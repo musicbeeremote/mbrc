@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainLinearLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/topRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <RelativeLayout
+            android:id="@+id/extraMediaButtonRelativeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true" >
+
+            <LinearLayout
+                android:id="@+id/extraMediaButtonLinearLayout"
+                android:layout_width="50dp"
+                android:layout_height="180dp"
+                android:orientation="vertical" >
+
+                <ImageButton
+                    android:id="@+id/repeatButton"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:background="@drawable/media_repeat"
+                    android:clickable="true"
+                    android:maxHeight="60dp"
+                    android:maxWidth="60dp" />
+
+                <ImageButton
+                    android:id="@+id/shuffleButton"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:background="@drawable/media_shuffle" />
+
+                <ImageButton
+                    android:id="@+id/scrobbleButton"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:background="@drawable/scrobble_red" />
+
+                <ImageButton
+                    android:id="@+id/muteButton"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:background="@drawable/media_volume_full" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/albumCover"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_weight="0.84"
+            android:adjustViewBounds="false" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/ratingRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <RatingBar
+            android:id="@+id/songRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+
+    <TableLayout
+        android:id="@+id/volumeTableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/volumeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/main_volume"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <SeekBar
+            android:id="@+id/volumeSlider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
+
+    </TableLayout>
+
+    <TableLayout
+        android:id="@+id/playingTrackInfoTableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/playingTrackLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mainPlayingTrack"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/titleLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/artistLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/albumLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/yearLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </TableLayout>
+
+    <LinearLayout
+        android:id="@+id/mediaButtonsLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal" >
+
+        <ImageButton
+            android:id="@+id/previousButton"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/media_previous" />
+
+        <ImageButton
+            android:id="@+id/playPauseButton"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/media_play" />
+
+        <ImageButton
+            android:id="@+id/stopButton"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/media_stop" />
+
+        <ImageButton
+            android:id="@+id/nextButton"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/media_next" />
+    </LinearLayout>
+
+</LinearLayout>

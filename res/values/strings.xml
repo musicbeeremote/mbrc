@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, AndroidRemoteforMusicBeeActivity!</string>
+    <string name="app_name">Android Remote for MusicBee</string>
+    <string name="main_volume">Volume:</string>
+    <string name="mainPlayingTrack">Playing track:</string>
+
+</resources>
