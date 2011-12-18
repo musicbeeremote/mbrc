@@ -26,28 +26,30 @@
                     android:id="@+id/repeatButton"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
-                    android:background="@drawable/media_repeat"
+                    android:src="@drawable/media_repeat"
                     android:clickable="true"
-                    android:maxHeight="60dp"
-                    android:maxWidth="60dp" />
+                    android:scaleType="fitCenter" />
 
                 <ImageButton
                     android:id="@+id/shuffleButton"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
-                    android:background="@drawable/media_shuffle" />
+                    android:src="@drawable/media_shuffle"
+                    android:scaleType="fitCenter" />
 
                 <ImageButton
                     android:id="@+id/scrobbleButton"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
-                    android:background="@drawable/scrobble_red" />
+                    android:src="@drawable/scrobble_red"
+                    android:scaleType="fitCenter" />
 
                 <ImageButton
                     android:id="@+id/muteButton"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
-                    android:background="@drawable/media_volume_full" />
+                    android:src="@drawable/media_volume_full"
+                    android:scaleType="fitCenter" />
 
             </LinearLayout>
 
@@ -94,7 +96,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp" />
+            android:paddingRight="10dp" android:max="100" android:progress="0"/>
 
     </TableLayout>
 
@@ -149,25 +151,29 @@
             android:id="@+id/previousButton"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:background="@drawable/media_previous" />
+            android:src="@drawable/media_previous"
+            android:scaleType="fitCenter" />
 
         <ImageButton
             android:id="@+id/playPauseButton"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:background="@drawable/media_play" />
+            android:src="@drawable/media_play" android:clickable="true"
+            android:scaleType="fitCenter"/>
 
         <ImageButton
             android:id="@+id/stopButton"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:background="@drawable/media_stop" />
+            android:src="@drawable/media_stop"
+            android:scaleType="fitCenter" />
 
         <ImageButton
             android:id="@+id/nextButton"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:background="@drawable/media_next" />
+            android:src="@drawable/media_next" 
+            android:scaleType="fitCenter"/>r
     </LinearLayout>
 
 </LinearLayout>
