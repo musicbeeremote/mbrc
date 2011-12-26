@@ -43,6 +43,7 @@ public class NetworkManager extends Service {
 		super.onCreate();
 		_cSocket = new Socket();
 		_handler = new AnswerHandler();
+		_handler.setContext(getApplicationContext());
 	}
 
 	public void onStart(Intent intent, int startId)

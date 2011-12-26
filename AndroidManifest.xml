@@ -13,8 +13,9 @@
             android:label="@string/app_name"
             android:name=".AndroidRemoteforMusicBeeActivity" >
             <intent-filter >
+                <action android:name="kelsos.mbremote.actions.VOLUME_DATA" />
                 <action android:name="android.intent.action.MAIN" />
-
+                
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
