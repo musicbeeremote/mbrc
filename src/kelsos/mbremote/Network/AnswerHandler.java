@@ -24,7 +24,11 @@ public class AnswerHandler {
     public final static String SONG_DATA = "kelsos.mbremote.action.SONG_DATA";
     public final static String SONG_COVER = "kelsos.mbremote.action.SONG_COVER";
     public final static String SONG_CHANGED = "kelsos.mbremote.action.SONG_CHANGED";
-
+    public final static String MUTE_STATE = "kelsos.mbremote.action.MUTE_STATE";
+    public final static String SCROBBLER_STATE = "kelsos.mbremote.action.SCROBBLER_STATE";
+    public final static String REPEAT_STATE = "kelsos.mbremote.action.REPEAT_STATE";
+    public final static String SHUFFLE_STATE = "kelsos.mbremote.action.SHUFFLE_STATE";
+    
     public AnswerHandler() {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
@@ -86,15 +90,38 @@ public class AnswerHandler {
                     notifyIntent.putExtra("title", title);
                     notifyIntent.putExtra("album", album);
                     notifyIntent.putExtra("year", year);
-                } else if (xmlNode.getNodeName().contains("songCover")) {
+                }
+                else if (xmlNode.getNodeName().contains("songCover")) {
                     _coverData = xmlNode.getTextContent();
                     notifyIntent.setAction(SONG_COVER);
                     //Log.d("Cover:", "Cover - Received");
-                } else if (xmlNode.getNodeName().contains("playState"))
+                }
+                else if (xmlNode.getNodeName().contains("playState"))
                 {
                 	notifyIntent.setAction(PLAY_STATE);
                 	notifyIntent.putExtra("playstate", xmlNode.getTextContent());
                 }
+                else if (xmlNode.getNodeName().contains("mute"))
+                {
+                	notifyIntent.setAction(MUTE_STATE);
+                	notifyIntent.putExtra("state", xmlNode.getTextContent());
+                }
+                else if (xmlNode.getNodeName().contains("repeat"))
+                {
+                	notifyIntent.setAction(REPEAT_STATE);
+                	notifyIntent.putExtra("state", xmlNode.getTextContent());
+                }
+                else if (xmlNode.getNodeName().contains("shuffle"))
+                {
+                	notifyIntent.setAction(SHUFFLE_STATE);
+                	notifyIntent.putExtra("state", xmlNode.getTextContent());
+                }
+                else if (xmlNode.getNodeName().contains("scrobbler"))
+                {
+                	notifyIntent.setAction(SCROBBLER_STATE);
+                	notifyIntent.putExtra("state", xmlNode.getTextContent());
+                }
+                
                 if (notifyIntent.getAction() != null)
                     context.sendBroadcast(notifyIntent);
             }

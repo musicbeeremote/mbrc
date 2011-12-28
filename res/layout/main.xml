@@ -31,31 +31,31 @@
                         android:layout_height="40dp"
                         android:src="@drawable/media_repeat"
                         android:clickable="true"
-                        android:scaleType="fitCenter" android:background="@drawable/button_vertical_top"/>
+                        android:scaleType="fitCenter" android:background="@drawable/button_vertical_top" android:layout_marginTop="10dp"/>
 
 
                 <ImageButton
                         android:id="@+id/shuffleButton"
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:src="@drawable/media_shuffle"
-                        android:scaleType="fitCenter"/>
+                        android:scaleType="fitCenter" android:background="@drawable/button_vertical_middle"/>
 
 
                 <ImageButton
                         android:id="@+id/scrobbleButton"
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:src="@drawable/scrobble_red"
-                        android:scaleType="fitCenter"/>
+                        android:scaleType="fitCenter" android:background="@drawable/button_vertical_middle"/>
 
 
                 <ImageButton
                         android:id="@+id/muteButton"
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:src="@drawable/media_volume_full"
-                        android:scaleType="fitCenter"/>
+                        android:scaleType="fitCenter" android:background="@drawable/button_vertical_bottom"/>
 
             </LinearLayout>
 
@@ -63,8 +63,8 @@
 
         <ImageView
             android:id="@+id/albumCover"
-            android:layout_width="240dp"
-            android:layout_height="240dp"
+            android:layout_width="230dp"
+            android:layout_height="230dp"
             android:layout_alignParentLeft="false"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="10dp"

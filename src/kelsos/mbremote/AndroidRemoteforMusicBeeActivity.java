@@ -40,7 +40,17 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
         filter.addAction(AnswerHandler.SONG_DATA);
         filter.addAction(AnswerHandler.SONG_COVER);
         filter.addAction(AnswerHandler.PLAY_STATE);
+        filter.addAction(AnswerHandler.MUTE_STATE);
+        filter.addAction(AnswerHandler.SCROBBLER_STATE);
+        filter.addAction(AnswerHandler.REPEAT_STATE);
+        filter.addAction(AnswerHandler.SHUFFLE_STATE);
         registerReceiver(mReceiver, filter);
+        RegisterListeners();
+
+        userChangingVolume = false;
+    }
+    private void RegisterListeners()
+    {
         // Buttons and listeners
         ImageButton playButton = (ImageButton) findViewById(R.id.playPauseButton);
         playButton.setOnClickListener(playButtonListener);
@@ -60,8 +70,6 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
         shuffleButton.setOnClickListener(shuffleButtonListener);
         ImageButton repeatButton = (ImageButton) findViewById(R.id.repeatButton);
         repeatButton.setOnClickListener(repeatButtonListener);
-
-        userChangingVolume = false;
     }
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -73,7 +81,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
                 if (!userChangingVolume)
                     volumeSlider.setProgress(intent.getExtras().getInt("data"));
             }
-            if (intent.getAction().equals(AnswerHandler.SONG_DATA)) {
+            else if (intent.getAction().equals(AnswerHandler.SONG_DATA)) {
                 TextView artistTextView = (TextView) findViewById(R.id.artistLabel);
                 TextView titleTextView = (TextView) findViewById(R.id.titleLabel);
                 TextView albumTextView = (TextView) findViewById(R.id.albumLabel);
@@ -84,10 +92,10 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
                 albumTextView.setText(intent.getExtras().getString("album"));
                 yearTextView.setText(intent.getExtras().getString("year"));
             }
-            if (intent.getAction().equals(AnswerHandler.SONG_COVER)) {
+            else if (intent.getAction().equals(AnswerHandler.SONG_COVER)) {
                 new ImageDecodeTask().execute();
             }
-            if (intent.getAction().equals(AnswerHandler.PLAY_STATE))
+            else if (intent.getAction().equals(AnswerHandler.PLAY_STATE))
             {
             	if(intent.getExtras().getString("playstate").equals("playing"))
             	{
@@ -103,6 +111,58 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
             	{
             		ImageButton playButton = (ImageButton)findViewById(R.id.playPauseButton);
             		playButton.setImageResource(R.drawable.media_play);
+            	}
+            }
+            else if (intent.getAction().equals(AnswerHandler.MUTE_STATE))
+            {
+            	if(intent.getExtras().getString("state").equalsIgnoreCase("True"))
+            	{
+            		ImageButton muteButton = (ImageButton)findViewById(R.id.muteButton);
+            				muteButton.setImageResource(R.drawable.media_volume_off);
+            	}
+            	else
+            	{
+            		ImageButton muteButton = (ImageButton)findViewById(R.id.muteButton);
+    				muteButton.setImageResource(R.drawable.media_volume_full);
+            	}
+            }
+            else if (intent.getAction().equals(AnswerHandler.REPEAT_STATE))
+            {
+            	if(intent.getExtras().getString("state").equalsIgnoreCase("All"))
+            	{
+            		ImageButton repeatButton = (ImageButton)findViewById(R.id.repeatButton);
+            				repeatButton.setImageResource(R.drawable.media_repeat);
+            	}
+            	else
+            	{
+            		ImageButton repeatButton = (ImageButton)findViewById(R.id.repeatButton);
+    				repeatButton.setImageResource(R.drawable.media_repeat_off);
+            	}
+            }
+            else if (intent.getAction().equals(AnswerHandler.SHUFFLE_STATE))
+            {
+            	if(intent.getExtras().getString("state").equalsIgnoreCase("True"))
+            	{
+            		ImageButton shuffleButton = (ImageButton)findViewById(R.id.shuffleButton);
+            		shuffleButton.setImageResource(R.drawable.media_shuffle);
+            	}
+            	else
+            	{
+            		ImageButton shuffleButton = (ImageButton)findViewById(R.id.shuffleButton);
+    				shuffleButton.setImageResource(R.drawable.media_shuffle_off);
+            	}
+            }
+            else if (intent.getAction().equals(AnswerHandler.SCROBBLER_STATE))
+            {
+            	if(intent.getExtras().getString("state").equalsIgnoreCase("True"))
+            	{
+            		ImageButton scrobbleButton = (ImageButton)findViewById(R.id.scrobbleButton);
+            		scrobbleButton.setImageResource(R.drawable.scrobble_red);
+            	}
+            	else
+            	{
+            		ImageButton scrobbleButton = (ImageButton)findViewById(R.id.scrobbleButton);
+    				scrobbleButton.setImageResource(R.drawable.scrobble_off);
             	}
             }
            // Log.d("Intent:", intent.getAction());
