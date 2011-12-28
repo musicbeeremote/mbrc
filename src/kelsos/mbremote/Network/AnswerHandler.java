@@ -53,23 +53,23 @@ public class AnswerHandler {
                 Document doc = db.parse(new ByteArrayInputStream(reply.getBytes("UTF-8")));
                 Node xmlNode = doc.getFirstChild();
                 //Debug Options
-                Log.d("Node Name:", xmlNode.getNodeName());
-                Log.d("Node Value:", xmlNode.getTextContent());
+                //Log.d("Node Name:", xmlNode.getNodeName());
+                //Log.d("Node Value:", xmlNode.getTextContent());
 
                 //AnswerIntent
-                Intent uiNotifyIntent = new Intent();
+                Intent notifyIntent = new Intent();
 
                 if (xmlNode.getNodeName().contains("playPause")) {
                     Log.d("Reply Received", "<playPause>");
                 } else if (xmlNode.getNodeName().contains("next")) {
                     Log.d("Reply Received", "<next>");
                 } else if (xmlNode.getNodeName().contains("volume")) {
-                    uiNotifyIntent.setAction(VOLUME_DATA);
-                    uiNotifyIntent.putExtra("data", Integer.parseInt(xmlNode.getTextContent()));
+                    notifyIntent.setAction(VOLUME_DATA);
+                    notifyIntent.putExtra("data", Integer.parseInt(xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains("songChanged")) {
                     if (xmlNode.getTextContent().contains("True")) {
-                        uiNotifyIntent.setAction(SONG_CHANGED);
-                        Log.d("SongChange","Cover Request to be send");
+                        notifyIntent.setAction(SONG_CHANGED);
+                        //Log.d("SongChange","Cover Request to be send");
                     }
                 } else if (xmlNode.getNodeName().contains("songInfo")) {
                     Node trackInfoNode = xmlNode.getFirstChild();
@@ -81,18 +81,22 @@ public class AnswerHandler {
                     trackInfoNode = trackInfoNode.getNextSibling();
                     String year = trackInfoNode.getTextContent();
 
-                    uiNotifyIntent.setAction(SONG_DATA);
-                    uiNotifyIntent.putExtra("artist", artist);
-                    uiNotifyIntent.putExtra("title", title);
-                    uiNotifyIntent.putExtra("album", album);
-                    uiNotifyIntent.putExtra("year", year);
+                    notifyIntent.setAction(SONG_DATA);
+                    notifyIntent.putExtra("artist", artist);
+                    notifyIntent.putExtra("title", title);
+                    notifyIntent.putExtra("album", album);
+                    notifyIntent.putExtra("year", year);
                 } else if (xmlNode.getNodeName().contains("songCover")) {
                     _coverData = xmlNode.getTextContent();
-                    uiNotifyIntent.setAction(SONG_COVER);
-                    Log.d("Cover:", "Cover - Received");
+                    notifyIntent.setAction(SONG_COVER);
+                    //Log.d("Cover:", "Cover - Received");
+                } else if (xmlNode.getNodeName().contains("playState"))
+                {
+                	notifyIntent.setAction(PLAY_STATE);
+                	notifyIntent.putExtra("playstate", xmlNode.getTextContent());
                 }
-                if (uiNotifyIntent.getAction() != null)
-                    context.sendBroadcast(uiNotifyIntent);
+                if (notifyIntent.getAction() != null)
+                    context.sendBroadcast(notifyIntent);
             }
         } catch (SAXException e) {
             e.printStackTrace();

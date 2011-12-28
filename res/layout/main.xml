@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/mainLinearLayout"
-              android:layout_width="wrap_content"
-              android:layout_height="fill_parent"
-              android:orientation="vertical">
-
+    android:id="@+id/mainLinearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
     <RelativeLayout
             android:id="@+id/topRelativeLayout"
@@ -28,11 +27,11 @@
 
                 <ImageButton
                         android:id="@+id/repeatButton"
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:src="@drawable/media_repeat"
                         android:clickable="true"
-                        android:scaleType="fitCenter"/>
+                        android:scaleType="fitCenter" android:background="@drawable/button_vertical_top"/>
 
 
                 <ImageButton
@@ -61,15 +60,17 @@
             </LinearLayout>
 
         </RelativeLayout>
-
+
         <ImageView
-                android:id="@+id/albumCover"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:layout_weight="0.84"
-                android:adjustViewBounds="false"/>
+            android:id="@+id/albumCover"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="0.84"
+            android:adjustViewBounds="false"
+            android:paddingLeft="10dp" />
 
     </RelativeLayout>
 
@@ -78,12 +79,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        <RatingBar
-                android:id="@+id/songRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"/>
     </RelativeLayout>
 
     <TableLayout
@@ -107,47 +102,81 @@
                 android:paddingRight="10dp" android:max="100" android:progress="0"/>
 
     </TableLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
 
-    <TableLayout
-            android:id="@+id/playingTrackInfoTableLayout"
+        <TextView
+            android:id="@+id/playingTrackLabel"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/mainPlayingTrack"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/titleLabel"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:focusableInTouchMode="true"
+            android:lines="1"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:text="Title"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingLeft="10dp"
+			android:paddingRight="10dp"
+			android:focusable="true"
+			android:textStyle="bold"/>
 
         <TextView
-                android:id="@+id/playingTrackLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/mainPlayingTrack"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+            android:id="@+id/artistLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:focusableInTouchMode="true"
+            android:lines="1"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:text="Artist"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingLeft="10dp"
+			android:paddingRight="10dp"
+			android:focusable="true" />
 
         <TextView
-                android:id="@+id/titleLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Medium Text"
-                android:textAppearance="?android:attr/textAppearanceMedium"/>
+            android:id="@+id/albumLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:focusableInTouchMode="true"
+            android:lines="1"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:text="Album"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingLeft="10dp"
+			android:paddingRight="10dp"
+			android:focusable="true" />
 
         <TextView
-                android:id="@+id/artistLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Medium Text"
-                android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-        <TextView
-                android:id="@+id/albumLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Medium Text"
-                android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-        <TextView
-                android:id="@+id/yearLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Medium Text"
-                android:textAppearance="?android:attr/textAppearanceMedium"/>
-    </TableLayout>
+            android:id="@+id/yearLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:focusableInTouchMode="true"
+            android:lines="1"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:text="Year"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingLeft="10dp"
+			android:paddingRight="10dp"
+			android:focusable="true" />
+    </LinearLayout>
 
     <LinearLayout
             android:id="@+id/mediaButtonsLinearLayout"
@@ -160,28 +189,28 @@
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:src="@drawable/media_previous"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter" android:background="@drawable/button_low_left"/>
 
         <ImageButton
                 android:id="@+id/playPauseButton"
-                android:layout_width="70dp"
+                android:layout_width="80dp"
                 android:layout_height="70dp"
                 android:src="@drawable/media_play" android:clickable="true"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter" android:background="@drawable/button_low_mid"/>
 
         <ImageButton
                 android:id="@+id/stopButton"
-                android:layout_width="70dp"
+                android:layout_width="80dp"
                 android:layout_height="70dp"
                 android:src="@drawable/media_stop"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter" android:background="@drawable/button_low_mid"/>
 
         <ImageButton
                 android:id="@+id/nextButton"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:src="@drawable/media_next"
-                android:scaleType="fitCenter"/>r
+                android:scaleType="fitCenter" android:background="@drawable/button_low_right"/>r
     </LinearLayout>
 
 </LinearLayout>

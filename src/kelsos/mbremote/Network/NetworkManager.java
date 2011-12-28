@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -23,6 +25,8 @@ public class NetworkManager extends Service {
     private PrintWriter _output;
     private AnswerHandler _handler;
     private final IBinder _mBinder = new LocalBinder();
+    
+    private boolean _initialRun;
 
     private static final String STATE = "state";
 
@@ -62,14 +66,17 @@ public class NetworkManager extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        _initialRun=true;
         _cSocket = new Socket();
         _handler = new AnswerHandler();
         _handler.setContext(getApplicationContext());
-        Timer _pollingTimer = new Timer();
+        Timer _pollingTimer = new Timer(true);
         PollingTimerTask _ptt = new PollingTimerTask();
         _pollingTimer.schedule(_ptt, 1000, 1000);
         IntentFilter _nmFilter = new IntentFilter();
         _nmFilter.addAction(AnswerHandler.SONG_CHANGED);
+        _nmFilter.addAction("android.intent.action.PHONE_STATE");
+        
         registerReceiver(nmBroadcastReceiver, _nmFilter);
     }
 
@@ -193,6 +200,12 @@ public class NetworkManager extends Service {
     }
 
     private void requestUpdate() {
+    	if(_initialRun)
+    	{
+    		requestCurrentlyPlayingSongCover();
+    		requestCurrentlyPlayingSongInfo();
+    		_initialRun=false;
+    	}
         requestSongChangedInformation();
         requestMuteState(STATE);
         requestRepeatState(STATE);
@@ -207,9 +220,21 @@ public class NetworkManager extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(AnswerHandler.SONG_CHANGED)) {
-                requestCurrentlyPlayingSongInfo();
                 requestCurrentlyPlayingSongCover();
-                Log.d("Intent Received","Cover Requested");
+            	requestCurrentlyPlayingSongInfo();
+                //Log.d("Intent Received","Cover Requested");
+            
+            }
+            if(intent.getAction().equals("android.intent.action.PHONE_STATE"))
+            {
+            	Bundle bundle = intent.getExtras();
+            	if(null==bundle)
+            		return;
+            	String state = bundle.getString(TelephonyManager.EXTRA_STATE);
+            	if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING))
+            	{
+            		requestVolumeChange(20);
+            	}
             }
         }
     };
