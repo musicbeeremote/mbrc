@@ -1,78 +1,105 @@
 package kelsos.mbremote.Network;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
-public class AnswerHandler{
-	private Context context;
-	private DocumentBuilderFactory dbf;
-	private DocumentBuilder db;
-	private Document doc;
-	
-	//Intents
-	public final static String VOLUME_DATA = "kelsos.mbremote.actions.VOLUME_DATA";
-	
-	public AnswerHandler(){
-		dbf = DocumentBuilderFactory.newInstance();
-		try {
-			db = dbf.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public void setContext(Context context)
-	{
-		this.context=context;
-	}
-	
-	public void answerProcessor(String answer){
-		try {
-			String[] replies = answer.split("\0");
-			for(int i = 0; i<replies.length; i++)
-			{
-				doc = db.parse(new ByteArrayInputStream(replies[i].getBytes("UTF-8")));
-				Node xmlNode = doc.getFirstChild();
-				Log.d("NodeName:",xmlNode.getNodeName());
-				if (xmlNode.getNodeName().contains("playPause"))
-				{
-					Log.d("Reply Received","<playPause>");
-				}
-				else if (xmlNode.getNodeName().contains("next"))
-				{
-					Log.d("Reply Received","<next>");
-				}
-				else if (xmlNode.getNodeName().contains("volume"))
-				{
-					Intent volumeDataIntent = new Intent();
-					volumeDataIntent.setAction(VOLUME_DATA);
-					volumeDataIntent.putExtra("data", Integer.parseInt(xmlNode.getTextContent()));
-					//volumeDataIntent.setClassName("kelsos.mbremote", "kelsos.mbremote.AndroidRemoteforMusicBeeActivity");
-					
-					context.sendBroadcast(volumeDataIntent);
-				}
-			}
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+public class AnswerHandler {
+    private Context context;
+    private DocumentBuilder db;
+    private String _coverData;
 
-	}
+    //Intents
+    public final static String VOLUME_DATA = "kelsos.mbremote.action.VOLUME_DATA";
+    public final static String PLAY_STATE = "kelsos.mbremote.action.PLAY_STATE";
+    public final static String SONG_DATA = "kelsos.mbremote.action.SONG_DATA";
+    public final static String SONG_COVER = "kelsos.mbremote.action.SONG_COVER";
+    public final static String SONG_CHANGED = "kelsos.mbremote.action.SONG_CHANGED";
+
+    public AnswerHandler() {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        try {
+            db = dbf.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public String getCoverData() {
+        return _coverData;
+    }
+
+    public void clearCoverData() {
+        _coverData = "";
+    }
+
+    public void answerProcessor(String answer) {
+        try {
+            String[] replies = answer.split("\0");
+            for (String reply : replies) {
+                Document doc = db.parse(new ByteArrayInputStream(reply.getBytes("UTF-8")));
+                Node xmlNode = doc.getFirstChild();
+                //Debug Options
+                Log.d("Node Name:", xmlNode.getNodeName());
+                Log.d("Node Value:", xmlNode.getTextContent());
+
+                //AnswerIntent
+                Intent uiNotifyIntent = new Intent();
+
+                if (xmlNode.getNodeName().contains("playPause")) {
+                    Log.d("Reply Received", "<playPause>");
+                } else if (xmlNode.getNodeName().contains("next")) {
+                    Log.d("Reply Received", "<next>");
+                } else if (xmlNode.getNodeName().contains("volume")) {
+                    uiNotifyIntent.setAction(VOLUME_DATA);
+                    uiNotifyIntent.putExtra("data", Integer.parseInt(xmlNode.getTextContent()));
+                } else if (xmlNode.getNodeName().contains("songChanged")) {
+                    if (xmlNode.getTextContent().contains("True")) {
+                        uiNotifyIntent.setAction(SONG_CHANGED);
+                        Log.d("SongChange","Cover Request to be send");
+                    }
+                } else if (xmlNode.getNodeName().contains("songInfo")) {
+                    Node trackInfoNode = xmlNode.getFirstChild();
+                    String artist = trackInfoNode.getTextContent();
+                    trackInfoNode = trackInfoNode.getNextSibling();
+                    String title = trackInfoNode.getTextContent();
+                    trackInfoNode = trackInfoNode.getNextSibling();
+                    String album = trackInfoNode.getTextContent();
+                    trackInfoNode = trackInfoNode.getNextSibling();
+                    String year = trackInfoNode.getTextContent();
+
+                    uiNotifyIntent.setAction(SONG_DATA);
+                    uiNotifyIntent.putExtra("artist", artist);
+                    uiNotifyIntent.putExtra("title", title);
+                    uiNotifyIntent.putExtra("album", album);
+                    uiNotifyIntent.putExtra("year", year);
+                } else if (xmlNode.getNodeName().contains("songCover")) {
+                    _coverData = xmlNode.getTextContent();
+                    uiNotifyIntent.setAction(SONG_COVER);
+                    Log.d("Cover:", "Cover - Received");
+                }
+                if (uiNotifyIntent.getAction() != null)
+                    context.sendBroadcast(uiNotifyIntent);
+            }
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 }
