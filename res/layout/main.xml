@@ -4,213 +4,193 @@
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
-    <RelativeLayout
-            android:id="@+id/topRelativeLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
-        <RelativeLayout
-                android:id="@+id/extraMediaButtonRelativeLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true">
-
-
-            <LinearLayout
-                    android:id="@+id/extraMediaButtonLinearLayout"
-                    android:layout_width="50dp"
-                    android:layout_height="180dp"
-                    android:orientation="vertical">
-
-
-                <ImageButton
-                        android:id="@+id/repeatButton"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/media_repeat"
-                        android:clickable="true"
-                        android:scaleType="fitCenter" android:background="@drawable/button_vertical_top" android:layout_marginTop="10dp"/>
-
-
-                <ImageButton
-                        android:id="@+id/shuffleButton"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/media_shuffle"
-                        android:scaleType="fitCenter" android:background="@drawable/button_vertical_middle"/>
-
-
-                <ImageButton
-                        android:id="@+id/scrobbleButton"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/scrobble_red"
-                        android:scaleType="fitCenter" android:background="@drawable/button_vertical_middle"/>
-
-
-                <ImageButton
-                        android:id="@+id/muteButton"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/media_volume_full"
-                        android:scaleType="fitCenter" android:background="@drawable/button_vertical_bottom"/>
-
-            </LinearLayout>
-
-        </RelativeLayout>
-
+    <LinearLayout
+        android:id="@+id/topHalfScreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
         <ImageView
             android:id="@+id/albumCover"
             android:layout_width="230dp"
             android:layout_height="230dp"
-            android:layout_alignParentLeft="false"
-            android:layout_alignParentTop="true"
             android:layout_marginLeft="10dp"
-            android:layout_weight="0.84"
             android:adjustViewBounds="false"
-            android:paddingLeft="10dp" />
-
-    </RelativeLayout>
-
+            android:contentDescription="@string/playing_track_album_cover"
+            android:paddingLeft="7dp" />
+        <LinearLayout
+            android:id="@+id/extraMediaButtonLinearLayout"
+            android:layout_width="43dp"
+            android:layout_height="180dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical" >
+            <ImageButton
+                android:id="@+id/repeatButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/skin_button_vertical_top"
+                android:clickable="true"
+                android:contentDescription="@string/repeat_button"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_media_repeat" />
+            <ImageButton
+                android:id="@+id/shuffleButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/skin_button_vertical_middle"
+                android:contentDescription="@string/shuffle_button"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_media_shuffle" />
+            <ImageButton
+                android:id="@+id/scrobbleButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/skin_button_vertical_middle"
+                android:contentDescription="@string/scrobbler_button"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_media_scrobble_red" />
+            <ImageButton
+                android:id="@+id/muteButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/skin_button_vertical_bottom"
+                android:contentDescription="@string/mute_button"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_media_volume_full" />
+        </LinearLayout>
+    </LinearLayout>
     <RelativeLayout
-            android:id="@+id/ratingRelativeLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
+        android:id="@+id/ratingRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
     </RelativeLayout>
-
     <TableLayout
-            android:id="@+id/volumeTableLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
+        android:id="@+id/volumeTableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
         <TextView
-                android:id="@+id/volumeLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/main_volume"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-
+            android:id="@+id/volumeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="@string/main_volume"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
         <SeekBar
-                android:id="@+id/volumeSlider"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp" android:max="100" android:progress="0"/>
-
+            android:id="@+id/volumeSlider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:progress="0" />
     </TableLayout>
-
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
-
         <TextView
             android:id="@+id/playingTrackLabel"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
             android:text="@string/mainPlayingTrack"
             android:textAppearance="?android:attr/textAppearanceSmall" />
-
         <TextView
             android:id="@+id/titleLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
+            android:focusable="true"
             android:focusableInTouchMode="true"
             android:lines="1"
             android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:text="Title"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:paddingLeft="10dp"
-			android:paddingRight="10dp"
-			android:focusable="true"
-			android:textStyle="bold"/>
-
+            android:paddingRight="10dp"
+            android:scrollHorizontally="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
         <TextView
             android:id="@+id/artistLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
+            android:focusable="true"
             android:focusableInTouchMode="true"
             android:lines="1"
             android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:text="Artist"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:paddingLeft="10dp"
-			android:paddingRight="10dp"
-			android:focusable="true" />
-
+            android:paddingRight="10dp"
+            android:scrollHorizontally="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="normal" />
         <TextView
             android:id="@+id/albumLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
+            android:focusable="true"
             android:focusableInTouchMode="true"
             android:lines="1"
             android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:text="Album"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:paddingLeft="10dp"
-			android:paddingRight="10dp"
-			android:focusable="true" />
-
+            android:paddingRight="10dp"
+            android:scrollHorizontally="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="normal" />
         <TextView
             android:id="@+id/yearLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
+            android:focusable="true"
             android:focusableInTouchMode="true"
             android:lines="1"
             android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:text="Year"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:paddingLeft="10dp"
-			android:paddingRight="10dp"
-			android:focusable="true" />
+            android:paddingRight="10dp"
+            android:scrollHorizontally="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="normal" />
     </LinearLayout>
-
     <LinearLayout
-            android:id="@+id/mediaButtonsLinearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal">
-
+        android:id="@+id/mediaButtonsLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal" >
         <ImageButton
-                android:id="@+id/previousButton"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:src="@drawable/media_previous"
-                android:scaleType="fitCenter" android:background="@drawable/button_low_left"/>
-
+            android:id="@+id/previousButton"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/skin_button_horizonal_left"
+            android:contentDescription="@string/previous_track_button"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_media_previous" />
         <ImageButton
-                android:id="@+id/playPauseButton"
-                android:layout_width="80dp"
-                android:layout_height="70dp"
-                android:src="@drawable/media_play" android:clickable="true"
-                android:scaleType="fitCenter" android:background="@drawable/button_low_mid"/>
-
+            android:id="@+id/playPauseButton"
+            android:layout_width="80dp"
+            android:layout_height="70dp"
+            android:background="@drawable/skin_button_horizonal_middle"
+            android:clickable="true"
+            android:contentDescription="@string/play_pause_button"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_media_play" />
         <ImageButton
-                android:id="@+id/stopButton"
-                android:layout_width="80dp"
-                android:layout_height="70dp"
-                android:src="@drawable/media_stop"
-                android:scaleType="fitCenter" android:background="@drawable/button_low_mid"/>
-
+            android:id="@+id/stopButton"
+            android:layout_width="80dp"
+            android:layout_height="70dp"
+            android:background="@drawable/skin_button_horizonal_middle"
+            android:contentDescription="@string/stop_playback_button"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_media_stop" />
         <ImageButton
-                android:id="@+id/nextButton"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:src="@drawable/media_next"
-                android:scaleType="fitCenter" android:background="@drawable/button_low_right"/>r
+            android:id="@+id/nextButton"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/skin_button_horizonal_right"
+            android:contentDescription="@string/next_track_button"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_media_next" />
     </LinearLayout>
-
 </LinearLayout>

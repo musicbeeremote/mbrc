@@ -4,10 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
-    <TwoLineListItem
-        android:id="@+id/nowPlayingList"
+
+    <ListView
+        android:id="@+id/listView1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+    android:choiceMode="singleChoice">
+    </ListView>
 
     </LinearLayout>

@@ -5,9 +5,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -18,6 +20,9 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import kelsos.mbremote.AppSettings;
+import kelsos.mbremote.R;
 
 public class NetworkManager extends Service {
 
@@ -82,14 +87,18 @@ public class NetworkManager extends Service {
 
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
-        Toast.makeText(this, "Socket Service: Started", Toast.LENGTH_LONG).show();
+        startSocketThread();
+    }
+    
+    private void startSocketThread()
+    {
         Runnable connect = new connectSocket();
         new Thread(connect).start();
     }
-
     private void sendData(String sendData) {
         try {
-            _output.println(sendData + "\r\n");
+        	if(_cSocket.isConnected())
+        		_output.println(sendData + "\r\n");
         } catch (Exception e) {
             Log.e("SendData", "Failed", e);
         }
@@ -159,7 +168,11 @@ public class NetworkManager extends Service {
     private class connectSocket implements Runnable {
 
         public void run() {
-            SocketAddress socketAddress = new InetSocketAddress("192.168.110.100", 3000);
+        	SharedPreferences sPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        	String server_hostname = sPrefs.getString(getApplicationContext().getString(R.string.settings_server_hostname), null);
+        	int server_port = Integer.parseInt(sPrefs.getString(getApplicationContext().getString(R.string.settings_server_port),null));
+        	Log.d("server_hostname",server_hostname + " " + server_port);
+            SocketAddress socketAddress = new InetSocketAddress(server_hostname, server_port);
             try {
                 _cSocket.connect(socketAddress);
                 _output = new PrintWriter(new BufferedWriter(
@@ -233,7 +246,9 @@ public class NetworkManager extends Service {
             	String state = bundle.getString(TelephonyManager.EXTRA_STATE);
             	if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING))
             	{
-            		requestVolumeChange(20);
+            		SharedPreferences sPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                	if(sPrefs.getBoolean(getApplicationContext().getString(R.string.settings_reduce_volume_on_ring), false))
+                		requestVolumeChange(20);
             	}
             }
         }

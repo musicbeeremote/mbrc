@@ -1,10 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="hello">Hello World, AndroidRemoteforMusicBeeActivity!</string>
     <string name="app_name">Android Remote for MusicBee</string>
     <string name="main_volume">Volume:</string>
     <string name="mainPlayingTrack">Playing track:</string>
     <string name="socket_service_started">Socket Service Stared</string>
-
+    <string name="mute_button">Mute Button</string>
+    <string name="repeat_button">Repeat Button</string>
+    <string name="shuffle_button">Shuffle Button</string>
+    <string name="scrobbler_button">Scrobbler Button</string>
+    <string name="previous_track_button">Previous Track Button</string>
+    <string name="play_pause_button">Play/Pause Button</string>
+    <string name="stop_playback_button">Stop Playback Button</string>
+    <string name="next_track_button">Next Track Button</string>
+    <string name="playing_track_album_cover">Playing track album cover</string>
+    <string name="settings">Settings</string>
+    <string name="server_hostname">Hostname or IP</string>
+    <string name="connection_settings">Connection Settings</string>
+    <string name="settings_server_hostname">server_hostname</string>
+    <string name="settings_server_port">server_port</string>
+    <string name="server_port">Port:</string>
+    <string name="settings_category_misc">Miscellaneous</string>
+    <string name="settings_reduce_volume_on_ring">reduce_volume_on_ring</string>
+    <string name="settings_misc_reduce_volume">Reduce on Incoming</string>
+    <string name="settings_reduce_volume_on_ring_summury">Reduce the player volume on incoming call</string>
 </resources>

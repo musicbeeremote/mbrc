@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -49,6 +52,28 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
 
         userChangingVolume = false;
     }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+    	MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+    	switch (item.getItemId()) {
+		case R.id.settings_menu:
+			Intent settingsIntent = new Intent(AndroidRemoteforMusicBeeActivity.this,AppSettings.class);
+			startActivity(settingsIntent);
+			break;
+		default:
+			return super.onMenuItemSelected(featureId, item);
+		}
+    	return true;
+    	
+    }
+    
     private void RegisterListeners()
     {
         // Buttons and listeners
@@ -100,17 +125,17 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
             	if(intent.getExtras().getString("playstate").equals("playing"))
             	{
             		ImageButton playButton = (ImageButton)findViewById(R.id.playPauseButton);
-            		playButton.setImageResource(R.drawable.media_pause);
+            		playButton.setImageResource(R.drawable.ic_media_pause);
             	}
             	else if (intent.getExtras().getString("playstate").equals("paused"))
             	{
             		ImageButton playButton = (ImageButton)findViewById(R.id.playPauseButton);
-            		playButton.setImageResource(R.drawable.media_play);
+            		playButton.setImageResource(R.drawable.ic_media_play);
             	}
             	else if (intent.getExtras().getString("playstate").equals("stopped"))
             	{
             		ImageButton playButton = (ImageButton)findViewById(R.id.playPauseButton);
-            		playButton.setImageResource(R.drawable.media_play);
+            		playButton.setImageResource(R.drawable.ic_media_play);
             	}
             }
             else if (intent.getAction().equals(AnswerHandler.MUTE_STATE))
@@ -118,12 +143,12 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
             	if(intent.getExtras().getString("state").equalsIgnoreCase("True"))
             	{
             		ImageButton muteButton = (ImageButton)findViewById(R.id.muteButton);
-            				muteButton.setImageResource(R.drawable.media_volume_off);
+            				muteButton.setImageResource(R.drawable.ic_media_volume_off);
             	}
             	else
             	{
             		ImageButton muteButton = (ImageButton)findViewById(R.id.muteButton);
-    				muteButton.setImageResource(R.drawable.media_volume_full);
+    				muteButton.setImageResource(R.drawable.ic_media_volume_full);
             	}
             }
             else if (intent.getAction().equals(AnswerHandler.REPEAT_STATE))
@@ -131,12 +156,12 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
             	if(intent.getExtras().getString("state").equalsIgnoreCase("All"))
             	{
             		ImageButton repeatButton = (ImageButton)findViewById(R.id.repeatButton);
-            				repeatButton.setImageResource(R.drawable.media_repeat);
+            				repeatButton.setImageResource(R.drawable.ic_media_repeat);
             	}
             	else
             	{
             		ImageButton repeatButton = (ImageButton)findViewById(R.id.repeatButton);
-    				repeatButton.setImageResource(R.drawable.media_repeat_off);
+    				repeatButton.setImageResource(R.drawable.ic_media_repeat_off);
             	}
             }
             else if (intent.getAction().equals(AnswerHandler.SHUFFLE_STATE))
@@ -144,12 +169,12 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
             	if(intent.getExtras().getString("state").equalsIgnoreCase("True"))
             	{
             		ImageButton shuffleButton = (ImageButton)findViewById(R.id.shuffleButton);
-            		shuffleButton.setImageResource(R.drawable.media_shuffle);
+            		shuffleButton.setImageResource(R.drawable.ic_media_shuffle);
             	}
             	else
             	{
             		ImageButton shuffleButton = (ImageButton)findViewById(R.id.shuffleButton);
-    				shuffleButton.setImageResource(R.drawable.media_shuffle_off);
+    				shuffleButton.setImageResource(R.drawable.ic_media_shuffle_off);
             	}
             }
             else if (intent.getAction().equals(AnswerHandler.SCROBBLER_STATE))
@@ -157,12 +182,12 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
             	if(intent.getExtras().getString("state").equalsIgnoreCase("True"))
             	{
             		ImageButton scrobbleButton = (ImageButton)findViewById(R.id.scrobbleButton);
-            		scrobbleButton.setImageResource(R.drawable.scrobble_red);
+            		scrobbleButton.setImageResource(R.drawable.ic_media_scrobble_red);
             	}
             	else
             	{
             		ImageButton scrobbleButton = (ImageButton)findViewById(R.id.scrobbleButton);
-    				scrobbleButton.setImageResource(R.drawable.scrobble_off);
+    				scrobbleButton.setImageResource(R.drawable.ic_media_scrobble_off);
             	}
             }
            // Log.d("Intent:", intent.getAction());
@@ -293,4 +318,5 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
                 mBoundService.requestVolumeChange(seekBar.getProgress());
         }
     };
+   
 }
