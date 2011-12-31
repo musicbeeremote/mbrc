@@ -6,12 +6,11 @@
     <uses-sdk android:minSdkVersion="8" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <application
-        android:label="@string/app_name"
-        android:theme="@style/Theme.Basic" >
+    <application android:label="@string/app_name" >
         <activity
             android:name=".AndroidRemoteforMusicBeeActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Basic" >
             <intent-filter>
                 <action android:name="kelsos.mbremote.action.SHUFFLE_STATE" />
                 <action android:name="kelsos.mbremote.action.REPEAT_STATE" />
