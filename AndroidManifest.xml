@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="kelsos.mbremote"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="0.1 Alpha" >
     <uses-sdk android:minSdkVersion="8" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -25,6 +25,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".AppSettings" >
+        </activity>
+        <activity android:name=".PlaylistActivity" >
+            <intent-filter>
+                <action android:name="kelsos.mbremote.action.PLAYLIST_DATA" />
+            </intent-filter>
         </activity>
         <service android:name="kelsos.mbremote.Network.NetworkManager" >
             <intent-filter>

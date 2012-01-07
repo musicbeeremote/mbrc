@@ -49,7 +49,6 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
         filter.addAction(AnswerHandler.SHUFFLE_STATE);
         registerReceiver(mReceiver, filter);
         RegisterListeners();
-
         userChangingVolume = false;
     }
     
@@ -63,10 +62,13 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
     	switch (item.getItemId()) {
-		case R.id.settings_menu:
+		case R.id.main_menu_settings:
 			Intent settingsIntent = new Intent(AndroidRemoteforMusicBeeActivity.this,AppSettings.class);
 			startActivity(settingsIntent);
 			break;
+		case R.id.main_menu_playlist:
+			Intent playlistIntent = new Intent(AndroidRemoteforMusicBeeActivity.this,PlaylistActivity.class);
+			startActivity(playlistIntent);
 		default:
 			return super.onMenuItemSelected(featureId, item);
 		}
@@ -143,7 +145,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
             	if(intent.getExtras().getString("state").equalsIgnoreCase("True"))
             	{
             		ImageButton muteButton = (ImageButton)findViewById(R.id.muteButton);
-            				muteButton.setImageResource(R.drawable.ic_media_volume_off);
+            		muteButton.setImageResource(R.drawable.ic_media_volume_off);
             	}
             	else
             	{

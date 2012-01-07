@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
-        android:id="@+id/settings_menu"
+        android:id="@+id/main_menu_settings"
         android:icon="@drawable/ic_menu_settings"
-        android:title="@string/settings">
+        android:title="@string/main_menu_settings">
+    </item>
+    <item
+        android:id="@+id/main_menu_playlist"
+        android:icon="@drawable/ic_menu_playlist"
+        android:title="@string/main_menu_playlist">
     </item>
 </menu>
