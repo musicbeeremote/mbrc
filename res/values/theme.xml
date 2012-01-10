@@ -3,5 +3,6 @@
     <style name="Theme"></style>
     <style name="Theme.Basic" parent="android:Theme">
         <item name="android:background">#323232</item>
+        <item name="android:textColor">#8f8106</item>
     </style>
 </resources>

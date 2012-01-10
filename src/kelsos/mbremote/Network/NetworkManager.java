@@ -60,11 +60,17 @@ public class NetworkManager extends Service {
 						true);
 				_input = new BufferedReader(new InputStreamReader(
 						_cSocket.getInputStream()));
-				Log.d("NM", "entering listening loop");
+				Log.d("NetworkManager", "Entering listening loop");
 				while (_cSocket.isConnected()) {
 					try {
 						// Log.d("ServerInput", "next stop");
-						_handler.answerProcessor(_input.readLine());
+						final String serverAnswer = _input.readLine();
+						new Thread(new Runnable() {
+							public void run() {
+								_handler.answerProcessor(serverAnswer);
+							
+							}
+						}).start();
 					} catch (IOException e) {
 						_input.close();
 						_cSocket.close();
@@ -144,6 +150,9 @@ public class NetworkManager extends Service {
 	private static final String PLAYNOW_CLOSE = "</playNow>";
 	private static final String SCROBBLE_OPEN = "<scrobbler>";
 	private static final String SCROBBLE_CLOSE = "</scrobbler>";
+	private static final String LYRICS = "<lyrics/>";
+	private static final String RATING_OPEN = "<rating>";
+	private static final String RATING_CLOSE = "</rating>";
 
 
 	private final BroadcastReceiver nmBroadcastReceiver = new BroadcastReceiver() {
@@ -303,6 +312,16 @@ public class NetworkManager extends Service {
 	public void requestStopPlayback() {
 		this.sendData(STOP);
 	}
+	
+	public void requestTrackLyrics()
+	{
+		this.sendData(LYRICS);
+	}
+	
+	public void requestRatingChange(String newRating)
+	{
+		this.sendData(RATING_OPEN + newRating + RATING_CLOSE);
+	}
 
 	private void requestUpdate() {
 		if (_requestCoverAndInfo) {
@@ -347,5 +366,14 @@ public class NetworkManager extends Service {
 		_connectionThread.start();
 		Log.d("NetworkManager","New connection thread");
 
+	}
+	
+	public String getSongLyrics()
+	{
+		return _handler.getSongLyrics();
+	}
+	
+	public void clearLyrics() {
+		_handler.clearLyrics();
 	}
 }

@@ -22,6 +22,7 @@ public class AnswerHandler {
 	private DocumentBuilder db;
 	private String _coverData;
 	private ArrayList<MusicTrack> _nowPlayingList;
+	private String _songLyrics;
 
 	public ArrayList<MusicTrack> getNowPlayingList() {
 		return _nowPlayingList;
@@ -43,6 +44,7 @@ public class AnswerHandler {
 	public final static String REPEAT_STATE = "kelsos.mbremote.action.REPEAT_STATE";
 	public final static String SHUFFLE_STATE = "kelsos.mbremote.action.SHUFFLE_STATE";
 	public final static String PLAYLIST_DATA = "kelsos.mbremote.action.PLAYLIST_DATA";
+	public final static String LYRICS_DATA = "kelsos.mbremote.action.LYRICS_DATA";
 
 	public AnswerHandler() {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -56,6 +58,7 @@ public class AnswerHandler {
 
 	public void answerProcessor(String answer) {
 		try {
+			//Log.d("AnswerHandler",answer);
 			String[] replies = answer.split("\0");
 			for (String reply : replies) {
 				Document doc = db.parse(new ByteArrayInputStream(reply
@@ -125,6 +128,11 @@ public class AnswerHandler {
 						_nowPlayingList.add(new MusicTrack(playlistData.item(i).getFirstChild().getTextContent(),playlistData.item(i).getLastChild().getTextContent()));
 					}
 					notifyIntent.setAction(PLAYLIST_DATA);
+				} else if (xmlNode.getNodeName().contains("lyrics"))
+				{
+					_songLyrics=xmlNode.getTextContent().replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;","<").replace("&gt;",">").replace("\"", "&quot;").replace("&apos;","'").replace("&", "&amp;").trim();
+					notifyIntent.setAction(LYRICS_DATA);
+					Log.d("SongLyrics", _songLyrics);
 				}
 
 				if (notifyIntent.getAction() != null)
@@ -136,6 +144,15 @@ public class AnswerHandler {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public String getSongLyrics()
+	{
+		return _songLyrics;
+	}
+	
+	public void clearLyrics() {
+		_songLyrics = "";
 	}
 
 	public void clearCoverData() {

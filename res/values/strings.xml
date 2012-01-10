@@ -25,4 +25,6 @@
     <string name="settings_reduce_volume_on_ring_summury">Reduce the player volume on incoming call</string>
     <string name="network_manager_check_hostname_or_port">Check hostname or Port</string>
     <string name="main_menu_playlist">Now Playing List</string>
+    <string name="popup_lyrics_label">Lyrics</string>
+    <string name="generic_string_close">Close</string>
 </resources>
