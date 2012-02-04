@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,6 +34,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class NetworkManager extends Service {
+	
+	private static int retryCount;
+	private static final int maxRetries = 3;
 	
 	private class connectSocket implements Runnable {
 
@@ -65,12 +69,7 @@ public class NetworkManager extends Service {
 					try {
 						// Log.d("ServerInput", "next stop");
 						final String serverAnswer = _input.readLine();
-						new Thread(new Runnable() {
-							public void run() {
-								_handler.answerProcessor(serverAnswer);
-							
-							}
-						}).start();
+						AnswerHandler.getInstance().answerProcessor(serverAnswer);
 					} catch (IOException e) {
 						_input.close();
 						_cSocket.close();
@@ -122,7 +121,6 @@ public class NetworkManager extends Service {
 	private Socket _cSocket = new Socket();
 	private PrintWriter _output;
 
-	private AnswerHandler _handler;
 
 	private final IBinder _mBinder = new LocalBinder();
 
@@ -153,7 +151,7 @@ public class NetworkManager extends Service {
 	private static final String LYRICS = "<lyrics/>";
 	private static final String RATING_OPEN = "<rating>";
 	private static final String RATING_CLOSE = "</rating>";
-
+	private Timer _pollingTimer;
 
 	private final BroadcastReceiver nmBroadcastReceiver = new BroadcastReceiver() {
 
@@ -185,20 +183,20 @@ public class NetworkManager extends Service {
 	};
 
 	public void clearCoverData() {
-		_handler.clearCoverData();
+		AnswerHandler.getInstance().clearCoverData();
 	}
 
 	public void clearNowPlayingList()
 	{
-		_handler.clearNowPlayingList();
+		AnswerHandler.getInstance().clearNowPlayingList();
 	}
 
 	public String getCoverData() {
-		return _handler.getCoverData();
+		return AnswerHandler.getInstance().getCoverData();
 	}
 
 	public ArrayList<MusicTrack> getNowPlayingList() {
-		return _handler.getNowPlayingList();
+		return AnswerHandler.getInstance().getNowPlayingList();
 	}
 
 	@Override
@@ -209,10 +207,10 @@ public class NetworkManager extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		retryCount = 0; //Initialize the connection retry counter.
 		_requestCoverAndInfo = true;
-		_handler = new AnswerHandler();
-		_handler.setContext(getApplicationContext());
-		Timer _pollingTimer = new Timer(true);
+		AnswerHandler.getInstance().setContext(getApplicationContext());
+		_pollingTimer = new Timer(true);
 		PollingTimerTask _ptt = new PollingTimerTask();
 		_pollingTimer.schedule(_ptt, 1000, 1000);
 		IntentFilter _nmFilter = new IntentFilter();
@@ -350,13 +348,22 @@ public class NetworkManager extends Service {
 			{ 
 				startSocketThread();
 			}
-
 		} catch (Exception e) {
 			Log.e("NetworkManager", "sendData", e);
 		}
 	}
 
 	private void startSocketThread() {
+//		if (retryCount>maxRetries)
+//		{
+//			try {
+//				_pollingTimer.wait(300000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			return;
+//		}
 		if (_cSocket!=null&&_cSocket.isConnected())
 			return;
 		if(_connectionThread!=null&&_connectionThread.isAlive())
@@ -364,16 +371,11 @@ public class NetworkManager extends Service {
 		Runnable connect = new connectSocket();
 		_connectionThread = new Thread(connect);
 		_connectionThread.start();
+		retryCount++;
+		
 		Log.d("NetworkManager","New connection thread");
 
 	}
 	
-	public String getSongLyrics()
-	{
-		return _handler.getSongLyrics();
-	}
 	
-	public void clearLyrics() {
-		_handler.clearLyrics();
-	}
 }

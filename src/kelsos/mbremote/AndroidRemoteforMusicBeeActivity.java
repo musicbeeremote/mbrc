@@ -213,7 +213,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
 				lyricsPopup.setOutsideTouchable(true);
 				((TextView)lyricsPopup.getContentView().findViewById(R.id.lyricsLabel)).setText("Lyrics for " + ((TextView)findViewById(R.id.titleLabel)).getText() + "\nby " + ((TextView)findViewById(R.id.artistLabel)).getText());
 				
-				((TextView)lyricsPopup.getContentView().findViewById(R.id.lyricsText)).setText(mBoundService.getSongLyrics());;
+				((TextView)lyricsPopup.getContentView().findViewById(R.id.lyricsText)).setText(AnswerHandler.getInstance().getSongLyrics());;
 				lyricsPopup.getContentView().findViewById(R.id.popup_close_button).setOnClickListener(new OnClickListener() {
 					
 					public void onClick(View v) {
@@ -222,7 +222,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
 					}
 				});
 				lyricsPopup.showAtLocation(findViewById(R.id.mainLinearLayout), Gravity.CENTER, 0, 0);
-				mBoundService.clearLyrics();
+				AnswerHandler.getInstance().clearLyrics();
 			}
 			// Log.d("Intent:", intent.getAction());
 		}

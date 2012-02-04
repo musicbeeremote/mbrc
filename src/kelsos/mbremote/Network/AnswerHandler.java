@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import kelsos.mbremote.Data.MusicTrack;
 
 public class AnswerHandler {
+	
+	private static AnswerHandler _instance;
 	private Context context;
 	private DocumentBuilder db;
 	private String _coverData;
@@ -46,7 +48,7 @@ public class AnswerHandler {
 	public final static String PLAYLIST_DATA = "kelsos.mbremote.action.PLAYLIST_DATA";
 	public final static String LYRICS_DATA = "kelsos.mbremote.action.LYRICS_DATA";
 
-	public AnswerHandler() {
+	private AnswerHandler() {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		try {
 			db = dbf.newDocumentBuilder();
@@ -54,6 +56,14 @@ public class AnswerHandler {
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static synchronized AnswerHandler getInstance(){
+		if(_instance==null)
+		{
+			_instance = new AnswerHandler();
+		}
+		return _instance;
 	}
 
 	public void answerProcessor(String answer) {
