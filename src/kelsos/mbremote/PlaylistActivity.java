@@ -51,9 +51,9 @@ public class PlaylistActivity extends ListActivity {
 	
 	private void updateListData()
 	{
-		PlaylistArrayAdapter adapter = new PlaylistArrayAdapter(this, R.layout.playlistview_item, mBoundService.getNowPlayingList());
+		PlaylistArrayAdapter adapter = new PlaylistArrayAdapter(this, R.layout.playlistview_item, AnswerHandler.getInstance().getNowPlayingList());
 		setListAdapter(adapter);
-		//mBoundService.clearNowPlayingList();
+		//AnswerHandler.getInstance().clearNowPlayingList();
 	}
 	
 	private class RequestPlaylistTask extends TimerTask

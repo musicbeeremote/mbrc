@@ -11,19 +11,16 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import kelsos.mbremote.R;
-import kelsos.mbremote.Data.MusicTrack;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,10 +31,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class NetworkManager extends Service {
-	
+
 	private static int retryCount;
 	private static final int maxRetries = 3;
-	
+
 	private class connectSocket implements Runnable {
 
 		public void run() {
@@ -69,7 +66,8 @@ public class NetworkManager extends Service {
 					try {
 						// Log.d("ServerInput", "next stop");
 						final String serverAnswer = _input.readLine();
-						AnswerHandler.getInstance().answerProcessor(serverAnswer);
+						AnswerHandler.getInstance().answerProcessor(
+								serverAnswer);
 					} catch (IOException e) {
 						_input.close();
 						_cSocket.close();
@@ -79,27 +77,28 @@ public class NetworkManager extends Service {
 			} catch (SocketTimeoutException e) {
 				_nmHandler.post(new Runnable() {
 					public void run() {
-						Toast.makeText(getApplicationContext(), "Connection timed out",
-								Toast.LENGTH_SHORT).show();
+						Toast.makeText(getApplicationContext(),
+								"Connection timed out", Toast.LENGTH_SHORT)
+								.show();
 					}
 				});
 			} catch (SocketException e) {
 				final String exceptionMessage = e.toString().substring(26);
 				_nmHandler.post(new Runnable() {
 					public void run() {
-						Toast.makeText(getApplicationContext(),exceptionMessage ,
-								Toast.LENGTH_SHORT).show();
+						Toast.makeText(getApplicationContext(),
+								exceptionMessage, Toast.LENGTH_SHORT).show();
 					}
 				});
 			} catch (IOException e) {
 				Log.e("NetworkManager", "Listening Loop", e);
 			} finally {
-				if(_output!=null){
-				_output.flush();
-				_output.close();
+				if (_output != null) {
+					_output.flush();
+					_output.close();
 				}
 				_cSocket = null;
-				_requestCoverAndInfo=true;
+				_requestCoverAndInfo = true;
 			}
 
 		}
@@ -112,6 +111,7 @@ public class NetworkManager extends Service {
 	}
 
 	private class PollingTimerTask extends TimerTask {
+		@Override
 		public void run() {
 			requestUpdate();
 		}
@@ -120,7 +120,6 @@ public class NetworkManager extends Service {
 	private Handler _nmHandler;
 	private Socket _cSocket = new Socket();
 	private PrintWriter _output;
-
 
 	private final IBinder _mBinder = new LocalBinder();
 
@@ -175,29 +174,12 @@ public class NetworkManager extends Service {
 					if (sPrefs.getBoolean(
 							getApplicationContext().getString(
 									R.string.settings_reduce_volume_on_ring),
-									false))
+							false))
 						requestVolumeChange(20);
 				}
 			}
 		}
 	};
-
-	public void clearCoverData() {
-		AnswerHandler.getInstance().clearCoverData();
-	}
-
-	public void clearNowPlayingList()
-	{
-		AnswerHandler.getInstance().clearNowPlayingList();
-	}
-
-	public String getCoverData() {
-		return AnswerHandler.getInstance().getCoverData();
-	}
-
-	public ArrayList<MusicTrack> getNowPlayingList() {
-		return AnswerHandler.getInstance().getNowPlayingList();
-	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -207,7 +189,7 @@ public class NetworkManager extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		retryCount = 0; //Initialize the connection retry counter.
+		retryCount = 0; // Initialize the connection retry counter.
 		_requestCoverAndInfo = true;
 		AnswerHandler.getInstance().setContext(getApplicationContext());
 		_pollingTimer = new Timer(true);
@@ -219,7 +201,7 @@ public class NetworkManager extends Service {
 
 		registerReceiver(nmBroadcastReceiver, _nmFilter);
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -231,6 +213,8 @@ public class NetworkManager extends Service {
 		_cSocket = null;
 		unregisterReceiver(nmBroadcastReceiver);
 	}
+
+	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
 		startSocketThread();
@@ -240,7 +224,7 @@ public class NetworkManager extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		_nmHandler = new Handler();
 		return super.onStartCommand(intent, flags, startId);
-		
+
 	}
 
 	public void requestCoverAndInfo() {
@@ -310,14 +294,12 @@ public class NetworkManager extends Service {
 	public void requestStopPlayback() {
 		this.sendData(STOP);
 	}
-	
-	public void requestTrackLyrics()
-	{
+
+	public void requestTrackLyrics() {
 		this.sendData(LYRICS);
 	}
-	
-	public void requestRatingChange(String newRating)
-	{
+
+	public void requestRatingChange(String newRating) {
 		this.sendData(RATING_OPEN + newRating + RATING_CLOSE);
 	}
 
@@ -342,10 +324,9 @@ public class NetworkManager extends Service {
 
 	private void sendData(String sendData) {
 		try {
-			if (_cSocket!=null&&_cSocket.isConnected())
+			if (_cSocket != null && _cSocket.isConnected())
 				_output.println(sendData + "\r\n");
-			else
-			{ 
+			else {
 				startSocketThread();
 			}
 		} catch (Exception e) {
@@ -353,29 +334,26 @@ public class NetworkManager extends Service {
 		}
 	}
 
+	/**
+	 * This function starts the Thread that handles the socket connection.
+	 * 
+	 */
 	private void startSocketThread() {
-//		if (retryCount>maxRetries)
-//		{
-//			try {
-//				_pollingTimer.wait(300000);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			return;
-//		}
-		if (_cSocket!=null&&_cSocket.isConnected())
+		if (retryCount > maxRetries) {
+			try {
+				_pollingTimer.wait(300000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			return;
-		if(_connectionThread!=null&&_connectionThread.isAlive())
+		}
+		if (_cSocket != null && _cSocket.isConnected())
+			return;
+		if (_connectionThread != null && _connectionThread.isAlive())
 			return;
 		Runnable connect = new connectSocket();
 		_connectionThread = new Thread(connect);
 		_connectionThread.start();
 		retryCount++;
-		
-		Log.d("NetworkManager","New connection thread");
-
 	}
-	
-	
 }

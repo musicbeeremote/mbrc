@@ -232,7 +232,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
 
 		@Override
 		protected Bitmap doInBackground(Void... params) {
-			byte[] decodedImage = Base64.decode(mBoundService.getCoverData(),
+			byte[] decodedImage = Base64.decode(AnswerHandler.getInstance().getCoverData(),
 					Base64.DEFAULT);
 			return BitmapFactory.decodeByteArray(decodedImage, 0,
 					decodedImage.length);
@@ -242,7 +242,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
 		protected void onPostExecute(Bitmap result) {
 			ImageView cover = (ImageView) findViewById(R.id.albumCover);
 			cover.setImageBitmap(result);
-			mBoundService.clearCoverData();
+			AnswerHandler.getInstance().clearCoverData();
 			Log.d("Cover:", "Cover - Updated");
 		}
 	}
