@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    <PreferenceCategory android:title="@string/connection_settings" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/connection_settings">
         <EditTextPreference
-            android:dialogTitle="@string/server_hostname"
-            android:key="@string/settings_server_hostname"
-            android:title="@string/server_hostname" />
+                android:dialogTitle="@string/server_hostname"
+                android:key="@string/settings_server_hostname"
+                android:title="@string/server_hostname"/>
         <EditTextPreference
-            android:dialogTitle="@string/server_port"
-            android:inputType="number"
-            android:key="@string/settings_server_port"
-            android:title="@string/server_port" />
+                android:dialogTitle="@string/server_port"
+                android:inputType="number"
+                android:key="@string/settings_server_port"
+                android:title="@string/server_port"/>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/settings_category_misc" >
+    <PreferenceCategory android:title="@string/settings_category_misc">
         <CheckBoxPreference
-            android:key="@string/settings_reduce_volume_on_ring"
-            android:summary="@string/settings_reduce_volume_on_ring_summury"
-            android:title="@string/settings_misc_reduce_volume" />
+                android:key="@string/settings_reduce_volume_on_ring"
+                android:summary="@string/settings_reduce_volume_on_ring_summury"
+                android:title="@string/settings_misc_reduce_volume"/>
     </PreferenceCategory>
 </PreferenceScreen>

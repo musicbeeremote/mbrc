@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="kelsos.mbremote"
-    android:versionCode="1"
-    android:versionName="0.1 Alpha" >
-    <uses-sdk android:minSdkVersion="8" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <application android:label="@string/app_name" >
-        <activity android:name=".AndroidRemoteforMusicBeeActivity" >
+          package="kelsos.mbremote"
+          android:versionCode="1"
+          android:versionName="0.1 Alpha">
+    <uses-sdk android:minSdkVersion="8"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <application android:label="@string/app_name">
+        <activity android:name=".AndroidRemoteforMusicBeeActivity">
             <intent-filter>
-                <action android:name="kelsos.mbremote.action.LYRICS_DATA" />
-                <action android:name="kelsos.mbremote.action.SHUFFLE_STATE" />
-                <action android:name="kelsos.mbremote.action.REPEAT_STATE" />
-                <action android:name="kelsos.mbremote.action.SCROBBLER_STATE" />
-                <action android:name="kelsos.mbremote.action.MUTE_STATE" />
-                <action android:name="kelsos.mbremote.action.PLAY_STATE" />
-                <action android:name="kelsos.mbremote.action.VOLUME_DATA" />
-                <action android:name="kelsos.mbremote.action.SONG_DATA" />
-                <action android:name="kelsos.mbremote.action.SONG_COVER" />
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="kelsos.mbremote.action.LYRICS_DATA"/>
+                <action android:name="kelsos.mbremote.action.SHUFFLE_STATE"/>
+                <action android:name="kelsos.mbremote.action.REPEAT_STATE"/>
+                <action android:name="kelsos.mbremote.action.SCROBBLER_STATE"/>
+                <action android:name="kelsos.mbremote.action.MUTE_STATE"/>
+                <action android:name="kelsos.mbremote.action.PLAY_STATE"/>
+                <action android:name="kelsos.mbremote.action.VOLUME_DATA"/>
+                <action android:name="kelsos.mbremote.action.SONG_DATA"/>
+                <action android:name="kelsos.mbremote.action.SONG_COVER"/>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".AppSettings" >
+        <activity android:name=".AppSettings">
         </activity>
-        <activity android:name=".PlaylistActivity" >
+        <activity android:name=".PlaylistActivity">
             <intent-filter>
-                <action android:name="kelsos.mbremote.action.PLAYLIST_DATA" />
+                <action android:name="kelsos.mbremote.action.PLAYLIST_DATA"/>
             </intent-filter>
         </activity>
-        <service android:name="kelsos.mbremote.Network.NetworkManager" >
+        <service android:name="kelsos.mbremote.Network.NetworkManager">
             <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE" >
+                <action android:name="android.intent.action.PHONE_STATE">
                 </action>
-                <action android:name="kelsos.mbremote.action.SONG_CHANGED" />
+                <action android:name="kelsos.mbremote.action.SONG_CHANGED"/>
             </intent-filter>
         </service>
     </application>
