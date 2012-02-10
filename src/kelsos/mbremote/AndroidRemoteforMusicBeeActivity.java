@@ -143,14 +143,14 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
             } else if (intent.getAction().equals(AnswerHandler.SONG_COVER)) {
                 new ImageDecodeTask().execute();
             } else if (intent.getAction().equals(AnswerHandler.PLAY_STATE)) {
-                if (intent.getExtras().getString("playstate").equals("playing")) {
+                if (intent.getExtras().getString("state").equals("playing")) {
                     ImageButton playButton = (ImageButton) findViewById(R.id.playPauseButton);
                     playButton.setImageResource(R.drawable.ic_media_pause);
-                } else if (intent.getExtras().getString("playstate")
+                } else if (intent.getExtras().getString("state")
                         .equals("paused")) {
                     ImageButton playButton = (ImageButton) findViewById(R.id.playPauseButton);
                     playButton.setImageResource(R.drawable.ic_media_play);
-                } else if (intent.getExtras().getString("playstate")
+                } else if (intent.getExtras().getString("state")
                         .equals("stopped")) {
                     ImageButton playButton = (ImageButton) findViewById(R.id.playPauseButton);
                     playButton.setImageResource(R.drawable.ic_media_play);
@@ -197,21 +197,25 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
                             .setImageResource(R.drawable.ic_media_scrobble_off);
                 }
             } else if (intent.getAction().equals(AnswerHandler.LYRICS_DATA)) {
-                LayoutInflater popupInflater = (LayoutInflater) AndroidRemoteforMusicBeeActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                final PopupWindow lyricsPopup = new PopupWindow(popupInflater.inflate(R.layout.popup_lyrics, null, false), ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getWidth(), ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getHeight() - 30, true);
-                lyricsPopup.setOutsideTouchable(true);
-                ((TextView) lyricsPopup.getContentView().findViewById(R.id.lyricsLabel)).setText("Lyrics for " + ((TextView) findViewById(R.id.titleLabel)).getText() + "\nby " + ((TextView) findViewById(R.id.artistLabel)).getText());
-
-                ((TextView) lyricsPopup.getContentView().findViewById(R.id.lyricsText)).setText(AnswerHandler.getInstance().getSongLyrics());
-                lyricsPopup.getContentView().findViewById(R.id.popup_close_button).setOnClickListener(new OnClickListener() {
-
-                    public void onClick(View v) {
-                        lyricsPopup.dismiss();
-
-                    }
-                });
-                lyricsPopup.showAtLocation(findViewById(R.id.mainLinearLayout), Gravity.CENTER, 0, 0);
-                AnswerHandler.getInstance().clearLyrics();
+				if(AnswerHandler.getInstance().getSongLyrics()==""){
+					Toast.makeText(getApplicationContext(), R.string.no_lyrics_found, Toast.LENGTH_SHORT).show();
+					return;
+				}
+				LayoutInflater popupInflater = (LayoutInflater)AndroidRemoteforMusicBeeActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				final PopupWindow lyricsPopup = new PopupWindow(popupInflater.inflate(R.layout.popup_lyrics, null, false),((WindowManager)getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getWidth(),((WindowManager)getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getHeight()-30,true);
+				lyricsPopup.setOutsideTouchable(true);
+				((TextView)lyricsPopup.getContentView().findViewById(R.id.lyricsLabel)).setText("Lyrics for " + ((TextView)findViewById(R.id.titleLabel)).getText() + "\nby " + ((TextView)findViewById(R.id.artistLabel)).getText());
+				
+				((TextView)lyricsPopup.getContentView().findViewById(R.id.lyricsText)).setText(AnswerHandler.getInstance().getSongLyrics());;
+				lyricsPopup.getContentView().findViewById(R.id.popup_close_button).setOnClickListener(new OnClickListener() {
+					
+					public void onClick(View v) {
+						lyricsPopup.dismiss();
+						
+					}
+				});
+				lyricsPopup.showAtLocation(findViewById(R.id.mainLinearLayout), Gravity.CENTER, 0, 0);
+				AnswerHandler.getInstance().clearLyrics();
             }
             // Log.d("Intent:", intent.getAction());
         }

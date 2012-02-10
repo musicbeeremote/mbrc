@@ -50,6 +50,7 @@ public class AnswerHandler {
     public final static String SHUFFLE_STATE = "kelsos.mbremote.action.SHUFFLE_STATE";
     public final static String PLAYLIST_DATA = "kelsos.mbremote.action.PLAYLIST_DATA";
     public final static String LYRICS_DATA = "kelsos.mbremote.action.LYRICS_DATA";
+    public final static String PLAYER_STATUS = "kelsos.mbremote.action.PLAYER_STATUS";
 
     /**
      * The default constructor of the AnswerHandler Class.
@@ -117,7 +118,7 @@ public class AnswerHandler {
                 } else if (xmlNode.getNodeName().contains("playState")) {
                     notifyIntent.setAction(PLAY_STATE);
                     notifyIntent
-                            .putExtra("playstate", xmlNode.getTextContent());
+                            .putExtra("state", xmlNode.getTextContent());
                 } else if (xmlNode.getNodeName().contains("mute")) {
                     notifyIntent.setAction(MUTE_STATE);
                     notifyIntent.putExtra("state", xmlNode.getTextContent());
@@ -135,6 +136,8 @@ public class AnswerHandler {
                 } else if (xmlNode.getNodeName().contains("lyrics")) {
                     _songLyrics = xmlNode.getTextContent().replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("\"", "&quot;").replace("&apos;", "'").replace("&", "&amp;").replace("<p>", "\r\n").replace("<br>", "\n").trim();
                     notifyIntent.setAction(LYRICS_DATA);
+                } else if(xmlNode.getNodeName().contains("playerStatus")){
+                    getPlayerStatus(notifyIntent,xmlNode);
                 }
 
                 if (notifyIntent.getAction() != null)
@@ -161,6 +164,35 @@ public class AnswerHandler {
             _nowPlayingList.add(new MusicTrack(playlistData.item(i).getFirstChild().getTextContent(), playlistData.item(i).getLastChild().getTextContent()));
         }
         notifyIntent.setAction(PLAYLIST_DATA);
+    }
+
+    private void broadcastPlayerStateIntent(Intent intent, String action, String extras)
+    {
+        intent.setAction(action);
+        intent.putExtra("state",extras);
+        context.sendBroadcast(intent);
+    }
+
+    private void getPlayerStatus(Intent intent, Node xmlNode) {
+        Node playerStatusNode = xmlNode.getFirstChild();
+        String repeat = playerStatusNode.getTextContent();
+        playerStatusNode = playerStatusNode.getNextSibling();
+        String mute = playerStatusNode.getTextContent();
+        playerStatusNode = playerStatusNode.getNextSibling();
+        String shuffle = playerStatusNode.getTextContent();
+        playerStatusNode = playerStatusNode.getNextSibling();
+        String scrobbler = playerStatusNode.getTextContent();
+        playerStatusNode = playerStatusNode.getNextSibling();
+        String playerState = playerStatusNode.getTextContent();
+        playerStatusNode = playerStatusNode.getNextSibling();
+        int volume = Integer.parseInt(playerStatusNode.getTextContent());
+        broadcastPlayerStateIntent(intent, REPEAT_STATE, repeat);
+        broadcastPlayerStateIntent(intent, MUTE_STATE, mute);
+        broadcastPlayerStateIntent(intent, SHUFFLE_STATE, shuffle);
+        broadcastPlayerStateIntent(intent, SCROBBLER_STATE, scrobbler);
+        broadcastPlayerStateIntent(intent, PLAY_STATE, playerState);
+        intent.setAction(VOLUME_DATA);
+        intent.putExtra("data", volume);
     }
 
     /**

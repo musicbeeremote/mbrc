@@ -226,12 +226,7 @@ public class NetworkManager extends Service {
             _requestCoverAndInfo = false;
         }
         requestAction(PlayerAction.SongChangedStatus);
-        requestAction(PlayerAction.Mute, ProtocolHandler.STATE);
-        requestAction(PlayerAction.Repeat, ProtocolHandler.STATE);
-        requestAction(PlayerAction.Scrobble, ProtocolHandler.STATE);
-        requestAction(PlayerAction.Shuffle, ProtocolHandler.STATE);
-        requestAction(PlayerAction.PlayState);
-        requestAction(PlayerAction.Volume, "-1");
+        requestAction(PlayerAction.PlayerStatus);
     }
 
     public void requestVolumeChange(int Volume) {

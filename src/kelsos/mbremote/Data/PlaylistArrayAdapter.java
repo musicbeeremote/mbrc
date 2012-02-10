@@ -26,7 +26,7 @@ public class PlaylistArrayAdapter extends ArrayAdapter<MusicTrack> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        TrackHolder holder = null;
+        TrackHolder holder;
 
         if (row == null) {
             LayoutInflater inflater = ((Activity) _context).getLayoutInflater();

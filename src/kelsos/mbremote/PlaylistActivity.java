@@ -11,6 +11,7 @@ import kelsos.mbremote.Data.MusicTrack;
 import kelsos.mbremote.Data.PlaylistArrayAdapter;
 import kelsos.mbremote.Network.AnswerHandler;
 import kelsos.mbremote.Network.NetworkManager;
+import kelsos.mbremote.Network.ProtocolHandler.PlayerAction;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -53,7 +54,7 @@ public class PlaylistActivity extends ListActivity {
     private class RequestPlaylistTask extends TimerTask {
         @Override
         public void run() {
-            mBoundService.requestPlaylist();
+            mBoundService.requestAction(PlayerAction.Playlist);
         }
     }
 
@@ -77,7 +78,7 @@ public class PlaylistActivity extends ListActivity {
         super.onListItemClick(l, v, position, id);
         MusicTrack track = (MusicTrack) getListView().getItemAtPosition(position);
         Log.d("track", track.getTitle());
-        mBoundService.requestPlaySelectedTrackNow(track.getTitle());
+        mBoundService.requestAction(PlayerAction.PlayNow, track.getTitle());
     }
 
     @Override
