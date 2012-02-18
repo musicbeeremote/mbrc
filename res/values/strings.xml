@@ -27,4 +27,6 @@
     <string name="main_menu_playlist">Now Playing List</string>
     <string name="popup_lyrics_label">Lyrics</string>
     <string name="generic_string_close">Close</string>
+    <string name="no_lyrics_found">No Lyrics Found</string>
+    <string name="main_menu_connect">Connect</string>
 </resources>

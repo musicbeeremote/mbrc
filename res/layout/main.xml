@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:id="@+id/mainLinearLayout"
-              style="@style/Theme.Basic"
               android:layout_width="match_parent"
               android:layout_height="fill_parent"
               android:orientation="vertical">
@@ -17,7 +16,7 @@
                 android:layout_marginLeft="10dp"
                 android:adjustViewBounds="false"
                 android:contentDescription="@string/playing_track_album_cover"
-                android:paddingLeft="7dp"/>
+                android:paddingLeft="10dp"/>
         <LinearLayout
                 android:id="@+id/extraMediaButtonLinearLayout"
                 android:layout_width="43dp"
@@ -30,7 +29,6 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/skin_button_vertical_top"
                     android:clickable="true"
                     android:contentDescription="@string/repeat_button"
                     android:scaleType="fitCenter"
@@ -39,7 +37,6 @@
                     android:id="@+id/shuffleButton"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:background="@drawable/skin_button_vertical_middle"
                     android:contentDescription="@string/shuffle_button"
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_media_shuffle"/>
@@ -47,7 +44,6 @@
                     android:id="@+id/scrobbleButton"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:background="@drawable/skin_button_vertical_middle"
                     android:contentDescription="@string/scrobbler_button"
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_media_scrobble_red"/>
@@ -55,7 +51,6 @@
                     android:id="@+id/muteButton"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:background="@drawable/skin_button_vertical_bottom"
                     android:contentDescription="@string/mute_button"
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_media_volume_full"/>
@@ -164,7 +159,6 @@
                 android:id="@+id/previousButton"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:background="@drawable/skin_button_horizonal_left"
                 android:contentDescription="@string/previous_track_button"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_previous"/>
@@ -172,7 +166,6 @@
                 android:id="@+id/playPauseButton"
                 android:layout_width="80dp"
                 android:layout_height="70dp"
-                android:background="@drawable/skin_button_horizonal_middle"
                 android:clickable="true"
                 android:contentDescription="@string/play_pause_button"
                 android:scaleType="fitCenter"
@@ -181,7 +174,6 @@
                 android:id="@+id/stopButton"
                 android:layout_width="80dp"
                 android:layout_height="70dp"
-                android:background="@drawable/skin_button_horizonal_middle"
                 android:contentDescription="@string/stop_playback_button"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_stop"/>
@@ -189,7 +181,6 @@
                 android:id="@+id/nextButton"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:background="@drawable/skin_button_horizonal_right"
                 android:contentDescription="@string/next_track_button"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_next"/>

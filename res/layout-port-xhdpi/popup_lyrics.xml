@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              style="@style/Theme.Basic"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:gravity="center"
-              android:orientation="vertical">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#000000"
+    android:gravity="center"
+    android:orientation="vertical" >
     <TextView
-            android:id="@+id/lyricsLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="@string/popup_lyrics_label"
-            android:textAppearance="?android:attr/textAppearanceMedium"/>
+        android:id="@+id/lyricsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="@string/popup_lyrics_label"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
     <View
-            android:id="@+id/separator"
-            android:layout_width="fill_parent"
-            android:layout_height="1dip"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="#ffffff"/>
+        android:id="@+id/separator"
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="#ffffff" />
     <ScrollView
-            android:id="@+id/scrollView1"
-            android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="0.5">
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="0.5" >
         <LinearLayout
-                android:id="@+id/lyricsTextLayout"
+            android:id="@+id/lyricsTextLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <TextView
+                android:id="@+id/lyricsText"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:orientation="vertical">
-            <TextView
-                    android:id="@+id/lyricsText"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:scrollbarAlwaysDrawVerticalTrack="true"
-                    android:scrollbarStyle="insideOverlay"
-                    android:scrollbars="vertical"/>
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:scrollbarAlwaysDrawVerticalTrack="true"
+                android:scrollbarStyle="insideOverlay"
+                android:scrollbars="vertical" />
         </LinearLayout>
     </ScrollView>
     <Button
-            android:id="@+id/popup_close_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/generic_string_close"/>
+        android:id="@+id/popup_close_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/generic_string_close" />
 </LinearLayout>

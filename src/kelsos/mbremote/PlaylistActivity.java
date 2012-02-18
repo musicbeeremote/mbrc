@@ -4,7 +4,6 @@ import android.app.ListActivity;
 import android.content.*;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import kelsos.mbremote.Data.MusicTrack;
@@ -65,7 +64,7 @@ public class PlaylistActivity extends ListActivity {
                 NetworkManager.class));
         doBindService();
         IntentFilter plFilter = new IntentFilter();
-        plFilter.addAction(AnswerHandler.PLAYLIST_DATA);
+        plFilter.addAction(Intents.PLAYLIST_DATA);
         registerReceiver(mReceiver, plFilter);
         Timer reqTimer = new Timer();
         RequestPlaylistTask rpt = new RequestPlaylistTask();
@@ -77,7 +76,6 @@ public class PlaylistActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         MusicTrack track = (MusicTrack) getListView().getItemAtPosition(position);
-        Log.d("track", track.getTitle());
         mBoundService.requestAction(PlayerAction.PlayNow, track.getTitle());
     }
 

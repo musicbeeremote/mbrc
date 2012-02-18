@@ -1,32 +1,11 @@
 package kelsos.mbremote.Network;
 
 public class ProtocolHandler {
-    static final String STATE = "state";
-    static final String PLAYPAUSE = "<playPause/>";
-    static final String PREVIOUS = "<previous/>";
-    static final String NEXT = "<next/>";
-    static final String STOP = "<stopPlayback/>";
-    static final String PLAYSTATE = "<playState/>";
-    static final String VOLUME_OPEN = "<volume>";
-    static final String VOLUME_CLOSED = "</volume>";
-    static final String SONGCHANGED = "<songChanged/>";
-    static final String SONGINFO = "<songInfo/>";
-    static final String SONGCOVER = "<songCover/>";
-    static final String SHUFFLE_OPEN = "<shuffle>";
-    static final String SHUFFLE_CLOSE = "</shuffle>";
-    static final String MUTE_OPEN = "<mute>";
-    static final String MUTE_CLOSE = "</mute>";
-    static final String REPEAT_OPEN = "<repeat>";
-    static final String REPEAT_CLOSE = "</repeat>";
-    static final String PLAYLIST = "<playlist/>";
-    static final String PLAYNOW_OPEN = "<playNow>";
-    static final String PLAYNOW_CLOSE = "</playNow>";
-    static final String SCROBBLE_OPEN = "<scrobbler>";
-    static final String SCROBBLE_CLOSE = "</scrobbler>";
-    static final String LYRICS = "<lyrics/>";
-    static final String RATING_OPEN = "<rating>";
-    static final String RATING_CLOSE = "</rating>";
-    static final String PLAYER_STATUS = "<playerStatus/>";
+
+    private static String PrepareXml(String name, String value)
+    {
+         return "<" + name + ">" + value + "</" + name + ">";
+    }
 
     public static enum PlayerAction {
         PlayPause,
@@ -49,65 +28,47 @@ public class ProtocolHandler {
         PlayerStatus
     }
     
-    public static String getActionString(PlayerAction action, String actionContent)
+    public static String getActionString(PlayerAction action, String value)
     {
-        String result = "";
         switch (action) {
             case PlayPause:
-                result = PLAYPAUSE;
-                break;
+                return  PrepareXml(Protocol.PLAYPAUSE,value);
             case Previous:
-                result = PREVIOUS;
-                break;
+                return  PrepareXml(Protocol.PREVIOUS,value);
             case Next:
-                result = NEXT;
-                break;
+                return  PrepareXml(Protocol.NEXT,value);
             case Stop:
-                result = STOP;
-                break;
+                return  PrepareXml(Protocol.STOP,value);
             case PlayState:
-                result = PLAYSTATE;
-                break;
+                return  PrepareXml(Protocol.PLAYSTATE,value);
             case Volume:
-                result = VOLUME_OPEN + actionContent + VOLUME_CLOSED;
-                break;
+                return  PrepareXml(Protocol.VOLUME,value);
             case SongChangedStatus:
-                result = SONGCHANGED;
-                break;
+                return  PrepareXml(Protocol.SONGCHANGED,value);
             case SongInformation:
-                result = SONGINFO;
-                break;
+                return  PrepareXml(Protocol.SONGINFO,value);
             case SongCover:
-                result = SONGCOVER;
-                break;
+                return  PrepareXml(Protocol.SONGCOVER,value);
             case Shuffle:
-                result = SHUFFLE_OPEN + actionContent + SHUFFLE_CLOSE;
-                break;
+                return  PrepareXml(Protocol.SHUFFLE,value);
             case Mute:
-                result = MUTE_OPEN + actionContent + MUTE_CLOSE;
-                break;
+                return  PrepareXml(Protocol.MUTE,value);
             case Repeat:
-                result = REPEAT_OPEN + actionContent + REPEAT_CLOSE;
-                break;
+                return  PrepareXml(Protocol.REPEAT,value);
             case Playlist:
-                result = PLAYLIST;
-                break;
+                return  PrepareXml(Protocol.PLAYLIST,value);
             case PlayNow:
-                result = PLAYNOW_OPEN + actionContent + PLAYNOW_CLOSE;
-                break;
+                return  PrepareXml(Protocol.PLAYNOW,value);
             case Scrobble:
-                result = SCROBBLE_OPEN + actionContent + SCROBBLE_CLOSE;
-                break;
+                return  PrepareXml(Protocol.SCROBBLE,value);
             case Lyrics:
-                result = LYRICS;
-                break;
+                return  PrepareXml(Protocol.LYRICS,value);
             case Rating:
-                result = RATING_OPEN + actionContent + RATING_CLOSE;
-                break;
+                return  PrepareXml(Protocol.RATING,value);
             case PlayerStatus:
-                result = PLAYER_STATUS;
-                break;
+                return  PrepareXml(Protocol.PLAYER_STATUS,value);
+            default:
+                return PrepareXml(Protocol.ERROR,"Invalid Request");
         }
-        return result;
     }
 }
