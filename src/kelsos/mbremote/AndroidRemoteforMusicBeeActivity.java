@@ -13,15 +13,15 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
-import kelsos.mbremote.Network.AnswerHandler;
-import kelsos.mbremote.Network.NetworkManager;
+import kelsos.mbremote.Network.ConnectivityHandler;
+import kelsos.mbremote.Network.ReplyHandler;
 import kelsos.mbremote.Network.ProtocolHandler.PlayerAction;
 
 public class AndroidRemoteforMusicBeeActivity extends Activity {
     /**
      * Called when the activity is first created.
      */
-    private NetworkManager mBoundService;
+    private ConnectivityHandler mBoundService;
     private boolean mIsBound;
     private boolean userChangingVolume;
     private static final String TOGGLE = "toggle";
@@ -32,7 +32,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
         setContentView(R.layout.main);
         RegisterListeners();
         startService(new Intent(AndroidRemoteforMusicBeeActivity.this,
-                NetworkManager.class));
+                ConnectivityHandler.class));
         doBindService();
         registerIntentFilters();
         userChangingVolume = false;
@@ -68,7 +68,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         if (item.getTitle().equals("Lyrics")) {
-            mBoundService.requestAction(PlayerAction.Lyrics);
+            mBoundService.requestHandler().requestAction(PlayerAction.Lyrics);
         } else if (item.getTitle().equals("Rating")) {
 
         } else {
@@ -98,7 +98,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
                         PlaylistActivity.class);
                 startActivity(playlistIntent);
             case R.id.main_menu_connect:
-            	mBoundService.attemptToStartSocketThread(NetworkManager.Input.user);
+            	mBoundService.attemptToStartSocketThread(ConnectivityHandler.Input.user);
             default:
                 return super.onMenuItemSelected(featureId, item);
         }
@@ -203,7 +203,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
                             .setImageResource(R.drawable.ic_media_scrobble_off);
                 }
             } else if (intent.getAction().equals(Intents.LYRICS_DATA)) {
-				if(AnswerHandler.getInstance().getSongLyrics().equals("")){
+				if(ReplyHandler.getInstance().getSongLyrics().equals("")){
 					Toast.makeText(getApplicationContext(), R.string.no_lyrics_found, Toast.LENGTH_SHORT).show();
 					return;
 				}
@@ -212,7 +212,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
 				lyricsPopup.setOutsideTouchable(true);
 				((TextView)lyricsPopup.getContentView().findViewById(R.id.lyricsLabel)).setText("Lyrics for " + ((TextView)findViewById(R.id.titleLabel)).getText() + "\nby " + ((TextView)findViewById(R.id.artistLabel)).getText());
 
-				((TextView)lyricsPopup.getContentView().findViewById(R.id.lyricsText)).setText(AnswerHandler.getInstance().getSongLyrics());
+				((TextView)lyricsPopup.getContentView().findViewById(R.id.lyricsText)).setText(ReplyHandler.getInstance().getSongLyrics());
 				lyricsPopup.getContentView().findViewById(R.id.popup_close_button).setOnClickListener(new OnClickListener() {
 
 					public void onClick(View v) {
@@ -221,7 +221,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
 					}
 				});
 				lyricsPopup.showAtLocation(findViewById(R.id.mainLinearLayout), Gravity.CENTER, 0, 0);
-				AnswerHandler.getInstance().clearLyrics();
+				ReplyHandler.getInstance().clearLyrics();
             }
         }
     };
@@ -230,7 +230,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
 
         @Override
         protected Bitmap doInBackground(Void... params) {
-            byte[] decodedImage = Base64.decode(AnswerHandler.getInstance().getCoverData(),
+            byte[] decodedImage = Base64.decode(ReplyHandler.getInstance().getCoverData(),
                     Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(decodedImage, 0,
                     decodedImage.length);
@@ -240,7 +240,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
         protected void onPostExecute(Bitmap result) {
             ImageView cover = (ImageView) findViewById(R.id.albumCover);
             cover.setImageBitmap(result);
-            AnswerHandler.getInstance().clearCoverData();
+            ReplyHandler.getInstance().clearCoverData();
         }
     }
 
@@ -251,13 +251,13 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
         }
 
         public void onServiceConnected(ComponentName name, IBinder service) {
-            mBoundService = ((NetworkManager.LocalBinder) service).getService();
+            mBoundService = ((ConnectivityHandler.LocalBinder) service).getService();
         }
     };
 
     void doBindService() {
         bindService(new Intent(AndroidRemoteforMusicBeeActivity.this,
-                NetworkManager.class), mConnection, Context.BIND_AUTO_CREATE);
+                ConnectivityHandler.class), mConnection, Context.BIND_AUTO_CREATE);
         mIsBound = true;
     }
 
@@ -278,42 +278,42 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
     private OnClickListener playButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            mBoundService.requestAction(PlayerAction.PlayPause);
+            mBoundService.requestHandler().requestAction(PlayerAction.PlayPause);
         }
     };
 
     private OnClickListener previousButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            mBoundService.requestAction(PlayerAction.Previous);
+            mBoundService.requestHandler().requestAction(PlayerAction.Previous);
         }
     };
 
     private OnClickListener nextButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            mBoundService.requestAction(PlayerAction.Next);
+            mBoundService.requestHandler().requestAction(PlayerAction.Next);
         }
     };
 
     private OnClickListener stopButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            mBoundService.requestAction(PlayerAction.Stop);
+            mBoundService.requestHandler().requestAction(PlayerAction.Stop);
         }
     };
 
     private OnClickListener muteButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            mBoundService.requestAction(PlayerAction.Mute, TOGGLE);
+            mBoundService.requestHandler().requestAction(PlayerAction.Mute, TOGGLE);
         }
     };
 
     private OnClickListener scrobbleButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            mBoundService.requestAction(PlayerAction.Scrobble, TOGGLE);
+            mBoundService.requestHandler().requestAction(PlayerAction.Scrobble, TOGGLE);
 
         }
     };
@@ -321,14 +321,14 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
     private OnClickListener shuffleButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            mBoundService.requestAction(PlayerAction.Shuffle, TOGGLE);
+            mBoundService.requestHandler().requestAction(PlayerAction.Shuffle, TOGGLE);
         }
     };
 
     private OnClickListener repeatButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            mBoundService.requestAction(PlayerAction.Repeat, TOGGLE);
+            mBoundService.requestHandler().requestAction(PlayerAction.Repeat, TOGGLE);
         }
     };
 
@@ -347,7 +347,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
         public void onProgressChanged(SeekBar seekBar, int progress,
                                       boolean fromUser) {
             if (fromUser)
-                mBoundService.requestAction(PlayerAction.Volume, Integer.toString(seekBar.getProgress()));
+                mBoundService.requestHandler().requestAction(PlayerAction.Volume, Integer.toString(seekBar.getProgress()));
         }
     };
 

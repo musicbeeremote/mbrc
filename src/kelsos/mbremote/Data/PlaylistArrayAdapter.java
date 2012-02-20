@@ -29,8 +29,8 @@ public class PlaylistArrayAdapter extends ArrayAdapter<MusicTrack> {
         TrackHolder holder;
 
         if (row == null) {
-            LayoutInflater inflater = ((Activity) _context).getLayoutInflater();
-            row = inflater.inflate(_layoutResourceId, parent, false);
+            LayoutInflater layoutInflater = ((Activity) _context).getLayoutInflater();
+            row = layoutInflater.inflate(_layoutResourceId, parent, false);
 
             holder = new TrackHolder();
             holder.title = (TextView) row.findViewById(R.id.trackTitle);

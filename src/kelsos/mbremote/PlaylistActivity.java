@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.ListView;
 import kelsos.mbremote.Data.MusicTrack;
 import kelsos.mbremote.Data.PlaylistArrayAdapter;
-import kelsos.mbremote.Network.AnswerHandler;
-import kelsos.mbremote.Network.NetworkManager;
+import kelsos.mbremote.Network.ReplyHandler;
+import kelsos.mbremote.Network.ConnectivityHandler;
 import kelsos.mbremote.Network.ProtocolHandler.PlayerAction;
 
 import java.util.Timer;
@@ -17,13 +17,13 @@ import java.util.TimerTask;
 
 
 public class PlaylistActivity extends ListActivity {
-    private NetworkManager mBoundService;
+    private ConnectivityHandler mBoundService;
     private boolean mIsBound;
 
     private ServiceConnection mConnection = new ServiceConnection() {
 
         public void onServiceConnected(ComponentName name, IBinder service) {
-            mBoundService = ((NetworkManager.LocalBinder) service).getService();
+            mBoundService = ((ConnectivityHandler.LocalBinder) service).getService();
         }
 
         public void onServiceDisconnected(ComponentName name) {
@@ -32,7 +32,7 @@ public class PlaylistActivity extends ListActivity {
     };
 
     void doBindService() {
-        bindService(new Intent(PlaylistActivity.this, NetworkManager.class),
+        bindService(new Intent(PlaylistActivity.this, ConnectivityHandler.class),
                 mConnection, Context.BIND_AUTO_CREATE);
         mIsBound = true;
     }
@@ -45,15 +45,15 @@ public class PlaylistActivity extends ListActivity {
     }
 
     private void updateListData() {
-        PlaylistArrayAdapter adapter = new PlaylistArrayAdapter(this, R.layout.playlistview_item, AnswerHandler.getInstance().getNowPlayingList());
+        PlaylistArrayAdapter adapter = new PlaylistArrayAdapter(this, R.layout.playlistview_item, ReplyHandler.getInstance().getNowPlayingList());
         setListAdapter(adapter);
-        //AnswerHandler.getInstance().clearNowPlayingList();
+        //ReplyHandler.getInstance().clearNowPlayingList();
     }
 
     private class RequestPlaylistTask extends TimerTask {
         @Override
         public void run() {
-            mBoundService.requestAction(PlayerAction.Playlist);
+            mBoundService.requestHandler().requestAction(PlayerAction.Playlist);
         }
     }
 
@@ -61,7 +61,7 @@ public class PlaylistActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         startService(new Intent(PlaylistActivity.this,
-                NetworkManager.class));
+                ConnectivityHandler.class));
         doBindService();
         IntentFilter plFilter = new IntentFilter();
         plFilter.addAction(Intents.PLAYLIST_DATA);
@@ -76,7 +76,7 @@ public class PlaylistActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         MusicTrack track = (MusicTrack) getListView().getItemAtPosition(position);
-        mBoundService.requestAction(PlayerAction.PlayNow, track.getTitle());
+        mBoundService.requestHandler().requestAction(PlayerAction.PlayNow, track.getTitle());
     }
 
     @Override

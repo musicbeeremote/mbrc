@@ -2,9 +2,8 @@ package kelsos.mbremote.Network;
 
 public class ProtocolHandler {
 
-    private static String PrepareXml(String name, String value)
-    {
-         return "<" + name + ">" + value + "</" + name + ">";
+    private static String PrepareXml(String name, String value) {
+        return "<" + name + ">" + value + "</" + name + ">";
     }
 
     public static enum PlayerAction {
@@ -27,48 +26,47 @@ public class ProtocolHandler {
         Rating,
         PlayerStatus
     }
-    
-    public static String getActionString(PlayerAction action, String value)
-    {
+
+    public static String getActionString(PlayerAction action, String value) {
         switch (action) {
             case PlayPause:
-                return  PrepareXml(Protocol.PLAYPAUSE,value);
+                return PrepareXml(Protocol.PLAYPAUSE, value);
             case Previous:
-                return  PrepareXml(Protocol.PREVIOUS,value);
+                return PrepareXml(Protocol.PREVIOUS, value);
             case Next:
-                return  PrepareXml(Protocol.NEXT,value);
+                return PrepareXml(Protocol.NEXT, value);
             case Stop:
-                return  PrepareXml(Protocol.STOP,value);
+                return PrepareXml(Protocol.STOP, value);
             case PlayState:
-                return  PrepareXml(Protocol.PLAYSTATE,value);
+                return PrepareXml(Protocol.PLAYSTATE, value);
             case Volume:
-                return  PrepareXml(Protocol.VOLUME,value);
+                return PrepareXml(Protocol.VOLUME, value);
             case SongChangedStatus:
-                return  PrepareXml(Protocol.SONGCHANGED,value);
+                return PrepareXml(Protocol.SONGCHANGED, value);
             case SongInformation:
-                return  PrepareXml(Protocol.SONGINFO,value);
+                return PrepareXml(Protocol.SONGINFO, value);
             case SongCover:
-                return  PrepareXml(Protocol.SONGCOVER,value);
+                return PrepareXml(Protocol.SONGCOVER, value);
             case Shuffle:
-                return  PrepareXml(Protocol.SHUFFLE,value);
+                return PrepareXml(Protocol.SHUFFLE, value);
             case Mute:
-                return  PrepareXml(Protocol.MUTE,value);
+                return PrepareXml(Protocol.MUTE, value);
             case Repeat:
-                return  PrepareXml(Protocol.REPEAT,value);
+                return PrepareXml(Protocol.REPEAT, value);
             case Playlist:
-                return  PrepareXml(Protocol.PLAYLIST,value);
+                return PrepareXml(Protocol.PLAYLIST, value);
             case PlayNow:
-                return  PrepareXml(Protocol.PLAYNOW,value);
+                return PrepareXml(Protocol.PLAYNOW, value);
             case Scrobble:
-                return  PrepareXml(Protocol.SCROBBLE,value);
+                return PrepareXml(Protocol.SCROBBLE, value);
             case Lyrics:
-                return  PrepareXml(Protocol.LYRICS,value);
+                return PrepareXml(Protocol.LYRICS, value);
             case Rating:
-                return  PrepareXml(Protocol.RATING,value);
+                return PrepareXml(Protocol.RATING, value);
             case PlayerStatus:
-                return  PrepareXml(Protocol.PLAYER_STATUS,value);
+                return PrepareXml(Protocol.PLAYER_STATUS, value);
             default:
-                return PrepareXml(Protocol.ERROR,"Invalid Request");
+                return PrepareXml(Protocol.ERROR, "Invalid Request");
         }
     }
 }
