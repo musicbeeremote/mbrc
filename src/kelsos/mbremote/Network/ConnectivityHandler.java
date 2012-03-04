@@ -103,7 +103,7 @@ public class ConnectivityHandler extends Service {
 					_output.close();
 				}
 				_cSocket = null;
-				requestHandler.coverAndInfoOutdated();
+				RequestHandler.coverAndInfoOutdated();
 				Log.d("ConnectivityHandler", "ListeningThread terminated");
 				attemptToStartSocketThread(Input.system);
 
@@ -137,9 +137,8 @@ public class ConnectivityHandler extends Service {
 		super.onCreate();
 		ReplyHandler.getInstance().setContext(getApplicationContext());
 		_numberOfTries = 0; // Initialize the connection retry counter.
-        requestHandler = new RequestHandler(this);
-		requestHandler.coverAndInfoOutdated();
-
+		requestHandler = new RequestHandler(this);
+		RequestHandler.coverAndInfoOutdated();
 	}
 
 	@Override
@@ -164,7 +163,7 @@ public class ConnectivityHandler extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		_nmHandler = new Handler();
-		requestHandler.coverAndInfoOutdated();
+		RequestHandler.coverAndInfoOutdated();
 		return super.onStartCommand(intent, flags, startId);
 
 	}
@@ -195,14 +194,13 @@ public class ConnectivityHandler extends Service {
 			_numberOfTries = 0;
 		}
 		if ((_numberOfTries > MAX_RETRIES) && _connectionTimerIsRunning) {
-			_connectionTimer.cancel();
-			_connectionTimerIsRunning = false;
+			stopConnectionTimer();
 			Log.d("ConnectivityHandler",
 					"attemptToStartSocketThread() Max Tries");
 		} else if ((_numberOfTries < MAX_RETRIES) && !_connectionTimerIsRunning)
 			startConnectionTimer();
-		Log.d("ConnectivityHandler", "attemptToStartSocketThread() Current: "
-				+ _numberOfTries);
+		// Log.d("ConnectivityHandler", "attemptToStartSocketThread() Current: "
+		// + _numberOfTries);
 	}
 
 	private void startConnectionTimer() {

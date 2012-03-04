@@ -51,10 +51,10 @@ public class RequestHandler {
 		if (_requestCoverAndInfo) {
 			requestAction(PlayerAction.SongCover);
 			requestAction(PlayerAction.SongInformation);
-			_requestCoverAndInfo = false;
+            requestAction(PlayerAction.PlayerStatus);
+            _requestCoverAndInfo = false;
+            stopPollingTimer();
 		}
-		requestAction(PlayerAction.SongChangedStatus);
-		requestAction(PlayerAction.PlayerStatus);
 	}
 
 	void startPollingTimer() {
@@ -62,7 +62,7 @@ public class RequestHandler {
 			_pollingTimer = new Timer(true);
 		if (_ptt == null)
 			_ptt = new PollingTimerTask();
-		_pollingTimer.schedule(_ptt, 1000, 1000);
+		_pollingTimer.schedule(_ptt, 1000);
 		_isPollingTimerRunning = true;
 		Log.d("ConnectivityHandler", "startPollingTimer();");
 	}
