@@ -10,7 +10,7 @@
     <application
         android:label="@string/app_name"
         android:theme="@android:style/Theme.NoTitleBar" >
-        <activity android:name=".AndroidRemoteforMusicBeeActivity" >
+        <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="kelsos.mbremote.action.LYRICS_DATA" />
                 <action android:name="kelsos.mbremote.action.SHUFFLE_STATE" />
@@ -21,6 +21,7 @@
                 <action android:name="kelsos.mbremote.action.VOLUME_DATA" />
                 <action android:name="kelsos.mbremote.action.SONG_DATA" />
                 <action android:name="kelsos.mbremote.action.SONG_COVER" />
+                <action android:name="kelsos.mbremote.action.CONNECTION_STATUS" />
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>

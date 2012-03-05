@@ -35,7 +35,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AndroidRemoteforMusicBeeActivity extends Activity {
+public class MainActivity extends Activity {
 	/**
 	 * Called when the activity is first created.
 	 */
@@ -49,8 +49,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		RegisterListeners();
-		startService(new Intent(AndroidRemoteforMusicBeeActivity.this,
-				ConnectivityHandler.class));
+		startService(new Intent(MainActivity.this, ConnectivityHandler.class));
 		doBindService();
 		registerIntentFilters();
 		userChangingVolume = false;
@@ -70,6 +69,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
 		filter.addAction(Intents.REPEAT_STATE);
 		filter.addAction(Intents.SHUFFLE_STATE);
 		filter.addAction(Intents.LYRICS_DATA);
+		filter.addAction(Intents.CONNECTION_STATUS);
 		registerReceiver(mReceiver, filter);
 	}
 
@@ -106,13 +106,12 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.main_menu_settings:
-			Intent settingsIntent = new Intent(
-					AndroidRemoteforMusicBeeActivity.this, AppSettings.class);
+			Intent settingsIntent = new Intent(MainActivity.this,
+					AppSettings.class);
 			startActivity(settingsIntent);
 			break;
 		case R.id.main_menu_playlist:
-			Intent playlistIntent = new Intent(
-					AndroidRemoteforMusicBeeActivity.this,
+			Intent playlistIntent = new Intent(MainActivity.this,
 					PlaylistActivity.class);
 			startActivity(playlistIntent);
 		case R.id.main_menu_connect:
@@ -155,6 +154,17 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
 				SeekBar volumeSlider = (SeekBar) findViewById(R.id.volumeSlider);
 				if (!userChangingVolume)
 					volumeSlider.setProgress(intent.getExtras().getInt("data"));
+			} else if (intent.getAction().equals(Intents.CONNECTION_STATUS)) {
+				boolean status = intent.getBooleanExtra("status", false);
+				if (status) {
+					ImageView statusView = (ImageView) findViewById(R.id.imageView1);
+					statusView
+							.setImageResource(R.drawable.ic_icon_indicator_green);
+				} else {
+					ImageView statusView = (ImageView) findViewById(R.id.imageView1);
+					statusView
+							.setImageResource(R.drawable.ic_icon_indicator_red);
+				}
 			} else if (intent.getAction().equals(Intents.SONG_DATA)) {
 				TextView artistTextView = (TextView) findViewById(R.id.artistLabel);
 				TextView titleTextView = (TextView) findViewById(R.id.titleLabel);
@@ -228,7 +238,7 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
 							.show();
 					return;
 				}
-				LayoutInflater layoutInflater = (LayoutInflater) AndroidRemoteforMusicBeeActivity.this
+				LayoutInflater layoutInflater = (LayoutInflater) MainActivity.this
 						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				final PopupWindow lyricsPopup = new PopupWindow(
 						layoutInflater.inflate(R.layout.popup_lyrics, null,
@@ -297,9 +307,8 @@ public class AndroidRemoteforMusicBeeActivity extends Activity {
 	};
 
 	void doBindService() {
-		bindService(new Intent(AndroidRemoteforMusicBeeActivity.this,
-				ConnectivityHandler.class), mConnection,
-				Context.BIND_AUTO_CREATE);
+		bindService(new Intent(MainActivity.this, ConnectivityHandler.class),
+				mConnection, Context.BIND_AUTO_CREATE);
 		mIsBound = true;
 	}
 

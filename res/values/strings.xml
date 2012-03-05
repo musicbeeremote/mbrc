@@ -29,4 +29,5 @@
     <string name="generic_string_close">Close</string>
     <string name="no_lyrics_found">No Lyrics Found</string>
     <string name="main_menu_connect">Connect</string>
+    <string name="connectivity_indicator">Connectivity Indicator</string>
 </resources>

@@ -13,6 +13,7 @@ import java.net.SocketTimeoutException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import kelsos.mbremote.Intents;
 import kelsos.mbremote.SettingsManager;
 import android.app.Service;
 import android.content.Intent;
@@ -65,6 +66,7 @@ public class ConnectivityHandler extends Service {
 						_cSocket.getInputStream()));
 				if (!RequestHandler.isPollingTimerRunning())
 					requestHandler.startPollingTimer();
+				sendConnectionIntent(true);
 				while (_cSocket.isConnected()) {
 					try {
 						final String serverAnswer = _input.readLine();
@@ -103,11 +105,24 @@ public class ConnectivityHandler extends Service {
 					_output.close();
 				}
 				_cSocket = null;
+
+				sendConnectionIntent(false);
+
 				RequestHandler.coverAndInfoOutdated();
 				Log.d("ConnectivityHandler", "ListeningThread terminated");
 				attemptToStartSocketThread(Input.system);
 
 			}
+		}
+
+		/**
+		 * 
+		 */
+		private void sendConnectionIntent(boolean status) {
+			Intent connectionIntent = new Intent();
+			connectionIntent.setAction(Intents.CONNECTION_STATUS);
+			connectionIntent.putExtra("status", status);
+			sendBroadcast(connectionIntent);
 		}
 	}
 
@@ -210,8 +225,9 @@ public class ConnectivityHandler extends Service {
 			_connectionTimer = new Timer(true);
 		if (_ctt == null)
 			_ctt = new ConnectorTimer();
-		_connectionTimer.schedule(_ctt, 1000);
 		_connectionTimerIsRunning = true;
+		_connectionTimer.schedule(_ctt, 1000);
+
 		Log.d("ConnectivityHandler", "Connection Timer Started");
 	}
 
