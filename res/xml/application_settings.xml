@@ -9,7 +9,8 @@
                 android:dialogTitle="@string/server_port"
                 android:inputType="number"
                 android:key="@string/settings_server_port"
-                android:title="@string/server_port"/>
+                android:title="@string/server_port"
+                android:maxLength="5"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_category_misc">
         <CheckBoxPreference

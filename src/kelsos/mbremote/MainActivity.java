@@ -36,13 +36,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-	/**
+	private static final String BY = "\nby ";
+	private static final String LYRICS_FOR = "Lyrics for ";
+    /**
 	 * Called when the activity is first created.
 	 */
 	private ConnectivityHandler mBoundService;
 	private boolean mIsBound;
 	private boolean userChangingVolume;
-	private static final String TOGGLE = "toggle";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -78,16 +79,16 @@ public class MainActivity extends Activity {
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 
-		menu.setHeaderTitle("Actions");
+		menu.setHeaderTitle(AppConstants.ACTIONS);
 		// menu.add(0, v.getId(), 0, "Rating");
-		menu.add(0, v.getId(), 0, "Lyrics");
+		menu.add(0, v.getId(), 0, AppConstants.LYRICS);
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		if (item.getTitle().equals("Lyrics")) {
+		if (item.getTitle().equals(AppConstants.LYRICS)) {
 			mBoundService.requestHandler().requestAction(PlayerAction.Lyrics);
-		} else if (item.getTitle().equals("Rating")) {
+		} else if (item.getTitle().equals(AppConstants.RATING)) {
 
 		} else {
 			return false;
@@ -124,26 +125,45 @@ public class MainActivity extends Activity {
 
 	}
 
+	private ImageButton getImageButtonById(int id) {
+		ImageButton button = (ImageButton) findViewById(id);
+		return button;
+	}
+
+	private SeekBar getSeekBarById(int id) {
+		SeekBar seekBar = (SeekBar) findViewById(id);
+		return seekBar;
+	}
+
+	private TextView getTextViewById(int id) {
+		TextView textView = (TextView) findViewById(id);
+		return textView;
+	}
+
+	private ImageView getImageViewById(int id) {
+		ImageView imageView = (ImageView) findViewById(id);
+		return imageView;
+	}
+
 	private void RegisterListeners() {
-		// Buttons and listeners
-		ImageButton playButton = (ImageButton) findViewById(R.id.playPauseButton);
-		playButton.setOnClickListener(playButtonListener);
-		ImageButton previousButton = (ImageButton) findViewById(R.id.previousButton);
-		previousButton.setOnClickListener(previousButtonListener);
-		ImageButton nextButton = (ImageButton) findViewById(R.id.nextButton);
-		nextButton.setOnClickListener(nextButtonListener);
-		SeekBar volumeSlider = (SeekBar) findViewById(R.id.volumeSlider);
-		volumeSlider.setOnSeekBarChangeListener(volumeChangeListener);
-		ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
-		stopButton.setOnClickListener(stopButtonListener);
-		ImageButton muteButton = (ImageButton) findViewById(R.id.muteButton);
-		muteButton.setOnClickListener(muteButtonListener);
-		ImageButton scrobbleButton = (ImageButton) findViewById(R.id.scrobbleButton);
-		scrobbleButton.setOnClickListener(scrobbleButtonListener);
-		ImageButton shuffleButton = (ImageButton) findViewById(R.id.shuffleButton);
-		shuffleButton.setOnClickListener(shuffleButtonListener);
-		ImageButton repeatButton = (ImageButton) findViewById(R.id.repeatButton);
-		repeatButton.setOnClickListener(repeatButtonListener);
+		getImageButtonById(R.id.playPauseButton).setOnClickListener(
+				playButtonListener);
+		getImageButtonById(R.id.previousButton).setOnClickListener(
+				previousButtonListener);
+		getImageButtonById(R.id.nextButton).setOnClickListener(
+				nextButtonListener);
+		getSeekBarById(R.id.volumeSlider).setOnSeekBarChangeListener(
+				volumeChangeListener);
+		getImageButtonById(R.id.stopButton).setOnClickListener(
+				stopButtonListener);
+		getImageButtonById(R.id.muteButton).setOnClickListener(
+				muteButtonListener);
+		getImageButtonById(R.id.scrobbleButton).setOnClickListener(
+				scrobbleButtonListener);
+		getImageButtonById(R.id.shuffleButton).setOnClickListener(
+				shuffleButtonListener);
+		getImageButtonById(R.id.repeatButton).setOnClickListener(
+				repeatButtonListener);
 	}
 
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -151,127 +171,78 @@ public class MainActivity extends Activity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if (intent.getAction().equals(Intents.VOLUME_DATA)) {
-				SeekBar volumeSlider = (SeekBar) findViewById(R.id.volumeSlider);
 				if (!userChangingVolume)
-					volumeSlider.setProgress(intent.getExtras().getInt("data"));
+					getSeekBarById(R.id.volumeSlider).setProgress(
+							intent.getExtras().getInt(AppConstants.DATA));
 			} else if (intent.getAction().equals(Intents.CONNECTION_STATUS)) {
-				boolean status = intent.getBooleanExtra("status", false);
+				boolean status = intent.getBooleanExtra(AppConstants.STATUS, false);
 				if (status) {
-					ImageView statusView = (ImageView) findViewById(R.id.imageView1);
-					statusView
-							.setImageResource(R.drawable.ic_icon_indicator_green);
+					getImageViewById(R.id.imageView1).setImageResource(
+							R.drawable.ic_icon_indicator_green);
 				} else {
-					ImageView statusView = (ImageView) findViewById(R.id.imageView1);
-					statusView
-							.setImageResource(R.drawable.ic_icon_indicator_red);
+					getImageViewById(R.id.imageView1).setImageResource(
+							R.drawable.ic_icon_indicator_red);
 				}
 			} else if (intent.getAction().equals(Intents.SONG_DATA)) {
-				TextView artistTextView = (TextView) findViewById(R.id.artistLabel);
-				TextView titleTextView = (TextView) findViewById(R.id.titleLabel);
-				TextView albumTextView = (TextView) findViewById(R.id.albumLabel);
-				TextView yearTextView = (TextView) findViewById(R.id.yearLabel);
-
-				artistTextView.setText(intent.getExtras().getString("artist"));
-				titleTextView.setText(intent.getExtras().getString("title"));
-				albumTextView.setText(intent.getExtras().getString("album"));
-				yearTextView.setText(intent.getExtras().getString("year"));
+				getTextViewById(R.id.artistLabel).setText(
+						intent.getExtras().getString(AppConstants.ARTIST));
+				getTextViewById(R.id.titleLabel).setText(
+						intent.getExtras().getString(AppConstants.TITLE));
+				getTextViewById(R.id.albumLabel).setText(
+						intent.getExtras().getString(AppConstants.ALBUM));
+				getTextViewById(R.id.yearLabel).setText(
+						intent.getExtras().getString(AppConstants.YEAR));
 			} else if (intent.getAction().equals(Intents.SONG_COVER)) {
 				new ImageDecodeTask().execute();
 			} else if (intent.getAction().equals(Intents.PLAY_STATE)) {
-				if (intent.getExtras().getString("state").equals("playing")) {
-					ImageButton playButton = (ImageButton) findViewById(R.id.playPauseButton);
-					playButton.setImageResource(R.drawable.ic_media_pause);
-				} else if (intent.getExtras().getString("state")
-						.equals("paused")) {
-					ImageButton playButton = (ImageButton) findViewById(R.id.playPauseButton);
-					playButton.setImageResource(R.drawable.ic_media_play);
-				} else if (intent.getExtras().getString("state")
-						.equals("stopped")) {
-					ImageButton playButton = (ImageButton) findViewById(R.id.playPauseButton);
-					playButton.setImageResource(R.drawable.ic_media_play);
+				if (intent.getExtras().getString(AppConstants.STATE).equals(AppConstants.PLAYING)) {
+					getImageButtonById(R.id.playPauseButton).setImageResource(
+							R.drawable.ic_media_pause);
+					getImageButtonById(R.id.stopButton).setImageResource(
+							R.drawable.ic_media_stop);
+				} else if (intent.getExtras().getString(AppConstants.STATE).equals(AppConstants.PAUSED)) {
+					getImageButtonById(R.id.playPauseButton).setImageResource(
+							R.drawable.ic_media_play);
+				} else if (intent.getExtras().getString(AppConstants.STATE).equals(AppConstants.STOPPED)) {
+					getImageButtonById(R.id.playPauseButton).setImageResource(
+							R.drawable.ic_media_play);
+					getImageButtonById(R.id.stopButton).setImageResource(
+							R.drawable.ic_media_stop_pressed);
 				}
 			} else if (intent.getAction().equals(Intents.MUTE_STATE)) {
-				if (intent.getExtras().getString("state")
-						.equalsIgnoreCase("True")) {
-					ImageButton muteButton = (ImageButton) findViewById(R.id.muteButton);
-					muteButton.setImageResource(R.drawable.ic_media_volume_off);
+				if (intent.getExtras().getString(AppConstants.STATE).equalsIgnoreCase(AppConstants.TRUE)) {
+					getImageButtonById(R.id.muteButton).setImageResource(
+							R.drawable.ic_media_mute_active);
 				} else {
-					ImageButton muteButton = (ImageButton) findViewById(R.id.muteButton);
-					muteButton
-							.setImageResource(R.drawable.ic_media_volume_full);
+					getImageButtonById(R.id.muteButton).setImageResource(
+							R.drawable.ic_media_mute_full);
 				}
 			} else if (intent.getAction().equals(Intents.REPEAT_STATE)) {
-				if (intent.getExtras().getString("state")
-						.equalsIgnoreCase("All")) {
-					ImageButton repeatButton = (ImageButton) findViewById(R.id.repeatButton);
-					repeatButton.setImageResource(R.drawable.ic_media_repeat);
+				if (intent.getExtras().getString(AppConstants.STATE).equalsIgnoreCase(AppConstants.ALL)) {
+					getImageButtonById(R.id.repeatButton).setImageResource(
+							R.drawable.ic_media_repeat);
 				} else {
-					ImageButton repeatButton = (ImageButton) findViewById(R.id.repeatButton);
-					repeatButton
-							.setImageResource(R.drawable.ic_media_repeat_off);
+					getImageButtonById(R.id.repeatButton).setImageResource(
+							R.drawable.ic_media_repeat_off);
 				}
 			} else if (intent.getAction().equals(Intents.SHUFFLE_STATE)) {
-				if (intent.getExtras().getString("state")
-						.equalsIgnoreCase("True")) {
-					ImageButton shuffleButton = (ImageButton) findViewById(R.id.shuffleButton);
-					shuffleButton.setImageResource(R.drawable.ic_media_shuffle);
+				if (intent.getExtras().getString(AppConstants.STATE).equalsIgnoreCase(AppConstants.TRUE)) {
+					getImageButtonById(R.id.shuffleButton).setImageResource(
+							R.drawable.ic_media_shuffle);
 				} else {
-					ImageButton shuffleButton = (ImageButton) findViewById(R.id.shuffleButton);
-					shuffleButton
-							.setImageResource(R.drawable.ic_media_shuffle_off);
+					getImageButtonById(R.id.shuffleButton).setImageResource(
+							R.drawable.ic_media_shuffle_off);
 				}
 			} else if (intent.getAction().equals(Intents.SCROBBLER_STATE)) {
-				if (intent.getExtras().getString("state")
-						.equalsIgnoreCase("True")) {
-					ImageButton scrobbleButton = (ImageButton) findViewById(R.id.scrobbleButton);
-					scrobbleButton
-							.setImageResource(R.drawable.ic_media_scrobble_red);
+				if (intent.getExtras().getString(AppConstants.STATE).equalsIgnoreCase(AppConstants.TRUE)) {
+					getImageButtonById(R.id.scrobbleButton).setImageResource(
+							R.drawable.ic_media_scrobble_red);
 				} else {
-					ImageButton scrobbleButton = (ImageButton) findViewById(R.id.scrobbleButton);
-					scrobbleButton
-							.setImageResource(R.drawable.ic_media_scrobble_off);
+					getImageButtonById(R.id.scrobbleButton).setImageResource(
+							R.drawable.ic_media_scrobble_off);
 				}
 			} else if (intent.getAction().equals(Intents.LYRICS_DATA)) {
-				if (ReplyHandler.getInstance().getSongLyrics().equals("")) {
-					Toast.makeText(getApplicationContext(),
-							R.string.no_lyrics_found, Toast.LENGTH_SHORT)
-							.show();
-					return;
-				}
-				LayoutInflater layoutInflater = (LayoutInflater) MainActivity.this
-						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				final PopupWindow lyricsPopup = new PopupWindow(
-						layoutInflater.inflate(R.layout.popup_lyrics, null,
-								false),
-						((WindowManager) getSystemService(Context.WINDOW_SERVICE))
-								.getDefaultDisplay().getWidth(),
-						((WindowManager) getSystemService(Context.WINDOW_SERVICE))
-								.getDefaultDisplay().getHeight() - 30, true);
-				lyricsPopup.setOutsideTouchable(true);
-				((TextView) lyricsPopup.getContentView().findViewById(
-						R.id.lyricsLabel))
-						.setText("Lyrics for "
-								+ ((TextView) findViewById(R.id.titleLabel))
-										.getText()
-								+ "\nby "
-								+ ((TextView) findViewById(R.id.artistLabel))
-										.getText());
-
-				((TextView) lyricsPopup.getContentView().findViewById(
-						R.id.lyricsText)).setText(ReplyHandler.getInstance()
-						.getSongLyrics());
-				lyricsPopup.getContentView()
-						.findViewById(R.id.popup_close_button)
-						.setOnClickListener(new OnClickListener() {
-
-							public void onClick(View v) {
-								lyricsPopup.dismiss();
-
-							}
-						});
-				lyricsPopup.showAtLocation(findViewById(R.id.mainLinearLayout),
-						Gravity.CENTER, 0, 0);
-				ReplyHandler.getInstance().clearLyrics();
+				processLyricsData();
 			}
 		}
 	};
@@ -280,6 +251,9 @@ public class MainActivity extends Activity {
 
 		@Override
 		protected Bitmap doInBackground(Void... params) {
+			if (ReplyHandler.getInstance().getCoverData() == "")
+				return BitmapFactory.decodeResource(getApplicationContext()
+						.getResources(), R.drawable.ic_image_no_cover);
 			byte[] decodedImage = Base64.decode(ReplyHandler.getInstance()
 					.getCoverData(), Base64.DEFAULT);
 			return BitmapFactory.decodeByteArray(decodedImage, 0,
@@ -326,6 +300,55 @@ public class MainActivity extends Activity {
 		unregisterReceiver(mReceiver);
 	}
 
+	/**
+     *
+     */
+	private void showToastWindow(int id) {
+		Toast.makeText(getApplicationContext(), id, Toast.LENGTH_SHORT).show();
+	}
+
+	/**
+     *
+     */
+	private void processLyricsData() {
+		if (ReplyHandler.getInstance().getSongLyrics().contains("")) {
+			showToastWindow(R.string.no_lyrics_found);
+			return;
+		}
+		LayoutInflater layoutInflater = (LayoutInflater) MainActivity.this
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+		int windowWidth = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+				.getDefaultDisplay().getWidth();
+		int windowHeight = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+				.getDefaultDisplay().getHeight();
+
+		final PopupWindow lyricsPopup = new PopupWindow(layoutInflater.inflate(
+				R.layout.popup_lyrics, null, false), windowWidth,
+				windowHeight - 30, true);
+		lyricsPopup.setOutsideTouchable(true);
+
+		CharSequence artist = getTextViewById(R.id.artistLabel).getText();
+		CharSequence title = getTextViewById(R.id.titleLabel).getText();
+
+		((TextView) lyricsPopup.getContentView().findViewById(R.id.lyricsLabel))
+				.setText(LYRICS_FOR + title + BY + artist);
+
+		((TextView) lyricsPopup.getContentView().findViewById(R.id.lyricsText))
+				.setText(ReplyHandler.getInstance().getSongLyrics());
+		lyricsPopup.getContentView().findViewById(R.id.popup_close_button)
+				.setOnClickListener(new OnClickListener() {
+
+                    public void onClick(View v) {
+                        lyricsPopup.dismiss();
+
+                    }
+                });
+		lyricsPopup.showAtLocation(findViewById(R.id.mainLinearLayout),
+				Gravity.CENTER, 0, 0);
+		ReplyHandler.getInstance().clearLyrics();
+	}
+
 	private OnClickListener playButtonListener = new OnClickListener() {
 
 		public void onClick(View v) {
@@ -359,7 +382,7 @@ public class MainActivity extends Activity {
 
 		public void onClick(View v) {
 			mBoundService.requestHandler().requestAction(PlayerAction.Mute,
-					TOGGLE);
+					AppConstants.TOGGLE);
 		}
 	};
 
@@ -367,7 +390,7 @@ public class MainActivity extends Activity {
 
 		public void onClick(View v) {
 			mBoundService.requestHandler().requestAction(PlayerAction.Scrobble,
-					TOGGLE);
+					AppConstants.TOGGLE);
 
 		}
 	};
@@ -376,7 +399,7 @@ public class MainActivity extends Activity {
 
 		public void onClick(View v) {
 			mBoundService.requestHandler().requestAction(PlayerAction.Shuffle,
-					TOGGLE);
+					AppConstants.TOGGLE);
 		}
 	};
 
@@ -384,7 +407,7 @@ public class MainActivity extends Activity {
 
 		public void onClick(View v) {
 			mBoundService.requestHandler().requestAction(PlayerAction.Repeat,
-					TOGGLE);
+					AppConstants.TOGGLE);
 		}
 	};
 

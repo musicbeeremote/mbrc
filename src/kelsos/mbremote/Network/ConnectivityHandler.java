@@ -13,6 +13,7 @@ import java.net.SocketTimeoutException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import kelsos.mbremote.AppConstants;
 import kelsos.mbremote.Intents;
 import kelsos.mbremote.SettingsManager;
 import android.app.Service;
@@ -25,7 +26,7 @@ import android.widget.Toast;
 
 public class ConnectivityHandler extends Service {
 
-	private Timer _connectionTimer;
+    private Timer _connectionTimer;
 	private ConnectorTimer _ctt;
 	private static int _numberOfTries;
 	private static final int MAX_RETRIES = 4;
@@ -121,7 +122,7 @@ public class ConnectivityHandler extends Service {
 		private void sendConnectionIntent(boolean status) {
 			Intent connectionIntent = new Intent();
 			connectionIntent.setAction(Intents.CONNECTION_STATUS);
-			connectionIntent.putExtra("status", status);
+			connectionIntent.putExtra(AppConstants.STATUS, status);
 			sendBroadcast(connectionIntent);
 		}
 	}
@@ -185,8 +186,8 @@ public class ConnectivityHandler extends Service {
 
 	protected void sendData(String data) {
 		try {
-			if (_cSocket != null && _cSocket.isConnected())
-				_output.println(data + "\r\n");
+			if (socketExistsAndIsConnected())
+				_output.println(data + AppConstants.NEWLINE);
 		} catch (Exception ignored) {
 		}
 	}
@@ -195,18 +196,30 @@ public class ConnectivityHandler extends Service {
 	 * This function starts the Thread that handles the socket connection.
 	 */
 	private void startSocketThread() {
-		if ((_cSocket != null && _cSocket.isConnected())
-				|| (_connectionThread != null && _connectionThread.isAlive()))
+		if (socketExistsAndIsConnected()||connectionThreadExistsAndIsAlive())
 			return;
+        else if (!socketExistsAndIsConnected()&&connectionThreadExistsAndIsAlive())
+        {
+            _connectionThread.destroy();
+            _connectionThread=null;
+        }
 		Runnable connect = new connectSocket();
 		_connectionThread = new Thread(connect);
 		_connectionThread.start();
 		Log.d("ConnectivityHandler", "startSocketThread();");
 	}
 
-	public void attemptToStartSocketThread(Input input) {
+    private boolean connectionThreadExistsAndIsAlive() {
+        return _connectionThread != null && _connectionThread.isAlive();
+    }
+
+    public void attemptToStartSocketThread(Input input) {
+		if (socketExistsAndIsConnected())
+			return;
 		if (input == Input.user) {
 			_numberOfTries = 0;
+			if (_connectionTimerIsRunning)
+				stopConnectionTimer();
 		}
 		if ((_numberOfTries > MAX_RETRIES) && _connectionTimerIsRunning) {
 			stopConnectionTimer();
@@ -214,11 +227,15 @@ public class ConnectivityHandler extends Service {
 					"attemptToStartSocketThread() Max Tries");
 		} else if ((_numberOfTries < MAX_RETRIES) && !_connectionTimerIsRunning)
 			startConnectionTimer();
-		// Log.d("ConnectivityHandler", "attemptToStartSocketThread() Current: "
-		// + _numberOfTries);
+		Log.d("ConnectivityHandler", "attemptToStartSocketThread() Current: "
+				+ _numberOfTries);
 	}
 
-	private void startConnectionTimer() {
+    private boolean socketExistsAndIsConnected() {
+        return _cSocket != null && _cSocket.isConnected();
+    }
+
+    private void startConnectionTimer() {
 		if (_connectionTimerIsRunning)
 			return;
 		if (_connectionTimer == null)

@@ -19,7 +19,7 @@
             android:paddingLeft="10dp" />
         <LinearLayout
             android:id="@+id/playingTrackLayout"
-            android:layout_width="249dp"
+            android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="0.84"
             android:orientation="vertical" >

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Android Remote for MusicBee</string>
+    <string name="app_name">Remote Control for MusicBee</string>
     <string name="main_volume">Volume:</string>
     <string name="mainPlayingTrack">Playing track:</string>
     <string name="socket_service_started">Socket Service Stared</string>

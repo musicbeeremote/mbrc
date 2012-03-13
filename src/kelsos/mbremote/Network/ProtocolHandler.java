@@ -24,7 +24,9 @@ public class ProtocolHandler {
         Scrobble,
         Lyrics,
         Rating,
-        PlayerStatus
+        PlayerStatus,
+        Protocol,
+        Player
     }
 
     public static String getActionString(PlayerAction action, String value) {
@@ -65,6 +67,10 @@ public class ProtocolHandler {
                 return PrepareXml(Protocol.RATING, value);
             case PlayerStatus:
                 return PrepareXml(Protocol.PLAYER_STATUS, value);
+            case Protocol:
+                return PrepareXml(Protocol.PROTOCOL, value);
+            case Player:
+                return PrepareXml(Protocol.PLAYER,value);
             default:
                 return PrepareXml(Protocol.ERROR, "Invalid Request");
         }

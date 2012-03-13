@@ -16,8 +16,7 @@
             android:layout_marginLeft="10dp"
             android:adjustViewBounds="false"
             android:contentDescription="@string/playing_track_album_cover"
-            android:paddingLeft="10dp"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:src="@drawable/ic_image_no_cover" />
         <LinearLayout
             android:id="@+id/extraMediaButtonLinearLayout"
@@ -65,7 +64,7 @@
                 android:background="@drawable/ic_button_vertical_bottom"
                 android:contentDescription="@string/mute_button"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_media_volume_full" />
+                android:src="@drawable/ic_media_mute_full" />
         </LinearLayout>
     </LinearLayout>
     <RelativeLayout
