@@ -13,8 +13,7 @@ import java.net.SocketTimeoutException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import kelsos.mbremote.AppConstants;
-import kelsos.mbremote.Intents;
+import kelsos.mbremote.Const;
 import kelsos.mbremote.SettingsManager;
 import android.app.Service;
 import android.content.Intent;
@@ -41,17 +40,11 @@ public class ConnectivityHandler extends Service {
 	private Thread _connectionThread;
 	private RequestHandler requestHandler;
 
-	public RequestHandler requestHandler() {
-		return requestHandler;
-	}
-
 	private class connectSocket implements Runnable {
 
 		public void run() {
 			Log.d("ConnectivityHandler", "connectSocket Running");
-			SettingsManager settingsManager = new SettingsManager(
-					getApplicationContext());
-			SocketAddress socketAddress = settingsManager.getSocketAddress();
+			SocketAddress socketAddress = SettingsManager.getInstance().getSocketAddress();
 			if (null == socketAddress)
 				return;
 			if (_connectionTimerIsRunning)
@@ -60,43 +53,30 @@ public class ConnectivityHandler extends Service {
 			try {
 				_cSocket = new Socket();
 				_cSocket.connect(socketAddress);
-				_output = new PrintWriter(new BufferedWriter(
-						new OutputStreamWriter(_cSocket.getOutputStream())),
-						true);
-				_input = new BufferedReader(new InputStreamReader(
-						_cSocket.getInputStream()));
+				_output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(_cSocket.getOutputStream())),true);
+				_input = new BufferedReader(new InputStreamReader(_cSocket.getInputStream()));
 				if (!RequestHandler.isPollingTimerRunning())
-					requestHandler.startPollingTimer();
+					requestHandler.startUpdateTimer();
 				sendConnectionIntent(true);
+
 				while (_cSocket.isConnected()) {
 					try {
 						final String serverAnswer = _input.readLine();
-						ReplyHandler.getInstance()
-								.answerProcessor(serverAnswer);
+						ReplyHandler.getInstance().answerProcessor(serverAnswer);
 					} catch (IOException e) {
-						requestHandler.stopPollingTimer();
+						requestHandler.stopUpdateTimer();
 						_input.close();
 						_cSocket.close();
 						throw e;
 					}
 				}
 			} catch (SocketTimeoutException e) {
-				_nmHandler.post(new Runnable() {
-					public void run() {
-						Toast.makeText(getApplicationContext(),
-								"Connection timed out", Toast.LENGTH_SHORT)
-								.show();
-					}
-				});
-			} catch (SocketException e) {
+                final String message = "Connection timed out";
+                postToastMessage(message);
+            } catch (SocketException e) {
 				final String exceptionMessage = e.toString().substring(26);
-				_nmHandler.post(new Runnable() {
-					public void run() {
-						Toast.makeText(getApplicationContext(),
-								exceptionMessage, Toast.LENGTH_SHORT).show();
-					}
-				});
-			} catch (IOException e) {
+                postToastMessage(exceptionMessage);
+            } catch (IOException e) {
 				Log.e("ConnectivityHandler", "Listening Loop", e);
 			} catch (NullPointerException e) {
 				Log.d("ConnectivityHandler", "NullPointer");
@@ -109,23 +89,38 @@ public class ConnectivityHandler extends Service {
 
 				sendConnectionIntent(false);
 
-				RequestHandler.coverAndInfoOutdated();
+				requestHandler.coverAndInfoOutdated();
 				Log.d("ConnectivityHandler", "ListeningThread terminated");
 				attemptToStartSocketThread(Input.system);
 
 			}
 		}
 
-		/**
-		 * 
-		 */
-		private void sendConnectionIntent(boolean status) {
-			Intent connectionIntent = new Intent();
-			connectionIntent.setAction(Intents.CONNECTION_STATUS);
-			connectionIntent.putExtra(AppConstants.STATUS, status);
-			sendBroadcast(connectionIntent);
-		}
+
 	}
+
+    /**
+     * Given a string that contains a message the function will display the message
+     * in a toast window.
+     * @param message The message that will be displayed.
+     */
+    private void postToastMessage(final String message) {
+        _nmHandler.post(new Runnable() {
+            public void run() {
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     *  Sends a connection intent to the Receivers listening, containing the connection status.
+     */
+    private void sendConnectionIntent(boolean status) {
+        Intent connectionIntent = new Intent();
+        connectionIntent.setAction(Const.CONNECTION_STATUS);
+        connectionIntent.putExtra(Const.STATUS, status);
+        sendBroadcast(connectionIntent);
+    }
 
 	public class LocalBinder extends Binder {
 		public ConnectivityHandler getService() {
@@ -145,6 +140,7 @@ public class ConnectivityHandler extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
+        sendConnectionIntent(socketExistsAndIsConnected());
 		return _mBinder;
 	}
 
@@ -154,7 +150,9 @@ public class ConnectivityHandler extends Service {
 		ReplyHandler.getInstance().setContext(getApplicationContext());
 		_numberOfTries = 0; // Initialize the connection retry counter.
 		requestHandler = new RequestHandler(this);
-		RequestHandler.coverAndInfoOutdated();
+		requestHandler.coverAndInfoOutdated();
+        // Initialize the settings manager context
+        SettingsManager.getInstance().setContext(getApplicationContext());
 	}
 
 	@Override
@@ -162,7 +160,7 @@ public class ConnectivityHandler extends Service {
 		super.onDestroy();
 		try {
 			// On destroy stop the Polling Timer and close the socket.
-			requestHandler.stopPollingTimer();
+			requestHandler.stopUpdateTimer();
 			_cSocket.close();
 		} catch (IOException e) {
 			Log.e("Socket Close", "Failure", e);
@@ -179,7 +177,7 @@ public class ConnectivityHandler extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		_nmHandler = new Handler();
-		RequestHandler.coverAndInfoOutdated();
+		requestHandler.coverAndInfoOutdated();
 		return super.onStartCommand(intent, flags, startId);
 
 	}
@@ -187,7 +185,7 @@ public class ConnectivityHandler extends Service {
 	protected void sendData(String data) {
 		try {
 			if (socketExistsAndIsConnected())
-				_output.println(data + AppConstants.NEWLINE);
+				_output.println(data + Const.NEWLINE);
 		} catch (Exception ignored) {
 		}
 	}

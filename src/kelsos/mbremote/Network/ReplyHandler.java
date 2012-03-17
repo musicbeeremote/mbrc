@@ -3,8 +3,8 @@ package kelsos.mbremote.Network;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import kelsos.mbremote.Const;
 import kelsos.mbremote.Data.MusicTrack;
-import kelsos.mbremote.Intents;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -88,40 +88,40 @@ public class ReplyHandler {
                 } else if (xmlNode.getNodeName().contains(Protocol.NEXT)) {
                     Log.d("Reply Received", "<next>");
                 } else if (xmlNode.getNodeName().contains(Protocol.VOLUME)) {
-                    notifyIntent.setAction(Intents.VOLUME_DATA);
+                    notifyIntent.setAction(Const.VOLUME_DATA);
                     notifyIntent.putExtra(Protocol.DATA,
                             Integer.parseInt(xmlNode.getTextContent()));
                     _currentVolume = Integer.parseInt(xmlNode.getTextContent());
                 } else if (xmlNode.getNodeName().contains(Protocol.SONGCHANGED)) {
                     if (xmlNode.getTextContent().contains("True")) {
-                        notifyIntent.setAction(Intents.SONG_CHANGED);
+                        notifyIntent.setAction(Const.SONG_CHANGED);
                     }
                 } else if (xmlNode.getNodeName().contains(Protocol.SONGINFO)) {
                     getSongData(xmlNode, notifyIntent);
                 } else if (xmlNode.getNodeName().contains(Protocol.SONGCOVER)) {
                     _coverData = xmlNode.getTextContent();
-                    notifyIntent.setAction(Intents.SONG_COVER);
+                    notifyIntent.setAction(Const.SONG_COVER);
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYSTATE)) {
-                    notifyIntent.setAction(Intents.PLAY_STATE);
+                    notifyIntent.setAction(Const.PLAY_STATE);
                     notifyIntent
                             .putExtra(Protocol.STATE, xmlNode.getTextContent());
                 } else if (xmlNode.getNodeName().contains(Protocol.MUTE)) {
-                    notifyIntent.setAction(Intents.MUTE_STATE);
+                    notifyIntent.setAction(Const.MUTE_STATE);
                     notifyIntent.putExtra(Protocol.STATE, xmlNode.getTextContent());
                 } else if (xmlNode.getNodeName().contains(Protocol.REPEAT)) {
-                    notifyIntent.setAction(Intents.REPEAT_STATE);
+                    notifyIntent.setAction(Const.REPEAT_STATE);
                     notifyIntent.putExtra(Protocol.STATE, xmlNode.getTextContent());
                 } else if (xmlNode.getNodeName().contains(Protocol.SHUFFLE)) {
-                    notifyIntent.setAction(Intents.SHUFFLE_STATE);
+                    notifyIntent.setAction(Const.SHUFFLE_STATE);
                     notifyIntent.putExtra(Protocol.STATE, xmlNode.getTextContent());
                 } else if (xmlNode.getNodeName().contains(Protocol.SCROBBLE)) {
-                    notifyIntent.setAction(Intents.SCROBBLER_STATE);
+                    notifyIntent.setAction(Const.SCROBBLER_STATE);
                     notifyIntent.putExtra(Protocol.STATE, xmlNode.getTextContent());
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYLIST)) {
                     getPlaylistData(xmlNode, notifyIntent);
                 } else if (xmlNode.getNodeName().contains(Protocol.LYRICS)) {
                     _songLyrics = xmlNode.getTextContent().replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("\"", "&quot;").replace("&apos;", "'").replace("&", "&amp;").replace("<p>", "\r\n").replace("<br>", "\n").trim();
-                    notifyIntent.setAction(Intents.LYRICS_DATA);
+                    notifyIntent.setAction(Const.LYRICS_DATA);
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYER_STATUS)) {
                     getPlayerStatus(notifyIntent, xmlNode);
                 }
@@ -149,7 +149,7 @@ public class ReplyHandler {
         for (int i = 0; i < playlistData.getLength(); i++) {
             _nowPlayingList.add(new MusicTrack(playlistData.item(i).getFirstChild().getTextContent(), playlistData.item(i).getLastChild().getTextContent()));
         }
-        notifyIntent.setAction(Intents.PLAYLIST_DATA);
+        notifyIntent.setAction(Const.PLAYLIST_DATA);
     }
 
     private void broadcastPlayerStateIntent(Intent intent, String action, String extras) {
@@ -160,17 +160,17 @@ public class ReplyHandler {
 
     private void getPlayerStatus(Intent intent, Node xmlNode) {
         Node playerStatusNode = xmlNode.getFirstChild();
-        broadcastPlayerStateIntent(intent, Intents.REPEAT_STATE, playerStatusNode.getTextContent());
+        broadcastPlayerStateIntent(intent, Const.REPEAT_STATE, playerStatusNode.getTextContent());
         playerStatusNode = playerStatusNode.getNextSibling();
-        broadcastPlayerStateIntent(intent, Intents.MUTE_STATE, playerStatusNode.getTextContent());
+        broadcastPlayerStateIntent(intent, Const.MUTE_STATE, playerStatusNode.getTextContent());
         playerStatusNode = playerStatusNode.getNextSibling();
-        broadcastPlayerStateIntent(intent, Intents.SHUFFLE_STATE, playerStatusNode.getTextContent());
+        broadcastPlayerStateIntent(intent, Const.SHUFFLE_STATE, playerStatusNode.getTextContent());
         playerStatusNode = playerStatusNode.getNextSibling();
-        broadcastPlayerStateIntent(intent, Intents.SCROBBLER_STATE, playerStatusNode.getTextContent());
+        broadcastPlayerStateIntent(intent, Const.SCROBBLER_STATE, playerStatusNode.getTextContent());
         playerStatusNode = playerStatusNode.getNextSibling();
-        broadcastPlayerStateIntent(intent, Intents.PLAY_STATE, playerStatusNode.getTextContent());
+        broadcastPlayerStateIntent(intent, Const.PLAY_STATE, playerStatusNode.getTextContent());
         playerStatusNode = playerStatusNode.getNextSibling();
-        intent.setAction(Intents.VOLUME_DATA);
+        intent.setAction(Const.VOLUME_DATA);
         intent.putExtra(Protocol.DATA, Integer.parseInt(playerStatusNode.getTextContent()));
     }
 
@@ -188,7 +188,7 @@ public class ReplyHandler {
             trackInfoNode = trackInfoNode.getNextSibling();
         }
         int index = 0;
-        notifyIntent.setAction(Intents.SONG_DATA);
+        notifyIntent.setAction(Const.SONG_DATA);
         notifyIntent.putExtra(Protocol.ARTIST, trackData[index++]);
         notifyIntent.putExtra(Protocol.TITLE, trackData[index++]);
         notifyIntent.putExtra(Protocol.ALBUM, trackData[index++]);

@@ -6,7 +6,7 @@ public class ProtocolHandler {
         return "<" + name + ">" + value + "</" + name + ">";
     }
 
-    public static enum PlayerAction {
+    public enum PlayerAction {
         PlayPause,
         Previous,
         Next,
