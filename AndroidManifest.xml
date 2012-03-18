@@ -25,7 +25,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AppSettings" >
+        <activity android:name=".AppPreferenceActivity" >
         </activity>
         <activity android:name=".PlaylistActivity" >
             <intent-filter>

@@ -1,13 +1,13 @@
-package kelsos.mbremote;
+package kelsos.mbremote.Others;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Looper;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
+import kelsos.mbremote.Messaging.AppNotificationManager;
+import kelsos.mbremote.R;
 
 public class SettingsManager {
 

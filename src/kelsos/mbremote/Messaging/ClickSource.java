@@ -1,4 +1,4 @@
-package kelsos.mbremote;
+package kelsos.mbremote.Messaging;
 
 public enum ClickSource
 {

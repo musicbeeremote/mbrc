@@ -1,4 +1,4 @@
-package kelsos.mbremote;
+package kelsos.mbremote.Messaging;
 
 import android.content.Context;
 import android.os.Handler;

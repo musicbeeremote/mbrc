@@ -3,7 +3,7 @@ package kelsos.mbremote.Network;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import kelsos.mbremote.Const;
+import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Data.MusicTrack;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

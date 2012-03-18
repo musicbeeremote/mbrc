@@ -7,13 +7,18 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import kelsos.mbremote.Messaging.AppNotificationManager;
+import kelsos.mbremote.Messaging.ClickSource;
+import kelsos.mbremote.Messaging.Communicator;
 import kelsos.mbremote.Network.ConnectivityHandler;
 import kelsos.mbremote.Network.ReplyHandler;
+import kelsos.mbremote.Others.Const;
 
 public class MainActivity extends Activity {
     private static final String BY = "\nby ";
@@ -34,6 +39,7 @@ public class MainActivity extends Activity {
         userChangingVolume = false;
         registerForContextMenu(findViewById(R.id.playingTrackLayout));
         Communicator.getInstance().onActivityButtonClicked(ClickSource.Refresh);
+        //Communicator.getInstance().onRequestConnectionStatus();
 
     }
 
@@ -84,14 +90,14 @@ public class MainActivity extends Activity {
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         switch (item.getItemId()) {
             case R.id.main_menu_settings:
-                Intent settingsIntent = new Intent(MainActivity.this, AppSettings.class);
+                Intent settingsIntent = new Intent(MainActivity.this, AppPreferenceActivity.class);
                 startActivity(settingsIntent);
                 break;
             case R.id.main_menu_playlist:
                 Intent playlistIntent = new Intent(MainActivity.this, PlaylistActivity.class);
                 startActivity(playlistIntent);
             case R.id.main_menu_connect:
-                //mBoundService.attemptToStartSocketThread(ConnectivityHandler.Input.user);
+                Communicator.getInstance().onRequestConnect();
             case R.id.main_menu_service_restart:
                 //mBoundService.stopSelf();
                 //mBoundService.startService(new Intent(MainActivity.this, ConnectivityHandler.class));
@@ -239,6 +245,7 @@ public class MainActivity extends Activity {
 
         private void handleConnectionStatus(Intent intent) {
             boolean status = intent.getBooleanExtra(Const.STATUS, false);
+            Log.d("ConIn:", String.valueOf(status));
             if (status) {
                 getImageViewById(R.id.imageView1).setImageResource(R.drawable.ic_icon_indicator_green);
             } else {

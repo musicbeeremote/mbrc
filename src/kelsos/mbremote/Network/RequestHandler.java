@@ -3,7 +3,9 @@ package kelsos.mbremote.Network;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import kelsos.mbremote.*;
+import kelsos.mbremote.Messaging.ClickSource;
+import kelsos.mbremote.Messaging.Communicator;
+import kelsos.mbremote.Messaging.UserInterfaceEvent;
 import kelsos.mbremote.Network.ProtocolHandler.PlayerAction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,6 +14,8 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import kelsos.mbremote.Others.Const;
+import kelsos.mbremote.Others.SettingsManager;
 
 public class RequestHandler {
 	private final ConnectivityHandler connectivityHandler;
@@ -25,7 +29,7 @@ public class RequestHandler {
 		installFilter();
 
         // Event Listener for the communicator events
-        Communicator.getInstance().setUserInterfaceEventsListener(new UserInterfaceEvents() {
+        Communicator.getInstance().setUserInterfaceEventsListener(new UserInterfaceEvent() {
             public void onActivityButtonClicked(ClickSource clickSource) {
                 switch (clickSource) {
 

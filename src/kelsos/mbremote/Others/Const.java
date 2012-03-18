@@ -1,4 +1,4 @@
-package kelsos.mbremote;
+package kelsos.mbremote.Others;
 
 public class Const {
 

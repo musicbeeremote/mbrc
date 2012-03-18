@@ -13,9 +13,11 @@ import java.net.SocketTimeoutException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import kelsos.mbremote.AppNotificationManager;
-import kelsos.mbremote.Const;
-import kelsos.mbremote.SettingsManager;
+import kelsos.mbremote.Messaging.AppNotificationManager;
+import kelsos.mbremote.Messaging.Communicator;
+import kelsos.mbremote.Messaging.ServerCommunicationEvent;
+import kelsos.mbremote.Others.Const;
+import kelsos.mbremote.Others.SettingsManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -99,6 +101,7 @@ public class ConnectivityHandler extends Service {
 
 	}
 
+
     /**
      *  Sends a connection intent to the Receivers listening, containing the connection status.
      */
@@ -140,6 +143,17 @@ public class ConnectivityHandler extends Service {
 		requestHandler.requestPlayerData();
         // Initialize the settings manager context
         SettingsManager.getInstance().setContext(getApplicationContext());
+
+        Communicator.getInstance().setServerCommunicationEventListener(new ServerCommunicationEvent() {
+            public void onRequestConnect() {
+                attemptToStartSocketThread(Input.user);
+            }
+
+            public void onRequestConnectionStatus() {
+        	Log.d("ConIn",String.valueOf(socketExistsAndIsConnected()));
+                sendConnectionIntent(socketExistsAndIsConnected());
+            }
+        });
 	}
 
 	@Override
