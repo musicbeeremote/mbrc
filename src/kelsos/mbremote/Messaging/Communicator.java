@@ -19,12 +19,12 @@ public class Communicator {
         serverCommunicationEvent = listener;
     }
 
-    public void onRequestConnect() {
+    public void requestConnect() {
         if (serverCommunicationEvent != null)
             serverCommunicationEvent.onRequestConnect();
     }
 
-    public void onRequestConnectionStatus() {
+    public void requestConnectionStatus() {
         if (serverCommunicationEvent != null)
             serverCommunicationEvent.onRequestConnectionStatus();
     }
@@ -33,17 +33,17 @@ public class Communicator {
         userInterfaceEvent = listener;
     }
 
-    public void onActivityButtonClicked(ClickSource clickSource) {
+    public void activityButtonClicked(ClickSource clickSource) {
         if (userInterfaceEvent != null)
             userInterfaceEvent.onActivityButtonClicked(clickSource);
     }
 
-    public void onSeekBarChanged(int volume) {
+    public void seekBarChanged(int volume) {
         if (userInterfaceEvent != null)
             userInterfaceEvent.onSeekBarChanged(volume);
     }
 
-    public void onPlayNowRequest(String track) {
+    public void playNowRequest(String track) {
         if (userInterfaceEvent != null)
             userInterfaceEvent.onPlayNowRequest(track);
     }

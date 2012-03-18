@@ -38,8 +38,8 @@ public class MainActivity extends Activity {
         registerIntentFilters();
         userChangingVolume = false;
         registerForContextMenu(findViewById(R.id.playingTrackLayout));
-        Communicator.getInstance().onActivityButtonClicked(ClickSource.Refresh);
-        //Communicator.getInstance().onRequestConnectionStatus();
+        Communicator.getInstance().activityButtonClicked(ClickSource.Refresh);
+        Communicator.getInstance().requestConnectionStatus();
 
     }
 
@@ -70,7 +70,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         if (item.getTitle().equals(Const.LYRICS)) {
-            Communicator.getInstance().onActivityButtonClicked(ClickSource.Lyrics);
+            Communicator.getInstance().activityButtonClicked(ClickSource.Lyrics);
         } else if (item.getTitle().equals(Const.RATING)) {
 
         } else {
@@ -97,7 +97,7 @@ public class MainActivity extends Activity {
                 Intent playlistIntent = new Intent(MainActivity.this, PlaylistActivity.class);
                 startActivity(playlistIntent);
             case R.id.main_menu_connect:
-                Communicator.getInstance().onRequestConnect();
+                Communicator.getInstance().requestConnect();
             case R.id.main_menu_service_restart:
                 //mBoundService.stopSelf();
                 //mBoundService.startService(new Intent(MainActivity.this, ConnectivityHandler.class));
@@ -228,11 +228,14 @@ public class MainActivity extends Activity {
             if (intent.getExtras().getString(Const.STATE).equals(Const.PLAYING)) {
                 getImageButtonById(R.id.playPauseButton).setImageResource(R.drawable.ic_media_pause);
                 getImageButtonById(R.id.stopButton).setImageResource(R.drawable.ic_media_stop);
+                getImageButtonById(R.id.stopButton).setEnabled(true);
             } else if (intent.getExtras().getString(Const.STATE).equals(Const.PAUSED)) {
                 getImageButtonById(R.id.playPauseButton).setImageResource(R.drawable.ic_media_play);
+                getImageButtonById(R.id.stopButton).setEnabled(true);
             } else if (intent.getExtras().getString(Const.STATE).equals(Const.STOPPED)) {
                 getImageButtonById(R.id.playPauseButton).setImageResource(R.drawable.ic_media_play);
                 getImageButtonById(R.id.stopButton).setImageResource(R.drawable.ic_media_stop_pressed);
+                getImageButtonById(R.id.stopButton).setEnabled(false);
             }
         }
 
@@ -247,9 +250,9 @@ public class MainActivity extends Activity {
             boolean status = intent.getBooleanExtra(Const.STATUS, false);
             Log.d("ConIn:", String.valueOf(status));
             if (status) {
-                getImageViewById(R.id.imageView1).setImageResource(R.drawable.ic_icon_indicator_green);
+                getImageViewById(R.id.connectivityIndicator).setImageResource(R.drawable.ic_icon_indicator_green);
             } else {
-                getImageViewById(R.id.imageView1).setImageResource(R.drawable.ic_icon_indicator_red);
+                getImageViewById(R.id.connectivityIndicator).setImageResource(R.drawable.ic_icon_indicator_red);
             }
         }
     };
@@ -327,56 +330,56 @@ public class MainActivity extends Activity {
     private OnClickListener playButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            Communicator.getInstance().onActivityButtonClicked(ClickSource.PlayPause);
+            Communicator.getInstance().activityButtonClicked(ClickSource.PlayPause);
                                                                                              }
     };
 
     private OnClickListener previousButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            Communicator.getInstance().onActivityButtonClicked(ClickSource.Previous);
+            Communicator.getInstance().activityButtonClicked(ClickSource.Previous);
         }
     };
 
     private OnClickListener nextButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            Communicator.getInstance().onActivityButtonClicked(ClickSource.Next);
+            Communicator.getInstance().activityButtonClicked(ClickSource.Next);
         }
     };
 
     private OnClickListener stopButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            Communicator.getInstance().onActivityButtonClicked(ClickSource.Stop);
+            Communicator.getInstance().activityButtonClicked(ClickSource.Stop);
         }
     };
 
     private OnClickListener muteButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            Communicator.getInstance().onActivityButtonClicked(ClickSource.Mute);
+            Communicator.getInstance().activityButtonClicked(ClickSource.Mute);
         }
     };
 
     private OnClickListener scrobbleButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            Communicator.getInstance().onActivityButtonClicked(ClickSource.Scrobble);
+            Communicator.getInstance().activityButtonClicked(ClickSource.Scrobble);
         }
     };
 
     private OnClickListener shuffleButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            Communicator.getInstance().onActivityButtonClicked(ClickSource.Shuffle);
+            Communicator.getInstance().activityButtonClicked(ClickSource.Shuffle);
         }
     };
 
     private OnClickListener repeatButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            Communicator.getInstance().onActivityButtonClicked(ClickSource.Repeat);
+            Communicator.getInstance().activityButtonClicked(ClickSource.Repeat);
         }
     };
 
@@ -394,7 +397,7 @@ public class MainActivity extends Activity {
 
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser)
-            Communicator.getInstance().onSeekBarChanged(seekBar.getProgress());
+            Communicator.getInstance().seekBarChanged(seekBar.getProgress());
         }
     };
 

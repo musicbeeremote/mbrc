@@ -33,7 +33,7 @@ public class PlaylistActivity extends ListActivity {
 	private class RequestPlaylistTask extends TimerTask {
 		@Override
 		public void run() {
-			Communicator.getInstance().onActivityButtonClicked(ClickSource.Playlist);
+			Communicator.getInstance().activityButtonClicked(ClickSource.Playlist);
 			Log.d("PlayList", "Request send");
 		}
 	}
@@ -56,7 +56,7 @@ public class PlaylistActivity extends ListActivity {
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		MusicTrack track = (MusicTrack) getListView().getItemAtPosition(position);
-		Communicator.getInstance().onPlayNowRequest(track.getTitle());
+		Communicator.getInstance().playNowRequest(track.getTitle());
 	}
 
 	@Override

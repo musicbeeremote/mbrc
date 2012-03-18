@@ -34,6 +34,7 @@ public class ConnectivityHandler extends Service {
     private RequestHandler requestHandler;
 
     private DelayTimer _connectionTimer;
+    private DelayTimer _statusUpdateTimer;
 
 
     private class connectSocket implements Runnable {
@@ -115,6 +116,7 @@ public class ConnectivityHandler extends Service {
     public void onCreate() {
         super.onCreate();
         _connectionTimer = new DelayTimer(1000);
+        _statusUpdateTimer = new DelayTimer(2000);
         ReplyHandler.getInstance().setContext(getApplicationContext());
 
         _numberOfTries = 0; // Initialize the connection retry counter.
@@ -125,7 +127,14 @@ public class ConnectivityHandler extends Service {
 
         Communicator.getInstance().setServerCommunicationEventListener(serverCommunicationEvent);
         _connectionTimer.setTimerFinishEventListener(timerFinishEvent);
+        _statusUpdateTimer.setTimerFinishEventListener(statusUpdateTimerFinishEvent);
     }
+
+    TimerFinishEvent statusUpdateTimerFinishEvent = new TimerFinishEvent() {
+        public void onTimerFinish() {
+            sendConnectionIntent(socketExistsAndIsConnected());
+        }
+    };
 
     private ServerCommunicationEvent serverCommunicationEvent = new ServerCommunicationEvent() {
         public void onRequestConnect() {
@@ -134,7 +143,7 @@ public class ConnectivityHandler extends Service {
 
         public void onRequestConnectionStatus() {
             Log.d("ConIn", String.valueOf(socketExistsAndIsConnected()));
-            sendConnectionIntent(socketExistsAndIsConnected());
+                    _statusUpdateTimer.start();
         }
     };
 

@@ -1,7 +1,5 @@
 package kelsos.mbremote.Network;
 
-import java.util.Timer;
-import java.util.TimerTask;
 
 import kelsos.mbremote.Messaging.ClickSource;
 import kelsos.mbremote.Messaging.Communicator;
@@ -13,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Others.DelayTimer;
 import kelsos.mbremote.Others.SettingsManager;
