@@ -1,109 +1,96 @@
 package kelsos.mbremote.Network;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import kelsos.mbremote.Messaging.AppNotificationManager;
-import kelsos.mbremote.Messaging.Communicator;
-import kelsos.mbremote.Messaging.ServerCommunicationEvent;
-import kelsos.mbremote.Others.Const;
-import kelsos.mbremote.Others.SettingsManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import kelsos.mbremote.Messaging.AppNotificationManager;
+import kelsos.mbremote.Messaging.Communicator;
+import kelsos.mbremote.Messaging.ServerCommunicationEvent;
+import kelsos.mbremote.Others.Const;
+import kelsos.mbremote.Others.DelayTimer;
+import kelsos.mbremote.Others.SettingsManager;
+
+import java.io.*;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+
+import static kelsos.mbremote.Others.DelayTimer.TimerFinishEvent;
 
 public class ConnectivityHandler extends Service {
 
-    private Timer _connectionTimer;
-	private ConnectorTimer _ctt;
-	private static int _numberOfTries;
-	private static final int MAX_RETRIES = 4;
-	private static boolean _connectionTimerIsRunning;
+    private static int _numberOfTries;
+    public static final int MAX_RETRIES = 4;
+
+    private Socket _cSocket;
+    private PrintWriter _output;
+
+    private final IBinder _mBinder = new LocalBinder();
+
+    private Thread _connectionThread;
+    private RequestHandler requestHandler;
+
+    private DelayTimer _connectionTimer;
 
 
-	private Socket _cSocket;
-	private PrintWriter _output;
+    private class connectSocket implements Runnable {
 
-	private final IBinder _mBinder = new LocalBinder();
+        public void run() {
+            Log.d("ConnectivityHandler", "connectSocket Running");
+            SocketAddress socketAddress = SettingsManager.getInstance().getSocketAddress();
+            if (null == socketAddress) return;
+            BufferedReader _input;
+            try {
+                _cSocket = new Socket();
+                _cSocket.connect(socketAddress);
+                _output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(_cSocket.getOutputStream())), true);
+                _input = new BufferedReader(new InputStreamReader(_cSocket.getInputStream()));
+                requestHandler.requestPlayerData();
+                sendConnectionIntent(true);
 
-	private Thread _connectionThread;
-	private RequestHandler requestHandler;
-
-
-	private class connectSocket implements Runnable {
-
-		public void run() {
-			Log.d("ConnectivityHandler", "connectSocket Running");
-			SocketAddress socketAddress = SettingsManager.getInstance().getSocketAddress();
-			if (null == socketAddress)
-				return;
-			if (_connectionTimerIsRunning)
-				stopConnectionTimer();
-			BufferedReader _input;
-			try {
-				_cSocket = new Socket();
-				_cSocket.connect(socketAddress);
-				_output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(_cSocket.getOutputStream())),true);
-				_input = new BufferedReader(new InputStreamReader(_cSocket.getInputStream()));
-				if (!RequestHandler.isPollingTimerRunning())
-					requestHandler.startUpdateTimer();
-				sendConnectionIntent(true);
-
-				while (_cSocket.isConnected()) {
-					try {
-						final String serverAnswer = _input.readLine();
-						ReplyHandler.getInstance().answerProcessor(serverAnswer);
-					} catch (IOException e) {
-						requestHandler.stopUpdateTimer();
-						_input.close();
-						_cSocket.close();
-						throw e;
-					}
-				}
-			} catch (SocketTimeoutException e) {
+                while (_cSocket.isConnected()) {
+                    try {
+                        final String serverAnswer = _input.readLine();
+                        ReplyHandler.getInstance().answerProcessor(serverAnswer);
+                    } catch (IOException e) {
+                        _input.close();
+                        _cSocket.close();
+                        throw e;
+                    }
+                }
+            } catch (SocketTimeoutException e) {
                 final String message = "Connection timed out";
                 AppNotificationManager.getInstance().showToastMessage(getApplicationContext(), message);
             } catch (SocketException e) {
-				final String exceptionMessage = e.toString().substring(26);
+                final String exceptionMessage = e.toString().substring(26);
                 AppNotificationManager.getInstance().showToastMessage(getApplicationContext(), exceptionMessage);
             } catch (IOException e) {
-				Log.e("ConnectivityHandler", "Listening Loop", e);
-			} catch (NullPointerException e) {
-				Log.d("ConnectivityHandler", "NullPointer");
-			} finally {
-				if (_output != null) {
-					_output.flush();
-					_output.close();
-				}
-				_cSocket = null;
+                Log.e("ConnectivityHandler", "Listening Loop", e);
+            } catch (NullPointerException e) {
+                Log.d("ConnectivityHandler", "NullPointer");
+            } finally {
+                if (_output != null) {
+                    _output.flush();
+                    _output.close();
+                }
+                _cSocket = null;
 
-				sendConnectionIntent(false);
+                sendConnectionIntent(false);
 
-				requestHandler.requestPlayerData();
-				Log.d("ConnectivityHandler", "ListeningThread terminated");
-				attemptToStartSocketThread(Input.system);
+                requestHandler.requestPlayerData();
+                Log.d("ConnectivityHandler", "ListeningThread terminated");
+                attemptToStartSocketThread(Input.system);
 
-			}
-		}
-
-
-	}
+            }
+        }
+    }
 
 
     /**
-     *  Sends a connection intent to the Receivers listening, containing the connection status.
+     * Sends a connection intent to the Receivers listening, containing the connection status.
      */
     private void sendConnectionIntent(boolean status) {
         Intent connectionIntent = new Intent();
@@ -112,140 +99,120 @@ public class ConnectivityHandler extends Service {
         sendBroadcast(connectionIntent);
     }
 
-	private class ConnectorTimer extends TimerTask {
-
-		@Override
-		public void run() {
-			startSocketThread();
-			_numberOfTries++;
-		}
-
-	}
-
     public class LocalBinder extends Binder {
         public ConnectivityHandler getService() {
             return ConnectivityHandler.this;
         }
     }
 
-	@Override
-	public IBinder onBind(Intent intent) {
+    @Override
+    public IBinder onBind(Intent intent) {
         sendConnectionIntent(socketExistsAndIsConnected());
-		return _mBinder;
-	}
+        return _mBinder;
+    }
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		ReplyHandler.getInstance().setContext(getApplicationContext());
-		_numberOfTries = 0; // Initialize the connection retry counter.
-		requestHandler = new RequestHandler(this);
-		requestHandler.requestPlayerData();
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        _connectionTimer = new DelayTimer(1000);
+        ReplyHandler.getInstance().setContext(getApplicationContext());
+
+        _numberOfTries = 0; // Initialize the connection retry counter.
+        requestHandler = new RequestHandler(this);
+        requestHandler.requestPlayerData();
         // Initialize the settings manager context
         SettingsManager.getInstance().setContext(getApplicationContext());
 
-        Communicator.getInstance().setServerCommunicationEventListener(new ServerCommunicationEvent() {
-            public void onRequestConnect() {
-                attemptToStartSocketThread(Input.user);
-            }
+        Communicator.getInstance().setServerCommunicationEventListener(serverCommunicationEvent);
+        _connectionTimer.setTimerFinishEventListener(timerFinishEvent);
+    }
 
-            public void onRequestConnectionStatus() {
-        	Log.d("ConIn",String.valueOf(socketExistsAndIsConnected()));
-                sendConnectionIntent(socketExistsAndIsConnected());
-            }
-        });
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		try {
-			// On destroy stop the Polling Timer and close the socket.
-			requestHandler.stopUpdateTimer();
-			_cSocket.close();
-		} catch (IOException e) {
-			Log.e("Socket Close", "Failure", e);
-		}
-		_cSocket = null;
-	}
-
-	@Override
-	public void onStart(Intent intent, int startId) {
-		super.onStart(intent, startId);
-		attemptToStartSocketThread(Input.system);
-	}
-
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		return super.onStartCommand(intent, flags, startId);
-
-	}
-
-	protected void sendData(String data) {
-		try {
-			if (socketExistsAndIsConnected())
-				_output.println(data + Const.NEWLINE);
-		} catch (Exception ignored) {
-		}
-	}
-
-	/**
-	 * This function starts the Thread that handles the socket connection.
-	 */
-	private void startSocketThread() {
-		if (socketExistsAndIsConnected()||connectionThreadExistsAndIsAlive())
-			return;
-        else if (!socketExistsAndIsConnected()&&connectionThreadExistsAndIsAlive())
-        {
-            _connectionThread.destroy();
-            _connectionThread=null;
+    private ServerCommunicationEvent serverCommunicationEvent = new ServerCommunicationEvent() {
+        public void onRequestConnect() {
+            attemptToStartSocketThread(Input.user);
         }
-		Runnable connect = new connectSocket();
-		_connectionThread = new Thread(connect);
-		_connectionThread.start();
-		Log.d("ConnectivityHandler", "startSocketThread();");
-	}
+
+        public void onRequestConnectionStatus() {
+            Log.d("ConIn", String.valueOf(socketExistsAndIsConnected()));
+            sendConnectionIntent(socketExistsAndIsConnected());
+        }
+    };
+
+    private TimerFinishEvent timerFinishEvent = new TimerFinishEvent() {
+        public void onTimerFinish() {
+            startSocketThread();
+            _numberOfTries++;
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        try {
+            _cSocket.close();
+        } catch (IOException e) {
+            Log.e("Socket Close", "Failure", e);
+        }
+        _cSocket = null;
+    }
+
+    @Override
+    public void onStart(Intent intent, int startId) {
+        super.onStart(intent, startId);
+        attemptToStartSocketThread(Input.system);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return super.onStartCommand(intent, flags, startId);
+
+    }
+
+    protected void sendData(String data) {
+        try {
+            if (socketExistsAndIsConnected())
+                _output.println(data + Const.NEWLINE);
+        } catch (Exception ignored) {
+        }
+    }
+
+    /**
+     * This function starts the Thread that handles the socket connection.
+     */
+    private void startSocketThread() {
+        if (socketExistsAndIsConnected() || connectionThreadExistsAndIsAlive())
+            return;
+        else if (!socketExistsAndIsConnected() && connectionThreadExistsAndIsAlive()) {
+            _connectionThread.destroy();
+            _connectionThread = null;
+        }
+        Runnable connect = new connectSocket();
+        _connectionThread = new Thread(connect);
+        _connectionThread.start();
+        Log.d("ConnectivityHandler", "startSocketThread();");
+    }
 
     private boolean connectionThreadExistsAndIsAlive() {
         return _connectionThread != null && _connectionThread.isAlive();
     }
 
     public void attemptToStartSocketThread(Input input) {
-		if (socketExistsAndIsConnected()) return;
-		if (input == Input.user) {
-			_numberOfTries = 0;
-			if (_connectionTimerIsRunning) stopConnectionTimer();
-		}
-		if ((_numberOfTries > MAX_RETRIES) && _connectionTimerIsRunning) {
-			stopConnectionTimer();
-		} else if ((_numberOfTries < MAX_RETRIES) && !_connectionTimerIsRunning)
-			startConnectionTimer();
-	}
+        if (socketExistsAndIsConnected()) return;
+        if (input == Input.user) {
+            _numberOfTries = 0;
+            if (_connectionTimer.isRunning()) _connectionTimer.stop();
+        }
+        if ((_numberOfTries > MAX_RETRIES) && _connectionTimer.isRunning()) {
+            _connectionTimer.stop();
+        } else if ((_numberOfTries < MAX_RETRIES) && !_connectionTimer.isRunning())
+            _connectionTimer.start();
+    }
 
     private boolean socketExistsAndIsConnected() {
         return _cSocket != null && _cSocket.isConnected();
     }
 
-    private void startConnectionTimer() {
-		if (_connectionTimerIsRunning) return;
-		if (_connectionTimer == null) _connectionTimer = new Timer(true);
-		if (_ctt == null) _ctt = new ConnectorTimer();
-		_connectionTimerIsRunning = true;
-		_connectionTimer.schedule(_ctt, 1000);
-
-		Log.d("ConnectivityHandler", "Connection Timer Started");
-	}
-
-	private void stopConnectionTimer() {
-		_ctt.cancel();
-		_ctt = null;
-		_connectionTimer.cancel();
-		_connectionTimer = null;
-		_connectionTimerIsRunning = false;
-		Log.d("ConnectivityHandler", "Connection Timer Stopped");
-	}
-
-	public enum Input {
-		user, system
-	}
+    public enum Input {
+        user, system
+    }
 }

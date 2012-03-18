@@ -15,78 +15,86 @@ import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import kelsos.mbremote.Others.Const;
+import kelsos.mbremote.Others.DelayTimer;
 import kelsos.mbremote.Others.SettingsManager;
+
+import static kelsos.mbremote.Others.DelayTimer.TimerFinishEvent;
 
 public class RequestHandler {
 	private final ConnectivityHandler connectivityHandler;
-	private static boolean _isUpdateTimerRunning;
-	private static boolean _requestPlayerData;
-	private Timer _updateTimer;
-	private PollingTimerTask _utt;
+    private DelayTimer _updateTimer;
+
 
 	public RequestHandler(ConnectivityHandler connectivityHandler) {
 		this.connectivityHandler = connectivityHandler;
 		installFilter();
-
+        _updateTimer = new DelayTimer(2000);
         // Event Listener for the communicator events
-        Communicator.getInstance().setUserInterfaceEventsListener(new UserInterfaceEvent() {
-            public void onActivityButtonClicked(ClickSource clickSource) {
-                switch (clickSource) {
-
-                    case PlayPause:
-                        requestAction(PlayerAction.PlayPause);
-                        break;
-                    case Stop:
-                        requestAction(PlayerAction.Stop);
-                        break;
-                    case Next:
-                        requestAction(PlayerAction.Next);
-                        break;
-                    case Previous:
-                        requestAction(PlayerAction.Previous);
-                        break;
-                    case Repeat:
-                        requestAction(PlayerAction.Repeat, Const.TOGGLE);
-                        break;
-                    case Shuffle:
-                        requestAction(PlayerAction.Shuffle, Const.TOGGLE);
-                        break;
-                    case Scrobble:
-                        requestAction(PlayerAction.Scrobble, Const.TOGGLE);
-                        break;
-                    case Mute:
-                        requestAction(PlayerAction.Mute, Const.TOGGLE);
-                        break;
-                    case Lyrics:
-                        requestAction(PlayerAction.Lyrics);
-                        break;
-                    case Refresh:
-                        requestPlayerData();
-                        break;
-                    case Playlist:
-                        requestAction(PlayerAction.Playlist);
-                        break;
-                }
-            }
-
-            public void onSeekBarChanged(int volume) {
-                requestAction(PlayerAction.Volume, Integer.toString(volume));
-            }
-
-            public void onPlayNowRequest(String track) {
-                requestAction(PlayerAction.PlayNow, track);
-            }
-        });
+        Communicator.getInstance().setUserInterfaceEventsListener(userInterfaceEvent);
+        _updateTimer.setTimerFinishEventListener(timerFinishEvent);
 	}
 
-	public static boolean isPollingTimerRunning() {
-		return _isUpdateTimerRunning;
-	}
+    private UserInterfaceEvent userInterfaceEvent =  new UserInterfaceEvent() {
+        public void onActivityButtonClicked(ClickSource clickSource) {
+            switch (clickSource) {
+
+                case PlayPause:
+                    requestAction(PlayerAction.PlayPause);
+                    break;
+                case Stop:
+                    requestAction(PlayerAction.Stop);
+                    break;
+                case Next:
+                    requestAction(PlayerAction.Next);
+                    break;
+                case Previous:
+                    requestAction(PlayerAction.Previous);
+                    break;
+                case Repeat:
+                    requestAction(PlayerAction.Repeat, Const.TOGGLE);
+                    break;
+                case Shuffle:
+                    requestAction(PlayerAction.Shuffle, Const.TOGGLE);
+                    break;
+                case Scrobble:
+                    requestAction(PlayerAction.Scrobble, Const.TOGGLE);
+                    break;
+                case Mute:
+                    requestAction(PlayerAction.Mute, Const.TOGGLE);
+                    break;
+                case Lyrics:
+                    requestAction(PlayerAction.Lyrics);
+                    break;
+                case Refresh:
+                    requestPlayerData();
+                    break;
+                case Playlist:
+                    requestAction(PlayerAction.Playlist);
+                    break;
+            }
+        }
+
+        public void onSeekBarChanged(int volume) {
+            requestAction(PlayerAction.Volume, Integer.toString(volume));
+        }
+
+        public void onPlayNowRequest(String track) {
+            requestAction(PlayerAction.PlayNow, track);
+        }
+    };
+
+    private TimerFinishEvent timerFinishEvent = new TimerFinishEvent() {
+
+        public void onTimerFinish() {
+            requestAction(PlayerAction.SongCover);
+            requestAction(PlayerAction.SongInformation);
+            requestAction(PlayerAction.PlayerStatus);
+        }
+    };
 
 	public void requestPlayerData() {
-		_requestPlayerData = true;
-        if(!_isUpdateTimerRunning)
-            startUpdateTimer();
+        if(!_updateTimer.isRunning())
+            _updateTimer.start();
 	}
 
 	public void requestAction(ProtocolHandler.PlayerAction action, String actionContent) {
@@ -95,48 +103,6 @@ public class RequestHandler {
 
 	public void requestAction(ProtocolHandler.PlayerAction action) {
 		connectivityHandler.sendData(ProtocolHandler.getActionString(action, ""));
-	}
-
-    /**
-     * Sends request for Player Status, Song Information and Song Cover data.
-     */
-	void requestPlayerDataUpdate() {
-		if (_requestPlayerData) {
-			requestAction(PlayerAction.SongCover);
-			requestAction(PlayerAction.SongInformation);
-			requestAction(PlayerAction.PlayerStatus);
-			_requestPlayerData = false;
-			stopUpdateTimer();
-		}
-	}
-
-    /**
-     * Schedules an update request that will be send after 2 seconds.
-     */
-	void startUpdateTimer() {
-		if (_updateTimer == null) _updateTimer = new Timer(true);
-		if (_utt == null) _utt = new PollingTimerTask();
-		_updateTimer.schedule(_utt, 2000);
-		_isUpdateTimerRunning = true;
-	}
-
-    /**
-     * Stops the update request timer and prepares it for reuse.
-     */
-	void stopUpdateTimer() {
-		_utt.cancel();
-		_utt = null;
-		_updateTimer.cancel();
-		_updateTimer = null;
-		_isUpdateTimerRunning = false;
-		Log.d("ConnectivityHandler", "stopUpdateTimer();");
-	}
-
-	private class PollingTimerTask extends TimerTask {
-		@Override
-		public void run() {
-			requestPlayerDataUpdate();
-		}
 	}
 
 	private final BroadcastReceiver nmBroadcastReceiver = new BroadcastReceiver() {
