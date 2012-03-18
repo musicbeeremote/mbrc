@@ -20,10 +20,9 @@
             android:src="@drawable/ic_image_no_cover" />
         <LinearLayout
             android:id="@+id/extraMediaButtonLinearLayout"
-            android:layout_width="43dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
             android:orientation="vertical" >
             <ImageView
                 android:id="@+id/imageView1"
@@ -67,11 +66,6 @@
                 android:src="@drawable/ic_media_mute_full" />
         </LinearLayout>
     </LinearLayout>
-    <RelativeLayout
-        android:id="@+id/ratingRelativeLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </RelativeLayout>
     <TableLayout
         android:id="@+id/volumeTableLayout"
         android:layout_width="match_parent"

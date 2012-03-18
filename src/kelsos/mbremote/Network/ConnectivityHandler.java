@@ -13,15 +13,14 @@ import java.net.SocketTimeoutException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import kelsos.mbremote.AppNotificationManager;
 import kelsos.mbremote.Const;
 import kelsos.mbremote.SettingsManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 public class ConnectivityHandler extends Service {
 
@@ -31,7 +30,7 @@ public class ConnectivityHandler extends Service {
 	private static final int MAX_RETRIES = 4;
 	private static boolean _connectionTimerIsRunning;
 
-	private Handler _nmHandler;
+
 	private Socket _cSocket;
 	private PrintWriter _output;
 
@@ -39,6 +38,7 @@ public class ConnectivityHandler extends Service {
 
 	private Thread _connectionThread;
 	private RequestHandler requestHandler;
+
 
 	private class connectSocket implements Runnable {
 
@@ -72,10 +72,10 @@ public class ConnectivityHandler extends Service {
 				}
 			} catch (SocketTimeoutException e) {
                 final String message = "Connection timed out";
-                postToastMessage(message);
+                AppNotificationManager.getInstance().showToastMessage(getApplicationContext(), message);
             } catch (SocketException e) {
 				final String exceptionMessage = e.toString().substring(26);
-                postToastMessage(exceptionMessage);
+                AppNotificationManager.getInstance().showToastMessage(getApplicationContext(), exceptionMessage);
             } catch (IOException e) {
 				Log.e("ConnectivityHandler", "Listening Loop", e);
 			} catch (NullPointerException e) {
@@ -89,7 +89,7 @@ public class ConnectivityHandler extends Service {
 
 				sendConnectionIntent(false);
 
-				requestHandler.coverAndInfoOutdated();
+				requestHandler.requestPlayerData();
 				Log.d("ConnectivityHandler", "ListeningThread terminated");
 				attemptToStartSocketThread(Input.system);
 
@@ -98,19 +98,6 @@ public class ConnectivityHandler extends Service {
 
 
 	}
-
-    /**
-     * Given a string that contains a message the function will display the message
-     * in a toast window.
-     * @param message The message that will be displayed.
-     */
-    private void postToastMessage(final String message) {
-        _nmHandler.post(new Runnable() {
-            public void run() {
-                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     /**
      *  Sends a connection intent to the Receivers listening, containing the connection status.
@@ -122,12 +109,6 @@ public class ConnectivityHandler extends Service {
         sendBroadcast(connectionIntent);
     }
 
-	public class LocalBinder extends Binder {
-		public ConnectivityHandler getService() {
-			return ConnectivityHandler.this;
-		}
-	}
-
 	private class ConnectorTimer extends TimerTask {
 
 		@Override
@@ -137,6 +118,12 @@ public class ConnectivityHandler extends Service {
 		}
 
 	}
+
+    public class LocalBinder extends Binder {
+        public ConnectivityHandler getService() {
+            return ConnectivityHandler.this;
+        }
+    }
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -150,7 +137,7 @@ public class ConnectivityHandler extends Service {
 		ReplyHandler.getInstance().setContext(getApplicationContext());
 		_numberOfTries = 0; // Initialize the connection retry counter.
 		requestHandler = new RequestHandler(this);
-		requestHandler.coverAndInfoOutdated();
+		requestHandler.requestPlayerData();
         // Initialize the settings manager context
         SettingsManager.getInstance().setContext(getApplicationContext());
 	}
@@ -176,8 +163,6 @@ public class ConnectivityHandler extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		_nmHandler = new Handler();
-		requestHandler.coverAndInfoOutdated();
 		return super.onStartCommand(intent, flags, startId);
 
 	}
@@ -212,21 +197,15 @@ public class ConnectivityHandler extends Service {
     }
 
     public void attemptToStartSocketThread(Input input) {
-		if (socketExistsAndIsConnected())
-			return;
+		if (socketExistsAndIsConnected()) return;
 		if (input == Input.user) {
 			_numberOfTries = 0;
-			if (_connectionTimerIsRunning)
-				stopConnectionTimer();
+			if (_connectionTimerIsRunning) stopConnectionTimer();
 		}
 		if ((_numberOfTries > MAX_RETRIES) && _connectionTimerIsRunning) {
 			stopConnectionTimer();
-			Log.d("ConnectivityHandler",
-					"attemptToStartSocketThread() Max Tries");
 		} else if ((_numberOfTries < MAX_RETRIES) && !_connectionTimerIsRunning)
 			startConnectionTimer();
-		Log.d("ConnectivityHandler", "attemptToStartSocketThread() Current: "
-				+ _numberOfTries);
 	}
 
     private boolean socketExistsAndIsConnected() {
@@ -234,12 +213,9 @@ public class ConnectivityHandler extends Service {
     }
 
     private void startConnectionTimer() {
-		if (_connectionTimerIsRunning)
-			return;
-		if (_connectionTimer == null)
-			_connectionTimer = new Timer(true);
-		if (_ctt == null)
-			_ctt = new ConnectorTimer();
+		if (_connectionTimerIsRunning) return;
+		if (_connectionTimer == null) _connectionTimer = new Timer(true);
+		if (_ctt == null) _ctt = new ConnectorTimer();
 		_connectionTimerIsRunning = true;
 		_connectionTimer.schedule(_ctt, 1000);
 

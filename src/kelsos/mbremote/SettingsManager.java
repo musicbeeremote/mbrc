@@ -35,8 +35,7 @@ public class SettingsManager {
 		String server_hostname = sharedPreferences.getString(context.getString(R.string.settings_server_hostname), null);
 		String server_port_string = sharedPreferences.getString(context.getString(R.string.settings_server_port), null);
 		if (notNullOrEmpty(server_hostname) || notNullOrEmpty(server_port_string)) {
-			Looper.prepare();
-			Toast.makeText(context, R.string.network_manager_check_hostname_or_port, Toast.LENGTH_SHORT).show();
+            AppNotificationManager.getInstance().showToastMessage(context, R.string.network_manager_check_hostname_or_port);
 			return null;
 		}
 		int server_port = Integer.parseInt(server_port_string);

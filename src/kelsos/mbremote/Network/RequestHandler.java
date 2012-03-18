@@ -57,7 +57,7 @@ public class RequestHandler {
                         requestAction(PlayerAction.Lyrics);
                         break;
                     case Refresh:
-                        coverAndInfoOutdated();
+                        requestPlayerData();
                         break;
                     case Playlist:
                         requestAction(PlayerAction.Playlist);
@@ -79,7 +79,7 @@ public class RequestHandler {
 		return _isUpdateTimerRunning;
 	}
 
-	public void coverAndInfoOutdated() {
+	public void requestPlayerData() {
 		_requestPlayerData = true;
         if(!_isUpdateTimerRunning)
             startUpdateTimer();

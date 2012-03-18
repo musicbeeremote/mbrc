@@ -271,13 +271,7 @@ public class MainActivity extends Activity {
         unregisterReceiver(mReceiver);
     }
 
-    /**
-     *  Using an id of the string stored in the strings XML this function
-     *  displays a toast window.
-     */
-    private void showToastWindow(int id) {
-        Toast.makeText(getApplicationContext(), id, Toast.LENGTH_SHORT).show();
-    }
+
 
     /**
      *  When this function is called is either displaying a "No Lyrics found" toast
@@ -286,7 +280,7 @@ public class MainActivity extends Activity {
      */
     private void processLyricsData() {
         if (ReplyHandler.getInstance().getSongLyrics()=="") {
-            showToastWindow(R.string.no_lyrics_found);
+            AppNotificationManager.getInstance().showToastMessage(getApplicationContext(), R.string.no_lyrics_found);
             return;
         }
         LayoutInflater layoutInflater = (LayoutInflater) MainActivity.this
