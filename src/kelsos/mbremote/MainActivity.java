@@ -34,6 +34,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         RegisterListeners();
+        AppNotificationManager.getInstance().setContext(getBaseContext());
         startService(new Intent(MainActivity.this, ConnectivityHandler.class));
         registerIntentFilters();
         userChangingVolume = false;
@@ -152,6 +153,7 @@ public class MainActivity extends Activity {
         getImageButtonById(R.id.nextButton).setOnClickListener(nextButtonListener);
         getSeekBarById(R.id.volumeSlider).setOnSeekBarChangeListener(volumeChangeListener);
         getImageButtonById(R.id.stopButton).setOnClickListener(stopButtonListener);
+        getImageButtonById(R.id.stopButton).setEnabled(false);
         getImageButtonById(R.id.muteButton).setOnClickListener(muteButtonListener);
         getImageButtonById(R.id.scrobbleButton).setOnClickListener(scrobbleButtonListener);
         getImageButtonById(R.id.shuffleButton).setOnClickListener(shuffleButtonListener);
@@ -290,7 +292,7 @@ public class MainActivity extends Activity {
      */
     private void processLyricsData() {
         if (ReplyHandler.getInstance().getSongLyrics()=="") {
-            AppNotificationManager.getInstance().showToastMessage(getApplicationContext(), R.string.no_lyrics_found);
+            AppNotificationManager.getInstance().showToastMessage(R.string.no_lyrics_found);
             return;
         }
         LayoutInflater layoutInflater = (LayoutInflater) MainActivity.this

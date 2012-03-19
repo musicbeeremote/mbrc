@@ -64,10 +64,10 @@ public class ConnectivityHandler extends Service {
                 }
             } catch (SocketTimeoutException e) {
                 final String message = "Connection timed out";
-                AppNotificationManager.getInstance().showToastMessage(getApplicationContext(), message);
+                AppNotificationManager.getInstance().showToastMessage(message);
             } catch (SocketException e) {
                 final String exceptionMessage = e.toString().substring(26);
-                AppNotificationManager.getInstance().showToastMessage(getApplicationContext(), exceptionMessage);
+                AppNotificationManager.getInstance().showToastMessage(exceptionMessage);
             } catch (IOException e) {
                 Log.e("ConnectivityHandler", "Listening Loop", e);
             } catch (NullPointerException e) {
