@@ -17,6 +17,10 @@ public class AppNotificationManager {
         this.context = context;
     }
 
+    /**
+     * Returnts the single instance of the AppNotificationManager.
+     * @return
+     */
     public static AppNotificationManager getInstance() {
         return ourInstance;
     }
@@ -24,7 +28,10 @@ public class AppNotificationManager {
     private AppNotificationManager() {
 
     }
-    
+
+    /**
+     * An Asynctask that is used to display the toast message.
+     */
     private class ToastMessageTask extends AsyncTask<String,String,String>
     {
         String toastMessage;
@@ -61,7 +68,13 @@ public class AppNotificationManager {
         String data = context.getString(id);
         new ToastMessageTask().execute(data);
     }
-    
+
+    /**
+     * Given a message, it displays the message on a toast window.
+     * If the AppNotification manager is not properly initialized
+     * nothing happens.
+     * @param message
+     */
     public void showToastMessage(final String message)
     {
         if(context==null) return;
