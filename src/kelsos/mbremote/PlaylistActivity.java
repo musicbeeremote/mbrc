@@ -19,8 +19,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import kelsos.mbremote.Others.Const;
+import kelsos.mbremote.Others.DelayTimer;
 
 public class PlaylistActivity extends ListActivity {
+
+    private DelayTimer delayTimer;
 
 	private void updateListData() {
 		PlaylistArrayAdapter adapter = new PlaylistArrayAdapter(this,
@@ -30,14 +33,6 @@ public class PlaylistActivity extends ListActivity {
 		// ReplyHandler.getInstance().clearNowPlayingList();
 	}
 
-	private class RequestPlaylistTask extends TimerTask {
-		@Override
-		public void run() {
-			Communicator.getInstance().activityButtonClicked(ClickSource.Playlist);
-			Log.d("PlayList", "Request send");
-		}
-	}
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -45,12 +40,18 @@ public class PlaylistActivity extends ListActivity {
 		IntentFilter plFilter = new IntentFilter();
 		plFilter.addAction(Const.PLAYLIST_DATA);
 		registerReceiver(mReceiver, plFilter);
-		Timer reqTimer = new Timer();
-		RequestPlaylistTask rpt = new RequestPlaylistTask();
-		reqTimer.schedule(rpt, 1000);
-		Log.d("Playlist", "oncreate");
+        delayTimer = new DelayTimer(1200);
+        delayTimer.setTimerFinishEventListener(timerFinishEvent);
+        delayTimer.start();
 
 	}
+
+    DelayTimer.TimerFinishEvent timerFinishEvent = new DelayTimer.TimerFinishEvent() {
+
+        public void onTimerFinish() {
+                    Communicator.getInstance().activityButtonClicked(ClickSource.Playlist);
+        }
+    };
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {

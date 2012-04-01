@@ -42,7 +42,9 @@
     </ScrollView>
     <Button
         android:id="@+id/popup_close_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="56dp"
+        android:layout_height="11dp"
+        android:layout_weight="0.02"
+        android:background="@drawable/ic_button_single_skin"
         android:text="@string/generic_string_close" />
 </LinearLayout>

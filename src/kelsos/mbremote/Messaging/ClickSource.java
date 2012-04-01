@@ -12,5 +12,6 @@ public enum ClickSource
     Mute,
     Lyrics,
     Refresh,
-    Playlist
+    Playlist,
+    Initialize
 }

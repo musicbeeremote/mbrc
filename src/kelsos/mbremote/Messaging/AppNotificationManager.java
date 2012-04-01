@@ -2,10 +2,7 @@ package kelsos.mbremote.Messaging;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.widget.Toast;
-
-import java.nio.channels.AsynchronousCloseException;
 
 public class AppNotificationManager {
     private static AppNotificationManager ourInstance = new AppNotificationManager();
@@ -18,7 +15,7 @@ public class AppNotificationManager {
     }
 
     /**
-     * Returnts the single instance of the AppNotificationManager.
+     * Returns the single instance of the AppNotificationManager.
      * @return
      */
     public static AppNotificationManager getInstance() {

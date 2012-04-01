@@ -40,6 +40,7 @@ public class MainActivity extends Activity {
         userChangingVolume = false;
         registerForContextMenu(findViewById(R.id.playingTrackLayout));
         Communicator.getInstance().activityButtonClicked(ClickSource.Refresh);
+        Communicator.getInstance().activityButtonClicked(ClickSource.Initialize);
         Communicator.getInstance().requestConnectionStatus();
 
     }
@@ -99,9 +100,6 @@ public class MainActivity extends Activity {
                 startActivity(playlistIntent);
             case R.id.main_menu_connect:
                 Communicator.getInstance().requestConnect();
-            case R.id.main_menu_service_restart:
-                //mBoundService.stopSelf();
-                //mBoundService.startService(new Intent(MainActivity.this, ConnectivityHandler.class));
             default:
                 return super.onMenuItemSelected(featureId, item);
         }
@@ -147,6 +145,9 @@ public class MainActivity extends Activity {
         return imageView;
     }
 
+    /**
+     * Registers the listeners for the interface elements used for interaction.
+     */
     private void RegisterListeners() {
         getImageButtonById(R.id.playPauseButton).setOnClickListener(playButtonListener);
         getImageButtonById(R.id.previousButton).setOnClickListener(previousButtonListener);

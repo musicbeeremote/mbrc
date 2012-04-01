@@ -1,7 +1,10 @@
 package kelsos.mbremote.Network;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -11,6 +14,7 @@ import kelsos.mbremote.Messaging.ServerCommunicationEvent;
 import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Others.DelayTimer;
 import kelsos.mbremote.Others.SettingsManager;
+import kelsos.mbremote.Network.Input;
 
 import java.io.*;
 import java.net.Socket;
@@ -92,6 +96,7 @@ public class ConnectivityHandler extends Service {
 
     /**
      * Sends a connection intent to the Receivers listening, containing the connection status.
+     * @param status
      */
     private void sendConnectionIntent(boolean status) {
         Intent connectionIntent = new Intent();
@@ -205,9 +210,20 @@ public class ConnectivityHandler extends Service {
         return _connectionThread != null && _connectionThread.isAlive();
     }
 
+    /**
+     * Depending on the user input the function either retries to connect until the MAX_RETRIES number is reached
+     * or it resets the number of retries counter and then retries to connect until the MAX_RETRIES number is reached
+     *
+     * @param input kelsos.mbremote.Network.Input.User resets the counter, kelsos.mbremote.Network.Input.System just tries one more time.
+     */
     public void attemptToStartSocketThread(Input input) {
+    	if(!isOnline())
+    	{
+    		AppNotificationManager.getInstance().showToastMessage("Check for Connection");
+    		return;
+    	}
         if (socketExistsAndIsConnected()) return;
-        if (input == Input.user) {
+        if (input == Input.user|| input == Input.initialize) {
             _numberOfTries = 0;
             if (_connectionTimer.isRunning()) _connectionTimer.stop();
         }
@@ -217,11 +233,26 @@ public class ConnectivityHandler extends Service {
             _connectionTimer.start();
     }
 
+    /**
+     * Returns true if the socket is not null and it is connected, false in any other case.
+     * @return Boolean
+     */
     private boolean socketExistsAndIsConnected() {
         return _cSocket != null && _cSocket.isConnected();
     }
 
-    public enum Input {
-        user, system
+    /**
+     * Returns if the device is connected to internet/network
+     * @return Boolean online status, true if online false if not.
+     */
+    private boolean isOnline()
+    {
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if(networkInfo !=null && networkInfo.isConnected())
+            return true;
+        return false;
     }
+
+
 }

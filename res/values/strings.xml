@@ -31,4 +31,5 @@
     <string name="main_menu_connect">Connect</string>
     <string name="connectivity_indicator">Connectivity Indicator</string>
     <string name="main_menu_service_restart">Service Restart</string>
+    <string name="connectivity_handler_description">This service is responsible for the communication of the application witht he plugin.</string>
 </resources>

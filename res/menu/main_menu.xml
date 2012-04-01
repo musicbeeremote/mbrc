@@ -15,9 +15,4 @@
         android:icon="@drawable/ic_menu_connect"
         android:title="@string/main_menu_connect">
     </item>
-    <item
-        android:id="@+id/main_menu_service_restart"
-        android:icon="@drawable/ic_menu_service_restart"
-        android:title="@string/main_menu_service_restart">
-    </item>
 </menu>

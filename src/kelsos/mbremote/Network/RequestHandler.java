@@ -1,6 +1,8 @@
 package kelsos.mbremote.Network;
 
 
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import kelsos.mbremote.Messaging.ClickSource;
 import kelsos.mbremote.Messaging.Communicator;
 import kelsos.mbremote.Messaging.UserInterfaceEvent;
@@ -68,6 +70,9 @@ public class RequestHandler {
                 case Playlist:
                     requestAction(PlayerAction.Playlist);
                     break;
+                case Initialize:
+                    connectivityHandler.attemptToStartSocketThread(Input.initialize);
+                    break;
             }
         }
 
@@ -117,6 +122,18 @@ public class RequestHandler {
 					}
 				}
 			}
+            else if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION))
+            {
+                NetworkInfo networkInfo = (NetworkInfo)intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                if(networkInfo.getState().equals(NetworkInfo.State.CONNECTED))
+                {
+                     connectivityHandler.attemptToStartSocketThread(Input.user);
+                }
+                else if (networkInfo.getState().equals(NetworkInfo.State.DISCONNECTING))
+                {
+                    
+                }
+            }
 		}
 	};
 
@@ -129,6 +146,7 @@ public class RequestHandler {
 		IntentFilter _nmFilter = new IntentFilter();
 		_nmFilter.addAction(Const.SONG_CHANGED);
 		_nmFilter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
+        _nmFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 		connectivityHandler.getApplicationContext().registerReceiver(nmBroadcastReceiver, _nmFilter);
 	}
 

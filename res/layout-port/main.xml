@@ -35,7 +35,7 @@
                 android:id="@+id/repeatButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/ic_button_vertical_middle"
+                android:background="@drawable/ic_button_vertical_middle_skin"
                 android:clickable="true"
                 android:contentDescription="@string/repeat_button"
                 android:scaleType="fitCenter"
@@ -44,7 +44,7 @@
                 android:id="@+id/shuffleButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/ic_button_vertical_middle"
+                android:background="@drawable/ic_button_vertical_middle_skin"
                 android:contentDescription="@string/shuffle_button"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_shuffle" />
@@ -52,7 +52,7 @@
                 android:id="@+id/scrobbleButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/ic_button_vertical_middle"
+                android:background="@drawable/ic_button_vertical_middle_skin"
                 android:contentDescription="@string/scrobbler_button"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_scrobble_red" />
@@ -60,7 +60,7 @@
                 android:id="@+id/muteButton"
                 android:layout_width="40dp"
                 android:layout_height="55dp"
-                android:background="@drawable/ic_button_vertical_bottom"
+                android:background="@drawable/ic_button_vertical_bottom_skin"
                 android:contentDescription="@string/mute_button"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_mute_full" />
