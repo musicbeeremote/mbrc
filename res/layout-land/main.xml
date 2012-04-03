@@ -13,10 +13,11 @@
             android:id="@+id/albumCover"
             android:layout_width="210dp"
             android:layout_height="210dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="0dp"
             android:adjustViewBounds="false"
             android:contentDescription="@string/playing_track_album_cover"
-            android:paddingLeft="10dp" />
+            android:paddingLeft="10dp"
+            android:src="@drawable/ic_image_no_cover"/>
         <LinearLayout
             android:id="@+id/playingTrackLayout"
             android:layout_width="0dip"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Remote Control for MusicBee</string>
+    <string name="app_name">RC for MusicBee</string>
     <string name="main_volume">Volume:</string>
     <string name="mainPlayingTrack">Playing track:</string>
     <string name="socket_service_started">Socket Service Stared</string>
@@ -32,4 +32,5 @@
     <string name="connectivity_indicator">Connectivity Indicator</string>
     <string name="main_menu_service_restart">Service Restart</string>
     <string name="connectivity_handler_description">This service is responsible for the communication of the application witht he plugin.</string>
+    <string name="app_description">Remote Control Application for MusicBee</string>
 </resources>

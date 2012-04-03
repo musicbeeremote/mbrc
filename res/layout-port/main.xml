@@ -22,18 +22,19 @@
             android:id="@+id/extraMediaButtonLinearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
             android:orientation="vertical" >
             <ImageView
                 android:id="@+id/connectivityIndicator"
-                android:layout_width="40dp"
+                android:layout_width="50dp"
                 android:layout_height="55dp"
-                android:background="@drawable/ic_button_vertical_top"
+                android:background="@drawable/ic_button_vertical_top_skin"
                 android:contentDescription="@string/connectivity_indicator"
                 android:src="@drawable/ic_icon_indicator_red" />
             <ImageButton
                 android:id="@+id/repeatButton"
-                android:layout_width="40dp"
+                android:layout_width="50dp"
                 android:layout_height="40dp"
                 android:background="@drawable/ic_button_vertical_middle_skin"
                 android:clickable="true"
@@ -42,7 +43,7 @@
                 android:src="@drawable/ic_media_repeat" />
             <ImageButton
                 android:id="@+id/shuffleButton"
-                android:layout_width="40dp"
+                android:layout_width="50dp"
                 android:layout_height="40dp"
                 android:background="@drawable/ic_button_vertical_middle_skin"
                 android:contentDescription="@string/shuffle_button"
@@ -50,7 +51,7 @@
                 android:src="@drawable/ic_media_shuffle" />
             <ImageButton
                 android:id="@+id/scrobbleButton"
-                android:layout_width="40dp"
+                android:layout_width="50dp"
                 android:layout_height="40dp"
                 android:background="@drawable/ic_button_vertical_middle_skin"
                 android:contentDescription="@string/scrobbler_button"
@@ -58,8 +59,8 @@
                 android:src="@drawable/ic_media_scrobble_red" />
             <ImageButton
                 android:id="@+id/muteButton"
-                android:layout_width="40dp"
-                android:layout_height="55dp"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
                 android:background="@drawable/ic_button_vertical_bottom_skin"
                 android:contentDescription="@string/mute_button"
                 android:scaleType="fitCenter"

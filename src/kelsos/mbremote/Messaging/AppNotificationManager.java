@@ -61,9 +61,9 @@ public class AppNotificationManager {
      *  displays a toast window.
      */
     public void showToastMessage(final int id) {
-        if(context==null) return;
-        String data = context.getString(id);
-        new ToastMessageTask().execute(data);
+//        if(context==null) return;
+//        String data = context.getString(id);
+//        new ToastMessageTask().execute(data);
     }
 
     /**
