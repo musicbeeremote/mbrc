@@ -47,6 +47,7 @@
                 <action android:name="android.intent.action.PHONE_STATE" />
                 <action android:name="android.net.wifi.STATE_CHANGE" />
                 <action android:name="kelsos.mbremote.action.SONG_CHANGED" />
+                <action android:name="kelsos.mbremote.action.CONNECTION_STATUS" />
             </intent-filter>
         </service>
     </application>

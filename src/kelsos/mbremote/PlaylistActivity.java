@@ -64,6 +64,7 @@ public class PlaylistActivity extends ListActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(mReceiver);
+        ReplyHandler.getInstance().clearNowPlayingList();
 	}
 
 	BroadcastReceiver mReceiver = new BroadcastReceiver() {

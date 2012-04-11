@@ -13,5 +13,6 @@ public enum ClickSource
     Lyrics,
     Refresh,
     Playlist,
-    Initialize
+    Initialize,
+
 }

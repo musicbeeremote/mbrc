@@ -53,7 +53,6 @@ public class ConnectivityHandler extends Service {
                 _cSocket.connect(socketAddress);
                 _output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(_cSocket.getOutputStream())), true);
                 _input = new BufferedReader(new InputStreamReader(_cSocket.getInputStream()));
-                requestHandler.requestPlayerData();
                 sendConnectionIntent(true);
 
                 while (_cSocket.isConnected()) {
@@ -85,7 +84,6 @@ public class ConnectivityHandler extends Service {
 
                 sendConnectionIntent(false);
 
-                requestHandler.requestPlayerData();
                 Log.d("ConnectivityHandler", "ListeningThread terminated");
                 attemptToStartSocketThread(Input.system);
 
@@ -126,7 +124,6 @@ public class ConnectivityHandler extends Service {
 
         _numberOfTries = 0; // Initialize the connection retry counter.
         requestHandler = new RequestHandler(this);
-        requestHandler.requestPlayerData();
         // Initialize the settings manager context
         SettingsManager.getInstance().setContext(getApplicationContext());
 

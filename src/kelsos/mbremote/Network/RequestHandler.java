@@ -22,6 +22,7 @@ import static kelsos.mbremote.Others.DelayTimer.TimerFinishEvent;
 public class RequestHandler {
 	private final ConnectivityHandler connectivityHandler;
     private DelayTimer _updateTimer;
+    private int packetCounter;
 
 
 	public RequestHandler(ConnectivityHandler connectivityHandler) {
@@ -31,6 +32,7 @@ public class RequestHandler {
         // Event Listener for the communicator events
         Communicator.getInstance().setUserInterfaceEventsListener(userInterfaceEvent);
         _updateTimer.setTimerFinishEventListener(timerFinishEvent);
+        packetCounter=0;
 	}
 
     private UserInterfaceEvent userInterfaceEvent =  new UserInterfaceEvent() {
@@ -134,6 +136,18 @@ public class RequestHandler {
                     
                 }
             }
+            else if(intent.getAction().equals(Const.CONNECTION_STATUS))
+            {
+                packetCounter=0;
+                boolean status = intent.getBooleanExtra(Const.STATUS, false);
+                if(status)
+                {
+                    requestAction(PlayerAction.Player);
+                    requestAction(PlayerAction.Protocol);
+                    requestPlayerData();
+                }
+            }
+
 		}
 	};
 
@@ -145,6 +159,7 @@ public class RequestHandler {
 	private void installFilter() {
 		IntentFilter _nmFilter = new IntentFilter();
 		_nmFilter.addAction(Const.SONG_CHANGED);
+        _nmFilter.addAction(Const.CONNECTION_STATUS);
 		_nmFilter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
         _nmFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 		connectivityHandler.getApplicationContext().registerReceiver(nmBroadcastReceiver, _nmFilter);
