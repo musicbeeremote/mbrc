@@ -27,6 +27,8 @@ public class ReplyHandler {
     private String _songLyrics;
     private int _currentVolume;
 
+    public static double ServerProtocolVersion;
+
     public int getCurrentVolume() {
         return _currentVolume;
     }
@@ -124,9 +126,10 @@ public class ReplyHandler {
                     notifyIntent.setAction(Const.LYRICS_DATA);
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYER_STATUS)) {
                     getPlayerStatus(notifyIntent, xmlNode);
-                } else if (xmlNode.getNodeName().contains(Protocol.PLAYER))
-                {
+                } else if (xmlNode.getNodeName().contains(Protocol.PLAYER)){
 
+                } else if(xmlNode.getNodeName().contains(Protocol.PROTOCOL)){
+                  ServerProtocolVersion = Double.parseDouble(xmlNode.getTextContent());
                 }
 
                 if (notifyIntent.getAction() != null)

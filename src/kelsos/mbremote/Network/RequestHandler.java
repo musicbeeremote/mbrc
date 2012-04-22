@@ -22,8 +22,6 @@ import static kelsos.mbremote.Others.DelayTimer.TimerFinishEvent;
 public class RequestHandler {
 	private final ConnectivityHandler connectivityHandler;
     private DelayTimer _updateTimer;
-    private int packetCounter;
-
 
 	public RequestHandler(ConnectivityHandler connectivityHandler) {
 		this.connectivityHandler = connectivityHandler;
@@ -32,7 +30,6 @@ public class RequestHandler {
         // Event Listener for the communicator events
         Communicator.getInstance().setUserInterfaceEventsListener(userInterfaceEvent);
         _updateTimer.setTimerFinishEventListener(timerFinishEvent);
-        packetCounter=0;
 	}
 
     private UserInterfaceEvent userInterfaceEvent =  new UserInterfaceEvent() {
@@ -138,7 +135,6 @@ public class RequestHandler {
             }
             else if(intent.getAction().equals(Const.CONNECTION_STATUS))
             {
-                packetCounter=0;
                 boolean status = intent.getBooleanExtra(Const.STATUS, false);
                 if(status)
                 {

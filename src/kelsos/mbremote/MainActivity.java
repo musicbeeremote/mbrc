@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.*;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -43,6 +45,7 @@ public class MainActivity extends Activity {
         Communicator.getInstance().activityButtonClicked(ClickSource.Initialize);
         Communicator.getInstance().requestConnectionStatus();
 
+
     }
 
     private void registerIntentFilters() {
@@ -58,6 +61,19 @@ public class MainActivity extends Activity {
         filter.addAction(Const.LYRICS_DATA);
         filter.addAction(Const.CONNECTION_STATUS);
         registerReceiver(mReceiver, filter);
+    }
+
+    /**
+     * Sets the typeface of the textviews in the main activity to roboto.
+     */
+    private void SetTextViewTypeface()
+    {
+        if(Build.VERSION.SDK_INT>14) return;
+        Typeface font = Typeface.createFromAsset(getAssets(),"Roboto-Light.ttf");
+        getTextViewById(R.id.artistLabel).setTypeface(font);
+        getTextViewById(R.id.titleLabel).setTypeface(font);
+        getTextViewById(R.id.albumLabel).setTypeface(font);
+        getTextViewById(R.id.yearLabel).setTypeface(font);
     }
 
     @Override
