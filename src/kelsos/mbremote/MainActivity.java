@@ -1,7 +1,10 @@
 package kelsos.mbremote;
 
 import android.app.Activity;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -9,9 +12,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.*;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -21,11 +22,13 @@ import kelsos.mbremote.Messaging.Communicator;
 import kelsos.mbremote.Network.ConnectivityHandler;
 import kelsos.mbremote.Network.ReplyHandler;
 import kelsos.mbremote.Others.Const;
+import kelsos.mbremote.Others.MainActivityState;
 
 public class MainActivity extends Activity {
     private static final String BY = "\nby ";
     private static final String LYRICS_FOR = "Lyrics for ";
     private boolean userChangingVolume;
+    private MainActivityState activityState;
 
     @Override
     public void onSaveInstanceState(Bundle outState)
@@ -48,6 +51,7 @@ public class MainActivity extends Activity {
         startService(new Intent(MainActivity.this, ConnectivityHandler.class));
         registerIntentFilters();
         userChangingVolume = false;
+        activityState = new MainActivityState();
         // Restore Persisting values
         if(savedInstanceState!=null) {
             getTextViewById(R.id.titleLabel).setText(savedInstanceState.getCharSequence("Title"));
@@ -122,8 +126,7 @@ public class MainActivity extends Activity {
     }
 
     private ImageButton getImageButtonById(int id) {
-        ImageButton button = (ImageButton) findViewById(id);
-        return button;
+        return (ImageButton) findViewById(id);
     }
 
     /**
@@ -133,8 +136,7 @@ public class MainActivity extends Activity {
      * @return The SeekBar that matches the id.
      */
     private SeekBar getSeekBarById(int id) {
-        SeekBar seekBar = (SeekBar) findViewById(id);
-        return seekBar;
+        return (SeekBar) findViewById(id);
     }
 
     /**
@@ -144,8 +146,7 @@ public class MainActivity extends Activity {
      * @return The TextView that matched the id.
      */
     private TextView getTextViewById(int id) {
-        TextView textView = (TextView) findViewById(id);
-        return textView;
+        return (TextView) findViewById(id);
     }
 
     /**
@@ -155,8 +156,7 @@ public class MainActivity extends Activity {
      * @return The ImageView that matches the id provided.
      */
     private ImageView getImageViewById(int id) {
-        ImageView imageView = (ImageView) findViewById(id);
-        return imageView;
+        return (ImageView) findViewById(id);
     }
 
     /**
@@ -185,56 +185,70 @@ public class MainActivity extends Activity {
             if (action.equals(Const.VOLUME_DATA)) {
                 handleVolumeData(intent);
             } else if (action.equals(Const.CONNECTION_STATUS)) {
-                handleConnectionStatus(intent);
+                updateConnectionIndicator(intent.getBooleanExtra(Const.STATUS, false));
             } else if (action.equals(Const.SONG_DATA)) {
                 handleSongInfo(intent);
             } else if (action.equals(Const.SONG_COVER)) {
                 new ImageDecodeTask().execute();
             } else if (action.equals(Const.PLAY_STATE)) {
-                handlePlayState(intent);
+                updatePlayState(intent.getExtras().getString(Const.STATE));
             } else if (action.equals(Const.MUTE_STATE)) {
-                handleMuteState(intent);
+                updateMuteButtonState(intent.getExtras().getString(Const.STATE).equalsIgnoreCase(Const.TRUE));
             } else if (action.equals(Const.REPEAT_STATE)) {
-                handleRepeatState(intent);
+                updateRepeatButtonState(intent.getExtras().getString(Const.STATE).equalsIgnoreCase(Const.ALL));
             } else if (action.equals(Const.SHUFFLE_STATE)) {
-                handleShuffleState(intent);
+                updateShuffleButtonState(intent.getExtras().getString(Const.STATE).equalsIgnoreCase(Const.TRUE));
             } else if (action.equals(Const.SCROBBLER_STATE)) {
-                handleScrobblerState(intent);
+                updateScrobblerButtonState(intent.getExtras().getString(Const.STATE).equalsIgnoreCase(Const.TRUE));
             } else if (action.equals(Const.LYRICS_DATA)) {
                 processLyricsData();
             }
         }
 
-        private void handleScrobblerState(Intent intent) {
-            if (intent.getExtras().getString(Const.STATE).equalsIgnoreCase(Const.TRUE)) {
+        /**
+         * Given a boolean state this function updates the Scrobbler button with the proper state.
+         * Also it updates the internal MainActivityState object.
+         * @param state If true it means that the scrobbler is active, false is used for inactive.
+         */
+        private void updateScrobblerButtonState(boolean state) {
+            if (state) {
                 getImageButtonById(R.id.scrobbleButton).setImageResource(R.drawable.ic_media_scrobble_red);
             } else {
                 getImageButtonById(R.id.scrobbleButton).setImageResource(R.drawable.ic_media_scrobble_off);
             }
+            activityState.setIsScrobblerActive(state);
         }
 
-        private void handleShuffleState(Intent intent) {
-            if (intent.getExtras().getString(Const.STATE).equalsIgnoreCase(Const.TRUE)) {
+        /**
+         * Given a boolean state value this function updates the Shuffle button with the proper state.
+         * Also it updates the internal MainActivityState object.
+         * @param state True is used to represent active shuffle, false is used for inactive.
+         */
+        private void updateShuffleButtonState(boolean state) {
+            if (state) {
                 getImageButtonById(R.id.shuffleButton).setImageResource(R.drawable.ic_media_shuffle);
             } else {
                 getImageButtonById(R.id.shuffleButton).setImageResource(R.drawable.ic_media_shuffle_off);
             }
+            activityState.setIsPlayerShuffling(state);
         }
 
-        private void handleRepeatState(Intent intent) {
-            if (intent.getExtras().getString(Const.STATE).equalsIgnoreCase(Const.ALL)) {
+        private void updateRepeatButtonState(boolean state) {
+            if (state) {
                 getImageButtonById(R.id.repeatButton).setImageResource(R.drawable.ic_media_repeat);
             } else {
                 getImageButtonById(R.id.repeatButton).setImageResource(R.drawable.ic_media_repeat_off);
             }
+            activityState.setIsRepeatAllActive(state);
         }
 
-        private void handleMuteState(Intent intent) {
-            if (intent.getExtras().getString(Const.STATE).equalsIgnoreCase(Const.TRUE)) {
+        private void updateMuteButtonState(boolean state) {
+            if (state) {
                 getImageButtonById(R.id.muteButton).setImageResource(R.drawable.ic_media_mute_active);
             } else {
                 getImageButtonById(R.id.muteButton).setImageResource(R.drawable.ic_media_mute_full);
             }
+            activityState.setIsPlayerMuted(state);
         }
 
         private void handleVolumeData(Intent intent) {
@@ -242,19 +256,20 @@ public class MainActivity extends Activity {
                 getSeekBarById(R.id.volumeSlider).setProgress(intent.getExtras().getInt(Const.DATA));
         }
 
-        private void handlePlayState(Intent intent) {
-            if (intent.getExtras().getString(Const.STATE).equals(Const.PLAYING)) {
+        private void updatePlayState(String playState) {
+            if (playState.equals(Const.PLAYING)) {
                 getImageButtonById(R.id.playPauseButton).setImageResource(R.drawable.ic_media_pause);
                 getImageButtonById(R.id.stopButton).setImageResource(R.drawable.ic_media_stop);
                 getImageButtonById(R.id.stopButton).setEnabled(true);
-            } else if (intent.getExtras().getString(Const.STATE).equals(Const.PAUSED)) {
+            } else if (playState.equals(Const.PAUSED)) {
                 getImageButtonById(R.id.playPauseButton).setImageResource(R.drawable.ic_media_play);
                 getImageButtonById(R.id.stopButton).setEnabled(true);
-            } else if (intent.getExtras().getString(Const.STATE).equals(Const.STOPPED)) {
+            } else if (playState.equals(Const.STOPPED)) {
                 getImageButtonById(R.id.playPauseButton).setImageResource(R.drawable.ic_media_play);
                 getImageButtonById(R.id.stopButton).setImageResource(R.drawable.ic_media_stop_pressed);
                 getImageButtonById(R.id.stopButton).setEnabled(false);
             }
+            activityState.setPlayState(playState);
         }
 
         private void handleSongInfo(Intent intent) {
@@ -264,14 +279,13 @@ public class MainActivity extends Activity {
             getTextViewById(R.id.yearLabel).setText(intent.getExtras().getString(Const.YEAR));
         }
 
-        private void handleConnectionStatus(Intent intent) {
-            boolean status = intent.getBooleanExtra(Const.STATUS, false);
-            Log.d("ConIn:", String.valueOf(status));
-            if (status) {
+        private void updateConnectionIndicator(boolean connected) {
+            if (connected) {
                 getImageViewById(R.id.connectivityIndicator).setImageResource(R.drawable.ic_icon_indicator_green);
             } else {
                 getImageViewById(R.id.connectivityIndicator).setImageResource(R.drawable.ic_icon_indicator_red);
             }
+            activityState.setIsConnected(connected);
         }
     };
 
@@ -307,7 +321,7 @@ public class MainActivity extends Activity {
      *
      */
     private void processLyricsData() {
-        if (ReplyHandler.getInstance().getSongLyrics()=="") {
+        if (ReplyHandler.getInstance().getSongLyrics().equals("")) {
             AppNotificationManager.getInstance().showToastMessage(R.string.no_lyrics_found);
             return;
         }
