@@ -25,11 +25,19 @@ import kelsos.mbremote.Others.Const;
 public class MainActivity extends Activity {
     private static final String BY = "\nby ";
     private static final String LYRICS_FOR = "Lyrics for ";
-
-    /**
-     * Called when the activity is first created.
-     */
     private boolean userChangingVolume;
+
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        // Saving Persisting values
+        outState.putCharSequence("Title",getTextViewById(R.id.titleLabel).getText());
+        outState.putCharSequence("Artist",getTextViewById(R.id.artistLabel).getText());
+        outState.putCharSequence("Album",getTextViewById(R.id.albumLabel).getText());
+        outState.putCharSequence("Year",getTextViewById(R.id.yearLabel).getText());
+
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,12 +48,17 @@ public class MainActivity extends Activity {
         startService(new Intent(MainActivity.this, ConnectivityHandler.class));
         registerIntentFilters();
         userChangingVolume = false;
-        registerForContextMenu(findViewById(R.id.playingTrackLayout));
+        // Restore Persisting values
+        if(savedInstanceState!=null) {
+            getTextViewById(R.id.titleLabel).setText(savedInstanceState.getCharSequence("Title"));
+            getTextViewById(R.id.artistLabel).setText(savedInstanceState.getCharSequence("Artist"));
+            getTextViewById(R.id.albumLabel).setText(savedInstanceState.getCharSequence("Album"));
+            getTextViewById(R.id.yearLabel).setText(savedInstanceState.getCharSequence("Year"));
+        }
         Communicator.getInstance().activityButtonClicked(ClickSource.Refresh);
         Communicator.getInstance().activityButtonClicked(ClickSource.Initialize);
         Communicator.getInstance().requestConnectionStatus();
-
-
+        SetTextViewTypeface();
     }
 
     private void registerIntentFilters() {
@@ -68,33 +81,18 @@ public class MainActivity extends Activity {
      */
     private void SetTextViewTypeface()
     {
-        if(Build.VERSION.SDK_INT>14) return;
+        /* Marquee Hack */
+        getTextViewById(R.id.artistLabel).setSelected(true);
+        getTextViewById(R.id.titleLabel).setSelected(true);
+        getTextViewById(R.id.albumLabel).setSelected(true);
+        getTextViewById(R.id.yearLabel).setSelected(true);
+
+        if(Build.VERSION.SDK_INT>=14) return;
         Typeface font = Typeface.createFromAsset(getAssets(),"Roboto-Light.ttf");
         getTextViewById(R.id.artistLabel).setTypeface(font);
         getTextViewById(R.id.titleLabel).setTypeface(font);
         getTextViewById(R.id.albumLabel).setTypeface(font);
         getTextViewById(R.id.yearLabel).setTypeface(font);
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-
-        menu.setHeaderTitle(Const.ACTIONS);
-        // menu.add(0, v.getId(), 0, "Rating");
-        menu.add(0, v.getId(), 0, Const.LYRICS);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        if (item.getTitle().equals(Const.LYRICS)) {
-            Communicator.getInstance().activityButtonClicked(ClickSource.Lyrics);
-        } else if (item.getTitle().equals(Const.RATING)) {
-
-        } else {
-            return false;
-        }
-        return true;
     }
 
     @Override
@@ -114,8 +112,8 @@ public class MainActivity extends Activity {
             case R.id.main_menu_playlist:
                 Intent playlistIntent = new Intent(MainActivity.this, PlaylistActivity.class);
                 startActivity(playlistIntent);
-            case R.id.main_menu_connect:
-                Communicator.getInstance().requestConnect();
+            case R.id.main_menu_lyrics:
+                Communicator.getInstance().activityButtonClicked(ClickSource.Lyrics);
             default:
                 return super.onMenuItemSelected(featureId, item);
         }
@@ -175,6 +173,7 @@ public class MainActivity extends Activity {
         getImageButtonById(R.id.scrobbleButton).setOnClickListener(scrobbleButtonListener);
         getImageButtonById(R.id.shuffleButton).setOnClickListener(shuffleButtonListener);
         getImageButtonById(R.id.repeatButton).setOnClickListener(repeatButtonListener);
+        getImageButtonById(R.id.connectivityIndicator).setOnClickListener(connectivityIndicatorListener);
     }
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -396,6 +395,12 @@ public class MainActivity extends Activity {
     };
 
     private OnClickListener repeatButtonListener = new OnClickListener() {
+
+        public void onClick(View v) {
+            Communicator.getInstance().activityButtonClicked(ClickSource.Repeat);
+        }
+    };
+    private OnClickListener connectivityIndicatorListener = new OnClickListener() {
 
         public void onClick(View v) {
             Communicator.getInstance().activityButtonClicked(ClickSource.Repeat);

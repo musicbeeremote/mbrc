@@ -11,8 +11,8 @@
         android:title="@string/main_menu_playlist">
     </item>
     <item
-        android:id="@+id/main_menu_connect"
+        android:id="@+id/main_menu_lyrics"
         android:icon="@drawable/ic_menu_connect"
-        android:title="@string/main_menu_connect">
+        android:title="@string/main_menu_lyrics">
     </item>
 </menu>

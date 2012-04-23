@@ -3,8 +3,7 @@
               android:id="@+id/mainLinearLayout"
               android:layout_width="match_parent"
               android:layout_height="fill_parent"
-              android:orientation="vertical"
-              android:background="#1A181D">
+              android:orientation="vertical">
     <LinearLayout android:orientation="horizontal"
                   android:layout_height="300dp"
                   android:layout_width="match_parent">
@@ -30,14 +29,13 @@
                     android:freezesText="true"/>
             <TextView
                     android:id="@+id/artistLabel"
-                    android:layout_width="250dp"
+                    android:layout_width="225dp"
                     android:layout_height="35dp"
                     android:ellipsize="marquee"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:marqueeRepeatLimit="marquee_forever"
                     android:layout_marginLeft="15dp"
-                    android:layout_marginRight="25dp"
                     android:scrollHorizontally="true"
                     android:textSize="20sp"
                     android:textColor="#FFFFFF"
@@ -65,13 +63,14 @@
                 android:layout_marginLeft="0dp"
                 android:layout_marginTop="60dp"
                 android:orientation="vertical">
-            <ImageView
+            <ImageButton
                     android:id="@+id/connectivityIndicator"
                     android:layout_width="50dp"
                     android:layout_height="55dp"
                     android:background="@drawable/ic_button_vertical_top_skin"
                     android:contentDescription="@string/connectivity_indicator"
-                    android:src="@drawable/ic_icon_indicator_red"/>
+                    android:src="@drawable/ic_icon_indicator_red"
+            android:clickable="true"/>
             <ImageButton
                     android:id="@+id/repeatButton"
                     android:layout_width="50dp"
