@@ -1,6 +1,5 @@
 package kelsos.mbremote.Models;
 
-import android.app.backup.RestoreObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -9,8 +8,7 @@ import kelsos.mbremote.Events.DataType;
 import kelsos.mbremote.Events.NewModelDataEvent;
 import kelsos.mbremote.Events.NewModelDataEventListener;
 import kelsos.mbremote.Events.NewModelDataEventSource;
-import kelsos.mbremote.Network.ReplyHandler;
-import kelsos.mbremote.R;
+import kelsos.mbremote.Others.Const;
 
 public class MainDataModel {
 
@@ -46,12 +44,11 @@ public class MainDataModel {
     private Bitmap _albumCover;
 
     private Boolean _isConnectionActive;
-    private Boolean _isRepeatButtonActivate;
-    private Boolean _isShuffleButtonActivate;
-    private Boolean _isScrobbleButtonActivate;
+    private Boolean _isRepeatButtonActive;
+    private Boolean _isShuffleButtonActive;
+    private Boolean _isScrobbleButtonActive;
     private Boolean _isMuteButtonActive;
-    private Boolean _isPlayActive;
-    private Boolean _isStopActive;
+    private PlayState _playState;
 
     public void setTitle(String title)
     {
@@ -125,7 +122,76 @@ public class MainDataModel {
         return _albumCover;
     }
 
-    public void set_isConnectionActive
+    public void setIsConnectionActive(String connectionActive)
+    {
+        boolean newStatus = Boolean.parseBoolean(connectionActive);
+        if(newStatus==_isConnectionActive) return;
+        _isConnectionActive=newStatus;
+        _source.fireEvent(new NewModelDataEvent(this,DataType.ConnectionState));
+    }
+
+    public boolean getIsConnectionActive()
+    {
+       return _isConnectionActive;
+    }
+
+    public void setIsRepeatButtonActive(String repeatButtonActive)
+    {
+        boolean newStatus = Boolean.parseBoolean(repeatButtonActive);
+        if(newStatus== _isRepeatButtonActive) return;
+        _isRepeatButtonActive = newStatus;
+        _source.fireEvent(new NewModelDataEvent(this, DataType.RepeatState));
+    }
+
+    public boolean getIsRepeatButtonActive()
+    {
+        return _isRepeatButtonActive;
+    }
+
+    public void setIsShuffleButtonActive(String shuffleButtonActive)
+    {
+        boolean newStatus = Boolean.parseBoolean(shuffleButtonActive);
+        if(newStatus == _isShuffleButtonActive) return;
+        _isShuffleButtonActive = newStatus;
+        _source.fireEvent(new NewModelDataEvent(this, DataType.ShuffleState));
+    }
+
+    public boolean getIsShuffleButtonActive()
+    {
+        return _isShuffleButtonActive;
+    }
+
+    public void setIsScrobbleButtonActive(String scrobbleButtonActive)
+    {
+        boolean newStatus = Boolean.parseBoolean(scrobbleButtonActive);
+        if(newStatus == _isScrobbleButtonActive) return;
+        _isScrobbleButtonActive = newStatus;
+        _source.fireEvent(new NewModelDataEvent(this, DataType.ScrobbleState));
+    }
+
+    public boolean getIsScrobbleButtonActive()
+    {
+        return _isScrobbleButtonActive;
+    }
+
+    public void setIsMuteButtonActive(String muteButtonActive)
+    {
+        boolean newStatus = Boolean.parseBoolean(muteButtonActive);
+        if(newStatus == _isMuteButtonActive) return;
+        _isMuteButtonActive = newStatus;
+        _source.fireEvent(new NewModelDataEvent(this, DataType.MuteState));
+    }
+
+    public void setPlayState(String playState)
+    {
+        PlayState newState = PlayState.Undefined;
+        if(playState.equalsIgnoreCase(Const.PLAYING)) newState = PlayState.Playing;
+        else if (playState.equalsIgnoreCase(Const.STOPPED)) newState = PlayState.Stopped;
+        else if (playState.equalsIgnoreCase(Const.PAUSED)) newState = PlayState.Paused;
+        if(_playState==newState) return;
+        _playState = newState;
+        _source.fireEvent(new NewModelDataEvent(this, DataType.PlayState));
+    }
 
     private class ImageDecodeTask extends AsyncTask<String, Void, Bitmap> {
 
@@ -142,3 +208,4 @@ public class MainDataModel {
     }
 
 }
+

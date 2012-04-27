@@ -13,5 +13,4 @@ public enum DataType {
     ScrobbleState,
     MuteState,
     PlayState,
-    StopState
 }
