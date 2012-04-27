@@ -22,7 +22,7 @@
             <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" >
+        <activity android:name=".Views.MainView" >
             <intent-filter>
                 <action android:name="kelsos.mbremote.action.LYRICS_DATA" />
                 <action android:name="kelsos.mbremote.action.SHUFFLE_STATE" />
@@ -36,9 +36,9 @@
                 <action android:name="kelsos.mbremote.action.CONNECTION_STATUS" />
             </intent-filter>
         </activity>
-        <activity android:name=".AppPreferenceActivity" >
+        <activity android:name=".Views.AppPreferenceView" >
         </activity>
-        <activity android:name=".PlaylistActivity" >
+        <activity android:name=".Views.PlaylistView" >
             <intent-filter>
                 <action android:name="kelsos.mbremote.action.PLAYLIST_DATA" />
             </intent-filter>

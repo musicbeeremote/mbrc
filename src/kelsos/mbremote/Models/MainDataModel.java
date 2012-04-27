@@ -93,6 +93,11 @@ public class MainDataModel {
         _source.fireEvent(new NewModelDataEvent(this,DataType.Year));
     }
 
+    public String getYear()
+    {
+        return _year;
+    }
+
     public void setVolume(String volume)
     {
         int newVolume = Integer.parseInt(volume);
@@ -182,6 +187,11 @@ public class MainDataModel {
         _source.fireEvent(new NewModelDataEvent(this, DataType.MuteState));
     }
 
+    public boolean getIsMuteButtonActive()
+    {
+        return _isMuteButtonActive;
+    }
+
     public void setPlayState(String playState)
     {
         PlayState newState = PlayState.Undefined;
@@ -191,6 +201,11 @@ public class MainDataModel {
         if(_playState==newState) return;
         _playState = newState;
         _source.fireEvent(new NewModelDataEvent(this, DataType.PlayState));
+    }
+
+    public PlayState getPlayState()
+    {
+        return _playState;
     }
 
     private class ImageDecodeTask extends AsyncTask<String, Void, Bitmap> {

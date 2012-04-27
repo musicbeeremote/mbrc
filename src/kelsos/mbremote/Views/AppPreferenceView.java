@@ -1,4 +1,4 @@
-package kelsos.mbremote;
+package kelsos.mbremote.Views;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -6,8 +6,9 @@ import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import kelsos.mbremote.R;
 
-public class AppPreferenceActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
+public class AppPreferenceView extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 
     public static final String REMOTE_SETTINGS = "mbremote_settings";
 
