@@ -5,9 +5,9 @@ import android.app.Application;
 import android.content.Intent;
 import kelsos.mbremote.Events.NewModelDataEvent;
 import kelsos.mbremote.Events.NewModelDataEventListener;
+import kelsos.mbremote.Models.MainDataModel;
 import kelsos.mbremote.Network.ConnectivityHandler;
 import kelsos.mbremote.Views.MainView;
-import kelsos.mbremote.Models.MainDataModel;
 
 import java.util.EventObject;
 
@@ -15,11 +15,11 @@ public class Controller extends Application {
 
     private static Controller _instance;
     Activity currentActivity;
-    MainView mainView;
 
     @Override
     public void onCreate()
     {
+        super.onCreate();
         _instance = this;
         MainDataModel.getInstance().addEventListener(newModelDataEventListener);
     }
@@ -29,66 +29,74 @@ public class Controller extends Application {
         return _instance;
     }
 
+    public void setCurrentActivity(Activity activity)
+    {
+        if(currentActivity!=null)
+        {
+            currentActivity.finish();
+        }
+        currentActivity = activity;
+        currentActivity.startService(new Intent(currentActivity, ConnectivityHandler.class));
+    }
+
+
     public void initialize(Activity activity)
     {
         currentActivity = activity;
-        startService(new Intent(activity, ConnectivityHandler.class));
-       mainView = new MainView();
-       launchActivity(mainView);
+        launchMainActivity(activity);
     }
 
     NewModelDataEventListener newModelDataEventListener = new NewModelDataEventListener() {
         @Override
         public void handleNewModelDataEvent(EventObject eventObject) {
-            if(mainView==null) return;
+            if(currentActivity.getClass()!=MainView.class) return;
             switch (((NewModelDataEvent) eventObject).getType()) {
                 case Title:
-                    mainView.updateTitleText(MainDataModel.getInstance().getTitle());
+                    ((MainView)currentActivity).updateTitleText(MainDataModel.getInstance().getTitle());
                     break;
                 case Artist:
-                    mainView.updateArtistText(MainDataModel.getInstance().getArtist());
+                    ((MainView)currentActivity).updateArtistText(MainDataModel.getInstance().getArtist());
                     break;
                 case Album:
-                    mainView.updateAlbumText(MainDataModel.getInstance().getAlbum());
+                    ((MainView)currentActivity).updateAlbumText(MainDataModel.getInstance().getAlbum());
                     break;
                 case Year:
-                    mainView.updateYearText(MainDataModel.getInstance().getYear());
+                    ((MainView)currentActivity).updateYearText(MainDataModel.getInstance().getYear());
                     break;
                 case Volume:
-                    mainView.updateVolumeData(MainDataModel.getInstance().getVolume());
+                    ((MainView)currentActivity).updateVolumeData(MainDataModel.getInstance().getVolume());
                     break;
                 case Bitmap:
-                    mainView.updateAlbumCover(MainDataModel.getInstance().getAlbumCover());
+                    ((MainView)currentActivity).updateAlbumCover(MainDataModel.getInstance().getAlbumCover());
                     break;
                 case ConnectionState:
-                    mainView.updateConnectionIndicator(MainDataModel.getInstance().getIsConnectionActive());
+                    ((MainView)currentActivity).updateConnectionIndicator(MainDataModel.getInstance().getIsConnectionActive());
                     break;
                 case RepeatState:
-                    mainView.updateRepeatButtonState(MainDataModel.getInstance().getIsRepeatButtonActive());
+                    ((MainView)currentActivity).updateRepeatButtonState(MainDataModel.getInstance().getIsRepeatButtonActive());
                     break;
                 case ShuffleState:
-                    mainView.updateShuffleButtonState(MainDataModel.getInstance().getIsShuffleButtonActive());
+                    ((MainView)currentActivity).updateShuffleButtonState(MainDataModel.getInstance().getIsShuffleButtonActive());
                     break;
                 case ScrobbleState:
-                    mainView.updateScrobblerButtonState(MainDataModel.getInstance().getIsScrobbleButtonActive());
+                    ((MainView)currentActivity).updateScrobblerButtonState(MainDataModel.getInstance().getIsScrobbleButtonActive());
                     break;
                 case MuteState:
-                    mainView.updateMuteButtonState(MainDataModel.getInstance().getIsMuteButtonActive());
+                    ((MainView)currentActivity).updateMuteButtonState(MainDataModel.getInstance().getIsMuteButtonActive());
                     break;
                 case PlayState:
-                    mainView.updatePlayState(MainDataModel.getInstance().getPlayState());
+                    ((MainView)currentActivity).updatePlayState(MainDataModel.getInstance().getPlayState());
                     break;
             }
         }
     };
 
-    private void launchActivity(Activity activity)
+    private void launchMainActivity(Activity activity)
     {
-        Intent launchIntent = new Intent(currentActivity,activity.getClass());
-        currentActivity.startActivity(launchIntent);
-        currentActivity.finish();
-        //currentActivity = activity;
-
+        if(activity.getClass() == MainView.class) return;
+        Intent launchIntent;
+        launchIntent = new Intent(activity, MainView.class);
+        activity.startActivity(launchIntent);
     }
 
 

@@ -8,6 +8,14 @@ public class InitActivity extends Activity {
    @Override
    public void onCreate(Bundle savedInstanceState)
    {
-       Controller.getInstance().initialize(this);
+       super.onCreate(savedInstanceState);
+
+
    }
+   @Override
+    public void onStart()
+    {
+        super.onStart();
+        Controller.getInstance().initialize(this);
+    }
 }

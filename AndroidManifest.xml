@@ -23,25 +23,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".Views.MainView" >
-            <intent-filter>
-                <action android:name="kelsos.mbremote.action.LYRICS_DATA" />
-                <action android:name="kelsos.mbremote.action.SHUFFLE_STATE" />
-                <action android:name="kelsos.mbremote.action.REPEAT_STATE" />
-                <action android:name="kelsos.mbremote.action.SCROBBLER_STATE" />
-                <action android:name="kelsos.mbremote.action.MUTE_STATE" />
-                <action android:name="kelsos.mbremote.action.PLAY_STATE" />
-                <action android:name="kelsos.mbremote.action.VOLUME_DATA" />
-                <action android:name="kelsos.mbremote.action.SONG_DATA" />
-                <action android:name="kelsos.mbremote.action.SONG_COVER" />
-                <action android:name="kelsos.mbremote.action.CONNECTION_STATUS" />
-            </intent-filter>
         </activity>
         <activity android:name=".Views.AppPreferenceView" >
         </activity>
         <activity android:name=".Views.PlaylistView" >
-            <intent-filter>
-                <action android:name="kelsos.mbremote.action.PLAYLIST_DATA" />
-            </intent-filter>
         </activity>
         <service
             android:name=".Network.ConnectivityHandler"
@@ -51,8 +36,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
                 <action android:name="android.net.wifi.STATE_CHANGE" />
-                <action android:name="kelsos.mbremote.action.SONG_CHANGED" />
-                <action android:name="kelsos.mbremote.action.CONNECTION_STATUS" />
             </intent-filter>
         </service>
     </application>

@@ -11,6 +11,7 @@ import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import kelsos.mbremote.Controller.Controller;
 import kelsos.mbremote.Messaging.AppNotificationManager;
 import kelsos.mbremote.Messaging.ClickSource;
 import kelsos.mbremote.Messaging.Communicator;
@@ -25,6 +26,8 @@ public class MainView extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+        Controller.getInstance().setCurrentActivity(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         RegisterListeners();

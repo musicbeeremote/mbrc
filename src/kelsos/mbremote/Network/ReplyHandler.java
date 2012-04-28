@@ -3,6 +3,7 @@ package kelsos.mbremote.Network;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import kelsos.mbremote.Models.MainDataModel;
 import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Data.MusicTrack;
 import org.w3c.dom.Document;
@@ -22,16 +23,10 @@ public class ReplyHandler {
     private static ReplyHandler _instance;
     private Context context;
     private DocumentBuilder db;
-    private String _coverData;
     private ArrayList<MusicTrack> _nowPlayingList;
     private String _songLyrics;
-    private int _currentVolume;
 
     public static double ServerProtocolVersion;
-
-    public int getCurrentVolume() {
-        return _currentVolume;
-    }
 
     public ArrayList<MusicTrack> getNowPlayingList() {
         return _nowPlayingList;
@@ -48,7 +43,6 @@ public class ReplyHandler {
      */
     private ReplyHandler() {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        _currentVolume = 0;
         try {
             db = dbf.newDocumentBuilder();
             _nowPlayingList = new ArrayList<MusicTrack>();
@@ -90,10 +84,7 @@ public class ReplyHandler {
                 } else if (xmlNode.getNodeName().contains(Protocol.NEXT)) {
                     Log.d("Reply Received", "<next>");
                 } else if (xmlNode.getNodeName().contains(Protocol.VOLUME)) {
-                    notifyIntent.setAction(Const.VOLUME_DATA);
-                    notifyIntent.putExtra(Protocol.DATA,
-                            Integer.parseInt(xmlNode.getTextContent()));
-                    _currentVolume = Integer.parseInt(xmlNode.getTextContent());
+                    MainDataModel.getInstance().setVolume(xmlNode.getTextContent());
                 } else if (xmlNode.getNodeName().contains(Protocol.SONGCHANGED)) {
                     if (xmlNode.getTextContent().contains("True")) {
                         notifyIntent.setAction(Const.SONG_CHANGED);
@@ -101,24 +92,17 @@ public class ReplyHandler {
                 } else if (xmlNode.getNodeName().contains(Protocol.SONGINFO)) {
                     getSongData(xmlNode, notifyIntent);
                 } else if (xmlNode.getNodeName().contains(Protocol.SONGCOVER)) {
-                    _coverData = xmlNode.getTextContent();
-                    notifyIntent.setAction(Const.SONG_COVER);
+                    MainDataModel.getInstance().setAlbumCover(xmlNode.getTextContent());
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYSTATE)) {
-                    notifyIntent.setAction(Const.PLAY_STATE);
-                    notifyIntent
-                            .putExtra(Protocol.STATE, xmlNode.getTextContent());
+                    MainDataModel.getInstance().setPlayState(xmlNode.getTextContent());
                 } else if (xmlNode.getNodeName().contains(Protocol.MUTE)) {
-                    notifyIntent.setAction(Const.MUTE_STATE);
-                    notifyIntent.putExtra(Protocol.STATE, xmlNode.getTextContent());
+                    MainDataModel.getInstance().setIsMuteButtonActive(xmlNode.getTextContent());
                 } else if (xmlNode.getNodeName().contains(Protocol.REPEAT)) {
-                    notifyIntent.setAction(Const.REPEAT_STATE);
-                    notifyIntent.putExtra(Protocol.STATE, xmlNode.getTextContent());
+                    MainDataModel.getInstance().setIsRepeatButtonActive(xmlNode.getTextContent());
                 } else if (xmlNode.getNodeName().contains(Protocol.SHUFFLE)) {
-                    notifyIntent.setAction(Const.SHUFFLE_STATE);
-                    notifyIntent.putExtra(Protocol.STATE, xmlNode.getTextContent());
+                    MainDataModel.getInstance().setIsShuffleButtonActive(xmlNode.getTextContent());
                 } else if (xmlNode.getNodeName().contains(Protocol.SCROBBLE)) {
-                    notifyIntent.setAction(Const.SCROBBLER_STATE);
-                    notifyIntent.putExtra(Protocol.STATE, xmlNode.getTextContent());
+                    MainDataModel.getInstance().setIsScrobbleButtonActive(xmlNode.getTextContent());
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYLIST)) {
                     getPlaylistData(xmlNode, notifyIntent);
                 } else if (xmlNode.getNodeName().contains(Protocol.LYRICS)) {
@@ -212,14 +196,6 @@ public class ReplyHandler {
 
     public void clearLyrics() {
         _songLyrics = "";
-    }
-
-    public void clearCoverData() {
-        _coverData = "";
-    }
-
-    public String getCoverData() {
-        return _coverData;
     }
 
     public void setContext(Context context) {

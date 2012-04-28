@@ -1,5 +1,6 @@
 <resources>
-    <style name="RemoteTheme" parent="@android:style/Theme.Holo.NoActionBar">
+    <style name="RemoteTheme" parent="@android:style/Theme.Black">
         <item name="android:background">#1A181D</item>
     </style>
 </resources>
+        <!--@android:style/Theme.Holo.NoActionBar-->

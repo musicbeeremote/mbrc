@@ -116,7 +116,7 @@ public class RequestHandler {
 				String state = bundle.getString(TelephonyManager.EXTRA_STATE);
 				if (state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)) {
 					if (SettingsManager.getInstance().isVolumeReducedOnRinging()) {
-						int newVolume = ((int) (ReplyHandler.getInstance().getCurrentVolume() * 0.2));
+						int newVolume = ((int) (100 * 0.2));
 						requestAction(PlayerAction.Volume, Integer.toString(newVolume));
 					}
 				}
