@@ -64,7 +64,7 @@ public class MainDataModel {
 
     public void setAlbum(String album)
     {
-        if(album.equals(album)) return;
+        if(album.equals(_album)) return;
         _album = album;
         _source.fireEvent(new ModelDataEvent(this,DataType.Album));
     }
@@ -83,7 +83,7 @@ public class MainDataModel {
 
     public String getArtist()
     {
-        return _album;
+        return _artist;
     }
 
     public void setYear(String year)
@@ -118,8 +118,8 @@ public class MainDataModel {
 
     private void setAlbumCover(Bitmap cover)
     {
-        //_albumCover = cover;
-       // _source.fireEvent(new ModelDataEvent(this,DataType.Bitmap));
+        _albumCover = cover;
+        _source.fireEvent(new ModelDataEvent(this,DataType.Bitmap));
     }
 
     public Bitmap getAlbumCover()
@@ -142,8 +142,8 @@ public class MainDataModel {
 
     public void setRepeatState(String repeatButtonActive)
     {
-        boolean newStatus = Boolean.parseBoolean(repeatButtonActive);
-        if(newStatus== _isRepeatButtonActive) return;
+        boolean newStatus = (repeatButtonActive.equals("All"));
+        if(_isRepeatButtonActive!=null&&newStatus== _isRepeatButtonActive) return;
         _isRepeatButtonActive = newStatus;
         _source.fireEvent(new ModelDataEvent(this, DataType.RepeatState));
     }
@@ -156,7 +156,7 @@ public class MainDataModel {
     public void setShuffleState(String shuffleButtonActive)
     {
         boolean newStatus = Boolean.parseBoolean(shuffleButtonActive);
-        if(newStatus == _isShuffleButtonActive) return;
+        if(_isShuffleButtonActive!=null&&newStatus == _isShuffleButtonActive) return;
         _isShuffleButtonActive = newStatus;
         _source.fireEvent(new ModelDataEvent(this, DataType.ShuffleState));
     }
