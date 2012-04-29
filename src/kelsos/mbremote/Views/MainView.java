@@ -12,11 +12,9 @@ import android.view.View.OnClickListener;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import kelsos.mbremote.Controller.Controller;
-import kelsos.mbremote.Messaging.AppNotificationManager;
 import kelsos.mbremote.Messaging.ClickSource;
 import kelsos.mbremote.Messaging.Communicator;
 import kelsos.mbremote.Models.PlayState;
-import kelsos.mbremote.Network.ReplyHandler;
 import kelsos.mbremote.R;
 
 public class MainView extends Activity {
@@ -242,10 +240,10 @@ public class MainView extends Activity {
      *
      */
     private void processLyricsData() {
-        if (ReplyHandler.getInstance().getSongLyrics().equals("")) {
-            AppNotificationManager.getInstance().showToastMessage(R.string.no_lyrics_found);
-            return;
-        }
+//        if (ReplyHandler.getInstance().getSongLyrics().equals("")) {
+//            AppNotificationManager.getInstance().showToastMessage(R.string.no_lyrics_found);
+//            return;
+//        }
         LayoutInflater layoutInflater = (LayoutInflater) MainView.this
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -265,8 +263,8 @@ public class MainView extends Activity {
         ((TextView) lyricsPopup.getContentView().findViewById(R.id.lyricsLabel))
                 .setText(LYRICS_FOR + title + BY + artist);
 
-        ((TextView) lyricsPopup.getContentView().findViewById(R.id.lyricsText))
-                .setText(ReplyHandler.getInstance().getSongLyrics());
+//        ((TextView) lyricsPopup.getContentView().findViewById(R.id.lyricsText))
+//                .setText(ReplyHandler.getInstance().getSongLyrics());
         lyricsPopup.getContentView().findViewById(R.id.popup_close_button)
                 .setOnClickListener(new OnClickListener() {
 
@@ -277,7 +275,7 @@ public class MainView extends Activity {
                 });
         lyricsPopup.showAtLocation(findViewById(R.id.mainLinearLayout),
                 Gravity.CENTER, 0, 0);
-        ReplyHandler.getInstance().clearLyrics();
+//        ReplyHandler.getInstance().clearLyrics();
     }
 
     private OnClickListener playButtonListener = new OnClickListener() {

@@ -1,11 +1,11 @@
 package kelsos.mbremote.Network;
 
-import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
-import kelsos.mbremote.Models.MainDataModel;
-import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Data.MusicTrack;
+import kelsos.mbremote.Events.DataType;
+import kelsos.mbremote.Events.SocketDataEvent;
+import kelsos.mbremote.Events.SocketDataEventListener;
+import kelsos.mbremote.Events.SocketDataEventSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -20,11 +20,10 @@ import java.util.ArrayList;
 
 public class ReplyHandler {
 
+    private SocketDataEventSource _SocketDataEventSource;
     private static ReplyHandler _instance;
-    private Context context;
     private DocumentBuilder db;
     private ArrayList<MusicTrack> _nowPlayingList;
-    private String _songLyrics;
 
     public static double ServerProtocolVersion;
 
@@ -36,12 +35,23 @@ public class ReplyHandler {
         _nowPlayingList.clear();
     }
 
+    public void addEventListener(SocketDataEventListener listener)
+    {
+        _SocketDataEventSource.addEventListener(listener);
+    }
+
+    public void removeEventListener(SocketDataEventListener listener)
+    {
+        _SocketDataEventSource.removeEventListener(listener);
+    }
+
     /**
      * The default constructor of the ReplyHandler Class.
      * it is set to private so than no instances of the singleton
      * can be created outside the class.
      */
     private ReplyHandler() {
+        _SocketDataEventSource = new SocketDataEventSource();
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
             db = dbf.newDocumentBuilder();
@@ -74,50 +84,42 @@ public class ReplyHandler {
         try {
             String[] replies = answer.split("\0");
             for (String reply : replies) {
-                Document doc = db.parse(new ByteArrayInputStream(reply
-                        .getBytes("UTF-8")));
+                Document doc = db.parse(new ByteArrayInputStream(reply.getBytes("UTF-8")));
                 Node xmlNode = doc.getFirstChild();
-                Intent notifyIntent = new Intent();
 
                 if (xmlNode.getNodeName().contains(Protocol.PLAYPAUSE)) {
                     Log.d("Reply Received", "<playPause>");
                 } else if (xmlNode.getNodeName().contains(Protocol.NEXT)) {
                     Log.d("Reply Received", "<next>");
                 } else if (xmlNode.getNodeName().contains(Protocol.VOLUME)) {
-                    MainDataModel.getInstance().setVolume(xmlNode.getTextContent());
+                    _SocketDataEventSource.fireEvent(new SocketDataEvent(this,DataType.Volume,xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.SONGCHANGED)) {
-                    if (xmlNode.getTextContent().contains("True")) {
-                        notifyIntent.setAction(Const.SONG_CHANGED);
-                    }
+                    // DEPRECATED IN PROTOCOL 1.1
                 } else if (xmlNode.getNodeName().contains(Protocol.SONGINFO)) {
-                    getSongData(xmlNode, notifyIntent);
+                    getSongData(xmlNode);
                 } else if (xmlNode.getNodeName().contains(Protocol.SONGCOVER)) {
-                    MainDataModel.getInstance().setAlbumCover(xmlNode.getTextContent());
+                    _SocketDataEventSource.fireEvent(new SocketDataEvent(this, DataType.Bitmap, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYSTATE)) {
-                    MainDataModel.getInstance().setPlayState(xmlNode.getTextContent());
+                    _SocketDataEventSource.fireEvent(new SocketDataEvent(this, DataType.PlayState, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.MUTE)) {
-                    MainDataModel.getInstance().setIsMuteButtonActive(xmlNode.getTextContent());
+                    _SocketDataEventSource.fireEvent(new SocketDataEvent(this, DataType.MuteState, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.REPEAT)) {
-                    MainDataModel.getInstance().setIsRepeatButtonActive(xmlNode.getTextContent());
+                    _SocketDataEventSource.fireEvent(new SocketDataEvent(this, DataType.RepeatState, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.SHUFFLE)) {
-                    MainDataModel.getInstance().setIsShuffleButtonActive(xmlNode.getTextContent());
+                    _SocketDataEventSource.fireEvent(new SocketDataEvent(this,DataType.ShuffleState,xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.SCROBBLE)) {
-                    MainDataModel.getInstance().setIsScrobbleButtonActive(xmlNode.getTextContent());
+                    _SocketDataEventSource.fireEvent(new SocketDataEvent(this, DataType.ScrobbleState, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYLIST)) {
-                    getPlaylistData(xmlNode, notifyIntent);
+                    getPlaylistData(xmlNode);
                 } else if (xmlNode.getNodeName().contains(Protocol.LYRICS)) {
-                    _songLyrics = xmlNode.getTextContent().replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("\"", "&quot;").replace("&apos;", "'").replace("&", "&amp;").replace("<p>", "\r\n").replace("<br>", "\n").trim();
-                    notifyIntent.setAction(Const.LYRICS_DATA);
+                    //_songLyrics = xmlNode.getTextContent().replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("\"", "&quot;").replace("&apos;", "'").replace("&", "&amp;").replace("<p>", "\r\n").replace("<br>", "\n").trim();
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYER_STATUS)) {
-                    getPlayerStatus(notifyIntent, xmlNode);
+                    getPlayerStatus(xmlNode);
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYER)){
 
                 } else if(xmlNode.getNodeName().contains(Protocol.PROTOCOL)){
                   ServerProtocolVersion = Double.parseDouble(xmlNode.getTextContent());
                 }
-
-                if (notifyIntent.getAction() != null)
-                    context.sendBroadcast(notifyIntent);
             }
         } catch (SAXException e) {
             e.printStackTrace();
@@ -131,46 +133,44 @@ public class ReplyHandler {
      * Given a Node it extracts the Playlist data and then prepares the intent to be send.
      *
      * @param xmlNode
-     * @param notifyIntent
+     *
      */
-    private void getPlaylistData(Node xmlNode, Intent notifyIntent) {
+    private void getPlaylistData(Node xmlNode) {
         _nowPlayingList.clear();
         NodeList playlistData = xmlNode.getChildNodes();
         for (int i = 0; i < playlistData.getLength(); i++) {
             _nowPlayingList.add(new MusicTrack(playlistData.item(i).getFirstChild().getTextContent(), playlistData.item(i).getLastChild().getTextContent()));
         }
-        notifyIntent.setAction(Const.PLAYLIST_DATA);
     }
 
-    private void broadcastPlayerStateIntent(Intent intent, String action, String extras) {
-        intent.setAction(action);
-        intent.putExtra(Protocol.STATE, extras);
-        context.sendBroadcast(intent);
-    }
 
-    private void getPlayerStatus(Intent intent, Node xmlNode) {
+    /**
+     * When given a playerStatus node the function extracts the player status information and dispatched the related
+     * events.
+     * @param xmlNode
+     */
+    private void getPlayerStatus(Node xmlNode) {
         Node playerStatusNode = xmlNode.getFirstChild();
-        broadcastPlayerStateIntent(intent, Const.REPEAT_STATE, playerStatusNode.getTextContent());
+        _SocketDataEventSource.fireEvent(new SocketDataEvent(this,DataType.RepeatState,playerStatusNode.getTextContent()));
         playerStatusNode = playerStatusNode.getNextSibling();
-        broadcastPlayerStateIntent(intent, Const.MUTE_STATE, playerStatusNode.getTextContent());
+        _SocketDataEventSource.fireEvent(new SocketDataEvent(this,DataType.MuteState,playerStatusNode.getTextContent()));
         playerStatusNode = playerStatusNode.getNextSibling();
-        broadcastPlayerStateIntent(intent, Const.SHUFFLE_STATE, playerStatusNode.getTextContent());
+        _SocketDataEventSource.fireEvent(new SocketDataEvent(this,DataType.ShuffleState,playerStatusNode.getTextContent()));
         playerStatusNode = playerStatusNode.getNextSibling();
-        broadcastPlayerStateIntent(intent, Const.SCROBBLER_STATE, playerStatusNode.getTextContent());
+        _SocketDataEventSource.fireEvent(new SocketDataEvent(this, DataType.ScrobbleState, playerStatusNode.getTextContent()));
         playerStatusNode = playerStatusNode.getNextSibling();
-        broadcastPlayerStateIntent(intent, Const.PLAY_STATE, playerStatusNode.getTextContent());
+        _SocketDataEventSource.fireEvent(new SocketDataEvent(this, DataType.PlayState, playerStatusNode.getTextContent()));
         playerStatusNode = playerStatusNode.getNextSibling();
-        intent.setAction(Const.VOLUME_DATA);
-        intent.putExtra(Protocol.DATA, Integer.parseInt(playerStatusNode.getTextContent()));
+        _SocketDataEventSource.fireEvent(new SocketDataEvent(this, DataType.Volume, playerStatusNode.getTextContent()));
     }
 
     /**
-     * Given a Node it extracts the song data and puts them inside an intent ready to be send.
+     * This function gets an xml node containing the track information extracts the data and sends the respective events
+     * to every on listening.
      *
      * @param xmlNode
-     * @param notifyIntent
      */
-    private void getSongData(Node xmlNode, Intent notifyIntent) {
+    private void getSongData(Node xmlNode) {
         Node trackInfoNode = xmlNode.getFirstChild();
         String[] trackData = new String[4];
         for (int i = 0; i < 4; i++) {
@@ -178,28 +178,10 @@ public class ReplyHandler {
             trackInfoNode = trackInfoNode.getNextSibling();
         }
         int index = 0;
-        notifyIntent.setAction(Const.SONG_DATA);
-        notifyIntent.putExtra(Protocol.ARTIST, trackData[index++]);
-        notifyIntent.putExtra(Protocol.TITLE, trackData[index++]);
-        notifyIntent.putExtra(Protocol.ALBUM, trackData[index++]);
-        notifyIntent.putExtra(Protocol.YEAR, trackData[index]);
-    }
-
-    /**
-     * This function returns the Song Lyrics String.
-     *
-     * @return
-     */
-    public String getSongLyrics() {
-        return _songLyrics;
-    }
-
-    public void clearLyrics() {
-        _songLyrics = "";
-    }
-
-    public void setContext(Context context) {
-        this.context = context;
+        _SocketDataEventSource.fireEvent(new SocketDataEvent(this, DataType.Artist,trackData[index++]));
+        _SocketDataEventSource.fireEvent(new SocketDataEvent(this, DataType.Title,trackData[index++]));
+        _SocketDataEventSource.fireEvent(new SocketDataEvent(this, DataType.Album,trackData[index++]));
+        _SocketDataEventSource.fireEvent(new SocketDataEvent(this, DataType.Year,trackData[index++]));
     }
 
 }

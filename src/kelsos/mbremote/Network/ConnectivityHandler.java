@@ -14,7 +14,6 @@ import kelsos.mbremote.Messaging.ServerCommunicationEvent;
 import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Others.DelayTimer;
 import kelsos.mbremote.Others.SettingsManager;
-import kelsos.mbremote.Network.Input;
 
 import java.io.*;
 import java.net.Socket;
@@ -119,8 +118,7 @@ public class ConnectivityHandler extends Service {
     public void onCreate() {
         super.onCreate();
         _connectionTimer = new DelayTimer(1000);
-        _statusUpdateTimer = new DelayTimer(2000);
-        ReplyHandler.getInstance().setContext(getApplicationContext());
+        _statusUpdateTimer = new DelayTimer(2000);;
 
         _numberOfTries = 0; // Initialize the connection retry counter.
         requestHandler = new RequestHandler(this);

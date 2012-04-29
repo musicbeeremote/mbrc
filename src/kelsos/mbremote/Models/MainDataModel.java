@@ -5,26 +5,26 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Base64;
 import kelsos.mbremote.Events.DataType;
-import kelsos.mbremote.Events.NewModelDataEvent;
-import kelsos.mbremote.Events.NewModelDataEventListener;
-import kelsos.mbremote.Events.NewModelDataEventSource;
+import kelsos.mbremote.Events.ModelDataEvent;
+import kelsos.mbremote.Events.ModelDataEventListener;
+import kelsos.mbremote.Events.ModelDataEventSource;
 import kelsos.mbremote.Others.Const;
 
 public class MainDataModel {
 
     private static MainDataModel _instance;
-    private NewModelDataEventSource _source;
+    private ModelDataEventSource _source;
 
     private MainDataModel(){
-        _source = new NewModelDataEventSource();
+        _source = new ModelDataEventSource();
     }
 
-    public void addEventListener(NewModelDataEventListener listener)
+    public void addEventListener(ModelDataEventListener listener)
     {
         _source.addEventListener(listener);
     }
 
-    public void removeEventListener(NewModelDataEventListener listener)
+    public void removeEventListener(ModelDataEventListener listener)
     {
         _source.removeEventListener(listener);
     }
@@ -52,9 +52,9 @@ public class MainDataModel {
 
     public void setTitle(String title)
     {
-        if(_title.equals(title)) return;
+        if(title.equals(_title)) return;
         _title=title;
-        _source.fireEvent(new NewModelDataEvent(this, DataType.Title));
+        _source.fireEvent(new ModelDataEvent(this, DataType.Title));
     }
 
     public String getTitle()
@@ -64,9 +64,9 @@ public class MainDataModel {
 
     public void setAlbum(String album)
     {
-        if(_album.equals(album)) return;
+        if(album.equals(album)) return;
         _album = album;
-        _source.fireEvent(new NewModelDataEvent(this,DataType.Album));
+        _source.fireEvent(new ModelDataEvent(this,DataType.Album));
     }
 
     public String getAlbum()
@@ -76,9 +76,9 @@ public class MainDataModel {
 
     public void setArtist(String artist)
     {
-        if(_artist.equals(artist)) return;
+        if(artist.equals(_artist)) return;
         _artist = artist;
-        _source.fireEvent(new NewModelDataEvent(this,DataType.Artist));
+        _source.fireEvent(new ModelDataEvent(this,DataType.Artist));
     }
 
     public String getArtist()
@@ -88,9 +88,9 @@ public class MainDataModel {
 
     public void setYear(String year)
     {
-        if(_year.equals(year)) return;
+        if(year.equals(_year)) return;
         _year=year;
-        _source.fireEvent(new NewModelDataEvent(this,DataType.Year));
+        _source.fireEvent(new ModelDataEvent(this,DataType.Year));
     }
 
     public String getYear()
@@ -103,7 +103,7 @@ public class MainDataModel {
         int newVolume = Integer.parseInt(volume);
         if(newVolume==_volume) return;
         _volume = newVolume;
-        _source.fireEvent(new NewModelDataEvent(this, DataType.Volume));
+        _source.fireEvent(new ModelDataEvent(this, DataType.Volume));
     }
 
     public int getVolume()
@@ -118,8 +118,8 @@ public class MainDataModel {
 
     private void setAlbumCover(Bitmap cover)
     {
-        _albumCover = cover;
-        _source.fireEvent(new NewModelDataEvent(this,DataType.Bitmap));
+        //_albumCover = cover;
+       // _source.fireEvent(new ModelDataEvent(this,DataType.Bitmap));
     }
 
     public Bitmap getAlbumCover()
@@ -127,12 +127,12 @@ public class MainDataModel {
         return _albumCover;
     }
 
-    public void setIsConnectionActive(String connectionActive)
+    public void setConnectionState(String connectionActive)
     {
         boolean newStatus = Boolean.parseBoolean(connectionActive);
         if(newStatus==_isConnectionActive) return;
         _isConnectionActive=newStatus;
-        _source.fireEvent(new NewModelDataEvent(this,DataType.ConnectionState));
+        _source.fireEvent(new ModelDataEvent(this,DataType.ConnectionState));
     }
 
     public boolean getIsConnectionActive()
@@ -140,12 +140,12 @@ public class MainDataModel {
        return _isConnectionActive;
     }
 
-    public void setIsRepeatButtonActive(String repeatButtonActive)
+    public void setRepeatState(String repeatButtonActive)
     {
         boolean newStatus = Boolean.parseBoolean(repeatButtonActive);
         if(newStatus== _isRepeatButtonActive) return;
         _isRepeatButtonActive = newStatus;
-        _source.fireEvent(new NewModelDataEvent(this, DataType.RepeatState));
+        _source.fireEvent(new ModelDataEvent(this, DataType.RepeatState));
     }
 
     public boolean getIsRepeatButtonActive()
@@ -153,12 +153,12 @@ public class MainDataModel {
         return _isRepeatButtonActive;
     }
 
-    public void setIsShuffleButtonActive(String shuffleButtonActive)
+    public void setShuffleState(String shuffleButtonActive)
     {
         boolean newStatus = Boolean.parseBoolean(shuffleButtonActive);
         if(newStatus == _isShuffleButtonActive) return;
         _isShuffleButtonActive = newStatus;
-        _source.fireEvent(new NewModelDataEvent(this, DataType.ShuffleState));
+        _source.fireEvent(new ModelDataEvent(this, DataType.ShuffleState));
     }
 
     public boolean getIsShuffleButtonActive()
@@ -166,12 +166,12 @@ public class MainDataModel {
         return _isShuffleButtonActive;
     }
 
-    public void setIsScrobbleButtonActive(String scrobbleButtonActive)
+    public void setScrobbleState(String scrobbleButtonActive)
     {
         boolean newStatus = Boolean.parseBoolean(scrobbleButtonActive);
         if(newStatus == _isScrobbleButtonActive) return;
         _isScrobbleButtonActive = newStatus;
-        _source.fireEvent(new NewModelDataEvent(this, DataType.ScrobbleState));
+        _source.fireEvent(new ModelDataEvent(this, DataType.ScrobbleState));
     }
 
     public boolean getIsScrobbleButtonActive()
@@ -179,12 +179,12 @@ public class MainDataModel {
         return _isScrobbleButtonActive;
     }
 
-    public void setIsMuteButtonActive(String muteButtonActive)
+    public void setMuteState(String muteButtonActive)
     {
         boolean newStatus = Boolean.parseBoolean(muteButtonActive);
         if(newStatus == _isMuteButtonActive) return;
         _isMuteButtonActive = newStatus;
-        _source.fireEvent(new NewModelDataEvent(this, DataType.MuteState));
+        _source.fireEvent(new ModelDataEvent(this, DataType.MuteState));
     }
 
     public boolean getIsMuteButtonActive()
@@ -200,7 +200,7 @@ public class MainDataModel {
         else if (playState.equalsIgnoreCase(Const.PAUSED)) newState = PlayState.Paused;
         if(_playState==newState) return;
         _playState = newState;
-        _source.fireEvent(new NewModelDataEvent(this, DataType.PlayState));
+        _source.fireEvent(new ModelDataEvent(this, DataType.PlayState));
     }
 
     public PlayState getPlayState()
