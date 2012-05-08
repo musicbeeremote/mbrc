@@ -6,7 +6,7 @@ import java.net.SocketAddress;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import kelsos.mbremote.Messaging.AppNotificationManager;
+import kelsos.mbremote.Messaging.NotificationService;
 import kelsos.mbremote.R;
 
 public class SettingsManager {
@@ -35,7 +35,7 @@ public class SettingsManager {
 		String server_hostname = sharedPreferences.getString(context.getString(R.string.settings_server_hostname), null);
 		String server_port_string = sharedPreferences.getString(context.getString(R.string.settings_server_port), null);
 		if (notNullOrEmpty(server_hostname) || notNullOrEmpty(server_port_string)) {
-            AppNotificationManager.getInstance().showToastMessage(R.string.network_manager_check_hostname_or_port);
+            NotificationService.getInstance().showToastMessage(R.string.network_manager_check_hostname_or_port);
 			return null;
 		}
 		int server_port = Integer.parseInt(server_port_string);

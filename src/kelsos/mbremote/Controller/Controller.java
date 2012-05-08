@@ -9,7 +9,7 @@ import kelsos.mbremote.Events.SocketDataEvent;
 import kelsos.mbremote.Events.SocketDataEventListener;
 import kelsos.mbremote.Models.MainDataModel;
 import kelsos.mbremote.Network.ConnectivityHandler;
-import kelsos.mbremote.Network.ReplyHandler;
+import kelsos.mbremote.Services.SocketService;
 import kelsos.mbremote.Views.MainView;
 
 import java.util.EventObject;
@@ -25,7 +25,7 @@ public class Controller extends Application {
         super.onCreate();
         _instance = this;
         MainDataModel.getInstance().addEventListener(modelDataEventListener);
-        ReplyHandler.getInstance().addEventListener(socketDataEventListener);
+        SocketService.getInstance().addEventListener(socketDataEventListener);
     }
 
     public static Controller getInstance()

@@ -12,8 +12,9 @@ import android.view.View.OnClickListener;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import kelsos.mbremote.Controller.Controller;
-import kelsos.mbremote.Messaging.ClickSource;
-import kelsos.mbremote.Messaging.Communicator;
+import kelsos.mbremote.Events.UserAction;
+import kelsos.mbremote.Events.UserActionEvent;
+import kelsos.mbremote.Events.UserActionEventSource;
 import kelsos.mbremote.Models.PlayState;
 import kelsos.mbremote.R;
 
@@ -21,6 +22,7 @@ public class MainView extends Activity {
     private static final String BY = "\nby ";
     private static final String LYRICS_FOR = "Lyrics for ";
     private boolean userChangingVolume;
+    private UserActionEventSource _userUserActionEventSource;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -29,12 +31,9 @@ public class MainView extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         RegisterListeners();
-       // AppNotificationManager.getInstance().setContext(getBaseContext());
         userChangingVolume = false;
-        Communicator.getInstance().activityButtonClicked(ClickSource.Refresh);
-        Communicator.getInstance().activityButtonClicked(ClickSource.Initialize);
-        Communicator.getInstance().requestConnectionStatus();
         SetTextViewTypeface();
+        _userUserActionEventSource = new UserActionEventSource();
     }
 
 
@@ -76,7 +75,7 @@ public class MainView extends Activity {
                 Intent playlistIntent = new Intent(MainView.this, PlaylistView.class);
                 startActivity(playlistIntent);
             case R.id.main_menu_lyrics:
-                Communicator.getInstance().activityButtonClicked(ClickSource.Lyrics);
+                _userUserActionEventSource.fireEvent(new UserActionEvent(this, UserAction.Lyrics));
             default:
                 return super.onMenuItemSelected(featureId, item);
         }
@@ -241,7 +240,7 @@ public class MainView extends Activity {
      */
     private void processLyricsData() {
 //        if (ReplyHandler.getInstance().getSongLyrics().equals("")) {
-//            AppNotificationManager.getInstance().showToastMessage(R.string.no_lyrics_found);
+//            NotificationService.getInstance().showToastMessage(R.string.no_lyrics_found);
 //            return;
 //        }
         LayoutInflater layoutInflater = (LayoutInflater) MainView.this
@@ -281,62 +280,62 @@ public class MainView extends Activity {
     private OnClickListener playButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            Communicator.getInstance().activityButtonClicked(ClickSource.PlayPause);
+            _userUserActionEventSource.fireEvent(new UserActionEvent(this,UserAction.PlayPause));
                                                                                              }
     };
 
     private OnClickListener previousButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            Communicator.getInstance().activityButtonClicked(ClickSource.Previous);
+            _userUserActionEventSource.fireEvent(new UserActionEvent(this, UserAction.Previous));
         }
     };
 
     private OnClickListener nextButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            Communicator.getInstance().activityButtonClicked(ClickSource.Next);
+            _userUserActionEventSource.fireEvent(new UserActionEvent(this, UserAction.Next));
         }
     };
 
     private OnClickListener stopButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            Communicator.getInstance().activityButtonClicked(ClickSource.Stop);
+            _userUserActionEventSource.fireEvent(new UserActionEvent(this, UserAction.Stop));
         }
     };
 
     private OnClickListener muteButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            Communicator.getInstance().activityButtonClicked(ClickSource.Mute);
+            _userUserActionEventSource.fireEvent(new UserActionEvent(this, UserAction.Mute));
         }
     };
 
     private OnClickListener scrobbleButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            Communicator.getInstance().activityButtonClicked(ClickSource.Scrobble);
+            _userUserActionEventSource.fireEvent(new UserActionEvent(this, UserAction.Scrobble));
         }
     };
 
     private OnClickListener shuffleButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            Communicator.getInstance().activityButtonClicked(ClickSource.Shuffle);
+            _userUserActionEventSource.fireEvent(new UserActionEvent(this, UserAction.Shuffle));
         }
     };
 
     private OnClickListener repeatButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            Communicator.getInstance().activityButtonClicked(ClickSource.Repeat);
+            _userUserActionEventSource.fireEvent(new UserActionEvent(this, UserAction.Repeat));
         }
     };
     private OnClickListener connectivityIndicatorListener = new OnClickListener() {
 
         public void onClick(View v) {
-            Communicator.getInstance().activityButtonClicked(ClickSource.Repeat);
+            _userUserActionEventSource.fireEvent(new UserActionEvent(this, UserAction.Repeat));
         }
     };
 
@@ -354,7 +353,7 @@ public class MainView extends Activity {
 
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser)
-            Communicator.getInstance().seekBarChanged(seekBar.getProgress());
+                _userUserActionEventSource.fireEvent(new UserActionEvent(this, UserAction.Volume, String.valueOf(seekBar.getProgress())));
         }
     };
 
