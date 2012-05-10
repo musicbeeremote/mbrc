@@ -47,6 +47,13 @@ public class MainView extends Activity {
 
     }
 
+    @Override
+    public void onStart()
+    {
+        Controller.getInstance().onActivityStart(this);
+        super.onStart();
+    }
+
 
 
     /**

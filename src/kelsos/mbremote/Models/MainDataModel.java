@@ -16,6 +16,18 @@ public class MainDataModel {
 
     private MainDataModel(){
         _source = new ModelDataEventSource();
+        _title="";
+        _artist="";
+        _album="";
+        _year = "";
+        _volume = 100;
+
+        _isConnectionActive=false;
+        _isRepeatButtonActive=false;
+        _isShuffleButtonActive=false;
+        _isScrobbleButtonActive=false;
+        _isMuteButtonActive=false;
+        _isDeviceOnline=false;
     }
 
     public void addEventListener(ModelDataEventListener listener)

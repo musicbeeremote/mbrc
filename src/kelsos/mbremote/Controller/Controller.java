@@ -15,8 +15,8 @@ import android.telephony.TelephonyManager;
 import kelsos.mbremote.Events.*;
 import kelsos.mbremote.Models.MainDataModel;
 import kelsos.mbremote.Network.Input;
-import kelsos.mbremote.Network.ProtocolHandler;
 import kelsos.mbremote.Others.SettingsManager;
+import kelsos.mbremote.Services.ProtocolHandler;
 import kelsos.mbremote.Services.SocketService;
 import kelsos.mbremote.Views.MainView;
 
@@ -33,7 +33,7 @@ public class Controller extends Service {
         super.onCreate();
         _instance = this;
         MainDataModel.getInstance().addEventListener(modelDataEventListener);
-        SocketService.getInstance().addEventListener(socketDataEventListener);
+        ProtocolHandler.getInstance().addEventListener(socketDataEventListener);
         SettingsManager.getInstance().setContext(this);
     }
 
@@ -68,6 +68,14 @@ public class Controller extends Service {
 
     }
 
+    public void onActivityStart(Activity activity)
+    {
+        if(activity.getClass()==MainView.class)
+        {
+            updateMainViewData();
+        }
+    }
+
 
     public void initialize(Activity activity)
     {
@@ -82,40 +90,40 @@ public class Controller extends Service {
             switch (((UserActionEvent) eventObject).getUserAction()) {
 
                 case PlayPause:
-                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.PlayPause);
+                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.PlayPause);
                     break;
                 case Stop:
-                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Stop);
+                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Stop);
                     break;
                 case Next:
-                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Next);
+                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Next);
                     break;
                 case Previous:
-                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Previous);
+                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Previous);
                     break;
                 case Repeat:
-                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Repeat);
+                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Repeat);
                     break;
                 case Shuffle:
-                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Shuffle);
+                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Shuffle);
                     break;
                 case Scrobble:
-                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Scrobble);
+                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Scrobble);
                     break;
                 case Mute:
-                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Mute);
+                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Mute);
                     break;
                 case Lyrics:
-                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Lyrics);
+                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Lyrics);
                     break;
                 case Refresh:
-                    SocketService.getInstance().requestPlayerData();
+                    ProtocolHandler.getInstance().requestPlayerData();
                     break;
                 case Playlist:
-                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Playlist);
+                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Playlist);
                     break;
                 case Volume:
-                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Volume,((UserActionEvent) eventObject).getEventData());
+                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Volume,((UserActionEvent) eventObject).getEventData());
                     break;
                 case Initialize:
                     break;
@@ -292,7 +300,7 @@ public class Controller extends Service {
                 if (state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)) {
                     if (SettingsManager.getInstance().isVolumeReducedOnRinging()) {
                         int newVolume = ((int) (100 * 0.2));
-                        SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Volume, Integer.toString(newVolume));
+                        ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Volume, Integer.toString(newVolume));
                     }
                 }
             }
@@ -310,6 +318,27 @@ public class Controller extends Service {
             }
         }
     };
+
+    private void updateMainViewData()
+    {
+        currentActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((MainView)currentActivity).updateTitleText(MainDataModel.getInstance().getTitle());
+                ((MainView)currentActivity).updateArtistText(MainDataModel.getInstance().getArtist());
+                ((MainView)currentActivity).updateAlbumText(MainDataModel.getInstance().getAlbum());
+                ((MainView)currentActivity).updateYearText(MainDataModel.getInstance().getYear());
+                ((MainView)currentActivity).updateVolumeData(MainDataModel.getInstance().getVolume());
+                //((MainView)currentActivity).updateAlbumCover(MainDataModel.getInstance().getAlbumCover());
+                ((MainView)currentActivity).updateConnectionIndicator(MainDataModel.getInstance().getIsConnectionActive());
+                ((MainView)currentActivity).updateRepeatButtonState(MainDataModel.getInstance().getIsRepeatButtonActive());
+                ((MainView)currentActivity).updateShuffleButtonState(MainDataModel.getInstance().getIsShuffleButtonActive());
+                ((MainView)currentActivity).updateScrobblerButtonState(MainDataModel.getInstance().getIsScrobbleButtonActive());
+                ((MainView)currentActivity).updateMuteButtonState(MainDataModel.getInstance().getIsMuteButtonActive());
+                ((MainView)currentActivity).updatePlayState(MainDataModel.getInstance().getPlayState());
+            }
+        });
+    }
 
     /**
      * Initialized and installs the IntentFilter listening for the SONG_CHANGED

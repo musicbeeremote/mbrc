@@ -1,7 +1,6 @@
 package kelsos.mbremote.Services;
 
 import android.util.Log;
-import kelsos.mbremote.Events.SocketDataEventListener;
 import kelsos.mbremote.Messaging.NotificationService;
 import kelsos.mbremote.Network.Input;
 import kelsos.mbremote.Others.Const;
@@ -18,7 +17,6 @@ public class SocketService {
 
     private static int _numberOfTries;
     public static final int MAX_RETRIES = 4;
-    private ProtocolHandler protocolHandler;
     private static SocketService _instance;
 
     private Socket _cSocket;
@@ -41,12 +39,12 @@ public class SocketService {
         _connectionTimer.setTimerFinishEventListener(timerFinishEvent);
         _statusUpdateTimer.setTimerFinishEventListener(statusUpdateTimerFinishEvent);
 
-        protocolHandler = new ProtocolHandler();
     }
 
     DelayTimer.TimerFinishEvent statusUpdateTimerFinishEvent = new DelayTimer.TimerFinishEvent() {
         public void onTimerFinish() {
-            protocolHandler.updateConnectionStatus(String.valueOf(socketExistsAndIsConnected()));
+            ProtocolHandler.getInstance().requestPlayerData();
+            ProtocolHandler.getInstance().updateConnectionStatus(String.valueOf(socketExistsAndIsConnected()));
         }
     };
 
@@ -114,7 +112,7 @@ public class SocketService {
     private class socketConnection implements Runnable {
 
         public void run() {
-            protocolHandler.setHandshakeComplete(false);
+            ProtocolHandler.getInstance().setHandshakeComplete(false);
             Log.d("ConnectivityHandler", "connectSocket Running");
             SocketAddress socketAddress = SettingsManager.getInstance().getSocketAddress();
             if (null == socketAddress) return;
@@ -125,12 +123,12 @@ public class SocketService {
                 _output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(_cSocket.getOutputStream())), true);
                 _input = new BufferedReader(new InputStreamReader(_cSocket.getInputStream()));
 
-                protocolHandler.updateConnectionStatus("true");
+                ProtocolHandler.getInstance().updateConnectionStatus("true");
                 _statusUpdateTimer.start();
                 while (_cSocket.isConnected()) {
                     try {
                         final String incoming = _input.readLine();
-                        protocolHandler.answerProcessor(incoming);
+                        ProtocolHandler.getInstance().answerProcessor(incoming);
                     } catch (IOException e) {
                         _input.close();
                         _cSocket.close();
@@ -154,7 +152,7 @@ public class SocketService {
                 }
                 _cSocket = null;
 
-                protocolHandler.updateConnectionStatus("false");
+                ProtocolHandler.getInstance().updateConnectionStatus("false");
 
                 Log.d("ConnectivityHandler", "ListeningThread terminated");
                 attemptToStartSocketThread(Input.system);
@@ -162,17 +160,6 @@ public class SocketService {
             }
         }
     }
-
-    public void addEventListener(SocketDataEventListener listener)
-    {
-        protocolHandler.addEventListener(listener);
-    }
-
-    public void removeEventListener(SocketDataEventListener listener)
-    {
-        protocolHandler.removeEventListener(listener);
-    }
-
 
     /**
      * Returns the instance of the Singleton ReplyHandler if the instance exists,

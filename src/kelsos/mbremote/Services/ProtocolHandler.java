@@ -21,12 +21,14 @@ import java.io.IOException;
 public class ProtocolHandler {
     private SocketDataEventSource _SocketDataEventSource;
 
+    private static ProtocolHandler _instance;
+
     private boolean isHandshakeComplete;
     private DocumentBuilder db;
 
     public static double ServerProtocolVersion;
 
-    public ProtocolHandler()
+    private ProtocolHandler()
     {
         _SocketDataEventSource = new SocketDataEventSource();
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -39,6 +41,13 @@ public class ProtocolHandler {
         _updateTimer = new DelayTimer(2000);
         // Event Listener for the communicator events
         _updateTimer.setTimerFinishEventListener(updateTimerFinishEvent);
+    }
+
+    public static synchronized ProtocolHandler getInstance()
+    {
+        if(_instance==null)
+            _instance = new ProtocolHandler();
+        return _instance;
     }
 
     public boolean isHandshakeComplete() {
