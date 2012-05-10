@@ -18,7 +18,7 @@ public class SocketDataEventSource {
         _listeners.remove(listener);
     }
 
-    public synchronized void fireEvent(SocketDataEvent e) {
+    public synchronized void dispatchEvent(SocketDataEvent e) {
         Iterator it = _listeners.iterator();
         while (it.hasNext()) {
             ((SocketDataEventListener) it.next()).handleSocketDataEvent(e);

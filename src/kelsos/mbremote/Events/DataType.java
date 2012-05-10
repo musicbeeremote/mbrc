@@ -6,11 +6,12 @@ public enum DataType {
     Album,
     Year,
     Volume,
-    Bitmap,
+    AlbumCover,
     ConnectionState,
     RepeatState,
     ShuffleState,
     ScrobbleState,
     MuteState,
     PlayState,
+    OnlineStatus
 }

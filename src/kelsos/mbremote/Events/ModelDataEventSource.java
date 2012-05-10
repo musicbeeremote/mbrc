@@ -15,7 +15,7 @@ public class ModelDataEventSource {
         _listeners.remove(listener);
     }
 
-    public synchronized void fireEvent(ModelDataEvent e) {
+    public synchronized void dispatchEvent(ModelDataEvent e) {
         Iterator it = _listeners.iterator();
         while (it.hasNext()) {
             ((ModelDataEventListener) it.next()).handleModelDataEvent(e);

@@ -1,20 +1,28 @@
 package kelsos.mbremote.Controller;
 
 import android.app.Activity;
-import android.app.Application;
+import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import kelsos.mbremote.Events.ModelDataEvent;
-import kelsos.mbremote.Events.ModelDataEventListener;
-import kelsos.mbremote.Events.SocketDataEvent;
-import kelsos.mbremote.Events.SocketDataEventListener;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.telephony.TelephonyManager;
+import kelsos.mbremote.Events.*;
 import kelsos.mbremote.Models.MainDataModel;
-import kelsos.mbremote.Network.ConnectivityHandler;
+import kelsos.mbremote.Network.Input;
+import kelsos.mbremote.Network.ProtocolHandler;
+import kelsos.mbremote.Others.SettingsManager;
 import kelsos.mbremote.Services.SocketService;
 import kelsos.mbremote.Views.MainView;
 
 import java.util.EventObject;
 
-public class Controller extends Application {
+public class Controller extends Service {
 
     private static Controller _instance;
     Activity currentActivity;
@@ -26,6 +34,18 @@ public class Controller extends Application {
         _instance = this;
         MainDataModel.getInstance().addEventListener(modelDataEventListener);
         SocketService.getInstance().addEventListener(socketDataEventListener);
+        SettingsManager.getInstance().setContext(this);
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;  ||
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        unregisterReceiver(nmBroadcastReceiver);
     }
 
     public static Controller getInstance()
@@ -35,20 +55,73 @@ public class Controller extends Application {
 
     public void setCurrentActivity(Activity activity)
     {
+
         if(currentActivity!=null)
         {
             currentActivity.finish();
         }
         currentActivity = activity;
-        currentActivity.startService(new Intent(currentActivity, ConnectivityHandler.class));
+        if(activity.getClass()==MainView.class)
+        {
+            ((MainView)activity).addEventListener(userActionEventListener);
+        }
+
     }
 
 
     public void initialize(Activity activity)
     {
+        SocketService.getInstance().attemptToStartSocketThread(Input.user);
         currentActivity = activity;
         launchMainActivity(activity);
     }
+
+    UserActionEventListener userActionEventListener = new UserActionEventListener() {
+        @Override
+        public void handleUserActionEvent(EventObject eventObject) {
+            switch (((UserActionEvent) eventObject).getUserAction()) {
+
+                case PlayPause:
+                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.PlayPause);
+                    break;
+                case Stop:
+                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Stop);
+                    break;
+                case Next:
+                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Next);
+                    break;
+                case Previous:
+                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Previous);
+                    break;
+                case Repeat:
+                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Repeat);
+                    break;
+                case Shuffle:
+                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Shuffle);
+                    break;
+                case Scrobble:
+                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Scrobble);
+                    break;
+                case Mute:
+                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Mute);
+                    break;
+                case Lyrics:
+                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Lyrics);
+                    break;
+                case Refresh:
+                    SocketService.getInstance().requestPlayerData();
+                    break;
+                case Playlist:
+                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Playlist);
+                    break;
+                case Volume:
+                    SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Volume,((UserActionEvent) eventObject).getEventData());
+                    break;
+                case Initialize:
+                    break;
+            }
+        }
+    };
 
     SocketDataEventListener socketDataEventListener = new SocketDataEventListener() {
         @Override
@@ -70,7 +143,7 @@ public class Controller extends Application {
                 case Volume:
                     MainDataModel.getInstance().setVolume(((SocketDataEvent) eventObject).getData());
                     break;
-                case Bitmap:
+                case AlbumCover:
                     MainDataModel.getInstance().setAlbumCover(((SocketDataEvent) eventObject).getData());
                     break;
                 case ConnectionState:
@@ -140,7 +213,7 @@ public class Controller extends Application {
                         }
                     });
                     break;
-                case Bitmap:
+                case AlbumCover:
                     currentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -206,6 +279,62 @@ public class Controller extends Application {
         Intent launchIntent;
         launchIntent = new Intent(activity, MainView.class);
         activity.startActivity(launchIntent);
+    }
+
+    private final BroadcastReceiver nmBroadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(TelephonyManager.ACTION_PHONE_STATE_CHANGED)) {
+                Bundle bundle = intent.getExtras();
+                if (null == bundle) return;
+                String state = bundle.getString(TelephonyManager.EXTRA_STATE);
+                if (state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)) {
+                    if (SettingsManager.getInstance().isVolumeReducedOnRinging()) {
+                        int newVolume = ((int) (100 * 0.2));
+                        SocketService.getInstance().requestAction(ProtocolHandler.PlayerAction.Volume, Integer.toString(newVolume));
+                    }
+                }
+            }
+            else if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION))
+            {
+                NetworkInfo networkInfo = (NetworkInfo)intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                if(networkInfo.getState().equals(NetworkInfo.State.CONNECTED))
+                {
+                    SocketService.getInstance().attemptToStartSocketThread(Input.user);
+                }
+                else if (networkInfo.getState().equals(NetworkInfo.State.DISCONNECTING))
+                {
+
+                }
+            }
+        }
+    };
+
+    /**
+     * Initialized and installs the IntentFilter listening for the SONG_CHANGED
+     * intent fired by the ReplyHandler or the PHONE_STATE intent fired by the
+     * Android operating system.
+     */
+    private void installFilter() {
+        IntentFilter _nmFilter = new IntentFilter();
+        _nmFilter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
+        _nmFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        registerReceiver(nmBroadcastReceiver, _nmFilter);
+    }
+
+
+    /**
+     * Returns if the device is connected to internet/network
+     * @return Boolean online status, true if online false if not.
+     */
+    private boolean isOnline()
+    {
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if(networkInfo !=null && networkInfo.isConnected())
+            return true;
+        return false;
     }
 
 

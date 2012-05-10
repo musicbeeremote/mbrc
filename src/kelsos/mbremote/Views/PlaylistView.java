@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 import kelsos.mbremote.Data.MusicTrack;
-import kelsos.mbremote.Network.ConnectivityHandler;
 import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Others.DelayTimer;
 
@@ -28,7 +27,6 @@ public class PlaylistView extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		startService(new Intent(PlaylistView.this, ConnectivityHandler.class));
 		IntentFilter plFilter = new IntentFilter();
 		plFilter.addAction(Const.PLAYLIST_DATA);
 		registerReceiver(mReceiver, plFilter);

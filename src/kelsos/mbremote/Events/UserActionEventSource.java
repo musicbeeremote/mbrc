@@ -18,7 +18,7 @@ public class UserActionEventSource {
         _listeners.remove(listener);
     }
 
-    public synchronized void fireEvent(UserActionEvent e) {
+    public synchronized void dispatchEvent(UserActionEvent e) {
         Iterator it = _listeners.iterator();
         while (it.hasNext()) {
             ((UserActionEventListener) it.next()).handleUserActionEvent(e);
