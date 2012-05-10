@@ -27,6 +27,8 @@ public class Controller extends Service {
     private static Controller _instance;
     Activity currentActivity;
 
+    private static boolean _isRunning = false;
+
     @Override
     public void onCreate()
     {
@@ -35,11 +37,12 @@ public class Controller extends Service {
         MainDataModel.getInstance().addEventListener(modelDataEventListener);
         ProtocolHandler.getInstance().addEventListener(socketDataEventListener);
         SettingsManager.getInstance().setContext(this);
+        _isRunning = true;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;  ||
+        return null;
     }
 
     @Override
@@ -53,23 +56,21 @@ public class Controller extends Service {
         return _instance;
     }
 
-    public void setCurrentActivity(Activity activity)
+    /**
+     * Accessor to the running state of the Controller.
+     * @return True is the Controller is already running.
+     */
+    public static boolean getIsRunning()
     {
-
-        if(currentActivity!=null)
-        {
-            currentActivity.finish();
-        }
-        currentActivity = activity;
-        if(activity.getClass()==MainView.class)
-        {
-            ((MainView)activity).addEventListener(userActionEventListener);
-        }
-
+        return _isRunning;
     }
 
     public void onActivityStart(Activity activity)
     {
+        if(activity.getClass()==MainView.class)
+        {
+            ((MainView)activity).addEventListener(userActionEventListener);
+        }
         if(activity.getClass()==MainView.class)
         {
             updateMainViewData();
@@ -81,7 +82,11 @@ public class Controller extends Service {
     {
         SocketService.getInstance().attemptToStartSocketThread(Input.user);
         currentActivity = activity;
-        launchMainActivity(activity);
+
+        if(activity.getClass()==MainView.class)
+        {
+            ((MainView)activity).addEventListener(userActionEventListener);
+        }
     }
 
     UserActionEventListener userActionEventListener = new UserActionEventListener() {
@@ -281,13 +286,6 @@ public class Controller extends Service {
         }
     };
 
-    private void launchMainActivity(Activity activity)
-    {
-        if(activity.getClass() == MainView.class) return;
-        Intent launchIntent;
-        launchIntent = new Intent(activity, MainView.class);
-        activity.startActivity(launchIntent);
-    }
 
     private final BroadcastReceiver nmBroadcastReceiver = new BroadcastReceiver() {
 
@@ -319,6 +317,9 @@ public class Controller extends Service {
         }
     };
 
+    /**
+     * Used to update the data on the main view.
+     */
     private void updateMainViewData()
     {
         currentActivity.runOnUiThread(new Runnable() {

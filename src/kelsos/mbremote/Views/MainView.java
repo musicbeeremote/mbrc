@@ -17,13 +17,30 @@ import kelsos.mbremote.Events.UserActionEvent;
 import kelsos.mbremote.Events.UserActionEventListener;
 import kelsos.mbremote.Events.UserActionEventSource;
 import kelsos.mbremote.Models.PlayState;
+import kelsos.mbremote.Others.DelayTimer;
 import kelsos.mbremote.R;
 
 public class MainView extends Activity {
+    private DelayTimer _selfRegistrationTimer;
     private static final String BY = "\nby ";
     private static final String LYRICS_FOR = "Lyrics for ";
     private boolean userChangingVolume;
     private UserActionEventSource _userUserActionEventSource;
+
+    DelayTimer.TimerFinishEvent selfRegistrationTimerEvent = new DelayTimer.TimerFinishEvent() {
+        @Override
+        public void onTimerFinish() {
+                registerSelf();
+        }
+    };
+
+    /**
+     * This function is used to register self in the Controller service.
+     */
+    private void registerSelf()
+    {
+        Controller.getInstance().initialize(this);
+    }
 
     public void addEventListener(UserActionEventListener listener)
     {
@@ -38,26 +55,35 @@ public class MainView extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         _userUserActionEventSource = new UserActionEventSource();
-        Controller.getInstance().setCurrentActivity(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         RegisterListeners();
         userChangingVolume = false;
         SetTextViewTypeface();
+        /* If the controller is not running send the start intent */
+        if(!Controller.getIsRunning())
+        {
+            startService(new Intent(this,Controller.class));
+            _selfRegistrationTimer = new DelayTimer(2000);
+            _selfRegistrationTimer.setTimerFinishEventListener(selfRegistrationTimerEvent);
+            _selfRegistrationTimer.start();
+
+        }
 
     }
 
     @Override
     public void onStart()
     {
-        Controller.getInstance().onActivityStart(this);
         super.onStart();
+        if(Controller.getIsRunning())
+        {
+            Controller.getInstance().onActivityStart(this);
+        }
     }
 
-
-
     /**
-     * Sets the typeface of the textviews in the main activity to roboto.
+     * Sets the typeface of the text views in the main activity to roboto.
      */
     private void SetTextViewTypeface()
     {

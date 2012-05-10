@@ -28,6 +28,7 @@ public class MainDataModel {
         _isScrobbleButtonActive=false;
         _isMuteButtonActive=false;
         _isDeviceOnline=false;
+        _playState = PlayState.Stopped;
     }
 
     public void addEventListener(ModelDataEventListener listener)
