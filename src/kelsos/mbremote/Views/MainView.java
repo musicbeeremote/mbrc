@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.*;
 import android.view.View.OnClickListener;
@@ -93,8 +92,7 @@ public class MainView extends Activity {
         getTextViewById(R.id.albumLabel).setSelected(true);
         getTextViewById(R.id.yearLabel).setSelected(true);
 
-        if(Build.VERSION.SDK_INT>=14) return;
-        Typeface font = Typeface.createFromAsset(getAssets(),"Roboto-Light.ttf");
+        Typeface font = Typeface.createFromAsset(getAssets(),"fonts/roboto_light.ttf");
         getTextViewById(R.id.artistLabel).setTypeface(font);
         getTextViewById(R.id.titleLabel).setTypeface(font);
         getTextViewById(R.id.albumLabel).setTypeface(font);

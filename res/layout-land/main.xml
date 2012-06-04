@@ -15,14 +15,14 @@
                 android:id="@+id/connectivityIndicator"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/ic_button_vertical_top_skin"
+                android:background="@android:color/transparent" 
                 android:contentDescription="@string/connectivity_indicator"
                 android:src="@drawable/ic_icon_indicator_red"/>
         <ImageButton
                 android:id="@+id/repeatButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/ic_button_vertical_middle_skin"
+                android:background="@android:color/transparent" 
                 android:clickable="true"
                 android:contentDescription="@string/repeat_button"
                 android:scaleType="fitCenter"
@@ -31,7 +31,7 @@
                 android:id="@+id/shuffleButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/ic_button_vertical_middle_skin"
+                android:background="@android:color/transparent" 
                 android:contentDescription="@string/shuffle_button"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_shuffle"/>
@@ -39,7 +39,7 @@
                 android:id="@+id/scrobbleButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/ic_button_vertical_middle_skin"
+                android:background="@android:color/transparent" 
                 android:contentDescription="@string/scrobbler_button"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_scrobble_red"/>
@@ -47,7 +47,7 @@
                 android:id="@+id/muteButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/ic_button_vertical_bottom_skin"
+                android:background="@android:color/transparent" 
                 android:contentDescription="@string/mute_button"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_mute_full"/>
@@ -149,7 +149,7 @@
                             android:id="@+id/previousButton"
                             android:layout_width="60dp"
                             android:layout_height="60dp"
-                            android:background="@drawable/ic_button_horizontal_left_skin"
+                            android:background="@android:color/transparent" 
                             android:contentDescription="@string/previous_track_button"
                             android:scaleType="fitCenter"
                             android:src="@drawable/ic_media_previous"/>
@@ -157,7 +157,7 @@
                             android:id="@+id/playPauseButton"
                             android:layout_width="60dp"
                             android:layout_height="60dp"
-                            android:background="@drawable/ic_button_horizontal_middle_skin"
+                            android:background="@android:color/transparent" 
                             android:clickable="true"
                             android:contentDescription="@string/play_pause_button"
                             android:scaleType="fitCenter"
@@ -166,7 +166,7 @@
                             android:id="@+id/stopButton"
                             android:layout_width="60dp"
                             android:layout_height="60dp"
-                            android:background="@drawable/ic_button_horizontal_middle_skin"
+                            android:background="@android:color/transparent" 
                             android:contentDescription="@string/stop_playback_button"
                             android:scaleType="fitCenter"
                             android:src="@drawable/ic_media_stop"/>
@@ -174,7 +174,7 @@
                             android:id="@+id/nextButton"
                             android:layout_width="60dp"
                             android:layout_height="60dp"
-                            android:background="@drawable/ic_button_horizontal_right_skin"
+                            android:background="@android:color/transparent" 
                             android:contentDescription="@string/next_track_button"
                             android:scaleType="fitCenter"
                             android:src="@drawable/ic_media_next"/>
