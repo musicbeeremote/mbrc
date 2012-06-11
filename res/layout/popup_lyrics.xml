@@ -45,6 +45,5 @@
         android:layout_width="56dp"
         android:layout_height="11dp"
         android:layout_weight="0.02"
-        android:background="@drawable/ic_button_single_skin"
         android:text="@string/generic_string_close" />
 </LinearLayout>

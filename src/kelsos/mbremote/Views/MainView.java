@@ -97,6 +97,8 @@ public class MainView extends Activity {
         getTextViewById(R.id.titleLabel).setTypeface(font);
         getTextViewById(R.id.albumLabel).setTypeface(font);
         getTextViewById(R.id.yearLabel).setTypeface(font);
+        getTextViewById(R.id.trackProgressCurrent).setTypeface(font);
+        getTextViewById(R.id.trackDuration).setTypeface(font);
     }
 
     @Override
@@ -377,7 +379,7 @@ public class MainView extends Activity {
     private OnClickListener connectivityIndicatorListener = new OnClickListener() {
 
         public void onClick(View v) {
-            _userUserActionEventSource.dispatchEvent(new UserActionEvent(this, UserAction.Repeat));
+            _userUserActionEventSource.dispatchEvent(new UserActionEvent(this, UserAction.Initialize));
         }
     };
 

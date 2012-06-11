@@ -12,9 +12,11 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import kelsos.mbremote.Events.*;
 import kelsos.mbremote.Models.MainDataModel;
 import kelsos.mbremote.Network.Input;
+import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Others.SettingsManager;
 import kelsos.mbremote.Services.ProtocolHandler;
 import kelsos.mbremote.Services.SocketService;
@@ -92,6 +94,7 @@ public class Controller extends Service {
     UserActionEventListener userActionEventListener = new UserActionEventListener() {
         @Override
         public void handleUserActionEvent(EventObject eventObject) {
+            Log.d("ACTION",((UserActionEvent) eventObject).getUserAction().toString());
             switch (((UserActionEvent) eventObject).getUserAction()) {
 
                 case PlayPause:
@@ -107,16 +110,16 @@ public class Controller extends Service {
                     ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Previous);
                     break;
                 case Repeat:
-                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Repeat);
+                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Repeat, Const.TOGGLE);
                     break;
                 case Shuffle:
-                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Shuffle);
+                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Shuffle, Const.TOGGLE);
                     break;
                 case Scrobble:
-                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Scrobble);
+                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Scrobble, Const.TOGGLE);
                     break;
                 case Mute:
-                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Mute);
+                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Mute, Const.TOGGLE);
                     break;
                 case Lyrics:
                     ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Lyrics);
@@ -157,7 +160,10 @@ public class Controller extends Service {
                     MainDataModel.getInstance().setVolume(((SocketDataEvent) eventObject).getData());
                     break;
                 case AlbumCover:
-                    MainDataModel.getInstance().setAlbumCover(((SocketDataEvent) eventObject).getData());
+                    if(((SocketDataEvent)eventObject).getData()!=null||((SocketDataEvent)eventObject).getData()!="")
+                    {
+                        MainDataModel.getInstance().setAlbumCover(((SocketDataEvent) eventObject).getData());
+                    }
                     break;
                 case ConnectionState:
                     MainDataModel.getInstance().setConnectionState(((SocketDataEvent) eventObject).getData());
