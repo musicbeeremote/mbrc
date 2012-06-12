@@ -118,9 +118,8 @@
                   android:orientation="vertical">
 
         <SeekBar android:id="@+id/trackProgressSlider"
-                 android:layout_width="240dp"
+                 android:layout_width="255dp"
                  android:layout_height="wrap_content"
-                 android:layout_marginLeft="14dp"
                  android:progressDrawable="@drawable/ic_duration_bar_progress"
                  android:progress="0"
                  android:minHeight="5dp"
@@ -197,16 +196,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:max="100"
-            android:minHeight="10dp"
-            android:maxHeight="10dp"
+            android:minHeight="8dp"
+            android:maxHeight="8dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="-20dp"
+            android:layout_marginTop="-15dp"
             android:secondaryProgress="0"
             android:progress="0"
             android:gravity="center"
             android:layout_gravity="center"
-            android:thumb="@drawable/volume_bar_indicator"
+            android:thumb="@drawable/ic_volume_thumb"
             android:progressDrawable="@drawable/ic_volume_bar_progress"
             />
     <LinearLayout

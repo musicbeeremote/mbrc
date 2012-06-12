@@ -7,11 +7,9 @@
                     android:dither="true"/>
     </item>
     <item android:id="@android:id/progress">
-        <nine-patch android:src="@drawable/volume_bar_fill_np"
-                android:dither="true"/>
-    </item>
-    <item android:id="@android:id/secondaryProgress">
-        <nine-patch android:src="@drawable/volume_bar_fill_np"
-                    android:dither="true"/>
+        <clip>
+            <nine-patch android:src="@drawable/volume_bar_fill_np"
+                        android:dither="true"/>
+        </clip>
     </item>
 </layer-list>

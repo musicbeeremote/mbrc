@@ -7,11 +7,10 @@
                     android:dither="true"/>
     </item>
     <item android:id="@android:id/progress">
-        <nine-patch android:src="@drawable/duration_bar_fill_np"
-                android:dither="true"/>
-    </item>
-    <item android:id="@android:id/secondaryProgress">
-        <nine-patch android:src="@drawable/duration_bar_fill_np"
-                    android:dither="true"/>
+        <clip>
+            <shape>
+                <solid android:color="#FFFFFF"></solid>
+            </shape>
+        </clip>
     </item>
 </layer-list>
