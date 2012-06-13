@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import kelsos.mbremote.Data.MusicTrack;
 import kelsos.mbremote.Events.*;
 import kelsos.mbremote.Models.MainDataModel;
 import kelsos.mbremote.Network.Input;
@@ -21,7 +22,9 @@ import kelsos.mbremote.Others.SettingsManager;
 import kelsos.mbremote.Services.ProtocolHandler;
 import kelsos.mbremote.Services.SocketService;
 import kelsos.mbremote.Views.MainView;
+import kelsos.mbremote.Views.PlaylistView;
 
+import java.util.ArrayList;
 import java.util.EventObject;
 
 public class Controller extends Service {
@@ -69,10 +72,24 @@ public class Controller extends Service {
 
     public void onActivityStart(Activity activity)
     {
+        if(currentActivity.getClass()==MainView.class)
+        {
+            ((MainView)currentActivity).removeEventListener(userActionEventListener);
+        }
+        else if(currentActivity.getClass()==PlaylistView.class)
+        {
+            ((PlaylistView)currentActivity).removeEventListener(playlistViewListener);
+        }
+
         if(activity.getClass()==MainView.class)
         {
             ((MainView)activity).addEventListener(userActionEventListener);
         }
+        else if (activity.getClass()==PlaylistView.class)
+        {
+            ((PlaylistView)activity).addEventListener(playlistViewListener);
+        }
+        currentActivity = activity;
         if(activity.getClass()==MainView.class)
         {
             updateMainViewData();
@@ -199,6 +216,17 @@ public class Controller extends Service {
                         }
                     });
                     break;
+                case Playlist:
+                    if(currentActivity.getClass()!=PlaylistView.class) break;
+                    final ArrayList<MusicTrack> nowPlaying = ((SocketDataEvent) eventObject).getTrackList();
+                    currentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((PlaylistView) currentActivity).updateListData(nowPlaying);
+                        }
+                    });
+
+                    break;
 
             }
         }
@@ -305,6 +333,16 @@ public class Controller extends Service {
                         }
                     });
                     break;
+            }
+        }
+    };
+
+    PlaylistViewListener playlistViewListener = new PlaylistViewListener() {
+        @Override
+        public void handlePlaylistViewEvent(EventObject eventObject) {
+            if(((PlaylistViewEvent) eventObject).getType()==PlaylistViewAction.GetPlaylist)
+            {
+                 ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Playlist);
             }
         }
     };

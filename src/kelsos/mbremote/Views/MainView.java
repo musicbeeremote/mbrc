@@ -239,12 +239,21 @@ public class MainView extends Activity {
                 getImageButtonById(R.id.playPauseButton).setImageResource(R.drawable.ic_media_pause);
                 getImageButtonById(R.id.stopButton).setImageResource(R.drawable.ic_media_stop);
                 getImageButtonById(R.id.stopButton).setEnabled(true);
+
+                /* Start the animation if the track is playing*/
+                trackProgressAnimation();
                 break;
             case Paused:
                 getImageButtonById(R.id.playPauseButton).setImageResource(R.drawable.ic_media_play);
                 getImageButtonById(R.id.stopButton).setEnabled(true);
+                /* Stop the animation if the track is paused*/
+                stopTrackProgressAnimation();
                 break;
             case Stopped:
+                /* Stop the animation if the track is paused*/
+                stopTrackProgressAnimation();
+                getSeekBarById(R.id.trackProgressSlider).setProgress(0);
+                getTextViewById(R.id.trackProgressCurrent).setText("00:00");
             case Undefined:
                 getImageButtonById(R.id.playPauseButton).setImageResource(R.drawable.ic_media_play);
                 getImageButtonById(R.id.stopButton).setImageResource(R.drawable.ic_media_stop_pressed);
@@ -303,17 +312,13 @@ public class MainView extends Activity {
         trackProgressAnimation();
     }
 
+    /**
+     * Starts the progress animation when called. If It was previously running then it restarts it.
+     */
     private void trackProgressAnimation() {
         /* If the scheduled tasks is not null then cancel it and clear it along with the timer to create them anew */
         final int timerPeriod = 100;
-        if(progressUpdateTask_!=null)
-        {
-            progressUpdateTask_.cancel();
-            progressUpdateTask_ = null;
-            progressUpdateTimer_.cancel();
-            progressUpdateTimer_.purge();
-            progressUpdateTimer_ = null;
-        }
+        stopTrackProgressAnimation();
         progressUpdateTimer_ = new Timer(true);
         progressUpdateTask_ = new TimerTask() {
             @Override
@@ -332,6 +337,20 @@ public class MainView extends Activity {
             }
         };
         progressUpdateTimer_.schedule(progressUpdateTask_, 0, timerPeriod);
+    }
+
+    /**
+     * If the track progress animation is running the the function stops it.
+     */
+    private void stopTrackProgressAnimation() {
+        if(progressUpdateTask_!=null)
+        {
+            progressUpdateTask_.cancel();
+            progressUpdateTask_ = null;
+            progressUpdateTimer_.cancel();
+            progressUpdateTimer_.purge();
+            progressUpdateTimer_ = null;
+        }
     }
 
     /**

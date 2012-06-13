@@ -1,6 +1,7 @@
 package kelsos.mbremote.Services;
 
 import android.util.Log;
+import kelsos.mbremote.Data.MusicTrack;
 import kelsos.mbremote.Events.DataType;
 import kelsos.mbremote.Events.SocketDataEvent;
 import kelsos.mbremote.Events.SocketDataEventListener;
@@ -18,6 +19,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ProtocolHandler {
     private SocketDataEventSource _SocketDataEventSource;
@@ -142,11 +144,12 @@ public class ProtocolHandler {
      *
      */
     private void getPlaylistData(Node xmlNode) {
-        //_nowPlayingList.clear();
+        ArrayList<MusicTrack> _nowPlayingList = new ArrayList<MusicTrack>();
         NodeList playlistData = xmlNode.getChildNodes();
         for (int i = 0; i < playlistData.getLength(); i++) {
-        //    _nowPlayingList.add(new MusicTrack(playlistData.item(i).getFirstChild().getTextContent(), playlistData.item(i).getLastChild().getTextContent()));
+            _nowPlayingList.add(new MusicTrack(playlistData.item(i).getFirstChild().getTextContent(), playlistData.item(i).getLastChild().getTextContent()));
         }
+        _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.Playlist, _nowPlayingList));
     }
     private void populateModel()
     {

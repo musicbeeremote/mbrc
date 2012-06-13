@@ -14,5 +14,6 @@ public enum DataType {
     MuteState,
     PlayState,
     OnlineStatus,
-    PlaybackPosition
+    PlaybackPosition,
+    Playlist
 }
