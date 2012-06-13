@@ -14,6 +14,7 @@ public enum UserAction
     Refresh,
     Playlist,
     Volume,
+    PlaybackPosition,
     Initialize,
 
 }

@@ -6,6 +6,7 @@ import kelsos.mbremote.Events.SocketDataEvent;
 import kelsos.mbremote.Events.SocketDataEventListener;
 import kelsos.mbremote.Events.SocketDataEventSource;
 import kelsos.mbremote.Network.Protocol;
+import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Others.DelayTimer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -56,6 +57,7 @@ public class ProtocolHandler {
 
     public void setHandshakeComplete(boolean handshakeComplete) {
         isHandshakeComplete = handshakeComplete;
+        populateModel();
     }
 
     public void addEventListener(SocketDataEventListener listener)
@@ -120,7 +122,10 @@ public class ProtocolHandler {
                 } else if(xmlNode.getNodeName().contains(Protocol.PROTOCOL)){
                     ServerProtocolVersion = Double.parseDouble(xmlNode.getTextContent());
                     isHandshakeComplete=true;
+                } else if(xmlNode.getNodeName().contains(Protocol.PLAYBACK_POSITION)){
+                    getTrackDurationInfo(xmlNode);
                 }
+
             }
         } catch (SAXException e) {
             e.printStackTrace();
@@ -143,8 +148,29 @@ public class ProtocolHandler {
         //    _nowPlayingList.add(new MusicTrack(playlistData.item(i).getFirstChild().getTextContent(), playlistData.item(i).getLastChild().getTextContent()));
         }
     }
+    private void populateModel()
+    {
+        ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Repeat, Const.STATE);
+        ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Shuffle, Const.STATE);
+        ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Scrobble, Const.STATE);
+        ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Mute, Const.STATE);
+        ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.SongCover);
+        ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.SongInformation);
+        ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Volume);
+    }
 
 
+
+    private void getTrackDurationInfo(Node xmNode)
+    {
+        String message;
+        Node childNode = xmNode.getFirstChild();
+        message = childNode.getTextContent() + "##";
+        childNode = childNode.getNextSibling();
+        message += childNode.getTextContent();
+        _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.PlaybackPosition, message));
+
+    }
     /**
      * When given a playerStatus node the function extracts the player status information and dispatched the related
      * events.
@@ -241,7 +267,8 @@ public class ProtocolHandler {
         Rating,
         PlayerStatus,
         Protocol,
-        Player
+        Player,
+        PlaybackPosition
     }
 
     public static String getActionString(PlayerAction action, String value) {
@@ -286,6 +313,8 @@ public class ProtocolHandler {
                 return PrepareXml(Protocol.PROTOCOL, value);
             case Player:
                 return PrepareXml(Protocol.PLAYER,value);
+            case PlaybackPosition:
+                return PrepareXml(Protocol.PLAYBACK_POSITION,value);
             default:
                 return PrepareXml(Protocol.ERROR, "Invalid Request");
         }

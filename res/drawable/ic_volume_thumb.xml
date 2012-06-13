@@ -2,12 +2,6 @@
 
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-         <item>
-             <bitmap android:antialias="true"
-                     android:gravity="center"
-                     android:src="@drawable/volume_bar_indicator_scaled"
-                    android:dither="true"
-                    android:filter="true"
-                     ></bitmap>
+         <item android:drawable="@drawable/volume_bar_indicator_scaled">
          </item>
 </selector>

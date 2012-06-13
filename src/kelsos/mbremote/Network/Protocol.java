@@ -28,4 +28,8 @@ public class Protocol {
     public static final String YEAR = "year";
     public static final String PLAYER = "player";
     public static final String PROTOCOL = "protocol";
+
+    /* Protocol 1.2 */
+
+    public static final String PLAYBACK_POSITION = "playbackPosition";
 }

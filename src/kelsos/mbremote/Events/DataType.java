@@ -13,5 +13,6 @@ public enum DataType {
     ScrobbleState,
     MuteState,
     PlayState,
-    OnlineStatus
+    OnlineStatus,
+    PlaybackPosition
 }

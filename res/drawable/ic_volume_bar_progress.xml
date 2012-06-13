@@ -7,9 +7,11 @@
                     android:dither="true"/>
     </item>
     <item android:id="@android:id/progress">
-        <clip>
+        <clip android:gravity="left"
+              android:clipOrientation="horizontal">
             <nine-patch android:src="@drawable/volume_bar_fill_np"
-                        android:dither="true"/>
+                        android:dither="true">
+                    </nine-patch>
         </clip>
     </item>
 </layer-list>

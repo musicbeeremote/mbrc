@@ -19,35 +19,37 @@ import kelsos.mbremote.Models.PlayState;
 import kelsos.mbremote.Others.DelayTimer;
 import kelsos.mbremote.R;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class MainView extends Activity {
     private DelayTimer _selfRegistrationTimer;
     private static final String BY = "\nby ";
     private static final String LYRICS_FOR = "Lyrics for ";
     private boolean userChangingVolume;
     private UserActionEventSource _userUserActionEventSource;
+    private Timer progressUpdateTimer_;
+    private TimerTask progressUpdateTask_;
 
     DelayTimer.TimerFinishEvent selfRegistrationTimerEvent = new DelayTimer.TimerFinishEvent() {
         @Override
         public void onTimerFinish() {
-                registerSelf();
+            registerSelf();
         }
     };
 
     /**
      * This function is used to register self in the Controller service.
      */
-    private void registerSelf()
-    {
+    private void registerSelf() {
         Controller.getInstance().initialize(this);
     }
 
-    public void addEventListener(UserActionEventListener listener)
-    {
+    public void addEventListener(UserActionEventListener listener) {
         _userUserActionEventSource.addEventListener(listener);
     }
 
-    public void removeEventListener(UserActionEventListener listener)
-    {
+    public void removeEventListener(UserActionEventListener listener) {
         _userUserActionEventSource.removeEventListener(listener);
     }
 
@@ -60,23 +62,21 @@ public class MainView extends Activity {
         userChangingVolume = false;
         SetTextViewTypeface();
         /* If the controller is not running send the start intent */
-        if(!Controller.getIsRunning())
-        {
-            startService(new Intent(this,Controller.class));
+        if (!Controller.getIsRunning()) {
+            startService(new Intent(this, Controller.class));
             _selfRegistrationTimer = new DelayTimer(2000);
             _selfRegistrationTimer.setTimerFinishEventListener(selfRegistrationTimerEvent);
             _selfRegistrationTimer.start();
-
+        } else {
+            Controller.getInstance().onActivityStart(this);
         }
 
     }
 
     @Override
-    public void onStart()
-    {
+    public void onStart() {
         super.onStart();
-        if(Controller.getIsRunning())
-        {
+        if (Controller.getIsRunning()) {
             Controller.getInstance().onActivityStart(this);
         }
     }
@@ -84,21 +84,21 @@ public class MainView extends Activity {
     /**
      * Sets the typeface of the text views in the main activity to roboto.
      */
-    private void SetTextViewTypeface()
-    {
+    private void SetTextViewTypeface() {
         /* Marquee Hack */
         getTextViewById(R.id.artistLabel).setSelected(true);
         getTextViewById(R.id.titleLabel).setSelected(true);
         getTextViewById(R.id.albumLabel).setSelected(true);
         getTextViewById(R.id.yearLabel).setSelected(true);
 
-        Typeface font = Typeface.createFromAsset(getAssets(),"fonts/roboto_light.ttf");
-        getTextViewById(R.id.artistLabel).setTypeface(font);
-        getTextViewById(R.id.titleLabel).setTypeface(font);
-        getTextViewById(R.id.albumLabel).setTypeface(font);
-        getTextViewById(R.id.yearLabel).setTypeface(font);
-        getTextViewById(R.id.trackProgressCurrent).setTypeface(font);
-        getTextViewById(R.id.trackDuration).setTypeface(font);
+        Typeface robotoLight = Typeface.createFromAsset(getAssets(), "fonts/roboto_light.ttf");
+        Typeface myriadPro = Typeface.createFromAsset(getAssets(), "fonts/myriadproregular.ttf");
+        getTextViewById(R.id.artistLabel).setTypeface(robotoLight);
+        getTextViewById(R.id.titleLabel).setTypeface(robotoLight);
+        getTextViewById(R.id.albumLabel).setTypeface(robotoLight);
+        getTextViewById(R.id.yearLabel).setTypeface(robotoLight);
+        getTextViewById(R.id.trackProgressCurrent).setTypeface(myriadPro);
+        getTextViewById(R.id.trackDuration).setTypeface(myriadPro);
     }
 
     @Override
@@ -169,6 +169,7 @@ public class MainView extends Activity {
         getImageButtonById(R.id.previousButton).setOnClickListener(previousButtonListener);
         getImageButtonById(R.id.nextButton).setOnClickListener(nextButtonListener);
         getSeekBarById(R.id.volumeSlider).setOnSeekBarChangeListener(volumeChangeListener);
+        getSeekBarById(R.id.trackProgressSlider).setOnSeekBarChangeListener(durationSeekBarChangeListener);
         getImageButtonById(R.id.stopButton).setOnClickListener(stopButtonListener);
         getImageButtonById(R.id.stopButton).setEnabled(false);
         getImageButtonById(R.id.muteButton).setOnClickListener(muteButtonListener);
@@ -176,111 +177,166 @@ public class MainView extends Activity {
         getImageButtonById(R.id.shuffleButton).setOnClickListener(shuffleButtonListener);
         getImageButtonById(R.id.repeatButton).setOnClickListener(repeatButtonListener);
         getImageButtonById(R.id.connectivityIndicator).setOnClickListener(connectivityIndicatorListener);
+
     }
 
-        /**
-         * Given a boolean state this function updates the Scrobbler button with the proper state.
-         * Also it updates the internal MainActivityState object.
-         * @param state If true it means that the scrobbler is active, false is used for inactive.
-         */
-        public void updateScrobblerButtonState(boolean state) {
-            if (state) {
-                getImageButtonById(R.id.scrobbleButton).setImageResource(R.drawable.ic_media_scrobble_red);
-            } else {
-                getImageButtonById(R.id.scrobbleButton).setImageResource(R.drawable.ic_media_scrobble_off);
-            }
+    /**
+     * Given a boolean state this function updates the Scrobbler button with the proper state.
+     * Also it updates the internal MainActivityState object.
+     *
+     * @param state If true it means that the scrobbler is active, false is used for inactive.
+     */
+    public void updateScrobblerButtonState(boolean state) {
+        if (state) {
+            getImageButtonById(R.id.scrobbleButton).setImageResource(R.drawable.ic_media_scrobble_red);
+        } else {
+            getImageButtonById(R.id.scrobbleButton).setImageResource(R.drawable.ic_media_scrobble_off);
         }
+    }
 
-    public void updateAlbumCover(Bitmap cover)
-    {
+    public void updateAlbumCover(Bitmap cover) {
         getImageViewById(R.id.albumCover).setImageBitmap(cover);
     }
 
-        /**
-         * Given a boolean state value this function updates the Shuffle button with the proper state.
-         * Also it updates the internal MainActivityState object.
-         * @param state True is used to represent active shuffle, false is used for inactive.
-         */
-        public void updateShuffleButtonState(boolean state) {
-            if (state) {
-                getImageButtonById(R.id.shuffleButton).setImageResource(R.drawable.ic_media_shuffle);
-            } else {
-                getImageButtonById(R.id.shuffleButton).setImageResource(R.drawable.ic_media_shuffle_off);
-            }
+    /**
+     * Given a boolean state value this function updates the Shuffle button with the proper state.
+     * Also it updates the internal MainActivityState object.
+     *
+     * @param state True is used to represent active shuffle, false is used for inactive.
+     */
+    public void updateShuffleButtonState(boolean state) {
+        if (state) {
+            getImageButtonById(R.id.shuffleButton).setImageResource(R.drawable.ic_media_shuffle);
+        } else {
+            getImageButtonById(R.id.shuffleButton).setImageResource(R.drawable.ic_media_shuffle_off);
         }
+    }
 
-        public void updateRepeatButtonState(boolean state) {
-            if (state) {
-                getImageButtonById(R.id.repeatButton).setImageResource(R.drawable.ic_media_repeat);
-            } else {
-                getImageButtonById(R.id.repeatButton).setImageResource(R.drawable.ic_media_repeat_off);
-            }
+    public void updateRepeatButtonState(boolean state) {
+        if (state) {
+            getImageButtonById(R.id.repeatButton).setImageResource(R.drawable.ic_media_repeat);
+        } else {
+            getImageButtonById(R.id.repeatButton).setImageResource(R.drawable.ic_media_repeat_off);
         }
+    }
 
-        public void updateMuteButtonState(boolean state) {
-            if (state) {
-                getImageButtonById(R.id.muteButton).setImageResource(R.drawable.ic_media_mute_active);
-            } else {
-                getImageButtonById(R.id.muteButton).setImageResource(R.drawable.ic_media_mute_full);
-            }
+    public void updateMuteButtonState(boolean state) {
+        if (state) {
+            getImageButtonById(R.id.muteButton).setImageResource(R.drawable.ic_media_mute_active);
+        } else {
+            getImageButtonById(R.id.muteButton).setImageResource(R.drawable.ic_media_mute_full);
         }
+    }
 
-        public void updateVolumeData(int volume) {
-            if (!userChangingVolume)
-                getSeekBarById(R.id.volumeSlider).setProgress(volume);
-        }
+    public void updateVolumeData(int volume) {
+        if (!userChangingVolume)
+            getSeekBarById(R.id.volumeSlider).setProgress(volume);
+    }
 
-        public void updatePlayState(PlayState playState) {
-            switch (playState) {
-                case Playing:
-                    getImageButtonById(R.id.playPauseButton).setImageResource(R.drawable.ic_media_pause);
-                    getImageButtonById(R.id.stopButton).setImageResource(R.drawable.ic_media_stop);
-                    getImageButtonById(R.id.stopButton).setEnabled(true);
-                    break;
-                case Paused:
-                    getImageButtonById(R.id.playPauseButton).setImageResource(R.drawable.ic_media_play);
-                    getImageButtonById(R.id.stopButton).setEnabled(true);
-                    break;
-                case Stopped:
-                case Undefined:
-                    getImageButtonById(R.id.playPauseButton).setImageResource(R.drawable.ic_media_play);
-                    getImageButtonById(R.id.stopButton).setImageResource(R.drawable.ic_media_stop_pressed);
-                    getImageButtonById(R.id.stopButton).setEnabled(false);
-                    break;
-            }
+    public void updatePlayState(PlayState playState) {
+        switch (playState) {
+            case Playing:
+                getImageButtonById(R.id.playPauseButton).setImageResource(R.drawable.ic_media_pause);
+                getImageButtonById(R.id.stopButton).setImageResource(R.drawable.ic_media_stop);
+                getImageButtonById(R.id.stopButton).setEnabled(true);
+                break;
+            case Paused:
+                getImageButtonById(R.id.playPauseButton).setImageResource(R.drawable.ic_media_play);
+                getImageButtonById(R.id.stopButton).setEnabled(true);
+                break;
+            case Stopped:
+            case Undefined:
+                getImageButtonById(R.id.playPauseButton).setImageResource(R.drawable.ic_media_play);
+                getImageButtonById(R.id.stopButton).setImageResource(R.drawable.ic_media_stop_pressed);
+                getImageButtonById(R.id.stopButton).setEnabled(false);
+                break;
         }
+    }
 
-        public void updateArtistText(String artist)
-        {
-            getTextViewById(R.id.artistLabel).setText(artist);
-        }
+    public void updateArtistText(String artist) {
+        getTextViewById(R.id.artistLabel).setText(artist);
+    }
 
-        public void updateTitleText(String title)
-        {
-            getTextViewById(R.id.titleLabel).setText(title);
-        }
+    public void updateTitleText(String title) {
+        getTextViewById(R.id.titleLabel).setText(title);
+    }
 
-        public void updateAlbumText(String album)
-        {
-            getTextViewById(R.id.albumLabel).setText(album);
-        }
+    public void updateAlbumText(String album) {
+        getTextViewById(R.id.albumLabel).setText(album);
+    }
 
-        public void updateYearText(String year) {
-            getTextViewById(R.id.yearLabel).setText(year);
-        }
+    public void updateYearText(String year) {
+        getTextViewById(R.id.yearLabel).setText(year);
+    }
 
-        public void updateConnectionIndicator(boolean connected) {
-            if (connected) {
-                getImageViewById(R.id.connectivityIndicator).setImageResource(R.drawable.ic_icon_indicator_green);
-            } else {
-                getImageViewById(R.id.connectivityIndicator).setImageResource(R.drawable.ic_icon_indicator_red);
-            }
+    public void updateConnectionIndicator(boolean connected) {
+        if (connected) {
+            getImageViewById(R.id.connectivityIndicator).setImageResource(R.drawable.ic_icon_indicator_green);
+        } else {
+            getImageViewById(R.id.connectivityIndicator).setImageResource(R.drawable.ic_icon_indicator_red);
         }
+    }
 
     /**
-     *  When this function is called is either displaying a "No Lyrics found" toast
-     *  message or it displays a popup with the lyrics of the track.
-     *
+     * Responsible for updating the displays and seekbar responsible for the display of the track duration and the
+     * current progress of playback
+     * @param current Integer represents the current playback position in milliseconds
+     * @param total Integer represents the total track duration in milliseconds
+     */
+    public void updateDurationDisplay(int current, int total)
+    {
+        int currentSeconds = current/1000;
+        int totalSeconds = total/1000;
+
+        int currentMinutes = currentSeconds/60;
+        int totalMinutes = totalSeconds/60;
+
+        currentSeconds %= 60;
+        totalSeconds %= 60;
+
+        getTextViewById(R.id.trackDuration).setText(String.format("%02d:%02d",totalMinutes,totalSeconds));
+        getTextViewById(R.id.trackProgressCurrent).setText(String.format("%02d:%02d",currentMinutes,currentSeconds));
+
+        getSeekBarById(R.id.trackProgressSlider).setMax(total);
+        getSeekBarById(R.id.trackProgressSlider).setProgress(current);
+
+        trackProgressAnimation();
+    }
+
+    private void trackProgressAnimation() {
+        /* If the scheduled tasks is not null then cancel it and clear it along with the timer to create them anew */
+        final int timerPeriod = 100;
+        if(progressUpdateTask_!=null)
+        {
+            progressUpdateTask_.cancel();
+            progressUpdateTask_ = null;
+            progressUpdateTimer_.cancel();
+            progressUpdateTimer_.purge();
+            progressUpdateTimer_ = null;
+        }
+        progressUpdateTimer_ = new Timer(true);
+        progressUpdateTask_ = new TimerTask() {
+            @Override
+            public void run() {
+                int currentProgress = getSeekBarById(R.id.trackProgressSlider).getProgress()/1000;
+                final int currentMinutes = currentProgress/60;
+                final int currentSeconds = currentProgress%60;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getSeekBarById(R.id.trackProgressSlider).setProgress(getSeekBarById(R.id.trackProgressSlider).getProgress()+timerPeriod);
+                        getTextViewById(R.id.trackProgressCurrent).setText(String.format("%02d:%02d",currentMinutes,currentSeconds));
+                    }
+                });
+
+            }
+        };
+        progressUpdateTimer_.schedule(progressUpdateTask_, 0, timerPeriod);
+    }
+
+    /**
+     * When this function is called is either displaying a "No Lyrics found" toast
+     * message or it displays a popup with the lyrics of the track.
      */
     private void processLyricsData() {
 //        if (ReplyHandler.getInstance().getSongLyrics().equals("")) {
@@ -325,7 +381,7 @@ public class MainView extends Activity {
 
         public void onClick(View v) {
             _userUserActionEventSource.dispatchEvent(new UserActionEvent(this, UserAction.PlayPause));
-                                                                                             }
+        }
     };
 
     private OnClickListener previousButtonListener = new OnClickListener() {
@@ -398,6 +454,26 @@ public class MainView extends Activity {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser)
                 _userUserActionEventSource.dispatchEvent(new UserActionEvent(this, UserAction.Volume, String.valueOf(seekBar.getProgress())));
+        }
+    };
+
+    private OnSeekBarChangeListener durationSeekBarChangeListener = new OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if(fromUser)
+            {
+                _userUserActionEventSource.dispatchEvent(new UserActionEvent(this, UserAction.PlaybackPosition, String.valueOf(progress)));
+            }
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            ||
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            ||
         }
     };
 

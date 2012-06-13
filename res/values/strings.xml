@@ -34,4 +34,6 @@
     <string name="connectivity_handler_description">This service is responsible for the communication of the application with the plugin.</string>
     <string name="app_description">Remote Control Application for MusicBee</string>
     <string name="main_menu_lyrics">Lyrics</string>
+    <string name="lyrics_for">Lyrics For</string>
+    <string name="by">\nBy</string>
 </resources>

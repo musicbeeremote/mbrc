@@ -133,6 +133,9 @@ public class Controller extends Service {
                 case Volume:
                     ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Volume,((UserActionEvent) eventObject).getEventData());
                     break;
+                case PlaybackPosition:
+                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.PlaybackPosition,((UserActionEvent) eventObject).getEventData());
+                    break;
                 case Initialize:
                     break;
             }
@@ -146,6 +149,7 @@ public class Controller extends Service {
 
                 case Title:
                     MainDataModel.getInstance().setTitle(((SocketDataEvent) eventObject).getData());
+                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.PlaybackPosition,"status");
                     break;
                 case Artist:
                     MainDataModel.getInstance().setArtist(((SocketDataEvent) eventObject).getData());
@@ -183,6 +187,19 @@ public class Controller extends Service {
                 case PlayState:
                     MainDataModel.getInstance().setPlayState(((SocketDataEvent) eventObject).getData());
                     break;
+                case PlaybackPosition:
+                    if(currentActivity.getClass()!=MainView.class) break;
+                    String duration[] = ((SocketDataEvent) eventObject).getData().split("##");
+                    final int current = Integer.parseInt(duration[0]);
+                    final int total = Integer.parseInt(duration[1]);
+                    currentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((MainView)currentActivity).updateDurationDisplay(current,total);
+                        }
+                    });
+                    break;
+
             }
         }
     };
