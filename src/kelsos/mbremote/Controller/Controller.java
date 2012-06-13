@@ -344,6 +344,11 @@ public class Controller extends Service {
             {
                  ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Playlist);
             }
+            else if (((PlaylistViewEvent) eventObject).getType()==PlaylistViewAction.PlaySpecifiedTrack)
+            {
+                String track = ((PlaylistViewEvent) eventObject).getData();
+                ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.PlayNow, track);
+            }
         }
     };
 

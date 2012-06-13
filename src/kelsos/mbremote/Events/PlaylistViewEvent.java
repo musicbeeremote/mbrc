@@ -25,4 +25,9 @@ public class PlaylistViewEvent extends EventObject {
         return _type;
     }
 
+    public String getData()
+    {
+        return _data;
+    }
+
 }

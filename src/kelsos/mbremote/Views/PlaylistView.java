@@ -12,6 +12,7 @@ import kelsos.mbremote.Events.PlaylistViewEvent;
 import kelsos.mbremote.Events.PlaylistViewEventSource;
 import kelsos.mbremote.Events.PlaylistViewListener;
 import kelsos.mbremote.Others.DelayTimer;
+import kelsos.mbremote.Others.XmlEncoder;
 import kelsos.mbremote.R;
 
 import java.util.ArrayList;
@@ -47,8 +48,8 @@ public class PlaylistView extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        MusicTrack track = (MusicTrack) getListView().getItemAtPosition(position);
-//		Communicator.getInstance().playNowRequest(track.getTitle());
+        String track = ((MusicTrack) getListView().getItemAtPosition(position)).getTitle();
+        _eventSource.dispatchEvent(new PlaylistViewEvent(this, PlaylistViewAction.PlaySpecifiedTrack, XmlEncoder.encode(track)));
 
     }
 
