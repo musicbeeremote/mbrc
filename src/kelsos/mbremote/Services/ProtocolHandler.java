@@ -2,10 +2,10 @@ package kelsos.mbremote.Services;
 
 import android.util.Log;
 import kelsos.mbremote.Data.MusicTrack;
-import kelsos.mbremote.Events.DataType;
-import kelsos.mbremote.Events.SocketDataEvent;
-import kelsos.mbremote.Events.SocketDataEventListener;
-import kelsos.mbremote.Events.SocketDataEventSource;
+import kelsos.mbremote.Events.ProtocolDataType;
+import kelsos.mbremote.Events.ProtocolDataEvent;
+import kelsos.mbremote.Events.ProtocolDataEventListener;
+import kelsos.mbremote.Events.ProtocolDataEventSource;
 import kelsos.mbremote.Network.Protocol;
 import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Others.DelayTimer;
@@ -22,18 +22,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class ProtocolHandler {
-    private SocketDataEventSource _SocketDataEventSource;
-
-    private static ProtocolHandler _instance;
+    private ProtocolDataEventSource _ProtocolDataEventSource;
 
     private boolean isHandshakeComplete;
     private DocumentBuilder db;
 
     public static double ServerProtocolVersion;
 
-    private ProtocolHandler()
+    public ProtocolHandler()
     {
-        _SocketDataEventSource = new SocketDataEventSource();
+        _ProtocolDataEventSource = new ProtocolDataEventSource();
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
             db = dbf.newDocumentBuilder();
@@ -46,13 +44,6 @@ public class ProtocolHandler {
         _updateTimer.setTimerFinishEventListener(updateTimerFinishEvent);
     }
 
-    public static synchronized ProtocolHandler getInstance()
-    {
-        if(_instance==null)
-            _instance = new ProtocolHandler();
-        return _instance;
-    }
-
     public boolean isHandshakeComplete() {
         return isHandshakeComplete;
     }
@@ -62,19 +53,14 @@ public class ProtocolHandler {
         populateModel();
     }
 
-    public void addEventListener(SocketDataEventListener listener)
+    public void addEventListener(ProtocolDataEventListener listener)
     {
-        _SocketDataEventSource.addEventListener(listener);
+        _ProtocolDataEventSource.addEventListener(listener);
     }
 
-    public void removeEventListener(SocketDataEventListener listener)
+    public void removeEventListener(ProtocolDataEventListener listener)
     {
-        _SocketDataEventSource.removeEventListener(listener);
-    }
-
-    public void updateConnectionStatus(String connectionStatus)
-    {
-        _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this,DataType.ConnectionState,connectionStatus));
+        _ProtocolDataEventSource.removeEventListener(listener);
     }
 
     /**
@@ -95,23 +81,23 @@ public class ProtocolHandler {
                 } else if (xmlNode.getNodeName().contains(Protocol.NEXT)) {
                     Log.d("Reply Received", "<next>");
                 } else if (xmlNode.getNodeName().contains(Protocol.VOLUME)) {
-                    _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.Volume, xmlNode.getTextContent()));
+                    _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.Volume, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.SONGCHANGED)) {
                     // DEPRECATED IN PROTOCOL 1.1
                 } else if (xmlNode.getNodeName().contains(Protocol.SONGINFO)) {
                     getSongData(xmlNode);
                 } else if (xmlNode.getNodeName().contains(Protocol.SONGCOVER)) {
-                    _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.AlbumCover, xmlNode.getTextContent()));
+                    _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.AlbumCover, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYSTATE)) {
-                    _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.PlayState, xmlNode.getTextContent()));
+                    _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.PlayState, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.MUTE)) {
-                    _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.MuteState, xmlNode.getTextContent()));
+                    _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.MuteState, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.REPEAT)) {
-                    _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.RepeatState, xmlNode.getTextContent()));
+                    _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.RepeatState, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.SHUFFLE)) {
-                    _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.ShuffleState, xmlNode.getTextContent()));
+                    _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.ShuffleState, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.SCROBBLE)) {
-                    _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.ScrobbleState, xmlNode.getTextContent()));
+                    _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.ScrobbleState, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYLIST)) {
                     getPlaylistData(xmlNode);
                 } else if (xmlNode.getNodeName().contains(Protocol.LYRICS)) {
@@ -149,17 +135,17 @@ public class ProtocolHandler {
         for (int i = 0; i < playlistData.getLength(); i++) {
             _nowPlayingList.add(new MusicTrack(playlistData.item(i).getFirstChild().getTextContent(), playlistData.item(i).getLastChild().getTextContent()));
         }
-        _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.Playlist, _nowPlayingList));
+        _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.Playlist, _nowPlayingList));
     }
     private void populateModel()
     {
-        ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Repeat, Const.STATE);
-        ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Shuffle, Const.STATE);
-        ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Scrobble, Const.STATE);
-        ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Mute, Const.STATE);
-        ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.SongCover);
-        ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.SongInformation);
-        ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Volume);
+       requestAction(ProtocolHandler.PlayerAction.Repeat, Const.STATE);
+        requestAction(ProtocolHandler.PlayerAction.Shuffle, Const.STATE);
+        requestAction(ProtocolHandler.PlayerAction.Scrobble, Const.STATE);
+        requestAction(ProtocolHandler.PlayerAction.Mute, Const.STATE);
+        requestAction(ProtocolHandler.PlayerAction.SongCover);
+        requestAction(ProtocolHandler.PlayerAction.SongInformation);
+        requestAction(ProtocolHandler.PlayerAction.Volume);
     }
 
 
@@ -171,7 +157,7 @@ public class ProtocolHandler {
         message = childNode.getTextContent() + "##";
         childNode = childNode.getNextSibling();
         message += childNode.getTextContent();
-        _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.PlaybackPosition, message));
+        _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.PlaybackPosition, message));
 
     }
     /**
@@ -181,17 +167,17 @@ public class ProtocolHandler {
      */
     private void getPlayerStatus(Node xmlNode) {
         Node playerStatusNode = xmlNode.getFirstChild();
-        _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.RepeatState, playerStatusNode.getTextContent()));
+        _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.RepeatState, playerStatusNode.getTextContent()));
         playerStatusNode = playerStatusNode.getNextSibling();
-        _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.MuteState, playerStatusNode.getTextContent()));
+        _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.MuteState, playerStatusNode.getTextContent()));
         playerStatusNode = playerStatusNode.getNextSibling();
-        _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.ShuffleState, playerStatusNode.getTextContent()));
+        _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.ShuffleState, playerStatusNode.getTextContent()));
         playerStatusNode = playerStatusNode.getNextSibling();
-        _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.ScrobbleState, playerStatusNode.getTextContent()));
+        _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.ScrobbleState, playerStatusNode.getTextContent()));
         playerStatusNode = playerStatusNode.getNextSibling();
-        _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.PlayState, playerStatusNode.getTextContent()));
+        _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.PlayState, playerStatusNode.getTextContent()));
         playerStatusNode = playerStatusNode.getNextSibling();
-        _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.Volume, playerStatusNode.getTextContent()));
+        _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.Volume, playerStatusNode.getTextContent()));
     }
 
     /**
@@ -208,10 +194,10 @@ public class ProtocolHandler {
             trackInfoNode = trackInfoNode.getNextSibling();
         }
         int index = 0;
-        _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.Artist, trackData[index++]));
-        _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.Title, trackData[index++]));
-        _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.Album, trackData[index++]));
-        _SocketDataEventSource.dispatchEvent(new SocketDataEvent(this, DataType.Year, trackData[index++]));
+        _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.Artist, trackData[index++]));
+        _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.Title, trackData[index++]));
+        _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.Album, trackData[index++]));
+        _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.Year, trackData[index++]));
     }
 
     private DelayTimer _updateTimer;
@@ -239,11 +225,11 @@ public class ProtocolHandler {
     }
 
     public void requestAction(PlayerAction action, String actionContent) {
-        SocketService.getInstance().sendData(getActionString(action, actionContent));
+        _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this,ProtocolDataType.ReplyAvailable, getActionString(action, actionContent)));
     }
 
     public void requestAction(ProtocolHandler.PlayerAction action) {
-        SocketService.getInstance().sendData(ProtocolHandler.getActionString(action, ""));
+        _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this,ProtocolDataType.ReplyAvailable, getActionString(action, "")));
     }
 
     private static String PrepareXml(String name, String value) {

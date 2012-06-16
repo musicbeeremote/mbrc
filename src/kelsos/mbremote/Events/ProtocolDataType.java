@@ -1,6 +1,6 @@
 package kelsos.mbremote.Events;
 
-public enum DataType {
+public enum ProtocolDataType {
      Title,
     Artist,
     Album,
@@ -15,5 +15,6 @@ public enum DataType {
     PlayState,
     OnlineStatus,
     PlaybackPosition,
-    Playlist
+    Playlist,
+    ReplyAvailable
 }

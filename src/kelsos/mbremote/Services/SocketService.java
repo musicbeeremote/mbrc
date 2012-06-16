@@ -1,6 +1,10 @@
 package kelsos.mbremote.Services;
 
 import android.util.Log;
+import kelsos.mbremote.Events.RawSocketAction;
+import kelsos.mbremote.Events.RawSocketDataEvent;
+import kelsos.mbremote.Events.RawSocketDataEventListener;
+import kelsos.mbremote.Events.RawSocketDataEventSource;
 import kelsos.mbremote.Messaging.NotificationService;
 import kelsos.mbremote.Network.Input;
 import kelsos.mbremote.Others.Const;
@@ -17,7 +21,6 @@ public class SocketService {
 
     private static int _numberOfTries;
     public static final int MAX_RETRIES = 4;
-    private static SocketService _instance;
 
     private Socket _cSocket;
 
@@ -26,27 +29,17 @@ public class SocketService {
     private Thread _connectionThread;
 
     private DelayTimer _connectionTimer;
-    private DelayTimer _statusUpdateTimer;
 
-    private SocketService()
+    private RawSocketDataEventSource _eventSource;
+
+    public SocketService()
     {
-        _instance = this;
+        _eventSource = new RawSocketDataEventSource();
         _connectionTimer = new DelayTimer(1000);
-        _statusUpdateTimer = new DelayTimer(2000);
-
         _numberOfTries = 0; // Initialize the connection retry counter.
 
         _connectionTimer.setTimerFinishEventListener(timerFinishEvent);
-        _statusUpdateTimer.setTimerFinishEventListener(statusUpdateTimerFinishEvent);
-
     }
-
-    DelayTimer.TimerFinishEvent statusUpdateTimerFinishEvent = new DelayTimer.TimerFinishEvent() {
-        public void onTimerFinish() {
-            ProtocolHandler.getInstance().requestPlayerData();
-            ProtocolHandler.getInstance().updateConnectionStatus(String.valueOf(socketExistsAndIsConnected()));
-        }
-    };
 
     private DelayTimer.TimerFinishEvent timerFinishEvent = new DelayTimer.TimerFinishEvent() {
         public void onTimerFinish() {
@@ -54,6 +47,16 @@ public class SocketService {
             _numberOfTries++;
         }
     };
+
+    public void addEventListener(RawSocketDataEventListener listener)
+    {
+        _eventSource.addEventListener(listener);
+    }
+
+    public void removeEventListener(RawSocketDataEventListener listener)
+    {
+        _eventSource.removeEventListener(listener);
+    }
 
     /**
      * This function starts the Thread that handles the socket connection.
@@ -81,7 +84,7 @@ public class SocketService {
      *
      * @param input kelsos.mbremote.Network.Input.User resets the counter, kelsos.mbremote.Network.Input.System just tries one more time.
      */
-    public void attemptToStartSocketThread(Input input) {
+    public void initSocketThread(Input input) {
         if (socketExistsAndIsConnected()) return;
         if (input == Input.user|| input == Input.initialize) {
             _numberOfTries = 0;
@@ -101,7 +104,7 @@ public class SocketService {
         return _cSocket != null && _cSocket.isConnected();
     }
 
-    protected void sendData(String data) {
+    public void sendData(String data) {
         try {
             if (socketExistsAndIsConnected())
                 _output.println(data + Const.NEWLINE);
@@ -112,7 +115,7 @@ public class SocketService {
     private class socketConnection implements Runnable {
 
         public void run() {
-            ProtocolHandler.getInstance().setHandshakeComplete(false);
+            _eventSource.dispatchEvent(new RawSocketDataEvent(this, RawSocketAction.HandshakeUpdate, "false"));
             Log.d("ConnectivityHandler", "connectSocket Running");
             SocketAddress socketAddress = SettingsManager.getInstance().getSocketAddress();
             if (null == socketAddress) return;
@@ -123,12 +126,11 @@ public class SocketService {
                 _output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(_cSocket.getOutputStream())), true);
                 _input = new BufferedReader(new InputStreamReader(_cSocket.getInputStream()));
 
-                ProtocolHandler.getInstance().updateConnectionStatus("true");
-                _statusUpdateTimer.start();
+                _eventSource.dispatchEvent(new RawSocketDataEvent(this, RawSocketAction.StatusChange, String.valueOf(_cSocket.isConnected())));
                 while (_cSocket.isConnected()) {
                     try {
                         final String incoming = _input.readLine();
-                        ProtocolHandler.getInstance().answerProcessor(incoming);
+                        _eventSource.dispatchEvent(new RawSocketDataEvent(this, RawSocketAction.PacketAvailable, incoming));
                     } catch (IOException e) {
                         _input.close();
                         _cSocket.close();
@@ -152,28 +154,12 @@ public class SocketService {
                 }
                 _cSocket = null;
 
-                ProtocolHandler.getInstance().updateConnectionStatus("false");
+                _eventSource.dispatchEvent(new RawSocketDataEvent(this, RawSocketAction.StatusChange, "false"));
 
                 Log.d("ConnectivityHandler", "ListeningThread terminated");
-                attemptToStartSocketThread(Input.system);
+                initSocketThread(Input.system);
 
             }
         }
     }
-
-    /**
-     * Returns the instance of the Singleton ReplyHandler if the instance exists,
-     * or creates the instance and then it returns it when it does not exist.
-     *
-     * @return ReplyHandler Singleton Instance
-     */
-    public static synchronized SocketService getInstance() {
-        if (_instance == null) {
-            _instance = new SocketService();
-        }
-        return _instance;
-    }
-
-
-
 }

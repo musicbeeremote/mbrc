@@ -3,13 +3,13 @@ package kelsos.mbremote.Events;
 import java.util.EventObject;
 
 public class ModelDataEvent extends EventObject {
-    private DataType type;
-    public ModelDataEvent(Object source, DataType type) {
+    private ProtocolDataType type;
+    public ModelDataEvent(Object source, ProtocolDataType type) {
         super(source);
         this.type = type;
     }
 
-    public DataType getType()
+    public ProtocolDataType getType()
     {
         return type;
     }

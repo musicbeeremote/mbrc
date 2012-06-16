@@ -5,19 +5,19 @@ import kelsos.mbremote.Data.MusicTrack;
 import java.util.ArrayList;
 import java.util.EventObject;
 
-public class SocketDataEvent extends EventObject {
-    private DataType _type;
+public class ProtocolDataEvent extends EventObject {
+    private ProtocolDataType _type;
     private String _data;
     private ArrayList<MusicTrack> _trackList;
 
-    public SocketDataEvent(Object source, DataType type, String data) {
+    public ProtocolDataEvent(Object source, ProtocolDataType type, String data) {
         super(source);
         _type = type;
         _data = data;
         _trackList = null;
     }
 
-    public SocketDataEvent(Object source, DataType type, ArrayList<MusicTrack> trackList)
+    public ProtocolDataEvent(Object source, ProtocolDataType type, ArrayList<MusicTrack> trackList)
     {
         super(source);
         _type = type;
@@ -26,7 +26,7 @@ public class SocketDataEvent extends EventObject {
     }
 
 
-    public DataType getType()
+    public ProtocolDataType getType()
     {
         return _type;
     }

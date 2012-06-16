@@ -33,14 +33,19 @@ public class Controller extends Service {
     Activity currentActivity;
 
     private static boolean _isRunning = false;
+    private SocketService _socketService;
+    private ProtocolHandler _pHandler;
 
     @Override
     public void onCreate()
     {
         super.onCreate();
         _instance = this;
+        _socketService = new SocketService();
+        _pHandler = new ProtocolHandler();
         MainDataModel.getInstance().addEventListener(modelDataEventListener);
-        ProtocolHandler.getInstance().addEventListener(socketDataEventListener);
+        _pHandler.addEventListener(protocolDataEventListener);
+        _socketService.addEventListener(rawSocketDataEventListener);
         SettingsManager.getInstance().setContext(this);
         _isRunning = true;
     }
@@ -99,7 +104,7 @@ public class Controller extends Service {
 
     public void initialize(Activity activity)
     {
-        SocketService.getInstance().attemptToStartSocketThread(Input.user);
+        _socketService.initSocketThread(Input.user);
         currentActivity = activity;
 
         if(activity.getClass()==MainView.class)
@@ -115,43 +120,43 @@ public class Controller extends Service {
             switch (((UserActionEvent) eventObject).getUserAction()) {
 
                 case PlayPause:
-                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.PlayPause);
+                    _pHandler.requestAction(ProtocolHandler.PlayerAction.PlayPause);
                     break;
                 case Stop:
-                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Stop);
+                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Stop);
                     break;
                 case Next:
-                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Next);
+                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Next);
                     break;
                 case Previous:
-                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Previous);
+                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Previous);
                     break;
                 case Repeat:
-                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Repeat, Const.TOGGLE);
+                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Repeat, Const.TOGGLE);
                     break;
                 case Shuffle:
-                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Shuffle, Const.TOGGLE);
+                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Shuffle, Const.TOGGLE);
                     break;
                 case Scrobble:
-                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Scrobble, Const.TOGGLE);
+                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Scrobble, Const.TOGGLE);
                     break;
                 case Mute:
-                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Mute, Const.TOGGLE);
+                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Mute, Const.TOGGLE);
                     break;
                 case Lyrics:
-                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Lyrics);
+                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Lyrics);
                     break;
                 case Refresh:
-                    ProtocolHandler.getInstance().requestPlayerData();
+                    _pHandler.requestPlayerData();
                     break;
                 case Playlist:
-                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Playlist);
+                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Playlist);
                     break;
                 case Volume:
-                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Volume,((UserActionEvent) eventObject).getEventData());
+                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Volume,((UserActionEvent) eventObject).getEventData());
                     break;
                 case PlaybackPosition:
-                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.PlaybackPosition,((UserActionEvent) eventObject).getEventData());
+                    _pHandler.requestAction(ProtocolHandler.PlayerAction.PlaybackPosition,((UserActionEvent) eventObject).getEventData());
                     break;
                 case Initialize:
                     break;
@@ -159,54 +164,54 @@ public class Controller extends Service {
         }
     };
 
-    SocketDataEventListener socketDataEventListener = new SocketDataEventListener() {
+    ProtocolDataEventListener protocolDataEventListener = new ProtocolDataEventListener() {
         @Override
         public void handleSocketDataEvent(EventObject eventObject) {
-            switch (((SocketDataEvent) eventObject).getType()) {
+            switch (((ProtocolDataEvent) eventObject).getType()) {
 
                 case Title:
-                    MainDataModel.getInstance().setTitle(((SocketDataEvent) eventObject).getData());
-                    ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.PlaybackPosition,"status");
+                    MainDataModel.getInstance().setTitle(((ProtocolDataEvent) eventObject).getData());
+                    _pHandler.requestAction(ProtocolHandler.PlayerAction.PlaybackPosition,"status");
                     break;
                 case Artist:
-                    MainDataModel.getInstance().setArtist(((SocketDataEvent) eventObject).getData());
+                    MainDataModel.getInstance().setArtist(((ProtocolDataEvent) eventObject).getData());
                     break;
                 case Album:
-                    MainDataModel.getInstance().setAlbum(((SocketDataEvent) eventObject).getData());
+                    MainDataModel.getInstance().setAlbum(((ProtocolDataEvent) eventObject).getData());
                     break;
                 case Year:
-                    MainDataModel.getInstance().setYear(((SocketDataEvent) eventObject).getData());
+                    MainDataModel.getInstance().setYear(((ProtocolDataEvent) eventObject).getData());
                     break;
                 case Volume:
-                    MainDataModel.getInstance().setVolume(((SocketDataEvent) eventObject).getData());
+                    MainDataModel.getInstance().setVolume(((ProtocolDataEvent) eventObject).getData());
                     break;
                 case AlbumCover:
-                    if(((SocketDataEvent)eventObject).getData()!=null||((SocketDataEvent)eventObject).getData()!="")
+                    if(((ProtocolDataEvent)eventObject).getData()!=null||((ProtocolDataEvent)eventObject).getData()!="")
                     {
-                        MainDataModel.getInstance().setAlbumCover(((SocketDataEvent) eventObject).getData());
+                        MainDataModel.getInstance().setAlbumCover(((ProtocolDataEvent) eventObject).getData());
                     }
                     break;
                 case ConnectionState:
-                    MainDataModel.getInstance().setConnectionState(((SocketDataEvent) eventObject).getData());
+                    MainDataModel.getInstance().setConnectionState(((ProtocolDataEvent) eventObject).getData());
                     break;
                 case RepeatState:
-                    MainDataModel.getInstance().setRepeatState(((SocketDataEvent) eventObject).getData());
+                    MainDataModel.getInstance().setRepeatState(((ProtocolDataEvent) eventObject).getData());
                     break;
                 case ShuffleState:
-                    MainDataModel.getInstance().setShuffleState(((SocketDataEvent) eventObject).getData());
+                    MainDataModel.getInstance().setShuffleState(((ProtocolDataEvent) eventObject).getData());
                     break;
                 case ScrobbleState:
-                    MainDataModel.getInstance().setScrobbleState(((SocketDataEvent) eventObject).getData());
+                    MainDataModel.getInstance().setScrobbleState(((ProtocolDataEvent) eventObject).getData());
                     break;
                 case MuteState:
-                    MainDataModel.getInstance().setMuteState(((SocketDataEvent) eventObject).getData());
+                    MainDataModel.getInstance().setMuteState(((ProtocolDataEvent) eventObject).getData());
                     break;
                 case PlayState:
-                    MainDataModel.getInstance().setPlayState(((SocketDataEvent) eventObject).getData());
+                    MainDataModel.getInstance().setPlayState(((ProtocolDataEvent) eventObject).getData());
                     break;
                 case PlaybackPosition:
                     if(currentActivity.getClass()!=MainView.class) break;
-                    String duration[] = ((SocketDataEvent) eventObject).getData().split("##");
+                    String duration[] = ((ProtocolDataEvent) eventObject).getData().split("##");
                     final int current = Integer.parseInt(duration[0]);
                     final int total = Integer.parseInt(duration[1]);
                     currentActivity.runOnUiThread(new Runnable() {
@@ -218,14 +223,16 @@ public class Controller extends Service {
                     break;
                 case Playlist:
                     if(currentActivity.getClass()!=PlaylistView.class) break;
-                    final ArrayList<MusicTrack> nowPlaying = ((SocketDataEvent) eventObject).getTrackList();
+                    final ArrayList<MusicTrack> nowPlaying = ((ProtocolDataEvent) eventObject).getTrackList();
                     currentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             ((PlaylistView) currentActivity).updateListData(nowPlaying);
                         }
                     });
-
+                    break;
+                case ReplyAvailable:
+                    _socketService.sendData(((ProtocolDataEvent) eventObject).getData());
                     break;
 
             }
@@ -342,12 +349,12 @@ public class Controller extends Service {
         public void handlePlaylistViewEvent(EventObject eventObject) {
             if(((PlaylistViewEvent) eventObject).getType()==PlaylistViewAction.GetPlaylist)
             {
-                 ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Playlist);
+                 _pHandler.requestAction(ProtocolHandler.PlayerAction.Playlist);
             }
             else if (((PlaylistViewEvent) eventObject).getType()==PlaylistViewAction.PlaySpecifiedTrack)
             {
                 String track = ((PlaylistViewEvent) eventObject).getData();
-                ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.PlayNow, track);
+                _pHandler.requestAction(ProtocolHandler.PlayerAction.PlayNow, track);
             }
         }
     };
@@ -364,7 +371,7 @@ public class Controller extends Service {
                 if (state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)) {
                     if (SettingsManager.getInstance().isVolumeReducedOnRinging()) {
                         int newVolume = ((int) (100 * 0.2));
-                        ProtocolHandler.getInstance().requestAction(ProtocolHandler.PlayerAction.Volume, Integer.toString(newVolume));
+                        _pHandler.requestAction(ProtocolHandler.PlayerAction.Volume, Integer.toString(newVolume));
                     }
                 }
             }
@@ -373,7 +380,7 @@ public class Controller extends Service {
                 NetworkInfo networkInfo = (NetworkInfo)intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
                 if(networkInfo.getState().equals(NetworkInfo.State.CONNECTED))
                 {
-                    SocketService.getInstance().attemptToStartSocketThread(Input.user);
+                    _socketService.initSocketThread(Input.user);
                 }
                 else if (networkInfo.getState().equals(NetworkInfo.State.DISCONNECTING))
                 {
@@ -406,6 +413,29 @@ public class Controller extends Service {
             }
         });
     }
+
+    RawSocketDataEventListener rawSocketDataEventListener = new RawSocketDataEventListener() {
+        @Override
+        public void handleRawSocketData(EventObject eventObject) {
+            if(((RawSocketDataEvent)eventObject).getType()==RawSocketAction.PacketAvailable)
+            {
+                _pHandler.answerProcessor(((RawSocketDataEvent)eventObject).getData());
+            }
+            else if (((RawSocketDataEvent)eventObject).getType()==RawSocketAction.StatusChange)
+            {
+                MainDataModel.getInstance().setConnectionState(((RawSocketDataEvent)eventObject).getData());
+                if(MainDataModel.getInstance().getIsConnectionActive())
+                {
+                    _pHandler.requestPlayerData();
+                }
+            }
+            else if (((RawSocketDataEvent)eventObject).getType()==RawSocketAction.HandshakeUpdate)
+            {
+                _pHandler.setHandshakeComplete(Boolean.parseBoolean(((RawSocketDataEvent)eventObject).getData()));
+            }
+
+        }
+    };
 
     /**
      * Initialized and installs the IntentFilter listening for the SONG_CHANGED
