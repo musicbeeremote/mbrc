@@ -116,7 +116,6 @@ public class MainDataModel {
     public void setVolume(String volume)
     {
         int newVolume = Integer.parseInt(volume);
-        if(newVolume==_volume) return;
         _volume = newVolume;
         _source.dispatchEvent(new ModelDataEvent(this, ProtocolDataType.Volume));
     }
@@ -145,7 +144,6 @@ public class MainDataModel {
     public void setConnectionState(String connectionActive)
     {
         boolean newStatus = Boolean.parseBoolean(connectionActive);
-        if(newStatus==_isConnectionActive) return;
         _isConnectionActive=newStatus;
         _source.dispatchEvent(new ModelDataEvent(this, ProtocolDataType.ConnectionState));
     }
@@ -158,7 +156,6 @@ public class MainDataModel {
     public void setRepeatState(String repeatButtonActive)
     {
         boolean newStatus = (repeatButtonActive.equals("All"));
-        if(newStatus== _isRepeatButtonActive) return;
         _isRepeatButtonActive = newStatus;
         _source.dispatchEvent(new ModelDataEvent(this, ProtocolDataType.RepeatState));
     }
@@ -171,7 +168,6 @@ public class MainDataModel {
     public void setShuffleState(String shuffleButtonActive)
     {
         boolean newStatus = Boolean.parseBoolean(shuffleButtonActive);
-        if(newStatus == _isShuffleButtonActive) return;
         _isShuffleButtonActive = newStatus;
         _source.dispatchEvent(new ModelDataEvent(this, ProtocolDataType.ShuffleState));
     }
@@ -184,7 +180,6 @@ public class MainDataModel {
     public void setScrobbleState(String scrobbleButtonActive)
     {
         boolean newStatus = Boolean.parseBoolean(scrobbleButtonActive);
-        if(newStatus == _isScrobbleButtonActive) return;
         _isScrobbleButtonActive = newStatus;
         _source.dispatchEvent(new ModelDataEvent(this, ProtocolDataType.ScrobbleState));
     }
@@ -197,7 +192,6 @@ public class MainDataModel {
     public void setMuteState(String muteButtonActive)
     {
         boolean newStatus = Boolean.parseBoolean(muteButtonActive);
-        if(newStatus == _isMuteButtonActive) return;
         _isMuteButtonActive = newStatus;
         _source.dispatchEvent(new ModelDataEvent(this, ProtocolDataType.MuteState));
     }
@@ -213,7 +207,6 @@ public class MainDataModel {
         if(playState.equalsIgnoreCase(Const.PLAYING)) newState = PlayState.Playing;
         else if (playState.equalsIgnoreCase(Const.STOPPED)) newState = PlayState.Stopped;
         else if (playState.equalsIgnoreCase(Const.PAUSED)) newState = PlayState.Paused;
-        if(_playState==newState) return;
         _playState = newState;
         _source.dispatchEvent(new ModelDataEvent(this, ProtocolDataType.PlayState));
     }
@@ -225,7 +218,6 @@ public class MainDataModel {
 
     public void setIsDeviceOnline(boolean value)
     {
-        if(value==_isDeviceOnline) return;
         _isDeviceOnline = value;
         _source.dispatchEvent(new ModelDataEvent(this, ProtocolDataType.OnlineStatus));
     }
