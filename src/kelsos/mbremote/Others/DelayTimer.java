@@ -20,8 +20,13 @@ public class DelayTimer {
      */
     public DelayTimer(int delay)
     {
-      _delay=delay;
+        _delay=delay;
         _timerFinishEventListener = null;
+    }
+    public DelayTimer(int delay, TimerFinishEvent listener)
+    {
+        _delay = delay;
+        _timerFinishEventListener = listener;
     }
 
     /**

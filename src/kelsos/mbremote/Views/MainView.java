@@ -111,8 +111,10 @@ public class MainView extends RoboActivity {
             case R.id.main_menu_playlist:
                 Intent playlistIntent = new Intent(MainView.this, PlaylistView.class);
                 startActivity(playlistIntent);
+                break;
             case R.id.main_menu_lyrics:
                 userActionEvent.fire(new UserActionEvent(this, UserAction.Lyrics));
+                break;
             default:
                 return super.onMenuItemSelected(featureId, item);
         }

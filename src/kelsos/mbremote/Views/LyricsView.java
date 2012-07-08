@@ -1,11 +1,11 @@
 package kelsos.mbremote.Views;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 import kelsos.mbremote.R;
+import roboguice.activity.RoboActivity;
 
-public class LyricsView extends Activity {
+public class LyricsView extends RoboActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

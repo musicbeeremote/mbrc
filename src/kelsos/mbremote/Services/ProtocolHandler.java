@@ -37,10 +37,7 @@ public class ProtocolHandler {
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         }
-
-        _updateTimer = new DelayTimer(2000);
-        // Event Listener for the communicator events
-        _updateTimer.setTimerFinishEventListener(updateTimerFinishEvent);
+        _updateTimer = new DelayTimer(2000, updateTimerFinishEvent);
     }
 
     public boolean isHandshakeComplete() {

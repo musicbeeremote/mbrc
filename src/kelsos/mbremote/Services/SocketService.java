@@ -34,9 +34,8 @@ public class SocketService {
 
     public SocketService()
     {
-        _connectionTimer = new DelayTimer(1000);
+        _connectionTimer = new DelayTimer(1000,timerFinishEvent);
         _numberOfTries = 0; // Initialize the connection retry counter.
-        _connectionTimer.setTimerFinishEventListener(timerFinishEvent);
         initSocketThread(Input.user);
     }
 
