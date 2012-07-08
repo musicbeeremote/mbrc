@@ -1,7 +1,6 @@
 package kelsos.mbremote.Controller;
 
 import android.app.Activity;
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +11,8 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
-import android.util.Log;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import kelsos.mbremote.Data.MusicTrack;
 import kelsos.mbremote.Events.*;
 import kelsos.mbremote.Models.MainDataModel;
@@ -24,18 +24,19 @@ import kelsos.mbremote.Services.SocketService;
 import kelsos.mbremote.Views.LyricsView;
 import kelsos.mbremote.Views.MainView;
 import kelsos.mbremote.Views.PlaylistView;
+import roboguice.event.Observes;
+import roboguice.service.RoboService;
 
 import java.util.ArrayList;
-import java.util.EventObject;
 
-public class Controller extends Service {
+@Singleton
+public class Controller extends RoboService {
+    @Inject private SocketService socketService;
+    @Inject private ProtocolHandler protocolHandler;
+    @Inject private MainDataModel model;
 
-    private static Controller _instance;
+
     Activity currentActivity;
-
-    private static boolean _isRunning = false;
-    private SocketService _socketService;
-    private ProtocolHandler _pHandler;
 
     private String _lyricsTemp;
 
@@ -43,14 +44,7 @@ public class Controller extends Service {
     public void onCreate()
     {
         super.onCreate();
-        _instance = this;
-        _socketService = new SocketService();
-        _pHandler = new ProtocolHandler();
-        MainDataModel.getInstance().addEventListener(modelDataEventListener);
-        _pHandler.addEventListener(protocolDataEventListener);
-        _socketService.addEventListener(rawSocketDataEventListener);
         SettingsManager.getInstance().setContext(this);
-        _isRunning = true;
     }
 
     @Override
@@ -64,39 +58,8 @@ public class Controller extends Service {
         unregisterReceiver(nmBroadcastReceiver);
     }
 
-    public static Controller getInstance()
-    {
-        return _instance;
-    }
-
-    /**
-     * Accessor to the running state of the Controller.
-     * @return True is the Controller is already running.
-     */
-    public static boolean getIsRunning()
-    {
-        return _isRunning;
-    }
-
     public void onActivityStart(Activity activity)
     {
-        if(currentActivity.getClass()==MainView.class)
-        {
-            ((MainView)currentActivity).removeEventListener(userActionEventListener);
-        }
-        else if(currentActivity.getClass()==PlaylistView.class)
-        {
-            ((PlaylistView)currentActivity).removeEventListener(playlistViewListener);
-        }
-
-        if(activity.getClass()==MainView.class)
-        {
-            ((MainView)activity).addEventListener(userActionEventListener);
-        }
-        else if (activity.getClass()==PlaylistView.class)
-        {
-            ((PlaylistView)activity).addEventListener(playlistViewListener);
-        }
 
         currentActivity = activity;
         if(activity.getClass()==MainView.class)
@@ -108,123 +71,107 @@ public class Controller extends Service {
             currentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ((LyricsView)currentActivity).updateLyricsData(_lyricsTemp, MainDataModel.getInstance().getArtist(), MainDataModel.getInstance().getTitle());
+                    ((LyricsView)currentActivity).updateLyricsData(_lyricsTemp, model.getArtist(), model.getTitle());
                 }
             });
         }
     }
 
 
-    public void initialize(Activity activity)
-    {
-        _socketService.initSocketThread(Input.user);
-        currentActivity = activity;
+    public void handleUserActionEvent(@Observes UserActionEvent event) {
 
-        if(activity.getClass()==MainView.class)
-        {
-            ((MainView)activity).addEventListener(userActionEventListener);
+        switch (event.getUserAction()) {
+
+            case PlayPause:
+                protocolHandler.requestAction(ProtocolHandler.PlayerAction.PlayPause);
+                break;
+            case Stop:
+                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Stop);
+                break;
+            case Next:
+                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Next);
+                break;
+            case Previous:
+                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Previous);
+                break;
+            case Repeat:
+                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Repeat, Const.TOGGLE);
+                break;
+            case Shuffle:
+                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Shuffle, Const.TOGGLE);
+                break;
+            case Scrobble:
+                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Scrobble, Const.TOGGLE);
+                break;
+            case Mute:
+                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Mute, Const.TOGGLE);
+                break;
+            case Lyrics:
+                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Lyrics);
+                break;
+            case Refresh:
+                protocolHandler.requestPlayerData();
+                break;
+            case Playlist:
+                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Playlist);
+                break;
+            case Volume:
+                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Volume, ((UserActionEvent) event).getEventData());
+                break;
+            case PlaybackPosition:
+                protocolHandler.requestAction(ProtocolHandler.PlayerAction.PlaybackPosition, ((UserActionEvent) event).getEventData());
+                break;
+            case Initialize:
+                break;
         }
     }
 
-    UserActionEventListener userActionEventListener = new UserActionEventListener() {
-        @Override
-        public void handleUserActionEvent(EventObject eventObject) {
-            Log.d("ACTION",((UserActionEvent) eventObject).getUserAction().toString());
-            switch (((UserActionEvent) eventObject).getUserAction()) {
-
-                case PlayPause:
-                    _pHandler.requestAction(ProtocolHandler.PlayerAction.PlayPause);
-                    break;
-                case Stop:
-                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Stop);
-                    break;
-                case Next:
-                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Next);
-                    break;
-                case Previous:
-                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Previous);
-                    break;
-                case Repeat:
-                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Repeat, Const.TOGGLE);
-                    break;
-                case Shuffle:
-                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Shuffle, Const.TOGGLE);
-                    break;
-                case Scrobble:
-                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Scrobble, Const.TOGGLE);
-                    break;
-                case Mute:
-                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Mute, Const.TOGGLE);
-                    break;
-                case Lyrics:
-                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Lyrics);
-                    break;
-                case Refresh:
-                    _pHandler.requestPlayerData();
-                    break;
-                case Playlist:
-                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Playlist);
-                    break;
-                case Volume:
-                    _pHandler.requestAction(ProtocolHandler.PlayerAction.Volume,((UserActionEvent) eventObject).getEventData());
-                    break;
-                case PlaybackPosition:
-                    _pHandler.requestAction(ProtocolHandler.PlayerAction.PlaybackPosition,((UserActionEvent) eventObject).getEventData());
-                    break;
-                case Initialize:
-                    break;
-            }
-        }
-    };
-
-    ProtocolDataEventListener protocolDataEventListener = new ProtocolDataEventListener() {
-        @Override
-        public void handleSocketDataEvent(EventObject eventObject) {
-            switch (((ProtocolDataEvent) eventObject).getType()) {
+        public void handleSocketDataEvent(@Observes ProtocolDataEvent event) {
+            switch (event.getType()) {
 
                 case Title:
-                    MainDataModel.getInstance().setTitle(((ProtocolDataEvent) eventObject).getData());
-                    _pHandler.requestAction(ProtocolHandler.PlayerAction.PlaybackPosition,"status");
+                    model.setTitle(event.getData());
+                    protocolHandler.requestAction(ProtocolHandler.PlayerAction.PlaybackPosition, "status");
                     break;
                 case Artist:
-                    MainDataModel.getInstance().setArtist(((ProtocolDataEvent) eventObject).getData());
+                    model.setArtist(event.getData());
                     break;
                 case Album:
-                    MainDataModel.getInstance().setAlbum(((ProtocolDataEvent) eventObject).getData());
+                    model.setAlbum(event.getData());
                     break;
                 case Year:
-                    MainDataModel.getInstance().setYear(((ProtocolDataEvent) eventObject).getData());
+                    model.setYear(event.getData());
                     break;
                 case Volume:
-                    MainDataModel.getInstance().setVolume(((ProtocolDataEvent) eventObject).getData());
+                    model.setVolume(event.getData());
                     break;
                 case AlbumCover:
-                    if(((ProtocolDataEvent)eventObject).getData()!=null||((ProtocolDataEvent)eventObject).getData()!="")
+                    if(event.getData()!=null|| event.getData()!="")
                     {
-                        MainDataModel.getInstance().setAlbumCover(((ProtocolDataEvent) eventObject).getData());
+                        model.setAlbumCover(event.getData());
                     }
                     break;
                 case ConnectionState:
-                    MainDataModel.getInstance().setConnectionState(((ProtocolDataEvent) eventObject).getData());
+                    model.setConnectionState(event.getData());
                     break;
                 case RepeatState:
-                    MainDataModel.getInstance().setRepeatState(((ProtocolDataEvent) eventObject).getData());
+                    model.setRepeatState(event.getData());
                     break;
                 case ShuffleState:
-                    MainDataModel.getInstance().setShuffleState(((ProtocolDataEvent) eventObject).getData());
+                    model.setShuffleState(event.getData());
                     break;
                 case ScrobbleState:
-                    MainDataModel.getInstance().setScrobbleState(((ProtocolDataEvent) eventObject).getData());
+                    model.setScrobbleState(event.getData());
                     break;
                 case MuteState:
-                    MainDataModel.getInstance().setMuteState(((ProtocolDataEvent) eventObject).getData());
+                    model.setMuteState(event.getData());
                     break;
                 case PlayState:
-                    MainDataModel.getInstance().setPlayState(((ProtocolDataEvent) eventObject).getData());
+                    model.setPlayState(event.getData());
                     break;
                 case PlaybackPosition:
                     if(currentActivity.getClass()!=MainView.class) break;
-                    String duration[] = ((ProtocolDataEvent) eventObject).getData().split("##");
+                    String duration[] = event.getData().split("##");
                     final int current = Integer.parseInt(duration[0]);
                     final int total = Integer.parseInt(duration[1]);
                     currentActivity.runOnUiThread(new Runnable() {
@@ -236,7 +183,7 @@ public class Controller extends Service {
                     break;
                 case Playlist:
                     if(currentActivity.getClass()!=PlaylistView.class) break;
-                    final ArrayList<MusicTrack> nowPlaying = ((ProtocolDataEvent) eventObject).getTrackList();
+                    final ArrayList<MusicTrack> nowPlaying = event.getTrackList();
                     currentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -245,22 +192,22 @@ public class Controller extends Service {
                     });
                     break;
                 case ReplyAvailable:
-                    _socketService.sendData(((ProtocolDataEvent) eventObject).getData());
+                    socketService.sendData(event.getData());
                     break;
                 case Lyrics:
                     if(currentActivity.getClass()!= LyricsView.class)
                     {
                         Intent lvIntent = new Intent(currentActivity, LyricsView.class);
                         startActivity(lvIntent);
-                        _lyricsTemp = ((ProtocolDataEvent) eventObject).getData();
+                        _lyricsTemp = event.getData();
                     }
                     else
                     {
-                        final String lyrics = ((ProtocolDataEvent) eventObject).getData();
+                        final String lyrics = event.getData();
                         currentActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                ((LyricsView)currentActivity).updateLyricsData(lyrics, MainDataModel.getInstance().getArtist(), MainDataModel.getInstance().getTitle());
+                                ((LyricsView)currentActivity).updateLyricsData(lyrics, model.getArtist(), model.getTitle());
                             }
                         });
 
@@ -269,18 +216,17 @@ public class Controller extends Service {
 
             }
         }
-    };
 
-    ModelDataEventListener modelDataEventListener = new ModelDataEventListener() {
-        @Override
-        public void handleModelDataEvent(EventObject eventObject) {
+
+
+        public void handleModelDataEvent(@Observes ModelDataEvent event) {
             if(currentActivity.getClass()!=MainView.class) return;
-            switch (((ModelDataEvent) eventObject).getType()) {
+            switch (event.getType()) {
                 case Title:
                     currentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((MainView)currentActivity).updateTitleText(MainDataModel.getInstance().getTitle());
+                            ((MainView)currentActivity).updateTitleText(model.getTitle());
                         }
                     });
                     break;
@@ -288,7 +234,7 @@ public class Controller extends Service {
                     currentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((MainView)currentActivity).updateArtistText(MainDataModel.getInstance().getArtist());
+                            ((MainView)currentActivity).updateArtistText(model.getArtist());
                         }
                     });
                     break;
@@ -296,7 +242,7 @@ public class Controller extends Service {
                     currentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((MainView)currentActivity).updateAlbumText(MainDataModel.getInstance().getAlbum());
+                            ((MainView)currentActivity).updateAlbumText(model.getAlbum());
                         }
                     });
                     break;
@@ -304,7 +250,7 @@ public class Controller extends Service {
                     currentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((MainView)currentActivity).updateYearText(MainDataModel.getInstance().getYear());
+                            ((MainView)currentActivity).updateYearText(model.getYear());
                         }
                     });
                     break;
@@ -312,7 +258,7 @@ public class Controller extends Service {
                     currentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((MainView)currentActivity).updateVolumeData(MainDataModel.getInstance().getVolume());
+                            ((MainView)currentActivity).updateVolumeData(model.getVolume());
                         }
                     });
                     break;
@@ -320,7 +266,7 @@ public class Controller extends Service {
                     currentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((MainView)currentActivity).updateAlbumCover(MainDataModel.getInstance().getAlbumCover());
+                            ((MainView)currentActivity).updateAlbumCover(model.getAlbumCover());
                         }
                     });
                     break;
@@ -328,7 +274,7 @@ public class Controller extends Service {
                     currentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((MainView)currentActivity).updateConnectionIndicator(MainDataModel.getInstance().getIsConnectionActive());
+                            ((MainView)currentActivity).updateConnectionIndicator(model.getIsConnectionActive());
                         }
                     });
                     break;
@@ -336,7 +282,7 @@ public class Controller extends Service {
                     currentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((MainView)currentActivity).updateRepeatButtonState(MainDataModel.getInstance().getIsRepeatButtonActive());
+                            ((MainView)currentActivity).updateRepeatButtonState(model.getIsRepeatButtonActive());
                         }
                     });
                     break;
@@ -344,7 +290,7 @@ public class Controller extends Service {
                     currentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((MainView)currentActivity).updateShuffleButtonState(MainDataModel.getInstance().getIsShuffleButtonActive());
+                            ((MainView)currentActivity).updateShuffleButtonState(model.getIsShuffleButtonActive());
                         }
                     });
                     break;
@@ -352,7 +298,7 @@ public class Controller extends Service {
                     currentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((MainView)currentActivity).updateScrobblerButtonState(MainDataModel.getInstance().getIsScrobbleButtonActive());
+                            ((MainView)currentActivity).updateScrobblerButtonState(model.getIsScrobbleButtonActive());
                         }
                     });
                     break;
@@ -360,7 +306,7 @@ public class Controller extends Service {
                     currentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((MainView)currentActivity).updateMuteButtonState(MainDataModel.getInstance().getIsMuteButtonActive());
+                            ((MainView)currentActivity).updateMuteButtonState(model.getIsMuteButtonActive());
                         }
                     });
                     break;
@@ -368,28 +314,26 @@ public class Controller extends Service {
                     currentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((MainView)currentActivity).updatePlayState(MainDataModel.getInstance().getPlayState());
+                            ((MainView)currentActivity).updatePlayState(model.getPlayState());
                         }
                     });
                     break;
             }
         }
-    };
 
-    PlaylistViewListener playlistViewListener = new PlaylistViewListener() {
-        @Override
-        public void handlePlaylistViewEvent(EventObject eventObject) {
-            if(((PlaylistViewEvent) eventObject).getType()==PlaylistViewAction.GetPlaylist)
+
+        public void handlePlaylistViewEvent(@Observes PlaylistViewEvent event) {
+            if(event.getType()==PlaylistViewAction.GetPlaylist)
             {
-                 _pHandler.requestAction(ProtocolHandler.PlayerAction.Playlist);
+                 protocolHandler.requestAction(ProtocolHandler.PlayerAction.Playlist);
             }
-            else if (((PlaylistViewEvent) eventObject).getType()==PlaylistViewAction.PlaySpecifiedTrack)
+            else if (event.getType()==PlaylistViewAction.PlaySpecifiedTrack)
             {
-                String track = ((PlaylistViewEvent) eventObject).getData();
-                _pHandler.requestAction(ProtocolHandler.PlayerAction.PlayNow, track);
+                String track = event.getData();
+                protocolHandler.requestAction(ProtocolHandler.PlayerAction.PlayNow, track);
             }
         }
-    };
+
 
 
     private final BroadcastReceiver nmBroadcastReceiver = new BroadcastReceiver() {
@@ -403,7 +347,7 @@ public class Controller extends Service {
                 if (state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)) {
                     if (SettingsManager.getInstance().isVolumeReducedOnRinging()) {
                         int newVolume = ((int) (100 * 0.2));
-                        _pHandler.requestAction(ProtocolHandler.PlayerAction.Volume, Integer.toString(newVolume));
+                        protocolHandler.requestAction(ProtocolHandler.PlayerAction.Volume, Integer.toString(newVolume));
                     }
                 }
             }
@@ -412,7 +356,7 @@ public class Controller extends Service {
                 NetworkInfo networkInfo = (NetworkInfo)intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
                 if(networkInfo.getState().equals(NetworkInfo.State.CONNECTED))
                 {
-                    _socketService.initSocketThread(Input.user);
+                    socketService.initSocketThread(Input.user);
                 }
                 else if (networkInfo.getState().equals(NetworkInfo.State.DISCONNECTING))
                 {
@@ -430,44 +374,42 @@ public class Controller extends Service {
         currentActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ((MainView)currentActivity).updateTitleText(MainDataModel.getInstance().getTitle());
-                ((MainView)currentActivity).updateArtistText(MainDataModel.getInstance().getArtist());
-                ((MainView)currentActivity).updateAlbumText(MainDataModel.getInstance().getAlbum());
-                ((MainView)currentActivity).updateYearText(MainDataModel.getInstance().getYear());
-                ((MainView)currentActivity).updateVolumeData(MainDataModel.getInstance().getVolume());
-                ((MainView)currentActivity).updateAlbumCover(MainDataModel.getInstance().getAlbumCover());
-                ((MainView)currentActivity).updateConnectionIndicator(MainDataModel.getInstance().getIsConnectionActive());
-                ((MainView)currentActivity).updateRepeatButtonState(MainDataModel.getInstance().getIsRepeatButtonActive());
-                ((MainView)currentActivity).updateShuffleButtonState(MainDataModel.getInstance().getIsShuffleButtonActive());
-                ((MainView)currentActivity).updateScrobblerButtonState(MainDataModel.getInstance().getIsScrobbleButtonActive());
-                ((MainView)currentActivity).updateMuteButtonState(MainDataModel.getInstance().getIsMuteButtonActive());
-                ((MainView)currentActivity).updatePlayState(MainDataModel.getInstance().getPlayState());
+                ((MainView)currentActivity).updateTitleText(model.getTitle());
+                ((MainView)currentActivity).updateArtistText(model.getArtist());
+                ((MainView)currentActivity).updateAlbumText(model.getAlbum());
+                ((MainView)currentActivity).updateYearText(model.getYear());
+                ((MainView)currentActivity).updateVolumeData(model.getVolume());
+                ((MainView)currentActivity).updateAlbumCover(model.getAlbumCover());
+                ((MainView)currentActivity).updateConnectionIndicator(model.getIsConnectionActive());
+                ((MainView)currentActivity).updateRepeatButtonState(model.getIsRepeatButtonActive());
+                ((MainView)currentActivity).updateShuffleButtonState(model.getIsShuffleButtonActive());
+                ((MainView)currentActivity).updateScrobblerButtonState(model.getIsScrobbleButtonActive());
+                ((MainView)currentActivity).updateMuteButtonState(model.getIsMuteButtonActive());
+                ((MainView)currentActivity).updatePlayState(model.getPlayState());
             }
         });
     }
 
-    RawSocketDataEventListener rawSocketDataEventListener = new RawSocketDataEventListener() {
-        @Override
-        public void handleRawSocketData(EventObject eventObject) {
-            if(((RawSocketDataEvent)eventObject).getType()==RawSocketAction.PacketAvailable)
+        public void handleRawSocketData(@Observes RawSocketDataEvent event) {
+            if(event.getType()==RawSocketAction.PacketAvailable)
             {
-                _pHandler.answerProcessor(((RawSocketDataEvent)eventObject).getData());
+                protocolHandler.answerProcessor(event.getData());
             }
-            else if (((RawSocketDataEvent)eventObject).getType()==RawSocketAction.StatusChange)
+            else if (event.getType()==RawSocketAction.StatusChange)
             {
-                MainDataModel.getInstance().setConnectionState(((RawSocketDataEvent)eventObject).getData());
-                if(MainDataModel.getInstance().getIsConnectionActive())
+                model.setConnectionState(event.getData());
+                if(model.getIsConnectionActive())
                 {
-                    _pHandler.requestPlayerData();
+                    protocolHandler.requestPlayerData();
                 }
             }
-            else if (((RawSocketDataEvent)eventObject).getType()==RawSocketAction.HandshakeUpdate)
+            else if (event.getType()==RawSocketAction.HandshakeUpdate)
             {
-                _pHandler.setHandshakeComplete(Boolean.parseBoolean(((RawSocketDataEvent)eventObject).getData()));
+                protocolHandler.setHandshakeComplete(Boolean.parseBoolean(event.getData()));
             }
 
         }
-    };
+
 
     /**
      * Initialized and installs the IntentFilter listening for the SONG_CHANGED

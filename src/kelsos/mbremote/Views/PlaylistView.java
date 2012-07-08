@@ -4,23 +4,22 @@ import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
-import kelsos.mbremote.Controller.Controller;
+import com.google.inject.Inject;
 import kelsos.mbremote.Data.MusicTrack;
 import kelsos.mbremote.Data.PlaylistArrayAdapter;
 import kelsos.mbremote.Events.PlaylistViewAction;
 import kelsos.mbremote.Events.PlaylistViewEvent;
-import kelsos.mbremote.Events.PlaylistViewEventSource;
-import kelsos.mbremote.Events.PlaylistViewListener;
 import kelsos.mbremote.Others.DelayTimer;
 import kelsos.mbremote.Others.XmlEncoder;
 import kelsos.mbremote.R;
+import roboguice.event.EventManager;
 
 import java.util.ArrayList;
 
 public class PlaylistView extends ListActivity {
 
+    @Inject protected EventManager eventManager;
     private DelayTimer delayTimer;
-    private PlaylistViewEventSource _eventSource;
 
     public void updateListData(ArrayList<MusicTrack> nowPlayingList) {
         PlaylistArrayAdapter adapter;
@@ -31,17 +30,16 @@ public class PlaylistView extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        _eventSource = new PlaylistViewEventSource();
         delayTimer = new DelayTimer(1200);
         delayTimer.setTimerFinishEventListener(timerFinishEvent);
         delayTimer.start();
-        Controller.getInstance().onActivityStart(this);
+        //Controller.getInstance().onActivityStart(this);
     }
 
     DelayTimer.TimerFinishEvent timerFinishEvent = new DelayTimer.TimerFinishEvent() {
 
         public void onTimerFinish() {
-            _eventSource.dispatchEvent(new PlaylistViewEvent(this, PlaylistViewAction.GetPlaylist));
+            eventManager.fire(new PlaylistViewEvent(this, PlaylistViewAction.GetPlaylist));
         }
     };
 
@@ -49,16 +47,8 @@ public class PlaylistView extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         String track = ((MusicTrack) getListView().getItemAtPosition(position)).getTitle();
-        _eventSource.dispatchEvent(new PlaylistViewEvent(this, PlaylistViewAction.PlaySpecifiedTrack, XmlEncoder.encode(track)));
+        eventManager.fire(new PlaylistViewEvent(this, PlaylistViewAction.PlaySpecifiedTrack, XmlEncoder.encode(track)));
 
-    }
-
-    public void addEventListener(PlaylistViewListener listener) {
-        _eventSource.addEventListener(listener);
-    }
-
-    public void removeEventListener(PlaylistViewListener listener) {
-        _eventSource.removeEventListener(listener);
     }
 }
 

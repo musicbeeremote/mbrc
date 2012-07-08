@@ -3,7 +3,6 @@ package kelsos.mbremote.Others;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import kelsos.mbremote.Messaging.NotificationService;
 import kelsos.mbremote.R;
 
 import java.net.InetSocketAddress;
@@ -32,15 +31,16 @@ public class SettingsManager {
     }
 
 	public SocketAddress getSocketAddress(){
-		String server_hostname = sharedPreferences.getString(context.getString(R.string.settings_server_hostname), null);
-		String server_port_string = sharedPreferences.getString(context.getString(R.string.settings_server_port), null);
-		if (notNullOrEmpty(server_hostname) || notNullOrEmpty(server_port_string)) {
-            NotificationService.getInstance().showToastMessage(R.string.network_manager_check_hostname_or_port);
-			return null;
-		}
-		int server_port = Integer.parseInt(server_port_string);
-
-		return new InetSocketAddress(server_hostname, server_port);
+//		String server_hostname = sharedPreferences.getString(context.getString(R.string.settings_server_hostname), null);
+//		String server_port_string = sharedPreferences.getString(context.getString(R.string.settings_server_port), null);
+//		if (notNullOrEmpty(server_hostname) || notNullOrEmpty(server_port_string)) {
+//            NotificationService.getInstance().showToastMessage(R.string.network_manager_check_hostname_or_port);
+//			return new InetSocketAddress("192.168.1.10", 3000);
+//		}
+//		int server_port = Integer.parseInt(server_port_string);
+//
+//		return new InetSocketAddress(server_hostname, server_port);
+        return new InetSocketAddress("192.168.1.10", 3000);
 	}
 
 	public boolean isVolumeReducedOnRinging(){

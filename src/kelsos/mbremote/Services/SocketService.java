@@ -1,15 +1,15 @@
 package kelsos.mbremote.Services;
 
 import android.util.Log;
+import com.google.inject.Inject;
 import kelsos.mbremote.Events.RawSocketAction;
 import kelsos.mbremote.Events.RawSocketDataEvent;
-import kelsos.mbremote.Events.RawSocketDataEventListener;
-import kelsos.mbremote.Events.RawSocketDataEventSource;
 import kelsos.mbremote.Messaging.NotificationService;
 import kelsos.mbremote.Network.Input;
 import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Others.DelayTimer;
 import kelsos.mbremote.Others.SettingsManager;
+import roboguice.event.EventManager;
 
 import java.io.*;
 import java.net.Socket;
@@ -18,6 +18,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 public class SocketService {
+    @Inject protected EventManager eventManager;
 
     private static int _numberOfTries;
     public static final int MAX_RETRIES = 4;
@@ -30,15 +31,12 @@ public class SocketService {
 
     private DelayTimer _connectionTimer;
 
-    private RawSocketDataEventSource _eventSource;
-
     public SocketService()
     {
-        _eventSource = new RawSocketDataEventSource();
         _connectionTimer = new DelayTimer(1000);
         _numberOfTries = 0; // Initialize the connection retry counter.
-
         _connectionTimer.setTimerFinishEventListener(timerFinishEvent);
+        initSocketThread(Input.user);
     }
 
     private DelayTimer.TimerFinishEvent timerFinishEvent = new DelayTimer.TimerFinishEvent() {
@@ -47,16 +45,6 @@ public class SocketService {
             _numberOfTries++;
         }
     };
-
-    public void addEventListener(RawSocketDataEventListener listener)
-    {
-        _eventSource.addEventListener(listener);
-    }
-
-    public void removeEventListener(RawSocketDataEventListener listener)
-    {
-        _eventSource.removeEventListener(listener);
-    }
 
     /**
      * This function starts the Thread that handles the socket connection.
@@ -115,7 +103,7 @@ public class SocketService {
     private class socketConnection implements Runnable {
 
         public void run() {
-            _eventSource.dispatchEvent(new RawSocketDataEvent(this, RawSocketAction.HandshakeUpdate, "false"));
+            eventManager.fire(new RawSocketDataEvent(this, RawSocketAction.HandshakeUpdate, "false"));
             Log.d("ConnectivityHandler", "connectSocket Running");
             SocketAddress socketAddress = SettingsManager.getInstance().getSocketAddress();
             if (null == socketAddress) return;
@@ -126,11 +114,11 @@ public class SocketService {
                 _output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(_cSocket.getOutputStream())), true);
                 _input = new BufferedReader(new InputStreamReader(_cSocket.getInputStream()));
 
-                _eventSource.dispatchEvent(new RawSocketDataEvent(this, RawSocketAction.StatusChange, String.valueOf(_cSocket.isConnected())));
+                eventManager.fire(new RawSocketDataEvent(this, RawSocketAction.StatusChange, String.valueOf(_cSocket.isConnected())));
                 while (_cSocket.isConnected()) {
                     try {
                         final String incoming = _input.readLine();
-                        _eventSource.dispatchEvent(new RawSocketDataEvent(this, RawSocketAction.PacketAvailable, incoming));
+                        eventManager.fire(new RawSocketDataEvent(this, RawSocketAction.PacketAvailable, incoming));
                     } catch (IOException e) {
                         _input.close();
                         _cSocket.close();
@@ -154,7 +142,7 @@ public class SocketService {
                 }
                 _cSocket = null;
 
-                _eventSource.dispatchEvent(new RawSocketDataEvent(this, RawSocketAction.StatusChange, "false"));
+                eventManager.fire(new RawSocketDataEvent(this, RawSocketAction.StatusChange, "false"));
 
                 Log.d("ConnectivityHandler", "ListeningThread terminated");
                 initSocketThread(Input.system);

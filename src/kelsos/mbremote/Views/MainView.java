@@ -15,13 +15,11 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import com.google.inject.Inject;
+import com.googlecode.androidannotations.annotations.Click;
 import kelsos.mbremote.Controller.Controller;
 import kelsos.mbremote.Events.UserAction;
 import kelsos.mbremote.Events.UserActionEvent;
-import kelsos.mbremote.Events.UserActionEventListener;
-import kelsos.mbremote.Events.UserActionEventSource;
 import kelsos.mbremote.Models.PlayState;
-import kelsos.mbremote.Others.DelayTimer;
 import kelsos.mbremote.R;
 import roboguice.activity.RoboActivity;
 import roboguice.event.EventManager;
@@ -52,65 +50,29 @@ public class MainView extends RoboActivity {
     @InjectView(R.id.albumCover) ImageView albumCover;
 
     // Injects
-    @Inject
-    EventManager userActionEvent;
+    @Inject protected EventManager userActionEvent;
+    @Inject private Controller controller;
 
-    private DelayTimer _selfRegistrationTimer;
-    private static final String BY = "\nby ";
-    private static final String LYRICS_FOR = "Lyrics for ";
     private boolean userChangingVolume;
-    private UserActionEventSource _userUserActionEventSource;
     private Timer progressUpdateTimer_;
     private TimerTask progressUpdateTask_;
 
-    DelayTimer.TimerFinishEvent selfRegistrationTimerEvent = new DelayTimer.TimerFinishEvent() {
-        @Override
-        public void onTimerFinish() {
-            registerSelf();
-        }
-    };
 
-    /**
-     * This function is used to register self in the Controller service.
-     */
-    private void registerSelf() {
-        Controller.getInstance().initialize(this);
-    }
-
-    public void addEventListener(UserActionEventListener listener) {
-        _userUserActionEventSource.addEventListener(listener);
-    }
-
-    public void removeEventListener(UserActionEventListener listener) {
-        _userUserActionEventSource.removeEventListener(listener);
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        _userUserActionEventSource = new UserActionEventSource();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         RegisterListeners();
         userChangingVolume = false;
         SetTextViewTypeface();
-        /* If the controller is not running send the start intent */
-        if (!Controller.getIsRunning()) {
-            startService(new Intent(this, Controller.class));
-            _selfRegistrationTimer = new DelayTimer(2000);
-            _selfRegistrationTimer.setTimerFinishEventListener(selfRegistrationTimerEvent);
-            _selfRegistrationTimer.start();
-        } else {
-            Controller.getInstance().onActivityStart(this);
-        }
-
+        controller.onActivityStart(this);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if (Controller.getIsRunning()) {
-            Controller.getInstance().onActivityStart(this);
-        }
+        controller.onActivityStart(this);
     }
 
     /**
@@ -151,7 +113,7 @@ public class MainView extends RoboActivity {
                 Intent playlistIntent = new Intent(MainView.this, PlaylistView.class);
                 startActivity(playlistIntent);
             case R.id.main_menu_lyrics:
-                _userUserActionEventSource.dispatchEvent(new UserActionEvent(this, UserAction.Lyrics));
+                userActionEvent.fire(new UserActionEvent(this, UserAction.Lyrics));
             default:
                 return super.onMenuItemSelected(featureId, item);
         }
@@ -164,19 +126,9 @@ public class MainView extends RoboActivity {
      * Registers the listeners for the interface elements used for interaction.
      */
     private void RegisterListeners() {
-        playPauseButton.setOnClickListener(playButtonListener);
-        previousButton.setOnClickListener(previousButtonListener);
-        nextButton.setOnClickListener(nextButtonListener);
         volumeSlider.setOnSeekBarChangeListener(volumeChangeListener);
         trackProgressSlider.setOnSeekBarChangeListener(durationSeekBarChangeListener);
-        stopButton.setOnClickListener(stopButtonListener);
         stopButton.setEnabled(false);
-        muteButton.setOnClickListener(muteButtonListener);
-        scrobbleButton.setOnClickListener(scrobbleButtonListener);
-        shuffleButton.setOnClickListener(shuffleButtonListener);
-        repeatButton.setOnClickListener(repeatButtonListener);
-        connectivityIndicator.setOnClickListener(connectivityIndicatorListener);
-
     }
 
     /**
@@ -351,66 +303,64 @@ public class MainView extends RoboActivity {
             progressUpdateTimer_ = null;
         }
     }
-
-    private OnClickListener playButtonListener = new OnClickListener() {
-
-        public void onClick(View v) {
-            _userUserActionEventSource.dispatchEvent(new UserActionEvent(this, UserAction.PlayPause));
-        }
-    };
+    @Click(R.id.playPauseButton)
+    void playPauseButtonClick()
+    {
+        userActionEvent.fire(new UserActionEvent(this, UserAction.PlayPause));
+    }
 
     private OnClickListener previousButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            _userUserActionEventSource.dispatchEvent(new UserActionEvent(this, UserAction.Previous));
+            userActionEvent.fire(new UserActionEvent(this, UserAction.Previous));
         }
     };
 
     private OnClickListener nextButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            _userUserActionEventSource.dispatchEvent(new UserActionEvent(this, UserAction.Next));
+            userActionEvent.fire(new UserActionEvent(this, UserAction.Next));
         }
     };
 
     private OnClickListener stopButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            _userUserActionEventSource.dispatchEvent(new UserActionEvent(this, UserAction.Stop));
+            userActionEvent.fire(new UserActionEvent(this, UserAction.Stop));
         }
     };
 
     private OnClickListener muteButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            _userUserActionEventSource.dispatchEvent(new UserActionEvent(this, UserAction.Mute));
+            userActionEvent.fire(new UserActionEvent(this, UserAction.Mute));
         }
     };
 
     private OnClickListener scrobbleButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            _userUserActionEventSource.dispatchEvent(new UserActionEvent(this, UserAction.Scrobble));
+            userActionEvent.fire(new UserActionEvent(this, UserAction.Scrobble));
         }
     };
 
     private OnClickListener shuffleButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            _userUserActionEventSource.dispatchEvent(new UserActionEvent(this, UserAction.Shuffle));
+            userActionEvent.fire(new UserActionEvent(this, UserAction.Shuffle));
         }
     };
 
     private OnClickListener repeatButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            _userUserActionEventSource.dispatchEvent(new UserActionEvent(this, UserAction.Repeat));
+            userActionEvent.fire(new UserActionEvent(this, UserAction.Repeat));
         }
     };
     private OnClickListener connectivityIndicatorListener = new OnClickListener() {
 
         public void onClick(View v) {
-            _userUserActionEventSource.dispatchEvent(new UserActionEvent(this, UserAction.Initialize));
+            userActionEvent.fire(new UserActionEvent(this, UserAction.Initialize));
         }
     };
 
@@ -428,7 +378,7 @@ public class MainView extends RoboActivity {
 
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser)
-                _userUserActionEventSource.dispatchEvent(new UserActionEvent(this, UserAction.Volume, String.valueOf(seekBar.getProgress())));
+                userActionEvent.fire(new UserActionEvent(this, UserAction.Volume, String.valueOf(seekBar.getProgress())));
         }
     };
 
@@ -437,7 +387,7 @@ public class MainView extends RoboActivity {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if(fromUser)
             {
-                _userUserActionEventSource.dispatchEvent(new UserActionEvent(this, UserAction.PlaybackPosition, String.valueOf(progress)));
+                userActionEvent.fire(new UserActionEvent(this, UserAction.PlaybackPosition, String.valueOf(progress)));
             }
         }
 
