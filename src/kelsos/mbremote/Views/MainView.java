@@ -15,7 +15,6 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import com.google.inject.Inject;
-import com.googlecode.androidannotations.annotations.Click;
 import kelsos.mbremote.Controller.Controller;
 import kelsos.mbremote.Events.UserAction;
 import kelsos.mbremote.Events.UserActionEvent;
@@ -126,9 +125,19 @@ public class MainView extends RoboActivity {
      * Registers the listeners for the interface elements used for interaction.
      */
     private void RegisterListeners() {
+        playPauseButton.setOnClickListener(playButtonListener);
+        previousButton.setOnClickListener(previousButtonListener);
+        nextButton.setOnClickListener(nextButtonListener);
         volumeSlider.setOnSeekBarChangeListener(volumeChangeListener);
         trackProgressSlider.setOnSeekBarChangeListener(durationSeekBarChangeListener);
+        stopButton.setOnClickListener(stopButtonListener);
         stopButton.setEnabled(false);
+        muteButton.setOnClickListener(muteButtonListener);
+        scrobbleButton.setOnClickListener(scrobbleButtonListener);
+        shuffleButton.setOnClickListener(shuffleButtonListener);
+        repeatButton.setOnClickListener(repeatButtonListener);
+        connectivityIndicator.setOnClickListener(connectivityIndicatorListener);
+
     }
 
     /**
@@ -303,11 +312,13 @@ public class MainView extends RoboActivity {
             progressUpdateTimer_ = null;
         }
     }
-    @Click(R.id.playPauseButton)
-    void playPauseButtonClick()
-    {
-        userActionEvent.fire(new UserActionEvent(this, UserAction.PlayPause));
-    }
+
+    private OnClickListener playButtonListener = new OnClickListener() {
+
+        public void onClick(View v) {
+            userActionEvent.fire(new UserActionEvent(this, UserAction.PlayPause));
+        }
+    };
 
     private OnClickListener previousButtonListener = new OnClickListener() {
 

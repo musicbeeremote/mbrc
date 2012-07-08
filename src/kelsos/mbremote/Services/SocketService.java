@@ -19,6 +19,7 @@ import java.net.SocketTimeoutException;
 
 public class SocketService {
     @Inject protected EventManager eventManager;
+    @Inject private SettingsManager settings;
 
     private static int _numberOfTries;
     public static final int MAX_RETRIES = 4;
@@ -105,7 +106,7 @@ public class SocketService {
         public void run() {
             eventManager.fire(new RawSocketDataEvent(this, RawSocketAction.HandshakeUpdate, "false"));
             Log.d("ConnectivityHandler", "connectSocket Running");
-            SocketAddress socketAddress = SettingsManager.getInstance().getSocketAddress();
+            SocketAddress socketAddress = settings.getSocketAddress();
             if (null == socketAddress) return;
             BufferedReader _input;
             try {

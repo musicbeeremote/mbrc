@@ -2,23 +2,25 @@ package kelsos.mbremote.Models;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Base64;
 import com.google.inject.Inject;
 import kelsos.mbremote.Events.ModelDataEvent;
 import kelsos.mbremote.Events.ProtocolDataType;
 import kelsos.mbremote.Others.Const;
+import kelsos.mbremote.R;
 import roboguice.event.EventManager;
+import roboguice.inject.InjectResource;
 
 public class MainDataModel {
 
     @Inject protected EventManager eventManager;
+    @InjectResource(R.drawable.ic_image_no_cover) Drawable noCover;
 
-    private MainDataModel(){
-       _title="";
-        _artist="";
-        _album="";
-        _year = "";
+    public MainDataModel(){
+       _title = _artist = _album = _year = "";
         _volume = 100;
 
         _isConnectionActive=false;
@@ -28,6 +30,7 @@ public class MainDataModel {
         _isMuteButtonActive=false;
         _isDeviceOnline=false;
         _playState = PlayState.Stopped;
+       //_albumCover = ((BitmapDrawable)noCover).getBitmap();
     }
 
 
@@ -110,7 +113,14 @@ public class MainDataModel {
 
     public void setAlbumCover(String base64format)
     {
-        new ImageDecodeTask().execute(base64format);
+        if(base64format==null || base64format== "")
+        {
+             setAlbumCover(((BitmapDrawable)noCover).getBitmap());
+        }
+        else
+        {
+            new ImageDecodeTask().execute(base64format);
+        }
     }
 
     private void setAlbumCover(Bitmap cover)

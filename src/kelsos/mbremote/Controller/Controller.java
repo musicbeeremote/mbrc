@@ -11,6 +11,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import kelsos.mbremote.Data.MusicTrack;
@@ -34,17 +35,18 @@ public class Controller extends RoboService {
     @Inject private SocketService socketService;
     @Inject private ProtocolHandler protocolHandler;
     @Inject private MainDataModel model;
-
+    @Inject private SettingsManager settings;
 
     Activity currentActivity;
 
     private String _lyricsTemp;
 
     @Override
-    public void onCreate()
-    {
+    public void onCreate() {
         super.onCreate();
-        SettingsManager.getInstance().setContext(this);
+        model.setAlbumCover("");
+        Log.d("CREATE", "I IS CREATED");
+        installFilter();
     }
 
     @Override
@@ -116,10 +118,10 @@ public class Controller extends RoboService {
                 protocolHandler.requestAction(ProtocolHandler.PlayerAction.Playlist);
                 break;
             case Volume:
-                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Volume, ((UserActionEvent) event).getEventData());
+                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Volume, event.getEventData());
                 break;
             case PlaybackPosition:
-                protocolHandler.requestAction(ProtocolHandler.PlayerAction.PlaybackPosition, ((UserActionEvent) event).getEventData());
+                protocolHandler.requestAction(ProtocolHandler.PlayerAction.PlaybackPosition, event.getEventData());
                 break;
             case Initialize:
                 break;
@@ -345,7 +347,7 @@ public class Controller extends RoboService {
                 if (null == bundle) return;
                 String state = bundle.getString(TelephonyManager.EXTRA_STATE);
                 if (state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)) {
-                    if (SettingsManager.getInstance().isVolumeReducedOnRinging()) {
+                    if (settings.isVolumeReducedOnRinging()) {
                         int newVolume = ((int) (100 * 0.2));
                         protocolHandler.requestAction(ProtocolHandler.PlayerAction.Volume, Integer.toString(newVolume));
                     }
@@ -379,6 +381,10 @@ public class Controller extends RoboService {
                 ((MainView)currentActivity).updateAlbumText(model.getAlbum());
                 ((MainView)currentActivity).updateYearText(model.getYear());
                 ((MainView)currentActivity).updateVolumeData(model.getVolume());
+                if(model.getAlbumCover()==null)
+                {
+                    model.setAlbumCover("");
+                }
                 ((MainView)currentActivity).updateAlbumCover(model.getAlbumCover());
                 ((MainView)currentActivity).updateConnectionIndicator(model.getIsConnectionActive());
                 ((MainView)currentActivity).updateRepeatButtonState(model.getIsRepeatButtonActive());
