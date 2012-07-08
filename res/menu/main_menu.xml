@@ -3,16 +3,19 @@
     <item
         android:id="@+id/main_menu_settings"
         android:icon="@drawable/ic_menu_settings"
-        android:title="@string/main_menu_settings">
+        android:title="@string/main_menu_settings"
+        android:showAsAction="ifRoom">
     </item>
     <item
         android:id="@+id/main_menu_playlist"
         android:icon="@drawable/ic_menu_playlist"
-        android:title="@string/main_menu_playlist">
+        android:title="@string/main_menu_playlist"
+        android:showAsAction="ifRoom">
     </item>
     <item
         android:id="@+id/main_menu_lyrics"
         android:icon="@drawable/ic_menu_connect"
-        android:title="@string/main_menu_lyrics">
+        android:title="@string/main_menu_lyrics"
+        android:showAsAction="ifRoom">
     </item>
 </menu>

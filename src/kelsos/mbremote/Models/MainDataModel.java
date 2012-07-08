@@ -4,10 +4,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Base64;
-import kelsos.mbremote.Events.ProtocolDataType;
 import kelsos.mbremote.Events.ModelDataEvent;
 import kelsos.mbremote.Events.ModelDataEventListener;
 import kelsos.mbremote.Events.ModelDataEventSource;
+import kelsos.mbremote.Events.ProtocolDataType;
 import kelsos.mbremote.Others.Const;
 public class MainDataModel {
 

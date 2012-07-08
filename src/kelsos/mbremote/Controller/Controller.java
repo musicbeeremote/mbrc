@@ -21,6 +21,7 @@ import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Others.SettingsManager;
 import kelsos.mbremote.Services.ProtocolHandler;
 import kelsos.mbremote.Services.SocketService;
+import kelsos.mbremote.Views.LyricsView;
 import kelsos.mbremote.Views.MainView;
 import kelsos.mbremote.Views.PlaylistView;
 
@@ -35,6 +36,8 @@ public class Controller extends Service {
     private static boolean _isRunning = false;
     private SocketService _socketService;
     private ProtocolHandler _pHandler;
+
+    private String _lyricsTemp;
 
     @Override
     public void onCreate()
@@ -94,10 +97,20 @@ public class Controller extends Service {
         {
             ((PlaylistView)activity).addEventListener(playlistViewListener);
         }
+
         currentActivity = activity;
         if(activity.getClass()==MainView.class)
         {
             updateMainViewData();
+        }
+        else if (activity.getClass() == LyricsView.class)
+        {
+            currentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((LyricsView)currentActivity).updateLyricsData(_lyricsTemp, MainDataModel.getInstance().getArtist(), MainDataModel.getInstance().getTitle());
+                }
+            });
         }
     }
 
@@ -233,6 +246,25 @@ public class Controller extends Service {
                     break;
                 case ReplyAvailable:
                     _socketService.sendData(((ProtocolDataEvent) eventObject).getData());
+                    break;
+                case Lyrics:
+                    if(currentActivity.getClass()!= LyricsView.class)
+                    {
+                        Intent lvIntent = new Intent(currentActivity, LyricsView.class);
+                        startActivity(lvIntent);
+                        _lyricsTemp = ((ProtocolDataEvent) eventObject).getData();
+                    }
+                    else
+                    {
+                        final String lyrics = ((ProtocolDataEvent) eventObject).getData();
+                        currentActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((LyricsView)currentActivity).updateLyricsData(lyrics, MainDataModel.getInstance().getArtist(), MainDataModel.getInstance().getTitle());
+                            }
+                        });
+
+                    }
                     break;
 
             }
@@ -403,7 +435,7 @@ public class Controller extends Service {
                 ((MainView)currentActivity).updateAlbumText(MainDataModel.getInstance().getAlbum());
                 ((MainView)currentActivity).updateYearText(MainDataModel.getInstance().getYear());
                 ((MainView)currentActivity).updateVolumeData(MainDataModel.getInstance().getVolume());
-                //((MainView)currentActivity).updateAlbumCover(MainDataModel.getInstance().getAlbumCover());
+                ((MainView)currentActivity).updateAlbumCover(MainDataModel.getInstance().getAlbumCover());
                 ((MainView)currentActivity).updateConnectionIndicator(MainDataModel.getInstance().getIsConnectionActive());
                 ((MainView)currentActivity).updateRepeatButtonState(MainDataModel.getInstance().getIsRepeatButtonActive());
                 ((MainView)currentActivity).updateShuffleButtonState(MainDataModel.getInstance().getIsShuffleButtonActive());

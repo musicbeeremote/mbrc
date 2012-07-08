@@ -16,5 +16,6 @@ public enum ProtocolDataType {
     OnlineStatus,
     PlaybackPosition,
     Playlist,
-    ReplyAvailable
+    ReplyAvailable,
+    Lyrics
 }

@@ -101,7 +101,8 @@ public class ProtocolHandler {
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYLIST)) {
                     getPlaylistData(xmlNode);
                 } else if (xmlNode.getNodeName().contains(Protocol.LYRICS)) {
-                    //_songLyrics = xmlNode.getTextContent().replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("\"", "&quot;").replace("&apos;", "'").replace("&", "&amp;").replace("<p>", "\r\n").replace("<br>", "\n").trim();
+                    String songLyrics = xmlNode.getTextContent().replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("\"", "&quot;").replace("&apos;", "'").replace("&", "&amp;").replace("<p>", "\r\n").replace("<br>", "\n").trim();
+                    _ProtocolDataEventSource.dispatchEvent(new ProtocolDataEvent(this, ProtocolDataType.Lyrics, songLyrics));
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYER_STATUS)) {
                     getPlayerStatus(xmlNode);
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYER))
@@ -110,6 +111,9 @@ public class ProtocolHandler {
                 } else if(xmlNode.getNodeName().contains(Protocol.PROTOCOL)){
                     ServerProtocolVersion = Double.parseDouble(xmlNode.getTextContent());
                     isHandshakeComplete=true;
+                    requestAction(PlayerAction.PlayerStatus);
+                    requestAction(PlayerAction.SongInformation);
+                    requestAction(PlayerAction.SongCover);
                 } else if(xmlNode.getNodeName().contains(Protocol.PLAYBACK_POSITION)){
                     getTrackDurationInfo(xmlNode);
                 }
