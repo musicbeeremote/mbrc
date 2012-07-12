@@ -7,13 +7,17 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Base64;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+import kelsos.mbremote.Enumerations.PlayState;
 import kelsos.mbremote.Events.ModelDataEvent;
-import kelsos.mbremote.Events.ProtocolDataType;
+import kelsos.mbremote.Enumerations.ProtocolDataType;
 import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.R;
 import roboguice.event.EventManager;
 import roboguice.inject.InjectResource;
 
+@Singleton
 public class MainDataModel {
 
     @Inject protected EventManager eventManager;

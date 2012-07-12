@@ -2,10 +2,12 @@ package kelsos.mbremote.Services;
 
 import android.util.Log;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import kelsos.mbremote.Data.MusicTrack;
 import kelsos.mbremote.Events.ProtocolDataEvent;
-import kelsos.mbremote.Events.ProtocolDataType;
-import kelsos.mbremote.Network.Protocol;
+import kelsos.mbremote.Enumerations.ProtocolDataType;
+import kelsos.mbremote.Others.Protocol;
 import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Others.DelayTimer;
 import org.w3c.dom.Document;
@@ -21,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+@Singleton
 public class ProtocolHandler {
     @Inject protected EventManager eventManager;
 

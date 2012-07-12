@@ -1,12 +1,15 @@
 package kelsos.mbremote.Events;
 
 import kelsos.mbremote.Data.MusicTrack;
+import kelsos.mbremote.Enumerations.ProtocolDataType;
 
 import java.util.ArrayList;
 import java.util.EventObject;
 
 public class ProtocolDataEvent extends EventObject {
-    private ProtocolDataType _type;
+
+	private static final long serialVersionUID = 8004924729473438394L;
+	private ProtocolDataType _type;
     private String _data;
     private ArrayList<MusicTrack> _trackList;
 

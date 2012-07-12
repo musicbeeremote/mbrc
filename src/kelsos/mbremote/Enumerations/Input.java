@@ -1,4 +1,4 @@
-package kelsos.mbremote.Network;
+package kelsos.mbremote.Enumerations;
 
 public enum Input {
     user,

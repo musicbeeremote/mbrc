@@ -1,4 +1,4 @@
-package kelsos.mbremote.Models;
+package kelsos.mbremote.Enumerations;
 
 public enum PlayState
 {

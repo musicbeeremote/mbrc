@@ -1,6 +1,5 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="RemoteTheme" parent="android:style/Theme.Holo">
         <item name="android:background">#111111</item>
     </style>
 </resources>
-        <!--@android:style/Theme.Holo.NoActionBar-->

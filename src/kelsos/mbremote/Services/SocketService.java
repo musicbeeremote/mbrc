@@ -2,10 +2,12 @@ package kelsos.mbremote.Services;
 
 import android.util.Log;
 import com.google.inject.Inject;
-import kelsos.mbremote.Events.RawSocketAction;
+import com.google.inject.Singleton;
+
+import kelsos.mbremote.Enumerations.Input;
+import kelsos.mbremote.Enumerations.RawSocketAction;
 import kelsos.mbremote.Events.RawSocketDataEvent;
 import kelsos.mbremote.Messaging.NotificationService;
-import kelsos.mbremote.Network.Input;
 import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Others.DelayTimer;
 import kelsos.mbremote.Others.SettingsManager;
@@ -16,10 +18,11 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-
+@Singleton
 public class SocketService {
     @Inject protected EventManager eventManager;
     @Inject private SettingsManager settings;
+    @Inject private NotificationService notificationService;
 
     private static int _numberOfTries;
     public static final int MAX_RETRIES = 4;
@@ -53,7 +56,6 @@ public class SocketService {
         if (socketExistsAndIsConnected() || connectionThreadExistsAndIsAlive())
             return;
         else if (!socketExistsAndIsConnected() && connectionThreadExistsAndIsAlive()) {
-            _connectionThread.destroy();
             _connectionThread = null;
         }
         Runnable socketConnection = new socketConnection();
@@ -70,7 +72,7 @@ public class SocketService {
      * Depending on the user input the function either retries to connect until the MAX_RETRIES number is reached
      * or it resets the number of retries counter and then retries to connect until the MAX_RETRIES number is reached
      *
-     * @param input kelsos.mbremote.Network.Input.User resets the counter, kelsos.mbremote.Network.Input.System just tries one more time.
+     * @param input kelsos.mbremote.Enumerations.Input.User resets the counter, kelsos.mbremote.Enumerations.Input.System just tries one more time.
      */
     public void initSocketThread(Input input) {
         if (socketExistsAndIsConnected()) return;
@@ -127,10 +129,10 @@ public class SocketService {
                 }
             } catch (SocketTimeoutException e) {
                 final String message = "Connection timed out";
-                NotificationService.getInstance().showToastMessage(message);
+               notificationService.showToastMessage(message);
             } catch (SocketException e) {
                 final String exceptionMessage = e.toString().substring(26);
-                NotificationService.getInstance().showToastMessage(exceptionMessage);
+                notificationService.showToastMessage(exceptionMessage);
             } catch (IOException e) {
                 Log.e("ConnectivityHandler", "Listening Loop", e);
             } catch (NullPointerException e) {

@@ -1,5 +1,5 @@
 <resources>
-    <style name="RemoteTheme" parent="@android:style/Theme.Black.NoTitleBar">
+    <style name="RemoteTheme" parent="@android:style/Theme.Black">
                    <item name="android:background">#111111</item>
     </style>
 </resources>

@@ -1,12 +1,15 @@
 package kelsos.mbremote.Events;
 
+import kelsos.mbremote.Enumerations.UserAction;
+
 import java.util.EventObject;
 
-/**
- * *****************
- */
 public class UserActionEvent extends EventObject{
-    private UserAction _userAction;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1563748901468970084L;
+	private UserAction _userAction;
     private String _eventData;
 
     public UserActionEvent(Object source, UserAction action)

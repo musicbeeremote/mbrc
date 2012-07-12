@@ -1,4 +1,4 @@
-package kelsos.mbremote.Events;
+package kelsos.mbremote.Enumerations;
 
 public enum UserAction
 {

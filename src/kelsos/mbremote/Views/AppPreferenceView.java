@@ -18,6 +18,7 @@ public class AppPreferenceView extends PreferenceActivity implements OnSharedPre
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         addPreferencesFromResource(R.xml.application_settings);
         hostEditTextPreference = (EditTextPreference) getPreferenceScreen().findPreference(getApplicationContext().getString(R.string.settings_server_hostname));
         portEditTextPreference = (EditTextPreference) getPreferenceScreen().findPreference(getApplicationContext().getString(R.string.settings_server_port));

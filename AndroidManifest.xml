@@ -14,14 +14,15 @@
         android:description="@string/app_description"
         android:icon="@drawable/ic_app_logo"
         android:label="@string/app_name"
-        android:theme="@style/RemoteTheme">
-        <activity android:name=".Views.MainView">
+        android:theme="@style/RemoteTheme" >
+        <activity android:name=".Views.MainView" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity android:name=".Views.LyricsView" >
+        </activity>
         <activity android:name=".Views.AppPreferenceView" >
         </activity>
         <activity android:name=".Views.PlaylistView" >

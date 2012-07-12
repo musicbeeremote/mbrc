@@ -7,7 +7,7 @@ import com.google.inject.Inject;
 import kelsos.mbremote.Controller.Controller;
 import kelsos.mbremote.Data.MusicTrack;
 import kelsos.mbremote.Data.PlaylistArrayAdapter;
-import kelsos.mbremote.Events.PlaylistViewAction;
+import kelsos.mbremote.Enumerations.PlaylistViewAction;
 import kelsos.mbremote.Events.PlaylistViewEvent;
 import kelsos.mbremote.Others.DelayTimer;
 import kelsos.mbremote.Others.XmlEncoder;

@@ -16,9 +16,9 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import com.google.inject.Inject;
 import kelsos.mbremote.Controller.Controller;
-import kelsos.mbremote.Events.UserAction;
+import kelsos.mbremote.Enumerations.UserAction;
 import kelsos.mbremote.Events.UserActionEvent;
-import kelsos.mbremote.Models.PlayState;
+import kelsos.mbremote.Enumerations.PlayState;
 import kelsos.mbremote.R;
 import roboguice.activity.RoboActivity;
 import roboguice.event.EventManager;
@@ -289,7 +289,6 @@ public class MainView extends RoboActivity {
                 final int currentMinutes = currentProgress/60;
                 final int currentSeconds = currentProgress%60;
                 runOnUiThread(new Runnable() {
-                    @Override
                     public void run() {
                         trackProgressSlider.setProgress(trackProgressSlider.getProgress()+timerPeriod);
                         trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
@@ -396,7 +395,6 @@ public class MainView extends RoboActivity {
     };
 
     private OnSeekBarChangeListener durationSeekBarChangeListener = new OnSeekBarChangeListener() {
-        @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if(fromUser)
             {
@@ -404,12 +402,10 @@ public class MainView extends RoboActivity {
             }
         }
 
-        @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
             ||
         }
 
-        @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             ||
         }

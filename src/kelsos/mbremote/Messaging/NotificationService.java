@@ -3,28 +3,13 @@ package kelsos.mbremote.Messaging;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
+import com.google.inject.Inject;
 
 public class NotificationService {
-    private static NotificationService _instance;
+    @Inject Context context;
 
-    private Context context;
-    
-    public void setContext(Context context)
-    {
-        this.context = context;
-    }
 
-    /**
-     * Returns the single instance of the NotificationService.
-     * @return
-     */
-    public static NotificationService getInstance() {
-        if(_instance==null)
-         _instance = new NotificationService();
-        return _instance;
-    }
-
-    private NotificationService() {
+    public NotificationService() {
 
     }
 
@@ -63,9 +48,9 @@ public class NotificationService {
      *  displays a toast window.
      */
     public void showToastMessage(final int id) {
-//        if(context==null) return;
-//        String data = context.getString(id);
-//        new ToastMessageTask().execute(data);
+          if(context==null) return;
+          String data = context.getString(id);
+          new ToastMessageTask().execute(data);
     }
 
     /**

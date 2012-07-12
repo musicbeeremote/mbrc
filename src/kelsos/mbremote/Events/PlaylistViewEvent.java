@@ -1,9 +1,13 @@
 package kelsos.mbremote.Events;
 
+import kelsos.mbremote.Enumerations.PlaylistViewAction;
+
 import java.util.EventObject;
 
 public class PlaylistViewEvent extends EventObject {
-    private PlaylistViewAction _type;
+
+	private static final long serialVersionUID = 2214267375307946521L;
+	private PlaylistViewAction _type;
     private String _data;
 
     public PlaylistViewEvent(Object source, PlaylistViewAction type) {

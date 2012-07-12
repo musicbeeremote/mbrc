@@ -1,4 +1,4 @@
-package kelsos.mbremote.Network;
+package kelsos.mbremote.Others;
 
 public class Protocol {
     public static final String STATE = "state";

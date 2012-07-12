@@ -3,7 +3,6 @@
     <string name="app_name">RC for MusicBee</string>
     <string name="main_volume">Volume:</string>
     <string name="mainPlayingTrack">Playing track:</string>
-    <string name="socket_service_started">Socket Service Stared</string>
     <string name="mute_button">Mute Button</string>
     <string name="repeat_button">Repeat Button</string>
     <string name="shuffle_button">Shuffle Button</string>
@@ -36,4 +35,10 @@
     <string name="main_menu_lyrics">Lyrics</string>
     <string name="lyrics_for">Lyrics For</string>
     <string name="by">\nBy</string>
+    <string name="mainview_titlelabel">Android Remote for MusicBee</string>
+    <string name="mainview_artistlabel">Dubmood</string>
+    <string name="duration">0:00</string>
+    <string name="mainview_total_duration">00:00</string>
+    <string name="mainview_datelabel">2012</string>
+    <string name="mainview_albumlabel">album goes here</string>
 </resources>
