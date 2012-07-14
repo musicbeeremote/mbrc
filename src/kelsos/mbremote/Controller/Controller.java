@@ -42,16 +42,21 @@ public class Controller extends RoboService {
     private MainDataModel model;
     @Inject
     private SettingsManager settings;
+	@Inject ConnectivityManager conManager;
 
     Activity currentActivity;
 
     private String _lyricsTemp;
 
-    @Override
     public void onCreate() {
         super.onCreate();
-        model.setAlbumCover("");
-        Log.d("CREATE", "I IS CREATED");
+        
+    }
+    @Override
+    public void onStart(Intent intent, int startId)
+    {
+    	super.onStart(intent, startId);
+    	model.setAlbumCover("");
         installFilter();
     }
 
@@ -411,8 +416,7 @@ public class Controller extends RoboService {
      * @return Boolean online status, true if online false if not.
      */
     private boolean isOnline() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        NetworkInfo networkInfo = conManager.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected())
             return true;
         return false;

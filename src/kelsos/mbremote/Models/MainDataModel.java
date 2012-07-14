@@ -127,7 +127,7 @@ public class MainDataModel {
         }
     }
 
-    private void setAlbumCover(Bitmap cover)
+    public void setAlbumCover(Bitmap cover)
     {
         _albumCover = cover;
         eventManager.fire(new ModelDataEvent(this, ProtocolDataType.AlbumCover));

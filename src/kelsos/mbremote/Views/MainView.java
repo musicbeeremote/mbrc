@@ -22,11 +22,13 @@ import kelsos.mbremote.Enumerations.PlayState;
 import kelsos.mbremote.R;
 import roboguice.activity.RoboActivity;
 import roboguice.event.EventManager;
+import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
+@ContentView(R.layout.main)
 public class MainView extends RoboActivity {
     // Inject elements of the view
     @InjectView(R.id.artistLabel) TextView artistLabel;

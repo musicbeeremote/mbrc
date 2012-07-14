@@ -223,10 +223,10 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginRight="17dp"
-            android:background="@android:color/transparent"
+            android:background="@drawable/skin_media_previous"
             android:contentDescription="@string/previous_track_button"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_media_previous" />
+            android:src="@android:color/transparent" />
         <ImageButton
             android:id="@+id/stopButton"
             android:layout_width="50dp"
@@ -250,9 +250,9 @@
             android:id="@+id/nextButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@android:color/transparent"
+            android:background="@drawable/skin_media_next"
             android:contentDescription="@string/next_track_button"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_media_next" />
+            android:src="@android:color/transparent" />
     </LinearLayout>
 </LinearLayout>
