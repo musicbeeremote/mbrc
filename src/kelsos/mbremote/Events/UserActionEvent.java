@@ -1,38 +1,33 @@
 package kelsos.mbremote.Events;
 
 import kelsos.mbremote.Enumerations.UserAction;
+import kelsos.mbremote.Interfaces.IEvent;
 
-import java.util.EventObject;
+public class UserActionEvent implements IEvent{
 
-public class UserActionEvent extends EventObject{
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1563748901468970084L;
-	private UserAction _userAction;
-    private String _eventData;
+	private UserAction type;
+    private String data;
 
-    public UserActionEvent(Object source, UserAction action)
+    public UserActionEvent(UserAction type)
     {
-        super(source);
-        _userAction = action;
+
+        this.type = type;
     }
 
-    public UserActionEvent(Object source, UserAction action, String eventData)
+    public UserActionEvent(UserAction type, String data)
     {
-        super(source);
-        _userAction = action;
-        _eventData = eventData;
+        this.type = type;
+        this.data = data;
     }
 
-    public UserAction getUserAction()
+    public UserAction getType()
     {
-        return _userAction;
+        return type;
     }
 
-    public String getEventData()
+    public String getData()
     {
-        return _eventData;
+        return data;
     }
 
 }

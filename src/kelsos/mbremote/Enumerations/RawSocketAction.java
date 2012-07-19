@@ -1,6 +1,9 @@
 package kelsos.mbremote.Enumerations;
 
-public enum RawSocketAction {
+import kelsos.mbremote.Interfaces.IEventType;
+
+public enum RawSocketAction implements IEventType
+{
     PacketAvailable,
     StatusChange,
     HandshakeUpdate

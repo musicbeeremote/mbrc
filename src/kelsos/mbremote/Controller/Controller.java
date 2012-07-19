@@ -11,16 +11,21 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
+import kelsos.mbremote.BusAdapter;
+import kelsos.mbremote.Command.RequestPlayPauseCommand;
 import kelsos.mbremote.Data.MusicTrack;
 import kelsos.mbremote.Enumerations.Input;
-import kelsos.mbremote.Enumerations.PlaylistViewAction;
 import kelsos.mbremote.Enumerations.RawSocketAction;
+import kelsos.mbremote.Enumerations.UserAction;
 import kelsos.mbremote.Events.*;
+import kelsos.mbremote.Interfaces.ICommand;
+import kelsos.mbremote.Interfaces.IEvent;
+import kelsos.mbremote.Interfaces.IEventType;
 import kelsos.mbremote.Models.MainDataModel;
-import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Others.SettingsManager;
 import kelsos.mbremote.Services.ProtocolHandler;
 import kelsos.mbremote.Services.SocketService;
@@ -30,7 +35,10 @@ import kelsos.mbremote.Views.PlaylistView;
 import roboguice.event.Observes;
 import roboguice.service.RoboService;
 
+import java.net.PortUnreachableException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @Singleton
 public class Controller extends RoboService {
@@ -43,6 +51,24 @@ public class Controller extends RoboService {
     @Inject
     private SettingsManager settings;
 	@Inject ConnectivityManager conManager;
+	@Inject private BusAdapter busAdapter;
+
+
+	protected Map<IEventType,ICommand> commandMap;
+
+	public void executeCommand(IEvent event)
+	{
+		ICommand commandInstance = (ICommand) this.commandMap.get(event.getType());
+		if(commandInstance!=null)
+		{
+			commandInstance.execute(event);
+		}
+	}
+
+	@Subscribe public void handleUserActionEvents(UserActionEvent event)
+	{
+		executeCommand(event);
+	}
 
     Activity currentActivity;
 
@@ -56,6 +82,7 @@ public class Controller extends RoboService {
     public void onStart(Intent intent, int startId)
     {
     	super.onStart(intent, startId);
+
     	model.setAlbumCover("");
         installFilter();
     }
@@ -71,7 +98,9 @@ public class Controller extends RoboService {
     }
 
     public void onActivityStart(Activity activity) {
-
+		busAdapter.getEventBus().register(this);
+		commandMap = new HashMap<IEventType, ICommand>();
+		commandMap.put(UserAction.PlayPause, new RequestPlayPauseCommand());
         currentActivity = activity;
         if (activity.getClass() == MainView.class) {
             updateMainViewData();
@@ -84,62 +113,6 @@ public class Controller extends RoboService {
         }
     }
 
-    public void handlePlaylistViewEvent(@Observes PlaylistViewEvent event) {
-        if (event.getType() == PlaylistViewAction.GetPlaylist) {
-            protocolHandler.requestAction(ProtocolHandler.PlayerAction.Playlist);
-        } else if (event.getType() == PlaylistViewAction.PlaySpecifiedTrack) {
-            String track = event.getData();
-            protocolHandler.requestAction(ProtocolHandler.PlayerAction.PlayNow, track);
-        }
-    }
-
-    public void handleUserActionEvent(@Observes UserActionEvent event) {
-
-        switch (event.getUserAction()) {
-
-            case PlayPause:
-                protocolHandler.requestAction(ProtocolHandler.PlayerAction.PlayPause);
-                break;
-            case Stop:
-                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Stop);
-                break;
-            case Next:
-                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Next);
-                break;
-            case Previous:
-                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Previous);
-                break;
-            case Repeat:
-                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Repeat, Const.TOGGLE);
-                break;
-            case Shuffle:
-                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Shuffle, Const.TOGGLE);
-                break;
-            case Scrobble:
-                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Scrobble, Const.TOGGLE);
-                break;
-            case Mute:
-                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Mute, Const.TOGGLE);
-                break;
-            case Lyrics:
-                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Lyrics);
-                break;
-            case Refresh:
-                protocolHandler.requestPlayerData();
-                break;
-            case Playlist:
-                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Playlist);
-                break;
-            case Volume:
-                protocolHandler.requestAction(ProtocolHandler.PlayerAction.Volume, event.getEventData());
-                break;
-            case PlaybackPosition:
-                protocolHandler.requestAction(ProtocolHandler.PlayerAction.PlaybackPosition, event.getEventData());
-                break;
-            case Initialize:
-                break;
-        }
-    }
 
     public void handleSocketDataEvent(@Observes ProtocolDataEvent event) {
         switch (event.getType()) {
@@ -368,9 +341,9 @@ public class Controller extends RoboService {
                 ((MainView) currentActivity).updateAlbumText(model.getAlbum());
                 ((MainView) currentActivity).updateYearText(model.getYear());
                 ((MainView) currentActivity).updateVolumeData(model.getVolume());
-                if (model.getAlbumCover() == null) {
-                    model.setAlbumCover("");
-                }
+//                if (model.getAlbumCover() == null) {
+//                    model.setAlbumCover("");
+//                }
                 ((MainView) currentActivity).updateAlbumCover(model.getAlbumCover());
                 ((MainView) currentActivity).updateConnectionIndicator(model.getIsConnectionActive());
                 ((MainView) currentActivity).updateRepeatButtonState(model.getIsRepeatButtonActive());

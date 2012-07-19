@@ -71,28 +71,28 @@ public class ProtocolHandler {
                 } else if (xmlNode.getNodeName().contains(Protocol.NEXT)) {
                     Log.d("Reply Received", "<next>");
                 } else if (xmlNode.getNodeName().contains(Protocol.VOLUME)) {
-                    eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.Volume, xmlNode.getTextContent()));
+                    eventManager.fire(new ProtocolDataEvent(ProtocolDataType.Volume, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.SONGCHANGED)) {
                     // DEPRECATED IN PROTOCOL 1.1
                 } else if (xmlNode.getNodeName().contains(Protocol.SONGINFO)) {
                     getSongData(xmlNode);
                 } else if (xmlNode.getNodeName().contains(Protocol.SONGCOVER)) {
-                    eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.AlbumCover, xmlNode.getTextContent()));
+                    eventManager.fire(new ProtocolDataEvent(ProtocolDataType.AlbumCover, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYSTATE)) {
-                    eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.PlayState, xmlNode.getTextContent()));
+                    eventManager.fire(new ProtocolDataEvent(ProtocolDataType.PlayState, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.MUTE)) {
-                    eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.MuteState, xmlNode.getTextContent()));
+                    eventManager.fire(new ProtocolDataEvent(ProtocolDataType.MuteState, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.REPEAT)) {
-                    eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.RepeatState, xmlNode.getTextContent()));
+                    eventManager.fire(new ProtocolDataEvent(ProtocolDataType.RepeatState, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.SHUFFLE)) {
-                    eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.ShuffleState, xmlNode.getTextContent()));
+                    eventManager.fire(new ProtocolDataEvent(ProtocolDataType.ShuffleState, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.SCROBBLE)) {
-                    eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.ScrobbleState, xmlNode.getTextContent()));
+                    eventManager.fire(new ProtocolDataEvent(ProtocolDataType.ScrobbleState, xmlNode.getTextContent()));
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYLIST)) {
                     getPlaylistData(xmlNode);
                 } else if (xmlNode.getNodeName().contains(Protocol.LYRICS)) {
                     String songLyrics = xmlNode.getTextContent().replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("\"", "&quot;").replace("&apos;", "'").replace("&", "&amp;").replace("<p>", "\r\n").replace("<br>", "\n").trim();
-                    eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.Lyrics, songLyrics));
+                    eventManager.fire(new ProtocolDataEvent(ProtocolDataType.Lyrics, songLyrics));
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYER_STATUS)) {
                     getPlayerStatus(xmlNode);
                 } else if (xmlNode.getNodeName().contains(Protocol.PLAYER))
@@ -129,7 +129,7 @@ public class ProtocolHandler {
         for (int i = 0; i < playlistData.getLength(); i++) {
             _nowPlayingList.add(new MusicTrack(playlistData.item(i).getFirstChild().getTextContent(), playlistData.item(i).getLastChild().getTextContent()));
         }
-        eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.Playlist, _nowPlayingList));
+        eventManager.fire(new ProtocolDataEvent(ProtocolDataType.Playlist, _nowPlayingList));
     }
     private void populateModel()
     {
@@ -151,7 +151,7 @@ public class ProtocolHandler {
         message = childNode.getTextContent() + "##";
         childNode = childNode.getNextSibling();
         message += childNode.getTextContent();
-        eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.PlaybackPosition, message));
+        eventManager.fire(new ProtocolDataEvent(ProtocolDataType.PlaybackPosition, message));
 
     }
     /**
@@ -161,17 +161,17 @@ public class ProtocolHandler {
      */
     private void getPlayerStatus(Node xmlNode) {
         Node playerStatusNode = xmlNode.getFirstChild();
-        eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.RepeatState, playerStatusNode.getTextContent()));
+        eventManager.fire(new ProtocolDataEvent(ProtocolDataType.RepeatState, playerStatusNode.getTextContent()));
         playerStatusNode = playerStatusNode.getNextSibling();
-        eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.MuteState, playerStatusNode.getTextContent()));
+        eventManager.fire(new ProtocolDataEvent(ProtocolDataType.MuteState, playerStatusNode.getTextContent()));
         playerStatusNode = playerStatusNode.getNextSibling();
-        eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.ShuffleState, playerStatusNode.getTextContent()));
+        eventManager.fire(new ProtocolDataEvent(ProtocolDataType.ShuffleState, playerStatusNode.getTextContent()));
         playerStatusNode = playerStatusNode.getNextSibling();
-        eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.ScrobbleState, playerStatusNode.getTextContent()));
+        eventManager.fire(new ProtocolDataEvent(ProtocolDataType.ScrobbleState, playerStatusNode.getTextContent()));
         playerStatusNode = playerStatusNode.getNextSibling();
-        eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.PlayState, playerStatusNode.getTextContent()));
+        eventManager.fire(new ProtocolDataEvent(ProtocolDataType.PlayState, playerStatusNode.getTextContent()));
         playerStatusNode = playerStatusNode.getNextSibling();
-        eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.Volume, playerStatusNode.getTextContent()));
+        eventManager.fire(new ProtocolDataEvent(ProtocolDataType.Volume, playerStatusNode.getTextContent()));
     }
 
     /**
@@ -188,10 +188,10 @@ public class ProtocolHandler {
             trackInfoNode = trackInfoNode.getNextSibling();
         }
         int index = 0;
-        eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.Artist, trackData[index++]));
-        eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.Title, trackData[index++]));
-        eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.Album, trackData[index++]));
-        eventManager.fire(new ProtocolDataEvent(this, ProtocolDataType.Year, trackData[index++]));
+        eventManager.fire(new ProtocolDataEvent(ProtocolDataType.Artist, trackData[index++]));
+        eventManager.fire(new ProtocolDataEvent(ProtocolDataType.Title, trackData[index++]));
+        eventManager.fire(new ProtocolDataEvent(ProtocolDataType.Album, trackData[index++]));
+        eventManager.fire(new ProtocolDataEvent(ProtocolDataType.Year, trackData[index++]));
     }
 
     private DelayTimer _updateTimer;
@@ -219,11 +219,11 @@ public class ProtocolHandler {
     }
 
     public void requestAction(PlayerAction action, String actionContent) {
-        eventManager.fire(new ProtocolDataEvent(this,ProtocolDataType.ReplyAvailable, getActionString(action, actionContent)));
+        eventManager.fire(new ProtocolDataEvent(ProtocolDataType.ReplyAvailable, getActionString(action, actionContent)));
     }
 
     public void requestAction(ProtocolHandler.PlayerAction action) {
-        eventManager.fire(new ProtocolDataEvent(this,ProtocolDataType.ReplyAvailable, getActionString(action, "")));
+        eventManager.fire(new ProtocolDataEvent(ProtocolDataType.ReplyAvailable, getActionString(action, "")));
     }
 
     private static String PrepareXml(String name, String value) {

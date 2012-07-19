@@ -1,6 +1,8 @@
 package kelsos.mbremote.Enumerations;
 
-public enum UserAction
+import kelsos.mbremote.Interfaces.IEventType;
+
+public enum UserAction implements IEventType
 {
     PlayPause,
     Stop,
@@ -16,5 +18,7 @@ public enum UserAction
     Volume,
     PlaybackPosition,
     Initialize,
+	GetPlaylist,
+	PlaySpecifiedTrack
 
 }

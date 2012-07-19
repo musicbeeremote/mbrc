@@ -15,6 +15,8 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import com.google.inject.Inject;
+import com.squareup.otto.Bus;
+import kelsos.mbremote.BusAdapter;
 import kelsos.mbremote.Controller.Controller;
 import kelsos.mbremote.Enumerations.UserAction;
 import kelsos.mbremote.Events.UserActionEvent;
@@ -51,19 +53,16 @@ public class MainView extends RoboActivity {
     @InjectView(R.id.albumCover) ImageView albumCover;
 
     // Injects
-    @Inject protected EventManager userActionEvent;
+    @Inject protected BusAdapter busAdapter;
     @Inject private Controller controller;
 
     private boolean userChangingVolume;
     private Timer progressUpdateTimer_;
     private TimerTask progressUpdateTask_;
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
         RegisterListeners();
         userChangingVolume = false;
         SetTextViewTypeface();
@@ -115,7 +114,7 @@ public class MainView extends RoboActivity {
                 startActivity(playlistIntent);
                 break;
             case R.id.main_menu_lyrics:
-                userActionEvent.fire(new UserActionEvent(this, UserAction.Lyrics));
+                busAdapter.getEventBus().post(new UserActionEvent(UserAction.Lyrics));
                 break;
             default:
                 return super.onMenuItemSelected(featureId, item);
@@ -319,62 +318,62 @@ public class MainView extends RoboActivity {
     private OnClickListener playButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            userActionEvent.fire(new UserActionEvent(this, UserAction.PlayPause));
+            busAdapter.getEventBus().post(new UserActionEvent(UserAction.PlayPause));
         }
     };
 
     private OnClickListener previousButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            userActionEvent.fire(new UserActionEvent(this, UserAction.Previous));
+            busAdapter.getEventBus().post(new UserActionEvent(UserAction.Previous));
         }
     };
 
     private OnClickListener nextButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            userActionEvent.fire(new UserActionEvent(this, UserAction.Next));
+            busAdapter.getEventBus().post(new UserActionEvent(UserAction.Next));
         }
     };
 
     private OnClickListener stopButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            userActionEvent.fire(new UserActionEvent(this, UserAction.Stop));
+            busAdapter.getEventBus().post(new UserActionEvent(UserAction.Stop));
         }
     };
 
     private OnClickListener muteButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            userActionEvent.fire(new UserActionEvent(this, UserAction.Mute));
+            busAdapter.getEventBus().post(new UserActionEvent(UserAction.Mute));
         }
     };
 
     private OnClickListener scrobbleButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            userActionEvent.fire(new UserActionEvent(this, UserAction.Scrobble));
+            busAdapter.getEventBus().post(new UserActionEvent(UserAction.Scrobble));
         }
     };
 
     private OnClickListener shuffleButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            userActionEvent.fire(new UserActionEvent(this, UserAction.Shuffle));
+            busAdapter.getEventBus().post(new UserActionEvent(UserAction.Shuffle));
         }
     };
 
     private OnClickListener repeatButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            userActionEvent.fire(new UserActionEvent(this, UserAction.Repeat));
+            busAdapter.getEventBus().post(new UserActionEvent(UserAction.Repeat));
         }
     };
     private OnClickListener connectivityIndicatorListener = new OnClickListener() {
 
         public void onClick(View v) {
-            userActionEvent.fire(new UserActionEvent(this, UserAction.Initialize));
+            busAdapter.getEventBus().post(new UserActionEvent(UserAction.Initialize));
         }
     };
 
@@ -392,7 +391,7 @@ public class MainView extends RoboActivity {
 
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser)
-                userActionEvent.fire(new UserActionEvent(this, UserAction.Volume, String.valueOf(seekBar.getProgress())));
+                busAdapter.getEventBus().post(new UserActionEvent(UserAction.Volume, String.valueOf(seekBar.getProgress())));
         }
     };
 
@@ -400,16 +399,14 @@ public class MainView extends RoboActivity {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if(fromUser)
             {
-                userActionEvent.fire(new UserActionEvent(this, UserAction.PlaybackPosition, String.valueOf(progress)));
+                busAdapter.getEventBus().post(new UserActionEvent(UserAction.PlaybackPosition, String.valueOf(progress)));
             }
         }
 
         public void onStartTrackingTouch(SeekBar seekBar) {
-            ||
         }
 
         public void onStopTrackingTouch(SeekBar seekBar) {
-            ||
         }
     };
 

@@ -1,15 +1,15 @@
 package kelsos.mbremote.Events;
 
 import kelsos.mbremote.Enumerations.ProtocolDataType;
+import kelsos.mbremote.Interfaces.IEvent;
 
 import java.util.EventObject;
 
-public class ModelDataEvent extends EventObject {
-
-	private static final long serialVersionUID = 4575540442030688983L;
+public class ModelDataEvent implements IEvent
+{
 	private ProtocolDataType type;
-    public ModelDataEvent(Object source, ProtocolDataType type) {
-        super(source);
+	private String data;
+    public ModelDataEvent(ProtocolDataType type) {
         this.type = type;
     }
 
@@ -17,4 +17,9 @@ public class ModelDataEvent extends EventObject {
     {
         return type;
     }
+
+	public String getData()
+	{
+		return this.data;
+	}
 }

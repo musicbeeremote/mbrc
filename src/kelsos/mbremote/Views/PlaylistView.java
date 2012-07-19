@@ -7,10 +7,7 @@ import com.google.inject.Inject;
 import kelsos.mbremote.Controller.Controller;
 import kelsos.mbremote.Data.MusicTrack;
 import kelsos.mbremote.Data.PlaylistArrayAdapter;
-import kelsos.mbremote.Enumerations.PlaylistViewAction;
-import kelsos.mbremote.Events.PlaylistViewEvent;
 import kelsos.mbremote.Others.DelayTimer;
-import kelsos.mbremote.Others.XmlEncoder;
 import kelsos.mbremote.R;
 import roboguice.activity.RoboListActivity;
 import roboguice.event.EventManager;
@@ -41,7 +38,7 @@ public class PlaylistView extends RoboListActivity {
     DelayTimer.TimerFinishEvent timerFinishEvent = new DelayTimer.TimerFinishEvent() {
 
         public void onTimerFinish() {
-            eventManager.fire(new PlaylistViewEvent(this, PlaylistViewAction.GetPlaylist));
+            //eventManager.fire(new PlaylistViewEvent(this, PlaylistViewAction.GetPlaylist));
         }
     };
 
@@ -49,7 +46,7 @@ public class PlaylistView extends RoboListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         String track = ((MusicTrack) getListView().getItemAtPosition(position)).getTitle();
-        eventManager.fire(new PlaylistViewEvent(this, PlaylistViewAction.PlaySpecifiedTrack, XmlEncoder.encode(track)));
+        //eventManager.fire(new PlaylistViewEvent(this, PlaylistViewAction.PlaySpecifiedTrack, XmlEncoder.encode(track)));
 
     }
 }

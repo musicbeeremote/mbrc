@@ -105,7 +105,7 @@ public class SocketService {
     private class socketConnection implements Runnable {
 
         public void run() {
-            eventManager.fire(new RawSocketDataEvent(this, RawSocketAction.HandshakeUpdate, "false"));
+            eventManager.fire(new RawSocketDataEvent(RawSocketAction.HandshakeUpdate, "false"));
             Log.d("ConnectivityHandler", "connectSocket Running");
             SocketAddress socketAddress = settings.getSocketAddress();
             if (null == socketAddress) return;
@@ -116,11 +116,11 @@ public class SocketService {
                 _output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(_cSocket.getOutputStream())), true);
                 _input = new BufferedReader(new InputStreamReader(_cSocket.getInputStream()));
 
-                eventManager.fire(new RawSocketDataEvent(this, RawSocketAction.StatusChange, String.valueOf(_cSocket.isConnected())));
+                eventManager.fire(new RawSocketDataEvent(RawSocketAction.StatusChange, String.valueOf(_cSocket.isConnected())));
                 while (_cSocket.isConnected()) {
                     try {
                         final String incoming = _input.readLine();
-                        eventManager.fire(new RawSocketDataEvent(this, RawSocketAction.PacketAvailable, incoming));
+                        eventManager.fire(new RawSocketDataEvent(RawSocketAction.PacketAvailable, incoming));
                     } catch (IOException e) {
                         _input.close();
                         _cSocket.close();
@@ -144,7 +144,7 @@ public class SocketService {
                 }
                 _cSocket = null;
 
-                eventManager.fire(new RawSocketDataEvent(this, RawSocketAction.StatusChange, "false"));
+                eventManager.fire(new RawSocketDataEvent(RawSocketAction.StatusChange, "false"));
 
                 Log.d("ConnectivityHandler", "ListeningThread terminated");
                 initSocketThread(Input.system);
