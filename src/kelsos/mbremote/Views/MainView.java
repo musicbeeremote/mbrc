@@ -15,7 +15,6 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import com.google.inject.Inject;
-import com.squareup.otto.Bus;
 import kelsos.mbremote.BusAdapter;
 import kelsos.mbremote.Controller.Controller;
 import kelsos.mbremote.Enumerations.UserAction;
@@ -23,7 +22,6 @@ import kelsos.mbremote.Events.UserActionEvent;
 import kelsos.mbremote.Enumerations.PlayState;
 import kelsos.mbremote.R;
 import roboguice.activity.RoboActivity;
-import roboguice.event.EventManager;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 
@@ -66,13 +64,11 @@ public class MainView extends RoboActivity {
         RegisterListeners();
         userChangingVolume = false;
         SetTextViewTypeface();
-        controller.onActivityStart(this);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        controller.onActivityStart(this);
     }
 
     /**

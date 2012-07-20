@@ -8,7 +8,6 @@ import kelsos.mbremote.Services.ProtocolHandler;
 public class RequestPlayPauseCommand implements ICommand
 {
 	@Inject private ProtocolHandler protocolHandler;
-	@Override
 	public void execute(IEvent e)
 	{
 		protocolHandler.requestAction(ProtocolHandler.PlayerAction.PlayPause);

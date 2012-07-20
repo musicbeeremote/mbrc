@@ -3,8 +3,6 @@ package kelsos.mbremote.Events;
 import kelsos.mbremote.Enumerations.ProtocolDataType;
 import kelsos.mbremote.Interfaces.IEvent;
 
-import java.util.EventObject;
-
 public class ModelDataEvent implements IEvent
 {
 	private ProtocolDataType type;

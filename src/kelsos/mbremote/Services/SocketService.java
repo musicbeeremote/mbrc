@@ -1,9 +1,8 @@
 package kelsos.mbremote.Services;
 
-import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
+import kelsos.mbremote.BusAdapter;
 import kelsos.mbremote.Enumerations.Input;
 import kelsos.mbremote.Enumerations.RawSocketAction;
 import kelsos.mbremote.Events.RawSocketDataEvent;
@@ -11,7 +10,6 @@ import kelsos.mbremote.Messaging.NotificationService;
 import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Others.DelayTimer;
 import kelsos.mbremote.Others.SettingsManager;
-import roboguice.event.EventManager;
 
 import java.io.*;
 import java.net.Socket;
@@ -20,7 +18,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 @Singleton
 public class SocketService {
-    @Inject protected EventManager eventManager;
+    @Inject protected BusAdapter busAdapter;
     @Inject private SettingsManager settings;
     @Inject private NotificationService notificationService;
 
@@ -61,7 +59,6 @@ public class SocketService {
         Runnable socketConnection = new socketConnection();
         _connectionThread = new Thread(socketConnection);
         _connectionThread.start();
-        Log.d("ConnectivityHandler", "startSocketThread();");
     }
 
     private boolean connectionThreadExistsAndIsAlive() {
@@ -105,22 +102,21 @@ public class SocketService {
     private class socketConnection implements Runnable {
 
         public void run() {
-            eventManager.fire(new RawSocketDataEvent(RawSocketAction.HandshakeUpdate, "false"));
-            Log.d("ConnectivityHandler", "connectSocket Running");
+            busAdapter.dispatchEvent(new RawSocketDataEvent(RawSocketAction.HandshakeUpdate, "false"));
             SocketAddress socketAddress = settings.getSocketAddress();
             if (null == socketAddress) return;
             BufferedReader _input;
             try {
                 _cSocket = new Socket();
                 _cSocket.connect(socketAddress);
-                _output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(_cSocket.getOutputStream())), true);
-                _input = new BufferedReader(new InputStreamReader(_cSocket.getInputStream()));
+                _output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(_cSocket.getOutputStream()), 4096), true);
+                _input = new BufferedReader(new InputStreamReader(_cSocket.getInputStream()), 4096);
 
-                eventManager.fire(new RawSocketDataEvent(RawSocketAction.StatusChange, String.valueOf(_cSocket.isConnected())));
+                busAdapter.dispatchEvent(new RawSocketDataEvent(RawSocketAction.StatusChange, String.valueOf(_cSocket.isConnected())));
                 while (_cSocket.isConnected()) {
                     try {
                         final String incoming = _input.readLine();
-                        eventManager.fire(new RawSocketDataEvent(RawSocketAction.PacketAvailable, incoming));
+                        busAdapter.dispatchEvent(new RawSocketDataEvent(RawSocketAction.PacketAvailable, incoming));
                     } catch (IOException e) {
                         _input.close();
                         _cSocket.close();
@@ -134,9 +130,9 @@ public class SocketService {
                 final String exceptionMessage = e.toString().substring(26);
                 notificationService.showToastMessage(exceptionMessage);
             } catch (IOException e) {
-                Log.e("ConnectivityHandler", "Listening Loop", e);
+                 //placeholder
             } catch (NullPointerException e) {
-                Log.d("ConnectivityHandler", "NullPointer");
+                //placeholder
             } finally {
                 if (_output != null) {
                     _output.flush();
@@ -144,11 +140,8 @@ public class SocketService {
                 }
                 _cSocket = null;
 
-                eventManager.fire(new RawSocketDataEvent(RawSocketAction.StatusChange, "false"));
-
-                Log.d("ConnectivityHandler", "ListeningThread terminated");
+                busAdapter.dispatchEvent(new RawSocketDataEvent(RawSocketAction.StatusChange, "false"));
                 initSocketThread(Input.system);
-
             }
         }
     }

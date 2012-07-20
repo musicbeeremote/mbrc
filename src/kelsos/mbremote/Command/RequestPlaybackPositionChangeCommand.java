@@ -5,14 +5,11 @@ import kelsos.mbremote.Interfaces.ICommand;
 import kelsos.mbremote.Interfaces.IEvent;
 import kelsos.mbremote.Services.ProtocolHandler;
 
-import java.util.EventObject;
-
 public class RequestPlaybackPositionChangeCommand implements ICommand
 {
 	@Inject private ProtocolHandler protocolHandler;
-	@Override
 	public void execute(IEvent e)
 	{
-		//protocolHandler.requestAction(ProtocolHandler.PlayerAction.PlaybackPosition, event.getEventData());
+		protocolHandler.requestAction(ProtocolHandler.PlayerAction.PlaybackPosition, e.getData());
 	}
 }

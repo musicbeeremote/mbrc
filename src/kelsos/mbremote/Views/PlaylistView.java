@@ -30,7 +30,6 @@ public class PlaylistView extends RoboListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        controller.onActivityStart(this);
         delayTimer = new DelayTimer(1200, timerFinishEvent);
         delayTimer.start();
     }

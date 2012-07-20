@@ -18,7 +18,6 @@ public class ImageDecoder extends RoboAsyncTask<Bitmap> {
         this.image = image;
     }
 
-    @Override
     public Bitmap call() throws Exception {
         byte[] decodedImage = Base64.decode(image, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(decodedImage, 0, decodedImage.length);

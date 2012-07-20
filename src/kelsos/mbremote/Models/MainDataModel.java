@@ -2,31 +2,29 @@ package kelsos.mbremote.Models;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.util.Base64;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import kelsos.mbremote.Async.ImageDecoder;
+import kelsos.mbremote.BusAdapter;
 import kelsos.mbremote.Enumerations.PlayState;
-import kelsos.mbremote.Events.ModelDataEvent;
 import kelsos.mbremote.Enumerations.ProtocolDataType;
+import kelsos.mbremote.Events.ModelDataEvent;
 import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.R;
-import roboguice.event.EventManager;
-import roboguice.inject.InjectExtra;
+import roboguice.activity.event.OnCreateEvent;
+import roboguice.event.Observes;
 import roboguice.inject.InjectResource;
 
 @Singleton
 public class MainDataModel {
 
-    @Inject protected EventManager eventManager;
+    @Inject protected BusAdapter eventBus;
     @Inject protected Context context;
-    @InjectResource(R.drawable.ic_image_no_cover) Drawable noCover;
+	@InjectResource(R.drawable.ic_image_no_cover) Drawable noCover;
 
+	@Inject
     public MainDataModel(){
        _title = _artist = _album = _year = "";
         _volume = 100;
@@ -38,9 +36,13 @@ public class MainDataModel {
         _isMuteButtonActive=false;
         _isDeviceOnline=false;
         _playState = PlayState.Stopped;
-       //_albumCover = ((BitmapDrawable)noCover).getBitmap();
+
     }
 
+	public void handleOnCreateEvent(@Observes OnCreateEvent e)
+	{
+		_albumCover = ((BitmapDrawable)noCover).getBitmap();
+	}
 
     private String _title;
     private String _artist;
@@ -63,7 +65,7 @@ public class MainDataModel {
     {
         if(title.equals(_title)) return;
         _title=title;
-        eventManager.fire(new ModelDataEvent( ProtocolDataType.Title));
+        eventBus.dispatchEvent(new ModelDataEvent( ProtocolDataType.Title));
     }
 
     public String getTitle()
@@ -75,7 +77,7 @@ public class MainDataModel {
     {
         if(album.equals(_album)) return;
         _album = album;
-        eventManager.fire(new ModelDataEvent( ProtocolDataType.Album));
+        eventBus.dispatchEvent(new ModelDataEvent( ProtocolDataType.Album));
     }
 
     public String getAlbum()
@@ -87,7 +89,7 @@ public class MainDataModel {
     {
         if(artist.equals(_artist)) return;
         _artist = artist;
-        eventManager.fire(new ModelDataEvent( ProtocolDataType.Artist));
+        eventBus.dispatchEvent(new ModelDataEvent( ProtocolDataType.Artist));
     }
 
     public String getArtist()
@@ -99,7 +101,7 @@ public class MainDataModel {
     {
         if(year.equals(_year)) return;
         _year=year;
-        eventManager.fire(new ModelDataEvent( ProtocolDataType.Year));
+        eventBus.dispatchEvent(new ModelDataEvent( ProtocolDataType.Year));
     }
 
     public String getYear()
@@ -111,7 +113,7 @@ public class MainDataModel {
     {
         int newVolume = Integer.parseInt(volume);
         _volume = newVolume;
-        eventManager.fire(new ModelDataEvent( ProtocolDataType.Volume));
+        eventBus.dispatchEvent(new ModelDataEvent( ProtocolDataType.Volume));
     }
 
     public int getVolume()
@@ -134,7 +136,7 @@ public class MainDataModel {
     public void setAlbumCover(Bitmap cover)
     {
         _albumCover = cover;
-        eventManager.fire(new ModelDataEvent( ProtocolDataType.AlbumCover));
+        eventBus.dispatchEvent(new ModelDataEvent( ProtocolDataType.AlbumCover));
     }
 
     public Bitmap getAlbumCover()
@@ -146,7 +148,7 @@ public class MainDataModel {
     {
         boolean newStatus = Boolean.parseBoolean(connectionActive);
         _isConnectionActive=newStatus;
-        eventManager.fire(new ModelDataEvent( ProtocolDataType.ConnectionState));
+        eventBus.dispatchEvent(new ModelDataEvent( ProtocolDataType.ConnectionState));
     }
 
     public boolean getIsConnectionActive()
@@ -158,7 +160,7 @@ public class MainDataModel {
     {
         boolean newStatus = (repeatButtonActive.equals("All"));
         _isRepeatButtonActive = newStatus;
-        eventManager.fire(new ModelDataEvent( ProtocolDataType.RepeatState));
+        eventBus.dispatchEvent(new ModelDataEvent( ProtocolDataType.RepeatState));
     }
 
     public boolean getIsRepeatButtonActive()
@@ -170,7 +172,7 @@ public class MainDataModel {
     {
         boolean newStatus = Boolean.parseBoolean(shuffleButtonActive);
         _isShuffleButtonActive = newStatus;
-        eventManager.fire(new ModelDataEvent( ProtocolDataType.ShuffleState));
+        eventBus.dispatchEvent(new ModelDataEvent( ProtocolDataType.ShuffleState));
     }
 
     public boolean getIsShuffleButtonActive()
@@ -182,7 +184,7 @@ public class MainDataModel {
     {
         boolean newStatus = Boolean.parseBoolean(scrobbleButtonActive);
         _isScrobbleButtonActive = newStatus;
-        eventManager.fire(new ModelDataEvent( ProtocolDataType.ScrobbleState));
+        eventBus.dispatchEvent(new ModelDataEvent( ProtocolDataType.ScrobbleState));
     }
 
     public boolean getIsScrobbleButtonActive()
@@ -194,7 +196,7 @@ public class MainDataModel {
     {
         boolean newStatus = Boolean.parseBoolean(muteButtonActive);
         _isMuteButtonActive = newStatus;
-        eventManager.fire(new ModelDataEvent( ProtocolDataType.MuteState));
+        eventBus.dispatchEvent(new ModelDataEvent( ProtocolDataType.MuteState));
     }
 
     public boolean getIsMuteButtonActive()
@@ -209,7 +211,7 @@ public class MainDataModel {
         else if (playState.equalsIgnoreCase(Const.STOPPED)) newState = PlayState.Stopped;
         else if (playState.equalsIgnoreCase(Const.PAUSED)) newState = PlayState.Paused;
         _playState = newState;
-        eventManager.fire(new ModelDataEvent( ProtocolDataType.PlayState));
+        eventBus.dispatchEvent(new ModelDataEvent( ProtocolDataType.PlayState));
     }
 
     public PlayState getPlayState()
@@ -220,7 +222,7 @@ public class MainDataModel {
     public void setIsDeviceOnline(boolean value)
     {
         _isDeviceOnline = value;
-        eventManager.fire(new ModelDataEvent( ProtocolDataType.OnlineStatus));
+        eventBus.dispatchEvent(new ModelDataEvent( ProtocolDataType.OnlineStatus));
     }
 
     public boolean getIsDeviceOnline()
