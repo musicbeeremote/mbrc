@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="main.java.mbremote"
+    package="kelsos.mbremote"
     android:installLocation="auto"
     android:versionCode="2"
     android:versionName="0.2 Alpha" >

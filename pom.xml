@@ -48,7 +48,6 @@
 	</dependencies>
 
 	<build>
-	  <sourceDirectory>${project.basedir}/src/java/main</sourceDirectory>
 		<finalName>${project.artifactId}</finalName>
 		<pluginManagement>
 			<plugins>
@@ -60,7 +59,6 @@
 					   <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
 						<assetsDirectory>${project.basedir}/assets</assetsDirectory>
 						<resourceDirectory>${project.basedir}/res</resourceDirectory>
-						<classFolders>${project.basedir}/target/classes/</classFolders>
 					</configuration>
 					<extensions>true</extensions>
 				</plugin>
@@ -81,7 +79,6 @@
 					<emulator>
 						<avd>16</avd>
 					</emulator>
-					<deleteConflictingFiles>true</deleteConflictingFiles>
 					<undeployBeforeDeploy>true</undeployBeforeDeploy>
 				</configuration>
 			</plugin>

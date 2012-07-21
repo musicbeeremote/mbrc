@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.os.Binder;
 import android.os.IBinder;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.squareup.otto.Subscribe;
 import kelsos.mbremote.BusAdapter;
@@ -43,8 +44,10 @@ public class Controller extends RoboService
 	ConnectivityManager conManager;
 	@Inject
 	private BusAdapter busAdapter;
+	@Inject
+	Injector injector;
 
-	protected Map<IEventType, ICommand> commandMap;
+	protected Map<IEventType, Class<?>> commandMap;
 
 	/**
 	 * When the OnCreateEvent gets fired the function catches it and registers the Controller to the event bus singleton
@@ -55,7 +58,7 @@ public class Controller extends RoboService
 	{
 		busAdapter.register(this);
 		//TEMP
-		registerCommand(UserAction.PlayPause, new UpdateMainViewCommand());
+		registerCommand(UserAction.PlayPause, UpdateMainViewCommand.class);
 	}
 
 	private final IBinder mBinder = new ControllerBinder();
@@ -74,11 +77,11 @@ public class Controller extends RoboService
 		return mBinder;
 	}
 
-	public void registerCommand(IEventType type, ICommand command)
+	public void registerCommand(IEventType type, Class<?> command)
 	{
 		if (commandMap == null)
 		{
-			commandMap = new HashMap<IEventType, ICommand>();
+			commandMap = new HashMap<IEventType, Class<?>>();
 		}
 		if (!commandMap.containsKey(type))
 		{
@@ -96,11 +99,21 @@ public class Controller extends RoboService
 
 	public void executeCommand(IEvent event)
 	{
-		ICommand commandInstance = this.commandMap.get(event.getType());
-		if (commandInstance != null)
-		{
-			commandInstance.execute(event);
+		Class<ICommand> commandClass =(Class<ICommand>)this.commandMap.get(event.getType());
+		ICommand commandInstance = null;
+		try{
+			commandInstance = commandClass.newInstance();
+			injector.injectMembers(commandInstance);
+			if (commandInstance != null)
+			{
+				commandInstance.execute(event);
+			}
 		}
+		catch (Exception ex)
+		{
+
+		}
+
 	}
 
 	/**
