@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import kelsos.mbremote.BusAdapter;
 import kelsos.mbremote.Controller.Controller;
+import kelsos.mbremote.Controller.RunningActivityAccessor;
 import kelsos.mbremote.Enumerations.UserAction;
 import kelsos.mbremote.Events.UserActionEvent;
 import kelsos.mbremote.Enumerations.PlayState;
@@ -53,6 +54,7 @@ public class MainView extends RoboActivity {
     // Injects
     @Inject protected BusAdapter busAdapter;
     @Inject private Controller controller;
+	@Inject private RunningActivityAccessor accessor;
 
     private boolean userChangingVolume;
     private Timer progressUpdateTimer_;
@@ -61,6 +63,7 @@ public class MainView extends RoboActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		accessor.register(this);
         RegisterListeners();
         userChangingVolume = false;
         SetTextViewTypeface();

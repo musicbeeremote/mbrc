@@ -5,11 +5,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>kelsos</groupId>
-    <artifactId>mbremote</artifactId>
+	<!-- application info-->
+    <groupId>kelsos.mbremote</groupId>
+    <artifactId>mbrc</artifactId>
     <version>0.2-ALPHA</version>
 	<packaging>apk</packaging>
 	<name>RC for MusicBee</name>
+	
+	<!-- utf8 source encoding -->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
 	<!-- Library Dependancies -->
 
@@ -42,14 +48,20 @@
 	</dependencies>
 
 	<build>
+	  <sourceDirectory>${project.basedir}/src/java/main</sourceDirectory>
 		<finalName>${project.artifactId}</finalName>
-		<sourceDirectory>src</sourceDirectory>
 		<pluginManagement>
 			<plugins>
 				<plugin>
 					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 					<artifactId>android-maven-plugin</artifactId>
 					<version>3.3.0</version>
+					<configuration>
+					   <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
+						<assetsDirectory>${project.basedir}/assets</assetsDirectory>
+						<resourceDirectory>${project.basedir}/res</resourceDirectory>
+						<classFolders>${project.basedir}/target/classes/</classFolders>
+					</configuration>
 					<extensions>true</extensions>
 				</plugin>
 			</plugins>
@@ -63,14 +75,21 @@
 						<debug>true</debug>
 					</run>
 					<sdk>
+					    <path>${env.ANDROID_HOME}</path>
 						<platform>15</platform>
 					</sdk>
 					<emulator>
 						<avd>16</avd>
 					</emulator>
+					<deleteConflictingFiles>true</deleteConflictingFiles>
 					<undeployBeforeDeploy>true</undeployBeforeDeploy>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+            </plugin>
 		</plugins>
 	</build>
 
