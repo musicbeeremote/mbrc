@@ -9,8 +9,6 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.squareup.otto.Subscribe;
 import kelsos.mbremote.BusAdapter;
-import kelsos.mbremote.Command.UpdateMainViewCommand;
-import kelsos.mbremote.Enumerations.UserAction;
 import kelsos.mbremote.Events.ModelDataEvent;
 import kelsos.mbremote.Events.ProtocolDataEvent;
 import kelsos.mbremote.Events.RawSocketDataEvent;
@@ -57,8 +55,6 @@ public class Controller extends RoboService
 	public void handleActivityStart(@Observes OnCreateEvent e)
 	{
 		busAdapter.register(this);
-		//TEMP
-		registerCommand(UserAction.PlayPause, UpdateMainViewCommand.class);
 	}
 
 	private final IBinder mBinder = new ControllerBinder();
@@ -100,14 +96,13 @@ public class Controller extends RoboService
 	public void executeCommand(IEvent event)
 	{
 		Class<ICommand> commandClass =(Class<ICommand>)this.commandMap.get(event.getType());
+		if(commandClass == null) return;
 		ICommand commandInstance = null;
 		try{
 			commandInstance = commandClass.newInstance();
 			injector.injectMembers(commandInstance);
-			if (commandInstance != null)
-			{
-				commandInstance.execute(event);
-			}
+			if(commandInstance==null) return;
+			commandInstance.execute(event);
 		}
 		catch (Exception ex)
 		{

@@ -2,7 +2,7 @@ package kelsos.mbremote.Enumerations;
 
 import kelsos.mbremote.Interfaces.IEventType;
 
-public enum ProtocolDataType implements IEventType
+public enum ProtocolHandlerEventType implements IEventType
 {
      Title,
     Artist,

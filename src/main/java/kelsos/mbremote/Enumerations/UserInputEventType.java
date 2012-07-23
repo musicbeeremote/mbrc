@@ -2,7 +2,7 @@ package kelsos.mbremote.Enumerations;
 
 import kelsos.mbremote.Interfaces.IEventType;
 
-public enum UserAction implements IEventType
+public enum UserInputEventType implements IEventType
 {
     PlayPause,
     Stop,

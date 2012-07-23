@@ -18,7 +18,7 @@ import com.google.inject.Inject;
 import kelsos.mbremote.BusAdapter;
 import kelsos.mbremote.Controller.Controller;
 import kelsos.mbremote.Controller.RunningActivityAccessor;
-import kelsos.mbremote.Enumerations.UserAction;
+import kelsos.mbremote.Enumerations.UserInputEventType;
 import kelsos.mbremote.Events.UserActionEvent;
 import kelsos.mbremote.Enumerations.PlayState;
 import kelsos.mbremote.R;
@@ -113,7 +113,7 @@ public class MainView extends RoboActivity {
                 startActivity(playlistIntent);
                 break;
             case R.id.main_menu_lyrics:
-                busAdapter.getEventBus().post(new UserActionEvent(UserAction.Lyrics));
+                busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Lyrics));
                 break;
             default:
                 return super.onMenuItemSelected(featureId, item);
@@ -317,62 +317,62 @@ public class MainView extends RoboActivity {
     private OnClickListener playButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserAction.PlayPause));
+            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.PlayPause));
         }
     };
 
     private OnClickListener previousButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserAction.Previous));
+            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Previous));
         }
     };
 
     private OnClickListener nextButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserAction.Next));
+            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Next));
         }
     };
 
     private OnClickListener stopButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserAction.Stop));
+            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Stop));
         }
     };
 
     private OnClickListener muteButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserAction.Mute));
+            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Mute));
         }
     };
 
     private OnClickListener scrobbleButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserAction.Scrobble));
+            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Scrobble));
         }
     };
 
     private OnClickListener shuffleButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserAction.Shuffle));
+            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Shuffle));
         }
     };
 
     private OnClickListener repeatButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserAction.Repeat));
+            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Repeat));
         }
     };
     private OnClickListener connectivityIndicatorListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserAction.Initialize));
+            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Initialize));
         }
     };
 
@@ -390,7 +390,7 @@ public class MainView extends RoboActivity {
 
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser)
-                busAdapter.getEventBus().post(new UserActionEvent(UserAction.Volume, String.valueOf(seekBar.getProgress())));
+                busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Volume, String.valueOf(seekBar.getProgress())));
         }
     };
 
@@ -398,7 +398,7 @@ public class MainView extends RoboActivity {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if(fromUser)
             {
-                busAdapter.getEventBus().post(new UserActionEvent(UserAction.PlaybackPosition, String.valueOf(progress)));
+                busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.PlaybackPosition, String.valueOf(progress)));
             }
         }
 
