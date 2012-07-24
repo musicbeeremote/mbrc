@@ -1,12 +1,9 @@
 package kelsos.mbremote.Views;
 
-import android.content.Intent;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -14,15 +11,17 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockActivity;
 import com.google.inject.Inject;
 import kelsos.mbremote.BusAdapter;
 import kelsos.mbremote.Controller.Controller;
 import kelsos.mbremote.Controller.RunningActivityAccessor;
+import kelsos.mbremote.Enumerations.PlayState;
 import kelsos.mbremote.Enumerations.UserInputEventType;
 import kelsos.mbremote.Events.UserActionEvent;
-import kelsos.mbremote.Enumerations.PlayState;
 import kelsos.mbremote.R;
-import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 
@@ -30,7 +29,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 @ContentView(R.layout.main)
-public class MainView extends RoboActivity {
+public class MainView extends RoboSherlockActivity
+{
     // Inject elements of the view
     @InjectView(R.id.artistLabel) TextView artistLabel;
     @InjectView(R.id.titleLabel) TextView titleLabel;
@@ -67,11 +67,13 @@ public class MainView extends RoboActivity {
         RegisterListeners();
         userChangingVolume = false;
         SetTextViewTypeface();
+		getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     @Override
     public void onStart() {
         super.onStart();
+
     }
 
     /**
@@ -94,32 +96,17 @@ public class MainView extends RoboActivity {
         trackDuration.setTypeface(myriadPro);
     }
 
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.main_menu, menu);
+		menu.add(R.string.main_menu_settings)
+				.setIcon(R.drawable.ic_menu_settings)
+				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		menu.add(R.string.main_menu_playlist)
+				.setIcon(R.drawable.ic_menu_playlist)
+				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		menu.add(R.string.main_menu_settings)
+				.setIcon(R.drawable.ic_menu_connect)
+				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return true;
-    }
-
-    @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.main_menu_settings:
-                Intent settingsIntent = new Intent(MainView.this, AppPreferenceView.class);
-                startActivity(settingsIntent);
-                break;
-            case R.id.main_menu_playlist:
-                Intent playlistIntent = new Intent(MainView.this, PlaylistView.class);
-                startActivity(playlistIntent);
-                break;
-            case R.id.main_menu_lyrics:
-                busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Lyrics));
-                break;
-            default:
-                return super.onMenuItemSelected(featureId, item);
-        }
-        return true;
-
     }
 
 
