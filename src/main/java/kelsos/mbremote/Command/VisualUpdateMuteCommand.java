@@ -4,12 +4,15 @@ import com.google.inject.Inject;
 import kelsos.mbremote.Controller.RunningActivityAccessor;
 import kelsos.mbremote.Interfaces.ICommand;
 import kelsos.mbremote.Interfaces.IEvent;
+import kelsos.mbremote.Models.MainDataModel;
 import kelsos.mbremote.Views.MainView;
 
-public class UpdateTitleVisualCommand implements ICommand
+public class VisualUpdateMuteCommand implements ICommand
 {
 	@Inject
 	RunningActivityAccessor accessor;
+	@Inject
+	MainDataModel model;
 
 	public void execute(IEvent e)
 	{
@@ -17,7 +20,7 @@ public class UpdateTitleVisualCommand implements ICommand
 		accessor.getRunningActivity().runOnUiThread(new Runnable() {
 			public void run() {
 				MainView view = (MainView) accessor.getRunningActivity();
-				view.updateTitleText(model.getTitle());
+				view.updateMuteButtonState(model.getIsMuteButtonActive());
 			}
 		});
 	}
