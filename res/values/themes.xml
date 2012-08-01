@@ -1,5 +1,0 @@
-<resources>
-	<style name="RemoteTheme" parent="Theme.Sherlock.Light.DarkActionBar">
-		<item name="android:background">#111111</item>
-	</style>
-</resources>

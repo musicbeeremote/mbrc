@@ -8,10 +8,10 @@ import kelsos.mbremote.Enumerations.ProtocolHandlerEventType;
 public class ProtocolHandlerCommandRegistration
 {
 	@Inject
-	public void register(Controller controller)
+	public static void register(Controller controller)
 	{
-		controller.registerCommand(ProtocolHandlerEventType.Title,UpdateTitleCommand.class);
-		controller.registerCommand(ProtocolHandlerEventType.Artist,UpdateArtistCommand.class);
+		controller.registerCommand(ProtocolHandlerEventType.TITLE_AVAILABLE,UpdateTitleCommand.class);
+		controller.registerCommand(ProtocolHandlerEventType.ARTIST_AVAILABLE,UpdateArtistCommand.class);
 		controller.registerCommand(ProtocolHandlerEventType.Album,UpdateAlbumCommand.class);
 		controller.registerCommand(ProtocolHandlerEventType.Year,UpdateYearCommand.class);
 		controller.registerCommand(ProtocolHandlerEventType.Volume,UpdateVolumeCommand.class);
@@ -29,7 +29,8 @@ public class ProtocolHandlerCommandRegistration
 		//controller.registerCommand(ProtocolHandlerEventType.Lyrics .class);
 	}
 
-	@Inject void unRegister(Controller controller)
+	@Inject
+	public static void unRegister(Controller controller)
 	{
 
 	}

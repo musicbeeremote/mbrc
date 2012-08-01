@@ -6,9 +6,10 @@ import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockPreferenceActivity;
 import kelsos.mbremote.R;
 
-public class AppPreferenceView extends PreferenceActivity implements OnSharedPreferenceChangeListener {
+public class AppPreferenceView extends RoboSherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
 
     public static final String REMOTE_SETTINGS = "mbremote_settings";
 

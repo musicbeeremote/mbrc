@@ -6,8 +6,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.squareup.otto.Bus;
 import kelsos.mbremote.Async.ImageDecoder;
-import kelsos.mbremote.BusAdapter;
 import kelsos.mbremote.Enumerations.PlayState;
 import kelsos.mbremote.Enumerations.ProtocolHandlerEventType;
 import kelsos.mbremote.Events.ModelDataEvent;
@@ -20,12 +20,16 @@ import roboguice.inject.InjectResource;
 @Singleton
 public class MainDataModel {
 
-    @Inject protected BusAdapter eventBus;
-    @Inject protected Context context;
+    private Bus bus;
+	private Context context;
+
 	@InjectResource(R.drawable.ic_image_no_cover) Drawable noCover;
 
 	@Inject
-    public MainDataModel(){
+    public MainDataModel(Bus bus, Context context){
+		this.context = context;
+		this.bus = bus;
+
        _title = _artist = _album = _year = "";
         _volume = 100;
 
@@ -65,7 +69,7 @@ public class MainDataModel {
     {
         if(title.equals(_title)) return;
         _title=title;
-        eventBus.dispatchEvent(new ModelDataEvent( ProtocolHandlerEventType.Title));
+        bus.post(new ModelDataEvent(ProtocolHandlerEventType.TITLE_AVAILABLE));
     }
 
     public String getTitle()
@@ -77,7 +81,7 @@ public class MainDataModel {
     {
         if(album.equals(_album)) return;
         _album = album;
-        eventBus.dispatchEvent(new ModelDataEvent( ProtocolHandlerEventType.Album));
+        bus.post(new ModelDataEvent(ProtocolHandlerEventType.Album));
     }
 
     public String getAlbum()
@@ -89,7 +93,7 @@ public class MainDataModel {
     {
         if(artist.equals(_artist)) return;
         _artist = artist;
-        eventBus.dispatchEvent(new ModelDataEvent( ProtocolHandlerEventType.Artist));
+        bus.post(new ModelDataEvent(ProtocolHandlerEventType.ARTIST_AVAILABLE));
     }
 
     public String getArtist()
@@ -101,7 +105,7 @@ public class MainDataModel {
     {
         if(year.equals(_year)) return;
         _year=year;
-        eventBus.dispatchEvent(new ModelDataEvent( ProtocolHandlerEventType.Year));
+        bus.post(new ModelDataEvent(ProtocolHandlerEventType.Year));
     }
 
     public String getYear()
@@ -113,7 +117,7 @@ public class MainDataModel {
     {
         int newVolume = Integer.parseInt(volume);
         _volume = newVolume;
-        eventBus.dispatchEvent(new ModelDataEvent( ProtocolHandlerEventType.Volume));
+        bus.post(new ModelDataEvent(ProtocolHandlerEventType.Volume));
     }
 
     public int getVolume()
@@ -136,7 +140,7 @@ public class MainDataModel {
     public void setAlbumCover(Bitmap cover)
     {
         _albumCover = cover;
-        eventBus.dispatchEvent(new ModelDataEvent( ProtocolHandlerEventType.AlbumCover));
+        bus.post(new ModelDataEvent(ProtocolHandlerEventType.AlbumCover));
     }
 
     public Bitmap getAlbumCover()
@@ -148,7 +152,7 @@ public class MainDataModel {
     {
         boolean newStatus = Boolean.parseBoolean(connectionActive);
         _isConnectionActive=newStatus;
-        eventBus.dispatchEvent(new ModelDataEvent( ProtocolHandlerEventType.ConnectionState));
+        bus.post(new ModelDataEvent(ProtocolHandlerEventType.ConnectionState));
     }
 
     public boolean getIsConnectionActive()
@@ -160,7 +164,7 @@ public class MainDataModel {
     {
         boolean newStatus = (repeatButtonActive.equals("All"));
         _isRepeatButtonActive = newStatus;
-        eventBus.dispatchEvent(new ModelDataEvent( ProtocolHandlerEventType.RepeatState));
+        bus.post(new ModelDataEvent(ProtocolHandlerEventType.RepeatState));
     }
 
     public boolean getIsRepeatButtonActive()
@@ -172,7 +176,7 @@ public class MainDataModel {
     {
         boolean newStatus = Boolean.parseBoolean(shuffleButtonActive);
         _isShuffleButtonActive = newStatus;
-        eventBus.dispatchEvent(new ModelDataEvent( ProtocolHandlerEventType.ShuffleState));
+        bus.post(new ModelDataEvent(ProtocolHandlerEventType.ShuffleState));
     }
 
     public boolean getIsShuffleButtonActive()
@@ -184,7 +188,7 @@ public class MainDataModel {
     {
         boolean newStatus = Boolean.parseBoolean(scrobbleButtonActive);
         _isScrobbleButtonActive = newStatus;
-        eventBus.dispatchEvent(new ModelDataEvent( ProtocolHandlerEventType.ScrobbleState));
+        bus.post(new ModelDataEvent(ProtocolHandlerEventType.ScrobbleState));
     }
 
     public boolean getIsScrobbleButtonActive()
@@ -196,7 +200,7 @@ public class MainDataModel {
     {
         boolean newStatus = Boolean.parseBoolean(muteButtonActive);
         _isMuteButtonActive = newStatus;
-        eventBus.dispatchEvent(new ModelDataEvent( ProtocolHandlerEventType.MuteState));
+        bus.post(new ModelDataEvent(ProtocolHandlerEventType.MuteState));
     }
 
     public boolean getIsMuteButtonActive()
@@ -211,7 +215,7 @@ public class MainDataModel {
         else if (playState.equalsIgnoreCase(Const.STOPPED)) newState = PlayState.Stopped;
         else if (playState.equalsIgnoreCase(Const.PAUSED)) newState = PlayState.Paused;
         _playState = newState;
-        eventBus.dispatchEvent(new ModelDataEvent( ProtocolHandlerEventType.PlayState));
+        bus.post(new ModelDataEvent(ProtocolHandlerEventType.PlayState));
     }
 
     public PlayState getPlayState()
@@ -222,7 +226,7 @@ public class MainDataModel {
     public void setIsDeviceOnline(boolean value)
     {
         _isDeviceOnline = value;
-        eventBus.dispatchEvent(new ModelDataEvent( ProtocolHandlerEventType.OnlineStatus));
+        bus.post(new ModelDataEvent(ProtocolHandlerEventType.OnlineStatus));
     }
 
     public boolean getIsDeviceOnline()

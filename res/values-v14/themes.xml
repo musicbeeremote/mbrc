@@ -1,6 +1,0 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <style name="RemoteTheme" parent="Theme.Sherlock.Light.DarkActionBar">
-        <item name="android:background">#111111</item>
-	    <item name="android:displayOptions">useLogo|showHome</item>
-    </style>
-</resources>

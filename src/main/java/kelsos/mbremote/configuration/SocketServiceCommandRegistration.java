@@ -10,7 +10,7 @@ import kelsos.mbremote.Enumerations.SocketServiceEventType;
 public class SocketServiceCommandRegistration
 {
 	@Inject
-	public void register(Controller controller)
+	public static void register(Controller controller)
 	{
 		controller.registerCommand(SocketServiceEventType.PacketAvailable, SocketDataAvailableCommand.class);
 		controller.registerCommand(SocketServiceEventType.StatusChange, ConnectionStatusChangedCommand.class);
@@ -18,7 +18,7 @@ public class SocketServiceCommandRegistration
 	}
 
 	@Inject
-	public void unregister(Controller controller)
+	public static void unregister(Controller controller)
 	{
 
 	}

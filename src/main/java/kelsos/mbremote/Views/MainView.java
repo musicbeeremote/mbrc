@@ -1,6 +1,6 @@
 package kelsos.mbremote.Views;
 
-import android.content.res.AssetManager;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -12,11 +12,11 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockActivity;
 import com.google.inject.Inject;
-import kelsos.mbremote.BusAdapter;
-import kelsos.mbremote.Controller.Controller;
+import com.squareup.otto.Bus;
 import kelsos.mbremote.Controller.RunningActivityAccessor;
 import kelsos.mbremote.Enumerations.PlayState;
 import kelsos.mbremote.Enumerations.UserInputEventType;
@@ -52,8 +52,7 @@ public class MainView extends RoboSherlockActivity
     @InjectView(R.id.albumCover) ImageView albumCover;
 
     // Injects
-    @Inject protected BusAdapter busAdapter;
-    @Inject private Controller controller;
+    @Inject protected Bus bus;
 	@Inject private RunningActivityAccessor accessor;
 
     private boolean userChangingVolume;
@@ -68,12 +67,6 @@ public class MainView extends RoboSherlockActivity
         userChangingVolume = false;
         SetTextViewTypeface();
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
     }
 
     /**
@@ -97,20 +90,25 @@ public class MainView extends RoboSherlockActivity
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(R.string.main_menu_settings)
-				.setIcon(R.drawable.ic_menu_settings)
-				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		menu.add(R.string.main_menu_playlist)
-				.setIcon(R.drawable.ic_menu_playlist)
-				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		menu.add(R.string.main_menu_settings)
-				.setIcon(R.drawable.ic_menu_connect)
-				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        return true;
+		MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.menu.menu, menu);
+		return true;
     }
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()){
+			case R.id.main_menu_settings:
+				startActivity(new Intent(this, AppPreferenceView.class));
+				return true;
+			default:
+				return false;
+		}
+	}
 
-    /**
+
+
+	/**
      * Registers the listeners for the interface elements used for interaction.
      */
     private void RegisterListeners() {
@@ -304,62 +302,62 @@ public class MainView extends RoboSherlockActivity
     private OnClickListener playButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.PlayPause));
+            bus.post(new UserActionEvent(UserInputEventType.PlayPause));
         }
     };
 
     private OnClickListener previousButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Previous));
+            bus.post(new UserActionEvent(UserInputEventType.Previous));
         }
     };
 
     private OnClickListener nextButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Next));
+            bus.post(new UserActionEvent(UserInputEventType.Next));
         }
     };
 
     private OnClickListener stopButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Stop));
+            bus.post(new UserActionEvent(UserInputEventType.Stop));
         }
     };
 
     private OnClickListener muteButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Mute));
+            bus.post(new UserActionEvent(UserInputEventType.Mute));
         }
     };
 
     private OnClickListener scrobbleButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Scrobble));
+            bus.post(new UserActionEvent(UserInputEventType.Scrobble));
         }
     };
 
     private OnClickListener shuffleButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Shuffle));
+            bus.post(new UserActionEvent(UserInputEventType.Shuffle));
         }
     };
 
     private OnClickListener repeatButtonListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Repeat));
+            bus.post(new UserActionEvent(UserInputEventType.Repeat));
         }
     };
     private OnClickListener connectivityIndicatorListener = new OnClickListener() {
 
         public void onClick(View v) {
-            busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Initialize));
+            bus.post(new UserActionEvent(UserInputEventType.Initialize));
         }
     };
 
@@ -377,7 +375,7 @@ public class MainView extends RoboSherlockActivity
 
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser)
-                busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.Volume, String.valueOf(seekBar.getProgress())));
+                bus.post(new UserActionEvent(UserInputEventType.Volume, String.valueOf(seekBar.getProgress())));
         }
     };
 
@@ -385,7 +383,7 @@ public class MainView extends RoboSherlockActivity
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if(fromUser)
             {
-                busAdapter.getEventBus().post(new UserActionEvent(UserInputEventType.PlaybackPosition, String.valueOf(progress)));
+                bus.post(new UserActionEvent(UserInputEventType.PlaybackPosition, String.valueOf(progress)));
             }
         }
 

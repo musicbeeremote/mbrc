@@ -3,21 +3,16 @@ package kelsos.mbremote.Views;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
-import com.google.inject.Inject;
-import kelsos.mbremote.Controller.Controller;
+import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockListActivity;
 import kelsos.mbremote.Data.MusicTrack;
 import kelsos.mbremote.Data.PlaylistArrayAdapter;
 import kelsos.mbremote.Others.DelayTimer;
 import kelsos.mbremote.R;
-import roboguice.activity.RoboListActivity;
-import roboguice.event.EventManager;
 
 import java.util.ArrayList;
 
-public class PlaylistView extends RoboListActivity {
-
-    @Inject protected EventManager eventManager;
-    @Inject private Controller controller;
+public class PlaylistView extends RoboSherlockListActivity
+{
 
     private DelayTimer delayTimer;
 
@@ -45,7 +40,6 @@ public class PlaylistView extends RoboListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         String track = ((MusicTrack) getListView().getItemAtPosition(position)).getTitle();
-        //eventManager.fire(new PlaylistViewEvent(this, PlaylistViewAction.PlaySpecifiedTrack, XmlEncoder.encode(track)));
 
     }
 }

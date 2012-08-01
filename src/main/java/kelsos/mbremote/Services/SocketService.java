@@ -1,8 +1,9 @@
 package kelsos.mbremote.Services;
 
+import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import kelsos.mbremote.BusAdapter;
+import com.squareup.otto.Bus;
 import kelsos.mbremote.Enumerations.Input;
 import kelsos.mbremote.Enumerations.SocketServiceEventType;
 import kelsos.mbremote.Events.RawSocketDataEvent;
@@ -18,9 +19,10 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 @Singleton
 public class SocketService {
-    @Inject protected BusAdapter busAdapter;
-    @Inject private SettingsManager settings;
-    @Inject private NotificationService notificationService;
+
+	private Bus bus;
+    private SettingsManager settingsManager;
+    private NotificationService notificationService;
 
     private static int _numberOfTries;
     public static final int MAX_RETRIES = 4;
@@ -33,8 +35,13 @@ public class SocketService {
 
     private DelayTimer _connectionTimer;
 
-    public SocketService()
-    {
+	@Inject
+    public SocketService(SettingsManager settingsManager, NotificationService notificationService, Bus bus)
+	{
+		this.bus = bus;
+		this.settingsManager = settingsManager;
+		this.notificationService = notificationService;
+
         _connectionTimer = new DelayTimer(1000,timerFinishEvent);
         _numberOfTries = 0; // Initialize the connection retry counter.
         initSocketThread(Input.user);
@@ -102,8 +109,8 @@ public class SocketService {
     private class socketConnection implements Runnable {
 
         public void run() {
-            busAdapter.dispatchEvent(new RawSocketDataEvent(SocketServiceEventType.HandshakeUpdate, "false"));
-            SocketAddress socketAddress = settings.getSocketAddress();
+            SocketAddress socketAddress = settingsManager.getSocketAddress();
+			bus.post(new RawSocketDataEvent(SocketServiceEventType.HandshakeUpdate, "false"));
             if (null == socketAddress) return;
             BufferedReader _input;
             try {
@@ -112,11 +119,12 @@ public class SocketService {
                 _output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(_cSocket.getOutputStream()), 4096), true);
                 _input = new BufferedReader(new InputStreamReader(_cSocket.getInputStream()), 4096);
 
-                busAdapter.dispatchEvent(new RawSocketDataEvent(SocketServiceEventType.StatusChange, String.valueOf(_cSocket.isConnected())));
+                bus.post(new RawSocketDataEvent(SocketServiceEventType.StatusChange, String.valueOf(_cSocket.isConnected())));
                 while (_cSocket.isConnected()) {
                     try {
                         final String incoming = _input.readLine();
-                        busAdapter.dispatchEvent(new RawSocketDataEvent(SocketServiceEventType.PacketAvailable, incoming));
+						Log.d("Incoming message", incoming);
+                        bus.post(new RawSocketDataEvent(SocketServiceEventType.PacketAvailable, incoming));
                     } catch (IOException e) {
                         _input.close();
                         _cSocket.close();
@@ -140,7 +148,7 @@ public class SocketService {
                 }
                 _cSocket = null;
 
-                busAdapter.dispatchEvent(new RawSocketDataEvent(SocketServiceEventType.StatusChange, "false"));
+                bus.post(new RawSocketDataEvent(SocketServiceEventType.StatusChange, "false"));
                 initSocketThread(Input.system);
             }
         }

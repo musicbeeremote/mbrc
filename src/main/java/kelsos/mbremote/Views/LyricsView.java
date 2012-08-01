@@ -2,15 +2,16 @@ package kelsos.mbremote.Views;
 
 import android.os.Bundle;
 import android.widget.TextView;
+import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockActivity;
 import kelsos.mbremote.R;
-import roboguice.activity.RoboActivity;
+import roboguice.inject.ContentView;
 
-public class LyricsView extends RoboActivity {
+@ContentView(R.layout.lyrics)
+public class LyricsView extends RoboSherlockActivity
+{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.lyrics);
-        //Controller.getInstance().onActivityStart(this);
     }
 
     public void updateLyricsData(String lyrics, String artist, String title)

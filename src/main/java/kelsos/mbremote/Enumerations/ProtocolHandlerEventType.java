@@ -4,8 +4,8 @@ import kelsos.mbremote.Interfaces.IEventType;
 
 public enum ProtocolHandlerEventType implements IEventType
 {
-     Title,
-    Artist,
+	TITLE_AVAILABLE,
+	ARTIST_AVAILABLE,
     Album,
     Year,
     Volume,
