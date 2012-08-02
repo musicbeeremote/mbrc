@@ -1,17 +1,17 @@
 package kelsos.mbremote.Events;
 
-import kelsos.mbremote.Enumerations.ProtocolHandlerEventType;
+import kelsos.mbremote.enums.ModelDataEventType;
 import kelsos.mbremote.Interfaces.IEvent;
 
 public class ModelDataEvent implements IEvent
 {
-	private ProtocolHandlerEventType type;
+	private ModelDataEventType type;
 	private String data;
-    public ModelDataEvent(ProtocolHandlerEventType type) {
+    public ModelDataEvent(ModelDataEventType type) {
         this.type = type;
     }
 
-    public ProtocolHandlerEventType getType()
+    public ModelDataEventType getType()
     {
         return type;
     }

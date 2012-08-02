@@ -1,6 +1,6 @@
 package kelsos.mbremote.Events;
 
-import kelsos.mbremote.Enumerations.UserInputEventType;
+import kelsos.mbremote.enums.UserInputEventType;
 import kelsos.mbremote.Interfaces.IEvent;
 
 public class UserActionEvent implements IEvent{

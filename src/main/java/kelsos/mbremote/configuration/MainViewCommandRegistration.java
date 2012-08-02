@@ -1,9 +1,9 @@
 package kelsos.mbremote.configuration;
 
 import com.google.inject.Inject;
-import kelsos.mbremote.Command.*;
-import kelsos.mbremote.Controller.Controller;
-import kelsos.mbremote.Enumerations.UserInputEventType;
+import kelsos.mbremote.commands.*;
+import kelsos.mbremote.controller.Controller;
+import kelsos.mbremote.enums.UserInputEventType;
 
 public class MainViewCommandRegistration
 {
@@ -19,10 +19,10 @@ public class MainViewCommandRegistration
 		controller.registerCommand(UserInputEventType.Repeat, RequestRepeatToggleCommand.class);
 		controller.registerCommand(UserInputEventType.Scrobble, RequestScrobbleToggleCommand.class);
 		controller.registerCommand(UserInputEventType.Mute, RequestMuteToggleCommand.class);
-		//controller.registerCommand(UserInputEventType.Lyrics, .class);
+		//controller.registerCommand(UserInputEventType.PROTOCOL_HANDLER_LYRICS_AVAILABLE, .class);
 		controller.registerCommand(UserInputEventType.Refresh, UpdateMainViewCommand.class);
 		controller.registerCommand(UserInputEventType.PlaybackPosition, RequestPlaybackPositionChangeCommand.class);
-		//controller.registerCommand(UserInputEventType.Initialize, .class);
+		controller.registerCommand(UserInputEventType.Initialize, InitiateConnectionCommand.class);
 	}
 
 	@Inject

@@ -17,9 +17,9 @@ import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockActivity;
 import com.google.inject.Inject;
 import com.squareup.otto.Bus;
-import kelsos.mbremote.Controller.RunningActivityAccessor;
-import kelsos.mbremote.Enumerations.PlayState;
-import kelsos.mbremote.Enumerations.UserInputEventType;
+import kelsos.mbremote.controller.RunningActivityAccessor;
+import kelsos.mbremote.enums.PlayState;
+import kelsos.mbremote.enums.UserInputEventType;
 import kelsos.mbremote.Events.UserActionEvent;
 import kelsos.mbremote.R;
 import roboguice.inject.ContentView;
@@ -68,6 +68,13 @@ public class MainView extends RoboSherlockActivity
         SetTextViewTypeface();
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
+
+	@Override
+	public void onDestroy()
+	{
+		accessor.unRegister(this);
+		super.onDestroy();
+	}
 
     /**
      * Sets the typeface of the text views in the main activity to roboto.

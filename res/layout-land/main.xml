@@ -57,7 +57,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="15dp"
         android:orientation="vertical" >
-        <!-- Contains the Album Cover along with the info etc. -->
+        <!-- Contains the PROTOCOL_HANDLER_ALBUM_AVAILABLE Cover along with the info etc. -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

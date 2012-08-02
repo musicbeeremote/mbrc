@@ -1,11 +1,11 @@
 package kelsos.mbremote.configuration;
 
 import com.google.inject.Inject;
-import kelsos.mbremote.Command.ConnectionStatusChangedCommand;
-import kelsos.mbremote.Command.HandshakeCompleteCommand;
-import kelsos.mbremote.Command.SocketDataAvailableCommand;
-import kelsos.mbremote.Controller.Controller;
-import kelsos.mbremote.Enumerations.SocketServiceEventType;
+import kelsos.mbremote.commands.ConnectionStatusChangedCommand;
+import kelsos.mbremote.commands.HandshakeCompleteCommand;
+import kelsos.mbremote.commands.SocketDataAvailableCommand;
+import kelsos.mbremote.controller.Controller;
+import kelsos.mbremote.enums.SocketServiceEventType;
 
 public class SocketServiceCommandRegistration
 {

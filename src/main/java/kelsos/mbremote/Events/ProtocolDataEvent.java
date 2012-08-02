@@ -1,7 +1,7 @@
 package kelsos.mbremote.Events;
 
 import kelsos.mbremote.Data.MusicTrack;
-import kelsos.mbremote.Enumerations.ProtocolHandlerEventType;
+import kelsos.mbremote.enums.ProtocolHandlerEventType;
 import kelsos.mbremote.Interfaces.IEvent;
 
 import java.util.ArrayList;

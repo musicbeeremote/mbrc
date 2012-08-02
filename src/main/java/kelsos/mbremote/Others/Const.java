@@ -6,7 +6,7 @@ public class Const {
      * This part contains various constants
      */
 	public static final String ACTIONS = "Actions";
-	public static final String LYRICS = "Lyrics";
+	public static final String LYRICS = "PROTOCOL_HANDLER_LYRICS_AVAILABLE";
 	public static final String RATING = "Rating";
 	public static final String DATA = "data";
 	public static final String STATE = "state";

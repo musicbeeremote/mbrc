@@ -31,7 +31,7 @@
         <activity android:name=".Views.PlaylistView" >
         </activity>
         <service
-            android:name=".Controller.Controller"
+            android:name=".controller.Controller"
             android:description="@string/connectivity_handler_description"
             android:permission="android.permission.READ_PHONE_STATE" >
             <intent-filter>

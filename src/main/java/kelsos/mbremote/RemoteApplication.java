@@ -4,7 +4,7 @@ import android.app.Application;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
 import com.google.inject.util.Modules;
-import kelsos.mbremote.Controller.Controller;
+import kelsos.mbremote.controller.Controller;
 import kelsos.mbremote.Models.MainDataModel;
 import kelsos.mbremote.Services.ProtocolHandler;
 import kelsos.mbremote.Services.SocketService;
@@ -21,6 +21,7 @@ public class RemoteApplication extends Application
 
 		Injector injector = RoboGuice.getInjector(this);
 
+		//Just getting the instances ready to start working
 		Controller controller = injector.getInstance(Controller.class);
 		MainDataModel model = injector.getInstance(MainDataModel.class);
 		ProtocolHandler protocolHandler = injector.getInstance(ProtocolHandler.class);

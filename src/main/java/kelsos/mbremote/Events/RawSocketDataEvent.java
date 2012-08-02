@@ -1,6 +1,6 @@
 package kelsos.mbremote.Events;
 
-import kelsos.mbremote.Enumerations.SocketServiceEventType;
+import kelsos.mbremote.enums.SocketServiceEventType;
 import kelsos.mbremote.Interfaces.IEvent;
 
 public class RawSocketDataEvent implements IEvent
