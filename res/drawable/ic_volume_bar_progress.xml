@@ -2,16 +2,16 @@
 
 
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@android:id/background">
-        <nine-patch android:src="@drawable/volume_bar_background_np"
-                    android:dither="true"/>
-    </item>
-    <item android:id="@android:id/progress">
-        <clip android:gravity="left"
-              android:clipOrientation="horizontal">
-            <nine-patch android:src="@drawable/volume_bar_fill_np"
-                        android:dither="true">
-                    </nine-patch>
-        </clip>
-    </item>
+	<item android:id="@android:id/background">
+		<nine-patch android:src="@drawable/ic_volume_seeker_background"
+		            android:dither="true"/>
+	</item>
+	<item android:id="@android:id/progress">
+		<clip android:gravity="left"
+		      android:clipOrientation="horizontal">
+			<nine-patch android:src="@drawable/ic_volume_seeker"
+			            android:dither="true">
+			</nine-patch>
+		</clip>
+	</item>
 </layer-list>

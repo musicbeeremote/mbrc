@@ -23,6 +23,7 @@ public class MainDataModelCommandRegistration
 		controller.registerCommand(ModelDataEventType.MODEL_TITLE_UPDATED, VisualUpdateTitleCommand.class);
 		controller.registerCommand(ModelDataEventType.MODEL_VOLUME_UPDATED, VisualUpdateVolumeCommand.class);
 		controller.registerCommand(ModelDataEventType.MODEL_YEAR_UPDATED, VisualUpdateYearTitleCommand.class);
+		controller.registerCommand(ModelDataEventType.MODEL_COVER_NOT_FOUND, NoCoverFoundCommand.class);
 
 
 	}

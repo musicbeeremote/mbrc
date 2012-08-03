@@ -56,17 +56,18 @@ public class MainView extends RoboSherlockActivity
 	@Inject private RunningActivityAccessor accessor;
 
     private boolean userChangingVolume;
-    private Timer progressUpdateTimer_;
-    private TimerTask progressUpdateTask_;
+    private Timer progressUpdateTimer;
+    private TimerTask progressUpdateTask;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		accessor.register(this);
-        RegisterListeners();
         userChangingVolume = false;
+		RegisterListeners();
         SetTextViewTypeface();
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
+		bus.post(new UserActionEvent(UserInputEventType.Refresh));
     }
 
 	@Override
@@ -87,13 +88,13 @@ public class MainView extends RoboSherlockActivity
         yearLabel.setSelected(true);
 
         Typeface robotoLight = Typeface.createFromAsset(getAssets(), "fonts/roboto_light.ttf");
-        Typeface myriadPro = Typeface.createFromAsset(getAssets(), "fonts/fresca.ttf");
+        Typeface fresca = Typeface.createFromAsset(getAssets(), "fonts/fresca.ttf");
         artistLabel.setTypeface(robotoLight);
         titleLabel.setTypeface(robotoLight);
         albumLabel.setTypeface(robotoLight);
         yearLabel.setTypeface(robotoLight);
-        trackProgressCurrent.setTypeface(myriadPro);
-        trackDuration.setTypeface(myriadPro);
+        trackProgressCurrent.setTypeface(fresca);
+        trackDuration.setTypeface(fresca);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -147,6 +148,11 @@ public class MainView extends RoboSherlockActivity
             scrobbleButton.setImageResource(R.drawable.ic_media_scrobble_off);
         }
     }
+
+	public void resetAlbumCover()
+	{
+		albumCover.setImageResource(R.drawable.ic_image_no_cover);
+	}
 
     public void updateAlbumCover(Bitmap cover) {
         albumCover.setImageBitmap(cover);
@@ -210,7 +216,7 @@ public class MainView extends RoboSherlockActivity
                 trackProgressCurrent.setText("00:00");
             case Undefined:
                 playPauseButton.setImageResource(R.drawable.ic_media_play);
-                stopButton.setImageResource(R.drawable.ic_media_stop_pressed);
+                stopButton.setImageResource(R.drawable.ic_media_stop_disabled);
                 stopButton.setEnabled(false);
                 break;
         }
@@ -273,8 +279,8 @@ public class MainView extends RoboSherlockActivity
         /* If the scheduled tasks is not null then cancel it and clear it along with the timer to create them anew */
         final int timerPeriod = 100;
         stopTrackProgressAnimation();
-        progressUpdateTimer_ = new Timer(true);
-        progressUpdateTask_ = new TimerTask() {
+        progressUpdateTimer = new Timer(true);
+        progressUpdateTask = new TimerTask() {
             @Override
             public void run() {
                 int currentProgress = trackProgressSlider.getProgress()/1000;
@@ -289,20 +295,20 @@ public class MainView extends RoboSherlockActivity
 
             }
         };
-        progressUpdateTimer_.schedule(progressUpdateTask_, 0, timerPeriod);
+        progressUpdateTimer.schedule(progressUpdateTask, 0, timerPeriod);
     }
 
     /**
      * If the track progress animation is running the the function stops it.
      */
     private void stopTrackProgressAnimation() {
-        if(progressUpdateTask_!=null)
+        if(progressUpdateTask !=null)
         {
-            progressUpdateTask_.cancel();
-            progressUpdateTask_ = null;
-            progressUpdateTimer_.cancel();
-            progressUpdateTimer_.purge();
-            progressUpdateTimer_ = null;
+            progressUpdateTask.cancel();
+            progressUpdateTask = null;
+            progressUpdateTimer.cancel();
+            progressUpdateTimer.purge();
+            progressUpdateTimer = null;
         }
     }
 

@@ -2,237 +2,219 @@ package kelsos.mbremote.Models;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.squareup.otto.Bus;
-import kelsos.mbremote.utilities.ImageDecoder;
-import kelsos.mbremote.enums.ModelDataEventType;
-import kelsos.mbremote.enums.PlayState;
 import kelsos.mbremote.Events.ModelDataEvent;
 import kelsos.mbremote.Others.Const;
-import kelsos.mbremote.R;
-import roboguice.activity.event.OnCreateEvent;
-import roboguice.event.Observes;
-import roboguice.inject.InjectResource;
+import kelsos.mbremote.enums.ModelDataEventType;
+import kelsos.mbremote.enums.PlayState;
+import kelsos.mbremote.utilities.ImageDecoder;
 
 @Singleton
-public class MainDataModel {
+public class MainDataModel
+{
 
-    private Bus bus;
+	private Bus bus;
 	private Context context;
 
-	@InjectResource(R.drawable.ic_image_no_cover) Drawable noCover;
-
 	@Inject
-    public MainDataModel(Bus bus, Context context){
+	public MainDataModel(Bus bus, Context context)
+	{
 		this.context = context;
 		this.bus = bus;
 
-       _title = _artist = _album = _year = "";
-        _volume = 100;
+		_title = _artist = _album = _year = "";
+		_volume = 100;
 
-        _isConnectionActive=false;
-        _isRepeatButtonActive=false;
-        _isShuffleButtonActive=false;
-        _isScrobbleButtonActive=false;
-        _isMuteButtonActive=false;
-        _isDeviceOnline=false;
-        _playState = PlayState.Stopped;
-
-    }
-
-	public void handleOnCreateEvent(@Observes OnCreateEvent e)
-	{
-		_albumCover = ((BitmapDrawable)noCover).getBitmap();
+		_isConnectionActive = false;
+		_isRepeatButtonActive = false;
+		_isShuffleButtonActive = false;
+		_isScrobbleButtonActive = false;
+		_isMuteButtonActive = false;
+		_isDeviceOnline = false;
+		_playState = PlayState.Stopped;
+		_albumCover = null;
 	}
 
-    private String _title;
-    private String _artist;
-    private String _album;
-    private String _year;
-    private int _volume;
-    private Bitmap _albumCover;
+	private String _title;
+	private String _artist;
+	private String _album;
+	private String _year;
+	private int _volume;
+	private Bitmap _albumCover;
 
-    private boolean _isConnectionActive;
-    private boolean _isRepeatButtonActive;
-    private boolean _isShuffleButtonActive;
-    private boolean _isScrobbleButtonActive;
-    private boolean _isMuteButtonActive;
-    private boolean _isDeviceOnline;
+	private boolean _isConnectionActive;
+	private boolean _isRepeatButtonActive;
+	private boolean _isShuffleButtonActive;
+	private boolean _isScrobbleButtonActive;
+	private boolean _isMuteButtonActive;
+	private boolean _isDeviceOnline;
 
 
-    private PlayState _playState;
+	private PlayState _playState;
 
-    public void setTitle(String title)
-    {
-        if(title.equals(_title)) return;
-        _title=title;
-        bus.post(new ModelDataEvent(ModelDataEventType.MODEL_TITLE_UPDATED));
-    }
+	public void setTitle(String title)
+	{
+		if (title.equals(_title)) return;
+		_title = title;
+		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_TITLE_UPDATED));
+	}
 
-    public String getTitle()
-    {
-        return _title;
-    }
+	public String getTitle()
+	{
+		return _title;
+	}
 
-    public void setAlbum(String album)
-    {
-        if(album.equals(_album)) return;
-        _album = album;
-        bus.post(new ModelDataEvent(ModelDataEventType.MODEL_ALBUM_UPDATED));
-    }
+	public void setAlbum(String album)
+	{
+		if (album.equals(_album)) return;
+		_album = album;
+		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_ALBUM_UPDATED));
+	}
 
-    public String getAlbum()
-    {
-        return _album;
-    }
+	public String getAlbum()
+	{
+		return _album;
+	}
 
-    public void setArtist(String artist)
-    {
-        if(artist.equals(_artist)) return;
-        _artist = artist;
-        bus.post(new ModelDataEvent(ModelDataEventType.MODEL_ARTIST_UPDATED));
-    }
+	public void setArtist(String artist)
+	{
+		if (artist.equals(_artist)) return;
+		_artist = artist;
+		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_ARTIST_UPDATED));
+	}
 
-    public String getArtist()
-    {
-        return _artist;
-    }
+	public String getArtist()
+	{
+		return _artist;
+	}
 
-    public void setYear(String year)
-    {
-        if(year.equals(_year)) return;
-        _year=year;
-        bus.post(new ModelDataEvent(ModelDataEventType.MODEL_YEAR_UPDATED));
-    }
+	public void setYear(String year)
+	{
+		if (year.equals(_year)) return;
+		_year = year;
+		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_YEAR_UPDATED));
+	}
 
-    public String getYear()
-    {
-        return _year;
-    }
+	public String getYear()
+	{
+		return _year;
+	}
 
-    public void setVolume(String volume)
-    {
-        int newVolume = Integer.parseInt(volume);
-        _volume = newVolume;
-        bus.post(new ModelDataEvent(ModelDataEventType.MODEL_VOLUME_UPDATED));
-    }
+	public void setVolume(String volume)
+	{
+		_volume = Integer.parseInt(volume);
+		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_VOLUME_UPDATED));
+	}
 
-    public int getVolume()
-    {
-        return _volume;
-    }
+	public int getVolume()
+	{
+		return _volume;
+	}
 
-    public void setAlbumCover(String base64format)
-    {
-        if(base64format==null || base64format== "")
-        {
-             setAlbumCover(((BitmapDrawable)noCover).getBitmap());
-        }
-        else
-        {
-            new ImageDecoder(context, base64format).execute();
-        }
-    }
+	public void setAlbumCover(String base64format)
+	{
+		if (base64format == null || base64format.equals(""))
+		{
+			bus.post(new ModelDataEvent(ModelDataEventType.MODEL_COVER_NOT_FOUND));
+		} else
+		{
+			new ImageDecoder(context, base64format).execute();
+		}
+	}
 
-    public void setAlbumCover(Bitmap cover)
-    {
-        _albumCover = cover;
-        bus.post(new ModelDataEvent(ModelDataEventType.MODEL_COVER_UPDATED));
-    }
+	public void setAlbumCover(Bitmap cover)
+	{
+		_albumCover = cover;
+		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_COVER_UPDATED));
+	}
 
-    public Bitmap getAlbumCover()
-    {
-        return _albumCover;
-    }
+	public Bitmap getAlbumCover()
+	{
+		return _albumCover;
+	}
 
-    public void setConnectionState(String connectionActive)
-    {
-        boolean newStatus = Boolean.parseBoolean(connectionActive);
-        _isConnectionActive=newStatus;
-        bus.post(new ModelDataEvent(ModelDataEventType.MODEL_CONNECTION_STATE_UPDATED));
-    }
+	public void setConnectionState(String connectionActive)
+	{
+		_isConnectionActive = Boolean.parseBoolean(connectionActive);
+		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_CONNECTION_STATE_UPDATED));
+	}
 
-    public boolean getIsConnectionActive()
-    {
-       return _isConnectionActive;
-    }
+	public boolean getIsConnectionActive()
+	{
+		return _isConnectionActive;
+	}
 
-    public void setRepeatState(String repeatButtonActive)
-    {
-        boolean newStatus = (repeatButtonActive.equals("All"));
-        _isRepeatButtonActive = newStatus;
-        bus.post(new ModelDataEvent(ModelDataEventType.MODEL_REPEAT_STATE_UPDATED));
-    }
+	public void setRepeatState(String repeatButtonActive)
+	{
+		_isRepeatButtonActive = (repeatButtonActive.equals("All"));
+		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_REPEAT_STATE_UPDATED));
+	}
 
-    public boolean getIsRepeatButtonActive()
-    {
-        return _isRepeatButtonActive;
-    }
+	public boolean getIsRepeatButtonActive()
+	{
+		return _isRepeatButtonActive;
+	}
 
-    public void setShuffleState(String shuffleButtonActive)
-    {
-        boolean newStatus = Boolean.parseBoolean(shuffleButtonActive);
-        _isShuffleButtonActive = newStatus;
-        bus.post(new ModelDataEvent(ModelDataEventType.MODEL_SHUFFLE_STATE_UPDATED));
-    }
+	public void setShuffleState(String shuffleButtonActive)
+	{
+		_isShuffleButtonActive = Boolean.parseBoolean(shuffleButtonActive);
+		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_SHUFFLE_STATE_UPDATED));
+	}
 
-    public boolean getIsShuffleButtonActive()
-    {
-        return _isShuffleButtonActive;
-    }
+	public boolean getIsShuffleButtonActive()
+	{
+		return _isShuffleButtonActive;
+	}
 
-    public void setScrobbleState(String scrobbleButtonActive)
-    {
-        boolean newStatus = Boolean.parseBoolean(scrobbleButtonActive);
-        _isScrobbleButtonActive = newStatus;
-        bus.post(new ModelDataEvent(ModelDataEventType.MODEL_SCROBBLE_STATE_UPDATED));
-    }
+	public void setScrobbleState(String scrobbleButtonActive)
+	{
+		_isScrobbleButtonActive = Boolean.parseBoolean(scrobbleButtonActive);
+		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_SCROBBLE_STATE_UPDATED));
+	}
 
-    public boolean getIsScrobbleButtonActive()
-    {
-        return _isScrobbleButtonActive;
-    }
+	public boolean getIsScrobbleButtonActive()
+	{
+		return _isScrobbleButtonActive;
+	}
 
-    public void setMuteState(String muteButtonActive)
-    {
-        boolean newStatus = Boolean.parseBoolean(muteButtonActive);
-        _isMuteButtonActive = newStatus;
-        bus.post(new ModelDataEvent(ModelDataEventType.MODEL_MUTE_STATE_UPDATED));
-    }
+	public void setMuteState(String muteButtonActive)
+	{
+		_isMuteButtonActive = Boolean.parseBoolean(muteButtonActive);
+		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_MUTE_STATE_UPDATED));
+	}
 
-    public boolean getIsMuteButtonActive()
-    {
-        return _isMuteButtonActive;
-    }
+	public boolean getIsMuteButtonActive()
+	{
+		return _isMuteButtonActive;
+	}
 
-    public void setPlayState(String playState)
-    {
-        PlayState newState = PlayState.Undefined;
-        if(playState.equalsIgnoreCase(Const.PLAYING)) newState = PlayState.Playing;
-        else if (playState.equalsIgnoreCase(Const.STOPPED)) newState = PlayState.Stopped;
-        else if (playState.equalsIgnoreCase(Const.PAUSED)) newState = PlayState.Paused;
-        _playState = newState;
-        bus.post(new ModelDataEvent(ModelDataEventType.MODEL_PLAY_STATE_UPDATED));
-    }
+	public void setPlayState(String playState)
+	{
+		PlayState newState = PlayState.Undefined;
+		if (playState.equalsIgnoreCase(Const.PLAYING)) newState = PlayState.Playing;
+		else if (playState.equalsIgnoreCase(Const.STOPPED)) newState = PlayState.Stopped;
+		else if (playState.equalsIgnoreCase(Const.PAUSED)) newState = PlayState.Paused;
+		_playState = newState;
+		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_PLAY_STATE_UPDATED));
+	}
 
-    public PlayState getPlayState()
-    {
-        return _playState;
-    }
+	public PlayState getPlayState()
+	{
+		return _playState;
+	}
 
-    public void setIsDeviceOnline(boolean value)
-    {
-        _isDeviceOnline = value;
-        bus.post(new ModelDataEvent(ModelDataEventType.MODEL_ONLINE_STATE_UPDATED));
-    }
+	public void setIsDeviceOnline(boolean value)
+	{
+		_isDeviceOnline = value;
+		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_ONLINE_STATE_UPDATED));
+	}
 
-    public boolean getIsDeviceOnline()
-    {
-        return _isDeviceOnline;
-    }
+	public boolean getIsDeviceOnline()
+	{
+		return _isDeviceOnline;
+	}
 
 }
 

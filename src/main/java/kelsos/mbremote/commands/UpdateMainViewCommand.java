@@ -1,11 +1,11 @@
 package kelsos.mbremote.commands;
 
 import com.google.inject.Inject;
-import kelsos.mbremote.controller.RunningActivityAccessor;
 import kelsos.mbremote.Interfaces.ICommand;
 import kelsos.mbremote.Interfaces.IEvent;
 import kelsos.mbremote.Models.MainDataModel;
 import kelsos.mbremote.Views.MainView;
+import kelsos.mbremote.controller.RunningActivityAccessor;
 
 public class UpdateMainViewCommand implements ICommand
 {
@@ -16,16 +16,25 @@ public class UpdateMainViewCommand implements ICommand
 
 	public void execute(IEvent e)
 	{
-		if(accessor.getRunningActivity().getClass()!=MainView.class) return;
-		(accessor.getRunningActivity()).runOnUiThread(new Runnable() {
-			public void run() {
-				 MainView view = (MainView)accessor.getRunningActivity();
-				  view.updateTitleText(model.getTitle());
+		if (accessor.getRunningActivity().getClass() != MainView.class) return;
+		(accessor.getRunningActivity()).runOnUiThread(new Runnable()
+		{
+			public void run()
+			{
+				MainView view = (MainView) accessor.getRunningActivity();
+				view.updateTitleText(model.getTitle());
 				view.updateArtistText(model.getArtist());
 				view.updateAlbumText(model.getAlbum());
 				view.updateYearText(model.getYear());
 				view.updateVolumeData(model.getVolume());
-				view.updateAlbumCover(model.getAlbumCover());
+				if(model.getAlbumCover()!=null)
+				{
+					view.updateAlbumCover(model.getAlbumCover());
+				}
+				else
+				{
+					view.resetAlbumCover();
+				}
 				view.updateConnectionIndicator(model.getIsConnectionActive());
 				view.updateRepeatButtonState(model.getIsRepeatButtonActive());
 				view.updateShuffleButtonState(model.getIsShuffleButtonActive());

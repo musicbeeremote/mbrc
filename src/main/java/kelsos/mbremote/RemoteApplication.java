@@ -28,5 +28,6 @@ public class RemoteApplication extends Application
 		ProtocolHandler protocolHandler = injector.getInstance(ProtocolHandler.class);
 		SocketService socketService = injector.getInstance(SocketService.class);
 		RemoteBroadcastReceiver remoteBroadcastReceiver = injector.getInstance(RemoteBroadcastReceiver.class);
+
 	}
 }
