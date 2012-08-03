@@ -87,7 +87,7 @@ public class MainView extends RoboSherlockActivity
         yearLabel.setSelected(true);
 
         Typeface robotoLight = Typeface.createFromAsset(getAssets(), "fonts/roboto_light.ttf");
-        Typeface myriadPro = Typeface.createFromAsset(getAssets(), "fonts/myriadproregular.ttf");
+        Typeface myriadPro = Typeface.createFromAsset(getAssets(), "fonts/fresca.ttf");
         artistLabel.setTypeface(robotoLight);
         titleLabel.setTypeface(robotoLight);
         albumLabel.setTypeface(robotoLight);

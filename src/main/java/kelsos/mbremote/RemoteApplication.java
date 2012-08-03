@@ -8,6 +8,7 @@ import kelsos.mbremote.controller.Controller;
 import kelsos.mbremote.Models.MainDataModel;
 import kelsos.mbremote.Services.ProtocolHandler;
 import kelsos.mbremote.Services.SocketService;
+import kelsos.mbremote.utilities.RemoteBroadcastReceiver;
 import roboguice.RoboGuice;
 
 public class RemoteApplication extends Application
@@ -26,5 +27,6 @@ public class RemoteApplication extends Application
 		MainDataModel model = injector.getInstance(MainDataModel.class);
 		ProtocolHandler protocolHandler = injector.getInstance(ProtocolHandler.class);
 		SocketService socketService = injector.getInstance(SocketService.class);
+		RemoteBroadcastReceiver remoteBroadcastReceiver = injector.getInstance(RemoteBroadcastReceiver.class);
 	}
 }

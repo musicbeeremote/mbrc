@@ -70,7 +70,7 @@
                 android:id="@+id/connectivityIndicator"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:background="@android:color/transparent"
+                android:background="@drawable/selectable_background_remotetheme"
                 android:clickable="true"
                 android:contentDescription="@string/connectivity_indicator"
                 android:src="@drawable/ic_icon_indicator_red" />
@@ -79,7 +79,7 @@
                 android:layout_width="44dp"
                 android:layout_height="44dp"
                 android:layout_marginTop="10dp"
-                android:background="@android:color/transparent"
+                android:background="@drawable/selectable_background_remotetheme"
                 android:clickable="true"
                 android:contentDescription="@string/repeat_button"
                 android:scaleType="fitCenter"
@@ -89,7 +89,7 @@
                 android:layout_width="44dp"
                 android:layout_height="44dp"
                 android:layout_marginTop="10dp"
-                android:background="@android:color/transparent"
+                android:background="@drawable/selectable_background_remotetheme"
                 android:contentDescription="@string/shuffle_button"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_shuffle" />
@@ -98,7 +98,7 @@
                 android:layout_width="44dp"
                 android:layout_height="44dp"
                 android:layout_marginTop="10dp"
-                android:background="@android:color/transparent"
+                android:background="@drawable/selectable_background_remotetheme"
                 android:contentDescription="@string/scrobbler_button"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_scrobble_red" />
@@ -107,7 +107,7 @@
                 android:layout_width="44dp"
                 android:layout_height="44dp"
                 android:layout_marginTop="10dp"
-                android:background="@android:color/transparent"
+                android:background="@drawable/selectable_background_remotetheme"
                 android:contentDescription="@string/mute_button"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_mute_full" />
@@ -226,13 +226,13 @@
             android:background="@drawable/selectable_background_remotetheme"
             android:contentDescription="@string/previous_track_button"
             android:scaleType="fitCenter"
-            android:src="@drawable/skin_media_previous" />
+            android:src="@drawable/ic_media_previous" />
         <ImageButton
             android:id="@+id/stopButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginRight="15dp"
-            android:background="@android:color/transparent"
+            android:background="@drawable/selectable_background_remotetheme"
             android:contentDescription="@string/stop_playback_button"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_stop" />
@@ -241,7 +241,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginRight="17dp"
-            android:background="@android:color/transparent"
+            android:background="@drawable/selectable_background_remotetheme"
             android:clickable="true"
             android:contentDescription="@string/play_pause_button"
             android:scaleType="fitCenter"
@@ -250,9 +250,9 @@
             android:id="@+id/nextButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/skin_media_next"
+            android:background="@drawable/selectable_background_remotetheme"
             android:contentDescription="@string/next_track_button"
             android:scaleType="fitCenter"
-            android:src="@android:color/transparent" />
+            android:src="@drawable/ic_media_next" />
     </LinearLayout>
 </LinearLayout>

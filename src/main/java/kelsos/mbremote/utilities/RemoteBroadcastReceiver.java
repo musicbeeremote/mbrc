@@ -2,6 +2,7 @@ package kelsos.mbremote.utilities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -19,12 +20,15 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver
 {
 	private SettingsManager settingsManager;
 	private Bus bus;
+	private Context context;
 
 	@Inject
-	public RemoteBroadcastReceiver(SettingsManager settingsManager, Bus bus)
+	public RemoteBroadcastReceiver(SettingsManager settingsManager, Bus bus, Context context)
 	{
 		this.settingsManager = settingsManager;
 		this.bus = bus;
+		this.context = context;
+		this.installFilter();
 	}
 
 	@Override
@@ -38,7 +42,7 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver
 			{
 				if (settingsManager.isVolumeReducedOnRinging())
 				{
-					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_REDUCE_VOLUME,""));
+					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_REDUCE_VOLUME));
 
 				}
 			}
@@ -54,6 +58,21 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver
 			}
 		}
 	}
+
+	/**
+	 * Initialized and installs the IntentFilter listening for the SONG_CHANGED
+	 * intent fired by the ReplyHandler or the PHONE_STATE intent fired by the
+	 * Android operating system.
+	 */
+	private void installFilter()
+	{
+		IntentFilter _nmFilter = new IntentFilter();
+		_nmFilter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
+		_nmFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+		context.registerReceiver(this, _nmFilter);
+	}
+
+
 
 
 }

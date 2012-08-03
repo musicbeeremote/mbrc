@@ -1,68 +1,60 @@
 package kelsos.mbremote.Messaging;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.widget.Toast;
 import com.google.inject.Inject;
+import kelsos.mbremote.controller.RunningActivityAccessor;
 
-public class NotificationService {
-    @Inject Context context;
+public class NotificationService
+{
+	private Context context;
+	private RunningActivityAccessor accessor;
 
+	@Inject
+	public NotificationService(Context context, RunningActivityAccessor accessor)
+	{
+		this.context = context;
+		this.accessor = accessor;
+	}
 
-    public NotificationService() {
+	/**
+	 * Given a message
+	 *
+	 * @param message
+	 */
+	private void showToast(final String message)
+	{
+		if (accessor.getRunningActivity() == null) return;
+		accessor.getRunningActivity().runOnUiThread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
 
-    }
+	/**
+	 * Using an id of the string stored in the strings XML this function
+	 * displays a toast window.
+	 */
+	public void showToastMessage(final int id)
+	{
+		String data = context.getString(id);
+		showToast(data);
+	}
 
-    /**
-     * An Asynctask that is used to display the toast message.
-     */
-    private class ToastMessageTask extends AsyncTask<String,String,String>
-    {
-        String toastMessage;
-        @Override
-        protected String doInBackground(String... strings) {
-            toastMessage = strings[0];
-            return toastMessage;
-        }
-
-        @Override
-        protected void onPostExecute(String string)
-        {
-            showToast(string);
-        }
-    }
-
-    /**
-     * Given a string that contains a message the function will display the message
-     * in a toast window.
-     * @param message The message that will be displayed.
-     */
-    private void showToast(final String message) {
-                if(context!=null)
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-
-    }
-
-    /**
-     *  Using an id of the string stored in the strings XML this function
-     *  displays a toast window.
-     */
-    public void showToastMessage(final int id) {
-          if(context==null) return;
-          String data = context.getString(id);
-          new ToastMessageTask().execute(data);
-    }
-
-    /**
-     * Given a message, it displays the message on a toast window.
-     * If the AppNotification manager is not properly initialized
-     * nothing happens.
-     * @param message
-     */
-    public void showToastMessage(final String message)
-    {
-        if(context==null) return;
-        new ToastMessageTask().execute(message);
-    }
+	/**
+	 * Given a message, it displays the message on a toast window.
+	 * If the AppNotification manager is not properly initialized
+	 * nothing happens.
+	 *
+	 * @param message
+	 */
+	public void showToastMessage(final String message)
+	{
+		showToast(message);
+	}
 
 }

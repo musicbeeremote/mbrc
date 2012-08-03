@@ -43,6 +43,8 @@ public class Controller extends RoboService
 		MainDataModelCommandRegistration.registerCommands(this);
 	}
 
+	public Controller(){};
+
 	private final IBinder mBinder = new ControllerBinder();
 
 	public class ControllerBinder extends Binder
