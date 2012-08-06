@@ -18,7 +18,6 @@ public enum UserInputEventType implements IEventType
     Volume,
     PlaybackPosition,
     Initialize,
-	GetPlaylist,
 	PlaySpecifiedTrack
 
 }

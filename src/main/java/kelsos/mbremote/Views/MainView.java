@@ -17,16 +17,18 @@ import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockActivity;
 import com.google.inject.Inject;
 import com.squareup.otto.Bus;
+import kelsos.mbremote.Events.UserActionEvent;
+import kelsos.mbremote.R;
 import kelsos.mbremote.controller.RunningActivityAccessor;
 import kelsos.mbremote.enums.PlayState;
 import kelsos.mbremote.enums.UserInputEventType;
-import kelsos.mbremote.Events.UserActionEvent;
-import kelsos.mbremote.R;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static android.os.Build.VERSION.SDK_INT;
 
 @ContentView(R.layout.main)
 public class MainView extends RoboSherlockActivity
@@ -62,13 +64,48 @@ public class MainView extends RoboSherlockActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		//HACK: in 2.2 the onContentChanged(); method does not get called before the on create.
+		if(SDK_INT >= 7 && SDK_INT <= 8)
+		{
+			super.onContentChanged();
+		}
 		accessor.register(this);
         userChangingVolume = false;
-		RegisterListeners();
-        SetTextViewTypeface();
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
 		bus.post(new UserActionEvent(UserInputEventType.Refresh));
+		RegisterListeners();
+		SetTextViewTypeface();
     }
+
+	@Override
+	protected void onStart()
+	{
+		super.onStart();
+		accessor.register(this);
+		bus.post(new UserActionEvent(UserInputEventType.Refresh));
+	}
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		accessor.register(this);
+		bus.post(new UserActionEvent(UserInputEventType.Refresh));
+	}
+
+	@Override
+	protected void onPause()
+	{
+		accessor.unRegister(this);
+		super.onPause();
+	}
+
+	@Override
+	protected void onStop()
+	{
+		accessor.unRegister(this);
+		super.onStop();
+	}
 
 	@Override
 	public void onDestroy()
@@ -108,6 +145,12 @@ public class MainView extends RoboSherlockActivity
 		switch(item.getItemId()){
 			case R.id.main_menu_settings:
 				startActivity(new Intent(this, AppPreferenceView.class));
+				return true;
+			case R.id.main_menu_lyrics:
+				startActivity(new Intent(this, LyricsView.class));
+				return true;
+			case R.id.main_menu_playlist:
+				startActivity(new Intent(this, PlaylistView.class));
 				return true;
 			default:
 				return false;

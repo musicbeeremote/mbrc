@@ -12,6 +12,14 @@
 	<packaging>apk</packaging>
 	<name>RC for MusicBee</name>
 
+	<developers>
+		<developer>
+			<id>kelsos</id>
+			<name>Konstantinos Paparas</name>
+			<email>kelsos86@gmail.com</email>
+		</developer>
+	</developers>
+
 	
 	<!-- utf8 source encoding -->
 	<properties>
@@ -46,7 +54,8 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<dependency><!-- Support library (aka compatibility library) from the central repository as well
+		<dependency>
+			<!-- Support library (aka compatibility library) from the central repository as well
 		note that this uses default scope (NOT provided) since the library will need to be added to your apk -->
 			<groupId>com.google.android</groupId>
 			<artifactId>support-v4</artifactId>
@@ -68,7 +77,23 @@
 			<version>1.4</version>
 		</dependency>
 
+		<!-- Roboelectric and JUnit for testing -->
+		<!-- Make sure this is below the android dependencies -->
+		<dependency>
+			<groupId>com.pivotallabs</groupId>
+			<artifactId>robolectric</artifactId>
+			<version>1.2-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
+
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
@@ -116,5 +141,12 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>6</version>
+	</parent>
+
 
 </project>

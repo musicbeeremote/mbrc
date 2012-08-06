@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal" >
+
     <LinearLayout
         android:id="@+id/extraMediaButtonLinearLayout"
         android:layout_width="43dp"
@@ -11,6 +12,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="15dp"
         android:orientation="vertical" >
+
         <ImageButton
             android:id="@+id/connectivityIndicator"
             android:layout_width="40dp"
@@ -18,6 +20,7 @@
             android:background="@android:color/transparent"
             android:contentDescription="@string/connectivity_indicator"
             android:src="@drawable/ic_icon_indicator_red" />
+
         <ImageButton
             android:id="@+id/repeatButton"
             android:layout_width="40dp"
@@ -27,6 +30,7 @@
             android:contentDescription="@string/repeat_button"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_repeat" />
+
         <ImageButton
             android:id="@+id/shuffleButton"
             android:layout_width="40dp"
@@ -35,6 +39,7 @@
             android:contentDescription="@string/shuffle_button"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_shuffle" />
+
         <ImageButton
             android:id="@+id/scrobbleButton"
             android:layout_width="40dp"
@@ -43,6 +48,7 @@
             android:contentDescription="@string/scrobbler_button"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_scrobble_red" />
+
         <ImageButton
             android:id="@+id/muteButton"
             android:layout_width="40dp"
@@ -52,16 +58,23 @@
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_mute_full" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="15dp"
         android:orientation="vertical" >
-        <!-- Contains the PROTOCOL_HANDLER_ALBUM_AVAILABLE Cover along with the info etc. -->
+
+        <!--
+             Contains the PROTOCOL_HANDLER_ALBUM_AVAILABLE Cover along with the 
+			info etc.
+        -->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
+
             <ImageView
                 android:id="@+id/albumCover"
                 android:layout_width="200dp"
@@ -73,10 +86,12 @@
                 android:padding="1dp"
                 android:src="@drawable/ic_image_no_cover" />
             <!-- Track information along with media navigation buttons -->
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
+
                 <TextView
                     android:id="@+id/titleLabel"
                     android:layout_width="250dp"
@@ -91,7 +106,10 @@
                     android:singleLine="true"
                     android:text="@string/mainview_titlelabel"
                     android:textColor="#FFFFFF"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    android:textStyle="normal"
+                    android:typeface="sans" />
+
                 <TextView
                     android:id="@+id/artistLabel"
                     android:layout_width="225dp"
@@ -107,6 +125,7 @@
                     android:text="@string/mainview_artistlabel"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp" />
+
                 <TextView
                     android:id="@+id/albumLabel"
                     android:layout_width="match_parent"
@@ -122,7 +141,9 @@
                     android:singleLine="true"
                     android:text="@string/mainview_albumlabel"
                     android:textColor="#FFFFFF"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:typeface="sans" />
+
                 <TextView
                     android:id="@+id/yearLabel"
                     android:layout_width="match_parent"
@@ -140,7 +161,56 @@
                     android:text="@string/mainview_datelabel"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp" />
+
+                <LinearLayout
+                    android:id="@+id/trackProgressLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-18dp"
+                    android:orientation="vertical" >
+
+                    <SeekBar
+                        android:id="@+id/trackProgressSlider"
+                        android:layout_width="255dp"
+                        android:layout_height="wrap_content"
+                        android:maxHeight="5dp"
+                        android:minHeight="5dp"
+                        android:progress="0"
+                        android:progressDrawable="@drawable/ic_duration_bar_progress"
+                        android:thumb="@null" />
+
+                    <LinearLayout
+                        android:id="@+id/trackProgressLabelsLayout"
+                        android:layout_width="255dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="5dp"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/trackProgressCurrent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/duration"
+                            android:textColor="#FFFFFF"
+                            android:textSize="11dp" />
+
+                        <TextView
+                            android:id="@+id/trackDuration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="30dp"
+                            android:layout_weight="1"
+                            android:gravity="right"
+                            android:text="@string/mainview_total_duration"
+                            android:textColor="#FFFFFF"
+                            android:textSize="11dp" />
+                    </LinearLayout>
+                </LinearLayout>
                 <!-- Media navigation bar -->
+
                 <LinearLayout
                     android:id="@+id/mediaButtonsLinearLayout"
                     android:layout_width="wrap_content"
@@ -148,6 +218,7 @@
                     android:layout_marginLeft="15dp"
                     android:gravity="center_horizontal"
                     android:orientation="horizontal" >
+
                     <ImageButton
                         android:id="@+id/previousButton"
                         android:layout_width="60dp"
@@ -156,6 +227,7 @@
                         android:contentDescription="@string/previous_track_button"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_media_previous" />
+
                     <ImageButton
                         android:id="@+id/playPauseButton"
                         android:layout_width="60dp"
@@ -165,6 +237,7 @@
                         android:contentDescription="@string/play_pause_button"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_media_play" />
+
                     <ImageButton
                         android:id="@+id/stopButton"
                         android:layout_width="60dp"
@@ -173,6 +246,7 @@
                         android:contentDescription="@string/stop_playback_button"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_media_stop" />
+
                     <ImageButton
                         android:id="@+id/nextButton"
                         android:layout_width="60dp"
@@ -185,6 +259,7 @@
             </LinearLayout>
         </LinearLayout>
         <!-- This is the lowest part of the second half of the screen -->
+
         <SeekBar
             android:id="@+id/volumeSlider"
             android:layout_width="match_parent"
@@ -194,4 +269,5 @@
             android:paddingRight="10dp"
             android:progress="0" />
     </LinearLayout>
+
 </LinearLayout>

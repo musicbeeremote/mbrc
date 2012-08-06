@@ -47,11 +47,6 @@ public class ProtocolHandler
 		_updateTimer = new DelayTimer(2000, updateTimerFinishEvent);
 	}
 
-	public boolean isHandshakeComplete()
-	{
-		return isHandshakeComplete;
-	}
-
 	public void setHandshakeComplete(boolean handshakeComplete)
 	{
 		isHandshakeComplete = handshakeComplete;
@@ -80,12 +75,13 @@ public class ProtocolHandler
 
 				if (!isHandshakeComplete)
 				{
-					if (xmlNode.getNodeName().contains(Protocol.PLAYER))
+
+				if (xmlNode.getNodeName().contains(Protocol.PLAYER))
 					{
 						requestAction(PlayerAction.Protocol);
 					} else if (xmlNode.getNodeName().contains(Protocol.PROTOCOL))
 					{
-						ServerProtocolVersion = Double.parseDouble(xmlNode.getTextContent());
+						ServerProtocolVersion = Double.parseDouble(xmlNode.getFirstChild().getNodeValue());
 						isHandshakeComplete = true;
 						requestAction(PlayerAction.PlayerStatus);
 						requestAction(PlayerAction.SongInformation);
@@ -105,35 +101,35 @@ public class ProtocolHandler
 					Log.d("Reply Received", "<next>");
 				} else if (xmlNode.getNodeName().contains(Protocol.VOLUME))
 				{
-					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_VOLUME_AVAILABLE, xmlNode.getTextContent()));
+					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_VOLUME_AVAILABLE, xmlNode.getFirstChild().getNodeValue()));
 				} else if (xmlNode.getNodeName().contains(Protocol.SONGINFO))
 				{
 					getSongData(xmlNode);
 					requestAction(PlayerAction.PlaybackPosition);
 				} else if (xmlNode.getNodeName().contains(Protocol.SONGCOVER))
 				{
-					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_COVER_AVAILABLE, xmlNode.getTextContent()));
+					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_COVER_AVAILABLE, xmlNode.getFirstChild().getNodeValue()));
 				} else if (xmlNode.getNodeName().contains(Protocol.PLAYSTATE))
 				{
-					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAY_STATE_AVAILABLE, xmlNode.getTextContent()));
+					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAY_STATE_AVAILABLE, xmlNode.getFirstChild().getNodeValue()));
 				} else if (xmlNode.getNodeName().contains(Protocol.MUTE))
 				{
-					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_MUTE_STATE_AVAILABLE, xmlNode.getTextContent()));
+					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_MUTE_STATE_AVAILABLE, xmlNode.getFirstChild().getNodeValue()));
 				} else if (xmlNode.getNodeName().contains(Protocol.REPEAT))
 				{
-					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_REPEAT_STATE_AVAILABLE, xmlNode.getTextContent()));
+					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_REPEAT_STATE_AVAILABLE, xmlNode.getFirstChild().getNodeValue()));
 				} else if (xmlNode.getNodeName().contains(Protocol.SHUFFLE))
 				{
-					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_SHUFFLE_STATE_AVAILABLE, xmlNode.getTextContent()));
+					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_SHUFFLE_STATE_AVAILABLE, xmlNode.getFirstChild().getNodeValue()));
 				} else if (xmlNode.getNodeName().contains(Protocol.SCROBBLE))
 				{
-					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_SCROBBLE_STATE_AVAILABLE, xmlNode.getTextContent()));
+					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_SCROBBLE_STATE_AVAILABLE, xmlNode.getFirstChild().getNodeValue()));
 				} else if (xmlNode.getNodeName().contains(Protocol.PLAYLIST))
 				{
 					getPlaylistData(xmlNode);
 				} else if (xmlNode.getNodeName().contains(Protocol.LYRICS))
 				{
-					String songLyrics = xmlNode.getTextContent().replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("\"", "&quot;").replace("&apos;", "'").replace("&", "&amp;").replace("<p>", "\r\n").replace("<br>", "\n").trim();
+					String songLyrics = xmlNode.getFirstChild().getNodeValue().replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("\"", "&quot;").replace("&apos;", "'").replace("&", "&amp;").replace("<p>", "\r\n").replace("<br>", "\n").trim();
 					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_LYRICS_AVAILABLE, songLyrics));
 				} else if (xmlNode.getNodeName().contains(Protocol.PLAYER_STATUS))
 				{
@@ -154,18 +150,13 @@ public class ProtocolHandler
 
 	}
 
-	/**
-	 * Given a Node it extracts the PROTOCOL_HANDLER_PLAYLIST_AVAILABLE data and then prepares the intent to be send.
-	 *
-	 * @param xmlNode
-	 */
 	private void getPlaylistData(Node xmlNode)
 	{
 		ArrayList<MusicTrack> _nowPlayingList = new ArrayList<MusicTrack>();
 		NodeList playlistData = xmlNode.getChildNodes();
 		for (int i = 0; i < playlistData.getLength(); i++)
 		{
-			_nowPlayingList.add(new MusicTrack(playlistData.item(i).getFirstChild().getTextContent(), playlistData.item(i).getLastChild().getTextContent()));
+			_nowPlayingList.add(new MusicTrack(playlistData.item(i).getFirstChild().getFirstChild().getNodeValue(), playlistData.item(i).getLastChild().getFirstChild().getNodeValue()));
 		}
 		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAYLIST_AVAILABLE, _nowPlayingList));
 	}
@@ -186,55 +177,43 @@ public class ProtocolHandler
 	{
 		String message;
 		Node childNode = xmNode.getFirstChild();
-		message = childNode.getTextContent() + "##";
+		message = childNode.getFirstChild().getNodeValue() + "##";
 		childNode = childNode.getNextSibling();
-		message += childNode.getTextContent();
+		message += childNode.getFirstChild().getNodeValue();
 		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAYBACK_POSITION_AVAILABLE, message));
 
 	}
 
-	/**
-	 * When given a playerStatus node the function extracts the player status information and dispatched the related
-	 * events.
-	 *
-	 * @param xmlNode
-	 */
 	private void getPlayerStatus(Node xmlNode)
 	{
 		Node playerStatusNode = xmlNode.getFirstChild();
-		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_REPEAT_STATE_AVAILABLE, playerStatusNode.getTextContent()));
+		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_REPEAT_STATE_AVAILABLE, playerStatusNode.getFirstChild().getNodeValue()));
 		playerStatusNode = playerStatusNode.getNextSibling();
-		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_MUTE_STATE_AVAILABLE, playerStatusNode.getTextContent()));
+		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_MUTE_STATE_AVAILABLE, playerStatusNode.getFirstChild().getNodeValue()));
 		playerStatusNode = playerStatusNode.getNextSibling();
-		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_SHUFFLE_STATE_AVAILABLE, playerStatusNode.getTextContent()));
+		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_SHUFFLE_STATE_AVAILABLE, playerStatusNode.getFirstChild().getNodeValue()));
 		playerStatusNode = playerStatusNode.getNextSibling();
-		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_SCROBBLE_STATE_AVAILABLE, playerStatusNode.getTextContent()));
+		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_SCROBBLE_STATE_AVAILABLE, playerStatusNode.getFirstChild().getNodeValue()));
 		playerStatusNode = playerStatusNode.getNextSibling();
-		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAY_STATE_AVAILABLE, playerStatusNode.getTextContent()));
+		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAY_STATE_AVAILABLE, playerStatusNode.getFirstChild().getNodeValue()));
 		playerStatusNode = playerStatusNode.getNextSibling();
-		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_VOLUME_AVAILABLE, playerStatusNode.getTextContent()));
+		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_VOLUME_AVAILABLE, playerStatusNode.getFirstChild().getNodeValue()));
 	}
 
-	/**
-	 * This function gets an xml node containing the track information extracts the data and sends the respective events
-	 * to every on listening.
-	 *
-	 * @param xmlNode
-	 */
 	private void getSongData(Node xmlNode)
 	{
-		Node trackInfoNode = xmlNode.getFirstChild();
+		NodeList trackInfoNodeList = xmlNode.getChildNodes();
 		String[] trackData = new String[4];
-		for (int i = 0; i < 4; i++)
-		{
-			trackData[i] = trackInfoNode.getTextContent();
-			trackInfoNode = trackInfoNode.getNextSibling();
+		int nodeListLength = trackInfoNodeList.getLength();
+		for(int i=0;i<nodeListLength;i++){
+			trackData[i] = trackInfoNodeList.item(i).getFirstChild().getNodeValue();
 		}
+
 		int index = 0;
 		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_ARTIST_AVAILABLE, trackData[index++]));
 		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_TITLE_AVAILABLE, trackData[index++]));
 		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_ALBUM_AVAILABLE, trackData[index++]));
-		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_YEAR_AVAILABLE, trackData[index++]));
+		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_YEAR_AVAILABLE, trackData[index]));
 	}
 
 	private DelayTimer _updateTimer;

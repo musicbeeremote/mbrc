@@ -24,6 +24,7 @@ public class NotificationService
 	 */
 	private void showToast(final String message)
 	{
+		try{
 		if (accessor.getRunningActivity() == null) return;
 		accessor.getRunningActivity().runOnUiThread(new Runnable()
 		{
@@ -33,6 +34,11 @@ public class NotificationService
 				Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 			}
 		});
+		}
+		catch (Exception ex)
+		{
+
+		}
 	}
 
 	/**

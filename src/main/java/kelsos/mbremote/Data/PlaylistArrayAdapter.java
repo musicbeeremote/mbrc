@@ -2,6 +2,7 @@ package kelsos.mbremote.Data;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ public class PlaylistArrayAdapter extends ArrayAdapter<MusicTrack> {
     private Context _context;
     private int _layoutResourceId;
     private ArrayList<MusicTrack> _nowPlayingList;
+	private Typeface robotoLight;
 
     public PlaylistArrayAdapter(Context context, int resource, ArrayList<MusicTrack> objects) {
         super(context, resource, objects);

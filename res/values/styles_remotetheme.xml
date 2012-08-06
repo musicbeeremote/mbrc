@@ -18,15 +18,15 @@
 
 <resources>
 
-    <style name="Theme.remotetheme" parent="@style/Theme.Sherlock">
-        <item name="actionBarItemBackground">@drawable/selectable_background_remotetheme</item>
+    <style name="Theme.remotetheme" parent="@style/Theme.Sherlock.ForceOverflow">
+	    <item name="absForceOverflow">true</item>
+	    <item name="actionBarItemBackground">@drawable/selectable_background_remotetheme</item>
         <item name="popupMenuStyle">@style/remotetheme_PopupMenu</item>
         <item name="dropDownListViewStyle">@style/remotetheme_DropDownListView</item>
         <item name="actionBarTabStyle">@style/remotetheme_ActionBarTabStyle</item>
         <item name="actionDropDownStyle">@style/remotetheme_DropDownNav</item>
         <item name="actionBarStyle">@style/remotetheme_transparent_ActionBar</item>
-
-        <item name="android:actionBarItemBackground">@drawable/selectable_background_remotetheme</item>
+	    <item name="android:actionBarItemBackground">@drawable/selectable_background_remotetheme</item>
         <item name="android:popupMenuStyle">@style/remotetheme_PopupMenu</item>
         <item name="android:dropDownListViewStyle">@style/remotetheme_DropDownListView</item>
         <item name="android:actionBarTabStyle">@style/remotetheme_ActionBarTabStyle</item>

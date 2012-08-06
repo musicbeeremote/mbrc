@@ -25,7 +25,6 @@ public class ProtocolHandlerCommandRegistration
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAYBACK_POSITION_AVAILABLE,UpdatePlaybackPositionCommand.class);
 		//controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAYLIST_AVAILABLE,.class);
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_REPLY_AVAILABLE,ProtocolReplyAvailableCommand.class);
-		//controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_LYRICS_AVAILABLE .class);
 		/* responsible for reducing the volume on incoming call */
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_REDUCE_VOLUME, ReduceVolumeOnRingCommand.class);
 	}

@@ -16,7 +16,6 @@ import kelsos.mbremote.Interfaces.ICommand;
 import kelsos.mbremote.Interfaces.IEvent;
 import kelsos.mbremote.Interfaces.IEventType;
 import kelsos.mbremote.configuration.MainDataModelCommandRegistration;
-import kelsos.mbremote.configuration.MainViewCommandRegistration;
 import kelsos.mbremote.configuration.ProtocolHandlerCommandRegistration;
 import kelsos.mbremote.configuration.SocketServiceCommandRegistration;
 import roboguice.service.RoboService;
@@ -37,7 +36,6 @@ public class Controller extends RoboService
 		this.bus = bus;
 		this.injector = injector;
 		bus.register(this);
-		MainViewCommandRegistration.registerCommands(this);
 		ProtocolHandlerCommandRegistration.register(this);
 		SocketServiceCommandRegistration.register(this);
 		MainDataModelCommandRegistration.registerCommands(this);

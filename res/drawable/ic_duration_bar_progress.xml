@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
 
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
-        <nine-patch android:src="@drawable/duration_bar_background_nine_patch"
-                    android:dither="true"/>
+        <nine-patch
+            android:dither="true"
+            android:src="@drawable/ic_duration_bar_background" />
     </item>
     <item android:id="@android:id/progress">
         <clip>
             <shape>
-                <solid android:color="#FFFFFF"></solid>
+                <solid android:color="#FFFFFF" >
+                </solid>
             </shape>
         </clip>
     </item>
+
 </layer-list>

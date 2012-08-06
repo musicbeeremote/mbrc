@@ -1,4 +1,4 @@
-package kelsos.mbremote.Controller;
+package kelsos.mbremote.controller;
 
 import android.content.Intent;
 import android.os.Binder;
@@ -15,11 +15,9 @@ import kelsos.mbremote.Events.UserActionEvent;
 import kelsos.mbremote.Interfaces.ICommand;
 import kelsos.mbremote.Interfaces.IEvent;
 import kelsos.mbremote.Interfaces.IEventType;
-import kelsos.mbremote.configuration.MainViewCommandRegistration;
+import kelsos.mbremote.configuration.MainDataModelCommandRegistration;
 import kelsos.mbremote.configuration.ProtocolHandlerCommandRegistration;
 import kelsos.mbremote.configuration.SocketServiceCommandRegistration;
-import roboguice.activity.event.OnCreateEvent;
-import roboguice.event.Observes;
 import roboguice.service.RoboService;
 
 import java.util.HashMap;
@@ -37,20 +35,13 @@ public class Controller extends RoboService
 	{
 		this.bus = bus;
 		this.injector = injector;
-		MainViewCommandRegistration.registerCommands(this);
+		bus.register(this);
 		ProtocolHandlerCommandRegistration.register(this);
 		SocketServiceCommandRegistration.register(this);
+		MainDataModelCommandRegistration.registerCommands(this);
 	}
 
-	/**
-	 * When the OnCreateEvent gets fired the function catches it and registers the Controller to the event bus singleton
-	 * provided by the Otto Event bus.
-	 * @param e
-	 */
-	public void handleActivityStart(@Observes OnCreateEvent e)
-	{
-		bus.register(this);
-	}
+	public Controller(){};
 
 	private final IBinder mBinder = new ControllerBinder();
 
