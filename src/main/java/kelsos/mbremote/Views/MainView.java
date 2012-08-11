@@ -125,13 +125,13 @@ public class MainView extends RoboSherlockActivity
         yearLabel.setSelected(true);
 
         Typeface robotoLight = Typeface.createFromAsset(getAssets(), "fonts/roboto_light.ttf");
-        Typeface fresca = Typeface.createFromAsset(getAssets(), "fonts/fresca.ttf");
+        Typeface robotoRegular = Typeface.createFromAsset(getAssets(), "fonts/roboto_regular.ttf");
         artistLabel.setTypeface(robotoLight);
         titleLabel.setTypeface(robotoLight);
         albumLabel.setTypeface(robotoLight);
         yearLabel.setTypeface(robotoLight);
-        trackProgressCurrent.setTypeface(fresca);
-        trackDuration.setTypeface(fresca);
+        trackProgressCurrent.setTypeface(robotoRegular);
+        trackDuration.setTypeface(robotoRegular);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

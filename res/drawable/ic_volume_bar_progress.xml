@@ -3,13 +3,13 @@
 
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:id="@android:id/background">
-		<nine-patch android:src="@drawable/ic_volume_seeker_background"
+		<nine-patch android:src="@drawable/ic_seeker_volume_back"
 		            android:dither="true"/>
 	</item>
 	<item android:id="@android:id/progress">
 		<clip android:gravity="left"
 		      android:clipOrientation="horizontal">
-			<nine-patch android:src="@drawable/ic_volume_seeker"
+			<nine-patch android:src="@drawable/ic_seeker_volume_fill"
 			            android:dither="true">
 			</nine-patch>
 		</clip>
