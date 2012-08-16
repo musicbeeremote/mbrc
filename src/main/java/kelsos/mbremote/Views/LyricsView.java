@@ -1,6 +1,8 @@
 package kelsos.mbremote.Views;
 
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockActivity;
@@ -16,8 +18,8 @@ import roboguice.inject.InjectView;
 @ContentView(R.layout.lyrics)
 public class LyricsView extends RoboSherlockActivity
 {
-	@InjectView(R.id.lyricsText) TextView lyricsText;
-	@InjectView(R.id.lyricsLabel) TextView trackInfo;
+	@InjectView(R.id.lyrics_list_view) ListView lyricsView;
+	@InjectView(R.id.lyrics_view_track_info_label) TextView trackInfo;
 	@Inject
 	Bus bus;
 	@Inject
@@ -36,15 +38,9 @@ public class LyricsView extends RoboSherlockActivity
 	@Override
 	protected void onStart()
 	{
-		lyricsText.setText("");
+		String array[] = {""};
+		lyricsView.setAdapter(new ArrayAdapter<String>(this,R.layout.lyrics_line_item,array));
 		super.onStart();
-	}
-
-	@Override
-	protected void onResume()
-	{
-		lyricsText.setText("");
-		super.onResume();
 	}
 
 	@Override
@@ -67,7 +63,8 @@ public class LyricsView extends RoboSherlockActivity
 
     public void updateLyricsData(String lyrics, String artist, String title)
     {
-        lyricsText.setText(lyrics);
-		trackInfo.setText(artist + " - " + title);
+		String array[] = lyrics.split("\r\n");
+		lyricsView.setAdapter(new ArrayAdapter<String>(this,R.layout.lyrics_line_item,array));
+        trackInfo.setText(artist + " - " + title);
     }
 }

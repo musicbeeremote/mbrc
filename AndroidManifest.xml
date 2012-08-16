@@ -16,7 +16,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:logo="@drawable/ic_launcher"
-        android:theme="@style/Theme.remotetheme"
+        android:theme="@style/Theme.mbrc_default"
 		android:name=".RemoteApplication" >
         <activity android:name=".Views.MainView" >
             <intent-filter>

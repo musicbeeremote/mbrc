@@ -3,9 +3,9 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item android:id="@android:id/background">
-        <nine-patch
-            android:dither="true"
-            android:src="@drawable/ic_duration_bar_background" />
+		       <shape>
+			       <solid android:color="#414141" >
+		       </solid></shape>
     </item>
     <item android:id="@android:id/progress">
         <clip>

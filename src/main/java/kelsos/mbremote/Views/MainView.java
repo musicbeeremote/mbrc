@@ -34,24 +34,24 @@ import static android.os.Build.VERSION.SDK_INT;
 public class MainView extends RoboSherlockActivity
 {
     // Inject elements of the view
-    @InjectView(R.id.artistLabel) TextView artistLabel;
-    @InjectView(R.id.titleLabel) TextView titleLabel;
-    @InjectView(R.id.albumLabel) TextView albumLabel;
+    @InjectView(R.id.main_artist_label) TextView artistLabel;
+    @InjectView(R.id.main_title_label) TextView titleLabel;
+    @InjectView(R.id.main_album_label) TextView albumLabel;
     @InjectView(R.id.yearLabel) TextView yearLabel;
-    @InjectView(R.id.trackProgressCurrent) TextView trackProgressCurrent;
-    @InjectView(R.id.trackDuration) TextView trackDuration;
-    @InjectView(R.id.playPauseButton) ImageButton playPauseButton;
-    @InjectView(R.id.previousButton) ImageButton previousButton;
-    @InjectView(R.id.nextButton) ImageButton nextButton;
-    @InjectView(R.id.volumeSlider) SeekBar volumeSlider;
-    @InjectView(R.id.trackProgressSlider) SeekBar trackProgressSlider;
-    @InjectView(R.id.stopButton) ImageButton stopButton;
-    @InjectView(R.id.muteButton) ImageButton muteButton;
-    @InjectView(R.id.scrobbleButton) ImageButton scrobbleButton;
-    @InjectView(R.id.shuffleButton) ImageButton shuffleButton;
-    @InjectView(R.id.repeatButton) ImageButton repeatButton;
-    @InjectView(R.id.connectivityIndicator) ImageButton connectivityIndicator;
-    @InjectView(R.id.albumCover) ImageView albumCover;
+    @InjectView(R.id.main_track_progress_current) TextView trackProgressCurrent;
+    @InjectView(R.id.main_track_duration_total) TextView trackDuration;
+    @InjectView(R.id.main_button_play_pause) ImageButton playPauseButton;
+    @InjectView(R.id.main_button_previous) ImageButton previousButton;
+    @InjectView(R.id.main_button_next) ImageButton nextButton;
+    @InjectView(R.id.main_volume_seeker) SeekBar volumeSlider;
+    @InjectView(R.id.main_track_progress_seeker) SeekBar trackProgressSlider;
+    @InjectView(R.id.main_button_stop) ImageButton stopButton;
+    @InjectView(R.id.main_mute_button) ImageButton muteButton;
+    @InjectView(R.id.main_last_fm_button) ImageButton scrobbleButton;
+    @InjectView(R.id.main_shuffle_button) ImageButton shuffleButton;
+    @InjectView(R.id.main_repeat_button) ImageButton repeatButton;
+    @InjectView(R.id.main_button_connect) ImageButton connectivityIndicator;
+    @InjectView(R.id.main_album_cover_image_view) ImageView albumCover;
 
     // Injects
     @Inject protected Bus bus;

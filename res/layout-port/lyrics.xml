@@ -1,51 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:gravity="center"
+    android:background="#222222"
+    android:baselineAligned="true"
+    android:gravity="top"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/lyricsLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical|center_horizontal"
-        android:text="@string/popup_lyrics_label"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+    <LinearLayout
+        android:id="@+id/lyrics_view_title_label_space"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="#222222"
+        android:baselineAligned="false"
+        android:gravity="top"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/lyrics_view_track_info_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical|center_horizontal"
+            android:singleLine="true"
+            android:text="@string/popup_lyrics_label"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </LinearLayout>
 
     <View
-        android:id="@+id/separator"
         android:layout_width="fill_parent"
-        android:layout_height="1dip"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:background="#ffffff" />
+        android:layout_height="4dp"
+        android:layout_below="@id/lyrics_view_title_label_space"
+        android:background="@drawable/ic_drop_shadow" >
+    </View>
 
-    <ScrollView
-        android:id="@+id/scrollView1"
+    <ListView
+        android:id="@+id/lyrics_list_view"
         android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="0.5"
-		    android:paddingLeft="6dp"
-		    android:paddingTop="6dp"
-		    android:paddingRight="32dp">
+        android:layout_height="fill_parent"
+        android:layout_below="@id/lyrics_view_title_label_space"
+        android:background="#111111"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:fastScrollAlwaysVisible="true"
+        android:fastScrollEnabled="true"
+        android:listSelector="@android:color/transparent"
+        android:paddingLeft="8dp"
+        android:paddingRight="32dp" >
+    </ListView>
 
-        <LinearLayout
-            android:id="@+id/lyricsTextLayout"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/lyricsText"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:scrollbarAlwaysDrawVerticalTrack="true"
-                android:scrollbarStyle="insideOverlay"
-                android:scrollbars="vertical" />
-        </LinearLayout>
-    </ScrollView>
-
-</LinearLayout>
+</RelativeLayout>
