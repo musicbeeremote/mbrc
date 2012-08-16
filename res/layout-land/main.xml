@@ -18,7 +18,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/connectivity_indicator"
+            android:contentDescription="@string/main_button_connection_description"
             android:src="@drawable/ic_icon_indicator_red" />
 
         <ImageButton
@@ -27,7 +27,7 @@
             android:layout_height="40dp"
             android:background="@android:color/transparent"
             android:clickable="true"
-            android:contentDescription="@string/repeat_button"
+            android:contentDescription="@string/main_button_repeat_description"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_repeat" />
 
@@ -36,7 +36,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/shuffle_button"
+            android:contentDescription="@string/main_button_shuffle_description"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_shuffle" />
 
@@ -45,7 +45,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/scrobbler_button"
+            android:contentDescription="@string/main_button_last_fm_description"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_scrobble_red" />
 
@@ -54,7 +54,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/mute_button"
+            android:contentDescription="@string/main_button_mute_description"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_mute_full" />
     </LinearLayout>
@@ -83,7 +83,7 @@
                 android:layout_marginLeft="0dp"
                 android:adjustViewBounds="false"
                 android:background="#FFFFFF"
-                android:contentDescription="@string/playing_track_album_cover"
+                android:contentDescription="@string/main_image_view_cover_description"
                 android:padding="1dp"
                 android:src="@drawable/ic_image_no_cover" />
             <!-- Track information along with media navigation buttons -->
@@ -123,7 +123,7 @@
                     android:marqueeRepeatLimit="marquee_forever"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-                    android:text="@string/main_artist_label"
+                    android:text="@string/main_label_artist"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp" />
 
@@ -140,7 +140,7 @@
                     android:marqueeRepeatLimit="marquee_forever"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-                    android:text="@string/main_album_label"
+                    android:text="@string/main_label_album"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp"
                     android:typeface="sans" />
@@ -159,7 +159,7 @@
                     android:marqueeRepeatLimit="marquee_forever"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-                    android:text="@string/main_date_label"
+                    android:text="@string/main_label_date"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp" />
 
@@ -225,7 +225,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:background="@android:color/transparent"
-                        android:contentDescription="@string/previous_track_button"
+                        android:contentDescription="@string/main_button_previous_description"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_media_previous" />
 
@@ -235,7 +235,7 @@
                         android:layout_height="60dp"
                         android:background="@android:color/transparent"
                         android:clickable="true"
-                        android:contentDescription="@string/play_pause_button"
+                        android:contentDescription="@string/main_button_play_pause_description"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_media_play" />
 
@@ -244,7 +244,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:background="@android:color/transparent"
-                        android:contentDescription="@string/stop_playback_button"
+                        android:contentDescription="@string/main_button_stop_description"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_media_stop" />
 
@@ -253,7 +253,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:background="@android:color/transparent"
-                        android:contentDescription="@string/next_track_button"
+                        android:contentDescription="@string/main_button_next_description"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_media_next" />
                 </LinearLayout>

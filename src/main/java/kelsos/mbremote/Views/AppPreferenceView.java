@@ -21,17 +21,17 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity implements
         super.onCreate(savedInstanceState);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setTitle(R.string.settings);
+		getSupportActionBar().setTitle(R.string.main_menu_title_settings);
         addPreferencesFromResource(R.xml.application_settings);
-        hostEditTextPreference = (EditTextPreference) getPreferenceScreen().findPreference(getApplicationContext().getString(R.string.settings_server_hostname));
-        portEditTextPreference = (EditTextPreference) getPreferenceScreen().findPreference(getApplicationContext().getString(R.string.settings_server_port));
+        hostEditTextPreference = (EditTextPreference) getPreferenceScreen().findPreference(getApplicationContext().getString(R.string.settings_key_hostname));
+        portEditTextPreference = (EditTextPreference) getPreferenceScreen().findPreference(getApplicationContext().getString(R.string.settings_key_port));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        hostEditTextPreference.setSummary(PreferenceManager.getDefaultSharedPreferences(this).getString(getApplicationContext().getString(R.string.settings_server_hostname), null));
-        portEditTextPreference.setSummary(PreferenceManager.getDefaultSharedPreferences(this).getString(getApplicationContext().getString(R.string.settings_server_port), null));
+        hostEditTextPreference.setSummary(PreferenceManager.getDefaultSharedPreferences(this).getString(getApplicationContext().getString(R.string.settings_key_hostname), null));
+        portEditTextPreference.setSummary(PreferenceManager.getDefaultSharedPreferences(this).getString(getApplicationContext().getString(R.string.settings_key_port), null));
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -54,10 +54,10 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity implements
 	}
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(getApplicationContext().getString(R.string.settings_server_hostname))) {
-            hostEditTextPreference.setSummary(sharedPreferences.getString(getApplicationContext().getString(R.string.settings_server_hostname), null));
-        } else if (key.equals(getApplicationContext().getString(R.string.settings_server_port))) {
-            portEditTextPreference.setSummary(sharedPreferences.getString(getApplicationContext().getString(R.string.settings_server_port), null));
+        if (key.equals(getApplicationContext().getString(R.string.settings_key_hostname))) {
+            hostEditTextPreference.setSummary(sharedPreferences.getString(getApplicationContext().getString(R.string.settings_key_hostname), null));
+        } else if (key.equals(getApplicationContext().getString(R.string.settings_key_port))) {
+            portEditTextPreference.setSummary(sharedPreferences.getString(getApplicationContext().getString(R.string.settings_key_port), null));
         }
     }
 }

@@ -9,7 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:maxLength="29"
         android:paddingLeft="9dp"
         android:paddingRight="32dp"
         android:paddingTop="6dp"
@@ -27,6 +26,7 @@
         android:paddingRight="32dp"
         android:paddingTop="6dp"
         android:singleLine="true"
+        android:textColor="#AAAAAA"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textSize="14dp" />
 

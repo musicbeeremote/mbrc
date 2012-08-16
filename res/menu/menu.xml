@@ -5,13 +5,13 @@
         android:id="@+id/main_menu_playlist"
         android:icon="@drawable/ic_action_playlist"
         android:showAsAction="always"
-        android:title="@string/main_menu_playlist">
+        android:title="@string/main_menu_title_playlist">
     </item>
     <item
         android:id="@+id/main_menu_lyrics"
         android:icon="@drawable/ic_action_lyrics"
         android:showAsAction="always"
-        android:title="@string/main_menu_lyrics">
+        android:title="@string/main_menu_title_lyrics">
     </item>
     <item
         android:id="@+id/main_menu_settings"
@@ -21,7 +21,7 @@
     </item>
     <item
         android:id="@+id/main_menu_share"
-        android:title="@string/main_menu_share">
+        android:title="@string/main_menu_title_share">
     </item>
 
 </menu>

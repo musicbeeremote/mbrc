@@ -83,6 +83,7 @@ public class MainView extends RoboSherlockActivity
 		super.onStart();
 		accessor.register(this);
 		bus.post(new UserActionEvent(UserInputEventType.Refresh));
+		bus.post(new UserActionEvent(UserInputEventType.PlaybackPosition));
 	}
 
 	@Override
@@ -240,14 +241,15 @@ public class MainView extends RoboSherlockActivity
         switch (playState) {
             case Playing:
                 playPauseButton.setImageResource(R.drawable.ic_media_pause);
+				playPauseButton.setTag("Playing");
                 stopButton.setImageResource(R.drawable.ic_media_stop);
                 stopButton.setEnabled(true);
-
                 /* Start the animation if the track is playing*/
                 trackProgressAnimation();
                 break;
             case Paused:
                 playPauseButton.setImageResource(R.drawable.ic_media_play);
+				playPauseButton.setTag("Paused");
                 stopButton.setEnabled(true);
                 /* Stop the animation if the track is paused*/
                 stopTrackProgressAnimation();
@@ -322,6 +324,7 @@ public class MainView extends RoboSherlockActivity
         /* If the scheduled tasks is not null then cancel it and clear it along with the timer to create them anew */
         final int timerPeriod = 100;
         stopTrackProgressAnimation();
+		if(!stopButton.isEnabled()||playPauseButton.getTag()=="Paused") return;
         progressUpdateTimer = new Timer(true);
         progressUpdateTask = new TimerTask() {
             @Override

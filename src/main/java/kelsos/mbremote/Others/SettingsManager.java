@@ -16,8 +16,8 @@ public class SettingsManager {
 	}
 
 	public SocketAddress getSocketAddress(){
-		String server_hostname = preferences.getString(context.getString(R.string.settings_server_hostname), null);
-		String server_port_string = preferences.getString(context.getString(R.string.settings_server_port), null);
+		String server_hostname = preferences.getString(context.getString(R.string.settings_key_hostname), null);
+		String server_port_string = preferences.getString(context.getString(R.string.settings_key_port), null);
 		if (notNullOrEmpty(server_hostname) || notNullOrEmpty(server_port_string)) {
             //NotificationService.getInstance().showToastMessage(R.string.network_manager_check_hostname_or_port);
 			return null;
@@ -28,7 +28,7 @@ public class SettingsManager {
         	}
 
 	public boolean isVolumeReducedOnRinging(){
-        return preferences.getBoolean(context.getString(R.string.settings_reduce_volume_on_ring), false);
+        return preferences.getBoolean(context.getString(R.string.settings_key_reduce_volume), false);
 	}
 
 	private static boolean notNullOrEmpty(String string) {

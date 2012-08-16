@@ -38,7 +38,7 @@ public class PlaylistView extends RoboSherlockListActivity
 		accessor.register(this);
 		bus.post(new UserActionEvent(UserInputEventType.Playlist));
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setTitle(R.string.string_now_playing_playlist);
+		getSupportActionBar().setTitle(R.string.string_value_now_playing);
     }
 
 

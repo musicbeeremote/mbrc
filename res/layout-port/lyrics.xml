@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#222222"
     android:baselineAligned="true"
     android:gravity="top"
     android:orientation="vertical" >
@@ -15,7 +14,7 @@
         android:layout_alignParentTop="true"
         android:background="#222222"
         android:baselineAligned="false"
-        android:gravity="top"
+        android:gravity="center_vertical"
         android:orientation="vertical" >
 
         <TextView
@@ -24,17 +23,18 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_marginTop="4dp"
             android:ellipsize="end"
             android:gravity="center_vertical|center_horizontal"
             android:singleLine="true"
-            android:text="@string/popup_lyrics_label"
+            android:text="@string/string_value_lyrics"
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
 
     <View
         android:layout_width="fill_parent"
-        android:layout_height="4dp"
+        android:layout_height="5dp"
         android:layout_below="@id/lyrics_view_title_label_space"
         android:background="@drawable/ic_drop_shadow" >
     </View>
@@ -44,7 +44,6 @@
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:layout_below="@id/lyrics_view_title_label_space"
-        android:background="#111111"
         android:divider="@null"
         android:dividerHeight="0dp"
         android:fastScrollAlwaysVisible="true"
