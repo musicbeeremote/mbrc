@@ -23,8 +23,6 @@ public class PlaylistView extends RoboSherlockListActivity
 	@Inject
 	private Bus bus;
 
-	private ListView mListView;
-
     public void updateListData(ArrayList<MusicTrack> nowPlayingList) {
         PlaylistArrayAdapter adapter;
         adapter = new PlaylistArrayAdapter(this, R.layout.playlistview_item, nowPlayingList);
@@ -40,9 +38,6 @@ public class PlaylistView extends RoboSherlockListActivity
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(R.string.string_value_now_playing);
     }
-
-
-
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
