@@ -129,7 +129,7 @@ public class ProtocolHandler
 					getPlaylistData(xmlNode);
 				} else if (xmlNode.getNodeName().contains(Protocol.LYRICS))
 				{
-					String songLyrics = xmlNode.getFirstChild().getNodeValue().replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("\"", "&quot;").replace("&apos;", "'").replace("&", "&amp;").replace("<p>", "\r\n").replace("<br>", "\n").trim();
+					String songLyrics = xmlNode.getFirstChild().getNodeValue().replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("&quot;","\"").replace("&apos;", "'").replace("&amp;","&").replace("<p>", "\r\n").replace("<br>", "\n").trim();
 					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_LYRICS_AVAILABLE, songLyrics));
 				} else if (xmlNode.getNodeName().contains(Protocol.PLAYER_STATUS))
 				{

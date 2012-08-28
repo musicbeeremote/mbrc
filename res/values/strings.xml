@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<string name="application_name">MBRC</string>
+	<string name="application_name">MusicBee RC</string>
 	<string name="main_button_mute_description">When pressed it toggles the volume mute.</string>
 	<string name="main_button_repeat_description">When pressed it changes the repeat (all/none).</string>
 	<string name="main_button_shuffle_description">When pressed it changes the shuffle mode (on/off).</string>

@@ -21,6 +21,7 @@ public class VisualUpdateMuteCommand implements ICommand
 			public void run() {
 				MainView view = (MainView) accessor.getRunningActivity();
 				view.updateMuteButtonState(model.getIsMuteButtonActive());
+				view.updateVolumeData(model.getIsMuteButtonActive()?0:model.getVolume());
 			}
 		});
 	}
