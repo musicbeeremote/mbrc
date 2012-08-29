@@ -29,7 +29,7 @@ public class LyricsView extends RoboSherlockActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		accessor.register(this);
-		bus.post(new UserActionEvent(UserInputEventType.Lyrics));
+		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_LYRICS));
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(R.string.string_value_lyrics);
 		String array[] = {""};

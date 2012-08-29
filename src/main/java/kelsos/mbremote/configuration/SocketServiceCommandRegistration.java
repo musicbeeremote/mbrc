@@ -12,9 +12,9 @@ public class SocketServiceCommandRegistration
 	@Inject
 	public static void register(Controller controller)
 	{
-		controller.registerCommand(SocketServiceEventType.PacketAvailable, SocketDataAvailableCommand.class);
-		controller.registerCommand(SocketServiceEventType.StatusChange, ConnectionStatusChangedCommand.class);
-		controller.registerCommand(SocketServiceEventType.HandshakeUpdate, HandshakeCompleteCommand.class);
+		controller.registerCommand(SocketServiceEventType.SOCKET_EVENT_PACKET_AVAILABLE, SocketDataAvailableCommand.class);
+		controller.registerCommand(SocketServiceEventType.SOCKET_EVENT_STATUS_CHANGE, ConnectionStatusChangedCommand.class);
+		controller.registerCommand(SocketServiceEventType.SOCKET_EVENT_HANDSHAKE_UPDATE, HandshakeCompleteCommand.class);
 	}
 
 	@Inject

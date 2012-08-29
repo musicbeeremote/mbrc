@@ -19,5 +19,8 @@
             android:summary="@string/settings_miscellaneous_reduce_volume_description"
             android:title="@string/settings_miscellaneous_reduce_volume" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/preferences_category_about">
+        <Preference android:summary="0.2 ALPHA" android:title="MusicBee RC Version"/>
+    </PreferenceCategory>
 
 </PreferenceScreen>

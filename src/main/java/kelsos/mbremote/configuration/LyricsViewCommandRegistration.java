@@ -10,13 +10,13 @@ public class LyricsViewCommandRegistration
 {
 	public static void register(Controller controller)
 	{
-		controller.registerCommand(UserInputEventType.Lyrics, RequestLyricsCommand.class);
+		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_LYRICS, RequestLyricsCommand.class);
 	    controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_LYRICS_AVAILABLE, VisualUpdateLyricsCommand.class);
 	}
 
 	public static void unRegister(Controller controller)
 	{
-		controller.unregisterCommand(UserInputEventType.Lyrics);
+		controller.unregisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_LYRICS);
 		controller.unregisterCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_LYRICS_AVAILABLE);
 	}
 }

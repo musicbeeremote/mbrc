@@ -4,7 +4,7 @@ import kelsos.mbremote.Interfaces.IEventType;
 
 public enum SocketServiceEventType implements IEventType
 {
-    PacketAvailable,
-    StatusChange,
-    HandshakeUpdate
+	SOCKET_EVENT_PACKET_AVAILABLE,
+	SOCKET_EVENT_STATUS_CHANGE,
+	SOCKET_EVENT_HANDSHAKE_UPDATE
 }

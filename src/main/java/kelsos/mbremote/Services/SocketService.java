@@ -1,16 +1,15 @@
 package kelsos.mbremote.Services;
 
-import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.squareup.otto.Bus;
-import kelsos.mbremote.enums.Input;
-import kelsos.mbremote.enums.SocketServiceEventType;
 import kelsos.mbremote.Events.RawSocketDataEvent;
 import kelsos.mbremote.Messaging.NotificationService;
 import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Others.DelayTimer;
 import kelsos.mbremote.Others.SettingsManager;
+import kelsos.mbremote.enums.Input;
+import kelsos.mbremote.enums.SocketServiceEventType;
 
 import java.io.*;
 import java.net.Socket;
@@ -45,7 +44,7 @@ public class SocketService
 		this.notificationService = notificationService;
 
 		_connectionTimer = new DelayTimer(1000, timerFinishEvent);
-		_numberOfTries = 0; // Initialize the connection retry counter.
+		_numberOfTries = 0;
 		initSocketThread(Input.INIT);
 	}
 
@@ -138,7 +137,7 @@ public class SocketService
 		public void run()
 		{
 			SocketAddress socketAddress = settingsManager.getSocketAddress();
-			informEventBus(new RawSocketDataEvent(SocketServiceEventType.HandshakeUpdate, "false"));
+			informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_HANDSHAKE_UPDATE, "false"));
 			if (null == socketAddress) return;
 			BufferedReader _input;
 			try
@@ -150,14 +149,13 @@ public class SocketService
 
 				String socketStatus = String.valueOf(_cSocket.isConnected());
 
-				informEventBus(new RawSocketDataEvent(SocketServiceEventType.StatusChange, socketStatus));
+				informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_STATUS_CHANGE, socketStatus));
 				while (_cSocket.isConnected())
 				{
 					try
 					{
 						final String incoming = _input.readLine();
-						Log.d("Incoming message", incoming);
-						informEventBus(new RawSocketDataEvent(SocketServiceEventType.PacketAvailable, incoming));
+						informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_PACKET_AVAILABLE, incoming));
 					} catch (IOException e)
 					{
 						_input.close();
@@ -173,12 +171,10 @@ public class SocketService
 			{
 				final String exceptionMessage = e.toString().substring(26);
 				notificationService.showToastMessage(exceptionMessage);
-			} catch (IOException e)
+			} catch (IOException ignored)
 			{
-				//placeholder
-			} catch (NullPointerException e)
+			} catch (NullPointerException ignored)
 			{
-				//placeholder
 			} finally
 			{
 				if (_output != null)
@@ -188,7 +184,7 @@ public class SocketService
 				}
 				_cSocket = null;
 
-				informEventBus(new RawSocketDataEvent(SocketServiceEventType.StatusChange, "false"));
+				informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_STATUS_CHANGE, "false"));
 				initSocketThread(Input.RETRY);
 			}
 		}

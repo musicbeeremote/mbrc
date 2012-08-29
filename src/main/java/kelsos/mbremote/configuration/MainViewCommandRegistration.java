@@ -8,33 +8,33 @@ public class MainViewCommandRegistration
 {
 	public static void register(Controller controller)
 	{
-		controller.registerCommand(UserInputEventType.PlayPause, RequestPlayPauseCommand.class);
-		controller.registerCommand(UserInputEventType.Stop, RequestPlayStopCommand.class);
-		controller.registerCommand(UserInputEventType.Next, RequestPlayNextCommand.class);
-		controller.registerCommand(UserInputEventType.Previous, RequestPlayPreviousCommand.class);
-		controller.registerCommand(UserInputEventType.Volume, RequestVolumeChangeCommand.class);
-		controller.registerCommand(UserInputEventType.Shuffle, RequestShuffleToggleCommand.class);
-		controller.registerCommand(UserInputEventType.Repeat, RequestRepeatToggleCommand.class);
-		controller.registerCommand(UserInputEventType.Scrobble, RequestScrobbleToggleCommand.class);
-		controller.registerCommand(UserInputEventType.Mute, RequestMuteToggleCommand.class);
-		controller.registerCommand(UserInputEventType.Refresh, UpdateMainViewCommand.class);
-		controller.registerCommand(UserInputEventType.PlaybackPosition, RequestPlaybackPositionChangeCommand.class);
-		controller.registerCommand(UserInputEventType.Initialize, InitiateConnectionCommand.class);
+		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAY_PAUSE, RequestPlayPauseCommand.class);
+		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_STOP, RequestPlayStopCommand.class);
+		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_NEXT, RequestPlayNextCommand.class);
+		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_PREVIOUS, RequestPlayPreviousCommand.class);
+		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_VOLUME, RequestVolumeChangeCommand.class);
+		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_SHUFFLE, RequestShuffleToggleCommand.class);
+		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_REPEAT, RequestRepeatToggleCommand.class);
+		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_LAST_FM, RequestScrobbleToggleCommand.class);
+		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_MUTE, RequestMuteToggleCommand.class);
+		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_DATA_REFRESH, UpdateMainViewCommand.class);
+		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAYBACK_POSITION, RequestPlaybackPositionChangeCommand.class);
+		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_INITIALIZE, InitiateConnectionCommand.class);
 	}
 
 	public static void unRegister(Controller controller)
 	{
-		controller.unregisterCommand(UserInputEventType.PlayPause);
-		controller.unregisterCommand(UserInputEventType.Stop);
-		controller.unregisterCommand(UserInputEventType.Next);
-		controller.unregisterCommand(UserInputEventType.Previous);
-		controller.unregisterCommand(UserInputEventType.Volume);
-		controller.unregisterCommand(UserInputEventType.Shuffle);
-		controller.unregisterCommand(UserInputEventType.Repeat);
-		controller.unregisterCommand(UserInputEventType.Scrobble);
-		controller.unregisterCommand(UserInputEventType.Mute);
-		controller.unregisterCommand(UserInputEventType.Refresh);
-		controller.unregisterCommand(UserInputEventType.PlaybackPosition);
-		controller.unregisterCommand(UserInputEventType.Initialize);
+		controller.unregisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAY_PAUSE);
+		controller.unregisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_STOP);
+		controller.unregisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_NEXT);
+		controller.unregisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_PREVIOUS);
+		controller.unregisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_VOLUME);
+		controller.unregisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_SHUFFLE);
+		controller.unregisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_REPEAT);
+		controller.unregisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_LAST_FM);
+		controller.unregisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_MUTE);
+		controller.unregisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_DATA_REFRESH);
+		controller.unregisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAYBACK_POSITION);
+		controller.unregisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_INITIALIZE);
 	}
 }

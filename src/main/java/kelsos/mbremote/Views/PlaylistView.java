@@ -34,7 +34,7 @@ public class PlaylistView extends RoboSherlockListActivity
         super.onCreate(savedInstanceState);
 		setContentView(R.layout.nowplayinglist);
 		accessor.register(this);
-		bus.post(new UserActionEvent(UserInputEventType.Playlist));
+		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_LIST));
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(R.string.string_value_now_playing);
     }
@@ -43,7 +43,7 @@ public class PlaylistView extends RoboSherlockListActivity
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         String track = ((MusicTrack) getListView().getItemAtPosition(position)).getTitle();
-		bus.post(new UserActionEvent(UserInputEventType.PlaySpecifiedTrack,track));
+		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_PLAY_NOW,track));
 
     }
 

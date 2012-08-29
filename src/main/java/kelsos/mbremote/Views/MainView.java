@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.ShareActionProvider;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockActivity;
 import com.google.inject.Inject;
 import com.squareup.otto.Bus;
@@ -39,9 +40,9 @@ public class MainView extends RoboSherlockActivity
 	TextView artistLabel;
 	@InjectView(R.id.main_title_label)
 	TextView titleLabel;
-	@InjectView(R.id.main_album_label)
+	@InjectView(R.id.main_label_album)
 	TextView albumLabel;
-	@InjectView(R.id.yearLabel)
+	@InjectView(R.id.main_label_year)
 	TextView yearLabel;
 	@InjectView(R.id.main_track_progress_current)
 	TextView trackProgressCurrent;
@@ -82,6 +83,8 @@ public class MainView extends RoboSherlockActivity
 	private Timer progressUpdateTimer;
 	private TimerTask progressUpdateTask;
 
+	private ShareActionProvider mShareActionProvider;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -94,7 +97,7 @@ public class MainView extends RoboSherlockActivity
 		accessor.register(this);
 		userChangingVolume = false;
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
-		bus.post(new UserActionEvent(UserInputEventType.Refresh));
+		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_DATA_REFRESH));
 		RegisterListeners();
 		SetTextViewTypeface();
 	}
@@ -104,8 +107,8 @@ public class MainView extends RoboSherlockActivity
 	{
 		super.onStart();
 		accessor.register(this);
-		bus.post(new UserActionEvent(UserInputEventType.Refresh));
-		bus.post(new UserActionEvent(UserInputEventType.PlaybackPosition));
+		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_DATA_REFRESH));
+		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAYBACK_POSITION));
 	}
 
 	@Override
@@ -113,7 +116,7 @@ public class MainView extends RoboSherlockActivity
 	{
 		super.onResume();
 		accessor.register(this);
-		bus.post(new UserActionEvent(UserInputEventType.Refresh));
+		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_DATA_REFRESH));
 	}
 
 	@Override
@@ -161,7 +164,14 @@ public class MainView extends RoboSherlockActivity
 	{
 		MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.menu, menu);
+		MenuItem shareItem = menu.findItem(R.id.main_menu_share);
+		mShareActionProvider = (ShareActionProvider) shareItem.getActionProvider();
 		return true;
+	}
+
+	private void setShareIntent(Intent shareIntent)
+	{
+		if(mShareActionProvider!=null) mShareActionProvider.setShareIntent(shareIntent);
 	}
 
 	@Override
@@ -178,6 +188,11 @@ public class MainView extends RoboSherlockActivity
 			case R.id.main_menu_playlist:
 				startActivity(new Intent(this, PlaylistView.class));
 				return true;
+			case R.id.main_menu_share:
+				Intent shareIntent = new Intent(Intent.ACTION_SEND);
+				shareIntent.setType("text/plain");
+				shareIntent.putExtra(Intent.EXTRA_TEXT, "Now Playing: " + artistLabel.getText() + " - " + titleLabel.getText());
+				setShareIntent(shareIntent);
 			default:
 				return false;
 		}
@@ -232,7 +247,7 @@ public class MainView extends RoboSherlockActivity
 	}
 
 	/**
-	 * Given a boolean state value this function updates the Shuffle button with the proper state.
+	 * Given a boolean state value this function updates the shuffle button with the proper state.
 	 * Also it updates the internal MainActivityState object.
 	 *
 	 * @param state True is used to represent active shuffle, false is used for inactive.
@@ -418,7 +433,7 @@ public class MainView extends RoboSherlockActivity
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.PlayPause));
+			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAY_PAUSE));
 		}
 	};
 
@@ -427,7 +442,7 @@ public class MainView extends RoboSherlockActivity
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.Previous));
+			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_PREVIOUS));
 		}
 	};
 
@@ -436,7 +451,7 @@ public class MainView extends RoboSherlockActivity
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.Next));
+			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NEXT));
 		}
 	};
 
@@ -445,7 +460,7 @@ public class MainView extends RoboSherlockActivity
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.Stop));
+			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_STOP));
 		}
 	};
 
@@ -454,7 +469,7 @@ public class MainView extends RoboSherlockActivity
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.Mute));
+			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_MUTE));
 		}
 	};
 
@@ -463,7 +478,7 @@ public class MainView extends RoboSherlockActivity
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.Scrobble));
+			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_LAST_FM));
 		}
 	};
 
@@ -472,7 +487,7 @@ public class MainView extends RoboSherlockActivity
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.Shuffle));
+			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_SHUFFLE));
 		}
 	};
 
@@ -481,7 +496,7 @@ public class MainView extends RoboSherlockActivity
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.Repeat));
+			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_REPEAT));
 		}
 	};
 	private OnClickListener connectivityIndicatorListener = new OnClickListener()
@@ -489,7 +504,7 @@ public class MainView extends RoboSherlockActivity
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.Initialize));
+			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_INITIALIZE));
 		}
 	};
 
@@ -511,7 +526,7 @@ public class MainView extends RoboSherlockActivity
 		public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
 		{
 			if (fromUser)
-				bus.post(new UserActionEvent(UserInputEventType.Volume, String.valueOf(seekBar.getProgress())));
+				bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_VOLUME, String.valueOf(seekBar.getProgress())));
 		}
 	};
 
@@ -521,7 +536,7 @@ public class MainView extends RoboSherlockActivity
 		{
 			if (fromUser)
 			{
-				bus.post(new UserActionEvent(UserInputEventType.PlaybackPosition, String.valueOf(progress)));
+				bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAYBACK_POSITION, String.valueOf(progress)));
 			}
 		}
 
@@ -543,14 +558,14 @@ public class MainView extends RoboSherlockActivity
 				if (volumeSlider.getProgress() <= 90)
 				{
 					volumeSlider.setProgress(volumeSlider.getProgress() + 10);
-					bus.post(new UserActionEvent(UserInputEventType.Volume, String.valueOf(volumeSlider.getProgress())));
+					bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_VOLUME, String.valueOf(volumeSlider.getProgress())));
 				}
 				return true;
 			case KeyEvent.KEYCODE_VOLUME_DOWN:
 				if (volumeSlider.getProgress() >= 10)
 				{
 					volumeSlider.setProgress(volumeSlider.getProgress() - 10);
-					bus.post(new UserActionEvent(UserInputEventType.Volume, String.valueOf(volumeSlider.getProgress())));
+					bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_VOLUME, String.valueOf(volumeSlider.getProgress())));
 				}
 				return true;
 			default:

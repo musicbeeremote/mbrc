@@ -21,7 +21,8 @@
     </item>
     <item
         android:id="@+id/main_menu_share"
-        android:title="@string/main_menu_title_share">
+        android:title="@string/main_menu_title_share"
+        android:actionProviderClass="com.actionbarsherlock.widget.ShareActionProvider">
     </item>
 
 </menu>

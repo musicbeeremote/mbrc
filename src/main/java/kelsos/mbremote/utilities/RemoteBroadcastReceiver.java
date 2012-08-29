@@ -51,7 +51,7 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver
 			NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 			if (networkInfo.getState().equals(NetworkInfo.State.CONNECTED))
 			{
-				 bus.post(new UserActionEvent(UserInputEventType.Initialize));
+				 bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_INITIALIZE));
 			} else if (networkInfo.getState().equals(NetworkInfo.State.DISCONNECTING))
 			{
 

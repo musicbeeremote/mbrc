@@ -1,15 +1,14 @@
 package kelsos.mbremote.Services;
 
-import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.squareup.otto.Bus;
 import kelsos.mbremote.Data.MusicTrack;
-import kelsos.mbremote.enums.ProtocolHandlerEventType;
 import kelsos.mbremote.Events.ProtocolDataEvent;
 import kelsos.mbremote.Others.Const;
 import kelsos.mbremote.Others.DelayTimer;
 import kelsos.mbremote.Others.Protocol;
+import kelsos.mbremote.enums.ProtocolHandlerEventType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -92,14 +91,7 @@ public class ProtocolHandler
 						return;
 					}
 				}
-
-				if (xmlNode.getNodeName().contains(Protocol.PLAYPAUSE))
-				{
-					Log.d("Reply Received", "<playPause>");
-				} else if (xmlNode.getNodeName().contains(Protocol.NEXT))
-				{
-					Log.d("Reply Received", "<next>");
-				} else if (xmlNode.getNodeName().contains(Protocol.VOLUME))
+				if (xmlNode.getNodeName().contains(Protocol.VOLUME))
 				{
 					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_VOLUME_AVAILABLE, xmlNode.getFirstChild().getNodeValue()));
 				} else if (xmlNode.getNodeName().contains(Protocol.SONGINFO))

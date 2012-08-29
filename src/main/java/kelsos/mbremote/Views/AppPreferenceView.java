@@ -11,9 +11,7 @@ import kelsos.mbremote.R;
 
 public class AppPreferenceView extends RoboSherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
 
-    public static final String REMOTE_SETTINGS = "mbremote_settings";
-
-    private EditTextPreference hostEditTextPreference;
+	private EditTextPreference hostEditTextPreference;
     private EditTextPreference portEditTextPreference;
 
     @Override

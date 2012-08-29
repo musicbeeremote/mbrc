@@ -14,7 +14,7 @@
         <TextView
             android:id="@+id/main_title_label"
             android:layout_width="match_parent"
-            android:layout_height="35dp"
+            android:layout_height="30dp"
             android:layout_marginLeft="11dp"
             android:layout_marginRight="11dp"
             android:layout_marginTop="1dp"
@@ -27,12 +27,12 @@
             android:singleLine="true"
             android:text="@string/main_label_track_title"
             android:textColor="#FFFFFF"
-            android:textSize="20dp" />
+            android:textSize="18dp" />
 
         <TextView
             android:id="@+id/main_artist_label"
             android:layout_width="match_parent"
-            android:layout_height="35dp"
+            android:layout_height="30dp"
             android:layout_below="@+id/main_title_label"
             android:layout_marginLeft="11dp"
             android:layout_marginRight="11dp"
@@ -46,7 +46,7 @@
             android:singleLine="true"
             android:text="@string/main_label_artist"
             android:textColor="#FFFFFF"
-            android:textSize="18dp" />
+            android:textSize="16dp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -55,12 +55,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/main_track_info_one"
         android:layout_marginLeft="27dp"
-        android:layout_marginTop="-4dp" >
+        android:layout_marginTop="-8dp" >
 
         <ImageView
             android:id="@+id/main_album_cover_image_view"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:adjustViewBounds="false"
             android:background="#FFFFFF"
             android:contentDescription="@string/main_image_view_cover_description"
@@ -77,7 +77,7 @@
 
             <SeekBar
                 android:id="@+id/main_track_progress_seeker"
-                android:layout_width="200dp"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
@@ -107,7 +107,7 @@
                 android:layout_below="@id/main_track_progress_seeker"
                 android:layout_toRightOf="@id/main_track_progress_current"
                 android:gravity="right"
-                android:paddingLeft="144dp"
+                android:paddingLeft="94dp"
                 android:text="@string/main_label_duration_total"
                 android:textColor="#FFFFFF"
                 android:textSize="11dp" />
@@ -117,14 +117,14 @@
             android:id="@+id/main_media_button_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="22dp"
+            android:layout_marginLeft="60dp"
             android:layout_toRightOf="@id/main_album_cover_image_view"
             android:orientation="vertical" >
 
             <ImageButton
                 android:id="@+id/main_button_connect"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="@dimen/extra_controls_button_size"
+                android:layout_height="@dimen/extra_controls_button_size"
                 android:layout_below="@id/main_media_button_group"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:clickable="true"
@@ -133,10 +133,10 @@
 
             <ImageButton
                 android:id="@+id/main_repeat_button"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="@dimen/extra_controls_button_size"
+                android:layout_height="@dimen/extra_controls_button_size"
                 android:layout_below="@id/main_last_fm_button"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/extra_controls_button_margin_top"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:clickable="true"
                 android:contentDescription="@string/main_button_repeat_description"
@@ -145,10 +145,10 @@
 
             <ImageButton
                 android:id="@+id/main_shuffle_button"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="@dimen/extra_controls_button_size"
+                android:layout_height="@dimen/extra_controls_button_size"
                 android:layout_below="@id/main_repeat_button"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/extra_controls_button_margin_top"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:contentDescription="@string/main_button_shuffle_description"
                 android:scaleType="fitCenter"
@@ -156,10 +156,10 @@
 
             <ImageButton
                 android:id="@+id/main_last_fm_button"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="@dimen/extra_controls_button_size"
+                android:layout_height="@dimen/extra_controls_button_size"
                 android:layout_below="@id/main_button_connect"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/extra_controls_button_margin_top"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:contentDescription="@string/main_button_last_fm_description"
                 android:scaleType="fitCenter"
@@ -177,7 +177,7 @@
 
         <TextView
             android:id="@+id/main_label_album"
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="20dp"
             android:layout_below="@id/main_track_info_two"
             android:layout_marginLeft="11dp"
@@ -191,16 +191,16 @@
             android:singleLine="true"
             android:text="@string/main_label_album"
             android:textColor="#FFFFFF"
-            android:textSize="15dp" />
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/main_label_year"
             android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:layout_below="@id/main_label_album"
-            android:layout_marginLeft="11dp"
+            android:layout_height="20dp"
+            android:layout_toRightOf="@id/main_label_album"
+            
             android:layout_marginRight="11dp"
-            android:layout_marginTop="6dp"
+            
             android:ellipsize="marquee"
             android:focusable="true"
             android:focusableInTouchMode="true"
@@ -210,7 +210,7 @@
             android:singleLine="true"
             android:text="@string/main_label_date"
             android:textColor="#FFFFFF"
-            android:textSize="13dp" />
+            android:textSize="12dp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -253,7 +253,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/main_volume_area"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="-5dp"
         android:gravity="center_horizontal" >
 
         <ImageButton

@@ -1,46 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<string name="application_name">MusicBee RC</string>
-	<string name="main_button_mute_description">When pressed it toggles the volume mute.</string>
-	<string name="main_button_repeat_description">When pressed it changes the repeat (all/none).</string>
-	<string name="main_button_shuffle_description">When pressed it changes the shuffle mode (on/off).</string>
-	<string name="main_button_last_fm_description">When pressed it enables/disables the last.fm functionality.</string>
-	<string name="main_button_previous_description">When pressed it plays the previous track</string>
-	<string name="main_button_play_pause_description">When pressed either it starts playing a track or pauses it if it
-		is already playing.
-	</string>
-	<string name="main_button_stop_description">When pressed it stops the playback.</string>
-	<string name="main_button_next_description">When pressed it plays the next track.</string>
-	<string name="main_image_view_cover_description">It displays the album cover for the current track.</string>
-	<string name="main_menu_settings">Settings</string>
-	<string name="settings_connection_hostname">Hostname or IP</string>
-	<string name="settings_connection">Connection Settings</string>
-	<string name="settings_key_hostname">server_hostname</string>
-	<string name="settings_key_port">server_port</string>
-	<string name="settings_connection_port">Port:</string>
-	<string name="settings_miscellaneous">Miscellaneous</string>
-	<string name="settings_key_reduce_volume">reduce_volume_on_ring</string>
-	<string name="settings_miscellaneous_reduce_volume">Reduce on Incoming</string>
-	<string name="settings_miscellaneous_reduce_volume_description">Reduce the player volume on incoming call</string>
-	<string name="notification_check_network_settings">Check hostname or Port</string>
-	<string name="main_menu_title_playlist">Now Playing</string>
-	<string name="notification_no_lyrics">No Lyrics Found</string>
-	<string name="main_button_connection_description">Displays the connection status. Also if the connection is not active it initiates it when pressed.</string>
-	<string name="info_service_description">This service is responsible for the communication of the application
-		with the plugin.
-	</string>
-	<string name="application_description">Remote Control Application for MusicBee</string>
-	<string name="main_menu_title_lyrics">Lyrics</string>
-	<string name="main_label_track_title">MusicBee Remote Control</string>
-	<string name="main_label_artist">Konstantinos Paparas</string>
-	<string name="main_label_duration_current">01:03</string>
-	<string name="main_label_duration_total">04:11</string>
-	<string name="main_label_date">(c) 2012</string>
-	<string name="main_label_album">Copyright</string>
-	<string name="main_menu_title_share">Share</string>
-	<string name="main_menu_title_settings">Settings</string>
-	<string name="string_value_lyrics">Lyrics</string>
-	<string name="string_value_now_playing">Now Playing</string>
+    <string name="application_name">MusicBee RC</string>
+    <string name="main_button_mute_description">When pressed it toggles the volume mute.</string>
+    <string name="main_button_repeat_description">When pressed it changes the repeat (all/none).</string>
+    <string name="main_button_shuffle_description">When pressed it changes the shuffle mode (on/off).</string>
+    <string name="main_button_last_fm_description">When pressed it enables/disables the last.fm
+		functionality.</string>
+    <string name="main_button_previous_description">When pressed it plays the previous track</string>
+    <string name="main_button_play_pause_description">When pressed either it starts playing a track or
+		pauses it if it
+		is already playing.</string>
+    <string name="main_button_stop_description">When pressed it stops the playback.</string>
+    <string name="main_button_next_description">When pressed it plays the next track.</string>
+    <string name="main_image_view_cover_description">It displays the album cover for the current track.</string>
+    <string name="main_menu_settings">Settings</string>
+    <string name="settings_connection_hostname">Hostname or IP</string>
+    <string name="settings_connection">Connection Settings</string>
+    <string name="settings_key_hostname">server_hostname</string>
+    <string name="settings_key_port">server_port</string>
+    <string name="settings_connection_port">Port:</string>
+    <string name="settings_miscellaneous">Miscellaneous</string>
+    <string name="settings_key_reduce_volume">reduce_volume_on_ring</string>
+    <string name="settings_miscellaneous_reduce_volume">Reduce on Incoming</string>
+    <string name="settings_miscellaneous_reduce_volume_description">Reduce the player volume on incoming call</string>
+    <string name="notification_check_network_settings">Check hostname or Port</string>
+    <string name="main_menu_title_playlist">Now Playing</string>
+    <string name="notification_no_lyrics">No Lyrics Found</string>
+    <string name="main_label_track_title">MusicBee Remote Control</string>
+    <string name="main_label_artist">Konstantinos Paparas</string>
+    <string name="main_label_duration_current">01:03</string>
+    <string name="main_label_duration_total">04:11</string>
+    <string name="main_label_date">© 2012</string>
+    <string name="main_label_album">Copyright</string>
+    <string name="main_button_connection_description">Displays the connection status. Also if the
+		connection is not active it initiates it when pressed.</string>
+    <string name="info_service_description">This service is responsible for the communication
+		of the application
+		with the plugin.</string>
+    <string name="application_description">Remote Control Application for MusicBee</string>
+    <string name="main_menu_title_lyrics">Lyrics</string>
+    <string name="main_menu_title_share">Share</string>
+    <string name="main_menu_title_settings">Settings</string>
+    <string name="string_value_lyrics">Lyrics</string>
+    <string name="string_value_now_playing">Now Playing</string>
+    <string name="preferences_category_about">About MusicBee RC</string>
 
 </resources>
