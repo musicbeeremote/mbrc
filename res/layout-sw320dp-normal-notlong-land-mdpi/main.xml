@@ -73,8 +73,8 @@
 
     <ImageView
         android:id="@+id/main_album_cover_image_view"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
         android:layout_marginTop="3dp"
         android:layout_toRightOf="@id/main_media_button_group"
         android:adjustViewBounds="false"
@@ -155,8 +155,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/main_label_album"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="6dp"
             android:layout_marginTop="8dp"
+            android:layout_marginRight="6dp"
             android:ellipsize="marquee"
             android:focusable="true"
             android:focusableInTouchMode="true"
@@ -168,10 +168,13 @@
             android:textColor="#FFFFFF"
             android:textSize="14sp" />
 
+
+
         <RelativeLayout
             android:id="@+id/trackProgressLabelsLayout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_above="@+id/main_media_buttons_group"
             android:layout_alignLeft="@+id/main_label_album"
             android:layout_below="@+id/main_label_year"
             android:layout_marginRight="12dp"
@@ -198,7 +201,8 @@
                 android:id="@+id/main_track_progress_current"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/main_track_progress_seeker"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
                 android:text="@string/main_label_duration_current"
                 android:textColor="#FFFFFF"
                 android:textSize="11dp" />
@@ -207,81 +211,83 @@
                 android:id="@+id/main_track_duration_total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/main_track_progress_seeker"
-                android:layout_toRightOf="@id/main_track_progress_current"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
                 android:gravity="right"
-                android:paddingLeft="140dp"
+                android:paddingLeft="11dp"
                 android:text="@string/main_label_duration_total"
                 android:textColor="#FFFFFF"
                 android:textSize="11dp" />
+
         </RelativeLayout>
-    </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/main_media_buttons_group"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/main_album_cover_image_view"
-        android:layout_centerHorizontal="true"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal" >
+        <RelativeLayout
+            android:id="@+id/main_media_buttons_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
 
-        <ImageButton
-            android:id="@+id/main_button_previous"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/main_button_previous_description"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_media_previous" />
+            <ImageButton
+                android:id="@+id/main_button_previous"
+                android:layout_width="@dimen/main_buttons_playback_size"
+                android:layout_height="@dimen/main_buttons_playback_size"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/main_button_previous_description"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_media_previous" />
 
-        <ImageButton
-            android:id="@+id/main_button_stop"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_marginLeft="24dp"
-            android:layout_toRightOf="@id/main_button_previous"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/main_button_stop_description"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_media_stop" />
 
-        <ImageButton
-            android:id="@+id/main_button_play_pause"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_marginLeft="24dp"
-            android:layout_toRightOf="@id/main_button_stop"
-            android:background="@android:color/transparent"
-            android:clickable="true"
-            android:contentDescription="@string/main_button_play_pause_description"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_media_play" />
+            <ImageButton
+                android:id="@+id/main_button_stop"
+                android:layout_width="@dimen/main_buttons_playback_size"
+                android:layout_height="@dimen/main_buttons_playback_size"
+                android:layout_marginLeft="24dp"
+                android:layout_toRightOf="@id/main_button_previous"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/main_button_stop_description"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_media_stop" />
 
-        <ImageButton
-            android:id="@+id/main_button_next"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_marginLeft="24dp"
-            android:layout_marginRight="2dp"
-            android:layout_toRightOf="@id/main_button_play_pause"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/main_button_next_description"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_media_next" />
+
+            <ImageButton
+                android:id="@+id/main_button_play_pause"
+                android:layout_width="@dimen/main_buttons_playback_size"
+                android:layout_height="@dimen/main_buttons_playback_size"
+                android:layout_marginLeft="24dp"
+                android:layout_toRightOf="@id/main_button_stop"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:contentDescription="@string/main_button_play_pause_description"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_media_play" />
+
+
+
+            <ImageButton
+                android:id="@+id/main_button_next"
+                android:layout_width="@dimen/main_buttons_playback_size"
+                android:layout_height="@dimen/main_buttons_playback_size"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="2dp"
+                android:layout_toRightOf="@id/main_button_play_pause"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/main_button_next_description"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_media_next" />
+
+        </RelativeLayout>
     </RelativeLayout>
 
     <SeekBar
         android:id="@+id/main_volume_seeker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/main_album_cover_image_view"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/main_media_buttons_group"
-        android:layout_gravity="center"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginBottom="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/main_media_button_group"
         android:gravity="center"
         android:max="100"
         android:maxHeight="7dp"
