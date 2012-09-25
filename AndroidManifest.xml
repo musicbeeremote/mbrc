@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="kelsos.mbremote"
+    package="com.kelsos.mbrc"
     android:installLocation="auto"
     android:versionCode="2"
     android:versionName="0.2 Alpha" >
@@ -18,17 +18,17 @@
         android:logo="@drawable/ic_launcher"
         android:theme="@style/Theme.mbrc_default"
 		android:name=".RemoteApplication" >
-        <activity android:name=".Views.MainView" >
+        <activity android:name=".views.MainView" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Views.LyricsView" >
+        <activity android:name=".views.LyricsView" >
         </activity>
-        <activity android:name=".Views.AppPreferenceView" >
+        <activity android:name=".views.AppPreferenceView" >
         </activity>
-        <activity android:name=".Views.PlaylistView" >
+        <activity android:name=".views.PlaylistView" >
         </activity>
         <service
             android:name=".controller.Controller"

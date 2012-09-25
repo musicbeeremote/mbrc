@@ -6,11 +6,11 @@
     <modelVersion>4.0.0</modelVersion>
 
 	<!-- application info-->
-    <groupId>kelsos.mbremote</groupId>
+    <groupId>com.kelsos.mbrc</groupId>
     <artifactId>mbrc</artifactId>
     <version>0.2-ALPHA</version>
 	<packaging>apk</packaging>
-	<name>RC for MusicBee</name>
+	<name>MusicBee Remote</name>
 
 	<developers>
 		<developer>

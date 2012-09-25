@@ -67,13 +67,14 @@
             android:padding="0.5dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_image_no_cover" />
-
+
         <RelativeLayout
             android:id="@+id/main_track_progress_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/main_album_cover_image_view"
-            android:layout_marginTop="5dp" >
+            android:layout_marginTop="5dp"
+            android:layout_toLeftOf="@+id/main_media_button_group" >
 
             <SeekBar
                 android:id="@+id/main_track_progress_seeker"
@@ -99,18 +100,19 @@
                 android:text="@string/main_label_duration_current"
                 android:textColor="#FFFFFF"
                 android:textSize="11dp" />
-
+
             <TextView
                 android:id="@+id/main_track_duration_total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:layout_below="@id/main_track_progress_seeker"
-                android:layout_toRightOf="@id/main_track_progress_current"
                 android:gravity="right"
                 android:paddingLeft="94dp"
                 android:text="@string/main_label_duration_total"
                 android:textColor="#FFFFFF"
                 android:textSize="11dp" />
+
         </RelativeLayout>
 
         <RelativeLayout
@@ -120,7 +122,7 @@
             android:layout_marginLeft="60dp"
             android:layout_toRightOf="@id/main_album_cover_image_view"
             android:orientation="vertical" >
-
+
             <ImageButton
                 android:id="@+id/main_button_connect"
                 android:layout_width="@dimen/extra_controls_button_size"
@@ -129,6 +131,7 @@
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:clickable="true"
                 android:contentDescription="@string/main_button_connection_description"
+                android:scaleType="fitCenter"
                 android:src="@drawable/ic_icon_indicator_red" />
 
             <ImageButton
@@ -174,10 +177,10 @@
         android:layout_below="@id/main_middle_group"
         android:layout_marginTop="5dp"
         android:orientation="vertical" >
-
+
         <TextView
             android:id="@+id/main_label_album"
-            android:layout_width="200dp"
+            android:layout_width="wrap_content"
             android:layout_height="20dp"
             android:layout_below="@id/main_track_info_two"
             android:layout_marginLeft="11dp"
@@ -192,15 +195,15 @@
             android:text="@string/main_label_album"
             android:textColor="#FFFFFF"
             android:textSize="14dp" />
-
+
         <TextView
             android:id="@+id/main_label_year"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="20dp"
-            android:layout_toRightOf="@id/main_label_album"
-            
-            android:layout_marginRight="11dp"
-            
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="false"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
             android:ellipsize="marquee"
             android:focusable="true"
             android:focusableInTouchMode="true"
@@ -211,14 +214,14 @@
             android:text="@string/main_label_date"
             android:textColor="#FFFFFF"
             android:textSize="12dp" />
-    </RelativeLayout>
 
+    </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/main_volume_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/main_track_info_two"
-        android:layout_marginTop="-10dp" >
+        android:layout_below="@+id/main_track_info_two" >
 
         <ImageButton
             android:id="@+id/main_mute_button"
@@ -230,22 +233,28 @@
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_mute_full" />
 
-        <SeekBar
-            android:id="@+id/main_volume_seeker"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/main_volume_area"
+            android:layout_height="44dp"
             android:layout_gravity="center"
-            android:layout_marginRight="8dp"
-            android:layout_toRightOf="@id/main_mute_button"
-            android:gravity="center"
-            android:max="100"
-            android:maxHeight="7dp"
-            android:minHeight="7dp"
-            android:progress="0"
-            android:progressDrawable="@drawable/ic_volume_bar_progress"
-            android:secondaryProgress="0"
-            android:thumb="@drawable/ic_seeker_volume_thumb" />
+            android:layout_toRightOf="@id/main_mute_button" >
+
+            <SeekBar
+                android:id="@+id/main_volume_seeker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:max="100"
+                android:maxHeight="7dp"
+                android:minHeight="7dp"
+                android:progress="0"
+                android:progressDrawable="@drawable/ic_volume_bar_progress"
+                android:secondaryProgress="0"
+                android:thumb="@drawable/ic_seeker_volume_thumb" />
+
+        </RelativeLayout>
     </RelativeLayout>
 
     <RelativeLayout

@@ -1,0 +1,16 @@
+package com.kelsos.mbrc.commands.request;
+
+import com.google.inject.Inject;
+import com.kelsos.mbrc.interfaces.ICommand;
+import com.kelsos.mbrc.interfaces.IEvent;
+import com.kelsos.mbrc.Others.Const;
+import com.kelsos.mbrc.services.ProtocolHandler;
+
+public class RequestScrobbleToggleCommand implements ICommand
+{
+	@Inject private ProtocolHandler protocolHandler;
+	public void execute(IEvent e)
+	{
+		protocolHandler.requestAction(ProtocolHandler.PlayerAction.Scrobble, Const.TOGGLE);
+	}
+}
