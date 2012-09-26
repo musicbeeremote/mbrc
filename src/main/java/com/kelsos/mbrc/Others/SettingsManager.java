@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.messaging.NotificationService;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -11,6 +12,7 @@ import java.net.SocketAddress;
 public class SettingsManager {
     @Inject SharedPreferences preferences;
     @Inject Context context;
+	@Inject NotificationService notificationService;
 
 	public SettingsManager() {
 	}
@@ -19,7 +21,7 @@ public class SettingsManager {
 		String server_hostname = preferences.getString(context.getString(R.string.settings_key_hostname), null);
 		String server_port_string = preferences.getString(context.getString(R.string.settings_key_port), null);
 		if (notNullOrEmpty(server_hostname) || notNullOrEmpty(server_port_string)) {
-            //NotificationService.getInstance().showToastMessage(R.string.network_manager_check_hostname_or_port);
+            notificationService.showToastMessage(R.string.notification_check_network_settings);
 			return null;
 		}
 		int server_port = Integer.parseInt(server_port_string);

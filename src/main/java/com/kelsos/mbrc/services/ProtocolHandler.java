@@ -85,6 +85,7 @@ public class ProtocolHandler
 						requestAction(PlayerAction.PlayerStatus);
 						requestAction(PlayerAction.SongInformation);
 						requestAction(PlayerAction.SongCover);
+						requestAction(PlayerAction.Lyrics);
 					}
 					else
 					{
