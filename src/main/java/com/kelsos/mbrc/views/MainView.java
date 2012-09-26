@@ -574,14 +574,32 @@ public class MainView extends RoboSherlockActivity
 			case KeyEvent.KEYCODE_VOLUME_UP:
 				if (volumeSlider.getProgress() <= 90)
 				{
-					volumeSlider.setProgress(volumeSlider.getProgress() + 10);
+					int mod = volumeSlider.getProgress()%10;
+					if(mod==0) {
+						volumeSlider.setProgress(volumeSlider.getProgress()+10);
+					}
+					else if (mod<5) {
+						volumeSlider.setProgress(volumeSlider.getProgress()+(10-mod));
+					}
+					else {
+						volumeSlider.setProgress(volumeSlider.getProgress()+(20-mod));
+					}
 					bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_VOLUME, String.valueOf(volumeSlider.getProgress())));
 				}
 				return true;
 			case KeyEvent.KEYCODE_VOLUME_DOWN:
 				if (volumeSlider.getProgress() >= 10)
 				{
-					volumeSlider.setProgress(volumeSlider.getProgress() - 10);
+					int mod = volumeSlider.getProgress()%10;
+					if(mod==0) {
+						volumeSlider.setProgress(volumeSlider.getProgress()-10);
+					}
+					else if (mod<5) {
+						volumeSlider.setProgress(volumeSlider.getProgress()-(10+mod));
+					}
+					else {
+						volumeSlider.setProgress(volumeSlider.getProgress()-mod);
+					}
 					bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_VOLUME, String.valueOf(volumeSlider.getProgress())));
 				}
 				return true;
