@@ -23,7 +23,7 @@
             android:clickable="true"
             android:contentDescription="@string/main_button_connection_description"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_icon_indicator_red" />
+            android:src="@drawable/ic_connectivy_off" />
 
         <ImageButton
             android:id="@+id/main_last_fm_button"

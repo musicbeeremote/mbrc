@@ -129,7 +129,7 @@
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:clickable="true"
                 android:contentDescription="@string/main_button_connection_description"
-                android:src="@drawable/ic_icon_indicator_red" />
+                android:src="@drawable/ic_connectivy_off" />
 
             <ImageButton
                 android:id="@+id/main_repeat_button"
@@ -234,10 +234,8 @@
             android:id="@+id/main_volume_seeker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/main_volume_area"
-            android:layout_gravity="center"
-            android:layout_marginRight="8dp"
-            android:layout_toRightOf="@id/main_mute_button"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/main_mute_button"
             android:gravity="center"
             android:max="100"
             android:maxHeight="7dp"
@@ -246,6 +244,7 @@
             android:progressDrawable="@drawable/ic_volume_bar_progress"
             android:secondaryProgress="0"
             android:thumb="@drawable/ic_seeker_volume_thumb" />
+
     </RelativeLayout>
 
     <RelativeLayout

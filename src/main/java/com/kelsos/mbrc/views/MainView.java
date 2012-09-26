@@ -18,6 +18,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.ShareActionProvider;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockActivity;
 import com.google.inject.Inject;
+import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.squareup.otto.Bus;
 import com.kelsos.mbrc.events.UserActionEvent;
 import com.kelsos.mbrc.R;
@@ -313,8 +314,7 @@ public class MainView extends RoboSherlockActivity
 			case Stopped:
                 /* Stop the animation if the track is paused*/
 				stopTrackProgressAnimation();
-				trackProgressSlider.setProgress(0);
-				trackProgressCurrent.setText("00:00");
+				activateStoppedState();
 			case Undefined:
 				playPauseButton.setImageResource(R.drawable.ic_media_play);
 				stopButton.setImageResource(R.drawable.ic_media_stop_disabled);
@@ -343,18 +343,29 @@ public class MainView extends RoboSherlockActivity
 		yearLabel.setText(year);
 	}
 
-	public void updateConnectionIndicator(boolean connected)
+	public void updateConnectivityStatus(ConnectionStatus status)
 	{
-		if (connected)
+		switch (status)
 		{
-			connectivityIndicator.setImageResource(R.drawable.ic_icon_indicator_green);
-		} else
-		{
-			connectivityIndicator.setImageResource(R.drawable.ic_icon_indicator_red);
-			stopTrackProgressAnimation();
-			trackProgressSlider.setProgress(0);
-			trackProgressCurrent.setText("00:00");
+			case CONNECTION_OFF:
+				connectivityIndicator.setImageResource(R.drawable.ic_connectivy_off);
+				stopTrackProgressAnimation();
+				activateStoppedState();
+				break;
+			case CONNECTION_ON:
+				connectivityIndicator.setImageResource(R.drawable.ic_connectivity_connected);
+				break;
+			case CONNECTION_ACTIVE:
+				connectivityIndicator.setImageResource(R.drawable.ic_connectivity_active);
+				break;
 		}
+	}
+
+	private void activateStoppedState()
+	{
+		trackProgressSlider.setProgress(0);
+		trackProgressCurrent.setText("00:00");
+		stopButton.setEnabled(false);
 	}
 
 	/**
@@ -429,6 +440,7 @@ public class MainView extends RoboSherlockActivity
 			progressUpdateTimer.purge();
 			progressUpdateTimer = null;
 		}
+
 	}
 
 	private OnClickListener playButtonListener = new OnClickListener()

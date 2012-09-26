@@ -2,14 +2,15 @@ package com.kelsos.mbrc.services;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.squareup.otto.Bus;
-import com.kelsos.mbrc.events.RawSocketDataEvent;
-import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.Others.Const;
 import com.kelsos.mbrc.Others.DelayTimer;
 import com.kelsos.mbrc.Others.SettingsManager;
+import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.Input;
 import com.kelsos.mbrc.enums.SocketServiceEventType;
+import com.kelsos.mbrc.events.RawSocketDataEvent;
+import com.kelsos.mbrc.messaging.NotificationService;
+import com.squareup.otto.Bus;
 
 import java.io.*;
 import java.net.Socket;
@@ -114,9 +115,7 @@ public class SocketService
 		{
 			if (socketExistsAndIsConnected())
 				_output.println(data + Const.NEWLINE);
-		} catch (Exception ignored)
-		{
-		}
+		} catch (Exception ignored){}
 	}
 
 	public void informEventBus(final RawSocketDataEvent event)
@@ -133,7 +132,6 @@ public class SocketService
 
 	private class socketConnection implements Runnable
 	{
-
 		public void run()
 		{
 			SocketAddress socketAddress = settingsManager.getSocketAddress();
@@ -165,8 +163,7 @@ public class SocketService
 				}
 			} catch (SocketTimeoutException e)
 			{
-				final String message = "Connection timed out";
-				notificationService.showToastMessage(message);
+				notificationService.showToastMessage(R.string.notification_connection_timeout);
 			} catch (SocketException e)
 			{
 				final String exceptionMessage = e.toString().substring(26);

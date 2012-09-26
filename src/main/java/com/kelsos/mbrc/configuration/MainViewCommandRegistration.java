@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.configuration;
 
 import com.kelsos.mbrc.commands.*;
-import com.kelsos.mbrc.commands.model.UpdateMainViewCommand;
+import com.kelsos.mbrc.commands.visual.UpdateMainViewCommand;
 import com.kelsos.mbrc.commands.request.*;
 import com.kelsos.mbrc.controller.Controller;
 import com.kelsos.mbrc.enums.UserInputEventType;

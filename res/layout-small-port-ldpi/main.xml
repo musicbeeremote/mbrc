@@ -67,7 +67,8 @@
             android:padding="0.5dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_image_no_cover" />
-
+
+
         <RelativeLayout
             android:id="@+id/main_track_progress_group"
             android:layout_width="match_parent"
@@ -100,7 +101,11 @@
                 android:text="@string/main_label_duration_current"
                 android:textColor="#FFFFFF"
                 android:textSize="11dp" />
-
+
+
+
+
+
             <TextView
                 android:id="@+id/main_track_duration_total"
                 android:layout_width="wrap_content"
@@ -122,7 +127,8 @@
             android:layout_marginLeft="60dp"
             android:layout_toRightOf="@id/main_album_cover_image_view"
             android:orientation="vertical" >
-
+
+
             <ImageButton
                 android:id="@+id/main_button_connect"
                 android:layout_width="@dimen/extra_controls_button_size"
@@ -132,7 +138,7 @@
                 android:clickable="true"
                 android:contentDescription="@string/main_button_connection_description"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_icon_indicator_red" />
+                android:src="@drawable/ic_connectivy_off" />
 
             <ImageButton
                 android:id="@+id/main_repeat_button"
@@ -177,7 +183,8 @@
         android:layout_below="@id/main_middle_group"
         android:layout_marginTop="5dp"
         android:orientation="vertical" >
-
+
+
         <TextView
             android:id="@+id/main_label_album"
             android:layout_width="wrap_content"
@@ -195,7 +202,15 @@
             android:text="@string/main_label_album"
             android:textColor="#FFFFFF"
             android:textSize="14dp" />
-
+
+
+
+
+
+
+
+
+
         <TextView
             android:id="@+id/main_label_year"
             android:layout_width="wrap_content"
@@ -216,7 +231,8 @@
             android:textSize="12dp" />
 
     </RelativeLayout>
-
+
+
     <RelativeLayout
         android:id="@+id/main_volume_area"
         android:layout_width="match_parent"

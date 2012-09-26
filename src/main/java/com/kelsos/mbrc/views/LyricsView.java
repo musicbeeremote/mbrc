@@ -20,10 +20,8 @@ public class LyricsView extends RoboSherlockActivity
 {
 	@InjectView(R.id.lyrics_list_view) ListView lyricsView;
 	@InjectView(R.id.lyrics_view_track_info_label) TextView trackInfo;
-	@Inject
-	Bus bus;
-	@Inject
-	RunningActivityAccessor accessor;
+	@Inject Bus bus;
+	@Inject RunningActivityAccessor accessor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

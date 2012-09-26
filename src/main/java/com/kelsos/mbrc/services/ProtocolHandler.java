@@ -2,13 +2,13 @@ package com.kelsos.mbrc.services;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.squareup.otto.Bus;
-import com.kelsos.mbrc.data.MusicTrack;
-import com.kelsos.mbrc.events.ProtocolDataEvent;
 import com.kelsos.mbrc.Others.Const;
 import com.kelsos.mbrc.Others.DelayTimer;
 import com.kelsos.mbrc.Others.Protocol;
+import com.kelsos.mbrc.data.MusicTrack;
 import com.kelsos.mbrc.enums.ProtocolHandlerEventType;
+import com.kelsos.mbrc.events.ProtocolDataEvent;
+import com.squareup.otto.Bus;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -49,12 +49,20 @@ public class ProtocolHandler
 	public void setHandshakeComplete(boolean handshakeComplete)
 	{
 		isHandshakeComplete = handshakeComplete;
-		if(isHandshakeComplete)
+		if (isHandshakeComplete)
 		{
-		 populateModel();
+			populateModel();
 		}
 	}
 
+	/**
+	 * Returns true if the handshake is complete and false if it is not.
+	 * @return
+	 */
+	public boolean getHandshakeComplete()
+	{
+		return isHandshakeComplete;
+	}
 
 	/**
 	 * Given the socket server's answer this function processes the send data, extracts needed
@@ -75,19 +83,19 @@ public class ProtocolHandler
 				if (!isHandshakeComplete)
 				{
 
-				if (xmlNode.getNodeName().contains(Protocol.PLAYER))
+					if (xmlNode.getNodeName().contains(Protocol.PLAYER))
 					{
 						requestAction(PlayerAction.Protocol);
 					} else if (xmlNode.getNodeName().contains(Protocol.PROTOCOL))
 					{
 						ServerProtocolVersion = Double.parseDouble(xmlNode.getFirstChild().getNodeValue());
 						isHandshakeComplete = true;
+						bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_HANDSHAKE_COMPLETE, "true"));
 						requestAction(PlayerAction.PlayerStatus);
 						requestAction(PlayerAction.SongInformation);
 						requestAction(PlayerAction.SongCover);
 						requestAction(PlayerAction.Lyrics);
-					}
-					else
+					} else
 					{
 						return;
 					}
@@ -122,7 +130,7 @@ public class ProtocolHandler
 					getPlaylistData(xmlNode);
 				} else if (xmlNode.getNodeName().contains(Protocol.LYRICS))
 				{
-					String songLyrics = xmlNode.getFirstChild().getNodeValue().replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("&quot;","\"").replace("&apos;", "'").replace("&amp;","&").replace("<p>", "\r\n").replace("<br>", "\n").trim();
+					String songLyrics = xmlNode.getFirstChild().getNodeValue().replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", "\"").replace("&apos;", "'").replace("&amp;", "&").replace("<p>", "\r\n").replace("<br>", "\n").trim();
 					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_LYRICS_AVAILABLE, songLyrics));
 				} else if (xmlNode.getNodeName().contains(Protocol.PLAYER_STATUS))
 				{
@@ -198,7 +206,8 @@ public class ProtocolHandler
 		NodeList trackInfoNodeList = xmlNode.getChildNodes();
 		String[] trackData = new String[4];
 		int nodeListLength = trackInfoNodeList.getLength();
-		for(int i=0;i<nodeListLength;i++){
+		for (int i = 0; i < nodeListLength; i++)
+		{
 			trackData[i] = trackInfoNodeList.item(i).getFirstChild().getNodeValue();
 		}
 
@@ -238,11 +247,13 @@ public class ProtocolHandler
 
 	public void requestAction(PlayerAction action, String actionContent)
 	{
+		if(!(action==PlayerAction.Protocol||action==PlayerAction.Player)&&!isHandshakeComplete) return;
 		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_REPLY_AVAILABLE, getActionString(action, actionContent)));
 	}
 
 	public void requestAction(ProtocolHandler.PlayerAction action)
 	{
+		if(!(action==PlayerAction.Protocol||action==PlayerAction.Player)&&!isHandshakeComplete) return;
 		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_REPLY_AVAILABLE, getActionString(action, "")));
 	}
 

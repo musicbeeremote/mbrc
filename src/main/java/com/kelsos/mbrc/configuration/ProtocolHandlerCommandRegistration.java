@@ -3,6 +3,7 @@ package com.kelsos.mbrc.configuration;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.commands.*;
 import com.kelsos.mbrc.commands.model.*;
+import com.kelsos.mbrc.commands.visual.VisualUpdateHandshakeComplete;
 import com.kelsos.mbrc.controller.Controller;
 import com.kelsos.mbrc.enums.ProtocolHandlerEventType;
 
@@ -29,6 +30,7 @@ public class ProtocolHandlerCommandRegistration
 		/* responsible for reducing the volume on incoming call */
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_REDUCE_VOLUME, ReduceVolumeOnRingCommand.class);
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_LYRICS_AVAILABLE, UpdateLyricsCommand.class);
+		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_HANDSHAKE_COMPLETE, VisualUpdateHandshakeComplete.class);
 
 	}
 

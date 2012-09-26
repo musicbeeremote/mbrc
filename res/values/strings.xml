@@ -50,7 +50,9 @@
     <string name="string_value_lyrics">Lyrics</string>
     <string name="string_value_now_playing">Now Playing</string>
     <string name="preferences_category_about">About MusicBee Remote</string>
+	<string name="preferences_about_version">MusicBee Remote Version</string>
 	<string name="alert_invalid_port_number">The valid port range is from 1 to 65535</string>
 	<string name="alert_invalid_range">"Invalid Range"</string>
+	<string name="notification_connection_timeout">Connection timed out</string>
 
 </resources>

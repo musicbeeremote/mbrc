@@ -66,7 +66,8 @@
             android:padding="0.5dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_image_no_cover" />
-
+
+
         <RelativeLayout
             android:id="@+id/main_track_progress_group"
             android:layout_width="match_parent"
@@ -74,7 +75,10 @@
             android:layout_below="@id/main_album_cover_image_view"
             android:layout_marginTop="5dp"
             android:layout_toLeftOf="@+id/main_media_button_group" >
-
+
+
+
+
             <SeekBar
                 android:id="@+id/main_track_progress_seeker"
                 android:layout_width="180dp"
@@ -99,7 +103,8 @@
                 android:text="@string/main_label_duration_current"
                 android:textColor="#FFFFFF"
                 android:textSize="11dp" />
-
+
+
             <TextView
                 android:id="@+id/main_track_duration_total"
                 android:layout_width="wrap_content"
@@ -130,7 +135,7 @@
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:clickable="true"
                 android:contentDescription="@string/main_button_connection_description"
-                android:src="@drawable/ic_icon_indicator_red" />
+                android:src="@drawable/ic_connectivy_off" />
 
             <ImageButton
                 android:id="@+id/main_repeat_button"
