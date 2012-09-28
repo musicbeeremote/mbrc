@@ -18,7 +18,7 @@
 
 <resources>
 
-    <style name="Theme.mbrc_default" parent="@style/Theme.Sherlock">
+    <style name="Theme.mbrc_default" parent="@style/Theme.Sherlock.ForceOverflow">
         <item name="actionBarItemBackground">@drawable/selectable_background_mbrc_default</item>
         <item name="popupMenuStyle">@style/mbrc_default_PopupMenu</item>
         <item name="dropDownListViewStyle">@style/mbrc_default_DropDownListView</item>

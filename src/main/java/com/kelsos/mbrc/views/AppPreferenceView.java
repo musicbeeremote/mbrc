@@ -9,11 +9,22 @@ import android.preference.Preference;
 import android.preference.PreferenceManager;
 import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockPreferenceActivity;
+import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.controller.RunningActivityAccessor;
+import com.kelsos.mbrc.enums.UserInputEventType;
+import com.kelsos.mbrc.events.UserActionEvent;
+import com.squareup.otto.Bus;
 
 import static android.app.AlertDialog.Builder;
 
 public class AppPreferenceView extends RoboSherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
+
+	@Inject
+	Bus bus;
+	@Inject
+	RunningActivityAccessor accessor;
+
 	private EditTextPreference hostEditTextPreference;
     private EditTextPreference portEditTextPreference;
 
@@ -21,6 +32,7 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+		accessor.register(this);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(R.string.main_menu_title_settings);
         addPreferencesFromResource(R.xml.application_settings);
@@ -80,5 +92,13 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity implements
         } else if (key.equals(getApplicationContext().getString(R.string.settings_key_port))) {
             portEditTextPreference.setSummary(sharedPreferences.getString(getApplicationContext().getString(R.string.settings_key_port), null));
         }
+		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_SETTINGS_CHANGED));
     }
+
+	@Override
+	public void onDestroy()
+	{
+		accessor.unRegister(this);
+		super.onDestroy();
+	}
 }

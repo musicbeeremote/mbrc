@@ -73,6 +73,23 @@ public class SocketService
 		_connectionThread.start();
 	}
 
+	public void resetSocketConnection()
+	{
+		_connectionThread = null;
+		if(socketExistsAndIsConnected())
+		{
+			try
+			{
+				_cSocket.close();
+				_cSocket = null;
+			} catch (IOException ignore)
+			{
+
+			}
+		}
+		initSocketThread(Input.INIT);
+	}
+
 	private boolean connectionThreadExistsAndIsAlive()
 	{
 		return _connectionThread != null && _connectionThread.isAlive();

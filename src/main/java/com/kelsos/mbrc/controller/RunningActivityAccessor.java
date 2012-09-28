@@ -3,6 +3,8 @@ package com.kelsos.mbrc.controller;
 import android.app.Activity;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.configuration.PreferenceViewCommandRegistration;
+import com.kelsos.mbrc.views.AppPreferenceView;
 import com.kelsos.mbrc.views.LyricsView;
 import com.kelsos.mbrc.views.MainView;
 import com.kelsos.mbrc.views.PlaylistView;
@@ -57,6 +59,10 @@ public class RunningActivityAccessor
 		{
 			PlaylistViewCommandRegistration.register(controller);
 		}
+		else if(activity.getClass()== AppPreferenceView.class)
+		{
+			PreferenceViewCommandRegistration.register(controller);
+		}
 	}
 
 	private void CommandUnRegistrationHandler(Activity activity)
@@ -72,6 +78,10 @@ public class RunningActivityAccessor
 		else if(activity.getClass() == PlaylistView.class)
 		{
 			PlaylistViewCommandRegistration.unRegister(controller);
+		}
+        else if(activity.getClass()== AppPreferenceView.class)
+		{
+			PreferenceViewCommandRegistration.unRegister(controller);
 		}
 	}
 

@@ -3,6 +3,7 @@ package com.kelsos.mbrc.configuration;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.commands.*;
 import com.kelsos.mbrc.commands.model.*;
+import com.kelsos.mbrc.commands.visual.UpdatePlaybackPositionCommand;
 import com.kelsos.mbrc.commands.visual.VisualUpdateHandshakeComplete;
 import com.kelsos.mbrc.controller.Controller;
 import com.kelsos.mbrc.enums.ProtocolHandlerEventType;

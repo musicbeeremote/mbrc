@@ -87,8 +87,8 @@
                 android:gravity="center"
                 android:maxHeight="5dp"
                 android:minHeight="5dp"
-                android:paddingLeft="0dp"
-                android:paddingRight="0dp"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
                 android:progress="0"
                 android:progressDrawable="@drawable/ic_duration_bar_progress"
                 android:secondaryProgress="0"
@@ -198,11 +198,11 @@
             android:text="@string/main_label_album"
             android:textColor="#FFFFFF"
             android:textSize="15dp" />
-
+
         <TextView
             android:id="@+id/main_label_year"
             android:layout_width="match_parent"
-            android:layout_height="25dp"
+            android:layout_height="wrap_content"
             android:layout_below="@id/main_label_album"
             android:layout_marginLeft="11dp"
             android:layout_marginRight="11dp"
@@ -217,14 +217,14 @@
             android:text="@string/main_label_date"
             android:textColor="#FFFFFF"
             android:textSize="13dp" />
-    </RelativeLayout>
 
+    </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/main_volume_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/main_track_info_two"
-        android:layout_marginTop="-10dp" >
+        android:layout_below="@id/main_track_info_two" >
 
         <ImageButton
             android:id="@+id/main_mute_button"
@@ -240,22 +240,25 @@
 	    android:layout_height="44dp"
 	    android:gravity="center"
 	       android:layout_toRightOf="@id/main_mute_button">
-
-        <SeekBar
-            android:id="@+id/main_volume_seeker"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/main_volume_area"
-            android:layout_gravity="center"
-            android:layout_marginRight="8dp"
-            android:gravity="center"
-            android:max="100"
-            android:maxHeight="7dp"
-            android:minHeight="7dp"
-            android:progress="0"
-            android:progressDrawable="@drawable/ic_volume_bar_progress"
-            android:secondaryProgress="0"
-            android:thumb="@drawable/ic_seeker_volume_thumb" />
+
+		<SeekBar
+		    android:id="@+id/main_volume_seeker"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentTop="true"
+		    android:layout_marginRight="8dp"
+		    android:layout_toRightOf="@+id/main_mute_button"
+		    android:gravity="center"
+		    android:max="100"
+		    android:maxHeight="12dp"
+		    android:minHeight="12dp"
+		    android:paddingLeft="8dp"
+		    android:paddingRight="8dp"
+		    android:progress="0"
+		    android:progressDrawable="@drawable/ic_volume_bar_progress"
+		    android:secondaryProgress="0"
+		    android:thumb="@drawable/ic_seeker_volume_thumb"
+		    android:thumbOffset="16dp" />
 
         </RelativeLayout>
     </RelativeLayout>

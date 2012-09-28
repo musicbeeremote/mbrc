@@ -22,6 +22,7 @@ public class MainViewCommandRegistration
 		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_DATA_REFRESH, UpdateMainViewCommand.class);
 		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAYBACK_POSITION, RequestPlaybackPositionChangeCommand.class);
 		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_INITIALIZE, InitiateConnectionCommand.class);
+		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_CONNECTION_RESET, RestartConnectionCommand.class);
 	}
 
 	public static void unRegister(Controller controller)
@@ -38,5 +39,6 @@ public class MainViewCommandRegistration
 		controller.unRegisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_DATA_REFRESH);
 		controller.unRegisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAYBACK_POSITION);
 		controller.unRegisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_INITIALIZE);
+		controller.unRegisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_CONNECTION_RESET);
 	}
 }

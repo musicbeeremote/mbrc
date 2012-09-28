@@ -18,13 +18,13 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.ShareActionProvider;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockActivity;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.enums.ConnectionStatus;
-import com.squareup.otto.Bus;
-import com.kelsos.mbrc.events.UserActionEvent;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.controller.RunningActivityAccessor;
+import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.enums.UserInputEventType;
+import com.kelsos.mbrc.events.UserActionEvent;
+import com.squareup.otto.Bus;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 
@@ -217,6 +217,7 @@ public class MainView extends RoboSherlockActivity
 		shuffleButton.setOnClickListener(shuffleButtonListener);
 		repeatButton.setOnClickListener(repeatButtonListener);
 		connectivityIndicator.setOnClickListener(connectivityIndicatorListener);
+		connectivityIndicator.setOnLongClickListener(connectivityIndicatorLongClickListener);
 
 	}
 
@@ -520,6 +521,16 @@ public class MainView extends RoboSherlockActivity
 		public void onClick(View v)
 		{
 			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_INITIALIZE));
+		}
+	};
+
+	private View.OnLongClickListener connectivityIndicatorLongClickListener = new View.OnLongClickListener()
+	{
+		@Override
+		public boolean onLongClick(View view)
+		{
+			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_CONNECTION_RESET));
+			return false;
 		}
 	};
 

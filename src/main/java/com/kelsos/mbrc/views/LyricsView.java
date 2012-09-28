@@ -15,6 +15,8 @@ import com.kelsos.mbrc.enums.UserInputEventType;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 
+import static android.os.Build.VERSION.SDK_INT;
+
 @ContentView(R.layout.lyrics)
 public class LyricsView extends RoboSherlockActivity
 {
@@ -26,6 +28,11 @@ public class LyricsView extends RoboSherlockActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		//HACK: in 2.2 the onContentChanged(); method does not get called before the on create.
+		if (SDK_INT >= 7 && SDK_INT <= 8)
+		{
+			super.onContentChanged();
+		}
 		accessor.register(this);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(R.string.string_value_lyrics);

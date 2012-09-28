@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.commands.model;
+package com.kelsos.mbrc.commands.visual;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.controller.RunningActivityAccessor;
@@ -21,8 +21,14 @@ public class UpdatePlaybackPositionCommand implements ICommand
 		{
 			public void run()
 			{
-				MainView view = (MainView) accessor.getRunningActivity();
-				view.updateDurationDisplay(current, total);
+				try
+				{
+					MainView view = (MainView) accessor.getRunningActivity();
+					view.updateDurationDisplay(current, total);
+				} catch (Exception ignore)
+				{
+
+				}
 			}
 		});
 	}

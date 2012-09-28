@@ -35,8 +35,19 @@ public class DelayTimer {
     public void start()
     {
         if(_isRunning) return;
-        if(_internalTimer==null) _internalTimer = new Timer();
-        if(_internalTimerTask==null) _internalTimerTask = new InternalTimerTask();
+		if(_internalTimerTask!=null)
+		{
+			_internalTimerTask.cancel();
+			_internalTimerTask = null;
+		}
+		if(_internalTimer!=null)
+		{
+			_internalTimer.cancel();
+			_internalTimer.purge();
+			_internalTimer=null;
+		}
+		_internalTimer = new Timer();
+        _internalTimerTask = new InternalTimerTask();
         _internalTimer.schedule(_internalTimerTask,_delay);
         _isRunning=true;
     }
