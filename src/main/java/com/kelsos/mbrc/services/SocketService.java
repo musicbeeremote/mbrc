@@ -7,7 +7,7 @@ import com.kelsos.mbrc.Others.Const;
 import com.kelsos.mbrc.Others.DelayTimer;
 import com.kelsos.mbrc.Others.SettingsManager;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.enums.Input;
+import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.enums.SocketServiceEventType;
 import com.kelsos.mbrc.events.RawSocketDataEvent;
 import com.kelsos.mbrc.messaging.NotificationService;
@@ -30,7 +30,7 @@ public class SocketService
 	private NotificationService notificationService;
 
 	private static int _numberOfTries;
-	public static final int MAX_RETRIES = 4;
+	public static final int MAX_ALLOWED_RETRIES = 8;
 
 	private Socket _cSocket;
 
@@ -47,76 +47,69 @@ public class SocketService
 		this.settingsManager = settingsManager;
 		this.notificationService = notificationService;
 
-		_connectionTimer = new DelayTimer(1500, timerFinishEvent);
+		_connectionTimer = new DelayTimer(1800, timerFinishEvent);
 		_numberOfTries = 0;
-		initSocketThread(Input.INIT);
+		SocketManager(SocketAction.SOCKET_START);
 	}
 
 	private DelayTimer.TimerFinishEvent timerFinishEvent = new DelayTimer.TimerFinishEvent()
 	{
 		public void onTimerFinish()
 		{
-			startSocketThread();
+			SocketManager(SocketAction.SOCKET_RESET);
 			_numberOfTries++;
 		}
 	};
-
-	/**
-	 * This function starts the Thread that handles the socket connection.
-	 */
-	private void startSocketThread()
-	{
-		if (socketExistsAndIsConnected() || connectionThreadExistsAndIsAlive())
-			return;
-		else if (!socketExistsAndIsConnected() && connectionThreadExistsAndIsAlive())
-		{
-			_connectionThread = null;
-		}
-		_connectionThread = new Thread(new socketConnection());
-		_connectionThread.start();
-	}
-
-	public void resetSocketConnection()
-	{
-		_connectionThread = null;
-		if(socketExistsAndIsConnected())
-		{
-			try
-			{
-				_cSocket.close();
-				_cSocket = null;
-			} catch (IOException ignore)
-			{
-
-			}
-		}
-		initSocketThread(Input.INIT);
-	}
 
 	private boolean connectionThreadExistsAndIsAlive()
 	{
 		return _connectionThread != null && _connectionThread.isAlive();
 	}
 
-	/**
-	 * Depending on the user input the function either retries to connect until the MAX_RETRIES number is reached
-	 * or it resets the number of retries counter and then retries to connect until the MAX_RETRIES number is reached
-	 *
-	 * @param input com.kelsos.mbrc.Enumerations.Input.User resets the counter, com.kelsos.mbrc.Enumerations.Input.System just tries one more time.
-	 */
-	public void initSocketThread(Input input)
+	public void SocketManager(SocketAction action)
 	{
-		if (socketExistsAndIsConnected()) return;
-		if (input == Input.INIT)
-		{
-			_numberOfTries = 0;
-			if (_connectionTimer.isRunning()) _connectionTimer.stop();
-		}
-		if ((_numberOfTries > MAX_RETRIES) && _connectionTimer.isRunning())
-		{
-			_connectionTimer.stop();
-		} else if ((_numberOfTries < MAX_RETRIES) && !_connectionTimer.isRunning())
-			_connectionTimer.start();
+	 	switch (action)
+		 {
+			 case SOCKET_RESET:
+
+				 if(socketExistsAndIsConnected())
+				 {
+					 try
+					 {
+						 if(_output!=null)
+						 {
+							 _output.flush();
+							 _output.close();
+							 _output=null;
+						 }
+						 _cSocket.close();
+						 _cSocket = null;
+					 } catch (IOException ignore)
+					 {
+
+					 }
+				 }
+				 if(_connectionThread!=null) _connectionThread.interrupt();
+				 _connectionThread = null;
+				 _connectionThread = new Thread(new socketConnection());
+				 _connectionThread.start();
+				 break;
+			 case SOCKET_START:
+				 if (socketExistsAndIsConnected() || connectionThreadExistsAndIsAlive())
+					 return;
+				 else if (!socketExistsAndIsConnected() && connectionThreadExistsAndIsAlive())
+				 {
+					 _connectionThread.interrupt();
+					 _connectionThread = null;
+				 }
+				 _connectionThread = new Thread(new socketConnection());
+				 _connectionThread.start();
+				 break;
+			case RETRY_COUNTER_RESET:
+				_numberOfTries = 0;
+				break;
+
+		 }
 	}
 
 	/**
@@ -134,6 +127,7 @@ public class SocketService
 		try
 		{
 			if (socketExistsAndIsConnected())
+				Log.d("mbrcdata", data);
 				_output.println(data + Const.NEWLINE);
 		} catch (Exception ignored){}
 	}
@@ -203,8 +197,7 @@ public class SocketService
 				_cSocket = null;
 
 				informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_STATUS_CHANGE, "false"));
-				initSocketThread(Input.RETRY);
-				Log.d("mbrc", Integer.toString(_numberOfTries));
+				if(_numberOfTries<MAX_ALLOWED_RETRIES) _connectionTimer.start();
 			}
 		}
 	}

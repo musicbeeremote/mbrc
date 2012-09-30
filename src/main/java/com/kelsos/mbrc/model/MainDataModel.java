@@ -121,7 +121,13 @@ public class MainDataModel
 			bus.post(new ModelDataEvent(ModelDataEventType.MODEL_COVER_NOT_FOUND));
 		} else
 		{
-			new ImageDecoder(context, base64format).execute();
+			try {
+				new ImageDecoder(context, base64format).execute();
+			}
+			catch (Exception ignore)
+			{
+
+			}
 		}
 	}
 
