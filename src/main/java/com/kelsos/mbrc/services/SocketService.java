@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.services;
 
+import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.Others.Const;
@@ -17,6 +18,8 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+
+import static android.os.Build.VERSION.SDK_INT;
 
 @Singleton
 public class SocketService
@@ -44,7 +47,7 @@ public class SocketService
 		this.settingsManager = settingsManager;
 		this.notificationService = notificationService;
 
-		_connectionTimer = new DelayTimer(1000, timerFinishEvent);
+		_connectionTimer = new DelayTimer(1500, timerFinishEvent);
 		_numberOfTries = 0;
 		initSocketThread(Input.INIT);
 	}
@@ -170,6 +173,7 @@ public class SocketService
 					try
 					{
 						final String incoming = _input.readLine();
+						if ((SDK_INT >= 8 && SDK_INT <= 10)&& incoming==null) throw new IOException();
 						informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_PACKET_AVAILABLE, incoming));
 					} catch (IOException e)
 					{
@@ -200,6 +204,7 @@ public class SocketService
 
 				informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_STATUS_CHANGE, "false"));
 				initSocketThread(Input.RETRY);
+				Log.d("mbrc", Integer.toString(_numberOfTries));
 			}
 		}
 	}

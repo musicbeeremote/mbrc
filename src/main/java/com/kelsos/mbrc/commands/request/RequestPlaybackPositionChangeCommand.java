@@ -10,6 +10,6 @@ public class RequestPlaybackPositionChangeCommand implements ICommand
 	@Inject private ProtocolHandler protocolHandler;
 	public void execute(IEvent e)
 	{
-		protocolHandler.requestAction(ProtocolHandler.PlayerAction.PlaybackPosition, e.getData());
+		protocolHandler.requestAction(ProtocolHandler.PlayerAction.PlaybackPosition, e.getData()==null?"":e.getData());
 	}
 }

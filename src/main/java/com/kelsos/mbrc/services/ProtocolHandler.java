@@ -21,6 +21,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static android.os.Build.VERSION.SDK_INT;
+
 @Singleton
 public class ProtocolHandler
 {
@@ -130,7 +132,18 @@ public class ProtocolHandler
 					getPlaylistData(xmlNode);
 				} else if (xmlNode.getNodeName().contains(Protocol.LYRICS))
 				{
-					String songLyrics = xmlNode.getFirstChild().getNodeValue().replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", "\"").replace("&apos;", "'").replace("&amp;", "&").replace("<p>", "\r\n").replace("<br>", "\n").trim();
+					String songLyrics ="";
+					if (SDK_INT >= 8 && SDK_INT <= 10)
+					{
+						NodeList nodeList = xmlNode.getChildNodes();
+						for(int i=0;i<nodeList.getLength();i++)
+						{
+							songLyrics+=nodeList.item(i).getNodeValue();
+						}
+					}
+					else{
+						songLyrics = xmlNode.getFirstChild().getNodeValue();
+					}
 					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_LYRICS_AVAILABLE, songLyrics));
 				} else if (xmlNode.getNodeName().contains(Protocol.PLAYER_STATUS))
 				{

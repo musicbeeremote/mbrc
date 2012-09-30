@@ -74,11 +74,13 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/main_album_cover_image_view"
             android:layout_marginTop="5dp" >
-
+
             <SeekBar
                 android:id="@+id/main_track_progress_seeker"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignRight="@+id/main_track_duration_total"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:maxHeight="5dp"
@@ -237,6 +239,9 @@
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/main_mute_button"
                         android:layout_marginRight="8dp"
+                        android:paddingRight="8dp"
+                        android:paddingLeft="8dp"
+                        android:thumbOffset="16dp"
             android:gravity="center"
             android:max="100"
             android:maxHeight="7dp"

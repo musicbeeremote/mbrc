@@ -174,17 +174,7 @@
             android:text="@string/main_label_date"
             android:textColor="#FFFFFF"
             android:textSize="14sp" />
-
-
-
-
-
-
-
-
-
-
-
+
         <RelativeLayout
             android:id="@+id/trackProgressLabelsLayout"
             android:layout_width="fill_parent"
@@ -194,13 +184,7 @@
             android:layout_alignParentTop="false"
             android:layout_below="@+id/main_label_year"
             android:layout_marginRight="12dp"
-            android:layout_marginTop="-4dp"
             android:orientation="horizontal" >
-
-
-
-
-
 
             <SeekBar
                 android:id="@+id/main_track_progress_seeker"

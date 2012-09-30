@@ -13,7 +13,8 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="2dp"
         android:orientation="vertical" >
-
+
+
         <ImageButton
             android:id="@+id/main_button_connect"
             android:layout_width="40dp"
@@ -24,7 +25,8 @@
             android:contentDescription="@string/main_button_connection_description"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_connectivy_off" />
-
+
+
         <ImageButton
             android:id="@+id/main_last_fm_button"
             android:layout_width="40dp"
@@ -35,7 +37,8 @@
             android:contentDescription="@string/main_button_last_fm_description"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_scrobble_red" />
-
+
+
         <ImageButton
             android:id="@+id/main_repeat_button"
             android:layout_width="40dp"
@@ -47,7 +50,8 @@
             android:contentDescription="@string/main_button_repeat_description"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_repeat" />
-
+
+
         <ImageButton
             android:id="@+id/main_shuffle_button"
             android:layout_width="40dp"
@@ -58,7 +62,8 @@
             android:contentDescription="@string/main_button_shuffle_description"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_shuffle" />
-
+
+
         <ImageButton
             android:id="@+id/main_mute_button"
             android:layout_width="40dp"
@@ -178,7 +183,9 @@
             android:layout_marginTop="-4dp"
             android:layout_marginRight="12dp"
             android:orientation="horizontal" >
-
+
+
+
             <SeekBar
                 android:id="@+id/main_track_progress_seeker"
                 android:layout_width="fill_parent"
@@ -203,7 +210,9 @@
                 android:text="@string/main_label_duration_current"
                 android:textColor="#FFFFFF"
                 android:textSize="11dp" />
-
+
+
+
             <TextView
                 android:id="@+id/main_track_duration_total"
                 android:layout_width="wrap_content"
@@ -226,7 +235,8 @@
             android:layout_centerHorizontal="true"
             android:gravity="center_horizontal"
             android:orientation="horizontal" >
-
+
+
             <ImageButton
                 android:id="@+id/main_button_previous"
                 android:layout_width="45dp"
@@ -235,7 +245,8 @@
                 android:contentDescription="@string/main_button_previous_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_previous" />
-
+
+
             <ImageButton
                 android:id="@+id/main_button_stop"
                 android:layout_width="45dp"
@@ -246,7 +257,8 @@
                 android:contentDescription="@string/main_button_stop_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_stop" />
-
+
+
             <ImageButton
                 android:id="@+id/main_button_play_pause"
                 android:layout_width="45dp"
@@ -258,7 +270,8 @@
                 android:contentDescription="@string/main_button_play_pause_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_play" />
-
+
+
             <ImageButton
                 android:id="@+id/main_button_next"
                 android:layout_width="45dp"
@@ -284,6 +297,9 @@
         android:layout_gravity="center"
         android:layout_marginTop="4dp"
         android:layout_marginRight="15dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:thumbOffset="16dp"
         android:gravity="center"
         android:max="100"
         android:maxHeight="7dp"
