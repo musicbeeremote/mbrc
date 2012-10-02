@@ -18,12 +18,13 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.ShareActionProvider;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockActivity;
 import com.google.inject.Inject;
-import com.squareup.otto.Bus;
-import com.kelsos.mbrc.events.UserActionEvent;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.controller.RunningActivityAccessor;
+import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.enums.UserInputEventType;
+import com.kelsos.mbrc.events.UserActionEvent;
+import com.squareup.otto.Bus;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 
@@ -216,6 +217,7 @@ public class MainView extends RoboSherlockActivity
 		shuffleButton.setOnClickListener(shuffleButtonListener);
 		repeatButton.setOnClickListener(repeatButtonListener);
 		connectivityIndicator.setOnClickListener(connectivityIndicatorListener);
+		connectivityIndicator.setOnLongClickListener(connectivityIndicatorLongClickListener);
 
 	}
 
@@ -313,8 +315,7 @@ public class MainView extends RoboSherlockActivity
 			case Stopped:
                 /* Stop the animation if the track is paused*/
 				stopTrackProgressAnimation();
-				trackProgressSlider.setProgress(0);
-				trackProgressCurrent.setText("00:00");
+				activateStoppedState();
 			case Undefined:
 				playPauseButton.setImageResource(R.drawable.ic_media_play);
 				stopButton.setImageResource(R.drawable.ic_media_stop_disabled);
@@ -343,18 +344,29 @@ public class MainView extends RoboSherlockActivity
 		yearLabel.setText(year);
 	}
 
-	public void updateConnectionIndicator(boolean connected)
+	public void updateConnectivityStatus(ConnectionStatus status)
 	{
-		if (connected)
+		switch (status)
 		{
-			connectivityIndicator.setImageResource(R.drawable.ic_icon_indicator_green);
-		} else
-		{
-			connectivityIndicator.setImageResource(R.drawable.ic_icon_indicator_red);
-			stopTrackProgressAnimation();
-			trackProgressSlider.setProgress(0);
-			trackProgressCurrent.setText("00:00");
+			case CONNECTION_OFF:
+				connectivityIndicator.setImageResource(R.drawable.ic_connectivy_off);
+				stopTrackProgressAnimation();
+				activateStoppedState();
+				break;
+			case CONNECTION_ON:
+				connectivityIndicator.setImageResource(R.drawable.ic_connectivity_connected);
+				break;
+			case CONNECTION_ACTIVE:
+				connectivityIndicator.setImageResource(R.drawable.ic_connectivity_active);
+				break;
 		}
+	}
+
+	private void activateStoppedState()
+	{
+		trackProgressSlider.setProgress(0);
+		trackProgressCurrent.setText("00:00");
+		stopButton.setEnabled(false);
 	}
 
 	/**
@@ -429,6 +441,7 @@ public class MainView extends RoboSherlockActivity
 			progressUpdateTimer.purge();
 			progressUpdateTimer = null;
 		}
+
 	}
 
 	private OnClickListener playButtonListener = new OnClickListener()
@@ -511,6 +524,16 @@ public class MainView extends RoboSherlockActivity
 		}
 	};
 
+	private View.OnLongClickListener connectivityIndicatorLongClickListener = new View.OnLongClickListener()
+	{
+		@Override
+		public boolean onLongClick(View view)
+		{
+			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_CONNECTION_RESET));
+			return false;
+		}
+	};
+
 	private OnSeekBarChangeListener volumeChangeListener = new OnSeekBarChangeListener()
 	{
 
@@ -562,14 +585,32 @@ public class MainView extends RoboSherlockActivity
 			case KeyEvent.KEYCODE_VOLUME_UP:
 				if (volumeSlider.getProgress() <= 90)
 				{
-					volumeSlider.setProgress(volumeSlider.getProgress() + 10);
+					int mod = volumeSlider.getProgress()%10;
+					if(mod==0) {
+						volumeSlider.setProgress(volumeSlider.getProgress()+10);
+					}
+					else if (mod<5) {
+						volumeSlider.setProgress(volumeSlider.getProgress()+(10-mod));
+					}
+					else {
+						volumeSlider.setProgress(volumeSlider.getProgress()+(20-mod));
+					}
 					bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_VOLUME, String.valueOf(volumeSlider.getProgress())));
 				}
 				return true;
 			case KeyEvent.KEYCODE_VOLUME_DOWN:
 				if (volumeSlider.getProgress() >= 10)
 				{
-					volumeSlider.setProgress(volumeSlider.getProgress() - 10);
+					int mod = volumeSlider.getProgress()%10;
+					if(mod==0) {
+						volumeSlider.setProgress(volumeSlider.getProgress()-10);
+					}
+					else if (mod<5) {
+						volumeSlider.setProgress(volumeSlider.getProgress()-(10+mod));
+					}
+					else {
+						volumeSlider.setProgress(volumeSlider.getProgress()-mod);
+					}
 					bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_VOLUME, String.valueOf(volumeSlider.getProgress())));
 				}
 				return true;
