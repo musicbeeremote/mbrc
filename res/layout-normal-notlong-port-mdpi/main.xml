@@ -239,7 +239,7 @@
 	    android:layout_height="44dp"
 	    android:gravity="center"
 	       android:layout_toRightOf="@id/main_mute_button">
-
+
 		<SeekBar
 		    android:id="@+id/main_volume_seeker"
 		    android:layout_width="match_parent"
@@ -252,8 +252,8 @@
 		    android:layout_toRightOf="@+id/main_mute_button"
 		    android:gravity="center"
 		    android:max="100"
-		    android:maxHeight="12dp"
-		    android:minHeight="12dp"
+		    android:maxHeight="10dp"
+		    android:minHeight="10dp"
 		    android:paddingLeft="9dp"
 		    android:paddingRight="8dp"
 		    android:progress="0"

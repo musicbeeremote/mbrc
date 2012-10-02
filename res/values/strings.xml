@@ -54,5 +54,6 @@
 	<string name="alert_invalid_port_number">The valid port range is from 1 to 65535</string>
 	<string name="alert_invalid_range">"Invalid Range"</string>
 	<string name="notification_connection_timeout">Connection timed out</string>
+	<string name="aboutview_musicbee_remote">About MusicBee Remote</string>
 
 </resources>

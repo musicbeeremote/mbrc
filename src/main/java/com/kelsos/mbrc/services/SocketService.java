@@ -127,7 +127,6 @@ public class SocketService
 		try
 		{
 			if (socketExistsAndIsConnected())
-				Log.d("mbrcdata", data);
 				_output.println(data + Const.NEWLINE);
 		} catch (Exception ignored){}
 	}
