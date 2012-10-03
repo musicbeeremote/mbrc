@@ -1,42 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.kelsos.mbrc"
-    android:installLocation="auto"
-    android:versionCode="2"
-    android:versionName="0.2 Alpha" >
-    <uses-sdk
-        android:minSdkVersion="8"
-        android:targetSdkVersion="15" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <application
-        android:description="@string/application_description"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/application_name"
-        android:logo="@drawable/ic_launcher"
-        android:theme="@style/Theme.mbrc_default"
-		android:name=".RemoteApplication" >
-        <activity android:name=".views.MainView" >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionCode="4" android:versionName="0.2.1" package="com.kelsos.mbrc">
+    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="15"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <application android:debuggable="false" android:description="@string/application_description" android:icon="@drawable/ic_launcher" android:label="@string/application_name" android:logo="@drawable/ic_launcher" android:name=".RemoteApplication" android:theme="@style/Theme.mbrc_default">
+        <activity android:name=".views.MainView">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".views.LyricsView" >
+        <activity android:name=".views.LyricsView">
         </activity>
-        <activity android:name=".views.AppPreferenceView" >
+        <activity android:name=".views.AppPreferenceView">
         </activity>
-        <activity android:name=".views.PlaylistView" >
+        <activity android:name=".views.PlaylistView">
         </activity>
-        <service
-            android:name=".controller.Controller"
-            android:description="@string/info_service_description"
-            android:permission="android.permission.READ_PHONE_STATE" >
+        <service android:description="@string/info_service_description" android:name=".controller.Controller" android:permission="android.permission.READ_PHONE_STATE">
             <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE" />
-                <action android:name="android.net.wifi.STATE_CHANGE" />
+                <action android:name="android.intent.action.PHONE_STATE"/>
+                <action android:name="android.net.wifi.STATE_CHANGE"/>
             </intent-filter>
         </service>
     </application>
