@@ -25,15 +25,11 @@ import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.enums.UserInputEventType;
 import com.kelsos.mbrc.events.UserActionEvent;
 import com.squareup.otto.Bus;
-import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static android.os.Build.VERSION.SDK_INT;
-
-@ContentView(R.layout.main)
 public class MainView extends RoboSherlockActivity
 {
 	// Inject elements of the view
@@ -90,17 +86,14 @@ public class MainView extends RoboSherlockActivity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		//HACK: in 2.2 the onContentChanged(); method does not get called before the on create.
-		if (SDK_INT >= 7 && SDK_INT <= 8)
-		{
-			super.onContentChanged();
-		}
+		this.setContentView(R.layout.main);
 		accessor.register(this);
 		userChangingVolume = false;
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
 		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_DATA_REFRESH));
-		RegisterListeners();
+
 		SetTextViewTypeface();
+		RegisterListeners();
 	}
 
 	@Override
@@ -146,6 +139,7 @@ public class MainView extends RoboSherlockActivity
 	 */
 	private void SetTextViewTypeface()
 	{		/* Marquee Hack */
+		try{
 		artistLabel.setSelected(true);
 		titleLabel.setSelected(true);
 		albumLabel.setSelected(true);
@@ -159,6 +153,11 @@ public class MainView extends RoboSherlockActivity
 		yearLabel.setTypeface(robotoLight);
 		trackProgressCurrent.setTypeface(robotoRegular);
 		trackDuration.setTypeface(robotoRegular);
+		}
+		catch (Exception ignore)
+		{
+
+		}
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu)
@@ -205,6 +204,7 @@ public class MainView extends RoboSherlockActivity
 	 */
 	private void RegisterListeners()
 	{
+		try{
 		playPauseButton.setOnClickListener(playButtonListener);
 		previousButton.setOnClickListener(previousButtonListener);
 		nextButton.setOnClickListener(nextButtonListener);
@@ -218,6 +218,10 @@ public class MainView extends RoboSherlockActivity
 		repeatButton.setOnClickListener(repeatButtonListener);
 		connectivityIndicator.setOnClickListener(connectivityIndicatorListener);
 		connectivityIndicator.setOnLongClickListener(connectivityIndicatorLongClickListener);
+		} catch (Exception ignore)
+		{
+
+		}
 
 	}
 
