@@ -55,5 +55,6 @@
 	<string name="alert_invalid_range">"Invalid Range"</string>
 	<string name="notification_connection_timeout">Connection timed out</string>
 	<string name="aboutview_musicbee_remote">About MusicBee Remote</string>
+	<string name="notification_not_allowed">Client is not allowed</string>
 
 </resources>

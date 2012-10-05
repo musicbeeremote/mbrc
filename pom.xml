@@ -205,7 +205,7 @@
 								<versionCodeAutoIncrement>true</versionCodeAutoIncrement>
 							</manifest>
 							<proguard>
-								<skip>false</skip>
+								<skip>true</skip>
 							</proguard>
 						</configuration>
 						<executions>

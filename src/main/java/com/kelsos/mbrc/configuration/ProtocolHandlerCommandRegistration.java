@@ -1,7 +1,8 @@
 package com.kelsos.mbrc.configuration;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.commands.*;
+import com.kelsos.mbrc.commands.ProtocolReplyAvailableCommand;
+import com.kelsos.mbrc.commands.ReduceVolumeOnRingCommand;
 import com.kelsos.mbrc.commands.model.*;
 import com.kelsos.mbrc.commands.visual.UpdatePlaybackPositionCommand;
 import com.kelsos.mbrc.commands.visual.VisualUpdateHandshakeComplete;
@@ -32,6 +33,7 @@ public class ProtocolHandlerCommandRegistration
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_REDUCE_VOLUME, ReduceVolumeOnRingCommand.class);
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_LYRICS_AVAILABLE, UpdateLyricsCommand.class);
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_HANDSHAKE_COMPLETE, VisualUpdateHandshakeComplete.class);
+		//controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_NOT_ALLOWED, NotifyNotAllowedCommand.class);
 
 	}
 

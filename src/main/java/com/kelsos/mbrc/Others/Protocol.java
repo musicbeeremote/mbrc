@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.Others;
 
 public class Protocol {
+
     public static final String STATE = "state";
     public static final String PLAYPAUSE = "playPause";
     public static final String PREVIOUS = "previous";
@@ -22,14 +23,17 @@ public class Protocol {
     public static final String PLAYER_STATUS = "playerStatus";
     public static final String ERROR = "error";
     public static final String DATA = "data";
+	/** BEGIN: deprecated **/
     public static final String ARTIST = "artist";
     public static final String TITLE = "title";
     public static final String ALBUM = "album";
     public static final String YEAR = "year";
+	/** END: deprecated **/
     public static final String PLAYER = "player";
     public static final String PROTOCOL = "protocol";
 
     /* Protocol 1.2 */
 
     public static final String PLAYBACK_POSITION = "playbackPosition";
+	public static final String NOT_ALLOWED = "notAllowed";
 }

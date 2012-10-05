@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.services;
 
-import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.Others.Const;
@@ -108,7 +107,28 @@ public class SocketService
 			case RETRY_COUNTER_RESET:
 				_numberOfTries = 0;
 				break;
+			case SOCKET_STOP:
+				if(socketExistsAndIsConnected())
+				{
+					try
+					{
+						if(_output!=null)
+						{
+							_output.flush();
+							_output.close();
+							_output=null;
+						}
+						_cSocket.close();
+						_cSocket = null;
+					} catch (IOException ignore)
+					{
 
+					}
+				}
+				if(_connectionThread!=null) _connectionThread.interrupt();
+				_connectionThread = null;
+				_numberOfTries = 0;
+				break;
 		 }
 	}
 
