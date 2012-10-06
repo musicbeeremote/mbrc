@@ -18,8 +18,6 @@ import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
-import static android.os.Build.VERSION.SDK_INT;
-
 @Singleton
 public class SocketService
 {
@@ -46,7 +44,7 @@ public class SocketService
 		this.settingsManager = settingsManager;
 		this.notificationService = notificationService;
 
-		_connectionTimer = new DelayTimer(1800, timerFinishEvent);
+		_connectionTimer = new DelayTimer(2500, timerFinishEvent);
 		_numberOfTries = 0;
 		SocketManager(SocketAction.SOCKET_START);
 	}
@@ -55,7 +53,8 @@ public class SocketService
 	{
 		public void onTimerFinish()
 		{
-			SocketManager(SocketAction.SOCKET_RESET);
+			_connectionThread = new Thread(new socketConnection());
+			_connectionThread.start();
 			_numberOfTries++;
 		}
 	};
@@ -67,56 +66,19 @@ public class SocketService
 
 	public void SocketManager(SocketAction action)
 	{
-	 	switch (action)
-		 {
-			 case SOCKET_RESET:
+		switch (action)
+		{
+			case SOCKET_RESET:
 
-				 if(socketExistsAndIsConnected())
-				 {
-					 try
-					 {
-						 if(_output!=null)
-						 {
-							 _output.flush();
-							 _output.close();
-							 _output=null;
-						 }
-						 _cSocket.close();
-						 _cSocket = null;
-					 } catch (IOException ignore)
-					 {
-
-					 }
-				 }
-				 if(_connectionThread!=null) _connectionThread.interrupt();
-				 _connectionThread = null;
-				 _connectionThread = new Thread(new socketConnection());
-				 _connectionThread.start();
-				 break;
-			 case SOCKET_START:
-				 if (socketExistsAndIsConnected() || connectionThreadExistsAndIsAlive())
-					 return;
-				 else if (!socketExistsAndIsConnected() && connectionThreadExistsAndIsAlive())
-				 {
-					 _connectionThread.interrupt();
-					 _connectionThread = null;
-				 }
-				 _connectionThread = new Thread(new socketConnection());
-				 _connectionThread.start();
-				 break;
-			case RETRY_COUNTER_RESET:
-				_numberOfTries = 0;
-				break;
-			case SOCKET_STOP:
-				if(socketExistsAndIsConnected())
+				if (socketExistsAndIsConnected())
 				{
 					try
 					{
-						if(_output!=null)
+						if (_output != null)
 						{
 							_output.flush();
 							_output.close();
-							_output=null;
+							_output = null;
 						}
 						_cSocket.close();
 						_cSocket = null;
@@ -125,11 +87,47 @@ public class SocketService
 
 					}
 				}
-				if(_connectionThread!=null) _connectionThread.interrupt();
+				if (_connectionThread != null) _connectionThread.interrupt();
 				_connectionThread = null;
+				_connectionTimer.start();
+				break;
+			case SOCKET_START:
+				if (socketExistsAndIsConnected() || connectionThreadExistsAndIsAlive())
+					return;
+				else if (!socketExistsAndIsConnected() && connectionThreadExistsAndIsAlive())
+				{
+					_connectionThread.interrupt();
+					_connectionThread = null;
+				}
+				_connectionTimer.start();
+				break;
+			case RETRY_COUNTER_RESET:
 				_numberOfTries = 0;
 				break;
-		 }
+			case SOCKET_STOP:
+				if (socketExistsAndIsConnected())
+				{
+					try
+					{
+						if (_output != null)
+						{
+							_output.flush();
+							_output.close();
+							_output = null;
+						}
+						_cSocket.close();
+						_cSocket = null;
+					} catch (IOException ignore)
+					{
+
+					}
+				}
+				if (_connectionThread != null) _connectionThread.interrupt();
+				_connectionThread = null;
+				_numberOfTries = 0;
+				_connectionTimer.stop();
+				break;
+		}
 	}
 
 	/**
@@ -148,7 +146,9 @@ public class SocketService
 		{
 			if (socketExistsAndIsConnected())
 				_output.println(data + Const.NEWLINE);
-		} catch (Exception ignored){}
+		} catch (Exception ignored)
+		{
+		}
 	}
 
 	public void informEventBus(final RawSocketDataEvent event)
@@ -186,8 +186,8 @@ public class SocketService
 					try
 					{
 						final String incoming = _input.readLine();
-						if ((SDK_INT >= 8 && SDK_INT <= 10)&& incoming==null) throw new IOException();
-						informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_PACKET_AVAILABLE, incoming));
+						if (incoming == null) throw new IOException();
+							informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_PACKET_AVAILABLE, incoming));
 					} catch (IOException e)
 					{
 						_input.close();
@@ -216,7 +216,7 @@ public class SocketService
 				_cSocket = null;
 
 				informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_STATUS_CHANGE, "false"));
-				if(_numberOfTries<MAX_ALLOWED_RETRIES) _connectionTimer.start();
+				if (_numberOfTries < MAX_ALLOWED_RETRIES) SocketManager(SocketAction.SOCKET_RESET);
 			}
 		}
 	}

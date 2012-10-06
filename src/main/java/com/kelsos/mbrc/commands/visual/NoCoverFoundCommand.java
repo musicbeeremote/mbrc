@@ -14,7 +14,7 @@ public class NoCoverFoundCommand implements ICommand
 	@Override
 	public void execute(IEvent e)
 	{
-		if(MainView.class != accessor.getRunningActivity().getClass()) return;
+		if(accessor.getRunningActivity()==null||MainView.class != accessor.getRunningActivity().getClass()) return;
 		accessor.getRunningActivity().runOnUiThread(new Runnable() {
 			public void run() {
 				MainView view = (MainView) accessor.getRunningActivity();

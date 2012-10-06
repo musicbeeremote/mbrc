@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.commands.ProtocolReplyAvailableCommand;
 import com.kelsos.mbrc.commands.ReduceVolumeOnRingCommand;
 import com.kelsos.mbrc.commands.model.*;
+import com.kelsos.mbrc.commands.visual.NotifyNotAllowedCommand;
 import com.kelsos.mbrc.commands.visual.UpdatePlaybackPositionCommand;
 import com.kelsos.mbrc.commands.visual.VisualUpdateHandshakeComplete;
 import com.kelsos.mbrc.controller.Controller;
@@ -25,16 +26,13 @@ public class ProtocolHandlerCommandRegistration
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_SCROBBLE_STATE_AVAILABLE,UpdateScrobbleStateCommand.class);
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_MUTE_STATE_AVAILABLE,UpdateMuteStateCommand.class);
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAY_STATE_AVAILABLE,UpdatePlayStateCommand.class);
-		//controller.registerCommand(ProtocolHandlerEventType.OnlineStatus,.class);
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAYBACK_POSITION_AVAILABLE,UpdatePlaybackPositionCommand.class);
-		//controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAYLIST_AVAILABLE,.class);
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_REPLY_AVAILABLE,ProtocolReplyAvailableCommand.class);
 		/* responsible for reducing the volume on incoming call */
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_REDUCE_VOLUME, ReduceVolumeOnRingCommand.class);
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_LYRICS_AVAILABLE, UpdateLyricsCommand.class);
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_HANDSHAKE_COMPLETE, VisualUpdateHandshakeComplete.class);
-		//controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_NOT_ALLOWED, NotifyNotAllowedCommand.class);
-
+		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_NOT_ALLOWED, NotifyNotAllowedCommand.class);
 	}
 
 	@Inject

@@ -20,7 +20,7 @@ public class UpdateMainViewCommand implements ICommand
 
 	public void execute(IEvent e)
 	{
-		if (accessor.getRunningActivity().getClass() != MainView.class) return;
+		if (accessor.getRunningActivity()==null||accessor.getRunningActivity().getClass() != MainView.class) return;
 		(accessor.getRunningActivity()).runOnUiThread(new Runnable()
 		{
 			public void run()

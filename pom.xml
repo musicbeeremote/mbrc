@@ -6,7 +6,7 @@
 	<!-- application info-->
     <groupId>com.kelsos.mbrc</groupId>
     <artifactId>mbrc</artifactId>
-    <version>0.2.1</version>
+    <version>0.2.2-SNAPSHOT</version>
 	<packaging>apk</packaging>
 	<name>MusicBee Remote</name>
 

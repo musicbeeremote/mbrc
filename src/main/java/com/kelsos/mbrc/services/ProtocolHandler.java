@@ -82,11 +82,11 @@ public class ProtocolHandler
 				Document doc = db.parse(new ByteArrayInputStream(reply.getBytes("UTF-8")));
 				Node xmlNode = doc.getFirstChild();
 
-//				if (xmlNode.getNodeName().contains(Protocol.NOT_ALLOWED))
-//				{
-//					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_NOT_ALLOWED));
-//					return;
-//				}
+				if (xmlNode.getNodeName().contains(Protocol.NOT_ALLOWED))
+				{
+					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_NOT_ALLOWED));
+					return;
+				}
 
 				if (!isHandshakeComplete)
 				{

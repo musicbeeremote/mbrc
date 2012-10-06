@@ -4,6 +4,15 @@
     android:layout_height="60dp"
     android:layout_gravity="center_vertical" >
 
+	<ImageView
+			android:id="@+id/listview_item_image"
+			android:layout_width="30dp"
+			android:layout_height="match_parent"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentTop="true"
+			android:scaleType="fitCenter" />
+
     <TextView
         android:id="@+id/trackTitle"
         android:layout_width="match_parent"

@@ -7,16 +7,27 @@ import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.model.MainDataModel;
+import com.kelsos.mbrc.services.ProtocolHandler;
 import com.kelsos.mbrc.services.SocketService;
 
 public class NotifyNotAllowedCommand implements ICommand
 {
+	private SocketService socketService;
+
+	private MainDataModel model;
+
+	private ProtocolHandler handler;
+
+	private NotificationService notificationService;
+
 	@Inject
-	NotificationService notificationService;
-	@Inject
-	SocketService socketService;
-	@Inject
-	MainDataModel model;
+	public NotifyNotAllowedCommand(SocketService socketService, MainDataModel model, ProtocolHandler handler, NotificationService notificationService)
+	{
+		this.socketService = socketService;
+		this.model = model;
+		this.handler = handler;
+		this.notificationService = notificationService;
+	}
 
 	@Override
 	public void execute(IEvent e)
@@ -24,5 +35,6 @@ public class NotifyNotAllowedCommand implements ICommand
 		notificationService.showToastMessage(R.string.notification_not_allowed);
 		socketService.SocketManager(SocketAction.SOCKET_STOP);
 		model.setConnectionState("false");
+		handler.setHandshakeComplete(false);
 	}
 }

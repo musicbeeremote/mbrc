@@ -382,6 +382,11 @@ public class MainView extends RoboSherlockActivity
 	 */
 	public void updateDurationDisplay(int current, int total)
 	{
+		if(total==0)
+		{
+			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAYBACK_POSITION));
+			return;
+		}
 		int currentSeconds = current / 1000;
 		int totalSeconds = total / 1000;
 

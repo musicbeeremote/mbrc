@@ -6,13 +6,13 @@ import android.widget.ListView;
 import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockListActivity;
 import com.google.inject.Inject;
-import com.squareup.otto.Bus;
-import com.kelsos.mbrc.data.MusicTrack;
-import com.kelsos.mbrc.data.PlaylistArrayAdapter;
-import com.kelsos.mbrc.events.UserActionEvent;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.controller.RunningActivityAccessor;
+import com.kelsos.mbrc.data.MusicTrack;
+import com.kelsos.mbrc.data.PlaylistArrayAdapter;
 import com.kelsos.mbrc.enums.UserInputEventType;
+import com.kelsos.mbrc.events.UserActionEvent;
+import com.squareup.otto.Bus;
 
 import java.util.ArrayList;
 
@@ -23,10 +23,13 @@ public class PlaylistView extends RoboSherlockListActivity
 	@Inject
 	private Bus bus;
 
-    public void updateListData(ArrayList<MusicTrack> nowPlayingList) {
-        PlaylistArrayAdapter adapter;
+	private PlaylistArrayAdapter adapter;
+
+    public void updateListData(ArrayList<MusicTrack> nowPlayingList, int playingTrackIndex) {
+
         adapter = new PlaylistArrayAdapter(this, R.layout.playlistview_item, nowPlayingList);
         setListAdapter(adapter);
+		adapter.setPlayingTrackIndex(playingTrackIndex);
     }
 
     @Override
@@ -43,7 +46,10 @@ public class PlaylistView extends RoboSherlockListActivity
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         String track = ((MusicTrack) getListView().getItemAtPosition(position)).getTitle();
-		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_PLAY_NOW,track));
+		adapter.setPlayingTrackIndex(position);
+		 ((PlaylistArrayAdapter)l.getAdapter()).notifyDataSetChanged();
+
+		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_PLAY_NOW, track));
 
     }
 

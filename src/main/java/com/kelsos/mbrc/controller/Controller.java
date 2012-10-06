@@ -6,8 +6,8 @@ import android.os.IBinder;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
+import com.kelsos.mbrc.configuration.ProtocolHandlerCommandRegistration;
+import com.kelsos.mbrc.configuration.SocketServiceCommandRegistration;
 import com.kelsos.mbrc.events.ModelDataEvent;
 import com.kelsos.mbrc.events.ProtocolDataEvent;
 import com.kelsos.mbrc.events.RawSocketDataEvent;
@@ -15,9 +15,8 @@ import com.kelsos.mbrc.events.UserActionEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.interfaces.IEventType;
-import com.kelsos.mbrc.configuration.MainDataModelCommandRegistration;
-import com.kelsos.mbrc.configuration.ProtocolHandlerCommandRegistration;
-import com.kelsos.mbrc.configuration.SocketServiceCommandRegistration;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import roboguice.service.RoboService;
 
 import java.util.HashMap;
@@ -38,7 +37,6 @@ public class Controller extends RoboService
 		bus.register(this);
 		ProtocolHandlerCommandRegistration.register(this);
 		SocketServiceCommandRegistration.register(this);
-		MainDataModelCommandRegistration.registerCommands(this);
 	}
 
 	public Controller(){};
@@ -85,15 +83,13 @@ public class Controller extends RoboService
 		if(commandClass == null) return;
 		ICommand commandInstance = null;
 		try{
-			commandInstance = commandClass.newInstance();
-			injector.injectMembers(commandInstance);
+			commandInstance=injector.getInstance(commandClass);
 			if(commandInstance==null) return;
 			commandInstance.execute(event);
-
 		}
 		catch (Exception ex)
 		{
-
+			//Log.d("Controller","Command Execute", ex);
 		}
 
 	}

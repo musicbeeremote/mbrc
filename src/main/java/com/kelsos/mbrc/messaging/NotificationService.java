@@ -3,8 +3,10 @@ package com.kelsos.mbrc.messaging;
 import android.content.Context;
 import android.widget.Toast;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.kelsos.mbrc.controller.RunningActivityAccessor;
 
+@Singleton
 public class NotificationService
 {
 	private Context context;

@@ -17,7 +17,7 @@ public class VisualUpdateLyricsCommand implements ICommand
 	@Override
 	public void execute(IEvent e)
 	{
-		if(LyricsView.class != accessor.getRunningActivity().getClass()) return;
+		if(accessor.getRunningActivity()==null||LyricsView.class != accessor.getRunningActivity().getClass()) return;
 		accessor.getRunningActivity().runOnUiThread(new Runnable() {
 			public void run() {
 				LyricsView view = (LyricsView) accessor.getRunningActivity();
