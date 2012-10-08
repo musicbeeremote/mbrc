@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.Others;
+package com.kelsos.mbrc.others;
 
 import android.content.Context;
 import android.content.SharedPreferences;

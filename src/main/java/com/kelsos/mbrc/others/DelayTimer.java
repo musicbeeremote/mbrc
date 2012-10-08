@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.Others;
+package com.kelsos.mbrc.others;
 
 import java.util.Timer;
 import java.util.TimerTask;
