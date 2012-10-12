@@ -92,6 +92,7 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity implements
         } else if (key.equals(getApplicationContext().getString(R.string.settings_key_port))) {
             portEditTextPreference.setSummary(sharedPreferences.getString(getApplicationContext().getString(R.string.settings_key_port), null));
         }
+		//TODO: Add check.
 		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_SETTINGS_CHANGED));
     }
 

@@ -16,13 +16,14 @@ public class VisualUpdateVolumeCommand implements ICommand
 
 	public void execute(IEvent e)
 	{
-		if(accessor.getRunningActivity()==null||MainView.class != accessor.getRunningActivity().getClass()) return;
-		accessor.getRunningActivity().runOnUiThread(new Runnable() {
-			public void run() {
-				try {
-					MainView view = (MainView) accessor.getRunningActivity();
-					view.updateVolumeData(model.getVolume());
-				}catch (Exception ignore){}
+		if (accessor.getRunningActivity() == null || MainView.class != accessor.getRunningActivity().getClass()) return;
+		accessor.getRunningActivity().runOnUiThread(new Runnable()
+		{
+			public void run()
+			{
+				MainView view = (MainView) accessor.getRunningActivity();
+				view.updateVolumeData(model.getVolume());
+
 			}
 		});
 	}

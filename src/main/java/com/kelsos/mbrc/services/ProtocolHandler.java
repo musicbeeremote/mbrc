@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.services;
 
+import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.Others.Const;
@@ -79,6 +80,12 @@ public class ProtocolHandler
 			String[] replies = answer.split("\0");
 			for (String reply : replies)
 			{
+				Log.d("reply","reply: "+reply);
+				//hack to avoid issues with apostrophes
+				if (SDK_INT >= 8 && SDK_INT <= 10)
+				{
+					reply = reply.replace("&apos;","\'");
+				}
 				Document doc = db.parse(new ByteArrayInputStream(reply.getBytes("UTF-8")));
 				Node xmlNode = doc.getFirstChild();
 

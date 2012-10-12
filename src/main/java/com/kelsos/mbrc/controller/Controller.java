@@ -3,6 +3,7 @@ package com.kelsos.mbrc.controller;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -89,7 +90,7 @@ public class Controller extends RoboService
 		}
 		catch (Exception ex)
 		{
-			//Log.d("Controller","Command Execute", ex);
+			Log.d("Controller", "CommandExecution", ex);
 		}
 
 	}

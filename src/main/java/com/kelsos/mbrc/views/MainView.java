@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -111,6 +112,7 @@ public class MainView extends RoboSherlockActivity
 		super.onResume();
 		accessor.register(this);
 		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_DATA_REFRESH));
+		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAYBACK_POSITION));
 	}
 
 	@Override
@@ -139,24 +141,24 @@ public class MainView extends RoboSherlockActivity
 	 */
 	private void SetTextViewTypeface()
 	{		/* Marquee Hack */
-		try{
-		artistLabel.setSelected(true);
-		titleLabel.setSelected(true);
-		albumLabel.setSelected(true);
-		yearLabel.setSelected(true);
-
-		Typeface robotoLight = Typeface.createFromAsset(getAssets(), "fonts/roboto_light.ttf");
-		Typeface robotoRegular = Typeface.createFromAsset(getAssets(), "fonts/roboto_regular.ttf");
-		artistLabel.setTypeface(robotoLight);
-		titleLabel.setTypeface(robotoLight);
-		albumLabel.setTypeface(robotoLight);
-		yearLabel.setTypeface(robotoLight);
-		trackProgressCurrent.setTypeface(robotoRegular);
-		trackDuration.setTypeface(robotoRegular);
-		}
-		catch (Exception ignore)
+		try
 		{
+			artistLabel.setSelected(true);
+			titleLabel.setSelected(true);
+			albumLabel.setSelected(true);
+			yearLabel.setSelected(true);
 
+			Typeface robotoLight = Typeface.createFromAsset(getAssets(), "fonts/roboto_light.ttf");
+			Typeface robotoRegular = Typeface.createFromAsset(getAssets(), "fonts/roboto_regular.ttf");
+			artistLabel.setTypeface(robotoLight);
+			titleLabel.setTypeface(robotoLight);
+			albumLabel.setTypeface(robotoLight);
+			yearLabel.setTypeface(robotoLight);
+			trackProgressCurrent.setTypeface(robotoRegular);
+			trackDuration.setTypeface(robotoRegular);
+		} catch (Exception ignore)
+		{
+			Log.d("MainView","settypeface", ignore);
 		}
 	}
 
@@ -171,7 +173,7 @@ public class MainView extends RoboSherlockActivity
 
 	private void setShareIntent(Intent shareIntent)
 	{
-		if(mShareActionProvider!=null) mShareActionProvider.setShareIntent(shareIntent);
+		if (mShareActionProvider != null) mShareActionProvider.setShareIntent(shareIntent);
 	}
 
 	@Override
@@ -204,23 +206,24 @@ public class MainView extends RoboSherlockActivity
 	 */
 	private void RegisterListeners()
 	{
-		try{
-		playPauseButton.setOnClickListener(playButtonListener);
-		previousButton.setOnClickListener(previousButtonListener);
-		nextButton.setOnClickListener(nextButtonListener);
-		volumeSlider.setOnSeekBarChangeListener(volumeChangeListener);
-		trackProgressSlider.setOnSeekBarChangeListener(durationSeekBarChangeListener);
-		stopButton.setOnClickListener(stopButtonListener);
-		stopButton.setEnabled(false);
-		muteButton.setOnClickListener(muteButtonListener);
-		scrobbleButton.setOnClickListener(scrobbleButtonListener);
-		shuffleButton.setOnClickListener(shuffleButtonListener);
-		repeatButton.setOnClickListener(repeatButtonListener);
-		connectivityIndicator.setOnClickListener(connectivityIndicatorListener);
-		connectivityIndicator.setOnLongClickListener(connectivityIndicatorLongClickListener);
+		try
+		{
+			playPauseButton.setOnClickListener(playButtonListener);
+			previousButton.setOnClickListener(previousButtonListener);
+			nextButton.setOnClickListener(nextButtonListener);
+			volumeSlider.setOnSeekBarChangeListener(volumeChangeListener);
+			trackProgressSlider.setOnSeekBarChangeListener(durationSeekBarChangeListener);
+			stopButton.setOnClickListener(stopButtonListener);
+			stopButton.setEnabled(false);
+			muteButton.setOnClickListener(muteButtonListener);
+			scrobbleButton.setOnClickListener(scrobbleButtonListener);
+			shuffleButton.setOnClickListener(shuffleButtonListener);
+			repeatButton.setOnClickListener(repeatButtonListener);
+			connectivityIndicator.setOnClickListener(connectivityIndicatorListener);
+			connectivityIndicator.setOnLongClickListener(connectivityIndicatorLongClickListener);
 		} catch (Exception ignore)
 		{
-
+			Log.d("MainView","registerlisteners", ignore);
 		}
 
 	}
@@ -305,8 +308,7 @@ public class MainView extends RoboSherlockActivity
 				playPauseButton.setImageResource(R.drawable.ic_media_pause);
 				playPauseButton.setTag("Playing");
 				stopButton.setImageResource(R.drawable.ic_media_stop);
-				stopButton.setEnabled(true);
-                /* Start the animation if the track is playing*/
+				stopButton.setEnabled(true);				/* Start the animation if the track is playing*/
 				trackProgressAnimation();
 				break;
 			case Paused:
@@ -382,7 +384,7 @@ public class MainView extends RoboSherlockActivity
 	 */
 	public void updateDurationDisplay(int current, int total)
 	{
-		if(total==0)
+		if (total == 0)
 		{
 			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAYBACK_POSITION));
 			return;
@@ -594,15 +596,16 @@ public class MainView extends RoboSherlockActivity
 			case KeyEvent.KEYCODE_VOLUME_UP:
 				if (volumeSlider.getProgress() <= 90)
 				{
-					int mod = volumeSlider.getProgress()%10;
-					if(mod==0) {
-						volumeSlider.setProgress(volumeSlider.getProgress()+10);
-					}
-					else if (mod<5) {
-						volumeSlider.setProgress(volumeSlider.getProgress()+(10-mod));
-					}
-					else {
-						volumeSlider.setProgress(volumeSlider.getProgress()+(20-mod));
+					int mod = volumeSlider.getProgress() % 10;
+					if (mod == 0)
+					{
+						volumeSlider.setProgress(volumeSlider.getProgress() + 10);
+					} else if (mod < 5)
+					{
+						volumeSlider.setProgress(volumeSlider.getProgress() + (10 - mod));
+					} else
+					{
+						volumeSlider.setProgress(volumeSlider.getProgress() + (20 - mod));
 					}
 					bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_VOLUME, String.valueOf(volumeSlider.getProgress())));
 				}
@@ -610,15 +613,16 @@ public class MainView extends RoboSherlockActivity
 			case KeyEvent.KEYCODE_VOLUME_DOWN:
 				if (volumeSlider.getProgress() >= 10)
 				{
-					int mod = volumeSlider.getProgress()%10;
-					if(mod==0) {
-						volumeSlider.setProgress(volumeSlider.getProgress()-10);
-					}
-					else if (mod<5) {
-						volumeSlider.setProgress(volumeSlider.getProgress()-(10+mod));
-					}
-					else {
-						volumeSlider.setProgress(volumeSlider.getProgress()-mod);
+					int mod = volumeSlider.getProgress() % 10;
+					if (mod == 0)
+					{
+						volumeSlider.setProgress(volumeSlider.getProgress() - 10);
+					} else if (mod < 5)
+					{
+						volumeSlider.setProgress(volumeSlider.getProgress() - (10 + mod));
+					} else
+					{
+						volumeSlider.setProgress(volumeSlider.getProgress() - mod);
 					}
 					bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_VOLUME, String.valueOf(volumeSlider.getProgress())));
 				}
