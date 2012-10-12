@@ -6,7 +6,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.squareup.otto.Bus;
 import com.kelsos.mbrc.events.ModelDataEvent;
-import com.kelsos.mbrc.Others.Const;
+import com.kelsos.mbrc.others.Const;
 import com.kelsos.mbrc.enums.ModelDataEventType;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.utilities.ImageDecoder;

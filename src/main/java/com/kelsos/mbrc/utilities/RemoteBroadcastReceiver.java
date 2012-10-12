@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 import com.squareup.otto.Bus;
 import com.kelsos.mbrc.events.ProtocolDataEvent;
 import com.kelsos.mbrc.events.UserActionEvent;
-import com.kelsos.mbrc.Others.SettingsManager;
+import com.kelsos.mbrc.others.SettingsManager;
 import com.kelsos.mbrc.enums.ProtocolHandlerEventType;
 import com.kelsos.mbrc.enums.UserInputEventType;
 import roboguice.receiver.RoboBroadcastReceiver;
