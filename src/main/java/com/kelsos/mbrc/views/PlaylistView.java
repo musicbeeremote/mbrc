@@ -32,6 +32,12 @@ public class PlaylistView extends RoboSherlockListActivity
 		adapter.setPlayingTrackIndex(playingTrackIndex);
     }
 
+	public void updatePlayingTrack(String artist, String title)
+	{
+		adapter.setPlayingTrackIndex(adapter.getPosition(new MusicTrack(artist,title)));
+		adapter.notifyDataSetChanged();
+	}
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +47,34 @@ public class PlaylistView extends RoboSherlockListActivity
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(R.string.string_value_now_playing);
     }
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		accessor.register(this);
+	}
+
+	@Override
+	protected void onPause()
+	{
+		accessor.unRegister(this);
+		super.onPause();
+	}
+
+	@Override
+	protected void onStop()
+	{
+		accessor.unRegister(this);
+		super.onStop();
+	}
+
+	@Override
+	public void onDestroy()
+	{
+		accessor.unRegister(this);
+		super.onDestroy();
+	}
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {

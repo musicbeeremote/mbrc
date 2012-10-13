@@ -15,7 +15,7 @@ public class LyricsViewCommandRegistration
 
 	public static void unRegister(Controller controller)
 	{
-		controller.unRegisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_LYRICS);
-		controller.unRegisterCommand(ModelDataEventType.MODEL_LYRICS_UPDATED);
+		controller.unRegisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_LYRICS, VisualUpdateLyricsCommand.class);
+		controller.unRegisterCommand(ModelDataEventType.MODEL_LYRICS_UPDATED, VisualUpdateLyricsCommand.class);
 	}
 }

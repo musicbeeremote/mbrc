@@ -70,9 +70,9 @@ public class Controller extends RoboService
 		}
 	}
 
-	public void unRegisterCommand(IEventType type)
+	public void unRegisterCommand(IEventType type, Class<?> command)
 	{
-		if (commandMap.containsKey(type))
+		if (commandMap.containsKey(type)&&commandMap.get(type).equals(command))
 		{
 			commandMap.remove(type);
 		}

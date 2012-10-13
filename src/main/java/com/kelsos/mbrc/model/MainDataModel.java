@@ -32,7 +32,6 @@ public class MainDataModel
 		_isShuffleButtonActive = false;
 		_isScrobbleButtonActive = false;
 		_isMuteButtonActive = false;
-		_isDeviceOnline = false;
 		_playState = PlayState.Stopped;
 		_albumCover = null;
 	}
@@ -50,7 +49,6 @@ public class MainDataModel
 	private boolean _isShuffleButtonActive;
 	private boolean _isScrobbleButtonActive;
 	private boolean _isMuteButtonActive;
-	private boolean _isDeviceOnline;
 
 
 	private PlayState _playState;
@@ -210,17 +208,6 @@ public class MainDataModel
 	public PlayState getPlayState()
 	{
 		return _playState;
-	}
-
-	public void setIsDeviceOnline(boolean value)
-	{
-		_isDeviceOnline = value;
-		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_ONLINE_STATE_UPDATED));
-	}
-
-	public boolean getIsDeviceOnline()
-	{
-		return _isDeviceOnline;
 	}
 
 	public void setLyrics(String lyrics)

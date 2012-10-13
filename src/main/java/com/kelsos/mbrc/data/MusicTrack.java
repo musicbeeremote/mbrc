@@ -25,12 +25,13 @@ public class MusicTrack {
 	@Override
 	public boolean equals(Object o)
 	{
+		boolean rValue = false;
 		if(o instanceof MusicTrack)
 		{
 			MusicTrack track = (MusicTrack)o;
 			if(track.getTitle().equals(this.title)&&track.getArtist().equals(this.artist))
-				return true;
+				rValue=true;
 		}
-		return false;
+		return rValue;
 	}
 }

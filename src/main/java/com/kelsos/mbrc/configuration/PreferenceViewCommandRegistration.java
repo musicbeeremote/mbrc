@@ -13,7 +13,7 @@ public class PreferenceViewCommandRegistration
 
 	public static void unRegister(Controller controller)
 	{
-		controller.unRegisterCommand(UserInputEventType.USERINPUT_EVENT_SETTINGS_CHANGED);
+		controller.unRegisterCommand(UserInputEventType.USERINPUT_EVENT_SETTINGS_CHANGED, RestartConnectionCommand.class);
 	}
 
 }
