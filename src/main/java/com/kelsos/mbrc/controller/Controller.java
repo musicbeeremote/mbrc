@@ -90,7 +90,7 @@ public class Controller extends RoboService
 		}
 		catch (Exception ex)
 		{
-			Log.d("Controller", "CommandExecution", ex);
+			//Log.d("Controller", "CommandExecution", ex);
 		}
 
 	}

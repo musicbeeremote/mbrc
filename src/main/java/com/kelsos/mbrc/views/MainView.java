@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -158,7 +157,7 @@ public class MainView extends RoboSherlockActivity
 			trackDuration.setTypeface(robotoRegular);
 		} catch (Exception ignore)
 		{
-			Log.d("MainView","settypeface", ignore);
+			//Log.d("MainView","settypeface", ignore);
 		}
 	}
 
@@ -223,7 +222,7 @@ public class MainView extends RoboSherlockActivity
 			connectivityIndicator.setOnLongClickListener(connectivityIndicatorLongClickListener);
 		} catch (Exception ignore)
 		{
-			Log.d("MainView","registerlisteners", ignore);
+			//Log.d("MainView","registerlisteners", ignore);
 		}
 
 	}

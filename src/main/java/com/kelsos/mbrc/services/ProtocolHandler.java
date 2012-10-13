@@ -80,7 +80,7 @@ public class ProtocolHandler
 			String[] replies = answer.split("\0");
 			for (String reply : replies)
 			{
-				Log.d("reply","reply: "+reply);
+				//Log.d("reply","reply: "+reply);
 				//hack to avoid issues with apostrophes
 				if (SDK_INT >= 8 && SDK_INT <= 10)
 				{
