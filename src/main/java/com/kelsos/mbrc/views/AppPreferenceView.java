@@ -87,12 +87,15 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity implements
 	}
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		String hostname = sharedPreferences.getString(getApplicationContext().getString(R.string.settings_key_hostname), "");
+		String port = sharedPreferences.getString(getApplicationContext().getString(R.string.settings_key_port), "");
+
         if (key.equals(getApplicationContext().getString(R.string.settings_key_hostname))) {
-            hostEditTextPreference.setSummary(sharedPreferences.getString(getApplicationContext().getString(R.string.settings_key_hostname), null));
+            hostEditTextPreference.setSummary(hostname);
         } else if (key.equals(getApplicationContext().getString(R.string.settings_key_port))) {
-            portEditTextPreference.setSummary(sharedPreferences.getString(getApplicationContext().getString(R.string.settings_key_port), null));
+			portEditTextPreference.setSummary(port);
         }
-		//TODO: Add check.
+		if(port.isEmpty()||hostname.isEmpty()) return;
 		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_SETTINGS_CHANGED));
     }
 
