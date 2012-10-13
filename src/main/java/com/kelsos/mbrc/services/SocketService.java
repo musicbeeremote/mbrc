@@ -26,16 +26,17 @@ public class SocketService
 	private SettingsManager settingsManager;
 	private NotificationService notificationService;
 
-	private static int _numberOfTries;
-	public static final int MAX_ALLOWED_RETRIES = 8;
+	private static int numOfRetries;
+	public static final int MAX_RETRIES = 5;
+	private boolean shouldStop;
 
-	private Socket _cSocket;
+	private Socket clSocket;
 
-	private PrintWriter _output;
+	private PrintWriter output;
 
-	private Thread _connectionThread;
+	private Thread cThread;
 
-	private DelayTimer _connectionTimer;
+	private DelayTimer cTimer;
 
 	@Inject
 	public SocketService(SettingsManager settingsManager, NotificationService notificationService, Bus bus)
@@ -44,89 +45,83 @@ public class SocketService
 		this.settingsManager = settingsManager;
 		this.notificationService = notificationService;
 
-		_connectionTimer = new DelayTimer(2500, timerFinishEvent);
-		_numberOfTries = 0;
-		SocketManager(SocketAction.SOCKET_START);
+		cTimer = new DelayTimer(2500, timerFinishEvent);
+		numOfRetries = 0;
+		shouldStop = false;
+		SocketManager(SocketAction.START);
 	}
 
 	private DelayTimer.TimerFinishEvent timerFinishEvent = new DelayTimer.TimerFinishEvent()
 	{
 		public void onTimerFinish()
 		{
-			_connectionThread = new Thread(new socketConnection());
-			_connectionThread.start();
-			_numberOfTries++;
+			cThread = new Thread(new socketConnection());
+			cThread.start();
+			numOfRetries++;
 		}
 	};
 
-	private boolean connectionThreadExistsAndIsAlive()
+	private boolean cThreadIsAlive()
 	{
-		return _connectionThread != null && _connectionThread.isAlive();
+		return cThread != null && cThread.isAlive();
 	}
 
 	public void SocketManager(SocketAction action)
 	{
 		switch (action)
 		{
-			case SOCKET_RESET:
-
-				if (socketExistsAndIsConnected())
-				{
-					try
-					{
-						if (_output != null)
-						{
-							_output.flush();
-							_output.close();
-							_output = null;
-						}
-						_cSocket.close();
-						_cSocket = null;
-					} catch (IOException ignore)
-					{
-
-					}
-				}
-				if (_connectionThread != null) _connectionThread.interrupt();
-				_connectionThread = null;
-				_connectionTimer.start();
+			case RESET:
+				cleanupSocket();
+				if (cThread != null) cThread.interrupt();
+				cThread = null;
+				shouldStop = false;
+				numOfRetries = 0;
+				cTimer.start();
 				break;
-			case SOCKET_START:
-				if (socketExistsAndIsConnected() || connectionThreadExistsAndIsAlive())
+			case START:
+				if (sIsConnected() || cThreadIsAlive()) return;
+				else if (!sIsConnected() && cThreadIsAlive())
+				{
+					cThread.interrupt();
+					cThread = null;
+				}
+				cTimer.start();
+				break;
+			case RETRY:
+				cleanupSocket();
+				if(cThread != null) cThread.interrupt();
+				cThread=null;
+				if(shouldStop)
+				{
+					shouldStop = false;
+					numOfRetries = 0;
 					return;
-				else if (!socketExistsAndIsConnected() && connectionThreadExistsAndIsAlive())
-				{
-					_connectionThread.interrupt();
-					_connectionThread = null;
 				}
-				_connectionTimer.start();
+				cTimer.start();
 				break;
-			case RETRY_COUNTER_RESET:
-				_numberOfTries = 0;
+			case STOP:
+				shouldStop = true;
 				break;
-			case SOCKET_STOP:
-				if (socketExistsAndIsConnected())
-				{
-					try
-					{
-						if (_output != null)
-						{
-							_output.flush();
-							_output.close();
-							_output = null;
-						}
-						_cSocket.close();
-						_cSocket = null;
-					} catch (IOException ignore)
-					{
+		}
+	}
 
-					}
-				}
-				if (_connectionThread != null) _connectionThread.interrupt();
-				_connectionThread = null;
-				_numberOfTries = 0;
-				_connectionTimer.stop();
-				break;
+	private void cleanupSocket()
+	{
+		if (!sIsConnected())
+			return;
+		try
+		{
+			if (output != null)
+			{
+				output.flush();
+				output.close();
+				output = null;
+			}
+			clSocket.close();
+			clSocket = null;
+		} catch (IOException ignore)
+		{
+
 		}
 	}
 
@@ -135,17 +130,17 @@ public class SocketService
 	 *
 	 * @return Boolean
 	 */
-	private boolean socketExistsAndIsConnected()
+	private boolean sIsConnected()
 	{
-		return _cSocket != null && _cSocket.isConnected();
+		return clSocket != null && clSocket.isConnected();
 	}
 
 	public void sendData(String data)
 	{
 		try
 		{
-			if (socketExistsAndIsConnected())
-				_output.println(data + Const.NEWLINE);
+			if (sIsConnected())
+				output.println(data + Const.NEWLINE);
 		} catch (Exception ignored)
 		{
 		}
@@ -170,28 +165,28 @@ public class SocketService
 			SocketAddress socketAddress = settingsManager.getSocketAddress();
 			informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_HANDSHAKE_UPDATE, "false"));
 			if (null == socketAddress) return;
-			BufferedReader _input;
+			BufferedReader input;
 			try
 			{
-				_cSocket = new Socket();
-				_cSocket.connect(socketAddress);
-				_output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(_cSocket.getOutputStream()), 4096), true);
-				_input = new BufferedReader(new InputStreamReader(_cSocket.getInputStream()), 4096);
+				clSocket = new Socket();
+				clSocket.connect(socketAddress);
+				output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(clSocket.getOutputStream()), 4096), true);
+				input = new BufferedReader(new InputStreamReader(clSocket.getInputStream()), 4096);
 
-				String socketStatus = String.valueOf(_cSocket.isConnected());
+				String socketStatus = String.valueOf(clSocket.isConnected());
 
 				informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_STATUS_CHANGE, socketStatus));
-				while (_cSocket.isConnected())
+				while (clSocket.isConnected())
 				{
 					try
 					{
-						final String incoming = _input.readLine();
+						final String incoming = input.readLine();
 						if (incoming == null) throw new IOException();
 							informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_PACKET_AVAILABLE, incoming));
 					} catch (IOException e)
 					{
-						_input.close();
-						_cSocket.close();
+						input.close();
+						clSocket.close();
 						throw e;
 					}
 				}
@@ -208,15 +203,15 @@ public class SocketService
 			{
 			} finally
 			{
-				if (_output != null)
+				if (output != null)
 				{
-					_output.flush();
-					_output.close();
+					output.flush();
+					output.close();
 				}
-				_cSocket = null;
+				clSocket = null;
 
 				informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_STATUS_CHANGE, "false"));
-				if (_numberOfTries < MAX_ALLOWED_RETRIES) SocketManager(SocketAction.SOCKET_RESET);
+				if (numOfRetries < MAX_RETRIES) SocketManager(SocketAction.RETRY);
 			}
 		}
 	}

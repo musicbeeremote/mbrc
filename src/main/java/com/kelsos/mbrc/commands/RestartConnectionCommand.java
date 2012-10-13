@@ -13,7 +13,6 @@ public class RestartConnectionCommand implements ICommand
 	@Override
 	public void execute(IEvent e)
 	{
-		socket.SocketManager(SocketAction.RETRY_COUNTER_RESET);
-		socket.SocketManager(SocketAction.SOCKET_RESET);
+		socket.SocketManager(SocketAction.RESET);
 	}
 }

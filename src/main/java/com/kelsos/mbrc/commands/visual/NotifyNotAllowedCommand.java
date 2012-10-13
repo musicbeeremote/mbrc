@@ -33,7 +33,7 @@ public class NotifyNotAllowedCommand implements ICommand
 	public void execute(IEvent e)
 	{
 		notificationService.showToastMessage(R.string.notification_not_allowed);
-		socketService.SocketManager(SocketAction.SOCKET_STOP);
+		socketService.SocketManager(SocketAction.STOP);
 		model.setConnectionState("false");
 		handler.setHandshakeComplete(false);
 	}
