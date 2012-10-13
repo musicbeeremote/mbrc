@@ -235,9 +235,8 @@ public class ProtocolHandler
 		int nodeListLength = trackInfoNodeList.getLength();
 		for (int i = 0; i < nodeListLength; i++)
 		{
-			trackData[i] = trackInfoNodeList.item(i).getFirstChild().getNodeValue();
+			trackData[i] = trackInfoNodeList.item(i).getFirstChild()!=null?trackInfoNodeList.item(i).getFirstChild().getNodeValue():"";
 		}
-
 		int index = 0;
 		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_ARTIST_AVAILABLE, trackData[index++]));
 		bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_TITLE_AVAILABLE, trackData[index++]));
