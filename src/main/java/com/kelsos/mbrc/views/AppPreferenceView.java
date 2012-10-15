@@ -45,6 +45,7 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity implements
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object o)
 			{
+				if(o.toString().equals("")) return false;
 				int portNumber = Integer.parseInt(o.toString());
 				if(portNumber<1||portNumber>65535){
 					final Builder alert = new Builder(pContext);
@@ -95,7 +96,7 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity implements
         } else if (key.equals(getApplicationContext().getString(R.string.settings_key_port))) {
 			portEditTextPreference.setSummary(port);
         }
-		if(port.isEmpty()||hostname.isEmpty()) return;
+		if(port.equals("")||hostname.equals("")) return;
 		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_SETTINGS_CHANGED));
     }
 
