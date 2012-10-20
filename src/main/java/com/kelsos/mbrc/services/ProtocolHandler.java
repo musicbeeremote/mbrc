@@ -3,17 +3,18 @@ package com.kelsos.mbrc.services;
 import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.others.Const;
-import com.kelsos.mbrc.others.DelayTimer;
-import com.kelsos.mbrc.others.Protocol;
 import com.kelsos.mbrc.data.MusicTrack;
 import com.kelsos.mbrc.enums.ProtocolHandlerEventType;
 import com.kelsos.mbrc.events.ProtocolDataEvent;
+import com.kelsos.mbrc.others.Const;
+import com.kelsos.mbrc.others.DelayTimer;
+import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -75,11 +76,14 @@ public class ProtocolHandler
 	 */
 	public void answerProcessor(String answer)
 	{
+		String data="";
 		try
 		{
+
 			String[] replies = answer.split("\0");
 			for (String reply : replies)
 			{
+				data =reply;
 				//Log.d("reply","reply: "+reply);
 				//hack to avoid issues with apostrophes
 				if (SDK_INT >= 8 && SDK_INT <= 10)
@@ -124,7 +128,8 @@ public class ProtocolHandler
 					requestAction(PlayerAction.PlaybackPosition);
 				} else if (xmlNode.getNodeName().contains(Protocol.SONGCOVER))
 				{
-					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_COVER_AVAILABLE, xmlNode.getFirstChild().getNodeValue()));
+					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_COVER_AVAILABLE,
+							xmlNode.getFirstChild()!=null?xmlNode.getFirstChild().getNodeValue():""));
 				} else if (xmlNode.getNodeName().contains(Protocol.PLAYSTATE))
 				{
 					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAY_STATE_AVAILABLE, xmlNode.getFirstChild().getNodeValue()));
@@ -165,10 +170,19 @@ public class ProtocolHandler
 				{
 					getTrackDurationInfo(xmlNode);
 				}
+				else if (xmlNode.getNodeName().contains(Protocol.PLAYNOW_REMOVESELECTED))
+				{
+					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAYLIST_TRACK_REMOVE, xmlNode.getFirstChild().getNodeValue()));
+				}
 
 
 			}
-		} catch (SAXException e)
+		}
+		catch (SAXParseException e)
+		{
+			Log.d("Parse Exception","answer is: " + answer + " specific: " +data ,e);
+		}
+		catch (SAXException e)
 		{
 			e.printStackTrace();
 		} catch (IOException e)
@@ -310,7 +324,8 @@ public class ProtocolHandler
 		PlayerStatus,
 		Protocol,
 		Player,
-		PlaybackPosition
+		PlaybackPosition,
+		NowPlayingRemoveSelected
 	}
 
 	public static String getActionString(PlayerAction action, String value)
@@ -359,6 +374,8 @@ public class ProtocolHandler
 				return PrepareXml(Protocol.PLAYER, value);
 			case PlaybackPosition:
 				return PrepareXml(Protocol.PLAYBACK_POSITION, value);
+			case NowPlayingRemoveSelected:
+				return PrepareXml(Protocol.PLAYNOW_REMOVESELECTED, value);
 			default:
 				return PrepareXml(Protocol.ERROR, "Invalid Request");
 		}

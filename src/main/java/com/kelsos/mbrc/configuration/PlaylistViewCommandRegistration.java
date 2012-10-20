@@ -3,7 +3,9 @@ package com.kelsos.mbrc.configuration;
 import com.kelsos.mbrc.commands.PlayListDataAvailableCommand;
 import com.kelsos.mbrc.commands.request.PlaySpecifiedTrackCommand;
 import com.kelsos.mbrc.commands.request.RequestPlaylistCommand;
+import com.kelsos.mbrc.commands.request.RequestRemoveSelectedCommand;
 import com.kelsos.mbrc.commands.visual.PlaylistViewTrackUpdatedCommand;
+import com.kelsos.mbrc.commands.visual.VisualUpdateTrackRemoved;
 import com.kelsos.mbrc.controller.Controller;
 import com.kelsos.mbrc.enums.ModelDataEventType;
 import com.kelsos.mbrc.enums.ProtocolHandlerEventType;
@@ -17,6 +19,8 @@ public class PlaylistViewCommandRegistration
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAYLIST_AVAILABLE, PlayListDataAvailableCommand.class);
 		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_PLAY_NOW, PlaySpecifiedTrackCommand.class);
 		controller.registerCommand(ModelDataEventType.MODEL_TITLE_UPDATED, PlaylistViewTrackUpdatedCommand.class);
+		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_REMOVE, RequestRemoveSelectedCommand.class);
+		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAYLIST_TRACK_REMOVE,VisualUpdateTrackRemoved.class);
 	}
 
 	public static void unRegister(Controller controller)
@@ -25,6 +29,8 @@ public class PlaylistViewCommandRegistration
 		controller.unRegisterCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAYLIST_AVAILABLE, PlayListDataAvailableCommand.class);
 		controller.unRegisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_PLAY_NOW, PlayListDataAvailableCommand.class);
 		controller.unRegisterCommand(ModelDataEventType.MODEL_TITLE_UPDATED, PlaylistViewTrackUpdatedCommand.class);
+		controller.unRegisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_REMOVE, RequestRemoveSelectedCommand.class);
+		controller.unRegisterCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAYLIST_TRACK_REMOVE,VisualUpdateTrackRemoved.class);
 	}
 
 }

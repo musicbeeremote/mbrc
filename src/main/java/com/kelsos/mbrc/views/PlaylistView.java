@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.views;
 
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import android.widget.ListView;
 import com.actionbarsherlock.view.MenuItem;
@@ -15,6 +17,8 @@ import com.kelsos.mbrc.events.UserActionEvent;
 import com.squareup.otto.Bus;
 
 import java.util.ArrayList;
+
+import static android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class PlaylistView extends RoboSherlockListActivity
 {
@@ -38,6 +42,13 @@ public class PlaylistView extends RoboSherlockListActivity
 		adapter.notifyDataSetChanged();
 	}
 
+	public void removeSelectedTrack(int index)
+	{
+		if(index<0) return;
+		adapter.remove(adapter.getItem(index));
+		adapter.notifyDataSetChanged();
+	}
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +57,7 @@ public class PlaylistView extends RoboSherlockListActivity
 		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_LIST));
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(R.string.string_value_now_playing);
+		registerForContextMenu(this.getListView());
     }
 
 	@Override
@@ -96,6 +108,26 @@ public class PlaylistView extends RoboSherlockListActivity
 			default:
 				return super.onOptionsItemSelected(item);
 		}
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
+	{
+		 menu.add(0,11,0,"Remove track");
+		AdapterContextMenuInfo mi = (AdapterContextMenuInfo)menuInfo;
+
+
+		menu.setHeaderTitle(adapter.getItem(mi.position).getTitle());
+		super.onCreateContextMenu(menu,v,menuInfo);
+	}
+
+	@Override
+	public boolean onContextItemSelected(android.view.MenuItem item)
+	{
+
+		AdapterContextMenuInfo mi = (AdapterContextMenuInfo)item.getMenuInfo();
+		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_REMOVE, Integer.toString(mi.position)));
+		return super.onContextItemSelected(item);
 	}
 }
 

@@ -2,6 +2,7 @@ package com.kelsos.mbrc.model;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.squareup.otto.Bus;
@@ -114,6 +115,7 @@ public class MainDataModel
 
 	public void setAlbumCover(String base64format)
 	{
+		Log.d("Cover", base64format);
 		if (base64format == null || base64format.equals(""))
 		{
 			bus.post(new ModelDataEvent(ModelDataEventType.MODEL_COVER_NOT_FOUND));

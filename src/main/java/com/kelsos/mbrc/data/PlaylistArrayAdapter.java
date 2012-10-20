@@ -55,9 +55,20 @@ public class PlaylistArrayAdapter extends ArrayAdapter<MusicTrack> {
 		{
 			holder.trackPlaying.setImageResource(android.R.color.transparent);
 		}
+		holder.trackPlaying.setOnClickListener(showContextMenu);
 
         return row;
     }
+
+	private final View.OnClickListener showContextMenu = new View.OnClickListener()
+	{
+		@Override
+		public void onClick(View view)
+		{
+			view.showContextMenu();
+		}
+	};
+
 
 	public void setPlayingTrackIndex(int index)
 	{
