@@ -69,7 +69,6 @@ public class PlaylistArrayAdapter extends ArrayAdapter<MusicTrack> {
 		}
 	};
 
-
 	public void setPlayingTrackIndex(int index)
 	{
 		this.playingTrackIndex = index;

@@ -56,5 +56,7 @@
 	<string name="notification_connection_timeout">Connection timed out</string>
 	<string name="aboutview_musicbee_remote">About MusicBee Remote</string>
 	<string name="notification_not_allowed">Client is not allowed</string>
+	<string name="now_playing_search">Search</string>
+	<string name="now_playing_search_hint">Search for a track</string>
 
 </resources>
