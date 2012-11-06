@@ -58,5 +58,14 @@
 	<string name="notification_not_allowed">Client is not allowed</string>
 	<string name="now_playing_search">Search</string>
 	<string name="now_playing_search_hint">Search for a track</string>
+	<string name="notification_plugin_out_of_date">Your plugin is out of date, please update.</string>
+	<string name="update_view">Update Available</string>
+	<string name="update_view_out_of_date">Out of Date</string>
+	<string name="update_view_message_p_one">Your MusicBee remote plugin is out of date! Please update to the latest
+		version to ensure the optimal experience.
+	</string>
+	<string name="update_view_message_p_two">New features require and updated version in order to work.</string>
+	<string name="update_view_message_p_three">To update the plugin visit <a href="http://kelsos.net/musicbeeremote">MusicBee Remote website</a> on your Computer and download the latest version from the Download section. You can check the help section for more information.</string>
+
 
 </resources>

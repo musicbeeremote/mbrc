@@ -8,12 +8,13 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import com.google.inject.Inject;
-import com.squareup.otto.Bus;
-import com.kelsos.mbrc.events.ProtocolDataEvent;
-import com.kelsos.mbrc.events.UserActionEvent;
-import com.kelsos.mbrc.others.SettingsManager;
 import com.kelsos.mbrc.enums.ProtocolHandlerEventType;
 import com.kelsos.mbrc.enums.UserInputEventType;
+import com.kelsos.mbrc.events.ProtocolDataEvent;
+import com.kelsos.mbrc.events.UserActionEvent;
+import com.kelsos.mbrc.messaging.NotificationService;
+import com.kelsos.mbrc.others.SettingsManager;
+import com.squareup.otto.Bus;
 import roboguice.receiver.RoboBroadcastReceiver;
 
 public class RemoteBroadcastReceiver extends RoboBroadcastReceiver
@@ -43,7 +44,6 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver
 				if (settingsManager.isVolumeReducedOnRinging())
 				{
 					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_REDUCE_VOLUME));
-
 				}
 			}
 		} else if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION))
@@ -56,7 +56,12 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver
 			{
 
 			}
+		} else if (intent.getAction().equals(NotificationService.NOTIFICATION_PLAY_PRESSED)) {
+			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAY_PAUSE));
+		} else if (intent.getAction().equals(NotificationService.NOTIFICATION_NEXT_PRESSED)) {
+			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NEXT));
 		}
+
 	}
 
 	/**
@@ -69,6 +74,8 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver
 		IntentFilter _nmFilter = new IntentFilter();
 		_nmFilter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
 		_nmFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+		_nmFilter.addAction(NotificationService.NOTIFICATION_PLAY_PRESSED);
+		_nmFilter.addAction(NotificationService.NOTIFICATION_NEXT_PRESSED);
 		context.registerReceiver(this, _nmFilter);
 	}
 

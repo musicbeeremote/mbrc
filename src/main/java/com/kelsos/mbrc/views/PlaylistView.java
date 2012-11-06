@@ -1,13 +1,9 @@
 package com.kelsos.mbrc.views;
 
-import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.widget.CursorAdapter;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -166,6 +162,7 @@ public class PlaylistView extends RoboSherlockListActivity implements SearchView
 		return super.onContextItemSelected(item);
 	}
 
+
 	public boolean onQueryTextSubmit(String query)
 	{
 
@@ -188,13 +185,12 @@ public class PlaylistView extends RoboSherlockListActivity implements SearchView
 
 		mSearchView.setIconified(true);
 		mSearchItem.collapseActionView();
-		return false; // pass on to other listeners.
+		return false;
 	}
-
 
 	public boolean onQueryTextChange(String newText)
 	{
-		return false;  ||
+		return true;
 	}
 
 }

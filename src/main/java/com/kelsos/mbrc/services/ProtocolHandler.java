@@ -61,7 +61,7 @@ public class ProtocolHandler
 
 	/**
 	 * Returns true if the handshake is complete and false if it is not.
-	 * @return
+	 * @return the handshake status
 	 */
 	public boolean getHandshakeComplete()
 	{
@@ -108,6 +108,10 @@ public class ProtocolHandler
 					} else if (xmlNode.getNodeName().contains(Protocol.PROTOCOL))
 					{
 						ServerProtocolVersion = Double.parseDouble(xmlNode.getFirstChild().getNodeValue());
+						if(ServerProtocolVersion < Protocol.CLIENT_PROTOCOL_VERSION)
+						{
+							bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLUGIN_OUT_OF_DATE));
+						}
 						isHandshakeComplete = true;
 						bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_HANDSHAKE_COMPLETE, "true"));
 						requestAction(PlayerAction.PlayerStatus);
