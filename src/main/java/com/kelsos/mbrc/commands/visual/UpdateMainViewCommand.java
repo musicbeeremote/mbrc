@@ -1,18 +1,19 @@
 package com.kelsos.mbrc.commands.visual;
 
+import android.app.Activity;
 import com.google.inject.Inject;
+import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.enums.ConnectionStatus;
+import com.kelsos.mbrc.fragments.MainFragment;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
 import com.kelsos.mbrc.services.ProtocolHandler;
-import com.kelsos.mbrc.views.MainView;
-import com.kelsos.mbrc.controller.RunningActivityAccessor;
 
 public class UpdateMainViewCommand implements ICommand
 {
 	@Inject
-	private RunningActivityAccessor accessor;
+	ActiveFragmentProvider afProvider;
 	@Inject
 	private MainDataModel model;
 	@Inject
@@ -20,44 +21,49 @@ public class UpdateMainViewCommand implements ICommand
 
 	public void execute(IEvent e)
 	{
-		if (accessor.getRunningActivity()==null||accessor.getRunningActivity().getClass() != MainView.class) return;
-		(accessor.getRunningActivity()).runOnUiThread(new Runnable()
+		if(afProvider.getActiveFragment(MainFragment.class)!=null)
 		{
-			public void run()
+			Activity cActivity = afProvider.getActiveFragment(MainFragment.class).getActivity();
+			cActivity.runOnUiThread(new Runnable()
 			{
-				MainView view = (MainView) accessor.getRunningActivity();
-				view.updateTitleText(model.getTitle());
-				view.updateArtistText(model.getArtist());
-				view.updateAlbumText(model.getAlbum());
-				view.updateYearText(model.getYear());
-				view.updateVolumeData(model.getVolume());
-				if(model.getAlbumCover()!=null)
+				@Override
+				public void run()
 				{
-					view.updateAlbumCover(model.getAlbumCover());
-				}
-				else
-				{
-					view.resetAlbumCover();
-				}
-				view.updateRepeatButtonState(model.getIsRepeatButtonActive());
-				view.updateShuffleButtonState(model.getIsShuffleButtonActive());
-				view.updateScrobblerButtonState(model.getIsScrobbleButtonActive());
-				view.updateMuteButtonState(model.getIsMuteButtonActive());
-				view.updatePlayState(model.getPlayState());
-				if(model.getIsConnectionActive()&&!handler.getHandshakeComplete())
-				{
-					view.updateConnectivityStatus(ConnectionStatus.CONNECTION_ON);
-				}
-				else if(model.getIsConnectionActive()&&handler.getHandshakeComplete())
-				{
-					view.updateConnectivityStatus(ConnectionStatus.CONNECTION_ACTIVE);
-				}
-				else
-				{
-					view.updateConnectivityStatus(ConnectionStatus.CONNECTION_OFF);
-				}
-			}
-		});
+					MainFragment mFragment = ((MainFragment)afProvider.getActiveFragment(MainFragment.class));
 
+					mFragment.updateTitleText(model.getTitle());
+					mFragment.updateArtistText(model.getArtist());
+					mFragment.updateAlbumText(model.getAlbum());
+					mFragment.updateYearText(model.getYear());
+					mFragment.updateVolumeData(model.getVolume());
+					if(model.getAlbumCover()!=null)
+					{
+						mFragment.updateAlbumCover(model.getAlbumCover());
+					}
+					else
+					{
+						mFragment.resetAlbumCover();
+					}
+					mFragment.updateRepeatButtonState(model.getIsRepeatButtonActive());
+					mFragment.updateShuffleButtonState(model.getIsShuffleButtonActive());
+					mFragment.updateScrobblerButtonState(model.getIsScrobbleButtonActive());
+					mFragment.updateMuteButtonState(model.getIsMuteButtonActive());
+					mFragment.updatePlayState(model.getPlayState());
+					if(model.getIsConnectionActive()&&!handler.getHandshakeComplete())
+					{
+						mFragment.updateConnectivityStatus(ConnectionStatus.CONNECTION_ON);
+					}
+					else if(model.getIsConnectionActive()&&handler.getHandshakeComplete())
+					{
+						mFragment.updateConnectivityStatus(ConnectionStatus.CONNECTION_ACTIVE);
+					}
+					else
+					{
+						mFragment.updateConnectivityStatus(ConnectionStatus.CONNECTION_OFF);
+					}
+
+				}
+			});
+		}
 	}
 }

@@ -60,6 +60,8 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver
 			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAY_PAUSE));
 		} else if (intent.getAction().equals(NotificationService.NOTIFICATION_NEXT_PRESSED)) {
 			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NEXT));
+		} else if(intent.getAction().equals(NotificationService.NOTIFICATION_CLOSE_PRESSED)) {
+			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_CANCEL_NOTIFICATION));
 		}
 
 	}
@@ -76,6 +78,7 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver
 		_nmFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 		_nmFilter.addAction(NotificationService.NOTIFICATION_PLAY_PRESSED);
 		_nmFilter.addAction(NotificationService.NOTIFICATION_NEXT_PRESSED);
+		_nmFilter.addAction(NotificationService.NOTIFICATION_CLOSE_PRESSED);
 		context.registerReceiver(this, _nmFilter);
 	}
 

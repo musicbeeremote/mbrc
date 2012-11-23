@@ -6,20 +6,16 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <application android:debuggable="false" android:description="@string/application_description" android:icon="@drawable/ic_launcher" android:label="@string/application_name" android:logo="@drawable/ic_launcher" android:name=".RemoteApplication" android:theme="@style/Theme.mbrc_default">
-        <activity android:name=".views.MainView"
+        <activity android:name=".views.MainFragmentActivity"
 				android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".views.LyricsView">
-        </activity>
         <activity android:name=".views.AppPreferenceView">
         </activity>
-        <activity android:name=".views.PlaylistView">
-        </activity>
-	    <activity android:name=".views.UpdateView"
+        <activity android:name=".views.UpdateView"
 		    android:launchMode="singleTask"
 		    android:taskAffinity=""
 		    android:excludeFromRecents="true">
@@ -30,6 +26,7 @@
                 <action android:name="android.net.wifi.STATE_CHANGE"/>
 	            <action android:name="com.kelsos.mbrc.notification.play"/>
 	            <action android:name="com.kelsos.mbrc.notification.next"/>
+	            <action android:name="com.kelsos.mbrc.notification.close"/>
             </intent-filter>
         </service>
     </application>

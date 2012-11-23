@@ -12,8 +12,9 @@ import android.widget.Toast;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.controller.RunningActivityAccessor;
-import com.kelsos.mbrc.views.MainView;
+import com.kelsos.mbrc.controller.ActiveFragmentProvider;
+import com.kelsos.mbrc.enums.PlayState;
+import com.kelsos.mbrc.views.MainFragmentActivity;
 import com.kelsos.mbrc.views.UpdateView;
 
 @Singleton
@@ -30,13 +31,13 @@ public class NotificationService
 	public static final String NOTIFICATION_CLOSE_PRESSED = "com.kelsos.mbrc.notification.close";
 
 	private Context context;
-	private RunningActivityAccessor accessor;
+	private ActiveFragmentProvider afProvider;
 
 	@Inject
-	public NotificationService(Context context, RunningActivityAccessor accessor)
+	public NotificationService(Context context, ActiveFragmentProvider afProvider)
 	{
 		this.context = context;
-		this.accessor = accessor;
+		this.afProvider = afProvider;
 	}
 
 	/**
@@ -47,15 +48,13 @@ public class NotificationService
 	private void showToast(final String message)
 	{
 		try{
-		if (accessor.getRunningActivity() == null) return;
-		accessor.getRunningActivity().runOnUiThread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-			}
-		});
+            if(afProvider.getActivity()==null) return;
+            afProvider.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                }
+            });
 		}
 		catch (Exception ex)
 		{
@@ -85,28 +84,48 @@ public class NotificationService
 		showToast(message);
 	}
 
- 	public void notificationBuilder(String title, String artist, Bitmap cover)
+ 	public void notificationBuilder(String title, String artist, Bitmap cover, PlayState state)
 	{
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
+
+		Intent notificationIntent = new Intent(context, MainFragmentActivity.class);
+		PendingIntent notificationPendingIntent = PendingIntent.getActivity(context,0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+		mBuilder.setContentIntent(notificationPendingIntent);
+
 		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.notification_control);
-		Intent mediaButtonIntent = new Intent(NOTIFICATION_PLAY_PRESSED);
-		PendingIntent mediaPendingIntent = PendingIntent.getBroadcast(context, 1,mediaButtonIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+		Intent playPressedIntent = new Intent(NOTIFICATION_PLAY_PRESSED);
+		PendingIntent mediaPendingIntent = PendingIntent.getBroadcast(context, 1,playPressedIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 		views.setOnClickPendingIntent(R.id.notification_play,mediaPendingIntent);
 		Intent mediaNextButtonIntent = new Intent(NOTIFICATION_NEXT_PRESSED);
-		PendingIntent mediaNextButtonPendingIntent = PendingIntent.getBroadcast(context, 1,mediaNextButtonIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent mediaNextButtonPendingIntent = PendingIntent.getBroadcast(context, 2,mediaNextButtonIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 		views.setOnClickPendingIntent(R.id.notification_next, mediaNextButtonPendingIntent);
+		Intent clearNotificationIntent = new Intent(NOTIFICATION_CLOSE_PRESSED);
+		PendingIntent clearNotificationPendingIntent = PendingIntent.getBroadcast(context, 3, clearNotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		views.setOnClickPendingIntent(R.id.notification_close, clearNotificationPendingIntent);
+
 		views.setTextViewText(R.id.notification_artist,artist);
 		views.setTextViewText(R.id.notification_title,title);
 		views.setImageViewBitmap(R.id.notification_album_art,cover);
-		views.setImageViewResource(R.id.notification_play,R.drawable.ic_notification_play);
-		views.setImageViewResource(R.id.notification_next,R.drawable.ic_notification_next);
+
+		switch (state)
+		{
+			case Playing:
+				views.setImageViewResource(R.id.notification_play,android.R.drawable.ic_media_pause);
+				break;
+			case Paused:
+				views.setImageViewResource(R.id.notification_play,android.R.drawable.ic_media_play);
+				break;
+			case Stopped:
+				views.setImageViewResource(R.id.notification_play,android.R.drawable.ic_media_play);
+				break;
+			case Undefined:
+				break;
+		}
+
+		views.setImageViewResource(R.id.notification_next,android.R.drawable.ic_media_next);
+
 		views.setImageViewResource(R.id.notification_close,R.drawable.ic_notification_close);
 
-
-		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
-
-		Intent notificationIntent = new Intent(context, MainView.class);
-		PendingIntent notificationPendingIntent = PendingIntent.getActivity(context,0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-		mBuilder.setContentIntent(notificationPendingIntent);
 
 		Notification notification = mBuilder.getNotification();
 		notification.contentView = views;
@@ -116,8 +135,10 @@ public class NotificationService
 		mNotificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification);
 	}
 
-
-
+	public void cancelNotification(int notificationId){
+		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.cancel(notificationId);
+	}
 
 	public void updateAvailableNotificationBuilder()
 	{

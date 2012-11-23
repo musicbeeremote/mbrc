@@ -36,7 +36,7 @@
         android:layout_width="fill_parent"
         android:layout_height="5dp"
         android:layout_below="@id/lyrics_view_title_label_space"
-        android:background="@drawable/ic_drop_shadow" >
+        android:background="@drawable/ic_drop_shadow_2" >
     </View>
 
     <ListView

@@ -13,6 +13,6 @@ public class UpdateTitleCommand implements ICommand
 	public void execute(IEvent e)
 	{
 		model.setTitle(e.getData());
-		service.notificationBuilder(model.getTitle(),model.getArtist(),model.getAlbumCover());
+		service.notificationBuilder(model.getTitle(),model.getArtist(),model.getAlbumCover(),model.getPlayState());
 	}
 }

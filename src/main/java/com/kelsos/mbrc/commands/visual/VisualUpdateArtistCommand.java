@@ -1,27 +1,33 @@
 package com.kelsos.mbrc.commands.visual;
 
+import android.app.Activity;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.controller.RunningActivityAccessor;
+import com.kelsos.mbrc.controller.ActiveFragmentProvider;
+import com.kelsos.mbrc.fragments.MainFragment;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
-import com.kelsos.mbrc.views.MainView;
 
 public class VisualUpdateArtistCommand implements ICommand
 {
 	@Inject
-	RunningActivityAccessor accessor;
+	ActiveFragmentProvider afProvide;
 	@Inject
 	MainDataModel model;
 
 	public void execute(IEvent e)
 	{
-		if(accessor.getRunningActivity()==null||MainView.class != accessor.getRunningActivity().getClass()) return;
-		accessor.getRunningActivity().runOnUiThread(new Runnable() {
-			public void run() {
-				MainView view = (MainView) accessor.getRunningActivity();
-				view.updateArtistText((model.getArtist()));
-			}
-		});
+		if(afProvide.getActiveFragment(MainFragment.class)!=null)
+		{
+			Activity cActivity = afProvide.getActiveFragment(MainFragment.class).getActivity();
+			cActivity.runOnUiThread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					((MainFragment)afProvide.getActiveFragment(MainFragment.class)).updateArtistText(model.getArtist());
+				}
+			});
+		}
 	}
 }

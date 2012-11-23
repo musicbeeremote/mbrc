@@ -118,6 +118,7 @@ public class ProtocolHandler
 						requestAction(PlayerAction.SongInformation);
 						requestAction(PlayerAction.SongCover);
 						requestAction(PlayerAction.Lyrics);
+                        requestAction(PlayerAction.Rating);
 					} else
 					{
 						return;
@@ -178,8 +179,9 @@ public class ProtocolHandler
 				{
 					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAYLIST_TRACK_REMOVE, xmlNode.getFirstChild().getNodeValue()));
 				}
-
-
+                else if (xmlNode.getNodeName().contains(Protocol.RATING)){
+                    bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_RATING_RECEIVED, xmlNode.getFirstChild().getNodeValue()));
+                }
 			}
 		}
 		catch (SAXParseException e)
@@ -216,6 +218,7 @@ public class ProtocolHandler
 		requestAction(ProtocolHandler.PlayerAction.SongCover);
 		requestAction(ProtocolHandler.PlayerAction.SongInformation);
 		requestAction(ProtocolHandler.PlayerAction.Volume);
+        requestAction(PlayerAction.Rating);
 	}
 
 

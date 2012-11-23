@@ -1,26 +1,27 @@
 package com.kelsos.mbrc.commands;
 
+import android.app.Activity;
 import com.google.inject.Inject;
+import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.data.MusicTrack;
 import com.kelsos.mbrc.events.ProtocolDataEvent;
+import com.kelsos.mbrc.fragments.NowPlayingFragment;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
-import com.kelsos.mbrc.views.PlaylistView;
-import com.kelsos.mbrc.controller.RunningActivityAccessor;
 
 import java.util.ArrayList;
 
 public class PlayListDataAvailableCommand implements ICommand
 {
 	@Inject
-	private RunningActivityAccessor accessor;
+	ActiveFragmentProvider afProvider;
 	@Inject
 	private MainDataModel model;
 	@Override
 	public void execute(final IEvent e)
 	{
-		if(accessor.getRunningActivity()==null||accessor.getRunningActivity().getClass()!= PlaylistView.class) return;
+		if(afProvider.getActiveFragment(NowPlayingFragment.class) == null) return;
 		int index=0;
 		final ArrayList<MusicTrack> playList = ((ProtocolDataEvent)e).getTrackList();
 		String artist = model.getArtist();
@@ -33,16 +34,16 @@ public class PlayListDataAvailableCommand implements ICommand
 				break;
 			}
 		}
+
 		final int trackIndex = index;
 
-
-		accessor.getRunningActivity().runOnUiThread(new Runnable()
+		Activity cActivity = afProvider.getActiveFragment(NowPlayingFragment.class).getActivity();
+		cActivity.runOnUiThread(new Runnable()
 		{
 			@Override
 			public void run()
 			{
-				PlaylistView view = (PlaylistView) accessor.getRunningActivity();
-				view.updateListData(playList, trackIndex);
+				((NowPlayingFragment) afProvider.getActiveFragment(NowPlayingFragment.class)).updateListData(playList, trackIndex);;
 			}
 		});
 	}

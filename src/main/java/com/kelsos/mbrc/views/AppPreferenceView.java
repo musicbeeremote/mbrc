@@ -11,7 +11,6 @@ import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockPreferenceActivity;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.controller.RunningActivityAccessor;
 import com.kelsos.mbrc.enums.UserInputEventType;
 import com.kelsos.mbrc.events.UserActionEvent;
 import com.squareup.otto.Bus;
@@ -22,8 +21,6 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity implements
 
 	@Inject
 	Bus bus;
-	@Inject
-	RunningActivityAccessor accessor;
 
 	private EditTextPreference hostEditTextPreference;
     private EditTextPreference portEditTextPreference;
@@ -32,7 +29,6 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-		accessor.register(this);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(R.string.main_menu_title_settings);
         addPreferencesFromResource(R.xml.application_settings);
@@ -103,7 +99,6 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity implements
 	@Override
 	public void onDestroy()
 	{
-		accessor.unRegister(this);
 		super.onDestroy();
 	}
 }

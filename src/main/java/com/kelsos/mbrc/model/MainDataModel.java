@@ -35,8 +35,10 @@ public class MainDataModel
 		_isMuteButtonActive = false;
 		_playState = PlayState.Stopped;
 		_albumCover = null;
+        rating = 0;
 	}
 
+    private float rating;
 	private String _title;
 	private String _artist;
 	private String _album;
@@ -53,6 +55,19 @@ public class MainDataModel
 
 
 	private PlayState _playState;
+
+    public void setRating(String rating){
+        try {
+           this.rating = Float.parseFloat(rating);
+        } catch (Exception ex){
+            this.rating = 0;
+        }
+        bus.post(new ModelDataEvent(ModelDataEventType.MODEL_RATING_UPDATED));
+    }
+
+    public float getRating(){
+        return rating;
+    }
 
 	public void setTitle(String title)
 	{

@@ -1,26 +1,31 @@
 package com.kelsos.mbrc.commands.visual;
 
+import android.app.Activity;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.controller.RunningActivityAccessor;
+import com.kelsos.mbrc.controller.ActiveFragmentProvider;
+import com.kelsos.mbrc.fragments.NowPlayingFragment;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
-import com.kelsos.mbrc.views.PlaylistView;
 
 public class VisualUpdateTrackRemoved implements ICommand
 {
-	@Inject
-	private RunningActivityAccessor accessor;
+    @Inject
+    ActiveFragmentProvider afProvider;
 
 	@Override
 	public void execute(final IEvent e)
 	{
-		if(accessor.getRunningActivity()==null||PlaylistView.class != accessor.getRunningActivity().getClass()) return;
-		accessor.getRunningActivity().runOnUiThread(new Runnable() {
-			public void run() {
-				PlaylistView view = (PlaylistView) accessor.getRunningActivity();
-				final int index = Integer.parseInt(e.getData());
-				view.removeSelectedTrack(index);
-			}
-		});
+        if(afProvider.getActiveFragment(NowPlayingFragment.class)!=null)
+        {    final int index = Integer.parseInt(e.getData());
+            Activity cActivity = afProvider.getActiveFragment(NowPlayingFragment.class).getActivity();
+            cActivity.runOnUiThread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    ((NowPlayingFragment)afProvider.getActiveFragment(NowPlayingFragment.class)).removeSelectedTrack(index);
+                }
+            });
+        }
 	}
 }

@@ -35,6 +35,7 @@ public class ProtocolHandlerCommandRegistration
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_HANDSHAKE_COMPLETE, VisualUpdateHandshakeComplete.class);
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_NOT_ALLOWED, NotifyNotAllowedCommand.class);
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLUGIN_OUT_OF_DATE, NotifyPluginOutOfDateCommand.class);
+        controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_RATING_RECEIVED, UpdateRatingCommand.class);
 	}
 
 	@Inject

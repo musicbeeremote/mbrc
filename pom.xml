@@ -57,7 +57,8 @@
 		note that this uses default scope (NOT provided) since the library will need to be added to your apk -->
 			<groupId>com.google.android</groupId>
 			<artifactId>support-v4</artifactId>
-			<version>r7</version></dependency>
+			<version>r7</version>
+		</dependency>
 
 
 		<!-- Action Bar sherlock -->
@@ -66,6 +67,19 @@
 			<artifactId>library</artifactId>
 			<version>4.2.0</version>
 			<type>apklib</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.slidingmenu</groupId>
+			<artifactId>library</artifactId>
+			<version>1.0.0</version>
+			<type>apklib</type>
+			<exclusions>
+				<exclusion>
+					<groupId>com.actionbarsherlock</groupId>
+					<artifactId>actionbarsherlock</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- Let Roboguice and Sherlock work together -->
@@ -100,7 +114,7 @@
 				<plugin>
 					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 					<artifactId>android-maven-plugin</artifactId>
-					<version>3.3.0</version>
+					<version>3.4.0</version>
 					<configuration>
 					   <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
 						<assetsDirectory>${project.basedir}/assets</assetsDirectory>

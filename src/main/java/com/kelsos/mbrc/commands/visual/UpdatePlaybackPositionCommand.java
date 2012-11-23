@@ -1,35 +1,33 @@
 package com.kelsos.mbrc.commands.visual;
 
+import android.app.Activity;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.controller.RunningActivityAccessor;
+import com.kelsos.mbrc.controller.ActiveFragmentProvider;
+import com.kelsos.mbrc.fragments.MainFragment;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
-import com.kelsos.mbrc.views.MainView;
 
 public class UpdatePlaybackPositionCommand implements ICommand
 {
 	@Inject
-	RunningActivityAccessor accessor;
+	ActiveFragmentProvider afProvider;
 
 	public void execute(IEvent e)
 	{
 		String duration[] = e.getData().split("##");
 		final int current = Integer.parseInt(duration[0]);
 		final int total = Integer.parseInt(duration[1]);
-		if (accessor.getRunningActivity()==null||MainView.class != accessor.getRunningActivity().getClass()) return;
-		accessor.getRunningActivity().runOnUiThread(new Runnable()
+		if (afProvider.getActiveFragment(MainFragment.class) != null)
 		{
-			public void run()
+			Activity cActivity = afProvider.getActiveFragment(MainFragment.class).getActivity();
+			cActivity.runOnUiThread(new Runnable()
 			{
-				try
+				@Override
+				public void run()
 				{
-					MainView view = (MainView) accessor.getRunningActivity();
-					view.updateDurationDisplay(current, total);
-				} catch (Exception ignore)
-				{
-
+					((MainFragment) afProvider.getActiveFragment(MainFragment.class)).updateDurationDisplay(current, total);;
 				}
-			}
-		});
+			});
+		}
 	}
 }

@@ -1,28 +1,35 @@
 package com.kelsos.mbrc.commands.visual;
 
+import android.app.Activity;
 import com.google.inject.Inject;
+import com.kelsos.mbrc.controller.ActiveFragmentProvider;
+import com.kelsos.mbrc.fragments.LyricsFragment;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
-import com.kelsos.mbrc.views.LyricsView;
-import com.kelsos.mbrc.controller.RunningActivityAccessor;
 
 public class VisualUpdateLyricsCommand implements ICommand
 {
 	@Inject
-	RunningActivityAccessor accessor;
+	ActiveFragmentProvider afProvider;
 	@Inject
 	MainDataModel model;
 
 	@Override
 	public void execute(IEvent e)
 	{
-		if(accessor.getRunningActivity()==null||LyricsView.class != accessor.getRunningActivity().getClass()) return;
-		accessor.getRunningActivity().runOnUiThread(new Runnable() {
-			public void run() {
-				LyricsView view = (LyricsView) accessor.getRunningActivity();
-				view.updateLyricsData(model.getLyrics(), model.getArtist(), model.getTitle());
-			}
-		});
+		if (afProvider.getActiveFragment(LyricsFragment.class) != null)
+		{
+			Activity cActivity = afProvider.getActiveFragment(LyricsFragment.class).getActivity();
+			cActivity.runOnUiThread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					LyricsFragment lFragment = ((LyricsFragment) afProvider.getActiveFragment(LyricsFragment.class));
+					lFragment.updateLyricsData(model.getLyrics(), model.getArtist(), model.getTitle());
+				}
+			});
+		}
 	}
 }
