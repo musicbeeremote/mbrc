@@ -35,4 +35,5 @@ public class Protocol {
 	/** Protocol 1.3 */
 
 	public static final double CLIENT_PROTOCOL_VERSION = 1.3;
+    public static final String NOW_PLAYING_CHANGED = "nowplayingchanged";
 }

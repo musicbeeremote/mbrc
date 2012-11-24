@@ -182,6 +182,9 @@ public class ProtocolHandler
                 else if (xmlNode.getNodeName().contains(Protocol.RATING)){
                     bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_RATING_RECEIVED, xmlNode.getFirstChild().getNodeValue()));
                 }
+                else if (xmlNode.getNodeName().contains(Protocol.NOW_PLAYING_CHANGED)){
+                    bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_NOW_PLAYING_CHANGED));
+                }
 			}
 		}
 		catch (SAXParseException e)

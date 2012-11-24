@@ -2,6 +2,7 @@ package com.kelsos.mbrc.configuration;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.commands.NotifyPluginOutOfDateCommand;
+import com.kelsos.mbrc.commands.NotifyProtocolHandlerChangeCommand;
 import com.kelsos.mbrc.commands.ProtocolReplyAvailableCommand;
 import com.kelsos.mbrc.commands.ReduceVolumeOnRingCommand;
 import com.kelsos.mbrc.commands.model.*;
@@ -36,6 +37,7 @@ public class ProtocolHandlerCommandRegistration
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_NOT_ALLOWED, NotifyNotAllowedCommand.class);
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLUGIN_OUT_OF_DATE, NotifyPluginOutOfDateCommand.class);
         controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_RATING_RECEIVED, UpdateRatingCommand.class);
+        controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_NOW_PLAYING_CHANGED, NotifyProtocolHandlerChangeCommand.class);
 	}
 
 	@Inject
