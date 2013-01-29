@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.configuration;
 
 import com.google.inject.Inject;
+import com.kelsos.mbrc.commands.request.RequestLfmBan;
+import com.kelsos.mbrc.commands.request.RequestLfmLove;
 import com.kelsos.mbrc.commands.request.RequestRatingChangeCommand;
 import com.kelsos.mbrc.commands.visual.VisualUpdateRatingCommand;
 import com.kelsos.mbrc.controller.Controller;
@@ -13,6 +15,8 @@ public class SlidingMenuCommandRegistration {
     public static void register(Controller controller){
         controller.registerCommand(ModelDataEventType.MODEL_RATING_UPDATED, VisualUpdateRatingCommand.class);
         controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_RATING_CHANGE, RequestRatingChangeCommand.class);
+        controller.registerCommand(UserInputEventType.USERINPUT_EVENT_LASTFM_BAN, RequestLfmBan.class);
+        controller.registerCommand(UserInputEventType.USERINPUT_EVENT_LASTFM_LOVE, RequestLfmLove.class);
     }
 
     @Inject

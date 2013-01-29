@@ -36,4 +36,7 @@ public class Protocol {
 
 	public static final double CLIENT_PROTOCOL_VERSION = 1.3;
     public static final String NOW_PLAYING_CHANGED = "nowplayingchanged";
+    public static final String MOVE_TRACK = "nowplayingmove";
+    public static final String LFM_LOVE = "lfmlove";
+    public static final String LFM_BAN = "lfmban";
 }

@@ -84,7 +84,7 @@ public class ProtocolHandler
 			for (String reply : replies)
 			{
 				data =reply;
-				//Log.d("reply","reply: "+reply);
+				Log.d("protocol","received: " + reply);
 				//hack to avoid issues with apostrophes
 				if (SDK_INT >= 8 && SDK_INT <= 10)
 				{
@@ -180,7 +180,7 @@ public class ProtocolHandler
 					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAYLIST_TRACK_REMOVE, xmlNode.getFirstChild().getNodeValue()));
 				}
                 else if (xmlNode.getNodeName().contains(Protocol.RATING)){
-                    bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_RATING_RECEIVED, xmlNode.getFirstChild().getNodeValue()));
+                    bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_RATING_RECEIVED, xmlNode.getFirstChild().getNodeValue()!=null ? xmlNode.getFirstChild().getNodeValue() : "0"));
                 }
                 else if (xmlNode.getNodeName().contains(Protocol.NOW_PLAYING_CHANGED)){
                     bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_NOW_PLAYING_CHANGED));
@@ -335,7 +335,10 @@ public class ProtocolHandler
 		Protocol,
 		Player,
 		PlaybackPosition,
-		NowPlayingRemoveSelected
+		NowPlayingRemoveSelected,
+        MoveSelectedTrack,
+        LfmLove,
+        LfmBan,
 	}
 
 	public static String getActionString(PlayerAction action, String value)
@@ -386,6 +389,12 @@ public class ProtocolHandler
 				return PrepareXml(Protocol.PLAYBACK_POSITION, value);
 			case NowPlayingRemoveSelected:
 				return PrepareXml(Protocol.PLAYNOW_REMOVESELECTED, value);
+            case MoveSelectedTrack:
+                return PrepareXml(Protocol.MOVE_TRACK, value);
+            case LfmLove:
+                return PrepareXml(Protocol.LFM_LOVE, value);
+            case LfmBan:
+                return PrepareXml(Protocol.LFM_BAN, value);
 			default:
 				return PrepareXml(Protocol.ERROR, "Invalid Request");
 		}

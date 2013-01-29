@@ -11,8 +11,4 @@ public interface IDrag {
 
     void onStopDrag(View item);
 
-    void onDrop(int from, int to);
-
-    void onRemove(int position);
-
 }

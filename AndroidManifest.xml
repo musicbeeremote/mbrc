@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionCode="68" android:versionName="0.2.3.1" package="com.kelsos.mbrc">
-    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="15"/>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionCode="72" android:versionName="0.2.4-SNAPSHOT" package="com.kelsos.mbrc">
+    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <application android:debuggable="false" android:description="@string/application_description" android:icon="@drawable/ic_launcher" android:label="@string/application_name" android:logo="@drawable/ic_launcher" android:name=".RemoteApplication" android:theme="@style/Theme.mbrc_default">
-        <activity android:name=".views.MainFragmentActivity"
-				android:launchMode="singleTop">
+        <activity android:launchMode="singleTop" android:name=".views.MainFragmentActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -15,10 +14,7 @@
         </activity>
         <activity android:name=".views.AppPreferenceView">
         </activity>
-        <activity android:name=".views.UpdateView"
-		    android:launchMode="singleTask"
-		    android:taskAffinity=""
-		    android:excludeFromRecents="true">
+        <activity android:excludeFromRecents="true" android:launchMode="singleTask" android:name=".views.UpdateView" android:taskAffinity="">
 	    </activity>
         <service android:description="@string/info_service_description" android:name=".controller.Controller" android:permission="android.permission.READ_PHONE_STATE">
             <intent-filter>

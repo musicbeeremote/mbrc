@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -254,6 +253,7 @@ public class MainFragment extends RoboSherlockFragment
 	 */
 	public void updateScrobblerButtonState(boolean state)
 	{
+		if(scrobbleButton==null) return;
 		if (state)
 		{
 			scrobbleButton.setImageResource(R.drawable.ic_media_scrobble_red);
@@ -265,11 +265,13 @@ public class MainFragment extends RoboSherlockFragment
 
 	public void resetAlbumCover()
 	{
+		if(albumCover==null) return;
 		albumCover.setImageResource(R.drawable.ic_image_no_cover);
 	}
 
 	public void updateAlbumCover(Bitmap cover)
 	{
+		if(albumCover==null) return;
 		albumCover.setImageBitmap(cover);
 	}
 
@@ -281,6 +283,7 @@ public class MainFragment extends RoboSherlockFragment
 	 */
 	public void updateShuffleButtonState(boolean state)
 	{
+		if(shuffleButton==null) return;
 		if (state)
 		{
 			shuffleButton.setImageResource(R.drawable.ic_media_shuffle);
@@ -292,6 +295,7 @@ public class MainFragment extends RoboSherlockFragment
 
 	public void updateRepeatButtonState(boolean state)
 	{
+		if(repeatButton==null) return;
 		if (state)
 		{
 			repeatButton.setImageResource(R.drawable.ic_media_repeat);
@@ -303,6 +307,7 @@ public class MainFragment extends RoboSherlockFragment
 
 	public void updateMuteButtonState(boolean state)
 	{
+		if(muteButton==null) return;
 		if (state)
 		{
 			muteButton.setImageResource(R.drawable.ic_media_mute_active);
@@ -314,12 +319,14 @@ public class MainFragment extends RoboSherlockFragment
 
 	public void updateVolumeData(int volume)
 	{
+		if(volumeSlider==null) return;
 		if (!userChangingVolume)
 			volumeSlider.setProgress(volume);
 	}
 
 	public void updatePlayState(PlayState playState)
 	{
+		if(playPauseButton==null||stopButton==null) return;
 		switch (playState)
 		{
 			case Playing:
@@ -350,26 +357,31 @@ public class MainFragment extends RoboSherlockFragment
 
 	public void updateArtistText(String artist)
 	{
+		if(artistLabel==null) return;
 		artistLabel.setText(artist);
 	}
 
 	public void updateTitleText(String title)
 	{
+		if(titleLabel==null) return;
 		titleLabel.setText(title);
 	}
 
 	public void updateAlbumText(String album)
 	{
+		if(albumLabel==null) return;
 		albumLabel.setText(album);
 	}
 
 	public void updateYearText(String year)
 	{
+		if(yearLabel==null) return;
 		yearLabel.setText(year);
 	}
 
 	public void updateConnectivityStatus(ConnectionStatus status)
 	{
+		if(connectivityIndicator==null) return;
 		switch (status)
 		{
 			case CONNECTION_OFF:
@@ -390,6 +402,7 @@ public class MainFragment extends RoboSherlockFragment
 
 	private void activateStoppedState()
 	{
+		if(trackProgressCurrent==null || trackProgressSlider==null || stopButton==null) return;
 		trackProgressSlider.setProgress(0);
 		trackProgressCurrent.setText("00:00");
 		stopButton.setEnabled(false);
@@ -404,6 +417,7 @@ public class MainFragment extends RoboSherlockFragment
 	 */
 	public void updateDurationDisplay(int current, int total)
 	{
+		if(trackProgressCurrent==null || trackProgressSlider==null || trackDuration==null) return;
 		if (total == 0)
 		{
 			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAYBACK_POSITION));
@@ -432,6 +446,7 @@ public class MainFragment extends RoboSherlockFragment
 	 */
 	private void trackProgressAnimation()
 	{
+		if(!isVisible()) return;
         /* If the scheduled tasks is not null then cancel it and clear it along with the timer to create them anew */
 		final int timerPeriod = 100;
 		stopTrackProgressAnimation();

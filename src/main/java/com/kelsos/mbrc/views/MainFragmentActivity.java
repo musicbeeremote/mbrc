@@ -1,19 +1,12 @@
 package com.kelsos.mbrc.views;
 
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.widget.SearchView;
-import com.actionbarsherlock.widget.ShareActionProvider;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.fragments.LyricsFragment;
 import com.kelsos.mbrc.fragments.MainFragment;
 import com.kelsos.mbrc.fragments.NowPlayingFragment;
 import com.kelsos.mbrc.fragments.SlidingMenuFragment;
@@ -45,7 +38,7 @@ public class MainFragmentActivity extends SlidingFragmentActivity {
                 fragmentTransaction.add(R.id.fragment_container_extra, npFragment);
             }
 
-            fragmentTransaction.addToBackStack(null);
+            //fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         }
 
@@ -59,11 +52,11 @@ public class MainFragmentActivity extends SlidingFragmentActivity {
         SlidingMenu slidingMenu = getSlidingMenu();
         slidingMenu.setShadowDrawable(R.drawable.ic_drop_shadow_2);
         slidingMenu.setShadowWidth(60);
-        slidingMenu.setBehindOffset(150);
+        slidingMenu.setBehindOffset(100);
         slidingMenu.setBehindScrollScale(0.25f);
         slidingMenu.setFadeDegree(0.25f);
         slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
-        setSlidingActionBarEnabled(true);
+        setSlidingActionBarEnabled(false);
 	}
 
     public boolean isTablet(){
@@ -94,6 +87,11 @@ public class MainFragmentActivity extends SlidingFragmentActivity {
 		return true;
 	}
 
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+	}
+
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
@@ -102,9 +100,9 @@ public class MainFragmentActivity extends SlidingFragmentActivity {
 		{
             case android.R.id.home:
                 FragmentManager fm = getSupportFragmentManager();
-                if(fm.getBackStackEntryCount()>1){
+                if(fm.getBackStackEntryCount()>0){
                     onBackPressed();
-                    if(fm.getBackStackEntryCount()<=1){
+                    if(fm.getBackStackEntryCount()<=0){
                         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                     }
                 }

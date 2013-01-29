@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -13,14 +14,17 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.data.MusicTrack;
 import com.kelsos.mbrc.data.PlaylistArrayAdapter;
 import com.kelsos.mbrc.enums.UserInputEventType;
+import com.kelsos.mbrc.events.DragDropEvent;
 import com.kelsos.mbrc.events.UserActionEvent;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
@@ -32,6 +36,8 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
 	ActiveFragmentProvider afProvider;
 	@Inject
 	private Bus bus;
+    @Inject
+    Injector injector;
 
 	private PlaylistArrayAdapter adapter;
     private SearchView mSearchView;
@@ -57,6 +63,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
 		adapter.remove(adapter.getItem(index));
 		adapter.notifyDataSetChanged();
 	}
+
 
     public boolean onQueryTextSubmit(String query)
     {
@@ -105,6 +112,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+        bus.register(this);
         setHasOptionsMenu(true);
 		afProvider.addActiveFragment(this);
 	}
@@ -113,6 +121,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		registerForContextMenu(this.getListView());
+        injector.injectMembers(this.getListView());
 	}
 
 	@Override
@@ -181,9 +190,28 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
 	@Override
 	public boolean onContextItemSelected(android.view.MenuItem item)
 	{
-
 		AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_REMOVE, Integer.toString(mi.position)));
 		return super.onContextItemSelected(item);
 	}
+
+    @Subscribe
+    public void handleDragAndDrop(DragDropEvent event){
+
+        int defaultBackgroundColor;
+        int backgroundColor = 0xe0103010;
+
+        switch (event.getType()) {
+
+            case DRAG_START:
+                event.getItem().setVisibility(View.INVISIBLE);
+                defaultBackgroundColor = event.getItem().getDrawingCacheBackgroundColor();
+                event.getItem().setBackgroundColor(backgroundColor);
+                break;
+            case DRAG_STOP:
+                event.getItem().setVisibility(View.VISIBLE);
+                //event.getItem().setBackgroundColor(defaultBackgroundColor);
+                break;
+        }
+    }
 }

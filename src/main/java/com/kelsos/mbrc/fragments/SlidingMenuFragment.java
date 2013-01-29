@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.RatingBar;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.inject.Inject;
@@ -26,6 +26,12 @@ public class SlidingMenuFragment extends RoboSherlockFragment {
     @InjectView(R.id.track_rating_bar)
     RatingBar trackRatingBar;
 
+    @InjectView(R.id.lfmLoveButton)
+    ImageButton lfmLoveButton;
+
+    @InjectView(R.id.lfmBanButton)
+    ImageButton lfmBanButton;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +42,8 @@ public class SlidingMenuFragment extends RoboSherlockFragment {
     public void onStart(){
         super.onStart();
         trackRatingBar.setOnRatingBarChangeListener(ratingBarChangeListener);
+        lfmBanButton.setOnClickListener(lfmBanClick);
+        lfmLoveButton.setOnClickListener(lfmLoveClick);
     }
 
     @Override
@@ -46,6 +54,7 @@ public class SlidingMenuFragment extends RoboSherlockFragment {
     @Override
     public void onDestroy()
     {
+		super.onDestroy();
         afProvider.addActiveFragment(this);
     }
 
@@ -55,6 +64,20 @@ public class SlidingMenuFragment extends RoboSherlockFragment {
             if(fromUser){
                 bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_RATING_CHANGE, Float.toString(rating)));
             }
+        }
+    };
+
+    private ImageButton.OnClickListener lfmLoveClick = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_LASTFM_LOVE));
+        }
+    };
+
+    private ImageButton.OnClickListener lfmBanClick = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View view){
+            bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_LASTFM_BAN));
         }
     };
 

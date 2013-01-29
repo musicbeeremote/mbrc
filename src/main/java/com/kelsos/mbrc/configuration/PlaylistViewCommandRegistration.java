@@ -3,6 +3,7 @@ package com.kelsos.mbrc.configuration;
 import com.kelsos.mbrc.commands.PlayListDataAvailableCommand;
 import com.kelsos.mbrc.commands.request.PlaySpecifiedTrackCommand;
 import com.kelsos.mbrc.commands.request.RequestPlaylistCommand;
+import com.kelsos.mbrc.commands.request.RequestPlaylistReorderCommand;
 import com.kelsos.mbrc.commands.request.RequestRemoveSelectedCommand;
 import com.kelsos.mbrc.commands.visual.PlaylistViewTrackUpdatedCommand;
 import com.kelsos.mbrc.commands.visual.VisualUpdateTrackRemoved;
@@ -21,6 +22,7 @@ public class PlaylistViewCommandRegistration
 		controller.registerCommand(ModelDataEventType.MODEL_TITLE_UPDATED, PlaylistViewTrackUpdatedCommand.class);
 		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_REMOVE, RequestRemoveSelectedCommand.class);
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAYLIST_TRACK_REMOVE,VisualUpdateTrackRemoved.class);
+        controller.registerCommand(UserInputEventType.USERINPUT_EVENT_MOVE_NOWPLAYING_TRACK, RequestPlaylistReorderCommand.class);
 	}
 
 	public static void unRegister(Controller controller)
