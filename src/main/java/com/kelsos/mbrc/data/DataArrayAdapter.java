@@ -46,7 +46,7 @@ public class DataArrayAdapter extends ArrayAdapter<String> {
         String str = mData.get(position);
         holder.title.setText(str);
 
-        holder.trackPlaying.setOnClickListener(showContextMenu);
+        //holder.trackPlaying.setOnClickListener(showContextMenu);
 
         return row;
     }
@@ -62,8 +62,7 @@ public class DataArrayAdapter extends ArrayAdapter<String> {
 
     static class Holder {
         TextView title;
-
-        ImageView trackPlaying;
+        //ImageView trackPlaying;
 
     }
 

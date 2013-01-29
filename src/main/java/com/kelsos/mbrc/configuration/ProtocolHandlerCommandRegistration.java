@@ -1,10 +1,7 @@
 package com.kelsos.mbrc.configuration;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.commands.NotifyPluginOutOfDateCommand;
-import com.kelsos.mbrc.commands.NotifyProtocolHandlerChangeCommand;
-import com.kelsos.mbrc.commands.ProtocolReplyAvailableCommand;
-import com.kelsos.mbrc.commands.ReduceVolumeOnRingCommand;
+import com.kelsos.mbrc.commands.*;
 import com.kelsos.mbrc.commands.model.*;
 import com.kelsos.mbrc.commands.visual.NotifyNotAllowedCommand;
 import com.kelsos.mbrc.commands.visual.UpdatePlaybackPositionCommand;
@@ -38,6 +35,7 @@ public class ProtocolHandlerCommandRegistration
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLUGIN_OUT_OF_DATE, NotifyPluginOutOfDateCommand.class);
         controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_RATING_RECEIVED, UpdateRatingCommand.class);
         controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_NOW_PLAYING_CHANGED, NotifyProtocolHandlerChangeCommand.class);
+        controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_LIBRARY_ALL_ARTISTS_AVAILABLE, AllArtistsAvailable.class);
 	}
 
 	@Inject

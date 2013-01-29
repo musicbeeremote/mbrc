@@ -12,6 +12,7 @@ public class ProtocolDataEvent implements IEvent
 	private ProtocolHandlerEventType type;
 	private String data;
 	private ArrayList<MusicTrack> trackList;
+    private ArrayList<String> list;
 
 	public ProtocolDataEvent(ProtocolHandlerEventType type, String data)
 	{
@@ -27,12 +28,22 @@ public class ProtocolDataEvent implements IEvent
 		this.trackList = trackList;
 	}
 
+    public ProtocolDataEvent(ProtocolHandlerEventType type, ArrayList<String> list, String extra){
+        this.type =type;
+        this.list = list;
+        data = extra;
+    }
+
 	public ProtocolDataEvent(ProtocolHandlerEventType type)
 	{
 		this.type = type;
 		this.data = "";
 		this.trackList = null;
 	}
+
+    public ArrayList<String> getList(){
+        return list;
+    }
 
 
 	public ProtocolHandlerEventType getType()

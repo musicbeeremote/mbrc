@@ -184,6 +184,15 @@ public class ProtocolHandler
                 }
                 else if (xmlNode.getNodeName().contains(Protocol.NOW_PLAYING_CHANGED)){
                     bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_NOW_PLAYING_CHANGED));
+                } else if (xmlNode.getNodeName().contains(Protocol.LIBRARY_ALL_ARTISTS)){
+
+                    NodeList artistList =  xmlNode.getChildNodes();
+                    ArrayList<String> list = new ArrayList<String>();
+                    for (int i=0;i<artistList.getLength();i++){
+                        list.add(artistList.item(i).getFirstChild().getFirstChild().getNodeValue());
+                    }
+
+                    bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_LIBRARY_ALL_ARTISTS_AVAILABLE, list, null));
                 }
 			}
 		}
@@ -338,7 +347,7 @@ public class ProtocolHandler
 		NowPlayingRemoveSelected,
         MoveSelectedTrack,
         LfmLove,
-        LfmBan,
+        LfmBan, LibraryAll,
 	}
 
 	public static String getActionString(PlayerAction action, String value)
@@ -395,6 +404,8 @@ public class ProtocolHandler
                 return PrepareXml(Protocol.LFM_LOVE, value);
             case LfmBan:
                 return PrepareXml(Protocol.LFM_BAN, value);
+            case LibraryAll:
+                return PrepareXml(Protocol.LIBRARY_ALL_ARTISTS, value);
 			default:
 				return PrepareXml(Protocol.ERROR, "Invalid Request");
 		}

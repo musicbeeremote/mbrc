@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.fragments;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,8 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.enums.UserInputEventType;
 import com.kelsos.mbrc.events.UserActionEvent;
+import com.kelsos.mbrc.views.MainFragmentActivity;
+import com.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.squareup.otto.Bus;
 import roboguice.inject.InjectView;
 
@@ -32,6 +36,9 @@ public class SlidingMenuFragment extends RoboSherlockFragment {
     @InjectView(R.id.lfmBanButton)
     ImageButton lfmBanButton;
 
+    @InjectView(R.id.artistButton)
+    ImageButton artistButton;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +51,7 @@ public class SlidingMenuFragment extends RoboSherlockFragment {
         trackRatingBar.setOnRatingBarChangeListener(ratingBarChangeListener);
         lfmBanButton.setOnClickListener(lfmBanClick);
         lfmLoveButton.setOnClickListener(lfmLoveClick);
+        artistButton.setOnClickListener(artistButtonClick);
     }
 
     @Override
@@ -81,9 +89,29 @@ public class SlidingMenuFragment extends RoboSherlockFragment {
         }
     };
 
+    private ImageButton.OnClickListener artistButtonClick = new ImageButton.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            LibraryArtistsFragment lfFragment = new LibraryArtistsFragment();
+            replaceFragment(lfFragment);
+        }
+    };
+
     public void setRating(float rating){
         if(trackRatingBar!=null){
             trackRatingBar.setRating(rating);
         }
     }
+
+    public void replaceFragment(Fragment fragment){
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(((MainFragmentActivity)getActivity()).isTablet() ? R.id.fragment_container_extra : R.id.fragment_container, fragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+        ((SlidingFragmentActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((SlidingFragmentActivity)getActivity()).showAbove();
+    }
+
+
 }

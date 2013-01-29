@@ -4,14 +4,13 @@ import android.app.Activity;
 import android.support.v4.app.Fragment;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.commands.request.RequestAllArtists;
 import com.kelsos.mbrc.configuration.LyricsViewCommandRegistration;
 import com.kelsos.mbrc.configuration.MainViewCommandRegistration;
 import com.kelsos.mbrc.configuration.PlaylistViewCommandRegistration;
 import com.kelsos.mbrc.configuration.SlidingMenuCommandRegistration;
-import com.kelsos.mbrc.fragments.LyricsFragment;
-import com.kelsos.mbrc.fragments.MainFragment;
-import com.kelsos.mbrc.fragments.NowPlayingFragment;
-import com.kelsos.mbrc.fragments.SlidingMenuFragment;
+import com.kelsos.mbrc.enums.UserInputEventType;
+import com.kelsos.mbrc.fragments.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +79,9 @@ public class ActiveFragmentProvider
         {
             SlidingMenuCommandRegistration.register(controller);
         }
+        else if (fragment.getClass() == LibraryArtistsFragment.class){
+            controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_LIBRARY_ALL_ARTISTS, RequestAllArtists.class);
+        }
 	//	else if(fragment.getClass()== AppPreferenceView.class)
 	//	{
 	//		PreferenceViewCommandRegistration.register(controller);
@@ -100,6 +102,7 @@ public class ActiveFragmentProvider
 		{
 			PlaylistViewCommandRegistration.unRegister(controller);
 		}
+
 //		else if(fragment.getClass()== AppPreferenceView.class)
 //		{
 //			PreferenceViewCommandRegistration.unRegister(controller);

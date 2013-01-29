@@ -39,4 +39,5 @@ public class Protocol {
     public static final String MOVE_TRACK = "nowplayingmove";
     public static final String LFM_LOVE = "lfmlove";
     public static final String LFM_BAN = "lfmban";
+    public static final String LIBRARY_ALL_ARTISTS = "liballartists";
 }
