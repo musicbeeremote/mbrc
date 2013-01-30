@@ -93,8 +93,11 @@ public class SlidingMenuFragment extends RoboSherlockFragment {
 
         @Override
         public void onClick(View view) {
-            LibraryArtistsFragment lfFragment = new LibraryArtistsFragment();
-            replaceFragment(lfFragment);
+            //LibraryArtistsFragment lfFragment = new LibraryArtistsFragment();
+            //replaceFragment(lfFragment);
+
+            SimpleLibrarySearchFragment slsFragment = new SimpleLibrarySearchFragment();
+            replaceFragment(slsFragment);
         }
     };
 

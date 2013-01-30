@@ -5,15 +5,12 @@ import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.data.DataArrayAdapter;
-import com.kelsos.mbrc.data.MusicTrack;
-import com.kelsos.mbrc.data.PlaylistArrayAdapter;
 import com.kelsos.mbrc.enums.UserInputEventType;
 import com.kelsos.mbrc.events.UserActionEvent;
 import com.squareup.otto.Bus;
@@ -54,7 +51,7 @@ public class LibraryArtistsFragment extends RoboSherlockListFragment {
     public void onStart()
     {
         super.onStart();
-        bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_LIBRARY_ALL_ARTISTS));
+        bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_LIB_REQUEST_ALL_ARTISTS));
     }
 
     @Override
@@ -62,7 +59,7 @@ public class LibraryArtistsFragment extends RoboSherlockListFragment {
     {
         super.onResume();
         afProvider.addActiveFragment(this);
-        bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_LIBRARY_ALL_ARTISTS));
+        bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_LIB_REQUEST_ALL_ARTISTS));
     }
 
     @Override

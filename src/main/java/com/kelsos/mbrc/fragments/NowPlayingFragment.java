@@ -195,10 +195,11 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
 		return super.onContextItemSelected(item);
 	}
 
+    private int defaultBackgroundColor;
+
     @Subscribe
     public void handleDragAndDrop(DragDropEvent event){
 
-        int defaultBackgroundColor;
         int backgroundColor = 0xe0103010;
 
         switch (event.getType()) {
@@ -210,7 +211,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
                 break;
             case DRAG_STOP:
                 event.getItem().setVisibility(View.VISIBLE);
-                //event.getItem().setBackgroundColor(defaultBackgroundColor);
+                event.getItem().setBackgroundColor(defaultBackgroundColor);
                 break;
         }
     }

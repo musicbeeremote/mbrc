@@ -80,7 +80,7 @@ public class ActiveFragmentProvider
             SlidingMenuCommandRegistration.register(controller);
         }
         else if (fragment.getClass() == LibraryArtistsFragment.class){
-            controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_LIBRARY_ALL_ARTISTS, RequestAllArtists.class);
+            controller.registerCommand(UserInputEventType.USERINPUT_EVENT_LIB_REQUEST_ALL_ARTISTS, RequestAllArtists.class);
         }
 	//	else if(fragment.getClass()== AppPreferenceView.class)
 	//	{
