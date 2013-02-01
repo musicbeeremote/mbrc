@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.commands.request.RequestAllArtists;
+import com.kelsos.mbrc.commands.request.RequestLibrarySearch;
 import com.kelsos.mbrc.configuration.LyricsViewCommandRegistration;
 import com.kelsos.mbrc.configuration.MainViewCommandRegistration;
 import com.kelsos.mbrc.configuration.PlaylistViewCommandRegistration;
@@ -81,6 +82,7 @@ public class ActiveFragmentProvider
         }
         else if (fragment.getClass() == LibraryArtistsFragment.class){
             controller.registerCommand(UserInputEventType.USERINPUT_EVENT_LIB_REQUEST_ALL_ARTISTS, RequestAllArtists.class);
+            controller.registerCommand(UserInputEventType.USERINPUT_EVENT_LIB_REQUEST_SEARCH, RequestLibrarySearch.class);
         }
 	//	else if(fragment.getClass()== AppPreferenceView.class)
 	//	{

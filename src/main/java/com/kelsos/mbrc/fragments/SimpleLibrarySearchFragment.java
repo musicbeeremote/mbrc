@@ -18,6 +18,7 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.enums.UserInputEventType;
 import com.kelsos.mbrc.events.UserActionEvent;
+import com.kelsos.mbrc.others.XmlEncoder;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.squareup.otto.Bus;
 
@@ -37,22 +38,22 @@ public class SimpleLibrarySearchFragment extends RoboSherlockListFragment implem
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        UserInputEventType eventType = null;
+        String filter = "";
         if(mCurrentFiltering.equals(mSearchOptions[0])){
-            eventType = UserInputEventType.USERINPUT_EVENT_LIB_REQUEST_SEARCH_ARTIST;
+            filter = "artist";
         } else if (mCurrentFiltering.equals(mSearchOptions[1])) {
-            eventType = UserInputEventType.USERINPUT_EVENT_LIB_REQUEST_SEARCH_ALBUM;
+            filter = "album";
         } else if (mCurrentFiltering.equals(mSearchOptions[2])) {
-            eventType = UserInputEventType.USERINPUT_EVENT_LIB_REQUEST_SEARCH_TRACK;
+            filter = "track";
         } else if (mCurrentFiltering.equals(mSearchOptions[3])) {
-            eventType = UserInputEventType.USERINPUT_EVENT_LIB_REQUEST_SEARCH_GENRE;
+            filter = "genre";
         }
 
         mSearchView.setIconified(true);
         mSearchItem.collapseActionView();
-        if(eventType!=null){
-            bus.post(new UserActionEvent(eventType,query));
-        }
+
+        bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_LIB_REQUEST_SEARCH,"<filtering>" + filter + "</filtering><query>" + XmlEncoder.encode(query) + "</query>"));
+
         return false;
     }
 
@@ -111,9 +112,6 @@ public class SimpleLibrarySearchFragment extends RoboSherlockListFragment implem
     public void onListItemClick(ListView l, View v, int position, long id)
     {
         super.onListItemClick(l, v, position, id);
-
-        //((PlaylistArrayAdapter) l.getAdapter()).notifyDataSetChanged();
-        //bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_PLAY_NOW, Integer.toString(position + 1)));
     }
 
     @Override

@@ -347,7 +347,7 @@ public class ProtocolHandler
 		NowPlayingRemoveSelected,
         MoveSelectedTrack,
         LfmLove,
-        LfmBan, LibraryAll,
+        LfmBan, LibraryAll, LibrarySearch,
 	}
 
 	public static String getActionString(PlayerAction action, String value)

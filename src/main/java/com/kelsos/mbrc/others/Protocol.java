@@ -25,14 +25,13 @@ public class Protocol {
     public static final String PLAYER = "player";
     public static final String PROTOCOL = "protocol";
 
-    /* Protocol 1.2 */
+    /** Protocol 1.2 **/
 
 	public static final String PLAYNOW_REMOVESELECTED = "playNowRemoveSelected";
-
     public static final String PLAYBACK_POSITION = "playbackPosition";
 	public static final String NOT_ALLOWED = "notAllowed";
 
-	/** Protocol 1.3 */
+	/** Protocol 1.3 **/
 
 	public static final double CLIENT_PROTOCOL_VERSION = 1.3;
     public static final String NOW_PLAYING_CHANGED = "nowplayingchanged";
@@ -40,4 +39,5 @@ public class Protocol {
     public static final String LFM_LOVE = "lfmlove";
     public static final String LFM_BAN = "lfmban";
     public static final String LIBRARY_ALL_ARTISTS = "liballartists";
+    public static final String LIB_SEARCH = "libsearch";
 }
