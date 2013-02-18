@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -27,7 +26,6 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 
 public class NowPlayingFragment extends RoboSherlockListFragment implements SearchView.OnQueryTextListener
@@ -68,22 +66,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
     public boolean onQueryTextSubmit(String query)
     {
 
-        int elements = adapter.getCount();
-        for (int i = 0; i < elements; i++)
-        {
-            MusicTrack track = adapter.getItem(i);
-            String trackString = track.getArtist() + " " + track.getTitle();
-            boolean isContained = Pattern.compile(Pattern.quote(query), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(trackString).find();
-            if (isContained)
-            {
-                adapter.setPlayingTrackIndex(i);
-                adapter.notifyDataSetChanged();
-
-                bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_PLAY_NOW, Integer.toString(i + 1)));
-                this.getListView().setSelection(i);
-                break;
-            }
-        }
+        bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NOW_PLAYING_SEARCH, query));
 
         mSearchView.setIconified(true);
         mSearchItem.collapseActionView();

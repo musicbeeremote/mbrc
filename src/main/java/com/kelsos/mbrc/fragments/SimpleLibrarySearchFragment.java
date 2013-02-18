@@ -16,11 +16,14 @@ import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFra
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
+import com.kelsos.mbrc.data.DataArrayAdapter;
 import com.kelsos.mbrc.enums.UserInputEventType;
 import com.kelsos.mbrc.events.UserActionEvent;
 import com.kelsos.mbrc.others.XmlEncoder;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.squareup.otto.Bus;
+
+import java.util.ArrayList;
 
 public class SimpleLibrarySearchFragment extends RoboSherlockListFragment implements SearchView.OnQueryTextListener, ActionBar.OnNavigationListener {
 
@@ -35,6 +38,7 @@ public class SimpleLibrarySearchFragment extends RoboSherlockListFragment implem
     private MenuItem mSearchItem;
 
     private String mCurrentFiltering;
+    private DataArrayAdapter adapter;
 
     @Override
     public boolean onQueryTextSubmit(String query) {
@@ -52,7 +56,7 @@ public class SimpleLibrarySearchFragment extends RoboSherlockListFragment implem
         mSearchView.setIconified(true);
         mSearchItem.collapseActionView();
 
-        bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_LIB_REQUEST_SEARCH,"<filtering>" + filter + "</filtering><query>" + XmlEncoder.encode(query) + "</query>"));
+        bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_LIB_REQUEST_SEARCH,"<tag>" + filter + "</tag><filter>none</filter><query>" + XmlEncoder.encode(query) + "</query>"));
 
         return false;
     }
@@ -146,5 +150,11 @@ public class SimpleLibrarySearchFragment extends RoboSherlockListFragment implem
 
         ((RoboSherlockFragmentActivity)getActivity()).getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         ((RoboSherlockFragmentActivity)getActivity()).getSupportActionBar().setListNavigationCallbacks(list, this);
+    }
+
+    public void updateListData(ArrayList<String> list)
+    {
+        adapter = new DataArrayAdapter(getActivity(), R.layout.playlistview_item, list);
+        setListAdapter(adapter);
     }
 }

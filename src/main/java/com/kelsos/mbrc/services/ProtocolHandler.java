@@ -76,6 +76,7 @@ public class ProtocolHandler
 	 */
 	public void answerProcessor(String answer)
 	{
+        Log.d("protocol", "received raw:\t" + answer);
 		String data="";
 		try
 		{
@@ -84,7 +85,7 @@ public class ProtocolHandler
 			for (String reply : replies)
 			{
 				data =reply;
-				Log.d("protocol","received: " + reply);
+				Log.d("protocol","received:\t" + reply);
 				//hack to avoid issues with apostrophes
 				if (SDK_INT >= 8 && SDK_INT <= 10)
 				{
@@ -180,19 +181,20 @@ public class ProtocolHandler
 					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLAYLIST_TRACK_REMOVE, xmlNode.getFirstChild().getNodeValue()));
 				}
                 else if (xmlNode.getNodeName().contains(Protocol.RATING)){
-                    bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_RATING_RECEIVED, xmlNode.getFirstChild().getNodeValue()!=null ? xmlNode.getFirstChild().getNodeValue() : "0"));
+                    bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_RATING_RECEIVED, xmlNode.getChildNodes().getLength() != 0 ? xmlNode.getFirstChild().getNodeValue() : "0"));
                 }
                 else if (xmlNode.getNodeName().contains(Protocol.NOW_PLAYING_CHANGED)){
                     bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_NOW_PLAYING_CHANGED));
-                } else if (xmlNode.getNodeName().contains(Protocol.LIBRARY_ALL_ARTISTS)){
+                } else if (xmlNode.getNodeName().contains(Protocol.LIB_SEARCH)){
 
                     NodeList artistList =  xmlNode.getChildNodes();
                     ArrayList<String> list = new ArrayList<String>();
                     for (int i=0;i<artistList.getLength();i++){
-                        list.add(artistList.item(i).getFirstChild().getFirstChild().getNodeValue());
+                        list.add(artistList.item(i).getFirstChild().getNodeValue());
+                        //.getFirstChild()
                     }
 
-                    bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_LIBRARY_ALL_ARTISTS_AVAILABLE, list, null));
+                    bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_LIBRARY_SEARCH_DATA, list, null));
                 }
 			}
 		}
@@ -347,7 +349,7 @@ public class ProtocolHandler
 		NowPlayingRemoveSelected,
         MoveSelectedTrack,
         LfmLove,
-        LfmBan, LibraryAll, LibrarySearch,
+        LfmBan, LibraryAll, LibrarySearch, NowPlayingSearch
 	}
 
 	public static String getActionString(PlayerAction action, String value)
@@ -404,8 +406,10 @@ public class ProtocolHandler
                 return PrepareXml(Protocol.LFM_LOVE, value);
             case LfmBan:
                 return PrepareXml(Protocol.LFM_BAN, value);
-            case LibraryAll:
-                return PrepareXml(Protocol.LIBRARY_ALL_ARTISTS, value);
+            case LibrarySearch:
+                return PrepareXml(Protocol.LIB_SEARCH, value);
+            case NowPlayingSearch:
+                return PrepareXml(Protocol.NOW_PLAYING_SEARCH, value);
 			default:
 				return PrepareXml(Protocol.ERROR, "Invalid Request");
 		}

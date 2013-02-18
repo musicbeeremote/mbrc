@@ -113,7 +113,7 @@ public class SlidingMenuFragment extends RoboSherlockFragment {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
         ((SlidingFragmentActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((SlidingFragmentActivity)getActivity()).showAbove();
+        ((SlidingFragmentActivity)getActivity()).showContent();
     }
 
 

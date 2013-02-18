@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <application android:debuggable="false" android:description="@string/application_description" android:icon="@drawable/ic_launcher" android:label="@string/application_name" android:logo="@drawable/ic_launcher" android:name=".RemoteApplication" android:theme="@style/Theme.mbrc_default">
+    <application android:description="@string/application_description" android:icon="@drawable/ic_launcher" android:label="@string/application_name" android:logo="@drawable/ic_launcher" android:name=".RemoteApplication" android:theme="@style/Theme.mbrc_default">
         <activity android:launchMode="singleTop" android:name=".views.MainFragmentActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

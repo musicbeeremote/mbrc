@@ -35,7 +35,6 @@ public class ProtocolHandlerCommandRegistration
 		controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_PLUGIN_OUT_OF_DATE, NotifyPluginOutOfDateCommand.class);
         controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_RATING_RECEIVED, UpdateRatingCommand.class);
         controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_NOW_PLAYING_CHANGED, NotifyProtocolHandlerChangeCommand.class);
-        controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_LIBRARY_ALL_ARTISTS_AVAILABLE, AllArtistsAvailable.class);
 	}
 
 	@Inject
