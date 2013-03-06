@@ -3,6 +3,7 @@ package com.kelsos.mbrc.services;
 import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.data.GenreEntry;
 import com.kelsos.mbrc.data.MusicTrack;
 import com.kelsos.mbrc.enums.ProtocolHandlerEventType;
 import com.kelsos.mbrc.events.ProtocolDataEvent;
@@ -187,10 +188,28 @@ public class ProtocolHandler
                     bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_NOW_PLAYING_CHANGED));
                 } else if (xmlNode.getNodeName().contains(Protocol.LIB_SEARCH)){
 
-                    NodeList artistList =  xmlNode.getChildNodes();
+                    NodeList nodeList =  xmlNode.getFirstChild().getChildNodes();
+                    String tag = xmlNode.getFirstChild().getNodeName();
+                    Log.d("protocol", "tag:\t" + tag);
+
+                    if (tag.equals("genres")) {
+                        ArrayList<GenreEntry> list = new ArrayList<GenreEntry>();
+                        for (int i = 0; i < nodeList.getLength(); i++) {
+
+                        }
+                    } else if (tag.equals("albums")) {
+
+
+                    } else if (tag.equals("artists")) {
+
+                    } else if (tag.equals("tracks")) {
+
+                    }
+
                     ArrayList<String> list = new ArrayList<String>();
-                    for (int i=0;i<artistList.getLength();i++){
-                        list.add(artistList.item(i).getFirstChild().getNodeValue());
+                    for (int i=0;i<nodeList.getLength();i++){
+                        Log.d("Protocol", nodeList.item(i).getFirstChild().getNodeName());
+                        list.add(nodeList.item(i).getFirstChild().getNodeValue());
                         //.getFirstChild()
                     }
 

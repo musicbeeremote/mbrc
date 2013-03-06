@@ -48,7 +48,7 @@ public class SimpleLibrarySearchFragment extends RoboSherlockListFragment implem
         } else if (mCurrentFiltering.equals(mSearchOptions[1])) {
             filter = "album";
         } else if (mCurrentFiltering.equals(mSearchOptions[2])) {
-            filter = "track";
+            filter = "title";
         } else if (mCurrentFiltering.equals(mSearchOptions[3])) {
             filter = "genre";
         }
@@ -56,7 +56,7 @@ public class SimpleLibrarySearchFragment extends RoboSherlockListFragment implem
         mSearchView.setIconified(true);
         mSearchItem.collapseActionView();
 
-        bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_LIB_REQUEST_SEARCH,"<tag>" + filter + "</tag><filter>none</filter><query>" + XmlEncoder.encode(query) + "</query>"));
+        bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_LIB_REQUEST_SEARCH,"<tag>" + filter + "</tag><filter>false</filter><query>" + XmlEncoder.encode(query) + "</query>"));
 
         return false;
     }
