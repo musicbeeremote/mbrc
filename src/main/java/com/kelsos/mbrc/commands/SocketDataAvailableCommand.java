@@ -12,6 +12,6 @@ public class SocketDataAvailableCommand implements ICommand
 
 	public void execute(IEvent e)
 	{
-		handler.answerProcessor(e.getData());
+		handler.answerProcessor(e.getDataString());
 	}
 }

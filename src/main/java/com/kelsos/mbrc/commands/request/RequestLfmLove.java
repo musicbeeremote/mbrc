@@ -1,15 +1,18 @@
 package com.kelsos.mbrc.commands.request;
 
 import com.google.inject.Inject;
+import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
+import com.kelsos.mbrc.others.Protocol;
 import com.kelsos.mbrc.services.ProtocolHandler;
+import com.kelsos.mbrc.services.SocketService;
 
 public class RequestLfmLove implements ICommand {
     @Inject
-    private ProtocolHandler protocolHandler;
+    SocketService socket;
     @Override
     public void execute(IEvent e) {
-        protocolHandler.requestAction(ProtocolHandler.PlayerAction.LfmLove);
+        socket.sendData(new SocketMessage(Protocol.NowPlayingLfmRating, Protocol.Request, "Love"));
     }
 }

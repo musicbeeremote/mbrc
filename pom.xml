@@ -89,7 +89,13 @@
 			<version>1.4</version>
 		</dependency>
 
-		<!-- Roboelectric and JUnit for testing -->
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.12</version>
+        </dependency>
+
+        <!-- Roboelectric and JUnit for testing -->
 		<!-- Make sure this is below the android dependencies -->
 		<dependency>
 			<groupId>com.pivotallabs</groupId>

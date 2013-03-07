@@ -8,10 +8,9 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.enums.ProtocolHandlerEventType;
-import com.kelsos.mbrc.enums.UserInputEventType;
-import com.kelsos.mbrc.events.ProtocolDataEvent;
-import com.kelsos.mbrc.events.UserActionEvent;
+import com.kelsos.mbrc.events.ProtocolEvent;
+import com.kelsos.mbrc.events.UserInputEvent;
+import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.others.SettingsManager;
 import com.squareup.otto.Bus;
@@ -43,7 +42,7 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver
 			{
 				if (settingsManager.isVolumeReducedOnRinging())
 				{
-					bus.post(new ProtocolDataEvent(ProtocolHandlerEventType.PROTOCOL_HANDLER_REDUCE_VOLUME));
+					bus.post(new MessageEvent(ProtocolEvent.ReduceVolume));
 				}
 			}
 		} else if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION))
@@ -51,17 +50,17 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver
 			NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 			if (networkInfo.getState().equals(NetworkInfo.State.CONNECTED))
 			{
-				 bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_INITIALIZE));
+				 bus.post(new MessageEvent(UserInputEvent.StartConnection));
 			} else if (networkInfo.getState().equals(NetworkInfo.State.DISCONNECTING))
 			{
 
 			}
 		} else if (intent.getAction().equals(NotificationService.NOTIFICATION_PLAY_PRESSED)) {
-			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAY_PAUSE));
+			bus.post(new MessageEvent(UserInputEvent.RequestPlayPause));
 		} else if (intent.getAction().equals(NotificationService.NOTIFICATION_NEXT_PRESSED)) {
-			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NEXT));
+			bus.post(new MessageEvent(UserInputEvent.RequestNext));
 		} else if(intent.getAction().equals(NotificationService.NOTIFICATION_CLOSE_PRESSED)) {
-			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_CANCEL_NOTIFICATION));
+			bus.post(new MessageEvent(UserInputEvent.CancelNotification));
 		}
 
 	}

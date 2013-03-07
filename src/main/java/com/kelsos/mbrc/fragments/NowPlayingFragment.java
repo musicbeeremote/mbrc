@@ -18,9 +18,9 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.data.MusicTrack;
 import com.kelsos.mbrc.data.PlaylistArrayAdapter;
-import com.kelsos.mbrc.enums.UserInputEventType;
+import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.DragDropEvent;
-import com.kelsos.mbrc.events.UserActionEvent;
+import com.kelsos.mbrc.events.MessageEvent;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -66,7 +66,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
     public boolean onQueryTextSubmit(String query)
     {
 
-        bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NOW_PLAYING_SEARCH, query));
+        bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingSearch, query));
 
         mSearchView.setIconified(true);
         mSearchItem.collapseActionView();
@@ -117,7 +117,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
 	public void onStart()
 	{
 		super.onStart();
-		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_LIST));
+		bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingList));
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
 	{
 		super.onResume();
 		afProvider.addActiveFragment(this);
-		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_LIST));
+		bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingList));
 	}
 
 	@Override
@@ -155,7 +155,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
 		super.onListItemClick(l, v, position, id);
 		adapter.setPlayingTrackIndex(position);
 		((PlaylistArrayAdapter) l.getAdapter()).notifyDataSetChanged();
-		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_PLAY_NOW, Integer.toString(position + 1)));
+		bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingPlayTrack, Integer.toString(position + 1)));
 	}
 
 
@@ -174,7 +174,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
 	public boolean onContextItemSelected(android.view.MenuItem item)
 	{
 		AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_REMOVE, Integer.toString(mi.position)));
+		bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingRemoveTrack, Integer.toString(mi.position)));
 		return super.onContextItemSelected(item);
 	}
 

@@ -2,15 +2,17 @@ package com.kelsos.mbrc.services;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.data.SocketMessage;
+import com.kelsos.mbrc.events.SocketEvent;
+import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.others.Const;
 import com.kelsos.mbrc.others.DelayTimer;
 import com.kelsos.mbrc.others.SettingsManager;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.SocketAction;
-import com.kelsos.mbrc.enums.SocketServiceEventType;
-import com.kelsos.mbrc.events.RawSocketDataEvent;
 import com.kelsos.mbrc.messaging.NotificationService;
 import com.squareup.otto.Bus;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.*;
 import java.net.Socket;
@@ -25,6 +27,7 @@ public class SocketService
 	private Bus bus;
 	private SettingsManager settingsManager;
 	private NotificationService notificationService;
+    private ObjectMapper mapper;
 
 	private static int numOfRetries;
 	public static final int MAX_RETRIES = 5;
@@ -39,11 +42,12 @@ public class SocketService
 	private DelayTimer cTimer;
 
 	@Inject
-	public SocketService(SettingsManager settingsManager, NotificationService notificationService, Bus bus)
+	public SocketService(SettingsManager settingsManager, NotificationService notificationService, Bus bus, ObjectMapper mapper)
 	{
 		this.bus = bus;
 		this.settingsManager = settingsManager;
 		this.notificationService = notificationService;
+        this.mapper = mapper;
 
 		cTimer = new DelayTimer(2500, timerFinishEvent);
 		numOfRetries = 0;
@@ -135,18 +139,18 @@ public class SocketService
 		return clSocket != null && clSocket.isConnected();
 	}
 
-	public void sendData(String data)
+	public void sendData(SocketMessage message)
 	{
 		try
 		{
 			if (sIsConnected())
-				output.println(data + Const.NEWLINE);
+				output.println(mapper.writeValueAsString(message) + Const.NEWLINE);
 		} catch (Exception ignored)
 		{
 		}
 	}
 
-	public void informEventBus(final RawSocketDataEvent event)
+	public void informEventBus(final MessageEvent event)
 	{
 		new Thread(new Runnable()
 		{
@@ -163,7 +167,7 @@ public class SocketService
 		public void run()
 		{
 			SocketAddress socketAddress = settingsManager.getSocketAddress();
-			informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_HANDSHAKE_UPDATE, "false"));
+			informEventBus(new MessageEvent(SocketEvent.SocketHandshakeUpdate, false));
 			if (null == socketAddress) return;
 			BufferedReader input;
 			try
@@ -175,14 +179,14 @@ public class SocketService
 
 				String socketStatus = String.valueOf(clSocket.isConnected());
 
-				informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_STATUS_CHANGE, socketStatus));
+				informEventBus(new MessageEvent(SocketEvent.SocketStatusChanged, socketStatus));
 				while (clSocket.isConnected())
 				{
 					try
 					{
 						final String incoming = input.readLine();
 						if (incoming == null) throw new IOException();
-							informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_PACKET_AVAILABLE, incoming));
+							informEventBus(new MessageEvent(SocketEvent.SocketDataAvailable, incoming));
 					} catch (IOException e)
 					{
 						input.close();
@@ -210,7 +214,7 @@ public class SocketService
 				}
 				clSocket = null;
 
-				informEventBus(new RawSocketDataEvent(SocketServiceEventType.SOCKET_EVENT_STATUS_CHANGE, "false"));
+				informEventBus(new MessageEvent(SocketEvent.SocketStatusChanged, false));
 				if (numOfRetries < MAX_RETRIES) SocketManager(SocketAction.RETRY);
 			}
 		}

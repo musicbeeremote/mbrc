@@ -2,6 +2,7 @@ package com.kelsos.mbrc.interfaces;
 
 public interface IEvent
 {
-	public IEventType getType();
-	public String getData();
+	public String getType();
+	public Object getData();
+    public String getDataString();
 }

@@ -7,13 +7,13 @@ import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.others.Protocol;
 import com.kelsos.mbrc.services.ProtocolHandler;
 import com.kelsos.mbrc.services.SocketService;
-import org.codehaus.jackson.map.ObjectMapper;
 
-public class RequestLfmBan implements ICommand {
+public class NowPlayingList implements ICommand
+{
     @Inject
     SocketService socket;
     @Override
     public void execute(IEvent e) {
-        socket.sendData(new SocketMessage(Protocol.NowPlayingLfmRating, Protocol.Request, "Ban"));
+        socket.sendData(new SocketMessage(Protocol.NowPlayingList, Protocol.Request, e.getData()));
     }
 }

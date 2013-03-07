@@ -5,10 +5,10 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.events.ModelEvent;
+import com.kelsos.mbrc.events.MessageEvent;
 import com.squareup.otto.Bus;
-import com.kelsos.mbrc.events.ModelDataEvent;
 import com.kelsos.mbrc.others.Const;
-import com.kelsos.mbrc.enums.ModelDataEventType;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.utilities.ImageDecoder;
 
@@ -62,18 +62,20 @@ public class MainDataModel
         } catch (Exception ex){
             this.rating = 0;
         }
-        bus.post(new ModelDataEvent(ModelDataEventType.MODEL_RATING_UPDATED));
+        bus.post(new MessageEvent(ModelEvent.ModelRatingUpdated));
     }
 
     public float getRating(){
         return rating;
     }
 
-	public void setTitle(String title)
+	public void setTrackInfo(String artist, String album, String title, String year)
 	{
-		if (title.equals(_title)) return;
+		_artist = artist;
+        _album = album;
+        _year = year;
 		_title = title;
-		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_TITLE_UPDATED));
+		bus.post(new MessageEvent(ModelEvent.ModelTrackUpdated));
 	}
 
 	public String getTitle()
@@ -81,35 +83,14 @@ public class MainDataModel
 		return _title;
 	}
 
-	public void setAlbum(String album)
-	{
-		if (album.equals(_album)) return;
-		_album = album;
-		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_ALBUM_UPDATED));
-	}
-
 	public String getAlbum()
 	{
 		return _album;
 	}
 
-	public void setArtist(String artist)
-	{
-		if (artist.equals(_artist)) return;
-		_artist = artist;
-		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_ARTIST_UPDATED));
-	}
-
 	public String getArtist()
 	{
 		return _artist;
-	}
-
-	public void setYear(String year)
-	{
-		if (year.equals(_year)) return;
-		_year = year;
-		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_YEAR_UPDATED));
 	}
 
 	public String getYear()
@@ -120,7 +101,7 @@ public class MainDataModel
 	public void setVolume(String volume)
 	{
 		_volume = Integer.parseInt(volume);
-		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_VOLUME_UPDATED));
+		bus.post(new MessageEvent(ModelEvent.ModelVolumeUpdated));
 	}
 
 	public int getVolume()
@@ -133,7 +114,7 @@ public class MainDataModel
 		Log.d("Cover", base64format);
 		if (base64format == null || base64format.equals(""))
 		{
-			bus.post(new ModelDataEvent(ModelDataEventType.MODEL_COVER_NOT_FOUND));
+			bus.post(new MessageEvent(ModelEvent.ModelCoverNotFound));
 		} else
 		{
 			try {
@@ -149,7 +130,7 @@ public class MainDataModel
 	public void setAlbumCover(Bitmap cover)
 	{
 		_albumCover = cover;
-		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_COVER_UPDATED));
+		bus.post(new MessageEvent(ModelEvent.ModelCoverUpdated));
 	}
 
 	public Bitmap getAlbumCover()
@@ -160,7 +141,7 @@ public class MainDataModel
 	public void setConnectionState(String connectionActive)
 	{
 		_isConnectionActive = Boolean.parseBoolean(connectionActive);
-		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_CONNECTION_STATE_UPDATED));
+		bus.post(new MessageEvent(ModelEvent.ModelConnectionStateUpdated));
 	}
 
 	public boolean getIsConnectionActive()
@@ -171,7 +152,7 @@ public class MainDataModel
 	public void setRepeatState(String repeatButtonActive)
 	{
 		_isRepeatButtonActive = (repeatButtonActive.equals("All"));
-		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_REPEAT_STATE_UPDATED));
+		bus.post(new MessageEvent(ModelEvent.ModelRepeatStateUpdated));
 	}
 
 	public boolean getIsRepeatButtonActive()
@@ -182,7 +163,7 @@ public class MainDataModel
 	public void setShuffleState(String shuffleButtonActive)
 	{
 		_isShuffleButtonActive = Boolean.parseBoolean(shuffleButtonActive);
-		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_SHUFFLE_STATE_UPDATED));
+		bus.post(new MessageEvent(ModelEvent.ModelShuffleStateUpdated));
 	}
 
 	public boolean getIsShuffleButtonActive()
@@ -193,7 +174,7 @@ public class MainDataModel
 	public void setScrobbleState(String scrobbleButtonActive)
 	{
 		_isScrobbleButtonActive = Boolean.parseBoolean(scrobbleButtonActive);
-		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_SCROBBLE_STATE_UPDATED));
+		bus.post(new MessageEvent(ModelEvent.ModelScrobbleStateUpdated));
 	}
 
 	public boolean getIsScrobbleButtonActive()
@@ -204,7 +185,7 @@ public class MainDataModel
 	public void setMuteState(String muteButtonActive)
 	{
 		_isMuteButtonActive = Boolean.parseBoolean(muteButtonActive);
-		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_MUTE_STATE_UPDATED));
+		bus.post(new MessageEvent(ModelEvent.ModelMuteStateUpdated));
 	}
 
 	public boolean getIsMuteButtonActive()
@@ -219,7 +200,7 @@ public class MainDataModel
 		else if (playState.equalsIgnoreCase(Const.STOPPED)) newState = PlayState.Stopped;
 		else if (playState.equalsIgnoreCase(Const.PAUSED)) newState = PlayState.Paused;
 		_playState = newState;
-		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_PLAY_STATE_UPDATED));
+		bus.post(new MessageEvent(ModelEvent.ModelPlayStateUpdated));
 	}
 
 	public PlayState getPlayState()
@@ -231,7 +212,7 @@ public class MainDataModel
 	{
 		if (lyrics.equals(_lyrics)) return;
 		_lyrics = lyrics.replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", "\"").replace("&apos;", "'").replace("&amp;", "&").replace("<p>", "\r\n").replace("<br>", "\n").trim();
-		bus.post(new ModelDataEvent(ModelDataEventType.MODEL_LYRICS_UPDATED));
+		bus.post(new MessageEvent(ModelEvent.ModelLyricsUpdated));
 	}
 
 	public String getLyrics()

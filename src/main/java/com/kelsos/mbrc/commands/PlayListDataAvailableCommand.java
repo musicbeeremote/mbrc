@@ -4,7 +4,6 @@ import android.app.Activity;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.data.MusicTrack;
-import com.kelsos.mbrc.events.ProtocolDataEvent;
 import com.kelsos.mbrc.fragments.NowPlayingFragment;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
@@ -23,7 +22,8 @@ public class PlayListDataAvailableCommand implements ICommand
 	{
 		if(afProvider.getActiveFragment(NowPlayingFragment.class) == null) return;
 		int index=0;
-		final ArrayList<MusicTrack> playList = ((ProtocolDataEvent)e).getTrackList();
+		final ArrayList<MusicTrack> playList = new ArrayList<MusicTrack>();
+        //TODO:fix
 		String artist = model.getArtist();
 		String title = model.getTitle();
 		for(int i=0;i<playList.size();i++)

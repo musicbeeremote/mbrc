@@ -6,17 +6,17 @@ import com.kelsos.mbrc.commands.request.RequestLfmLove;
 import com.kelsos.mbrc.commands.request.RequestRatingChangeCommand;
 import com.kelsos.mbrc.commands.visual.VisualUpdateRatingCommand;
 import com.kelsos.mbrc.controller.Controller;
-import com.kelsos.mbrc.enums.ModelDataEventType;
-import com.kelsos.mbrc.enums.UserInputEventType;
+import com.kelsos.mbrc.events.ModelEvent;
+import com.kelsos.mbrc.events.UserInputEvent;
 
 public class SlidingMenuCommandRegistration {
 
     @Inject
     public static void register(Controller controller){
-        controller.registerCommand(ModelDataEventType.MODEL_RATING_UPDATED, VisualUpdateRatingCommand.class);
-        controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_RATING_CHANGE, RequestRatingChangeCommand.class);
-        controller.registerCommand(UserInputEventType.USERINPUT_EVENT_LASTFM_BAN, RequestLfmBan.class);
-        controller.registerCommand(UserInputEventType.USERINPUT_EVENT_LASTFM_LOVE, RequestLfmLove.class);
+        controller.register(ModelEvent.ModelRatingUpdated, VisualUpdateRatingCommand.class);
+        controller.register(UserInputEvent.RequestRating, RequestRatingChangeCommand.class);
+        controller.register(UserInputEvent.RequestLastFmBan, RequestLfmBan.class);
+        controller.register(UserInputEvent.RequestLastFmLove, RequestLfmLove.class);
     }
 
     @Inject

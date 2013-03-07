@@ -8,10 +8,10 @@ import android.view.*;
 import android.widget.ImageView;
 import android.widget.ListView;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.enums.UserInputEventType;
+import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.Drag;
 import com.kelsos.mbrc.events.DragDropEvent;
-import com.kelsos.mbrc.events.UserActionEvent;
+import com.kelsos.mbrc.events.MessageEvent;
 import com.squareup.otto.Bus;
 
 public class DragAndDropListView extends ListView {
@@ -72,7 +72,7 @@ public class DragAndDropListView extends ListView {
                 stopDrag(mStartPosition - getFirstVisiblePosition());
                 if(mStartPosition != INVALID_POSITION && mEndPosition !=INVALID_POSITION)
                 {
-                    bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_MOVE_NOWPLAYING_TRACK, mStartPosition + "#" +mEndPosition));
+                    bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingMoveTrack, mStartPosition + "#" +mEndPosition));
                 }
                 break;
         }

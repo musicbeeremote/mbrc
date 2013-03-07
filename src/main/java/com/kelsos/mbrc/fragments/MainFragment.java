@@ -23,8 +23,8 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.enums.PlayState;
-import com.kelsos.mbrc.enums.UserInputEventType;
-import com.kelsos.mbrc.events.UserActionEvent;
+import com.kelsos.mbrc.events.UserInputEvent;
+import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.views.AppPreferenceView;
 import com.kelsos.mbrc.views.MainFragmentActivity;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
@@ -81,6 +81,7 @@ public class MainFragment extends RoboSherlockFragment
     private ShareActionProvider mShareActionProvider;
 
 	private boolean userChangingVolume;
+    private int previousVol;
 	private Timer progressUpdateTimer;
 	private TimerTask progressUpdateTask;
 
@@ -92,7 +93,7 @@ public class MainFragment extends RoboSherlockFragment
         setHasOptionsMenu(true);
 		afProvide.addActiveFragment(this);
 		userChangingVolume = false;
-		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_DATA_REFRESH));
+		bus.post(new MessageEvent(UserInputEvent.RequestMainViewUpdate));
 		SetTextViewTypeface();
 	}
 
@@ -107,8 +108,8 @@ public class MainFragment extends RoboSherlockFragment
 		super.onStart();
 		afProvide.addActiveFragment(this);
 		RegisterListeners();
-		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_DATA_REFRESH));
-		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAYBACK_POSITION));
+		bus.post(new MessageEvent(UserInputEvent.RequestMainViewUpdate));
+		bus.post(new MessageEvent(UserInputEvent.RequestPosition));
 	}
 
 	@Override
@@ -116,8 +117,8 @@ public class MainFragment extends RoboSherlockFragment
 	{
 		super.onResume();
 		afProvide.addActiveFragment(this);
-		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_DATA_REFRESH));
-		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAYBACK_POSITION));
+		bus.post(new MessageEvent(UserInputEvent.RequestMainViewUpdate));
+		bus.post(new MessageEvent(UserInputEvent.RequestPosition));
 	}
 
 	@Override
@@ -395,7 +396,7 @@ public class MainFragment extends RoboSherlockFragment
 			case CONNECTION_ACTIVE:
 				connectivityIndicator.setImageResource(R.drawable.ic_connectivity_active);
 				//temp
-				bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NOWPLAYING_LIST));
+				bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingList));
 				break;
 		}
 	}
@@ -420,7 +421,7 @@ public class MainFragment extends RoboSherlockFragment
 		if(trackProgressCurrent==null || trackProgressSlider==null || trackDuration==null) return;
 		if (total == 0)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAYBACK_POSITION));
+			bus.post(new MessageEvent(UserInputEvent.RequestPosition));
 			return;
 		}
 		int currentSeconds = current / 1000;
@@ -495,7 +496,7 @@ public class MainFragment extends RoboSherlockFragment
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAY_PAUSE));
+			bus.post(new MessageEvent(UserInputEvent.RequestPlayPause));
 		}
 	};
 
@@ -504,7 +505,7 @@ public class MainFragment extends RoboSherlockFragment
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_PREVIOUS));
+			bus.post(new MessageEvent(UserInputEvent.RequestPrevious));
 		}
 	};
 
@@ -513,7 +514,7 @@ public class MainFragment extends RoboSherlockFragment
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_NEXT));
+			bus.post(new MessageEvent(UserInputEvent.RequestNext));
 		}
 	};
 
@@ -522,7 +523,7 @@ public class MainFragment extends RoboSherlockFragment
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_STOP));
+			bus.post(new MessageEvent(UserInputEvent.RequestStop));
 		}
 	};
 
@@ -531,7 +532,7 @@ public class MainFragment extends RoboSherlockFragment
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_MUTE));
+			bus.post(new MessageEvent(UserInputEvent.RequestMute));
 		}
 	};
 
@@ -540,7 +541,7 @@ public class MainFragment extends RoboSherlockFragment
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_LAST_FM));
+			bus.post(new MessageEvent(UserInputEvent.RequestScrobble));
 		}
 	};
 
@@ -549,7 +550,7 @@ public class MainFragment extends RoboSherlockFragment
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_SHUFFLE));
+			bus.post(new MessageEvent(UserInputEvent.RequestShuffle));
 		}
 	};
 
@@ -558,7 +559,7 @@ public class MainFragment extends RoboSherlockFragment
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_REPEAT));
+			bus.post(new MessageEvent(UserInputEvent.RequestRepeat));
 		}
 	};
 	private View.OnClickListener connectivityIndicatorListener = new View.OnClickListener()
@@ -566,7 +567,7 @@ public class MainFragment extends RoboSherlockFragment
 
 		public void onClick(View v)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_INITIALIZE));
+			bus.post(new MessageEvent(UserInputEvent.StartConnection));
 		}
 	};
 
@@ -575,7 +576,7 @@ public class MainFragment extends RoboSherlockFragment
 		@Override
 		public boolean onLongClick(View view)
 		{
-			bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_CONNECTION_RESET));
+			bus.post(new MessageEvent(UserInputEvent.ResetConnection));
 			return false;
 		}
 	};
@@ -599,7 +600,7 @@ public class MainFragment extends RoboSherlockFragment
 		{
 			if (fromUser)
 			{
-				bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_VOLUME, String.valueOf(seekBar.getProgress())));
+				bus.post(new MessageEvent(UserInputEvent.RequestVolume, String.valueOf(seekBar.getProgress())));
 			}
 		}
 	};
@@ -610,7 +611,11 @@ public class MainFragment extends RoboSherlockFragment
 		{
 			if (fromUser)
 			{
-				bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_REQUEST_PLAYBACK_POSITION, String.valueOf(progress)));
+                if (progress != previousVol) {
+                    bus.post(new MessageEvent(UserInputEvent.RequestPosition, String.valueOf(progress)));
+                    previousVol = progress;
+                }
+
 			}
 		}
 

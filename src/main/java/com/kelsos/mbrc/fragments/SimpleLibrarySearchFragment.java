@@ -17,9 +17,6 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.data.DataArrayAdapter;
-import com.kelsos.mbrc.enums.UserInputEventType;
-import com.kelsos.mbrc.events.UserActionEvent;
-import com.kelsos.mbrc.others.XmlEncoder;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.squareup.otto.Bus;
 
@@ -56,7 +53,7 @@ public class SimpleLibrarySearchFragment extends RoboSherlockListFragment implem
         mSearchView.setIconified(true);
         mSearchItem.collapseActionView();
 
-        bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_LIB_REQUEST_SEARCH,"<tag>" + filter + "</tag><filter>false</filter><query>" + XmlEncoder.encode(query) + "</query>"));
+
 
         return false;
     }

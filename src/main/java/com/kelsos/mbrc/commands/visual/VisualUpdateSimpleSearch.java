@@ -3,8 +3,7 @@ package com.kelsos.mbrc.commands.visual;
 import android.app.Activity;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
-import com.kelsos.mbrc.events.ProtocolDataEvent;
-import com.kelsos.mbrc.fragments.MainFragment;
+import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.fragments.SimpleLibrarySearchFragment;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
@@ -22,7 +21,7 @@ public class VisualUpdateSimpleSearch implements ICommand {
                 @Override
                 public void run()
                 {
-                    ((SimpleLibrarySearchFragment) afp.getActiveFragment(SimpleLibrarySearchFragment.class)).updateListData(((ProtocolDataEvent)e).getList());
+                   // ((SimpleLibrarySearchFragment) afp.getActiveFragment(SimpleLibrarySearchFragment.class)).updateListData(((MessageEvent)e).getList());
                 }
             });
         }

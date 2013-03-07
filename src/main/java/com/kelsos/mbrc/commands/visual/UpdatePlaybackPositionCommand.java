@@ -14,20 +14,20 @@ public class UpdatePlaybackPositionCommand implements ICommand
 
 	public void execute(IEvent e)
 	{
-		String duration[] = e.getData().split("##");
-		final int current = Integer.parseInt(duration[0]);
-		final int total = Integer.parseInt(duration[1]);
-		if (afProvider.getActiveFragment(MainFragment.class) != null)
-		{
-			Activity cActivity = afProvider.getActiveFragment(MainFragment.class).getActivity();
-			cActivity.runOnUiThread(new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					((MainFragment) afProvider.getActiveFragment(MainFragment.class)).updateDurationDisplay(current, total);;
-				}
-			});
-		}
+//		String duration[] = e.getData().split("##");
+//		final int current = Integer.parseInt(duration[0]);
+//		final int total = Integer.parseInt(duration[1]);
+//		if (afProvider.getActiveFragment(MainFragment.class) != null)
+//		{
+//			Activity cActivity = afProvider.getActiveFragment(MainFragment.class).getActivity();
+//			cActivity.runOnUiThread(new Runnable()
+//			{
+//				@Override
+//				public void run()
+//				{
+//					((MainFragment) afProvider.getActiveFragment(MainFragment.class)).updateDurationDisplay(current, total);;
+//				}
+//			});
+//		}
 	}
 }

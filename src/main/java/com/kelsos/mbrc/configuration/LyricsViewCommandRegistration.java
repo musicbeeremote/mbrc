@@ -2,20 +2,20 @@ package com.kelsos.mbrc.configuration;
 
 import com.kelsos.mbrc.commands.visual.VisualUpdateLyricsCommand;
 import com.kelsos.mbrc.controller.Controller;
-import com.kelsos.mbrc.enums.ModelDataEventType;
-import com.kelsos.mbrc.enums.UserInputEventType;
+import com.kelsos.mbrc.events.ModelEvent;
+import com.kelsos.mbrc.events.UserInputEvent;
 
 public class LyricsViewCommandRegistration
 {
 	public static void register(Controller controller)
 	{
-		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_LYRICS, VisualUpdateLyricsCommand.class);
-	    controller.registerCommand(ModelDataEventType.MODEL_LYRICS_UPDATED, VisualUpdateLyricsCommand.class);
+		controller.register(UserInputEvent.RequestLyrics, VisualUpdateLyricsCommand.class);
+	    controller.register(ModelEvent.ModelLyricsUpdated, VisualUpdateLyricsCommand.class);
 	}
 
 	public static void unRegister(Controller controller)
 	{
-		controller.unRegisterCommand(UserInputEventType.USERINPUT_EVENT_REQUEST_LYRICS, VisualUpdateLyricsCommand.class);
-		controller.unRegisterCommand(ModelDataEventType.MODEL_LYRICS_UPDATED, VisualUpdateLyricsCommand.class);
+		controller.unRegisterCommand(UserInputEvent.RequestLyrics, VisualUpdateLyricsCommand.class);
+		controller.unRegisterCommand(ModelEvent.ModelLyricsUpdated, VisualUpdateLyricsCommand.class);
 	}
 }

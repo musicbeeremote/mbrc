@@ -11,8 +11,8 @@ import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockPreferenceActivity;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.enums.UserInputEventType;
-import com.kelsos.mbrc.events.UserActionEvent;
+import com.kelsos.mbrc.events.UserInputEvent;
+import com.kelsos.mbrc.events.MessageEvent;
 import com.squareup.otto.Bus;
 
 import static android.app.AlertDialog.Builder;
@@ -93,7 +93,7 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity implements
 			portEditTextPreference.setSummary(port);
         }
 		if(port.equals("")||hostname.equals("")) return;
-		bus.post(new UserActionEvent(UserInputEventType.USERINPUT_EVENT_SETTINGS_CHANGED));
+		bus.post(new MessageEvent(UserInputEvent.SettingsChanged));
     }
 
 	@Override

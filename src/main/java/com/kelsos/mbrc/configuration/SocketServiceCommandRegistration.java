@@ -3,23 +3,23 @@ package com.kelsos.mbrc.configuration;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.commands.CancelNotificationCommand;
 import com.kelsos.mbrc.commands.ConnectionStatusChangedCommand;
-import com.kelsos.mbrc.commands.ResetHandshakeStatusCommand;
+import com.kelsos.mbrc.commands.HandleHanshake;
 import com.kelsos.mbrc.commands.SocketDataAvailableCommand;
 import com.kelsos.mbrc.controller.Controller;
-import com.kelsos.mbrc.enums.SocketServiceEventType;
-import com.kelsos.mbrc.enums.UserInputEventType;
+import com.kelsos.mbrc.events.SocketEvent;
+import com.kelsos.mbrc.events.UserInputEvent;
 
 public class SocketServiceCommandRegistration
 {
 	@Inject
 	public static void register(Controller controller)
 	{
-		controller.registerCommand(SocketServiceEventType.SOCKET_EVENT_PACKET_AVAILABLE, SocketDataAvailableCommand.class);
-		controller.registerCommand(SocketServiceEventType.SOCKET_EVENT_STATUS_CHANGE, ConnectionStatusChangedCommand.class);
-		controller.registerCommand(SocketServiceEventType.SOCKET_EVENT_HANDSHAKE_UPDATE, ResetHandshakeStatusCommand.class);
+		controller.register(SocketEvent.SocketDataAvailable, SocketDataAvailableCommand.class);
+		controller.register(SocketEvent.SocketStatusChanged, ConnectionStatusChangedCommand.class);
+		controller.register(SocketEvent.SocketHandshakeUpdate, HandleHanshake.class);
 
 		//temp
-		controller.registerCommand(UserInputEventType.USERINPUT_EVENT_CANCEL_NOTIFICATION, CancelNotificationCommand.class);
+		controller.register(UserInputEvent.CancelNotification, CancelNotificationCommand.class);
 	}
 
 	@Inject

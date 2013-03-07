@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.commands.request;
+package com.kelsos.mbrc.commands;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.SocketMessage;
@@ -8,11 +8,18 @@ import com.kelsos.mbrc.others.Protocol;
 import com.kelsos.mbrc.services.ProtocolHandler;
 import com.kelsos.mbrc.services.SocketService;
 
-public class RequestNowPlayingSearch implements ICommand {
+public class HandleHanshake implements ICommand
+{
+	@Inject
+	ProtocolHandler handler;
     @Inject
-    SocketService socket;
-    @Override
-    public void execute(IEvent e) {
-        socket.sendData(new SocketMessage(Protocol.NowPlayingListSearch, Protocol.Request, e.getDataString()));
-    }
+    SocketService service;
+
+	public void execute(IEvent e)
+	{
+        if(!(Boolean)e.getData()) {
+            handler.resetHandshake();
+        }
+
+	}
 }

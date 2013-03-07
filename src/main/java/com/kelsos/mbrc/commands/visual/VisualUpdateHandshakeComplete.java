@@ -14,7 +14,7 @@ public class VisualUpdateHandshakeComplete implements ICommand
 
 	public void execute(IEvent e)
 	{
-		if(!Boolean.parseBoolean(e.getData())) return;
+		if(!(Boolean)e.getData()) return;
 		if(afProvider.getActiveFragment(MainFragment.class)!=null)
 		{
 			Activity cActivity = afProvider.getActiveFragment(MainFragment.class).getActivity();

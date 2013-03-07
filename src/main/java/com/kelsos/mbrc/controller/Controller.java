@@ -9,10 +9,7 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.configuration.ProtocolHandlerCommandRegistration;
 import com.kelsos.mbrc.configuration.SocketServiceCommandRegistration;
-import com.kelsos.mbrc.events.ModelDataEvent;
-import com.kelsos.mbrc.events.ProtocolDataEvent;
-import com.kelsos.mbrc.events.RawSocketDataEvent;
-import com.kelsos.mbrc.events.UserActionEvent;
+import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.interfaces.IEventType;
@@ -27,14 +24,12 @@ import java.util.Map;
 public class Controller extends RoboService
 {
 	private Injector injector;
-	private Bus bus;
-	private Map<IEventType, Class<?>> commandMap;
+    private Map<String, Class<?>> commandMap;
 
 	@Inject
 	public Controller(Bus bus, Injector injector)
 	{
-		this.bus = bus;
-		this.injector = injector;
+        this.injector = injector;
 		bus.register(this);
 		ProtocolHandlerCommandRegistration.register(this);
 		SocketServiceCommandRegistration.register(this);
@@ -58,11 +53,11 @@ public class Controller extends RoboService
 		return mBinder;
 	}
 
-	public void registerCommand(IEventType type, Class<?> command)
+	public void register(String type, Class<?> command)
 	{
 		if (commandMap == null)
 		{
-			commandMap = new HashMap<IEventType, Class<?>>();
+			commandMap = new HashMap<String, Class<?>>();
 		}
 		if (!commandMap.containsKey(type))
 		{
@@ -70,7 +65,7 @@ public class Controller extends RoboService
 		}
 	}
 
-	public void unRegisterCommand(IEventType type, Class<?> command)
+	public void unRegisterCommand(String type, Class<?> command)
 	{
 		if (commandMap.containsKey(type)&&commandMap.get(type).equals(command))
 		{
@@ -100,25 +95,7 @@ public class Controller extends RoboService
 	 * @param event
 	 */
 	@Subscribe
-	public void handleSocketDataEvent(ProtocolDataEvent event)
-	{
-		executeCommand(event);
-	}
-
-	@Subscribe
-	public void handleUserActionEvents(UserActionEvent event)
-	{
-		executeCommand(event);
-	}
-
-	@Subscribe
-	public void handleModelDataEvent(ModelDataEvent event)
-	{
-		executeCommand(event);
-	}
-
-	@Subscribe
-	public void handleRawSocketData(RawSocketDataEvent event)
+	public void handleUserActionEvents(MessageEvent event)
 	{
 		executeCommand(event);
 	}

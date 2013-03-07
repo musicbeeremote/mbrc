@@ -4,16 +4,12 @@ import android.app.Activity;
 import android.support.v4.app.Fragment;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.commands.request.RequestAllArtists;
-import com.kelsos.mbrc.commands.request.RequestLibrarySearch;
 import com.kelsos.mbrc.commands.visual.VisualUpdateSimpleSearch;
 import com.kelsos.mbrc.configuration.LyricsViewCommandRegistration;
 import com.kelsos.mbrc.configuration.MainViewCommandRegistration;
 import com.kelsos.mbrc.configuration.PlaylistViewCommandRegistration;
 import com.kelsos.mbrc.configuration.SlidingMenuCommandRegistration;
-import com.kelsos.mbrc.enums.ProtocolHandlerEventType;
-import com.kelsos.mbrc.enums.UserInputEventType;
-import com.kelsos.mbrc.events.ProtocolDataEvent;
+import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.fragments.*;
 
 import java.util.ArrayList;
@@ -83,14 +79,6 @@ public class ActiveFragmentProvider
         {
             SlidingMenuCommandRegistration.register(controller);
         }
-        else if (fragment.getClass() == SimpleLibrarySearchFragment.class){
-            controller.registerCommand(UserInputEventType.USERINPUT_EVENT_LIB_REQUEST_SEARCH, RequestLibrarySearch.class);
-            controller.registerCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_LIBRARY_SEARCH_DATA, VisualUpdateSimpleSearch.class);
-        }
-	//	else if(fragment.getClass()== AppPreferenceView.class)
-	//	{
-	//		PreferenceViewCommandRegistration.register(controller);
-	//	}
 	}
 
 	private void unRegisterCommands(Fragment fragment)
@@ -107,15 +95,6 @@ public class ActiveFragmentProvider
 		{
 			PlaylistViewCommandRegistration.unRegister(controller);
 		}
-        else if (fragment.getClass() == SimpleLibrarySearchFragment.class){
-            controller.unRegisterCommand(UserInputEventType.USERINPUT_EVENT_LIB_REQUEST_SEARCH, RequestLibrarySearch.class);
-            controller.unRegisterCommand(ProtocolHandlerEventType.PROTOCOL_HANDLER_LIBRARY_SEARCH_DATA, VisualUpdateSimpleSearch.class);
-        }
-
-//		else if(fragment.getClass()== AppPreferenceView.class)
-//		{
-//			PreferenceViewCommandRegistration.unRegister(controller);
-//		}
 	}
 
 
