@@ -1,0 +1,11 @@
+package com.kelsos.mbrc.commands.model;
+
+import com.kelsos.mbrc.interfaces.ICommand;
+import com.kelsos.mbrc.interfaces.IEvent;
+
+public class UpdateVolume implements ICommand {
+    @Override
+    public void execute(IEvent e) {
+
+    }
+}

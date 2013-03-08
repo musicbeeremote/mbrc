@@ -65,7 +65,7 @@ public class Controller extends RoboService
 		}
 	}
 
-	public void unRegisterCommand(String type, Class<?> command)
+	public void unregister(String type, Class<?> command)
 	{
 		if (commandMap.containsKey(type)&&commandMap.get(type).equals(command))
 		{

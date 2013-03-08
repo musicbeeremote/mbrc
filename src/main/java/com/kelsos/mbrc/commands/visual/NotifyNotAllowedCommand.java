@@ -35,6 +35,6 @@ public class NotifyNotAllowedCommand implements ICommand
 		notificationService.showToastMessage(R.string.notification_not_allowed);
 		socketService.SocketManager(SocketAction.STOP);
 		model.setConnectionState("false");
-		handler.setHandshakeComplete(false);
+		handler.resetHandshake();
 	}
 }

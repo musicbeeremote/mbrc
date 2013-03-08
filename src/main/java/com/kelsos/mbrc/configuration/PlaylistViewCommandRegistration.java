@@ -20,10 +20,10 @@ public class PlaylistViewCommandRegistration
 
 	public static void unRegister(Controller controller)
 	{
-		controller.unRegisterCommand(UserInputEvent.RequestNowPlayingList, NowPlayingList.class);
-		controller.unRegisterCommand(UserInputEvent.RequestNowPlayingPlayTrack, PlayListDataAvailableCommand.class);
-		controller.unRegisterCommand(ModelEvent.ModelTrackUpdated, PlaylistViewTrackUpdatedCommand.class);
-		controller.unRegisterCommand(UserInputEvent.RequestNowPlayingRemoveTrack, RequestRemoveSelectedCommand.class);
+		controller.unregister(UserInputEvent.RequestNowPlayingList, NowPlayingList.class);
+		controller.unregister(UserInputEvent.RequestNowPlayingPlayTrack, PlayListDataAvailableCommand.class);
+		controller.unregister(ModelEvent.ModelTrackUpdated, PlaylistViewTrackUpdatedCommand.class);
+		controller.unregister(UserInputEvent.RequestNowPlayingRemoveTrack, RequestRemoveSelectedCommand.class);
 	}
 
 }

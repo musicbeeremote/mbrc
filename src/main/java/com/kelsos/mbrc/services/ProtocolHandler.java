@@ -56,7 +56,7 @@ public class ProtocolHandler
 			String[] replies = answer.split("\r\n");
 			for (String reply : replies)
 			{
-				Log.d("Protocol","Processing current:\t" + reply);
+				if (replies.length>1)Log.d("Protocol","Processing current:\t" + reply);
 
                 SocketMessage msg = mapper.readValue(reply, SocketMessage.class);
 
