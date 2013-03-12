@@ -36,6 +36,7 @@ public class MainDataModel
 		_playState = PlayState.Stopped;
 		_albumCover = null;
         rating = 0;
+        _lyrics = "";
 	}
 
     private float rating;
@@ -98,10 +99,12 @@ public class MainDataModel
 		return _year;
 	}
 
-	public void setVolume(String volume)
+	public void setVolume(int volume)
 	{
-		_volume = Integer.parseInt(volume);
-		bus.post(new MessageEvent(ModelEvent.ModelVolumeUpdated));
+        if(volume!=_volume){
+            _volume = volume;
+            bus.post(new MessageEvent(ModelEvent.ModelVolumeUpdated));
+        }
 	}
 
 	public int getVolume()
@@ -160,9 +163,9 @@ public class MainDataModel
 		return _isRepeatButtonActive;
 	}
 
-	public void setShuffleState(String shuffleButtonActive)
+	public void setShuffleState(boolean shuffleButtonActive)
 	{
-		_isShuffleButtonActive = Boolean.parseBoolean(shuffleButtonActive);
+		_isShuffleButtonActive = shuffleButtonActive;
 		bus.post(new MessageEvent(ModelEvent.ModelShuffleStateUpdated));
 	}
 
@@ -171,9 +174,9 @@ public class MainDataModel
 		return _isShuffleButtonActive;
 	}
 
-	public void setScrobbleState(String scrobbleButtonActive)
+	public void setScrobbleState(boolean scrobbleButtonActive)
 	{
-		_isScrobbleButtonActive = Boolean.parseBoolean(scrobbleButtonActive);
+		_isScrobbleButtonActive = scrobbleButtonActive;
 		bus.post(new MessageEvent(ModelEvent.ModelScrobbleStateUpdated));
 	}
 

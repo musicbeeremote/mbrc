@@ -15,8 +15,8 @@ public class NotifyProtocolHandlerChangeCommand implements ICommand {
 
     @Override
     public void execute(IEvent e) {
-        if(afProvider.getActiveFragment(NowPlayingFragment.class)!=null){
-            pHandler.requestAction(ProtocolHandler.PlayerAction.Playlist);
-        }
+//        if(afProvider.getActiveFragment(NowPlayingFragment.class)!=null){
+//            pHandler.requestAction(ProtocolHandler.PlayerAction.Playlist);
+//        }
     }
 }

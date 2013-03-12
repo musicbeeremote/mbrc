@@ -3,11 +3,19 @@ package com.kelsos.mbrc.data;
 public class MusicTrack {
     private String title;
     private String artist;
+    private int position;
 
     public MusicTrack(String artist, String title) {
+        this.artist = artist;
+        this.title = title;
+        position = 0;
+    }
+
+    public MusicTrack(String artist, String title, int position) {
         super();
         this.title = title;
         this.artist = artist;
+        this.position = position;
 	}
 
     public String getArtist() {
@@ -20,6 +28,10 @@ public class MusicTrack {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public int getPosition() {
+        return position;
     }
 
 	@Override

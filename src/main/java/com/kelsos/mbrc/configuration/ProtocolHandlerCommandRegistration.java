@@ -2,10 +2,7 @@ package com.kelsos.mbrc.configuration;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.commands.*;
-import com.kelsos.mbrc.commands.model.UpdateCover;
-import com.kelsos.mbrc.commands.model.UpdateNowPlayingTrack;
-import com.kelsos.mbrc.commands.model.UpdatePlayState;
-import com.kelsos.mbrc.commands.model.UpdatePlayerStatus;
+import com.kelsos.mbrc.commands.model.*;
 import com.kelsos.mbrc.commands.visual.NotifyNotAllowedCommand;
 import com.kelsos.mbrc.commands.visual.UpdatePlaybackPositionCommand;
 import com.kelsos.mbrc.commands.visual.VisualUpdateHandshakeComplete;
@@ -27,6 +24,11 @@ public class ProtocolHandlerCommandRegistration
         controller.register(Protocol.NowPlayingCover, UpdateCover.class);
         controller.register(Protocol.PlayerStatus, UpdatePlayerStatus.class);
         controller.register(Protocol.PlayerState, UpdatePlayState.class);
+        controller.register(Protocol.PlayerRepeat, UpdateRepeat.class);
+        controller.register(Protocol.PlayerVolume, UpdateVolume.class);
+        controller.register(Protocol.PlayerMute, UpdateMute.class);
+        controller.register(Protocol.PlayerShuffle, UpdateShuffle.class);
+        controller.register(Protocol.PlayerScrobble, UpdateLastFm.class);
 	}
 
 	@Inject

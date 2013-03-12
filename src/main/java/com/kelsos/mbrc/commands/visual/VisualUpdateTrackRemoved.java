@@ -15,17 +15,17 @@ public class VisualUpdateTrackRemoved implements ICommand
 	@Override
 	public void execute(final IEvent e)
 	{
-        if(afProvider.getActiveFragment(NowPlayingFragment.class)!=null)
-        {    final int index = Integer.parseInt(e.getData());
-            Activity cActivity = afProvider.getActiveFragment(NowPlayingFragment.class).getActivity();
-            cActivity.runOnUiThread(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    ((NowPlayingFragment)afProvider.getActiveFragment(NowPlayingFragment.class)).removeSelectedTrack(index);
-                }
-            });
-        }
+//        if(afProvider.getActiveFragment(NowPlayingFragment.class)!=null)
+//        {    final int index = Integer.parseInt(e.getData());
+//            Activity cActivity = afProvider.getActiveFragment(NowPlayingFragment.class).getActivity();
+//            cActivity.runOnUiThread(new Runnable()
+//            {
+//                @Override
+//                public void run()
+//                {
+//                    ((NowPlayingFragment)afProvider.getActiveFragment(NowPlayingFragment.class)).removeSelectedTrack(index);
+//                }
+//            });
+//        }
 	}
 }

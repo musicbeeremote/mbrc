@@ -10,6 +10,7 @@ public class MessageEvent implements IEvent{
     public MessageEvent(String type)
     {
         this.type = type;
+        data = "";
     }
 
     public MessageEvent(String type, Object data)

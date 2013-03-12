@@ -5,11 +5,11 @@ import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
 
-public class UpdateVolume implements ICommand {
+public class UpdateMute implements ICommand {
     @Inject
     MainDataModel model;
     @Override
     public void execute(IEvent e) {
-        model.setVolume((Integer)e.getData());
+        model.setMuteState(e.getDataString());
     }
 }

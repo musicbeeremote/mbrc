@@ -17,7 +17,7 @@ public class UpdatePlayerStatus implements ICommand {
         model.setPlayState(map.get(Protocol.PlayerState));
         model.setMuteState(map.get(Protocol.PlayerMute));
         model.setRepeatState(map.get(Protocol.PlayerRepeat));
-        model.setShuffleState(map.get(Protocol.PlayerShuffle));
-        model.setVolume(map.get(Protocol.PlayerVolume));
+        model.setShuffleState(Boolean.parseBoolean(map.get(Protocol.PlayerShuffle)));
+        model.setVolume(Integer.parseInt(map.get(Protocol.PlayerVolume)));
     }
 }
