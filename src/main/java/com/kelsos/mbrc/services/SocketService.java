@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.services;
 
+import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.data.SocketMessage;
@@ -147,7 +148,7 @@ public class SocketService
 				output.println(mapper.writeValueAsString(message) + Const.NEWLINE);
 		} catch (Exception ignored)
 		{
-		}
+        }
 	}
 
 	public void informEventBus(final MessageEvent event)

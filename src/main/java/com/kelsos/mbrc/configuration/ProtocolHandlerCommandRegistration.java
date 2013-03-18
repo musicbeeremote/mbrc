@@ -29,6 +29,8 @@ public class ProtocolHandlerCommandRegistration
         controller.register(Protocol.PlayerMute, UpdateMute.class);
         controller.register(Protocol.PlayerShuffle, UpdateShuffle.class);
         controller.register(Protocol.PlayerScrobble, UpdateLastFm.class);
+        controller.register(ProtocolEvent.NoSettingsAvailable, CreateSetupDialog.class);
+        controller.register(Protocol.NowPlayingLyrics, UpdateLyrics.class);
 	}
 
 	@Inject

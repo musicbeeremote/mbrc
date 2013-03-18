@@ -17,6 +17,8 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.data.DataArrayAdapter;
+import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.others.Protocol;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.squareup.otto.Bus;
 
@@ -39,21 +41,21 @@ public class SimpleLibrarySearchFragment extends RoboSherlockListFragment implem
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        String filter = "";
+        String pContext = "";
         if(mCurrentFiltering.equals(mSearchOptions[0])){
-            filter = "artist";
+            pContext = Protocol.LibrarySearchArtist;
         } else if (mCurrentFiltering.equals(mSearchOptions[1])) {
-            filter = "album";
+            pContext = Protocol.LibrarySearchAlbum;
         } else if (mCurrentFiltering.equals(mSearchOptions[2])) {
-            filter = "title";
+            pContext = Protocol.LibrarySearchTitle;
         } else if (mCurrentFiltering.equals(mSearchOptions[3])) {
-            filter = "genre";
+            pContext = Protocol.LibrarySearchGenre;
         }
 
         mSearchView.setIconified(true);
         mSearchItem.collapseActionView();
 
-
+        bus.post(new MessageEvent(pContext,query));
 
         return false;
     }

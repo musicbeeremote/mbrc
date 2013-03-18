@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.messaging.NotificationService;
+import com.squareup.otto.Bus;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -16,7 +19,7 @@ public class SettingsManager
 	@Inject
 	Context context;
 	@Inject
-	NotificationService notificationService;
+    Bus bus;
 
 	public SettingsManager()
 	{
@@ -28,7 +31,7 @@ public class SettingsManager
 		String server_port_string = preferences.getString(context.getString(R.string.settings_key_port), null);
 		if (notNullOrEmpty(server_hostname) || notNullOrEmpty(server_port_string))
 		{
-			notificationService.showToastMessage(R.string.notification_check_network_settings);
+            bus.post(new MessageEvent(ProtocolEvent.NoSettingsAvailable));
 			return null;
 		}
 		int server_port = Integer.parseInt(server_port_string);

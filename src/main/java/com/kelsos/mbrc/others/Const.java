@@ -11,5 +11,5 @@ public class Const {
 	public static final String PLAYING = "playing";
 	public static final String PAUSED = "paused";
 	public static final String STOPPED = "stopped";
-	public static final String NEWLINE = "\r\n";
+	public static final String NEWLINE = "\r";
 }
