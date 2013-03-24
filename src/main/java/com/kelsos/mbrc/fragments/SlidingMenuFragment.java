@@ -8,14 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
+import android.widget.TextView;
+import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
-import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.views.MainFragmentActivity;
-import com.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.squareup.otto.Bus;
 import roboguice.inject.InjectView;
 
@@ -36,8 +37,17 @@ public class SlidingMenuFragment extends RoboSherlockFragment {
     @InjectView(R.id.lfmBanButton)
     ImageButton lfmBanButton;
 
-    @InjectView(R.id.artistButton)
-    ImageButton artistButton;
+    @InjectView(R.id.menuLibrary)
+    TextView menuLibrary;
+
+    @InjectView(R.id.menuLyrics)
+    TextView menuLyrics;
+
+    @InjectView(R.id.menuNowPlaying)
+    TextView menuNowPlaying;
+
+    @InjectView(R.id.menuSettings)
+    TextView menuSettings;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +61,10 @@ public class SlidingMenuFragment extends RoboSherlockFragment {
         trackRatingBar.setOnRatingBarChangeListener(ratingBarChangeListener);
         lfmBanButton.setOnClickListener(lfmBanClick);
         lfmLoveButton.setOnClickListener(lfmLoveClick);
-        artistButton.setOnClickListener(artistButtonClick);
+        menuLibrary.setOnClickListener(libraryButtonClick);
+        menuSettings.setOnClickListener(settingsButtonClick);
+        menuNowPlaying.setOnClickListener(nowPlayingButtonClick);
+        menuLyrics.setOnClickListener(lyricsButtonClick);
     }
 
     @Override
@@ -89,13 +102,37 @@ public class SlidingMenuFragment extends RoboSherlockFragment {
         }
     };
 
-    private ImageButton.OnClickListener artistButtonClick = new ImageButton.OnClickListener() {
+    private TextView.OnClickListener libraryButtonClick = new TextView.OnClickListener() {
 
         @Override
         public void onClick(View view) {
 
             SimpleLibrarySearchFragment slsFragment = new SimpleLibrarySearchFragment();
             replaceFragment(slsFragment);
+        }
+    };
+
+    private TextView.OnClickListener settingsButtonClick = new TextView.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            ||
+        }
+    };
+
+    private TextView.OnClickListener nowPlayingButtonClick = new TextView.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            ||
+        }
+    };
+
+    private TextView.OnClickListener lyricsButtonClick = new TextView.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            ||
         }
     };
 
@@ -110,8 +147,7 @@ public class SlidingMenuFragment extends RoboSherlockFragment {
         fragmentTransaction.replace(((MainFragmentActivity)getActivity()).isTablet() ? R.id.fragment_container_extra : R.id.fragment_container, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
-        ((SlidingFragmentActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((SlidingFragmentActivity)getActivity()).showContent();
+        ((RoboSherlockFragmentActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 

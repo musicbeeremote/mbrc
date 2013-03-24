@@ -60,8 +60,6 @@ public class ProtocolHandler
 
                 SocketMessage msg = mapper.readValue(reply, SocketMessage.class);
 
-				//new ByteArrayInputStream(reply.getBytes("UTF-8"));
-
 				if (msg.getContext().contains(Protocol.ClientNotAllowed))
 				{
 					bus.post(new MessageEvent(ProtocolEvent.InformClientNotAllowed));

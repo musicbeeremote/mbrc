@@ -19,7 +19,6 @@ import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.data.DataArrayAdapter;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.others.Protocol;
-import com.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.squareup.otto.Bus;
 
 import java.util.ArrayList;
@@ -128,7 +127,7 @@ public class SimpleLibrarySearchFragment extends RoboSherlockListFragment implem
     @Override
     public void onCreateOptionsMenu (Menu menu, MenuInflater inflater){
 
-        mSearchView = new SearchView(((SlidingFragmentActivity)getActivity()).getSupportActionBar().getThemedContext());
+        mSearchView = new SearchView(((RoboSherlockFragmentActivity)getActivity()).getSupportActionBar().getThemedContext());
         mSearchView.setQueryHint(getString(R.string.now_playing_search_hint));
         mSearchView.setIconifiedByDefault(true);
 

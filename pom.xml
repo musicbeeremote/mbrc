@@ -69,18 +69,12 @@
 			<type>apklib</type>
 		</dependency>
 
-		<dependency>
-			<groupId>com.slidingmenu</groupId>
-			<artifactId>library</artifactId>
-			<version>1.0.0</version>
-			<type>apklib</type>
-			<exclusions>
-				<exclusion>
-					<groupId>com.actionbarsherlock</groupId>
-					<artifactId>actionbarsherlock</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <dependency>
+            <groupId>net.simonvt</groupId>
+            <artifactId>android-menudrawer</artifactId>
+            <version>2.0.1</version>
+            <type>apklib</type>
+        </dependency>
 
 		<!-- Let Roboguice and Sherlock work together -->
 		<dependency>

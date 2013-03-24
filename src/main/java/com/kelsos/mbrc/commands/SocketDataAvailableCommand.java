@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.commands;
 
+import android.util.Log;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
@@ -12,6 +13,11 @@ public class SocketDataAvailableCommand implements ICommand
 
 	public void execute(IEvent e)
 	{
-		handler.answerProcessor(e.getDataString());
+        try {
+            handler.answerProcessor(e.getDataString());
+        } catch (Exception ex) {
+            Log.d("Protocol", "Processing", ex);
+        }
+
 	}
 }

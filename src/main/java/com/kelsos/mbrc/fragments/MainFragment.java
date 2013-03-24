@@ -17,6 +17,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.ShareActionProvider;
+import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
@@ -27,7 +28,6 @@ import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.views.AppPreferenceView;
 import com.kelsos.mbrc.views.MainFragmentActivity;
-import com.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.squareup.otto.Bus;
 import roboguice.inject.InjectView;
 
@@ -216,7 +216,7 @@ public class MainFragment extends RoboSherlockFragment
         fragmentTransaction.replace(((MainFragmentActivity)getActivity()).isTablet() ? R.id.fragment_container_extra : R.id.fragment_container, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
-        ((SlidingFragmentActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((RoboSherlockFragmentActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 	/**

@@ -11,6 +11,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
+import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -21,7 +22,6 @@ import com.kelsos.mbrc.data.PlaylistArrayAdapter;
 import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.DragDropEvent;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -81,7 +81,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
     @Override
     public void onCreateOptionsMenu (Menu menu, MenuInflater inflater){
 
-        mSearchView = new SearchView(((SlidingFragmentActivity)getActivity()).getSupportActionBar().getThemedContext());
+        mSearchView = new SearchView(((RoboSherlockFragmentActivity)getActivity()).getSupportActionBar().getThemedContext());
         mSearchView.setQueryHint(getString(R.string.now_playing_search_hint));
         mSearchView.setIconifiedByDefault(true);
 
