@@ -13,17 +13,7 @@ public class MainViewCommandRegistration
 {
 	public static void register(Controller controller)
 	{
-		controller.register(UserInputEvent.RequestPlayPause, RequestPlayPauseCommand.class);
-		controller.register(UserInputEvent.RequestStop, RequestPlayStopCommand.class);
-		controller.register(UserInputEvent.RequestNext, RequestPlayNextCommand.class);
-		controller.register(UserInputEvent.RequestPrevious, RequestPlayPreviousCommand.class);
-		controller.register(UserInputEvent.RequestVolume, RequestVolumeChangeCommand.class);
-		controller.register(UserInputEvent.RequestShuffle, RequestShuffleToggleCommand.class);
-		controller.register(UserInputEvent.RequestRepeat, RequestRepeatToggleCommand.class);
-		controller.register(UserInputEvent.RequestScrobble, RequestScrobbleToggleCommand.class);
-		controller.register(UserInputEvent.RequestMute, RequestMuteToggleCommand.class);
-		controller.register(UserInputEvent.RequestMainViewUpdate, UpdateMainViewCommand.class);
-		controller.register(UserInputEvent.RequestPosition, NowPlaygingPositionChange.class);
+        controller.register(UserInputEvent.RequestMainViewUpdate, UpdateMainViewCommand.class);
 		controller.register(UserInputEvent.StartConnection, InitiateConnectionCommand.class);
 		controller.register(UserInputEvent.ResetConnection, RestartConnectionCommand.class);
 		controller.register(ModelEvent.ModelConnectionStateUpdated, VisualUpdateConnectionStateCommand.class);
@@ -41,15 +31,7 @@ public class MainViewCommandRegistration
 
 	public static void unRegister(Controller controller)
 	{
-		controller.unregister(UserInputEvent.RequestStop, RequestPlayStopCommand.class);
-		controller.unregister(UserInputEvent.RequestPrevious, RequestPlayPreviousCommand.class);
-		controller.unregister(UserInputEvent.RequestVolume, RequestVolumeChangeCommand.class);
-		controller.unregister(UserInputEvent.RequestShuffle, RequestShuffleToggleCommand.class);
-		controller.unregister(UserInputEvent.RequestRepeat, RequestRepeatToggleCommand.class);
-		controller.unregister(UserInputEvent.RequestScrobble, RequestScrobbleToggleCommand.class);
-		controller.unregister(UserInputEvent.RequestMute, RequestMuteToggleCommand.class);
-		controller.unregister(UserInputEvent.RequestMainViewUpdate, UpdateMainViewCommand.class);
-		controller.unregister(UserInputEvent.RequestPosition, NowPlaygingPositionChange.class);
+        controller.unregister(UserInputEvent.RequestMainViewUpdate, UpdateMainViewCommand.class);
 		controller.unregister(UserInputEvent.StartConnection, InitiateConnectionCommand.class);
 		controller.unregister(UserInputEvent.ResetConnection, RestartConnectionCommand.class);
 		controller.unregister(ModelEvent.ModelConnectionStateUpdated, VisualUpdateConnectionStateCommand.class);

@@ -22,10 +22,14 @@ import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragmen
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
+import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.enums.PlayState;
+import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.others.Const;
+import com.kelsos.mbrc.others.Protocol;
 import com.kelsos.mbrc.views.AppPreferenceView;
 import com.kelsos.mbrc.views.MainFragmentActivity;
 import com.squareup.otto.Bus;
@@ -173,9 +177,7 @@ public class MainFragment extends RoboSherlockFragment
     {
         inflater.inflate(R.menu.menu, menu);
         MenuItem shareItem = menu.findItem(R.id.main_menu_share);
-        if(((MainFragmentActivity)getActivity()).isTablet()){
-            menu.removeItem(R.id.main_menu_playlist);
-        }
+
         mShareActionProvider = (ShareActionProvider) shareItem.getActionProvider();
     }
 
@@ -189,17 +191,6 @@ public class MainFragment extends RoboSherlockFragment
     {
         switch (item.getItemId())
         {
-            case R.id.main_menu_settings:
-                startActivity(new Intent(getActivity(), AppPreferenceView.class));
-                return true;
-            case R.id.main_menu_lyrics:
-                LyricsFragment lFragment = new LyricsFragment();
-                replaceFragment(lFragment);
-                return true;
-            case R.id.main_menu_playlist:
-                NowPlayingFragment npFragment = new NowPlayingFragment();
-                replaceFragment(npFragment);
-                return true;
             case R.id.main_menu_share:
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
@@ -211,13 +202,6 @@ public class MainFragment extends RoboSherlockFragment
         }
     }
 
-    public void replaceFragment(Fragment fragment){
-        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(((MainFragmentActivity)getActivity()).isTablet() ? R.id.fragment_container_extra : R.id.fragment_container, fragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
-        ((RoboSherlockFragmentActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
 
 	/**
 	 * Registers the listeners for the interface elements used for interaction.
@@ -496,7 +480,7 @@ public class MainFragment extends RoboSherlockFragment
 
 		public void onClick(View v)
 		{
-			bus.post(new MessageEvent(UserInputEvent.RequestPlayPause));
+			bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerPlayPause, true)));
 		}
 	};
 
@@ -505,7 +489,7 @@ public class MainFragment extends RoboSherlockFragment
 
 		public void onClick(View v)
 		{
-			bus.post(new MessageEvent(UserInputEvent.RequestPrevious));
+			bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerPrevious, true)));
 		}
 	};
 
@@ -514,7 +498,7 @@ public class MainFragment extends RoboSherlockFragment
 
 		public void onClick(View v)
 		{
-			bus.post(new MessageEvent(UserInputEvent.RequestNext));
+			bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerNext, true)));
 		}
 	};
 
@@ -523,7 +507,7 @@ public class MainFragment extends RoboSherlockFragment
 
 		public void onClick(View v)
 		{
-			bus.post(new MessageEvent(UserInputEvent.RequestStop));
+			bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerStop, true)));
 		}
 	};
 
@@ -532,7 +516,7 @@ public class MainFragment extends RoboSherlockFragment
 
 		public void onClick(View v)
 		{
-			bus.post(new MessageEvent(UserInputEvent.RequestMute));
+			bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerMute, true)));
 		}
 	};
 
@@ -541,7 +525,7 @@ public class MainFragment extends RoboSherlockFragment
 
 		public void onClick(View v)
 		{
-			bus.post(new MessageEvent(UserInputEvent.RequestScrobble));
+			bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerScrobble, true)));
 		}
 	};
 
@@ -550,7 +534,7 @@ public class MainFragment extends RoboSherlockFragment
 
 		public void onClick(View v)
 		{
-			bus.post(new MessageEvent(UserInputEvent.RequestShuffle));
+			bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerShuffle, Const.TOGGLE)));
 		}
 	};
 
@@ -559,7 +543,7 @@ public class MainFragment extends RoboSherlockFragment
 
 		public void onClick(View v)
 		{
-			bus.post(new MessageEvent(UserInputEvent.RequestRepeat));
+			bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerRepeat, true)));
 		}
 	};
 	private View.OnClickListener connectivityIndicatorListener = new View.OnClickListener()
@@ -600,7 +584,7 @@ public class MainFragment extends RoboSherlockFragment
 		{
 			if (fromUser)
 			{
-				bus.post(new MessageEvent(UserInputEvent.RequestVolume, String.valueOf(seekBar.getProgress())));
+				bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerVolume, String.valueOf(seekBar.getProgress()))));
 			}
 		}
 	};
@@ -612,7 +596,7 @@ public class MainFragment extends RoboSherlockFragment
 			if (fromUser)
 			{
                 if (progress != previousVol) {
-                    bus.post(new MessageEvent(UserInputEvent.RequestPosition, String.valueOf(progress)));
+                    bus.post(new MessageEvent(ProtocolEvent.UserAction,new UserAction(Protocol.NowPlayingPosition,String.valueOf(progress))));
                     previousVol = progress;
                 }
 

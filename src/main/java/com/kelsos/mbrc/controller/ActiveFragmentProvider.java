@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.support.v4.app.Fragment;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.commands.visual.VisualUpdateSimpleSearch;
 import com.kelsos.mbrc.configuration.LyricsViewCommandRegistration;
 import com.kelsos.mbrc.configuration.MainViewCommandRegistration;
 import com.kelsos.mbrc.configuration.PlaylistViewCommandRegistration;
 import com.kelsos.mbrc.configuration.SlidingMenuCommandRegistration;
-import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.fragments.*;
 
 import java.util.ArrayList;
@@ -75,7 +73,7 @@ public class ActiveFragmentProvider
 		{
 			PlaylistViewCommandRegistration.register(controller);
 		}
-        else if(fragment.getClass() == SlidingMenuFragment.class)
+        else if(fragment.getClass() == DrawerFragment.class)
         {
             SlidingMenuCommandRegistration.register(controller);
         }

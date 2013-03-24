@@ -78,26 +78,42 @@
 
     </RelativeLayout>
 
-    <ImageView
-            android:id="@+id/main_album_cover_image_view"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_marginTop="3dp"
-            android:layout_toRightOf="@id/main_media_button_group"
-            android:adjustViewBounds="false"
-            android:background="#FFFFFF"
-            android:contentDescription="@string/main_image_view_cover_description"
-            android:padding="1dp"
-            android:src="@drawable/ic_image_no_cover" />
+    <FrameLayout
+                android:id="@+id/album_cover_area"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_marginTop="3dp"
+                android:layout_toRightOf="@id/main_media_button_group" >
+
+        <ImageView
+                android:id="@+id/main_album_cover_image_view"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:adjustViewBounds="false"
+                android:background="#FFFFFF"
+                android:contentDescription="@string/main_image_view_cover_description"
+                android:padding="1dp"
+                android:src="@drawable/ic_image_no_cover" />
+
+        <RatingBar
+                android:id="@+id/track_rating_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:layout_marginTop="10dp"
+                android:numStars="5"
+                />
+
+    </FrameLayout>
+
+
 
     <RelativeLayout
             android:id="@+id/main_track_info"
             android:layout_width="match_parent"
             android:layout_height="308dp"
-            android:layout_toRightOf="@+id/main_media_buttons_group"
+            android:layout_toRightOf="@+id/album_cover_area"
             android:orientation="vertical" >
-
-
 
         <TextView
                 android:id="@+id/main_title_label"
@@ -119,10 +135,6 @@
                 android:textStyle="normal"
                 android:typeface="sans" />
 
-
-
-
-
         <TextView
                 android:id="@+id/main_artist_label"
                 android:layout_width="match_parent"
@@ -141,9 +153,6 @@
                 android:text="@string/main_label_artist"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp" />
-
-
-
 
         <TextView
                 android:id="@+id/main_label_album"
@@ -164,8 +173,6 @@
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:typeface="sans" />
-
-
 
         <TextView
                 android:id="@+id/main_label_year"
@@ -188,18 +195,11 @@
 
     </RelativeLayout>
 
-
-
-
-
-
-
-
     <SeekBar
             android:id="@+id/main_volume_seeker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/main_album_cover_image_view"
+            android:layout_alignLeft="@+id/album_cover_area"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_centerInParent="false"
@@ -223,7 +223,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/main_volume_seeker"
-            android:layout_alignLeft="@+id/main_volume_seeker"
+            android:layout_alignLeft="@+id/album_cover_area"
             android:layout_marginRight="8dp"
             android:orientation="horizontal" >
 
@@ -284,10 +284,9 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
-            android:layout_alignLeft="@+id/main_album_cover_image_view"
+            android:layout_alignLeft="@+id/album_cover_area"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="314dp"
-            android:layout_alignRight="@+id/main_album_cover_image_view">
+            android:layout_marginTop="316dp">
 
 
         <ImageButton

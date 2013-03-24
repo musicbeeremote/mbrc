@@ -31,6 +31,7 @@ public class ProtocolHandlerCommandRegistration
         controller.register(Protocol.PlayerScrobble, UpdateLastFm.class);
         controller.register(ProtocolEvent.NoSettingsAvailable, CreateSetupDialog.class);
         controller.register(Protocol.NowPlayingLyrics, UpdateLyrics.class);
+        controller.register(ProtocolEvent.UserAction, ProcessUserAction.class);
 	}
 
 	@Inject

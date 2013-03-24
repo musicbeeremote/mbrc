@@ -8,9 +8,9 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.fragments.DrawerFragment;
 import com.kelsos.mbrc.fragments.MainFragment;
 import com.kelsos.mbrc.fragments.NowPlayingFragment;
-import com.kelsos.mbrc.fragments.SlidingMenuFragment;
 import net.simonvt.menudrawer.MenuDrawer;
 
 import java.lang.reflect.Field;
@@ -54,7 +54,7 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
         }
 
 
-        SlidingMenuFragment smFragment = new SlidingMenuFragment();
+        DrawerFragment smFragment = new DrawerFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.sliding_menu_placeholder,smFragment).commit();
 
 

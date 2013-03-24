@@ -3,7 +3,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
-              android:orientation="vertical">
+              android:orientation="vertical"
+              android:background="@drawable/menu_item_background">
 
     <TextView
             android:layout_width="match_parent"
@@ -11,30 +12,17 @@
             android:text="Track Rating"
             android:layout_marginTop="5dp" />
 
-    <View
-            android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:background="@android:color/darker_gray"
-            android:layout_marginTop="5dp"
-            />
-
     <RatingBar
             android:id="@+id/track_rating_bar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
             android:layout_marginTop="10dp"/>
 
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Last.fm Track rating"
-            android:id="@+id/lfmRatingLabel"
-            android:layout_marginTop="5dp"/>
     <View
             android:layout_width="fill_parent"
             android:layout_height="2dp"
-            android:background="@android:color/darker_gray"
-            android:layout_marginTop="5dp"/>
+            android:background="@android:color/holo_blue_dark"/>
 
     <ImageButton
             android:layout_width="44dp"
@@ -48,17 +36,6 @@
             android:id="@+id/lfmBanButton"
             android:contentDescription=""/>
 
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Library"
-            android:id="@+id/libBrowserLabel"
-            android:layout_marginTop="5dp"/>
-    <View
-            android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:background="@android:color/darker_gray"
-            android:layout_marginTop="5dp"/>
 
     <TextView
             android:layout_width="match_parent"
@@ -67,6 +44,10 @@
             android:id="@+id/menuLibrary"
             android:layout_gravity="left|center_vertical"
             style="@style/Menu.Title"/>
+    <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="@android:color/holo_blue_dark"/>
 
     <TextView
             android:layout_width="match_parent"
@@ -77,6 +58,10 @@
             android:drawableLeft="@drawable/ic_action_playlist"
             style="@style/Menu.Title"
             />
+    <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="@android:color/holo_blue_dark"/>
 
     <TextView
             android:layout_width="match_parent"
@@ -87,6 +72,11 @@
             android:drawableLeft="@drawable/ic_action_lyrics"
             style="@style/Menu.Title"
             />
+
+    <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="@android:color/holo_blue_dark"/>
 
     <TextView
             android:layout_width="match_parent"
