@@ -27,6 +27,7 @@ public class MainViewCommandRegistration
 		controller.register(ModelEvent.ModelVolumeUpdated, VisualUpdateVolumeCommand.class);
 		controller.register(ModelEvent.ModelCoverNotFound, NoCoverFoundCommand.class);
         controller.register(Protocol.NowPlayingPosition, UpdatePlaybackPositionCommand.class);
+        controller.register(ModelEvent.ModelRatingUpdated, VisualUpdateRatingCommand.class);
 	}
 
 	public static void unRegister(Controller controller)
@@ -45,5 +46,6 @@ public class MainViewCommandRegistration
 		controller.unregister(ModelEvent.ModelVolumeUpdated, VisualUpdateVolumeCommand.class);
 		controller.unregister(ModelEvent.ModelCoverNotFound, NoCoverFoundCommand.class);
         controller.unregister(Protocol.NowPlayingPosition, UpdatePlaybackPositionCommand.class);
+        controller.unregister(ModelEvent.ModelRatingUpdated, VisualUpdateRatingCommand.class);
 	}
 }

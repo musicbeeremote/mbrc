@@ -95,14 +95,23 @@
                 android:padding="1dp"
                 android:src="@drawable/ic_image_no_cover" />
 
-        <RatingBar
-                android:id="@+id/track_rating_bar"
+        <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="16dp"
-                android:layout_marginTop="10dp"
-                android:numStars="5"
-                />
+                android:background="#99000000"
+                android:layout_gravity="center_horizontal|bottom"
+                android:id="@+id/ratingWrapper">
+
+            <RatingBar
+                    android:id="@+id/track_rating_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:numStars="5"
+                    android:stepSize="0.5"
+                    android:layout_gravity="center"
+                    />
+        </LinearLayout>
 
     </FrameLayout>
 

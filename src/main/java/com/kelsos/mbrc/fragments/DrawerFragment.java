@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
@@ -29,9 +28,6 @@ public class DrawerFragment extends RoboSherlockFragment {
     ActiveFragmentProvider afProvider;
     @Inject
     Bus bus;
-
-    @InjectView(R.id.track_rating_bar)
-    RatingBar trackRatingBar;
 
     @InjectView(R.id.lfmLoveButton)
     ImageButton lfmLoveButton;
@@ -60,7 +56,7 @@ public class DrawerFragment extends RoboSherlockFragment {
     @Override
     public void onStart(){
         super.onStart();
-        trackRatingBar.setOnRatingBarChangeListener(ratingBarChangeListener);
+
         lfmBanButton.setOnClickListener(lfmBanClick);
         lfmLoveButton.setOnClickListener(lfmLoveClick);
         menuLibrary.setOnClickListener(libraryButtonClick);
@@ -71,7 +67,7 @@ public class DrawerFragment extends RoboSherlockFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_sliding_menu, container, false);
+        return inflater.inflate(R.layout.ui_fragment_drawer, container, false);
     }
 
     @Override
@@ -80,15 +76,6 @@ public class DrawerFragment extends RoboSherlockFragment {
 		super.onDestroy();
         afProvider.addActiveFragment(this);
     }
-
-    private RatingBar.OnRatingBarChangeListener ratingBarChangeListener = new RatingBar.OnRatingBarChangeListener() {
-        @Override
-        public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-            if(fromUser){
-                bus.post(new MessageEvent(UserInputEvent.RequestRating, Float.toString(rating)));
-            }
-        }
-    };
 
     private ImageButton.OnClickListener lfmLoveClick = new ImageButton.OnClickListener() {
         @Override
@@ -111,6 +98,7 @@ public class DrawerFragment extends RoboSherlockFragment {
 
             SimpleLibrarySearchFragment slsFragment = new SimpleLibrarySearchFragment();
             replaceFragment(slsFragment);
+            closeDrawer();
         }
     };
 
@@ -128,6 +116,7 @@ public class DrawerFragment extends RoboSherlockFragment {
         public void onClick(View view) {
             NowPlayingFragment npFragment = new NowPlayingFragment();
             replaceFragment(npFragment);
+            closeDrawer();
         }
     };
 
@@ -137,14 +126,9 @@ public class DrawerFragment extends RoboSherlockFragment {
         public void onClick(View view) {
             LyricsFragment lFragment = new LyricsFragment();
             replaceFragment(lFragment);
+            closeDrawer();
         }
     };
-
-    public void setRating(float rating){
-        if(trackRatingBar!=null){
-            trackRatingBar.setRating(rating);
-        }
-    }
 
     public void replaceFragment(Fragment fragment){
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -152,6 +136,10 @@ public class DrawerFragment extends RoboSherlockFragment {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
         ((RoboSherlockFragmentActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void closeDrawer() {
+        ((MainFragmentActivity)afProvider.getActivity()).closeDrawer();
     }
 
 

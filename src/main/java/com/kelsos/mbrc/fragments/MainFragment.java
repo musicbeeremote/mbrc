@@ -9,10 +9,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.SeekBar;
-import android.widget.TextView;
+import android.view.animation.*;
+import android.widget.*;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -77,6 +75,10 @@ public class MainFragment extends RoboSherlockFragment
 	ImageButton connectivityIndicator;
 	@InjectView(R.id.main_album_cover_image_view)
 	ImageView albumCover;
+    @InjectView(R.id.ratingWrapper)
+    LinearLayout ratingWrapper;
+    @InjectView(R.id.track_rating_bar)
+    RatingBar trackRating;
 
 	// Injects
 	@Inject protected Bus bus;
@@ -210,6 +212,9 @@ public class MainFragment extends RoboSherlockFragment
 	{
 		try
 		{
+            ratingWrapper.setVisibility(View.INVISIBLE);
+            trackRating.setOnRatingBarChangeListener(ratingChangeListener);
+
 			playPauseButton.setOnClickListener(playButtonListener);
 			previousButton.setOnClickListener(previousButtonListener);
 			nextButton.setOnClickListener(nextButtonListener);
@@ -223,12 +228,26 @@ public class MainFragment extends RoboSherlockFragment
 			repeatButton.setOnClickListener(repeatButtonListener);
 			connectivityIndicator.setOnClickListener(connectivityIndicatorListener);
 			connectivityIndicator.setOnLongClickListener(connectivityIndicatorLongClickListener);
+            albumCover.setOnClickListener(coverOnClick);
 		} catch (Exception ignore)
 		{
 
 		}
 
 	}
+
+    public void updateRating(float rating){
+        if(trackRating!=null){
+            trackRating.setRating(rating);
+        }
+    }
+
+    private RatingBar.OnRatingBarChangeListener ratingChangeListener = new RatingBar.OnRatingBarChangeListener(){
+        @Override
+        public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingRating, v)));
+        }
+    };
 
 	/**
 	 * Given a boolean state this function updates the Scrobbler button with the proper state.
@@ -611,4 +630,50 @@ public class MainFragment extends RoboSherlockFragment
 		{
 		}
 	};
+
+    private ImageView.OnClickListener coverOnClick = new ImageView.OnClickListener() {
+
+        boolean isActive = false;
+        @Override
+        public void onClick(View view) {
+
+            if (!isActive) {
+                int fadeInDuration = 600;
+                int timeBetween = 3000;
+                int fadeOutDuration = 1000;
+
+                Animation fadeIn = new AlphaAnimation(0, 1);
+                fadeIn.setInterpolator(new DecelerateInterpolator());
+                fadeIn.setDuration(fadeInDuration);
+
+                Animation fadeOut = new AlphaAnimation(1, 0);
+                fadeOut.setInterpolator(new AccelerateInterpolator());
+                fadeOut.setStartOffset(fadeInDuration + timeBetween);
+                fadeOut.setDuration(fadeOutDuration);
+
+                AnimationSet animation = new AnimationSet(false);
+                animation.addAnimation(fadeIn);
+                animation.addAnimation(fadeOut);
+                animation.setRepeatCount(1);
+
+                ratingWrapper.startAnimation(animation);
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        isActive = true;
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        isActive = false;
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                        ||
+                    }
+                });
+            }
+        }
+    };
 }

@@ -13,8 +13,6 @@ public class SlidingMenuCommandRegistration {
 
     @Inject
     public static void register(Controller controller){
-        controller.register(ModelEvent.ModelRatingUpdated, VisualUpdateRatingCommand.class);
-        controller.register(UserInputEvent.RequestRating, RequestRatingChangeCommand.class);
         controller.register(UserInputEvent.RequestLastFmBan, RequestLfmBan.class);
         controller.register(UserInputEvent.RequestLastFmLove, RequestLfmLove.class);
     }

@@ -50,15 +50,19 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
         mDrawer.setContentView(R.layout.main_layout);
         mDrawer.setMenuView(R.layout.sliding_menu_frame);
         if (isTablet()) {
-            mDrawer.setMenuSize(400);
+            mDrawer.setMenuSize(350);
         }
 
 
         DrawerFragment smFragment = new DrawerFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.sliding_menu_placeholder,smFragment).commit();
-
-
 	}
+
+    public void closeDrawer() {
+        if (mDrawer!=null) {
+            mDrawer.closeMenu();
+        }
+    }
 
     public boolean isTablet(){
         boolean value = false;
