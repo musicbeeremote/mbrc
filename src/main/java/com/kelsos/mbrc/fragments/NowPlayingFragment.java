@@ -110,7 +110,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		return inflater.inflate(R.layout.nowplayinglist, container, false);
+		return inflater.inflate(R.layout.ui_fragment_nowplaying, container, false);
 	}
 
 	@Override

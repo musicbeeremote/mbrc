@@ -187,6 +187,7 @@ public class SocketService
 					{
 						final String incoming = input.readLine();
 						if (incoming == null) throw new IOException();
+                        if (incoming.length() > 0)
 							informEventBus(new MessageEvent(SocketEvent.SocketDataAvailable, incoming));
 					} catch (IOException e)
 					{

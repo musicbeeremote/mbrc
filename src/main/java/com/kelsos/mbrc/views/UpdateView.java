@@ -10,7 +10,7 @@ public class UpdateView extends RoboSherlockActivity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.update_view);
+		setContentView(R.layout.ui_activity_update);
 		getSupportActionBar().setTitle(R.string.update_view);
 	}
 	@Override

@@ -50,7 +50,7 @@ public class ProtocolHandler
 	 */
 	public void answerProcessor(String answer)
 	{
-        Log.d("Protocol", "Processing answer:\t" + answer);
+        Log.d("Protocol", "Processing answer:\t" + answer + '\t' + "aL:\t" + answer.length());
 		try
 		{
 			String[] replies = answer.split("\r\n");

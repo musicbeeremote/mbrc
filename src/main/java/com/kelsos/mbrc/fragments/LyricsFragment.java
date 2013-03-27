@@ -44,7 +44,7 @@ public class LyricsFragment extends RoboSherlockFragment
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.lyrics, container, false);
+		return inflater.inflate(R.layout.ui_fragment_lyrics, container, false);
 	}
 
 	@Override
