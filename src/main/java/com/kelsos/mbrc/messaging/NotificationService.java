@@ -92,7 +92,7 @@ public class NotificationService
 		PendingIntent notificationPendingIntent = PendingIntent.getActivity(context,0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 		mBuilder.setContentIntent(notificationPendingIntent);
 
-		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.notification_control);
+		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.ui_notification_control);
 		Intent playPressedIntent = new Intent(NOTIFICATION_PLAY_PRESSED);
 		PendingIntent mediaPendingIntent = PendingIntent.getBroadcast(context, 1,playPressedIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 		views.setOnClickPendingIntent(R.id.notification_play,mediaPendingIntent);

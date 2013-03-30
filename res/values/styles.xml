@@ -13,4 +13,9 @@
         <item name="android:drawablePadding">16dp</item>
         <item name="android:gravity">center_vertical</item>
     </style>
+    <style name="Rating"/>
+    <style name="Rating.Normal">
+        <item name="android:minHeight">35dp</item>
+        <item name="android:maxHeight">35dp</item>
+    </style>
 </resources>

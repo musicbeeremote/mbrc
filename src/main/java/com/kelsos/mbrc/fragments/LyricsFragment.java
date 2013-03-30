@@ -38,7 +38,7 @@ public class LyricsFragment extends RoboSherlockFragment
     public void onStart(){
         super.onStart();
         String array[] = {""};
-        lyricsView.setAdapter(new ArrayAdapter<String>(getActivity(),R.layout.lyrics_line_item,array));
+        lyricsView.setAdapter(new ArrayAdapter<String>(getActivity(),R.layout.ui_list_lyrics_item,array));
         bus.post(new MessageEvent(UserInputEvent.RequestLyrics));
     }
 
@@ -68,7 +68,7 @@ public class LyricsFragment extends RoboSherlockFragment
 	public void updateLyricsData(String lyrics, String artist, String title)
 	{
 		String array[] = lyrics.split("\r\n");
-		lyricsView.setAdapter(new ArrayAdapter<String>(getActivity(),R.layout.lyrics_line_item,array));
+		lyricsView.setAdapter(new ArrayAdapter<String>(getActivity(),R.layout.ui_list_lyrics_item,array));
 		trackInfo.setText(artist + " - " + title);
 	}
 }

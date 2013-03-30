@@ -20,7 +20,7 @@
             android:title="@string/settings_miscellaneous_reduce_volume" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preferences_category_about">
-        <Preference android:summary="0.2.3.1" android:title="@string/preferences_about_version"/>
+        <Preference android:summary="0.3 DEV" android:title="@string/preferences_about_version"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

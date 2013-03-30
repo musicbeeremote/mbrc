@@ -23,7 +23,7 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-		setContentView(R.layout.main_layout);
+		setContentView(R.layout.ui_main_container);
 
         if (findViewById(R.id.fragment_container)!=null){
             if(savedInstanceState!=null){
@@ -47,8 +47,8 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mDrawer = MenuDrawer.attach(this);
-        mDrawer.setContentView(R.layout.main_layout);
-        mDrawer.setMenuView(R.layout.sliding_menu_frame);
+        mDrawer.setContentView(R.layout.ui_main_container);
+        mDrawer.setMenuView(R.layout.ui_drawer_placeholder);
         if (isTablet()) {
             mDrawer.setMenuSize(350);
         }

@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +13,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.ShareActionProvider;
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
@@ -28,8 +25,6 @@ import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.others.Const;
 import com.kelsos.mbrc.others.Protocol;
-import com.kelsos.mbrc.views.AppPreferenceView;
-import com.kelsos.mbrc.views.MainFragmentActivity;
 import com.squareup.otto.Bus;
 import roboguice.inject.InjectView;
 
@@ -79,6 +74,10 @@ public class MainFragment extends RoboSherlockFragment
     LinearLayout ratingWrapper;
     @InjectView(R.id.track_rating_bar)
     RatingBar trackRating;
+    @InjectView(R.id.loveWrapper)
+    LinearLayout loveWrapper;
+    @InjectView(R.id.lfmLove)
+    ImageButton lfmLoveButton;
 
 	// Injects
 	@Inject protected Bus bus;
@@ -105,7 +104,7 @@ public class MainFragment extends RoboSherlockFragment
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.main, container, false);
+		return inflater.inflate(R.layout.ui_fragment_main, container, false);
 	}
 
 	@Override
@@ -115,7 +114,7 @@ public class MainFragment extends RoboSherlockFragment
 		afProvide.addActiveFragment(this);
 		RegisterListeners();
 		bus.post(new MessageEvent(UserInputEvent.RequestMainViewUpdate));
-		bus.post(new MessageEvent(UserInputEvent.RequestPosition));
+
 	}
 
 	@Override
@@ -124,7 +123,7 @@ public class MainFragment extends RoboSherlockFragment
 		super.onResume();
 		afProvide.addActiveFragment(this);
 		bus.post(new MessageEvent(UserInputEvent.RequestMainViewUpdate));
-		bus.post(new MessageEvent(UserInputEvent.RequestPosition));
+		bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingPosition,true)));
 	}
 
 	@Override
@@ -213,7 +212,9 @@ public class MainFragment extends RoboSherlockFragment
 		try
 		{
             ratingWrapper.setVisibility(View.INVISIBLE);
+            loveWrapper.setVisibility(View.INVISIBLE);
             trackRating.setOnRatingBarChangeListener(ratingChangeListener);
+            lfmLoveButton.setOnClickListener(lfmLoveClicked);
 
 			playPauseButton.setOnClickListener(playButtonListener);
 			previousButton.setOnClickListener(previousButtonListener);
@@ -338,6 +339,7 @@ public class MainFragment extends RoboSherlockFragment
 				playPauseButton.setTag("Playing");
 				stopButton.setImageResource(R.drawable.ic_media_stop);
 				stopButton.setEnabled(true);				/* Start the animation if the track is playing*/
+                bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingPosition, true)));
 				trackProgressAnimation();
 				break;
 			case Paused:
@@ -464,6 +466,7 @@ public class MainFragment extends RoboSherlockFragment
 				int currentProgress = trackProgressSlider.getProgress() / 1000;
 				final int currentMinutes = currentProgress / 60;
 				final int currentSeconds = currentProgress % 60;
+                //TODO: check if activity is null
 				getActivity().runOnUiThread(new Runnable()
 				{
 					public void run()
@@ -657,6 +660,7 @@ public class MainFragment extends RoboSherlockFragment
                 animation.setRepeatCount(1);
 
                 ratingWrapper.startAnimation(animation);
+                loveWrapper.startAnimation(animation);
                 animation.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
@@ -674,6 +678,14 @@ public class MainFragment extends RoboSherlockFragment
                     }
                 });
             }
+        }
+    };
+
+    private ImageButton.OnClickListener lfmLoveClicked = new ImageButton.OnClickListener(){
+
+        @Override
+        public void onClick(View view) {
+            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingLfmRating, Const.TOGGLE)));
         }
     };
 }

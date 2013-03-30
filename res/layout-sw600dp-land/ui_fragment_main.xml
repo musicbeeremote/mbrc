@@ -97,11 +97,32 @@
 
         <LinearLayout
                 android:orientation="vertical"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="#99000000"
+                android:layout_gravity="right|top"
+                android:id="@+id/loveWrapper"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="1dp">
+
+            <ImageButton
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/lfmLove"
+                    android:background="@drawable/selectable_background_mbrc_default"
+                    />
+        </LinearLayout>
+
+        <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#99000000"
                 android:layout_gravity="center_horizontal|bottom"
-                android:id="@+id/ratingWrapper">
+                android:id="@+id/ratingWrapper"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginBottom="1dp">
 
             <RatingBar
                     android:id="@+id/track_rating_bar"

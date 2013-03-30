@@ -43,7 +43,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
 
 	public void updateListData(ArrayList<MusicTrack> nowPlayingList, int playingTrackIndex)
 	{
-		adapter = new PlaylistArrayAdapter(getActivity(), R.layout.playlistview_item, nowPlayingList);
+		adapter = new PlaylistArrayAdapter(getActivity(), R.layout.ui_list_track_item, nowPlayingList);
 		setListAdapter(adapter);
 		adapter.setPlayingTrackIndex(playingTrackIndex);
 		this.getListView().setSelection(playingTrackIndex);

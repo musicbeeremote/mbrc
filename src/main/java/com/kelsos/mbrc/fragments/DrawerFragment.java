@@ -29,12 +29,6 @@ public class DrawerFragment extends RoboSherlockFragment {
     @Inject
     Bus bus;
 
-    @InjectView(R.id.lfmLoveButton)
-    ImageButton lfmLoveButton;
-
-    @InjectView(R.id.lfmBanButton)
-    ImageButton lfmBanButton;
-
     @InjectView(R.id.menuLibrary)
     TextView menuLibrary;
 
@@ -56,9 +50,6 @@ public class DrawerFragment extends RoboSherlockFragment {
     @Override
     public void onStart(){
         super.onStart();
-
-        lfmBanButton.setOnClickListener(lfmBanClick);
-        lfmLoveButton.setOnClickListener(lfmLoveClick);
         menuLibrary.setOnClickListener(libraryButtonClick);
         menuSettings.setOnClickListener(settingsButtonClick);
         menuNowPlaying.setOnClickListener(nowPlayingButtonClick);
@@ -76,20 +67,6 @@ public class DrawerFragment extends RoboSherlockFragment {
 		super.onDestroy();
         afProvider.addActiveFragment(this);
     }
-
-    private ImageButton.OnClickListener lfmLoveClick = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            bus.post(new MessageEvent(UserInputEvent.RequestLastFmLove));
-        }
-    };
-
-    private ImageButton.OnClickListener lfmBanClick = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View view){
-            bus.post(new MessageEvent(UserInputEvent.RequestLastFmBan));
-        }
-    };
 
     private TextView.OnClickListener libraryButtonClick = new TextView.OnClickListener() {
 

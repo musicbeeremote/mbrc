@@ -17,7 +17,9 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.data.DataArrayAdapter;
+import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
 
@@ -54,7 +56,7 @@ public class SimpleLibrarySearchFragment extends RoboSherlockListFragment implem
         mSearchView.setIconified(true);
         mSearchItem.collapseActionView();
 
-        bus.post(new MessageEvent(pContext,query));
+        bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(pContext,query)));
 
         return false;
     }
@@ -73,7 +75,7 @@ public class SimpleLibrarySearchFragment extends RoboSherlockListFragment implem
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        return inflater.inflate(R.layout.simple_list_layout, container, false);
+        return inflater.inflate(R.layout.ui_list_simple, container, false);
     }
 
     @Override
@@ -152,7 +154,7 @@ public class SimpleLibrarySearchFragment extends RoboSherlockListFragment implem
 
     public void updateListData(ArrayList<String> list)
     {
-        adapter = new DataArrayAdapter(getActivity(), R.layout.playlistview_item, list);
+        adapter = new DataArrayAdapter(getActivity(), R.layout.ui_list_track_item, list);
         setListAdapter(adapter);
     }
 }
