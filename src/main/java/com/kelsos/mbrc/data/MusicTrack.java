@@ -1,9 +1,17 @@
 package com.kelsos.mbrc.data;
 
+import org.codehaus.jackson.JsonNode;
+
 public class MusicTrack {
     private String title;
     private String artist;
     private int position;
+
+    public MusicTrack(JsonNode node) {
+        this.artist = node.path("Artist").getTextValue();
+        this.title = node.path("Title").getTextValue();
+        this.position = node.path("Position").getIntValue();
+    }
 
     public MusicTrack(String artist, String title) {
         this.artist = artist;

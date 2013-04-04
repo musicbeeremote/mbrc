@@ -6,6 +6,7 @@ import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.fragments.MainFragment;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
+import org.codehaus.jackson.node.ObjectNode;
 
 import java.util.LinkedHashMap;
 
@@ -17,10 +18,10 @@ public class UpdatePlaybackPositionCommand implements ICommand
 	public void execute(IEvent e)
 	{
 
-        LinkedHashMap<String, Integer> map = (LinkedHashMap<String, Integer>) e.getData();
+        ObjectNode oNode = (ObjectNode)e.getData();
 
-		final int current = map.get("current");
-		final int total = map.get("total");
+		final int current = oNode.path("current").asInt();
+		final int total = oNode.path("total").asInt();
 		if (afProvider.getActiveFragment(MainFragment.class) != null)
 		{
 			Activity cActivity = afProvider.getActiveFragment(MainFragment.class).getActivity();

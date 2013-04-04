@@ -5,19 +5,18 @@ import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
 import com.kelsos.mbrc.others.Protocol;
-
-import java.util.LinkedHashMap;
+import org.codehaus.jackson.node.ObjectNode;
 
 public class UpdatePlayerStatus implements ICommand {
     @Inject
     MainDataModel model;
     @Override
     public void execute(IEvent e) {
-        LinkedHashMap<String, String> map = (LinkedHashMap<String, String>)e.getData();
-        model.setPlayState(map.get(Protocol.PlayerState));
-        model.setMuteState(map.get(Protocol.PlayerMute));
-        model.setRepeatState(map.get(Protocol.PlayerRepeat));
-        model.setShuffleState(Boolean.parseBoolean(map.get(Protocol.PlayerShuffle)));
-        model.setVolume(Integer.parseInt(map.get(Protocol.PlayerVolume)));
+        ObjectNode node = (ObjectNode)e.getData();
+        model.setPlayState(node.path(Protocol.PlayerState).asText());
+        model.setMuteState(node.path(Protocol.PlayerMute).asText());
+        model.setRepeatState(node.path(Protocol.PlayerRepeat).asText());
+        model.setShuffleState(Boolean.parseBoolean(node.path(Protocol.PlayerShuffle).asText()));
+        model.setVolume(Integer.parseInt(node.path(Protocol.PlayerVolume).asText()));
     }
 }

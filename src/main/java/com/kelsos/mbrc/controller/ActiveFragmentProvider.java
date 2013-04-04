@@ -7,7 +7,7 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.configuration.LyricsViewCommandRegistration;
 import com.kelsos.mbrc.configuration.MainViewCommandRegistration;
 import com.kelsos.mbrc.configuration.PlaylistViewCommandRegistration;
-import com.kelsos.mbrc.configuration.SlidingMenuCommandRegistration;
+import com.kelsos.mbrc.configuration.SimpleLibraryCommandRegistration;
 import com.kelsos.mbrc.fragments.*;
 
 import java.util.ArrayList;
@@ -73,9 +73,9 @@ public class ActiveFragmentProvider
 		{
 			PlaylistViewCommandRegistration.register(controller);
 		}
-        else if(fragment.getClass() == DrawerFragment.class)
+        else if(fragment.getClass() == SimpleLibrarySearchFragment.class)
         {
-            SlidingMenuCommandRegistration.register(controller);
+            SimpleLibraryCommandRegistration.register(controller);
         }
 	}
 
@@ -92,7 +92,10 @@ public class ActiveFragmentProvider
 		else if(fragment.getClass() == NowPlayingFragment.class)
 		{
 			PlaylistViewCommandRegistration.unRegister(controller);
-		}
+		} else if (fragment.getClass() == SimpleLibrarySearchFragment.class) {
+            SimpleLibraryCommandRegistration.unRegister(controller);
+        }
+
 	}
 
 

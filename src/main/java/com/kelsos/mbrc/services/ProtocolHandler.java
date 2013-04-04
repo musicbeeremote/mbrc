@@ -8,6 +8,7 @@ import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
@@ -58,9 +59,10 @@ public class ProtocolHandler
 			{
 				if (replies.length>1)Log.d("Protocol","Processing current:\t" + reply);
 
-                SocketMessage msg = mapper.readValue(reply, SocketMessage.class);
+                JsonNode node = mapper.readValue(reply, JsonNode.class);
+                String context = node.path("context").getTextValue();
 
-				if (msg.getContext().contains(Protocol.ClientNotAllowed))
+				if (context.contains(Protocol.ClientNotAllowed))
 				{
 					bus.post(new MessageEvent(ProtocolEvent.InformClientNotAllowed));
 					return;
@@ -68,12 +70,12 @@ public class ProtocolHandler
 
 				if (!isHandshakeComplete)
 				{
-					if (msg.getContext().contains(Protocol.Player))
+					if (context.contains(Protocol.Player))
 					{
 						bus.post(new MessageEvent(ProtocolEvent.InitiateProtocolRequest));
-					} else if (msg.getContext().contains(Protocol.Protocol))
+					} else if (context.contains(Protocol.Protocol))
 					{
-						ServerProtocolVersion = Double.parseDouble(msg.getDataString());
+						ServerProtocolVersion = node.path("data").getDoubleValue();
 						if(ServerProtocolVersion < 2)
 						{
 							bus.post(new MessageEvent(ProtocolEvent.InformClientPluginOutOfDate));
@@ -86,7 +88,7 @@ public class ProtocolHandler
 					}
 				}
 
-                bus.post(new MessageEvent(msg.getContext(), msg.getData()));
+                bus.post(new MessageEvent(context, node.path("data")));
 			}
 
 		} catch (IOException e)
