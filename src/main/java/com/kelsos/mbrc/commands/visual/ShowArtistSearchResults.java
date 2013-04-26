@@ -4,14 +4,13 @@ import android.app.Activity;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.data.ArtistEntry;
-import com.kelsos.mbrc.fragments.MainFragment;
 import com.kelsos.mbrc.fragments.SimpleLibrarySearchFragment;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ArrayNode;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 public class ShowArtistSearchResults implements ICommand {
     @Inject
@@ -21,8 +20,14 @@ public class ShowArtistSearchResults implements ICommand {
         if(afProvider.getActiveFragment(SimpleLibrarySearchFragment.class)!=null)
         {
             ArrayList<ArtistEntry> artists = new ArrayList<ArtistEntry>();
-            JsonNode node = (JsonNode)e.getData();
+            ArrayNode node = (ArrayNode)e.getData();
+            for(int i = 0; i < node.size(); i++) {
+                JsonNode jNode = node.get(i);
+                ArtistEntry entry = new ArtistEntry(jNode);
+                artists.add(entry);
+            }
 
+            final ArrayList<ArtistEntry> fi = artists;
 
             Activity cActivity = afProvider.getActiveFragment(SimpleLibrarySearchFragment.class).getActivity();
             cActivity.runOnUiThread(new Runnable()
@@ -30,7 +35,8 @@ public class ShowArtistSearchResults implements ICommand {
                 @Override
                 public void run()
                 {
-                    SimpleLibrarySearchFragment fragment = ((SimpleLibrarySearchFragment)afProvider.getActiveFragment(MainFragment.class));
+                    SimpleLibrarySearchFragment fragment = ((SimpleLibrarySearchFragment)afProvider.getActiveFragment(SimpleLibrarySearchFragment.class));
+                    fragment.updateListData(fi);
 
                 }
             });

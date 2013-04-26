@@ -18,4 +18,5 @@
 
 <resources>
     <color name="pressed_mbrc_default">#CC33B5E5</color>
+    <color name="mbrc_background">#ff464646</color>
 </resources>

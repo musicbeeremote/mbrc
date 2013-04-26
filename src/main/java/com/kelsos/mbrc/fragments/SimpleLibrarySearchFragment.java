@@ -16,6 +16,7 @@ import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFra
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
+import com.kelsos.mbrc.data.ArtistEntry;
 import com.kelsos.mbrc.data.DataArrayAdapter;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
@@ -152,7 +153,7 @@ public class SimpleLibrarySearchFragment extends RoboSherlockListFragment implem
         ((RoboSherlockFragmentActivity)getActivity()).getSupportActionBar().setListNavigationCallbacks(list, this);
     }
 
-    public void updateListData(ArrayList<String> list)
+    public void updateListData(ArrayList<ArtistEntry> list)
     {
         adapter = new DataArrayAdapter(getActivity(), R.layout.ui_list_track_item, list);
         setListAdapter(adapter);

@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.commands;
 
 import android.app.Activity;
-import android.util.Log;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.data.MusicTrack;
@@ -11,11 +10,8 @@ import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 
 public class NowPlayingListData implements ICommand
 {
@@ -42,8 +38,6 @@ public class NowPlayingListData implements ICommand
             {
                 index = i;
             }
-            Log.d("MBRC", String.valueOf(i));
-            Log.d("MBRC", track.getArtist() +'\t'+track.getTitle());
         }
 
 		final int trackIndex = index;

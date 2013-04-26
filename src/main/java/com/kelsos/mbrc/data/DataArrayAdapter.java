@@ -7,19 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
 
 import java.util.ArrayList;
 
-public class DataArrayAdapter extends ArrayAdapter<String> {
+public class DataArrayAdapter extends ArrayAdapter<ArtistEntry> {
 
     private Context mContext;
     private int mResource;
-    private ArrayList<String> mData;
+    private ArrayList<ArtistEntry> mData;
 
-    public DataArrayAdapter(Context context, int resource, ArrayList<String> objects) {
+    public DataArrayAdapter(Context context, int resource, ArrayList<ArtistEntry> objects) {
         super(context, resource, objects);
         this.mResource = resource;
         this.mContext = context;
@@ -43,8 +42,8 @@ public class DataArrayAdapter extends ArrayAdapter<String> {
             holder = (Holder) row.getTag();
         }
 
-        String str = mData.get(position);
-        holder.title.setText(str);
+        ArtistEntry str = mData.get(position);
+        holder.title.setText(str.getArtist());
 
         //holder.trackPlaying.setOnClickListener(showContextMenu);
 
