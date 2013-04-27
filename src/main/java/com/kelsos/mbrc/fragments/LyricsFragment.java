@@ -11,11 +11,15 @@ import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.adapters.LyricsAdapter;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.squareup.otto.Bus;
 import roboguice.inject.InjectView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class LyricsFragment extends RoboSherlockFragment
 {
@@ -38,7 +42,10 @@ public class LyricsFragment extends RoboSherlockFragment
     public void onStart(){
         super.onStart();
         String array[] = {""};
-        lyricsView.setAdapter(new ArrayAdapter<String>(getActivity(),R.layout.ui_list_lyrics_item,array));
+        lyricsView.setAdapter(new LyricsAdapter(getActivity(),R.layout.ui_list_lyrics_item,
+                new ArrayList<String>(Arrays.asList(array))
+
+        ));
         bus.post(new MessageEvent(UserInputEvent.RequestLyrics));
     }
 
@@ -68,7 +75,8 @@ public class LyricsFragment extends RoboSherlockFragment
 	public void updateLyricsData(String lyrics, String artist, String title)
 	{
 		String array[] = lyrics.split("\r\n");
-		lyricsView.setAdapter(new ArrayAdapter<String>(getActivity(),R.layout.ui_list_lyrics_item,array));
+		lyricsView.setAdapter(new LyricsAdapter(getActivity(),R.layout.ui_list_lyrics_item,
+                new ArrayList<String>(Arrays.asList(array))));
 		trackInfo.setText(artist + " - " + title);
 	}
 }

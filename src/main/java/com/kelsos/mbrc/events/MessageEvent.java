@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.events;
 
 import com.kelsos.mbrc.interfaces.IEvent;
+import org.codehaus.jackson.node.TextNode;
 
 public class MessageEvent implements IEvent{
 
@@ -32,7 +33,9 @@ public class MessageEvent implements IEvent{
 
     public String getDataString() {
         String result = null;
-        if (data.getClass() == String.class) {
+        if (data.getClass() == TextNode.class) {
+            result = ((TextNode)data).asText();
+        } else if (data.getClass() == String.class) {
             result = (String)data;
         }
         return result;

@@ -28,7 +28,10 @@ android:layout_gravity="center_vertical|right"
         android:layout_centerInParent="true"
         android:layout_marginTop="15dp"
         android:text="@string/update_view_message_p_one"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:typeface="normal"
+        android:singleLine="false"
+        android:textSize="16sp"/>
 
 
 
@@ -41,7 +44,9 @@ android:layout_gravity="center_vertical|right"
         android:layout_below="@+id/textView2"
         android:layout_marginTop="15dp"
         android:text="@string/update_view_message_p_two"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="16sp"
+            />
 
     <TextView
         android:id="@+id/textView4"
@@ -51,6 +56,9 @@ android:layout_gravity="center_vertical|right"
         android:layout_below="@+id/textView3"
         android:layout_marginTop="15dp"
         android:text="@string/update_view_message_p_three"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="16sp"
+        android:autoLink="web"
+        android:autoText="false"/>
 
 </RelativeLayout>

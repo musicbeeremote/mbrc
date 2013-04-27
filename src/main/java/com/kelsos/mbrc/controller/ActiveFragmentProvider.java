@@ -73,7 +73,7 @@ public class ActiveFragmentProvider
 		{
 			PlaylistViewCommandRegistration.register(controller);
 		}
-        else if(fragment.getClass() == SimpleLibrarySearchFragment.class)
+        else if(fragment.getClass() == SearchFragment.class)
         {
             SimpleLibraryCommandRegistration.register(controller);
         }
@@ -92,7 +92,7 @@ public class ActiveFragmentProvider
 		else if(fragment.getClass() == NowPlayingFragment.class)
 		{
 			PlaylistViewCommandRegistration.unRegister(controller);
-		} else if (fragment.getClass() == SimpleLibrarySearchFragment.class) {
+		} else if (fragment.getClass() == SearchFragment.class) {
             SimpleLibraryCommandRegistration.unRegister(controller);
         }
 

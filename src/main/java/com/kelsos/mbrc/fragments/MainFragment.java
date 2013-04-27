@@ -99,7 +99,6 @@ public class MainFragment extends RoboSherlockFragment
 		afProvide.addActiveFragment(this);
 		userChangingVolume = false;
 		bus.post(new MessageEvent(UserInputEvent.RequestMainViewUpdate));
-		SetTextViewTypeface();
 	}
 
 	@Override
@@ -111,6 +110,7 @@ public class MainFragment extends RoboSherlockFragment
 	public void onStart()
 	{
 		super.onStart();
+        SetTextViewTypeface();
 		afProvide.addActiveFragment(this);
 		RegisterListeners();
 		bus.post(new MessageEvent(UserInputEvent.RequestMainViewUpdate));

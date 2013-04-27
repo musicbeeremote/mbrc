@@ -1,28 +1,32 @@
-package com.kelsos.mbrc.data;
+package com.kelsos.mbrc.adapters;
 
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.data.ArtistEntry;
 
 import java.util.ArrayList;
 
-public class DataArrayAdapter extends ArrayAdapter<ArtistEntry> {
+public class LyricsAdapter extends ArrayAdapter<String> {
 
     private Context mContext;
     private int mResource;
-    private ArrayList<ArtistEntry> mData;
+    private ArrayList<String> mData;
+    private Typeface robotoLight;
 
-    public DataArrayAdapter(Context context, int resource, ArrayList<ArtistEntry> objects) {
+    public LyricsAdapter(Context context, int resource, ArrayList<String> objects) {
         super(context, resource, objects);
         this.mResource = resource;
         this.mContext = context;
         this.mData = objects;
+        robotoLight = Typeface.createFromAsset(mContext.getAssets(), "fonts/roboto_light.ttf");
     }
 
     @Override
@@ -35,34 +39,22 @@ public class DataArrayAdapter extends ArrayAdapter<ArtistEntry> {
             row = layoutInflater.inflate(mResource, parent, false);
 
             holder = new Holder();
-            holder.title = (TextView) row.findViewById(R.id.trackTitle);
+            holder.title = (TextView) row.findViewById(android.R.id.text1);
+            holder.title.setTypeface(robotoLight);
 
             row.setTag(holder);
         } else {
             holder = (Holder) row.getTag();
         }
 
-        ArtistEntry str = mData.get(position);
-        holder.title.setText(str.getArtist());
-
-        //holder.trackPlaying.setOnClickListener(showContextMenu);
+        String str = mData.get(position);
+        holder.title.setText(str);
 
         return row;
     }
 
-    private final View.OnClickListener showContextMenu = new View.OnClickListener()
-    {
-        @Override
-        public void onClick(View view)
-        {
-            view.showContextMenu();
-        }
-    };
-
     static class Holder {
         TextView title;
-        //ImageView trackPlaying;
-
     }
 
 }

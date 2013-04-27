@@ -8,7 +8,7 @@ android:layout_height="fill_parent"
                     android:layout_height="60dp"
                     android:layout_gravity="center_vertical"
                     android:clickable="false"
-                    android:background="@drawable/rectangle"
+                    android:background="@drawable/ui_list_item_background"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="5dp"
@@ -48,7 +48,7 @@ android:layout_height="fill_parent"
                 android:singleLine="true"
                 android:textColor="#AAAAAA"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textSize="15dp" />
+                android:textSize="14dp" />
 
 
 

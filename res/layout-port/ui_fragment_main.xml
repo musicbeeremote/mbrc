@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/main_track_info_one"
         android:layout_marginLeft="27dp"
-        android:layout_marginTop="1dp" >
+        android:layout_marginTop="3dp" >
 
         <FrameLayout
                 android:id="@+id/album_cover_area"
@@ -135,12 +135,12 @@
                 android:gravity="center"
                 android:maxHeight="5dp"
                 android:minHeight="5dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
+                android:paddingLeft="0.5dp"
+                android:paddingRight="0.5dp"
                 android:progress="0"
                 android:progressDrawable="@drawable/ic_duration_bar_progress"
                 android:secondaryProgress="0"
-                android:thumb="@drawable/ic_duration_thumb"
+                android:thumb="@null"
                 android:thumbOffset="6dp"
                 android:layout_alignParentRight="true"/>
 

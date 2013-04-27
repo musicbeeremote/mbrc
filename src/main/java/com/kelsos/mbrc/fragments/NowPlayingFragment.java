@@ -18,7 +18,7 @@ import com.google.inject.Injector;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.data.MusicTrack;
-import com.kelsos.mbrc.data.PlaylistArrayAdapter;
+import com.kelsos.mbrc.adapters.PlaylistArrayAdapter;
 import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.DragDropEvent;
 import com.kelsos.mbrc.events.MessageEvent;
@@ -66,7 +66,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
     public boolean onQueryTextSubmit(String query)
     {
 
-        bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingSearch, query));
+        bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingSearch, query.trim()));
 
         mSearchView.setIconified(true);
         mSearchItem.collapseActionView();
