@@ -16,9 +16,9 @@ import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFra
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter;
+import com.kelsos.mbrc.adapters.GenreEntryAdapter;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
-import com.kelsos.mbrc.data.ArtistEntry;
-import com.kelsos.mbrc.data.UserAction;
+import com.kelsos.mbrc.data.*;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.others.Protocol;
@@ -32,19 +32,16 @@ public class SearchFragment extends RoboSherlockListFragment implements SearchVi
     Bus bus;
     @Inject
     ActiveFragmentProvider afProvider;
-
     private String[] mSearchOptions;
-
     private SearchView mSearchView;
     private MenuItem mSearchItem;
-
     private String mCurrentFiltering;
-    private ArtistEntryAdapter adapter;
+    private ArrayAdapter<?> adapter;
 
     @Override
     public boolean onQueryTextSubmit(String query) {
         String pContext = "";
-        if(mCurrentFiltering.equals(mSearchOptions[0])){
+        if (mCurrentFiltering.equals(mSearchOptions[0])) {
             pContext = Protocol.LibrarySearchArtist;
         } else if (mCurrentFiltering.equals(mSearchOptions[1])) {
             pContext = Protocol.LibrarySearchAlbum;
@@ -57,7 +54,7 @@ public class SearchFragment extends RoboSherlockListFragment implements SearchVi
         mSearchView.setIconified(true);
         mSearchItem.collapseActionView();
 
-        bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(pContext,query.trim())));
+        bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(pContext, query.trim())));
 
         return false;
     }
@@ -74,63 +71,55 @@ public class SearchFragment extends RoboSherlockListFragment implements SearchVi
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ui_list_simple, container, false);
     }
 
     @Override
-    public void onStart()
-    {
+    public void onStart() {
         super.onStart();
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         afProvider.addActiveFragment(this);
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         afProvider.removeActiveFragment(this);
         super.onPause();
     }
 
     @Override
-    public void onStop()
-    {
+    public void onStop() {
         afProvider.removeActiveFragment(this);
         super.onStop();
     }
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         afProvider.removeActiveFragment(this);
         super.onDestroy();
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id)
-    {
+    public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         afProvider.addActiveFragment(this);
     }
 
     @Override
-    public void onCreateOptionsMenu (Menu menu, MenuInflater inflater){
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        mSearchView = new SearchView(((RoboSherlockFragmentActivity)getActivity()).getSupportActionBar().getThemedContext());
+        mSearchView = new SearchView(((RoboSherlockFragmentActivity) getActivity()).getSupportActionBar().getThemedContext());
         mSearchView.setQueryHint(getString(R.string.now_playing_search_hint));
         mSearchView.setIconifiedByDefault(true);
 
@@ -149,13 +138,28 @@ public class SearchFragment extends RoboSherlockListFragment implements SearchVi
         list.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
 
 
-        ((RoboSherlockFragmentActivity)getActivity()).getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        ((RoboSherlockFragmentActivity)getActivity()).getSupportActionBar().setListNavigationCallbacks(list, this);
+        ((RoboSherlockFragmentActivity) getActivity()).getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        ((RoboSherlockFragmentActivity) getActivity()).getSupportActionBar().setListNavigationCallbacks(list, this);
     }
 
-    public void updateListData(ArrayList<ArtistEntry> list)
-    {
+    public void updateArtistResults(ArrayList<ArtistEntry> list) {
         adapter = new ArtistEntryAdapter(getActivity(), R.layout.ui_list_single, list);
         setListAdapter(adapter);
     }
+
+    public void updateGenreResults(ArrayList<GenreEntry> list) {
+
+        adapter = new GenreEntryAdapter(getActivity(), R.layout.ui_list_single, list);
+        setListAdapter(adapter);
+    }
+
+    public void updateAlbumResults(ArrayList<AlbumEntry> list) {
+
+    }
+
+    public void updateTrackResults(ArrayList<TrackEntry> list) {
+
+    }
+
+
 }

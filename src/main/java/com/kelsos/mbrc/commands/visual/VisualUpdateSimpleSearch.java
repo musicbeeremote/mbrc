@@ -20,7 +20,7 @@ public class VisualUpdateSimpleSearch implements ICommand {
                 @Override
                 public void run()
                 {
-                   // ((SimpleLibrarySearchFragment) afp.getActiveFragment(SimpleLibrarySearchFragment.class)).updateListData(((MessageEvent)e).getList());
+                   // ((SimpleLibrarySearchFragment) afp.getActiveFragment(SimpleLibrarySearchFragment.class)).updateArtistResults(((MessageEvent)e).getList());
                 }
             });
         }
