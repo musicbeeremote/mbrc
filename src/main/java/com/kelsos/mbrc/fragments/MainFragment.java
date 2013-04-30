@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -471,8 +472,14 @@ public class MainFragment extends RoboSherlockFragment
 				{
 					public void run()
 					{
-						trackProgressSlider.setProgress(trackProgressSlider.getProgress() + timerPeriod);
-						trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
+                        try {
+                            if (trackProgressSlider == null) return;
+                            trackProgressSlider.setProgress(trackProgressSlider.getProgress() + timerPeriod);
+                            trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
+                        } catch (Exception ex) {
+                            Log.d("MBRC", "TimerEx", ex);
+                        }
+
 					}
 				});
 

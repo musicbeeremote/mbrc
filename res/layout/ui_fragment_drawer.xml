@@ -3,7 +3,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:orientation="vertical"
-                android:background="@drawable/menu_item_background">
+                android:background="@color/mbrc_background">
 
     <LinearLayout
             android:layout_width="fill_parent"
@@ -22,7 +22,7 @@
 
         <View
                 android:layout_width="fill_parent"
-                android:layout_height="2dp"
+                android:layout_height="1dp"
                 android:background="@color/mbrc_drawer_seperator"/>
 
         <TextView
@@ -37,7 +37,7 @@
 
         <View
                 android:layout_width="fill_parent"
-                android:layout_height="2dp"
+                android:layout_height="1dp"
                 android:background="@color/mbrc_drawer_seperator"/>
 
         <TextView
@@ -52,8 +52,8 @@
 
         <View
                 android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="#3b3b3b"/>
+                android:layout_height="1dp"
+                android:background="@color/mbrc_drawer_seperator"/>
 
         <TextView
                 android:layout_width="match_parent"

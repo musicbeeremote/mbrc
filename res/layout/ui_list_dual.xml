@@ -25,7 +25,11 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textSize="18dp"
                 android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"/>
+                android:layout_centerVertical="true"
+                android:layout_marginTop="5dp"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"/>
         <TextView
                 android:id="@+id/line_two"
                 android:layout_width="match_parent"
@@ -37,7 +41,12 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textSize="16dp"
                 android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"/>
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="5dp"
+                android:textColor="@color/mbrc_subtitle"/>
 
     </RelativeLayout>
 </FrameLayout>
