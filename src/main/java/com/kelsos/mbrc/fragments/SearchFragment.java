@@ -231,7 +231,7 @@ public class SearchFragment extends RoboSherlockListFragment implements SearchVi
         }
 
         UserAction ua = null;
-        switch ((int)mi.id) {
+        switch (item.getItemId()) {
             case QUEUE_NEXT:
                 ua = new UserAction(qContext, new Queue("next",query));
                 break;

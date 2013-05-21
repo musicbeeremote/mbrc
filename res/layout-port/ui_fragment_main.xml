@@ -121,6 +121,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/album_cover_area"
             android:layout_marginTop="5dp"
+            android:layout_alignRight="@+id/album_cover_area"
                 >
 
 
