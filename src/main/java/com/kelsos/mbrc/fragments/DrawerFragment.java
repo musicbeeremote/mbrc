@@ -122,7 +122,11 @@ public class DrawerFragment extends RoboSherlockFragment {
     }
 
     private void closeDrawer() {
-        ((MainFragmentActivity)afProvider.getActivity()).closeDrawer();
+        MainFragmentActivity activity = ((MainFragmentActivity)afProvider.getActivity());
+        if (activity != null)
+        {
+            activity.closeDrawer();
+        }
     }
 
 

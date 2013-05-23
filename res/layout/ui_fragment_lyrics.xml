@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:baselineAligned="true"
     android:gravity="top"
@@ -9,7 +10,7 @@
     <LinearLayout
         android:id="@+id/lyrics_view_title_label_space"
         android:layout_width="fill_parent"
-        android:layout_height="40dp"
+        android:layout_height="0dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:background="#222222"
@@ -52,5 +53,13 @@
         android:paddingLeft="8dp"
         android:paddingRight="32dp" >
     </ListView>
+
+    <fragment
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:name="com.kelsos.mbrc.fragments.MiniControlFragment"
+            android:layout="@layout/ui_fragment_mini_control"
+            tools:layout="@layout/ui_fragment_mini_control"
+            android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

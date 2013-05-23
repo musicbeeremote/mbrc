@@ -72,7 +72,7 @@
         <dependency>
             <groupId>com.actionbarsherlock</groupId>
             <artifactId>actionbarsherlock</artifactId>
-            <version>4.3.0</version>
+            <version>4.3.1</version>
             <type>apklib</type>
         </dependency>
 
@@ -121,7 +121,7 @@
 				<plugin>
 					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 					<artifactId>android-maven-plugin</artifactId>
-					<version>3.4.0</version>
+					<version>3.5.3</version>
 					<configuration>
 					   <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
 						<assetsDirectory>${project.basedir}/assets</assetsDirectory>
@@ -152,7 +152,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
+				<version>3.1</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
@@ -211,7 +211,7 @@
 					<plugin>
 						<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 						<artifactId>android-maven-plugin</artifactId>
-						<version>3.3.2</version>
+						<version>3.5.3</version>
 						<inherited>true</inherited>
 						<configuration>
 							<sign>
