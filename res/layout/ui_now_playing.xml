@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:id="@+id/track_cover"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"/>
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="100dp"
+            android:layout_height="fill_parent"
+            android:layout_toRightOf="@+id/track_cover"
+            android:layout_alignTop="@+id/track_cover"
+            android:id="@+id/linearLayout">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New Text"
+                android:id="@+id/track_title"
+                android:layout_gravity="left|center_vertical"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New Text"
+                android:id="@+id/track_artist"
+                android:layout_gravity="left|center_vertical"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/linearLayout">
+
+        <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/prev_track"/>
+
+        <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:id="@+id/play_pause"/>
+
+        <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/next_track"/>
+    </LinearLayout>
+
+</RelativeLayout>
