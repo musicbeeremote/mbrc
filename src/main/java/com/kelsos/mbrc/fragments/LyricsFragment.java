@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.actionbarsherlock.view.MenuItem;
@@ -28,7 +27,7 @@ public class LyricsFragment extends RoboSherlockFragment
 	@InjectView(R.id.lyrics_view_track_info_label)
 	TextView trackInfo;
 	@Inject
-	Bus bus;
+    Bus bus;
 	@Inject
 	ActiveFragmentProvider afProvider;
 

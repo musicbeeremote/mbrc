@@ -3,7 +3,6 @@ package com.kelsos.mbrc.services;
 import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.others.Protocol;

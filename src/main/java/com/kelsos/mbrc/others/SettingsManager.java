@@ -6,7 +6,6 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
-import com.kelsos.mbrc.messaging.NotificationService;
 import com.squareup.otto.Bus;
 
 import java.net.InetSocketAddress;

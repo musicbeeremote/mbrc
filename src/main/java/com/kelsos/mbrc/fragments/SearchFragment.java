@@ -26,7 +26,6 @@ import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.data.*;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
-import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
 

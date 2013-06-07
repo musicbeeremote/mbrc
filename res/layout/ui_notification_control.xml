@@ -2,7 +2,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
+	android:layout_height="wrap_content"
 	android:orientation="horizontal">
 
 	<ImageView
@@ -28,7 +28,7 @@
 			android:layout_width="wrap_content"
 			android:textSize="16dp"
 			android:textColor="#FFFFFF"
-			android:textStyle="bold" />
+            android:textStyle="bold"/>
 
 		<TextView
 			android:id="@+id/notification_artist"
@@ -44,20 +44,23 @@
 		android:background="@drawable/selectable_background_mbrc_default"
 		android:layout_gravity="center|right"
 		android:layout_height="48dp"
-		android:layout_width="48dp" />
+		android:layout_width="48dp"
+        android:src="@drawable/ic_np_play_holder"/>
 
 	<ImageButton
 		android:id="@+id/notification_next"
 		android:background="@drawable/selectable_background_mbrc_default"
 		android:layout_gravity="center|right"
 		android:layout_height="48dp"
-		android:layout_width="48dp" />
+		android:layout_width="48dp"
+        android:src="@drawable/ic_np_next_holder"/>
 
 	<ImageButton
 		android:id="@+id/notification_close"
 		android:background="@drawable/selectable_background_mbrc_default"
 		android:layout_gravity="center|right"
 		android:layout_height="48dp"
-		android:layout_width="48dp" />
+		android:layout_width="48dp"
+        android:src="@drawable/ic_np_not_collapse_holder"/>
 
 </LinearLayout>

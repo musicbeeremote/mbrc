@@ -20,7 +20,7 @@ import static android.app.AlertDialog.Builder;
 public class AppPreferenceView extends RoboSherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
 
 	@Inject
-	Bus bus;
+    Bus bus;
 
 	private EditTextPreference hostEditTextPreference;
     private EditTextPreference portEditTextPreference;

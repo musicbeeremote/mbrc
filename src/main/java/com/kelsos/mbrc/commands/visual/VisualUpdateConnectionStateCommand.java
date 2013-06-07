@@ -1,42 +1,23 @@
 package com.kelsos.mbrc.commands.visual;
 
-import android.app.Activity;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.enums.ConnectionStatus;
-import com.kelsos.mbrc.fragments.MainFragment;
+import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
+import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
+import com.squareup.otto.Bus;
 
 public class VisualUpdateConnectionStateCommand implements ICommand
 {
-	@Inject
-	ActiveFragmentProvider afProvider;
-	@Inject
-	MainDataModel model;
+	@Inject MainDataModel model;
+    @Inject MainThreadBusWrapper bus;
 
 	public void execute(IEvent e)
 	{
-		if(afProvider.getActiveFragment(MainFragment.class)!=null)
-		{
-			Activity cActivity = afProvider.getActiveFragment(MainFragment.class).getActivity();
-			cActivity.runOnUiThread(new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					MainFragment fragment = ((MainFragment)afProvider.getActiveFragment(MainFragment.class));
-					if(model.getIsConnectionActive())
-					{
-						fragment.updateConnectivityStatus(ConnectionStatus.CONNECTION_ON);
-					}
-					else
-					{
-						fragment.updateConnectivityStatus(ConnectionStatus.CONNECTION_OFF);
-					}
-				}
-			});
-		}
+        bus.post(new ConnectionStatusChange(model.getIsConnectionActive() ?
+                ConnectionStatus.CONNECTION_ON :
+                ConnectionStatus.CONNECTION_OFF));
 	}
 }
