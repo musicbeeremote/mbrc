@@ -13,11 +13,8 @@ import com.kelsos.mbrc.services.SocketService;
 public class NotifyNotAllowedCommand implements ICommand
 {
 	private SocketService socketService;
-
 	private MainDataModel model;
-
 	private ProtocolHandler handler;
-
 	private NotificationService notificationService;
 
 	@Inject

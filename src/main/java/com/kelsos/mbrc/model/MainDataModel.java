@@ -2,226 +2,203 @@ package com.kelsos.mbrc.model;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.events.ModelEvent;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.squareup.otto.Bus;
+import com.kelsos.mbrc.events.ui.*;
+import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.kelsos.mbrc.others.Const;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.utilities.ImageDecoder;
+import com.squareup.otto.Produce;
 
 @Singleton
-public class MainDataModel
-{
+public class MainDataModel {
 
-	private Bus bus;
-	private Context context;
-
-	@Inject
-	public MainDataModel(Bus bus, Context context)
-	{
-		this.context = context;
-		this.bus = bus;
-
-		_title = _artist = _album = _year = "";
-		_volume = 100;
-
-		_isConnectionActive = false;
-		_isRepeatButtonActive = false;
-		_isShuffleButtonActive = false;
-		_isScrobbleButtonActive = false;
-		_isMuteButtonActive = false;
-		_playState = PlayState.Stopped;
-		_albumCover = null;
-        rating = 0;
-        _lyrics = "";
-	}
-
+    private MainThreadBusWrapper bus;
+    private Context context;
     private float rating;
-	private String _title;
-	private String _artist;
-	private String _album;
-	private String _year;
-	private String _lyrics;
-	private int _volume;
-	private Bitmap _albumCover;
+    private String title;
+    private String artist;
+    private String album;
+    private String year;
+    private String lyrics;
+    private int volume;
+    private Bitmap cover;
+    private boolean isConnectionOn;
+    private boolean isHandShakeDone;
+    private boolean isRepeatActive;
+    private boolean iShuffleActive;
+    private boolean isScrobblingActive;
+    private boolean isMuteActive;
+    private PlayState _playState;
 
-	private boolean _isConnectionActive;
-	private boolean _isRepeatButtonActive;
-	private boolean _isShuffleButtonActive;
-	private boolean _isScrobbleButtonActive;
-	private boolean _isMuteButtonActive;
+
+    @Inject
+    public MainDataModel(MainThreadBusWrapper bus, Context context) {
+        this.context = context;
+        this.bus = bus;
+        bus.register(this);
 
 
-	private PlayState _playState;
+        title = artist = album = year = "";
+        volume = 100;
 
-    public void setRating(String rating){
+        isConnectionOn = false;
+        isHandShakeDone = false;
+        isRepeatActive = false;
+        iShuffleActive = false;
+        isScrobblingActive = false;
+        isMuteActive = false;
+        _playState = PlayState.Stopped;
+        cover = null;
+        rating = 0;
+        lyrics = "";
+    }
+
+    public void setRating(String rating) {
         try {
-           this.rating = Float.parseFloat(rating);
-        } catch (Exception ex){
+            this.rating = Float.parseFloat(rating);
+        } catch (Exception ex) {
             this.rating = 0;
         }
-        bus.post(new MessageEvent(ModelEvent.ModelRatingUpdated));
+        bus.post(new RatingChanged(this.rating));
     }
 
-    public float getRating(){
-        return rating;
+    @Produce public RatingChanged produceRatingChanged() {
+        return new RatingChanged(this.rating);
     }
 
-	public void setTrackInfo(String artist, String album, String title, String year)
-	{
-		_artist = artist;
-        _album = album;
-        _year = year;
-		_title = title;
-		bus.post(new MessageEvent(ModelEvent.ModelTrackUpdated));
-	}
+    public void setTrackInfo(String artist, String album, String title, String year) {
+        this.artist = artist;
+        this.album = album;
+        this.year = year;
+        this.title = title;
+        bus.post(new TrackInfoChange(artist, title, album, year));
+    }
 
-	public String getTitle()
-	{
-		return _title;
-	}
+    @Produce public TrackInfoChange produceTrackInfo() {
+        return new TrackInfoChange(artist, title, album, year);
+    }
 
-	public String getAlbum()
-	{
-		return _album;
-	}
+    public String getArtist() {
+        return this.artist;
+    }
 
-	public String getArtist()
-	{
-		return _artist;
-	}
+    public String getTitle() {
+        return this.title;
+    }
 
-	public String getYear()
-	{
-		return _year;
-	}
-
-	public void setVolume(int volume)
-	{
-        if(volume!=_volume){
-            _volume = volume;
-            bus.post(new MessageEvent(ModelEvent.ModelVolumeUpdated));
+    public void setVolume(int volume) {
+        if (volume != this.volume) {
+            this.volume = volume;
+            bus.post(new VolumeChange(this.volume));
         }
-	}
+    }
 
-	public int getVolume()
-	{
-		return _volume;
-	}
+    public int getVolume() {
+        return this.volume;
+    }
 
-	public void setAlbumCover(String base64format)
-	{
-		Log.d("Cover", base64format);
-		if (base64format == null || base64format.equals(""))
-		{
-			bus.post(new MessageEvent(ModelEvent.ModelCoverNotFound));
-		} else
-		{
-			try {
-				new ImageDecoder(context, base64format).execute();
-			}
-			catch (Exception ignore)
-			{
+    public void setCover(String base64format) {
+        if (base64format == null || base64format.equals("")) {
+            cover = null;
+        } else {
+            try {
+                new ImageDecoder(context, base64format).execute();
+            } catch (Exception ignore) {
 
-			}
-		}
-	}
+            }
+        }
+    }
 
-	public void setAlbumCover(Bitmap cover)
-	{
-		_albumCover = cover;
-		bus.post(new MessageEvent(ModelEvent.ModelCoverUpdated));
-	}
+    public void setAlbumCover(Bitmap cover) {
+        this.cover = cover;
+        bus.post(new CoverAvailable(cover));
+    }
 
-	public Bitmap getAlbumCover()
-	{
-		return _albumCover;
-	}
+    @Produce public CoverAvailable produceAvailableCover() {
+        return cover == null ? new CoverAvailable() : new CoverAvailable(cover);
+    }
 
-	public void setConnectionState(String connectionActive)
-	{
-		_isConnectionActive = Boolean.parseBoolean(connectionActive);
-		bus.post(new MessageEvent(ModelEvent.ModelConnectionStateUpdated));
-	}
+    public void setConnectionState(String connectionActive) {
+        isConnectionOn = Boolean.parseBoolean(connectionActive);
+        bus.post(new ConnectionStatusChange(isConnectionOn ?
+                ConnectionStatus.CONNECTION_ON :
+                ConnectionStatus.CONNECTION_OFF));
+    }
 
-	public boolean getIsConnectionActive()
-	{
-		return _isConnectionActive;
-	}
+    public void setHandShakeDone(boolean handShakeDone){
+        this.isHandShakeDone = handShakeDone;
+        if (isConnectionOn && isHandShakeDone) {
+            bus.post(new ConnectionStatusChange(ConnectionStatus.CONNECTION_ACTIVE));
+        }
+    }
 
-	public void setRepeatState(String repeatButtonActive)
-	{
-		_isRepeatButtonActive = (repeatButtonActive.equals("All"));
-		bus.post(new MessageEvent(ModelEvent.ModelRepeatStateUpdated));
-	}
+    public boolean getIsConnectionActive() {
+        return isConnectionOn;
+    }
 
-	public boolean getIsRepeatButtonActive()
-	{
-		return _isRepeatButtonActive;
-	}
+    public void setRepeatState(String repeatButtonActive) {
+        isRepeatActive = (repeatButtonActive.equals("All"));
+        bus.post(new RepeatChange(this.isRepeatActive));
+    }
 
-	public void setShuffleState(boolean shuffleButtonActive)
-	{
-		_isShuffleButtonActive = shuffleButtonActive;
-		bus.post(new MessageEvent(ModelEvent.ModelShuffleStateUpdated));
-	}
+    @Produce public RepeatChange produceRepeatChange() {
+        return new RepeatChange(this.isRepeatActive);
+    }
 
-	public boolean getIsShuffleButtonActive()
-	{
-		return _isShuffleButtonActive;
-	}
+    public void setShuffleState(boolean shuffleButtonActive) {
+        iShuffleActive = shuffleButtonActive;
+        bus.post(new ShuffleChange(iShuffleActive));
+    }
 
-	public void setScrobbleState(boolean scrobbleButtonActive)
-	{
-		_isScrobbleButtonActive = scrobbleButtonActive;
-		bus.post(new MessageEvent(ModelEvent.ModelScrobbleStateUpdated));
-	}
+    @Produce public ShuffleChange produceShuffleChange() {
+        return new ShuffleChange(this.iShuffleActive);
+    }
 
-	public boolean getIsScrobbleButtonActive()
-	{
-		return _isScrobbleButtonActive;
-	}
+    public void setScrobbleState(boolean scrobbleButtonActive) {
+        isScrobblingActive = scrobbleButtonActive;
+        bus.post(new ScrobbleChange(isScrobblingActive));
+    }
 
-	public void setMuteState(String muteButtonActive)
-	{
-		_isMuteButtonActive = Boolean.parseBoolean(muteButtonActive);
-		bus.post(new MessageEvent(ModelEvent.ModelMuteStateUpdated));
-	}
+    @Produce public ScrobbleChange produceScrobbleChange() {
+        return new ScrobbleChange(this.isScrobblingActive);
+    }
 
-	public boolean getIsMuteButtonActive()
-	{
-		return _isMuteButtonActive;
-	}
+    public void setMuteState(String isMuteActive) {
+        this.isMuteActive = Boolean.parseBoolean(isMuteActive);
+        bus.post(new VolumeChange());
+    }
 
-	public void setPlayState(String playState)
-	{
-		PlayState newState = PlayState.Undefined;
-		if (playState.equalsIgnoreCase(Const.PLAYING)) newState = PlayState.Playing;
-		else if (playState.equalsIgnoreCase(Const.STOPPED)) newState = PlayState.Stopped;
-		else if (playState.equalsIgnoreCase(Const.PAUSED)) newState = PlayState.Paused;
-		_playState = newState;
-		bus.post(new MessageEvent(ModelEvent.ModelPlayStateUpdated));
-	}
+    @Produce public VolumeChange produceVolumeChange() {
+        return isMuteActive ? new VolumeChange() : new VolumeChange(volume);
+    }
 
-	public PlayState getPlayState()
-	{
-		return _playState;
-	}
+    public PlayState getPlayState() {
+        return _playState;
+    }
 
-	public void setLyrics(String lyrics)
-	{
-		if (lyrics.equals(_lyrics)) return;
-		_lyrics = lyrics.replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", "\"").replace("&apos;", "'").replace("&amp;", "&").replace("<p>", "\r\n").replace("<br>", "\n").trim();
-		bus.post(new MessageEvent(ModelEvent.ModelLyricsUpdated));
-	}
+    public void setPlayState(String playState) {
+        PlayState newState = PlayState.Undefined;
+        if (playState.equalsIgnoreCase(Const.PLAYING)) newState = PlayState.Playing;
+        else if (playState.equalsIgnoreCase(Const.STOPPED)) newState = PlayState.Stopped;
+        else if (playState.equalsIgnoreCase(Const.PAUSED)) newState = PlayState.Paused;
+        _playState = newState;
+        bus.post(new MessageEvent(ModelEvent.ModelPlayStateUpdated));
+    }
 
-	public String getLyrics()
-	{
-		return _lyrics;
-	}
+    @Produce public LyricsUpdated produceLyricsUpdate() {
+        return new LyricsUpdated(lyrics);
+    }
+
+    public void setLyrics(String lyrics) {
+        if (lyrics.equals(this.lyrics)) return;
+        this.lyrics = lyrics.replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", "\"").replace("&apos;", "'").replace("&amp;", "&").replace("<p>", "\r\n").replace("<br>", "\n").trim();
+        bus.post(new LyricsUpdated(this.lyrics));
+    }
 
 }
 

@@ -16,55 +16,50 @@ import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFra
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.adapters.PlaylistArrayAdapter;
 import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.data.MusicTrack;
-import com.kelsos.mbrc.adapters.PlaylistArrayAdapter;
-import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.DragDropEvent;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.UserInputEvent;
+import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 
 
-public class NowPlayingFragment extends RoboSherlockListFragment implements SearchView.OnQueryTextListener
-{
-	@Inject
-	ActiveFragmentProvider afProvider;
-	@Inject
-	private Bus bus;
+public class NowPlayingFragment extends RoboSherlockListFragment implements SearchView.OnQueryTextListener {
+    @Inject
+    ActiveFragmentProvider afProvider;
     @Inject
     Injector injector;
-
-	private PlaylistArrayAdapter adapter;
+    @Inject
+    private Bus bus;
+    private PlaylistArrayAdapter adapter;
     private SearchView mSearchView;
     private MenuItem mSearchItem;
+    private int defaultBackgroundColor;
 
-	public void updateListData(ArrayList<MusicTrack> nowPlayingList, int playingTrackIndex)
-	{
-		adapter = new PlaylistArrayAdapter(getActivity(), R.layout.ui_list_track_item, nowPlayingList);
-		setListAdapter(adapter);
-		adapter.setPlayingTrackIndex(playingTrackIndex);
-		this.getListView().setSelection(playingTrackIndex);
-	}
+    public void updateListData(ArrayList<MusicTrack> nowPlayingList, int playingTrackIndex) {
+        adapter = new PlaylistArrayAdapter(getActivity(), R.layout.ui_list_track_item, nowPlayingList);
+        setListAdapter(adapter);
+        adapter.setPlayingTrackIndex(playingTrackIndex);
+        this.getListView().setSelection(playingTrackIndex);
+    }
 
-	public void updatePlayingTrack(String artist, String title)
-	{
-		adapter.setPlayingTrackIndex(adapter.getPosition(new MusicTrack(artist, title)));
-		adapter.notifyDataSetChanged();
-	}
+    @Subscribe public void handlePlayingTrackChange(TrackInfoChange event) {
+        adapter.setPlayingTrackIndex(adapter.getPosition(new MusicTrack(event.getArtist(), event.getTitle())));
+        adapter.notifyDataSetChanged();
+    }
 
-	public void removeSelectedTrack(int index)
-	{
-		if (index < 0) return;
-		adapter.remove(adapter.getItem(index));
-		adapter.notifyDataSetChanged();
-	}
+    public void removeSelectedTrack(int index) {
+        if (index < 0) return;
+        adapter.remove(adapter.getItem(index));
+        adapter.notifyDataSetChanged();
+    }
 
-
-    public boolean onQueryTextSubmit(String query)
-    {
+    public boolean onQueryTextSubmit(String query) {
 
         bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingSearch, query.trim()));
 
@@ -73,15 +68,14 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
         return false;
     }
 
-    public boolean onQueryTextChange(String newText)
-    {
+    public boolean onQueryTextChange(String newText) {
         return true;
     }
 
     @Override
-    public void onCreateOptionsMenu (Menu menu, MenuInflater inflater){
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        mSearchView = new SearchView(((RoboSherlockFragmentActivity)getActivity()).getSupportActionBar().getThemedContext());
+        mSearchView = new SearchView(((RoboSherlockFragmentActivity) getActivity()).getSupportActionBar().getThemedContext());
         mSearchView.setQueryHint(getString(R.string.now_playing_search_hint));
         mSearchView.setIconifiedByDefault(true);
 
@@ -91,97 +85,83 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
         mSearchView.setOnQueryTextListener(this);
     }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         bus.register(this);
         setHasOptionsMenu(true);
-		afProvider.addActiveFragment(this);
-	}
+        afProvider.addActiveFragment(this);
+    }
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		registerForContextMenu(this.getListView());
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        registerForContextMenu(this.getListView());
         injector.injectMembers(this.getListView());
-	}
+    }
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-	{
-		return inflater.inflate(R.layout.ui_fragment_nowplaying, container, false);
-	}
+    @Override
+    public void onStart() {
+        super.onStart();
+        bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingList));
+    }
 
-	@Override
-	public void onStart()
-	{
-		super.onStart();
-		bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingList));
-	}
+    @Override
+    public void onResume() {
+        super.onResume();
+        afProvider.addActiveFragment(this);
+        bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingList));
+    }
 
-	@Override
-	public void onResume()
-	{
-		super.onResume();
-		afProvider.addActiveFragment(this);
-		bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingList));
-	}
+    @Override
+    public void onPause() {
+        afProvider.removeActiveFragment(this);
+        super.onPause();
+    }
 
-	@Override
-	public void onPause()
-	{
-		afProvider.removeActiveFragment(this);
-		super.onPause();
-	}
+    @Override
+    public void onStop() {
+        afProvider.removeActiveFragment(this);
+        super.onStop();
+    }
 
-	@Override
-	public void onStop()
-	{
-		afProvider.removeActiveFragment(this);
-		super.onStop();
-	}
+    @Override
+    public void onDestroy() {
+        afProvider.removeActiveFragment(this);
+        super.onDestroy();
+    }
 
-	@Override
-	public void onDestroy()
-	{
-		afProvider.removeActiveFragment(this);
-		super.onDestroy();
-	}
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        menu.add(0, 11, 0, "Remove track");
+        AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) menuInfo;
 
-	@Override
-	public void onListItemClick(ListView l, View v, int position, long id)
-	{
-		super.onListItemClick(l, v, position, id);
-		adapter.setPlayingTrackIndex(position);
-		((PlaylistArrayAdapter) l.getAdapter()).notifyDataSetChanged();
-		bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingPlayTrack, Integer.toString(position + 1)));
-	}
+        menu.setHeaderTitle(adapter.getItem(mi.position).getTitle());
+        super.onCreateContextMenu(menu, v, menuInfo);
+    }
 
+    @Override
+    public boolean onContextItemSelected(android.view.MenuItem item) {
+        AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingRemoveTrack, Integer.toString(mi.position)));
+        return super.onContextItemSelected(item);
+    }
 
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
-	{
-		menu.add(0, 11, 0, "Remove track");
-		AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) menuInfo;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.ui_fragment_nowplaying, container, false);
+    }
 
-		menu.setHeaderTitle(adapter.getItem(mi.position).getTitle());
-		super.onCreateContextMenu(menu, v, menuInfo);
-	}
-
-
-	@Override
-	public boolean onContextItemSelected(android.view.MenuItem item)
-	{
-		AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-		bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingRemoveTrack, Integer.toString(mi.position)));
-		return super.onContextItemSelected(item);
-	}
-
-    private int defaultBackgroundColor;
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        adapter.setPlayingTrackIndex(position);
+        ((PlaylistArrayAdapter) l.getAdapter()).notifyDataSetChanged();
+        bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingPlayTrack, Integer.toString(position + 1)));
+    }
 
     @Subscribe
-    public void handleDragAndDrop(DragDropEvent event){
+    public void handleDragAndDrop(DragDropEvent event) {
 
         int backgroundColor = 0xe0103010;
 

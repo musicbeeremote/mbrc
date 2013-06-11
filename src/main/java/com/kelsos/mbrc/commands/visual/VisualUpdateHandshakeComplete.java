@@ -6,6 +6,7 @@ import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
+import com.kelsos.mbrc.model.MainDataModel;
 import com.kelsos.mbrc.others.Protocol;
 import com.kelsos.mbrc.services.SocketService;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
@@ -15,16 +16,18 @@ public class VisualUpdateHandshakeComplete implements ICommand
 {
 	@Inject MainThreadBusWrapper bus;
     @Inject SocketService service;
+    @Inject MainDataModel model;
 
 	public void execute(IEvent e)
 	{
-		if(!(Boolean)e.getData()) return;
 
+        boolean isComplete = (Boolean)e.getData();
+        model.setHandShakeDone(isComplete);
+
+        if(!isComplete) return;
         service.sendData(new SocketMessage(Protocol.PlayerStatus,Protocol.Request, ""));
         service.sendData(new SocketMessage(Protocol.NowPlayingTrack, Protocol.Request, ""));
         service.sendData(new SocketMessage(Protocol.NowPlayingCover, Protocol.Request, ""));
-
-		bus.post(new ConnectionStatusChange(ConnectionStatus.CONNECTION_ACTIVE));
 	}
 }
 

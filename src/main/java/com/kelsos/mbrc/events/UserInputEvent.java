@@ -4,8 +4,6 @@ public class UserInputEvent
 {
 	public static final String RequestPlayPause = "RequestPlayPause";
 	public static final String RequestNext = "RequestNext";
-	public static final String RequestLyrics = "RequestLyric";
-	public static final String RequestMainViewUpdate = "RequestMainViewUpdate";
 	public static final String RequestNowPlayingList = "RequestNowPlayingList";
 	public static final String RequestPosition = "RequestPosition";
 	public static final String StartConnection = "StartConnection";
@@ -14,9 +12,6 @@ public class UserInputEvent
 	public static final String SettingsChanged = "SettingsChanged";
 	public static final String ResetConnection = "ResetConnection";
 	public static final String CancelNotification = "CancelNotification";
-    public static final String RequestRating = "RequestRating";
     public static final String RequestNowPlayingMoveTrack = "RequestNowPlayingMoveTrack";
-    public static final String RequestLastFmLove = "RequestLastFmLove";
-    public static final String RequestLastFmBan = "RequestLastFmBan";
     public static final String RequestNowPlayingSearch = "RequestNowPlayingSearch";
 }

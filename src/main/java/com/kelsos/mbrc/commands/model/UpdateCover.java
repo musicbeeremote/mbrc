@@ -11,6 +11,6 @@ public class UpdateCover implements ICommand {
     MainDataModel model;
     @Override
     public void execute(IEvent e) {
-        model.setAlbumCover(((TextNode)e.getData()).getTextValue());
+        model.setCover(((TextNode) e.getData()).getTextValue());
     }
 }

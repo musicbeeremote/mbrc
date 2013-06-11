@@ -34,7 +34,7 @@ android:layout_height="fill_parent"
                 android:paddingTop="6dp"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="15dp" />
+                android:textSize="16sp" />
 
         <TextView
                 android:id="@+id/trackArtist"
@@ -48,7 +48,7 @@ android:layout_height="fill_parent"
                 android:singleLine="true"
                 android:textColor="#AAAAAA"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textSize="14dp" />
+                android:textSize="15sp" />
 
 
 

@@ -11,10 +11,8 @@ import com.kelsos.mbrc.services.SocketService;
 
 public class ReduceVolumeOnRingCommand implements ICommand
 {
-	@Inject
-	MainDataModel model;
-	@Inject
-    SocketService service;
+	@Inject MainDataModel model;
+	@Inject SocketService service;
 
 	@Override
 	public void execute(IEvent e)

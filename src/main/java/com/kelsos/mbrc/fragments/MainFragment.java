@@ -167,7 +167,6 @@ public class MainFragment extends RoboSherlockFragment {
 
         public void onStartTrackingTouch(SeekBar seekBar) {
             userChangingVolume = true;
-
         }
 
 
@@ -244,29 +243,22 @@ public class MainFragment extends RoboSherlockFragment {
         }
     };
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
+    @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         afProvide.addActiveFragment(this);
         userChangingVolume = false;
-        bus.register(this);
-        bus.post(new MessageEvent(UserInputEvent.RequestMainViewUpdate));
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ui_fragment_main, container, false);
     }
 
-    @Override
-    public void onStart() {
+    @Override public void onStart() {
         super.onStart();
         SetTextViewTypeface();
         afProvide.addActiveFragment(this);
         RegisterListeners();
-        bus.post(new MessageEvent(UserInputEvent.RequestMainViewUpdate));
-
     }
 
     /**
@@ -326,7 +318,6 @@ public class MainFragment extends RoboSherlockFragment {
     public void onResume() {
         super.onResume();
         afProvide.addActiveFragment(this);
-        bus.post(new MessageEvent(UserInputEvent.RequestMainViewUpdate));
         bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingPosition, true)));
     }
 
@@ -340,6 +331,7 @@ public class MainFragment extends RoboSherlockFragment {
     public void onStop() {
         afProvide.removeActiveFragment(this);
         super.onStop();
+        bus.register(this);
     }
 
     @Override
@@ -380,19 +372,9 @@ public class MainFragment extends RoboSherlockFragment {
         }
     }
 
-    /**
-     * Given a boolean state this function updates the Scrobbler button with the proper state.
-     * Also it updates the internal MainActivityState object.
-     *
-     * @param state If true it means that the scrobbler is active, false is used for inactive.
-     */
-    public void updateScrobblerButtonState(boolean state) {
+    @Subscribe public void handleScrobbleChange(ScrobbleChange change) {
         if (scrobbleButton == null) return;
-        if (state) {
-            scrobbleButton.setImageResource(R.drawable.ic_media_scrobble_red);
-        } else {
-            scrobbleButton.setImageResource(R.drawable.ic_media_scrobble_off);
-        }
+        scrobbleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_scrobble_red : R.drawable.ic_media_scrobble_off);
     }
 
     @Subscribe
@@ -410,32 +392,17 @@ public class MainFragment extends RoboSherlockFragment {
         });
     }
 
-    /**
-     * Given a boolean state value this function updates the shuffle button with the proper state.
-     * Also it updates the internal MainActivityState object.
-     *
-     * @param state True is used to represent active shuffle, false is used for inactive.
-     */
-    public void updateShuffleButtonState(boolean state) {
+    @Subscribe public void handleShuffleChange(ShuffleChange change) {
         if (shuffleButton == null) return;
-        if (state) {
-            shuffleButton.setImageResource(R.drawable.ic_media_shuffle);
-        } else {
-            shuffleButton.setImageResource(R.drawable.ic_media_shuffle_off);
-        }
+        shuffleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_shuffle : R.drawable.ic_media_shuffle_off);
     }
 
-    public void updateRepeatButtonState(boolean state) {
+    @Subscribe public void updateRepeatButtonState(RepeatChange change) {
         if (repeatButton == null) return;
-        if (state) {
-            repeatButton.setImageResource(R.drawable.ic_media_repeat);
-        } else {
-            repeatButton.setImageResource(R.drawable.ic_media_repeat_off);
-        }
+        repeatButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_repeat : R.drawable.ic_media_repeat_off);
     }
 
-    @Subscribe
-    public void updateVolumeData(VolumeChange change) {
+    @Subscribe public void updateVolumeData(VolumeChange change) {
         if (volumeSlider == null) return;
         if (!userChangingVolume)
             volumeSlider.setProgress(change.getVolume());
