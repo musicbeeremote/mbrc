@@ -5,8 +5,6 @@ import android.graphics.Bitmap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.enums.ConnectionStatus;
-import com.kelsos.mbrc.events.ModelEvent;
-import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.kelsos.mbrc.others.Const;
@@ -33,7 +31,7 @@ public class MainDataModel {
     private boolean iShuffleActive;
     private boolean isScrobblingActive;
     private boolean isMuteActive;
-    private PlayState _playState;
+    private PlayState playState;
 
 
     @Inject
@@ -52,7 +50,7 @@ public class MainDataModel {
         iShuffleActive = false;
         isScrobblingActive = false;
         isMuteActive = false;
-        _playState = PlayState.Stopped;
+        playState = PlayState.Stopped;
         cover = null;
         rating = 0;
         lyrics = "";
@@ -137,6 +135,14 @@ public class MainDataModel {
         }
     }
 
+    @Produce public ConnectionStatusChange produceConnectionStatus() {
+        return new ConnectionStatusChange(isConnectionOn ?
+                (isHandShakeDone ?
+                        ConnectionStatus.CONNECTION_ACTIVE :
+                        ConnectionStatus.CONNECTION_ON ) :
+                ConnectionStatus.CONNECTION_OFF);
+    }
+
     public boolean getIsConnectionActive() {
         return isConnectionOn;
     }
@@ -177,17 +183,17 @@ public class MainDataModel {
         return isMuteActive ? new VolumeChange() : new VolumeChange(volume);
     }
 
-    public PlayState getPlayState() {
-        return _playState;
-    }
-
     public void setPlayState(String playState) {
         PlayState newState = PlayState.Undefined;
         if (playState.equalsIgnoreCase(Const.PLAYING)) newState = PlayState.Playing;
         else if (playState.equalsIgnoreCase(Const.STOPPED)) newState = PlayState.Stopped;
         else if (playState.equalsIgnoreCase(Const.PAUSED)) newState = PlayState.Paused;
-        _playState = newState;
-        bus.post(new MessageEvent(ModelEvent.ModelPlayStateUpdated));
+        this.playState = newState;
+        bus.post(new PlayStateChange(this.playState));
+    }
+
+    @Produce public PlayStateChange producePlayState() {
+        return new PlayStateChange(this.playState);
     }
 
     @Produce public LyricsUpdated produceLyricsUpdate() {

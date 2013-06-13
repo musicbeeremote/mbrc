@@ -51,6 +51,11 @@ public class MiniControlFragment extends RoboSherlockFragment {
         playNext.setOnClickListener(playNextListener);
     }
 
+    @Override public void onStop() {
+        super.onStop();
+        bus.unregister(this);
+    }
+
     @Subscribe public void handleCoverChange(CoverAvailable event) {
         if (trackCover == null) return;
         if (event.getIsAvailable()) {

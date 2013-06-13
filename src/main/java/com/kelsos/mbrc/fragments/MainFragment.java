@@ -16,7 +16,6 @@ import com.actionbarsherlock.widget.ShareActionProvider;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
@@ -79,7 +78,7 @@ public class MainFragment extends RoboSherlockFragment {
     LinearLayout loveWrapper;
     @InjectView(R.id.lfmLove)
     ImageButton lfmLoveButton;
-    @Inject ActiveFragmentProvider afProvide;
+
     private ShareActionProvider mShareActionProvider;
     private boolean userChangingVolume;
     private int previousVol;
@@ -229,7 +228,6 @@ public class MainFragment extends RoboSherlockFragment {
 
                     @Override
                     public void onAnimationRepeat(Animation animation) {
-                        ||
                     }
                 });
             }
@@ -246,7 +244,6 @@ public class MainFragment extends RoboSherlockFragment {
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        afProvide.addActiveFragment(this);
         userChangingVolume = false;
     }
 
@@ -257,8 +254,9 @@ public class MainFragment extends RoboSherlockFragment {
     @Override public void onStart() {
         super.onStart();
         SetTextViewTypeface();
-        afProvide.addActiveFragment(this);
         RegisterListeners();
+        bus.register(this);
+        bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingPosition, true)));
     }
 
     /**
@@ -315,36 +313,15 @@ public class MainFragment extends RoboSherlockFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        afProvide.addActiveFragment(this);
-        bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingPosition, true)));
-    }
-
-    @Override
-    public void onPause() {
-        afProvide.removeActiveFragment(this);
-        super.onPause();
-    }
-
-    @Override
     public void onStop() {
-        afProvide.removeActiveFragment(this);
         super.onStop();
-        bus.register(this);
-    }
-
-    @Override
-    public void onDestroy() {
-        afProvide.removeActiveFragment(this);
-        super.onDestroy();
+        bus.unregister(this);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu, menu);
         MenuItem shareItem = menu.findItem(R.id.main_menu_share);
-
         mShareActionProvider = (ShareActionProvider) shareItem.getActionProvider();
     }
 

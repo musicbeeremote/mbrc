@@ -3,7 +3,9 @@
 <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        xmlns:android="http://schemas.android.com/apk/res/android">
+        android:layout_marginTop="1dp"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:background="@color/abs__background_holo_dark">
     <View
             android:layout_width="fill_parent"
             android:layout_height="1dp"
@@ -16,7 +18,8 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:src="@drawable/ic_image_no_cover"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitCenter"
+            android:padding="1dp"/>
 
     <LinearLayout
             android:layout_width="wrap_content"

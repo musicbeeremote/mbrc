@@ -17,38 +17,35 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistArrayAdapter;
-import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.data.MusicTrack;
+import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.DragDropEvent;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.UserInputEvent;
+import com.kelsos.mbrc.events.ProtocolEvent;
+import com.kelsos.mbrc.events.ui.NowPlayingListAvailable;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
+import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
-import java.util.ArrayList;
-
 
 public class NowPlayingFragment extends RoboSherlockListFragment implements SearchView.OnQueryTextListener {
-    @Inject
-    ActiveFragmentProvider afProvider;
-    @Inject
-    Injector injector;
-    @Inject
-    private Bus bus;
+    @Inject Injector injector;
+    @Inject private Bus bus;
     private PlaylistArrayAdapter adapter;
     private SearchView mSearchView;
     private MenuItem mSearchItem;
     private int defaultBackgroundColor;
 
-    public void updateListData(ArrayList<MusicTrack> nowPlayingList, int playingTrackIndex) {
-        adapter = new PlaylistArrayAdapter(getActivity(), R.layout.ui_list_track_item, nowPlayingList);
+    @Subscribe public void handleNowPlayingListAvailable(NowPlayingListAvailable event){
+        adapter = new PlaylistArrayAdapter(getActivity(), R.layout.ui_list_track_item, event.getList());
         setListAdapter(adapter);
-        adapter.setPlayingTrackIndex(playingTrackIndex);
-        this.getListView().setSelection(playingTrackIndex);
+        adapter.setPlayingTrackIndex(event.getIndex());
+        this.getListView().setSelection(event.getIndex());
     }
 
     @Subscribe public void handlePlayingTrackChange(TrackInfoChange event) {
+        if (adapter == null || !adapter.getClass().equals(PlaylistArrayAdapter.class)) return;
         adapter.setPlayingTrackIndex(adapter.getPosition(new MusicTrack(event.getArtist(), event.getTitle())));
         adapter.notifyDataSetChanged();
     }
@@ -60,9 +57,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
     }
 
     public boolean onQueryTextSubmit(String query) {
-
-        bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingSearch, query.trim()));
-
+        bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingListSearch, query.trim())));
         mSearchView.setIconified(true);
         mSearchItem.collapseActionView();
         return false;
@@ -88,9 +83,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        bus.register(this);
         setHasOptionsMenu(true);
-        afProvider.addActiveFragment(this);
     }
 
     @Override
@@ -103,32 +96,14 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
     @Override
     public void onStart() {
         super.onStart();
-        bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingList));
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        afProvider.addActiveFragment(this);
-        bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingList));
-    }
-
-    @Override
-    public void onPause() {
-        afProvider.removeActiveFragment(this);
-        super.onPause();
+        bus.register(this);
+        bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingList, true)));
     }
 
     @Override
     public void onStop() {
-        afProvider.removeActiveFragment(this);
         super.onStop();
-    }
-
-    @Override
-    public void onDestroy() {
-        afProvider.removeActiveFragment(this);
-        super.onDestroy();
+        bus.unregister(this);
     }
 
     @Override
@@ -143,7 +118,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
     @Override
     public boolean onContextItemSelected(android.view.MenuItem item) {
         AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingRemoveTrack, Integer.toString(mi.position)));
+        bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingListRemove, mi.position)));
         return super.onContextItemSelected(item);
     }
 
@@ -157,7 +132,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
         super.onListItemClick(l, v, position, id);
         adapter.setPlayingTrackIndex(position);
         ((PlaylistArrayAdapter) l.getAdapter()).notifyDataSetChanged();
-        bus.post(new MessageEvent(UserInputEvent.RequestNowPlayingPlayTrack, Integer.toString(position + 1)));
+        bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingListPlay, position + 1)));
     }
 
     @Subscribe

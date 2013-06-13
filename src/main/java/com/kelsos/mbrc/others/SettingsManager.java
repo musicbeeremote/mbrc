@@ -6,6 +6,8 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
+import com.kelsos.mbrc.events.ui.NoSettingsAvailable;
+import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.squareup.otto.Bus;
 
 import java.net.InetSocketAddress;
@@ -18,7 +20,7 @@ public class SettingsManager
 	@Inject
 	Context context;
 	@Inject
-    Bus bus;
+    MainThreadBusWrapper bus;
 
 	public SettingsManager()
 	{
@@ -30,7 +32,7 @@ public class SettingsManager
 		String server_port_string = preferences.getString(context.getString(R.string.settings_key_port), null);
 		if (notNullOrEmpty(server_hostname) || notNullOrEmpty(server_port_string))
 		{
-            bus.post(new MessageEvent(ProtocolEvent.NoSettingsAvailable));
+            bus.post(new NoSettingsAvailable());
 			return null;
 		}
 		int server_port = Integer.parseInt(server_port_string);

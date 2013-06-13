@@ -22,14 +22,16 @@ import com.kelsos.mbrc.adapters.AlbumEntryAdapter;
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter;
 import com.kelsos.mbrc.adapters.GenreEntryAdapter;
 import com.kelsos.mbrc.adapters.TrackEntryAdapter;
-import com.kelsos.mbrc.controller.ActiveFragmentProvider;
 import com.kelsos.mbrc.data.*;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
+import com.kelsos.mbrc.events.ui.AlbumSearchResults;
+import com.kelsos.mbrc.events.ui.ArtistSearchResults;
+import com.kelsos.mbrc.events.ui.GenreSearchResults;
+import com.kelsos.mbrc.events.ui.TrackSearchResults;
 import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
-
-import java.util.ArrayList;
+import com.squareup.otto.Subscribe;
 
 public class SearchFragment extends RoboSherlockListFragment implements SearchView.OnQueryTextListener, ActionBar.OnNavigationListener {
 
@@ -40,8 +42,6 @@ public class SearchFragment extends RoboSherlockListFragment implements SearchVi
 
     @Inject
     Bus bus;
-    @Inject
-    ActiveFragmentProvider afProvider;
     private String[] mSearchOptions;
     private SearchView mSearchView;
     private MenuItem mSearchItem;
@@ -88,30 +88,13 @@ public class SearchFragment extends RoboSherlockListFragment implements SearchVi
     @Override
     public void onStart() {
         super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        afProvider.addActiveFragment(this);
-    }
-
-    @Override
-    public void onPause() {
-        afProvider.removeActiveFragment(this);
-        super.onPause();
+        bus.register(this);
     }
 
     @Override
     public void onStop() {
-        afProvider.removeActiveFragment(this);
         super.onStop();
-    }
-
-    @Override
-    public void onDestroy() {
-        afProvider.removeActiveFragment(this);
-        super.onDestroy();
+        bus.unregister(this);
     }
 
     @Override
@@ -123,7 +106,6 @@ public class SearchFragment extends RoboSherlockListFragment implements SearchVi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        afProvider.addActiveFragment(this);
     }
 
     @Override
@@ -152,24 +134,23 @@ public class SearchFragment extends RoboSherlockListFragment implements SearchVi
         ((RoboSherlockFragmentActivity) getActivity()).getSupportActionBar().setListNavigationCallbacks(list, this);
     }
 
-    public void updateArtistResults(ArrayList<ArtistEntry> list) {
-        adapter = new ArtistEntryAdapter(getActivity(), R.layout.ui_list_single, list);
+    @Subscribe public void handleArtistSearchResults(ArtistSearchResults results) {
+        adapter = new ArtistEntryAdapter(getActivity(), R.layout.ui_list_single, results.getList());
         setListAdapter(adapter);
     }
 
-    public void updateGenreResults(ArrayList<GenreEntry> list) {
-
-        adapter = new GenreEntryAdapter(getActivity(), R.layout.ui_list_single, list);
+    @Subscribe public void handleGenreSearchResults(GenreSearchResults results) {
+        adapter = new GenreEntryAdapter(getActivity(), R.layout.ui_list_single, results.getList());
         setListAdapter(adapter);
     }
 
-    public void updateAlbumResults(ArrayList<AlbumEntry> list) {
-        adapter = new AlbumEntryAdapter(getActivity(), R.layout.ui_list_dual, list);
+    @Subscribe public void handleAlbumResults(AlbumSearchResults results) {
+        adapter = new AlbumEntryAdapter(getActivity(), R.layout.ui_list_dual, results.getList());
         setListAdapter(adapter);
     }
 
-    public void updateTrackResults(ArrayList<TrackEntry> list) {
-        adapter = new TrackEntryAdapter(getActivity(), R.layout.ui_list_dual, list);
+    @Subscribe public void handleTrackResults(TrackSearchResults results) {
+        adapter = new TrackEntryAdapter(getActivity(), R.layout.ui_list_dual, results.getList());
         setListAdapter(adapter);
     }
 

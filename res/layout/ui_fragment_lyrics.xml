@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -7,44 +7,11 @@
     android:gravity="top"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:id="@+id/lyrics_view_title_label_space"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:background="#222222"
-        android:baselineAligned="false"
-        android:gravity="center_vertical"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/lyrics_view_track_info_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="4dp"
-            android:ellipsize="end"
-            android:gravity="center_vertical|center_horizontal"
-            android:singleLine="true"
-            android:text="@string/string_value_lyrics"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="5dp"
-        android:layout_below="@id/lyrics_view_title_label_space"
-        android:background="@drawable/ic_drop_shadow_2" >
-    </View>
-
     <ListView
         android:id="@+id/lyrics_list_view"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/lyrics_view_title_label_space"
+        android:layout_weight="1"
         android:divider="@null"
         android:dividerHeight="0dp"
         android:fastScrollAlwaysVisible="true"
@@ -55,11 +22,11 @@
     </ListView>
 
     <fragment
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="45dp"
             android:name="com.kelsos.mbrc.fragments.MiniControlFragment"
             android:layout="@layout/ui_fragment_mini_control"
             tools:layout="@layout/ui_fragment_mini_control"
-            android:layout_alignParentBottom="true"/>
+            />
 
-</RelativeLayout>
+</LinearLayout>
