@@ -8,10 +8,12 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import com.google.inject.Inject;
+import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.messaging.NotificationService;
+import com.kelsos.mbrc.others.Protocol;
 import com.kelsos.mbrc.others.SettingsManager;
 import com.squareup.otto.Bus;
 import roboguice.receiver.RoboBroadcastReceiver;
@@ -56,9 +58,9 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver
 
 			}
 		} else if (intent.getAction().equals(NotificationService.NOTIFICATION_PLAY_PRESSED)) {
-			bus.post(new MessageEvent(UserInputEvent.RequestPlayPause));
+            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerPlayPause, true)));
 		} else if (intent.getAction().equals(NotificationService.NOTIFICATION_NEXT_PRESSED)) {
-			bus.post(new MessageEvent(UserInputEvent.RequestNext));
+            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerNext, true)));
 		} else if(intent.getAction().equals(NotificationService.NOTIFICATION_CLOSE_PRESSED)) {
 			bus.post(new MessageEvent(UserInputEvent.CancelNotification));
 		}

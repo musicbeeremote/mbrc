@@ -15,8 +15,11 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.PlayState;
+import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
+import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.kelsos.mbrc.views.MainFragmentActivity;
 import com.kelsos.mbrc.views.UpdateView;
+import com.squareup.otto.Subscribe;
 
 @Singleton
 public class NotificationService {
@@ -27,9 +30,12 @@ public class NotificationService {
     public static final String NOTIFICATION_CLOSE_PRESSED = "com.kelsos.mbrc.notification.close";
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private Context context;
+    private MainThreadBusWrapper bus;
 
-    @Inject public NotificationService(Context context) {
+    @Inject public NotificationService(Context context, MainThreadBusWrapper bus) {
         this.context = context;
+        this.bus = bus;
+        bus.register(this);
     }
 
     /**
@@ -75,7 +81,11 @@ public class NotificationService {
         showToast(message);
     }
 
-    public void notificationBuilder(String title, String artist, Bitmap cover, PlayState state) {
+    @Subscribe public void handleNotificationData(NotificationDataAvailable event){
+        notificationBuilder(event.getTitle(),event.getArtist(),event.getCover(),event.getState());
+    }
+
+    private void notificationBuilder(String title, String artist, Bitmap cover, PlayState state) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
 
         Intent notificationIntent = new Intent(context, MainFragmentActivity.class);
@@ -99,21 +109,21 @@ public class NotificationService {
 
         switch (state) {
             case Playing:
-                views.setImageViewResource(R.id.notification_play, android.R.drawable.ic_media_pause);
+                views.setImageViewResource(R.id.notification_play, R.drawable.ic_np_play_holder);
                 break;
             case Paused:
-                views.setImageViewResource(R.id.notification_play, android.R.drawable.ic_media_play);
+                views.setImageViewResource(R.id.notification_play, R.drawable.ic_np_pause_holder);
                 break;
             case Stopped:
-                views.setImageViewResource(R.id.notification_play, android.R.drawable.ic_media_play);
+                views.setImageViewResource(R.id.notification_play, R.drawable.ic_np_play_holder);
                 break;
             case Undefined:
                 break;
         }
 
-        views.setImageViewResource(R.id.notification_next, android.R.drawable.ic_media_next);
+        views.setImageViewResource(R.id.notification_next, R.drawable.ic_np_next_holder);
 
-        views.setImageViewResource(R.id.notification_close, R.drawable.ic_notification_close);
+        views.setImageViewResource(R.id.notification_close, R.drawable.ic_np_not_collapse_holder);
 
 
         Notification notification = mBuilder.getNotification();

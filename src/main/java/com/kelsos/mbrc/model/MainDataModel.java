@@ -69,12 +69,17 @@ public class MainDataModel {
         return new RatingChanged(this.rating);
     }
 
+    private void updateNotification() {
+        bus.post(new NotificationDataAvailable(artist,title,cover,playState));
+    }
+
     public void setTrackInfo(String artist, String album, String title, String year) {
         this.artist = artist;
         this.album = album;
         this.year = year;
         this.title = title;
         bus.post(new TrackInfoChange(artist, title, album, year));
+        updateNotification();
     }
 
     @Produce public TrackInfoChange produceTrackInfo() {
@@ -115,6 +120,7 @@ public class MainDataModel {
     public void setAlbumCover(Bitmap cover) {
         this.cover = cover;
         bus.post(new CoverAvailable(cover));
+        updateNotification();
     }
 
     @Produce public CoverAvailable produceAvailableCover() {
@@ -190,6 +196,7 @@ public class MainDataModel {
         else if (playState.equalsIgnoreCase(Const.PAUSED)) newState = PlayState.Paused;
         this.playState = newState;
         bus.post(new PlayStateChange(this.playState));
+        updateNotification();
     }
 
     @Produce public PlayStateChange producePlayState() {
