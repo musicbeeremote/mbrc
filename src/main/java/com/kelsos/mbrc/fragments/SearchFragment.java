@@ -219,6 +219,7 @@ public class SearchFragment extends RoboSherlockListFragment implements SearchVi
                 ua = new UserAction(qContext, new Queue("last",query));
                 break;
             case PLAY_NOW:
+                ua = new UserAction(qContext, new Queue("now", query));
                 break;
             case GET_SUB:
                 ua = new UserAction(gSub, query);
