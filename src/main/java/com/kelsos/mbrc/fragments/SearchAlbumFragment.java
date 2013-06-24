@@ -10,13 +10,18 @@ import android.widget.ArrayAdapter;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.adapters.AlbumEntryAdapter;
 import com.kelsos.mbrc.data.AlbumEntry;
 import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
+import com.kelsos.mbrc.events.ui.AlbumSearchResults;
 import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
+
+import java.util.ArrayList;
 
 public class SearchAlbumFragment extends RoboSherlockListFragment{
     private static final int QUEUE_NEXT = 1;
@@ -27,9 +32,21 @@ public class SearchAlbumFragment extends RoboSherlockListFragment{
 
     @Inject Bus bus;
 
+    @Override public void onStart() {
+        super.onStart();
+        bus.register(this);
+    }
+
+    @Override public void onStop() {
+        super.onStop();
+        bus.unregister(this);
+    }
+
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         registerForContextMenu(getListView());
+        adapter = new AlbumEntryAdapter(getActivity(), R.layout.ui_list_dual, new ArrayList<AlbumEntry>());
+        setListAdapter(adapter);
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,8 +92,8 @@ public class SearchAlbumFragment extends RoboSherlockListFragment{
         }
     }
 
-    public void updateAdapter(ArrayAdapter<AlbumEntry> adapter) {
-        this.adapter = adapter;
+    @Subscribe public void handleAlbumResults(AlbumSearchResults results) {
+        adapter = new AlbumEntryAdapter(getActivity(), R.layout.ui_list_dual, results.getList());
         setListAdapter(adapter);
         adapter.notifyDataSetChanged();
     }

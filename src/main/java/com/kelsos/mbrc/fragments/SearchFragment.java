@@ -40,6 +40,7 @@ public class SearchFragment extends RoboSherlockFragment implements SearchView.O
     private SearchView mSearchView;
     private MenuItem mSearchItem;
     private ViewPager mPager;
+    private SearchPagerAdapter mAdapter;
 
     @Override
     public boolean onQueryTextSubmit(String query) {
@@ -74,12 +75,13 @@ public class SearchFragment extends RoboSherlockFragment implements SearchView.O
         return false;
     }
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ui_fragment_search, container, false);
         mPager = (ViewPager)view.findViewById(R.id.search_pager);
-        mPager.setAdapter(new SearchPagerAdapter(getActivity()));
-        mPager.setOffscreenPageLimit(3);
+        mPager.setAdapter(mAdapter);
         TitlePageIndicator titleIndicator = (TitlePageIndicator)view.findViewById(R.id.search_categories);
         titleIndicator.setViewPager(mPager);
         return view;
@@ -101,6 +103,7 @@ public class SearchFragment extends RoboSherlockFragment implements SearchView.O
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        mAdapter = new SearchPagerAdapter(getActivity());
     }
 
     @Override
@@ -116,27 +119,19 @@ public class SearchFragment extends RoboSherlockFragment implements SearchView.O
         mSearchView.setOnQueryTextListener(this);
     }
 
-    @Subscribe public void handleArtistSearchResults(ArtistSearchResults results) {
-        ArtistEntryAdapter adapter = new ArtistEntryAdapter(getActivity(), R.layout.ui_list_single, results.getList());
-        mPager.setCurrentItem(1);
-        ((SearchArtistFragment)((SearchPagerAdapter)mPager.getAdapter()).getFragment(1)).updateAdapter(adapter);
+    @Subscribe public void handleGenreSearchResults(GenreSearchResults results) {
+        mPager.setCurrentItem(0);
     }
 
-    @Subscribe public void handleGenreSearchResults(GenreSearchResults results) {
-        GenreEntryAdapter adapter = new GenreEntryAdapter(getActivity(), R.layout.ui_list_single, results.getList());
-        mPager.setCurrentItem(0);
-        ((SearchGenreFragment)((SearchPagerAdapter)mPager.getAdapter()).getFragment(0)).updateAdapter(adapter);
+    @Subscribe public void handleArtistSearchResults(ArtistSearchResults results) {
+        mPager.setCurrentItem(1);
     }
 
     @Subscribe public void handleAlbumResults(AlbumSearchResults results) {
-        AlbumEntryAdapter adapter = new AlbumEntryAdapter(getActivity(), R.layout.ui_list_dual, results.getList());
         mPager.setCurrentItem(2);
-        ((SearchAlbumFragment)((SearchPagerAdapter)mPager.getAdapter()).getFragment(2)).updateAdapter(adapter);
     }
 
     @Subscribe public void handleTrackResults(TrackSearchResults results) {
-        TrackEntryAdapter adapter = new TrackEntryAdapter(getActivity(), R.layout.ui_list_dual, results.getList());
         mPager.setCurrentItem(3);
-        ((SearchTrackFragment)((SearchPagerAdapter)mPager.getAdapter()).getFragment(3)).updateAdapter(adapter);
     }
 }

@@ -15,8 +15,12 @@ import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
+import com.kelsos.mbrc.events.ui.ArtistSearchResults;
 import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
+
+import java.util.ArrayList;
 
 public class SearchArtistFragment extends RoboSherlockListFragment {
     private static final int QUEUE_NEXT = 1;
@@ -26,9 +30,21 @@ public class SearchArtistFragment extends RoboSherlockListFragment {
     private ArtistEntryAdapter adapter;
     @Inject Bus bus;
 
+    @Override public void onStart() {
+        super.onStart();
+        bus.register(this);
+    }
+
+    @Override public void onStop() {
+        super.onStop();
+        bus.unregister(this);
+    }
+
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         registerForContextMenu(getListView());
+        adapter = new ArtistEntryAdapter(getActivity(), R.layout.ui_list_single, new ArrayList<ArtistEntry>());
+        setListAdapter(adapter);
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -74,8 +90,8 @@ public class SearchArtistFragment extends RoboSherlockListFragment {
         }
     }
 
-    public void updateAdapter(ArtistEntryAdapter adapter) {
-        this.adapter = adapter;
+    @Subscribe public void handleArtistSearchResults(ArtistSearchResults results) {
+        adapter = new ArtistEntryAdapter(getActivity(), R.layout.ui_list_single, results.getList());
         setListAdapter(adapter);
         adapter.notifyDataSetChanged();
     }

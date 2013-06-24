@@ -15,8 +15,12 @@ import com.kelsos.mbrc.data.TrackEntry;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
+import com.kelsos.mbrc.events.ui.TrackSearchResults;
 import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
+
+import java.util.ArrayList;
 
 public class SearchTrackFragment extends RoboSherlockListFragment {
     private static final int QUEUE_NEXT = 1;
@@ -26,9 +30,21 @@ public class SearchTrackFragment extends RoboSherlockListFragment {
     private TrackEntryAdapter adapter;
     @Inject Bus bus;
 
+    @Override public void onStart() {
+        super.onStart();
+        bus.register(this);
+    }
+
+    @Override public void onStop() {
+        super.onStop();
+        bus.unregister(this);
+    }
+
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         registerForContextMenu(getListView());
+        adapter = new TrackEntryAdapter(getActivity(), R.layout.ui_list_dual, new ArrayList<TrackEntry>());
+        setListAdapter(adapter);
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,8 +85,8 @@ public class SearchTrackFragment extends RoboSherlockListFragment {
         }
     }
 
-    public void updateAdapter(TrackEntryAdapter adapter) {
-        this.adapter = adapter;
+    @Subscribe public void handleTrackResults(TrackSearchResults results) {
+        adapter = new TrackEntryAdapter(getActivity(), R.layout.ui_list_dual, results.getList());
         setListAdapter(adapter);
         adapter.notifyDataSetChanged();
     }

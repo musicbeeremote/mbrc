@@ -4,6 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.data.AlbumEntry;
+import com.kelsos.mbrc.data.ArtistEntry;
+import com.kelsos.mbrc.data.GenreEntry;
+import com.kelsos.mbrc.data.TrackEntry;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.events.ui.*;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
@@ -11,6 +15,8 @@ import com.kelsos.mbrc.others.Const;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.utilities.ImageDecoder;
 import com.squareup.otto.Produce;
+
+import java.util.ArrayList;
 
 @Singleton
 public class MainDataModel {
@@ -32,7 +38,10 @@ public class MainDataModel {
     private boolean isScrobblingActive;
     private boolean isMuteActive;
     private PlayState playState;
-
+    private ArrayList<TrackEntry> searchTracks;
+    private ArrayList<AlbumEntry> searchAlbums;
+    private ArrayList<GenreEntry> searchGenres;
+    private ArrayList<ArtistEntry> searchArtists;
 
     @Inject
     public MainDataModel(MainThreadBusWrapper bus, Context context) {
@@ -54,6 +63,47 @@ public class MainDataModel {
         cover = null;
         rating = 0;
         lyrics = "";
+
+        searchArtists = new ArrayList<ArtistEntry>();
+        searchAlbums = new ArrayList<AlbumEntry>();
+        searchGenres = new ArrayList<GenreEntry>();
+        searchTracks = new ArrayList<TrackEntry>();
+    }
+
+    public void setSearchArtists(ArrayList<ArtistEntry> searchArtists) {
+        this.searchArtists = searchArtists;
+        bus.post(new ArtistSearchResults(this.searchArtists));
+    }
+
+    @Produce public ArtistSearchResults produceArtistSearchResults() {
+        return new ArtistSearchResults(searchArtists);
+    }
+
+    public void setSearchTracks(ArrayList<TrackEntry> searchTracks) {
+        this.searchTracks = searchTracks;
+        bus.post(new TrackSearchResults(searchTracks));
+    }
+
+    @Produce public TrackSearchResults produceTrackSearchResults() {
+        return new TrackSearchResults(searchTracks);
+    }
+
+    public void setSearchAlbums(ArrayList<AlbumEntry> searchAlbums) {
+        this.searchAlbums = searchAlbums;
+        bus.post(new AlbumSearchResults(searchAlbums));
+    }
+
+    @Produce public AlbumSearchResults produceAlbumSearchResults() {
+        return new AlbumSearchResults(searchAlbums);
+    }
+
+    public void setSearchGenres(ArrayList<GenreEntry> searchGenres) {
+        this.searchGenres = searchGenres;
+        bus.post(new GenreSearchResults(searchGenres));
+    }
+
+    @Produce public GenreSearchResults produceGenreSearchResults() {
+        return new GenreSearchResults(searchGenres);
     }
 
     public void setRating(String rating) {

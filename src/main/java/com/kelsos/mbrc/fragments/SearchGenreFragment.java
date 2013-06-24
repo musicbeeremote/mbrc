@@ -16,8 +16,12 @@ import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
+import com.kelsos.mbrc.events.ui.GenreSearchResults;
 import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
+
+import java.util.ArrayList;
 
 public class SearchGenreFragment extends RoboSherlockListFragment {
     private static final int QUEUE_NEXT = 1;
@@ -30,6 +34,8 @@ public class SearchGenreFragment extends RoboSherlockListFragment {
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         registerForContextMenu(getListView());
+        adapter = new GenreEntryAdapter(getActivity(), R.layout.ui_list_single, new ArrayList<GenreEntry>());
+        setListAdapter(adapter);
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,9 +82,19 @@ public class SearchGenreFragment extends RoboSherlockListFragment {
 
     }
 
-    public void updateAdapter(GenreEntryAdapter adapter) {
-        this.adapter = adapter;
+    @Subscribe public void handleGenreSearchResults(GenreSearchResults results) {
+        adapter = new GenreEntryAdapter(getActivity(), R.layout.ui_list_single, results.getList());
         setListAdapter(adapter);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override public void onStart() {
+        super.onStart();
+        bus.register(this);
+    }
+
+    @Override public void onStop() {
+        super.onStop();
+        bus.unregister(this);
     }
 }
