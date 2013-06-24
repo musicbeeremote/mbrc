@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="library_search_options">
-        <item>Artist</item>
-        <item>Album</item>
-        <item>Title</item>
-        <item>Genre</item>
-    </string-array>
-</resources>

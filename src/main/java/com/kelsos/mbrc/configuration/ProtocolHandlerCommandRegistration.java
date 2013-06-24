@@ -35,6 +35,9 @@ public class ProtocolHandlerCommandRegistration
         controller.register(Protocol.LibrarySearchAlbum, ShowAlbumSearchResults.class);
         controller.register(Protocol.LibrarySearchGenre, ShowGenreSearchResults.class);
         controller.register(Protocol.LibrarySearchTitle, ShowTrackSearchResults.class);
+        controller.register(Protocol.LibraryArtistAlbums, ShowAlbumSearchResults.class);
+        controller.register(Protocol.LibraryGenreArtists, ShowArtistSearchResults.class);
+        controller.register(Protocol.LibraryAlbumTracks, ShowTrackSearchResults.class);
         controller.register(Protocol.NowPlayingPosition, UpdatePlaybackPositionCommand.class);
         controller.register(UserInputEvent.StartConnection, InitiateConnectionCommand.class);
         controller.register(UserInputEvent.ResetConnection, RestartConnectionCommand.class);
