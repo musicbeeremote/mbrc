@@ -3,13 +3,12 @@ package com.kelsos.mbrc.adapters;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
-import com.kelsos.mbrc.fragments.SearchAlbumFragment;
-import com.kelsos.mbrc.fragments.SearchArtistFragment;
-import com.kelsos.mbrc.fragments.SearchGenreFragment;
-import com.kelsos.mbrc.fragments.SearchTrackFragment;
+import com.kelsos.mbrc.ui.fragments.SearchAlbumFragment;
+import com.kelsos.mbrc.ui.fragments.SearchArtistFragment;
+import com.kelsos.mbrc.ui.fragments.SearchGenreFragment;
+import com.kelsos.mbrc.ui.fragments.SearchTrackFragment;
 
 import java.util.ArrayList;
 

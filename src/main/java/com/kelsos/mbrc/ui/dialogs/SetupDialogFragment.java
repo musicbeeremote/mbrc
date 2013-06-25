@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui;
+package com.kelsos.mbrc.ui.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.views.AppPreferenceView;
+import com.kelsos.mbrc.ui.activities.AppPreferenceView;
 
 public class SetupDialogFragment extends DialogFragment {
     @Override

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.fragments;
+package com.kelsos.mbrc.ui.fragments;
 
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -13,8 +13,8 @@ import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmen
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.views.AppPreferenceView;
-import com.kelsos.mbrc.views.MainFragmentActivity;
+import com.kelsos.mbrc.ui.activities.AppPreferenceView;
+import com.kelsos.mbrc.ui.activities.MainFragmentActivity;
 import com.squareup.otto.Bus;
 import roboguice.inject.InjectView;
 

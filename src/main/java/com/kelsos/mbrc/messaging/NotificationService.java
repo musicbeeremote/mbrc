@@ -17,8 +17,8 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
-import com.kelsos.mbrc.views.MainFragmentActivity;
-import com.kelsos.mbrc.views.UpdateView;
+import com.kelsos.mbrc.ui.activities.MainFragmentActivity;
+import com.kelsos.mbrc.ui.activities.UpdateView;
 import com.squareup.otto.Subscribe;
 
 @Singleton
@@ -66,8 +66,6 @@ public class NotificationService {
         } catch (Exception ex) {
 
         }
-
-
     }
 
     /**
@@ -155,6 +153,4 @@ public class NotificationService {
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(PLUGIN_OUT_OF_DATE, notification);
     }
-
-
 }

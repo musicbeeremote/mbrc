@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.fragments;
+package com.kelsos.mbrc.ui.fragments;
 
 
 import android.os.Bundle;

@@ -24,7 +24,7 @@
     <fragment
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:name="com.kelsos.mbrc.fragments.MiniControlFragment"
+            android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
             android:layout="@layout/ui_fragment_mini_control"
             tools:layout="@layout/ui_fragment_mini_control"
             />
