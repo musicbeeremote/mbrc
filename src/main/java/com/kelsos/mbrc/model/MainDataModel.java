@@ -230,9 +230,9 @@ public class MainDataModel {
         return new ScrobbleChange(this.isScrobblingActive);
     }
 
-    public void setMuteState(String isMuteActive) {
-        this.isMuteActive = Boolean.parseBoolean(isMuteActive);
-        bus.post(new VolumeChange());
+    public void setMuteState(boolean isMuteActive) {
+        this.isMuteActive = isMuteActive;
+        bus.post(isMuteActive ? new VolumeChange() : new VolumeChange(volume));
     }
 
     @Produce public VolumeChange produceVolumeChange() {

@@ -108,8 +108,8 @@
                         android:layout_height="35dp"
                         android:numStars="5"
                         android:stepSize="0.5"
-                        android:scaleX="1"
-                        android:scaleY="1"
+                        android:scaleX="0.8"
+                        android:scaleY="0.8"
                         android:layout_gravity="center"
                         style="@style/Rating.Normal"/>
             </LinearLayout>
@@ -176,16 +176,6 @@
             android:layout_alignBottom="@+id/album_cover_area">
 
             <ImageButton
-                android:id="@+id/main_button_connect"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_below="@id/main_media_button_group"
-                android:background="@drawable/selectable_background_mbrc_default"
-                android:clickable="true"
-                android:contentDescription="@string/main_button_connection_description"
-                android:src="@drawable/ic_connectivy_off" />
-
-            <ImageButton
                 android:id="@+id/main_repeat_button"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
@@ -212,12 +202,12 @@
                 android:id="@+id/main_last_fm_button"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:layout_below="@id/main_button_connect"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:contentDescription="@string/main_button_last_fm_description"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_media_scrobble_red" />
+                android:src="@drawable/ic_media_scrobble_red"
+                android:layout_below="@id/main_media_button_group"/>
         </RelativeLayout>
     </RelativeLayout>
 

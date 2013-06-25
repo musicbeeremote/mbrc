@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
+import org.codehaus.jackson.node.BooleanNode;
 
 public class UpdateShuffle implements ICommand {
 
@@ -11,6 +12,6 @@ public class UpdateShuffle implements ICommand {
     MainDataModel model;
     @Override
     public void execute(IEvent e) {
-        model.setShuffleState((Boolean)e.getData());
+        model.setShuffleState(((BooleanNode)e.getData()).asBoolean());
     }
 }

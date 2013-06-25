@@ -352,17 +352,6 @@
         android:layout_alignBottom="@+id/main_middle_group">
 
         <ImageButton
-            android:id="@+id/main_button_connect"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_below="@id/main_media_button_group"
-            android:background="@drawable/selectable_background_mbrc_default"
-            android:clickable="true"
-            android:contentDescription="@string/main_button_connection_description"
-            android:src="@drawable/ic_connectivy_off" />
-
-
-        <ImageButton
             android:id="@+id/main_repeat_button"
             android:layout_width="44dp"
             android:layout_height="44dp"

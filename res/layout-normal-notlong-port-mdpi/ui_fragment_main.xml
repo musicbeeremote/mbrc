@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
-
+
+
         <TextView
             android:id="@+id/main_title_label"
             android:layout_width="match_parent"
@@ -28,7 +29,10 @@
             android:text="@string/main_label_track_title"
             android:textColor="#FFFFFF"
             android:textSize="20dp" />
-
+
+
+
+
         <TextView
             android:id="@+id/main_artist_label"
             android:layout_width="match_parent"
@@ -76,7 +80,15 @@
             android:layout_below="@id/main_album_cover_image_view"
             android:layout_marginTop="5dp"
             android:layout_toLeftOf="@+id/main_media_button_group" >
-
+
+
+
+
+
+
+
+
+
             <SeekBar
                 android:id="@+id/main_track_progress_seeker"
                 android:layout_width="match_parent"
@@ -104,7 +116,9 @@
                 android:text="@string/main_label_duration_current"
                 android:textColor="#FFFFFF"
                 android:textSize="11dp" />
-
+
+
+
             <TextView
                 android:id="@+id/main_track_duration_total"
                 android:layout_width="wrap_content"
@@ -125,16 +139,6 @@
             android:layout_marginLeft="40dp"
             android:layout_toRightOf="@id/main_album_cover_image_view"
             android:orientation="vertical" >
-
-            <ImageButton
-                android:id="@+id/main_button_connect"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_below="@id/main_media_button_group"
-                android:background="@drawable/selectable_background_mbrc_default"
-                android:clickable="true"
-                android:contentDescription="@string/main_button_connection_description"
-                android:src="@drawable/ic_connectivy_off" />
 
             <ImageButton
                 android:id="@+id/main_repeat_button"
@@ -163,7 +167,6 @@
                 android:id="@+id/main_last_fm_button"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:layout_below="@id/main_button_connect"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:contentDescription="@string/main_button_last_fm_description"
@@ -197,7 +200,8 @@
             android:text="@string/main_label_album"
             android:textColor="#FFFFFF"
             android:textSize="15dp" />
-
+
+
         <TextView
             android:id="@+id/main_label_year"
             android:layout_width="match_parent"
@@ -218,7 +222,8 @@
             android:textSize="13dp" />
 
     </RelativeLayout>
-
+
+
     <RelativeLayout
         android:id="@+id/main_volume_area"
         android:layout_width="match_parent"
@@ -239,7 +244,15 @@
 	    android:layout_height="44dp"
 	    android:gravity="center"
 	       android:layout_toRightOf="@id/main_mute_button">
-
+
+
+
+
+
+
+
+
+
 		<SeekBar
 		    android:id="@+id/main_volume_seeker"
 		    android:layout_width="match_parent"

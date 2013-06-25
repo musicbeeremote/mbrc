@@ -139,17 +139,6 @@
             android:orientation="vertical" >
 
             <ImageButton
-                android:id="@+id/main_button_connect"
-                android:layout_width="@dimen/extra_controls_button_size"
-                android:layout_height="@dimen/extra_controls_button_size"
-                android:layout_below="@id/main_media_button_group"
-                android:background="@drawable/selectable_background_mbrc_default"
-                android:clickable="true"
-                android:contentDescription="@string/main_button_connection_description"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_connectivy_off" />
-
-            <ImageButton
                 android:id="@+id/main_repeat_button"
                 android:layout_width="@dimen/extra_controls_button_size"
                 android:layout_height="@dimen/extra_controls_button_size"
@@ -176,7 +165,6 @@
                 android:id="@+id/main_last_fm_button"
                 android:layout_width="@dimen/extra_controls_button_size"
                 android:layout_height="@dimen/extra_controls_button_size"
-                android:layout_below="@id/main_button_connect"
                 android:layout_marginTop="@dimen/extra_controls_button_margin_top"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:contentDescription="@string/main_button_last_fm_description"

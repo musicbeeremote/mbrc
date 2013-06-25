@@ -16,18 +16,6 @@
             android:orientation="vertical" >
 
         <ImageButton
-                android:id="@+id/main_button_connect"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignWithParentIfMissing="true"
-                android:background="@drawable/selectable_background_mbrc_default"
-                android:clickable="true"
-                android:contentDescription="@string/main_button_connection_description"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_connectivy_off" />
-
-
-        <ImageButton
                 android:id="@+id/main_last_fm_button"
                 android:layout_width="40dp"
                 android:layout_height="40dp"

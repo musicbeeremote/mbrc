@@ -63,7 +63,7 @@ public class SearchTrackFragment extends RoboSherlockListFragment {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             Object line = adapter.getItem(mi.position);
             String qContext = Protocol.LibraryQueueTrack;
-            String query = ((TrackEntry)line).getTitle();
+            String query = ((TrackEntry)line).getSrc();
 
             UserAction ua = null;
             switch (item.getItemId()) {

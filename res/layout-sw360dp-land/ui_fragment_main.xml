@@ -4,7 +4,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal" >
-
+
+
     <RelativeLayout
         android:id="@+id/main_media_button_group"
         android:layout_width="wrap_content"
@@ -15,27 +16,16 @@
         android:orientation="vertical" >
 
         <ImageButton
-            android:id="@+id/main_button_connect"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignWithParentIfMissing="true"
-            android:background="@drawable/selectable_background_mbrc_default"
-            android:clickable="true"
-            android:contentDescription="@string/main_button_connection_description"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_connectivy_off" />
-
-        <ImageButton
             android:id="@+id/main_last_fm_button"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_below="@id/main_button_connect"
             android:layout_marginTop="20dp"
             android:background="@drawable/selectable_background_mbrc_default"
             android:contentDescription="@string/main_button_last_fm_description"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_scrobble_red" />
-
+
+
         <ImageButton
             android:id="@+id/main_repeat_button"
             android:layout_width="40dp"
@@ -47,7 +37,8 @@
             android:contentDescription="@string/main_button_repeat_description"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_repeat" />
-
+
+
         <ImageButton
             android:id="@+id/main_shuffle_button"
             android:layout_width="40dp"
@@ -58,7 +49,8 @@
             android:contentDescription="@string/main_button_shuffle_description"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_shuffle" />
-
+
+
         <ImageButton
             android:id="@+id/main_mute_button"
             android:layout_width="40dp"
@@ -92,7 +84,9 @@
         android:layout_alignBottom="@+id/main_album_cover_image_view"
         android:layout_toRightOf="@id/main_album_cover_image_view"
         android:orientation="vertical" >
-
+
+
+
         <TextView
             android:id="@+id/main_title_label"
             android:layout_width="match_parent"
@@ -112,7 +106,11 @@
             android:textSize="24dp"
             android:textStyle="normal"
             android:typeface="sans" />
-
+
+
+
+
+
         <TextView
             android:id="@+id/main_artist_label"
             android:layout_width="match_parent"
@@ -131,7 +129,10 @@
             android:text="@string/main_label_artist"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
-
+
+
+
+
         <TextView
             android:id="@+id/main_label_album"
             android:layout_width="match_parent"
@@ -151,7 +152,9 @@
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:typeface="sans" />
-
+
+
+
         <TextView
             android:id="@+id/main_label_year"
             android:layout_width="match_parent"
@@ -189,7 +192,8 @@
                 android:contentDescription="@string/main_button_previous_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_previous" />
-
+
+
             <ImageButton
                 android:id="@+id/main_button_stop"
                 android:layout_width="55dp"
@@ -200,7 +204,8 @@
                 android:contentDescription="@string/main_button_stop_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_stop" />
-
+
+
             <ImageButton
                 android:id="@+id/main_button_play_pause"
                 android:layout_width="55dp"
@@ -212,7 +217,8 @@
                 android:contentDescription="@string/main_button_play_pause_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_play" />
-
+
+
             <ImageButton
                 android:id="@+id/main_button_next"
                 android:layout_width="55dp"
@@ -227,7 +233,14 @@
 
         </RelativeLayout>
     </RelativeLayout>
-
+
+
+
+
+
+
+
+
     <SeekBar
         android:id="@+id/main_volume_seeker"
         android:layout_width="match_parent"
@@ -249,7 +262,8 @@
         android:secondaryProgress="0"
         android:thumb="@drawable/ic_volume_thumb"
         android:thumbOffset="16dp" />
-
+
+
     <RelativeLayout
         android:id="@+id/trackProgressLabelsLayout"
         android:layout_width="fill_parent"
@@ -258,7 +272,11 @@
         android:layout_alignLeft="@+id/main_volume_seeker"
         android:layout_marginRight="8dp"
         android:orientation="horizontal" >
-
+
+
+
+
+
         <SeekBar
             android:id="@+id/main_track_progress_seeker"
             android:layout_width="fill_parent"
@@ -273,7 +291,10 @@
             android:progressDrawable="@drawable/ic_duration_bar_progress"
             android:thumb="@drawable/ic_duration_thumb"
             android:thumbOffset="6dp" />
-
+
+
+
+
         <TextView
             android:id="@+id/main_track_progress_current"
             android:layout_width="wrap_content"
@@ -284,7 +305,9 @@
             android:text="@string/main_label_duration_current"
             android:textColor="#FFFFFF"
             android:textSize="11dp" />
-
+
+
+
         <TextView
             android:id="@+id/main_track_duration_total"
             android:layout_width="wrap_content"

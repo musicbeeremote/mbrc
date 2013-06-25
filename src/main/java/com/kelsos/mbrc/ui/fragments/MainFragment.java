@@ -17,6 +17,7 @@ import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragmen
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.UserAction;
+import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.events.UserInputEvent;
@@ -66,8 +67,6 @@ public class MainFragment extends RoboSherlockFragment {
     ImageButton shuffleButton;
     @InjectView(R.id.main_repeat_button)
     ImageButton repeatButton;
-    @InjectView(R.id.main_button_connect)
-    ImageButton connectivityIndicator;
     @InjectView(R.id.main_album_cover_image_view)
     ImageView albumCover;
     @InjectView(R.id.ratingWrapper)
@@ -117,13 +116,13 @@ public class MainFragment extends RoboSherlockFragment {
     private View.OnClickListener muteButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerMute, true)));
+            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerMute, Const.TOGGLE)));
         }
     };
     private View.OnClickListener scrobbleButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerScrobble, true)));
+            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerScrobble, Const.TOGGLE)));
         }
     };
     private View.OnClickListener shuffleButtonListener = new View.OnClickListener() {
@@ -135,20 +134,7 @@ public class MainFragment extends RoboSherlockFragment {
     private View.OnClickListener repeatButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerRepeat, true)));
-        }
-    };
-    private View.OnClickListener connectivityIndicatorListener = new View.OnClickListener() {
-
-        public void onClick(View v) {
-            bus.post(new MessageEvent(UserInputEvent.StartConnection));
-        }
-    };
-    private View.OnLongClickListener connectivityIndicatorLongClickListener = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View view) {
-            bus.post(new MessageEvent(UserInputEvent.ResetConnection));
-            return false;
+            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerRepeat, Const.TOGGLE)));
         }
     };
     private SeekBar.OnSeekBarChangeListener volumeChangeListener = new SeekBar.OnSeekBarChangeListener() {
@@ -256,6 +242,10 @@ public class MainFragment extends RoboSherlockFragment {
         SetTextViewTypeface();
         RegisterListeners();
         bus.register(this);
+    }
+
+    @Override public void onResume() {
+        super.onResume();
         bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingPosition, true)));
     }
 
@@ -280,8 +270,6 @@ public class MainFragment extends RoboSherlockFragment {
             scrobbleButton.setOnClickListener(scrobbleButtonListener);
             shuffleButton.setOnClickListener(shuffleButtonListener);
             repeatButton.setOnClickListener(repeatButtonListener);
-            connectivityIndicator.setOnClickListener(connectivityIndicatorListener);
-            connectivityIndicator.setOnLongClickListener(connectivityIndicatorLongClickListener);
             albumCover.setOnClickListener(coverOnClick);
         } catch (Exception ignore) {
 
@@ -356,17 +344,12 @@ public class MainFragment extends RoboSherlockFragment {
 
     @Subscribe
     public void handleCoverEvent(final CoverAvailable cevent) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (albumCover == null) return;
-                if (cevent.getIsAvailable()) {
-                    albumCover.setImageBitmap(cevent.getCover());
-                } else {
-                    albumCover.setImageResource(R.drawable.ic_image_no_cover);
-                }
-            }
-        });
+        if (albumCover == null) return;
+        if (cevent.getIsAvailable()) {
+            albumCover.setImageBitmap(cevent.getCover());
+        } else {
+            albumCover.setImageResource(R.drawable.ic_image_no_cover);
+        }
     }
 
     @Subscribe public void handleShuffleChange(ShuffleChange change) {
@@ -450,9 +433,10 @@ public class MainFragment extends RoboSherlockFragment {
                 int currentProgress = trackProgressSlider.getProgress() / 1000;
                 final int currentMinutes = currentProgress / 60;
                 final int currentSeconds = currentProgress % 60;
-                if (getActivity() == null) return;
-                getActivity().runOnUiThread(new Runnable() {
-                    public void run() {
+
+                getActivity().runOnUiThread(new Runnable(){
+
+                    @Override public void run() {
                         try {
                             if (trackProgressSlider == null) return;
                             trackProgressSlider.setProgress(trackProgressSlider.getProgress() + timerPeriod);
@@ -462,6 +446,7 @@ public class MainFragment extends RoboSherlockFragment {
                         }
                     }
                 });
+
 
             }
         };
@@ -488,26 +473,10 @@ public class MainFragment extends RoboSherlockFragment {
 
     @Subscribe
     public void handleConnectionStatusChange(final ConnectionStatusChange change) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (connectivityIndicator == null) return;
-                switch (change.getStatus()) {
-                    case CONNECTION_OFF:
-                        connectivityIndicator.setImageResource(R.drawable.ic_connectivy_off);
-                        stopTrackProgressAnimation();
-                        activateStoppedState();
-                        break;
-                    case CONNECTION_ON:
-                        connectivityIndicator.setImageResource(R.drawable.ic_connectivity_connected);
-                        break;
-                    case CONNECTION_ACTIVE:
-                        connectivityIndicator.setImageResource(R.drawable.ic_connectivity_active);
-                        break;
-                }
-            }
-        });
-
+        if (change.getStatus() == ConnectionStatus.CONNECTION_OFF) {
+            stopTrackProgressAnimation();
+            activateStoppedState();
+        }
     }
 
     /**
@@ -533,17 +502,12 @@ public class MainFragment extends RoboSherlockFragment {
         totalSeconds %= 60;
         final int finalTotalSeconds = totalSeconds;
         final int finalCurrentSeconds = currentSeconds;
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                trackDuration.setText(String.format("%02d:%02d", totalMinutes, finalTotalSeconds));
-                trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, finalCurrentSeconds));
 
-                trackProgressSlider.setMax(total);
-                trackProgressSlider.setProgress(current);
-            }
-        });
+        trackDuration.setText(String.format("%02d:%02d", totalMinutes, finalTotalSeconds));
+        trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, finalCurrentSeconds));
 
+        trackProgressSlider.setMax(total);
+        trackProgressSlider.setProgress(current);
 
         trackProgressAnimation();
     }

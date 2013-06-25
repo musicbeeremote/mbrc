@@ -8,7 +8,9 @@
     <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:id="@+id/drawer_navigation"
+            android:layout_above="@+id/linearLayout">
 
         <TextView
                 android:layout_width="match_parent"
@@ -18,7 +20,7 @@
                 android:layout_gravity="left|center_vertical"
                 android:drawableLeft="@android:drawable/ic_menu_search"
                 style="@style/Menu.Title"
-                android:background="@drawable/ui_drawer_line_gradient"/>
+                android:background="@drawable/ui_drawer_clickable_background"/>
 
         <View
                 android:layout_width="fill_parent"
@@ -33,7 +35,7 @@
                 android:layout_gravity="left|center_vertical"
                 android:drawableLeft="@drawable/ic_action_playlist"
                 style="@style/Menu.Title"
-                android:background="@drawable/ui_drawer_line_gradient"/>
+                android:background="@drawable/ui_drawer_clickable_background"/>
 
         <View
                 android:layout_width="fill_parent"
@@ -48,7 +50,7 @@
                 android:layout_gravity="left|center_vertical"
                 android:drawableLeft="@drawable/ic_action_lyrics"
                 style="@style/Menu.Title"
-                android:background="@drawable/ui_drawer_line_gradient"/>
+                android:background="@drawable/ui_drawer_clickable_background"/>
 
         <View
                 android:layout_width="fill_parent"
@@ -63,7 +65,31 @@
                 android:layout_gravity="left|center_vertical"
                 android:drawableLeft="@drawable/ic_action_settings"
                 style="@style/Menu.Title"
-                android:background="@drawable/ui_drawer_line_gradient"/>
+                android:background="@drawable/ui_drawer_clickable_background"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="45dp"
+            android:layout_above="@+id/drawer_version_indicator"
+            android:id="@+id/linearLayout">
+
+        <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@color/mbrc_drawer_seperator"/>
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/drawer_connection_status_off"
+                android:id="@+id/menuConnector"
+                android:layout_gravity="left|center_vertical"
+                android:drawableLeft="@drawable/ic_connectivy_off"
+                style="@style/Menu.Title"
+                android:background="@drawable/ui_drawer_clickable_background"/>
 
     </LinearLayout>
 
@@ -71,7 +97,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="MusicBee Remote v0.3 DEV"
-            android:id="@+id/textView"
+            android:id="@+id/drawer_version_indicator"
             android:layout_gravity="left|center_vertical"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="12dp"

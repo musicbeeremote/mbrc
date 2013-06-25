@@ -72,6 +72,8 @@
     <string name="dialog_application_setup_positive">Setup Now</string>
     <string name="dialog_application_setup_negative">Cancel</string>
     <string name="preferences_open_source">open_source</string>
-
+    <string name="drawer_connection_status_off">Offline</string>
+    <string name="drawer_connection_status_on">Authenticating</string>
+    <string name="drawer_connection_status_active">Connected</string>
 
 </resources>
