@@ -71,6 +71,7 @@
     <string name="dialog_application_setup_title">Setup</string>
     <string name="dialog_application_setup_positive">Setup Now</string>
     <string name="dialog_application_setup_negative">Cancel</string>
+    <string name="preferences_open_source">open_source</string>
 
 
 </resources>

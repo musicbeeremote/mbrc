@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.views;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.webkit.WebView;
 import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockPreferenceActivity;
 import com.google.inject.Inject;
@@ -56,6 +58,14 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity implements
 				}
 			}
 		});
+
+        final Preference mOpenSource = findPreference("open_source");
+        mOpenSource.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override public boolean onPreferenceClick(Preference preference) {
+                showOpenSourceLicenseDialgo();
+                return false;
+            }
+        });
     }
 
     @Override
@@ -101,4 +111,15 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity implements
 	{
 		super.onDestroy();
 	}
+
+    private void showOpenSourceLicenseDialgo() {
+        final WebView webView = new WebView(this);
+        webView.loadUrl("file:///android_asset/licenses.html");
+        new AlertDialog.Builder(this)
+                .setView(webView)
+                .setPositiveButton(android.R.string.ok, null)
+                .setTitle("Open source licenses")
+                .create()
+                .show();
+    }
 }
