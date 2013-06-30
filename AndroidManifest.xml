@@ -13,13 +13,15 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
     <application android:description="@string/application_description"
                  android:icon="@drawable/ic_launcher"
                  android:label="@string/application_name"
                  android:logo="@drawable/ic_launcher"
                  android:name=".RemoteApplication"
                  android:theme="@style/Theme.mbrc_default"
-            android:debuggable="true">
+                 android:allowBackup="true"
+                 android:debuggable="true">
         <activity android:launchMode="singleTop"
                   android:name=".ui.activities.MainFragmentActivity"
                   android:windowSoftInputMode="adjustNothing">

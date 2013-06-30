@@ -434,6 +434,7 @@ public class MainFragment extends RoboSherlockFragment {
                 final int currentMinutes = currentProgress / 60;
                 final int currentSeconds = currentProgress % 60;
 
+                if (getActivity() == null) return;
                 getActivity().runOnUiThread(new Runnable(){
 
                     @Override public void run() {
