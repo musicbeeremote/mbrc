@@ -58,14 +58,6 @@
             <version>13</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.viewpagerindicator</groupId>
-            <artifactId>library</artifactId>
-            <version>2.4.1</version>
-            <type>apklib</type>
-        </dependency>
-
-
 		<!-- Action Bar sherlock -->
         <dependency>
             <groupId>com.actionbarsherlock</groupId>

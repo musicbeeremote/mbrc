@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:gravity="center_vertical"
@@ -16,6 +17,7 @@
             android:divider="@null"
             android:fastScrollAlwaysVisible="false"
             android:fastScrollEnabled="true"
-            android:listSelector="@drawable/abs__list_selector_holo_dark" />
+            android:listSelector="@drawable/abs__list_selector_holo_dark"
+            tools:listitem="@layout/ui_list_single"/>
 
 </LinearLayout>

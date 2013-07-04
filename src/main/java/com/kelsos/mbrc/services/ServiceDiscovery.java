@@ -5,6 +5,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 import com.google.inject.Inject;
+import com.kelsos.mbrc.data.ConnectionSettings;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -66,6 +67,7 @@ public class ServiceDiscovery {
 
                     JsonNode node = mapper.readValue(notify, JsonNode.class);
                     if (node.path("context").asText().equals("notify")) {
+                        ConnectionSettings settings = new ConnectionSettings(node);
                         break;
                     }
                 }

@@ -1,36 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_marginTop="1dp"
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:background="@color/abs__background_holo_dark">
+
     <View
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:background="#ffffff"/>
 
-    <ImageView
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:id="@+id/mc_track_cover"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:src="@drawable/ic_image_no_cover"
-            android:scaleType="fitCenter"
-            android:padding="1dp"/>
-
     <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-        android:layout_toRightOf="@+id/mc_track_cover"
-        android:layout_alignTop="@+id/mc_track_cover"
-        android:orientation="vertical"
-        android:layout_alignParentRight="false"
-        android:id="@+id/relativeLayout"
-        android:layout_marginLeft="8dp"
-            >
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+        <ImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:id="@+id/mc_track_cover"
+                android:src="@drawable/ic_image_no_cover"
+                android:scaleType="fitCenter"
+                android:padding="1dp"/>
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:id="@+id/relativeLayout"
+                android:layout_marginLeft="8dp"
+                android:layout_gravity="left"
+                android:layout_weight="1">
 
             <TextView
                     android:layout_width="wrap_content"
@@ -39,7 +40,7 @@
                     android:singleLine="true"
                     android:ellipsize="end"
                     android:text="Title goes here"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:id="@+id/mc_track_title"
                     android:layout_gravity="left|center_vertical"
                     android:layout_marginTop="4dp"/>
@@ -53,50 +54,46 @@
                     android:id="@+id/mc_track_artist"
                     android:layout_gravity="left|center_vertical"
                     android:layout_alignParentStart="false"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentLeft="true"/>
+                    />
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                >
+
+            <ImageButton
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:id="@+id/mc_prev_track"
+                    android:background="@drawable/selectable_background_mbrc_default"
+                    android:src="@drawable/ic_np_previous_holder"
+                    android:baselineAlignBottom="false"
+                    />
+
+            <ImageButton
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:id="@+id/mc_play_pause"
+                    android:background="@drawable/selectable_background_mbrc_default"
+                    android:src="@drawable/ic_np_play_holder"
+                    android:baselineAlignBottom="false"
+                    />
+
+            <ImageButton
+                    android:layout_width="45dp"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/mc_next_track"
+                    android:background="@drawable/selectable_background_mbrc_default"
+                    android:src="@drawable/ic_np_next_holder"
+                    android:baselineAlignBottom="false"
+                    />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-
-
-    <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:baselineAligned="false"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/relativeLayout">
-
-        <ImageButton
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:id="@+id/mc_prev_track"
-                android:background="@drawable/selectable_background_mbrc_default"
-                android:src="@drawable/ic_np_previous_holder"
-                android:baselineAlignBottom="false"
-                android:layout_alignParentTop="true"
-                android:layout_toLeftOf="@+id/mc_play_pause"/>
-
-        <ImageButton
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:id="@+id/mc_play_pause"
-                android:background="@drawable/selectable_background_mbrc_default"
-                android:src="@drawable/ic_np_play_holder"
-                android:baselineAlignBottom="false"
-                android:layout_alignParentTop="true"
-                android:layout_toLeftOf="@+id/mc_next_track"/>
-
-        <ImageButton
-                android:layout_width="45dp"
-                android:layout_height="fill_parent"
-                android:id="@+id/mc_next_track"
-                android:background="@drawable/selectable_background_mbrc_default"
-                android:src="@drawable/ic_np_next_holder"
-                android:baselineAlignBottom="false"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"/>
-    </RelativeLayout>
 
 </RelativeLayout>

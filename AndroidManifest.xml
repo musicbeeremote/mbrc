@@ -7,7 +7,7 @@
 
     <uses-sdk android:minSdkVersion="8"
               android:targetSdkVersion="17"/>
-    <!--debug-->
+
     <uses-permission android:name="android.permission.SET_DEBUG_APP"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
@@ -20,8 +20,7 @@
                  android:logo="@drawable/ic_launcher"
                  android:name=".RemoteApplication"
                  android:theme="@style/Theme.mbrc_default"
-                 android:allowBackup="true"
-                 android:debuggable="true">
+                 android:allowBackup="true">
         <activity android:launchMode="singleTop"
                   android:name=".ui.activities.MainFragmentActivity"
                   android:windowSoftInputMode="adjustNothing">
