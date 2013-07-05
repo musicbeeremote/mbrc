@@ -48,6 +48,16 @@
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_shuffle" />
 
+        <ImageButton
+                android:id="@+id/main_lfm_love_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/selectable_background_mbrc_default"
+                android:contentDescription="@string/main_button_lfm_love_description"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_media_lfm_unloved"
+                android:layout_marginTop="20dp"/>
+
 
         <ImageButton
             android:id="@+id/main_mute_button"
@@ -57,7 +67,8 @@
             android:background="@drawable/selectable_background_mbrc_default"
             android:contentDescription="@string/main_button_mute_description"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_media_mute_full" />
+            android:src="@drawable/ic_media_mute_full"
+            android:layout_marginTop="20dp"/>
 
     </LinearLayout>
 

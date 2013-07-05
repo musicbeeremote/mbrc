@@ -73,9 +73,7 @@ public class MainFragment extends RoboSherlockFragment {
     LinearLayout ratingWrapper;
     @InjectView(R.id.track_rating_bar)
     RatingBar trackRating;
-    @InjectView(R.id.loveWrapper)
-    LinearLayout loveWrapper;
-    @InjectView(R.id.lfmLove)
+    @InjectView(R.id.main_lfm_love_button)
     ImageButton lfmLoveButton;
 
     private ShareActionProvider mShareActionProvider;
@@ -200,7 +198,6 @@ public class MainFragment extends RoboSherlockFragment {
                 animation.setRepeatCount(1);
 
                 ratingWrapper.startAnimation(animation);
-                loveWrapper.startAnimation(animation);
                 animation.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
@@ -255,7 +252,6 @@ public class MainFragment extends RoboSherlockFragment {
     private void RegisterListeners() {
         try {
             ratingWrapper.setVisibility(View.INVISIBLE);
-            loveWrapper.setVisibility(View.INVISIBLE);
             trackRating.setOnRatingBarChangeListener(ratingChangeListener);
             lfmLoveButton.setOnClickListener(lfmLoveClicked);
 

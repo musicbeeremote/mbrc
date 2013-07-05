@@ -74,24 +74,6 @@
 
         <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="#99000000"
-                android:layout_gravity="right|top"
-                android:id="@+id/loveWrapper"
-                android:layout_marginTop="1dp"
-                android:layout_marginRight="1dp">
-
-            <ImageButton
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/lfmLove"
-                    android:background="@drawable/selectable_background_mbrc_default"
-                    />
-        </LinearLayout>
-
-        <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#99000000"
@@ -316,6 +298,15 @@
             android:layout_alignBottom="@+id/album_cover_area">
 
         <ImageButton
+                android:id="@+id/main_last_fm_button"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/selectable_background_mbrc_default"
+                android:contentDescription="@string/main_button_last_fm_description"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_media_scrobble_red"/>
+
+        <ImageButton
                 android:id="@+id/main_repeat_button"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
@@ -331,21 +322,21 @@
                 android:id="@+id/main_shuffle_button"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:contentDescription="@string/main_button_shuffle_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_shuffle"/>
 
-
         <ImageButton
-                android:id="@+id/main_last_fm_button"
+                android:id="@+id/main_lfm_love_button"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:layout_marginTop="20dp"
                 android:background="@drawable/selectable_background_mbrc_default"
-                android:contentDescription="@string/main_button_last_fm_description"
+                android:contentDescription="@string/main_button_lfm_love_description"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_media_scrobble_red"/>
+                android:src="@drawable/ic_media_lfm_unloved"
+                android:layout_marginTop="20dp"/>
 
     </LinearLayout>
 

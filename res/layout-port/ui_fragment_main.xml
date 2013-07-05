@@ -76,25 +76,6 @@
 
             <LinearLayout
                     android:orientation="vertical"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="#99000000"
-                    android:layout_gravity="right|top"
-                    android:id="@+id/loveWrapper"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginRight="1dp">
-
-                <ImageButton
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:id="@+id/lfmLove"
-                        android:background="@drawable/selectable_background_mbrc_default"
-                        android:contentDescription="@string/main_lfm_content"
-                        />
-            </LinearLayout>
-
-            <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="#99000000"
@@ -107,11 +88,11 @@
                 <RatingBar
                         android:id="@+id/track_rating_bar"
                         android:layout_width="wrap_content"
-                        android:layout_height="35dp"
+                        android:layout_height="50dp"
                         android:numStars="5"
                         android:stepSize="0.5"
-                        android:scaleX="0.6"
-                        android:scaleY="0.6"
+                        android:scaleX="0.8"
+                        android:scaleY="0.8"
                         android:layout_gravity="center"
                         />
             </LinearLayout>
@@ -127,35 +108,46 @@
                 android:layout_alignBottom="@+id/album_cover_area">
 
             <ImageButton
+                    android:id="@+id/main_last_fm_button"
+                    android:layout_width="@dimen/control_button_side"
+                    android:layout_height="@dimen/control_button_side"
+                    android:background="@drawable/selectable_background_mbrc_default"
+                    android:contentDescription="@string/main_button_last_fm_description"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_media_scrobble_red"
+                    />
+
+            <ImageButton
                     android:id="@+id/main_repeat_button"
                     android:layout_width="@dimen/control_button_side"
                     android:layout_height="@dimen/control_button_side"
-                    android:layout_marginTop="8dp"
+
                     android:background="@drawable/selectable_background_mbrc_default"
                     android:clickable="true"
                     android:contentDescription="@string/main_button_repeat_description"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_media_repeat"/>
+                    android:src="@drawable/ic_media_repeat"
+                    android:layout_marginTop="@dimen/second_bar_button_distance"/>
 
             <ImageButton
                     android:id="@+id/main_shuffle_button"
                     android:layout_width="@dimen/control_button_side"
                     android:layout_height="@dimen/control_button_side"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="@dimen/second_bar_button_distance"
                     android:background="@drawable/selectable_background_mbrc_default"
                     android:contentDescription="@string/main_button_shuffle_description"
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_media_shuffle"/>
 
             <ImageButton
-                    android:id="@+id/main_last_fm_button"
-                    android:layout_width="@dimen/control_button_side"
-                    android:layout_height="@dimen/control_button_side"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/selectable_background_mbrc_default"
-                    android:contentDescription="@string/main_button_last_fm_description"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_media_scrobble_red"
+                android:id="@+id/main_lfm_love_button"
+                android:layout_width="@dimen/control_button_side"
+                android:layout_height="@dimen/control_button_side"
+                android:layout_marginTop="@dimen/second_bar_button_distance"
+                android:background="@drawable/selectable_background_mbrc_default"
+                android:contentDescription="@string/main_button_lfm_love_description"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_media_lfm_unloved"
                     />
         </LinearLayout>
     </RelativeLayout>

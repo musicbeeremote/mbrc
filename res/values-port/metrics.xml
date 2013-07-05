@@ -3,4 +3,5 @@
     <dimen name="album_cover_side">200dp</dimen>
     <dimen name="info_side_margin">11dp</dimen>
     <dimen name="control_button_side">44dp</dimen>
+    <dimen name="second_bar_button_distance">8dp</dimen>
 </resources>

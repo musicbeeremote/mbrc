@@ -79,5 +79,6 @@
     <string name="settings_dialog_hint_host">Hostname / IP</string>
     <string name="settings_dialog_hint_port">Port number</string>
     <string name="main_lfm_content">The last fm love button</string>
+    <string name="main_button_lfm_love_description">Used to change the love state of the playing track</string>
 
 </resources>
