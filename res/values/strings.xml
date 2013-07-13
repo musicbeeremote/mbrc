@@ -80,5 +80,15 @@
     <string name="settings_dialog_hint_port">Port number</string>
     <string name="main_lfm_content">The last fm love button</string>
     <string name="main_button_lfm_love_description">Used to change the love state of the playing track</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="ui_drawer_menu_home">Home</string>
+    <string name="ui_drawer_menu_search">Search</string>
+    <string name="ui_drawer_menu_np">Now Playing List</string>
+    <string name="ui_drawer_menu_lyrics">Lyrics</string>
+    <string name="ui_drawer_menu_settings">Settings</string>
+    <string name="ui_drawer_menu_version">MusicBee Remote v0.3 DEV</string>
+    <string name="artist_placeholder">Artistname</string>
+    <string name="title_placeholder">Titleplaceholder</string>
 
 </resources>

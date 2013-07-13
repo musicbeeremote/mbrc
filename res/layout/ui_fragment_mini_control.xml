@@ -14,7 +14,8 @@
 
     <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:paddingTop="1dp">
 
         <ImageView
                 android:layout_width="45dp"
@@ -31,7 +32,8 @@
                 android:id="@+id/relativeLayout"
                 android:layout_marginLeft="8dp"
                 android:layout_gravity="left"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:gravity="center">
 
             <TextView
                     android:layout_width="wrap_content"
@@ -39,18 +41,17 @@
                     android:textColor="#FFFFFF"
                     android:singleLine="true"
                     android:ellipsize="end"
-                    android:text="Title goes here"
+                    android:text="@string/title_placeholder"
                     android:textSize="16sp"
                     android:id="@+id/mc_track_title"
-                    android:layout_gravity="left|center_vertical"
-                    android:layout_marginTop="4dp"/>
+                    android:layout_gravity="left|center_vertical"/>
 
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:text="Artist goes here"
+                    android:text="@string/artist_placeholder"
                     android:id="@+id/mc_track_artist"
                     android:layout_gravity="left|center_vertical"
                     android:layout_alignParentStart="false"
@@ -69,7 +70,7 @@
                     android:layout_height="45dp"
                     android:id="@+id/mc_prev_track"
                     android:background="@drawable/selectable_background_mbrc_default"
-                    android:src="@drawable/ic_np_previous_holder"
+                    android:src="@drawable/ic_action_previous"
                     android:baselineAlignBottom="false"
                     />
 
@@ -78,7 +79,7 @@
                     android:layout_height="45dp"
                     android:id="@+id/mc_play_pause"
                     android:background="@drawable/selectable_background_mbrc_default"
-                    android:src="@drawable/ic_np_play_holder"
+                    android:src="@drawable/ic_action_play"
                     android:baselineAlignBottom="false"
                     />
 
@@ -87,7 +88,7 @@
                     android:layout_height="fill_parent"
                     android:id="@+id/mc_next_track"
                     android:background="@drawable/selectable_background_mbrc_default"
-                    android:src="@drawable/ic_np_next_holder"
+                    android:src="@drawable/ic_action_next"
                     android:baselineAlignBottom="false"
                     />
 

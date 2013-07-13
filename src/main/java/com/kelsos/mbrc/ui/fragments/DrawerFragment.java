@@ -1,72 +1,41 @@
 package com.kelsos.mbrc.ui.fragments;
 
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
+import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.adapters.DrawerAdapter;
+import com.kelsos.mbrc.data.NavigationEntry;
+import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
-import com.kelsos.mbrc.ui.activities.AppPreferenceView;
-import com.kelsos.mbrc.ui.activities.MainFragmentActivity;
+import com.kelsos.mbrc.events.ui.DrawerEvent;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.inject.InjectView;
 
+import java.util.ArrayList;
 
-public class DrawerFragment extends RoboSherlockFragment {
+
+public class DrawerFragment extends RoboSherlockListFragment implements FragmentManager.OnBackStackChangedListener {
     @Inject Bus bus;
-    @InjectView(R.id.menuLibrary) TextView menuLibrary;
-    @InjectView(R.id.menuLyrics) TextView menuLyrics;
-    @InjectView(R.id.menuNowPlaying) TextView menuNowPlaying;
-    @InjectView(R.id.menuSettings) TextView menuSettings;
     @InjectView(R.id.menuConnector) TextView menuConnector;
+
     private Typeface robotoLight;
-
-    private TextView.OnClickListener libraryButtonClick = new TextView.OnClickListener() {
-
-        @Override
-        public void onClick(View view) {
-
-            SearchFragment slsFragment = new SearchFragment();
-            replaceFragment(slsFragment);
-            closeDrawer();
-        }
-    };
-    private TextView.OnClickListener settingsButtonClick = new TextView.OnClickListener() {
-
-        @Override
-        public void onClick(View view) {
-            startActivity(new Intent(getActivity(), AppPreferenceView.class));
-        }
-    };
-    private TextView.OnClickListener nowPlayingButtonClick = new TextView.OnClickListener() {
-
-        @Override
-        public void onClick(View view) {
-            NowPlayingFragment npFragment = new NowPlayingFragment();
-            replaceFragment(npFragment);
-            closeDrawer();
-        }
-    };
-    private TextView.OnClickListener lyricsButtonClick = new TextView.OnClickListener() {
-
-        @Override
-        public void onClick(View view) {
-            LyricsFragment lFragment = new LyricsFragment();
-            replaceFragment(lFragment);
-            closeDrawer();
-        }
-    };
+    private DrawerLayout mDrawerLayout;
+    private int mSelection;
+    private boolean mBackstackChanging;
 
     private TextView.OnLongClickListener connectButtonLongClick = new TextView.OnLongClickListener() {
         @Override
@@ -87,6 +56,13 @@ public class DrawerFragment extends RoboSherlockFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         robotoLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
+        mSelection = 0;
+        mBackstackChanging = false;
+
+        if (savedInstanceState != null) {
+            mSelection = savedInstanceState.getInt("mSelection");
+        }
+        getActivity().getSupportFragmentManager().addOnBackStackChangedListener(this);
     }
 
     @Override
@@ -98,39 +74,29 @@ public class DrawerFragment extends RoboSherlockFragment {
     public void onStart() {
         super.onStart();
         bus.register(this);
-
-        menuLibrary.setOnClickListener(libraryButtonClick);
-        menuSettings.setOnClickListener(settingsButtonClick);
-        menuNowPlaying.setOnClickListener(nowPlayingButtonClick);
-        menuLyrics.setOnClickListener(lyricsButtonClick);
         menuConnector.setOnClickListener(connectButtonClick);
         menuConnector.setOnLongClickListener(connectButtonLongClick);
-
-        menuLibrary.setTypeface(robotoLight);
-        menuSettings.setTypeface(robotoLight);
-        menuNowPlaying.setTypeface(robotoLight);
-        menuLyrics.setTypeface(robotoLight);
         menuConnector.setTypeface(robotoLight);
+
+        ArrayList<NavigationEntry> nav = new ArrayList<NavigationEntry>();
+        nav.add(new NavigationEntry("Home", getResources().getDrawable(R.drawable.ic_action_play)));
+        nav.add(new NavigationEntry("Search", getResources().getDrawable(R.drawable.ic_action_search)));
+        nav.add(new NavigationEntry("Now playing list", getResources().getDrawable(R.drawable.ic_action_playlist)));
+        nav.add(new NavigationEntry("Lyrics", getResources().getDrawable(R.drawable.ic_action_lyrics)));
+
+        setListAdapter(new DrawerAdapter(getActivity(), R.layout.ui_drawer_item, nav));
+        getListView().setOnItemClickListener(new DrawerOnClickListener());
+        getListView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+        getListView().setItemChecked(mSelection, true);
+
+        if(mDrawerLayout == null) {
+            mDrawerLayout = (DrawerLayout)getActivity().findViewById(R.id.drawer_layout);
+        }
     }
 
     @Override public void onStop() {
         super.onStop();
         bus.unregister(this);
-    }
-
-    public void replaceFragment(Fragment fragment) {
-        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(((MainFragmentActivity) getActivity()).isTablet() ? R.id.fragment_container_extra : R.id.fragment_container, fragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
-        ((RoboSherlockFragmentActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    private void closeDrawer() {
-        MainFragmentActivity activity = ((MainFragmentActivity) getActivity());
-        if (activity != null) {
-            activity.closeDrawer();
-        }
     }
 
     @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChange change) {
@@ -150,5 +116,40 @@ public class DrawerFragment extends RoboSherlockFragment {
                 break;
         }
 
+    }
+
+    @Override public void onBackStackChanged() {
+        if (!mBackstackChanging)
+            if(getActivity().getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                mSelection = 0;
+                getListView().setItemChecked(mSelection, true);
+            }
+        mBackstackChanging = false;
+
+    }
+
+    private class DrawerOnClickListener implements ListView.OnItemClickListener {
+
+        @Override public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
+            mBackstackChanging = true;
+            DrawerEvent dEvent;
+            if (mSelection != i) {
+
+                getListView().setItemChecked(i, true);
+                mSelection = i;
+
+                DisplayFragment dfrag = DisplayFragment.values()[i];
+                dEvent = new DrawerEvent(dfrag);
+            } else {
+                dEvent = new DrawerEvent();
+            }
+
+            bus.post(dEvent);
+        }
+    }
+
+    @Override public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("mSelection", mSelection);
+        super.onSaveInstanceState(outState);
     }
 }

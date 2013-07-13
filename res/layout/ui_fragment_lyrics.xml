@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:baselineAligned="true"
-    android:gravity="top"
-    android:orientation="vertical" >
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:baselineAligned="true"
+              android:gravity="top"
+              android:orientation="vertical"
+              android:background="@color/mbrc_background">
 
     <ListView
-        android:id="@+id/lyrics_list_view"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:divider="@null"
-        android:dividerHeight="0dp"
-        android:fastScrollAlwaysVisible="true"
-        android:fastScrollEnabled="true"
-        android:listSelector="@android:color/transparent"
-        android:paddingLeft="8dp"
-        android:paddingRight="32dp" >
+            android:id="@+id/lyrics_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:fastScrollAlwaysVisible="true"
+            android:fastScrollEnabled="true"
+            android:listSelector="@android:color/transparent"
+            android:paddingLeft="8dp"
+            android:paddingRight="32dp">
     </ListView>
 
     <fragment

@@ -45,7 +45,7 @@
 		android:layout_gravity="center|right"
 		android:layout_height="48dp"
 		android:layout_width="48dp"
-        android:src="@drawable/ic_np_play_holder"/>
+        android:src="@drawable/ic_action_play"/>
 
 	<ImageButton
 		android:id="@+id/notification_next"
@@ -53,7 +53,7 @@
 		android:layout_gravity="center|right"
 		android:layout_height="48dp"
 		android:layout_width="48dp"
-        android:src="@drawable/ic_np_next_holder"/>
+        android:src="@drawable/ic_action_next"/>
 
 	<ImageButton
 		android:id="@+id/notification_close"
@@ -61,6 +61,6 @@
 		android:layout_gravity="center|right"
 		android:layout_height="48dp"
 		android:layout_width="48dp"
-        android:src="@drawable/ic_np_not_collapse_holder"/>
+        android:src="@drawable/ic_action_collapse"/>
 
 </LinearLayout>

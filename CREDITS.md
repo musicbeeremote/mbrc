@@ -32,10 +32,6 @@ Many of the icons used are created by [Tasos Papazoglou Chalikias](https://githu
  
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
     
-*   [MenuDrawer](https://github.com/SimonVT/android-menudrawer)
- 
-    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-    
 *   [roboguice-sherlock](https://github.com/rtyley/roboguice-sherlock)
  
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)

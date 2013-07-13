@@ -12,11 +12,8 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="2dp"
-            android:orientation="vertical"><![CDATA[
-
-        />
-
-        ]]>
+            android:orientation="vertical"
+            >
 
         <ImageButton
                 android:id="@+id/main_last_fm_button"
@@ -73,24 +70,55 @@
 
     </LinearLayout>
 
-    <ImageView
-            android:id="@+id/main_album_cover_image_view"
+    <FrameLayout
+            android:id="@+id/album_cover_area"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_marginTop="3dp"
-            android:layout_toRightOf="@+id/main_media_button_group"
-            android:adjustViewBounds="false"
-            android:background="#FFFFFF"
-            android:contentDescription="@string/main_image_view_cover_description"
-            android:padding="1dp"
-            android:src="@drawable/ic_image_no_cover"/>
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/main_media_button_group">
+
+        <ImageView
+                android:id="@+id/main_album_cover_image_view"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="3dp"
+                android:layout_toRightOf="@+id/main_media_button_group"
+                android:adjustViewBounds="false"
+                android:background="#FFFFFF"
+                android:contentDescription="@string/main_image_view_cover_description"
+                android:padding="1dp"
+                android:src="@drawable/ic_image_no_cover"/>
+
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#99000000"
+                android:layout_gravity="center_horizontal|bottom"
+                android:id="@+id/ratingWrapper"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginBottom="1dp">
+
+            <RatingBar
+                    android:id="@+id/track_rating_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:numStars="5"
+                    android:stepSize="0.5"
+                    android:scaleX="0.8"
+                    android:scaleY="0.8"
+                    android:layout_gravity="center"
+                    />
+        </LinearLayout>
+    </FrameLayout>
 
     <RelativeLayout
             android:id="@+id/main_track_info"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignBottom="@+id/main_album_cover_image_view"
-            android:layout_toRightOf="@+id/main_album_cover_image_view"
+            android:layout_alignBottom="@+id/album_cover_area"
+            android:layout_toRightOf="@+id/album_cover_area"
             android:orientation="vertical">
 
         <TextView
@@ -203,7 +231,9 @@
                     android:layout_below="@+id/main_track_progress_seeker"
                     android:text="@string/main_label_duration_current"
                     android:textColor="#FFFFFF"
-                    android:textSize="12sp"/>
+                    android:textSize="12sp"
+                    android:layout_marginLeft="3dp"
+                    />
 
 
             <TextView
@@ -216,7 +246,8 @@
                     android:gravity="right"
                     android:text="@string/main_label_duration_total"
                     android:textColor="#FFFFFF"
-                    android:textSize="12sp"/>
+                    android:textSize="12sp"
+                    android:layout_marginRight="3dp"/>
 
         </RelativeLayout>
 
@@ -281,9 +312,8 @@
             android:id="@+id/main_volume_seeker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/main_album_cover_image_view"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/main_album_cover_image_view"
+            android:layout_below="@+id/album_cover_area"
             android:layout_gravity="center"
             android:layout_marginTop="4dp"
             android:layout_marginRight="15dp"
@@ -298,6 +328,7 @@
             android:progressDrawable="@drawable/ic_volume_bar_progress"
             android:secondaryProgress="0"
             android:thumb="@drawable/ic_volume_thumb"
-            android:layout_centerInParent="true"/>
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/main_media_button_group"/>
 
 </RelativeLayout>

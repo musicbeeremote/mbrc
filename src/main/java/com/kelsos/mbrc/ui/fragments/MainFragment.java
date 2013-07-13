@@ -305,14 +305,14 @@ public class MainFragment extends RoboSherlockFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu, menu);
-        MenuItem shareItem = menu.findItem(R.id.main_menu_share);
+        MenuItem shareItem = menu.findItem(R.id.actionbar_share);
         mShareActionProvider = (ShareActionProvider) shareItem.getActionProvider();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.main_menu_share:
+            case R.id.actionbar_share:
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(Intent.EXTRA_TEXT, "Now Playing: " + artistLabel.getText() + " - " + titleLabel.getText());

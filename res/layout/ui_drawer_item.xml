@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
+          android:layout_width="match_parent"
+          android:layout_height="48dp"
+          android:text="@string/drawer_connection_status_off"
+          android:id="@+id/dr_option_text"
+          android:layout_gravity="left|center_vertical"
+          android:drawableLeft="@drawable/ic_connectivy_off"
+          style="@style/Menu.Title"
+          android:background="@drawable/ui_drawer_clickable_background"/>

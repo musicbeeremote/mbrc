@@ -1,73 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:orientation="vertical"
                 android:background="@color/mbrc_background">
 
-    <LinearLayout
+    <ListView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:orientation="vertical"
-            android:id="@+id/drawer_navigation"
-            android:layout_above="@+id/linearLayout">
-
-        <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Search"
-                android:id="@+id/menuLibrary"
-                android:layout_gravity="left|center_vertical"
-                android:drawableLeft="@android:drawable/ic_menu_search"
-                style="@style/Menu.Title"
-                android:background="@drawable/ui_drawer_clickable_background"/>
-
-        <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="@color/mbrc_drawer_seperator"/>
-
-        <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Now Playing List"
-                android:id="@+id/menuNowPlaying"
-                android:layout_gravity="left|center_vertical"
-                android:drawableLeft="@drawable/ic_action_playlist"
-                style="@style/Menu.Title"
-                android:background="@drawable/ui_drawer_clickable_background"/>
-
-        <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="@color/mbrc_drawer_seperator"/>
-
-        <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Lyrics"
-                android:id="@+id/menuLyrics"
-                android:layout_gravity="left|center_vertical"
-                android:drawableLeft="@drawable/ic_action_lyrics"
-                style="@style/Menu.Title"
-                android:background="@drawable/ui_drawer_clickable_background"/>
-
-        <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="@color/mbrc_drawer_seperator"/>
-
-        <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Settings"
-                android:id="@+id/menuSettings"
-                android:layout_gravity="left|center_vertical"
-                android:drawableLeft="@drawable/ic_action_settings"
-                style="@style/Menu.Title"
-                android:background="@drawable/ui_drawer_clickable_background"/>
-
-    </LinearLayout>
+            android:id="@android:id/list"
+            android:layout_above="@+id/linearLayout"
+            tools:listitem="@layout/ui_drawer_item"
+            android:divider="@color/mbrc_drawer_seperator"
+            android:dividerHeight="1dp">
+    </ListView>
 
     <LinearLayout
             android:orientation="vertical"
@@ -96,13 +44,13 @@
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="MusicBee Remote v0.3 DEV"
+            android:text="@string/ui_drawer_menu_version"
             android:id="@+id/drawer_version_indicator"
             android:layout_gravity="left|center_vertical"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
-            android:textSize="11sp"
+            android:textSize="12sp"
             android:layout_marginBottom="3dp"
             android:textStyle="normal"
             android:textIsSelectable="false"

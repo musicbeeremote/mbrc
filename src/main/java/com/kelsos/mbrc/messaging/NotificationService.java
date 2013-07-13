@@ -107,24 +107,24 @@ public class NotificationService {
 
         switch (state) {
             case Playing:
-                views.setImageViewResource(R.id.notification_play, R.drawable.ic_np_play_holder);
+                views.setImageViewResource(R.id.notification_play, R.drawable.ic_action_play);
                 break;
             case Paused:
-                views.setImageViewResource(R.id.notification_play, R.drawable.ic_np_pause_holder);
+                views.setImageViewResource(R.id.notification_play, R.drawable.ic_action_pause);
                 break;
             case Stopped:
-                views.setImageViewResource(R.id.notification_play, R.drawable.ic_np_play_holder);
+                views.setImageViewResource(R.id.notification_play, R.drawable.ic_action_play);
                 break;
             case Undefined:
                 break;
         }
 
-        views.setImageViewResource(R.id.notification_next, R.drawable.ic_np_next_holder);
+        views.setImageViewResource(R.id.notification_next, R.drawable.ic_action_next);
 
-        views.setImageViewResource(R.id.notification_close, R.drawable.ic_np_not_collapse_holder);
+        views.setImageViewResource(R.id.notification_close, R.drawable.ic_action_collapse);
 
 
-        Notification notification = mBuilder.getNotification();
+        Notification notification = mBuilder.build();
         notification.contentView = views;
         notification.flags = Notification.FLAG_ONGOING_EVENT;
         notification.icon = R.drawable.ic_mbrc_status;
@@ -148,7 +148,7 @@ public class NotificationService {
 
         PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(resultPendingIntent);
-        final Notification notification = mBuilder.getNotification();
+        final Notification notification = mBuilder.build();
         notification.flags = Notification.FLAG_AUTO_CANCEL;
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(PLUGIN_OUT_OF_DATE, notification);
