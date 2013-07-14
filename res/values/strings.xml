@@ -90,5 +90,10 @@
     <string name="ui_drawer_menu_version">MusicBee Remote v0.3 DEV</string>
     <string name="artist_placeholder">Artistname</string>
     <string name="title_placeholder">Titleplaceholder</string>
+    <string name="connection_manager_scan">Scan</string>
+    <string name="connection_manager_add">Add</string>
+    <string name="settings_dialog_add">Add</string>
+    <string name="connection_manager_title">Connection Manager</string>
+    <string name="settings_array">settings_array</string>
 
 </resources>

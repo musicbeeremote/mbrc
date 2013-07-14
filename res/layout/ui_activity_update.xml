@@ -20,7 +20,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/cs_list_host"
 android:layout_gravity="center_vertical|right"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,12 +36,12 @@ android:layout_gravity="center_vertical|right"
 
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/cs_list_port"
         android:layout_gravity="center_vertical|right"
         android:layout_centerInParent="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView2"
+        android:layout_below="@+id/cs_list_host"
         android:layout_marginTop="15dp"
         android:text="@string/update_view_message_p_two"
         android:textAppearance="?android:attr/textAppearanceMedium"
@@ -53,7 +53,7 @@ android:layout_gravity="center_vertical|right"
         android:layout_width="match_parent"
         android:layout_gravity="center_vertical|right"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView3"
+        android:layout_below="@+id/cs_list_port"
         android:layout_marginTop="15dp"
         android:text="@string/update_view_message_p_three"
         android:textAppearance="?android:attr/textAppearanceMedium"

@@ -2,6 +2,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceCategory android:title="@string/settings_connection" >
+        <Preference
+            android:title="Manage Connections"
+            android:key="manage_connections"/>
         <EditTextPreference
             android:dialogTitle="@string/settings_connection_hostname"
             android:key="@string/settings_key_hostname"

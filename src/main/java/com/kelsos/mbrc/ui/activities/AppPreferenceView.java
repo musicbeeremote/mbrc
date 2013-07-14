@@ -2,8 +2,8 @@ package com.kelsos.mbrc.ui.activities;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
@@ -19,7 +19,7 @@ import com.squareup.otto.Bus;
 
 import static android.app.AlertDialog.Builder;
 
-public class AppPreferenceView extends RoboSherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
+public class AppPreferenceView extends RoboSherlockPreferenceActivity {
 
 	@Inject
     Bus bus;
@@ -60,12 +60,22 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity implements
 		});
 
         final Preference mOpenSource = findPreference("open_source");
+        final Preference mManager = findPreference("manage_connections");
         mOpenSource.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override public boolean onPreferenceClick(Preference preference) {
-                showOpenSourceLicenseDialgo();
+                showOpenSourceLicenseDialog();
                 return false;
             }
         });
+
+        mManager.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override public boolean onPreferenceClick(Preference preference) {
+                startActivity(new Intent(pContext, ConnectionManagerActivity.class));
+                return false;
+            }
+        });
+
+
     }
 
     @Override
@@ -73,13 +83,11 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity implements
         super.onResume();
         hostEditTextPreference.setSummary(PreferenceManager.getDefaultSharedPreferences(this).getString(getApplicationContext().getString(R.string.settings_key_hostname), null));
         portEditTextPreference.setSummary(PreferenceManager.getDefaultSharedPreferences(this).getString(getApplicationContext().getString(R.string.settings_key_port), null));
-        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
 
 	@Override
@@ -112,7 +120,7 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity implements
 		super.onDestroy();
 	}
 
-    private void showOpenSourceLicenseDialgo() {
+    private void showOpenSourceLicenseDialog() {
         final WebView webView = new WebView(this);
         webView.loadUrl("file:///android_asset/licenses.html");
         new AlertDialog.Builder(this)

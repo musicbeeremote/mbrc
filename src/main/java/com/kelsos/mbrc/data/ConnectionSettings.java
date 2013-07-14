@@ -9,8 +9,14 @@ public class ConnectionSettings {
 
     public ConnectionSettings(JsonNode node){
         this.address = node.path("address").asText();
-        this.name = node.path("computer").asText();
+        this.name = node.path("name").asText();
         this.port = node.path("port").asInt();
+    }
+
+    public ConnectionSettings(String address, String name, int port) {
+        this.address = address;
+        this.name = name;
+        this.port = port;
     }
 
     public String getAddress() {

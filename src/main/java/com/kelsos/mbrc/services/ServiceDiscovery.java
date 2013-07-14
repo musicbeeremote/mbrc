@@ -1,9 +1,10 @@
 package com.kelsos.mbrc.services;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import org.codehaus.jackson.JsonNode;
@@ -19,14 +20,19 @@ public class ServiceDiscovery {
     private WifiManager manager;
     private WifiManager.MulticastLock mLock;
     private ObjectMapper mapper;
+    private Context mContext;
 
     @Inject
     public ServiceDiscovery(Context context, ObjectMapper mapper) {
+        this.mContext = context;
         manager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
         this.mapper = mapper;
     }
 
     public void startDiscovery() {
+        if (!isWifiConnected()) {
+            return;
+        }
         mLock = manager.createMulticastLock("locked");
         mLock.setReferenceCounted(true);
         mLock.acquire();
@@ -92,5 +98,11 @@ public class ServiceDiscovery {
                 (address >> 8 & 0xff),
                 (address >> 16 & 0xff),
                 (address >> 24 & 0xff));
+    }
+
+    private boolean isWifiConnected() {
+        ConnectivityManager cMan = (ConnectivityManager)mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo current = cMan.getActiveNetworkInfo();
+        return current != null && current.getType() == ConnectivityManager.TYPE_WIFI;
     }
 }
