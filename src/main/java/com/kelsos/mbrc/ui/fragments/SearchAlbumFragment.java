@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
@@ -21,14 +20,13 @@ import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
-import java.util.ArrayList;
-
 public class SearchAlbumFragment extends RoboSherlockListFragment{
     private static final int QUEUE_NEXT = 1;
     private static final int QUEUE_LAST = 2;
     private static final int PLAY_NOW = 3;
     private static final int GET_SUB = 4;
-    private ArrayAdapter<AlbumEntry> adapter;
+    private static final int GROUP_ID = 13;
+    private AlbumEntryAdapter adapter;
 
     @Inject Bus bus;
 
@@ -45,24 +43,21 @@ public class SearchAlbumFragment extends RoboSherlockListFragment{
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         registerForContextMenu(getListView());
-        adapter = new AlbumEntryAdapter(getActivity(), R.layout.ui_list_dual, new ArrayList<AlbumEntry>());
-        setListAdapter(adapter);
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.ui_fragment_library_simpl, container, false);
-        return view;
+        return inflater.inflate(R.layout.ui_fragment_library_simpl, container, false);
     }
     @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(0, QUEUE_NEXT, 0, "Queue Next");
-        menu.add(0, QUEUE_LAST, 0, "Queue Last");
-        menu.add(0, PLAY_NOW, 0, "Play Now");
-        menu.add(0, GET_SUB, 0, "Get Tracks");
+        menu.add(GROUP_ID, QUEUE_NEXT, 0, "Queue Next");
+        menu.add(GROUP_ID, QUEUE_LAST, 0, "Queue Last");
+        menu.add(GROUP_ID, PLAY_NOW, 0, "Play Now");
+        menu.add(GROUP_ID, GET_SUB, 0, "Get Tracks");
         super.onCreateContextMenu(menu, v, menuInfo);
     }
     @Override
     public boolean onContextItemSelected(android.view.MenuItem item) {
-        if (getUserVisibleHint()) {
+        if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             Object line = adapter.getItem(mi.position);
             String qContext = Protocol.LibraryQueueAlbum;

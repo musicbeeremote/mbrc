@@ -21,37 +21,33 @@ import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
-import java.util.ArrayList;
-
 public class SearchGenreFragment extends RoboSherlockListFragment {
     private static final int QUEUE_NEXT = 1;
     private static final int QUEUE_LAST = 2;
     private static final int PLAY_NOW = 3;
     private static final int GET_SUB = 4;
+    private static final int GROUP_ID = 11;
     private GenreEntryAdapter adapter;
     @Inject Bus bus;
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         registerForContextMenu(getListView());
-        adapter = new GenreEntryAdapter(getActivity(), R.layout.ui_list_single, new ArrayList<GenreEntry>());
-        setListAdapter(adapter);
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.ui_fragment_library_simpl, container, false);
-        return view;
+        return inflater.inflate(R.layout.ui_fragment_library_simpl, container, false);
     }
 
     @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(0, QUEUE_NEXT, 0, "Queue Next");
-        menu.add(0, QUEUE_LAST, 0, "Queue Last");
-        menu.add(0, PLAY_NOW, 0, "Play Now");
-        menu.add(0, GET_SUB, 0, "Get Artists");
+        menu.add(GROUP_ID, QUEUE_NEXT, 0, "Queue Next");
+        menu.add(GROUP_ID, QUEUE_LAST, 0, "Queue Last");
+        menu.add(GROUP_ID, PLAY_NOW, 0, "Play Now");
+        menu.add(GROUP_ID, GET_SUB, 0, "Get Artists");
     }
 
     @Override public boolean onContextItemSelected(android.view.MenuItem item) {
-        if (getUserVisibleHint()) {
+        if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             Object line = adapter.getItem(mi.position);
             String qContext = Protocol.LibraryQueueGenre;
