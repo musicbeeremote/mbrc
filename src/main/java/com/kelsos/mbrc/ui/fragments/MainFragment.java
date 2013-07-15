@@ -84,7 +84,9 @@ public class MainFragment extends RoboSherlockFragment {
     private RatingBar.OnRatingBarChangeListener ratingChangeListener = new RatingBar.OnRatingBarChangeListener() {
         @Override
         public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingRating, v)));
+            if(b) {
+                bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingRating, v)));
+            }
         }
     };
     private View.OnClickListener playButtonListener = new View.OnClickListener() {
@@ -179,9 +181,9 @@ public class MainFragment extends RoboSherlockFragment {
         public void onClick(View view) {
 
             if (!isActive) {
-                int fadeInDuration = 600;
-                int timeBetween = 3000;
-                int fadeOutDuration = 1000;
+                final int fadeInDuration = 600;
+                final int timeBetween = 3000;
+                final int fadeOutDuration = 1000;
 
                 Animation fadeIn = new AlphaAnimation(0, 1);
                 fadeIn.setInterpolator(new DecelerateInterpolator());
@@ -327,9 +329,9 @@ public class MainFragment extends RoboSherlockFragment {
         if (mShareActionProvider != null) mShareActionProvider.setShareIntent(shareIntent);
     }
 
-    public void updateRating(float rating) {
+    @Subscribe public void handleRatingChange (RatingChanged event) {
         if (trackRating != null) {
-            trackRating.setRating(rating);
+            trackRating.setRating(event.getRating());
         }
     }
 

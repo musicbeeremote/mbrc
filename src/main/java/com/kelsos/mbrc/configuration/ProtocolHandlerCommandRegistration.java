@@ -22,6 +22,7 @@ public class ProtocolHandlerCommandRegistration
         controller.register(ProtocolEvent.UserAction, ProcessUserAction.class);
         controller.register(Protocol.NowPlayingTrack, UpdateNowPlayingTrack.class);
         controller.register(Protocol.NowPlayingCover, UpdateCover.class);
+        controller.register(Protocol.NowPlayingRating, UpdateRating.class);
         controller.register(Protocol.PlayerStatus, UpdatePlayerStatus.class);
         controller.register(Protocol.PlayerState, UpdatePlayState.class);
         controller.register(Protocol.PlayerRepeat, UpdateRepeat.class);

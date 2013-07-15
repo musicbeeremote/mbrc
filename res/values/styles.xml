@@ -13,9 +13,10 @@
         <item name="android:drawablePadding">16dp</item>
         <item name="android:gravity">center_vertical</item>
     </style>
-    <style name="Rating"/>
-    <style name="Rating.Normal">
-        <item name="android:minHeight">32dp</item>
-        <item name="android:maxHeight">32dp</item>
+
+    <style name="RatingBar" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/ui_rating_bar</item>
+        <item name="android:maxHeight">24dip</item>
+        <item name="android:minHeight">24dip</item>
     </style>
 </resources>

@@ -72,22 +72,25 @@
 
     <FrameLayout
             android:id="@+id/album_cover_area"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/main_media_button_group">
+            android:layout_toRightOf="@+id/main_media_button_group"
+            android:layout_alignParentBottom="false"
+            android:layout_centerInParent="true">
 
         <ImageView
                 android:id="@+id/main_album_cover_image_view"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
-                android:layout_marginTop="3dp"
-                android:layout_toRightOf="@+id/main_media_button_group"
+                android:layout_marginTop="1dp"
                 android:adjustViewBounds="false"
                 android:background="#FFFFFF"
                 android:contentDescription="@string/main_image_view_cover_description"
-                android:padding="1dp"
-                android:src="@drawable/ic_image_no_cover"/>
+                android:padding="0.5dp"
+                android:src="@drawable/ic_image_no_cover"
+                android:baselineAlignBottom="false"
+                android:cropToPadding="false"/>
 
         <LinearLayout
                 android:orientation="vertical"
@@ -98,16 +101,17 @@
                 android:id="@+id/ratingWrapper"
                 android:layout_marginLeft="1dp"
                 android:layout_marginRight="1dp"
+                android:baselineAligned="false"
+                android:gravity="center_vertical|center_horizontal"
                 android:layout_marginBottom="1dp">
 
             <RatingBar
                     android:id="@+id/track_rating_bar"
+                    style="@style/RatingBar"
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
+                    android:layout_height="48dp"
                     android:numStars="5"
                     android:stepSize="0.5"
-                    android:scaleX="0.8"
-                    android:scaleY="0.8"
                     android:layout_gravity="center"
                     />
         </LinearLayout>

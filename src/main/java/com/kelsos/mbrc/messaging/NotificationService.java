@@ -103,7 +103,11 @@ public class NotificationService {
 
         views.setTextViewText(R.id.notification_artist, artist);
         views.setTextViewText(R.id.notification_title, title);
-        views.setImageViewBitmap(R.id.notification_album_art, cover);
+        if (cover != null) {
+            views.setImageViewBitmap(R.id.notification_album_art, cover);
+        } else {
+            views.setImageViewResource(R.id.notification_album_art, R.drawable.ic_image_no_cover);
+        }
 
         switch (state) {
             case Playing:

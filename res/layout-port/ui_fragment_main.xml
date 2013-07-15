@@ -15,8 +15,8 @@
                 android:id="@+id/main_title_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/info_side_margin"
-                android:layout_marginRight="@dimen/info_side_margin"
+                android:layout_marginLeft="@dimen/side_margin"
+                android:layout_marginRight="@dimen/side_margin"
                 android:layout_marginTop="1dp"
                 android:ellipsize="marquee"
                 android:focusable="true"
@@ -34,8 +34,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/main_title_label"
-                android:layout_marginLeft="@dimen/info_side_margin"
-                android:layout_marginRight="@dimen/info_side_margin"
+                android:layout_marginLeft="@dimen/side_margin"
+                android:layout_marginRight="@dimen/side_margin"
                 android:layout_marginTop="5dp"
                 android:ellipsize="marquee"
                 android:focusable="true"
@@ -54,13 +54,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/main_track_info_one"
-            android:layout_marginLeft="27dp"
-            android:layout_marginTop="3dp">
+            android:layout_marginLeft="@dimen/side_margin_extra"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="@dimen/side_margin_extra">
 
         <FrameLayout
                 android:id="@+id/album_cover_area"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentTop="true">
 
             <ImageView
@@ -87,12 +88,11 @@
 
                 <RatingBar
                         android:id="@+id/track_rating_bar"
+                        style="@style/RatingBar"
                         android:layout_width="wrap_content"
                         android:layout_height="50dp"
                         android:numStars="5"
                         android:stepSize="0.5"
-                        android:scaleX="0.8"
-                        android:scaleY="0.8"
                         android:layout_gravity="center"
                         />
             </LinearLayout>
@@ -102,7 +102,7 @@
                 android:id="@+id/main_media_button_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="22dp"
+                android:layout_marginLeft="@dimen/side_margin_extra"
                 android:layout_toRightOf="@+id/album_cover_area"
                 android:orientation="vertical"
                 android:layout_alignBottom="@+id/album_cover_area">
@@ -140,7 +140,7 @@
                     android:src="@drawable/ic_media_shuffle"/>
 
             <ImageButton
-                android:id="@+id/main_lfm_love_button"
+                android:id="@id/main_lfm_love_button"
                 android:layout_width="@dimen/control_button_side"
                 android:layout_height="@dimen/control_button_side"
                 android:layout_marginTop="@dimen/second_bar_button_distance"
@@ -158,8 +158,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/main_middle_group"
             android:layout_marginTop="5dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp">
+            android:layout_marginLeft="@dimen/side_margin"
+            android:layout_marginRight="@dimen/side_margin">
 
         <SeekBar
                 android:id="@+id/main_track_progress_seeker"
@@ -212,8 +212,8 @@
                 android:id="@+id/main_label_album"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/info_side_margin"
-                android:layout_marginRight="@dimen/info_side_margin"
+                android:layout_marginLeft="@dimen/side_margin"
+                android:layout_marginRight="@dimen/side_margin"
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
@@ -230,8 +230,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/main_label_album"
-                android:layout_marginLeft="@dimen/info_side_margin"
-                android:layout_marginRight="@dimen/info_side_margin"
+                android:layout_marginLeft="@dimen/side_margin"
+                android:layout_marginRight="@dimen/side_margin"
                 android:layout_marginTop="6dp"
                 android:ellipsize="marquee"
                 android:focusable="true"
@@ -250,13 +250,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/main_track_info_two"
-            >
+            android:layout_marginLeft="@dimen/side_margin"
+            android:layout_marginRight="@dimen/side_margin">
 
         <ImageButton
                 android:id="@+id/main_mute_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:contentDescription="@string/main_button_mute_description"
                 android:scaleType="fitCenter"
@@ -269,7 +269,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_toRightOf="@+id/main_mute_button"
-                android:layout_marginRight="8dp"
                 android:paddingRight="8dp"
                 android:paddingLeft="8dp"
                 android:thumbOffset="16dp"

@@ -40,7 +40,6 @@ public class MainDataModel {
     private ArrayList<GenreEntry> searchGenres;
     private ArrayList<ArtistEntry> searchArtists;
     private ArrayList<MusicTrack> nowPlayingList;
-    private int playingIndex;
 
     @Inject
     public MainDataModel(MainThreadBusWrapper bus, Context context) {
@@ -117,12 +116,8 @@ public class MainDataModel {
         return new GenreSearchResults(searchGenres);
     }
 
-    public void setRating(String rating) {
-        try {
-            this.rating = Float.parseFloat(rating);
-        } catch (Exception ex) {
-            this.rating = 0;
-        }
+    public void setRating(double rating) {
+        this.rating = (float) rating;
         bus.post(new RatingChanged(this.rating));
     }
 

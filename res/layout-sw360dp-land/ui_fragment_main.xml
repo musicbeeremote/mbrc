@@ -72,25 +72,54 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/main_album_cover_image_view"
-        android:layout_width="215dp"
-        android:layout_height="215dp"
-        android:layout_marginTop="3dp"
-        android:layout_toRightOf="@+id/main_media_button_group"
-        android:adjustViewBounds="false"
-        android:background="#FFFFFF"
-        android:contentDescription="@string/main_image_view_cover_description"
-        android:padding="1dp"
-        android:src="@drawable/ic_image_no_cover" />
+    <FrameLayout
+            android:id="@+id/cover_area"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_toRightOf="@+id/main_media_button_group">
+
+        <ImageView
+                android:id="@id/main_album_cover_image_view"
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+                android:adjustViewBounds="false"
+                android:background="#FFFFFF"
+                android:contentDescription="@string/main_image_view_cover_description"
+                android:padding="0.5dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_image_no_cover"
+                android:longClickable="true"/>
+
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="#99000000"
+                android:layout_gravity="center_horizontal|bottom"
+                android:id="@+id/ratingWrapper"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginBottom="1dp">
+
+            <RatingBar
+                    style="@style/RatingBar"
+                    android:id="@+id/track_rating_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:numStars="5"
+                    android:stepSize="0.5"
+                    android:layout_gravity="center"/>
+        </LinearLayout>
+    </FrameLayout>
 
     <RelativeLayout
         android:id="@+id/main_track_info"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignBottom="@+id/main_album_cover_image_view"
-        android:layout_toRightOf="@+id/main_album_cover_image_view"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:layout_toRightOf="@+id/cover_area"
+        android:layout_above="@+id/trackProgressLabelsLayout">
 
 
 
@@ -242,11 +271,8 @@
         android:id="@+id/main_volume_seeker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/main_album_cover_image_view"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerInParent="false"
-        android:layout_centerVertical="true"
+        android:layout_centerInParent="true"
         android:layout_marginRight="8dp"
         android:gravity="center"
         android:max="100"
@@ -258,17 +284,19 @@
         android:progressDrawable="@drawable/ic_volume_bar_progress"
         android:secondaryProgress="0"
         android:thumb="@drawable/ic_volume_thumb"
-        android:thumbOffset="16dp" />
+        android:thumbOffset="16dp"
+        android:layout_below="@+id/trackProgressLabelsLayout"
+        android:layout_toRightOf="@+id/main_media_button_group"/>
 
 
     <RelativeLayout
         android:id="@+id/trackProgressLabelsLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/main_album_cover_image_view"
         android:layout_marginRight="8dp"
         android:orientation="horizontal"
-        android:layout_below="@+id/main_album_cover_image_view">
+        android:layout_toRightOf="@+id/main_media_button_group"
+        android:layout_below="@+id/cover_area">
 
         <SeekBar
             android:id="@+id/main_track_progress_seeker"
