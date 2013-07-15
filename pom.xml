@@ -18,7 +18,24 @@
 		</developer>
 	</developers>
 
-	
+    <scm>
+        <url>https://github.com/kelsos/mbrc/</url>
+        <connection>scm:git:git://github.com:kelsos/mbrc.git</connection>
+        <developerConnection>scm:git:git@github.com:kelsos/mbrc.git</developerConnection>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/kelsos/mbrc/issues</url>
+    </issueManagement>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License v3 (GPLv3)</name>
+            <url>https://www.gnu.org/licenses/gpl.txt</url>
+        </license>
+    </licenses>
+
 	<!-- utf8 source encoding -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
