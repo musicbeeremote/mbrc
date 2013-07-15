@@ -4,10 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.data.AlbumEntry;
-import com.kelsos.mbrc.data.ArtistEntry;
-import com.kelsos.mbrc.data.GenreEntry;
-import com.kelsos.mbrc.data.TrackEntry;
+import com.kelsos.mbrc.data.*;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.events.ui.*;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
@@ -42,6 +39,8 @@ public class MainDataModel {
     private ArrayList<AlbumEntry> searchAlbums;
     private ArrayList<GenreEntry> searchGenres;
     private ArrayList<ArtistEntry> searchArtists;
+    private ArrayList<MusicTrack> nowPlayingList;
+    private int playingIndex;
 
     @Inject
     public MainDataModel(MainThreadBusWrapper bus, Context context) {
@@ -68,6 +67,18 @@ public class MainDataModel {
         searchAlbums = new ArrayList<AlbumEntry>();
         searchGenres = new ArrayList<GenreEntry>();
         searchTracks = new ArrayList<TrackEntry>();
+        nowPlayingList = new ArrayList<MusicTrack>();
+
+    }
+
+    public void setNowPlayingList(ArrayList<MusicTrack> nowPlayingList) {
+        this.nowPlayingList = nowPlayingList;
+        bus.post(new NowPlayingListAvailable(nowPlayingList, nowPlayingList.indexOf(new MusicTrack(artist, title))));
+    }
+
+    @Produce public NowPlayingListAvailable produceNowPlayingListAvailable() {
+        int index = nowPlayingList.indexOf(new MusicTrack(artist, title));
+        return new NowPlayingListAvailable(nowPlayingList, index);
     }
 
     public void setSearchArtists(ArrayList<ArtistEntry> searchArtists) {

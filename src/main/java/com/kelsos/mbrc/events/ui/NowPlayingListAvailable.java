@@ -10,6 +10,7 @@ public class NowPlayingListAvailable {
 
     public NowPlayingListAvailable(ArrayList<MusicTrack> list, int index) {
         this.list = list;
+        this.index = index;
     }
 
     public ArrayList<MusicTrack> getList() {

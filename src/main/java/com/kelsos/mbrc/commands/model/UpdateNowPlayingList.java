@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.commands;
+package com.kelsos.mbrc.commands.model;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.MusicTrack;
@@ -12,28 +12,18 @@ import org.codehaus.jackson.node.ArrayNode;
 
 import java.util.ArrayList;
 
-public class NowPlayingListData implements ICommand {
-
-    @Inject MainThreadBusWrapper bus;
+public class UpdateNowPlayingList implements ICommand {
     @Inject private MainDataModel model;
 
     @Override public void execute(final IEvent e) {
-        int index = 0;
 
         ArrayNode node = (ArrayNode) e.getData();
         ArrayList<MusicTrack> playList = new ArrayList<MusicTrack>();
-        String artist = model.getArtist();
-        String title = model.getTitle();
-
         for (int i = 0; i < node.size(); i++) {
             JsonNode jNode = node.get(i);
-            MusicTrack track = new MusicTrack(jNode);
-            playList.add(track);
-            if (track.getArtist().contains(artist) && track.getTitle().contains(title)) {
-                index = i;
-            }
+            playList.add(new MusicTrack(jNode));
         }
 
-        bus.post(new NowPlayingListAvailable(playList, index));
+        model.setNowPlayingList(playList);
     }
 }
