@@ -59,7 +59,7 @@ public class SearchArtistFragment extends RoboSherlockListFragment {
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             Object line = adapter.getItem(mi.position);
-            String qContext = Protocol.LibraryQueueArtist;
+            final String qContext = Protocol.LibraryQueueArtist;
             String gSub = Protocol.LibraryArtistAlbums;
             String query = ((ArtistEntry)line).getArtist();
 

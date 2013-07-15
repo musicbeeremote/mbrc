@@ -60,8 +60,8 @@ public class SearchAlbumFragment extends RoboSherlockListFragment{
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             Object line = adapter.getItem(mi.position);
-            String qContext = Protocol.LibraryQueueAlbum;
-            String gSub = Protocol.LibraryAlbumTracks;
+            final String qContext = Protocol.LibraryQueueAlbum;
+            final String gSub = Protocol.LibraryAlbumTracks;
             String query = ((AlbumEntry)line).getAlbum();
 
             UserAction ua = null;

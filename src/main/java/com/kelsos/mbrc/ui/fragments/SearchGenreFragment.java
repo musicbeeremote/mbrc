@@ -50,8 +50,8 @@ public class SearchGenreFragment extends RoboSherlockListFragment {
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             Object line = adapter.getItem(mi.position);
-            String qContext = Protocol.LibraryQueueGenre;
-            String gSub = Protocol.LibraryGenreArtists;
+            final String qContext = Protocol.LibraryQueueGenre;
+            final String gSub = Protocol.LibraryGenreArtists;
             String query = ((GenreEntry) line).getName();
 
             UserAction ua = null;
