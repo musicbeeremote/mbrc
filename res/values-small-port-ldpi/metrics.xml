@@ -2,5 +2,6 @@
 <resources>
     <dimen name="extra_controls_button_size">40dp</dimen>
     <dimen name="extra_controls_button_margin_top">8dp</dimen>
-    
+    <dimen name="album_cover_side">240dp</dimen>
+    <dimen name="drawer_width">300dp</dimen>
 </resources>
