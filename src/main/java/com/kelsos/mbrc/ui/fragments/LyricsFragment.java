@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
@@ -24,7 +23,6 @@ public class LyricsFragment extends RoboSherlockFragment {
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -33,10 +31,6 @@ public class LyricsFragment extends RoboSherlockFragment {
 
     @Override public void onStart() {
         super.onStart();
-        String array[] = {""};
-        lyricsView.setAdapter(new LyricsAdapter(getActivity(), R.layout.ui_list_lyrics_item,
-                new ArrayList<String>(Arrays.asList(array))
-        ));
         bus.register(this);
     }
 
@@ -45,20 +39,9 @@ public class LyricsFragment extends RoboSherlockFragment {
         bus.unregister(this);
     }
 
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                //finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
     @Subscribe public void updateLyricsData(LyricsUpdated update) {
-        String array[] = update.getLyrics().split("\r\n");
         lyricsView.setAdapter(new LyricsAdapter(getActivity(), R.layout.ui_list_lyrics_item,
-                new ArrayList<String>(Arrays.asList(array))));
+                new ArrayList<String>(Arrays.asList(update.getLyrics().split("\r\n")))));
 
     }
 }
