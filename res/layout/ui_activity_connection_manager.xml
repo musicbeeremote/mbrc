@@ -15,11 +15,13 @@
             android:layout_height="0dip"
             android:layout_weight="1"
             android:divider="@null"
-            android:dividerHeight="8dp"
+            android:layout_marginLeft="@dimen/side_margin"
+            android:layout_marginRight="@dimen/side_margin"
+            android:dividerHeight="@dimen/side_margin_half"
+            android:layout_marginTop="@dimen/side_margin_half"
+            android:layout_marginBottom="@dimen/side_margin_half"
             android:fastScrollEnabled="true"
             android:listSelector="@android:color/transparent"
-            android:paddingLeft="8dp"
-            android:paddingRight="32dp"
             tools:listitem="@layout/ui_list_connection_settings">
     </ListView>
 

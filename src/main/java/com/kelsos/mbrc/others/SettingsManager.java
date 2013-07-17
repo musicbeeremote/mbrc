@@ -41,7 +41,7 @@ public class SettingsManager {
         mSettings = new ArrayList<ConnectionSettings>();
 
         if (sVal != null && !sVal.equals("")) {
-            ArrayNode node = null;
+            ArrayNode node;
             try {
                 node = mMapper.readValue(sVal, ArrayNode.class);
                 for (int i = 0; i < node.size(); i++) {
@@ -82,6 +82,7 @@ public class SettingsManager {
         try {
             editor.putString(context.getString(R.string.settings_array), mMapper.writeValueAsString(mSettings));
             editor.commit();
+            bus.post(new ConnectionSettingsChanged(mSettings));
         } catch (IOException e) {
             e.printStackTrace();
         }

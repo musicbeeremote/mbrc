@@ -95,5 +95,14 @@
     <string name="settings_dialog_add">Add</string>
     <string name="connection_manager_title">Connection Manager</string>
     <string name="settings_array">settings_array</string>
+    <string name="placeholer_computer_name">Computer Name</string>
+    <string name="place_holder_ip">192.168.100.10</string>
+    <string name="placeholder_port">3565</string>
+    <string name="connection_default_description">Represents if this connection is the default selected connection
+    </string>
+    <string name="connectivity_manager_default">Set default</string>
+    <string name="connectivity_manager_edit">Edit</string>
+    <string name="connectivity_manager_delete">Delete</string>
+    <string name="connectivity_manager_header">Manage Connection</string>
 
 </resources>

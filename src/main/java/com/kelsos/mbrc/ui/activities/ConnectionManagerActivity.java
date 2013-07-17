@@ -2,6 +2,7 @@ package com.kelsos.mbrc.ui.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.view.ContextMenu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -23,6 +24,11 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
     @InjectView(R.id.connection_add) Button addButton;
     @InjectView(R.id.connection_list) ListView connectionList;
 
+    private static final int GROUP_ID = 56;
+    private static final int DEFAULT = 11;
+    private static final int EDIT = 12;
+    private static final int DELETE = 13;
+
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ui_activity_connection_manager);
@@ -35,6 +41,7 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
         getSupportActionBar().setTitle(R.string.connection_manager_title);
         scanButton.setOnClickListener(scanListener);
         addButton.setOnClickListener(addListener);
+        registerForContextMenu(connectionList);
     }
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {
@@ -44,6 +51,14 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
                 break;
         }
         return true;
+    }
+
+    @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        menu.add(GROUP_ID, DEFAULT, 0, getString(R.string.connectivity_manager_default));
+        menu.add(GROUP_ID, EDIT, 0, getString(R.string.connectivity_manager_edit));
+        menu.add(GROUP_ID, DELETE, 0 , getString(R.string.connectivity_manager_delete));
+        menu.setHeaderTitle(getString(R.string.connectivity_manager_header));
+        super.onCreateContextMenu(menu, v, menuInfo);
     }
 
     Button.OnClickListener scanListener = new Button.OnClickListener() {

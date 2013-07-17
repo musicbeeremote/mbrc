@@ -2,6 +2,7 @@ package com.kelsos.mbrc.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,14 @@ public class ConnectionSettingsAdapter extends ArrayAdapter<ConnectionSettings> 
     private ArrayList<ConnectionSettings> mData;
     private Context mContext;
     private int mResource;
+    private Typeface robotoLight;
 
     public ConnectionSettingsAdapter(Context context, int textViewResourceId, ArrayList<ConnectionSettings> objects) {
         super(context, textViewResourceId, objects);
         this.mData = objects;
         this.mContext = context;
         this.mResource = textViewResourceId;
+        robotoLight = Typeface.createFromAsset(mContext.getAssets(), "fonts/roboto_light.ttf");
     }
 
     @Override
@@ -39,6 +42,7 @@ public class ConnectionSettingsAdapter extends ArrayAdapter<ConnectionSettings> 
             holder.hostname = (TextView) row.findViewById(R.id.cs_list_host);
             holder.portNum = (TextView) row.findViewById(R.id.cs_list_port);
             holder.computerName = (TextView) row.findViewById(R.id.cs_list_name);
+            holder.computerName.setTypeface(robotoLight);
             row.setTag(holder);
         } else {
             holder = (Holder) row.getTag();

@@ -1,46 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="48dp"
-              android:layout_marginTop="4dp"
-              android:layout_marginBottom="4dp"
-              android:layout_marginLeft="16dp"
-              android:layout_marginRight="16dp"
               android:background="@drawable/ui_list_item_background"
               android:gravity="center_vertical">
 
     <LinearLayout
             android:orientation="vertical"
-            android:layout_width="fill_parent"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
             android:layout_height="fill_parent"
-            android:layout_toLeftOf="@+id/cs_list_default"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp">
+            android:layout_marginLeft="@dimen/side_margin_half"
+            android:layout_marginRight="@dimen/side_margin_half">
 
         <TextView
                 android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:text="Computer Name"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:text="@string/placeholer_computer_name"
                 android:id="@+id/cs_list_name"
                 android:lines="1"
                 android:linksClickable="false"
-                android:textSize="16sp"
-                android:layout_weight="1"/>
+                android:textSize="18sp"/>
 
         <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:orientation="horizontal"
-                android:layout_weight="1">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
             <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="0dip"
                     android:layout_height="wrap_content"
-                    android:text="192.168.100.10"
+                    android:text="@string/place_holder_ip"
                     android:id="@+id/cs_list_host"
                     android:textSize="14sp"
                     android:layout_weight="1"/>
@@ -48,7 +42,7 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="3565"
+                    android:text="@string/placeholder_port"
                     android:textSize="14sp"
                     android:id="@+id/cs_list_port"
                     />
@@ -59,12 +53,10 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:id="@+id/cs_list_default"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
             android:layout_marginRight="8dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
             android:layout_alignParentEnd="true"
-            android:contentDescription="Represents if this connection is the default selected connection"/>
+            android:contentDescription="@string/connection_default_description"/>
 
-</RelativeLayout>
+</LinearLayout>
