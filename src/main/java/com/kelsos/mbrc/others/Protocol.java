@@ -35,7 +35,6 @@ public class Protocol {
     public static final String NowPlayingListRemove = "nowplayinglistremove";
     public static final String NowPlayingListMove = "nowplayinglistmove";
     public static final String NowPlayingListSearch = "nowplayinglistsearch";
-    public static final String NowPlayingListQueue = "nowplayinglistqueue";
 
     public static final String LibrarySearchArtist = "librarysearchartist";
     public static final String LibrarySearchAlbum = "librarysearchalbum";

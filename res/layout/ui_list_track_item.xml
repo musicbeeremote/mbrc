@@ -1,56 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="fill_parent"
-android:layout_height="fill_parent"
-        >
-    <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center_vertical"
-                    android:clickable="false"
-                    android:background="@drawable/ui_list_item_background"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:orientation="horizontal"
+              android:layout_height="60dp"
+              android:layout_gravity="center_vertical"
+              android:gravity="center_vertical"
+              android:clickable="false"
+              android:background="@drawable/ui_list_item_background">
 
-        <ImageView
-                android:id="@+id/listview_item_image"
-                android:layout_width="30dp"
-                android:paddingRight="5dp"
-                android:layout_height="match_parent"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:scaleType="fitCenter" />
+    <LinearLayout
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/side_margin_half"
+            android:layout_marginRight="@dimen/side_margin_half"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
         <TextView
                 android:id="@+id/trackTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:paddingLeft="12dp"
-                android:paddingRight="32dp"
-                android:paddingTop="6dp"
+                android:paddingLeft="@dimen/side_margin_half"
+                android:text="@string/title_placeholder"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="16sp" />
+                android:textSize="18sp"/>
 
         <TextView
                 android:id="@+id/trackArtist"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/trackTitle"
+                android:text="@string/artist_placeholder"
                 android:ellipsize="end"
-                android:paddingLeft="12dp"
-                android:paddingRight="32dp"
-                android:paddingTop="6dp"
+                android:paddingLeft="@dimen/side_margin_half"
                 android:singleLine="true"
                 android:textColor="#AAAAAA"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textSize="15sp" />
+                android:textSize="16sp"/>
+    </LinearLayout>
 
 
+    <ImageView
+            android:id="@+id/listview_item_image"
+            android:layout_width="48dp"
+            android:src="@drawable/ic_action_play"
+            android:paddingRight="@dimen/side_margin_half"
+            android:layout_marginRight="@dimen/side_margin_half"
+            android:layout_height="48dp"
+            android:scaleType="fitCenter"/>
 
-    </RelativeLayout>
-</FrameLayout>
+</LinearLayout>

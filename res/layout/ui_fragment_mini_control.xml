@@ -22,18 +22,19 @@
                 android:layout_height="45dp"
                 android:id="@+id/mc_track_cover"
                 android:src="@drawable/ic_image_no_cover"
+                android:contentDescription="@string/main_image_view_cover_description"
                 android:scaleType="fitCenter"
                 android:padding="1dp"/>
 
         <LinearLayout
-                android:layout_width="fill_parent"
+                android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:id="@+id/relativeLayout"
-                android:layout_marginLeft="8dp"
+                android:layout_marginLeft="@dimen/side_margin_half"
                 android:layout_gravity="left"
                 android:layout_weight="1"
-                android:gravity="center">
+                android:gravity="center_vertical">
 
             <TextView
                     android:layout_width="wrap_content"
@@ -72,7 +73,7 @@
                     android:background="@drawable/selectable_background_mbrc_default"
                     android:src="@drawable/ic_action_previous"
                     android:baselineAlignBottom="false"
-                    />
+                    android:contentDescription="@string/main_button_previous_description"/>
 
             <ImageButton
                     android:layout_width="45dp"
@@ -81,7 +82,7 @@
                     android:background="@drawable/selectable_background_mbrc_default"
                     android:src="@drawable/ic_action_play"
                     android:baselineAlignBottom="false"
-                    />
+                    android:contentDescription="@string/main_button_play_pause_description"/>
 
             <ImageButton
                     android:layout_width="45dp"
@@ -90,7 +91,7 @@
                     android:background="@drawable/selectable_background_mbrc_default"
                     android:src="@drawable/ic_action_next"
                     android:baselineAlignBottom="false"
-                    />
+                    android:contentDescription="@string/main_button_next_description"/>
 
         </LinearLayout>
 

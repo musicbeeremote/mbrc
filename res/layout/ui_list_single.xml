@@ -1,31 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="fill_parent"
-             android:layout_height="fill_parent"
-        >
-    <RelativeLayout
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="60dp"
+              android:layout_gravity="center_vertical"
+              android:clickable="false"
+              android:background="@drawable/ui_list_item_background"
+              android:gravity="center_vertical">
+
+    <TextView
+            android:id="@+id/line_one"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_gravity="center_vertical"
-            android:clickable="false"
-            android:background="@drawable/ui_list_item_background"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp">
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/side_margin_half"
+            android:layout_marginRight="@dimen/side_margin_half"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="@string/artist_placeholder"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="18sp"/>
 
-        <TextView
-                android:id="@+id/line_one"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
-                android:singleLine="true"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="18dp"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"/>
-
-    </RelativeLayout>
-</FrameLayout>
+</LinearLayout>

@@ -1,52 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="fill_parent"
-             android:layout_height="fill_parent"
-        >
-    <RelativeLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="60dp"
+              android:orientation="vertical"
+              android:layout_gravity="center_vertical"
+              android:clickable="false"
+              android:background="@drawable/ui_list_item_background"
+              android:gravity="center_vertical">
+
+    <TextView
+            android:id="@+id/line_one"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_gravity="center_vertical"
-            android:clickable="false"
-            android:background="@drawable/ui_list_item_background"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp">
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:text="@string/title_placeholder"
+            android:paddingLeft="@dimen/side_margin_half"
+            android:paddingRight="@dimen/side_margin_half"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="18sp"
+            android:layout_alignParentEnd="false"/>
 
-        <TextView
-                android:id="@+id/line_one"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
-                android:singleLine="true"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="18dp"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_marginTop="5dp"
-                android:layout_alignParentEnd="false"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"/>
-        <TextView
-                android:id="@+id/line_two"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
-                android:singleLine="true"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="16dp"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="false"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="5dp"
-                android:textColor="@color/mbrc_subtitle"/>
+    <TextView
+            android:id="@+id/line_two"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/artist_placeholder"
+            android:ellipsize="end"
+            android:paddingLeft="@dimen/side_margin_half"
+            android:paddingRight="@dimen/side_margin_half"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="16sp"
+            android:textColor="@color/mbrc_subtitle"/>
 
-    </RelativeLayout>
-</FrameLayout>
+</LinearLayout>

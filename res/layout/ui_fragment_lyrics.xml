@@ -13,18 +13,20 @@
             android:layout_width="match_parent"
             android:layout_height="0dip"
             android:layout_weight="1"
+            android:layout_marginLeft="@dimen/side_margin_half"
+            android:layout_marginRight="@dimen/side_margin_half"
+            android:layout_marginTop="@dimen/side_margin_half"
+            android:layout_marginBottom="@dimen/side_margin_half"
             android:divider="@null"
-            android:dividerHeight="0dp"
-            android:fastScrollAlwaysVisible="true"
+            android:dividerHeight="0dip"
             android:fastScrollEnabled="true"
             android:listSelector="@android:color/transparent"
-            android:paddingLeft="8dp"
-            android:paddingRight="32dp">
+            tools:listitem="@layout/ui_list_lyrics_item">
     </ListView>
 
     <fragment
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="48dp"
             android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
             android:layout="@layout/ui_fragment_mini_control"
             tools:layout="@layout/ui_fragment_mini_control"
