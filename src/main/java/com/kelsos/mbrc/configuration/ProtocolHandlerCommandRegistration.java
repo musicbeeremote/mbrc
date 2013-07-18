@@ -32,6 +32,7 @@ public class ProtocolHandlerCommandRegistration
         controller.register(Protocol.PlayerScrobble, UpdateLastFm.class);
         controller.register(Protocol.NowPlayingLyrics, UpdateLyrics.class);
         controller.register(Protocol.NowPlayingList, UpdateNowPlayingList.class);
+        controller.register(Protocol.NowPlayingLfmRating, UpdateLfmRating.class);
         controller.register(Protocol.LibrarySearchArtist, UpdateArtistSearchResults.class);
         controller.register(Protocol.LibrarySearchAlbum, UpdateAlbumSearchResults.class);
         controller.register(Protocol.LibrarySearchGenre, UpdateGenreSearchResults.class);

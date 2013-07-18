@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.data.*;
 import com.kelsos.mbrc.enums.ConnectionStatus;
+import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.events.ui.*;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.kelsos.mbrc.others.Const;
@@ -40,6 +41,7 @@ public class MainDataModel {
     private ArrayList<GenreEntry> searchGenres;
     private ArrayList<ArtistEntry> searchArtists;
     private ArrayList<MusicTrack> nowPlayingList;
+    private LfmStatus lfmRating;
 
     @Inject
     public MainDataModel(MainThreadBusWrapper bus, Context context) {
@@ -67,7 +69,24 @@ public class MainDataModel {
         searchGenres = new ArrayList<GenreEntry>();
         searchTracks = new ArrayList<TrackEntry>();
         nowPlayingList = new ArrayList<MusicTrack>();
+        lfmRating = LfmStatus.NORMAL;
 
+    }
+
+    public void setLfmRating(String rating) {
+        if (rating.equals("Love")) {
+            lfmRating = LfmStatus.LOVED;
+        } else if (rating.equals("Ban")) {
+            lfmRating = LfmStatus.BANNED;
+        } else {
+            lfmRating = LfmStatus.NORMAL;
+        }
+
+        bus.post(new LfmRatingChanged(lfmRating));
+    }
+
+    @Produce public LfmRatingChanged produceLfmRating() {
+        return new LfmRatingChanged(lfmRating);
     }
 
     public void setNowPlayingList(ArrayList<MusicTrack> nowPlayingList) {

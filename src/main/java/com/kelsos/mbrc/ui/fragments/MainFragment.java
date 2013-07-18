@@ -478,6 +478,19 @@ public class MainFragment extends RoboSherlockFragment {
         }
     }
 
+    @Subscribe public void handleLfmStatusChange(final LfmRatingChanged event) {
+        switch (event.getStatus()) {
+            case LOVED:
+                lfmLoveButton.setImageResource(R.drawable.ic_media_lfm_loved);
+                break;
+            case BANNED:
+                break;
+            case NORMAL:
+                lfmLoveButton.setImageResource(R.drawable.ic_media_lfm_unloved);
+                break;
+        }
+    }
+
     /**
      * Responsible for updating the displays and seekbar responsible for the display of the track duration and the
      * current progress of playback
