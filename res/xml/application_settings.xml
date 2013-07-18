@@ -1,30 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/settings_connection" >
+    <PreferenceCategory android:title="@string/settings_connection">
         <Preference
-            android:title="Manage Connections"
-            android:key="manage_connections"/>
+                android:title="Manage Connections"
+                android:key="@string/preferences_key_connection_manager"/>
         <EditTextPreference
-            android:dialogTitle="@string/settings_connection_hostname"
-            android:key="@string/settings_key_hostname"
-            android:title="@string/settings_connection_hostname" />
+                android:dialogTitle="@string/settings_connection_hostname"
+                android:key="@string/settings_key_hostname"
+                android:title="@string/settings_connection_hostname"/>
         <EditTextPreference
-            android:dialogTitle="@string/settings_connection_port"
-            android:inputType="number"
-            android:key="@string/settings_key_port"
-            android:maxLength="5"
-            android:title="@string/settings_connection_port" />
+                android:dialogTitle="@string/settings_connection_port"
+                android:inputType="number"
+                android:key="@string/settings_key_port"
+                android:maxLength="5"
+                android:title="@string/settings_connection_port"/>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/settings_miscellaneous" >
+    <PreferenceCategory android:title="@string/settings_miscellaneous">
         <CheckBoxPreference
-            android:key="@string/settings_key_reduce_volume"
-            android:summary="@string/settings_miscellaneous_reduce_volume_description"
-            android:title="@string/settings_miscellaneous_reduce_volume" />
+                android:key="@string/settings_key_reduce_volume"
+                android:summary="@string/settings_miscellaneous_reduce_volume_description"
+                android:title="@string/settings_miscellaneous_reduce_volume"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preferences_category_about">
-        <Preference android:title="Open source licenses" android:key="@string/preferences_open_source"/>
-        <Preference android:summary="0.3 DEV" android:title="@string/preferences_about_version"/>
+        <Preference
+                android:title="@string/settings_oss_license"
+                android:key="@string/preferences_open_source"/>
+        <Preference
+                android:summary="@string/settings_version_number"
+                android:key="@string/settings_version"
+                android:title="@string/preferences_about_version"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -21,6 +22,7 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
+import com.kelsos.mbrc.utilities.RemoteUtils;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.inject.InjectView;
@@ -30,7 +32,9 @@ import java.util.ArrayList;
 
 public class DrawerFragment extends RoboSherlockListFragment implements FragmentManager.OnBackStackChangedListener {
     @Inject Bus bus;
+    @Inject RemoteUtils rmUtils;
     @InjectView(R.id.menuConnector) TextView menuConnector;
+    @InjectView(R.id.drawer_version_indicator) TextView versionIndicator;
 
     private Typeface robotoLight;
     private DrawerLayout mDrawerLayout;
@@ -91,6 +95,11 @@ public class DrawerFragment extends RoboSherlockListFragment implements Fragment
 
         if(mDrawerLayout == null) {
             mDrawerLayout = (DrawerLayout)getActivity().findViewById(R.id.drawer_layout);
+        }
+        try {
+            versionIndicator.setText(String.format(getString(R.string.ui_drawer_menu_version), rmUtils.getVersion()));
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
