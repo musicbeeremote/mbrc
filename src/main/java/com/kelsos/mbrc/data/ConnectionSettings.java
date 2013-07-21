@@ -30,4 +30,16 @@ public class ConnectionSettings {
     public int getPort() {
         return this.port;
     }
+
+    @Override public boolean equals(Object o) {
+        boolean equality = false;
+
+        if (o instanceof ConnectionSettings) {
+            ConnectionSettings other = (ConnectionSettings)o;
+            equality = other.getAddress().equals(address) &&
+                    other.getName().equals(name) &&
+                    other.getPort() == port;
+        }
+        return equality;
+    }
 }

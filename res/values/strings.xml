@@ -108,5 +108,7 @@
     <string name="settings_oss_license">Open source licenses</string>
     <string name="settings_version">settings_version</string>
     <string name="preferences_key_connection_manager">manage_connections</string>
+    <string name="progress_scanning">Scanning...</string>
+    <string name="progress_scanning_message">Wait while scanning for a remote host</string>
 
 </resources>

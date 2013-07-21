@@ -7,6 +7,8 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.ConnectionSettings;
+import com.kelsos.mbrc.events.ui.DiscoveryStopped;
+import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -15,18 +17,21 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.Hashtable;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ServiceDiscovery {
     private WifiManager manager;
     private WifiManager.MulticastLock mLock;
     private ObjectMapper mapper;
     private Context mContext;
+    private MainThreadBusWrapper bus;
 
-    @Inject
-    public ServiceDiscovery(Context context, ObjectMapper mapper) {
+    @Inject public ServiceDiscovery(Context context, ObjectMapper mapper, MainThreadBusWrapper bus) {
         this.mContext = context;
         manager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
         this.mapper = mapper;
+        this.bus = bus;
     }
 
     public void startDiscovery() {
@@ -48,10 +53,35 @@ public class ServiceDiscovery {
         }
     }
 
+    private class Notify {
+        private String notifyPacket;
+
+        private Notify() {
+            this.notifyPacket = "";
+        }
+
+        private String getNotifyPacket() {
+            return notifyPacket;
+        }
+
+        private void setNotifyPacket(String notifyPacket) {
+            this.notifyPacket = notifyPacket;
+        }
+    }
+
     private class ServiceListener implements Runnable{
 
         @Override public void run() {
             try {
+                final Notify mNotify = new Notify();
+
+                Timer timeoutTimer = new Timer();
+                timeoutTimer.schedule(new TimerTask() {
+                    @Override public void run() {
+                        mNotify.setNotifyPacket(null);
+                    }
+                }, 2000);
+
                 MulticastSocket mSocket = new MulticastSocket(45345);
                 InetAddress group = InetAddress.getByName("239.1.5.10");
                 mSocket.joinGroup(group);
@@ -65,19 +95,19 @@ public class ServiceDiscovery {
                 byte[] discovery = mapper.writeValueAsBytes(discoveryMessage);
                 mSocket.send(new DatagramPacket(discovery, discovery.length,group, 45345));
 
-                String notify = "";
-
-                while (notify != null) {
+                while (mNotify.getNotifyPacket() != null) {
                     mSocket.receive(mPacket);
-                    notify = new String(mPacket.getData());
+                    mNotify.setNotifyPacket(new String(mPacket.getData()));
 
-                    JsonNode node = mapper.readValue(notify, JsonNode.class);
+                    JsonNode node = mapper.readValue(mNotify.getNotifyPacket(), JsonNode.class);
                     if (node.path("context").asText().equals("notify")) {
                         ConnectionSettings settings = new ConnectionSettings(node);
+                        bus.post(settings);
                         break;
                     }
                 }
 
+                bus.post(new DiscoveryStopped());
                 mSocket.leaveGroup(group);
                 mSocket.close();
                 stopDiscovery();

@@ -45,6 +45,7 @@ public class ProtocolHandlerCommandRegistration
         controller.register(Protocol.NowPlayingPosition, UpdatePlaybackPositionCommand.class);
         controller.register(UserInputEvent.StartConnection, InitiateConnectionCommand.class);
         controller.register(UserInputEvent.ResetConnection, RestartConnectionCommand.class);
+        controller.register(UserInputEvent.StartDiscovery, StartDiscoveryCommand.class);
 	}
 
 	@Inject

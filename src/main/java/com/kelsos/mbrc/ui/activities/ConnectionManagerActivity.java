@@ -1,9 +1,12 @@
 package com.kelsos.mbrc.ui.activities;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.ContextMenu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import com.actionbarsherlock.view.MenuItem;
@@ -12,7 +15,12 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ConnectionSettingsAdapter;
 import com.kelsos.mbrc.data.ConnectionSettings;
+import com.kelsos.mbrc.enums.SettingsAction;
+import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.UserInputEvent;
+import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
+import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -29,6 +37,9 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
     private static final int EDIT = 12;
     private static final int DELETE = 13;
 
+    private ProgressDialog mProgress;
+    private Context mContext;
+
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ui_activity_connection_manager);
@@ -37,6 +48,7 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
     @Override protected void onStart() {
         super.onStart();
         bus.register(this);
+        mContext = this;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.connection_manager_title);
         scanButton.setOnClickListener(scanListener);
@@ -61,9 +73,25 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
         super.onCreateContextMenu(menu, v, menuInfo);
     }
 
+    @Override public boolean onContextItemSelected(android.view.MenuItem item) {
+        AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case DEFAULT:
+                bus.post(new ChangeSettings(mi.position, SettingsAction.DEFAULT));
+                break;
+            case EDIT:
+                break;
+            case DELETE:
+                bus.post(new ChangeSettings(mi.position, SettingsAction.DELETE));
+                break;
+        }
+        return true;
+    }
+
     Button.OnClickListener scanListener = new Button.OnClickListener() {
         @Override public void onClick(View view) {
-
+            bus.post(new MessageEvent(UserInputEvent.StartDiscovery));
+            mProgress = ProgressDialog.show(mContext, getString(R.string.progress_scanning), getString(R.string.progress_scanning_message), true, false);
         }
     };
 
@@ -80,5 +108,11 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
 
     @Subscribe public void handleConnectionSettingsChange(ConnectionSettingsChanged event) {
         connectionList.setAdapter(new ConnectionSettingsAdapter(this, R.layout.ui_list_connection_settings, event.getmSettings()));
+    }
+
+    @Subscribe public void handleDiscoveryStopped(DiscoveryStopped event) {
+        if (mProgress != null) {
+            mProgress.hide();
+        }
     }
 }

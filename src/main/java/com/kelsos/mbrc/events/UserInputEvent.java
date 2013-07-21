@@ -7,5 +7,5 @@ public class UserInputEvent
     public static final String SettingsChanged = "SettingsChanged";
 	public static final String ResetConnection = "ResetConnection";
 	public static final String CancelNotification = "CancelNotification";
-    public static final String RequestNowPlayingMoveTrack = "RequestNowPlayingMoveTrack";
+    public static final String StartDiscovery = "StartDiscovery";
 }

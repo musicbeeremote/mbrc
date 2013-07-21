@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
+import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.NoSettingsAvailable;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
@@ -76,8 +77,7 @@ public class SettingsManager {
 		return string == null || string.equals("");
 	}
 
-    @Subscribe public void handleConnectionSettings(ConnectionSettings settings) {
-        mSettings.add(settings);
+    private void storeSettings() {
         SharedPreferences.Editor editor = preferences.edit();
         try {
             editor.putString(context.getString(R.string.settings_array), mMapper.writeValueAsString(mSettings));
@@ -88,7 +88,34 @@ public class SettingsManager {
         }
     }
 
+    @Subscribe public void handleConnectionSettings(ConnectionSettings settings) {
+        if (!mSettings.contains(settings)) {
+            mSettings.add(settings);
+            storeSettings();
+        }
+        //todo: add some kind of message that the settings already exist on else;
+    }
+
     @Produce public ConnectionSettingsChanged produceConnectionSettings() {
         return new ConnectionSettingsChanged(mSettings);
+    }
+
+    @Subscribe public void handleSettingsChange(ChangeSettings event) {
+        switch (event.getAction()) {
+            case DELETE:
+                mSettings.remove(event.getIndex());
+                storeSettings();
+                break;
+            case EDIT:
+                break;
+            case DEFAULT:
+                ConnectionSettings settings = mSettings.get(event.getIndex());
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString(context.getString(R.string.settings_key_hostname), settings.getAddress());
+                editor.putString(context.getString(R.string.settings_key_port), Integer.toString(settings.getPort()));
+                editor.commit();
+                //bus.post(new ConnectionSettingsChanged(mSettings));
+                break;
+        }
     }
 }
