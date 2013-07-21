@@ -137,6 +137,14 @@ public class MainFragment extends RoboSherlockFragment {
             bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerRepeat, Const.TOGGLE)));
         }
     };
+
+    private View.OnLongClickListener lfmLongClickListener = new View.OnLongClickListener() {
+        @Override public boolean onLongClick(View view) {
+            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingLfmRating, "Ban")));
+            return true;
+        }
+    };
+
     private SeekBar.OnSeekBarChangeListener volumeChangeListener = new SeekBar.OnSeekBarChangeListener() {
 
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -256,6 +264,7 @@ public class MainFragment extends RoboSherlockFragment {
             ratingWrapper.setVisibility(View.INVISIBLE);
             trackRating.setOnRatingBarChangeListener(ratingChangeListener);
             lfmLoveButton.setOnClickListener(lfmLoveClicked);
+            lfmLoveButton.setOnLongClickListener(lfmLongClickListener);
 
             playPauseButton.setOnClickListener(playButtonListener);
             previousButton.setOnClickListener(previousButtonListener);
@@ -484,6 +493,7 @@ public class MainFragment extends RoboSherlockFragment {
                 lfmLoveButton.setImageResource(R.drawable.ic_media_lfm_loved);
                 break;
             case BANNED:
+                lfmLoveButton.setImageResource(R.drawable.ic_media_lfm_banned);
                 break;
             case NORMAL:
                 lfmLoveButton.setImageResource(R.drawable.ic_media_lfm_unloved);
