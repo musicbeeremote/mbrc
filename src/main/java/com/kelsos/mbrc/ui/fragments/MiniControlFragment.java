@@ -14,6 +14,7 @@ import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.events.ui.CoverAvailable;
+import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
@@ -32,7 +33,6 @@ public class MiniControlFragment extends RoboSherlockFragment {
     @InjectView (R.id.mc_play_pause) ImageButton playPause;
     @InjectView (R.id.mc_prev_track) ImageButton playPrevious;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +47,8 @@ public class MiniControlFragment extends RoboSherlockFragment {
         super.onStart();
         bus.register(this);
         playNext.setOnClickListener(playNextListener);
+        playPause.setOnClickListener(playPauseListener);
+        playPrevious.setOnClickListener(playPreviousListener);
     }
 
     @Override public void onStop() {
@@ -72,8 +74,35 @@ public class MiniControlFragment extends RoboSherlockFragment {
 
         @Override public void onClick(View view) {
             bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerNext, true)));
-            int p = 1;
         }
     };
+
+    ImageButton.OnClickListener playPauseListener = new ImageButton.OnClickListener() {
+        @Override public void onClick(View view) {
+            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerPlayPause, true)));
+        }
+    };
+
+    ImageButton.OnClickListener playPreviousListener = new ImageButton.OnClickListener() {
+        @Override public void onClick(View view) {
+            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerPrevious, true)));
+        }
+    };
+
+    @Subscribe public void handlePlayStateChange(PlayStateChange event) {
+        switch (event.getState()) {
+            case Playing:
+                playPause.setImageResource(R.drawable.ic_action_pause);
+                break;
+            case Paused:
+                playPause.setImageResource(R.drawable.ic_action_play);
+                break;
+            case Stopped:
+                playPause.setImageResource(R.drawable.ic_action_play);
+                break;
+            case Undefined:
+                break;
+        }
+    }
 
 }
