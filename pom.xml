@@ -131,8 +131,14 @@
             </exclusions>
         </dependency>
 
-    </dependencies>
+        <dependency>
+            <groupId>com.mobeta.android.dslv</groupId>
+            <artifactId>drag-sort-listview</artifactId>
+            <version>0.6.1-SNAPSHOT</version>
+            <type>apklib</type>
+        </dependency>
 
+    </dependencies>
 
 	<build>
 		<finalName>${project.artifactId}</finalName>

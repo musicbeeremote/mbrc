@@ -7,7 +7,7 @@
               android:orientation="vertical"
               android:background="@color/mbrc_background">
 
-    <com.kelsos.mbrc.views.DragAndDropListView
+    <com.mobeta.android.dslv.DragSortListView
             android:id="@android:id/list"
             android:layout_width="match_parent"
             android:layout_marginTop="@dimen/side_margin_half"
@@ -16,7 +16,7 @@
             android:layout_marginLeft="@dimen/side_margin"
             android:layout_height="0dip"
             android:layout_weight="1"
-            android:drawSelectorOnTop="false"
+            android:drawSelectorOnTop="true"
             android:dividerHeight="@dimen/side_margin_half"
             android:divider="@null"
             android:fastScrollEnabled="true"

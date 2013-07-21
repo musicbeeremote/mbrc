@@ -15,6 +15,10 @@ Credits
 
 Many of the icons used are created by [Tasos Papazoglou Chalikias](https://github.com/sushiperv) and are licenced under the [Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License.](https://creativecommons.org/licenses/by-nc-nd/3.0/deed.en_US) some of them where taken by other projects and some awful icons during the earlier development where created by me. The original logo idea belongs to Jordan Georgiades.
 
+### Inspiration
+A great source of inspiration for this project was the [Cyanogen Apollo player](https://github.com/CyanogenMod/android_packages_apps_Apollo)
+along with [Google Play Music for Android](https://play.google.com/store/apps/details?id=com.google.android.music).
+
 ### Runtime dependencies
 
 *   [Guice](http://code.google.com/p/google-guice/)
@@ -37,6 +41,10 @@ Many of the icons used are created by [Tasos Papazoglou Chalikias](https://githu
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 *   [Jackson](http://jackson.codehaus.org/)
+
+    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+*   [DragSortListView](https://github.com/bauerca/drag-sort-listview)
 
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 

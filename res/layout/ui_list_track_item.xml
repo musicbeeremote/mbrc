@@ -9,10 +9,25 @@
               android:background="@drawable/ui_list_item_background">
 
     <LinearLayout
+            android:id="@+id/drag_handle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingRight="@dimen/side_margin_half"
+            android:layout_weight="0"
+            android:gravity="center_vertical">
+
+        <ImageView
+                android:background="@drawable/ic_list_drag_icon"
+                android:layout_width="14dp"
+                android:layout_height="25dp"
+                />
+    </LinearLayout>
+
+
+    <LinearLayout
             android:layout_width="0dip"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/side_margin_half"
             android:layout_marginRight="@dimen/side_margin_half"
             android:gravity="center_vertical"
             android:orientation="vertical">
@@ -22,7 +37,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:paddingLeft="@dimen/side_margin_half"
                 android:text="@string/title_placeholder"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceMedium"
@@ -34,7 +48,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/artist_placeholder"
                 android:ellipsize="end"
-                android:paddingLeft="@dimen/side_margin_half"
                 android:singleLine="true"
                 android:textColor="#AAAAAA"
                 android:textAppearance="?android:attr/textAppearanceSmall"
@@ -44,11 +57,18 @@
 
     <ImageView
             android:id="@+id/listview_item_image"
-            android:layout_width="48dp"
+            android:layout_width="30dp"
             android:src="@drawable/ic_action_play"
-            android:paddingRight="@dimen/side_margin_half"
             android:layout_marginRight="@dimen/side_margin_half"
-            android:layout_height="48dp"
+            android:layout_height="30dp"
             android:scaleType="fitCenter"/>
+
+    <ImageView
+            android:id="@+id/click_remove"
+            android:background="@drawable/ic_action_collapse"
+            android:layout_marginRight="@dimen/side_margin_half"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_weight="0"/>
 
 </LinearLayout>

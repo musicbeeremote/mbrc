@@ -1,11 +1,9 @@
 package com.kelsos.mbrc.ui.fragments;
 
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -19,14 +17,20 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistArrayAdapter;
 import com.kelsos.mbrc.data.MusicTrack;
 import com.kelsos.mbrc.data.UserAction;
-import com.kelsos.mbrc.events.DragDropEvent;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.events.ui.NowPlayingListAvailable;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
+import com.kelsos.mbrc.events.ui.TrackMoved;
+import com.kelsos.mbrc.events.ui.TrackRemoval;
 import com.kelsos.mbrc.others.Protocol;
+import com.mobeta.android.dslv.DragSortController;
+import com.mobeta.android.dslv.DragSortListView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class NowPlayingFragment extends RoboSherlockListFragment implements SearchView.OnQueryTextListener {
@@ -35,7 +39,29 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
     private PlaylistArrayAdapter adapter;
     private SearchView mSearchView;
     private MenuItem mSearchItem;
-    private int defaultBackgroundColor;
+
+    private DragSortListView mDslv;
+    private DragSortController mController;
+
+    public int dragStartMode = DragSortController.ON_DOWN;
+    public boolean removeEnabled = true;
+    public int removeMode = DragSortController.FLING_REMOVE;
+    public boolean sortEnabled = true;
+    public boolean dragEnabled = true;
+
+    public DragSortController buildController(DragSortListView dslv) {
+        // defaults are
+        // dragStartMode = onDown
+        // removeMode = flingRight
+        DragSortController controller = new DragSortController(dslv);
+        controller.setDragHandleId(R.id.drag_handle);
+        controller.setClickRemoveId(R.id.click_remove);
+        controller.setRemoveEnabled(removeEnabled);
+        controller.setSortEnabled(sortEnabled);
+        controller.setDragInitMode(dragStartMode);
+        controller.setRemoveMode(removeMode);
+        return controller;
+    }
 
     @Subscribe public void handleNowPlayingListAvailable(NowPlayingListAvailable event){
         adapter = new PlaylistArrayAdapter(getActivity(), R.layout.ui_list_track_item, event.getList());
@@ -47,12 +73,6 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
     @Subscribe public void handlePlayingTrackChange(TrackInfoChange event) {
         if (adapter == null || !adapter.getClass().equals(PlaylistArrayAdapter.class)) return;
         adapter.setPlayingTrackIndex(adapter.getPosition(new MusicTrack(event.getArtist(), event.getTitle())));
-        adapter.notifyDataSetChanged();
-    }
-
-    public void removeSelectedTrack(int index) {
-        if (index < 0) return;
-        adapter.remove(adapter.getItem(index));
         adapter.notifyDataSetChanged();
     }
 
@@ -89,8 +109,11 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        registerForContextMenu(this.getListView());
-        injector.injectMembers(this.getListView());
+        mDslv = (DragSortListView) getListView();
+        mDslv.setDropListener(onDrop);
+        mDslv.setRemoveListener(onRemove);
+        registerForContextMenu(getListView());
+        injector.injectMembers(getListView());
     }
 
     @Override
@@ -107,50 +130,56 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(0, 11, 0, "Remove track");
-        AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) menuInfo;
-
-        menu.setHeaderTitle(adapter.getItem(mi.position).getTitle());
-        super.onCreateContextMenu(menu, v, menuInfo);
-    }
-
-    @Override
-    public boolean onContextItemSelected(android.view.MenuItem item) {
-        AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingListRemove, mi.position)));
-        return super.onContextItemSelected(item);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.ui_fragment_nowplaying, container, false);
+        View mView = inflater.inflate(R.layout.ui_fragment_nowplaying, container, false);
+        mDslv = (DragSortListView) mView.findViewById(android.R.id.list);
+        mController = buildController(mDslv);
+        mDslv.setFloatViewManager(mController);
+        mDslv.setOnTouchListener(mController);
+        mDslv.setDragEnabled(dragEnabled);
+        return mView;
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         adapter.setPlayingTrackIndex(position);
-        ((PlaylistArrayAdapter) l.getAdapter()).notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
         bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingListPlay, position + 1)));
     }
 
-    @Subscribe
-    public void handleDragAndDrop(DragDropEvent event) {
+    private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
+        @Override public void drop(int from, int to) {
+            if (from != to) {
 
-        int backgroundColor = 0xe0103010;
+                Map<String, Integer> move = new HashMap<String, Integer>();
+                move.put("from", from);
+                move.put("to", to);
+                bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingListMove,move)));
 
-        switch (event.getType()) {
-
-            case DRAG_START:
-                event.getItem().setVisibility(View.INVISIBLE);
-                defaultBackgroundColor = event.getItem().getDrawingCacheBackgroundColor();
-                event.getItem().setBackgroundColor(backgroundColor);
-                break;
-            case DRAG_STOP:
-                event.getItem().setVisibility(View.VISIBLE);
-                event.getItem().setBackgroundColor(defaultBackgroundColor);
-                break;
+            }
         }
+    };
+
+    private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
+        @Override public void remove(int which) {
+            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingListRemove, which)));
+        }
+    };
+
+    @Subscribe public void handleTrackMoved(TrackMoved event) {
+        if (event.isSuccess()) {
+            MusicTrack track = adapter.getItem(event.getFrom());
+            adapter.remove(track);
+            adapter.insert(track, event.getTo());
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    @Subscribe public void handleTrackRemoval(TrackRemoval event) {
+        if (event.isSuccess()) {
+            adapter.remove(adapter.getItem(event.getIndex()));
+        }
+        adapter.notifyDataSetChanged();
     }
 }
