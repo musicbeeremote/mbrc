@@ -13,12 +13,11 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.Hashtable;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class ServiceDiscovery {
     private WifiManager manager;
@@ -53,36 +52,13 @@ public class ServiceDiscovery {
         }
     }
 
-    private class Notify {
-        private String notifyPacket;
-
-        private Notify() {
-            this.notifyPacket = "";
-        }
-
-        private String getNotifyPacket() {
-            return notifyPacket;
-        }
-
-        private void setNotifyPacket(String notifyPacket) {
-            this.notifyPacket = notifyPacket;
-        }
-    }
-
     private class ServiceListener implements Runnable{
 
         @Override public void run() {
             try {
-                final Notify mNotify = new Notify();
-
-                Timer timeoutTimer = new Timer();
-                timeoutTimer.schedule(new TimerTask() {
-                    @Override public void run() {
-                        mNotify.setNotifyPacket(null);
-                    }
-                }, 2000);
 
                 MulticastSocket mSocket = new MulticastSocket(45345);
+                mSocket.setSoTimeout(2000);
                 InetAddress group = InetAddress.getByName("239.1.5.10");
                 mSocket.joinGroup(group);
 
@@ -94,12 +70,13 @@ public class ServiceDiscovery {
                 discoveryMessage.put("address", getWifiAddress());
                 byte[] discovery = mapper.writeValueAsBytes(discoveryMessage);
                 mSocket.send(new DatagramPacket(discovery, discovery.length,group, 45345));
+                String incoming;
 
-                while (mNotify.getNotifyPacket() != null) {
+                while (true) {
                     mSocket.receive(mPacket);
-                    mNotify.setNotifyPacket(new String(mPacket.getData()));
+                    incoming = new String(mPacket.getData());
 
-                    JsonNode node = mapper.readValue(mNotify.getNotifyPacket(), JsonNode.class);
+                    JsonNode node = mapper.readValue(incoming, JsonNode.class);
                     if (node.path("context").asText().equals("notify")) {
                         ConnectionSettings settings = new ConnectionSettings(node);
                         bus.post(settings);
@@ -112,8 +89,11 @@ public class ServiceDiscovery {
                 mSocket.close();
                 stopDiscovery();
 
+            } catch(InterruptedIOException e) {
+                bus.post(new DiscoveryStopped());
+                stopDiscovery();
             } catch (IOException e) {
-                e.printStackTrace();
+                bus.post(new DiscoveryStopped());
             }
         }
     }
