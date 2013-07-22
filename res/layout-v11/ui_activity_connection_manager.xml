@@ -38,16 +38,18 @@
         <Button
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:text="@string/connection_manager_scan"
                 android:id="@+id/connection_scan"
+                android:background="@drawable/selectable_background_mbrc_default"
                 android:layout_gravity="left|center_vertical"/>
 
         <Button
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:text="@string/connection_manager_add"
+                android:background="@drawable/selectable_background_mbrc_default"
                 android:id="@+id/connection_add"/>
 
     </LinearLayout>
