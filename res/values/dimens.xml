@@ -5,4 +5,5 @@
     <dimen name="side_margin_extra">24dp</dimen>
     <dimen name="side_margin_half">8dp</dimen>
     <dimen name="drawer_width">260dp</dimen>
+    <dimen name="drawer_item_height">48dp</dimen>
 </resources>

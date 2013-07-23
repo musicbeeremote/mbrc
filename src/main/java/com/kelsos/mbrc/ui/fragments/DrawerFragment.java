@@ -83,10 +83,11 @@ public class DrawerFragment extends RoboSherlockListFragment implements Fragment
         menuConnector.setTypeface(robotoLight);
 
         ArrayList<NavigationEntry> nav = new ArrayList<NavigationEntry>();
-        nav.add(new NavigationEntry("Home", getResources().getDrawable(R.drawable.ic_action_play)));
-        nav.add(new NavigationEntry("Search", getResources().getDrawable(R.drawable.ic_action_search)));
-        nav.add(new NavigationEntry("Now playing list", getResources().getDrawable(R.drawable.ic_action_playlist)));
-        nav.add(new NavigationEntry("Lyrics", getResources().getDrawable(R.drawable.ic_action_lyrics)));
+        int bound = getResources().getInteger(R.integer.drawer_drawable_bounds);
+        nav.add(new NavigationEntry("Home", getResources().getDrawable(R.drawable.ic_action_play),bound,bound));
+        nav.add(new NavigationEntry("Search", getResources().getDrawable(R.drawable.ic_action_search),bound,bound));
+        nav.add(new NavigationEntry("Now playing list", getResources().getDrawable(R.drawable.ic_action_playlist),bound,bound));
+        nav.add(new NavigationEntry("Lyrics", getResources().getDrawable(R.drawable.ic_action_lyrics),bound,bound));
 
         setListAdapter(new DrawerAdapter(getActivity(), R.layout.ui_drawer_item, nav));
         getListView().setOnItemClickListener(new DrawerOnClickListener());

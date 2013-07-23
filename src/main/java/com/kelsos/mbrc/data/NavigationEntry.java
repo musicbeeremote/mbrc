@@ -6,10 +6,10 @@ public class NavigationEntry {
     private String label;
     private Drawable leftDrawable;
 
-    public NavigationEntry(String label, Drawable leftDrawable) {
+    public NavigationEntry(String label, Drawable leftDrawable, int w, int h) {
         this.label = label;
         this.leftDrawable = leftDrawable;
-        this.leftDrawable.setBounds(0,0,40,40);
+        this.leftDrawable.setBounds(0,0,w,h);
     }
 
     public Drawable getLeftDrawable() {
