@@ -7,21 +7,20 @@ import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.model.MainDataModel;
 import com.kelsos.mbrc.others.Protocol;
-import com.kelsos.mbrc.services.ProtocolHandler;
 import com.kelsos.mbrc.services.SocketService;
-import com.squareup.otto.Bus;
 
-public class ConnectionStatusChangedCommand implements ICommand
-{
-	@Inject
-	MainDataModel model;
-    @Inject
-    SocketService service;
-	@Inject
-	NotificationService notificationService;
+public class ConnectionStatusChangedCommand implements ICommand {
+	private MainDataModel model;
+    private SocketService service;
+	private NotificationService notificationService;
 
-	public void execute(IEvent e)
-	{
+    @Inject public ConnectionStatusChangedCommand(MainDataModel model, SocketService service, NotificationService notificationService) {
+        this.model = model;
+        this.service = service;
+        this.notificationService = notificationService;
+    }
+
+    public void execute(IEvent e) {
 		model.setConnectionState(e.getDataString());
 		if(model.getIsConnectionActive()){
             service.sendData(new SocketMessage(Protocol.Player, Protocol.Request, "Android"));

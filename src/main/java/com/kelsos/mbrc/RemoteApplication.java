@@ -5,6 +5,7 @@ import android.view.ViewConfiguration;
 import com.google.inject.Stage;
 import com.google.inject.util.Modules;
 import com.kelsos.mbrc.controller.Controller;
+import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.model.MainDataModel;
 import com.kelsos.mbrc.services.ProtocolHandler;
 import com.kelsos.mbrc.services.SocketService;
@@ -31,8 +32,9 @@ public class RemoteApplication extends Application
 		ProtocolHandler protocolHandler = injector.getInstance(ProtocolHandler.class);
 		SocketService socketService = injector.getInstance(SocketService.class);
 		RemoteBroadcastReceiver remoteBroadcastReceiver = injector.getInstance(RemoteBroadcastReceiver.class);
+        NotificationService instance = injector.getInstance(NotificationService.class);
 
-		//HACK: Force overflow code courtesy of Timo Ohr http://stackoverflow.com/a/11438245
+        //HACK: Force overflow code courtesy of Timo Ohr http://stackoverflow.com/a/11438245
 		try {
 			ViewConfiguration config = ViewConfiguration.get(this);
 			Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");

@@ -7,19 +7,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
-import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.kelsos.mbrc.ui.activities.MainFragmentActivity;
 import com.kelsos.mbrc.ui.activities.UpdateView;
+import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.squareup.otto.Subscribe;
 
 @Singleton
@@ -29,82 +26,48 @@ public class NotificationService {
     public static final String NOTIFICATION_PLAY_PRESSED = "com.kelsos.mbrc.notification.play";
     public static final String NOTIFICATION_NEXT_PRESSED = "com.kelsos.mbrc.notification.next";
     public static final String NOTIFICATION_CLOSE_PRESSED = "com.kelsos.mbrc.notification.close";
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
-    private Context context;
+    private Context mContext;
     private MainThreadBusWrapper bus;
 
     @Inject public NotificationService(Context context, MainThreadBusWrapper bus) {
-        this.context = context;
+        this.mContext = context;
         this.bus = bus;
         bus.register(this);
-    }
-
-    /**
-     * Using an id of the string stored in the strings XML this function
-     * displays a toast window.
-     */
-    public void showToastMessage(final int id) {
-        String data = context.getString(id);
-        showToast(data);
-    }
-
-    /**
-     * Given a message
-     *
-     * @param message the string of a message that will be shown as a toast message.
-     */
-    private void showToast(final String message) {
-        try {
-            if (Looper.myLooper() == Looper.getMainLooper()) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-            } else {
-                mHandler.post(new Runnable() {
-                    @Override public void run() {
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        } catch (Exception ex) {
-
-        }
-    }
-
-    /**
-     * Given a message, it displays the message on a toast window.
-     * If the AppNotification manager is not properly initialized
-     * nothing happens.
-     *
-     * @param message the string message that will be shown as a toast message.
-     */
-    public void showToastMessage(final String message) {
-        showToast(message);
     }
 
     @Subscribe public void handleNotificationData(NotificationDataAvailable event){
         notificationBuilder(event.getTitle(),event.getArtist(),event.getCover(),event.getState());
     }
 
+    /**
+     * Creates an ongoing notification that displays the cover and information about the playing track,
+     * and also provides controls to skip or play/pause.
+     * @param title The title of the track playing.
+     * @param artist The artist of the track playing.
+     * @param cover The cover Bitmap.
+     * @param state The current play state is used to display the proper play or pause icon.
+     */
     private void notificationBuilder(String title, String artist, Bitmap cover, PlayState state) {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
             return;
         }
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
 
-        Intent notificationIntent = new Intent(context, MainFragmentActivity.class);
-        PendingIntent notificationPendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent notificationIntent = new Intent(mContext, MainFragmentActivity.class);
+        PendingIntent notificationPendingIntent = PendingIntent.getActivity(mContext, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(notificationPendingIntent);
 
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.ui_notification_control);
+        RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.ui_notification_control);
         Intent playPressedIntent = new Intent(NOTIFICATION_PLAY_PRESSED);
-        PendingIntent mediaPendingIntent = PendingIntent.getBroadcast(context, 1, playPressedIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent mediaPendingIntent = PendingIntent.getBroadcast(mContext, 1, playPressedIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.notification_play, mediaPendingIntent);
         Intent mediaNextButtonIntent = new Intent(NOTIFICATION_NEXT_PRESSED);
-        PendingIntent mediaNextButtonPendingIntent = PendingIntent.getBroadcast(context, 2, mediaNextButtonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent mediaNextButtonPendingIntent = PendingIntent.getBroadcast(mContext, 2, mediaNextButtonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.notification_next, mediaNextButtonPendingIntent);
         Intent clearNotificationIntent = new Intent(NOTIFICATION_CLOSE_PRESSED);
-        PendingIntent clearNotificationPendingIntent = PendingIntent.getBroadcast(context, 3, clearNotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent clearNotificationPendingIntent = PendingIntent.getBroadcast(mContext, 3, clearNotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.notification_close, clearNotificationPendingIntent);
 
         views.setTextViewText(R.id.notification_artist, artist);
@@ -138,29 +101,29 @@ public class NotificationService {
         notification.contentView = views;
         notification.flags = Notification.FLAG_ONGOING_EVENT;
         notification.icon = R.drawable.ic_mbrc_status;
-        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification);
     }
 
     public void cancelNotification(int notificationId) {
-        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.cancel(notificationId);
     }
 
     public void updateAvailableNotificationBuilder() {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
                 .setSmallIcon(R.drawable.ic_mbrc_status)
-                .setContentTitle(context.getString(R.string.application_name))
-                .setContentText(context.getString(R.string.notification_plugin_out_of_date));
+                .setContentTitle(mContext.getString(R.string.application_name))
+                .setContentText(mContext.getString(R.string.notification_plugin_out_of_date));
 
-        Intent resultIntent = new Intent(context, UpdateView.class);
+        Intent resultIntent = new Intent(mContext, UpdateView.class);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(resultPendingIntent);
         final Notification notification = mBuilder.build();
         notification.flags = Notification.FLAG_AUTO_CANCEL;
-        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(PLUGIN_OUT_OF_DATE, notification);
     }
 }

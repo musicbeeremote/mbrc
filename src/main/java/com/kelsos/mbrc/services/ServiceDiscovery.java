@@ -7,6 +7,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.ConnectionSettings;
+import com.kelsos.mbrc.enums.DiscoveryStop;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import org.codehaus.jackson.JsonNode;
@@ -35,7 +36,7 @@ public class ServiceDiscovery {
 
     public void startDiscovery() {
         if (!isWifiConnected()) {
-            bus.post(new DiscoveryStopped());
+            bus.post(new DiscoveryStopped(DiscoveryStop.NO_WIFI));
             return;
         }
         mLock = manager.createMulticastLock("locked");
@@ -85,16 +86,16 @@ public class ServiceDiscovery {
                     }
                 }
 
-                bus.post(new DiscoveryStopped());
+                bus.post(new DiscoveryStopped(DiscoveryStop.COMPLETE));
                 mSocket.leaveGroup(group);
                 mSocket.close();
                 stopDiscovery();
 
             } catch(InterruptedIOException e) {
-                bus.post(new DiscoveryStopped());
+                bus.post(new DiscoveryStopped(DiscoveryStop.NOT_FOUND));
                 stopDiscovery();
             } catch (IOException e) {
-                bus.post(new DiscoveryStopped());
+                bus.post(new DiscoveryStopped(DiscoveryStop.NOT_FOUND));
             }
         }
     }

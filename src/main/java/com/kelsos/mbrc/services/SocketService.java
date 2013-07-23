@@ -2,15 +2,15 @@ package com.kelsos.mbrc.services;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.SocketMessage;
-import com.kelsos.mbrc.events.SocketEvent;
+import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.SocketEvent;
+import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.others.Const;
 import com.kelsos.mbrc.others.DelayTimer;
 import com.kelsos.mbrc.others.SettingsManager;
-import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.enums.SocketAction;
-import com.kelsos.mbrc.messaging.NotificationService;
 import com.squareup.otto.Bus;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -26,7 +26,6 @@ public class SocketService
 
 	private Bus bus;
 	private SettingsManager settingsManager;
-	private NotificationService notificationService;
     private ObjectMapper mapper;
 
 	private static int numOfRetries;
@@ -42,11 +41,10 @@ public class SocketService
 	private DelayTimer cTimer;
 
 	@Inject
-	public SocketService(SettingsManager settingsManager, NotificationService notificationService, Bus bus, ObjectMapper mapper)
+	public SocketService(SettingsManager settingsManager, Bus bus, ObjectMapper mapper)
 	{
 		this.bus = bus;
 		this.settingsManager = settingsManager;
-		this.notificationService = notificationService;
         this.mapper = mapper;
 
 		cTimer = new DelayTimer(2500, timerFinishEvent);
@@ -195,13 +193,10 @@ public class SocketService
 						throw e;
 					}
 				}
-			} catch (SocketTimeoutException e)
-			{
-				notificationService.showToastMessage(R.string.notification_connection_timeout);
-			} catch (SocketException e)
-			{
-				final String exceptionMessage = e.toString().substring(26);
-				notificationService.showToastMessage(exceptionMessage);
+			} catch (SocketTimeoutException e){
+                bus.post(new NotifyUser(R.string.notification_connection_timeout));
+			} catch (SocketException e){
+                bus.post(new NotifyUser(e.toString().substring(26)));
 			} catch (IOException ignored)
 			{
 			} catch (NullPointerException ignored)

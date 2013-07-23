@@ -14,6 +14,7 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
 import com.kelsos.mbrc.events.ui.NoSettingsAvailable;
+import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.fragments.LyricsFragment;
 import com.kelsos.mbrc.ui.fragments.MainFragment;
@@ -21,6 +22,8 @@ import com.kelsos.mbrc.ui.fragments.NowPlayingFragment;
 import com.kelsos.mbrc.ui.fragments.SearchFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class MainFragmentActivity extends RoboSherlockFragmentActivity {
 
@@ -86,15 +89,15 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    public boolean onCreateOptionsMenu(Menu menu)
-	{
+    public boolean onCreateOptionsMenu(Menu menu) {
 		return true;
 	}
 
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
-	}
+        Crouton.cancelAllCroutons();
+    }
 
     @Override public void onStart() {
         super.onStart();
@@ -183,5 +186,13 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
                 break;
         }
         navChanged = false;
+    }
+
+    @Subscribe public void handleUserNotification(NotifyUser event) {
+        if (event.isFromResource()) {
+            Crouton.makeText(this, event.getResId(), Style.INFO).show();
+        } else {
+            Crouton.makeText(this, event.getMessage(), Style.INFO).show();
+        }
     }
 }

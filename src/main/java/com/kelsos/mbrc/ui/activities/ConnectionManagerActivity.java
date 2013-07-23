@@ -21,9 +21,12 @@ import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
+import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 import roboguice.inject.InjectView;
 
 public class ConnectionManagerActivity extends RoboSherlockFragmentActivity implements SettingsDialogFragment.SettingsDialogListener {
@@ -113,6 +116,33 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
     @Subscribe public void handleDiscoveryStopped(DiscoveryStopped event) {
         if (mProgress != null) {
             mProgress.hide();
+        }
+        String message ="";
+        de.keyboardsurfer.android.widget.crouton.Style style = Style.INFO;
+        switch (event.getReason()) {
+
+            case NO_WIFI:
+
+                message= "This service is available only on a wifi connection";
+                break;
+            case NOT_FOUND:
+                style = Style.ALERT;
+                message= "A remote service could not be found";
+                break;
+            case COMPLETE:
+                style = Style.CONFIRM;
+                message= "Service successfully found";
+                break;
+        }
+
+        Crouton.makeText(this, message, style).show();
+    }
+
+    @Subscribe public void handleUserNotification(NotifyUser event) {
+        if (event.isFromResource()) {
+            Crouton.makeText(this, event.getResId(), Style.INFO).show();
+        } else {
+            Crouton.makeText(this, event.getMessage(), Style.INFO).show();
         }
     }
 }
