@@ -101,38 +101,38 @@ public class MainDataModel {
 
     public void setSearchArtists(ArrayList<ArtistEntry> searchArtists) {
         this.searchArtists = searchArtists;
-        bus.post(new ArtistSearchResults(this.searchArtists));
+        bus.post(new ArtistSearchResults(this.searchArtists, false));
     }
 
     @Produce public ArtistSearchResults produceArtistSearchResults() {
-        return new ArtistSearchResults(searchArtists);
+        return new ArtistSearchResults(searchArtists, true);
     }
 
     public void setSearchTracks(ArrayList<TrackEntry> searchTracks) {
         this.searchTracks = searchTracks;
-        bus.post(new TrackSearchResults(searchTracks));
+        bus.post(new TrackSearchResults(searchTracks, false));
     }
 
     @Produce public TrackSearchResults produceTrackSearchResults() {
-        return new TrackSearchResults(searchTracks);
+        return new TrackSearchResults(searchTracks, true);
     }
 
     public void setSearchAlbums(ArrayList<AlbumEntry> searchAlbums) {
         this.searchAlbums = searchAlbums;
-        bus.post(new AlbumSearchResults(searchAlbums));
+        bus.post(new AlbumSearchResults(searchAlbums, false));
     }
 
     @Produce public AlbumSearchResults produceAlbumSearchResults() {
-        return new AlbumSearchResults(searchAlbums);
+        return new AlbumSearchResults(searchAlbums, true);
     }
 
     public void setSearchGenres(ArrayList<GenreEntry> searchGenres) {
         this.searchGenres = searchGenres;
-        bus.post(new GenreSearchResults(searchGenres));
+        bus.post(new GenreSearchResults(searchGenres, false));
     }
 
     @Produce public GenreSearchResults produceGenreSearchResults() {
-        return new GenreSearchResults(searchGenres);
+        return new GenreSearchResults(searchGenres, true);
     }
 
     public void setRating(double rating) {

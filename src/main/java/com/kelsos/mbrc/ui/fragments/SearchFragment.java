@@ -17,10 +17,7 @@ import com.kelsos.mbrc.adapters.*;
 import com.kelsos.mbrc.data.*;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
-import com.kelsos.mbrc.events.ui.AlbumSearchResults;
-import com.kelsos.mbrc.events.ui.ArtistSearchResults;
-import com.kelsos.mbrc.events.ui.GenreSearchResults;
-import com.kelsos.mbrc.events.ui.TrackSearchResults;
+import com.kelsos.mbrc.events.ui.*;
 import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -112,18 +109,38 @@ public class SearchFragment extends RoboSherlockFragment implements SearchView.O
     }
 
     @Subscribe public void handleGenreSearchResults(GenreSearchResults results) {
-        mPager.setCurrentItem(0);
+        if (!results.isStored()){
+            mPager.setCurrentItem(0);
+            if (results.getList().size() == 0) {
+                bus.post(new NotifyUser(getString(R.string.search_msg_genre_not_found)));
+            }
+        }
     }
 
     @Subscribe public void handleArtistSearchResults(ArtistSearchResults results) {
-        mPager.setCurrentItem(1);
+        if (!results.isStored()) {
+            mPager.setCurrentItem(1);
+            if (results.getList().size() == 0) {
+                bus.post(new NotifyUser(getString(R.string.search_msg_artist_not_found)));
+            }
+        }
     }
 
     @Subscribe public void handleAlbumResults(AlbumSearchResults results) {
-        mPager.setCurrentItem(2);
+        if (!results.isStored()) {
+            mPager.setCurrentItem(2);
+            if (results.getList().size() == 0) {
+                bus.post(new NotifyUser(getString(R.string.search_msg_album_not_found)));
+            }
+        }
     }
 
     @Subscribe public void handleTrackResults(TrackSearchResults results) {
-        mPager.setCurrentItem(3);
+        if (!results.isStored()) {
+            mPager.setCurrentItem(3);
+            if (results.getList().size() == 0) {
+                bus.post(new NotifyUser(getString(R.string.search_msg_track_not_found)));
+            }
+        }
     }
 }

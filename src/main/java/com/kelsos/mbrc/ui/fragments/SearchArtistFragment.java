@@ -49,10 +49,11 @@ public class SearchArtistFragment extends RoboSherlockListFragment {
     }
 
     @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(GROUP_ID, QUEUE_NEXT, 0, "Queue Next");
-        menu.add(GROUP_ID, QUEUE_LAST, 0, "Queue Last");
-        menu.add(GROUP_ID, PLAY_NOW, 0, "Play Now");
-        menu.add(GROUP_ID, GET_SUB, 0, "Get albums");
+        menu.setHeaderTitle(R.string.search_context_header);
+        menu.add(GROUP_ID, QUEUE_NEXT, 0, R.string.search_context_queue_next);
+        menu.add(GROUP_ID, QUEUE_LAST, 0, R.string.search_context_queue_last);
+        menu.add(GROUP_ID, PLAY_NOW, 0, R.string.search_context_play_now);
+        menu.add(GROUP_ID, GET_SUB, 0, R.string.search_context_get_albums);
     }
 
     @Override public boolean onContextItemSelected(android.view.MenuItem item) {
@@ -60,7 +61,7 @@ public class SearchArtistFragment extends RoboSherlockListFragment {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             Object line = adapter.getItem(mi.position);
             final String qContext = Protocol.LibraryQueueArtist;
-            String gSub = Protocol.LibraryArtistAlbums;
+            final String gSub = Protocol.LibraryArtistAlbums;
             String query = ((ArtistEntry)line).getArtist();
 
             UserAction ua = null;

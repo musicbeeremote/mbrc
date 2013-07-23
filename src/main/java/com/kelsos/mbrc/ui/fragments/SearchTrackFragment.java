@@ -49,9 +49,10 @@ public class SearchTrackFragment extends RoboSherlockListFragment {
     }
 
     @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(GROUP_ID, QUEUE_NEXT, 0, "Queue Next");
-        menu.add(GROUP_ID, QUEUE_LAST, 0, "Queue Last");
-        menu.add(GROUP_ID, PLAY_NOW, 0, "Play Now");
+        menu.setHeaderTitle(R.string.search_context_header);
+        menu.add(GROUP_ID, QUEUE_NEXT, 0, R.string.search_context_queue_next);
+        menu.add(GROUP_ID, QUEUE_LAST, 0, R.string.search_context_queue_last);
+        menu.add(GROUP_ID, PLAY_NOW, 0, R.string.search_context_play_now);
     }
 
     @Override public boolean onContextItemSelected(android.view.MenuItem item) {

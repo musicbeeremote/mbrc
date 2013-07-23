@@ -40,10 +40,11 @@ public class SearchGenreFragment extends RoboSherlockListFragment {
     }
 
     @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(GROUP_ID, QUEUE_NEXT, 0, "Queue Next");
-        menu.add(GROUP_ID, QUEUE_LAST, 0, "Queue Last");
-        menu.add(GROUP_ID, PLAY_NOW, 0, "Play Now");
-        menu.add(GROUP_ID, GET_SUB, 0, "Get Artists");
+        menu.setHeaderTitle(R.string.search_context_header);
+        menu.add(GROUP_ID, QUEUE_NEXT, 0, R.string.search_context_queue_next);
+        menu.add(GROUP_ID, QUEUE_LAST, 0, R.string.search_context_queue_last);
+        menu.add(GROUP_ID, PLAY_NOW, 0, R.string.search_context_play_now);
+        menu.add(GROUP_ID, GET_SUB, 0, R.string.search_context_get_artists);
     }
 
     @Override public boolean onContextItemSelected(android.view.MenuItem item) {

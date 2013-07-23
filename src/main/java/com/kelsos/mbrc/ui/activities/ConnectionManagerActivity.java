@@ -123,15 +123,15 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
 
             case NO_WIFI:
 
-                message= "This service is available only on a wifi connection";
+                message= getString(R.string.con_man_no_wifi);
                 break;
             case NOT_FOUND:
                 style = Style.ALERT;
-                message= "A remote service could not be found";
+                message= getString(R.string.con_man_not_found);
                 break;
             case COMPLETE:
                 style = Style.CONFIRM;
-                message= "Service successfully found";
+                message= getString(R.string.con_man_success);
                 break;
         }
 

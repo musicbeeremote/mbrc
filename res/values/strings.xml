@@ -110,5 +110,19 @@
     <string name="preferences_key_connection_manager">manage_connections</string>
     <string name="progress_scanning">Scanning...</string>
     <string name="progress_scanning_message">Wait while scanning for a remote host</string>
+    <string name="search_msg_album_not_found">No albums found for the current search</string>
+    <string name="search_msg_artist_not_found">No artist found for the current search</string>
+    <string name="search_msg_genre_not_found">No genres found for the current search</string>
+    <string name="search_msg_track_not_found">No track found for the current search</string>
+    <string name="search_context_header">Actions</string>
+    <string name="search_context_queue_next">Queue Next</string>
+    <string name="search_context_queue_last">Queue Last</string>
+    <string name="search_context_play_now">Play Now</string>
+    <string name="search_context_get_artists">Get Artists</string>
+    <string name="search_context_get_albums">Get albums</string>
+    <string name="search_context_get_tracks">Get Tracks</string>
+    <string name="con_man_no_wifi">This service is available only on a wifi connection</string>
+    <string name="con_man_not_found">A remote service could not be found</string>
+    <string name="con_man_success">Service successfully found</string>
 
 </resources>
