@@ -35,6 +35,7 @@ public class ServiceDiscovery {
 
     public void startDiscovery() {
         if (!isWifiConnected()) {
+            bus.post(new DiscoveryStopped());
             return;
         }
         mLock = manager.createMulticastLock("locked");

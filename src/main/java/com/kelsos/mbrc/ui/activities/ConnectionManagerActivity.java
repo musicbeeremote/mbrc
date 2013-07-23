@@ -90,8 +90,8 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
 
     Button.OnClickListener scanListener = new Button.OnClickListener() {
         @Override public void onClick(View view) {
-            bus.post(new MessageEvent(UserInputEvent.StartDiscovery));
             mProgress = ProgressDialog.show(mContext, getString(R.string.progress_scanning), getString(R.string.progress_scanning_message), true, false);
+            bus.post(new MessageEvent(UserInputEvent.StartDiscovery));
         }
     };
 
