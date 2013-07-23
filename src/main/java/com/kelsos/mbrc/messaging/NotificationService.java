@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
@@ -84,6 +85,11 @@ public class NotificationService {
     }
 
     private void notificationBuilder(String title, String artist, Bitmap cover, PlayState state) {
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+            return;
+        }
+
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
 
         Intent notificationIntent = new Intent(context, MainFragmentActivity.class);
