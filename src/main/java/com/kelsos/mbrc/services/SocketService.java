@@ -11,7 +11,7 @@ import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.others.Const;
 import com.kelsos.mbrc.others.DelayTimer;
 import com.kelsos.mbrc.others.SettingsManager;
-import com.squareup.otto.Bus;
+import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.*;
@@ -25,7 +25,7 @@ public class SocketService {
 
     public static final int MAX_RETRIES = 5;
     private static int numOfRetries;
-    private Bus bus;
+    private MainThreadBusWrapper bus;
     private SettingsManager settingsManager;
     private ObjectMapper mapper;
     private boolean shouldStop;
@@ -42,7 +42,7 @@ public class SocketService {
     };
 
     @Inject
-    public SocketService(SettingsManager settingsManager, Bus bus, ObjectMapper mapper) {
+    public SocketService(SettingsManager settingsManager, MainThreadBusWrapper bus, ObjectMapper mapper) {
         this.bus = bus;
         this.settingsManager = settingsManager;
         this.mapper = mapper;
