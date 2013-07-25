@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:orientation="horizontal"
-              android:layout_height="60dp"
+              android:layout_height="@dimen/list_item_height"
               android:layout_gravity="center_vertical"
               android:gravity="center_vertical"
               android:clickable="false"
@@ -40,7 +40,7 @@
                 android:text="@string/title_placeholder"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="18sp"/>
+                android:textSize="@dimen/list_item_one"/>
 
         <TextView
                 android:id="@+id/trackArtist"
@@ -51,7 +51,7 @@
                 android:singleLine="true"
                 android:textColor="#AAAAAA"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textSize="16sp"/>
+                android:textSize="@dimen/list_item_two"/>
     </LinearLayout>
 
 

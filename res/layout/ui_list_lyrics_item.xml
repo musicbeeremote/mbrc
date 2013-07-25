@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
+    android:paddingLeft="@dimen/side_margin_half"
+    android:paddingRight="@dimen/side_margin_half"
     android:textColor="#BBBBBB"
-    android:textSize="15sp" />
+    android:textSize="@dimen/lyrics_text_size" />

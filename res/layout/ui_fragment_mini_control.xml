@@ -3,7 +3,7 @@
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="@dimen/mini_control_height"
         android:layout_marginTop="1dp"
         android:background="@color/abs__background_holo_dark">
 
@@ -18,8 +18,8 @@
             android:paddingTop="1dp">
 
         <ImageView
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+                android:layout_width="@dimen/mini_control_height"
+                android:layout_height="@dimen/mini_control_height"
                 android:id="@+id/mc_track_cover"
                 android:src="@drawable/ic_image_no_cover"
                 android:contentDescription="@string/main_image_view_cover_description"
@@ -67,8 +67,8 @@
                 >
 
             <ImageButton
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
+                    android:layout_width="@dimen/mini_control_height"
+                    android:layout_height="@dimen/mini_control_height"
                     android:id="@+id/mc_prev_track"
                     android:background="@drawable/selectable_background_mbrc_default"
                     android:src="@drawable/ic_action_previous"
@@ -76,8 +76,8 @@
                     android:contentDescription="@string/main_button_previous_description"/>
 
             <ImageButton
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
+                    android:layout_width="@dimen/mini_control_height"
+                    android:layout_height="@dimen/mini_control_height"
                     android:id="@+id/mc_play_pause"
                     android:background="@drawable/selectable_background_mbrc_default"
                     android:src="@drawable/ic_action_play"
@@ -85,8 +85,8 @@
                     android:contentDescription="@string/main_button_play_pause_description"/>
 
             <ImageButton
-                    android:layout_width="45dp"
-                    android:layout_height="fill_parent"
+                    android:layout_width="@dimen/mini_control_height"
+                    android:layout_height="@dimen/mini_control_height"
                     android:id="@+id/mc_next_track"
                     android:background="@drawable/selectable_background_mbrc_default"
                     android:src="@drawable/ic_action_next"
