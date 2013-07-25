@@ -10,9 +10,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/settings_dialog_name"
             android:layout_gravity="center"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginTop="@dimen/side_margin_half"
+            android:layout_marginLeft="@dimen/side_margin_half"
+            android:layout_marginRight="@dimen/side_margin_half"
             android:hint="@string/settings_dialog_hint_name"/>
 
     <EditText
@@ -20,9 +20,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/settings_dialog_host"
             android:layout_gravity="center"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginTop="@dimen/side_margin_half"
+            android:layout_marginLeft="@dimen/side_margin_half"
+            android:layout_marginRight="@dimen/side_margin_half"
             android:hint="@string/settings_dialog_hint_host"/>
 
     <EditText
@@ -30,9 +30,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/settings_dialog_port"
             android:layout_gravity="center"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginTop="@dimen/side_margin_half"
+            android:layout_marginLeft="@dimen/side_margin_half"
+            android:layout_marginRight="@dimen/side_margin_half"
             android:inputType="number"
             android:numeric="integer"
             android:maxLength="5"

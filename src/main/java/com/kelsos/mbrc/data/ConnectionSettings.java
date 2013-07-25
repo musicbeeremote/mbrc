@@ -3,7 +3,7 @@ package com.kelsos.mbrc.data;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"index"})
+@JsonIgnoreProperties({"index","isDefault"})
 public class ConnectionSettings {
     private String address;
     private String name;
@@ -24,6 +24,13 @@ public class ConnectionSettings {
         this.index = index;
     }
 
+    public ConnectionSettings() {
+        this.address = "";
+        this.index = -1;
+        this.port = 0;
+        this.name = "";
+    }
+
     public String getAddress() {
         return this.address;
     }
@@ -41,9 +48,7 @@ public class ConnectionSettings {
 
         if (o instanceof ConnectionSettings) {
             ConnectionSettings other = (ConnectionSettings)o;
-            equality = other.getAddress().equals(address) &&
-                    other.getName().equals(name) &&
-                    other.getPort() == port;
+            equality = other.getAddress().equals(address) && other.getPort() == port;
         }
         return equality;
     }

@@ -94,7 +94,7 @@
     <string name="connection_manager_add">Add</string>
     <string name="settings_dialog_add">Add</string>
     <string name="connection_manager_title">Connection Manager</string>
-    <string name="settings_array">settings_array</string>
+    <string name="settings_key_array">settings_array</string>
     <string name="placeholer_computer_name">Computer Name</string>
     <string name="place_holder_ip">192.168.100.10</string>
     <string name="placeholder_port">3565</string>
@@ -124,5 +124,7 @@
     <string name="con_man_no_wifi">This service is available only on a wifi connection</string>
     <string name="con_man_not_found">A remote service could not be found</string>
     <string name="con_man_success">Service successfully found</string>
+    <string name="settings_key_default_index">mbrc_default_settings</string>
+    <string name="notification_settings_stored">The specified settings already exist.</string>
 
 </resources>

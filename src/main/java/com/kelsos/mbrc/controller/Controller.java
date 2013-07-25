@@ -7,8 +7,7 @@ import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.configuration.ProtocolHandlerCommandRegistration;
-import com.kelsos.mbrc.configuration.SocketServiceCommandRegistration;
+import com.kelsos.mbrc.configuration.CommandRegistration;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
@@ -28,12 +27,10 @@ public class Controller extends RoboService {
     @Inject public Controller(Bus bus, Injector injector) {
         this.injector = injector;
         bus.register(this);
-        ProtocolHandlerCommandRegistration.register(this);
-        SocketServiceCommandRegistration.register(this);
+        CommandRegistration.register(this);
     }
 
-    public Controller() {
-    }
+    public Controller() {}
 
     @Override public IBinder onBind(Intent intent) {
         return mBinder;
@@ -55,6 +52,7 @@ public class Controller extends RoboService {
     }
 
     /**
+     * Takes a MessageEvent and passes it to the command execution function.
      * @param event
      */
     @Subscribe public void handleUserActionEvents(MessageEvent event) {
@@ -64,7 +62,7 @@ public class Controller extends RoboService {
     public void executeCommand(IEvent event) {
         Class<ICommand> commandClass = (Class<ICommand>) this.commandMap.get(event.getType());
         if (commandClass == null) return;
-        ICommand commandInstance = null;
+        ICommand commandInstance;
         try {
             commandInstance = injector.getInstance(commandClass);
             if (commandInstance == null) return;

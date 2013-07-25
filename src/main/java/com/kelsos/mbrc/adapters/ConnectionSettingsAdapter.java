@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
@@ -19,6 +20,7 @@ public class ConnectionSettingsAdapter extends ArrayAdapter<ConnectionSettings> 
     private Context mContext;
     private int mResource;
     private Typeface robotoLight;
+    private int defaultIndex;
 
     public ConnectionSettingsAdapter(Context context, int textViewResourceId, ArrayList<ConnectionSettings> objects) {
         super(context, textViewResourceId, objects);
@@ -42,6 +44,7 @@ public class ConnectionSettingsAdapter extends ArrayAdapter<ConnectionSettings> 
             holder.hostname = (TextView) row.findViewById(R.id.cs_list_host);
             holder.portNum = (TextView) row.findViewById(R.id.cs_list_port);
             holder.computerName = (TextView) row.findViewById(R.id.cs_list_name);
+            holder.defaultIcon = (ImageView) row.findViewById(R.id.cs_list_default);
             holder.computerName.setTypeface(robotoLight);
             row.setTag(holder);
         } else {
@@ -51,13 +54,21 @@ public class ConnectionSettingsAdapter extends ArrayAdapter<ConnectionSettings> 
         holder.hostname.setText(current.getAddress());
         holder.portNum.setText(Integer.toString(current.getPort()));
         holder.computerName.setText(current.getName());
-
+        if (position == defaultIndex) {
+            holder.defaultIcon.setImageResource(R.drawable.ic_selection_default);
+        }
         return row;
     }
+
+    public void setDefaultIndex(int defaultIndex) {
+        this.defaultIndex = defaultIndex;
+    }
+
 
     static class Holder {
         TextView hostname;
         TextView portNum;
         TextView computerName;
+        ImageView defaultIcon;
     }
 }

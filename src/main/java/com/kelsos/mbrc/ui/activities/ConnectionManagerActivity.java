@@ -123,7 +123,10 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
     }
 
     @Subscribe public void handleConnectionSettingsChange(ConnectionSettingsChanged event) {
-        connectionList.setAdapter(new ConnectionSettingsAdapter(this, R.layout.ui_list_connection_settings, event.getmSettings()));
+        ConnectionSettingsAdapter mAdapter = new ConnectionSettingsAdapter(this,
+                R.layout.ui_list_connection_settings, event.getmSettings());
+        mAdapter.setDefaultIndex(event.getDefaultIndex());
+        connectionList.setAdapter(mAdapter);
     }
 
     @Subscribe public void handleDiscoveryStopped(DiscoveryStopped event) {
@@ -135,7 +138,6 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
         switch (event.getReason()) {
 
             case NO_WIFI:
-
                 message= getString(R.string.con_man_no_wifi);
                 break;
             case NOT_FOUND:

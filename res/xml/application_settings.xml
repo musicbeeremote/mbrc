@@ -5,16 +5,6 @@
         <Preference
                 android:title="Manage Connections"
                 android:key="@string/preferences_key_connection_manager"/>
-        <EditTextPreference
-                android:dialogTitle="@string/settings_connection_hostname"
-                android:key="@string/settings_key_hostname"
-                android:title="@string/settings_connection_hostname"/>
-        <EditTextPreference
-                android:dialogTitle="@string/settings_connection_port"
-                android:inputType="number"
-                android:key="@string/settings_key_port"
-                android:maxLength="5"
-                android:title="@string/settings_connection_port"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_miscellaneous">
         <CheckBoxPreference
