@@ -13,13 +13,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
-import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
-import com.squareup.otto.Subscribe;
 
 public class SettingsDialogFragment extends DialogFragment {
     private EditText host;
     private EditText name;
     private EditText port;
+
+    private String cname;
+    private String caddress;
+    private int cport;
+    private int cindex;
 
     public interface SettingsDialogListener {
         public void onDialogPositiveClick(DialogFragment dialog, ConnectionSettings settings);
@@ -79,7 +82,7 @@ public class SettingsDialogFragment extends DialogFragment {
                     int portNum = Integer.parseInt(portText);
 
                     if (validatePortNumber(portNum) && shouldIClose) {
-                        ConnectionSettings settings = new ConnectionSettings(hostname, computerName, portNum);
+                        ConnectionSettings settings = new ConnectionSettings(hostname, computerName, portNum, cindex);
                         mListener.onDialogPositiveClick(SettingsDialogFragment.this, settings);
                         dismiss();
                     }
@@ -89,6 +92,14 @@ public class SettingsDialogFragment extends DialogFragment {
         name = (EditText)dialog.findViewById(R.id.settings_dialog_name);
         host = (EditText)dialog.findViewById(R.id.settings_dialog_host);
         port = (EditText)dialog.findViewById(R.id.settings_dialog_port);
+
+        if (name != null || !name.equals("")) {
+            name.setText(cname);
+            host.setText(caddress);
+            if (cport > 0) {
+                port.setText(Integer.toString(cport));
+            }
+        }
     }
 
     private boolean validatePortNumber(int port) {
@@ -108,7 +119,14 @@ public class SettingsDialogFragment extends DialogFragment {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    @Subscribe public void handleConnectionSettings(ConnectionSettingsChanged event) {
-
+    @Override public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null) {
+            cindex = args.getInt("index");
+            cport = args.getInt("port");
+            caddress = args.getString("address");
+            cname = args.getString("name");
+        }
     }
 }

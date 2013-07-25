@@ -83,6 +83,16 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
                 bus.post(new ChangeSettings(mi.position, SettingsAction.DEFAULT));
                 break;
             case EDIT:
+                SettingsDialogFragment settingsDialog = new SettingsDialogFragment();
+                ConnectionSettingsAdapter mAdapter = (ConnectionSettingsAdapter)connectionList.getAdapter();
+                Bundle args = new Bundle();
+                ConnectionSettings mSettings = mAdapter.getItem(mi.position);
+                args.putString("address", mSettings.getAddress());
+                args.putString("name", mSettings.getName());
+                args.putInt("port", mSettings.getPort());
+                args.putInt("index", mi.position);
+                settingsDialog.setArguments(args);
+                settingsDialog.show(getSupportFragmentManager(),"settings_dialog");
                 break;
             case DELETE:
                 bus.post(new ChangeSettings(mi.position, SettingsAction.DELETE));
@@ -101,6 +111,9 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
     Button.OnClickListener addListener = new Button.OnClickListener() {
         @Override public void onClick(View view) {
             SettingsDialogFragment settingsDialog = new SettingsDialogFragment();
+            Bundle args = new Bundle();
+            args.putInt("index", -1);
+            settingsDialog.setArguments(args);
             settingsDialog.show(getSupportFragmentManager(),"settings_dialog");
         }
     };

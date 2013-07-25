@@ -1,22 +1,27 @@
 package com.kelsos.mbrc.data;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
+@JsonIgnoreProperties({"index"})
 public class ConnectionSettings {
     private String address;
     private String name;
     private int port;
+    private int index;
 
     public ConnectionSettings(JsonNode node){
         this.address = node.path("address").asText();
         this.name = node.path("name").asText();
         this.port = node.path("port").asInt();
+        this.index = -1;
     }
 
-    public ConnectionSettings(String address, String name, int port) {
+    public ConnectionSettings(String address, String name, int port, int index) {
         this.address = address;
         this.name = name;
         this.port = port;
+        this.index = index;
     }
 
     public String getAddress() {
@@ -41,5 +46,9 @@ public class ConnectionSettings {
                     other.getPort() == port;
         }
         return equality;
+    }
+
+    public int getIndex() {
+        return index;
     }
 }

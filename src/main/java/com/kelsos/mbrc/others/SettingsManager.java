@@ -89,8 +89,13 @@ public class SettingsManager {
     }
 
     @Subscribe public void handleConnectionSettings(ConnectionSettings settings) {
-        if (!mSettings.contains(settings)) {
-            mSettings.add(settings);
+        if (settings.getIndex() < 0) {
+            if (!mSettings.contains(settings)) {
+                mSettings.add(settings);
+                storeSettings();
+            }
+        } else {
+            mSettings.set(settings.getIndex(), settings);
             storeSettings();
         }
         //todo: add some kind of message that the settings already exist on else;
