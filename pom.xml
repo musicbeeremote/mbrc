@@ -65,14 +65,14 @@
         <dependency>
             <groupId>android</groupId>
             <artifactId>android</artifactId>
-            <version>4.2_r1</version>
+            <version>4.3_r1</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>android.support</groupId>
             <artifactId>compatibility-v4</artifactId>
-            <version>13</version>
+            <version>18</version>
         </dependency>
 
 		<!-- Action Bar sherlock -->
