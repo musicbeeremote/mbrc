@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.configuration.CommandRegistration;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
@@ -68,8 +69,10 @@ public class Controller extends RoboService {
             if (commandInstance == null) return;
             commandInstance.execute(event);
         } catch (Exception ex) {
-            Log.d("Controller", "CommandExecution on: \t" + event.getType().toString(), ex);
-            Log.d("Controller", "CommandExecution data: \t" + event.getData());
+            if (BuildConfig.DEBUG) {
+                Log.d("mbrc-log", "executing command for type: \t" + event.getType().toString(), ex);
+                Log.d("mbrc-log", "command data: \t" + event.getData());
+            }
         }
 
     }

@@ -2,6 +2,7 @@ package com.kelsos.mbrc.services;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.others.Protocol;
@@ -34,11 +35,9 @@ public class ProtocolHandler {
      * @param answer the answer that came from the server
      */
     public void answerProcessor(String answer) {
-        //Log.d("Protocol", "Processing answer:\t" + answer + '\t' + "aL:\t" + answer.length());
         try {
             String[] replies = answer.split("\r\n");
             for (String reply : replies) {
-                //if (replies.length>1)Log.d("Protocol","Processing current:\t" + reply);
 
                 JsonNode node = mapper.readValue(reply, JsonNode.class);
                 String context = node.path("context").getTextValue();
@@ -67,7 +66,9 @@ public class ProtocolHandler {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            if (BuildConfig.DEBUG) {
+                e.printStackTrace();
+            }
         }
 
     }

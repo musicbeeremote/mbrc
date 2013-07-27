@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
 import com.google.inject.Inject;
+import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.DrawerAdapter;
 import com.kelsos.mbrc.data.NavigationEntry;
@@ -100,7 +101,9 @@ public class DrawerFragment extends RoboSherlockListFragment implements Fragment
         try {
             versionIndicator.setText(String.format(getString(R.string.ui_drawer_menu_version), rmUtils.getVersion()));
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            if (BuildConfig.DEBUG) {
+                e.printStackTrace();
+            }
         }
     }
 

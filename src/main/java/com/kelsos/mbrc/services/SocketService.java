@@ -119,8 +119,9 @@ public class SocketService {
 
     public void sendData(SocketMessage message) {
         try {
-            if (sIsConnected())
+            if (sIsConnected()) {
                 output.println(mapper.writeValueAsString(message) + Const.NEWLINE);
+            }
         } catch (Exception ignored) {
         }
     }

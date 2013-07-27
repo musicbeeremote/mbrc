@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.util.Base64;
 import android.util.Log;
 import com.google.inject.Inject;
+import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.model.MainDataModel;
 import roboguice.inject.InjectResource;
@@ -30,7 +31,9 @@ public class ImageDecoder extends RoboAsyncTask<Bitmap> {
             byte[] decodedImage = Base64.decode(image, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(decodedImage, 0, decodedImage.length);
         } catch (Exception ex){
-            Log.d("image",ex.toString());
+            if (BuildConfig.DEBUG) {
+                Log.d("mbrc-log", "image processing", ex);
+            }
         }
         return ((BitmapDrawable)noCover).getBitmap();
     }

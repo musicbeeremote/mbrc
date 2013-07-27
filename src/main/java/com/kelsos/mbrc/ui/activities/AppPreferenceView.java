@@ -10,6 +10,7 @@ import android.webkit.WebView;
 import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockPreferenceActivity;
 import com.google.inject.Inject;
+import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.utilities.RemoteUtils;
 import com.squareup.otto.Bus;
@@ -53,7 +54,9 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity{
             try {
                 mVersion.setSummary(String.format(getResources().getString(R.string.settings_version_number), rmUtils.getVersion()));
             } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
+                if (BuildConfig.DEBUG) {
+                    e.printStackTrace();
+                }
             }
         }
     }

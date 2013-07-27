@@ -214,6 +214,9 @@
 					<value>true</value>
 				</property>
 			</activation>
+            <properties>
+                <android.release>true</android.release>
+            </properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -256,6 +259,7 @@
 								<debug>false</debug>
 							</sign>
 							<zipalign>
+                                <skip>false</skip>
 								<verbose>true</verbose>
 								<inputApk>${project.build.directory}/${project.artifactId}.apk</inputApk>
 								<outputApk>${project.build.directory}/${project.artifactId}-signed-aligned.apk

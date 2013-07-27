@@ -450,7 +450,6 @@ public class MainFragment extends RoboSherlockFragment {
                             trackProgressSlider.setProgress(trackProgressSlider.getProgress() + timerPeriod);
                             trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
                         } catch (Exception ex) {
-                            Log.d("MBRC", "TimerEx", ex);
                         }
                     }
                 });

@@ -1,22 +1,24 @@
 package com.kelsos.mbrc.data;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
-@JsonIgnoreProperties({"dataString"})
 public class SocketMessage {
 
-    private String context;
-    private String type;
-    private Object data;
+    @JsonProperty private String context;
+    @JsonProperty private String type;
+    @JsonProperty private Object data;
 
+    public SocketMessage() {
+        this.context = "uninitialized";
+        this.data = "missing";
+        this.type = "error";
+    }
 
     public SocketMessage(String context, String type, Object data) {
         this.context = context;
         this.data = data;
         this.type = type;
     }
-
-    public SocketMessage(){}
 
     public String getContext() {
         return context;
@@ -41,13 +43,4 @@ public class SocketMessage {
     public void setData(Object data) {
         this.data = data;
     }
-
-    public String getDataString() {
-        String result = "";
-        if(data.getClass() == String.class){
-            result = (String)data;
-        }
-        return result;
-    }
-
 }

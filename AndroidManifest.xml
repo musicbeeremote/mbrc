@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          android:installLocation="auto"
-          android:versionCode="72"
-          android:versionName="0.9.0-SNAPSHOT"
-          package="com.kelsos.mbrc">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionCode="74" android:versionName="0.9.1-SNAPSHOT" package="com.kelsos.mbrc">
 
-    <uses-sdk android:minSdkVersion="8"
-              android:targetSdkVersion="18"/>
+    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="18"/>
 
     <uses-permission android:name="android.permission.SET_DEBUG_APP"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -14,16 +9,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
-    <application android:description="@string/application_description"
-                 android:icon="@drawable/ic_launcher"
-                 android:label="@string/application_name"
-                 android:logo="@drawable/ic_launcher"
-                 android:name=".RemoteApplication"
-                 android:theme="@style/Theme.mbrc_default"
-                 android:allowBackup="true">
-        <activity android:launchMode="singleTop"
-                  android:name=".ui.activities.MainFragmentActivity"
-                  android:windowSoftInputMode="adjustNothing">
+    <application android:allowBackup="true" android:debuggable="false" android:description="@string/application_description" android:icon="@drawable/ic_launcher" android:label="@string/application_name" android:logo="@drawable/ic_launcher" android:name=".RemoteApplication" android:theme="@style/Theme.mbrc_default">
+        <activity android:launchMode="singleTop" android:name=".ui.activities.MainFragmentActivity" android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -31,16 +18,10 @@
         </activity>
         <activity android:name=".ui.activities.AppPreferenceView">
         </activity>
-        <activity android:excludeFromRecents="true"
-                  android:launchMode="singleTask"
-                  android:name=".ui.activities.UpdateView"
-                  android:taskAffinity="">
+        <activity android:excludeFromRecents="true" android:launchMode="singleTask" android:name=".ui.activities.UpdateView" android:taskAffinity="">
 	    </activity>
-        <activity android:name=".ui.activities.ConnectionManagerActivity"
-                  android:windowSoftInputMode="adjustNothing"/>
-        <service android:description="@string/info_service_description"
-                 android:name=".controller.Controller"
-                 android:permission="android.permission.READ_PHONE_STATE">
+        <activity android:name=".ui.activities.ConnectionManagerActivity" android:windowSoftInputMode="adjustNothing"/>
+        <service android:description="@string/info_service_description" android:name=".controller.Controller" android:permission="android.permission.READ_PHONE_STATE">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE"/>
                 <action android:name="android.net.wifi.STATE_CHANGE"/>

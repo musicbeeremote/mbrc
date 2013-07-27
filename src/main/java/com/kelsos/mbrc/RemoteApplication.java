@@ -1,6 +1,7 @@
 package com.kelsos.mbrc;
 
 import android.app.Application;
+import android.util.Log;
 import android.view.ViewConfiguration;
 import com.google.inject.Stage;
 import com.google.inject.util.Modules;
@@ -43,7 +44,9 @@ public class RemoteApplication extends Application
 				menuKeyField.setBoolean(config, false);
 			}
 		} catch (Exception ex) {
-			//Log.d("App", "configHack", ex);
+            if (BuildConfig.DEBUG) {
+                Log.d("App", "configHack", ex);
+            }
 		}
 
 
