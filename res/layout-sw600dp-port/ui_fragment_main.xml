@@ -13,7 +13,7 @@
             android:orientation="vertical"
             android:layout_alignParentRight="true"
             android:layout_alignTop="@+id/album_cover_area"
-            android:layout_marginRight="24dp"
+            android:layout_marginRight="@dimen/side_margin_extra"
             android:layout_above="@+id/trackProgressLabelsLayout"
             android:layout_alignParentBottom="false"
             android:layout_centerInParent="true">
@@ -68,7 +68,7 @@
             android:layout_width="500dp"
             android:layout_height="500dp"
             android:layout_below="@+id/main_track_info"
-            android:layout_marginLeft="24dp"
+            android:layout_marginLeft="@dimen/side_margin_extra"
             android:layout_marginTop="10dp">
 
         <ImageView
@@ -113,13 +113,13 @@
             android:orientation="vertical"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            >
+            android:layout_marginLeft="@dimen/side_margin"
+            android:layout_marginRight="@dimen/side_margin">
 
         <TextView
                 android:id="@+id/main_title_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
                 android:layout_marginTop="4dp"
                 android:ellipsize="marquee"
                 android:focusable="true"
@@ -132,16 +132,15 @@
                 android:textColor="#FFFFFF"
                 android:textSize="24sp"
                 android:textStyle="normal"
-                android:typeface="sans"/>
+                android:typeface="sans"
+                />
 
         <TextView
                 android:id="@+id/main_artist_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/main_title_label"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/side_margin_half"
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
@@ -174,17 +173,18 @@
             android:layout_below="@+id/linearLayout"
             android:layout_marginTop="14dp"
             android:layout_toRightOf="@+id/main_mute_button"
-            android:layout_marginRight="12dp"/>
+            android:layout_marginRight="@dimen/side_margin"
+            android:layout_marginLeft="@dimen/side_margin_half"/>
 
 
     <RelativeLayout
             android:id="@+id/trackProgressLabelsLayout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="12dp"
+            android:layout_marginRight="@dimen/side_margin"
             android:orientation="horizontal"
             android:layout_below="@+id/album_cover_area"
-            android:layout_marginLeft="12dp"
+            android:layout_marginLeft="@dimen/side_margin"
             android:layout_marginTop="10dp">
 
 
@@ -200,7 +200,8 @@
                 android:progress="0"
                 android:progressDrawable="@drawable/ic_duration_bar_progress"
                 android:thumb="@drawable/ic_duration_thumb"
-                android:thumbOffset="6dp"/>
+                android:thumbOffset="6dp"
+                android:layout_alignParentTop="true"/>
 
 
         <TextView
@@ -294,15 +295,14 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/trackProgressLabelsLayout"
-            android:layout_marginTop="10dp"
-            android:id="@+id/linearLayout">
+            android:layout_marginTop="@dimen/side_margin"
+            android:id="@+id/linearLayout"
+            android:layout_marginLeft="@dimen/side_margin">
 
         <TextView
                 android:id="@+id/main_label_album"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
@@ -319,9 +319,7 @@
                 android:id="@+id/main_label_year"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/side_margin_half"
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
@@ -346,7 +344,7 @@
             android:layout_alignTop="@+id/main_volume_seeker"
             android:layout_alignParentLeft="true"
             android:layout_alignBottom="@+id/main_volume_seeker"
-            android:layout_marginLeft="12dp"
+            android:layout_marginLeft="@dimen/side_margin"
             />
 
 </RelativeLayout>

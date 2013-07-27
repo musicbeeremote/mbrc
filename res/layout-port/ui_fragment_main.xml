@@ -170,12 +170,12 @@
                 android:gravity="center"
                 android:maxHeight="6dp"
                 android:minHeight="6dp"
-                android:paddingLeft="0.5dp"
-                android:paddingRight="0.5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
                 android:progress="0"
                 android:progressDrawable="@drawable/ic_duration_bar_progress"
                 android:secondaryProgress="0"
-                android:thumb="@null"
+                android:thumb="@drawable/ic_seeker_duration_thumb"
                 android:thumbOffset="6dp"
                 android:layout_alignParentRight="true"/>
 

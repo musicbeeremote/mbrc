@@ -61,7 +61,15 @@ public class SettingsManager {
 
 	public SocketAddress getSocketAddress() {
 		String serverAddress = mPreferences.getString(mContext.getString(R.string.settings_key_hostname), null);
-		int serverPort = mPreferences.getInt(mContext.getString(R.string.settings_key_port), 0);
+        int serverPort;
+
+        try {
+            serverPort = mPreferences.getInt(mContext.getString(R.string.settings_key_port), 0);
+        } catch (ClassCastException castException) {
+            serverPort = Integer.parseInt(mPreferences.getString(mContext.getString(R.string.settings_key_port), "0"));
+        }
+
+
 		if (nullOrEmpty(serverAddress) || serverPort == 0) {
             bus.post(new NoSettingsAvailable());
 			return null;

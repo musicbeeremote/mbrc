@@ -251,12 +251,12 @@
                 android:gravity="center"
                 android:maxHeight="6dp"
                 android:minHeight="6dp"
-                android:paddingLeft="0dp"
-                android:paddingRight="0dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
                 android:progress="0"
                 android:progressDrawable="@drawable/ic_duration_bar_progress"
                 android:secondaryProgress="0"
-                android:thumb="@null"
+                android:thumb="@drawable/ic_duration_thumb"
                 android:thumbOffset="6dp"/>
 
 

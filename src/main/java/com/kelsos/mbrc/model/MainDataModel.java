@@ -205,15 +205,19 @@ public class MainDataModel {
     public void setConnectionState(String connectionActive) {
         isConnectionOn = Boolean.parseBoolean(connectionActive);
         bus.post(new ConnectionStatusChange(isConnectionOn ?
-                ConnectionStatus.CONNECTION_ON :
+                (isHandShakeDone ?
+                        ConnectionStatus.CONNECTION_ACTIVE :
+                        ConnectionStatus.CONNECTION_ON ) :
                 ConnectionStatus.CONNECTION_OFF));
     }
 
     public void setHandShakeDone(boolean handShakeDone){
         this.isHandShakeDone = handShakeDone;
-        if (isConnectionOn && isHandShakeDone) {
-            bus.post(new ConnectionStatusChange(ConnectionStatus.CONNECTION_ACTIVE));
-        }
+        bus.post(new ConnectionStatusChange(isConnectionOn ?
+                (isHandShakeDone ?
+                        ConnectionStatus.CONNECTION_ACTIVE :
+                        ConnectionStatus.CONNECTION_ON ) :
+                ConnectionStatus.CONNECTION_OFF));
     }
 
     @Produce public ConnectionStatusChange produceConnectionStatus() {

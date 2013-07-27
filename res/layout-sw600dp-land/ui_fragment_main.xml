@@ -6,92 +6,6 @@
                 android:layout_weight="1"
                 android:orientation="horizontal">
 
-    <RelativeLayout
-            android:layout_width="fill_parent"
-            android:id="@+id/tablet_top_bar"
-            android:layout_height="50dp"
-            android:layout_alignParentTop="true"
-            >
-
-        <TextView
-                android:id="@+id/main_artist_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:freezesText="true"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:text="@string/main_label_artist"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:layout_marginLeft="12dp"
-                android:layout_alignParentTop="false"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="false"
-                android:layout_alignParentBottom="true"/>
-
-        <TextView
-                android:id="@+id/main_title_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:freezesText="true"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:text="@string/main_label_track_title"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:textStyle="normal"
-                android:typeface="sans"
-                android:layout_alignBottom="@+id/main_artist_label"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="12dp"/>
-
-        <TextView
-                android:id="@+id/main_label_album"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:lines="1"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:text="@string/main_label_album"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:typeface="sans"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="12dp"/>
-
-        <TextView
-                android:id="@+id/main_label_year"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:lines="1"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:text="@string/main_label_date"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="12dp"/>
-    </RelativeLayout>
-
     <FrameLayout
             android:id="@+id/album_cover_area"
             android:layout_width="400dp"
@@ -134,33 +48,98 @@
     </FrameLayout>
 
     <RelativeLayout
-            android:id="@+id/trackProgressLabelsLayout"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_alignParentTop="false"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@+id/tablet_bottom_bar"
-            android:layout_marginBottom="-4dp">
+            android:layout_height="fill_parent"
+            android:layout_alignBottom="@+id/tablet_top_bar"
+            android:layout_toLeftOf="@+id/album_cover_area"
+            android:layout_marginLeft="@dimen/side_margin">
 
-
-        <SeekBar
-                android:id="@+id/main_track_progress_seeker"
-                android:layout_width="fill_parent"
+        <TextView
+                android:id="@+id/main_artist_label"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:maxHeight="6dp"
-                android:minHeight="6dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:progress="0"
-                android:progressDrawable="@drawable/ic_duration_bar_progress"
-                android:thumb="@drawable/ic_duration_thumb"
-                android:thumbOffset="6dp"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"/>
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:freezesText="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:text="@string/main_label_artist"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="false"
+                android:layout_alignParentBottom="true"/>
 
+        <TextView
+                android:id="@+id/main_title_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:freezesText="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:text="@string/main_label_track_title"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:typeface="sans"
+                android:layout_alignBottom="@+id/main_artist_label"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:lines="1"/>
+    </RelativeLayout>
 
+    <RelativeLayout
+            android:layout_width="fill_parent"
+            android:id="@+id/tablet_top_bar"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/album_cover_area"
+            android:layout_marginRight="@dimen/side_margin">
+
+        <TextView
+                android:id="@+id/main_label_album"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:lines="1"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:text="@string/main_label_album"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:typeface="sans"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentLeft="false"
+                android:gravity="right"/>
+
+        <TextView
+                android:id="@+id/main_label_year"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:lines="1"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:text="@string/main_label_date"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:gravity="right"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -312,6 +291,36 @@
                 android:layout_marginLeft="24dp"/>
     </RelativeLayout>
 
+    <RelativeLayout
+            android:id="@+id/trackProgressLabelsLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentTop="false"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@+id/tablet_bottom_bar"
+            android:layout_marginBottom="-4dp">
+
+
+        <SeekBar
+                android:id="@+id/main_track_progress_seeker"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:maxHeight="6dp"
+                android:minHeight="6dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:progress="0"
+                android:progressDrawable="@drawable/ic_duration_bar_progress"
+                android:thumb="@drawable/ic_duration_thumb"
+                android:thumbOffset="6dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"/>
+
+
+    </RelativeLayout>
+
     <TextView
             android:id="@+id/main_track_duration_total"
             android:layout_width="wrap_content"
@@ -322,7 +331,7 @@
             android:textSize="12sp"
             android:layout_above="@+id/trackProgressLabelsLayout"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="14dp"/>
+            android:layout_marginRight="15dp"/>
 
     <TextView
             android:id="@+id/main_track_progress_current"
@@ -334,6 +343,6 @@
             android:layout_alignBaseline="@+id/main_track_duration_total"
             android:layout_alignBottom="@+id/main_track_duration_total"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="14dp"/>
+            android:layout_marginLeft="15dp"/>
 
 </RelativeLayout>

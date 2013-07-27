@@ -267,36 +267,15 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <SeekBar
-        android:id="@+id/main_volume_seeker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
-        android:layout_marginRight="8dp"
-        android:gravity="center"
-        android:max="100"
-        android:maxHeight="7dp"
-        android:minHeight="7dp"
-        android:paddingLeft="9dp"
-        android:paddingRight="9dp"
-        android:progress="0"
-        android:progressDrawable="@drawable/ic_volume_bar_progress"
-        android:secondaryProgress="0"
-        android:thumb="@drawable/ic_volume_thumb"
-        android:thumbOffset="16dp"
-        android:layout_below="@+id/trackProgressLabelsLayout"
-        android:layout_toRightOf="@+id/main_media_button_group"/>
-
-
     <RelativeLayout
         android:id="@+id/trackProgressLabelsLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
         android:orientation="horizontal"
         android:layout_toRightOf="@+id/main_media_button_group"
-        android:layout_below="@+id/cover_area">
+        android:layout_below="@+id/cover_area"
+        android:layout_marginRight="@dimen/side_margin_half"
+        android:layout_marginTop="@dimen/side_margin_half">
 
         <SeekBar
             android:id="@+id/main_track_progress_seeker"
@@ -310,15 +289,16 @@
             android:progress="0"
             android:progressDrawable="@drawable/ic_duration_bar_progress"
             android:thumb="@drawable/ic_duration_thumb"
-            android:thumbOffset="6dp" />
+            android:thumbOffset="6dp"
+            android:layout_alignParentTop="true"/>
 
         <TextView
             android:id="@+id/main_track_progress_current"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/main_track_progress_seeker"
-            android:layout_marginLeft="1dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="4dp"
             android:text="@string/main_label_duration_current"
             android:textColor="#FFFFFF"
             android:textSize="12sp" />
@@ -329,8 +309,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/main_track_progress_seeker"
-            android:layout_marginRight="1dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginTop="4dp"
             android:layout_toRightOf="@id/main_track_progress_current"
             android:gravity="right"
             android:text="@string/main_label_duration_total"
@@ -338,5 +318,26 @@
             android:textSize="12sp" />
 
     </RelativeLayout>
+
+    <SeekBar
+        android:id="@+id/main_volume_seeker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginRight="@dimen/side_margin_half"
+        android:gravity="center"
+        android:max="100"
+        android:maxHeight="6.5dp"
+        android:minHeight="6.5dp"
+        android:paddingLeft="9dp"
+        android:paddingRight="9dp"
+        android:progress="0"
+        android:progressDrawable="@drawable/ic_volume_bar_progress"
+        android:secondaryProgress="0"
+        android:thumb="@drawable/ic_volume_thumb"
+        android:thumbOffset="16dp"
+        android:layout_toRightOf="@+id/main_media_button_group"/>
+
 
 </RelativeLayout>
