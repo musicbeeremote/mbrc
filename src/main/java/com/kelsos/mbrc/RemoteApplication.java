@@ -1,6 +1,7 @@
 package com.kelsos.mbrc;
 
 import android.app.Application;
+import android.content.Intent;
 import android.util.Log;
 import android.view.ViewConfiguration;
 import com.google.inject.Stage;
@@ -27,8 +28,8 @@ public class RemoteApplication extends Application
 
 		final RoboInjector injector = RoboGuice.getInjector(this);
 
+        startService(new Intent(this, Controller.class));
 		//Just getting the instances ready to start working
-		Controller controller = injector.getInstance(Controller.class);
 		MainDataModel model = injector.getInstance(MainDataModel.class);
 		ProtocolHandler protocolHandler = injector.getInstance(ProtocolHandler.class);
 		SocketService socketService = injector.getInstance(SocketService.class);

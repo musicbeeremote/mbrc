@@ -1,7 +1,9 @@
 package com.kelsos.mbrc.services;
 
+import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.enums.SocketAction;
@@ -121,8 +123,14 @@ public class SocketService {
         try {
             if (sIsConnected()) {
                 output.println(mapper.writeValueAsString(message) + Const.NEWLINE);
+                if (output.checkError()) {
+                    throw new Exception("Check error");
+                }
             }
         } catch (Exception ignored) {
+            if (BuildConfig.DEBUG) {
+                Log.d("mbrc-log", "socket send data exception", ignored);
+            }
         }
     }
 
@@ -177,6 +185,9 @@ public class SocketService {
 
                 informEventBus(new MessageEvent(SocketEvent.SocketStatusChanged, false));
                 if (numOfRetries < MAX_RETRIES) SocketManager(SocketAction.RETRY);
+                if (BuildConfig.DEBUG) {
+                    Log.d("mbrc-log", "socket closed");
+                }
             }
         }
     }

@@ -10,6 +10,7 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.configuration.CommandRegistration;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.squareup.otto.Bus;
@@ -21,15 +22,11 @@ import java.util.Map;
 
 @Singleton
 public class Controller extends RoboService {
-    private final IBinder mBinder = new ControllerBinder();
-    private Injector injector;
-    private Map<String, Class<?>> commandMap;
 
-    @Inject public Controller(Bus bus, Injector injector) {
-        this.injector = injector;
-        bus.register(this);
-        CommandRegistration.register(this);
-    }
+    private final IBinder mBinder = new ControllerBinder();
+    @Inject private Injector injector;
+    @Inject private Bus bus;
+    private Map<String, Class<?>> commandMap;
 
     public Controller() {}
 
@@ -54,7 +51,7 @@ public class Controller extends RoboService {
 
     /**
      * Takes a MessageEvent and passes it to the command execution function.
-     * @param event
+     * @param event The message received.
      */
     @Subscribe public void handleUserActionEvents(MessageEvent event) {
         executeCommand(event);
@@ -70,7 +67,7 @@ public class Controller extends RoboService {
             commandInstance.execute(event);
         } catch (Exception ex) {
             if (BuildConfig.DEBUG) {
-                Log.d("mbrc-log", "executing command for type: \t" + event.getType().toString(), ex);
+                Log.d("mbrc-log", "executing command for type: \t" + event.getType(), ex);
                 Log.d("mbrc-log", "command data: \t" + event.getData());
             }
         }
@@ -81,5 +78,20 @@ public class Controller extends RoboService {
         ControllerBinder getService() {
             return ControllerBinder.this;
         }
+    }
+
+    @Override public int onStartCommand(Intent intent, int flags, int startId) {
+        bus.register(this);
+        CommandRegistration.register(this);
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override public void onStart(Intent intent, int startId) {
+        super.onStart(intent, startId);
+    }
+
+    @Override public void onDestroy() {
+        executeCommand(new MessageEvent(UserInputEvent.CancelNotification));
+        super.onDestroy();
     }
 }
