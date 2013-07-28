@@ -204,6 +204,9 @@ public class MainDataModel {
 
     public void setConnectionState(String connectionActive) {
         isConnectionOn = Boolean.parseBoolean(connectionActive);
+        if (!isConnectionOn) {
+            setPlayState(Const.STOPPED);
+        }
         bus.post(new ConnectionStatusChange(isConnectionOn ?
                 (isHandShakeDone ?
                         ConnectionStatus.CONNECTION_ACTIVE :
