@@ -126,5 +126,6 @@
     <string name="con_man_success">Service successfully found</string>
     <string name="settings_key_default_index">mbrc_default_settings</string>
     <string name="notification_settings_stored">The specified settings already exist.</string>
+    <string name="album_placeholder">album title</string>
 
 </resources>

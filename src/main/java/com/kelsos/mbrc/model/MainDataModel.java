@@ -145,7 +145,7 @@ public class MainDataModel {
     }
 
     private void updateNotification() {
-        bus.post(new NotificationDataAvailable(artist,title,cover,playState));
+        bus.post(new NotificationDataAvailable(artist, title, album, cover, playState));
     }
 
     public void setTrackInfo(String artist, String album, String title, String year) {

@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.messaging;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -26,17 +27,57 @@ public class NotificationService {
     public static final String NOTIFICATION_PLAY_PRESSED = "com.kelsos.mbrc.notification.play";
     public static final String NOTIFICATION_NEXT_PRESSED = "com.kelsos.mbrc.notification.next";
     public static final String NOTIFICATION_CLOSE_PRESSED = "com.kelsos.mbrc.notification.close";
+    public static final String NOTIFICATION_PREVIOUS_PRESSED = "com.kelsos.mbrc.notification.previous";
+
+    private static final int OPEN = 0;
+    private static final int PLAY = 1;
+    private static final int NEXT = 2;
+    private static final int CLOSE = 3;
+    private static final int PREVIOUS = 4;
+
+    private RemoteViews mNormalView;
+    private RemoteViews mExpandedView;
+    private Notification mNotification;
+    private NotificationManager mNotificationManager;
     private Context mContext;
     private MainThreadBusWrapper bus;
 
     @Inject public NotificationService(Context context, MainThreadBusWrapper bus) {
         this.mContext = context;
         this.bus = bus;
+        mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         bus.register(this);
     }
 
-    @Subscribe public void handleNotificationData(NotificationDataAvailable event){
-        notificationBuilder(event.getTitle(),event.getArtist(),event.getCover(),event.getState());
+    @Subscribe public void handleNotificationData(final NotificationDataAvailable event){
+        notificationBuilder(event.getTitle(),event.getArtist(), event.getAlbum(),event.getCover(),event.getState());
+    }
+
+    private boolean isJellyBean() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+    }
+
+    private void updateNormalNotification (final String artist, final String title, final Bitmap cover) {
+        mNormalView.setTextViewText(R.id.notification_artist, artist);
+        mNormalView.setTextViewText(R.id.notification_title, title);
+        if (cover != null) {
+            mNormalView.setImageViewBitmap(R.id.notification_album_art, cover);
+        } else {
+            mNormalView.setImageViewResource(R.id.notification_album_art, R.drawable.ic_image_no_cover);
+        }
+    }
+
+    private void updateExpandedNotification (final String artist, final String title, final String album,
+                                             final Bitmap cover) {
+        mExpandedView.setTextViewText(R.id.expanded_notification_line_one, title);
+        mExpandedView.setTextViewText(R.id.expanded_notification_line_two, artist);
+        mExpandedView.setTextViewText(R.id.expanded_notification_line_three, album);
+
+        if (cover != null) {
+            mExpandedView.setImageViewBitmap(R.id.expanded_notification_cover, cover);
+        } else {
+            mExpandedView.setImageViewResource(R.id.expanded_notification_cover, R.drawable.ic_image_no_cover);
+        }
     }
 
     /**
@@ -47,66 +88,83 @@ public class NotificationService {
      * @param cover The cover Bitmap.
      * @param state The current play state is used to display the proper play or pause icon.
      */
-    private void notificationBuilder(String title, String artist, Bitmap cover, PlayState state) {
+    @SuppressLint("NewApi")
+    private void notificationBuilder(final String title, final String artist, final String album, final Bitmap cover,
+                                     final PlayState state) {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
             return;
         }
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
+        mNormalView = new RemoteViews(mContext.getPackageName(), R.layout.ui_notification_control);
+        updateNormalNotification(artist, title, cover);
 
-        Intent notificationIntent = new Intent(mContext, MainFragmentActivity.class);
-        PendingIntent notificationPendingIntent = PendingIntent.getActivity(mContext, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        mBuilder.setContentIntent(notificationPendingIntent);
+        mBuilder.setContentIntent(getPendingIntent(OPEN));
+        mNormalView.setOnClickPendingIntent(R.id.notification_play, getPendingIntent(PLAY));
+        mNormalView.setOnClickPendingIntent(R.id.notification_next, getPendingIntent(NEXT));
+        mNormalView.setOnClickPendingIntent(R.id.notification_close, getPendingIntent(CLOSE));
 
-        RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.ui_notification_control);
-        Intent playPressedIntent = new Intent(NOTIFICATION_PLAY_PRESSED);
-        PendingIntent mediaPendingIntent = PendingIntent.getBroadcast(mContext, 1, playPressedIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        views.setOnClickPendingIntent(R.id.notification_play, mediaPendingIntent);
-        Intent mediaNextButtonIntent = new Intent(NOTIFICATION_NEXT_PRESSED);
-        PendingIntent mediaNextButtonPendingIntent = PendingIntent.getBroadcast(mContext, 2, mediaNextButtonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        views.setOnClickPendingIntent(R.id.notification_next, mediaNextButtonPendingIntent);
-        Intent clearNotificationIntent = new Intent(NOTIFICATION_CLOSE_PRESSED);
-        PendingIntent clearNotificationPendingIntent = PendingIntent.getBroadcast(mContext, 3, clearNotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        views.setOnClickPendingIntent(R.id.notification_close, clearNotificationPendingIntent);
+        mNotification = mBuilder.build();
 
-        views.setTextViewText(R.id.notification_artist, artist);
-        views.setTextViewText(R.id.notification_title, title);
-        if (cover != null) {
-            views.setImageViewBitmap(R.id.notification_album_art, cover);
-        } else {
-            views.setImageViewResource(R.id.notification_album_art, R.drawable.ic_image_no_cover);
+        if (isJellyBean()) {
+            mExpandedView = new RemoteViews(mContext.getPackageName(), R.layout.ui_notification_control_expanded);
+            updateExpandedNotification(artist, title, album, cover);
+            mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_playpause, getPendingIntent(PLAY));
+            mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_next, getPendingIntent(NEXT));
+            mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_previous, getPendingIntent(PREVIOUS));
+            mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_remove, getPendingIntent(CLOSE));
+            mNotification.bigContentView = mExpandedView;
         }
 
-        switch (state) {
-            case Playing:
-                views.setImageViewResource(R.id.notification_play, R.drawable.ic_action_play);
-                break;
-            case Paused:
-                views.setImageViewResource(R.id.notification_play, R.drawable.ic_action_pause);
-                break;
-            case Stopped:
-                views.setImageViewResource(R.id.notification_play, R.drawable.ic_action_play);
-                break;
-            case Undefined:
-                break;
-        }
+        updatePlayState(state);
 
-        views.setImageViewResource(R.id.notification_next, R.drawable.ic_action_next);
-
-        views.setImageViewResource(R.id.notification_close, R.drawable.ic_action_collapse);
-
-
-        Notification notification = mBuilder.build();
-        notification.contentView = views;
-        notification.flags = Notification.FLAG_ONGOING_EVENT;
-        notification.icon = R.drawable.ic_mbrc_status;
-        NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification);
+        mNotification.contentView = mNormalView;
+        mNotification.flags = Notification.FLAG_ONGOING_EVENT;
+        mNotification.icon = R.drawable.ic_mbrc_status;
+        mNotificationManager.notify(NOW_PLAYING_PLACEHOLDER, mNotification);
     }
 
-    public void cancelNotification(int notificationId) {
-        NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+    private void updatePlayState(final PlayState state) {
+        if (mNormalView == null || mNotification == null) {
+            return;
+        }
+
+        mNormalView.setImageViewResource(R.id.notification_play, state == PlayState.Playing ?
+                R.drawable.ic_action_pause :
+                R.drawable.ic_action_play);
+
+        if (isJellyBean() && mExpandedView != null) {
+
+            mExpandedView.setImageViewResource(R.id.expanded_notification_playpause, state == PlayState.Playing ?
+                    R.drawable.ic_action_pause :
+                    R.drawable.ic_action_play);
+        }
+    }
+
+    private PendingIntent getPendingIntent(int id) {
+        switch (id) {
+            case OPEN:
+                Intent notificationIntent = new Intent(mContext, MainFragmentActivity.class);
+                return PendingIntent.getActivity(mContext, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            case PLAY:
+                Intent playPressedIntent = new Intent(NOTIFICATION_PLAY_PRESSED);
+                return PendingIntent.getBroadcast(mContext, 1, playPressedIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            case NEXT:
+                Intent mediaNextButtonIntent = new Intent(NOTIFICATION_NEXT_PRESSED);
+                return PendingIntent.getBroadcast(mContext, 2, mediaNextButtonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            case CLOSE:
+                Intent clearNotificationIntent = new Intent(NOTIFICATION_CLOSE_PRESSED);
+                return PendingIntent.getBroadcast(mContext, 3, clearNotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            case PREVIOUS:
+                Intent mediaPreviousButtonIntent = new Intent(NOTIFICATION_PREVIOUS_PRESSED);
+                return PendingIntent.getBroadcast(mContext, 4, mediaPreviousButtonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            default:
+                throw new IndexOutOfBoundsException();
+        }
+    }
+
+    public void cancelNotification(final int notificationId) {
         mNotificationManager.cancel(notificationId);
     }
 
@@ -123,7 +181,6 @@ public class NotificationService {
         mBuilder.setContentIntent(resultPendingIntent);
         final Notification notification = mBuilder.build();
         notification.flags = Notification.FLAG_AUTO_CANCEL;
-        NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(PLUGIN_OUT_OF_DATE, notification);
     }
 }

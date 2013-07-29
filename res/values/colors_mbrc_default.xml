@@ -20,5 +20,6 @@
     <color name="pressed_mbrc_default">#CC33B5E5</color>
     <color name="mbrc_background">#ff191919</color>
     <color name="mbrc_drawer_seperator">#0e0e0e</color>
-    <color name="mbrc_subtitle">#AAAAAA</color>
+    <color name="mbrc_subtitle">#ffa4a4a4</color>
+    <color name="mbrc_title">#FFFFFF</color>
 </resources>

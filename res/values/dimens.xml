@@ -11,4 +11,9 @@
     <dimen name="list_item_one">18sp</dimen>
     <dimen name="list_item_two">16sp</dimen>
     <dimen name="mini_control_height">45dp</dimen>
+    <dimen name="mbrc_notification_expanded_height">128dp</dimen>
+    <dimen name="mbrc_notification_expanded_text_big">20sp</dimen>
+    <dimen name="mbrc_notification_expanded_button_height">48dp</dimen>
+    <dimen name="mbrc_notification_height">64dp</dimen>
+    <dimen name="mbrc_notification_button_height">48dp</dimen>
 </resources>

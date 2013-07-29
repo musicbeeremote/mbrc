@@ -6,12 +6,14 @@ import com.kelsos.mbrc.enums.PlayState;
 public class NotificationDataAvailable {
     private String artist;
     private String title;
+    private String album;
     private Bitmap cover;
     private PlayState state;
 
-    public NotificationDataAvailable(String artist, String title, Bitmap cover, PlayState state) {
+    public NotificationDataAvailable(String artist, String title, String album, Bitmap cover, PlayState state) {
         this.artist = artist;
         this.title = title;
+        this.album = album;
         this.cover = cover;
         this.state = state;
     }
@@ -30,5 +32,9 @@ public class NotificationDataAvailable {
 
     public PlayState getState() {
         return state;
+    }
+
+    public String getAlbum() {
+        return album;
     }
 }

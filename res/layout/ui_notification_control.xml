@@ -7,8 +7,8 @@
 
 	<ImageView
 		android:id="@+id/notification_album_art"
-		android:layout_width="64dp"
-		android:layout_height="64dp"
+		android:layout_width="@dimen/mbrc_notification_height"
+		android:layout_height="@dimen/mbrc_notification_height"
 		android:background="@drawable/ic_image_no_cover"
 		android:scaleType="fitCenter" />
 
@@ -24,18 +24,20 @@
 			android:id="@+id/notification_title"
 			android:singleLine="true"
 			android:ellipsize="end"
+            android:text="@string/title_placeholder"
 			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:textSize="16sp"
-			android:textColor="#FFFFFF"
+			android:layout_width="match_parent"
+			android:textSize="17sp"
+			android:textColor="@color/mbrc_title"
             android:textStyle="bold"/>
 
 		<TextView
 			android:id="@+id/notification_artist"
+            android:text="@string/artist_placeholder"
 			android:ellipsize="end"
 			android:singleLine="true"
 			android:layout_height="wrap_content"
-			android:layout_width="wrap_content" />
+			android:layout_width="match_parent" />
 
 	</LinearLayout>
 
@@ -43,24 +45,24 @@
 		android:id="@+id/notification_play"
 		android:background="@drawable/selectable_background_mbrc_default"
 		android:layout_gravity="center|right"
-		android:layout_height="48dp"
-		android:layout_width="48dp"
+		android:layout_height="@dimen/mbrc_notification_button_height"
+		android:layout_width="@dimen/mbrc_notification_button_height"
         android:src="@drawable/ic_action_play"/>
 
 	<ImageButton
 		android:id="@+id/notification_next"
 		android:background="@drawable/selectable_background_mbrc_default"
 		android:layout_gravity="center|right"
-		android:layout_height="48dp"
-		android:layout_width="48dp"
+		android:layout_height="@dimen/mbrc_notification_button_height"
+		android:layout_width="@dimen/mbrc_notification_button_height"
         android:src="@drawable/ic_action_next"/>
 
 	<ImageButton
 		android:id="@+id/notification_close"
 		android:background="@drawable/selectable_background_mbrc_default"
 		android:layout_gravity="center|right"
-		android:layout_height="48dp"
-		android:layout_width="48dp"
+		android:layout_height="@dimen/mbrc_notification_button_height"
+		android:layout_width="@dimen/mbrc_notification_button_height"
         android:src="@drawable/ic_action_collapse"/>
 
 </LinearLayout>
