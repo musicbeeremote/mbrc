@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.*;
 import android.support.v4.widget.DrawerLayout;
+import android.view.KeyEvent;
 import android.view.View;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -12,6 +13,8 @@ import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmen
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.DisplayFragment;
+import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
 import com.kelsos.mbrc.events.ui.NoSettingsAvailable;
 import com.kelsos.mbrc.events.ui.NotifyUser;
@@ -193,6 +196,31 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
             Crouton.makeText(this, event.getResId(), Style.INFO).show();
         } else {
             Crouton.makeText(this, event.getMessage(), Style.INFO).show();
+        }
+    }
+
+    @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                bus.post(new MessageEvent(UserInputEvent.KeyVolumeUp));
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                bus.post(new MessageEvent(UserInputEvent.KeyVolumeDown));
+                return true;
+            default:
+                return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                return true;
+            default:
+                return super.onKeyUp(keyCode, event);
         }
     }
 }

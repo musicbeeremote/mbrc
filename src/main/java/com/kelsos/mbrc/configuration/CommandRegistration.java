@@ -46,6 +46,8 @@ public class CommandRegistration {
         controller.register(UserInputEvent.StartConnection, InitiateConnectionCommand.class);
         controller.register(UserInputEvent.ResetConnection, RestartConnectionCommand.class);
         controller.register(UserInputEvent.StartDiscovery, StartDiscoveryCommand.class);
+        controller.register(UserInputEvent.KeyVolumeUp, KeyVolumeUpCommand.class);
+        controller.register(UserInputEvent.KeyVolumeDown, KeyVolumeDownCommand.class);
         controller.register(SocketEvent.SocketDataAvailable, SocketDataAvailableCommand.class);
         controller.register(SocketEvent.SocketStatusChanged, ConnectionStatusChangedCommand.class);
         controller.register(SocketEvent.SocketHandshakeUpdate, HandleHanshake.class);
