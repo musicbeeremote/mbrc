@@ -55,7 +55,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
         // removeMode = flingRight
         DragSortController controller = new DragSortController(dslv);
         controller.setDragHandleId(R.id.drag_handle);
-        controller.setClickRemoveId(R.id.click_remove);
+        controller.setFlingHandleId(R.id.click_remove);
         controller.setRemoveEnabled(removeEnabled);
         controller.setSortEnabled(sortEnabled);
         controller.setDragInitMode(dragStartMode);
