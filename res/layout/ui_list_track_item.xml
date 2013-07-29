@@ -13,13 +13,14 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingRight="@dimen/side_margin_half"
+            android:paddingLeft="@dimen/side_margin_half"
             android:layout_weight="0"
             android:gravity="center_vertical">
 
         <ImageView
                 android:background="@drawable/ic_list_drag_icon"
-                android:layout_width="14dp"
-                android:layout_height="25dp"
+                android:layout_width="@dimen/mbrc_list_drag_icon"
+                android:layout_height="@dimen/mbrc_list_drag_icon"
                 />
     </LinearLayout>
 

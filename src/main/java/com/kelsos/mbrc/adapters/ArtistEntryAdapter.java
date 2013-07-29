@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ArtistEntry;
@@ -42,6 +43,8 @@ public class ArtistEntryAdapter extends ArrayAdapter<ArtistEntry> {
             holder.title = (TextView) row.findViewById(R.id.line_one);
             holder.title.setTypeface(robotoLight);
 
+            holder.indicator = (LinearLayout) row.findViewById(R.id.ui_item_context_indicator);
+
             row.setTag(holder);
         } else {
             holder = (Holder) row.getTag();
@@ -50,7 +53,7 @@ public class ArtistEntryAdapter extends ArrayAdapter<ArtistEntry> {
         ArtistEntry str = mData.get(position);
         holder.title.setText(str.getArtist());
 
-        //holder.trackPlaying.setOnClickListener(showContextMenu);
+        holder.indicator.setOnClickListener(showContextMenu);
 
         return row;
     }
@@ -64,6 +67,7 @@ public class ArtistEntryAdapter extends ArrayAdapter<ArtistEntry> {
 
     static class Holder {
         TextView title;
+        LinearLayout indicator;
     }
 
 }

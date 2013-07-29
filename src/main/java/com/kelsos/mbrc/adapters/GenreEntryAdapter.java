@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.GenreEntry;
@@ -40,6 +41,8 @@ public class GenreEntryAdapter extends ArrayAdapter<GenreEntry> {
             holder.title = (TextView) row.findViewById(R.id.line_one);
             holder.title.setTypeface(robotoLight);
 
+            holder.indicator = (LinearLayout) row.findViewById(R.id.ui_item_context_indicator);
+
             row.setTag(holder);
         } else {
             holder = (Holder) row.getTag();
@@ -48,7 +51,7 @@ public class GenreEntryAdapter extends ArrayAdapter<GenreEntry> {
         GenreEntry entry = mData.get(position);
         holder.title.setText(entry.getName());
 
-        //holder.trackPlaying.setOnClickListener(showContextMenu);
+        holder.indicator.setOnClickListener(showContextMenu);
 
         return row;
     }
@@ -62,5 +65,6 @@ public class GenreEntryAdapter extends ArrayAdapter<GenreEntry> {
 
     static class Holder {
         TextView title;
+        LinearLayout indicator;
     }
 }

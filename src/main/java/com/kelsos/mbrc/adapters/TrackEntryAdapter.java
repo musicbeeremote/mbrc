@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.TrackEntry;
@@ -42,6 +43,8 @@ public class TrackEntryAdapter extends ArrayAdapter<TrackEntry> {
             holder.artist = (TextView) row.findViewById(R.id.line_two);
             holder.artist.setTypeface(robotoLight);
 
+            holder.indicator = (LinearLayout) row.findViewById(R.id.ui_item_context_indicator);
+
             row.setTag(holder);
         } else {
             holder = (Holder) row.getTag();
@@ -51,7 +54,7 @@ public class TrackEntryAdapter extends ArrayAdapter<TrackEntry> {
         holder.title.setText(entry.getTitle());
         holder.artist.setText(entry.getArtist());
 
-        //holder.trackPlaying.setOnClickListener(showContextMenu);
+        holder.indicator.setOnClickListener(showContextMenu);
 
         return row;
     }
@@ -66,5 +69,6 @@ public class TrackEntryAdapter extends ArrayAdapter<TrackEntry> {
     static class Holder {
         TextView artist;
         TextView title;
+        LinearLayout indicator;
     }
 }

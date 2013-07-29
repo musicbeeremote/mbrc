@@ -43,7 +43,7 @@
                     android:singleLine="true"
                     android:ellipsize="end"
                     android:text="@string/title_placeholder"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:id="@+id/mc_track_title"
                     android:layout_gravity="left|center_vertical"/>
 
@@ -53,6 +53,7 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="@string/artist_placeholder"
+                    android:textSize="14sp"
                     android:id="@+id/mc_track_artist"
                     android:layout_gravity="left|center_vertical"
                     android:layout_alignParentStart="false"

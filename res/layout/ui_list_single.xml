@@ -10,7 +10,8 @@
 
     <TextView
             android:id="@+id/line_one"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/side_margin_half"
             android:layout_marginRight="@dimen/side_margin_half"
@@ -20,4 +21,17 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="@dimen/list_item_one"/>
 
+    <LinearLayout
+            android:id="@+id/ui_item_context_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/side_margin_half"
+            android:layout_weight="0"
+            android:gravity="center_vertical">
+
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/mbrc_list_context_indicator_height"
+                android:src="@drawable/ic_context_indicator"/>
+    </LinearLayout>
 </LinearLayout>

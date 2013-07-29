@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,8 @@ public class MiniControlFragment extends RoboSherlockFragment {
     @InjectView (R.id.mc_play_pause) ImageButton playPause;
     @InjectView (R.id.mc_prev_track) ImageButton playPrevious;
 
+    private Typeface robotoLight;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +52,8 @@ public class MiniControlFragment extends RoboSherlockFragment {
         playNext.setOnClickListener(playNextListener);
         playPause.setOnClickListener(playPauseListener);
         playPrevious.setOnClickListener(playPreviousListener);
+        robotoLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
+        trackTitle.setTypeface(robotoLight);
     }
 
     @Override public void onStop() {
