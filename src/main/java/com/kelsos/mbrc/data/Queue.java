@@ -1,8 +1,10 @@
 package com.kelsos.mbrc.data;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 public class Queue {
-    private String type;
-    private String query;
+    @JsonProperty private String type;
+    @JsonProperty private String query;
 
     public Queue(String type, String query) {
         this.type = type;
@@ -11,7 +13,7 @@ public class Queue {
 
     public String getType() {
         return type;
-    };
+    }
 
     public String getQuery() {
         return query;
