@@ -75,11 +75,13 @@ public class PlaylistArrayAdapter extends ArrayAdapter<MusicTrack> {
 		}
 	};
 
-	public void setPlayingTrackIndex(int index)
-	{
+	public void setPlayingTrackIndex(int index) {
 		this.playingTrackIndex = index;
 	}
 
+    public int getPlayingTrackIndex() {
+        return this.playingTrackIndex;
+    }
 
     static class TrackHolder {
         TextView title;

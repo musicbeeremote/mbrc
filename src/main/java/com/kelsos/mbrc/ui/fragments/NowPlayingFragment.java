@@ -157,6 +157,8 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
                 adapter.insert(mTrack, to);
                 adapter.notifyDataSetChanged();
 
+                adapter.setPlayingTrackIndex(calculateNewIndex(from, to, adapter.getPlayingTrackIndex()));
+
                 Map<String, Integer> move = new HashMap<String, Integer>();
                 move.put("from", from);
                 move.put("to", to);
@@ -164,6 +166,24 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
             }
         }
     };
+
+    private int calculateNewIndex(int from, int to, int index) {
+        int dist = Math.abs(from - to);
+        if (dist == 1 && index == from ||
+                dist > 1 && from > to && index == from ||
+                dist > 1 && from < to && index == from) {
+            index = to;
+        } else if (dist == 1 && index == to) {
+            index = from;
+        } else if (dist > 1 && from > to && index == to ||
+                from > index && to < index) {
+            index += 1;
+        } else if (dist > 1 && from < to && index == to ||
+                from < index && to > index) {
+            index -= 1;
+        }
+        return index;
+    }
 
     private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
         @Override public void remove(int which) {
