@@ -147,7 +147,7 @@ public class MainDataModel {
     }
 
     private void updateNotification() {
-        if (playState == PlayState.Stopped || !isConnectionOn) {
+        if (!isConnectionOn) {
             bus.post(new MessageEvent(UserInputEvent.CancelNotification));
         } else {
             bus.post(new NotificationDataAvailable(artist, title, album, cover, playState));

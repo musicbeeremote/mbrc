@@ -15,6 +15,7 @@ import com.kelsos.mbrc.data.TrackEntry;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
+import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.events.ui.TrackSearchResults;
 import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
@@ -25,6 +26,7 @@ public class SearchTrackFragment extends RoboSherlockListFragment {
     private static final int QUEUE_LAST = 2;
     private static final int PLAY_NOW = 3;
     private static final int GROUP_ID = 14;
+    private String mDefault;
 
     private TrackEntryAdapter adapter;
     @Inject Bus bus;
@@ -32,11 +34,25 @@ public class SearchTrackFragment extends RoboSherlockListFragment {
     @Override public void onStart() {
         super.onStart();
         bus.register(this);
+        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String path = ((TrackEntry)getListView().getAdapter().getItem(position)).getSrc();
+
+                bus.post(new MessageEvent(ProtocolEvent.UserAction,
+                        new UserAction(Protocol.LibraryQueueTrack,
+                                new Queue(mDefault, path))));
+            }
+        });
     }
 
     @Override public void onStop() {
         super.onStop();
         bus.unregister(this);
+    }
+
+    @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
+        mDefault = action.getAction();
     }
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {

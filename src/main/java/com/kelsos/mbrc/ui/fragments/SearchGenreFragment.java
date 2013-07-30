@@ -16,6 +16,7 @@ import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
+import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.events.ui.GenreSearchResults;
 import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
@@ -27,8 +28,13 @@ public class SearchGenreFragment extends RoboSherlockListFragment {
     private static final int PLAY_NOW = 3;
     private static final int GET_SUB = 4;
     private static final int GROUP_ID = 11;
+    private String mDefault;
     private GenreEntryAdapter adapter;
     @Inject Bus bus;
+
+    @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
+        mDefault = action.getAction();
+    }
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -88,6 +94,16 @@ public class SearchGenreFragment extends RoboSherlockListFragment {
     @Override public void onStart() {
         super.onStart();
         bus.register(this);
+        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String genre = ((GenreEntry)getListView().getAdapter().getItem(position)).getName();
+
+                bus.post(new MessageEvent(ProtocolEvent.UserAction,
+                        new UserAction(Protocol.LibraryQueueGenre,
+                                new Queue(mDefault, genre))));
+            }
+        });
     }
 
     @Override public void onStop() {

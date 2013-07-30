@@ -15,6 +15,7 @@ import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
+import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.events.ui.ArtistSearchResults;
 import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
@@ -27,16 +28,31 @@ public class SearchArtistFragment extends RoboSherlockListFragment {
     private static final int GET_SUB = 4;
     private static final int GROUP_ID = 12;
     private ArtistEntryAdapter adapter;
+    private String mDefault;
     @Inject Bus bus;
 
     @Override public void onStart() {
         super.onStart();
         bus.register(this);
+        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String artist = ((ArtistEntry)getListView().getAdapter().getItem(position)).getArtist();
+
+                bus.post(new MessageEvent(ProtocolEvent.UserAction,
+                        new UserAction(Protocol.LibraryQueueArtist,
+                                new Queue(mDefault, artist))));
+            }
+        });
     }
 
     @Override public void onStop() {
         super.onStop();
         bus.unregister(this);
+    }
+
+    @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
+        mDefault = action.getAction();
     }
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {

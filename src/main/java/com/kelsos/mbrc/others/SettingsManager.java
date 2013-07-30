@@ -9,6 +9,7 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.UserInputEvent;
+import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.NoSettingsAvailable;
@@ -154,5 +155,12 @@ public class SettingsManager {
                 bus.post(new MessageEvent(UserInputEvent.SettingsChanged));
                 break;
         }
+    }
+
+    @Produce public SearchDefaultAction produceAction() {
+
+        return new SearchDefaultAction(mPreferences.getString(
+                mContext.getString(R.string.settings_search_default_key),
+                mContext.getString(R.string.search_click_default_value)));
     }
 }

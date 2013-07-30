@@ -15,6 +15,7 @@ import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ProtocolEvent;
+import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.events.ui.AlbumSearchResults;
 import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
@@ -26,6 +27,7 @@ public class SearchAlbumFragment extends RoboSherlockListFragment{
     private static final int PLAY_NOW = 3;
     private static final int GET_SUB = 4;
     private static final int GROUP_ID = 13;
+    private String mDefault;
     private AlbumEntryAdapter adapter;
 
     @Inject Bus bus;
@@ -33,6 +35,20 @@ public class SearchAlbumFragment extends RoboSherlockListFragment{
     @Override public void onStart() {
         super.onStart();
         bus.register(this);
+        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String album = ((AlbumEntry)getListView().getAdapter().getItem(position)).getAlbum();
+
+                bus.post(new MessageEvent(ProtocolEvent.UserAction,
+                        new UserAction(Protocol.LibraryQueueAlbum,
+                                new Queue(mDefault, album))));
+            }
+        });
+    }
+
+    @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
+        mDefault = action.getAction();
     }
 
     @Override public void onStop() {

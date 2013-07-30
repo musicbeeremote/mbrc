@@ -127,5 +127,10 @@
     <string name="settings_key_default_index">mbrc_default_settings</string>
     <string name="notification_settings_stored">The specified settings already exist.</string>
     <string name="album_placeholder">album title</string>
+    <string name="settings_search_default_key">search_click_default</string>
+    <string name="settings_manage_connections">Manage Connections</string>
+    <string name="settings_search_default_title">Search list default action</string>
+    <string name="settings_search_default_summary">Set the default press action for the search list.</string>
+    <string name="search_click_default_value">last</string>
 
 </resources>

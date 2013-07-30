@@ -3,7 +3,7 @@
 
     <PreferenceCategory android:title="@string/settings_connection">
         <Preference
-                android:title="Manage Connections"
+                android:title="@string/settings_manage_connections"
                 android:key="@string/preferences_key_connection_manager"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_miscellaneous">
@@ -12,6 +12,14 @@
                 android:summary="@string/settings_miscellaneous_reduce_volume_description"
                 android:title="@string/settings_miscellaneous_reduce_volume"/>
     </PreferenceCategory>
+    <ListPreference android:key="@string/settings_search_default_key"
+                    android:title="@string/settings_search_default_title"
+                    android:summary="@string/settings_search_default_summary"
+                    android:dialogTitle="@string/settings_search_default_title"
+                    android:entries="@array/search_click_options"
+                    android:entryValues="@array/search_click_options_values"
+                    android:defaultValue="@string/search_click_default_value"/>
+
     <PreferenceCategory android:title="@string/preferences_category_about">
         <Preference
                 android:title="@string/settings_oss_license"
