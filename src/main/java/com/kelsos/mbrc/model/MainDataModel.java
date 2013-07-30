@@ -7,6 +7,8 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.data.*;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.enums.LfmStatus;
+import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.ui.*;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.kelsos.mbrc.others.Const;
@@ -145,7 +147,11 @@ public class MainDataModel {
     }
 
     private void updateNotification() {
-        bus.post(new NotificationDataAvailable(artist, title, album, cover, playState));
+        if (playState == PlayState.Stopped || !isConnectionOn) {
+            bus.post(new MessageEvent(UserInputEvent.CancelNotification));
+        } else {
+            bus.post(new NotificationDataAvailable(artist, title, album, cover, playState));
+        }
     }
 
     public void setTrackInfo(String artist, String album, String title, String year) {

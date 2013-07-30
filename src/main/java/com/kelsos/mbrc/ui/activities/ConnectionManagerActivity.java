@@ -57,6 +57,12 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
         scanButton.setOnClickListener(scanListener);
         addButton.setOnClickListener(addListener);
         registerForContextMenu(connectionList);
+        connectionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                bus.post(new ChangeSettings(position, SettingsAction.DEFAULT));
+            }
+        });
     }
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {
