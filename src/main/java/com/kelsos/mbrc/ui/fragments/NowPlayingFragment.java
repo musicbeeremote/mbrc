@@ -39,6 +39,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
     private PlaylistArrayAdapter adapter;
     private SearchView mSearchView;
     private MenuItem mSearchItem;
+    private MusicTrack mTrack;
 
     private DragSortListView mDslv;
     private DragSortController mController;
@@ -151,35 +152,41 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
     private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
         @Override public void drop(int from, int to) {
             if (from != to) {
+                mTrack = adapter.getItem(from);
+                adapter.remove(mTrack);
+                adapter.insert(mTrack, to);
+                adapter.notifyDataSetChanged();
 
                 Map<String, Integer> move = new HashMap<String, Integer>();
                 move.put("from", from);
                 move.put("to", to);
                 bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingListMove,move)));
-
             }
         }
     };
 
     private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
         @Override public void remove(int which) {
+            mTrack = adapter.getItem(which);
+            adapter.remove(mTrack);
+            adapter.notifyDataSetChanged();
             bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingListRemove, which)));
         }
     };
 
     @Subscribe public void handleTrackMoved(TrackMoved event) {
-        if (event.isSuccess()) {
-            MusicTrack track = adapter.getItem(event.getFrom());
-            adapter.remove(track);
-            adapter.insert(track, event.getTo());
+        // In case the action failed revert the change
+        if (!event.isSuccess()) {
+            mTrack = adapter.getItem(event.getTo());
+            adapter.remove(mTrack);
+            adapter.insert(mTrack, event.getFrom());
         }
-        adapter.notifyDataSetChanged();
     }
 
     @Subscribe public void handleTrackRemoval(TrackRemoval event) {
-        if (event.isSuccess()) {
-            adapter.remove(adapter.getItem(event.getIndex()));
+        // In case the action failed revert the change
+        if (!event.isSuccess()) {
+            adapter.insert(mTrack, event.getIndex());
         }
-        adapter.notifyDataSetChanged();
     }
 }
