@@ -15,33 +15,32 @@ import com.kelsos.mbrc.data.MusicTrack;
 import java.util.ArrayList;
 
 public class PlaylistArrayAdapter extends ArrayAdapter<MusicTrack> {
-    private Context _context;
-    private int _layoutResourceId;
-    private ArrayList<MusicTrack> _nowPlayingList;
-	private int playingTrackIndex;
+    private Context mContext;
+    private int mResource;
+    private ArrayList<MusicTrack> nowPlayingList;
+    private int playingTrackIndex;
     private Typeface robotoLight;
 
     public PlaylistArrayAdapter(Context context, int resource, ArrayList<MusicTrack> objects) {
         super(context, resource, objects);
-        this._layoutResourceId = resource;
-        this._context = context;
-        this._nowPlayingList = objects;
-        robotoLight = Typeface.createFromAsset(_context.getAssets(), "fonts/roboto_light.ttf");
+        this.mResource = resource;
+        this.mContext = context;
+        this.nowPlayingList = objects;
+        robotoLight = Typeface.createFromAsset(mContext.getAssets(), "fonts/roboto_light.ttf");
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @Override public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         TrackHolder holder;
 
         if (row == null) {
-            LayoutInflater layoutInflater = ((Activity) _context).getLayoutInflater();
-            row = layoutInflater.inflate(_layoutResourceId, parent, false);
+            LayoutInflater layoutInflater = ((Activity) mContext).getLayoutInflater();
+            row = layoutInflater.inflate(mResource, parent, false);
 
             holder = new TrackHolder();
             holder.title = (TextView) row.findViewById(R.id.trackTitle);
             holder.artist = (TextView) row.findViewById(R.id.trackArtist);
-			holder.trackPlaying = (ImageView) row.findViewById(R.id.listview_item_image);
+            holder.trackPlaying = (ImageView) row.findViewById(R.id.listview_item_image);
             holder.title.setTypeface(robotoLight);
             holder.artist.setTypeface(robotoLight);
 
@@ -50,34 +49,29 @@ public class PlaylistArrayAdapter extends ArrayAdapter<MusicTrack> {
             holder = (TrackHolder) row.getTag();
         }
 
-        MusicTrack track = _nowPlayingList.get(position);
+        MusicTrack track = nowPlayingList.get(position);
         holder.title.setText(track.getTitle());
         holder.artist.setText(track.getArtist());
-		if(position==playingTrackIndex)
-		{
-			holder.trackPlaying.setImageResource(R.drawable.ic_media_now_playing);
-		}
-		else
-		{
-			holder.trackPlaying.setImageResource(android.R.color.transparent);
-		}
-		holder.trackPlaying.setOnClickListener(showContextMenu);
+        if (position == playingTrackIndex) {
+            holder.trackPlaying.setImageResource(R.drawable.ic_media_now_playing);
+        } else {
+            holder.trackPlaying.setImageResource(android.R.color.transparent);
+        }
+        holder.trackPlaying.setOnClickListener(showContextMenu);
 
         return row;
     }
 
-	private final View.OnClickListener showContextMenu = new View.OnClickListener()
-	{
-		@Override
-		public void onClick(View view)
-		{
-			view.showContextMenu();
-		}
-	};
+    private final View.OnClickListener showContextMenu = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            view.showContextMenu();
+        }
+    };
 
-	public void setPlayingTrackIndex(int index) {
-		this.playingTrackIndex = index;
-	}
+    public void setPlayingTrackIndex(int index) {
+        this.playingTrackIndex = index;
+    }
 
     public int getPlayingTrackIndex() {
         return this.playingTrackIndex;
@@ -86,7 +80,7 @@ public class PlaylistArrayAdapter extends ArrayAdapter<MusicTrack> {
     static class TrackHolder {
         TextView title;
         TextView artist;
-		ImageView trackPlaying;
+        ImageView trackPlaying;
 
     }
 

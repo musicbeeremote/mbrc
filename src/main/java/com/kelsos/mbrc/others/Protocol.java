@@ -55,5 +55,4 @@ public class Protocol {
     public static final String Request = "req";
     public static final String Reply = "rep";
     public static final String Message = "msg";
-
 }

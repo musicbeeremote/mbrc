@@ -10,9 +10,9 @@ import com.kelsos.mbrc.others.Protocol;
 import com.kelsos.mbrc.services.SocketService;
 
 public class ConnectionStatusChangedCommand implements ICommand {
-	private MainDataModel model;
+    private MainDataModel model;
     private SocketService service;
-	private NotificationService notificationService;
+    private NotificationService notificationService;
 
     @Inject public ConnectionStatusChangedCommand(MainDataModel model, SocketService service, NotificationService notificationService) {
         this.model = model;
@@ -21,11 +21,11 @@ public class ConnectionStatusChangedCommand implements ICommand {
     }
 
     public void execute(IEvent e) {
-		model.setConnectionState(e.getDataString());
-		if(model.getIsConnectionActive()){
+        model.setConnectionState(e.getDataString());
+        if (model.getIsConnectionActive()) {
             service.sendData(new SocketMessage(Protocol.Player, Protocol.Request, "Android"));
-		} else {
-			notificationService.cancelNotification(NotificationService.NOW_PLAYING_PLACEHOLDER);
-		}
-	}
+        } else {
+            notificationService.cancelNotification(NotificationService.NOW_PLAYING_PLACEHOLDER);
+        }
+    }
 }

@@ -17,6 +17,5 @@ public class HandleHanshake implements ICommand {
             handler.resetHandshake();
             model.setHandShakeDone(false);
         }
-
     }
 }

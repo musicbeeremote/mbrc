@@ -19,15 +19,15 @@ public class AlbumEntry {
         this.count = node.path("count").getIntValue();
     }
 
-    public String getArtist(){
+    public String getArtist() {
         return artist;
     }
 
-    public String getAlbum(){
+    public String getAlbum() {
         return album;
     }
 
-    public int getCount(){
+    public int getCount() {
         return count;
     }
 }

@@ -10,8 +10,7 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.activities.AppPreferenceView;
 
 public class SetupDialogFragment extends DialogFragment {
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.dialog_application_setup)
                 .setTitle(R.string.dialog_application_setup_title)

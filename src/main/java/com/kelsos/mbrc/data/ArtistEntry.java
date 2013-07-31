@@ -16,11 +16,11 @@ public class ArtistEntry {
         this.count = count;
     }
 
-    public String getArtist(){
+    public String getArtist() {
         return artist;
     }
 
-    public int getCount(){
+    public int getCount() {
         return count;
     }
 }

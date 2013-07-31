@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.data;
 
 public class UserAction {
-
     private String context;
     private Object data;
 

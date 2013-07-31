@@ -11,10 +11,9 @@ import com.kelsos.mbrc.ui.fragments.SearchTrackFragment;
 import java.util.ArrayList;
 
 public class SearchPagerAdapter extends FragmentStatePagerAdapter {
-
     private int mCount = 4;
     private final ArrayList<Fragment> mFragments = new ArrayList<Fragment>();
-    private final CharSequence pageTitles[] = new CharSequence[] {"Genre","Artist","Album","Track"};
+    private final CharSequence pageTitles[] = new CharSequence[]{"Genre", "Artist", "Album", "Track"};
 
 
     public SearchPagerAdapter(FragmentActivity activity) {

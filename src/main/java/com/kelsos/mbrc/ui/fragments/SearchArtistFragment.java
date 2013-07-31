@@ -37,7 +37,7 @@ public class SearchArtistFragment extends RoboSherlockListFragment {
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String artist = ((ArtistEntry)getListView().getAdapter().getItem(position)).getArtist();
+                String artist = ((ArtistEntry) getListView().getAdapter().getItem(position)).getArtist();
 
                 bus.post(new MessageEvent(ProtocolEvent.UserAction,
                         new UserAction(Protocol.LibraryQueueArtist,
@@ -78,15 +78,15 @@ public class SearchArtistFragment extends RoboSherlockListFragment {
             Object line = adapter.getItem(mi.position);
             final String qContext = Protocol.LibraryQueueArtist;
             final String gSub = Protocol.LibraryArtistAlbums;
-            String query = ((ArtistEntry)line).getArtist();
+            String query = ((ArtistEntry) line).getArtist();
 
             UserAction ua = null;
             switch (item.getItemId()) {
                 case QUEUE_NEXT:
-                    ua = new UserAction(qContext, new Queue("next",query));
+                    ua = new UserAction(qContext, new Queue("next", query));
                     break;
                 case QUEUE_LAST:
-                    ua = new UserAction(qContext, new Queue("last",query));
+                    ua = new UserAction(qContext, new Queue("last", query));
                     break;
                 case PLAY_NOW:
                     ua = new UserAction(qContext, new Queue("now", query));

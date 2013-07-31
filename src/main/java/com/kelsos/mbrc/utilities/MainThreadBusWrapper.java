@@ -6,7 +6,6 @@ import com.google.inject.Inject;
 import com.squareup.otto.Bus;
 
 public class MainThreadBusWrapper {
-
     private final Bus bus;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 

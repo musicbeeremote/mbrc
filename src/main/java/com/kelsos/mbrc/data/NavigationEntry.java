@@ -9,7 +9,7 @@ public class NavigationEntry {
     public NavigationEntry(String label, Drawable leftDrawable, int w, int h) {
         this.label = label;
         this.leftDrawable = leftDrawable;
-        this.leftDrawable.setBounds(0,0,w,h);
+        this.leftDrawable.setBounds(0, 0, w, h);
     }
 
     public Drawable getLeftDrawable() {

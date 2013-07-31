@@ -66,7 +66,7 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
     }
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
                 break;
@@ -77,7 +77,7 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
     @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.add(GROUP_ID, DEFAULT, 0, getString(R.string.connectivity_manager_default));
         menu.add(GROUP_ID, EDIT, 0, getString(R.string.connectivity_manager_edit));
-        menu.add(GROUP_ID, DELETE, 0 , getString(R.string.connectivity_manager_delete));
+        menu.add(GROUP_ID, DELETE, 0, getString(R.string.connectivity_manager_delete));
         menu.setHeaderTitle(getString(R.string.connectivity_manager_header));
         super.onCreateContextMenu(menu, v, menuInfo);
     }
@@ -90,7 +90,7 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
                 break;
             case EDIT:
                 SettingsDialogFragment settingsDialog = new SettingsDialogFragment();
-                ConnectionSettingsAdapter mAdapter = (ConnectionSettingsAdapter)connectionList.getAdapter();
+                ConnectionSettingsAdapter mAdapter = (ConnectionSettingsAdapter) connectionList.getAdapter();
                 Bundle args = new Bundle();
                 ConnectionSettings mSettings = mAdapter.getItem(mi.position);
                 args.putString("address", mSettings.getAddress());
@@ -98,7 +98,7 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
                 args.putInt("port", mSettings.getPort());
                 args.putInt("index", mi.position);
                 settingsDialog.setArguments(args);
-                settingsDialog.show(getSupportFragmentManager(),"settings_dialog");
+                settingsDialog.show(getSupportFragmentManager(), "settings_dialog");
                 break;
             case DELETE:
                 bus.post(new ChangeSettings(mi.position, SettingsAction.DELETE));
@@ -120,7 +120,7 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
             Bundle args = new Bundle();
             args.putInt("index", -1);
             settingsDialog.setArguments(args);
-            settingsDialog.show(getSupportFragmentManager(),"settings_dialog");
+            settingsDialog.show(getSupportFragmentManager(), "settings_dialog");
         }
     };
 
@@ -139,20 +139,20 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
         if (mProgress != null) {
             mProgress.hide();
         }
-        String message ="";
+        String message = "";
         de.keyboardsurfer.android.widget.crouton.Style style = Style.INFO;
         switch (event.getReason()) {
 
             case NO_WIFI:
-                message= getString(R.string.con_man_no_wifi);
+                message = getString(R.string.con_man_no_wifi);
                 break;
             case NOT_FOUND:
                 style = Style.ALERT;
-                message= getString(R.string.con_man_not_found);
+                message = getString(R.string.con_man_not_found);
                 break;
             case COMPLETE:
                 style = Style.CONFIRM;
-                message= getString(R.string.con_man_success);
+                message = getString(R.string.con_man_success);
                 break;
         }
 

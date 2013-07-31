@@ -16,6 +16,6 @@ public class UpdateNowPlayingTrackRemoval implements ICommand {
 
     @Override public void execute(final IEvent e) {
         e.getData();
-        bus.post(new TrackRemoval((ObjectNode)e.getData()));
+        bus.post(new TrackRemoval((ObjectNode) e.getData()));
     }
 }

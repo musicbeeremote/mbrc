@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.enums;
 
-public enum PlayState
-{
+public enum PlayState {
     Playing,
     Paused,
     Stopped,

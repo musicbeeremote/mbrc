@@ -11,7 +11,6 @@ import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
 
 public class KeyVolumeUpCommand implements ICommand {
-
     private MainDataModel model;
     private Bus bus;
 

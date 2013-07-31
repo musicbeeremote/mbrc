@@ -6,14 +6,10 @@ import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.services.SocketService;
 
-public class InitiateConnectionCommand implements ICommand
-{
-	@Inject
-	SocketService socketService;
+public class InitiateConnectionCommand implements ICommand {
+    @Inject SocketService socketService;
 
-	@Override
-	public void execute(IEvent e)
-	{
-		socketService.SocketManager(SocketAction.START);
-	}
+    @Override public void execute(IEvent e) {
+        socketService.SocketManager(SocketAction.START);
+    }
 }

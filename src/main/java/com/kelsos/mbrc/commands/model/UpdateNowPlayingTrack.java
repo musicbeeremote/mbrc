@@ -7,11 +7,10 @@ import com.kelsos.mbrc.model.MainDataModel;
 import org.codehaus.jackson.node.ObjectNode;
 
 public class UpdateNowPlayingTrack implements ICommand {
-    @Inject
-    MainDataModel model;
-    @Override
-    public void execute(IEvent e) {
-        ObjectNode node = (ObjectNode)e.getData();
+    @Inject MainDataModel model;
+
+    @Override public void execute(IEvent e) {
+        ObjectNode node = (ObjectNode) e.getData();
         model.setTrackInfo(node.path("Artist").getTextValue(),
                 node.path("Album").getTextValue(),
                 node.path("Title").getTextValue(),

@@ -9,13 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.ArtistEntry;
-
 import java.util.ArrayList;
 
 public class LyricsAdapter extends ArrayAdapter<String> {
-
     private Context mContext;
     private int mResource;
     private ArrayList<String> mData;
@@ -29,8 +25,7 @@ public class LyricsAdapter extends ArrayAdapter<String> {
         robotoLight = Typeface.createFromAsset(mContext.getAssets(), "fonts/roboto_light.ttf");
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @Override public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         Holder holder;
 

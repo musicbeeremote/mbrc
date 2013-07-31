@@ -21,7 +21,7 @@ import com.kelsos.mbrc.others.Protocol;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
-public class SearchAlbumFragment extends RoboSherlockListFragment{
+public class SearchAlbumFragment extends RoboSherlockListFragment {
     private static final int QUEUE_NEXT = 1;
     private static final int QUEUE_LAST = 2;
     private static final int PLAY_NOW = 3;
@@ -38,7 +38,7 @@ public class SearchAlbumFragment extends RoboSherlockListFragment{
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String album = ((AlbumEntry)getListView().getAdapter().getItem(position)).getAlbum();
+                String album = ((AlbumEntry) getListView().getAdapter().getItem(position)).getAlbum();
 
                 bus.post(new MessageEvent(ProtocolEvent.UserAction,
                         new UserAction(Protocol.LibraryQueueAlbum,
@@ -64,6 +64,7 @@ public class SearchAlbumFragment extends RoboSherlockListFragment{
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ui_fragment_library_simpl, container, false);
     }
+
     @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.setHeaderTitle(R.string.search_context_header);
         menu.add(GROUP_ID, QUEUE_NEXT, 0, R.string.search_context_queue_next);
@@ -72,6 +73,7 @@ public class SearchAlbumFragment extends RoboSherlockListFragment{
         menu.add(GROUP_ID, GET_SUB, 0, R.string.search_context_get_tracks);
         super.onCreateContextMenu(menu, v, menuInfo);
     }
+
     @Override
     public boolean onContextItemSelected(android.view.MenuItem item) {
         if (item.getGroupId() == GROUP_ID) {
@@ -79,15 +81,15 @@ public class SearchAlbumFragment extends RoboSherlockListFragment{
             Object line = adapter.getItem(mi.position);
             final String qContext = Protocol.LibraryQueueAlbum;
             final String gSub = Protocol.LibraryAlbumTracks;
-            String query = ((AlbumEntry)line).getAlbum();
+            String query = ((AlbumEntry) line).getAlbum();
 
             UserAction ua = null;
             switch (item.getItemId()) {
                 case QUEUE_NEXT:
-                    ua = new UserAction(qContext, new Queue("next",query));
+                    ua = new UserAction(qContext, new Queue("next", query));
                     break;
                 case QUEUE_LAST:
-                    ua = new UserAction(qContext, new Queue("last",query));
+                    ua = new UserAction(qContext, new Queue("last", query));
                     break;
                 case PLAY_NOW:
                     ua = new UserAction(qContext, new Queue("now", query));

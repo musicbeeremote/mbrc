@@ -23,7 +23,7 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.viewpagerindicator.TitlePageIndicator;
 
-public class SearchFragment extends RoboSherlockFragment implements SearchView.OnQueryTextListener{
+public class SearchFragment extends RoboSherlockFragment implements SearchView.OnQueryTextListener {
 
     @Inject Bus bus;
     private SearchView mSearchView;
@@ -31,8 +31,7 @@ public class SearchFragment extends RoboSherlockFragment implements SearchView.O
     private ViewPager mPager;
     private SearchPagerAdapter mAdapter;
 
-    @Override
-    public boolean onQueryTextSubmit(String query) {
+    @Override public boolean onQueryTextSubmit(String query) {
         String pContext = "";
         int current = mPager.getCurrentItem();
 
@@ -59,25 +58,21 @@ public class SearchFragment extends RoboSherlockFragment implements SearchView.O
         return false;
     }
 
-    @Override
-    public boolean onQueryTextChange(String newText) {
+    @Override public boolean onQueryTextChange(String newText) {
         return false;
     }
 
 
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ui_fragment_search, container, false);
-        mPager = (ViewPager)view.findViewById(R.id.search_pager);
+        mPager = (ViewPager) view.findViewById(R.id.search_pager);
         mPager.setAdapter(mAdapter);
-        TitlePageIndicator titleIndicator = (TitlePageIndicator)view.findViewById(R.id.search_categories);
+        TitlePageIndicator titleIndicator = (TitlePageIndicator) view.findViewById(R.id.search_categories);
         titleIndicator.setViewPager(mPager);
         return view;
     }
 
-    @Override
-    public void onStart() {
+    @Override public void onStart() {
         super.onStart();
         bus.register(this);
     }
@@ -88,16 +83,13 @@ public class SearchFragment extends RoboSherlockFragment implements SearchView.O
         bus.unregister(this);
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
+    @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mAdapter = new SearchPagerAdapter(getActivity());
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
+    @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         mSearchView = new SearchView(((RoboSherlockFragmentActivity) getActivity()).getSupportActionBar().getThemedContext());
         //mSearchView.setQueryHint("Search for " );
         mSearchView.setIconifiedByDefault(true);
@@ -109,7 +101,7 @@ public class SearchFragment extends RoboSherlockFragment implements SearchView.O
     }
 
     @Subscribe public void handleGenreSearchResults(GenreSearchResults results) {
-        if (!results.isStored()){
+        if (!results.isStored()) {
             mPager.setCurrentItem(0);
             if (results.getList().size() == 0) {
                 bus.post(new NotifyUser(getString(R.string.search_msg_genre_not_found)));

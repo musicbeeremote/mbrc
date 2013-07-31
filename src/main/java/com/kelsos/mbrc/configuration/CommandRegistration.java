@@ -53,8 +53,4 @@ public class CommandRegistration {
         controller.register(SocketEvent.SocketStatusChanged, ConnectionStatusChangedCommand.class);
         controller.register(SocketEvent.SocketHandshakeUpdate, HandleHanshake.class);
     }
-
-    @Inject public static void unRegister(Controller controller) {
-
-    }
 }

@@ -3,7 +3,6 @@ package com.kelsos.mbrc.ui.fragments;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,46 +34,26 @@ public class MainFragment extends RoboSherlockFragment {
     // Injects
     @Inject protected Bus bus;
     // Inject elements of the view
-    @InjectView(R.id.main_artist_label)
-    TextView artistLabel;
-    @InjectView(R.id.main_title_label)
-    TextView titleLabel;
-    @InjectView(R.id.main_label_album)
-    TextView albumLabel;
-    @InjectView(R.id.main_label_year)
-    TextView yearLabel;
-    @InjectView(R.id.main_track_progress_current)
-    TextView trackProgressCurrent;
-    @InjectView(R.id.main_track_duration_total)
-    TextView trackDuration;
-    @InjectView(R.id.main_button_play_pause)
-    ImageButton playPauseButton;
-    @InjectView(R.id.main_button_previous)
-    ImageButton previousButton;
-    @InjectView(R.id.main_button_next)
-    ImageButton nextButton;
-    @InjectView(R.id.main_volume_seeker)
-    SeekBar volumeSlider;
-    @InjectView(R.id.main_track_progress_seeker)
-    SeekBar trackProgressSlider;
-    @InjectView(R.id.main_button_stop)
-    ImageButton stopButton;
-    @InjectView(R.id.main_mute_button)
-    ImageButton muteButton;
-    @InjectView(R.id.main_last_fm_button)
-    ImageButton scrobbleButton;
-    @InjectView(R.id.main_shuffle_button)
-    ImageButton shuffleButton;
-    @InjectView(R.id.main_repeat_button)
-    ImageButton repeatButton;
-    @InjectView(R.id.main_album_cover_image_view)
-    ImageView albumCover;
-    @InjectView(R.id.ratingWrapper)
-    LinearLayout ratingWrapper;
-    @InjectView(R.id.track_rating_bar)
-    RatingBar trackRating;
-    @InjectView(R.id.main_lfm_love_button)
-    ImageButton lfmLoveButton;
+    @InjectView(R.id.main_artist_label) TextView artistLabel;
+    @InjectView(R.id.main_title_label) TextView titleLabel;
+    @InjectView(R.id.main_label_album) TextView albumLabel;
+    @InjectView(R.id.main_label_year) TextView yearLabel;
+    @InjectView(R.id.main_track_progress_current) TextView trackProgressCurrent;
+    @InjectView(R.id.main_track_duration_total) TextView trackDuration;
+    @InjectView(R.id.main_button_play_pause) ImageButton playPauseButton;
+    @InjectView(R.id.main_button_previous) ImageButton previousButton;
+    @InjectView(R.id.main_button_next) ImageButton nextButton;
+    @InjectView(R.id.main_volume_seeker) SeekBar volumeSlider;
+    @InjectView(R.id.main_track_progress_seeker) SeekBar trackProgressSlider;
+    @InjectView(R.id.main_button_stop) ImageButton stopButton;
+    @InjectView(R.id.main_mute_button) ImageButton muteButton;
+    @InjectView(R.id.main_last_fm_button) ImageButton scrobbleButton;
+    @InjectView(R.id.main_shuffle_button) ImageButton shuffleButton;
+    @InjectView(R.id.main_repeat_button) ImageButton repeatButton;
+    @InjectView(R.id.main_album_cover_image_view) ImageView albumCover;
+    @InjectView(R.id.ratingWrapper) LinearLayout ratingWrapper;
+    @InjectView(R.id.track_rating_bar) RatingBar trackRating;
+    @InjectView(R.id.main_lfm_love_button) ImageButton lfmLoveButton;
 
     private ShareActionProvider mShareActionProvider;
     private boolean userChangingVolume;
@@ -84,7 +63,7 @@ public class MainFragment extends RoboSherlockFragment {
     private RatingBar.OnRatingBarChangeListener ratingChangeListener = new RatingBar.OnRatingBarChangeListener() {
         @Override
         public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-            if(b) {
+            if (b) {
                 bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingRating, v)));
             }
         }
@@ -209,18 +188,15 @@ public class MainFragment extends RoboSherlockFragment {
 
                 ratingWrapper.startAnimation(animation);
                 animation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
+                    @Override public void onAnimationStart(Animation animation) {
                         isActive = true;
                     }
 
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
+                    @Override public void onAnimationEnd(Animation animation) {
                         isActive = false;
                     }
 
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
+                    @Override public void onAnimationRepeat(Animation animation) {
                     }
                 });
             }
@@ -307,21 +283,18 @@ public class MainFragment extends RoboSherlockFragment {
         }
     }
 
-    @Override
-    public void onStop() {
+    @Override public void onStop() {
         super.onStop();
         bus.unregister(this);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu, menu);
         MenuItem shareItem = menu.findItem(R.id.actionbar_share);
         mShareActionProvider = (ShareActionProvider) shareItem.getActionProvider();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.actionbar_share:
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
@@ -338,7 +311,7 @@ public class MainFragment extends RoboSherlockFragment {
         if (mShareActionProvider != null) mShareActionProvider.setShareIntent(shareIntent);
     }
 
-    @Subscribe public void handleRatingChange (RatingChanged event) {
+    @Subscribe public void handleRatingChange(RatingChanged event) {
         if (trackRating != null) {
             trackRating.setRating(event.getRating());
         }
@@ -349,8 +322,7 @@ public class MainFragment extends RoboSherlockFragment {
         scrobbleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_scrobble_red : R.drawable.ic_media_scrobble_off);
     }
 
-    @Subscribe
-    public void handleCoverEvent(final CoverAvailable cevent) {
+    @Subscribe public void handleCoverEvent(final CoverAvailable cevent) {
         if (albumCover == null) return;
         if (cevent.getIsAvailable()) {
             albumCover.setImageBitmap(cevent.getCover());
@@ -377,8 +349,7 @@ public class MainFragment extends RoboSherlockFragment {
         muteButton.setImageResource(change.getIsMute() ? R.drawable.ic_media_mute_active : R.drawable.ic_media_mute_full);
     }
 
-    @Subscribe
-    public void handlePlayStateChange(final PlayStateChange change) {
+    @Subscribe public void handlePlayStateChange(final PlayStateChange change) {
         if (playPauseButton == null || stopButton == null) return;
         switch (change.getState()) {
             case Playing:
@@ -442,7 +413,7 @@ public class MainFragment extends RoboSherlockFragment {
                 final int currentSeconds = currentProgress % 60;
 
                 if (getActivity() == null) return;
-                getActivity().runOnUiThread(new Runnable(){
+                getActivity().runOnUiThread(new Runnable() {
 
                     @Override public void run() {
                         try {
@@ -467,9 +438,7 @@ public class MainFragment extends RoboSherlockFragment {
         stopButton.setEnabled(false);
     }
 
-    @Subscribe
-    public void handleTrackInfoChange(final TrackInfoChange change) {
-
+    @Subscribe public void handleTrackInfoChange(final TrackInfoChange change) {
         if (artistLabel == null) return;
         artistLabel.setText(change.getArtist());
         titleLabel.setText(change.getTitle());
@@ -478,8 +447,7 @@ public class MainFragment extends RoboSherlockFragment {
 
     }
 
-    @Subscribe
-    public void handleConnectionStatusChange(final ConnectionStatusChange change) {
+    @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChange change) {
         if (change.getStatus() == ConnectionStatus.CONNECTION_OFF) {
             stopTrackProgressAnimation();
             activateStoppedState();
@@ -504,8 +472,7 @@ public class MainFragment extends RoboSherlockFragment {
      * Responsible for updating the displays and seekbar responsible for the display of the track duration and the
      * current progress of playback
      */
-    @Subscribe
-    public void handlePositionUpdate(UpdatePosition position) {
+    @Subscribe public void handlePositionUpdate(UpdatePosition position) {
         final int total = position.getTotal();
         final int current = position.getCurrent();
         if (trackProgressCurrent == null || trackProgressSlider == null || trackDuration == null) return;

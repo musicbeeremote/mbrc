@@ -221,16 +221,16 @@ public class MainDataModel {
         bus.post(new ConnectionStatusChange(isConnectionOn ?
                 (isHandShakeDone ?
                         ConnectionStatus.CONNECTION_ACTIVE :
-                        ConnectionStatus.CONNECTION_ON ) :
+                        ConnectionStatus.CONNECTION_ON) :
                 ConnectionStatus.CONNECTION_OFF));
     }
 
-    public void setHandShakeDone(boolean handShakeDone){
+    public void setHandShakeDone(boolean handShakeDone) {
         this.isHandShakeDone = handShakeDone;
         bus.post(new ConnectionStatusChange(isConnectionOn ?
                 (isHandShakeDone ?
                         ConnectionStatus.CONNECTION_ACTIVE :
-                        ConnectionStatus.CONNECTION_ON ) :
+                        ConnectionStatus.CONNECTION_ON) :
                 ConnectionStatus.CONNECTION_OFF));
     }
 
@@ -238,7 +238,7 @@ public class MainDataModel {
         return new ConnectionStatusChange(isConnectionOn ?
                 (isHandShakeDone ?
                         ConnectionStatus.CONNECTION_ACTIVE :
-                        ConnectionStatus.CONNECTION_ON ) :
+                        ConnectionStatus.CONNECTION_ON) :
                 ConnectionStatus.CONNECTION_OFF);
     }
 

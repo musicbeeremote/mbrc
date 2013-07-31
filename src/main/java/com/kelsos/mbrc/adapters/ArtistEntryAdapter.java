@@ -16,7 +16,6 @@ import com.kelsos.mbrc.data.ArtistEntry;
 import java.util.ArrayList;
 
 public class ArtistEntryAdapter extends ArrayAdapter<ArtistEntry> {
-
     private Context mContext;
     private int mResource;
     private ArrayList<ArtistEntry> mData;
@@ -30,8 +29,7 @@ public class ArtistEntryAdapter extends ArrayAdapter<ArtistEntry> {
         robotoLight = Typeface.createFromAsset(mContext.getAssets(), "fonts/roboto_light.ttf");
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @Override public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         Holder holder;
 

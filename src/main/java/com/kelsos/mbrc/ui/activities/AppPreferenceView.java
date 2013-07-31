@@ -15,8 +15,7 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.utilities.RemoteUtils;
 import com.squareup.otto.Bus;
 
-public class AppPreferenceView extends RoboSherlockPreferenceActivity{
-
+public class AppPreferenceView extends RoboSherlockPreferenceActivity {
     @Inject Bus bus;
     @Inject RemoteUtils rmUtils;
 

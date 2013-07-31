@@ -15,6 +15,6 @@ public class UpdateNowPlayingTrackMoved implements ICommand {
     }
 
     @Override public void execute(IEvent e) {
-        bus.post(new TrackMoved((ObjectNode)e.getData()));
+        bus.post(new TrackMoved((ObjectNode) e.getData()));
     }
 }

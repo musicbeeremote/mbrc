@@ -49,15 +49,15 @@ public class NotificationService {
         bus.register(this);
     }
 
-    @Subscribe public void handleNotificationData(final NotificationDataAvailable event){
-        notificationBuilder(event.getTitle(),event.getArtist(), event.getAlbum(),event.getCover(),event.getState());
+    @Subscribe public void handleNotificationData(final NotificationDataAvailable event) {
+        notificationBuilder(event.getTitle(), event.getArtist(), event.getAlbum(), event.getCover(), event.getState());
     }
 
     private boolean isJellyBean() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     }
 
-    private void updateNormalNotification (final String artist, final String title, final Bitmap cover) {
+    private void updateNormalNotification(final String artist, final String title, final Bitmap cover) {
         mNormalView.setTextViewText(R.id.notification_artist, artist);
         mNormalView.setTextViewText(R.id.notification_title, title);
         if (cover != null) {
@@ -67,8 +67,8 @@ public class NotificationService {
         }
     }
 
-    private void updateExpandedNotification (final String artist, final String title, final String album,
-                                             final Bitmap cover) {
+    private void updateExpandedNotification(final String artist, final String title, final String album,
+                                            final Bitmap cover) {
         mExpandedView.setTextViewText(R.id.expanded_notification_line_one, title);
         mExpandedView.setTextViewText(R.id.expanded_notification_line_two, artist);
         mExpandedView.setTextViewText(R.id.expanded_notification_line_three, album);
@@ -83,10 +83,11 @@ public class NotificationService {
     /**
      * Creates an ongoing notification that displays the cover and information about the playing track,
      * and also provides controls to skip or play/pause.
-     * @param title The title of the track playing.
+     *
+     * @param title  The title of the track playing.
      * @param artist The artist of the track playing.
-     * @param cover The cover Bitmap.
-     * @param state The current play state is used to display the proper play or pause icon.
+     * @param cover  The cover Bitmap.
+     * @param state  The current play state is used to display the proper play or pause icon.
      */
     @SuppressLint("NewApi")
     private void notificationBuilder(final String title, final String artist, final String album, final Bitmap cover,
@@ -146,19 +147,24 @@ public class NotificationService {
         switch (id) {
             case OPEN:
                 Intent notificationIntent = new Intent(mContext, MainFragmentActivity.class);
-                return PendingIntent.getActivity(mContext, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                return PendingIntent.getActivity(mContext, 0, notificationIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
             case PLAY:
                 Intent playPressedIntent = new Intent(NOTIFICATION_PLAY_PRESSED);
-                return PendingIntent.getBroadcast(mContext, 1, playPressedIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                return PendingIntent.getBroadcast(mContext, 1, playPressedIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
             case NEXT:
                 Intent mediaNextButtonIntent = new Intent(NOTIFICATION_NEXT_PRESSED);
-                return PendingIntent.getBroadcast(mContext, 2, mediaNextButtonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                return PendingIntent.getBroadcast(mContext, 2, mediaNextButtonIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
             case CLOSE:
                 Intent clearNotificationIntent = new Intent(NOTIFICATION_CLOSE_PRESSED);
-                return PendingIntent.getBroadcast(mContext, 3, clearNotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                return PendingIntent.getBroadcast(mContext, 3, clearNotificationIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
             case PREVIOUS:
                 Intent mediaPreviousButtonIntent = new Intent(NOTIFICATION_PREVIOUS_PRESSED);
-                return PendingIntent.getBroadcast(mContext, 4, mediaPreviousButtonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                return PendingIntent.getBroadcast(mContext, 4, mediaPreviousButtonIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
             default:
                 throw new IndexOutOfBoundsException();
         }
@@ -177,7 +183,8 @@ public class NotificationService {
         Intent resultIntent = new Intent(mContext, UpdateView.class);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext, 0, resultIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(resultPendingIntent);
         final Notification notification = mBuilder.build();
         notification.flags = Notification.FLAG_AUTO_CANCEL;

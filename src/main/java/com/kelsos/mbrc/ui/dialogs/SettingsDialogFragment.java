@@ -65,7 +65,7 @@ public class SettingsDialogFragment extends DialogFragment {
     @Override public void onStart() {
         super.onStart();
 
-        AlertDialog dialog = (AlertDialog)getDialog();
+        AlertDialog dialog = (AlertDialog) getDialog();
         if (dialog != null) {
             Button confirm = dialog.getButton(Dialog.BUTTON_POSITIVE);
             confirm.setOnClickListener(new Button.OnClickListener() {
@@ -89,9 +89,9 @@ public class SettingsDialogFragment extends DialogFragment {
                 }
             });
         }
-        name = (EditText)dialog.findViewById(R.id.settings_dialog_name);
-        host = (EditText)dialog.findViewById(R.id.settings_dialog_host);
-        port = (EditText)dialog.findViewById(R.id.settings_dialog_port);
+        name = (EditText) dialog.findViewById(R.id.settings_dialog_name);
+        host = (EditText) dialog.findViewById(R.id.settings_dialog_host);
+        port = (EditText) dialog.findViewById(R.id.settings_dialog_port);
 
         if (name != null || !name.equals("")) {
             name.setText(cname);
@@ -103,7 +103,7 @@ public class SettingsDialogFragment extends DialogFragment {
     }
 
     private boolean validatePortNumber(int port) {
-        if(port < 1 || port > 65535) {
+        if (port < 1 || port > 65535) {
             final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             alert.setTitle(R.string.alert_invalid_range);
             alert.setMessage(R.string.alert_invalid_port_number);

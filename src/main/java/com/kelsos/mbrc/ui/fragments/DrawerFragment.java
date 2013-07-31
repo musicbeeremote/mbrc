@@ -57,8 +57,7 @@ public class DrawerFragment extends RoboSherlockListFragment implements Fragment
         }
     };
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
+    @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         robotoLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
         mSelection = 0;
@@ -70,13 +69,11 @@ public class DrawerFragment extends RoboSherlockListFragment implements Fragment
         getActivity().getSupportFragmentManager().addOnBackStackChangedListener(this);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ui_fragment_drawer, container, false);
     }
 
-    @Override
-    public void onStart() {
+    @Override public void onStart() {
         super.onStart();
         bus.register(this);
         menuConnector.setOnClickListener(connectButtonClick);
@@ -85,18 +82,18 @@ public class DrawerFragment extends RoboSherlockListFragment implements Fragment
 
         ArrayList<NavigationEntry> nav = new ArrayList<NavigationEntry>();
         int bound = getResources().getInteger(R.integer.drawer_drawable_bounds);
-        nav.add(new NavigationEntry("Home", getResources().getDrawable(R.drawable.ic_action_play),bound,bound));
-        nav.add(new NavigationEntry("Search", getResources().getDrawable(R.drawable.ic_action_search),bound,bound));
-        nav.add(new NavigationEntry("Now playing list", getResources().getDrawable(R.drawable.ic_action_playlist),bound,bound));
-        nav.add(new NavigationEntry("Lyrics", getResources().getDrawable(R.drawable.ic_action_lyrics),bound,bound));
+        nav.add(new NavigationEntry("Home", getResources().getDrawable(R.drawable.ic_action_play), bound, bound));
+        nav.add(new NavigationEntry("Search", getResources().getDrawable(R.drawable.ic_action_search), bound, bound));
+        nav.add(new NavigationEntry("Now playing list", getResources().getDrawable(R.drawable.ic_action_playlist), bound, bound));
+        nav.add(new NavigationEntry("Lyrics", getResources().getDrawable(R.drawable.ic_action_lyrics), bound, bound));
 
         setListAdapter(new DrawerAdapter(getActivity(), R.layout.ui_drawer_item, nav));
         getListView().setOnItemClickListener(new DrawerOnClickListener());
         getListView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         getListView().setItemChecked(mSelection, true);
 
-        if(mDrawerLayout == null) {
-            mDrawerLayout = (DrawerLayout)getActivity().findViewById(R.id.drawer_layout);
+        if (mDrawerLayout == null) {
+            mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
         }
         try {
             versionIndicator.setText(String.format(getString(R.string.ui_drawer_menu_version), rmUtils.getVersion()));
@@ -133,7 +130,7 @@ public class DrawerFragment extends RoboSherlockListFragment implements Fragment
 
     @Override public void onBackStackChanged() {
         if (!mBackstackChanging)
-            if(getActivity().getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 0) {
                 mSelection = 0;
                 getListView().setItemChecked(mSelection, true);
             }

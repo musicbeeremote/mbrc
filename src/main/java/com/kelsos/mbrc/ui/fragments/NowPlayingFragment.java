@@ -64,7 +64,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
         return controller;
     }
 
-    @Subscribe public void handleNowPlayingListAvailable(NowPlayingListAvailable event){
+    @Subscribe public void handleNowPlayingListAvailable(NowPlayingListAvailable event) {
         adapter = new PlaylistArrayAdapter(getActivity(), R.layout.ui_list_track_item, event.getList());
         setListAdapter(adapter);
         adapter.setPlayingTrackIndex(event.getIndex());
@@ -88,8 +88,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
         return true;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         mSearchView = new SearchView(((RoboSherlockFragmentActivity) getActivity()).getSupportActionBar().getThemedContext());
         mSearchView.setQueryHint(getString(R.string.now_playing_search_hint));
@@ -101,14 +100,12 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
         mSearchView.setOnQueryTextListener(this);
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
+    @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mDslv = (DragSortListView) getListView();
         mDslv.setDropListener(onDrop);
@@ -117,21 +114,18 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
         injector.injectMembers(getListView());
     }
 
-    @Override
-    public void onStart() {
+    @Override public void onStart() {
         super.onStart();
         bus.register(this);
         bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingList, true)));
     }
 
-    @Override
-    public void onStop() {
+    @Override public void onStop() {
         super.onStop();
         bus.unregister(this);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View mView = inflater.inflate(R.layout.ui_fragment_nowplaying, container, false);
         mDslv = (DragSortListView) mView.findViewById(android.R.id.list);
         mController = buildController(mDslv);
@@ -141,8 +135,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
         return mView;
     }
 
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
+    @Override public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         adapter.setPlayingTrackIndex(position);
         adapter.notifyDataSetChanged();
@@ -162,7 +155,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
                 Map<String, Integer> move = new HashMap<String, Integer>();
                 move.put("from", from);
                 move.put("to", to);
-                bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingListMove,move)));
+                bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingListMove, move)));
             }
         }
     };

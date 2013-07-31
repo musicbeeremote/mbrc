@@ -7,8 +7,8 @@ import com.kelsos.mbrc.model.MainDataModel;
 import org.codehaus.jackson.node.BooleanNode;
 
 public class UpdateMute implements ICommand {
-    @Inject
-    MainDataModel model;
+    @Inject MainDataModel model;
+
     @Override
     public void execute(IEvent e) {
         model.setMuteState(((BooleanNode)e.getData()).asBoolean());

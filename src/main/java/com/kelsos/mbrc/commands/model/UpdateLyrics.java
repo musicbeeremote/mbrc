@@ -6,8 +6,7 @@ import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
 
 public class UpdateLyrics implements ICommand {
-    @Inject
-    MainDataModel model;
+    @Inject MainDataModel model;
 
     @Override
     public void execute(IEvent e) {

@@ -13,6 +13,6 @@ public class UpdatePluginVersionCommand implements ICommand {
     }
 
     @Override public void execute(final IEvent e) {
-          model.setPluginVersion(e.getDataString());
+        model.setPluginVersion(e.getDataString());
     }
 }

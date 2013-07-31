@@ -5,7 +5,7 @@ import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
 
-public class UpdateLfmRating implements ICommand{
+public class UpdateLfmRating implements ICommand {
     private MainDataModel model;
 
     @Inject public UpdateLfmRating(MainDataModel model) {

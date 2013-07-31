@@ -28,8 +28,7 @@ public class TrackEntryAdapter extends ArrayAdapter<TrackEntry> {
         robotoLight = Typeface.createFromAsset(mContext.getAssets(), "fonts/roboto_light.ttf");
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @Override public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         Holder holder;
 

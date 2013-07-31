@@ -64,10 +64,10 @@ public class SearchGenreFragment extends RoboSherlockListFragment {
             UserAction ua = null;
             switch (item.getItemId()) {
                 case QUEUE_NEXT:
-                    ua = new UserAction(qContext, new Queue("next",query));
+                    ua = new UserAction(qContext, new Queue("next", query));
                     break;
                 case QUEUE_LAST:
-                    ua = new UserAction(qContext, new Queue("last",query));
+                    ua = new UserAction(qContext, new Queue("last", query));
                     break;
                 case PLAY_NOW:
                     ua = new UserAction(qContext, new Queue("now", query));
@@ -97,7 +97,7 @@ public class SearchGenreFragment extends RoboSherlockListFragment {
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String genre = ((GenreEntry)getListView().getAdapter().getItem(position)).getName();
+                String genre = ((GenreEntry) getListView().getAdapter().getItem(position)).getName();
 
                 bus.post(new MessageEvent(ProtocolEvent.UserAction,
                         new UserAction(Protocol.LibraryQueueGenre,

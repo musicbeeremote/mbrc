@@ -6,10 +6,9 @@ import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
 
 public class UpdatePlayState implements ICommand {
-    @Inject
-    MainDataModel model;
-    @Override
-    public void execute(IEvent e) {
+    @Inject MainDataModel model;
+
+    @Override public void execute(IEvent e) {
         model.setPlayState(e.getDataString());
     }
 }

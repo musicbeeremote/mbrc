@@ -6,12 +6,12 @@ public class GenreEntry {
     private int count;
     private String name;
 
-    public GenreEntry (String name, int count) {
+    public GenreEntry(String name, int count) {
         this.name = name;
         this.count = count;
     }
 
-    public GenreEntry (JsonNode node) {
+    public GenreEntry(JsonNode node) {
         this.name = node.path("genre").getTextValue();
         this.count = node.path("count").getIntValue();
     }
@@ -20,7 +20,7 @@ public class GenreEntry {
         return count;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 }

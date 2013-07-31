@@ -3,7 +3,6 @@ package com.kelsos.mbrc.data;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 public class SocketMessage {
-
     @JsonProperty private String context;
     @JsonProperty private String type;
     @JsonProperty private Object data;

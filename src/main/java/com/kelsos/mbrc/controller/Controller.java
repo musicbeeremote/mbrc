@@ -28,7 +28,8 @@ public class Controller extends RoboService {
     @Inject private Bus bus;
     private Map<String, Class<?>> commandMap;
 
-    public Controller() {}
+    public Controller() {
+    }
 
     @Override public IBinder onBind(Intent intent) {
         return mBinder;
@@ -51,6 +52,7 @@ public class Controller extends RoboService {
 
     /**
      * Takes a MessageEvent and passes it to the command execution function.
+     *
      * @param event The message received.
      */
     @Subscribe public void handleUserActionEvents(MessageEvent event) {

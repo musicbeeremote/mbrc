@@ -24,7 +24,6 @@ import java.net.SocketTimeoutException;
 
 @Singleton
 public class SocketService {
-
     public static final int MAX_RETRIES = 5;
     private static int numOfRetries;
     private MainThreadBusWrapper bus;
@@ -43,8 +42,7 @@ public class SocketService {
         }
     };
 
-    @Inject
-    public SocketService(SettingsManager settingsManager, MainThreadBusWrapper bus, ObjectMapper mapper) {
+    @Inject public SocketService(SettingsManager settingsManager, MainThreadBusWrapper bus, ObjectMapper mapper) {
         this.bus = bus;
         this.settingsManager = settingsManager;
         this.mapper = mapper;

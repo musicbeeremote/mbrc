@@ -7,13 +7,10 @@ import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.services.ProtocolHandler;
 
-public class SocketDataAvailableCommand implements ICommand
-{
-	@Inject
-	ProtocolHandler handler;
+public class SocketDataAvailableCommand implements ICommand {
+    @Inject ProtocolHandler handler;
 
-	public void execute(IEvent e)
-	{
+    public void execute(IEvent e) {
         try {
             handler.answerProcessor(e.getDataString());
         } catch (Exception ex) {
@@ -22,5 +19,5 @@ public class SocketDataAvailableCommand implements ICommand
             }
         }
 
-	}
+    }
 }

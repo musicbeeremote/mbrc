@@ -28,14 +28,15 @@ import java.util.ArrayList;
 
 @Singleton
 public class SettingsManager {
-	private SharedPreferences mPreferences;
-	private Context mContext;
-	private MainThreadBusWrapper bus;
+    private SharedPreferences mPreferences;
+    private Context mContext;
+    private MainThreadBusWrapper bus;
     private ArrayList<ConnectionSettings> mSettings;
     private ObjectMapper mMapper;
     private int defaultIndex;
 
-    @Inject public SettingsManager(Context context, SharedPreferences preferences, MainThreadBusWrapper bus, ObjectMapper mapper) {
+    @Inject public SettingsManager(Context context, SharedPreferences preferences, MainThreadBusWrapper bus,
+                                   ObjectMapper mapper) {
         this.mPreferences = preferences;
         this.mContext = context;
         this.bus = bus;
@@ -61,10 +62,10 @@ public class SettingsManager {
             }
         }
         defaultIndex = mPreferences.getInt(mContext.getString(R.string.settings_key_default_index), 0);
-	}
+    }
 
-	public SocketAddress getSocketAddress() {
-		String serverAddress = mPreferences.getString(mContext.getString(R.string.settings_key_hostname), null);
+    public SocketAddress getSocketAddress() {
+        String serverAddress = mPreferences.getString(mContext.getString(R.string.settings_key_hostname), null);
         int serverPort;
 
         try {
@@ -74,21 +75,21 @@ public class SettingsManager {
         }
 
 
-		if (nullOrEmpty(serverAddress) || serverPort == 0) {
+        if (nullOrEmpty(serverAddress) || serverPort == 0) {
             bus.post(new NoSettingsAvailable());
-			return null;
-		}
+            return null;
+        }
 
-		return new InetSocketAddress(serverAddress, serverPort);
-	}
+        return new InetSocketAddress(serverAddress, serverPort);
+    }
 
-	public boolean isVolumeReducedOnRinging() {
-		return mPreferences.getBoolean(mContext.getString(R.string.settings_key_reduce_volume), false);
-	}
+    public boolean isVolumeReducedOnRinging() {
+        return mPreferences.getBoolean(mContext.getString(R.string.settings_key_reduce_volume), false);
+    }
 
-	private static boolean nullOrEmpty(String string) {
-		return string == null || string.equals("");
-	}
+    private static boolean nullOrEmpty(String string) {
+        return string == null || string.equals("");
+    }
 
     private void storeSettings() {
         SharedPreferences.Editor editor = mPreferences.edit();
@@ -138,7 +139,7 @@ public class SettingsManager {
         switch (event.getAction()) {
             case DELETE:
                 mSettings.remove(event.getIndex());
-                if (event.getIndex() == defaultIndex && mSettings.size()>0) {
+                if (event.getIndex() == defaultIndex && mSettings.size() > 0) {
                     updateDefault(0, mSettings.get(0));
                     bus.post(new MessageEvent(UserInputEvent.SettingsChanged));
                 } else {
@@ -158,7 +159,6 @@ public class SettingsManager {
     }
 
     @Produce public SearchDefaultAction produceAction() {
-
         return new SearchDefaultAction(mPreferences.getString(
                 mContext.getString(R.string.settings_search_default_key),
                 mContext.getString(R.string.search_click_default_value)));

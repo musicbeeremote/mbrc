@@ -29,7 +29,7 @@ public class ServiceDiscovery {
 
     @Inject public ServiceDiscovery(Context context, ObjectMapper mapper, MainThreadBusWrapper bus) {
         this.mContext = context;
-        manager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+        manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         this.mapper = mapper;
         this.bus = bus;
     }
@@ -48,13 +48,13 @@ public class ServiceDiscovery {
     }
 
     public void stopDiscovery() {
-        if(mLock != null) {
+        if (mLock != null) {
             mLock.release();
             mLock = null;
         }
     }
 
-    private class ServiceListener implements Runnable{
+    private class ServiceListener implements Runnable {
 
         @Override public void run() {
             try {
@@ -71,7 +71,7 @@ public class ServiceDiscovery {
                 discoveryMessage.put("context", "discovery");
                 discoveryMessage.put("address", getWifiAddress());
                 byte[] discovery = mapper.writeValueAsBytes(discoveryMessage);
-                mSocket.send(new DatagramPacket(discovery, discovery.length,group, 45345));
+                mSocket.send(new DatagramPacket(discovery, discovery.length, group, 45345));
                 String incoming;
 
                 while (true) {
@@ -91,7 +91,7 @@ public class ServiceDiscovery {
                 mSocket.close();
                 stopDiscovery();
 
-            } catch(InterruptedIOException e) {
+            } catch (InterruptedIOException e) {
                 bus.post(new DiscoveryStopped(DiscoveryStop.NOT_FOUND));
                 stopDiscovery();
             } catch (IOException e) {
@@ -113,7 +113,7 @@ public class ServiceDiscovery {
     }
 
     private boolean isWifiConnected() {
-        ConnectivityManager cMan = (ConnectivityManager)mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cMan = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo current = cMan.getActiveNetworkInfo();
         return current != null && current.getType() == ConnectivityManager.TYPE_WIFI;
     }

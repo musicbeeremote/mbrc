@@ -37,7 +37,7 @@ public class SearchTrackFragment extends RoboSherlockListFragment {
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String path = ((TrackEntry)getListView().getAdapter().getItem(position)).getSrc();
+                String path = ((TrackEntry) getListView().getAdapter().getItem(position)).getSrc();
 
                 bus.post(new MessageEvent(ProtocolEvent.UserAction,
                         new UserAction(Protocol.LibraryQueueTrack,
@@ -76,15 +76,15 @@ public class SearchTrackFragment extends RoboSherlockListFragment {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             Object line = adapter.getItem(mi.position);
             final String qContext = Protocol.LibraryQueueTrack;
-            final String query = ((TrackEntry)line).getSrc();
+            final String query = ((TrackEntry) line).getSrc();
 
             UserAction ua = null;
             switch (item.getItemId()) {
                 case QUEUE_NEXT:
-                    ua = new UserAction(qContext, new Queue("next",query));
+                    ua = new UserAction(qContext, new Queue("next", query));
                     break;
                 case QUEUE_LAST:
-                    ua = new UserAction(qContext, new Queue("last",query));
+                    ua = new UserAction(qContext, new Queue("last", query));
                     break;
                 case PLAY_NOW:
                     ua = new UserAction(qContext, new Queue("now", query));

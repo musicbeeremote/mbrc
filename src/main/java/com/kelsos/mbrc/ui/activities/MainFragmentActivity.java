@@ -29,7 +29,6 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class MainFragmentActivity extends RoboSherlockFragmentActivity {
-
     @Inject Bus bus;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
@@ -37,13 +36,13 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
     private DisplayFragment mDisplay;
     private boolean navChanged;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-		setContentView(R.layout.ui_main_container);
+        setContentView(R.layout.ui_main_container);
 
-        mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerMenu = findViewById(R.id.drawer_menu);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
@@ -66,7 +65,7 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             return;
         }
 
@@ -77,9 +76,9 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
         mFragment.setArguments(getIntent().getExtras());
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.fragment_container, mFragment,"main_fragment");
+        fragmentTransaction.add(R.id.fragment_container, mFragment, "main_fragment");
         fragmentTransaction.commit();
-	}
+    }
 
     private void closeDrawer() {
         if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
@@ -93,12 +92,12 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public void onDestroy(){
-		super.onDestroy();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
         Crouton.cancelAllCroutons();
     }
 
@@ -112,10 +111,8 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
         bus.unregister(this);
     }
 
-	@Override public boolean onOptionsItemSelected(MenuItem item)
-	{
-		switch (item.getItemId())
-		{
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case android.R.id.home:
                 if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
                     mDrawerLayout.closeDrawer(mDrawerMenu);
@@ -126,10 +123,10 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
                 return true;
             case R.id.actionbar_settings:
                 startActivity(new Intent(this, AppPreferenceView.class));
-			default:
-				return false;
-		}
-	}
+            default:
+                return false;
+        }
+    }
 
     @Override protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -138,7 +135,7 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
 
     @Subscribe public void ShowSetupDialog(NoSettingsAvailable noSettings) {
         DialogFragment dialog = new SetupDialogFragment();
-        dialog.show(getSupportFragmentManager(),"SetupDialogFragment");
+        dialog.show(getSupportFragmentManager(), "SetupDialogFragment");
     }
 
     @Subscribe public void handleDrawerEvent(DrawerEvent event) {
@@ -185,7 +182,7 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
                 break;
             case LYRICS:
                 LyricsFragment lFragment = new LyricsFragment();
-                replaceFragment(lFragment,"lyrics");
+                replaceFragment(lFragment, "lyrics");
                 break;
         }
         navChanged = false;
