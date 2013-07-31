@@ -21,16 +21,19 @@ public class RemoteApplication extends Application {
 
     public void onCreate() {
         super.onCreate();
-        RoboGuice.setBaseApplicationInjector(this, Stage.PRODUCTION, Modules.override(RoboGuice.newDefaultRoboModule(this)).with(new RemoteModule()));
+        RoboGuice.setBaseApplicationInjector(this, Stage.PRODUCTION,
+                Modules.override(RoboGuice.newDefaultRoboModule(this))
+                        .with(new RemoteModule()));
         final RoboInjector injector = RoboGuice.getInjector(this);
 
         startService(new Intent(this, Controller.class));
-        //Just getting the instances ready to start working
-        MainDataModel model = injector.getInstance(MainDataModel.class);
-        ProtocolHandler protocolHandler = injector.getInstance(ProtocolHandler.class);
-        SocketService socketService = injector.getInstance(SocketService.class);
-        RemoteBroadcastReceiver remoteBroadcastReceiver = injector.getInstance(RemoteBroadcastReceiver.class);
-        NotificationService instance = injector.getInstance(NotificationService.class);
+
+        //Initialization of the background service
+        injector.getInstance(MainDataModel.class);
+        injector.getInstance(ProtocolHandler.class);
+        injector.getInstance(SocketService.class);
+        injector.getInstance(RemoteBroadcastReceiver.class);
+        injector.getInstance(NotificationService.class);
 
         //HACK: Force overflow code courtesy of Timo Ohr http://stackoverflow.com/a/11438245
         try {
