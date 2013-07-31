@@ -41,6 +41,7 @@ public class CommandRegistration {
         controller.register(Protocol.LibraryGenreArtists, UpdateArtistSearchResults.class);
         controller.register(Protocol.LibraryAlbumTracks, UpdateTrackSearchResults.class);
         controller.register(Protocol.NowPlayingPosition, UpdatePlaybackPositionCommand.class);
+        controller.register(Protocol.PluginVersion, UpdatePluginVersionCommand.class);
         controller.register(UserInputEvent.SettingsChanged, RestartConnectionCommand.class);
         controller.register(UserInputEvent.CancelNotification, CancelNotificationCommand.class);
         controller.register(UserInputEvent.StartConnection, InitiateConnectionCommand.class);

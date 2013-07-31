@@ -44,13 +44,13 @@ public class MainDataModel {
     private ArrayList<ArtistEntry> searchArtists;
     private ArrayList<MusicTrack> nowPlayingList;
     private LfmStatus lfmRating;
+    private String pluginVersion;
 
     @Inject
     public MainDataModel(MainThreadBusWrapper bus, Context context) {
         this.context = context;
         this.bus = bus;
         bus.register(this);
-
 
         title = artist = album = year = "";
         volume = 100;
@@ -72,6 +72,7 @@ public class MainDataModel {
         searchTracks = new ArrayList<TrackEntry>();
         nowPlayingList = new ArrayList<MusicTrack>();
         lfmRating = LfmStatus.NORMAL;
+        pluginVersion = "";
 
     }
 
@@ -85,6 +86,10 @@ public class MainDataModel {
         }
 
         bus.post(new LfmRatingChanged(lfmRating));
+    }
+
+    public void setPluginVersion(String pluginVersion) {
+        this.pluginVersion = pluginVersion;
     }
 
     @Produce public LfmRatingChanged produceLfmRating() {

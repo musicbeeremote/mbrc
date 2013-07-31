@@ -17,7 +17,6 @@ public class VisualUpdateHandshakeComplete implements ICommand
 
 	public void execute(IEvent e)
 	{
-
         boolean isComplete = (Boolean)e.getData();
         model.setHandShakeDone(isComplete);
 
@@ -27,6 +26,7 @@ public class VisualUpdateHandshakeComplete implements ICommand
         service.sendData(new SocketMessage(Protocol.NowPlayingCover, Protocol.Request, ""));
         service.sendData(new SocketMessage(Protocol.NowPlayingLyrics, Protocol.Request, ""));
         service.sendData(new SocketMessage(Protocol.NowPlayingPosition, Protocol.Request, ""));
+        service.sendData(new SocketMessage(Protocol.PluginVersion, Protocol.Request, ""));
 	}
 }
 
