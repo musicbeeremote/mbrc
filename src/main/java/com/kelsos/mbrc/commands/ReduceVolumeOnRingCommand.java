@@ -9,8 +9,13 @@ import com.kelsos.mbrc.others.Protocol;
 import com.kelsos.mbrc.services.SocketService;
 
 public class ReduceVolumeOnRingCommand implements ICommand {
-    @Inject MainDataModel model;
-    @Inject SocketService service;
+    private MainDataModel model;
+    private SocketService service;
+
+    @Inject public ReduceVolumeOnRingCommand(MainDataModel model, SocketService service) {
+        this.model = model;
+        this.service = service;
+    }
 
     @Override public void execute(IEvent e) {
         service.sendData(new SocketMessage(Protocol.PlayerVolume, Protocol.Request, (int) (model.getVolume() * 0.2)));

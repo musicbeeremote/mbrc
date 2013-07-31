@@ -7,7 +7,11 @@ import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.services.SocketService;
 
 public class RestartConnectionCommand implements ICommand {
-    @Inject SocketService socket;
+    private SocketService socket;
+
+    @Inject public RestartConnectionCommand(SocketService socket) {
+        this.socket = socket;
+    }
 
     @Override public void execute(IEvent e) {
         socket.SocketManager(SocketAction.RESET);

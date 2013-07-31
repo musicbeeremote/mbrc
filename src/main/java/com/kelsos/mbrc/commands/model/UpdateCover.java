@@ -7,7 +7,11 @@ import com.kelsos.mbrc.model.MainDataModel;
 import org.codehaus.jackson.node.TextNode;
 
 public class UpdateCover implements ICommand {
-    @Inject MainDataModel model;
+    private MainDataModel model;
+
+    @Inject public UpdateCover(MainDataModel model) {
+        this.model = model;
+    }
 
     @Override
     public void execute(IEvent e) {

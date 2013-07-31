@@ -6,7 +6,11 @@ import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.messaging.NotificationService;
 
 public class NotifyPluginOutOfDateCommand implements ICommand {
-    @Inject NotificationService notificationService;
+    private NotificationService notificationService;
+
+    @Inject public NotifyPluginOutOfDateCommand(NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
 
     @Override public void execute(IEvent e) {
         notificationService.updateAvailableNotificationBuilder();

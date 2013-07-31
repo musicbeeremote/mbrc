@@ -8,7 +8,11 @@ import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.services.ProtocolHandler;
 
 public class SocketDataAvailableCommand implements ICommand {
-    @Inject ProtocolHandler handler;
+    private ProtocolHandler handler;
+
+    @Inject public SocketDataAvailableCommand(ProtocolHandler handler) {
+        this.handler = handler;
+    }
 
     public void execute(IEvent e) {
         try {

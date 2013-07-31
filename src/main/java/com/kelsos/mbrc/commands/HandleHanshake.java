@@ -5,12 +5,15 @@ import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
 import com.kelsos.mbrc.services.ProtocolHandler;
-import com.kelsos.mbrc.services.SocketService;
 
 public class HandleHanshake implements ICommand {
-    @Inject ProtocolHandler handler;
-    @Inject SocketService service;
-    @Inject MainDataModel model;
+    private ProtocolHandler handler;
+    private MainDataModel model;
+
+    @Inject public HandleHanshake(ProtocolHandler handler, MainDataModel model) {
+        this.handler = handler;
+        this.model = model;
+    }
 
     public void execute(IEvent e) {
         if (!(Boolean) e.getData()) {

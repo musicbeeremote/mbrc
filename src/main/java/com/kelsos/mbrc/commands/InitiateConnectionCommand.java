@@ -7,7 +7,11 @@ import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.services.SocketService;
 
 public class InitiateConnectionCommand implements ICommand {
-    @Inject SocketService socketService;
+    private SocketService socketService;
+
+    @Inject public InitiateConnectionCommand(SocketService socketService) {
+        this.socketService = socketService;
+    }
 
     @Override public void execute(IEvent e) {
         socketService.SocketManager(SocketAction.START);

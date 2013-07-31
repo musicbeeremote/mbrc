@@ -8,7 +8,11 @@ import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 public class UpdatePlaybackPositionCommand implements ICommand {
-    @Inject MainThreadBusWrapper bus;
+    private MainThreadBusWrapper bus;
+
+    @Inject public UpdatePlaybackPositionCommand(MainThreadBusWrapper bus) {
+        this.bus = bus;
+    }
 
     public void execute(IEvent e) {
         ObjectNode oNode = (ObjectNode) e.getData();

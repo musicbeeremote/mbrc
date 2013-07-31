@@ -7,7 +7,11 @@ import com.kelsos.mbrc.model.MainDataModel;
 import org.codehaus.jackson.node.IntNode;
 
 public class UpdateVolume implements ICommand {
-    @Inject MainDataModel model;
+    private MainDataModel model;
+
+    @Inject public UpdateVolume(MainDataModel model) {
+        this.model = model;
+    }
 
     @Override public void execute(IEvent e) {
         model.setVolume(((IntNode) e.getData()).asInt());

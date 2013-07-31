@@ -7,7 +7,11 @@ import com.kelsos.mbrc.model.MainDataModel;
 import org.codehaus.jackson.node.TextNode;
 
 public class UpdateRating implements ICommand {
-    @Inject MainDataModel model;
+    private MainDataModel model;
+
+    @Inject public UpdateRating(MainDataModel model) {
+        this.model = model;
+    }
 
     @Override public void execute(IEvent e) {
         model.setRating(((TextNode) e.getData()).asDouble(0));

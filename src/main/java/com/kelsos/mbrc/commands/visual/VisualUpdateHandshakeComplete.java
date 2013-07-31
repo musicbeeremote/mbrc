@@ -7,12 +7,15 @@ import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
 import com.kelsos.mbrc.others.Protocol;
 import com.kelsos.mbrc.services.SocketService;
-import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 
 public class VisualUpdateHandshakeComplete implements ICommand {
-    @Inject MainThreadBusWrapper bus;
-    @Inject SocketService service;
-    @Inject MainDataModel model;
+    private SocketService service;
+    private MainDataModel model;
+
+    @Inject public VisualUpdateHandshakeComplete(SocketService service, MainDataModel model) {
+        this.service = service;
+        this.model = model;
+    }
 
     public void execute(IEvent e) {
         boolean isComplete = (Boolean) e.getData();

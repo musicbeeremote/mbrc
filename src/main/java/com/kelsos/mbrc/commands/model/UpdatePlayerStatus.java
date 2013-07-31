@@ -8,7 +8,11 @@ import com.kelsos.mbrc.others.Protocol;
 import org.codehaus.jackson.node.ObjectNode;
 
 public class UpdatePlayerStatus implements ICommand {
-    @Inject MainDataModel model;
+    private MainDataModel model;
+
+    @Inject public UpdatePlayerStatus(MainDataModel model) {
+        this.model = model;
+    }
 
     @Override public void execute(IEvent e) {
         ObjectNode node = (ObjectNode)e.getData();

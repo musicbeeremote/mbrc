@@ -6,7 +6,11 @@ import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
 
 public class UpdateRepeat implements ICommand {
-    @Inject MainDataModel model;
+    private MainDataModel model;
+
+    @Inject public UpdateRepeat(MainDataModel model) {
+        this.model = model;
+    }
 
     @Override
     public void execute(IEvent e) {

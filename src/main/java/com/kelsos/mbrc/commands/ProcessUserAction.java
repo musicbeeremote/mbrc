@@ -9,9 +9,14 @@ import com.kelsos.mbrc.others.Protocol;
 import com.kelsos.mbrc.services.SocketService;
 
 public class ProcessUserAction implements ICommand {
-    @Inject SocketService socket;
+    private SocketService socket;
+
+    @Inject public ProcessUserAction(SocketService socket) {
+        this.socket = socket;
+    }
 
     @Override public void execute(IEvent e) {
-        socket.sendData(new SocketMessage(((UserAction) e.getData()).getContext(), Protocol.Request, ((UserAction) e.getData()).getData()));
+        socket.sendData(new SocketMessage(((UserAction) e.getData()).getContext(), Protocol.Request,
+                ((UserAction) e.getData()).getData()));
     }
 }
