@@ -8,6 +8,7 @@ import com.kelsos.mbrc.data.*;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.ui.*;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
@@ -89,7 +90,12 @@ public class MainDataModel {
     }
 
     public void setPluginVersion(String pluginVersion) {
-        this.pluginVersion = pluginVersion;
+        this.pluginVersion = pluginVersion.substring(0, pluginVersion.lastIndexOf('.'));
+        bus.post(new MessageEvent(ProtocolEvent.PluginVersionCheck));
+    }
+
+    public String getPluginVersion() {
+        return pluginVersion;
     }
 
     @Produce public LfmRatingChanged produceLfmRating() {
@@ -305,6 +311,5 @@ public class MainDataModel {
         this.lyrics = lyrics.replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", "\"").replace("&apos;", "'").replace("&amp;", "&").replace("<p>", "\r\n").replace("<br>", "\n").trim();
         bus.post(new LyricsUpdated(this.lyrics));
     }
-
 }
 

@@ -17,6 +17,7 @@ public class CommandRegistration {
         controller.register(ProtocolEvent.InformClientNotAllowed, NotifyNotAllowedCommand.class);
         controller.register(ProtocolEvent.InformClientPluginOutOfDate, NotifyPluginOutOfDateCommand.class);
         controller.register(ProtocolEvent.InitiateProtocolRequest, ProtocolRequest.class);
+        controller.register(ProtocolEvent.PluginVersionCheck, VersionCheckCommand.class);
         controller.register(ProtocolEvent.UserAction, ProcessUserAction.class);
         controller.register(Protocol.NowPlayingTrack, UpdateNowPlayingTrack.class);
         controller.register(Protocol.NowPlayingCover, UpdateCover.class);

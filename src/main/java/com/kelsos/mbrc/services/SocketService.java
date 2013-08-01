@@ -12,7 +12,7 @@ import com.kelsos.mbrc.events.SocketEvent;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.others.Const;
 import com.kelsos.mbrc.others.DelayTimer;
-import com.kelsos.mbrc.others.SettingsManager;
+import com.kelsos.mbrc.utilities.SettingsManager;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import org.codehaus.jackson.map.ObjectMapper;
 

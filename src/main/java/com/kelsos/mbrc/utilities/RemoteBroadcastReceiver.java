@@ -14,7 +14,6 @@ import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.others.Protocol;
-import com.kelsos.mbrc.others.SettingsManager;
 import com.squareup.otto.Bus;
 import roboguice.receiver.RoboBroadcastReceiver;
 
