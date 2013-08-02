@@ -3,10 +3,4 @@
 
     <item android:id="@+id/actionbar_settings"
           android:title="@string/main_menu_settings"/>
-
-    <item
-        android:id="@+id/actionbar_share"
-        android:title="@string/main_menu_title_share"
-        android:actionProviderClass="com.actionbarsherlock.widget.ShareActionProvider"/>
-
 </menu>

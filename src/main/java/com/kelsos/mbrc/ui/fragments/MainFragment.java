@@ -289,7 +289,7 @@ public class MainFragment extends RoboSherlockFragment {
     }
 
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.share, menu);
         MenuItem shareItem = menu.findItem(R.id.actionbar_share);
         mShareActionProvider = (ShareActionProvider) shareItem.getActionProvider();
     }

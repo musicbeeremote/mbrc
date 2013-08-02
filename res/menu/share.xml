@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+            android:id="@+id/actionbar_share"
+            android:title="@string/main_menu_title_share"
+            android:actionProviderClass="com.actionbarsherlock.widget.ShareActionProvider"/>
+</menu>
