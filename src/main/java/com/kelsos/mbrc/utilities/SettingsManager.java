@@ -14,7 +14,6 @@ import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.NoSettingsAvailable;
 import com.kelsos.mbrc.events.ui.NotifyUser;
-import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 import org.codehaus.jackson.JsonNode;
@@ -89,6 +88,10 @@ public class SettingsManager {
 
     private static boolean nullOrEmpty(String string) {
         return string == null || string.equals("");
+    }
+
+    public boolean isNotificationControlEnabled() {
+        return mPreferences.getBoolean(mContext.getString(R.string.settings_key_notification_control), true);
     }
 
     private void storeSettings() {

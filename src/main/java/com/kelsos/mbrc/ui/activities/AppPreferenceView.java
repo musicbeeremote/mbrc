@@ -12,6 +12,8 @@ import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockPrefere
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.utilities.RemoteUtils;
 import com.squareup.otto.Bus;
 
@@ -58,6 +60,18 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity {
                 }
             }
         }
+
+        final Preference mShowNotification = findPreference(getResources().
+                getString(R.string.settings_key_notification_control));
+        mShowNotification.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    @Override public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        boolean value = (Boolean)newValue;
+                        if (!value) {
+                            bus.post(new MessageEvent(UserInputEvent.CancelNotification));
+                        }
+                        return true;
+                    }
+                });
     }
 
     private void showOpenSourceLicenseDialog() {

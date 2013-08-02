@@ -18,6 +18,7 @@ import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
 import com.kelsos.mbrc.ui.activities.MainFragmentActivity;
 import com.kelsos.mbrc.ui.activities.UpdateView;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
+import com.kelsos.mbrc.utilities.SettingsManager;
 import com.squareup.otto.Subscribe;
 
 @Singleton
@@ -41,15 +42,18 @@ public class NotificationService {
     private NotificationManager mNotificationManager;
     private Context mContext;
     private MainThreadBusWrapper bus;
+    private SettingsManager mSettings;
 
-    @Inject public NotificationService(Context context, MainThreadBusWrapper bus) {
+    @Inject public NotificationService(Context context, MainThreadBusWrapper bus, SettingsManager mSettings) {
         this.mContext = context;
         this.bus = bus;
+        this.mSettings = mSettings;
         mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         bus.register(this);
     }
 
     @Subscribe public void handleNotificationData(final NotificationDataAvailable event) {
+        if (!mSettings.isNotificationControlEnabled()) return;
         notificationBuilder(event.getTitle(), event.getArtist(), event.getAlbum(), event.getCover(), event.getState());
     }
 

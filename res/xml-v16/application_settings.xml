@@ -12,15 +12,21 @@
                 android:summary="@string/settings_miscellaneous_reduce_volume_description"
                 android:title="@string/settings_miscellaneous_reduce_volume"
                 android:defaultValue="false"/>
+        <CheckBoxPreference
+                android:key="@string/settings_key_notification_control"
+                android:summary="@string/settings_sum_notification_control"
+                android:title="@string/settings_title_notification_control"
+                android:defaultValue="true"/>
 
     </PreferenceCategory>
-    <ListPreference android:key="@string/settings_search_default_key"
-                    android:title="@string/settings_search_default_title"
-                    android:summary="@string/settings_search_default_summary"
-                    android:dialogTitle="@string/settings_search_default_title"
-                    android:entries="@array/search_click_options"
-                    android:entryValues="@array/search_click_options_values"
-                    android:defaultValue="@string/search_click_default_value"/>
+    <ListPreference
+            android:key="@string/settings_search_default_key"
+            android:title="@string/settings_search_default_title"
+            android:summary="@string/settings_search_default_summary"
+            android:dialogTitle="@string/settings_search_default_title"
+            android:entries="@array/search_click_options"
+            android:entryValues="@array/search_click_options_values"
+            android:defaultValue="@string/search_click_default_value"/>
 
     <PreferenceCategory android:title="@string/preferences_category_about">
         <Preference
