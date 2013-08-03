@@ -15,10 +15,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activities.AppPreferenceView">
-        </activity>
-        <activity android:excludeFromRecents="true" android:launchMode="singleTask" android:name=".ui.activities.UpdateView" android:taskAffinity="">
-	    </activity>
+        <activity android:name=".ui.activities.AppPreferenceView"/>
         <activity android:name=".ui.activities.ConnectionManagerActivity" android:windowSoftInputMode="adjustNothing"/>
         <service android:description="@string/info_service_description" android:name=".controller.Controller" android:permission="android.permission.READ_PHONE_STATE">
             <intent-filter>

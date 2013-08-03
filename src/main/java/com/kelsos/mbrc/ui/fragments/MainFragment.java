@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.fragments;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.ShareActionProvider;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.inject.Inject;
+import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.enums.ConnectionStatus;
@@ -421,6 +423,9 @@ public class MainFragment extends RoboSherlockFragment {
                             trackProgressSlider.setProgress(trackProgressSlider.getProgress() + timerPeriod);
                             trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
                         } catch (Exception ex) {
+                            if (BuildConfig.DEBUG) {
+                                Log.d("mbrc-log:","animation timer", ex);
+                            }
                         }
                     }
                 });

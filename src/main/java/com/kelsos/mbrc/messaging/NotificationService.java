@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
@@ -16,7 +17,6 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
 import com.kelsos.mbrc.ui.activities.MainFragmentActivity;
-import com.kelsos.mbrc.ui.activities.UpdateView;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.squareup.otto.Subscribe;
@@ -184,8 +184,9 @@ public class NotificationService {
                 .setContentTitle(mContext.getString(R.string.application_name))
                 .setContentText(mContext.getString(R.string.notification_plugin_out_of_date));
 
-        Intent resultIntent = new Intent(mContext, UpdateView.class);
+        Intent resultIntent = new Intent(Intent.ACTION_VIEW);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        resultIntent.setData(Uri.parse("http://kelsos.net/musicbeeremote/download/"));
 
         PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext, 0, resultIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);

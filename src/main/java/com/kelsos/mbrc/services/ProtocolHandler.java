@@ -52,9 +52,6 @@ public class ProtocolHandler {
                         bus.post(new MessageEvent(ProtocolEvent.InitiateProtocolRequest));
                     } else if (context.contains(Protocol.Protocol)) {
                         ServerProtocolVersion = node.path("data").getDoubleValue();
-                        if (ServerProtocolVersion < 2) {
-                            bus.post(new MessageEvent(ProtocolEvent.InformClientPluginOutOfDate));
-                        }
                         isHandshakeComplete = true;
                         bus.post(new MessageEvent(ProtocolEvent.HandshakeComplete, true));
                     } else {

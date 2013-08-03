@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
+import java.util.Date;
 
 @Singleton
 public class SettingsManager {
@@ -132,6 +133,16 @@ public class SettingsManager {
         editor.putInt(mContext.getString(R.string.settings_key_default_index), index);
         editor.commit();
         defaultIndex = index;
+    }
+
+    public void setLastUpdated(Date lastChecked) {
+        SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putLong(mContext.getString(R.string.settings_key_last_update_check), lastChecked.getTime());
+        editor.commit();
+    }
+
+    public Date getLastUpdated() {
+        return new Date(mPreferences.getLong(mContext.getString(R.string.settings_key_last_update_check), 0));
     }
 
     @Produce public ConnectionSettingsChanged produceConnectionSettings() {
