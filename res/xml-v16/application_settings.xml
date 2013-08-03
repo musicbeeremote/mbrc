@@ -33,6 +33,9 @@
                 android:title="@string/settings_oss_license"
                 android:key="@string/preferences_open_source"/>
         <Preference
+                android:title="@string/settings_title_license"
+                android:key="@string/settings_key_license"/>
+        <Preference
                 android:summary="@string/settings_version_number"
                 android:key="@string/settings_version"
                 android:title="@string/preferences_about_version"/>

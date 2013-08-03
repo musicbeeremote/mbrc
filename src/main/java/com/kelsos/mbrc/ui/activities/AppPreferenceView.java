@@ -64,14 +64,33 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity {
         final Preference mShowNotification = findPreference(getResources().
                 getString(R.string.settings_key_notification_control));
         mShowNotification.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                    @Override public boolean onPreferenceChange(Preference preference, Object newValue) {
-                        boolean value = (Boolean)newValue;
-                        if (!value) {
-                            bus.post(new MessageEvent(UserInputEvent.CancelNotification));
-                        }
-                        return true;
-                    }
-                });
+            @Override public boolean onPreferenceChange(Preference preference, Object newValue) {
+                boolean value = (Boolean) newValue;
+                if (!value) {
+                    bus.post(new MessageEvent(UserInputEvent.CancelNotification));
+                }
+                return true;
+            }
+        });
+
+        final Preference mLicense = findPreference(getResources().getString(R.string.settings_key_license));
+        mLicense.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override public boolean onPreferenceClick(Preference preference) {
+                showLicenseDialog();
+                return false;
+            }
+        });
+    }
+
+    private void showLicenseDialog() {
+        final WebView webView = new WebView(this);
+        webView.loadUrl("file:///android_asset/license.html");
+        new AlertDialog.Builder(this)
+                .setView(webView)
+                .setPositiveButton(android.R.string.ok, null)
+                .setTitle("MusicBee Remote license")
+                .create()
+                .show();
     }
 
     private void showOpenSourceLicenseDialog() {
