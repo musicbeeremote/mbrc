@@ -138,5 +138,6 @@
     <string name="settings_key_last_update_check">last_update_check</string>
     <string name="settings_title_license">License</string>
     <string name="settings_key_license">mbrc_license</string>
+    <string name="main_menu_help">Help</string>
 
 </resources>

@@ -2,6 +2,7 @@ package com.kelsos.mbrc.ui.activities;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.*;
 import android.support.v4.widget.DrawerLayout;
@@ -126,6 +127,12 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
                 return true;
             case R.id.actionbar_settings:
                 startActivity(new Intent(this, AppPreferenceView.class));
+                return true;
+            case R.id.actionbar_help:
+                Intent openHelp = new Intent(Intent.ACTION_VIEW);
+                openHelp.setData(Uri.parse("http://kelsos.net/musicbeeremote/help/"));
+                startActivity(openHelp);
+                return true;
             default:
                 return false;
         }
