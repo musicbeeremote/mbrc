@@ -14,9 +14,9 @@ public class SocketDataAvailableCommand implements ICommand {
         this.handler = handler;
     }
 
-    public void execute(IEvent e) {
+    public void execute(final IEvent e) {
         try {
-            handler.answerProcessor(e.getDataString());
+            handler.preProcessIncoming(e.getDataString());
         } catch (Exception ex) {
             if (BuildConfig.DEBUG) {
                 Log.d("mbrc-log", "message processing", ex);

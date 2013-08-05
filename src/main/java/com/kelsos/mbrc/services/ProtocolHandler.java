@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.services;
 
+import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
@@ -28,15 +29,9 @@ public class ProtocolHandler {
         isHandshakeComplete = false;
     }
 
-    /**
-     * Given the socket server's answer this function processes the send data, extracts needed
-     * information and then notifies the interested parts via Intents for the new changes/data.
-     *
-     * @param answer the answer that came from the server
-     */
-    public void answerProcessor(String answer) {
+    public void preProcessIncoming(final String incoming) {
         try {
-            String[] replies = answer.split("\r\n");
+            final String[] replies = incoming.split("\r\n");
             for (String reply : replies) {
 
                 JsonNode node = mapper.readValue(reply, JsonNode.class);
@@ -64,7 +59,8 @@ public class ProtocolHandler {
 
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
-                e.printStackTrace();
+                Log.d("mbrc-log", "Incoming message pre-processor", e);
+
             }
         }
 

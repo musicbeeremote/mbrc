@@ -30,8 +30,6 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.inject.InjectView;
 
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -177,9 +175,9 @@ public class MainFragment extends RoboSherlockFragment {
         public void onClick(View view) {
 
             if (!isActive) {
-                final int fadeInDuration = 600;
+                final int fadeInDuration = 300;
                 final int timeBetween = 3000;
-                final int fadeOutDuration = 1000;
+                final int fadeOutDuration = 800;
 
                 Animation fadeIn = new AlphaAnimation(0, 1);
                 fadeIn.setInterpolator(new DecelerateInterpolator());
@@ -202,12 +200,13 @@ public class MainFragment extends RoboSherlockFragment {
 
                     @Override public void onAnimationEnd(Animation animation) {
                         isActive = false;
+                        ratingWrapper.setVisibility(View.INVISIBLE);
                     }
 
                     @Override public void onAnimationRepeat(Animation animation) {
                     }
                 });
-
+                ratingWrapper.setVisibility(View.VISIBLE);
                 ratingWrapper.startAnimation(animation);
             }
         }
@@ -424,7 +423,7 @@ public class MainFragment extends RoboSherlockFragment {
                     @Override public void run() {
                         try {
                             if (trackProgressSlider == null) return;
-                            trackProgressSlider.setProgress(trackProgressSlider.getProgress() + (TIME_PERIOD * 1000));
+                            trackProgressSlider.setProgress(trackProgressSlider.getProgress() + 1000);
                             trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
                         } catch (Exception ex) {
                             if (BuildConfig.DEBUG) {
