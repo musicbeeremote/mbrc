@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.webkit.WebView;
@@ -61,17 +62,20 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity {
             }
         }
 
-        final Preference mShowNotification = findPreference(getResources().
-                getString(R.string.settings_key_notification_control));
-        mShowNotification.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override public boolean onPreferenceChange(Preference preference, Object newValue) {
-                boolean value = (Boolean) newValue;
-                if (!value) {
-                    bus.post(new MessageEvent(UserInputEvent.CancelNotification));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            final Preference mShowNotification = findPreference(getResources().
+                    getString(R.string.settings_key_notification_control));
+            mShowNotification.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean value = (Boolean) newValue;
+                    if (!value) {
+                        bus.post(new MessageEvent(UserInputEvent.CancelNotification));
+                    }
+                    return true;
                 }
-                return true;
-            }
-        });
+            });
+        }
 
         final Preference mLicense = findPreference(getResources().getString(R.string.settings_key_license));
         mLicense.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
