@@ -113,6 +113,10 @@ public class VersionCheckCommand implements ICommand {
                 if (BuildConfig.DEBUG) {
                     Log.d("mbrc-log", "version check PackageManager.NameNotFoundException",e);
                 }
+            } catch (NumberFormatException e) {
+                if (BuildConfig.DEBUG) {
+                    Log.d("mbrc-log", "version check NumberFormatException",e);
+                }
             }
         }
     }

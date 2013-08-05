@@ -188,7 +188,6 @@ public class MainFragment extends RoboSherlockFragment {
                 animation.addAnimation(fadeOut);
                 animation.setRepeatCount(1);
 
-                ratingWrapper.startAnimation(animation);
                 animation.setAnimationListener(new Animation.AnimationListener() {
                     @Override public void onAnimationStart(Animation animation) {
                         isActive = true;
@@ -201,6 +200,8 @@ public class MainFragment extends RoboSherlockFragment {
                     @Override public void onAnimationRepeat(Animation animation) {
                     }
                 });
+
+                ratingWrapper.startAnimation(animation);
             }
         }
     };
