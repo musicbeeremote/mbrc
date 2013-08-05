@@ -8,24 +8,27 @@ import com.kelsos.mbrc.ui.fragments.SearchArtistFragment;
 import com.kelsos.mbrc.ui.fragments.SearchGenreFragment;
 import com.kelsos.mbrc.ui.fragments.SearchTrackFragment;
 
-import java.util.ArrayList;
-
 public class SearchPagerAdapter extends FragmentStatePagerAdapter {
     private int mCount = 4;
-    private final ArrayList<Fragment> mFragments = new ArrayList<Fragment>();
     private final CharSequence pageTitles[] = new CharSequence[]{"Genre", "Artist", "Album", "Track"};
-
 
     public SearchPagerAdapter(FragmentActivity activity) {
         super(activity.getSupportFragmentManager());
-        mFragments.add(new SearchGenreFragment());
-        mFragments.add(new SearchArtistFragment());
-        mFragments.add(new SearchAlbumFragment());
-        mFragments.add(new SearchTrackFragment());
     }
 
     @Override public Fragment getItem(int position) {
-        return mFragments.get(position);
+
+        switch (position) {
+            case 0:
+                return new SearchGenreFragment();
+            case 1:
+                return new SearchArtistFragment();
+            case 2:
+                return new SearchAlbumFragment();
+            case 3:
+                return new SearchTrackFragment();
+        }
+        return null;
     }
 
     @Override public int getCount() {

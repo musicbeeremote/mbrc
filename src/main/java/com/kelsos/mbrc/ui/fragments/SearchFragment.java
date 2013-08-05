@@ -135,4 +135,9 @@ public class SearchFragment extends RoboSherlockFragment implements SearchView.O
             }
         }
     }
+
+    @Override public void onDestroy() {
+        super.onDestroy();
+        mAdapter = null;
+    }
 }

@@ -78,7 +78,7 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
         mFragment.setArguments(getIntent().getExtras());
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.fragment_container, mFragment, "main_fragment");
+        fragmentTransaction.replace(R.id.fragment_container, mFragment, "main_fragment");
         fragmentTransaction.commit();
     }
 

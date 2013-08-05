@@ -15,6 +15,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.ShareActionProvider;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.UserAction;
@@ -31,7 +32,12 @@ import roboguice.inject.InjectView;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
+@Singleton
 public class MainFragment extends RoboSherlockFragment {
     // Injects
     @Inject protected Bus bus;
@@ -60,8 +66,9 @@ public class MainFragment extends RoboSherlockFragment {
     private ShareActionProvider mShareActionProvider;
     private boolean userChangingVolume;
     private int previousVol;
-    private Timer progressUpdateTimer;
-    private TimerTask progressUpdateTask;
+    private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
+    private ScheduledFuture mProgressUpdateHandler;
+
     private RatingBar.OnRatingBarChangeListener ratingChangeListener = new RatingBar.OnRatingBarChangeListener() {
         @Override
         public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
@@ -388,14 +395,9 @@ public class MainFragment extends RoboSherlockFragment {
      * If the track progress animation is running the the function stops it.
      */
     private void stopTrackProgressAnimation() {
-        if (progressUpdateTask != null) {
-            progressUpdateTask.cancel();
-            progressUpdateTask = null;
-            progressUpdateTimer.cancel();
-            progressUpdateTimer.purge();
-            progressUpdateTimer = null;
+        if (mProgressUpdateHandler != null) {
+            mProgressUpdateHandler.cancel(true);
         }
-
     }
 
     /**
@@ -404,24 +406,25 @@ public class MainFragment extends RoboSherlockFragment {
     private void trackProgressAnimation() {
         if (!isVisible()) return;
         /* If the scheduled tasks is not null then cancel it and clear it along with the timer to create them anew */
-        final int timerPeriod = 100;
+        final int TIME_PERIOD = 1;
         stopTrackProgressAnimation();
         if (!stopButton.isEnabled() || playPauseButton.getTag() == "Paused") return;
-        progressUpdateTimer = new Timer(true);
-        progressUpdateTask = new TimerTask() {
-            @Override
-            public void run() {
+
+        final Runnable updateProgress = new Runnable() {
+            @Override public void run() {
+
                 int currentProgress = trackProgressSlider.getProgress() / 1000;
                 final int currentMinutes = currentProgress / 60;
                 final int currentSeconds = currentProgress % 60;
 
                 if (getActivity() == null) return;
+
                 getActivity().runOnUiThread(new Runnable() {
 
                     @Override public void run() {
                         try {
                             if (trackProgressSlider == null) return;
-                            trackProgressSlider.setProgress(trackProgressSlider.getProgress() + timerPeriod);
+                            trackProgressSlider.setProgress(trackProgressSlider.getProgress() + (TIME_PERIOD * 1000));
                             trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
                         } catch (Exception ex) {
                             if (BuildConfig.DEBUG) {
@@ -430,11 +433,12 @@ public class MainFragment extends RoboSherlockFragment {
                         }
                     }
                 });
-
-
             }
         };
-        progressUpdateTimer.schedule(progressUpdateTask, 0, timerPeriod);
+
+        mProgressUpdateHandler = progressScheduler.scheduleAtFixedRate(updateProgress, 0,
+                TIME_PERIOD, TimeUnit.SECONDS);
+
     }
 
     private void activateStoppedState() {
