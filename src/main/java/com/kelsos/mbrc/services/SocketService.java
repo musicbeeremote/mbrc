@@ -132,19 +132,10 @@ public class SocketService {
         }
     }
 
-    public void informEventBus(final MessageEvent event) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                bus.post(event);
-            }
-        }).start();
-    }
-
     private class socketConnection implements Runnable {
         public void run() {
             SocketAddress socketAddress = settingsManager.getSocketAddress();
-            informEventBus(new MessageEvent(SocketEvent.SocketHandshakeUpdate, false));
+            bus.post(new MessageEvent(SocketEvent.SocketHandshakeUpdate, false));
             if (null == socketAddress) return;
             BufferedReader input;
             try {
@@ -155,13 +146,13 @@ public class SocketService {
 
                 String socketStatus = String.valueOf(clSocket.isConnected());
 
-                informEventBus(new MessageEvent(SocketEvent.SocketStatusChanged, socketStatus));
+                bus.post(new MessageEvent(SocketEvent.SocketStatusChanged, socketStatus));
                 while (clSocket.isConnected()) {
                     try {
                         final String incoming = input.readLine();
                         if (incoming == null) throw new IOException();
                         if (incoming.length() > 0)
-                            informEventBus(new MessageEvent(SocketEvent.SocketDataAvailable, incoming));
+                            bus.post(new MessageEvent(SocketEvent.SocketDataAvailable, incoming));
                     } catch (IOException e) {
                         input.close();
                         clSocket.close();
@@ -181,7 +172,7 @@ public class SocketService {
                 }
                 clSocket = null;
 
-                informEventBus(new MessageEvent(SocketEvent.SocketStatusChanged, false));
+                bus.post(new MessageEvent(SocketEvent.SocketStatusChanged, false));
                 if (numOfRetries < MAX_RETRIES) SocketManager(SocketAction.RETRY);
                 if (BuildConfig.DEBUG) {
                     Log.d("mbrc-log", "socket closed");

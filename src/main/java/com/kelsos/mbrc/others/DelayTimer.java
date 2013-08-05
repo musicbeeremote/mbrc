@@ -41,7 +41,7 @@ public class DelayTimer {
             mTimer.purge();
             mTimer = null;
         }
-        mTimer = new Timer();
+        mTimer = new Timer(true);
         mTimerTask = new InternalTimerTask();
         mTimer.schedule(mTimerTask, delay);
         isRunning = true;
