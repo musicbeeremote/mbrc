@@ -13,8 +13,8 @@ import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockPrefere
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.utilities.RemoteUtils;
 import com.squareup.otto.Bus;
 
@@ -71,7 +71,7 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity {
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
                         boolean value = (Boolean) newValue;
                         if (!value) {
-                            bus.post(new MessageEvent(UserInputEvent.CancelNotification));
+                            bus.post(new MessageEvent(UserInputEventType.CancelNotification));
                         }
                         return true;
                     }

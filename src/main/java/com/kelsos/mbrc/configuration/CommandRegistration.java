@@ -4,21 +4,21 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.commands.*;
 import com.kelsos.mbrc.commands.model.*;
 import com.kelsos.mbrc.commands.visual.*;
+import com.kelsos.mbrc.constants.ProtocolEventType;
+import com.kelsos.mbrc.constants.SocketEventType;
+import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.controller.Controller;
-import com.kelsos.mbrc.events.ProtocolEvent;
-import com.kelsos.mbrc.events.SocketEvent;
-import com.kelsos.mbrc.events.UserInputEvent;
-import com.kelsos.mbrc.others.Protocol;
+import com.kelsos.mbrc.constants.Protocol;
 
 public class CommandRegistration {
     @Inject public static void register(Controller controller) {
-        controller.register(ProtocolEvent.ReduceVolume, ReduceVolumeOnRingCommand.class);
-        controller.register(ProtocolEvent.HandshakeComplete, VisualUpdateHandshakeComplete.class);
-        controller.register(ProtocolEvent.InformClientNotAllowed, NotifyNotAllowedCommand.class);
-        controller.register(ProtocolEvent.InformClientPluginOutOfDate, NotifyPluginOutOfDateCommand.class);
-        controller.register(ProtocolEvent.InitiateProtocolRequest, ProtocolRequest.class);
-        controller.register(ProtocolEvent.PluginVersionCheck, VersionCheckCommand.class);
-        controller.register(ProtocolEvent.UserAction, ProcessUserAction.class);
+        controller.register(ProtocolEventType.ReduceVolume, ReduceVolumeOnRingCommand.class);
+        controller.register(ProtocolEventType.HandshakeComplete, VisualUpdateHandshakeComplete.class);
+        controller.register(ProtocolEventType.InformClientNotAllowed, NotifyNotAllowedCommand.class);
+        controller.register(ProtocolEventType.InformClientPluginOutOfDate, NotifyPluginOutOfDateCommand.class);
+        controller.register(ProtocolEventType.InitiateProtocolRequest, ProtocolRequest.class);
+        controller.register(ProtocolEventType.PluginVersionCheck, VersionCheckCommand.class);
+        controller.register(ProtocolEventType.UserAction, ProcessUserAction.class);
         controller.register(Protocol.NowPlayingTrack, UpdateNowPlayingTrack.class);
         controller.register(Protocol.NowPlayingCover, UpdateCover.class);
         controller.register(Protocol.NowPlayingRating, UpdateRating.class);
@@ -43,15 +43,15 @@ public class CommandRegistration {
         controller.register(Protocol.LibraryAlbumTracks, UpdateTrackSearchResults.class);
         controller.register(Protocol.NowPlayingPosition, UpdatePlaybackPositionCommand.class);
         controller.register(Protocol.PluginVersion, UpdatePluginVersionCommand.class);
-        controller.register(UserInputEvent.SettingsChanged, RestartConnectionCommand.class);
-        controller.register(UserInputEvent.CancelNotification, CancelNotificationCommand.class);
-        controller.register(UserInputEvent.StartConnection, InitiateConnectionCommand.class);
-        controller.register(UserInputEvent.ResetConnection, RestartConnectionCommand.class);
-        controller.register(UserInputEvent.StartDiscovery, StartDiscoveryCommand.class);
-        controller.register(UserInputEvent.KeyVolumeUp, KeyVolumeUpCommand.class);
-        controller.register(UserInputEvent.KeyVolumeDown, KeyVolumeDownCommand.class);
-        controller.register(SocketEvent.SocketDataAvailable, SocketDataAvailableCommand.class);
-        controller.register(SocketEvent.SocketStatusChanged, ConnectionStatusChangedCommand.class);
-        controller.register(SocketEvent.SocketHandshakeUpdate, HandleHanshake.class);
+        controller.register(UserInputEventType.SettingsChanged, RestartConnectionCommand.class);
+        controller.register(UserInputEventType.CancelNotification, CancelNotificationCommand.class);
+        controller.register(UserInputEventType.StartConnection, InitiateConnectionCommand.class);
+        controller.register(UserInputEventType.ResetConnection, RestartConnectionCommand.class);
+        controller.register(UserInputEventType.StartDiscovery, StartDiscoveryCommand.class);
+        controller.register(UserInputEventType.KeyVolumeUp, KeyVolumeUpCommand.class);
+        controller.register(UserInputEventType.KeyVolumeDown, KeyVolumeDownCommand.class);
+        controller.register(SocketEventType.SocketDataAvailable, SocketDataAvailableCommand.class);
+        controller.register(SocketEventType.SocketStatusChanged, ConnectionStatusChangedCommand.class);
+        controller.register(SocketEventType.SocketHandshakeUpdate, HandleHanshake.class);
     }
 }

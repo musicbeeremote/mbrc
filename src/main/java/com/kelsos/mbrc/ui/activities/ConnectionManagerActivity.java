@@ -14,10 +14,10 @@ import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmen
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ConnectionSettingsAdapter;
+import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.enums.SettingsAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
@@ -110,7 +110,7 @@ public class ConnectionManagerActivity extends RoboSherlockFragmentActivity impl
     Button.OnClickListener scanListener = new Button.OnClickListener() {
         @Override public void onClick(View view) {
             mProgress = ProgressDialog.show(mContext, getString(R.string.progress_scanning), getString(R.string.progress_scanning_message), true, false);
-            bus.post(new MessageEvent(UserInputEvent.StartDiscovery));
+            bus.post(new MessageEvent(UserInputEventType.StartDiscovery));
         }
     };
 

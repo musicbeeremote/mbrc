@@ -1,7 +1,7 @@
-package com.kelsos.mbrc.events;
+package com.kelsos.mbrc.constants;
 
 
-public class ProtocolEvent {
+public class ProtocolEventType {
     public static final String InitiateProtocolRequest = "InitiateProtocolRequest";
     public static final String ReduceVolume = "ReduceVolume";
     public static final String HandshakeComplete = "HandshakeComplete";

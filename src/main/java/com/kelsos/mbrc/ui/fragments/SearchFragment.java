@@ -14,11 +14,11 @@ import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragmen
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.*;
+import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.*;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.events.ui.*;
-import com.kelsos.mbrc.others.Protocol;
+import com.kelsos.mbrc.constants.Protocol;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.viewpagerindicator.TitlePageIndicator;
@@ -53,7 +53,7 @@ public class SearchFragment extends RoboSherlockFragment implements SearchView.O
         mSearchView.setIconified(true);
         mSearchItem.collapseActionView();
 
-        bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(pContext, query.trim())));
+        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(pContext, query.trim())));
 
         return false;
     }

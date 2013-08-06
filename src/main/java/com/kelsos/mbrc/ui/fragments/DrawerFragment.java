@@ -17,10 +17,10 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.DrawerAdapter;
+import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.NavigationEntry;
 import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
 import com.kelsos.mbrc.utilities.RemoteUtils;
@@ -45,7 +45,7 @@ public class DrawerFragment extends RoboSherlockListFragment implements Fragment
     private TextView.OnLongClickListener connectButtonLongClick = new TextView.OnLongClickListener() {
         @Override
         public boolean onLongClick(View view) {
-            bus.post(new MessageEvent(UserInputEvent.ResetConnection));
+            bus.post(new MessageEvent(UserInputEventType.ResetConnection));
             return false;
         }
     };
@@ -53,7 +53,7 @@ public class DrawerFragment extends RoboSherlockListFragment implements Fragment
     private TextView.OnClickListener connectButtonClick = new TextView.OnClickListener() {
 
         public void onClick(View v) {
-            bus.post(new MessageEvent(UserInputEvent.StartConnection));
+            bus.post(new MessageEvent(UserInputEventType.StartConnection));
         }
     };
 

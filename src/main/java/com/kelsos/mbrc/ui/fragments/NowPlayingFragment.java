@@ -15,15 +15,15 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistArrayAdapter;
+import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.MusicTrack;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.events.ui.NowPlayingListAvailable;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.events.ui.TrackMoved;
 import com.kelsos.mbrc.events.ui.TrackRemoval;
-import com.kelsos.mbrc.others.Protocol;
+import com.kelsos.mbrc.constants.Protocol;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import com.squareup.otto.Bus;
@@ -78,7 +78,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
     }
 
     public boolean onQueryTextSubmit(String query) {
-        bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingListSearch, query.trim())));
+        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingListSearch, query.trim())));
         mSearchView.setIconified(true);
         mSearchItem.collapseActionView();
         return false;
@@ -117,7 +117,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
     @Override public void onStart() {
         super.onStart();
         bus.register(this);
-        bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingList, true)));
+        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingList, true)));
     }
 
     @Override public void onStop() {
@@ -139,7 +139,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
         super.onListItemClick(l, v, position, id);
         adapter.setPlayingTrackIndex(position);
         adapter.notifyDataSetChanged();
-        bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingListPlay, position + 1)));
+        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingListPlay, position + 1)));
     }
 
     private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
@@ -155,7 +155,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
                 Map<String, Integer> move = new HashMap<String, Integer>();
                 move.put("from", from);
                 move.put("to", to);
-                bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingListMove, move)));
+                bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingListMove, move)));
             }
         }
     };
@@ -183,7 +183,7 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
             mTrack = adapter.getItem(which);
             adapter.remove(mTrack);
             adapter.notifyDataSetChanged();
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingListRemove, which)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingListRemove, which)));
         }
     };
 

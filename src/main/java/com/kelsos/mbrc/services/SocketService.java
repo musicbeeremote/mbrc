@@ -5,13 +5,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.constants.SocketEventType;
 import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.SocketEvent;
 import com.kelsos.mbrc.events.ui.NotifyUser;
-import com.kelsos.mbrc.others.Const;
-import com.kelsos.mbrc.others.DelayTimer;
+import com.kelsos.mbrc.constants.Const;
+import com.kelsos.mbrc.utilities.DelayTimer;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -135,7 +135,7 @@ public class SocketService {
     private class socketConnection implements Runnable {
         public void run() {
             SocketAddress socketAddress = settingsManager.getSocketAddress();
-            bus.post(new MessageEvent(SocketEvent.SocketHandshakeUpdate, false));
+            bus.post(new MessageEvent(SocketEventType.SocketHandshakeUpdate, false));
             if (null == socketAddress) return;
             BufferedReader input;
             try {
@@ -146,13 +146,13 @@ public class SocketService {
 
                 String socketStatus = String.valueOf(clSocket.isConnected());
 
-                bus.post(new MessageEvent(SocketEvent.SocketStatusChanged, socketStatus));
+                bus.post(new MessageEvent(SocketEventType.SocketStatusChanged, socketStatus));
                 while (clSocket.isConnected()) {
                     try {
                         final String incoming = input.readLine();
                         if (incoming == null) throw new IOException();
                         if (incoming.length() > 0)
-                            bus.post(new MessageEvent(SocketEvent.SocketDataAvailable, incoming));
+                            bus.post(new MessageEvent(SocketEventType.SocketDataAvailable, incoming));
                     } catch (IOException e) {
                         input.close();
                         clSocket.close();
@@ -172,7 +172,7 @@ public class SocketService {
                 }
                 clSocket = null;
 
-                bus.post(new MessageEvent(SocketEvent.SocketStatusChanged, false));
+                bus.post(new MessageEvent(SocketEventType.SocketStatusChanged, false));
                 if (numOfRetries < MAX_RETRIES) SocketManager(SocketAction.RETRY);
                 if (BuildConfig.DEBUG) {
                     Log.d("mbrc-log", "socket closed");

@@ -6,7 +6,7 @@ import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.model.MainDataModel;
-import com.kelsos.mbrc.others.Protocol;
+import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.services.SocketService;
 
 public class ConnectionStatusChangedCommand implements ICommand {

@@ -4,8 +4,8 @@ import android.content.pm.PackageManager;
 import android.util.Log;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
+import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
@@ -82,7 +82,7 @@ public class VersionCheckCommand implements ICommand {
                     }
 
                     if (isOutOfDate) {
-                        bus.post(new MessageEvent(ProtocolEvent.InformClientPluginOutOfDate));
+                        bus.post(new MessageEvent(ProtocolEventType.InformClientPluginOutOfDate));
                     }
                 }
 

@@ -9,8 +9,8 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.configuration.CommandRegistration;
+import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.squareup.otto.Bus;
@@ -93,7 +93,7 @@ public class Controller extends RoboService {
     }
 
     @Override public void onDestroy() {
-        executeCommand(new MessageEvent(UserInputEvent.CancelNotification));
+        executeCommand(new MessageEvent(UserInputEventType.CancelNotification));
         super.onDestroy();
     }
 }

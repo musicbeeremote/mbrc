@@ -14,9 +14,9 @@ import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
 import com.kelsos.mbrc.events.ui.NoSettingsAvailable;
 import com.kelsos.mbrc.events.ui.NotifyUser;
@@ -209,10 +209,10 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
     @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
-                bus.post(new MessageEvent(UserInputEvent.KeyVolumeUp));
+                bus.post(new MessageEvent(UserInputEventType.KeyVolumeUp));
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-                bus.post(new MessageEvent(UserInputEvent.KeyVolumeDown));
+                bus.post(new MessageEvent(UserInputEventType.KeyVolumeDown));
                 return true;
             default:
                 return super.onKeyDown(keyCode, event);

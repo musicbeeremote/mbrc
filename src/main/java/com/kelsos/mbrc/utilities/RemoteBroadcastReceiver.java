@@ -8,12 +8,12 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import com.google.inject.Inject;
+import com.kelsos.mbrc.constants.ProtocolEventType;
+import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ProtocolEvent;
-import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.messaging.NotificationService;
-import com.kelsos.mbrc.others.Protocol;
+import com.kelsos.mbrc.constants.Protocol;
 import com.squareup.otto.Bus;
 import roboguice.receiver.RoboBroadcastReceiver;
 
@@ -36,24 +36,24 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
             String state = bundle.getString(TelephonyManager.EXTRA_STATE);
             if (state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)) {
                 if (settingsManager.isVolumeReducedOnRinging()) {
-                    bus.post(new MessageEvent(ProtocolEvent.ReduceVolume));
+                    bus.post(new MessageEvent(ProtocolEventType.ReduceVolume));
                 }
             }
         } else if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
             NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
             if (networkInfo.getState().equals(NetworkInfo.State.CONNECTED)) {
-                bus.post(new MessageEvent(UserInputEvent.StartConnection));
+                bus.post(new MessageEvent(UserInputEventType.StartConnection));
             } else if (networkInfo.getState().equals(NetworkInfo.State.DISCONNECTING)) {
 
             }
         } else if (intent.getAction().equals(NotificationService.NOTIFICATION_PLAY_PRESSED)) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerPlayPause, true)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerPlayPause, true)));
         } else if (intent.getAction().equals(NotificationService.NOTIFICATION_NEXT_PRESSED)) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerNext, true)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerNext, true)));
         } else if (intent.getAction().equals(NotificationService.NOTIFICATION_CLOSE_PRESSED)) {
-            bus.post(new MessageEvent(UserInputEvent.CancelNotification));
+            bus.post(new MessageEvent(UserInputEventType.CancelNotification));
         } else if (intent.getAction().equals(NotificationService.NOTIFICATION_PREVIOUS_PRESSED)) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerPrevious, true)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerPrevious, true)));
         }
 
     }

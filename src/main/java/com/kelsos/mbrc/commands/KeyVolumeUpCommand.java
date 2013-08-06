@@ -1,13 +1,13 @@
 package com.kelsos.mbrc.commands;
 
 import com.google.inject.Inject;
+import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
-import com.kelsos.mbrc.others.Protocol;
+import com.kelsos.mbrc.constants.Protocol;
 import com.squareup.otto.Bus;
 
 public class KeyVolumeUpCommand implements ICommand {
@@ -32,7 +32,7 @@ public class KeyVolumeUpCommand implements ICommand {
                 volume = model.getVolume() + (20 - mod);
             }
 
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerVolume, volume)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerVolume, volume)));
         }
     }
 }

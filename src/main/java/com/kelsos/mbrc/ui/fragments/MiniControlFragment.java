@@ -11,13 +11,13 @@ import android.widget.TextView;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.events.ui.CoverAvailable;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
-import com.kelsos.mbrc.others.Protocol;
+import com.kelsos.mbrc.constants.Protocol;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.inject.InjectView;
@@ -78,19 +78,19 @@ public class MiniControlFragment extends RoboSherlockFragment {
     ImageButton.OnClickListener playNextListener = new ImageButton.OnClickListener(){
 
         @Override public void onClick(View view) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerNext, true)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerNext, true)));
         }
     };
 
     ImageButton.OnClickListener playPauseListener = new ImageButton.OnClickListener() {
         @Override public void onClick(View view) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerPlayPause, true)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerPlayPause, true)));
         }
     };
 
     ImageButton.OnClickListener playPreviousListener = new ImageButton.OnClickListener() {
         @Override public void onClick(View view) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerPrevious, true)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerPrevious, true)));
         }
     };
 

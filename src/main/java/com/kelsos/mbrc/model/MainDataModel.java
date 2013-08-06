@@ -4,15 +4,15 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.constants.ProtocolEventType;
+import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.*;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ProtocolEvent;
-import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.ui.*;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
-import com.kelsos.mbrc.others.Const;
+import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.utilities.ImageDecoder;
 import com.squareup.otto.Produce;
@@ -91,7 +91,7 @@ public class MainDataModel {
 
     public void setPluginVersion(String pluginVersion) {
         this.pluginVersion = pluginVersion.substring(0, pluginVersion.lastIndexOf('.'));
-        bus.post(new MessageEvent(ProtocolEvent.PluginVersionCheck));
+        bus.post(new MessageEvent(ProtocolEventType.PluginVersionCheck));
     }
 
     public String getPluginVersion() {
@@ -159,7 +159,7 @@ public class MainDataModel {
 
     private void updateNotification() {
         if (!isConnectionOn) {
-            bus.post(new MessageEvent(UserInputEvent.CancelNotification));
+            bus.post(new MessageEvent(UserInputEventType.CancelNotification));
         } else {
             bus.post(new NotificationDataAvailable(artist, title, album, cover, playState));
         }

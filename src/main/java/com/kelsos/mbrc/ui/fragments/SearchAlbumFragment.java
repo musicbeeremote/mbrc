@@ -10,14 +10,14 @@ import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFra
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumEntryAdapter;
+import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.AlbumEntry;
 import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.events.ui.AlbumSearchResults;
-import com.kelsos.mbrc.others.Protocol;
+import com.kelsos.mbrc.constants.Protocol;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -40,7 +40,7 @@ public class SearchAlbumFragment extends RoboSherlockListFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String album = ((AlbumEntry) getListView().getAdapter().getItem(position)).getAlbum();
 
-                bus.post(new MessageEvent(ProtocolEvent.UserAction,
+                bus.post(new MessageEvent(ProtocolEventType.UserAction,
                         new UserAction(Protocol.LibraryQueueAlbum,
                                 new Queue(mDefault, album))));
             }
@@ -99,7 +99,7 @@ public class SearchAlbumFragment extends RoboSherlockListFragment {
                     break;
             }
 
-            if (ua != null) bus.post(new MessageEvent(ProtocolEvent.UserAction, ua));
+            if (ua != null) bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
             return true;
         } else {
             return false;

@@ -6,9 +6,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
@@ -110,7 +110,7 @@ public class SettingsManager {
             if (!mSettings.contains(settings)) {
                 if (mSettings.size() == 0) {
                     updateDefault(0, settings);
-                    bus.post(new MessageEvent(UserInputEvent.SettingsChanged));
+                    bus.post(new MessageEvent(UserInputEventType.SettingsChanged));
                 }
                 mSettings.add(settings);
                 storeSettings();
@@ -120,7 +120,7 @@ public class SettingsManager {
         } else {
             mSettings.set(settings.getIndex(), settings);
             if (settings.getIndex() == defaultIndex) {
-                bus.post(new MessageEvent(UserInputEvent.SettingsChanged));
+                bus.post(new MessageEvent(UserInputEventType.SettingsChanged));
             }
             storeSettings();
         }
@@ -155,7 +155,7 @@ public class SettingsManager {
                 mSettings.remove(event.getIndex());
                 if (event.getIndex() == defaultIndex && mSettings.size() > 0) {
                     updateDefault(0, mSettings.get(0));
-                    bus.post(new MessageEvent(UserInputEvent.SettingsChanged));
+                    bus.post(new MessageEvent(UserInputEventType.SettingsChanged));
                 } else {
                     updateDefault(0, new ConnectionSettings());
                 }
@@ -167,7 +167,7 @@ public class SettingsManager {
                 ConnectionSettings settings = mSettings.get(event.getIndex());
                 updateDefault(event.getIndex(), settings);
                 bus.post(new ConnectionSettingsChanged(mSettings, event.getIndex()));
-                bus.post(new MessageEvent(UserInputEvent.SettingsChanged));
+                bus.post(new MessageEvent(UserInputEventType.SettingsChanged));
                 break;
         }
     }

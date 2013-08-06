@@ -18,14 +18,14 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.constants.ProtocolEventType;
+import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ProtocolEvent;
-import com.kelsos.mbrc.events.UserInputEvent;
 import com.kelsos.mbrc.events.ui.*;
-import com.kelsos.mbrc.others.Const;
-import com.kelsos.mbrc.others.Protocol;
+import com.kelsos.mbrc.constants.Const;
+import com.kelsos.mbrc.constants.Protocol;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.inject.InjectView;
@@ -71,62 +71,62 @@ public class MainFragment extends RoboSherlockFragment {
         @Override
         public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
             if (b) {
-                bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingRating, v)));
+                bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingRating, v)));
             }
         }
     };
     private View.OnClickListener playButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerPlayPause, true)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerPlayPause, true)));
         }
     };
     private View.OnClickListener previousButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerPrevious, true)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerPrevious, true)));
         }
     };
     private View.OnClickListener nextButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerNext, true)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerNext, true)));
         }
     };
     private View.OnClickListener stopButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerStop, true)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerStop, true)));
         }
     };
     private View.OnClickListener muteButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerMute, Const.TOGGLE)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerMute, Const.TOGGLE)));
         }
     };
     private View.OnClickListener scrobbleButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerScrobble, Const.TOGGLE)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerScrobble, Const.TOGGLE)));
         }
     };
     private View.OnClickListener shuffleButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerShuffle, Const.TOGGLE)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerShuffle, Const.TOGGLE)));
         }
     };
     private View.OnClickListener repeatButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerRepeat, Const.TOGGLE)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerRepeat, Const.TOGGLE)));
         }
     };
 
     private View.OnLongClickListener lfmLongClickListener = new View.OnLongClickListener() {
         @Override public boolean onLongClick(View view) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingLfmRating, "Ban")));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingLfmRating, "Ban")));
             return true;
         }
     };
@@ -135,7 +135,7 @@ public class MainFragment extends RoboSherlockFragment {
 
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser) {
-                bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.PlayerVolume, String.valueOf(seekBar.getProgress()))));
+                bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerVolume, String.valueOf(seekBar.getProgress()))));
             }
         }
 
@@ -154,7 +154,7 @@ public class MainFragment extends RoboSherlockFragment {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser) {
                 if (progress != previousVol) {
-                    bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingPosition, String.valueOf(progress))));
+                    bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingPosition, String.valueOf(progress))));
                     previousVol = progress;
                 }
 
@@ -215,7 +215,7 @@ public class MainFragment extends RoboSherlockFragment {
 
         @Override
         public void onClick(View view) {
-            bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingLfmRating, Const.TOGGLE)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingLfmRating, Const.TOGGLE)));
         }
     };
 
@@ -238,7 +238,7 @@ public class MainFragment extends RoboSherlockFragment {
 
     @Override public void onResume() {
         super.onResume();
-        bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingPosition, true)));
+        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingPosition, true)));
     }
 
     /**
@@ -366,7 +366,7 @@ public class MainFragment extends RoboSherlockFragment {
                 playPauseButton.setTag("Playing");
                 stopButton.setImageResource(R.drawable.ic_media_stop);
                 stopButton.setEnabled(true);				/* Start the animation if the track is playing*/
-                bus.post(new MessageEvent(ProtocolEvent.UserAction, new UserAction(Protocol.NowPlayingPosition, true)));
+                bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingPosition, true)));
                 trackProgressAnimation();
                 break;
             case Paused:
@@ -486,7 +486,7 @@ public class MainFragment extends RoboSherlockFragment {
         final int current = position.getCurrent();
         if (trackProgressCurrent == null || trackProgressSlider == null || trackDuration == null) return;
         if (total == 0) {
-            bus.post(new MessageEvent(UserInputEvent.RequestPosition));
+            bus.post(new MessageEvent(UserInputEventType.RequestPosition));
             return;
         }
         int currentSeconds = current / 1000;

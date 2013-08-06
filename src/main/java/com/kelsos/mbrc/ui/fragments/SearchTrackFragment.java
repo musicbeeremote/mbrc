@@ -10,14 +10,14 @@ import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFra
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.TrackEntryAdapter;
+import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.TrackEntry;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ProtocolEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.events.ui.TrackSearchResults;
-import com.kelsos.mbrc.others.Protocol;
+import com.kelsos.mbrc.constants.Protocol;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -39,7 +39,7 @@ public class SearchTrackFragment extends RoboSherlockListFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String path = ((TrackEntry) getListView().getAdapter().getItem(position)).getSrc();
 
-                bus.post(new MessageEvent(ProtocolEvent.UserAction,
+                bus.post(new MessageEvent(ProtocolEventType.UserAction,
                         new UserAction(Protocol.LibraryQueueTrack,
                                 new Queue(mDefault, path))));
             }
@@ -91,7 +91,7 @@ public class SearchTrackFragment extends RoboSherlockListFragment {
                     break;
             }
 
-            if (ua != null) bus.post(new MessageEvent(ProtocolEvent.UserAction, ua));
+            if (ua != null) bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
             return true;
         } else {
             return false;

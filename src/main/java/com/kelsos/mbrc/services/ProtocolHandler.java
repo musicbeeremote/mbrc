@@ -4,9 +4,9 @@ import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
+import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ProtocolEvent;
-import com.kelsos.mbrc.others.Protocol;
+import com.kelsos.mbrc.constants.Protocol;
 import com.squareup.otto.Bus;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -38,17 +38,17 @@ public class ProtocolHandler {
                 String context = node.path("context").getTextValue();
 
                 if (context.contains(Protocol.ClientNotAllowed)) {
-                    bus.post(new MessageEvent(ProtocolEvent.InformClientNotAllowed));
+                    bus.post(new MessageEvent(ProtocolEventType.InformClientNotAllowed));
                     return;
                 }
 
                 if (!isHandshakeComplete) {
                     if (context.contains(Protocol.Player)) {
-                        bus.post(new MessageEvent(ProtocolEvent.InitiateProtocolRequest));
+                        bus.post(new MessageEvent(ProtocolEventType.InitiateProtocolRequest));
                     } else if (context.contains(Protocol.Protocol)) {
                         ServerProtocolVersion = node.path("data").getDoubleValue();
                         isHandshakeComplete = true;
-                        bus.post(new MessageEvent(ProtocolEvent.HandshakeComplete, true));
+                        bus.post(new MessageEvent(ProtocolEventType.HandshakeComplete, true));
                     } else {
                         return;
                     }
