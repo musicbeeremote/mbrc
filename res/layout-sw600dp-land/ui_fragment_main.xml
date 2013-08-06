@@ -8,8 +8,8 @@
 
     <FrameLayout
             android:id="@+id/album_cover_area"
-            android:layout_width="400dp"
-            android:layout_height="400dp"
+            android:layout_width="@dimen/album_cover_side"
+            android:layout_height="@dimen/album_cover_side"
             android:layout_alignParentLeft="false"
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true">

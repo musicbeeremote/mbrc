@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="album_cover_side">700dp</dimen>
+    <dimen name="mbrc_control_button_side">65dp</dimen>
+    <dimen name="mbrc_artist_text_size">24sp</dimen>
+    <dimen name="mbrc_title_text_size">28sp</dimen>
+    <dimen name="mbrc_album_text_size">22sp</dimen>
+    <dimen name="mbrc_year_text_size">20sp</dimen>
+    <dimen name="mbrc_duration_text_size">16sp</dimen>
+    <dimen name="mbrc_rating_bar_wrapper_height">80dp</dimen>
+</resources>

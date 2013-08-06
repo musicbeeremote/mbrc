@@ -139,5 +139,6 @@
     <string name="settings_title_license">License</string>
     <string name="settings_key_license">mbrc_license</string>
     <string name="main_menu_help">Help</string>
+    <string name="settings_key_last_version_run">last_version_run</string>
 
 </resources>
