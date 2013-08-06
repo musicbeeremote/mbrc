@@ -62,28 +62,32 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity {
             }
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             final Preference mShowNotification = findPreference(getResources().
                     getString(R.string.settings_key_notification_control));
-            mShowNotification.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    boolean value = (Boolean) newValue;
-                    if (!value) {
-                        bus.post(new MessageEvent(UserInputEvent.CancelNotification));
+            if (mShowNotification != null) {
+                mShowNotification.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        boolean value = (Boolean) newValue;
+                        if (!value) {
+                            bus.post(new MessageEvent(UserInputEvent.CancelNotification));
+                        }
+                        return true;
                     }
-                    return true;
-                }
-            });
+                });
+            }
         }
 
         final Preference mLicense = findPreference(getResources().getString(R.string.settings_key_license));
-        mLicense.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override public boolean onPreferenceClick(Preference preference) {
-                showLicenseDialog();
-                return false;
-            }
-        });
+        if (mLicense != null) {
+            mLicense.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override public boolean onPreferenceClick(Preference preference) {
+                    showLicenseDialog();
+                    return false;
+                }
+            });
+        }
     }
 
     private void showLicenseDialog() {

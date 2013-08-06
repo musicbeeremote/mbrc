@@ -8,7 +8,7 @@ public class Protocol {
     public static final String PlayerName = "MusicBee";
     public static final String ProtocolVersion = "2";
     public static final String PluginVersion = "pluginversion";
-    public static final String ClientNotAllowed = "clientnotallowed";
+    public static final String ClientNotAllowed = "notallowed";
 
     public static final String PlayerStatus = "playerstatus";
     public static final String PlayerRepeat = "playerrepeat";
