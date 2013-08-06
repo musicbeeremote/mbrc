@@ -1,64 +1,60 @@
 package com.kelsos.mbrc.others;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import android.util.Log;
+import com.kelsos.mbrc.BuildConfig;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 
 public class DelayTimer {
     private int delay;
     private boolean isRunning;
-    private Timer mTimer;
-    private InternalTimerTask mTimerTask;
+    private final ScheduledExecutorService mScheduler = Executors.newScheduledThreadPool(1);
+    private ScheduledFuture mFuture;
     private TimerFinishEvent mTimerFinishListener;
 
     /**
-     * This is the Default constructor of the DelayTimer class.
-     * The timer will fire an event after the specified period.
-     *
-     * @param delay The delay period in millisecond.
+     * Delay timer constructor, with a delay parameter
+     * @param delay Number of seconds to wait.
      */
     public DelayTimer(int delay) {
         this.delay = delay;
         mTimerFinishListener = null;
     }
 
+    /**
+     * Delay timer constructor with delay parameter and a listener for the execute event.
+     * @param delay Number of seconds to wait.
+     * @param listener The event listener that will run after the delay
+     */
     public DelayTimer(int delay, TimerFinishEvent listener) {
         this.delay = delay;
         mTimerFinishListener = listener;
     }
 
     /**
-     * This method starts the delay timer's countdown.
+     * The method is used to start the timer
      */
     public void start() {
-        if (isRunning) return;
-        if (mTimerTask != null) {
-            mTimerTask.cancel();
-            mTimerTask = null;
-        }
-        if (mTimer != null) {
-            mTimer.cancel();
-            mTimer.purge();
-            mTimer = null;
-        }
-        mTimer = new Timer(true);
-        mTimerTask = new InternalTimerTask();
-        mTimer.schedule(mTimerTask, delay);
+        stop();
+        final DelayTimerTask task = new DelayTimerTask();
+        mFuture = mScheduler.schedule(task, delay, TimeUnit.SECONDS);
         isRunning = true;
     }
 
     /**
-     * This method stops the delay timer's countdown.
+     * The method is used to stop the timer.
      */
     public void stop() {
-        if (mTimerTask != null) {
-            mTimerTask.cancel();
-            mTimerTask = null;
-        }
-        if (mTimer != null) {
-            mTimer.cancel();
-            mTimer.purge();
-            mTimer = null;
+        if (mFuture!=null) {
+            mFuture.cancel(true);
+            if (BuildConfig.DEBUG) {
+                Log.d("mbrc-log", "stopping delay timer");
+            }
+
         }
         isRunning = false;
     }
@@ -86,17 +82,15 @@ public class DelayTimer {
             mTimerFinishListener.onTimerFinish();
     }
 
-    /**
-     * This TimerTask when executed fires the onTimerFinishEvent and then stops the timer.
-     */
-    private class InternalTimerTask extends TimerTask {
-
-        public void run() {
-            onTimerFinish();
+    private class DelayTimerTask implements Runnable {
+        @Override public void run() {
             stop();
+            onTimerFinish();
+            if (BuildConfig.DEBUG) {
+                Log.d("mbrc-log", "delay timer tick");
+            }
         }
     }
-
     /**
      * This interface represents the TimerFinishEvent
      * The abstract method onTimerFinish() fires when the countdown finishes.

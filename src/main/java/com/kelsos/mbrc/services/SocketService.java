@@ -24,7 +24,7 @@ import java.net.SocketTimeoutException;
 
 @Singleton
 public class SocketService {
-    public static final int MAX_RETRIES = 5;
+    public static final int MAX_RETRIES = 3;
     private static int numOfRetries;
     private MainThreadBusWrapper bus;
     private SettingsManager settingsManager;
@@ -47,7 +47,7 @@ public class SocketService {
         this.settingsManager = settingsManager;
         this.mapper = mapper;
 
-        cTimer = new DelayTimer(2500, timerFinishEvent);
+        cTimer = new DelayTimer(3, timerFinishEvent);
         numOfRetries = 0;
         shouldStop = false;
         SocketManager(SocketAction.START);
