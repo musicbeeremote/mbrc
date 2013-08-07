@@ -59,15 +59,8 @@
 	<string name="now_playing_search">Search</string>
 	<string name="now_playing_search_hint">Search for a track</string>
 	<string name="notification_plugin_out_of_date">Your plugin is out of date, please update.</string>
-	<string name="update_view">Update Available</string>
-	<string name="update_view_out_of_date">Out of Date</string>
-	<string name="update_view_message_p_one">Your MusicBee remote plugin is out of date! Please update to the latest
-		version to ensure the optimal experience.
-	</string>
-	<string name="update_view_message_p_two">New features require and updated version in order to work.</string>
-	<string name="update_view_message_p_three">To update the plugin visit <a href="http://kelsos.net/musicbeeremote">MusicBee Remote website</a> on your Computer and download the latest version from the Download section. You can check the help section for more information.</string>
-    <string name="dialog_application_setup">The connection settings appear empty. Would you like to fill them now?
-    </string>
+    <string name="dialog_application_setup">The connection settings appear empty. Would you like to setup up
+        the application now? </string>
     <string name="dialog_application_setup_title">Setup</string>
     <string name="dialog_application_setup_positive">Setup Now</string>
     <string name="dialog_application_setup_negative">Cancel</string>
@@ -140,5 +133,7 @@
     <string name="settings_key_license">mbrc_license</string>
     <string name="main_menu_help">Help</string>
     <string name="settings_key_last_version_run">last_version_run</string>
+    <string name="dialog_upgrade_negative">Ok</string>
+    <string name="dialog_upgrade_title">Welcome</string>
 
 </resources>

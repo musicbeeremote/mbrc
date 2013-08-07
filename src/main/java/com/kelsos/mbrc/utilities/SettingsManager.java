@@ -14,7 +14,7 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
-import com.kelsos.mbrc.events.ui.NoSettingsAvailable;
+import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
@@ -36,6 +36,7 @@ public class SettingsManager {
     private ArrayList<ConnectionSettings> mSettings;
     private ObjectMapper mMapper;
     private int defaultIndex;
+    private boolean isFirstRun;
 
     @Inject public SettingsManager(Context context, SharedPreferences preferences, MainThreadBusWrapper bus,
                                    ObjectMapper mapper) {
@@ -79,7 +80,7 @@ public class SettingsManager {
 
 
         if (nullOrEmpty(serverAddress) || serverPort == 0) {
-            bus.post(new NoSettingsAvailable());
+            bus.post(new DisplayDialog(DisplayDialog.SETUP));
             return null;
         }
 
@@ -183,6 +184,12 @@ public class SettingsManager {
                 mContext.getString(R.string.settings_search_default_key),
                 mContext.getString(R.string.search_click_default_value)));
     }
+
+    @Produce public DisplayDialog produceDisplayDialog() {
+        int run = isFirstRun ? DisplayDialog.UPGRADE : DisplayDialog.NONE;
+        isFirstRun = false;
+        return new DisplayDialog(run);
+    }
     
     private void checkForFirstRunAfterUpdate() {
         try {
@@ -191,6 +198,12 @@ public class SettingsManager {
             long currentVersion = RemoteUtils.getVersionCode(mContext);
 
             if (lastVersionCode < currentVersion) {
+                isFirstRun = true;
+
+                SharedPreferences.Editor editor = mPreferences.edit();
+                editor.putLong(mContext.getString(R.string.settings_key_last_version_run), currentVersion);
+                editor.commit();
+
                 if (BuildConfig.DEBUG) {
                     Log.d("mbrc-log", "update or fresh install");
                 }

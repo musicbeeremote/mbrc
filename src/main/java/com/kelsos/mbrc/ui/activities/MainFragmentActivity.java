@@ -17,10 +17,11 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
-import com.kelsos.mbrc.events.ui.NoSettingsAvailable;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
+import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.kelsos.mbrc.ui.fragments.LyricsFragment;
 import com.kelsos.mbrc.ui.fragments.MainFragment;
 import com.kelsos.mbrc.ui.fragments.NowPlayingFragment;
@@ -37,6 +38,7 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
     private View mDrawerMenu;
     private DisplayFragment mDisplay;
     private boolean navChanged;
+    private DialogFragment mDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -143,9 +145,16 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
         mDrawerToggle.syncState();
     }
 
-    @Subscribe public void ShowSetupDialog(NoSettingsAvailable noSettings) {
-        DialogFragment dialog = new SetupDialogFragment();
-        dialog.show(getSupportFragmentManager(), "SetupDialogFragment");
+    @Subscribe public void ShowSetupDialog(DisplayDialog event) {
+        if (mDialog != null) return;
+        if (event.getDialogType() == DisplayDialog.SETUP) {
+            mDialog = new SetupDialogFragment();
+            mDialog.show(getSupportFragmentManager(), "SetupDialogFragment");
+        } else if (event.getDialogType() == DisplayDialog.UPGRADE) {
+            mDialog = new UpgradeDialogFragment();
+            mDialog.show(getSupportFragmentManager(), "UpgradeDialogFragment");
+        }
+
     }
 
     @Subscribe public void handleDrawerEvent(DrawerEvent event) {
