@@ -54,7 +54,7 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity {
 
         if (mVersion != null) {
             try {
-                mVersion.setSummary(String.format(getResources().getString(R.string.settings_version_number), rmUtils.getVersion()));
+                mVersion.setSummary(String.format(getResources().getString(R.string.settings_version_number), RemoteUtils.getVersion(this)));
             } catch (PackageManager.NameNotFoundException e) {
                 if (BuildConfig.DEBUG) {
                     e.printStackTrace();

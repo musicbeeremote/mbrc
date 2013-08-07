@@ -2,6 +2,8 @@ package com.kelsos.mbrc.utilities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
@@ -62,6 +64,7 @@ public class SettingsManager {
             }
         }
         defaultIndex = mPreferences.getInt(mContext.getString(R.string.settings_key_default_index), 0);
+        checkForFirstRunAfterUpdate();
     }
 
     public SocketAddress getSocketAddress() {
@@ -102,6 +105,9 @@ public class SettingsManager {
             editor.commit();
             bus.post(new ConnectionSettingsChanged(mSettings, 0));
         } catch (IOException e) {
+            if (BuildConfig.DEBUG) {
+                Log.d("mbrc-log", "Settings store", e);
+            }
         }
     }
 
@@ -176,5 +182,23 @@ public class SettingsManager {
         return new SearchDefaultAction(mPreferences.getString(
                 mContext.getString(R.string.settings_search_default_key),
                 mContext.getString(R.string.search_click_default_value)));
+    }
+    
+    private void checkForFirstRunAfterUpdate() {
+        try {
+            long lastVersionCode = mPreferences.getLong(mContext.
+                    getString(R.string.settings_key_last_version_run), 0);
+            long currentVersion = RemoteUtils.getVersionCode(mContext);
+
+            if (lastVersionCode < currentVersion) {
+                if (BuildConfig.DEBUG) {
+                    Log.d("mbrc-log", "update or fresh install");
+                }
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            if (BuildConfig.DEBUG) {
+                Log.d("mbrc-log", "check for first run", e);
+            }
+        }
     }
 }

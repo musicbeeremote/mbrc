@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.commands;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
 import com.google.inject.Inject;
@@ -26,15 +27,15 @@ import java.util.Date;
 public class VersionCheckCommand implements ICommand {
     private MainDataModel model;
     private ObjectMapper mapper;
-    private RemoteUtils rUtils;
+    private Context mContext;
     private SettingsManager manager;
     private Bus bus;
 
-    @Inject public VersionCheckCommand(MainDataModel model, ObjectMapper mapper, RemoteUtils rUtils,
+    @Inject public VersionCheckCommand(MainDataModel model, ObjectMapper mapper, Context mContext,
                                        SettingsManager manager, Bus bus) {
         this.model = model;
         this.mapper = mapper;
-        this.rUtils = rUtils;
+        this.mContext = mContext;
         this.manager = manager;
         this.bus = bus;
     }
@@ -60,7 +61,7 @@ public class VersionCheckCommand implements ICommand {
                 }
 
                 JsonNode jsonNode = mapper.readValue(new URL("http://kelsos.net/musicbeeremote/versions.json"), JsonNode.class);
-                String version = rUtils.getVersion();
+                String version = RemoteUtils.getVersion(mContext);
                 JsonNode vNode = jsonNode.path("versions").path(version);
 
                 String suggestedVersion = vNode.path("plugin").asText();

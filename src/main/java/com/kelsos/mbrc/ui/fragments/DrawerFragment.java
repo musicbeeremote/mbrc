@@ -96,7 +96,7 @@ public class DrawerFragment extends RoboSherlockListFragment implements Fragment
             mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
         }
         try {
-            versionIndicator.setText(String.format(getString(R.string.ui_drawer_menu_version), rmUtils.getVersion()));
+            versionIndicator.setText(String.format(getString(R.string.ui_drawer_menu_version), RemoteUtils.getVersion(getActivity())));
         } catch (PackageManager.NameNotFoundException e) {
             if (BuildConfig.DEBUG) {
                 e.printStackTrace();
