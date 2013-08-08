@@ -153,6 +153,10 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
         } else if (event.getDialogType() == DisplayDialog.UPGRADE) {
             mDialog = new UpgradeDialogFragment();
             mDialog.show(getSupportFragmentManager(), "UpgradeDialogFragment");
+        } else if (event.getDialogType() == DisplayDialog.INSTALL) {
+            mDialog = new UpgradeDialogFragment();
+            ((UpgradeDialogFragment)mDialog).setNewInstall(true);
+            mDialog.show(getSupportFragmentManager(), "UpgradeDialogFragment");
         }
 
     }

@@ -87,6 +87,19 @@ public class SettingsManager {
         return new InetSocketAddress(serverAddress, serverPort);
     }
 
+    private boolean checkIfRemoteSettingsExist() {
+        String serverAddress = mPreferences.getString(mContext.getString(R.string.settings_key_hostname), null);
+        int serverPort;
+
+        try {
+            serverPort = mPreferences.getInt(mContext.getString(R.string.settings_key_port), 0);
+        } catch (ClassCastException castException) {
+            serverPort = Integer.parseInt(mPreferences.getString(mContext.getString(R.string.settings_key_port), "0"));
+        }
+
+        return !(nullOrEmpty(serverAddress) || serverPort == 0);
+    }
+
     public boolean isVolumeReducedOnRinging() {
         return mPreferences.getBoolean(mContext.getString(R.string.settings_key_reduce_volume), false);
     }
@@ -186,7 +199,12 @@ public class SettingsManager {
     }
 
     @Produce public DisplayDialog produceDisplayDialog() {
-        int run = isFirstRun ? DisplayDialog.UPGRADE : DisplayDialog.NONE;
+        int run = DisplayDialog.NONE;
+        if (isFirstRun && checkIfRemoteSettingsExist()) {
+            run = DisplayDialog.UPGRADE;
+        } else if (isFirstRun && !checkIfRemoteSettingsExist()) {
+            run = DisplayDialog.INSTALL;
+        }
         isFirstRun = false;
         return new DisplayDialog(run);
     }
