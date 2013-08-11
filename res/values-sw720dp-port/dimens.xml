@@ -6,7 +6,6 @@
     <dimen name="mbrc_album_text_size">22sp</dimen>
     <dimen name="mbrc_year_text_size">20sp</dimen>
     <dimen name="mbrc_duration_text_size">16sp</dimen>
-    <dimen name="mbrc_rating_bar_wrapper_height">80dp</dimen>
     <dimen name="mbrc_control_button">65dp</dimen>
     <dimen name="mbrc_secondary_control_button">45dp</dimen>
 </resources>

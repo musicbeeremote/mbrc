@@ -84,7 +84,7 @@
         <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/mbrc_rating_bar_wrapper_height"
+                android:layout_height="@dimen/mbrc_rating_bar_wrapper"
                 android:background="#99000000"
                 android:layout_gravity="center_horizontal|bottom"
                 android:id="@+id/ratingWrapper"
