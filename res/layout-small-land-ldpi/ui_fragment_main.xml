@@ -60,7 +60,7 @@
     <RelativeLayout
             android:id="@+id/frameLayout"
             android:layout_width="280dp"
-            android:layout_height="@dimen/album_cover_side"
+            android:layout_height="@dimen/mbrc_cover"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="@dimen/side_margin_half"
             android:layout_centerHorizontal="true">
@@ -68,7 +68,7 @@
         <ImageView
                 android:id="@+id/main_album_cover_image_view"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/album_cover_side"
+                android:layout_height="@dimen/mbrc_cover"
                 android:adjustViewBounds="false"
                 android:background="#FFFFFF"
                 android:contentDescription="@string/main_image_view_cover_description"

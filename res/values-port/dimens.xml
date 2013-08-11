@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="album_cover_side">200dp</dimen>
+    <dimen name="mbrc_cover">200dp</dimen>
     <dimen name="control_button_side">44dp</dimen>
     <dimen name="second_bar_button_distance">8dp</dimen>
 </resources>

@@ -8,8 +8,8 @@
 
     <FrameLayout
             android:id="@+id/album_cover_area"
-            android:layout_width="@dimen/album_cover_side"
-            android:layout_height="@dimen/album_cover_side"
+            android:layout_width="@dimen/mbrc_cover"
+            android:layout_height="@dimen/mbrc_cover"
             android:layout_alignParentLeft="false"
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true">
@@ -49,8 +49,7 @@
 
     <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_alignBottom="@+id/tablet_top_bar"
+            android:layout_height="@dimen/mbrc_top_text"
             android:layout_toLeftOf="@+id/album_cover_area"
             android:layout_marginLeft="@dimen/side_margin">
 
@@ -66,8 +65,8 @@
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:text="@string/main_label_artist"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
+                android:textColor="@color/mbrc_title"
+                android:textSize="@dimen/mbrc_artist_text_size"
                 android:layout_alignParentTop="false"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="false"
@@ -85,8 +84,8 @@
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:text="@string/main_label_track_title"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
+                android:textColor="@color/mbrc_title"
+                android:textSize="@dimen/mbrc_title_text_size"
                 android:textStyle="normal"
                 android:typeface="sans"
                 android:layout_alignBottom="@+id/main_artist_label"
@@ -98,10 +97,11 @@
     <RelativeLayout
             android:layout_width="fill_parent"
             android:id="@+id/tablet_top_bar"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/mbrc_top_text"
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/album_cover_area"
-            android:layout_marginRight="@dimen/side_margin">
+            android:layout_marginRight="@dimen/side_margin"
+            >
 
         <TextView
                 android:id="@+id/main_label_album"
@@ -115,8 +115,8 @@
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:text="@string/main_label_album"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
+                android:textColor="@color/mbrc_title"
+                android:textSize="@dimen/mbrc_album_text_size"
                 android:typeface="sans"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
@@ -135,8 +135,8 @@
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:text="@string/main_label_date"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
+                android:textColor="@color/mbrc_title"
+                android:textSize="@dimen/mbrc_year_text_size"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:gravity="right"/>
@@ -163,8 +163,8 @@
 
             <ImageButton
                     android:id="@+id/main_button_previous"
-                    android:layout_width="55dp"
-                    android:layout_height="55dp"
+                    android:layout_width="@dimen/mbrc_control_button"
+                    android:layout_height="@dimen/mbrc_control_button"
                     android:background="@drawable/selectable_background_mbrc_default"
                     android:contentDescription="@string/main_button_previous_description"
                     android:scaleType="fitCenter"
@@ -173,8 +173,8 @@
 
             <ImageButton
                     android:id="@+id/main_button_stop"
-                    android:layout_width="55dp"
-                    android:layout_height="55dp"
+                    android:layout_width="@dimen/mbrc_control_button"
+                    android:layout_height="@dimen/mbrc_control_button"
                     android:layout_marginLeft="26dp"
                     android:background="@drawable/selectable_background_mbrc_default"
                     android:contentDescription="@string/main_button_stop_description"
@@ -184,8 +184,8 @@
 
             <ImageButton
                     android:id="@+id/main_button_play_pause"
-                    android:layout_width="55dp"
-                    android:layout_height="55dp"
+                    android:layout_width="@dimen/mbrc_control_button"
+                    android:layout_height="@dimen/mbrc_control_button"
                     android:layout_marginLeft="26dp"
                     android:background="@drawable/selectable_background_mbrc_default"
                     android:clickable="true"
@@ -196,8 +196,8 @@
 
             <ImageButton
                     android:id="@+id/main_button_next"
-                    android:layout_width="55dp"
-                    android:layout_height="55dp"
+                    android:layout_width="@dimen/mbrc_control_button"
+                    android:layout_height="@dimen/mbrc_control_button"
                     android:layout_marginLeft="26dp"
                     android:layout_marginRight="2dp"
                     android:background="@drawable/selectable_background_mbrc_default"
@@ -209,8 +209,8 @@
 
         <ImageButton
                 android:id="@+id/main_last_fm_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/mbrc_secondary_control_button"
+                android:layout_height="@dimen/mbrc_secondary_control_button"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:contentDescription="@string/main_button_last_fm_description"
                 android:scaleType="fitCenter"
@@ -221,8 +221,8 @@
 
         <ImageButton
                 android:id="@+id/main_repeat_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/mbrc_secondary_control_button"
+                android:layout_height="@dimen/mbrc_secondary_control_button"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:clickable="true"
                 android:contentDescription="@string/main_button_repeat_description"
@@ -234,7 +234,7 @@
 
         <ImageButton
                 android:id="@+id/main_shuffle_button"
-                android:layout_width="40dp"
+                android:layout_width="@dimen/mbrc_secondary_control_button"
                 android:layout_height="fill_parent"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:contentDescription="@string/main_button_shuffle_description"
@@ -247,8 +247,8 @@
 
         <ImageButton
                 android:id="@+id/main_lfm_love_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/mbrc_secondary_control_button"
+                android:layout_height="@dimen/mbrc_secondary_control_button"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:contentDescription="@string/main_button_lfm_love_description"
                 android:scaleType="fitCenter"
@@ -280,8 +280,8 @@
 
         <ImageButton
                 android:id="@+id/main_mute_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/mbrc_secondary_control_button"
+                android:layout_height="@dimen/mbrc_secondary_control_button"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:contentDescription="@string/main_button_mute_description"
                 android:scaleType="fitCenter"
@@ -327,8 +327,8 @@
             android:layout_height="wrap_content"
             android:gravity="right"
             android:text="@string/main_label_duration_total"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
+            android:textColor="@color/mbrc_title"
+            android:textSize="@dimen/mbrc_duration_text_size"
             android:layout_above="@+id/trackProgressLabelsLayout"
             android:layout_alignParentRight="true"
             android:layout_marginRight="15dp"/>
@@ -338,8 +338,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/main_label_duration_current"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
+            android:textColor="@color/mbrc_title"
+            android:textSize="@dimen/mbrc_duration_text_size"
             android:layout_alignBaseline="@+id/main_track_duration_total"
             android:layout_alignBottom="@+id/main_track_duration_total"
             android:layout_alignParentLeft="true"
