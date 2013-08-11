@@ -76,7 +76,7 @@
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:adjustViewBounds="false"
-                android:background="@color/mbrc_title"
+                android:background="@drawable/ic_cover_background"
                 android:contentDescription="@string/main_image_view_cover_description"
                 android:padding="1dp"
                 android:src="@drawable/ic_image_no_cover"/>

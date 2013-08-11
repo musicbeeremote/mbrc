@@ -85,7 +85,7 @@
                 android:layout_height="200dp"
                 android:layout_marginTop="1dp"
                 android:adjustViewBounds="false"
-                android:background="#FFFFFF"
+                android:background="@drawable/ic_cover_background"
                 android:contentDescription="@string/main_image_view_cover_description"
                 android:padding="0.5dp"
                 android:src="@drawable/ic_image_no_cover"

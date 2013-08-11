@@ -84,7 +84,7 @@
                 android:layout_width="220dp"
                 android:layout_height="220dp"
                 android:adjustViewBounds="false"
-                android:background="#FFFFFF"
+                android:background="@drawable/ic_cover_background"
                 android:contentDescription="@string/main_image_view_cover_description"
                 android:padding="0.5dp"
                 android:scaleType="fitCenter"

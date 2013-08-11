@@ -69,7 +69,7 @@
                     android:layout_width="@dimen/mbrc_cover"
                     android:layout_height="@dimen/mbrc_cover"
                     android:adjustViewBounds="false"
-                    android:background="#FFFFFF"
+                    android:background="@drawable/ic_cover_background"
                     android:contentDescription="@string/main_image_view_cover_description"
                     android:padding="0.5dp"
                     android:scaleType="fitCenter"
