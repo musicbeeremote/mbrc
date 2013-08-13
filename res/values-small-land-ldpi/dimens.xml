@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="extra_controls_button_size">40dp</dimen>
-    <dimen name="extra_controls_button_margin_top">8dp</dimen>
+    <dimen name="mbrc_control_button">40dp</dimen>
+    <dimen name="mbrc_control_button_distance">8dp</dimen>
     <dimen name="mbrc_cover">180dp</dimen>
-    <dimen name="drawer_width">300dp</dimen>
+    <dimen name="mbrc_drawer_width">300dp</dimen>
 </resources>

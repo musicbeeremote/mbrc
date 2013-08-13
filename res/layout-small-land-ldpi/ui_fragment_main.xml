@@ -18,8 +18,8 @@
 
         <ImageButton
                 android:id="@+id/main_last_fm_button"
-                android:layout_width="@dimen/extra_controls_button_size"
-                android:layout_height="@dimen/extra_controls_button_size"
+                android:layout_width="@dimen/mbrc_control_button"
+                android:layout_height="@dimen/mbrc_control_button"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:contentDescription="@string/main_button_last_fm_description"
                 android:scaleType="fitCenter"
@@ -27,9 +27,9 @@
 
         <ImageButton
                 android:id="@+id/main_repeat_button"
-                android:layout_width="@dimen/extra_controls_button_size"
-                android:layout_height="@dimen/extra_controls_button_size"
-                android:layout_marginTop="@dimen/extra_controls_button_margin_top"
+                android:layout_width="@dimen/mbrc_control_button"
+                android:layout_height="@dimen/mbrc_control_button"
+                android:layout_marginTop="@dimen/mbrc_control_button_distance"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:clickable="true"
                 android:contentDescription="@string/main_button_repeat_description"
@@ -38,9 +38,9 @@
 
         <ImageButton
                 android:id="@+id/main_shuffle_button"
-                android:layout_width="@dimen/extra_controls_button_size"
-                android:layout_height="@dimen/extra_controls_button_size"
-                android:layout_marginTop="@dimen/extra_controls_button_margin_top"
+                android:layout_width="@dimen/mbrc_control_button"
+                android:layout_height="@dimen/mbrc_control_button"
+                android:layout_marginTop="@dimen/mbrc_control_button_distance"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:contentDescription="@string/main_button_shuffle_description"
                 android:scaleType="fitCenter"
@@ -310,8 +310,8 @@
 
         <ImageButton
                 android:id="@+id/main_button_previous"
-                android:layout_width="@dimen/extra_controls_button_size"
-                android:layout_height="@dimen/extra_controls_button_size"
+                android:layout_width="@dimen/mbrc_control_button"
+                android:layout_height="@dimen/mbrc_control_button"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:contentDescription="@string/main_button_previous_description"
                 android:scaleType="fitCenter"
@@ -319,34 +319,34 @@
 
         <ImageButton
                 android:id="@+id/main_button_stop"
-                android:layout_width="@dimen/extra_controls_button_size"
-                android:layout_height="@dimen/extra_controls_button_size"
+                android:layout_width="@dimen/mbrc_control_button"
+                android:layout_height="@dimen/mbrc_control_button"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:contentDescription="@string/main_button_stop_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_stop"
-                android:layout_marginTop="@dimen/extra_controls_button_margin_top"/>
+                android:layout_marginTop="@dimen/mbrc_control_button_distance"/>
 
         <ImageButton
                 android:id="@+id/main_button_play_pause"
-                android:layout_width="@dimen/extra_controls_button_size"
-                android:layout_height="@dimen/extra_controls_button_size"
+                android:layout_width="@dimen/mbrc_control_button"
+                android:layout_height="@dimen/mbrc_control_button"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:clickable="true"
                 android:contentDescription="@string/main_button_play_pause_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_play"
-                android:layout_marginTop="@dimen/extra_controls_button_margin_top"/>
+                android:layout_marginTop="@dimen/mbrc_control_button_distance"/>
 
         <ImageButton
                 android:id="@+id/main_button_next"
-                android:layout_width="@dimen/extra_controls_button_size"
-                android:layout_height="@dimen/extra_controls_button_size"
+                android:layout_width="@dimen/mbrc_control_button"
+                android:layout_height="@dimen/mbrc_control_button"
                 android:background="@drawable/selectable_background_mbrc_default"
                 android:contentDescription="@string/main_button_next_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_next"
-                android:layout_marginTop="@dimen/extra_controls_button_margin_top"/>
+                android:layout_marginTop="@dimen/mbrc_control_button_distance"/>
     </LinearLayout>
 
 </RelativeLayout>

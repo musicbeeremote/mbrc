@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="drawer_drawable_bounds">30</integer>
+    <integer name="mbrc_drawer_drawable_bounds">30</integer>
 </resources>

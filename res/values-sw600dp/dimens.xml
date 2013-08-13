@@ -5,7 +5,7 @@
     <dimen name="list_item_one">22sp</dimen>
     <dimen name="list_item_two">20sp</dimen>
     <dimen name="mini_control_height">60dp</dimen>
-    <dimen name="drawer_width">320dp</dimen>
-    <dimen name="drawer_item_height">60dp</dimen>
+    <dimen name="mbrc_drawer_width">320dp</dimen>
+    <dimen name="mbrc_drawer_item_height">60dp</dimen>
     <dimen name="mbrc_rating_bar_wrapper">40dp</dimen>
 </resources>

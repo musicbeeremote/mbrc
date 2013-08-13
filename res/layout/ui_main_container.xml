@@ -14,7 +14,7 @@
 
     <fragment
             android:id="@+id/drawer_menu"
-            android:layout_width="@dimen/drawer_width"
+            android:layout_width="@dimen/mbrc_drawer_width"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:name="com.kelsos.mbrc.ui.fragments.DrawerFragment"
