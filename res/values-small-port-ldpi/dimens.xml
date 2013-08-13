@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="mbrc_control_button">40dp</dimen>
-    <dimen name="mbrc_control_button_distance">8dp</dimen>
+    <dimen name="mbrc_control_distance">8dp</dimen>
     <dimen name="mbrc_cover">225dp</dimen>
     <dimen name="mbrc_drawer_width">260dp</dimen>
     <dimen name="mbrc_drawer_item_height">40dp</dimen>

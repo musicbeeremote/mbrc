@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="mbrc_cover">700dp</dimen>
+    <dimen name="mbrc_cover">685dp</dimen>
     <dimen name="mbrc_artist_text_size">24sp</dimen>
     <dimen name="mbrc_title_text_size">28sp</dimen>
     <dimen name="mbrc_album_text_size">22sp</dimen>
     <dimen name="mbrc_year_text_size">20sp</dimen>
     <dimen name="mbrc_duration_text_size">16sp</dimen>
-    <dimen name="mbrc_control_button">65dp</dimen>
+    <dimen name="mbrc_control_button">75dp</dimen>
+    <dimen name="mbrc_control_distance">30dp</dimen>
     <dimen name="mbrc_secondary_control_button">45dp</dimen>
+    <dimen name="mbrc_secondary_control_distance">30dp</dimen>
+    <dimen name="mbrc_volume_seekbar_height">8dp</dimen>
+    <dimen name="mbrc_volume_seekbar_padding">9dp</dimen>
+    <dimen name="mbrc_volume_seekbar_thumb_offset">16dp</dimen>
+    <dimen name="mbrc_progress_seekbar_height">8dp</dimen>
+    <dimen name="mbrc_progress_seekbar_padding">4dp</dimen>
+    <dimen name="mbrc_progress_seekbar_thumb_offset">6dp</dimen>
 </resources>
