@@ -248,6 +248,10 @@
 								<phase>package</phase>
 								<inherited>true</inherited>
 								<configuration>
+                                    <arguments>
+                                        <argument>-sigalg</argument><argument>MD5withRSA</argument>
+                                        <argument>-digestalg</argument><argument>SHA1</argument>
+                                    </arguments>
 									<removeExistingSignatures>true</removeExistingSignatures>
 									<archiveDirectory />
 									<includes>
