@@ -79,7 +79,8 @@ public class SettingsDialogFragment extends DialogFragment {
                     }
 
                     String portText = port.getText().toString();
-                    int portNum = Integer.parseInt(portText);
+
+                    int portNum = portText.isEmpty() ? 0 : Integer.parseInt(portText);
 
                     if (validatePortNumber(portNum) && shouldIClose) {
                         ConnectionSettings settings = new ConnectionSettings(hostname, computerName, portNum, cindex);
@@ -93,7 +94,7 @@ public class SettingsDialogFragment extends DialogFragment {
         host = (EditText) dialog.findViewById(R.id.settings_dialog_host);
         port = (EditText) dialog.findViewById(R.id.settings_dialog_port);
 
-        if (name != null || !name.equals("")) {
+        if (name != null || !name.getText().toString().equals("")) {
             name.setText(cname);
             host.setText(caddress);
             if (cport > 0) {
