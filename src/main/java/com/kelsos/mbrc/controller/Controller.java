@@ -1,14 +1,13 @@
 package com.kelsos.mbrc.controller;
 
 import android.content.Intent;
-import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
-import com.kelsos.mbrc.configuration.CommandRegistration;
+import com.kelsos.mbrc.configuration.Configuration;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
@@ -23,28 +22,30 @@ import java.util.Map;
 @Singleton
 public class Controller extends RoboService {
 
-    private final IBinder mBinder = new ControllerBinder();
     @Inject private Injector injector;
     @Inject private Bus bus;
-    private Map<String, Class<?>> commandMap;
+    private Map<String, Class<? extends ICommand>> commandMap;
 
     public Controller() {
+        if (BuildConfig.DEBUG) {
+            Log.d("mbrc-log", "Controller initialized");
+        }
     }
 
     @Override public IBinder onBind(Intent intent) {
-        return mBinder;
+        return null;
     }
 
-    public void register(String type, Class<?> command) {
+    public void register(String type, Class<? extends ICommand> command) {
         if (commandMap == null) {
-            commandMap = new HashMap<String, Class<?>>();
+            commandMap = new HashMap<String, Class<? extends ICommand>>();
         }
         if (!commandMap.containsKey(type)) {
             commandMap.put(type, command);
         }
     }
 
-    public void unregister(String type, Class<?> command) {
+    public void unregister(String type, Class<? extends ICommand> command) {
         if (commandMap.containsKey(type) && commandMap.get(type).equals(command)) {
             commandMap.remove(type);
         }
@@ -60,7 +61,7 @@ public class Controller extends RoboService {
     }
 
     public void executeCommand(IEvent event) {
-        Class<ICommand> commandClass = (Class<ICommand>) this.commandMap.get(event.getType());
+        Class<? extends ICommand> commandClass = this.commandMap.get(event.getType());
         if (commandClass == null) return;
         ICommand commandInstance;
         try {
@@ -76,15 +77,9 @@ public class Controller extends RoboService {
 
     }
 
-    public class ControllerBinder extends Binder {
-        ControllerBinder getService() {
-            return ControllerBinder.this;
-        }
-    }
-
     @Override public int onStartCommand(Intent intent, int flags, int startId) {
+        Configuration.initialize(this);
         bus.register(this);
-        CommandRegistration.register(this);
         return super.onStartCommand(intent, flags, startId);
     }
 

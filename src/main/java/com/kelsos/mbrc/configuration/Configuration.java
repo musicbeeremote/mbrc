@@ -10,8 +10,8 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.controller.Controller;
 import com.kelsos.mbrc.constants.Protocol;
 
-public class CommandRegistration {
-    @Inject public static void register(Controller controller) {
+public class Configuration {
+    @Inject public static void initialize(Controller controller) {
         controller.register(ProtocolEventType.ReduceVolume, ReduceVolumeOnRingCommand.class);
         controller.register(ProtocolEventType.HandshakeComplete, VisualUpdateHandshakeComplete.class);
         controller.register(ProtocolEventType.InformClientNotAllowed, NotifyNotAllowedCommand.class);

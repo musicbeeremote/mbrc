@@ -4,5 +4,5 @@
     <item android:icon="@drawable/abs__ic_search"
             android:id="@+id/now_playing_search_item"
             android:showAsAction="collapseActionView|always"
-            android:title="@string/now_playing_search"></item>
+            android:title="@string/now_playing_search"/>
 </menu>
