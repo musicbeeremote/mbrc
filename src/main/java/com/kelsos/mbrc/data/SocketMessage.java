@@ -13,6 +13,12 @@ public class SocketMessage {
         this.type = "error";
     }
 
+    public SocketMessage(String context, String type) {
+        this.context = context;
+        this.type = type;
+        this.data = "";
+    }
+
     public SocketMessage(String context, String type, Object data) {
         this.context = context;
         this.data = data;

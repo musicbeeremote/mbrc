@@ -52,9 +52,9 @@ public class Controller extends RoboService {
     }
 
     /**
-     * Takes a MessageEvent and passes it to the command execution function.
-     *
-     * @param event The message received.
+     * Subscriber - Handler to the MessageEvents posted through the event bus.
+     * Responsible for passing the event to the executeCommand function.
+     * @param event
      */
     @Subscribe public void handleUserActionEvents(MessageEvent event) {
         executeCommand(event);

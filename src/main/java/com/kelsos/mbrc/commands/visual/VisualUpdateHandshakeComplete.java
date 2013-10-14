@@ -22,12 +22,12 @@ public class VisualUpdateHandshakeComplete implements ICommand {
         model.setHandShakeDone(isComplete);
 
         if (!isComplete) return;
-        service.sendData(new SocketMessage(Protocol.PlayerStatus, Protocol.Request, ""));
-        service.sendData(new SocketMessage(Protocol.NowPlayingTrack, Protocol.Request, ""));
-        service.sendData(new SocketMessage(Protocol.NowPlayingCover, Protocol.Request, ""));
-        service.sendData(new SocketMessage(Protocol.NowPlayingLyrics, Protocol.Request, ""));
-        service.sendData(new SocketMessage(Protocol.NowPlayingPosition, Protocol.Request, ""));
-        service.sendData(new SocketMessage(Protocol.PluginVersion, Protocol.Request, ""));
+        service.sendData(new SocketMessage(Protocol.NowPlayingTrack, Protocol.Request));
+        service.sendData(new SocketMessage(Protocol.PlayerStatus, Protocol.Request));
+        service.sendData(new SocketMessage(Protocol.NowPlayingCover, Protocol.Request));
+        service.sendData(new SocketMessage(Protocol.NowPlayingLyrics, Protocol.Request));
+        service.sendData(new SocketMessage(Protocol.NowPlayingPosition, Protocol.Request));
+        service.sendData(new SocketMessage(Protocol.PluginVersion, Protocol.Request));
     }
 }
 

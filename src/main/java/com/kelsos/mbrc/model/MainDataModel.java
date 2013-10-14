@@ -308,7 +308,16 @@ public class MainDataModel {
 
     public void setLyrics(String lyrics) {
         if (lyrics.equals(this.lyrics)) return;
-        this.lyrics = lyrics.replace("<p>", "\r\n").replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", "\"").replace("&apos;", "'").replace("&amp;", "&").replace("<p>", "\r\n").replace("<br>", "\n").trim();
+        this.lyrics = lyrics.replace("<p>", "\r\n")
+                .replace("<br>", "\n")
+                .replace("&lt;", "<")
+                .replace("&gt;", ">")
+                .replace("&quot;", "\"")
+                .replace("&apos;", "'")
+                .replace("&amp;", "&")
+                .replace("<p>", "\r\n")
+                .replace("<br>", "\n")
+                .trim();
         bus.post(new LyricsUpdated(this.lyrics));
     }
 }
