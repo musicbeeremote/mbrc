@@ -135,5 +135,10 @@
     <string name="settings_key_last_version_run">last_version_run</string>
     <string name="dialog_upgrade_negative">Ok</string>
     <string name="dialog_upgrade_title">Welcome</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_nowplaying">Now playing list</string>
+    <string name="nav_lyrics">Lyrics</string>
+    <string name="nav_playlists">Playlists</string>
 
 </resources>

@@ -22,10 +22,7 @@ import com.kelsos.mbrc.events.ui.DrawerEvent;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
-import com.kelsos.mbrc.ui.fragments.LyricsFragment;
-import com.kelsos.mbrc.ui.fragments.MainFragment;
-import com.kelsos.mbrc.ui.fragments.NowPlayingFragment;
-import com.kelsos.mbrc.ui.fragments.SearchFragment;
+import com.kelsos.mbrc.ui.fragments.*;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -206,6 +203,10 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
             case LYRICS:
                 LyricsFragment lFragment = new LyricsFragment();
                 replaceFragment(lFragment, "lyrics");
+                break;
+            case PLAYLIST:
+                PlaylistFragment plFragment = new PlaylistFragment();
+                replaceFragment(plFragment, "playlist");
                 break;
         }
         navChanged = false;

@@ -4,5 +4,6 @@ public enum DisplayFragment {
     HOME,
     SEARCH,
     NOW_PLAYING_LIST,
-    LYRICS
+    LYRICS,
+    PLAYLIST
 }
