@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionCode="83" android:versionName="0.9.8-SNAPSHOT" package="com.kelsos.mbrc">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionCode="84" android:versionName="0.9.8" package="com.kelsos.mbrc">
 
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="18"/>
 
