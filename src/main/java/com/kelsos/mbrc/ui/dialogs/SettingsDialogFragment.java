@@ -80,7 +80,7 @@ public class SettingsDialogFragment extends DialogFragment {
 
                     String portText = port.getText().toString();
 
-                    int portNum = portText.isEmpty() ? 0 : Integer.parseInt(portText);
+                    int portNum = portText.equals("") ? 0 : Integer.parseInt(portText);
 
                     if (validatePortNumber(portNum) && shouldIClose) {
                         ConnectionSettings settings = new ConnectionSettings(hostname, computerName, portNum, cindex);
