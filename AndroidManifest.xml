@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
-    <application android:allowBackup="true" android:debuggable="false" android:description="@string/application_description" android:icon="@drawable/ic_launcher" android:label="@string/application_name" android:logo="@drawable/ic_launcher" android:name=".RemoteApplication" android:theme="@style/Theme.mbrc_default">
+    <application android:allowBackup="true" android:description="@string/application_description" android:icon="@drawable/ic_launcher" android:label="@string/application_name" android:logo="@drawable/ic_launcher" android:name=".RemoteApplication" android:theme="@style/Theme.mbrc_default">
         <activity android:launchMode="singleTop" android:name=".ui.activities.MainFragmentActivity" android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

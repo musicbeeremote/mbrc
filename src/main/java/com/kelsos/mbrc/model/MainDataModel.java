@@ -44,6 +44,7 @@ public class MainDataModel {
     private ArrayList<GenreEntry> searchGenres;
     private ArrayList<ArtistEntry> searchArtists;
     private ArrayList<MusicTrack> nowPlayingList;
+    private ArrayList<Playlist> availablePlaylists;
     private LfmStatus lfmRating;
     private String pluginVersion;
 
@@ -72,9 +73,19 @@ public class MainDataModel {
         searchGenres = new ArrayList<GenreEntry>();
         searchTracks = new ArrayList<TrackEntry>();
         nowPlayingList = new ArrayList<MusicTrack>();
+        availablePlaylists = new ArrayList<Playlist>();
         lfmRating = LfmStatus.NORMAL;
         pluginVersion = "";
 
+    }
+
+    public void setAvailablePlaylists(ArrayList<Playlist> playlists) {
+        this.availablePlaylists = playlists;
+        bus.post(new AvailablePlaylists(this.availablePlaylists, false));
+    }
+
+    @Produce public AvailablePlaylists availablePlaylistsChanged() {
+        return new AvailablePlaylists(this.availablePlaylists, true);
     }
 
     public void setLfmRating(String rating) {

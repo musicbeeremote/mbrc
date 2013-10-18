@@ -43,6 +43,8 @@ public class Configuration {
         controller.register(Protocol.LibraryAlbumTracks, UpdateTrackSearchResults.class);
         controller.register(Protocol.NowPlayingPosition, UpdatePlaybackPositionCommand.class);
         controller.register(Protocol.PluginVersion, UpdatePluginVersionCommand.class);
+        controller.register(Protocol.PlaylistList, UpdateAvailablePlaylists.class);
+
         controller.register(UserInputEventType.SettingsChanged, RestartConnectionCommand.class);
         controller.register(UserInputEventType.CancelNotification, CancelNotificationCommand.class);
         controller.register(UserInputEventType.StartConnection, InitiateConnectionCommand.class);

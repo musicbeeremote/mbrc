@@ -51,6 +51,13 @@ public class Protocol {
     public static final String LibraryQueueTrack = "libraryqueuetrack";
 
     public static final String PlaylistList = "playlistlist";
+    public static final String PlaylistGetFiles = "playlistgetfiles";
+    public static final String PlaylistPlayNow = "playlistplaynow";
+    public static final String PlaylistRemove = "playlistremove";
+    public static final String PlaylistMove = "playlistmove";
+    public static final String PlaylistAddFiles = "playlistaddfiles";
+    public static final String PlaylistCreate = "playlistcreate";
+
 
     public static final String Request = "req";
     public static final String Reply = "rep";
