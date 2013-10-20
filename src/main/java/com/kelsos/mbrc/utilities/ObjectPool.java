@@ -19,7 +19,7 @@ public abstract class ObjectPool<T> {
 
     public abstract void expire(T o);
 
-    public synchronized T checkOut() {
+    public synchronized T acquire() {
         long now = System.currentTimeMillis();
         T t;
         if (unlocked.size() > 0) {
@@ -49,7 +49,7 @@ public abstract class ObjectPool<T> {
         return (t);
     }
 
-    public synchronized void checkIn(T t) {
+    public synchronized void release(T t) {
         locked.remove(t);
         unlocked.put(t, System.currentTimeMillis());
     }

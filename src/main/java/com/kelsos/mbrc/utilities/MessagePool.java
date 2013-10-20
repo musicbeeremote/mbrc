@@ -16,7 +16,7 @@ public class MessagePool extends ObjectPool<MessageEvent> {
 
     @Override
     public boolean validate(MessageEvent o) {
-        return false;
+        return  !o.isProcessed();
     }
 
     @Override
