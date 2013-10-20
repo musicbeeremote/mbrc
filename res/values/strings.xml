@@ -140,5 +140,7 @@
     <string name="nav_nowplaying">Now playing list</string>
     <string name="nav_lyrics">Lyrics</string>
     <string name="nav_playlists">Playlists</string>
+    <string name="playlist_list_play_now">Play Now</string>
+    <string name="playlist_list_get">Get Playlist</string>
 
 </resources>
