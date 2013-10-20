@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -13,9 +14,11 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistAdapter;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.*;
+import com.kelsos.mbrc.data.Playlist;
+import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.AvailablePlaylists;
+import com.kelsos.mbrc.ui.activities.PlaylistActivity;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.squareup.otto.Subscribe;
 
@@ -56,7 +59,15 @@ public class PlaylistFragment extends RoboSherlockListFragment {
     @Override public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         Playlist list = adapter.getItem(position);
-        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlaylistGetFiles, list.getSrc())));
+        openPlaylist(list);
+    }
+
+    private void openPlaylist(Playlist list) {
+        Intent intent = new Intent(this.getActivity(), PlaylistActivity.class);
+        intent.putExtra("name", list.getName());
+        intent.putExtra("count", list.getCount());
+        intent.putExtra("src", list.getSrc());
+        startActivity(intent);
     }
 
     @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -68,13 +79,14 @@ public class PlaylistFragment extends RoboSherlockListFragment {
     @Override public boolean onContextItemSelected(android.view.MenuItem item) {
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            Object line = adapter.getItem(mi.position);
-            String query = ((Playlist) line).getSrc();
+            Playlist line = adapter.getItem(mi.position);
+            String query = line.getSrc();
 
             UserAction ua = null;
             switch (item.getItemId()) {
                 case GET_PLAYLIST:
                     ua = new UserAction(Protocol.PlaylistGetFiles, query);
+                    openPlaylist(line);
                     break;
                 case PLAY_NOW:
                     ua = new UserAction(Protocol.PlaylistPlayNow, query);
