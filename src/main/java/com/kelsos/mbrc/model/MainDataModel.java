@@ -89,6 +89,11 @@ public class MainDataModel {
 
     public void setPlaylistTracks(ArrayList<TrackEntry> tracks) {
         this.playlistTracks = tracks;
+        bus.post(new PlaylistTracksAvailable(this.playlistTracks, false));
+    }
+
+    @Produce public PlaylistTracksAvailable producePlaylistTrack() {
+        return new PlaylistTracksAvailable(this.playlistTracks, true);
     }
 
     @Produce public AvailablePlaylists availablePlaylistsChanged() {
