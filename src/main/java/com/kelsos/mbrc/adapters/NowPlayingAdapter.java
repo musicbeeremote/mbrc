@@ -14,14 +14,14 @@ import com.kelsos.mbrc.data.MusicTrack;
 
 import java.util.ArrayList;
 
-public class PlaylistArrayAdapter extends ArrayAdapter<MusicTrack> {
+public class NowPlayingAdapter extends ArrayAdapter<MusicTrack> {
     private Context mContext;
     private int mResource;
     private ArrayList<MusicTrack> nowPlayingList;
     private int playingTrackIndex;
     private Typeface robotoLight;
 
-    public PlaylistArrayAdapter(Context context, int resource, ArrayList<MusicTrack> objects) {
+    public NowPlayingAdapter(Context context, int resource, ArrayList<MusicTrack> objects) {
         super(context, resource, objects);
         this.mResource = resource;
         this.mContext = context;

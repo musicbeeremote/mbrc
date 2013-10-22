@@ -14,7 +14,7 @@ import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFra
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.adapters.PlaylistArrayAdapter;
+import com.kelsos.mbrc.adapters.NowPlayingAdapter;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.MusicTrack;
 import com.kelsos.mbrc.data.UserAction;
@@ -36,7 +36,7 @@ import java.util.Map;
 public class NowPlayingFragment extends RoboSherlockListFragment implements SearchView.OnQueryTextListener {
     @Inject Injector injector;
     @Inject private Bus bus;
-    private PlaylistArrayAdapter adapter;
+    private NowPlayingAdapter adapter;
     private SearchView mSearchView;
     private MenuItem mSearchItem;
     private MusicTrack mTrack;
@@ -65,14 +65,14 @@ public class NowPlayingFragment extends RoboSherlockListFragment implements Sear
     }
 
     @Subscribe public void handleNowPlayingListAvailable(NowPlayingListAvailable event) {
-        adapter = new PlaylistArrayAdapter(getActivity(), R.layout.ui_list_track_item, event.getList());
+        adapter = new NowPlayingAdapter(getActivity(), R.layout.ui_list_track_item, event.getList());
         setListAdapter(adapter);
         adapter.setPlayingTrackIndex(event.getIndex());
         this.getListView().setSelection(event.getIndex());
     }
 
     @Subscribe public void handlePlayingTrackChange(TrackInfoChange event) {
-        if (adapter == null || !adapter.getClass().equals(PlaylistArrayAdapter.class)) return;
+        if (adapter == null || !adapter.getClass().equals(NowPlayingAdapter.class)) return;
         adapter.setPlayingTrackIndex(adapter.getPosition(new MusicTrack(event.getArtist(), event.getTitle())));
         adapter.notifyDataSetChanged();
     }
