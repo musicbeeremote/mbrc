@@ -79,7 +79,7 @@ public class PlaylistActivity extends RoboSherlockFragmentActivity {
     }
 
     @Subscribe public void handlePlaylistData(PlaylistTracksAvailable event) {
-        adapter = new PlaylistTrackAdapter(this, R.layout.ui_list_dual, event.getPlaylistTracks());
+        adapter = new PlaylistTrackAdapter(this, R.layout.ui_list_track_item, event.getPlaylistTracks());
         mList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
