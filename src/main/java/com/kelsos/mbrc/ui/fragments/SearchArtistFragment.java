@@ -22,11 +22,6 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 public class SearchArtistFragment extends RoboSherlockListFragment {
-    private static final int QUEUE_NEXT = 1;
-    private static final int QUEUE_LAST = 2;
-    private static final int PLAY_NOW = 3;
-    private static final int GET_SUB = 4;
-    private static final int PLAYLIST = 5;
     private static final int GROUP_ID = 12;
     private ArtistEntryAdapter adapter;
     private String mDefault;
@@ -67,11 +62,11 @@ public class SearchArtistFragment extends RoboSherlockListFragment {
 
     @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.setHeaderTitle(R.string.search_context_header);
-        menu.add(GROUP_ID, QUEUE_NEXT, 0, R.string.search_context_queue_next);
-        menu.add(GROUP_ID, QUEUE_LAST, 0, R.string.search_context_queue_last);
-        menu.add(GROUP_ID, PLAY_NOW, 0, R.string.search_context_play_now);
-        menu.add(GROUP_ID, GET_SUB, 0, R.string.search_context_get_albums);
-        menu.add(GROUP_ID, PLAYLIST, 0, getString(R.string.search_context_playlist));
+        menu.add(GROUP_ID, SearchMenuItems.QUEUE_NEXT, 0, R.string.search_context_queue_next);
+        menu.add(GROUP_ID, SearchMenuItems.QUEUE_LAST, 0, R.string.search_context_queue_last);
+        menu.add(GROUP_ID, SearchMenuItems.PLAY_NOW, 0, R.string.search_context_play_now);
+        menu.add(GROUP_ID, SearchMenuItems.GET_SUB, 0, R.string.search_context_get_albums);
+        menu.add(GROUP_ID, SearchMenuItems.PLAYLIST, 0, getString(R.string.search_context_playlist));
     }
 
     @Override public boolean onContextItemSelected(android.view.MenuItem item) {
@@ -84,16 +79,16 @@ public class SearchArtistFragment extends RoboSherlockListFragment {
 
             UserAction ua = null;
             switch (item.getItemId()) {
-                case QUEUE_NEXT:
+                case SearchMenuItems.QUEUE_NEXT:
                     ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_next), query));
                     break;
-                case QUEUE_LAST:
+                case SearchMenuItems.QUEUE_LAST:
                     ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_last), query));
                     break;
-                case PLAY_NOW:
+                case SearchMenuItems.PLAY_NOW:
                     ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_now), query));
                     break;
-                case GET_SUB:
+                case SearchMenuItems.GET_SUB:
                     ua = new UserAction(gSub, query);
                     break;
             }
