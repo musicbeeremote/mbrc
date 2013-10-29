@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
-import com.kelsos.mbrc.services.SocketService;
+import com.kelsos.mbrc.net.SocketService;
 
 public class InitiateConnectionCommand implements ICommand {
     private SocketService socketService;

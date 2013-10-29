@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.utilities;
+package com.kelsos.mbrc.util;
 
 import android.os.Handler;
 import android.os.Looper;

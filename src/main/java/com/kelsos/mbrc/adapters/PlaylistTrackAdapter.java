@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.TrackEntry;
+import com.kelsos.mbrc.model.TrackEntry;
 
 import java.util.ArrayList;
 

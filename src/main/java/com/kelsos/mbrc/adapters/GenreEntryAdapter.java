@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.GenreEntry;
+import com.kelsos.mbrc.model.GenreEntry;
 
 import java.util.ArrayList;
 

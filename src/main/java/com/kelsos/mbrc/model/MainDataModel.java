@@ -6,15 +6,14 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.data.*;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
-import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
+import com.kelsos.mbrc.util.MainThreadBusWrapper;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.enums.PlayState;
-import com.kelsos.mbrc.utilities.ImageDecoder;
+import com.kelsos.mbrc.util.ImageDecoder;
 import com.squareup.otto.Produce;
 
 import java.util.ArrayList;

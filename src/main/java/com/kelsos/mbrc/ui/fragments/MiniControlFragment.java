@@ -12,7 +12,7 @@ import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragmen
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.UserAction;
+import com.kelsos.mbrc.model.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.CoverAvailable;
 import com.kelsos.mbrc.events.ui.PlayStateChange;

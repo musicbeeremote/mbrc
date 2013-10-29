@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.data;
+package com.kelsos.mbrc.model;
 
 public class UserAction {
     private String context;

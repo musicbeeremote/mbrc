@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.events;
 
 import com.kelsos.mbrc.interfaces.IEvent;
-import com.kelsos.mbrc.utilities.ObjectPool;
 import org.codehaus.jackson.node.TextNode;
 
 public class MessageEvent implements IEvent {

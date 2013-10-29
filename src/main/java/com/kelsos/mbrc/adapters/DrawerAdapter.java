@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckedTextView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.NavigationEntry;
+import com.kelsos.mbrc.model.NavigationEntry;
 
 import java.util.ArrayList;
 

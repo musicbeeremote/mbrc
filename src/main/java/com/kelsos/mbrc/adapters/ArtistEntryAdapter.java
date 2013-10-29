@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.ArtistEntry;
+import com.kelsos.mbrc.model.ArtistEntry;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.utilities;
+package com.kelsos.mbrc.util;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;

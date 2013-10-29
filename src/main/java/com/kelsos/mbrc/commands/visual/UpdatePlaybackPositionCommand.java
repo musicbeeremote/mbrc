@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.events.ui.UpdatePosition;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
-import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
+import com.kelsos.mbrc.util.MainThreadBusWrapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 public class UpdatePlaybackPositionCommand implements ICommand {

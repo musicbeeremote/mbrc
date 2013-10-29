@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.utilities;
+package com.kelsos.mbrc.util;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;

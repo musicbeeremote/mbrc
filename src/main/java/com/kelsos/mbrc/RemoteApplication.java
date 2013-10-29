@@ -7,11 +7,11 @@ import android.view.ViewConfiguration;
 import com.google.inject.Stage;
 import com.google.inject.util.Modules;
 import com.kelsos.mbrc.controller.Controller;
-import com.kelsos.mbrc.messaging.NotificationService;
+import com.kelsos.mbrc.util.NotificationService;
 import com.kelsos.mbrc.model.MainDataModel;
-import com.kelsos.mbrc.services.ProtocolHandler;
-import com.kelsos.mbrc.services.SocketService;
-import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver;
+import com.kelsos.mbrc.net.ProtocolHandler;
+import com.kelsos.mbrc.net.SocketService;
+import com.kelsos.mbrc.util.RemoteBroadcastReceiver;
 import roboguice.RoboGuice;
 import roboguice.inject.RoboInjector;
 

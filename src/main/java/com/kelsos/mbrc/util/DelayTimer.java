@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.utilities;
+package com.kelsos.mbrc.util;
 
 import android.util.Log;
 import com.kelsos.mbrc.BuildConfig;

@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
-import com.kelsos.mbrc.services.ProtocolHandler;
+import com.kelsos.mbrc.net.ProtocolHandler;
 
 public class SocketDataAvailableCommand implements ICommand {
     private ProtocolHandler handler;

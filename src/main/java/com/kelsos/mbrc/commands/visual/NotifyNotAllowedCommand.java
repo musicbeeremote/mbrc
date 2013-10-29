@@ -7,9 +7,9 @@ import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
-import com.kelsos.mbrc.services.ProtocolHandler;
-import com.kelsos.mbrc.services.SocketService;
-import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
+import com.kelsos.mbrc.net.ProtocolHandler;
+import com.kelsos.mbrc.net.SocketService;
+import com.kelsos.mbrc.util.MainThreadBusWrapper;
 
 public class NotifyNotAllowedCommand implements ICommand {
     private SocketService socketService;

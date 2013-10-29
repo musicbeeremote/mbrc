@@ -20,7 +20,7 @@ import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.data.UserAction;
+import com.kelsos.mbrc.model.UserAction;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;

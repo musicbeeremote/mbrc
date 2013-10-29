@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.services;
+package com.kelsos.mbrc.net;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -6,10 +6,10 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.data.ConnectionSettings;
+import com.kelsos.mbrc.model.ConnectionSettings;
 import com.kelsos.mbrc.enums.DiscoveryStop;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
-import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
+import com.kelsos.mbrc.util.MainThreadBusWrapper;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 

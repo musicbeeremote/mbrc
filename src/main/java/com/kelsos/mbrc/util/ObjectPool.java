@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.utilities;
+package com.kelsos.mbrc.util;
 
 import java.util.Enumeration;
 import java.util.Hashtable;

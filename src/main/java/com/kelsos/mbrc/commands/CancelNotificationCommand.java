@@ -3,7 +3,7 @@ package com.kelsos.mbrc.commands;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
-import com.kelsos.mbrc.messaging.NotificationService;
+import com.kelsos.mbrc.util.NotificationService;
 
 public class CancelNotificationCommand implements ICommand {
     private NotificationService notificationService;
