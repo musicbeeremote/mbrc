@@ -142,5 +142,9 @@
     <string name="nav_playlists">Playlists</string>
     <string name="playlist_list_play_now">Play Now</string>
     <string name="playlist_list_get">Get Playlist</string>
+    <string name="mqueue_next">next</string>
+    <string name="mqueue_last">last</string>
+    <string name="mqueue_now">now</string>
+    <string name="search_context_playlist">Add to playlist</string>
 
 </resources>

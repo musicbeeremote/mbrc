@@ -25,6 +25,7 @@ public class SearchTrackFragment extends RoboSherlockListFragment {
     private static final int QUEUE_NEXT = 1;
     private static final int QUEUE_LAST = 2;
     private static final int PLAY_NOW = 3;
+    private static final int PLAYLIST = 5;
     private static final int GROUP_ID = 14;
     private String mDefault;
 
@@ -69,6 +70,7 @@ public class SearchTrackFragment extends RoboSherlockListFragment {
         menu.add(GROUP_ID, QUEUE_NEXT, 0, R.string.search_context_queue_next);
         menu.add(GROUP_ID, QUEUE_LAST, 0, R.string.search_context_queue_last);
         menu.add(GROUP_ID, PLAY_NOW, 0, R.string.search_context_play_now);
+        menu.add(GROUP_ID, PLAYLIST, 0, getString(R.string.search_context_playlist));
     }
 
     @Override public boolean onContextItemSelected(android.view.MenuItem item) {
@@ -81,13 +83,13 @@ public class SearchTrackFragment extends RoboSherlockListFragment {
             UserAction ua = null;
             switch (item.getItemId()) {
                 case QUEUE_NEXT:
-                    ua = new UserAction(qContext, new Queue("next", query));
+                    ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_next), query));
                     break;
                 case QUEUE_LAST:
-                    ua = new UserAction(qContext, new Queue("last", query));
+                    ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_last), query));
                     break;
                 case PLAY_NOW:
-                    ua = new UserAction(qContext, new Queue("now", query));
+                    ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_now), query));
                     break;
             }
 
