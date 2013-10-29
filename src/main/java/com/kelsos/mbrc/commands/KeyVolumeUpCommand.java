@@ -7,7 +7,7 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
-import com.kelsos.mbrc.constants.Protocol;
+import com.kelsos.mbrc.net.Protocol;
 import com.squareup.otto.Bus;
 
 public class KeyVolumeUpCommand implements ICommand {

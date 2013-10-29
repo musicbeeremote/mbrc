@@ -8,7 +8,7 @@ import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.SocketEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.controller.Controller;
-import com.kelsos.mbrc.constants.Protocol;
+import com.kelsos.mbrc.net.Protocol;
 
 public class Configuration {
     @Inject public static void initialize(Controller controller) {

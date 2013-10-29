@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.constants;
+package com.kelsos.mbrc.net;
 
 public class Protocol {
 

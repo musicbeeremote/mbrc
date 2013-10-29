@@ -17,7 +17,7 @@ import com.kelsos.mbrc.model.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.events.ui.AlbumSearchResults;
-import com.kelsos.mbrc.constants.Protocol;
+import com.kelsos.mbrc.net.Protocol;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 

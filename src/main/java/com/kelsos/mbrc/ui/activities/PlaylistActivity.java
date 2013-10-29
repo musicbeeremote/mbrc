@@ -8,7 +8,7 @@ import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmen
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistTrackAdapter;
-import com.kelsos.mbrc.constants.Protocol;
+import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.model.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
