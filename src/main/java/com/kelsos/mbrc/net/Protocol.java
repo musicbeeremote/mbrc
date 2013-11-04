@@ -58,8 +58,10 @@ public class Protocol {
     public static final String PlaylistAddFiles = "playlistaddfiles";
     public static final String PlaylistCreate = "playlistcreate";
 
+    public static final String LibrarySync = "librarysync";
 
     public static final String Request = "req";
     public static final String Reply = "rep";
     public static final String Message = "msg";
+
 }

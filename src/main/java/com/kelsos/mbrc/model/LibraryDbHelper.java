@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.model;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -40,7 +41,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_LIBRARY = "CREATE TABLE "
             + TABLE_LIBRARY + "(" + ENTRY_ID + " INTEGER PRIMARY KEY," +
-            FILE + " TEXT," + ARTIST + " INTEGER," + ALBUMARTIST + " INTEGER," +
+            FILE + " TEXT UNIQUE," + ARTIST + " INTEGER," + ALBUMARTIST + " INTEGER," +
             TITLE + " TEXT," + ALBUM + " INTEGER," + YEAR + " TEXT," +
             GENRE + " INTEGER," + COVER + " TEXT,"+ UPDATED
             + " DATETIME" + ")";
@@ -63,5 +64,12 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ARTISTS);
 
         onCreate(db);
+    }
+
+    public long createLibraryEntry(String file) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(FILE, file);
+        return db.insert(TABLE_LIBRARY, null, values);
     }
 }
