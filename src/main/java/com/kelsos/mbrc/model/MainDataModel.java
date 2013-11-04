@@ -51,6 +51,7 @@ public class MainDataModel {
     @Inject
     public MainDataModel(MainThreadBusWrapper bus, Context context) {
         this.context = context;
+        LibraryDbHelper db = new LibraryDbHelper(context);
         this.bus = bus;
         bus.register(this);
 
