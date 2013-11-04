@@ -13,7 +13,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
     }
 
     @Override public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_DELETE_E);
+        //db.execSQL(//);
     }
 
     @Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

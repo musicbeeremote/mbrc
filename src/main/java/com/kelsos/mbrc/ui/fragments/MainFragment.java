@@ -9,10 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.*;
 import android.widget.*;
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.ShareActionProvider;
+import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -453,7 +455,10 @@ public class MainFragment extends RoboSherlockFragment {
         titleLabel.setText(change.getTitle());
         albumLabel.setText(change.getAlbum());
         yearLabel.setText(change.getYear());
-
+        ActionBar actionBar = ((RoboSherlockFragmentActivity) getActivity()).getSupportActionBar();
+        actionBar.setTitle(change.getTitle());
+        actionBar.setSubtitle(change.getAlbum());
+        actionBar.setDisplayShowTitleEnabled(true);
     }
 
     @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChange change) {

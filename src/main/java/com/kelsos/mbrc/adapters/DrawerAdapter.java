@@ -45,9 +45,6 @@ public class DrawerAdapter extends ArrayAdapter<NavigationEntry> {
         }
 
         holder.itemName.setText(current.getLabel());
-        holder.itemName.setCompoundDrawables(current.getLeftDrawable(), null, null, null);
-
-
         return row;
     }
 
