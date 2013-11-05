@@ -3,16 +3,16 @@ package com.kelsos.mbrc.adapters;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import com.kelsos.mbrc.ui.fragments.SearchAlbumFragment;
-import com.kelsos.mbrc.ui.fragments.SearchArtistFragment;
-import com.kelsos.mbrc.ui.fragments.SearchGenreFragment;
-import com.kelsos.mbrc.ui.fragments.SearchTrackFragment;
+import com.kelsos.mbrc.ui.fragments.BrowseAlbumFragment;
+import com.kelsos.mbrc.ui.fragments.BrowseArtistFragment;
+import com.kelsos.mbrc.ui.fragments.BrowseGenreFragment;
+import com.kelsos.mbrc.ui.fragments.BrowseTrackFragment;
 
-public class SearchPagerAdapter extends FragmentStatePagerAdapter {
+public class BrowsePagerAdapter extends FragmentStatePagerAdapter {
     private int mCount = 4;
     private final CharSequence pageTitles[] = new CharSequence[]{"Genre", "Artist", "Album", "Track"};
 
-    public SearchPagerAdapter(FragmentActivity activity) {
+    public BrowsePagerAdapter(FragmentActivity activity) {
         super(activity.getSupportFragmentManager());
     }
 
@@ -20,13 +20,13 @@ public class SearchPagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                return new SearchGenreFragment();
+                return new BrowseGenreFragment();
             case 1:
-                return new SearchArtistFragment();
+                return new BrowseArtistFragment();
             case 2:
-                return new SearchAlbumFragment();
+                return new BrowseAlbumFragment();
             case 3:
-                return new SearchTrackFragment();
+                return new BrowseTrackFragment();
         }
         return null;
     }

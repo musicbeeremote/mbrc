@@ -23,13 +23,13 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.viewpagerindicator.TitlePageIndicator;
 
-public class SearchFragment extends RoboSherlockFragment implements SearchView.OnQueryTextListener {
+public class BrowseFragment extends RoboSherlockFragment implements SearchView.OnQueryTextListener {
 
     @Inject Bus bus;
     private SearchView mSearchView;
     private MenuItem mSearchItem;
     private ViewPager mPager;
-    private SearchPagerAdapter mAdapter;
+    private BrowsePagerAdapter mAdapter;
 
     @Override public boolean onQueryTextSubmit(String query) {
         String pContext = "";
@@ -72,6 +72,16 @@ public class SearchFragment extends RoboSherlockFragment implements SearchView.O
         return view;
     }
 
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case 1:
+                bus.post(new MessageEvent(ProtocolEventType.UserAction,
+                    new UserAction(Protocol.LibrarySync,"")));
+                break;
+        }
+        return false;
+    }
+
     @Override public void onStart() {
         super.onStart();
         bus.register(this);
@@ -86,7 +96,7 @@ public class SearchFragment extends RoboSherlockFragment implements SearchView.O
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mAdapter = new SearchPagerAdapter(getActivity());
+        mAdapter = new BrowsePagerAdapter(getActivity());
     }
 
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -95,6 +105,7 @@ public class SearchFragment extends RoboSherlockFragment implements SearchView.O
         mSearchView.setIconifiedByDefault(true);
 
         inflater.inflate(R.menu.menu_now_playing, menu);
+        menu.add(15,1,0,"Sync Library");
         mSearchItem = menu.findItem(R.id.now_playing_search_item);
         mSearchItem.setActionView(mSearchView);
         mSearchView.setOnQueryTextListener(this);

@@ -81,8 +81,8 @@ public class DrawerFragment extends RoboSherlockListFragment implements Fragment
 
         ArrayList<NavigationEntry> nav = new ArrayList<NavigationEntry>();
         nav.add(new NavigationEntry(getString(R.string.nav_home)));
-        nav.add(new NavigationEntry(getString(R.string.nav_search)));
-        nav.add(new NavigationEntry(getString(R.string.nav_nowplaying)));
+        nav.add(new NavigationEntry(getString(R.string.nav_library)));
+        nav.add(new NavigationEntry(getString(R.string.nav_currentqueue)));
         nav.add(new NavigationEntry(getString(R.string.nav_lyrics)));
         nav.add(new NavigationEntry(getString(R.string.nav_playlists)));
 

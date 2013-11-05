@@ -193,7 +193,7 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
                 }
                 break;
             case SEARCH:
-                SearchFragment slsFragment = new SearchFragment();
+                BrowseFragment slsFragment = new BrowseFragment();
                 replaceFragment(slsFragment, "library_search");
                 break;
             case NOW_PLAYING_LIST:

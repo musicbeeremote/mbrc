@@ -4,9 +4,12 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.LibraryDbHelper;
+import com.kelsos.mbrc.model.LibraryTrack;
 import com.kelsos.mbrc.model.MainDataModel;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
+
+import java.util.List;
 
 public class UpdateLibraryFiles implements ICommand {
     @Inject private MainDataModel model;

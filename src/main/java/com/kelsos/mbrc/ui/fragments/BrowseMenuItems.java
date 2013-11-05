@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.fragments;
 
-public class SearchMenuItems {
+public class BrowseMenuItems {
     public static final int QUEUE_NEXT = 1;
     public static final int QUEUE_LAST = 2;
     public static final int PLAY_NOW = 3;

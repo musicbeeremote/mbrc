@@ -9,23 +9,22 @@ import android.widget.AdapterView;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.adapters.AlbumEntryAdapter;
+import com.kelsos.mbrc.adapters.ArtistEntryAdapter;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.model.AlbumEntry;
+import com.kelsos.mbrc.model.ArtistEntry;
 import com.kelsos.mbrc.model.Queue;
 import com.kelsos.mbrc.model.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
-import com.kelsos.mbrc.events.ui.AlbumSearchResults;
+import com.kelsos.mbrc.events.ui.ArtistSearchResults;
 import com.kelsos.mbrc.net.Protocol;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
-public class SearchAlbumFragment extends RoboSherlockListFragment {
-    private static final int GROUP_ID = 13;
+public class BrowseArtistFragment extends RoboSherlockListFragment {
+    private static final int GROUP_ID = 12;
+    private ArtistEntryAdapter adapter;
     private String mDefault;
-    private AlbumEntryAdapter adapter;
-
     @Inject Bus bus;
 
     @Override public void onStart() {
@@ -34,22 +33,22 @@ public class SearchAlbumFragment extends RoboSherlockListFragment {
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String album = ((AlbumEntry) getListView().getAdapter().getItem(position)).getAlbum();
+                String artist = ((ArtistEntry) getListView().getAdapter().getItem(position)).getArtist();
 
                 bus.post(new MessageEvent(ProtocolEventType.UserAction,
-                        new UserAction(Protocol.LibraryQueueAlbum,
-                                new Queue(mDefault, album))));
+                        new UserAction(Protocol.LibraryQueueArtist,
+                                new Queue(mDefault, artist))));
             }
         });
-    }
-
-    @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
-        mDefault = action.getAction();
     }
 
     @Override public void onStop() {
         super.onStop();
         bus.unregister(this);
+    }
+
+    @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
+        mDefault = action.getAction();
     }
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {
@@ -63,35 +62,33 @@ public class SearchAlbumFragment extends RoboSherlockListFragment {
 
     @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.setHeaderTitle(R.string.search_context_header);
-        menu.add(GROUP_ID, SearchMenuItems.QUEUE_NEXT, 0, R.string.search_context_queue_next);
-        menu.add(GROUP_ID, SearchMenuItems.QUEUE_LAST, 0, R.string.search_context_queue_last);
-        menu.add(GROUP_ID, SearchMenuItems.PLAY_NOW, 0, R.string.search_context_play_now);
-        menu.add(GROUP_ID, SearchMenuItems.GET_SUB, 0, R.string.search_context_get_tracks);
-        menu.add(GROUP_ID, SearchMenuItems.PLAYLIST, 0, getString(R.string.search_context_playlist));
-        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(GROUP_ID, BrowseMenuItems.QUEUE_NEXT, 0, R.string.search_context_queue_next);
+        menu.add(GROUP_ID, BrowseMenuItems.QUEUE_LAST, 0, R.string.search_context_queue_last);
+        menu.add(GROUP_ID, BrowseMenuItems.PLAY_NOW, 0, R.string.search_context_play_now);
+        menu.add(GROUP_ID, BrowseMenuItems.GET_SUB, 0, R.string.search_context_get_albums);
+        menu.add(GROUP_ID, BrowseMenuItems.PLAYLIST, 0, getString(R.string.search_context_playlist));
     }
 
-    @Override
-    public boolean onContextItemSelected(android.view.MenuItem item) {
+    @Override public boolean onContextItemSelected(android.view.MenuItem item) {
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             Object line = adapter.getItem(mi.position);
-            final String qContext = Protocol.LibraryQueueAlbum;
-            final String gSub = Protocol.LibraryAlbumTracks;
-            String query = ((AlbumEntry) line).getAlbum();
+            final String qContext = Protocol.LibraryQueueArtist;
+            final String gSub = Protocol.LibraryArtistAlbums;
+            String query = ((ArtistEntry) line).getArtist();
 
             UserAction ua = null;
             switch (item.getItemId()) {
-                case SearchMenuItems.QUEUE_NEXT:
+                case BrowseMenuItems.QUEUE_NEXT:
                     ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_next), query));
                     break;
-                case SearchMenuItems.QUEUE_LAST:
+                case BrowseMenuItems.QUEUE_LAST:
                     ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_last), query));
                     break;
-                case SearchMenuItems.PLAY_NOW:
+                case BrowseMenuItems.PLAY_NOW:
                     ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_now), query));
                     break;
-                case SearchMenuItems.GET_SUB:
+                case BrowseMenuItems.GET_SUB:
                     ua = new UserAction(gSub, query);
                     break;
             }
@@ -103,8 +100,8 @@ public class SearchAlbumFragment extends RoboSherlockListFragment {
         }
     }
 
-    @Subscribe public void handleAlbumResults(AlbumSearchResults results) {
-        adapter = new AlbumEntryAdapter(getActivity(), R.layout.ui_list_dual, results.getList());
+    @Subscribe public void handleArtistSearchResults(ArtistSearchResults results) {
+        adapter = new ArtistEntryAdapter(getActivity(), R.layout.ui_list_single, results.getList());
         setListAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
