@@ -51,7 +51,7 @@
         <vpi.version>2.4.1</vpi.version>
         <dslv.version>0.6.1-SNAPSHOT</dslv.version>
         <crouton.version>1.8.1</crouton.version>
-        <mvn-android.version>3.7.0</mvn-android.version>
+        <mvn-android.version>3.8.0</mvn-android.version>
         <android.platform>19</android.platform>
         <!--<junit.version>4.11</junit.version>-->
 	</properties>
