@@ -3,6 +3,7 @@ package com.kelsos.mbrc.model;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -81,11 +82,38 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public long getLibraryEntryId(String file) {
+        long id = -1;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.query(true, TABLE_LIBRARY, new String[] {ENTRY_ID},
+                FILE + " = ?", new String[] {file}, null, null, null, null);
+
+        if (c.moveToFirst()) {
+            do {
+                id = c.getInt(c.getColumnIndex(ENTRY_ID));
+            } while (c.moveToNext());
+        }
+        c.close();
+
+        return id;
+    }
+
     public long createLibraryEntry(String file) {
+        long id = -1;
+
+        if (getLibraryEntryId(file) >= 0) {
+            return id;
+        }
+
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(FILE, file);
-        return db.insert(TABLE_LIBRARY, null, values);
+
+        try {
+            id = db.insert(TABLE_LIBRARY, null, values);
+        } catch (SQLiteConstraintException ex) {}
+
+        return id;
     }
 
     public List<LibraryTrack> getAllTracks() {

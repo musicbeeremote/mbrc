@@ -47,12 +47,10 @@ public class MainDataModel {
     private ArrayList<TrackEntry> playlistTracks;
     private LfmStatus lfmRating;
     private String pluginVersion;
-    private LibraryDbHelper db;
 
     @Inject
     public MainDataModel(MainThreadBusWrapper bus, Context context) {
         this.context = context;
-        db = new LibraryDbHelper(context);
         this.bus = bus;
         bus.register(this);
 
@@ -81,10 +79,6 @@ public class MainDataModel {
         lfmRating = LfmStatus.NORMAL;
         pluginVersion = "";
 
-    }
-
-    public LibraryDbHelper getDbHelper() {
-        return db;
     }
 
     public void setAvailablePlaylists(ArrayList<Playlist> playlists) {

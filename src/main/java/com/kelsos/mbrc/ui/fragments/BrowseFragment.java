@@ -23,6 +23,9 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.viewpagerindicator.TitlePageIndicator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class BrowseFragment extends RoboSherlockFragment implements SearchView.OnQueryTextListener {
 
     @Inject Bus bus;
@@ -75,8 +78,10 @@ public class BrowseFragment extends RoboSherlockFragment implements SearchView.O
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case 1:
+                Map<String, String> req = new HashMap<String,String>();
+                req.put("type","full");
                 bus.post(new MessageEvent(ProtocolEventType.UserAction,
-                    new UserAction(Protocol.LibrarySync,"")));
+                    new UserAction(Protocol.LibrarySync, req)));
                 break;
         }
         return false;

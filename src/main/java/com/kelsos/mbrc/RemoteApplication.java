@@ -7,6 +7,7 @@ import android.view.ViewConfiguration;
 import com.google.inject.Stage;
 import com.google.inject.util.Modules;
 import com.kelsos.mbrc.controller.Controller;
+import com.kelsos.mbrc.model.SyncHandler;
 import com.kelsos.mbrc.util.NotificationService;
 import com.kelsos.mbrc.model.MainDataModel;
 import com.kelsos.mbrc.net.ProtocolHandler;
@@ -34,6 +35,8 @@ public class RemoteApplication extends Application {
         injector.getInstance(SocketService.class);
         injector.getInstance(RemoteBroadcastReceiver.class);
         injector.getInstance(NotificationService.class);
+        // Temporary because I have an issue with the context injection on the command;
+        injector.getInstance(SyncHandler.class);
 
         //HACK: Force overflow code courtesy of Timo Ohr http://stackoverflow.com/a/11438245
         try {

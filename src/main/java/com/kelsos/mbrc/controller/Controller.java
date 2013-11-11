@@ -18,6 +18,10 @@ import roboguice.service.RoboService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class Controller extends RoboService {
@@ -25,8 +29,20 @@ public class Controller extends RoboService {
     @Inject private Injector injector;
     @Inject private Bus bus;
     private Map<String, Class<? extends ICommand>> commandMap;
+    private final BlockingQueue<Runnable> mExecutionQueue;
+    private final ThreadPoolExecutor mCommandExecutionThreadPool;
+    private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
+    private static final int KEEP_ALIVE_TIME = 1;
+    private static final TimeUnit KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS;
 
     public Controller() {
+        mExecutionQueue = new LinkedBlockingQueue<Runnable>();
+        mCommandExecutionThreadPool = new ThreadPoolExecutor(NUMBER_OF_CORES,
+                NUMBER_OF_CORES,
+                KEEP_ALIVE_TIME,
+                KEEP_ALIVE_TIME_UNIT,
+                mExecutionQueue);
+
         if (BuildConfig.DEBUG) {
             Log.d("mbrc-log", "Controller initialized");
         }
@@ -60,14 +76,17 @@ public class Controller extends RoboService {
         executeCommand(event);
     }
 
-    public void executeCommand(IEvent event) {
+    public void executeCommand(final IEvent event) {
         Class<? extends ICommand> commandClass = this.commandMap.get(event.getType());
         if (commandClass == null) return;
-        ICommand commandInstance;
         try {
-            commandInstance = injector.getInstance(commandClass);
+            final ICommand commandInstance = injector.getInstance(commandClass);
             if (commandInstance == null) return;
-            commandInstance.execute(event);
+            mCommandExecutionThreadPool.execute(new Runnable() {
+                @Override public void run() {
+                    commandInstance.execute(event);
+                }
+            });
         } catch (Exception ex) {
             if (BuildConfig.DEBUG) {
                 Log.d("mbrc-log", "executing command for type: \t" + event.getType(), ex);
