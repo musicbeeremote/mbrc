@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.fragments;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.adapters.BrowsePagerAdapter;
+import com.kelsos.mbrc.adapters.InfoButtonPagerAdapter;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.model.UserAction;
@@ -42,32 +45,20 @@ public class MainFragment extends RoboSherlockFragment {
     // Injects
     @Inject protected Bus bus;
     // Inject elements of the view
-    @InjectView(R.id.main_artist_label) TextView artistLabel;
-    @InjectView(R.id.main_title_label) TextView titleLabel;
-    @InjectView(R.id.main_label_album) TextView albumLabel;
-    @InjectView(R.id.main_label_year) TextView yearLabel;
     @InjectView(R.id.main_track_progress_current) TextView trackProgressCurrent;
     @InjectView(R.id.main_track_duration_total) TextView trackDuration;
-    @InjectView(R.id.main_button_play_pause) ImageButton playPauseButton;
-    @InjectView(R.id.main_button_previous) ImageButton previousButton;
-    @InjectView(R.id.main_button_next) ImageButton nextButton;
     @InjectView(R.id.main_volume_seeker) SeekBar volumeSlider;
     @InjectView(R.id.main_track_progress_seeker) SeekBar trackProgressSlider;
-    @InjectView(R.id.main_button_stop) ImageButton stopButton;
-    @InjectView(R.id.main_mute_button) ImageButton muteButton;
-    @InjectView(R.id.main_last_fm_button) ImageButton scrobbleButton;
-    @InjectView(R.id.main_shuffle_button) ImageButton shuffleButton;
-    @InjectView(R.id.main_repeat_button) ImageButton repeatButton;
     @InjectView(R.id.main_album_cover_image_view) ImageView albumCover;
     @InjectView(R.id.ratingWrapper) LinearLayout ratingWrapper;
     @InjectView(R.id.track_rating_bar) RatingBar trackRating;
-    @InjectView(R.id.main_lfm_love_button) ImageButton lfmLoveButton;
 
     private ShareActionProvider mShareActionProvider;
     private boolean userChangingVolume;
     private int previousVol;
     private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture mProgressUpdateHandler;
+    private InfoButtonPagerAdapter mAdapter;
 
     private RatingBar.OnRatingBarChangeListener ratingChangeListener = new RatingBar.OnRatingBarChangeListener() {
         @Override
@@ -220,15 +211,21 @@ public class MainFragment extends RoboSherlockFragment {
             bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingLfmRating, Const.TOGGLE)));
         }
     };
+    private ViewPager mPager;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         userChangingVolume = false;
+        mAdapter = new InfoButtonPagerAdapter(getActivity());
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.ui_fragment_main, container, false);
+
+        View view = inflater.inflate(R.layout.ui_fragment_main, container, false);
+        mPager = (ViewPager) view.findViewById(R.id.search_pager);
+        mPager.setAdapter(mAdapter);
+        return view;
     }
 
     @Override public void onStart() {
@@ -250,20 +247,8 @@ public class MainFragment extends RoboSherlockFragment {
         try {
             ratingWrapper.setVisibility(View.INVISIBLE);
             trackRating.setOnRatingBarChangeListener(ratingChangeListener);
-            lfmLoveButton.setOnClickListener(lfmLoveClicked);
-            lfmLoveButton.setOnLongClickListener(lfmLongClickListener);
-
-            playPauseButton.setOnClickListener(playButtonListener);
-            previousButton.setOnClickListener(previousButtonListener);
-            nextButton.setOnClickListener(nextButtonListener);
             volumeSlider.setOnSeekBarChangeListener(volumeChangeListener);
             trackProgressSlider.setOnSeekBarChangeListener(durationSeekBarChangeListener);
-            stopButton.setOnClickListener(stopButtonListener);
-            stopButton.setEnabled(false);
-            muteButton.setOnClickListener(muteButtonListener);
-            scrobbleButton.setOnClickListener(scrobbleButtonListener);
-            shuffleButton.setOnClickListener(shuffleButtonListener);
-            repeatButton.setOnClickListener(repeatButtonListener);
             albumCover.setOnClickListener(coverOnClick);
         } catch (Exception ignore) {
 
@@ -276,17 +261,9 @@ public class MainFragment extends RoboSherlockFragment {
      */
     private void SetTextViewTypeface() {		/* Marquee Hack */
         try {
-            artistLabel.setSelected(true);
-            titleLabel.setSelected(true);
-            albumLabel.setSelected(true);
-            yearLabel.setSelected(true);
 
             Typeface robotoLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
             Typeface robotoRegular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
-            artistLabel.setTypeface(robotoLight);
-            titleLabel.setTypeface(robotoLight);
-            albumLabel.setTypeface(robotoLight);
-            yearLabel.setTypeface(robotoLight);
             trackProgressCurrent.setTypeface(robotoRegular);
             trackDuration.setTypeface(robotoRegular);
         } catch (Exception ignore) {
