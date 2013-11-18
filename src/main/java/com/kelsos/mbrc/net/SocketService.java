@@ -5,15 +5,15 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.SocketEventType;
-import com.kelsos.mbrc.model.SocketMessage;
 import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.NotifyUser;
-import com.kelsos.mbrc.constants.Const;
+import com.kelsos.mbrc.model.SocketMessage;
 import com.kelsos.mbrc.util.DelayTimer;
-import com.kelsos.mbrc.util.SettingsManager;
 import com.kelsos.mbrc.util.MainThreadBusWrapper;
+import com.kelsos.mbrc.util.SettingsManager;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.*;
@@ -120,7 +120,7 @@ public class SocketService {
     public void sendData(SocketMessage message) {
         try {
             if (sIsConnected()) {
-                output.println(mapper.writeValueAsString(message) + Const.NEWLINE);
+                output.print(mapper.writeValueAsString(message) + Const.NEWLINE);
                 if (output.checkError()) {
                     throw new Exception("Check error");
                 }

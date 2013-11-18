@@ -9,7 +9,8 @@ public class LibraryTrack {
     private String genre;
     private String cover;
     private String updated;
-    private String file;
+    private String sha1;
+    private String year;
     private int trackNo;
 
     public LibraryTrack() {}
@@ -86,11 +87,19 @@ public class LibraryTrack {
         this.trackNo = trackNo;
     }
 
-    public String getFile() {
-        return file;
+    public String getSha1() {
+        return sha1;
     }
 
-    public void setFile(String file) {
-        this.file = file;
+    public void setSha1(String sha1) {
+        this.sha1 = sha1;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
     }
 }

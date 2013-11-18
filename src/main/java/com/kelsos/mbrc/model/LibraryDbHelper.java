@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import com.kelsos.mbrc.util.RemoteUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_LIBRARY = "CREATE TABLE "
             + TABLE_LIBRARY + "(" + ENTRY_ID + " INTEGER PRIMARY KEY," +
-            FILE + " TEXT UNIQUE," + ARTIST + " INTEGER," + ALBUMARTIST + " INTEGER," +
+            SHA1 + " TEXT UNIQUE," + ARTIST + " INTEGER," + ALBUMARTIST + " INTEGER," +
             TITLE + " TEXT," + ALBUM + " INTEGER," + YEAR + " TEXT," +
             GENRE + " INTEGER," + COVER + " INTEGER," + TRACK_NO + " INTEGER," + UPDATED
             + " DATETIME" + ")";
@@ -58,7 +59,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_COVERS = "CREATE TABLE " +
             TABLE_COVERS + "(" + ENTRY_ID + " INTEGER PRIMARY KEY," +
             FILE + " TEXT UNIQUE," + SHA1 + " TEXT UNIQUE," + LENGTH + " INTEGER," +
-            UPDATED + "DATETIME" + ")";
+            UPDATED + " DATETIME" + ")";
 
     public LibraryDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -82,11 +83,11 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long getLibraryEntryId(String file) {
+    public long getLibraryEntryId(String sha1) {
         long id = -1;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.query(true, TABLE_LIBRARY, new String[] {ENTRY_ID},
-                FILE + " = ?", new String[] {file}, null, null, null, null);
+                SHA1 + " = ?", new String[] {sha1}, null, null, null, null);
 
         if (c.moveToFirst()) {
             do {
@@ -98,16 +99,43 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public long createLibraryEntry(String file) {
+    public long createLibraryEntry(LibraryTrack track) {
         long id = -1;
 
-        if (getLibraryEntryId(file) >= 0) {
+        if (getLibraryEntryId(track.getSha1()) >= 0) {
             return id;
         }
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(FILE, file);
+        values.put(SHA1, track.getSha1());
+
+        long artist = getArtistId(track.getArtist());
+        if (artist < 0) {
+            artist = insertArtist(track.getArtist());
+        }
+        values.put(ARTIST, artist);
+        long albumarist = getArtistId(track.getAlbumArtist());
+        if (albumarist < 0) {
+            albumarist = insertArtist(track.getAlbumArtist());
+        }
+        values.put(ALBUMARTIST, albumarist);
+        long album = getAlbumId(track.getAlbum());
+        if (album < 0) {
+            album = insertAlbum(track.getAlbum());
+        }
+        values.put(ALBUM, album);
+        long genre = getGenreId(track.getGenre());
+        if (genre < 0) {
+            genre = insertGenre(track.getGenre());
+        }
+
+        values.put(COVER,getCoverId(track.getCover()));
+        values.put(GENRE, genre);
+        values.put(YEAR, track.getYear());
+        values.put(TRACK_NO, track.getTrackNo());
+        values.put(UPDATED, RemoteUtils.Now());
+        values.put(TITLE, track.getTitle());
 
         try {
             id = db.insert(TABLE_LIBRARY, null, values);
@@ -115,6 +143,8 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
 
         return id;
     }
+
+
 
     public List<LibraryTrack> getAllTracks() {
         List<LibraryTrack> tracks = new ArrayList<LibraryTrack>();
@@ -126,7 +156,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
             do {
                 LibraryTrack track = new LibraryTrack();
                 track.setId(c.getInt(c.getColumnIndex(ENTRY_ID)));
-                track.setFile(c.getString(c.getColumnIndex(FILE)));
+                track.setSha1(c.getString(c.getColumnIndex(FILE)));
                 tracks.add(track);
             } while (c.moveToNext());
         }
@@ -134,29 +164,111 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
     }
 
 
-    public long insertCover (String file, String sha1, int length) {
+    public long insertCover (String sha1, int length) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(FILE, file);
         values.put(SHA1, sha1);
         values.put(LENGTH, length);
+        values.put(UPDATED, RemoteUtils.Now());
         return db.insert(TABLE_COVERS, null, values);
     }
 
-    public void getCoverBySHA1(String sha1) {
+    public long getCoverId(String sha1) {
+        long id = -1;
         SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery = "SELECT * FROM " + TABLE_COVERS + " WHERE " + SHA1 + " = '" + sha1 + "'";
-        Cursor c = db.rawQuery(selectQuery, null);
+        Cursor c = db.query(true, TABLE_COVERS, new String[] {ENTRY_ID},
+                SHA1 + " = ?", new String[] {sha1}, null, null, null, null);
+
+        if (c.moveToFirst()) {
+            do {
+                id = c.getInt(c.getColumnIndex(ENTRY_ID));
+            } while (c.moveToNext());
+        }
+        c.close();
+
+        return id;
+
+        //SQLiteDatabase db = this.getReadableDatabase();
+        //String selectQuery = "SELECT * FROM " + TABLE_COVERS + " WHERE " + SHA1 + " = '" + sha1 + "'";
+        //Cursor c = db.rawQuery(selectQuery, null);
 
 //        if (c.moveToFirst()) {
 //            do {
 //                LibraryTrack track = new LibraryTrack();
 //                track.setId(c.getInt(c.getColumnIndex(ENTRY_ID)));
-//                track.setFile(c.getString(c.getColumnIndex(FILE)));
+//                track.setSha1(c.getString(c.getColumnIndex(FILE)));
 //                tracks.add(track);
 //            } while (c.moveToNext());
 //        }
 //        return tracks;
     }
 
+    public long insertArtist(String artist) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(NAME, artist);
+        return db.insert(TABLE_ARTISTS, null, values);
+    }
+
+    public long insertAlbum(String album) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(NAME, album);
+        return db.insert(TABLE_ALBUMS, null, values);
+    }
+
+    public long insertGenre(String genre) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(NAME, genre);
+        return db.insert(TABLE_GENRES, null, values);
+    }
+
+    public long getArtistId(String artistName) {
+        long id = -1;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.query(true, TABLE_ARTISTS, new String[] {ENTRY_ID},
+                NAME + " = ?", new String[] {artistName}, null, null, null, null);
+
+        if (c.moveToFirst()) {
+            do {
+                id = c.getInt(c.getColumnIndex(ENTRY_ID));
+            } while (c.moveToNext());
+        }
+        c.close();
+
+        return id;
+    }
+
+    public long getAlbumId (String albumName) {
+        long id = -1;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.query(true, TABLE_ALBUMS, new String[] {ENTRY_ID},
+                NAME + " = ?", new String[] {albumName}, null, null, null, null);
+
+        if (c.moveToFirst()) {
+            do {
+                id = c.getInt(c.getColumnIndex(ENTRY_ID));
+            } while (c.moveToNext());
+        }
+        c.close();
+
+        return id;
+    }
+
+    public long getGenreId (String genreName) {
+        long id = -1;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.query(true, TABLE_GENRES, new String[] {ENTRY_ID},
+                NAME + " = ?", new String[] {genreName}, null, null, null, null);
+
+        if (c.moveToFirst()) {
+            do {
+                id = c.getInt(c.getColumnIndex(ENTRY_ID));
+            } while (c.moveToNext());
+        }
+        c.close();
+
+        return id;
+    }
 }

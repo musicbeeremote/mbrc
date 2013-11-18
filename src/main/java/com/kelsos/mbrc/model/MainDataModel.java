@@ -4,16 +4,16 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.enums.LfmStatus;
+import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
-import com.kelsos.mbrc.util.MainThreadBusWrapper;
-import com.kelsos.mbrc.constants.Const;
-import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.util.ImageDecoder;
+import com.kelsos.mbrc.util.MainThreadBusWrapper;
 import com.squareup.otto.Produce;
 
 import java.util.ArrayList;
@@ -329,7 +329,7 @@ public class MainDataModel {
     }
 
     public void setLyrics(String lyrics) {
-        if (lyrics.equals(this.lyrics)) return;
+        if (lyrics == null || lyrics.equals(this.lyrics)) return;
         this.lyrics = lyrics.replace("<p>", "\r\n")
                 .replace("<br>", "\n")
                 .replace("&lt;", "<")

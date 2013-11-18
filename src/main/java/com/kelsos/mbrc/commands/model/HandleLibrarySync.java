@@ -3,9 +3,9 @@ package com.kelsos.mbrc.commands.model;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
+import com.kelsos.mbrc.model.LibraryTrack;
 import com.kelsos.mbrc.model.SyncHandler;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
 
 public class HandleLibrarySync implements ICommand {
     private SyncHandler handler;
@@ -19,21 +19,30 @@ public class HandleLibrarySync implements ICommand {
         String type = node.path("type").asText();
 
         if (type.equals("full")) {
-
-            ArrayNode array = (ArrayNode) node.path("payload");
-            for (int i = 0; i < array.size(); i++) {
-                JsonNode jNode = array.get(i);
-                handler.createEntry(jNode.asText());
-            }
-
-            handler.initFullSyncProcess();
+            int totalFiles = node.path("payload").asInt();
+            handler.initFullSyncProcess(totalFiles);
 
         } else if (type.equals("partial")) {
 
         } else if (type.equals("cover")) {
+            JsonNode payload = node.path("payload");
+            String sha1 = payload.path("sha1").asText();
+            int length = payload.path("length").asInt();
+            String image = payload.path("image").asText();
+            handler.updateCover(image, sha1, length);
 
         } else if (type.equals("meta")) {
-
+            LibraryTrack track = new LibraryTrack();
+            track.setTitle(node.path("title").asText());
+            track.setAlbum(node.path("album").asText());
+            track.setArtist(node.path("artist").asText());
+            track.setAlbumArtist(node.path("album_artist").asText());
+            track.setYear(node.path("year").asText());
+            track.setTrackNo(node.path("track_no").asInt());
+            track.setGenre(node.path("genre").asText());
+            track.setSha1(node.path("sha1").asText());
+            track.setCover(node.path("cover").asText());
+            handler.createEntry(track);
         }
     }
 }
