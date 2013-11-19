@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.model.MusicTrack;
+import com.kelsos.mbrc.data.MusicTrack;
 
 import java.util.ArrayList;
 

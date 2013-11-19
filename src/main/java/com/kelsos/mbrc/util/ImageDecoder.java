@@ -10,7 +10,7 @@ import android.util.Log;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.model.MainDataModel;
+import com.kelsos.mbrc.data.MainDataModel;
 import roboguice.inject.InjectResource;
 import roboguice.util.RoboAsyncTask;
 

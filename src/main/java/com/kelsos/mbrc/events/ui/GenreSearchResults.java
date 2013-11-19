@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.model.GenreEntry;
+import com.kelsos.mbrc.data.GenreEntry;
 
 import java.util.ArrayList;
 

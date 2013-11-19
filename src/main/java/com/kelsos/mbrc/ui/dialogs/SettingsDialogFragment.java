@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.model.ConnectionSettings;
+import com.kelsos.mbrc.data.ConnectionSettings;
 
 public class SettingsDialogFragment extends DialogFragment {
     private EditText host;

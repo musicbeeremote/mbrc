@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.commands.model;
 
 import com.google.inject.Inject;
+import com.kelsos.mbrc.data.LibraryTrack;
+import com.kelsos.mbrc.data.SyncHandler;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
-import com.kelsos.mbrc.model.LibraryTrack;
-import com.kelsos.mbrc.model.SyncHandler;
 import org.codehaus.jackson.JsonNode;
 
 public class HandleLibrarySync implements ICommand {

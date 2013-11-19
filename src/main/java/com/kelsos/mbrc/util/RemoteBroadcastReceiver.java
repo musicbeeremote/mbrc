@@ -10,7 +10,7 @@ import android.telephony.TelephonyManager;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.model.UserAction;
+import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.net.Protocol;
 import com.squareup.otto.Bus;

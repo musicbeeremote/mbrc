@@ -2,11 +2,11 @@ package com.kelsos.mbrc.commands.visual;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.data.MainDataModel;
 import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
-import com.kelsos.mbrc.model.MainDataModel;
 import com.kelsos.mbrc.net.ProtocolHandler;
 import com.kelsos.mbrc.net.SocketService;
 import com.kelsos.mbrc.util.MainThreadBusWrapper;

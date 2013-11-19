@@ -12,12 +12,12 @@ import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFra
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistAdapter;
-import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.model.Playlist;
-import com.kelsos.mbrc.model.UserAction;
+import com.kelsos.mbrc.data.Playlist;
+import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.AvailablePlaylists;
+import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.activities.PlaylistActivity;
 import com.kelsos.mbrc.util.MainThreadBusWrapper;
 import com.squareup.otto.Subscribe;

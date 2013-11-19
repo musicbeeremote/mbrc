@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.model.TrackEntry;
+import com.kelsos.mbrc.data.TrackEntry;
 
 import java.util.ArrayList;
 

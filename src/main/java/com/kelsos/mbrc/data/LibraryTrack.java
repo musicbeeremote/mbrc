@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.model;
+package com.kelsos.mbrc.data;
 
 public class LibraryTrack {
     private int id;

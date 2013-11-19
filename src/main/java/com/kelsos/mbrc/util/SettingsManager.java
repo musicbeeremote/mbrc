@@ -9,7 +9,7 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.model.ConnectionSettings;
+import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.events.ui.ChangeSettings;

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.model;
+package com.kelsos.mbrc.data;
 
 import android.content.Context;
 import android.util.Base64;

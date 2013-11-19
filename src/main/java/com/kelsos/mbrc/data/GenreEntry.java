@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.model;
+package com.kelsos.mbrc.data;
 
 import org.codehaus.jackson.JsonNode;
 

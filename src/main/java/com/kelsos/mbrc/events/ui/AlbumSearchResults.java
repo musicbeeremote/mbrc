@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.model.AlbumEntry;
+import com.kelsos.mbrc.data.AlbumEntry;
 
 import java.util.ArrayList;
 

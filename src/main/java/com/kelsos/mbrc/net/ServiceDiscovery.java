@@ -6,7 +6,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.model.ConnectionSettings;
+import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.enums.DiscoveryStop;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.util.MainThreadBusWrapper;
