@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.configuration;
+package com.kelsos.mbrc.controller;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.commands.*;
@@ -7,7 +7,6 @@ import com.kelsos.mbrc.commands.visual.*;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.SocketEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.controller.Controller;
 import com.kelsos.mbrc.net.Protocol;
 
 public class Configuration {
