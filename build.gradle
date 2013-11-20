@@ -4,16 +4,11 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.6.3'
+        classpath 'com.android.tools.build:gradle:0.6.+'
     }
 }
 
 apply plugin: 'android'
-
-group = 'com.kelsos.mbrc'
-version = '0.9.9-SNAPSHOT'
-
-description = """MusicBee Remote"""
 
 repositories {
     /** Temporary for vpi **/
@@ -66,5 +61,14 @@ android {
         }
 
         instrumentTest.setRoot('tests')
+    }
+
+    buildTypes {
+        release {}
+        debug {}
+    }
+
+    productFlavors {
+        defaultFlavor {}
     }
 }

@@ -27,6 +27,8 @@ proguard/
 *.ipr
 *.iws
 .idea/
+.gradle
+build
 
 # Maven created directories
 target/
