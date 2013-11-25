@@ -23,7 +23,7 @@ public class SyncHandler {
     private LibraryDbHelper dbHelper;
     private int numberOfTracks;
     private int currentTrack;
-    private LibraryTrack cachedTrack;
+    private Track cachedTrack;
 
     @Inject public SyncHandler(Context mContext, Bus bus) {
         this.mContext = mContext;
@@ -48,11 +48,11 @@ public class SyncHandler {
         }
     }
 
-    public void updateCover(String image, String sha1, int length) {
+    public void updateCover(String image, String hash) {
 
         FileOutputStream outputStream;
         try {
-            outputStream = mContext.openFileOutput(sha1,Context.MODE_PRIVATE);
+            outputStream = mContext.openFileOutput(hash,Context.MODE_PRIVATE);
             outputStream.write(Base64.decode(image, Base64.DEFAULT));
             outputStream.close();
         }  catch (Exception ex) {
@@ -60,23 +60,23 @@ public class SyncHandler {
                 Log.d("mbrc-log", "saving cover", ex);
         }
 
-        long cover = dbHelper.insertCover(sha1,length);
-        dbHelper.createLibraryEntry(cachedTrack);
+        long cover = dbHelper.insertCover(new Cover(hash));
+        dbHelper.insertTrack(cachedTrack);
         cachedTrack = null;
         getNextTrack();
     }
 
-    public void createEntry(LibraryTrack track) {
+    public void createEntry(Track track) {
 
-        if (dbHelper.getCoverId(track.getCover()) < 0) {
+        if (dbHelper.getCoverId(track.getCoverHash()) < 0) {
             Map<String, String> syncData = new HashMap<String, String>();
             syncData.put("type", "cover");
-            syncData.put("hash", track.getSha1());
+            syncData.put("hash", track.getCoverHash());
             bus.post(new MessageEvent(ProtocolEventType.UserAction,
                     new UserAction(Protocol.LibrarySync, syncData)));
             cachedTrack = track;
         } else {
-            dbHelper.createLibraryEntry(track);
+            dbHelper.insertTrack(track);
             getNextTrack();
         }
 

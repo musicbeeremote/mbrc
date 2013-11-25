@@ -1,97 +1,84 @@
 package com.kelsos.mbrc.data;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import com.kelsos.mbrc.util.RemoteUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class LibraryDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "TrackLibrary.db";
-
-    private static final String TABLE_LIBRARY ="library";
-    private static final String TABLE_GENRES = "genres";
-    private static final String TABLE_ARTISTS = "artists";
-    private static final String TABLE_ALBUMS = "albums";
-    private static final String TABLE_COVERS = "covers";
-
-    private static final String ENTRY_ID = "id";
-    private static final String FILE = "file";
-    private static final String ARTIST = "artist";
-    private static final String ALBUMARTIST = "albumartist";
-    private static final String TITLE = "title";
-    private static final String ALBUM = "album";
-    private static final String YEAR = "year";
-    private static final String TRACK_NO = "track_no";
-    private static final String GENRE = "genre";
-    private static final String COVER = "cover";
-    private static final String UPDATED = "updated";
-    private static final String NAME = "name";
-    private static final String SHA1 = "sha1";
-    private static final String LENGTH = "length";
-
-    private static final String CREATE_TABLE_GENRES = "CREATE TABLE " +
-            TABLE_GENRES + "(" + ENTRY_ID + " INTEGER PRIMARY KEY," +
-            NAME + " TEXT UNIQUE" + ")";
-
-    private static final String CREATE_TABLE_ARTISTS = "CREATE TABLE " +
-            TABLE_ARTISTS + "(" + ENTRY_ID + " INTEGER PRIMARY KEY," +
-            NAME + " TEXT UNIQUE" + ")";
-
-    private static final String CREATE_TABLE_ALBUMS = "CREATE TABLE " +
-            TABLE_ALBUMS + "(" + ENTRY_ID + " INTEGER PRIMARY KEY," +
-            NAME + " TEXT UNIQUE" + ")";
-
-
-    private static final String CREATE_TABLE_LIBRARY = "CREATE TABLE "
-            + TABLE_LIBRARY + "(" + ENTRY_ID + " INTEGER PRIMARY KEY," +
-            SHA1 + " TEXT UNIQUE," + ARTIST + " INTEGER," + ALBUMARTIST + " INTEGER," +
-            TITLE + " TEXT," + ALBUM + " INTEGER," + YEAR + " TEXT," +
-            GENRE + " INTEGER," + COVER + " INTEGER," + TRACK_NO + " INTEGER," + UPDATED
-            + " DATETIME" + ")";
-
-    private static final String CREATE_TABLE_COVERS = "CREATE TABLE " +
-            TABLE_COVERS + "(" + ENTRY_ID + " INTEGER PRIMARY KEY," +
-            FILE + " TEXT UNIQUE," + SHA1 + " TEXT UNIQUE," + LENGTH + " INTEGER," +
-            UPDATED + " DATETIME" + ")";
 
     public LibraryDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_TABLE_ALBUMS);
-        db.execSQL(CREATE_TABLE_ARTISTS);
-        db.execSQL(CREATE_TABLE_GENRES);
-        db.execSQL(CREATE_TABLE_COVERS);
-        db.execSQL(CREATE_TABLE_LIBRARY);
+        db.execSQL(Album.CREATE_TABLE);
+        db.execSQL(Artist.CREATE_TABLE);
+        db.execSQL(Cover.CREATE_TABLE);
+        db.execSQL(Genre.CREATE_TABLE);
+        db.execSQL(Track.CREATE_TABLE);
     }
 
     @Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LIBRARY);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_GENRES);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ALBUMS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ARTISTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COVERS);
+        db.execSQL(Album.DROP_TABLE);
+        db.execSQL(Artist.DROP_TABLE);
+        db.execSQL(Cover.DROP_TABLE);
+        db.execSQL(Genre.DROP_TABLE);
+        db.execSQL(Track.DROP_TABLE);
 
         onCreate(db);
     }
 
-    public long getLibraryEntryId(String sha1) {
+    public synchronized Album getAlbum(final long id) {
+        return null;
+    }
+
+    public synchronized long insertAlbum(final Album album) {
+        album.setId(getAlbumId(album.getAlbumName()));
+        if (album.getId() > 0) {
+            return album.getId();
+        }
+        album.setArtistId(insertArtist(new Artist(album.getArtist())));
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.insert(Album.TABLE_NAME, null, album.getContentValues());
+    }
+
+    public synchronized int deleteAlbum(final Album album) {
+        return -1;
+    }
+
+    public synchronized long getAlbumId(final String albumName) {
         long id = -1;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.query(true, TABLE_LIBRARY, new String[] {ENTRY_ID},
-                SHA1 + " = ?", new String[] {sha1}, null, null, null, null);
+        Cursor c = db.query(true, Album.TABLE_NAME, new String[] {Album._ID},
+                Album.ALBUM_NAME + " = ?", new String[] {albumName},
+                null, null, null, null);
 
         if (c.moveToFirst()) {
             do {
-                id = c.getInt(c.getColumnIndex(ENTRY_ID));
+                id = c.getInt(c.getColumnIndex(Album._ID));
+            } while (c.moveToNext());
+        }
+        c.close();
+        return id;
+    }
+
+    public synchronized Artist getArtist(final long id) {
+        return null;
+    }
+
+    public synchronized long getArtistId(final String artistName) {
+        long id = -1;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.query(true, Artist.TABLE_NAME, new String[] {Artist._ID},
+                Artist.ARTIST_NAME + " = ?", new String[] {artistName},
+                null, null, null, null);
+
+        if (c.moveToFirst()) {
+            do {
+                id = c.getInt(c.getColumnIndex(Artist._ID));
             } while (c.moveToNext());
         }
         c.close();
@@ -99,140 +86,36 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public long createLibraryEntry(LibraryTrack track) {
+    public synchronized long insertArtist(final Artist artist) {
         long id = -1;
-
-        if (getLibraryEntryId(track.getSha1()) >= 0) {
+        id = getArtistId(artist.getArtistName());
+        if (id > 0) {
             return id;
         }
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.insert(Artist.TABLE_NAME, null, artist.getContentValues());
+    }
+
+    public synchronized long insertGenre(final Genre genre) {
+        genre.setId(getGenreId(genre.getGenreName()));
+        if (genre.getId() > 0) {
+            return genre.getId();
+        }
 
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(SHA1, track.getSha1());
-
-        long artist = getArtistId(track.getArtist());
-        if (artist < 0) {
-            artist = insertArtist(track.getArtist());
-        }
-        values.put(ARTIST, artist);
-        long albumarist = getArtistId(track.getAlbumArtist());
-        if (albumarist < 0) {
-            albumarist = insertArtist(track.getAlbumArtist());
-        }
-        values.put(ALBUMARTIST, albumarist);
-        long album = getAlbumId(track.getAlbum());
-        if (album < 0) {
-            album = insertAlbum(track.getAlbum());
-        }
-        values.put(ALBUM, album);
-        long genre = getGenreId(track.getGenre());
-        if (genre < 0) {
-            genre = insertGenre(track.getGenre());
-        }
-
-        values.put(COVER,getCoverId(track.getCover()));
-        values.put(GENRE, genre);
-        values.put(YEAR, track.getYear());
-        values.put(TRACK_NO, track.getTrackNo());
-        values.put(UPDATED, RemoteUtils.Now());
-        values.put(TITLE, track.getTitle());
-
-        try {
-            id = db.insert(TABLE_LIBRARY, null, values);
-        } catch (SQLiteConstraintException ex) {}
-
-        return id;
+        return db.insert(Genre.TABLE_NAME, null, genre.getContentValues());
     }
 
-
-
-    public List<LibraryTrack> getAllTracks() {
-        List<LibraryTrack> tracks = new ArrayList<LibraryTrack>();
-        String selectQuery = "SELECT * FROM " + TABLE_LIBRARY;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(selectQuery, null);
-
-        if (c.moveToFirst()) {
-            do {
-                LibraryTrack track = new LibraryTrack();
-                track.setId(c.getInt(c.getColumnIndex(ENTRY_ID)));
-                track.setSha1(c.getString(c.getColumnIndex(FILE)));
-                tracks.add(track);
-            } while (c.moveToNext());
-        }
-        return tracks;
-    }
-
-
-    public long insertCover (String sha1, int length) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(SHA1, sha1);
-        values.put(LENGTH, length);
-        values.put(UPDATED, RemoteUtils.Now());
-        return db.insert(TABLE_COVERS, null, values);
-    }
-
-    public long getCoverId(String sha1) {
+    public synchronized long getGenreId (final String genreName) {
         long id = -1;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.query(true, TABLE_COVERS, new String[] {ENTRY_ID},
-                SHA1 + " = ?", new String[] {sha1}, null, null, null, null);
+        Cursor c = db.query(true, Genre.TABLE_NAME, new String[] {Genre._ID},
+                Genre.GENRE_NAME + " = ?", new String[] {genreName},
+                null, null, null, null);
 
         if (c.moveToFirst()) {
             do {
-                id = c.getInt(c.getColumnIndex(ENTRY_ID));
-            } while (c.moveToNext());
-        }
-        c.close();
-
-        return id;
-
-        //SQLiteDatabase db = this.getReadableDatabase();
-        //String selectQuery = "SELECT * FROM " + TABLE_COVERS + " WHERE " + SHA1 + " = '" + sha1 + "'";
-        //Cursor c = db.rawQuery(selectQuery, null);
-
-//        if (c.moveToFirst()) {
-//            do {
-//                LibraryTrack track = new LibraryTrack();
-//                track.setId(c.getInt(c.getColumnIndex(ENTRY_ID)));
-//                track.setSha1(c.getString(c.getColumnIndex(FILE)));
-//                tracks.add(track);
-//            } while (c.moveToNext());
-//        }
-//        return tracks;
-    }
-
-    public long insertArtist(String artist) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(NAME, artist);
-        return db.insert(TABLE_ARTISTS, null, values);
-    }
-
-    public long insertAlbum(String album) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(NAME, album);
-        return db.insert(TABLE_ALBUMS, null, values);
-    }
-
-    public long insertGenre(String genre) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(NAME, genre);
-        return db.insert(TABLE_GENRES, null, values);
-    }
-
-    public long getArtistId(String artistName) {
-        long id = -1;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.query(true, TABLE_ARTISTS, new String[] {ENTRY_ID},
-                NAME + " = ?", new String[] {artistName}, null, null, null, null);
-
-        if (c.moveToFirst()) {
-            do {
-                id = c.getInt(c.getColumnIndex(ENTRY_ID));
+                id = c.getInt(c.getColumnIndex(Genre._ID));
             } while (c.moveToNext());
         }
         c.close();
@@ -240,15 +123,16 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public long getAlbumId (String albumName) {
+    public synchronized long getCoverId (final String hash) {
         long id = -1;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.query(true, TABLE_ALBUMS, new String[] {ENTRY_ID},
-                NAME + " = ?", new String[] {albumName}, null, null, null, null);
+        Cursor c = db.query(true, Cover.COVER_HASH, new String[] {Cover._ID},
+                Cover.COVER_HASH + " = ?", new String[] {hash},
+                null, null, null, null);
 
         if (c.moveToFirst()) {
             do {
-                id = c.getInt(c.getColumnIndex(ENTRY_ID));
+                id = c.getInt(c.getColumnIndex(Cover._ID));
             } while (c.moveToNext());
         }
         c.close();
@@ -256,19 +140,38 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public long getGenreId (String genreName) {
+    public synchronized long insertCover (final Cover cover) {
+        cover.setId(getCoverId(cover.getCoverHash()));
+        if (cover.getId() > 0) {
+            return cover.getId();
+        }
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.insert(Cover.TABLE_NAME, null, cover.getContentValues());
+    }
+
+    public synchronized long getTrackId(String hash) {
         long id = -1;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.query(true, TABLE_GENRES, new String[] {ENTRY_ID},
-                NAME + " = ?", new String[] {genreName}, null, null, null, null);
+        Cursor c = db.query(true, Track.TABLE_NAME, new String[] {Track._ID},
+                Track.HASH + " = ?", new String[] {hash},
+                null, null, null, null);
 
         if (c.moveToFirst()) {
             do {
-                id = c.getInt(c.getColumnIndex(ENTRY_ID));
+                id = c.getInt(c.getColumnIndex(Track._ID));
             } while (c.moveToNext());
         }
         c.close();
 
         return id;
+    }
+
+    public synchronized long insertTrack (final Track track) {
+        track.setAlbumId(insertAlbum(new Album(track.getAlbum(),track.getAlbumArtist())));
+        track.setArtistId(insertArtist(new Artist(track.getArtist())));
+        track.setGenreId(insertGenre(new Genre(track.getGenre())));
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.insert(Track.TABLE_NAME, null, track.getContentValues());
     }
 }
