@@ -5,6 +5,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LibraryDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "TrackLibrary.db";
@@ -31,8 +34,39 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public synchronized Cursor getAlbumCursor(final long id) {
+        final SQLiteDatabase db = this.getReadableDatabase();
+        final Cursor cursor = db.rawQuery(Album.SELECT_ALBUM, new String[]{Long.toString(id)});
+        return cursor;
+    }
+
     public synchronized Album getAlbum(final long id) {
-        return null;
+        final Cursor cursor = getAlbumCursor(id);
+        final Album result;
+        result = cursor.moveToFirst() ? new Album(cursor) : null;
+        cursor.close();
+        return result;
+    }
+
+    public synchronized Cursor getAllAlbumsCursor() {
+        final SQLiteDatabase db = this.getReadableDatabase();
+        final Cursor cursor = db.rawQuery(Album.SELECT_ALBUMS, null);
+        return cursor;
+    }
+
+    public synchronized List<Album> getAllAlbums() {
+        final List<Album> result = new ArrayList<Album>();
+        final Cursor cursor = getAllAlbumsCursor();
+
+        if (cursor.moveToFirst()) {
+            while(cursor.moveToNext()) {
+                Album album = new Album(cursor);
+                result.add(album);
+            }
+        }
+
+        cursor.close();
+        return result;
     }
 
     public synchronized long insertAlbum(final Album album) {

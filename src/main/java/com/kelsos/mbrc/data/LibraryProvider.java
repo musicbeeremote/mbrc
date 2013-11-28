@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.net.Uri;
 
 public class LibraryProvider extends ContentProvider {
+    public static final String AUTHORITY = "com.kelsos.mbrc.provider";
+    public static final String SCHEME = "content://";
     @Override public boolean onCreate() {
         return false;
     }

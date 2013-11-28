@@ -28,5 +28,11 @@
                 <action android:name="com.kelsos.mbrc.notification.previous"/>
             </intent-filter>
         </service>
+        <provider
+                android:name="com.kelsos.mbrc.data.LibraryProvider"
+                android:authorities="com.kelsos.mbrc.provider"
+                android:enabled="true"
+                android:exported="false" >
+        </provider>
     </application>
 </manifest>

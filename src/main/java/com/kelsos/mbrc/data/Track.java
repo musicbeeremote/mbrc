@@ -1,7 +1,9 @@
 package com.kelsos.mbrc.data;
 
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.BaseColumns;
 import com.kelsos.mbrc.util.RemoteUtils;
 
@@ -41,6 +43,23 @@ public class Track implements BaseColumns, TrackColumns {
             Cover.TABLE_NAME + "("+ _ID + ") on delete cascade " + ")";
 
     public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
+
+
+    public static Uri URI() {
+        return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME +
+                LibraryProvider.AUTHORITY), TABLE_NAME);
+    }
+
+    public static final int BASE_URI_CODE = 0x8ee72c3;
+    public static final int BASE_ITEM_CODE =  0x63b3c5d;
+
+    public static void addMatcherUris(UriMatcher uriMatcher) {
+        uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME, BASE_URI_CODE);
+        uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME + "/#", BASE_ITEM_CODE);
+    }
+
+    public static final String TYPE_DIR = "vnd.android.cursor.dir/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;
+    public static final String TYPE_ITEM = "vnd.android.cursor.item/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;
 
     public Track() {
         this.id = -1;
