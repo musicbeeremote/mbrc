@@ -26,7 +26,7 @@ public class HandleLibrarySync implements ICommand {
 
         } else if (type.equals("cover")) {
             JsonNode payload = node.path("payload");
-            String sha1 = payload.path("sha1").asText();
+            String sha1 = payload.path("hash").asText();
             String image = payload.path("image").asText();
             handler.updateCover(image, sha1);
 
@@ -39,7 +39,7 @@ public class HandleLibrarySync implements ICommand {
             track.setYear(node.path("year").asText());
             track.setTrackNo(node.path("track_no").asInt());
             track.setGenre(node.path("genre").asText());
-            track.setHash(node.path("sha1").asText());
+            track.setHash(node.path("hash").asText());
             track.setCoverHash(node.path("cover").asText());
             handler.createEntry(track);
         }

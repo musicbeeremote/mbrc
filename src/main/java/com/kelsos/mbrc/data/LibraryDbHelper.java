@@ -351,6 +351,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         track.setAlbumId(insertAlbum(new Album(track.getAlbum(), track.getAlbumArtist())));
         track.setArtistId(insertArtist(new Artist(track.getArtist())));
         track.setGenreId(insertGenre(new Genre(track.getGenre())));
+        track.setCoverId(insertCover(new Cover(track.getCoverHash())));
         SQLiteDatabase db = this.getWritableDatabase();
         long id = db.insert(Track.TABLE_NAME, null, track.getContentValues());
         if (id > 0) {

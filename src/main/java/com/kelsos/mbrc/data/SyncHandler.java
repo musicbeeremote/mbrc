@@ -39,6 +39,7 @@ public class SyncHandler {
 
     public void getNextTrack() {
         if (currentTrack < numberOfTracks) {
+            Log.d("mbrc-log", String.format("Processing track %d of %d", currentTrack,numberOfTracks));
             Map<String, Object> syncData = new HashMap<String, Object>();
             syncData.put("type", "meta");
             syncData.put("file", currentTrack);
@@ -60,7 +61,9 @@ public class SyncHandler {
                 Log.d("mbrc-log", "saving cover", ex);
         }
 
-        long cover = dbHelper.insertCover(new Cover(hash));
+        long cover_id = dbHelper.insertCover(new Cover(hash));
+        cachedTrack.setCoverHash(hash);
+        cachedTrack.setCoverId(cover_id);
         dbHelper.insertTrack(cachedTrack);
         cachedTrack = null;
         getNextTrack();
@@ -71,7 +74,7 @@ public class SyncHandler {
         if (dbHelper.getCoverId(track.getCoverHash()) < 0) {
             Map<String, String> syncData = new HashMap<String, String>();
             syncData.put("type", "cover");
-            syncData.put("hash", track.getCoverHash());
+            syncData.put("hash", track.getHash());
             bus.post(new MessageEvent(ProtocolEventType.UserAction,
                     new UserAction(Protocol.LibrarySync, syncData)));
             cachedTrack = track;
