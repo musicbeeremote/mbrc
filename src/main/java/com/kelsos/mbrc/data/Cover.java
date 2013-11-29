@@ -9,6 +9,7 @@ public class Cover extends DataItem implements CoverColumns {
     private long id;
     private String coverHash;
     public static final String TABLE_NAME = "covers";
+    public static final String[] FIELDS = { _ID, COVER_HASH };
 
     public static final String CREATE_TABLE =
             "create table " + TABLE_NAME + "(" + _ID + " integer primary key autoincrement," +

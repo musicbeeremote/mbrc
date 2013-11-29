@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 public class Genre extends DataItem implements GenreColumns {
+    public static final String[] FIELDS ={_ID, GENRE_NAME} ;
     private long id;
     private String genreName;
     public static final String TABLE_NAME = "genres";
