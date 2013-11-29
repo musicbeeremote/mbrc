@@ -4,9 +4,8 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.BaseColumns;
 
-public class Artist implements BaseColumns, ArtistColumns{
+public class Artist extends DataItem implements ArtistColumns{
     private String artistName;
     private long id;
     public static final String TABLE_NAME = "artists";
@@ -47,6 +46,10 @@ public class Artist implements BaseColumns, ArtistColumns{
         ContentValues values = new ContentValues();
         values.put(ARTIST_NAME, artistName);
         return values;
+    }
+
+    @Override public String getTableName() {
+        return TABLE_NAME;
     }
 
     public String getArtistName() {

@@ -4,9 +4,8 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.BaseColumns;
 
-public class Genre implements BaseColumns, GenreColumns {
+public class Genre extends DataItem implements GenreColumns {
     private long id;
     private String genreName;
     public static final String TABLE_NAME = "genres";
@@ -47,6 +46,10 @@ public class Genre implements BaseColumns, GenreColumns {
         ContentValues values = new ContentValues();
         values.put(GENRE_NAME, genreName);
         return values;
+    }
+
+    @Override public String getTableName() {
+        return TABLE_NAME;
     }
 
     public String getGenreName() {

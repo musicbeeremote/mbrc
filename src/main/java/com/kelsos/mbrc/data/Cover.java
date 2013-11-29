@@ -4,9 +4,8 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.BaseColumns;
 
-public class Cover implements BaseColumns, CoverColumns {
+public class Cover extends DataItem implements CoverColumns {
     private long id;
     private String coverHash;
     public static final String TABLE_NAME = "covers";
@@ -46,6 +45,10 @@ public class Cover implements BaseColumns, CoverColumns {
         ContentValues values = new ContentValues();
         values.put(COVER_HASH, coverHash);
         return values;
+    }
+
+    @Override public String getTableName() {
+        return TABLE_NAME;
     }
 
     public String getCoverHash() {

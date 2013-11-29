@@ -11,9 +11,11 @@ import java.util.List;
 public class LibraryDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "TrackLibrary.db";
+    private final Context mContext;
 
     public LibraryDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.mContext = context;
     }
 
     @Override public void onCreate(SQLiteDatabase db) {
@@ -32,6 +34,13 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         db.execSQL(Track.DROP_TABLE);
 
         onCreate(db);
+    }
+
+    @Override public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        if (!db.isReadOnly()) {
+            db.execSQL("PRAGMA foreign_keys=ON");
+        }
     }
 
     public synchronized Cursor getAlbumCursor(final long id) {
@@ -76,11 +85,23 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         }
         album.setArtistId(insertArtist(new Artist(album.getArtist())));
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.insert(Album.TABLE_NAME, null, album.getContentValues());
+        final long id = db.insert(Album.TABLE_NAME, null, album.getContentValues());
+        if (id > 0) {
+            album.notifyProvider(mContext);
+        }
+
+        return id;
     }
 
-    public synchronized int deleteAlbum(final Album album) {
-        return -1;
+    public synchronized int deleteItem(final DataItem item) {
+        final SQLiteDatabase db = this.getWritableDatabase();
+        final int result = db.delete(item.getTableName(), Album._ID +
+            " IS ?", new String[] {Long.toString(item.getId())});
+
+        if (result > 0) {
+            item.notifyProvider(mContext);
+        }
+        return result;
     }
 
     public synchronized long getAlbumId(final String albumName) {
@@ -100,7 +121,22 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
     }
 
     public synchronized Artist getArtist(final long id) {
-        return null;
+        final Cursor cursor = getArtistCursor(id);
+        final Artist artist;
+        if (cursor.moveToFirst()) {
+            artist = new Artist(cursor);
+        } else {
+            artist = null;
+        }
+        return artist;
+    }
+
+    public synchronized Cursor getArtistCursor(final long id) {
+        final SQLiteDatabase db = this.getReadableDatabase();
+        final Cursor cursor = db.query(Artist.TABLE_NAME, Artist.FIELDS,
+                Artist._ID + " IS ?", new String[] {Long.toString(id)},
+                null,null,null,null);
+        return cursor;
     }
 
     public synchronized long getArtistId(final String artistName) {
@@ -118,6 +154,26 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         c.close();
 
         return id;
+    }
+
+    public synchronized Cursor getAllArtistsCursor() {
+        final SQLiteDatabase db = this.getReadableDatabase();
+        final Cursor cursor = db.query(Artist.TABLE_NAME, Artist.FIELDS, null,
+                null,null,null,null);
+        return cursor;
+    }
+
+    public synchronized List<Artist> getAllArtists() {
+        final List<Artist> artistList = new ArrayList<Artist>();
+        final Cursor cursor = getAllArtistsCursor();
+        if (cursor.moveToFirst()) {
+            while (cursor.moveToNext()) {
+                Artist artist = new Artist(cursor);
+                artistList.add(artist);
+            }
+        }
+        cursor.close();
+        return artistList;
     }
 
     public synchronized long insertArtist(final Artist artist) {

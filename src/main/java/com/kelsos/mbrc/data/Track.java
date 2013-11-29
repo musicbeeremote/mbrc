@@ -4,12 +4,11 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.BaseColumns;
 import com.kelsos.mbrc.util.RemoteUtils;
 
 import java.util.Date;
 
-public class Track implements BaseColumns, TrackColumns {
+public class Track extends DataItem implements TrackColumns {
     private long id;
     private String hash;
     private String title;
@@ -120,6 +119,10 @@ public class Track implements BaseColumns, TrackColumns {
         values.put(COVER_ID, coverId);
         values.put(UPDATED, RemoteUtils.Now());
         return values;
+    }
+
+    @Override public String getTableName() {
+        return TABLE_NAME;
     }
 
     public long getId() {

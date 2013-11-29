@@ -4,9 +4,8 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.BaseColumns;
 
-public class Album implements BaseColumns, AlbumColumns {
+public class Album extends DataItem implements AlbumColumns {
     public static final String TABLE_NAME = "albums";
     public static final String CREATE_TABLE =
             "create table " + TABLE_NAME + "(" + _ID + " integer primary key autoincrement," +
@@ -63,6 +62,10 @@ public class Album implements BaseColumns, AlbumColumns {
         values.put(ALBUM_NAME, albumName);
         values.put(ARTIST_ID, artistId);
         return values;
+    }
+
+    @Override public String getTableName() {
+        return TABLE_NAME;
     }
 
     public long getArtistId() {
