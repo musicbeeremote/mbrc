@@ -9,19 +9,15 @@ public class Album extends DataItem implements AlbumColumns {
     public static final String TABLE_NAME = "albums";
     public static final String CREATE_TABLE =
             "create table " + TABLE_NAME + "(" + _ID + " integer primary key autoincrement," +
-                    ALBUM_NAME + " text unique " + ARTIST_ID + "integer, " +
+                    ALBUM_NAME + " text unique," + ARTIST_ID + " integer, " +
                     "foreign key (" + ARTIST_ID + ") references " +
                     Artist.TABLE_NAME + "(" + _ID + ") on delete cascade" + ")";
     public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
-    public static final String SELECT_ALBUM =
-            "select al." + _ID + "," + ALBUM_NAME + "," + ARTIST_ID + "," +
-            Artist.ARTIST_NAME + " from " + TABLE_NAME + " al, " +
-            Artist.TABLE_NAME + " ar where al." + ARTIST_ID + " = ar." + _ID +
-            " and al."+ _ID + " = ? ";
     public static final String SELECT_ALBUMS =
             "select al." + _ID + "," + ALBUM_NAME + "," + ARTIST_ID + "," +
             Artist.ARTIST_NAME + " from " + TABLE_NAME + " al, " +
             Artist.TABLE_NAME + " ar where al." + ARTIST_ID + " = ar." + _ID;
+    public static final String SELECT_ALBUM = SELECT_ALBUMS + " and al."+ _ID + " = ? ";
 
     public static Uri URI() {
         return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME +

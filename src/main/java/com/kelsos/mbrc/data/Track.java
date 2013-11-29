@@ -42,6 +42,16 @@ public class Track extends DataItem implements TrackColumns {
             Cover.TABLE_NAME + "("+ _ID + ") on delete cascade " + ")";
 
     public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
+    public static final String SELECT_TRACKS =
+            "select t." + _ID +", t."+ HASH + ", t."+ TITLE +", t." + ALBUM_ID + ", al." +
+    Album.ALBUM_NAME + ", t." + GENRE_ID + ", g." + Genre.GENRE_NAME +", t." + ARTIST_ID +
+    ", ar." + Artist.ARTIST_NAME + ", t." + YEAR + ", t." + TRACK_NO + ", t." + COVER_ID +
+    ", c." + Cover.COVER_HASH + ", t." + UPDATED +
+    "from " + Album.TABLE_NAME + " al, " + Artist.TABLE_NAME + " ar, " + Cover.TABLE_NAME +
+    " c, " + Genre.TABLE_NAME + " g, " + TABLE_NAME + " t " +
+    "where al." + _ID + " = t." + ALBUM_ID + " and ar." + _ID + " = t." + ARTIST_ID +
+    " and g." + _ID + " = t." + GENRE_ID + " and c." + _ID + " = t." + COVER_ID;
+    public static final String SELECT_TRACK = SELECT_TRACKS + " and t." + _ID + " = ?";
 
 
     public static Uri URI() {
