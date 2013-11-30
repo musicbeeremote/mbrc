@@ -47,9 +47,9 @@ public class Track extends DataItem implements TrackColumns {
     Album.ALBUM_NAME + ", t." + GENRE_ID + ", g." + Genre.GENRE_NAME +", t." + ARTIST_ID +
     ", ar." + Artist.ARTIST_NAME + ", t." + YEAR + ", t." + TRACK_NO + ", t." + COVER_ID +
     ", c." + Cover.COVER_HASH + ", t." + UPDATED +
-    "from " + Album.TABLE_NAME + " al, " + Artist.TABLE_NAME + " ar, " + Cover.TABLE_NAME +
+    " from " + Album.TABLE_NAME + " al, " + Artist.TABLE_NAME + " ar, " + Cover.TABLE_NAME +
     " c, " + Genre.TABLE_NAME + " g, " + TABLE_NAME + " t " +
-    "where al." + _ID + " = t." + ALBUM_ID + " and ar." + _ID + " = t." + ARTIST_ID +
+    " where al." + _ID + " = t." + ALBUM_ID + " and ar." + _ID + " = t." + ARTIST_ID +
     " and g." + _ID + " = t." + GENRE_ID + " and c." + _ID + " = t." + COVER_ID;
     public static final String SELECT_TRACK = SELECT_TRACKS + " and t." + _ID + " = ?";
 

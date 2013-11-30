@@ -1,6 +1,12 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +15,8 @@ import android.widget.AdapterView;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.adapters.ArtistEntryAdapter;
 import com.kelsos.mbrc.constants.ProtocolEventType;
+import com.kelsos.mbrc.data.Artist;
 import com.kelsos.mbrc.data.ArtistEntry;
 import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
@@ -21,9 +27,11 @@ import com.kelsos.mbrc.net.Protocol;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
-public class BrowseArtistFragment extends RoboSherlockListFragment {
+public class BrowseArtistFragment extends RoboSherlockListFragment
+        implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final int GROUP_ID = 12;
-    private ArtistEntryAdapter adapter;
+    private static final int URL_LOADER = 0x12;
+    private SimpleCursorAdapter mAdapter;
     private String mDefault;
     @Inject Bus bus;
 
@@ -33,7 +41,8 @@ public class BrowseArtistFragment extends RoboSherlockListFragment {
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String artist = ((ArtistEntry) getListView().getAdapter().getItem(position)).getArtist();
+                String artist;
+                artist = ((ArtistEntry) getListView().getAdapter().getItem(position)).getArtist();
 
                 bus.post(new MessageEvent(ProtocolEventType.UserAction,
                         new UserAction(Protocol.LibraryQueueArtist,
@@ -57,6 +66,7 @@ public class BrowseArtistFragment extends RoboSherlockListFragment {
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getLoaderManager().initLoader(URL_LOADER, null, this);
         return inflater.inflate(R.layout.ui_fragment_library_simpl, container, false);
     }
 
@@ -72,7 +82,7 @@ public class BrowseArtistFragment extends RoboSherlockListFragment {
     @Override public boolean onContextItemSelected(android.view.MenuItem item) {
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            Object line = adapter.getItem(mi.position);
+            Object line = mAdapter.getItem(mi.position);
             final String qContext = Protocol.LibraryQueueArtist;
             final String gSub = Protocol.LibraryArtistAlbums;
             String query = ((ArtistEntry) line).getArtist();
@@ -101,8 +111,30 @@ public class BrowseArtistFragment extends RoboSherlockListFragment {
     }
 
     @Subscribe public void handleArtistSearchResults(ArtistSearchResults results) {
-        adapter = new ArtistEntryAdapter(getActivity(), R.layout.ui_list_single, results.getList());
-        setListAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        //adapter = new ArtistEntryAdapter(getActivity(), R.layout.ui_list_single, results.getList());
+        //setListAdapter(adapter);
+        //adapter.notifyDataSetChanged();
+    }
+
+    @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Uri baseUri;
+        baseUri = Artist.URI();
+        return new CursorLoader(getActivity(),baseUri,
+                new String[] {Artist.ARTIST_NAME }, null,null,null);
+    }
+
+    @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mAdapter = new SimpleCursorAdapter(getActivity(),
+                R.layout.ui_list_single,
+                data,
+                new String[] { Artist.ARTIST_NAME },
+                new int[] { R.id.line_one },
+                0);
+        this.setListAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }

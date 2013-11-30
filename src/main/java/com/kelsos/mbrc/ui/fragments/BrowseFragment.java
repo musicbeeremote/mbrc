@@ -26,7 +26,7 @@ import com.viewpagerindicator.TitlePageIndicator;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BrowseFragment extends RoboSherlockFragment implements SearchView.OnQueryTextListener {
+public class BrowseFragment extends RoboSherlockFragment {
 
     @Inject Bus bus;
     private SearchView mSearchView;
@@ -34,36 +34,36 @@ public class BrowseFragment extends RoboSherlockFragment implements SearchView.O
     private ViewPager mPager;
     private BrowsePagerAdapter mAdapter;
 
-    @Override public boolean onQueryTextSubmit(String query) {
-        String pContext = "";
-        int current = mPager.getCurrentItem();
-
-        switch (current) {
-            case 0:
-                pContext = Protocol.LibrarySearchGenre;
-                break;
-            case 1:
-                pContext = Protocol.LibrarySearchArtist;
-                break;
-            case 2:
-                pContext = Protocol.LibrarySearchAlbum;
-                break;
-            case 3:
-                pContext = Protocol.LibrarySearchTitle;
-                break;
-        }
-
-        mSearchView.setIconified(true);
-        mSearchItem.collapseActionView();
-
-        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(pContext, query.trim())));
-
-        return false;
-    }
-
-    @Override public boolean onQueryTextChange(String newText) {
-        return false;
-    }
+//    @Override public boolean onQueryTextSubmit(String query) {
+//        String pContext = "";
+//        int current = mPager.getCurrentItem();
+//
+//        switch (current) {
+//            case 0:
+//                pContext = Protocol.LibrarySearchGenre;
+//                break;
+//            case 1:
+//                pContext = Protocol.LibrarySearchArtist;
+//                break;
+//            case 2:
+//                pContext = Protocol.LibrarySearchAlbum;
+//                break;
+//            case 3:
+//                pContext = Protocol.LibrarySearchTitle;
+//                break;
+//        }
+//
+//        mSearchView.setIconified(true);
+//        mSearchItem.collapseActionView();
+//
+//        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(pContext, query.trim())));
+//
+//        return false;
+//    }
+//
+//    @Override public boolean onQueryTextChange(String newText) {
+//        return false;
+//    }
 
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -113,7 +113,7 @@ public class BrowseFragment extends RoboSherlockFragment implements SearchView.O
         menu.add(15,1,0,"Sync Library");
         mSearchItem = menu.findItem(R.id.now_playing_search_item);
         mSearchItem.setActionView(mSearchView);
-        mSearchView.setOnQueryTextListener(this);
+        //mSearchView.setOnQueryTextListener(this);
     }
 
     @Subscribe public void handleGenreSearchResults(GenreSearchResults results) {

@@ -74,7 +74,7 @@ public class LibraryProvider extends ContentProvider {
                 result.setNotificationUri(getContext().getContentResolver(), uri);
                 break;
             default:
-
+                throw new IllegalArgumentException(String.format("Unknown Uri %s", uri));
         }
         return result;
     }
