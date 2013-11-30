@@ -57,15 +57,19 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public synchronized Cursor getAllAlbumsCursor() {
+    public synchronized Cursor getAllAlbumsCursor(final String selection,
+                                                  final String[] args,
+                                                  final String sortOrder) {
         final SQLiteDatabase db = this.getReadableDatabase();
         final Cursor cursor = db.rawQuery(Album.SELECT_ALBUMS, null);
         return cursor;
     }
 
-    public synchronized List<Album> getAllAlbums() {
+    public synchronized List<Album> getAllAlbums(final String selection,
+                                                 final String[] args,
+                                                 final String sortOrder) {
         final List<Album> result = new ArrayList<Album>();
-        final Cursor cursor = getAllAlbumsCursor();
+        final Cursor cursor = getAllAlbumsCursor(selection, args, sortOrder);
 
         while (cursor.moveToNext()) {
             Album album = new Album(cursor);
@@ -308,9 +312,9 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         return cover;
     }
 
-    public synchronized Cursor getAllCoverCursor(final String selection,
-                                                 final String[] args,
-                                                 final String sortOrder) {
+    public synchronized Cursor getAllCoversCursor(final String selection,
+                                                  final String[] args,
+                                                  final String sortOrder) {
         final SQLiteDatabase db = this.getReadableDatabase();
         final Cursor cursor = db.query(Cover.TABLE_NAME, Cover.FIELDS, selection, args,
                 null, null, sortOrder, null);
@@ -321,7 +325,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
                                                  final String[] args,
                                                  final String sortOrder) {
         final List<Cover> coverList = new ArrayList<Cover>();
-        final Cursor cursor = getAllCoverCursor(selection, args, sortOrder);
+        final Cursor cursor = getAllCoversCursor(selection, args, sortOrder);
         while (cursor.moveToNext()) {
             Cover cover = new Cover(cursor);
             coverList.add(cover);
