@@ -5,6 +5,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 import com.kelsos.mbrc.util.RemoteUtils;
+import org.codehaus.jackson.JsonNode;
 
 import java.util.Date;
 
@@ -69,6 +70,24 @@ public class Track extends DataItem implements TrackColumns {
 
     public static final String TYPE_DIR = "vnd.android.cursor.dir/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;
     public static final String TYPE_ITEM = "vnd.android.cursor.item/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;
+
+
+    public Track(JsonNode node) {
+        this.id = -1;
+        this.hash = node.path("hash").asText();
+        this.title = node.path("title").asText();
+        this.albumId = -1;
+        this.album = node.path("album").asText();
+        this.genreId = -1;
+        this.genre = node.path("genre").asText();
+        this.artistId = -1;
+        this.artist = node.path("artist").asText();
+        this.year = node.path("year").asText();
+        this.trackNo = node.path("track_no").asInt();
+        this.coverId = -1;
+        this.albumArtist = node.path("album_artist").asText();
+        this.coverHash = node.path("cover").asText();
+    }
 
     public Track() {
         this.id = -1;

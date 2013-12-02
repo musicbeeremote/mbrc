@@ -9,6 +9,7 @@ import android.net.Uri;
 public class LibraryProvider extends ContentProvider {
     public static final String AUTHORITY = "com.kelsos.mbrc.provider";
     public static final String SCHEME = "content://";
+    public static final Uri AUTHORITY_URI = Uri.parse(SCHEME + AUTHORITY);
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     private LibraryDbHelper dbHelper;
 
@@ -64,6 +65,13 @@ public class LibraryProvider extends ContentProvider {
                 result = dbHelper.getAllGenresCursor(selection, selectionArgs, sortOrder);
                 result.setNotificationUri(getContext().getContentResolver(), uri);
                 break;
+            case Genre.BASE_FILTER_CODE:
+                selection = Genre.GENRE_NAME + " LIKE ?";
+                String search = "%"+uri.getLastPathSegment()+"%";
+                selectionArgs = new String[] { search };
+                result = dbHelper.getAllGenresCursor(selection, selectionArgs, sortOrder);
+                result.setNotificationUri(getContext().getContentResolver(), uri);
+                break;
             case Track.BASE_ITEM_CODE:
                 id = Long.parseLong(uri.getLastPathSegment());
                 result = dbHelper.getTrackCursor(id);
@@ -94,9 +102,11 @@ public class LibraryProvider extends ContentProvider {
             case Cover.BASE_URI_CODE:
                 return Cover.TYPE_DIR;
             case Genre.BASE_ITEM_CODE:
-                return Genre.TYPE_ITEM;
+                return Genre.CONTENT_ITEM_TYPE;
             case Genre.BASE_URI_CODE:
-                return Genre.TYPE_DIR;
+                return Genre.CONTENT_TYPE;
+            case Genre.BASE_FILTER_CODE:
+                return Genre.CONTENT_TYPE;
             case Track.BASE_ITEM_CODE:
                 return Track.TYPE_ITEM;
             case Track.BASE_URI_CODE:

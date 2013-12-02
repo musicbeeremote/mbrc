@@ -8,11 +8,17 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.SearchView;
+import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
@@ -28,12 +34,29 @@ import com.kelsos.mbrc.net.Protocol;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
-public class BrowseGenreFragment extends RoboSherlockListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class BrowseGenreFragment extends RoboSherlockListFragment
+        implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener {
     private static final int GROUP_ID = 11;
     private static final int URL_LOADER = 1;
     private String mDefault;
     private SimpleCursorAdapter mAdapter;
+    private String mFilter;
+    private SearchView mSearchView;
+    private MenuItem mSearchItem;
     @Inject Bus bus;
+
+    @Override public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        mAdapter = new SimpleCursorAdapter(getActivity(),
+                R.layout.ui_list_single,
+                null,
+                new String[] {Genre.GENRE_NAME},
+                new int[] {R.id.line_one},
+                0);
+
+        setListAdapter(mAdapter);
+    }
 
     @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
         mDefault = action.getAction();
@@ -118,22 +141,43 @@ public class BrowseGenreFragment extends RoboSherlockListFragment implements Loa
 
     @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri baseUri;
-        baseUri = Genre.URI();
+        if (mFilter != null) {
+            baseUri = Uri.withAppendedPath(Genre.CONTENT_FILTER_URI, Uri.encode(mFilter));
+        } else {
+            baseUri = Genre.CONTENT_URI;
+        }
+
         return new CursorLoader(getActivity(),baseUri,Genre.FIELDS, null,null,null);
     }
 
     @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mAdapter = new SimpleCursorAdapter(getActivity(),
-                 R.layout.ui_list_single,
-                data,
-                new String[] {Genre.GENRE_NAME},
-                new int[] {R.id.line_one},
-                0);
-        this.setListAdapter(mAdapter);
-        mAdapter.notifyDataSetChanged();
+        mAdapter.swapCursor(data);
     }
 
     @Override public void onLoaderReset(Loader<Cursor> loader) {
+        mAdapter.swapCursor(null);
+    }
 
+    @Override public boolean onQueryTextSubmit(String query) {
+        mFilter = !TextUtils.isEmpty(query) ? query : null;
+        getLoaderManager().restartLoader(URL_LOADER, null,this);
+        mSearchView.setIconified(true);
+        mSearchItem.collapseActionView();
+        return false;
+    }
+
+    @Override public boolean onQueryTextChange(String newText) {
+        return false;
+    }
+
+    @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_now_playing, menu);
+        mSearchView = new SearchView(((RoboSherlockFragmentActivity) getActivity()).getSupportActionBar().getThemedContext());
+        mSearchView.setQueryHint("Search for Genre");
+        mSearchView.setIconifiedByDefault(true);
+        mSearchItem = menu.findItem(R.id.now_playing_search_item);
+        mSearchItem.setActionView(mSearchView);
+        mSearchView.setOnQueryTextListener(this);
     }
 }

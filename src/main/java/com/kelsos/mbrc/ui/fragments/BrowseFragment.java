@@ -105,14 +105,14 @@ public class BrowseFragment extends RoboSherlockFragment {
     }
 
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        mSearchView = new SearchView(((RoboSherlockFragmentActivity) getActivity()).getSupportActionBar().getThemedContext());
+//        mSearchView = new SearchView(((RoboSherlockFragmentActivity) getActivity()).getSupportActionBar().getThemedContext());
         //mSearchView.setQueryHint("Search for " );
-        mSearchView.setIconifiedByDefault(true);
+//        mSearchView.setIconifiedByDefault(true);
 
-        inflater.inflate(R.menu.menu_now_playing, menu);
+//        inflater.inflate(R.menu.menu_now_playing, menu);
         menu.add(15,1,0,"Sync Library");
-        mSearchItem = menu.findItem(R.id.now_playing_search_item);
-        mSearchItem.setActionView(mSearchView);
+//        mSearchItem = menu.findItem(R.id.now_playing_search_item);
+//        mSearchItem.setActionView(mSearchView);
         //mSearchView.setOnQueryTextListener(this);
     }
 
