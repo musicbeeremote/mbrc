@@ -17,6 +17,10 @@ repositories {
     mavenLocal()
 }
 
+def gitSha() {
+    return 'git rev-parse --short HEAD'.execute().text.trim()
+}
+
 dependencies {
     compile 'com.android.support:support-v4:19.0.0'
     compile 'com.google.inject:guice:3.0:no_aop'
@@ -42,6 +46,8 @@ android {
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 19
+        buildConfig "public static final String GIT_SHA =\"" +  gitSha()+ "\";", \
+                    "public static final String BUILD_TIME =\"" + new Date() + "\";"
     }
 
     compileOptions {
@@ -65,10 +71,17 @@ android {
 
     buildTypes {
         release {}
-        debug {}
+        debug {
+            packageNameSuffix ".debug"
+            versionNameSuffix ".debug-${gitSha()}"
+        }
     }
 
     productFlavors {
         defaultFlavor {}
     }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.8'
 }
