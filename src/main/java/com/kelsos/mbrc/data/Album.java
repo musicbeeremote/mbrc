@@ -13,16 +13,13 @@ public class Album extends DataItem implements AlbumColumns {
                     "foreign key (" + ARTIST_ID + ") references " +
                     Artist.TABLE_NAME + "(" + _ID + ") on delete cascade" + ")";
     public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
-    public static final String SELECT_ALBUMS =
-            "select al." + _ID + "," + ALBUM_NAME + "," + ARTIST_ID + "," +
-            Artist.ARTIST_NAME + " from " + TABLE_NAME + " al, " +
-            Artist.TABLE_NAME + " ar where al." + ARTIST_ID + " = ar." + _ID;
-    public static final String SELECT_ALBUM = SELECT_ALBUMS + " and al."+ _ID + " = ? ";
 
     public static Uri URI() {
         return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME +
             LibraryProvider.AUTHORITY), TABLE_NAME);
     }
+
+    public static String[] FIELDS = { _ID, ALBUM_NAME, ARTIST_ID };
 
     public static final int BASE_URI_CODE = 0x33872c3;
     public static final int BASE_ITEM_CODE =  0x462395d;
@@ -39,6 +36,8 @@ public class Album extends DataItem implements AlbumColumns {
     private String albumName;
     private long artistId;
     private String artist;
+    private String coverHash;
+    private int totalTracks;
 
     public Album(String albumName, String artist) {
         this.id = -1;
@@ -51,6 +50,7 @@ public class Album extends DataItem implements AlbumColumns {
         this.albumName = cursor.getString(cursor.getColumnIndex(ALBUM_NAME));
         this.artistId = cursor.getLong(cursor.getColumnIndex(ARTIST_ID));
         this.artist = cursor.getString(cursor.getColumnIndex(Artist.ARTIST_NAME));
+        this.coverHash = cursor.getString(cursor.getColumnIndex(Cover.COVER_HASH));
     }
 
     public ContentValues getContentValues() {
@@ -94,5 +94,13 @@ public class Album extends DataItem implements AlbumColumns {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getCoverHash() {
+        return coverHash;
+    }
+
+    public void setCoverHash(String coverHash) {
+        this.coverHash = coverHash;
     }
 }

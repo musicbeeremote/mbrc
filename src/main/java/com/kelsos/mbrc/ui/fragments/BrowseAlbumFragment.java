@@ -11,10 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.SimpleCursorAdapter;
+import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.adapters.AlbumCursorAdapter;
 import com.kelsos.mbrc.adapters.AlbumEntryAdapter;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.*;
@@ -25,27 +28,20 @@ import com.kelsos.mbrc.net.Protocol;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
-public class BrowseAlbumFragment extends RoboSherlockListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+import static android.support.v4.app.LoaderManager.LoaderCallbacks;
+
+public class BrowseAlbumFragment extends RoboSherlockFragment implements LoaderCallbacks<Cursor> {
     private static final int GROUP_ID = 13;
     private static final int URL_LOADER = 2;
     private String mDefault;
-    private SimpleCursorAdapter mAdapter;
+    private AlbumCursorAdapter mAdapter;
+    private GridView mGridView;
 
     @Inject Bus bus;
 
     @Override public void onStart() {
         super.onStart();
         bus.register(this);
-        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String album = ((AlbumEntry) getListView().getAdapter().getItem(position)).getAlbum();
-
-                bus.post(new MessageEvent(ProtocolEventType.UserAction,
-                        new UserAction(Protocol.LibraryQueueAlbum,
-                                new Queue(mDefault, album))));
-            }
-        });
     }
 
     @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
@@ -59,12 +55,14 @@ public class BrowseAlbumFragment extends RoboSherlockListFragment implements Loa
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        registerForContextMenu(getListView());
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getLoaderManager().initLoader(URL_LOADER, null, this);
-        return inflater.inflate(R.layout.ui_fragment_library_simpl, container, false);
+        View view = inflater.inflate(R.layout.ui_library_grid, container, false);
+        mGridView = (GridView)view.findViewById(R.id.mbrc_grid_view);
+
+        return view;
     }
 
     @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -109,12 +107,6 @@ public class BrowseAlbumFragment extends RoboSherlockListFragment implements Loa
         }
     }
 
-    @Subscribe public void handleAlbumResults(AlbumSearchResults results) {
-//        adapter = new AlbumEntryAdapter(getActivity(), R.layout.ui_list_dual, results.getList());
-//        setListAdapter(adapter);
-//        adapter.notifyDataSetChanged();
-    }
-
     @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri baseUri;
         baseUri = Album.URI();
@@ -123,13 +115,8 @@ public class BrowseAlbumFragment extends RoboSherlockListFragment implements Loa
     }
 
     @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mAdapter = new SimpleCursorAdapter(getActivity(),
-                R.layout.ui_list_dual,
-                data,
-                new String[] { Album.ALBUM_NAME, Artist.ARTIST_NAME },
-                new int[] {R.id.line_one, R.id.line_two},
-                0);
-        this.setListAdapter(mAdapter);
+        mAdapter = new AlbumCursorAdapter(getActivity(),data, 0);
+        mGridView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }
 

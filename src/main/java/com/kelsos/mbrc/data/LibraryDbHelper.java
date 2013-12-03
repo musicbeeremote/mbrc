@@ -45,7 +45,9 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
 
     public synchronized Cursor getAlbumCursor(final long id) {
         final SQLiteDatabase db = this.getReadableDatabase();
-        final Cursor cursor = db.rawQuery(Album.SELECT_ALBUM, new String[]{Long.toString(id)});
+        final Cursor cursor = db.query(Album.TABLE_NAME, Album.FIELDS,
+                Album._ID + " IS ?", new String[]{Long.toString(id)},
+                null, null, null, null);
         return cursor;
     }
 
@@ -61,7 +63,8 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
                                                   final String[] args,
                                                   final String sortOrder) {
         final SQLiteDatabase db = this.getReadableDatabase();
-        final Cursor cursor = db.rawQuery(Album.SELECT_ALBUMS, null);
+        final Cursor cursor = db.query(Album.TABLE_NAME, Album.FIELDS, selection,
+                args, null, sortOrder, null);
         return cursor;
     }
 
