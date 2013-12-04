@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,17 +18,15 @@ import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmen
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.adapters.BrowsePagerAdapter;
 import com.kelsos.mbrc.adapters.InfoButtonPagerAdapter;
+import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.model.UserAction;
+import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
-import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.net.Protocol;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -38,7 +35,6 @@ import roboguice.inject.InjectView;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class MainFragment extends RoboSherlockFragment {
@@ -66,30 +62,6 @@ public class MainFragment extends RoboSherlockFragment {
             if (b) {
                 post(new UserAction(Protocol.NowPlayingRating, v));
             }
-        }
-    };
-    private View.OnClickListener playButtonListener = new View.OnClickListener() {
-
-        public void onClick(View v) {
-            post(new UserAction(Protocol.PlayerPlayPause, true));
-        }
-    };
-    private View.OnClickListener previousButtonListener = new View.OnClickListener() {
-
-        public void onClick(View v) {
-            post(new UserAction(Protocol.PlayerPrevious, true));
-        }
-    };
-    private View.OnClickListener nextButtonListener = new View.OnClickListener() {
-
-        public void onClick(View v) {
-            post(new UserAction(Protocol.PlayerNext, true));
-        }
-    };
-    private View.OnClickListener stopButtonListener = new View.OnClickListener() {
-
-        public void onClick(View v) {
-            post(new UserAction(Protocol.PlayerStop, true));
         }
     };
 
@@ -226,9 +198,8 @@ public class MainFragment extends RoboSherlockFragment {
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.ui_fragment_main, container, false);
-        mPager = (ViewPager) view.findViewById(R.id.search_pager);
+        mPager = (ViewPager) view.findViewById(R.id.mbrc_main_infopager);
         mPager.setAdapter(mAdapter);
         return view;
     }
@@ -292,7 +263,7 @@ public class MainFragment extends RoboSherlockFragment {
             case R.id.actionbar_share:
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
-                shareIntent.putExtra(Intent.EXTRA_TEXT, "Now Playing: " + artistLabel.getText() + " - " + titleLabel.getText());
+                //shareIntent.putExtra(Intent.EXTRA_TEXT, "Now Playing: " + artistLabel.getText() + " - " + titleLabel.getText());
                 setShareIntent(shareIntent);
                 return true;
             default:
@@ -311,8 +282,8 @@ public class MainFragment extends RoboSherlockFragment {
     }
 
     @Subscribe public void handleScrobbleChange(ScrobbleChange change) {
-        if (scrobbleButton == null) return;
-        scrobbleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_scrobble_red : R.drawable.ic_media_scrobble_off);
+//        if (scrobbleButton == null) return;
+//        scrobbleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_scrobble_red : R.drawable.ic_media_scrobble_off);
     }
 
     @Subscribe public void handleCoverEvent(final CoverAvailable cevent) {
@@ -325,54 +296,54 @@ public class MainFragment extends RoboSherlockFragment {
     }
 
     @Subscribe public void handleShuffleChange(ShuffleChange change) {
-        if (shuffleButton == null) return;
-        shuffleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_shuffle : R.drawable.ic_media_shuffle_off);
+//        if (shuffleButton == null) return;
+//        shuffleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_shuffle : R.drawable.ic_media_shuffle_off);
     }
 
     @Subscribe public void updateRepeatButtonState(RepeatChange change) {
-        if (repeatButton == null) return;
-        repeatButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_repeat : R.drawable.ic_media_repeat_off);
+//        if (repeatButton == null) return;
+//        repeatButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_repeat : R.drawable.ic_media_repeat_off);
     }
 
     @Subscribe public void updateVolumeData(VolumeChange change) {
         if (volumeSlider == null) return;
         if (!userChangingVolume)
             volumeSlider.setProgress(change.getVolume());
-        if (muteButton == null) return;
-        muteButton.setImageResource(change.getIsMute() ? R.drawable.ic_media_mute_active : R.drawable.ic_media_mute_full);
+//        if (muteButton == null) return;
+//        muteButton.setImageResource(change.getIsMute() ? R.drawable.ic_media_mute_active : R.drawable.ic_media_mute_full);
     }
 
-    @Subscribe public void handlePlayStateChange(final PlayStateChange change) {
-        if (playPauseButton == null || stopButton == null) return;
-        switch (change.getState()) {
-            case Playing:
-                playPauseButton.setImageResource(R.drawable.ic_media_pause);
-                playPauseButton.setTag("Playing");
-                stopButton.setImageResource(R.drawable.ic_media_stop);
-                stopButton.setEnabled(true);				/* Start the animation if the track is playing*/
-                post(new UserAction(Protocol.NowPlayingPosition, true));
-                trackProgressAnimation();
-                break;
-            case Paused:
-                playPauseButton.setImageResource(R.drawable.ic_media_play);
-                playPauseButton.setTag("Paused");
-                stopButton.setEnabled(true);
-        /* Stop the animation if the track is paused*/
-                stopTrackProgressAnimation();
-                break;
-            case Stopped:
-        /* Stop the animation if the track is paused*/
-                stopTrackProgressAnimation();
-                activateStoppedState();
-            case Undefined:
-                playPauseButton.setImageResource(R.drawable.ic_media_play);
-                stopButton.setImageResource(R.drawable.ic_media_stop_disabled);
-                stopButton.setEnabled(false);
-                break;
-        }
+//    @Subscribe public void handlePlayStateChange(final PlayStateChange change) {
+//        if (playPauseButton == null || stopButton == null) return;
+//        switch (change.getState()) {
+//            case Playing:
+//                playPauseButton.setImageResource(R.drawable.ic_media_pause);
+//                playPauseButton.setTag("Playing");
+//                stopButton.setImageResource(R.drawable.ic_media_stop);
+//                stopButton.setEnabled(true);				/* Start the animation if the track is playing*/
+//                post(new UserAction(Protocol.NowPlayingPosition, true));
+//                trackProgressAnimation();
+//                break;
+//            case Paused:
+//                playPauseButton.setImageResource(R.drawable.ic_media_play);
+//                playPauseButton.setTag("Paused");
+//                stopButton.setEnabled(true);
+//        /* Stop the animation if the track is paused*/
+//                stopTrackProgressAnimation();
+//                break;
+//            case Stopped:
+//        /* Stop the animation if the track is paused*/
+//                stopTrackProgressAnimation();
+//                activateStoppedState();
+//            case Undefined:
+//                playPauseButton.setImageResource(R.drawable.ic_media_play);
+//                stopButton.setImageResource(R.drawable.ic_media_stop_disabled);
+//                stopButton.setEnabled(false);
+//                break;
+//        }
 
 
-    }
+//    }
 
     /**
      * If the track progress animation is running the the function stops it.
@@ -387,56 +358,56 @@ public class MainFragment extends RoboSherlockFragment {
      * Starts the progress animation when called. If It was previously running then it restarts it.
      */
     private void trackProgressAnimation() {
-        if (!isVisible()) return;
-        /* If the scheduled tasks is not null then cancel it and clear it along with the timer to create them anew */
-        final int TIME_PERIOD = 1;
-        stopTrackProgressAnimation();
-        if (!stopButton.isEnabled() || playPauseButton.getTag() == "Paused") return;
-
-        final Runnable updateProgress = new Runnable() {
-            @Override public void run() {
-
-                int currentProgress = trackProgressSlider.getProgress() / 1000;
-                final int currentMinutes = currentProgress / 60;
-                final int currentSeconds = currentProgress % 60;
-
-                if (getActivity() == null) return;
-
-                getActivity().runOnUiThread(new Runnable() {
-
-                    @Override public void run() {
-                        try {
-                            if (trackProgressSlider == null) return;
-                            trackProgressSlider.setProgress(trackProgressSlider.getProgress() + 1000);
-                            trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
-                        } catch (Exception ex) {
-                            if (BuildConfig.DEBUG) {
-                                Log.d("mbrc-log:","animation timer", ex);
-                            }
-                        }
-                    }
-                });
-            }
-        };
-
-        mProgressUpdateHandler = progressScheduler.scheduleAtFixedRate(updateProgress, 0,
-                TIME_PERIOD, TimeUnit.SECONDS);
+//        if (!isVisible()) return;
+//        /* If the scheduled tasks is not null then cancel it and clear it along with the timer to create them anew */
+//        final int TIME_PERIOD = 1;
+//        stopTrackProgressAnimation();
+//        if (!stopButton.isEnabled() || playPauseButton.getTag() == "Paused") return;
+//
+//        final Runnable updateProgress = new Runnable() {
+//            @Override public void run() {
+//
+//                int currentProgress = trackProgressSlider.getProgress() / 1000;
+//                final int currentMinutes = currentProgress / 60;
+//                final int currentSeconds = currentProgress % 60;
+//
+//                if (getActivity() == null) return;
+//
+//                getActivity().runOnUiThread(new Runnable() {
+//
+//                    @Override public void run() {
+//                        try {
+//                            if (trackProgressSlider == null) return;
+//                            trackProgressSlider.setProgress(trackProgressSlider.getProgress() + 1000);
+//                            trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
+//                        } catch (Exception ex) {
+//                            if (BuildConfig.DEBUG) {
+//                                Log.d("mbrc-log:","animation timer", ex);
+//                            }
+//                        }
+//                    }
+//                });
+//            }
+//        };
+//
+//        mProgressUpdateHandler = progressScheduler.scheduleAtFixedRate(updateProgress, 0,
+//                TIME_PERIOD, TimeUnit.SECONDS);
 
     }
 
     private void activateStoppedState() {
-        if (trackProgressCurrent == null || trackProgressSlider == null || stopButton == null) return;
-        trackProgressSlider.setProgress(0);
-        trackProgressCurrent.setText("00:00");
-        stopButton.setEnabled(false);
+//        if (trackProgressCurrent == null || trackProgressSlider == null || stopButton == null) return;
+//        trackProgressSlider.setProgress(0);
+//        trackProgressCurrent.setText("00:00");
+//        stopButton.setEnabled(false);
     }
 
     @Subscribe public void handleTrackInfoChange(final TrackInfoChange change) {
-        if (artistLabel == null) return;
-        artistLabel.setText(change.getArtist());
-        titleLabel.setText(change.getTitle());
-        albumLabel.setText(change.getAlbum());
-        yearLabel.setText(change.getYear());
+//        if (artistLabel == null) return;
+//        artistLabel.setText(change.getArtist());
+//        titleLabel.setText(change.getTitle());
+//        albumLabel.setText(change.getAlbum());
+//        yearLabel.setText(change.getYear());
         ActionBar actionBar = ((RoboSherlockFragmentActivity) getActivity()).getSupportActionBar();
         actionBar.setTitle(change.getTitle());
         actionBar.setSubtitle(change.getAlbum());
@@ -452,15 +423,15 @@ public class MainFragment extends RoboSherlockFragment {
 
     @Subscribe public void handleLfmStatusChange(final LfmRatingChanged event) {
         switch (event.getStatus()) {
-            case LOVED:
-                lfmLoveButton.setImageResource(R.drawable.ic_media_lfm_loved);
-                break;
-            case BANNED:
-                lfmLoveButton.setImageResource(R.drawable.ic_media_lfm_banned);
-                break;
-            case NORMAL:
-                lfmLoveButton.setImageResource(R.drawable.ic_media_lfm_unloved);
-                break;
+//            case LOVED:
+//                lfmLoveButton.setImageResource(R.drawable.ic_media_lfm_loved);
+//                break;
+//            case BANNED:
+//                lfmLoveButton.setImageResource(R.drawable.ic_media_lfm_banned);
+//                break;
+//            case NORMAL:
+//                lfmLoveButton.setImageResource(R.drawable.ic_media_lfm_unloved);
+//                break;
         }
     }
 

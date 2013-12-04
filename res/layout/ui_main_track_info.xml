@@ -3,6 +3,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:background="@drawable/ui_track_info_background"
+              android:layout_margin="4dp"
+              android:padding="@dimen/side_margin_half"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
