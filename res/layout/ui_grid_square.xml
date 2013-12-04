@@ -1,36 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
-            android:background="@drawable/ui_list_item_background"
-              android:orientation="vertical"
-              android:layout_width="150dp"
-              android:layout_height="150dp">
+                android:background="@drawable/ui_list_item_background"
+                android:orientation="vertical"
+                android:layout_width="@dimen/mbrc_grid_item_width"
+                android:layout_height="@dimen/mbrc_grid_item_height">
+
     <ImageView
             android:id="@+id/ui_grid_image"
             android:src="@drawable/ic_image_no_cover"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="@dimen/mbrc_grid_item_width"/>
+
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_height="40dp">
+            android:paddingLeft="@dimen/side_margin_half"
+            android:paddingRight="@dimen/side_margin_half"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:id="@+id/linearLayout"
+            >
+
         <TextView
                 tools:text="Title"
                 android:id="@+id/line_one"
+                android:textColor="@color/mbrc_title"
+                android:ellipsize="end"
+                android:singleLine="true"
                 android:layout_width="match_parent"
-                android:textSize="@dimen/mbrc_title_text_size"
-                android:layout_height="20dp"/>
+                android:fontFamily="sans-serif-light"
+                android:textStyle="normal"
+                android:textSize="@dimen/mbrc_grid_line_one_size"
+                android:layout_height="wrap_content"/>
 
         <TextView
                 tools:text="artist"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/mbrc_subtitle"
                 android:id="@+id/line_two"
-                android:textSize="@dimen/mbrc_artist_text_size"
+                android:singleLine="true"
+                android:textStyle="normal"
+                android:textSize="@dimen/mbrc_grid_line_two_size"
                 android:layout_width="match_parent"
-                android:layout_height="20dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="false"/>
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

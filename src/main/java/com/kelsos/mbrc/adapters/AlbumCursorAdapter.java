@@ -22,11 +22,12 @@ public class AlbumCursorAdapter extends CursorAdapter {
     }
 
     @Override public void bindView(View view, Context context, Cursor cursor) {
-        Album album = new Album(cursor);
+        final ImageView imageView = ((ImageView)view.findViewById(R.id.ui_grid_image));
+        final Album album = new Album(cursor);
+        final String hash = album.getCoverHash();
+        imageView.setImageResource(android.R.color.transparent);
         ((TextView)view.findViewById(R.id.line_one)).setText(album.getAlbumName());
         ((TextView)view.findViewById(R.id.line_two)).setText(album.getArtist());
-        final ImageView imageView = ((ImageView)view.findViewById(R.id.ui_grid_image));
-        final String hash = album.getCoverHash();
         imageView.setTag(hash);
         ImageWorkerTask imageWorker = new ImageWorkerTask(imageView,context.getContentResolver());
         imageWorker.execute(hash);
