@@ -15,6 +15,7 @@ public abstract class BaseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         RoboGuice.getInjector(getActivity()).injectMembersWithoutViews(this);
+        scopedBus.register(this);
     }
 
     @Override
@@ -31,5 +32,10 @@ public abstract class BaseFragment extends Fragment {
     @Override public void onResume() {
         super.onResume();
         scopedBus.resumed();
+    }
+
+    @Override public void onDestroy() {
+        scopedBus.unregister(this);
+        super.onDestroy();
     }
 }

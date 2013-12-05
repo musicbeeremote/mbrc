@@ -15,6 +15,8 @@
     <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="end"
             tools:text="Crimson Flower"
             android:textSize="@dimen/mbrc_title_text_size"
             android:textStyle="bold"
@@ -23,6 +25,8 @@
     <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:textSize="@dimen/mbrc_album_text_size"
             tools:text="Circus Black"
             android:id="@+id/track_album"/>
@@ -31,6 +35,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/mbrc_album_text_size"
+            android:singleLine="true"
+            android:ellipsize="end"
             tools:text="Amberian Dawn"
             android:id="@+id/track_artist"/>
 
@@ -38,6 +44,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/mbrc_album_text_size"
+            android:singleLine="true"
+            android:ellipsize="end"
             tools:text="2012"
             android:id="@+id/track_year"/>
 </LinearLayout>

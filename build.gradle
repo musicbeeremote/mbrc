@@ -46,7 +46,7 @@ android {
         minSdkVersion 8
         targetSdkVersion 19
         buildConfig "public static final String GIT_SHA =\"" +  gitSha()+ "\";", \
-                    "public static final String BUILD_TIME =\"" + new Date() + "\";"
+                    "public static final String BUILD_TIME =\"" + new Date().format("yyyy-MM-dd'T'HH:mm:ssZ") + "\";"
     }
 
     compileOptions {

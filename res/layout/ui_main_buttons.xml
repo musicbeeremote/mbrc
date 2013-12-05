@@ -9,7 +9,7 @@
     <ImageButton
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/imageButton"
+            android:id="@+id/main_repeat_button"
             android:background="@drawable/selectable_background_mbrc_dark"
             android:layout_gravity="center_vertical"
             android:src="@drawable/ic_media_repeat"/>
@@ -50,7 +50,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:background="@drawable/selectable_background_mbrc_dark"
-            android:id="@+id/imageButton2"
+            android:id="@+id/main_shuffle_button"
             android:src="@drawable/ic_media_shuffle"
             android:layout_gravity="center_vertical"/>
 

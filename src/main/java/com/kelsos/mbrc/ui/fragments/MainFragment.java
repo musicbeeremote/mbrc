@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.*;
 import android.view.animation.*;
 import android.widget.*;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.InfoButtonPagerAdapter;
 import com.kelsos.mbrc.constants.Const;
@@ -29,6 +31,7 @@ import roboguice.inject.InjectView;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class MainFragment extends BaseFragment {
@@ -75,18 +78,7 @@ public class MainFragment extends BaseFragment {
             post(new UserAction(Protocol.PlayerScrobble, Const.TOGGLE));
         }
     };
-    private View.OnClickListener shuffleButtonListener = new View.OnClickListener() {
 
-        public void onClick(View v) {
-            post(new UserAction(Protocol.PlayerShuffle, Const.TOGGLE));
-        }
-    };
-    private View.OnClickListener repeatButtonListener = new View.OnClickListener() {
-
-        public void onClick(View v) {
-            post(new UserAction(Protocol.PlayerRepeat, Const.TOGGLE));
-        }
-    };
 
     private View.OnLongClickListener lfmLongClickListener = new View.OnLongClickListener() {
         @Override public boolean onLongClick(View view) {
@@ -289,16 +281,6 @@ public class MainFragment extends BaseFragment {
         }
     }
 
-    @Subscribe public void handleShuffleChange(ShuffleChange change) {
-//        if (shuffleButton == null) return;
-//        shuffleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_shuffle : R.drawable.ic_media_shuffle_off);
-    }
-
-    @Subscribe public void updateRepeatButtonState(RepeatChange change) {
-//        if (repeatButton == null) return;
-//        repeatButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_repeat : R.drawable.ic_media_repeat_off);
-    }
-
     @Subscribe public void updateVolumeData(VolumeChange change) {
         if (volumeSlider == null) return;
         if (!userChangingVolume)
@@ -307,37 +289,26 @@ public class MainFragment extends BaseFragment {
 //        muteButton.setImageResource(change.getIsMute() ? R.drawable.ic_media_mute_active : R.drawable.ic_media_mute_full);
     }
 
-//    @Subscribe public void handlePlayStateChange(final PlayStateChange change) {
-//        if (playPauseButton == null || stopButton == null) return;
-//        switch (change.getState()) {
-//            case Playing:
-//                playPauseButton.setImageResource(R.drawable.ic_media_pause);
-//                playPauseButton.setTag("Playing");
-//                stopButton.setImageResource(R.drawable.ic_media_stop);
-//                stopButton.setEnabled(true);				/* Start the animation if the track is playing*/
-//                post(new UserAction(Protocol.NowPlayingPosition, true));
-//                trackProgressAnimation();
-//                break;
-//            case Paused:
-//                playPauseButton.setImageResource(R.drawable.ic_media_play);
-//                playPauseButton.setTag("Paused");
-//                stopButton.setEnabled(true);
-//        /* Stop the animation if the track is paused*/
-//                stopTrackProgressAnimation();
-//                break;
-//            case Stopped:
-//        /* Stop the animation if the track is paused*/
-//                stopTrackProgressAnimation();
-//                activateStoppedState();
-//            case Undefined:
-//                playPauseButton.setImageResource(R.drawable.ic_media_play);
-//                stopButton.setImageResource(R.drawable.ic_media_stop_disabled);
-//                stopButton.setEnabled(false);
-//                break;
-//        }
-
-
-//    }
+    @Subscribe public void handlePlayStateChange(final PlayStateChange change) {
+        switch (change.getState()) {
+            case Playing:
+                /* Start the animation if the track is playing*/
+                post(new UserAction(Protocol.NowPlayingPosition, true));
+                trackProgressAnimation();
+                break;
+            case Paused:
+        /* Stop the animation if the track is paused*/
+                stopTrackProgressAnimation();
+                break;
+            case Stopped:
+        /* Stop the animation if the track is paused*/
+                stopTrackProgressAnimation();
+                activateStoppedState();
+            case Undefined:
+                stopTrackProgressAnimation();
+                break;
+        }
+    }
 
     /**
      * If the track progress animation is running the the function stops it.
@@ -352,56 +323,50 @@ public class MainFragment extends BaseFragment {
      * Starts the progress animation when called. If It was previously running then it restarts it.
      */
     private void trackProgressAnimation() {
-//        if (!isVisible()) return;
-//        /* If the scheduled tasks is not null then cancel it and clear it along with the timer to create them anew */
-//        final int TIME_PERIOD = 1;
-//        stopTrackProgressAnimation();
-//        if (!stopButton.isEnabled() || playPauseButton.getTag() == "Paused") return;
-//
-//        final Runnable updateProgress = new Runnable() {
-//            @Override public void run() {
-//
-//                int currentProgress = trackProgressSlider.getProgress() / 1000;
-//                final int currentMinutes = currentProgress / 60;
-//                final int currentSeconds = currentProgress % 60;
-//
-//                if (getActivity() == null) return;
-//
-//                getActivity().runOnUiThread(new Runnable() {
-//
-//                    @Override public void run() {
-//                        try {
-//                            if (trackProgressSlider == null) return;
-//                            trackProgressSlider.setProgress(trackProgressSlider.getProgress() + 1000);
-//                            trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
-//                        } catch (Exception ex) {
-//                            if (BuildConfig.DEBUG) {
-//                                Log.d("mbrc-log:","animation timer", ex);
-//                            }
-//                        }
-//                    }
-//                });
-//            }
-//        };
-//
-//        mProgressUpdateHandler = progressScheduler.scheduleAtFixedRate(updateProgress, 0,
-//                TIME_PERIOD, TimeUnit.SECONDS);
+        if (!isVisible()) return;
+        /* If the scheduled tasks is not null then cancel it and clear it along with the timer to create them anew */
+        final int TIME_PERIOD = 1;
+        stopTrackProgressAnimation();
+
+        final Runnable updateProgress = new Runnable() {
+            @Override public void run() {
+
+                int currentProgress = trackProgressSlider.getProgress() / 1000;
+                final int currentMinutes = currentProgress / 60;
+                final int currentSeconds = currentProgress % 60;
+
+                if (getActivity() == null) return;
+
+                getActivity().runOnUiThread(new Runnable() {
+
+                    @Override public void run() {
+                        try {
+                            if (trackProgressSlider == null) return;
+                            trackProgressSlider.setProgress(trackProgressSlider.getProgress() + 1000);
+                            trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
+                        } catch (Exception ex) {
+
+                            if (BuildConfig.DEBUG) {
+                                Log.d("mbrc-log:", "animation timer", ex);
+                            }
+                        }
+                    }
+                });
+            }
+        };
+
+        mProgressUpdateHandler = progressScheduler.scheduleAtFixedRate(updateProgress, 0,
+                TIME_PERIOD, TimeUnit.SECONDS);
 
     }
 
     private void activateStoppedState() {
-//        if (trackProgressCurrent == null || trackProgressSlider == null || stopButton == null) return;
-//        trackProgressSlider.setProgress(0);
-//        trackProgressCurrent.setText("00:00");
-//        stopButton.setEnabled(false);
+        if (trackProgressCurrent == null || trackProgressSlider == null) return;
+        trackProgressSlider.setProgress(0);
+        trackProgressCurrent.setText("00:00");
     }
 
     @Subscribe public void handleTrackInfoChange(final TrackInfoChange change) {
-//        if (artistLabel == null) return;
-//        artistLabel.setText(change.getArtist());
-//        titleLabel.setText(change.getTitle());
-//        albumLabel.setText(change.getAlbum());
-//        yearLabel.setText(change.getYear());
         ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
         actionBar.setTitle(change.getTitle());
         actionBar.setSubtitle(change.getAlbum());

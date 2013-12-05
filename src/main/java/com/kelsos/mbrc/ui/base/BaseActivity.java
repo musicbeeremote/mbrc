@@ -34,6 +34,7 @@ public abstract class BaseActivity extends ActionBarActivity implements RoboCont
         injector.injectMembersWithoutViews(this);
         super.onCreate(savedInstanceState);
         eventManager.fire(new OnCreateEvent(savedInstanceState));
+        scopedBus.register(this);
     }
 
     @Override
@@ -85,6 +86,7 @@ public abstract class BaseActivity extends ActionBarActivity implements RoboCont
     @Override
     protected void onDestroy() {
         try {
+            scopedBus.unregister(this);
             eventManager.fire(new OnDestroyEvent());
         } finally {
             try {
