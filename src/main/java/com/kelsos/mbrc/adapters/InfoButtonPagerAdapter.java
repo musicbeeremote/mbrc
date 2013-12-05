@@ -1,15 +1,15 @@
 package com.kelsos.mbrc.adapters;
 
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import com.kelsos.mbrc.ui.fragments.ButtonFragment;
 import com.kelsos.mbrc.ui.fragments.TrackInfoFragment;
 
 public class InfoButtonPagerAdapter extends FragmentPagerAdapter {
     private static final int M_COUNT = 2;
-    public InfoButtonPagerAdapter(FragmentActivity activity) {
-        super(activity.getSupportFragmentManager());
+    public InfoButtonPagerAdapter(FragmentManager fragmentManager) {
+        super(fragmentManager);
     }
 
     @Override public int getCount() {

@@ -188,7 +188,7 @@ public class MainFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         userChangingVolume = false;
-        mAdapter = new InfoButtonPagerAdapter(getActivity());
+        mAdapter = new InfoButtonPagerAdapter(getChildFragmentManager());
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
