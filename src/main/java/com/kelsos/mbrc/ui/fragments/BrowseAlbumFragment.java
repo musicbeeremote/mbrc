@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumCursorAdapter;
 import com.kelsos.mbrc.constants.ProtocolEventType;
@@ -20,7 +19,6 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseFragment;
-import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import static android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -32,20 +30,8 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
     private AlbumCursorAdapter mAdapter;
     private GridView mGridView;
 
-    @Inject Bus bus;
-
-    @Override public void onStart() {
-        super.onStart();
-        bus.register(this);
-    }
-
     @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
         mDefault = action.getAction();
-    }
-
-    @Override public void onStop() {
-        super.onStop();
-        bus.unregister(this);
     }
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {
@@ -95,7 +81,7 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
                     break;
             }
 
-            if (ua != null) bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
+            if (ua != null) getBus().post(new MessageEvent(ProtocolEventType.UserAction, ua));
             return true;
         } else {
             return false;

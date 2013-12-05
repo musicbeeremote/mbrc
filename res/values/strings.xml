@@ -146,5 +146,6 @@
     <string name="mqueue_last">last</string>
     <string name="mqueue_now">now</string>
     <string name="search_context_playlist">Add to playlist</string>
+    <string name="mbrc_actionbar_love">Love</string>
 
 </resources>

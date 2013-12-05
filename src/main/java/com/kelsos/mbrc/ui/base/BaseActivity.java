@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import com.google.inject.Inject;
 import com.google.inject.Key;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
 import roboguice.RoboGuice;
 import roboguice.activity.event.*;
 import roboguice.event.EventManager;
@@ -87,6 +88,7 @@ public abstract class BaseActivity extends ActionBarActivity implements RoboCont
     protected void onDestroy() {
         try {
             scopedBus.unregister(this);
+            Crouton.cancelAllCroutons();
             eventManager.fire(new OnDestroyEvent());
         } finally {
             try {

@@ -21,7 +21,6 @@ import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
-import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import java.util.HashMap;
@@ -30,7 +29,6 @@ import java.util.Map;
 
 public class NowPlayingFragment extends BaseListFragment implements SearchView.OnQueryTextListener {
     @Inject Injector injector;
-    @Inject private Bus bus;
     private NowPlayingAdapter adapter;
     private SearchView mSearchView;
     private MenuItem mSearchItem;
@@ -73,7 +71,7 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
     }
 
     public boolean onQueryTextSubmit(String query) {
-        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingListSearch, query.trim())));
+        getBus().post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingListSearch, query.trim())));
         mSearchView.setIconified(true);
         mSearchItem.collapseActionView();
         return false;
@@ -111,13 +109,7 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
 
     @Override public void onStart() {
         super.onStart();
-        bus.register(this);
-        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingList, true)));
-    }
-
-    @Override public void onStop() {
-        super.onStop();
-        bus.unregister(this);
+        getBus().post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingList, true)));
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -134,7 +126,7 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
         super.onListItemClick(l, v, position, id);
         adapter.setPlayingTrackIndex(position);
         adapter.notifyDataSetChanged();
-        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingListPlay, position + 1)));
+        getBus().post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingListPlay, position + 1)));
     }
 
     private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
@@ -150,7 +142,7 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
                 Map<String, Integer> move = new HashMap<String, Integer>();
                 move.put("from", from);
                 move.put("to", to);
-                bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingListMove, move)));
+                getBus().post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingListMove, move)));
             }
         }
     };
@@ -178,7 +170,7 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
             mTrack = adapter.getItem(which);
             adapter.remove(mTrack);
             adapter.notifyDataSetChanged();
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingListRemove, which)));
+            getBus().post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingListRemove, which)));
         }
     };
 

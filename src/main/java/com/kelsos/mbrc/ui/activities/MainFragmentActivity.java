@@ -7,31 +7,34 @@ import android.os.Bundle;
 import android.support.v4.app.*;
 import android.support.v4.widget.DrawerLayout;
 import android.view.*;
-import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.constants.Const;
+import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
+import com.kelsos.mbrc.events.ui.LfmRatingChanged;
 import com.kelsos.mbrc.events.ui.NotifyUser;
+import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseActivity;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.kelsos.mbrc.ui.fragments.*;
-import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class MainFragmentActivity extends BaseActivity {
-    @Inject Bus bus;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private View mDrawerMenu;
     private DisplayFragment mDisplay;
     private boolean navChanged;
     private DialogFragment mDialog;
+    private MenuItem favoriteItem;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,23 +94,8 @@ public class MainFragmentActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+        favoriteItem = menu.findItem(R.id.action_bar_favorite);
         return true;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Crouton.cancelAllCroutons();
-    }
-
-    @Override public void onStart() {
-        super.onStart();
-        bus.register(this);
-    }
-
-    @Override public void onStop() {
-        super.onStop();
-        bus.unregister(this);
     }
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {
@@ -127,6 +115,11 @@ public class MainFragmentActivity extends BaseActivity {
                 Intent openHelp = new Intent(Intent.ACTION_VIEW);
                 openHelp.setData(Uri.parse("http://kelsos.net/musicbeeremote/help/"));
                 startActivity(openHelp);
+                return true;
+            case R.id.action_bar_favorite:
+                final UserAction loveAction = new UserAction(Protocol.NowPlayingLfmRating, Const.TOGGLE);
+                final MessageEvent userAction = new MessageEvent(ProtocolEventType.UserAction, loveAction);
+                getBus().post(userAction);
                 return true;
             default:
                 return false;
@@ -219,10 +212,10 @@ public class MainFragmentActivity extends BaseActivity {
     @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
-                bus.post(new MessageEvent(UserInputEventType.KeyVolumeUp));
+                getBus().post(new MessageEvent(UserInputEventType.KeyVolumeUp));
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-                bus.post(new MessageEvent(UserInputEventType.KeyVolumeDown));
+                getBus().post(new MessageEvent(UserInputEventType.KeyVolumeDown));
                 return true;
             default:
                 return super.onKeyDown(keyCode, event);
@@ -238,6 +231,21 @@ public class MainFragmentActivity extends BaseActivity {
                 return true;
             default:
                 return super.onKeyUp(keyCode, event);
+        }
+    }
+
+    @Subscribe public void handleLfmStatusChange(final LfmRatingChanged event) {
+        if (favoriteItem == null) return;
+        switch (event.getStatus()) {
+            case LOVED:
+                favoriteItem.setIcon(R.drawable.ic_action_rating_favorite);
+                break;
+            case BANNED:
+                favoriteItem.setIcon(R.drawable.ic_media_lfm_banned);
+                break;
+            case NORMAL:
+                favoriteItem.setIcon(R.drawable.ic_action_rating_favorite_disabled);
+                break;
         }
     }
 }

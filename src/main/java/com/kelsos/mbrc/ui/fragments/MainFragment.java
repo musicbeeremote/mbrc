@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.*;
 import android.view.animation.*;
 import android.widget.*;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
@@ -24,7 +23,6 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
 import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseFragment;
-import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.inject.InjectView;
 
@@ -35,9 +33,6 @@ import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class MainFragment extends BaseFragment {
-    // Injects
-    @Inject protected Bus bus;
-    // Inject elements of the view
     @InjectView(R.id.main_track_progress_current) TextView trackProgressCurrent;
     @InjectView(R.id.main_track_duration_total) TextView trackDuration;
     @InjectView(R.id.main_volume_seeker) SeekBar volumeSlider;
@@ -63,7 +58,7 @@ public class MainFragment extends BaseFragment {
     };
 
     private void post(UserAction data) {
-        bus.post(new MessageEvent(ProtocolEventType.UserAction, data));
+        getBus().post(new MessageEvent(ProtocolEventType.UserAction, data));
     }
 
     private View.OnClickListener muteButtonListener = new View.OnClickListener() {
@@ -167,13 +162,6 @@ public class MainFragment extends BaseFragment {
             }
         }
     };
-    private ImageButton.OnClickListener lfmLoveClicked = new ImageButton.OnClickListener() {
-
-        @Override
-        public void onClick(View view) {
-            post(new UserAction(Protocol.NowPlayingLfmRating, Const.TOGGLE));
-        }
-    };
     private ViewPager mPager;
 
     @Override public void onCreate(Bundle savedInstanceState) {
@@ -194,7 +182,6 @@ public class MainFragment extends BaseFragment {
         super.onStart();
         SetTextViewTypeface();
         RegisterListeners();
-        bus.register(this);
     }
 
     @Override public void onResume() {
@@ -235,7 +222,6 @@ public class MainFragment extends BaseFragment {
 
     @Override public void onStop() {
         super.onStop();
-        bus.unregister(this);
     }
 
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -380,20 +366,6 @@ public class MainFragment extends BaseFragment {
         }
     }
 
-    @Subscribe public void handleLfmStatusChange(final LfmRatingChanged event) {
-        switch (event.getStatus()) {
-//            case LOVED:
-//                lfmLoveButton.setImageResource(R.drawable.ic_media_lfm_loved);
-//                break;
-//            case BANNED:
-//                lfmLoveButton.setImageResource(R.drawable.ic_media_lfm_banned);
-//                break;
-//            case NORMAL:
-//                lfmLoveButton.setImageResource(R.drawable.ic_media_lfm_unloved);
-//                break;
-        }
-    }
-
     /**
      * Responsible for updating the displays and seekbar responsible for the display of the track duration and the
      * current progress of playback
@@ -403,7 +375,7 @@ public class MainFragment extends BaseFragment {
         final int current = position.getCurrent();
         if (trackProgressCurrent == null || trackProgressSlider == null || trackDuration == null) return;
         if (total == 0) {
-            bus.post(new MessageEvent(UserInputEventType.RequestPosition));
+            getBus().post(new MessageEvent(UserInputEventType.RequestPosition));
             return;
         }
         int currentSeconds = current / 1000;

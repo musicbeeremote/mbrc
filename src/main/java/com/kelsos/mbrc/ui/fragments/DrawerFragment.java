@@ -12,7 +12,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.DrawerAdapter;
@@ -24,7 +23,6 @@ import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.kelsos.mbrc.util.RemoteUtils;
-import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.inject.InjectView;
 
@@ -32,7 +30,6 @@ import java.util.ArrayList;
 
 
 public class DrawerFragment extends BaseListFragment implements FragmentManager.OnBackStackChangedListener {
-    @Inject private Bus bus;
     @InjectView(R.id.menuConnector) TextView menuConnector;
     @InjectView(R.id.drawer_version_indicator) TextView versionIndicator;
 
@@ -44,7 +41,7 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
     private TextView.OnLongClickListener connectButtonLongClick = new TextView.OnLongClickListener() {
         @Override
         public boolean onLongClick(View view) {
-            bus.post(new MessageEvent(UserInputEventType.ResetConnection));
+            getBus().post(new MessageEvent(UserInputEventType.ResetConnection));
             return false;
         }
     };
@@ -52,7 +49,7 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
     private TextView.OnClickListener connectButtonClick = new TextView.OnClickListener() {
 
         public void onClick(View v) {
-            bus.post(new MessageEvent(UserInputEventType.StartConnection));
+            getBus().post(new MessageEvent(UserInputEventType.StartConnection));
         }
     };
 
@@ -74,7 +71,6 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
 
     @Override public void onStart() {
         super.onStart();
-        bus.register(this);
         menuConnector.setOnClickListener(connectButtonClick);
         menuConnector.setOnLongClickListener(connectButtonLongClick);
         menuConnector.setTypeface(robotoLight);
@@ -101,11 +97,6 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
                 e.printStackTrace();
             }
         }
-    }
-
-    @Override public void onStop() {
-        super.onStop();
-        bus.unregister(this);
     }
 
     @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChange change) {
@@ -153,7 +144,7 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
                 dEvent = new DrawerEvent();
             }
 
-            bus.post(dEvent);
+            getBus().post(dEvent);
         }
     }
 

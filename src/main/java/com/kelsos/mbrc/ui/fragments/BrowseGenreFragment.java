@@ -13,7 +13,6 @@ import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.*;
 import android.widget.AdapterView;
-import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.Genre;
@@ -25,7 +24,6 @@ import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.events.ui.GenreSearchResults;
 import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
-import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 public class BrowseGenreFragment extends BaseListFragment
@@ -37,7 +35,6 @@ public class BrowseGenreFragment extends BaseListFragment
     private String mFilter;
     private SearchView mSearchView;
     private MenuItem mSearchItem;
-    @Inject Bus bus;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,7 +96,7 @@ public class BrowseGenreFragment extends BaseListFragment
                     break;
             }
 
-            if (ua != null) bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
+            if (ua != null) getBus().post(new MessageEvent(ProtocolEventType.UserAction, ua));
             return true;
         } else {
             return false;
@@ -111,26 +108,6 @@ public class BrowseGenreFragment extends BaseListFragment
         //mAdapter = new GenreAdapter(getActivity(), R.layout.ui_list_single, results.getList());
         //setListAdapter(mAdapter);
        /// mAdapter.notifyDataSetChanged();
-    }
-
-    @Override public void onStart() {
-        super.onStart();
-        bus.register(this);
-        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String genre = ((GenreEntry) getListView().getAdapter().getItem(position)).getName();
-
-                bus.post(new MessageEvent(ProtocolEventType.UserAction,
-                        new UserAction(Protocol.LibraryQueueGenre,
-                                new Queue(mDefault, genre))));
-            }
-        });
-    }
-
-    @Override public void onStop() {
-        super.onStop();
-        bus.unregister(this);
     }
 
     @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
