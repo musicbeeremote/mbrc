@@ -8,18 +8,11 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.view.ContextMenu;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.AdapterView;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.widget.SearchView;
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.ProtocolEventType;
@@ -31,10 +24,11 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.events.ui.GenreSearchResults;
 import com.kelsos.mbrc.net.Protocol;
+import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
-public class BrowseGenreFragment extends RoboSherlockListFragment
+public class BrowseGenreFragment extends BaseListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener {
     private static final int GROUP_ID = 11;
     private static final int URL_LOADER = 1;
@@ -173,7 +167,7 @@ public class BrowseGenreFragment extends RoboSherlockListFragment
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_now_playing, menu);
-        mSearchView = new SearchView(((RoboSherlockFragmentActivity) getActivity()).getSupportActionBar().getThemedContext());
+        mSearchView = new SearchView(((ActionBarActivity)getActivity()).getSupportActionBar().getThemedContext());
         mSearchView.setQueryHint("Search for Genre");
         mSearchView.setIconifiedByDefault(true);
         mSearchItem = menu.findItem(R.id.now_playing_search_item);

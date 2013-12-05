@@ -6,12 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.*;
 import android.support.v4.widget.DrawerLayout;
-import android.view.KeyEvent;
-import android.view.View;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
+import android.view.*;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
@@ -20,6 +15,7 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
 import com.kelsos.mbrc.events.ui.NotifyUser;
+import com.kelsos.mbrc.ui.base.BaseActivity;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.kelsos.mbrc.ui.fragments.*;
@@ -28,7 +24,7 @@ import com.squareup.otto.Subscribe;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class MainFragmentActivity extends RoboSherlockFragmentActivity {
+public class MainFragmentActivity extends BaseActivity {
     @Inject Bus bus;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
@@ -93,7 +89,7 @@ public class MainFragmentActivity extends RoboSherlockFragmentActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getSupportMenuInflater();
+        MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
         return true;
     }

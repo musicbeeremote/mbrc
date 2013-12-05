@@ -17,7 +17,7 @@
                 android:layout_width="@dimen/mbrc_control_button"
                 android:layout_height="@dimen/mbrc_control_button"
                 android:layout_marginRight="@dimen/mbrc_control_distance"
-                android:background="@drawable/selectable_background_mbrc_default"
+                android:background="@drawable/selectable_background_mbrc_dark"
                 android:contentDescription="@string/main_button_previous_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_previous"/>
@@ -27,7 +27,7 @@
                 android:layout_width="@dimen/mbrc_control_button"
                 android:layout_height="@dimen/mbrc_control_button"
                 android:layout_marginRight="@dimen/mbrc_control_distance"
-                android:background="@drawable/selectable_background_mbrc_default"
+                android:background="@drawable/selectable_background_mbrc_dark"
                 android:contentDescription="@string/main_button_stop_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_stop"/>
@@ -37,7 +37,7 @@
                 android:layout_width="@dimen/mbrc_control_button"
                 android:layout_height="@dimen/mbrc_control_button"
                 android:layout_marginRight="@dimen/mbrc_control_distance"
-                android:background="@drawable/selectable_background_mbrc_default"
+                android:background="@drawable/selectable_background_mbrc_dark"
                 android:clickable="true"
                 android:contentDescription="@string/main_button_play_pause_description"
                 android:scaleType="fitCenter"
@@ -47,7 +47,7 @@
                 android:id="@+id/main_button_next"
                 android:layout_width="@dimen/mbrc_control_button"
                 android:layout_height="@dimen/mbrc_control_button"
-                android:background="@drawable/selectable_background_mbrc_default"
+                android:background="@drawable/selectable_background_mbrc_dark"
                 android:contentDescription="@string/main_button_next_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_next"/>

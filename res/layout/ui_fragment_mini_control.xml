@@ -4,8 +4,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mini_control_height"
-        android:layout_marginTop="1dp"
-        android:background="@color/abs__background_holo_dark">
+        android:layout_marginTop="1dp">
 
     <View
             android:layout_width="fill_parent"
@@ -71,7 +70,7 @@
                     android:layout_width="@dimen/mini_control_height"
                     android:layout_height="@dimen/mini_control_height"
                     android:id="@+id/mc_prev_track"
-                    android:background="@drawable/selectable_background_mbrc_default"
+                    android:background="@drawable/selectable_background_mbrc_dark"
                     android:src="@drawable/ic_action_previous"
                     android:baselineAlignBottom="false"
                     android:contentDescription="@string/main_button_previous_description"/>
@@ -80,7 +79,7 @@
                     android:layout_width="@dimen/mini_control_height"
                     android:layout_height="@dimen/mini_control_height"
                     android:id="@+id/mc_play_pause"
-                    android:background="@drawable/selectable_background_mbrc_default"
+                    android:background="@drawable/selectable_background_mbrc_dark"
                     android:src="@drawable/ic_action_play"
                     android:baselineAlignBottom="false"
                     android:contentDescription="@string/main_button_play_pause_description"/>
@@ -89,7 +88,7 @@
                     android:layout_width="@dimen/mini_control_height"
                     android:layout_height="@dimen/mini_control_height"
                     android:id="@+id/mc_next_track"
-                    android:background="@drawable/selectable_background_mbrc_default"
+                    android:background="@drawable/selectable_background_mbrc_dark"
                     android:src="@drawable/ic_action_next"
                     android:baselineAlignBottom="false"
                     android:contentDescription="@string/main_button_next_description"/>

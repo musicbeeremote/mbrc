@@ -2,9 +2,8 @@ package com.kelsos.mbrc.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.ListView;
-import com.actionbarsherlock.view.MenuItem;
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistTrackAdapter;
@@ -13,13 +12,14 @@ import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.PlaylistTracksAvailable;
 import com.kelsos.mbrc.net.Protocol;
+import com.kelsos.mbrc.ui.base.BaseActivity;
 import com.kelsos.mbrc.util.MainThreadBusWrapper;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import com.squareup.otto.Subscribe;
 import roboguice.inject.InjectView;
 
-public class PlaylistActivity extends RoboSherlockFragmentActivity {
+public class PlaylistActivity extends BaseActivity {
     @Inject private MainThreadBusWrapper bus;
     @InjectView(android.R.id.list) ListView mList;
     private PlaylistTrackAdapter adapter;

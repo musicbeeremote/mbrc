@@ -43,7 +43,7 @@
 
 	<ImageButton
 		android:id="@+id/notification_play"
-		android:background="@drawable/selectable_background_mbrc_default"
+		android:background="@drawable/selectable_background_mbrc_dark"
 		android:layout_gravity="center|right"
 		android:layout_height="@dimen/mbrc_notification_button_height"
 		android:layout_width="@dimen/mbrc_notification_button_height"
@@ -51,7 +51,7 @@
 
 	<ImageButton
 		android:id="@+id/notification_next"
-		android:background="@drawable/selectable_background_mbrc_default"
+		android:background="@drawable/selectable_background_mbrc_dark"
 		android:layout_gravity="center|right"
 		android:layout_height="@dimen/mbrc_notification_button_height"
 		android:layout_width="@dimen/mbrc_notification_button_height"
@@ -59,7 +59,7 @@
 
 	<ImageButton
 		android:id="@+id/notification_close"
-		android:background="@drawable/selectable_background_mbrc_default"
+		android:background="@drawable/selectable_background_mbrc_dark"
 		android:layout_gravity="center|right"
 		android:layout_height="@dimen/mbrc_notification_button_height"
 		android:layout_width="@dimen/mbrc_notification_button_height"

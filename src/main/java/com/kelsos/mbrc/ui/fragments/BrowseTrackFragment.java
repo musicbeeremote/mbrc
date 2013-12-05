@@ -12,20 +12,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.adapters.TrackEntryAdapter;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.*;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.events.ui.TrackSearchResults;
 import com.kelsos.mbrc.net.Protocol;
+import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
-public class BrowseTrackFragment extends RoboSherlockListFragment
+public class BrowseTrackFragment extends BaseListFragment
     implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int GROUP_ID = 14;
     private static final int URL_LOADER = 0x53;

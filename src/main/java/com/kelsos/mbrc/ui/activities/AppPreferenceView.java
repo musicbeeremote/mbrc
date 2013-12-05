@@ -7,9 +7,9 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.preference.PreferenceActivity;
+import android.view.MenuItem;
 import android.webkit.WebView;
-import com.actionbarsherlock.view.MenuItem;
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockPreferenceActivity;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
@@ -18,7 +18,7 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.util.RemoteUtils;
 import com.squareup.otto.Bus;
 
-public class AppPreferenceView extends RoboSherlockPreferenceActivity {
+public class AppPreferenceView extends PreferenceActivity {
     @Inject Bus bus;
     @Inject RemoteUtils rmUtils;
 
@@ -26,8 +26,8 @@ public class AppPreferenceView extends RoboSherlockPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(R.string.main_menu_title_settings);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setTitle(R.string.main_menu_title_settings);
         addPreferencesFromResource(R.xml.application_settings);
         final Context mContext = this;
 

@@ -5,17 +5,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.net.Protocol;
+import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.squareup.otto.Bus;
 import roboguice.inject.InjectView;
 
-public class ButtonFragment extends RoboSherlockFragment {
+public class ButtonFragment extends BaseFragment {
     @Inject private Bus bus;
     @InjectView(R.id.main_button_play_pause) private ImageButton playButton;
     @InjectView(R.id.main_button_previous) private ImageButton previousButton;

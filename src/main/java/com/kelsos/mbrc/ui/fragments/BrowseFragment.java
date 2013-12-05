@@ -2,15 +2,8 @@ package com.kelsos.mbrc.ui.fragments;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.widget.SearchView;
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
+import android.support.v7.widget.SearchView;
+import android.view.*;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.BrowsePagerAdapter;
@@ -19,6 +12,7 @@ import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
 import com.kelsos.mbrc.net.Protocol;
+import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.viewpagerindicator.TitlePageIndicator;
@@ -26,7 +20,7 @@ import com.viewpagerindicator.TitlePageIndicator;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BrowseFragment extends RoboSherlockFragment {
+public class BrowseFragment extends BaseFragment {
 
     @Inject Bus bus;
     private SearchView mSearchView;

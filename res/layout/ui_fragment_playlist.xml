@@ -20,7 +20,7 @@
             android:dividerHeight="@dimen/side_margin_half"
             android:divider="@null"
             android:fastScrollEnabled="true"
-            android:listSelector="@drawable/abs__list_selector_holo_dark"
+            android:listSelector="@drawable/abc_list_selector_holo_dark"
             tools:listitem="@layout/ui_list_dual"/>
 
     <fragment

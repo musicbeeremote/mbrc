@@ -12,7 +12,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
@@ -23,6 +22,7 @@ import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
+import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.kelsos.mbrc.util.RemoteUtils;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -31,7 +31,7 @@ import roboguice.inject.InjectView;
 import java.util.ArrayList;
 
 
-public class DrawerFragment extends RoboSherlockListFragment implements FragmentManager.OnBackStackChangedListener {
+public class DrawerFragment extends BaseListFragment implements FragmentManager.OnBackStackChangedListener {
     @Inject private Bus bus;
     @InjectView(R.id.menuConnector) TextView menuConnector;
     @InjectView(R.id.drawer_version_indicator) TextView versionIndicator;

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.fragments;
 
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
+import com.kelsos.mbrc.ui.base.BaseFragment;
 
-public class ActionsFragment extends RoboSherlockFragment {
+public class ActionsFragment extends BaseFragment {
 }

@@ -62,7 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:id="@+id/expanded_notification_divider"
-            android:background="@drawable/abs__list_divider_holo_dark"
+            android:background="@drawable/abc_list_divider_holo_dark"
             android:layout_above="@+id/expanded_notification_button_bar"
             android:layout_toRightOf="@+id/expanded_notification_cover"/>
 
@@ -82,7 +82,7 @@
                 android:layout_weight="1"
                 android:layout_height="@dimen/mbrc_notification_expanded_button_height"
                 android:id="@+id/expanded_notification_previous"
-                android:background="@drawable/selectable_background_mbrc_default"
+                android:background="@drawable/selectable_background_mbrc_dark"
                 android:src="@drawable/ic_action_previous"/>
 
         <ImageButton
@@ -90,7 +90,7 @@
                 android:layout_weight="1"
                 android:layout_height="@dimen/mbrc_notification_expanded_button_height"
                 android:id="@+id/expanded_notification_playpause"
-                android:background="@drawable/selectable_background_mbrc_default"
+                android:background="@drawable/selectable_background_mbrc_dark"
                 android:src="@drawable/ic_action_play"/>
 
         <ImageButton
@@ -100,7 +100,7 @@
                 android:id="@+id/expanded_notification_next"
                 android:focusable="false"
                 android:src="@drawable/ic_action_next"
-                android:background="@drawable/selectable_background_mbrc_default"/>
+                android:background="@drawable/selectable_background_mbrc_dark"/>
     </LinearLayout>
 
     <ImageButton
@@ -108,7 +108,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/side_margin_half"
             android:id="@+id/expanded_notification_remove"
-            android:background="@drawable/selectable_background_mbrc_default"
+            android:background="@drawable/selectable_background_mbrc_dark"
             android:src="@drawable/ic_action_collapse"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"/>

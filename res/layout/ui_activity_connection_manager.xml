@@ -5,7 +5,7 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:divider="@drawable/abs__list_divider_holo_dark"
+              android:divider="@drawable/abc_list_divider_holo_dark"
               android:background="@color/mbrc_background"
               android:showDividers="middle"
               android:baselineAligned="false">
@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:showDividers="middle"
-            android:divider="@drawable/abs__list_divider_holo_dark"
+            android:divider="@drawable/abc_list_divider_holo_dark"
             android:orientation="horizontal"
             android:baselineAligned="false"
             android:dividerPadding="8dp">

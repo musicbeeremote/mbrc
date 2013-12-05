@@ -3,7 +3,6 @@ package com.kelsos.mbrc.ui.fragments;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.ContextMenu;
@@ -12,25 +11,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.SimpleCursorAdapter;
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumCursorAdapter;
-import com.kelsos.mbrc.adapters.AlbumEntryAdapter;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.*;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
-import com.kelsos.mbrc.events.ui.AlbumSearchResults;
 import com.kelsos.mbrc.net.Protocol;
+import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import static android.support.v4.app.LoaderManager.LoaderCallbacks;
 
-public class BrowseAlbumFragment extends RoboSherlockFragment implements LoaderCallbacks<Cursor> {
+public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks<Cursor> {
     private static final int GROUP_ID = 13;
     private static final int URL_LOADER = 2;
     private String mDefault;

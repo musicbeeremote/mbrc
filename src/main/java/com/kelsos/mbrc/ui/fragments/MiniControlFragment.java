@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.ProtocolEventType;
@@ -18,13 +17,14 @@ import com.kelsos.mbrc.events.ui.CoverAvailable;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.net.Protocol;
+import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.inject.InjectView;
 
 
 
-public class MiniControlFragment extends RoboSherlockFragment {
+public class MiniControlFragment extends BaseFragment {
 
     @Inject Bus bus;
     @InjectView (R.id.mc_track_cover) ImageView trackCover;

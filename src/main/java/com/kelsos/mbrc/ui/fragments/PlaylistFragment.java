@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistAdapter;
@@ -19,10 +18,11 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.AvailablePlaylists;
 import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.activities.PlaylistActivity;
+import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.kelsos.mbrc.util.MainThreadBusWrapper;
 import com.squareup.otto.Subscribe;
 
-public class PlaylistFragment extends RoboSherlockListFragment {
+public class PlaylistFragment extends BaseListFragment {
     private static final int GROUP_ID = 1;
     private static final int PLAY_NOW = 1;
     private static final int GET_PLAYLIST = 2;

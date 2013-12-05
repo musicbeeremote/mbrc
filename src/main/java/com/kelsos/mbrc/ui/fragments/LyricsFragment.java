@@ -5,11 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.LyricsAdapter;
 import com.kelsos.mbrc.events.ui.LyricsUpdated;
+import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.inject.InjectView;
@@ -17,7 +17,7 @@ import roboguice.inject.InjectView;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class LyricsFragment extends RoboSherlockFragment {
+public class LyricsFragment extends BaseFragment {
     @InjectView(R.id.lyrics_list_view) ListView lyricsView;
     @Inject Bus bus;
 

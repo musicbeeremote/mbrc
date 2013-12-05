@@ -5,12 +5,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import com.actionbarsherlock.view.MenuItem;
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ConnectionSettingsAdapter;
@@ -22,6 +21,7 @@ import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.events.ui.NotifyUser;
+import com.kelsos.mbrc.ui.base.BaseActivity;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -29,7 +29,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 import roboguice.inject.InjectView;
 
-public class ConnectionManagerActivity extends RoboSherlockFragmentActivity implements SettingsDialogFragment.SettingsDialogListener {
+public class ConnectionManagerActivity extends BaseActivity implements SettingsDialogFragment.SettingsDialogListener {
     @Inject Bus bus;
     @InjectView(R.id.connection_scan) Button scanButton;
     @InjectView(R.id.connection_add) Button addButton;

@@ -5,15 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
+import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.inject.InjectView;
 
-public class TrackInfoFragment extends RoboSherlockFragment {
+public class TrackInfoFragment extends BaseFragment {
     @Inject private Bus bus;
     @InjectView (R.id.track_title) private TextView trackTitle;
     @InjectView (R.id.track_artist) private TextView trackArtist;
