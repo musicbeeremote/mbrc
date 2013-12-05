@@ -1,56 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+              android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
-    <LinearLayout
-            android:id="@+id/main_media_buttons_group"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/main_volume_area"
-            android:layout_marginTop="5dp"
-            android:gravity="center_horizontal">
+              android:layout_height="match_parent"
+              android:gravity="center_vertical|center_horizontal">
 
-        <ImageButton
-                android:id="@+id/main_button_previous"
-                android:layout_width="@dimen/mbrc_control_button"
-                android:layout_height="@dimen/mbrc_control_button"
-                android:layout_marginRight="@dimen/mbrc_control_distance"
-                android:background="@drawable/selectable_background_mbrc_dark"
-                android:contentDescription="@string/main_button_previous_description"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_media_previous"/>
+    <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/imageButton"
+            android:background="@drawable/selectable_background_mbrc_dark"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_media_repeat"/>
 
-        <ImageButton
-                android:id="@+id/main_button_stop"
-                android:layout_width="@dimen/mbrc_control_button"
-                android:layout_height="@dimen/mbrc_control_button"
-                android:layout_marginRight="@dimen/mbrc_control_distance"
-                android:background="@drawable/selectable_background_mbrc_dark"
-                android:contentDescription="@string/main_button_stop_description"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_media_stop"/>
+    <ImageButton
+            android:id="@+id/main_button_previous"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/selectable_background_mbrc_dark"
+            android:contentDescription="@string/main_button_previous_description"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_media_previous"/>
 
-        <ImageButton
-                android:id="@+id/main_button_play_pause"
-                android:layout_width="@dimen/mbrc_control_button"
-                android:layout_height="@dimen/mbrc_control_button"
-                android:layout_marginRight="@dimen/mbrc_control_distance"
-                android:background="@drawable/selectable_background_mbrc_dark"
-                android:clickable="true"
-                android:contentDescription="@string/main_button_play_pause_description"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_media_play"/>
+    <ImageButton
+            android:id="@+id/main_button_play_pause"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:background="@drawable/selectable_background_mbrc_dark"
+            android:layout_marginLeft="13dp"
+            android:layout_marginRight="13dp"
+            android:clickable="true"
+            android:contentDescription="@string/main_button_play_pause_description"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_media_play"/>
 
-        <ImageButton
-                android:id="@+id/main_button_next"
-                android:layout_width="@dimen/mbrc_control_button"
-                android:layout_height="@dimen/mbrc_control_button"
-                android:background="@drawable/selectable_background_mbrc_dark"
-                android:contentDescription="@string/main_button_next_description"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_media_next"/>
-    </LinearLayout>
+    <ImageButton
+            android:id="@+id/main_button_next"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/selectable_background_mbrc_dark"
+            android:contentDescription="@string/main_button_next_description"
+            android:layout_marginRight="20dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_media_next"/>
+
+    <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/selectable_background_mbrc_dark"
+            android:id="@+id/imageButton2"
+            android:src="@drawable/ic_media_shuffle"
+            android:layout_gravity="center_vertical"/>
 
 </LinearLayout>

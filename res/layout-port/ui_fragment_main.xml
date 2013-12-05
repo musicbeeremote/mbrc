@@ -92,7 +92,7 @@
                 android:progress="0"
                 android:progressDrawable="@drawable/ic_duration_bar_progress"
                 android:secondaryProgress="0"
-                android:thumb="@drawable/ic_seeker_duration_thumb"
+                android:thumb="@null"
                 android:thumbOffset="6dp"/>
 
         <TextView

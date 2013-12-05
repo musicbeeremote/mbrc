@@ -1,35 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical"
               android:background="@drawable/ui_track_info_background"
-              android:layout_margin="4dp"
-              android:padding="@dimen/side_margin_half"
+              android:paddingLeft="@dimen/side_margin_half"
+              android:paddingRight="@dimen/side_margin_half"
+              android:paddingBottom="4dp"
+              android:paddingTop="4dp"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:gravity="center_vertical|left">
 
     <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/title_placeholder"
+            tools:text="Crimson Flower"
             android:textSize="@dimen/mbrc_title_text_size"
+            android:textStyle="bold"
             android:id="@+id/track_title"/>
 
     <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/album_placeholder"
+            android:textSize="@dimen/mbrc_album_text_size"
+            tools:text="Circus Black"
             android:id="@+id/track_album"/>
 
     <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/artist_placeholder"
+            android:textSize="@dimen/mbrc_album_text_size"
+            tools:text="Amberian Dawn"
             android:id="@+id/track_artist"/>
 
     <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/album_placeholder"
+            android:textSize="@dimen/mbrc_album_text_size"
+            tools:text="2012"
             android:id="@+id/track_year"/>
 </LinearLayout>

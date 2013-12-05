@@ -20,7 +20,7 @@ public class ButtonFragment extends BaseFragment {
     @InjectView(R.id.main_button_play_pause) private ImageButton playButton;
     @InjectView(R.id.main_button_previous) private ImageButton previousButton;
     @InjectView(R.id.main_button_next) private ImageButton nextButton;
-    @InjectView(R.id.main_button_stop) private ImageButton stopButton;
+   // @InjectView(R.id.main_button_stop) private ImageButton stopButton;
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         return inflater.inflate(R.layout.ui_main_buttons, container, false);
@@ -32,7 +32,7 @@ public class ButtonFragment extends BaseFragment {
         playButton.setOnClickListener(playButtonListener);
         previousButton.setOnClickListener(previousButtonListener);
         nextButton.setOnClickListener(nextButtonListener);
-        stopButton.setOnClickListener(stopButtonListener);
+     //   stopButton.setOnClickListener(stopButtonListener);
     }
 
     @Override public void onStop() {
