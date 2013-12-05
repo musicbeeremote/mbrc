@@ -4,6 +4,7 @@
                 android:id="@+id/mainLinearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/mbrc_background"
                 android:orientation="vertical">
 
     <RelativeLayout
@@ -58,17 +59,16 @@
             tools:layout="@layout/ui_main_buttons"
             android:layout_width="match_parent"
             android:layout_height="0dip"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:padding="@dimen/side_margin_half"/>
 
     <LinearLayout
             android:id="@+id/main_track_progress_group"
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/main_middle_group"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="@dimen/side_margin"
-            android:layout_marginRight="@dimen/side_margin">
+            android:background="@color/mbrc_transparent_dark"
+            android:padding="@dimen/side_margin_half">
 
         <TextView
                 android:id="@+id/main_track_progress_current"
@@ -108,7 +108,7 @@
     <LinearLayout
             android:id="@+id/main_volume_area"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginLeft="@dimen/side_margin"
             android:layout_marginRight="@dimen/side_margin">
 
