@@ -24,6 +24,7 @@ import com.kelsos.mbrc.events.ui.*;
 import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.squareup.otto.Subscribe;
+import com.viewpagerindicator.LinePageIndicator;
 import roboguice.inject.InjectView;
 
 import java.util.concurrent.Executors;
@@ -47,6 +48,7 @@ public class MainFragment extends BaseFragment {
     private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture mProgressUpdateHandler;
     private InfoButtonPagerAdapter mAdapter;
+    private LinePageIndicator mIndicator;
 
     private RatingBar.OnRatingBarChangeListener ratingChangeListener = new RatingBar.OnRatingBarChangeListener() {
         @Override
@@ -175,6 +177,9 @@ public class MainFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.ui_fragment_main, container, false);
         mPager = (ViewPager) view.findViewById(R.id.mbrc_main_infopager);
         mPager.setAdapter(mAdapter);
+
+        mIndicator = (LinePageIndicator)view.findViewById(R.id.mbrc_main_infoindicator);
+        mIndicator.setViewPager(mPager);
         return view;
     }
 

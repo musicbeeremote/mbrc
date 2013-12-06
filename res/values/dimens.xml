@@ -22,4 +22,5 @@
     <dimen name="mbrc_grid_line_two_size">14sp</dimen>
     <dimen name="mbrc_grid_item_width">150dp</dimen>
     <dimen name="mbrc_grid_item_height">200dp</dimen>
+    <dimen name="mbrc_indicator_line_width">160dp</dimen>
 </resources>
