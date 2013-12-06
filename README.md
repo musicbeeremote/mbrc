@@ -12,14 +12,17 @@ You can also find information about the plugin and the remote to the dedicated t
 
 Building
 -------
+### Older version
 To build the application the usage of [Maven Android SDK Deployer](https://github.com/mosabua/maven-android-sdk-deployer) is required. After cloning the SDK Deployer repository in a directory you need to run:
 ``mvn install -P 4.3`` to install the necessary libraries to build the application with Maven and the Android Maven Plugin. The application also depends on **DragSortListView**. You should use the [fork](https://github.com/kelsos/drag-sort-listview) since the library is no longer maintained and the original will require some modifications to build.
+### Latest development
+The latest development version have moved to the new Gradle based Android build system **DragSortListView** is required to be installed in the local maven repository as an ``aar`` artifact.
 
 Credits
 -----------
 ### Artwork
 
-Many of the icons used are created by [Tasos Papazoglou Chalikias](https://github.com/sushiperv) and are licenced under the [Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License.](https://creativecommons.org/licenses/by-nc-nd/3.0/deed.en_US) some of them where taken by other projects and some awful icons during the earlier development where created by me. The original logo idea belongs to Jordan Georgiades. Any other icons introduced in version 0.9.7 and later was probably my work.
+Many of the icons used are created by [Tasos Papazoglou Chalikias](https://github.com/sushiperv) and are licenced under the [Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License.](https://creativecommons.org/licenses/by-nc-nd/3.0/deed.en_US) some of them where taken by other projects and some awful icons during the earlier development where created by me. The original logo idea belongs to Jordan Georgiades. Any other icons introduced in version 0.9.7 and later was probably my work. The newest design after version 0.9.8 is based on [mockups](https://groups.google.com/forum/#!topic/musicbee-remote/wgm029yfJnU) by Carlos Parga
 
 ### Inspiration
 A great source of inspiration for this project was the [Cyanogen Apollo player](https://github.com/CyanogenMod/android_packages_apps_Apollo)
@@ -35,14 +38,7 @@ along with [Google Play Music for Android](https://play.google.com/store/apps/de
 
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
-*   [ActionBarSherlock](https://github.com/JakeWharton/ActionBarSherlock)
-
-    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 *   [Otto](http://square.github.io/otto/)
- 
-    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-    
-*   [roboguice-sherlock](https://github.com/rtyley/roboguice-sherlock)
  
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
@@ -65,7 +61,16 @@ along with [Google Play Music for Android](https://play.google.com/store/apps/de
 
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
+### Dependencies of older versions
 
+    
+*   [roboguice-sherlock](https://github.com/rtyley/roboguice-sherlock)
+ 
+    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+*   [ActionBarSherlock](https://github.com/JakeWharton/ActionBarSherlock)
+
+    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 
 License
