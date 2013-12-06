@@ -45,10 +45,14 @@ public class ImageWorkerTask extends AsyncTask<String, Void, Bitmap> {
     }
 
     @Override protected void onPostExecute(Bitmap bitmap) {
+        final ImageView imageView = imageViewReference.get();
         if (bitmap != null) {
-            final ImageView imageView = imageViewReference.get();
             if (imageView != null && imageView.getTag().equals(data)) {
                 imageView.setImageBitmap(bitmap);
+            }
+        } else {
+            if (imageView != null) {
+                imageView.setImageResource(com.kelsos.mbrc.R.drawable.ic_image_no_cover);
             }
         }
     }

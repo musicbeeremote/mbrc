@@ -51,9 +51,9 @@ public class LibraryProvider extends ContentProvider {
                         new String[] { "al." +Album._ID, Album.ALBUM_NAME, "al."+Album.ARTIST_ID, Artist.ARTIST_NAME, Cover.COVER_HASH },
                         datasel,
                         null,
-                        Cover.COVER_HASH,
+                       "al." +Album._ID,
                         null,
-                        Album.ALBUM_NAME + " ASC");
+                        "ar."+ Artist.ARTIST_NAME + ", al." + Album.ALBUM_NAME + " ASC");
 
                 result.setNotificationUri(getContext().getContentResolver(), uri);
                 break;
