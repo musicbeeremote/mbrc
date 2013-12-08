@@ -85,7 +85,7 @@ public class BrowseTrackFragment extends BaseListFragment
 
     @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri baseUri;
-        baseUri = Track.URI();
+        baseUri = Track.getContentUri();
         return new CursorLoader(getActivity(),baseUri,
                 new String[] { Track.TITLE, Artist.ARTIST_NAME }, null,null,null);
     }

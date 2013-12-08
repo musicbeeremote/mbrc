@@ -94,7 +94,7 @@ public class BrowseArtistFragment extends BaseListFragment
 
     @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri baseUri;
-        baseUri = Artist.URI();
+        baseUri = Artist.getContentUri();
         return new CursorLoader(getActivity(),baseUri,
                 new String[] {Artist.ARTIST_NAME }, null,null,null);
     }

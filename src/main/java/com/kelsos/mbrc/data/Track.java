@@ -14,6 +14,7 @@ public class Track extends DataItem implements TrackColumns {
     private String hash;
     private String title;
     private long albumId;
+    private String artistImageUrl;
     private String album;
     private String albumArtist;
     private long genreId;
@@ -55,7 +56,7 @@ public class Track extends DataItem implements TrackColumns {
     public static final String SELECT_TRACK = SELECT_TRACKS + " and t." + _ID + " = ?";
 
 
-    public static Uri URI() {
+    public static Uri getContentUri() {
         return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME +
                 LibraryProvider.AUTHORITY), TABLE_NAME);
     }
@@ -87,6 +88,7 @@ public class Track extends DataItem implements TrackColumns {
         this.coverId = -1;
         this.albumArtist = node.path("album_artist").asText();
         this.coverHash = node.path("cover").asText();
+        this.artistImageUrl = node.path("artist_image_url").asText();
     }
 
     public Track() {
@@ -102,9 +104,11 @@ public class Track extends DataItem implements TrackColumns {
         this.year = "";
         this.trackNo = -1;
         this.coverId = -1;
+        this.artistImageUrl = "";
     }
 
-    public Track(String hash, String title, String album, String genre, String artist, String year, int trackNo, Date updated) {
+    public Track(String hash, String title, String album, String genre, String artist, String year, int trackNo,
+                 Date updated, String artistImageUrl) {
         this.id = -1;
         this.albumId = -1;
         this.genreId = -1;
@@ -118,6 +122,7 @@ public class Track extends DataItem implements TrackColumns {
         this.year = year;
         this.trackNo = trackNo;
         this.updated = updated;
+        this.artistImageUrl = artistImageUrl;
     }
 
     public Track(final Cursor cursor) {
@@ -271,5 +276,13 @@ public class Track extends DataItem implements TrackColumns {
 
     public void setCoverHash(String coverHash) {
         this.coverHash = coverHash;
+    }
+
+    public String getArtistImageUrl() {
+        return artistImageUrl;
+    }
+
+    public void setArtistImageUrl(String artistImageUrl) {
+        this.artistImageUrl = artistImageUrl;
     }
 }

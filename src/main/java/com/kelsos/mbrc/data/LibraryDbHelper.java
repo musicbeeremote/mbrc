@@ -88,7 +88,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         if (album.getId() > 0) {
             return album.getId();
         }
-        album.setArtistId(insertArtist(new Artist(album.getArtist())));
+        album.setArtistId(insertArtist(new Artist(album.getArtist(),"")));
         SQLiteDatabase db = this.getWritableDatabase();
         final long id = db.insert(Album.TABLE_NAME, null, album.getContentValues());
         if (id > 0) {
@@ -355,10 +355,10 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
     }
 
     public synchronized long insertTrack(final Track track) {
-        track.setAlbumId(insertAlbum(new Album(track.getAlbum(), track.getAlbumArtist())));
-        track.setArtistId(insertArtist(new Artist(track.getArtist())));
+        track.setArtistId(insertArtist(new Artist(track.getArtist(), track.getArtistImageUrl())));
         track.setGenreId(insertGenre(new Genre(track.getGenre())));
         track.setCoverId(insertCover(new Cover(track.getCoverHash())));
+        track.setAlbumId(insertAlbum(new Album(track.getAlbum(), track.getAlbumArtist())));
         SQLiteDatabase db = this.getWritableDatabase();
         long id = db.insert(Track.TABLE_NAME, null, track.getContentValues());
         if (id > 0) {
