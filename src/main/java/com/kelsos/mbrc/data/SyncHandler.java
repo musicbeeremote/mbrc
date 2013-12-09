@@ -48,7 +48,7 @@ public class SyncHandler {
 
         if (currentTrack < numberOfTracks) {
             mNotification.librarySyncNotification(numberOfTracks, currentTrack + 1);
-            Map<String, Object> syncData = new HashMap<String, Object>();
+            Map<String, Object> syncData = new HashMap<>();
             syncData.put("type", "meta");
             syncData.put("file", currentTrack);
             bus.post(new MessageEvent(ProtocolEventType.UserAction,
@@ -79,7 +79,7 @@ public class SyncHandler {
 
     public void createEntry(Track track) {
         if (dbHelper.getCoverId(track.getCoverHash()) < 0) {
-            Map<String, String> syncData = new HashMap<String, String>();
+            Map<String, String> syncData = new HashMap<>();
             syncData.put("type", "cover");
             syncData.put("hash", track.getHash());
             bus.post(new MessageEvent(ProtocolEventType.UserAction,

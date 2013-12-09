@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.Album;
 import com.kelsos.mbrc.data.Cover;
@@ -26,6 +27,8 @@ public class AlbumCursorAdapter extends CursorAdapter {
         final ImageView imageView = ((ImageView)view.findViewById(R.id.ui_grid_image));
         final Album album = new Album(cursor);
         final Uri uri = Uri.withAppendedPath(Cover.CONTENT_IMAGE_URI, album.getCoverHash());
+        ((TextView)view.findViewById(R.id.line_one)).setText(album.getAlbumName());
+        ((TextView)view.findViewById(R.id.line_two)).setText(album.getArtist());
         Picasso.with(context)
                 .load(uri)
                 .fit()
