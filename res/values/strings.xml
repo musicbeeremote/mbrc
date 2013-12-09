@@ -101,7 +101,7 @@
     <string name="settings_oss_license">Open source licenses</string>
     <string name="settings_version">settings_version</string>
     <string name="preferences_key_connection_manager">manage_connections</string>
-    <string name="progress_scanning">Scanning...</string>
+    <string name="progress_scanning">Scanning…</string>
     <string name="progress_scanning_message">Wait while scanning for a remote host</string>
     <string name="search_msg_album_not_found">No albums found for the current search</string>
     <string name="search_msg_artist_not_found">No artist found for the current search</string>
@@ -147,5 +147,8 @@
     <string name="mqueue_now">now</string>
     <string name="search_context_playlist">Add to playlist</string>
     <string name="mbrc_actionbar_love">Love</string>
+    <string name="mbrc_library_sync">Library data sync</string>
+    <string name="mbrc_libary_sync_msg">Sync in progress, %1$d of %2$d</string>
+    <string name="mbrc_library_sync_complete">Sync complete</string>
 
 </resources>

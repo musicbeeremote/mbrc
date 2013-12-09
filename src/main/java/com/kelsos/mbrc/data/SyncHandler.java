@@ -9,6 +9,7 @@ import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.net.Protocol;
+import com.kelsos.mbrc.util.NotificationService;
 import com.squareup.otto.Bus;
 
 import java.io.FileOutputStream;
@@ -19,27 +20,34 @@ import java.util.Map;
 public class SyncHandler {
 
     private Context mContext;
+    private NotificationService mNotification;
     private Bus bus;
     private LibraryDbHelper dbHelper;
     private int numberOfTracks;
     private int currentTrack;
     private Track cachedTrack;
 
-    @Inject public SyncHandler(Context mContext, Bus bus) {
+    @Inject public SyncHandler(Context mContext, NotificationService mNotification, Bus bus) {
         this.mContext = mContext;
+        this.mNotification = mNotification;
         this.bus = bus;
         dbHelper = new LibraryDbHelper(mContext);
     }
-
+    long start;
     public void initFullSyncProcess(int numberOfTracks) {
         this.numberOfTracks = numberOfTracks;
         this.currentTrack = 0;
+        start = System.currentTimeMillis();
         getNextTrack();
     }
 
+
     public void getNextTrack() {
+        long elapsed = System.currentTimeMillis() - start;
+        Log.d("mbrc-log", String.format("between calls elapsed: %d ms", elapsed));
+
         if (currentTrack < numberOfTracks) {
-            Log.d("mbrc-log", String.format("Processing track %d of %d", currentTrack,numberOfTracks));
+            mNotification.librarySyncNotification(numberOfTracks, currentTrack + 1);
             Map<String, Object> syncData = new HashMap<String, Object>();
             syncData.put("type", "meta");
             syncData.put("file", currentTrack);
@@ -47,10 +55,10 @@ public class SyncHandler {
                     new UserAction(Protocol.LibrarySync, syncData)));
             currentTrack++;
         }
+        start = System.currentTimeMillis();
     }
 
     public void updateCover(String image, String hash) {
-
         FileOutputStream outputStream;
         try {
             outputStream = mContext.openFileOutput(hash,Context.MODE_PRIVATE);
@@ -70,7 +78,6 @@ public class SyncHandler {
     }
 
     public void createEntry(Track track) {
-
         if (dbHelper.getCoverId(track.getCoverHash()) < 0) {
             Map<String, String> syncData = new HashMap<String, String>();
             syncData.put("type", "cover");
@@ -82,6 +89,5 @@ public class SyncHandler {
             dbHelper.insertTrack(track);
             getNextTrack();
         }
-
     }
 }

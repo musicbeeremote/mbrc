@@ -23,6 +23,7 @@ import com.squareup.otto.Subscribe;
 public class NotificationService {
     public static final int PLUGIN_OUT_OF_DATE = 15612;
     public static final int NOW_PLAYING_PLACEHOLDER = 15613;
+    public static final int SYNC_UPDATE = 0x1258;
     public static final String NOTIFICATION_PLAY_PRESSED = "com.kelsos.mbrc.notification.play";
     public static final String NOTIFICATION_NEXT_PRESSED = "com.kelsos.mbrc.notification.next";
     public static final String NOTIFICATION_CLOSE_PRESSED = "com.kelsos.mbrc.notification.close";
@@ -192,5 +193,21 @@ public class NotificationService {
         final Notification notification = mBuilder.build();
         notification.flags = Notification.FLAG_AUTO_CANCEL;
         mNotificationManager.notify(PLUGIN_OUT_OF_DATE, notification);
+    }
+
+    public void librarySyncNotification(final int total, final int current) {
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
+        mBuilder.setContentTitle(mContext.getString(R.string.mbrc_library_sync))
+            .setContentText(mContext.getString(R.string.mbrc_libary_sync_msg))
+            .setSmallIcon(R.drawable.ic_mbrc_status);
+
+        if (current == total) {
+            mBuilder.setContentText(mContext.getString(R.string.mbrc_library_sync_complete))
+                    .setProgress(0, 0, false);
+        } else {
+            mBuilder.setContentText(String.format(mContext.getString(R.string.mbrc_libary_sync_msg), current, total))
+                    .setProgress(total, current, false);
+        }
+        mNotificationManager.notify(SYNC_UPDATE, mBuilder.build());
     }
 }
