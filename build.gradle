@@ -85,6 +85,10 @@ android {
     productFlavors {
         defaultFlavor {}
     }
+
+    lintOptions {
+        abortOnError false
+    }
 }
 
 task wrapper(type: Wrapper) {
