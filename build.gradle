@@ -49,7 +49,7 @@ android {
     buildToolsVersion "19.0.0"
 
     defaultConfig {
-        minSdkVersion 8
+        minSdkVersion 10
         targetSdkVersion 19
         buildConfigField "String", "GIT_SHA", "\""+gitSha()+"\";"
         buildConfigField "String", "BUILD_TIME", "\""+new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")+"\";"
