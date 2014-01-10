@@ -64,7 +64,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
                                                   final String sortOrder) {
         final SQLiteDatabase db = this.getReadableDatabase();
         final Cursor cursor = db.query(Album.TABLE_NAME, Album.FIELDS, selection,
-                args, null, sortOrder, null);
+                args, null, null, Album.ALBUM_NAME + " ASC");
         return cursor;
     }
 
@@ -139,7 +139,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         final SQLiteDatabase db = this.getReadableDatabase();
         final Cursor cursor = db.query(Artist.TABLE_NAME, Artist.FIELDS,
                 Artist._ID + " IS ?", new String[]{Long.toString(id)},
-                null, null, null, null);
+                null, null, Artist.ARTIST_NAME + " ASC", null);
         return cursor;
     }
 
@@ -163,7 +163,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
                                                    final String sortOrder) {
         final SQLiteDatabase db = this.getReadableDatabase();
         final Cursor cursor = db.query(Artist.TABLE_NAME, Artist.FIELDS, selection,
-                args, null, sortOrder, null);
+                args, null, null, Artist.ARTIST_NAME + " ASC");
         return cursor;
     }
 
@@ -228,7 +228,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         final SQLiteDatabase db = this.getReadableDatabase();
         final Cursor cursor = db.query(Genre.TABLE_NAME, Genre.FIELDS,
                 Genre._ID + " IS ?", new String[]{Long.toString(id)},
-                null, null, null, null);
+                null, null, Genre.GENRE_NAME + " ASC", null);
         return cursor;
     }
 
@@ -249,7 +249,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
                                                   final String sortOrder) {
         final SQLiteDatabase db = this.getReadableDatabase();
         final Cursor cursor = db.query(Genre.TABLE_NAME, Genre.FIELDS,
-                selection, args, null, sortOrder, null);
+                selection, args, null, null, Genre.GENRE_NAME + " ASC");
         return cursor;
     }
 

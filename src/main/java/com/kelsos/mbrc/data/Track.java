@@ -87,7 +87,7 @@ public class Track extends DataItem implements TrackColumns {
         this.trackNo = node.path("track_no").asInt();
         this.coverId = -1;
         this.albumArtist = node.path("album_artist").asText();
-        this.coverHash = node.path("cover").asText();
+        this.coverHash = node.path("cover_hash").asText();
         this.artistImageUrl = node.path("artist_image_url").asText();
     }
 

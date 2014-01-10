@@ -78,7 +78,7 @@ public class SyncHandler {
     }
 
     public void createEntry(Track track) {
-        if (dbHelper.getCoverId(track.getCoverHash()) < 0) {
+        if (dbHelper.getCoverId(track.getCoverHash()) <= 0) {
             Map<String, String> syncData = new HashMap<>();
             syncData.put("type", "cover");
             syncData.put("hash", track.getHash());
