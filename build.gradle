@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 buildscript {
     repositories {
         mavenCentral()
@@ -17,8 +19,14 @@ repositories {
     mavenLocal()
 }
 
+def buildTime() {
+    def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
+    df.setTimeZone(TimeZone.getTimeZone("UTC"))
+    return df.format(new Date())
+}
+
 def gitSha() {
-    return 'git rev-parse --short HEAD'.execute().text.trim()
+    return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
 
 dependencies {
@@ -42,13 +50,13 @@ android {
     }
 
     compileSdkVersion 19
-    buildToolsVersion "19.0.0"
+    buildToolsVersion "19.0.1"
 
     defaultConfig {
         minSdkVersion 10
         targetSdkVersion 19
-        buildConfigField "String", "GIT_SHA", "\""+gitSha()+"\";"
-        buildConfigField "String", "BUILD_TIME", "\""+new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")+"\";"
+        buildConfigField "String", "GIT_SHA", "\"${gitSha()}\";"
+        buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\";"
     }
 
     compileOptions {
@@ -74,7 +82,7 @@ android {
         release {}
         debug {
             packageNameSuffix ".debug"
-            versionNameSuffix ".debug-${gitSha()}"
+            versionNameSuffix ".debug-${buildTime()}"
         }
     }
 
