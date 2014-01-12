@@ -20,7 +20,7 @@ repositories {
 }
 
 def buildTime() {
-    def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
+    def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ")
     df.setTimeZone(TimeZone.getTimeZone("UTC"))
     return df.format(new Date())
 }
@@ -82,9 +82,37 @@ android {
 
     lintOptions {
         abortOnError false
+        xmlReport false
     }
 }
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.9'
+}
+
+
+apply plugin: 'checkstyle'
+
+checkstyle {
+    configFile = new File(rootDir, 'config/quality/checkstyle/checkstyle.xml')
+}
+
+task checkstyle(type: Checkstyle) {
+    source 'src/main/java'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    // empty classpath
+    classpath = files()
+}
+
+
+gradle.taskGraph.afterTask {Task task, TaskState state ->
+    if(state.failure) {
+        if (task.name in ['checkstyle']) {
+            ant.xslt(in: "$buildDir/reports/checkstyle/checkstyle.xml",
+                    style: new File(rootDir, 'config/quality/checkstyle/checkstyle-noframes-sorted.xsl'),
+                    out: new File("$buildDir/reports/checkstyle/checkstyle.html"))
+        }
+    }
 }
