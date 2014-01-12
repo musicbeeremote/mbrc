@@ -54,6 +54,19 @@ public class SyncHandler {
         }
     }
 
+    public void getNextBunch() {
+
+        if (currentTrack < numberOfTracks) {
+            mNotification.librarySyncNotification(numberOfTracks, currentTrack + 50);
+            Map<String, Object> syncData = new HashMap<>();
+            syncData.put("type", "meta");
+            syncData.put("file", currentTrack);
+            bus.post(new MessageEvent(ProtocolEventType.UserAction,
+                    new UserAction(Protocol.LibrarySync, syncData)));
+            currentTrack += 50;
+        }
+    }
+
     public void updateCover(String image, String hash) {
         FileOutputStream outputStream;
         try {
@@ -74,16 +87,15 @@ public class SyncHandler {
     }
 
     public void createEntry(Track track) {
-        if (dbHelper.getCoverId(track.getCoverHash()) <= 0) {
-            Map<String, String> syncData = new HashMap<>();
-            syncData.put("type", "cover");
-            syncData.put("hash", track.getHash());
-            bus.post(new MessageEvent(ProtocolEventType.UserAction,
-                    new UserAction(Protocol.LibrarySync, syncData)));
-            cachedTrack = track;
-        } else {
+//        if (dbHelper.getCoverId(track.getCoverHash()) <= 0) {
+//            Map<String, String> syncData = new HashMap<>();
+//            syncData.put("type", "cover");
+//            syncData.put("hash", track.getHash());
+//            bus.post(new MessageEvent(ProtocolEventType.UserAction,
+//                    new UserAction(Protocol.LibrarySync, syncData)));
+//            cachedTrack = track;
+//        } else {
             dbHelper.insertTrack(track);
-            getNextTrack();
-        }
+//        }
     }
 }

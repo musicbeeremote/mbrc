@@ -6,6 +6,7 @@ import com.kelsos.mbrc.data.Track;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ArrayNode;
 
 public class HandleLibrarySync implements ICommand {
     private SyncHandler handler;
@@ -30,8 +31,13 @@ public class HandleLibrarySync implements ICommand {
             String image = payload.path("image").asText();
             handler.updateCover(image, sha1);
         } else if (type.equals("meta")) {
-            Track track = new Track(node);
-            handler.createEntry(track);
+            ArrayNode trackNode = (ArrayNode) node.path("data");
+            for (int i = 0; i < node.size(); i++) {
+                JsonNode jNode = trackNode.get(i);
+                Track track = new Track(jNode);
+                handler.createEntry(track);
+            }
+            handler.getNextBunch();
         }
     }
 }
