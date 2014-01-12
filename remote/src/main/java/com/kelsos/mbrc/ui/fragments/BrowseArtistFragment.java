@@ -20,7 +20,6 @@ import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
-import com.kelsos.mbrc.events.ui.ArtistSearchResults;
 import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.squareup.otto.Subscribe;
@@ -84,12 +83,6 @@ public class BrowseArtistFragment extends BaseListFragment
         } else {
             return false;
         }
-    }
-
-    @Subscribe public void handleArtistSearchResults(ArtistSearchResults results) {
-        //adapter = new ArtistEntryAdapter(getActivity(), R.layout.ui_list_single, results.getList());
-        //setListAdapter(adapter);
-        //adapter.notifyDataSetChanged();
     }
 
     @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {

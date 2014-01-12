@@ -1,19 +1,21 @@
 package com.kelsos.mbrc.ui.fragments;
 
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.*;
 import android.widget.AdapterView;
+import android.widget.ListView;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.adapters.GenreCursorAdapter;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.Genre;
 import com.kelsos.mbrc.data.GenreEntry;
@@ -21,8 +23,8 @@ import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
-import com.kelsos.mbrc.events.ui.GenreSearchResults;
 import com.kelsos.mbrc.net.Protocol;
+import com.kelsos.mbrc.ui.activities.Profile;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.squareup.otto.Subscribe;
 
@@ -31,7 +33,7 @@ public class BrowseGenreFragment extends BaseListFragment
     private static final int GROUP_ID = 11;
     private static final int URL_LOADER = 1;
     private String mDefault;
-    private SimpleCursorAdapter mAdapter;
+    private GenreCursorAdapter mAdapter;
     private String mFilter;
     private SearchView mSearchView;
     private MenuItem mSearchItem;
@@ -39,14 +41,6 @@ public class BrowseGenreFragment extends BaseListFragment
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mAdapter = new SimpleCursorAdapter(getActivity(),
-                R.layout.ui_list_single,
-                null,
-                new String[] {Genre.GENRE_NAME},
-                new int[] {R.id.line_one},
-                0);
-
-        setListAdapter(mAdapter);
     }
 
     @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
@@ -104,12 +98,6 @@ public class BrowseGenreFragment extends BaseListFragment
 
     }
 
-    @Subscribe public void handleGenreSearchResults(GenreSearchResults results) {
-        //mAdapter = new GenreAdapter(getActivity(), R.layout.ui_list_single, results.getList());
-        //setListAdapter(mAdapter);
-       /// mAdapter.notifyDataSetChanged();
-    }
-
     @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri baseUri;
         if (mFilter != null) {
@@ -122,7 +110,9 @@ public class BrowseGenreFragment extends BaseListFragment
     }
 
     @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mAdapter.swapCursor(data);
+        mAdapter = new GenreCursorAdapter(getActivity(), data, 0);
+        setListAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override public void onLoaderReset(Loader<Cursor> loader) {
@@ -150,5 +140,15 @@ public class BrowseGenreFragment extends BaseListFragment
         mSearchItem = menu.findItem(R.id.now_playing_search_item);
         mSearchItem.setActionView(mSearchView);
         mSearchView.setOnQueryTextListener(this);
+    }
+
+    @Override public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        final Genre genre = new Genre((Cursor)mAdapter.getItem(position));
+        Intent intent = new Intent(getActivity(), Profile.class);
+        intent.putExtra("name", genre.getGenreName());
+        intent.putExtra("id", genre.getId());
+        intent.putExtra("type", "genre");
+        startActivity(intent);
     }
 }

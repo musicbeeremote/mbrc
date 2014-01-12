@@ -15,7 +15,6 @@ import android.widget.AdapterView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.*;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
-import com.kelsos.mbrc.events.ui.TrackSearchResults;
 import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.squareup.otto.Subscribe;
@@ -75,12 +74,6 @@ public class BrowseTrackFragment extends BaseListFragment
         } else {
             return false;
         }
-    }
-
-    @Subscribe public void handleTrackResults(TrackSearchResults results) {
-//        mAdapter = new TrackEntryAdapter(getActivity(), R.layout.ui_list_dual, results.getList());
-//        setListAdapter(mAdapter);
-//        mAdapter.notifyDataSetChanged();
     }
 
     @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {

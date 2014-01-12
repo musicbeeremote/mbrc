@@ -1,38 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionCode="84" android:versionName="0.9.9" package="com.kelsos.mbrc">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.kelsos.mbrc"
+    android:installLocation="auto"
+    android:versionCode="84"
+    android:versionName="0.9.9" >
 
-    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="19"/>
+    <uses-sdk
+        android:minSdkVersion="10"
+        android:targetSdkVersion="19" />
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
-    <application android:allowBackup="true" android:description="@string/application_description" android:icon="@drawable/ic_launcher" android:label="@string/application_name" android:logo="@drawable/ic_launcher" android:name=".RemoteApplication" android:theme="@style/Theme.Mbrc_dark">
-        <activity android:launchMode="singleTop" android:name=".ui.activities.MainFragmentActivity" android:windowSoftInputMode="adjustNothing">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+
+    <application
+        android:name="com.kelsos.mbrc.RemoteApplication"
+        android:allowBackup="true"
+        android:description="@string/application_description"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/application_name"
+        android:logo="@drawable/ic_launcher"
+        android:theme="@style/Theme.Mbrc_dark" >
+        <activity
+            android:name="com.kelsos.mbrc.ui.activities.MainFragmentActivity"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustNothing" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activities.AppPreferenceView"/>
-        <activity android:name=".ui.activities.PlaylistActivity"/>
-        <activity android:name=".ui.activities.ConnectionManagerActivity" android:windowSoftInputMode="adjustNothing"/>
-        <service android:description="@string/info_service_description" android:name=".controller.Controller" android:permission="android.permission.READ_PHONE_STATE">
+        <activity android:name="com.kelsos.mbrc.ui.activities.Profile" />
+        <activity android:name="com.kelsos.mbrc.ui.activities.AppPreferenceView" />
+        <activity android:name="com.kelsos.mbrc.ui.activities.PlaylistActivity" />
+        <activity
+            android:name="com.kelsos.mbrc.ui.activities.ConnectionManagerActivity"
+            android:windowSoftInputMode="adjustNothing" />
+
+        <service
+            android:name="com.kelsos.mbrc.controller.Controller"
+            android:description="@string/info_service_description"
+            android:permission="android.permission.READ_PHONE_STATE" >
             <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE"/>
-                <action android:name="android.net.wifi.STATE_CHANGE"/>
-	            <action android:name="com.kelsos.mbrc.notification.play"/>
-	            <action android:name="com.kelsos.mbrc.notification.next"/>
-	            <action android:name="com.kelsos.mbrc.notification.close"/>
-                <action android:name="com.kelsos.mbrc.notification.previous"/>
+                <action android:name="android.intent.action.PHONE_STATE" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+                <action android:name="com.kelsos.mbrc.notification.play" />
+                <action android:name="com.kelsos.mbrc.notification.next" />
+                <action android:name="com.kelsos.mbrc.notification.close" />
+                <action android:name="com.kelsos.mbrc.notification.previous" />
             </intent-filter>
         </service>
+
         <provider
-                android:name="com.kelsos.mbrc.data.LibraryProvider"
-                android:authorities="com.kelsos.mbrc.provider"
-                android:enabled="true"
-                android:exported="false" >
+            android:name="com.kelsos.mbrc.data.LibraryProvider"
+            android:authorities="com.kelsos.mbrc.provider"
+            android:enabled="true"
+            android:exported="false" >
         </provider>
+
     </application>
+
 </manifest>

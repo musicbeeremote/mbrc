@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="mbrc_cover">200dp</dimen>
+    <dimen name="mbrc_cover">254dp</dimen>
     <dimen name="mbrc_artist_text_size">18sp</dimen>
     <dimen name="mbrc_title_text_size">20sp</dimen>
     <dimen name="mbrc_album_text_size">16sp</dimen>

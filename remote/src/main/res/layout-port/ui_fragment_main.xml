@@ -58,6 +58,7 @@
     <android.support.v4.view.ViewPager
             android:id="@+id/mbrc_main_infopager"
             tools:layout="@layout/ui_main_buttons"
+            tools:context="com.kelsos.mbrc.ui.fragments.ActionsFragment"
             android:layout_width="match_parent"
             android:layout_height="0dip"
             android:layout_weight="1"

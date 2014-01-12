@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <dimen name="zero_dp">0dp</dimen>
     <dimen name="side_margin">16dp</dimen>
     <dimen name="side_margin_extra">24dp</dimen>
@@ -23,4 +24,7 @@
     <dimen name="mbrc_grid_item_width">150dp</dimen>
     <dimen name="mbrc_grid_item_height">200dp</dimen>
     <dimen name="mbrc_indicator_line_width">160dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
 </resources>
