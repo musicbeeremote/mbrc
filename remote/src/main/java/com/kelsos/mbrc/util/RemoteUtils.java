@@ -7,23 +7,32 @@ import android.graphics.BitmapFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class RemoteUtils {
     private static final String DATEFORMAT = "yyyy-MM-dd HH:mm:ss";
 
     public static String getVersion(Context mContext) throws PackageManager.NameNotFoundException {
-        PackageInfo mInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
-        return mInfo.versionName;
+        final PackageManager pm = mContext.getPackageManager();
+        PackageInfo mInfo = null;
+        if (pm != null) {
+            mInfo = pm.getPackageInfo(mContext.getPackageName(), 0);
+        }
+        return mInfo != null ? mInfo.versionName : "";
     }
 
     public static long getVersionCode(Context mContext) throws PackageManager.NameNotFoundException {
-        PackageInfo mInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
-        return mInfo.versionCode;
+        final PackageManager pm = mContext.getPackageManager();
+        PackageInfo mInfo = null;
+        if (pm != null) {
+            mInfo = pm.getPackageInfo(mContext.getPackageName(), 0);
+        }
+        return mInfo != null ? mInfo.versionCode : 0;
     }
 
     public static String Now() {
-        final SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMAT);
+        final SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMAT, Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         return sdf.format(new Date());
     }

@@ -19,7 +19,7 @@ public class UpgradeDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(webView)
                 .setTitle(R.string.dialog_upgrade_title)
-                .setNegativeButton(R.string.dialog_upgrade_negative, new DialogInterface.OnClickListener() {
+                .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface dialogInterface, int i) {
                         UpgradeDialogFragment.this.getDialog().cancel();
                     }

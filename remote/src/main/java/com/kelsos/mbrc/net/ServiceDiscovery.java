@@ -19,6 +19,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.Hashtable;
+import java.util.Locale;
 
 public class ServiceDiscovery {
     private WifiManager manager;
@@ -67,7 +68,7 @@ public class ServiceDiscovery {
                 DatagramPacket mPacket;
                 byte[] buffer = new byte[512];
                 mPacket = new DatagramPacket(buffer, buffer.length);
-                Hashtable<String, String> discoveryMessage = new Hashtable<String, String>();
+                Hashtable<String, String> discoveryMessage = new Hashtable<>();
                 discoveryMessage.put("context", "discovery");
                 discoveryMessage.put("address", getWifiAddress());
                 byte[] discovery = mapper.writeValueAsBytes(discoveryMessage);
@@ -104,7 +105,7 @@ public class ServiceDiscovery {
     private String getWifiAddress() {
         WifiInfo mInfo = manager.getConnectionInfo();
         int address = mInfo.getIpAddress();
-        return String.format(
+        return String.format(Locale.ENGLISH,
                 "%d.%d.%d.%d",
                 (address & 0xff),
                 (address >> 8 & 0xff),

@@ -8,51 +8,42 @@
                 android:background="@color/mbrc_background"
                 android:orientation="vertical">
 
-    <RelativeLayout
-            android:id="@+id/main_middle_group"
+    <FrameLayout
+            android:id="@+id/album_cover_area"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
 
-        <FrameLayout
-                android:id="@+id/album_cover_area"
-                android:layout_width="wrap_content"
+        <ImageView
+                android:id="@+id/main_album_cover_image_view"
+                android:layout_width="@dimen/mbrc_cover"
+                android:layout_height="@dimen/mbrc_cover"
+                android:adjustViewBounds="false"
+                android:contentDescription="@string/main_image_view_cover_description"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_image_no_cover"/>
+
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true">
+                android:background="@color/mbrc_transparent_dark"
+                android:layout_gravity="center_horizontal|bottom"
+                android:id="@+id/ratingWrapper"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginBottom="1dp">
 
-            <ImageView
-                    android:id="@+id/main_album_cover_image_view"
-                    android:layout_width="@dimen/mbrc_cover"
-                    android:layout_height="@dimen/mbrc_cover"
-                    android:adjustViewBounds="false"
-                    android:contentDescription="@string/main_image_view_cover_description"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_image_no_cover"/>
-
-            <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/mbrc_transparent_dark"
-                    android:layout_gravity="center_horizontal|bottom"
-                    android:id="@+id/ratingWrapper"
-                    android:layout_marginLeft="1dp"
-                    android:layout_marginRight="1dp"
-                    android:layout_marginBottom="1dp">
-
-                <RatingBar
-                        android:id="@+id/track_rating_bar"
-                        style="@style/RatingBar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="50dp"
-                        android:numStars="5"
-                        android:stepSize="0.5"
-                        android:layout_gravity="center"
-                        />
-            </LinearLayout>
-        </FrameLayout>
-
-    </RelativeLayout>
+            <RatingBar
+                    android:id="@+id/track_rating_bar"
+                    style="@style/RatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:numStars="5"
+                    android:stepSize="0.5"
+                    android:layout_gravity="center"
+                    />
+        </LinearLayout>
+    </FrameLayout>
 
     <com.viewpagerindicator.LinePageIndicator
             android:id="@+id/mbrc_main_infoindicator"
