@@ -20,7 +20,7 @@ repositories {
 }
 
 def buildTime() {
-    def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ")
+    def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
     df.setTimeZone(TimeZone.getTimeZone("UTC"))
     return df.format(new Date())
 }
@@ -68,8 +68,15 @@ android {
         instrumentTest.setRoot('tests')
     }
 
-    buildTypes {
+    signingConfigs {
         release {}
+        debug {}
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
         debug {
             packageNameSuffix ".debug"
             versionNameSuffix ".debug-${buildTime()}"
@@ -113,6 +120,29 @@ gradle.taskGraph.afterTask {Task task, TaskState state ->
             ant.xslt(in: "$buildDir/reports/checkstyle/checkstyle.xml",
                     style: new File(rootDir, 'config/quality/checkstyle/checkstyle-noframes-sorted.xsl'),
                     out: new File("$buildDir/reports/checkstyle/checkstyle.html"))
+        }
+    }
+}
+
+allprojects {
+    afterEvaluate { project ->
+        def propsFile = rootProject.file('signing.properties')
+        def configName = 'release'
+
+        if (propsFile.exists()) {
+            def prop = new Properties()
+            prop.load(new FileInputStream(propsFile))
+            def filepath = prop['keys']
+            def keyPropFile = file(filepath)
+            if (keyPropFile.exists() && android.signingConfigs.hasProperty(configName)) {
+                def props = new Properties()
+                props.load(new FileInputStream(keyPropFile))
+                def keystorePath = props['keystore']
+                android.signingConfigs[configName].storeFile = file(keystorePath)
+                android.signingConfigs[configName].storePassword = props['storePass']
+                android.signingConfigs[configName].keyAlias = props['keyAlias']
+                android.signingConfigs[configName].keyPassword = props['keyPass']
+            }
         }
     }
 }

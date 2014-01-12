@@ -33,18 +33,15 @@ public class SyncHandler {
         this.bus = bus;
         dbHelper = new LibraryDbHelper(mContext);
     }
-    long start;
+
     public void initFullSyncProcess(int numberOfTracks) {
         this.numberOfTracks = numberOfTracks;
         this.currentTrack = 0;
-        start = System.currentTimeMillis();
         getNextTrack();
     }
 
 
     public void getNextTrack() {
-        long elapsed = System.currentTimeMillis() - start;
-        Log.d("mbrc-log", String.format("between calls elapsed: %d ms", elapsed));
 
         if (currentTrack < numberOfTracks) {
             mNotification.librarySyncNotification(numberOfTracks, currentTrack + 1);
@@ -55,7 +52,6 @@ public class SyncHandler {
                     new UserAction(Protocol.LibrarySync, syncData)));
             currentTrack++;
         }
-        start = System.currentTimeMillis();
     }
 
     public void updateCover(String image, String hash) {
