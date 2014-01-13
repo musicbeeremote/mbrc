@@ -33,10 +33,9 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
             Bundle bundle = intent.getExtras();
             if (null == bundle) return;
             String state = bundle.getString(TelephonyManager.EXTRA_STATE);
-            if (state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)) {
-                if (settingsManager.isVolumeReducedOnRinging()) {
-                    bus.post(new MessageEvent(ProtocolEventType.ReduceVolume));
-                }
+            if (state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)
+                    && settingsManager.isVolumeReducedOnRinging()) {
+                bus.post(new MessageEvent(ProtocolEventType.ReduceVolume));
             }
         } else if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
             NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);

@@ -11,15 +11,15 @@ import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.Playlist;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class PlaylistAdapter extends ArrayAdapter<Playlist> {
     private final int mResource;
     private final Context mContext;
-    private final ArrayList<Playlist> availablePlaylists;
+    private final List<Playlist> availablePlaylists;
     private final Typeface robotoLight;
 
-    public PlaylistAdapter(Context context, int resource, ArrayList<Playlist> objects) {
+    public PlaylistAdapter(Context context, int resource, List<Playlist> objects) {
         super(context, resource, objects);
         this.mResource = resource;
         this.mContext = context;

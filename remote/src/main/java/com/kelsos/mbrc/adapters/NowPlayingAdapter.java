@@ -12,16 +12,16 @@ import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.MusicTrack;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class NowPlayingAdapter extends ArrayAdapter<MusicTrack> {
     private Context mContext;
     private int mResource;
-    private ArrayList<MusicTrack> nowPlayingList;
+    private List<MusicTrack> nowPlayingList;
     private int playingTrackIndex;
     private Typeface robotoLight;
 
-    public NowPlayingAdapter(Context context, int resource, ArrayList<MusicTrack> objects) {
+    public NowPlayingAdapter(Context context, int resource, List<MusicTrack> objects) {
         super(context, resource, objects);
         this.mResource = resource;
         this.mContext = context;

@@ -14,7 +14,6 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.InfoButtonPagerAdapter;
-import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.UserAction;
@@ -34,6 +33,14 @@ import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class MainFragment extends BaseFragment {
+    /**
+     * Total milliseconds in a second (1000)
+     */
+    public static final int MILLISECONDS = 1000;
+    /**
+     * Total seconds in a minute (60)
+     */
+    public static final int SECONDS = 60;
     @InjectView(R.id.main_track_progress_current) TextView trackProgressCurrent;
     @InjectView(R.id.main_track_duration_total) TextView trackDuration;
     @InjectView(R.id.main_volume_seeker) SeekBar volumeSlider;
@@ -48,7 +55,6 @@ public class MainFragment extends BaseFragment {
     private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture mProgressUpdateHandler;
     private InfoButtonPagerAdapter mAdapter;
-    private LinePageIndicator mIndicator;
 
     private RatingBar.OnRatingBarChangeListener ratingChangeListener = new RatingBar.OnRatingBarChangeListener() {
         @Override
@@ -62,27 +68,6 @@ public class MainFragment extends BaseFragment {
     private void post(UserAction data) {
         getBus().post(new MessageEvent(ProtocolEventType.UserAction, data));
     }
-
-    private View.OnClickListener muteButtonListener = new View.OnClickListener() {
-
-        public void onClick(View v) {
-            post(new UserAction(Protocol.PlayerMute, Const.TOGGLE));
-        }
-    };
-    private View.OnClickListener scrobbleButtonListener = new View.OnClickListener() {
-
-        public void onClick(View v) {
-            post(new UserAction(Protocol.PlayerScrobble, Const.TOGGLE));
-        }
-    };
-
-
-    private View.OnLongClickListener lfmLongClickListener = new View.OnLongClickListener() {
-        @Override public boolean onLongClick(View view) {
-            post(new UserAction(Protocol.NowPlayingLfmRating, "Ban"));
-            return true;
-        }
-    };
 
     private SeekBar.OnSeekBarChangeListener volumeChangeListener = new SeekBar.OnSeekBarChangeListener() {
 
@@ -105,12 +90,9 @@ public class MainFragment extends BaseFragment {
     };
     private SeekBar.OnSeekBarChangeListener durationSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            if (fromUser) {
-                if (progress != previousVol) {
-                    post(new UserAction(Protocol.NowPlayingPosition, String.valueOf(progress)));
-                    previousVol = progress;
-                }
-
+            if (fromUser && progress != previousVol) {
+                post(new UserAction(Protocol.NowPlayingPosition, String.valueOf(progress)));
+                previousVol = progress;
             }
         }
 
@@ -164,7 +146,6 @@ public class MainFragment extends BaseFragment {
             }
         }
     };
-    private ViewPager mPager;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,10 +156,9 @@ public class MainFragment extends BaseFragment {
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ui_fragment_main, container, false);
-        mPager = (ViewPager) view.findViewById(R.id.mbrc_main_infopager);
+        ViewPager mPager = (ViewPager) view.findViewById(R.id.mbrc_main_infopager);
         mPager.setAdapter(mAdapter);
-
-        mIndicator = (LinePageIndicator)view.findViewById(R.id.mbrc_main_infoindicator);
+        LinePageIndicator mIndicator = (LinePageIndicator) view.findViewById(R.id.mbrc_main_infoindicator);
         mIndicator.setViewPager(mPager);
         return view;
     }
@@ -216,7 +196,6 @@ public class MainFragment extends BaseFragment {
     private void SetTextViewTypeface() {		/* Marquee Hack */
         try {
 
-            Typeface robotoLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
             Typeface robotoRegular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
             trackProgressCurrent.setTypeface(robotoRegular);
             trackDuration.setTypeface(robotoRegular);
@@ -258,11 +237,6 @@ public class MainFragment extends BaseFragment {
         }
     }
 
-    @Subscribe public void handleScrobbleChange(ScrobbleChange change) {
-//        if (scrobbleButton == null) return;
-//        scrobbleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_scrobble_red : R.drawable.ic_media_scrobble_off);
-    }
-
     @Subscribe public void handleCoverEvent(final CoverAvailable cevent) {
         if (albumCover == null) return;
         if (cevent.getIsAvailable()) {
@@ -270,14 +244,6 @@ public class MainFragment extends BaseFragment {
         } else {
             albumCover.setImageResource(R.drawable.ic_image_no_cover);
         }
-    }
-
-    @Subscribe public void updateVolumeData(VolumeChange change) {
-        if (volumeSlider == null) return;
-        if (!userChangingVolume)
-            volumeSlider.setProgress(change.getVolume());
-//        if (muteButton == null) return;
-//        muteButton.setImageResource(change.getIsMute() ? R.drawable.ic_media_mute_active : R.drawable.ic_media_mute_full);
     }
 
     @Subscribe public void handlePlayStateChange(final PlayStateChange change) {
@@ -295,6 +261,7 @@ public class MainFragment extends BaseFragment {
         /* Stop the animation if the track is paused*/
                 stopTrackProgressAnimation();
                 activateStoppedState();
+                break;
             case Undefined:
                 stopTrackProgressAnimation();
                 break;
@@ -322,9 +289,9 @@ public class MainFragment extends BaseFragment {
         final Runnable updateProgress = new Runnable() {
             @Override public void run() {
 
-                int currentProgress = trackProgressSlider.getProgress() / 1000;
-                final int currentMinutes = currentProgress / 60;
-                final int currentSeconds = currentProgress % 60;
+                int currentProgress = trackProgressSlider.getProgress() / MILLISECONDS;
+                final int currentMinutes = currentProgress / SECONDS;
+                final int currentSeconds = currentProgress % SECONDS;
 
                 if (getActivity() == null) return;
 
@@ -333,7 +300,7 @@ public class MainFragment extends BaseFragment {
                     @Override public void run() {
                         try {
                             if (trackProgressSlider == null) return;
-                            trackProgressSlider.setProgress(trackProgressSlider.getProgress() + 1000);
+                            trackProgressSlider.setProgress(trackProgressSlider.getProgress() + MILLISECONDS);
                             trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
                         } catch (Exception ex) {
 
@@ -383,14 +350,14 @@ public class MainFragment extends BaseFragment {
             getBus().post(new MessageEvent(UserInputEventType.RequestPosition));
             return;
         }
-        int currentSeconds = current / 1000;
-        int totalSeconds = total / 1000;
+        int currentSeconds = current / MILLISECONDS;
+        int totalSeconds = total / MILLISECONDS;
 
-        final int currentMinutes = currentSeconds / 60;
-        final int totalMinutes = totalSeconds / 60;
+        final int currentMinutes = currentSeconds / SECONDS;
+        final int totalMinutes = totalSeconds / SECONDS;
 
-        currentSeconds %= 60;
-        totalSeconds %= 60;
+        currentSeconds %= SECONDS;
+        totalSeconds %= SECONDS;
         final int finalTotalSeconds = totalSeconds;
         final int finalCurrentSeconds = currentSeconds;
 

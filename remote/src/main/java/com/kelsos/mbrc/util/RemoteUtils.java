@@ -1,8 +1,5 @@
 package com.kelsos.mbrc.util;
 
-import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 
 import java.text.SimpleDateFormat;
@@ -10,28 +7,13 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-public class RemoteUtils {
+public final class RemoteUtils {
+
+    private RemoteUtils() {}
+
     private static final String DATEFORMAT = "yyyy-MM-dd HH:mm:ss";
 
-    public static String getVersion(Context mContext) throws PackageManager.NameNotFoundException {
-        final PackageManager pm = mContext.getPackageManager();
-        PackageInfo mInfo = null;
-        if (pm != null) {
-            mInfo = pm.getPackageInfo(mContext.getPackageName(), 0);
-        }
-        return mInfo != null ? mInfo.versionName : "";
-    }
-
-    public static long getVersionCode(Context mContext) throws PackageManager.NameNotFoundException {
-        final PackageManager pm = mContext.getPackageManager();
-        PackageInfo mInfo = null;
-        if (pm != null) {
-            mInfo = pm.getPackageInfo(mContext.getPackageName(), 0);
-        }
-        return mInfo != null ? mInfo.versionCode : 0;
-    }
-
-    public static String Now() {
+    public static String currentTime() {
         final SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMAT, Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         return sdf.format(new Date());

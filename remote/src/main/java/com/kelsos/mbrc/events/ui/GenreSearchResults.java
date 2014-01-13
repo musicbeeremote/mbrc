@@ -2,18 +2,18 @@ package com.kelsos.mbrc.events.ui;
 
 import com.kelsos.mbrc.data.GenreEntry;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class GenreSearchResults {
-    private ArrayList<GenreEntry> list;
+    private List<GenreEntry> list;
     private boolean stored;
 
-    public GenreSearchResults(ArrayList<GenreEntry> list, boolean stored){
+    public GenreSearchResults(List<GenreEntry> list, boolean stored){
         this.list = list;
         this.stored = stored;
     }
 
-    public ArrayList<GenreEntry> getList() {
+    public List<GenreEntry> getList() {
         return this.list;
     }
 

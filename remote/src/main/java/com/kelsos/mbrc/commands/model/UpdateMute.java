@@ -15,6 +15,6 @@ public class UpdateMute implements ICommand {
 
     @Override
     public void execute(IEvent e) {
-        model.setMuteState(((BooleanNode)e.getData()).asBoolean());
+        model.setMuteState(((BooleanNode) e.getData()).asBoolean());
     }
 }

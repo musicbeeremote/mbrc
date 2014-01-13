@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @Singleton
 public class ProtocolHandler {
-    public static double ServerProtocolVersion;
+    public static double serverProtocolVersion;
     private Bus bus;
     private boolean isHandshakeComplete;
     private ObjectMapper mapper;
@@ -45,7 +45,7 @@ public class ProtocolHandler {
                     if (context.contains(Protocol.Player)) {
                         bus.post(new MessageEvent(ProtocolEventType.InitiateProtocolRequest));
                     } else if (context.contains(Protocol.Protocol)) {
-                        ServerProtocolVersion = node.path("data").getDoubleValue();
+                        serverProtocolVersion = node.path("data").getDoubleValue();
                         isHandshakeComplete = true;
                         bus.post(new MessageEvent(ProtocolEventType.HandshakeComplete, true));
                     } else {

@@ -19,21 +19,14 @@ import com.kelsos.mbrc.data.ArtistEntry;
 import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
-import com.squareup.otto.Subscribe;
 
 public class BrowseArtistFragment extends BaseListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final int GROUP_ID = 12;
     private static final int URL_LOADER = 0x12;
     private SimpleCursorAdapter mAdapter;
-    private String mDefault;
-
-    @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
-        mDefault = action.getAction();
-    }
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

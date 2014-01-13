@@ -10,6 +10,9 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.net.Protocol;
 
 public class Configuration {
+
+    private Configuration() {}
+
     @Inject public static void initialize(Controller controller) {
         controller.register(ProtocolEventType.ReduceVolume, ReduceVolumeOnRingCommand.class);
         controller.register(ProtocolEventType.HandshakeComplete, VisualUpdateHandshakeComplete.class);

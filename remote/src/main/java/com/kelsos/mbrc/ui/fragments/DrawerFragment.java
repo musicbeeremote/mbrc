@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.fragments;
 
-import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -22,7 +21,6 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
-import com.kelsos.mbrc.util.RemoteUtils;
 import com.squareup.otto.Subscribe;
 import roboguice.inject.InjectView;
 
@@ -90,13 +88,8 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
         if (mDrawerLayout == null) {
             mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
         }
-        try {
-            versionIndicator.setText(String.format(getString(R.string.ui_drawer_menu_version), RemoteUtils.getVersion(getActivity())));
-        } catch (PackageManager.NameNotFoundException e) {
-            if (BuildConfig.DEBUG) {
-                e.printStackTrace();
-            }
-        }
+
+        versionIndicator.setText(String.format(getString(R.string.ui_drawer_menu_version), BuildConfig.VERSION_NAME));
     }
 
     @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChange change) {
@@ -119,11 +112,10 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
     }
 
     @Override public void onBackStackChanged() {
-        if (!mBackstackChanging)
-            if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 0) {
-                mSelection = 0;
-                getListView().setItemChecked(mSelection, true);
-            }
+        if (!mBackstackChanging && getActivity().getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            mSelection = 0;
+            getListView().setItemChecked(mSelection, true);
+        }
         mBackstackChanging = false;
 
     }

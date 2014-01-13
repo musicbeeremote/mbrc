@@ -10,7 +10,7 @@ public class Artist extends DataItem implements ArtistColumns{
     private String imageUrl;
     private long id;
     public static final String TABLE_NAME = "artists";
-    public static final String[] FIELDS = { _ID, ARTIST_NAME };
+    public static final String[] FIELDS = {_ID, ARTIST_NAME };
 
     public static final String CREATE_TABLE =
             "create table " + TABLE_NAME + "(" + _ID + " integer primary key autoincrement,"
@@ -26,10 +26,12 @@ public class Artist extends DataItem implements ArtistColumns{
 
     public static final int BASE_URI_CODE = 0xb450ddf;
     public static final int BASE_ITEM_CODE =  0x4213467;
+    public static final int BASE_GENRE_FILTER = 0x099198;
 
     public static void addMatcherUris(UriMatcher uriMatcher) {
         uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME, BASE_URI_CODE);
         uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME + "/#", BASE_ITEM_CODE);
+        uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME + "/genre/*", BASE_GENRE_FILTER);
     }
 
     public static final String TYPE_DIR = "vnd.android.cursor.dir/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;

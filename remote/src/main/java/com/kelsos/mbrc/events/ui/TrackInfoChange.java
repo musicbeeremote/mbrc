@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.events.ui;
 
 public class TrackInfoChange {
-    public String artist;
-    public String title;
-    public String album;
-    public String year;
+    private String artist;
+    private String title;
+    private String album;
+    private String year;
 
     public String getArtist() {
         return artist;

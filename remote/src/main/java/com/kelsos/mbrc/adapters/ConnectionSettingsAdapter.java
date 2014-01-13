@@ -12,17 +12,17 @@ import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class ConnectionSettingsAdapter extends ArrayAdapter<ConnectionSettings> {
 
-    private ArrayList<ConnectionSettings> mData;
+    private List<ConnectionSettings> mData;
     private Context mContext;
     private int mResource;
     private Typeface robotoLight;
     private int defaultIndex;
 
-    public ConnectionSettingsAdapter(Context context, int textViewResourceId, ArrayList<ConnectionSettings> objects) {
+    public ConnectionSettingsAdapter(Context context, int textViewResourceId, List<ConnectionSettings> objects) {
         super(context, textViewResourceId, objects);
         this.mData = objects;
         this.mContext = context;

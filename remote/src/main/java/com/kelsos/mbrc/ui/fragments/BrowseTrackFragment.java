@@ -14,22 +14,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.*;
-import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
-import com.squareup.otto.Subscribe;
 
 public class BrowseTrackFragment extends BaseListFragment
     implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int GROUP_ID = 14;
     private static final int URL_LOADER = 0x53;
-    private String mDefault;
-
     private SimpleCursorAdapter mAdapter;
-
-    @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
-        mDefault = action.getAction();
-    }
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

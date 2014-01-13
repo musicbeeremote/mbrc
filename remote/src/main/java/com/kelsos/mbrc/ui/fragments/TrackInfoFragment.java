@@ -17,7 +17,7 @@ public class TrackInfoFragment extends BaseFragment {
     @InjectView (R.id.track_album) private TextView trackAlbum;
     @InjectView (R.id.track_year) private TextView trackYear;
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ui_main_track_info, container, false);
     }
 

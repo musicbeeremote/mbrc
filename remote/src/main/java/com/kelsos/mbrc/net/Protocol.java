@@ -2,6 +2,8 @@ package com.kelsos.mbrc.net;
 
 public class Protocol {
 
+    private Protocol() {}
+
     public static final String Error = "error";
     public static final String Player = "player";
     public static final String Protocol = "protocol";

@@ -2,18 +2,18 @@ package com.kelsos.mbrc.events.ui;
 
 import com.kelsos.mbrc.data.MusicTrack;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class NowPlayingListAvailable {
-    private ArrayList<MusicTrack> list;
+    private List<MusicTrack> list;
     private int index;
 
-    public NowPlayingListAvailable(ArrayList<MusicTrack> list, int index) {
+    public NowPlayingListAvailable(List<MusicTrack> list, int index) {
         this.list = list;
         this.index = index;
     }
 
-    public ArrayList<MusicTrack> getList() {
+    public List<MusicTrack> getList() {
         return this.list;
     }
 

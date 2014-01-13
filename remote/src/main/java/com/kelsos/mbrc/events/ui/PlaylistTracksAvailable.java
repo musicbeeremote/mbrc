@@ -2,18 +2,18 @@ package com.kelsos.mbrc.events.ui;
 
 import com.kelsos.mbrc.data.TrackEntry;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class PlaylistTracksAvailable {
-    private ArrayList<TrackEntry> playlistTracks;
+    private List<TrackEntry> playlistTracks;
     private boolean stored;
 
-    public PlaylistTracksAvailable(ArrayList<TrackEntry> playlistTracks, boolean stored) {
+    public PlaylistTracksAvailable(List<TrackEntry> playlistTracks, boolean stored) {
         this.playlistTracks = playlistTracks;
         this.stored = stored;
     }
 
-    public ArrayList<TrackEntry> getPlaylistTracks() {
+    public List<TrackEntry> getPlaylistTracks() {
         return playlistTracks;
     }
 

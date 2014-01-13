@@ -14,6 +14,6 @@ public class InitiateConnectionCommand implements ICommand {
     }
 
     @Override public void execute(IEvent e) {
-        socketService.SocketManager(SocketAction.START);
+        socketService.socketManager(SocketAction.START);
     }
 }

@@ -9,15 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import java.util.ArrayList;
+
+import java.util.List;
 
 public class LyricsAdapter extends ArrayAdapter<String> {
     private Context mContext;
     private int mResource;
-    private ArrayList<String> mData;
+    private List<String> mData;
     private Typeface robotoLight;
 
-    public LyricsAdapter(Context context, int resource, ArrayList<String> objects) {
+    public LyricsAdapter(Context context, int resource, List<String> objects) {
         super(context, resource, objects);
         this.mResource = resource;
         this.mContext = context;

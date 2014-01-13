@@ -8,7 +8,7 @@ public class VolumeChange {
         this.isMute = false;
     }
 
-    public VolumeChange(){
+    public VolumeChange() {
         this.volume = 0;
         this.isMute = true;
     }

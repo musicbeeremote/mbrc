@@ -19,7 +19,7 @@ import java.util.Map;
 
 public abstract class BaseActivity extends ActionBarActivity implements RoboContext {
     protected EventManager eventManager;
-    protected HashMap<Key<?>,Object> scopedObjects = new HashMap<Key<?>, Object>();
+    protected Map<Key<?>,Object> scopedObjects = new HashMap<>();
 
     @Inject ContentViewListener ignored; // BUG find a better place to put this
     @Inject private ScopedBus scopedBus;

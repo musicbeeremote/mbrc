@@ -19,6 +19,7 @@ import java.util.Map;
 @Singleton
 public class SyncHandler {
 
+    public static final int BATCH_SIZE = 50;
     private Context mContext;
     private NotificationService mNotification;
     private Bus bus;
@@ -57,25 +58,26 @@ public class SyncHandler {
     public void getNextBunch() {
 
         if (currentTrack < numberOfTracks) {
-            mNotification.librarySyncNotification(numberOfTracks, currentTrack + 50);
+            mNotification.librarySyncNotification(numberOfTracks, currentTrack + BATCH_SIZE);
             Map<String, Object> syncData = new HashMap<>();
             syncData.put("type", "meta");
             syncData.put("file", currentTrack);
             bus.post(new MessageEvent(ProtocolEventType.UserAction,
                     new UserAction(Protocol.LibrarySync, syncData)));
-            currentTrack += 50;
+            currentTrack += BATCH_SIZE;
         }
     }
 
     public void updateCover(String image, String hash) {
         FileOutputStream outputStream;
         try {
-            outputStream = mContext.openFileOutput(hash,Context.MODE_PRIVATE);
+            outputStream = mContext.openFileOutput(hash, Context.MODE_PRIVATE);
             outputStream.write(Base64.decode(image, Base64.DEFAULT));
             outputStream.close();
         }  catch (Exception ex) {
-            if (BuildConfig.DEBUG)
+            if (BuildConfig.DEBUG) {
                 Log.d("mbrc-log", "saving cover", ex);
+            }
         }
 
         long cover_id = dbHelper.insertCover(new Cover(hash));
@@ -95,7 +97,7 @@ public class SyncHandler {
 //                    new UserAction(Protocol.LibrarySync, syncData)));
 //            cachedTrack = track;
 //        } else {
-            dbHelper.insertTrack(track);
+        dbHelper.insertTrack(track);
 //        }
     }
 }

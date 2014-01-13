@@ -9,6 +9,7 @@ import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.net.SocketService;
 
 public class ReduceVolumeOnRingCommand implements ICommand {
+    public static final double TWENTY_PERCENT = 0.2;
     private MainDataModel model;
     private SocketService service;
 
@@ -18,6 +19,6 @@ public class ReduceVolumeOnRingCommand implements ICommand {
     }
 
     @Override public void execute(IEvent e) {
-        service.sendData(new SocketMessage(Protocol.PlayerVolume, Protocol.Request, (int) (model.getVolume() * 0.2)));
+        service.sendData(new SocketMessage(Protocol.PlayerVolume, Protocol.Request, (int) (model.getVolume() * TWENTY_PERCENT)));
     }
 }

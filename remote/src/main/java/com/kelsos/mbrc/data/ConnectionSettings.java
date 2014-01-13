@@ -53,6 +53,13 @@ public class ConnectionSettings {
         return equality;
     }
 
+    @Override public int hashCode() {
+        int hash = 0x192;
+        hash = hash * 17 + port;
+        hash = hash * 31 + address.hashCode();
+        return hash;
+    }
+
     public int getIndex() {
         return index;
     }

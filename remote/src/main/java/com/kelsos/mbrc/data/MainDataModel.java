@@ -17,10 +17,12 @@ import com.kelsos.mbrc.util.MainThreadBusWrapper;
 import com.squareup.otto.Produce;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Singleton
 public class MainDataModel {
 
+    public static final int MAX_VOLUME = 100;
     private MainThreadBusWrapper bus;
     private Context context;
     private float rating;
@@ -38,13 +40,13 @@ public class MainDataModel {
     private boolean isScrobblingActive;
     private boolean isMuteActive;
     private PlayState playState;
-    private ArrayList<TrackEntry> searchTracks;
-    private ArrayList<AlbumEntry> searchAlbums;
-    private ArrayList<GenreEntry> searchGenres;
-    private ArrayList<ArtistEntry> searchArtists;
-    private ArrayList<MusicTrack> nowPlayingList;
-    private ArrayList<Playlist> availablePlaylists;
-    private ArrayList<TrackEntry> playlistTracks;
+    private List<TrackEntry> searchTracks;
+    private List<AlbumEntry> searchAlbums;
+    private List<GenreEntry> searchGenres;
+    private List<ArtistEntry> searchArtists;
+    private List<MusicTrack> nowPlayingList;
+    private List<Playlist> availablePlaylists;
+    private List<TrackEntry> playlistTracks;
     private LfmStatus lfmRating;
     private String pluginVersion;
 
@@ -55,7 +57,7 @@ public class MainDataModel {
         bus.register(this);
 
         title = artist = album = year = "";
-        volume = 100;
+        volume = MAX_VOLUME;
 
         isConnectionOn = false;
         isHandShakeDone = false;
@@ -68,25 +70,25 @@ public class MainDataModel {
         rating = 0;
         lyrics = "";
 
-        searchArtists = new ArrayList<ArtistEntry>();
-        searchAlbums = new ArrayList<AlbumEntry>();
-        searchGenres = new ArrayList<GenreEntry>();
-        searchTracks = new ArrayList<TrackEntry>();
-        nowPlayingList = new ArrayList<MusicTrack>();
-        availablePlaylists = new ArrayList<Playlist>();
-        playlistTracks = new ArrayList<TrackEntry>();
+        searchArtists = new ArrayList<>();
+        searchAlbums = new ArrayList<>();
+        searchGenres = new ArrayList<>();
+        searchTracks = new ArrayList<>();
+        nowPlayingList = new ArrayList<>();
+        availablePlaylists = new ArrayList<>();
+        playlistTracks = new ArrayList<>();
 
         lfmRating = LfmStatus.NORMAL;
         pluginVersion = "";
 
     }
 
-    public void setAvailablePlaylists(ArrayList<Playlist> playlists) {
+    public void setAvailablePlaylists(List<Playlist> playlists) {
         this.availablePlaylists = playlists;
         bus.post(new AvailablePlaylists(this.availablePlaylists, false));
     }
 
-    public void setPlaylistTracks(ArrayList<TrackEntry> tracks) {
+    public void setPlaylistTracks(List<TrackEntry> tracks) {
         this.playlistTracks = tracks;
         bus.post(new PlaylistTracksAvailable(this.playlistTracks, false));
     }
@@ -124,7 +126,7 @@ public class MainDataModel {
         return new LfmRatingChanged(lfmRating);
     }
 
-    public void setNowPlayingList(ArrayList<MusicTrack> nowPlayingList) {
+    public void setNowPlayingList(List<MusicTrack> nowPlayingList) {
         this.nowPlayingList = nowPlayingList;
         bus.post(new NowPlayingListAvailable(nowPlayingList, nowPlayingList.indexOf(new MusicTrack(artist, title))));
     }
@@ -134,7 +136,7 @@ public class MainDataModel {
         return new NowPlayingListAvailable(nowPlayingList, index);
     }
 
-    public void setSearchArtists(ArrayList<ArtistEntry> searchArtists) {
+    public void setSearchArtists(List<ArtistEntry> searchArtists) {
         this.searchArtists = searchArtists;
         bus.post(new ArtistSearchResults(this.searchArtists, false));
     }
@@ -143,7 +145,7 @@ public class MainDataModel {
         return new ArtistSearchResults(searchArtists, true);
     }
 
-    public void setSearchTracks(ArrayList<TrackEntry> searchTracks) {
+    public void setSearchTracks(List<TrackEntry> searchTracks) {
         this.searchTracks = searchTracks;
         bus.post(new TrackSearchResults(searchTracks, false));
     }
@@ -152,7 +154,7 @@ public class MainDataModel {
         return new TrackSearchResults(searchTracks, true);
     }
 
-    public void setSearchAlbums(ArrayList<AlbumEntry> searchAlbums) {
+    public void setSearchAlbums(List<AlbumEntry> searchAlbums) {
         this.searchAlbums = searchAlbums;
         bus.post(new AlbumSearchResults(searchAlbums, false));
     }
@@ -161,7 +163,7 @@ public class MainDataModel {
         return new AlbumSearchResults(searchAlbums, true);
     }
 
-    public void setSearchGenres(ArrayList<GenreEntry> searchGenres) {
+    public void setSearchGenres(List<GenreEntry> searchGenres) {
         this.searchGenres = searchGenres;
         bus.post(new GenreSearchResults(searchGenres, false));
     }

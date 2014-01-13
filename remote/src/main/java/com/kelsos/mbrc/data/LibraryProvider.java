@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.data;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -33,11 +34,12 @@ public class LibraryProvider extends ContentProvider {
     @Override public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Cursor result = null;
         final long id;
+        ContentResolver contentResolver = getContext().getContentResolver();
         switch (sUriMatcher.match(uri)) {
             case Album.BASE_ITEM_CODE:
                 id = Long.parseLong(uri.getLastPathSegment());
                 result = dbHelper.getAlbumCursor(id);
-                result.setNotificationUri(getContext().getContentResolver(), uri);
+                result.setNotificationUri(contentResolver, uri);
                 break;
             case Album.BASE_URI_CODE:
                 SQLiteQueryBuilder sqBuilder = new SQLiteQueryBuilder();
@@ -55,50 +57,54 @@ public class LibraryProvider extends ContentProvider {
                         null,
                         "ar."+ Artist.ARTIST_NAME + ", al." + Album.ALBUM_NAME + " ASC");
 
-                result.setNotificationUri(getContext().getContentResolver(), uri);
+                result.setNotificationUri(contentResolver, uri);
                 break;
             case Artist.BASE_ITEM_CODE:
                 id = Long.parseLong(uri.getLastPathSegment());
                 result = dbHelper.getArtistCursor(id);
-                result.setNotificationUri(getContext().getContentResolver(), uri);
+                result.setNotificationUri(contentResolver, uri);
                 break;
             case Artist.BASE_URI_CODE:
                 result = dbHelper.getAllArtistsCursor(selection, selectionArgs, sortOrder);
-                result.setNotificationUri(getContext().getContentResolver(), uri);
+                result.setNotificationUri(contentResolver, uri);
+                break;
+            case Artist.BASE_GENRE_FILTER:
+//                SQLiteQueryBuilder sqBuilder = new SQLiteQueryBuilder();
+//                sqBuilder.setTables();
                 break;
             case Cover.BASE_ITEM_CODE:
                 id = Long.parseLong(uri.getLastPathSegment());
                 result = dbHelper.getCoverCursor(id);
-                result.setNotificationUri(getContext().getContentResolver(), uri);
+                result.setNotificationUri(contentResolver, uri);
                 break;
             case Cover.BASE_URI_CODE:
                 result = dbHelper.getAllCoversCursor(selection, selectionArgs, sortOrder);
-                result.setNotificationUri(getContext().getContentResolver(), uri);
+                result.setNotificationUri(contentResolver, uri);
                 break;
             case Genre.BASE_ITEM_CODE:
                 id = Long.parseLong(uri.getLastPathSegment());
                 result = dbHelper.getGenreCursor(id);
-                result.setNotificationUri(getContext().getContentResolver(), uri);
+                result.setNotificationUri(contentResolver, uri);
                 break;
             case Genre.BASE_URI_CODE:
                 result = dbHelper.getAllGenresCursor(selection, selectionArgs, sortOrder);
-                result.setNotificationUri(getContext().getContentResolver(), uri);
+                result.setNotificationUri(contentResolver, uri);
                 break;
             case Genre.BASE_FILTER_CODE:
                 selection = Genre.GENRE_NAME + " LIKE ?";
                 String search = "%"+uri.getLastPathSegment()+"%";
                 selectionArgs = new String[] { search };
                 result = dbHelper.getAllGenresCursor(selection, selectionArgs, sortOrder);
-                result.setNotificationUri(getContext().getContentResolver(), uri);
+                result.setNotificationUri(contentResolver, uri);
                 break;
             case Track.BASE_ITEM_CODE:
                 id = Long.parseLong(uri.getLastPathSegment());
                 result = dbHelper.getTrackCursor(id);
-                result.setNotificationUri(getContext().getContentResolver(), uri);
+                result.setNotificationUri(contentResolver, uri);
                 break;
             case Track.BASE_URI_CODE:
                 result = dbHelper.getAllTracksCursor(selection, selectionArgs, sortOrder);
-                result.setNotificationUri(getContext().getContentResolver(), uri);
+                result.setNotificationUri(contentResolver, uri);
                 break;
             default:
                 throw new IllegalArgumentException(String.format("Unknown Uri %s", uri));
@@ -152,9 +158,8 @@ public class LibraryProvider extends ContentProvider {
         if (sUriMatcher.match(uri) != Cover.BASE_IMAGE_CODE) {
             throw new IllegalArgumentException("Action not supported");
         } else {
-            File file = new File(getContext().getFilesDir() + "/" + uri.getLastPathSegment());
-            ParcelFileDescriptor parcel = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
-            return parcel;
+            File file = new File(String.format("%s/%s", getContext().getFilesDir(), uri.getLastPathSegment()));
+            return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
         }
     }
 }

@@ -9,7 +9,11 @@ import com.kelsos.mbrc.ui.fragments.BrowseGenreFragment;
 import com.kelsos.mbrc.ui.fragments.BrowseTrackFragment;
 
 public class BrowsePagerAdapter extends FragmentStatePagerAdapter {
-    private int mCount = 4;
+    public static final int TOTAL_FRAGMENTS = 4;
+    public static final int GENRES_FRAGMENT = 0;
+    public static final int ARTISTS_FRAGMENT = 1;
+    public static final int ALBUMS_FRAGMENT = 2;
+    public static final int TRACKS_FRAGMENT = 3;
     private final CharSequence pageTitles[] = new CharSequence[]{"Genre", "Artist", "Album", "Track"};
 
     public BrowsePagerAdapter(FragmentActivity activity) {
@@ -19,20 +23,20 @@ public class BrowsePagerAdapter extends FragmentStatePagerAdapter {
     @Override public Fragment getItem(int position) {
 
         switch (position) {
-            case 0:
+            case GENRES_FRAGMENT:
                 return new BrowseGenreFragment();
-            case 1:
+            case ARTISTS_FRAGMENT:
                 return new BrowseArtistFragment();
-            case 2:
+            case ALBUMS_FRAGMENT:
                 return new BrowseAlbumFragment();
-            case 3:
+            case TRACKS_FRAGMENT:
                 return new BrowseTrackFragment();
         }
         return null;
     }
 
     @Override public int getCount() {
-        return mCount;
+        return TOTAL_FRAGMENTS;
     }
 
     @Override public CharSequence getPageTitle(int position) {

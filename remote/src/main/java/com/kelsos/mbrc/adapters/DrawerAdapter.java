@@ -11,15 +11,15 @@ import android.widget.CheckedTextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.NavigationEntry;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class DrawerAdapter extends ArrayAdapter<NavigationEntry> {
     private Context mContext;
     private int mResource;
-    private ArrayList<NavigationEntry> mData;
+    private List<NavigationEntry> mData;
     private Typeface robotoLight;
 
-    public DrawerAdapter(Context context, int resource, ArrayList<NavigationEntry> objects) {
+    public DrawerAdapter(Context context, int resource, List<NavigationEntry> objects) {
         super(context, resource, objects);
         this.mResource = resource;
         this.mContext = context;

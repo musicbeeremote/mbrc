@@ -131,7 +131,7 @@ public class MainFragmentActivity extends BaseActivity {
         mDrawerToggle.syncState();
     }
 
-    @Subscribe public void ShowSetupDialog(DisplayDialog event) {
+    @Subscribe public void showSetupDialog(DisplayDialog event) {
         if (mDialog != null) return;
         if (event.getDialogType() == DisplayDialog.SETUP) {
             mDialog = new SetupDialogFragment();

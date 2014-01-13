@@ -2,7 +2,6 @@ package com.kelsos.mbrc.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -27,13 +26,14 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Singleton
 public class SettingsManager {
     private SharedPreferences mPreferences;
     private Context mContext;
     private MainThreadBusWrapper bus;
-    private ArrayList<ConnectionSettings> mSettings;
+    private List<ConnectionSettings> mSettings;
     private ObjectMapper mMapper;
     private int defaultIndex;
     private boolean isFirstRun;
@@ -47,7 +47,7 @@ public class SettingsManager {
         bus.register(this);
 
         String sVal = preferences.getString(context.getString(R.string.settings_key_array), null);
-        mSettings = new ArrayList<ConnectionSettings>();
+        mSettings = new ArrayList<>();
 
         if (sVal != null && !sVal.equals("")) {
             ArrayNode node;
@@ -60,7 +60,7 @@ public class SettingsManager {
                 }
             } catch (IOException e) {
                 if (BuildConfig.DEBUG) {
-                    e.printStackTrace();
+                    Log.d("mbrc-log", "connection-settings", e);
                 }
             }
         }
@@ -210,25 +210,19 @@ public class SettingsManager {
     }
     
     private void checkForFirstRunAfterUpdate() {
-        try {
-            long lastVersionCode = mPreferences.getLong(mContext.
-                    getString(R.string.settings_key_last_version_run), 0);
-            long currentVersion = RemoteUtils.getVersionCode(mContext);
+        long lastVersionCode = mPreferences.getLong(mContext.
+                getString(R.string.settings_key_last_version_run), 0);
+        long currentVersion = BuildConfig.VERSION_CODE;
 
-            if (lastVersionCode < currentVersion) {
-                isFirstRun = true;
+        if (lastVersionCode < currentVersion) {
+            isFirstRun = true;
 
-                SharedPreferences.Editor editor = mPreferences.edit();
-                editor.putLong(mContext.getString(R.string.settings_key_last_version_run), currentVersion);
-                editor.commit();
+            SharedPreferences.Editor editor = mPreferences.edit();
+            editor.putLong(mContext.getString(R.string.settings_key_last_version_run), currentVersion);
+            editor.commit();
 
-                if (BuildConfig.DEBUG) {
-                    Log.d("mbrc-log", "update or fresh install");
-                }
-            }
-        } catch (PackageManager.NameNotFoundException e) {
             if (BuildConfig.DEBUG) {
-                Log.d("mbrc-log", "check for first run", e);
+                Log.d("mbrc-log", "update or fresh install");
             }
         }
     }

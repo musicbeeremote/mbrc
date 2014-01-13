@@ -16,23 +16,16 @@ import com.kelsos.mbrc.adapters.AlbumCursorAdapter;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.*;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseFragment;
-import com.squareup.otto.Subscribe;
 
 import static android.support.v4.app.LoaderManager.LoaderCallbacks;
 
 public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks<Cursor> {
     private static final int GROUP_ID = 13;
     private static final int URL_LOADER = 2;
-    private String mDefault;
     private AlbumCursorAdapter mAdapter;
     private GridView mGridView;
-
-    @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
-        mDefault = action.getAction();
-    }
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

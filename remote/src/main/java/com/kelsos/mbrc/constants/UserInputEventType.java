@@ -1,6 +1,9 @@
 package com.kelsos.mbrc.constants;
 
-public class UserInputEventType {
+public final class UserInputEventType {
+
+    private UserInputEventType() { }
+
     public static final String RequestPosition = "RequestPosition";
     public static final String StartConnection = "StartConnection";
     public static final String SettingsChanged = "SettingsChanged";

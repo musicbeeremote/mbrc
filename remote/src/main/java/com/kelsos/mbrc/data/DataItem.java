@@ -2,15 +2,12 @@ package com.kelsos.mbrc.data;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
 public abstract class DataItem implements BaseColumns {
 
     public DataItem() {}
-
-    public DataItem(final Cursor cursor) {}
 
     public abstract ContentValues getContentValues();
 

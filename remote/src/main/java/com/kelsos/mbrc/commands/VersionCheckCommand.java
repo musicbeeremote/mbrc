@@ -1,7 +1,5 @@
 package com.kelsos.mbrc.commands;
 
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.util.Log;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
@@ -10,7 +8,6 @@ import com.kelsos.mbrc.data.MainDataModel;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
-import com.kelsos.mbrc.util.RemoteUtils;
 import com.kelsos.mbrc.util.SettingsManager;
 import com.squareup.otto.Bus;
 import org.codehaus.jackson.JsonNode;
@@ -27,15 +24,12 @@ import java.util.Date;
 public class VersionCheckCommand implements ICommand {
     private MainDataModel model;
     private ObjectMapper mapper;
-    private Context mContext;
     private SettingsManager manager;
     private Bus bus;
 
-    @Inject public VersionCheckCommand(MainDataModel model, ObjectMapper mapper, Context mContext,
-                                       SettingsManager manager, Bus bus) {
+    @Inject public VersionCheckCommand(MainDataModel model, ObjectMapper mapper, SettingsManager manager, Bus bus) {
         this.model = model;
         this.mapper = mapper;
-        this.mContext = mContext;
         this.manager = manager;
         this.bus = bus;
     }
@@ -61,7 +55,7 @@ public class VersionCheckCommand implements ICommand {
                 }
 
                 JsonNode jsonNode = mapper.readValue(new URL("http://kelsos.net/musicbeeremote/versions.json"), JsonNode.class);
-                String version = RemoteUtils.getVersion(mContext);
+                String version = BuildConfig.VERSION_NAME;
                 JsonNode vNode = jsonNode.path("versions").path(version);
 
                 String suggestedVersion = vNode.path("plugin").asText();
@@ -73,11 +67,13 @@ public class VersionCheckCommand implements ICommand {
                     String[] latestVersion = suggestedVersion.split("\\.");
 
                     int i = 0;
-                    while (i<currentVersion.length&&i<latestVersion.length&&currentVersion[i].equals(latestVersion[i])) {
+                    while (i < currentVersion.length
+                            && i < latestVersion.length
+                            && currentVersion[i].equals(latestVersion[i])) {
                         i++;
                     }
 
-                    if (i<currentVersion.length&&i<latestVersion.length) {
+                    if (i < currentVersion.length && i < latestVersion.length) {
                         int diff = Integer.valueOf(currentVersion[i]).compareTo(Integer.valueOf(latestVersion[i]));
                         isOutOfDate = diff < 0;
                     }
@@ -96,27 +92,23 @@ public class VersionCheckCommand implements ICommand {
 
             } catch (MalformedURLException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d("mbrc-log", "version check MalformedURLException",e);
+                    Log.d("mbrc-log", "version check MalformedURLException", e);
                 }
             } catch (JsonMappingException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d("mbrc-log", "version check JsonMappingException",e);
+                    Log.d("mbrc-log", "version check JsonMappingException", e);
                 }
             } catch (JsonParseException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d("mbrc-log", "version check parse",e);
+                    Log.d("mbrc-log", "version check parse", e);
                 }
             } catch (IOException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d("mbrc-log", "version check IOException",e);
-                }
-            } catch (PackageManager.NameNotFoundException e) {
-                if (BuildConfig.DEBUG) {
-                    Log.d("mbrc-log", "version check PackageManager.NameNotFoundException",e);
+                    Log.d("mbrc-log", "version check IOException", e);
                 }
             } catch (NumberFormatException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d("mbrc-log", "version check NumberFormatException",e);
+                    Log.d("mbrc-log", "version check NumberFormatException", e);
                 }
             }
         }

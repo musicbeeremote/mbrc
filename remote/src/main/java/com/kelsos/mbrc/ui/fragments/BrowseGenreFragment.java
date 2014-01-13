@@ -32,7 +32,6 @@ public class BrowseGenreFragment extends BaseListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener {
     private static final int GROUP_ID = 11;
     private static final int URL_LOADER = 1;
-    private String mDefault;
     private GenreCursorAdapter mAdapter;
     private String mFilter;
     private SearchView mSearchView;
@@ -43,9 +42,6 @@ public class BrowseGenreFragment extends BaseListFragment
         setHasOptionsMenu(true);
     }
 
-    @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
-        mDefault = action.getAction();
-    }
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

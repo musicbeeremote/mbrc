@@ -15,6 +15,8 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
 
 public class SettingsDialogFragment extends DialogFragment {
+    public static final int MAX_PORT = 65535;
+    public static final int MIN_PORT = 1;
     private EditText host;
     private EditText name;
     private EditText port;
@@ -90,9 +92,12 @@ public class SettingsDialogFragment extends DialogFragment {
                 }
             });
         }
-        name = (EditText) dialog.findViewById(R.id.settings_dialog_name);
-        host = (EditText) dialog.findViewById(R.id.settings_dialog_host);
-        port = (EditText) dialog.findViewById(R.id.settings_dialog_port);
+        if (dialog != null) {
+            name = (EditText) dialog.findViewById(R.id.settings_dialog_name);
+            host = (EditText) dialog.findViewById(R.id.settings_dialog_host);
+            port = (EditText) dialog.findViewById(R.id.settings_dialog_port);
+        }
+
 
         if (name != null || !name.getText().toString().equals("")) {
             name.setText(cname);
@@ -104,7 +109,7 @@ public class SettingsDialogFragment extends DialogFragment {
     }
 
     private boolean validatePortNumber(int port) {
-        if (port < 1 || port > 65535) {
+        if (port < MIN_PORT || port > MAX_PORT) {
             final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             alert.setTitle(R.string.alert_invalid_range);
             alert.setMessage(R.string.alert_invalid_port_number);

@@ -2,13 +2,13 @@ package com.kelsos.mbrc.events.ui;
 
 import com.kelsos.mbrc.data.Playlist;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class AvailablePlaylists {
-    private ArrayList<Playlist> list;
+    private List<Playlist> list;
     private boolean stored;
 
-    public AvailablePlaylists(ArrayList<Playlist> list, boolean stored) {
+    public AvailablePlaylists(List<Playlist> list, boolean stored) {
         this.list = list;
         this.stored = stored;
     }
@@ -17,7 +17,7 @@ public class AvailablePlaylists {
         return stored;
     }
 
-    public ArrayList<Playlist> getList() {
+    public List<Playlist> getList() {
         return list;
     }
 }

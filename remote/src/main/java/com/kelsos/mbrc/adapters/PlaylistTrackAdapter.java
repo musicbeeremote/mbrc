@@ -12,15 +12,15 @@ import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.TrackEntry;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class PlaylistTrackAdapter extends ArrayAdapter<TrackEntry>{
     private Context mContext;
     private int mResource;
-    private ArrayList<TrackEntry> mList;
+    private List<TrackEntry> mList;
     private Typeface robotoLight;
 
-    public PlaylistTrackAdapter(Context context, int resource, ArrayList<TrackEntry> objects) {
+    public PlaylistTrackAdapter(Context context, int resource, List<TrackEntry> objects) {
         super(context, resource, objects);
         this.mResource = resource;
         this.mContext = context;

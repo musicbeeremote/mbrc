@@ -29,24 +29,24 @@ public class Track extends DataItem implements TrackColumns {
     public static final String TABLE_NAME = "tracks";
 
     public static final String CREATE_TABLE =
-            "create table " + TABLE_NAME + "(" + _ID +
-            " integer primary key autoincrement," + HASH + " text unique," +
-            TITLE + " text," + ALBUM_ID + " integer, " + GENRE_ID + " integer," +
-            ARTIST_ID + " integer," + YEAR + " text," + TRACK_NO + " integer," +
-            COVER_ID + " integer, " + UPDATED + " datetime, " +
-            "foreign key (" + ARTIST_ID + ") references " +
-            Artist.TABLE_NAME + "("+ _ID + ") on delete cascade, " +
-            "foreign key (" + ALBUM_ID + ") references " +
-            Album.TABLE_NAME + "("+ _ID + ") on delete cascade, " +
-            "foreign key (" + GENRE_ID + ") references " +
-            Genre.TABLE_NAME + "("+ _ID + ") on delete cascade, " +
-            "foreign key (" + COVER_ID + ") references " +
-            Cover.TABLE_NAME + "("+ _ID + ") on delete cascade " + ")";
+            "create table " + TABLE_NAME + "(" + _ID
+            + " integer primary key autoincrement," + HASH + " text unique,"
+            + TITLE + " text," + ALBUM_ID + " integer, " + GENRE_ID + " integer,"
+            + ARTIST_ID + " integer," + YEAR + " text," + TRACK_NO + " integer,"
+            + COVER_ID + " integer, " + UPDATED + " datetime, "
+            + "foreign key (" + ARTIST_ID + ") references "
+            + Artist.TABLE_NAME + "("+ _ID + ") on delete cascade, "
+            + "foreign key (" + ALBUM_ID + ") references "
+            + Album.TABLE_NAME + "("+ _ID + ") on delete cascade, "
+            + "foreign key (" + GENRE_ID + ") references "
+            + Genre.TABLE_NAME + "("+ _ID + ") on delete cascade, "
+            + "foreign key (" + COVER_ID + ") references "
+            + Cover.TABLE_NAME + "("+ _ID + ") on delete cascade " + ")";
 
     public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
     public static final String SELECT_TRACKS =
-            "select t." + _ID +", t."+ HASH + ", t."+ TITLE +", t." + ALBUM_ID + ", al." +
-    Album.ALBUM_NAME + ", t." + GENRE_ID + ", g." + Genre.GENRE_NAME +", t." + ARTIST_ID +
+            "select t." + _ID + ", t." + HASH + ", t."+ TITLE + ", t." + ALBUM_ID + ", al." +
+    Album.ALBUM_NAME + ", t." + GENRE_ID + ", g." + Genre.GENRE_NAME + ", t." + ARTIST_ID +
     ", ar." + Artist.ARTIST_NAME + ", t." + YEAR + ", t." + TRACK_NO + ", t." + COVER_ID +
     ", c." + Cover.COVER_HASH + ", t." + UPDATED +
     " from " + Album.TABLE_NAME + " al, " + Artist.TABLE_NAME + " ar, " + Cover.TABLE_NAME +
@@ -151,7 +151,7 @@ public class Track extends DataItem implements TrackColumns {
         values.put(YEAR, year);
         values.put(TRACK_NO, trackNo);
         values.put(COVER_ID, coverId);
-        values.put(UPDATED, RemoteUtils.Now());
+        values.put(UPDATED, RemoteUtils.currentTime());
         return values;
     }
 

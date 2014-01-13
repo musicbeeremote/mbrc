@@ -25,6 +25,7 @@ import java.net.SocketTimeoutException;
 @Singleton
 public class SocketService {
     public static final int MAX_RETRIES = 3;
+    public static final int BUFFER_SIZE = 4096;
     private static int numOfRetries;
     private MainThreadBusWrapper bus;
     private SettingsManager settingsManager;
@@ -50,10 +51,10 @@ public class SocketService {
         cTimer = new DelayTimer(3, timerFinishEvent);
         numOfRetries = 0;
         shouldStop = false;
-        SocketManager(SocketAction.START);
+        socketManager(SocketAction.START);
     }
 
-    public void SocketManager(SocketAction action) {
+    public void socketManager(SocketAction action) {
         switch (action) {
             case RESET:
                 cleanupSocket();
@@ -84,6 +85,8 @@ public class SocketService {
                 break;
             case STOP:
                 shouldStop = true;
+                break;
+            default:
                 break;
         }
     }
@@ -141,8 +144,8 @@ public class SocketService {
             try {
                 clSocket = new Socket();
                 clSocket.connect(socketAddress);
-                output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(clSocket.getOutputStream()), 4096), true);
-                input = new BufferedReader(new InputStreamReader(clSocket.getInputStream()), 4096);
+                output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(clSocket.getOutputStream()), BUFFER_SIZE), true);
+                input = new BufferedReader(new InputStreamReader(clSocket.getInputStream()), BUFFER_SIZE);
 
                 String socketStatus = String.valueOf(clSocket.isConnected());
 
@@ -163,8 +166,7 @@ public class SocketService {
                 bus.post(new NotifyUser(R.string.notification_connection_timeout));
             } catch (SocketException e) {
                 bus.post(new NotifyUser(e.toString().substring(26)));
-            } catch (IOException ignored) {
-            } catch (NullPointerException ignored) {
+            } catch (IOException | NullPointerException ignored) {
             } finally {
                 if (output != null) {
                     output.flush();
@@ -173,7 +175,9 @@ public class SocketService {
                 clSocket = null;
 
                 bus.post(new MessageEvent(SocketEventType.SocketStatusChanged, false));
-                if (numOfRetries < MAX_RETRIES) SocketManager(SocketAction.RETRY);
+                if (numOfRetries < MAX_RETRIES) {
+                    socketManager(SocketAction.RETRY);
+                }
                 if (BuildConfig.DEBUG) {
                     Log.d("mbrc-log", "socket closed");
                 }

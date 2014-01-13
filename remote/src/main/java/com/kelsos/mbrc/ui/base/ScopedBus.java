@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.squareup.otto.Bus;
 
 import java.util.HashSet;
-import java.lang.Object;
 import java.util.Set;
 
 public class ScopedBus {

@@ -27,7 +27,7 @@ public class NotifyNotAllowedCommand implements ICommand {
 
     @Override public void execute(IEvent e) {
         bus.post(new NotifyUser(R.string.notification_not_allowed));
-        socketService.SocketManager(SocketAction.STOP);
+        socketService.socketManager(SocketAction.STOP);
         model.setConnectionState("false");
         handler.resetHandshake();
     }

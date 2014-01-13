@@ -3,7 +3,6 @@ package com.kelsos.mbrc.ui.activities;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -15,12 +14,10 @@ import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.util.RemoteUtils;
 import com.squareup.otto.Bus;
 
 public class AppPreferenceView extends PreferenceActivity {
-    @Inject Bus bus;
-    @Inject RemoteUtils rmUtils;
+    @Inject private Bus bus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +50,7 @@ public class AppPreferenceView extends PreferenceActivity {
         }
 
         if (mVersion != null) {
-            try {
-                mVersion.setSummary(String.format(getResources().getString(R.string.settings_version_number), RemoteUtils.getVersion(this)));
-            } catch (PackageManager.NameNotFoundException e) {
-                if (BuildConfig.DEBUG) {
-                    e.printStackTrace();
-                }
-            }
+            mVersion.setSummary(String.format(getResources().getString(R.string.settings_version_number), BuildConfig.VERSION_NAME));
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
