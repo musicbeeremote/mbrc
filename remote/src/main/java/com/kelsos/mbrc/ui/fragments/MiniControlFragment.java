@@ -30,15 +30,7 @@ public class MiniControlFragment extends BaseFragment {
     @InjectView (R.id.mc_play_pause) ImageButton playPause;
     @InjectView (R.id.mc_prev_track) ImageButton playPrevious;
 
-    private Typeface robotoLight;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
+    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ui_fragment_mini_control, container, false);
     }
 
@@ -47,12 +39,14 @@ public class MiniControlFragment extends BaseFragment {
         playNext.setOnClickListener(playNextListener);
         playPause.setOnClickListener(playPauseListener);
         playPrevious.setOnClickListener(playPreviousListener);
-        robotoLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
+        Typeface robotoLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
         trackTitle.setTypeface(robotoLight);
     }
 
     @Subscribe public void handleCoverChange(CoverAvailable event) {
-        if (trackCover == null) return;
+        if (trackCover == null) {
+            return;
+        }
         if (event.getIsAvailable()) {
             trackCover.setImageBitmap(event.getCover());
         } else {
@@ -96,6 +90,9 @@ public class MiniControlFragment extends BaseFragment {
                 playPause.setImageResource(R.drawable.ic_action_play);
                 break;
             case Undefined:
+                break;
+            default:
+                playPause.setImageResource(R.drawable.ic_media_stop);
                 break;
         }
     }

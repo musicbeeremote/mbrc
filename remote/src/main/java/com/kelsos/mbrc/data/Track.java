@@ -107,24 +107,6 @@ public class Track extends DataItem implements TrackColumns {
         this.artistImageUrl = "";
     }
 
-    public Track(String hash, String title, String album, String genre, String artist, String year, int trackNo,
-                 Date updated, String artistImageUrl) {
-        this.id = -1;
-        this.albumId = -1;
-        this.genreId = -1;
-        this.artistId = -1;
-        this.coverId = -1;
-        this.hash = hash;
-        this.title = title;
-        this.album = album;
-        this.genre = genre;
-        this.artist = artist;
-        this.year = year;
-        this.trackNo = trackNo;
-        this.updated = updated;
-        this.artistImageUrl = artistImageUrl;
-    }
-
     public Track(final Cursor cursor) {
         this.id = cursor.getLong(cursor.getColumnIndex(_ID));
         this.hash = cursor.getString(cursor.getColumnIndex(HASH));

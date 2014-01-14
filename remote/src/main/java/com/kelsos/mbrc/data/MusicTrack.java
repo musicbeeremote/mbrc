@@ -46,8 +46,9 @@ public class MusicTrack {
         boolean rValue = false;
         if (o instanceof MusicTrack) {
             MusicTrack track = (MusicTrack) o;
-            if (track.getTitle().equals(this.title) && track.getArtist().equals(this.artist))
+            if (track.getTitle().equals(this.title) && track.getArtist().equals(this.artist)) {
                 rValue = true;
+            }
         }
         return rValue;
     }

@@ -5,7 +5,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 
-public class Artist extends DataItem implements ArtistColumns{
+public class Artist extends DataItem implements ArtistColumns {
     private String artistName;
     private String imageUrl;
     private long id;
@@ -18,11 +18,8 @@ public class Artist extends DataItem implements ArtistColumns{
     public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
 
     public static Uri getContentUri() {
-        return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME +
-            LibraryProvider.AUTHORITY), TABLE_NAME);
+        return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME + LibraryProvider.AUTHORITY), TABLE_NAME);
     }
-
-    public static final Uri CONTENT_URI = Uri.withAppendedPath(LibraryProvider.AUTHORITY_URI, TABLE_NAME);
 
     public static final int BASE_URI_CODE = 0xb450ddf;
     public static final int BASE_ITEM_CODE =  0x4213467;

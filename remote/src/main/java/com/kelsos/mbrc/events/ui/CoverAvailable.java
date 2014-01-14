@@ -20,7 +20,7 @@ public class CoverAvailable {
         return this.isAvailable;
     }
 
-    public Bitmap getCover(){
+    public Bitmap getCover() {
         return  this.cover;
     }
 }

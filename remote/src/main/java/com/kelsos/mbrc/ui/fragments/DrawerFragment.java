@@ -93,7 +93,9 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
     }
 
     @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChange change) {
-        if (menuConnector == null) return;
+        if (menuConnector == null) {
+            return;
+        }
         switch (change.getStatus()) {
             case CONNECTION_OFF:
                 menuConnector.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_connectivy_off, 0, 0, 0);
@@ -107,6 +109,8 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
                 menuConnector.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_connectivity_active, 0, 0, 0);
                 menuConnector.setText(R.string.drawer_connection_status_active);
                 break;
+            default:
+                break;
         }
 
     }
@@ -118,6 +122,11 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
         }
         mBackstackChanging = false;
 
+    }
+
+    @Override public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("mSelection", mSelection);
+        super.onSaveInstanceState(outState);
     }
 
     private class DrawerOnClickListener implements ListView.OnItemClickListener {
@@ -138,10 +147,5 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
 
             getBus().post(dEvent);
         }
-    }
-
-    @Override public void onSaveInstanceState(Bundle outState) {
-        outState.putInt("mSelection", mSelection);
-        super.onSaveInstanceState(outState);
     }
 }

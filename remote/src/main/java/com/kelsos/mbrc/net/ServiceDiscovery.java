@@ -56,6 +56,23 @@ public class ServiceDiscovery {
         }
     }
 
+    private String getWifiAddress() {
+        WifiInfo mInfo = manager.getConnectionInfo();
+        int address = mInfo.getIpAddress();
+        return String.format(Locale.ENGLISH,
+                "%d.%d.%d.%d",
+                (address & 0xff),
+                (address >> 8 & 0xff),
+                (address >> 16 & 0xff),
+                (address >> 24 & 0xff));
+    }
+
+    private boolean isWifiConnected() {
+        ConnectivityManager cMan = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo current = cMan.getActiveNetworkInfo();
+        return current != null && current.getType() == ConnectivityManager.TYPE_WIFI;
+    }
+
     private class ServiceListener implements Runnable {
 
         @Override public void run() {
@@ -100,23 +117,5 @@ public class ServiceDiscovery {
                 bus.post(new DiscoveryStopped(DiscoveryStop.NOT_FOUND));
             }
         }
-    }
-
-
-    private String getWifiAddress() {
-        WifiInfo mInfo = manager.getConnectionInfo();
-        int address = mInfo.getIpAddress();
-        return String.format(Locale.ENGLISH,
-                "%d.%d.%d.%d",
-                (address & 0xff),
-                (address >> 8 & 0xff),
-                (address >> 16 & 0xff),
-                (address >> 24 & 0xff));
-    }
-
-    private boolean isWifiConnected() {
-        ConnectivityManager cMan = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo current = cMan.getActiveNetworkInfo();
-        return current != null && current.getType() == ConnectivityManager.TYPE_WIFI;
     }
 }

@@ -74,17 +74,23 @@ public class ButtonFragment extends BaseFragment {
     }
 
     @Subscribe public void handleShuffleChange(ShuffleChange change) {
-        if (shuffleButton == null) return;
+        if (shuffleButton == null) {
+            return;
+        }
         shuffleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_shuffle : R.drawable.ic_media_shuffle_off);
     }
 
     @Subscribe public void updateRepeatButtonState(RepeatChange change) {
-        if (repeatButton == null) return;
+        if (repeatButton == null) {
+            return;
+        }
         repeatButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_repeat : R.drawable.ic_media_repeat_off);
     }
 
     @Subscribe public void handlePlayStateChange(final PlayStateChange change) {
-        if (playButton == null) return;
+        if (playButton == null) {
+            return;
+        }
         switch (change.getState()) {
             case Playing:
                 playButton.setImageResource(R.drawable.ic_media_pause);
@@ -99,9 +105,9 @@ public class ButtonFragment extends BaseFragment {
             case Undefined:
                 playButton.setImageResource(R.drawable.ic_media_play);
                 break;
+            default:
+                break;
         }
-
-
     }
 
     private void post(UserAction data) {

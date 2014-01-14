@@ -23,7 +23,7 @@ import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 
 public class BrowseArtistFragment extends BaseListFragment
-        implements LoaderManager.LoaderCallbacks<Cursor>{
+        implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int GROUP_ID = 12;
     private static final int URL_LOADER = 0x12;
     private SimpleCursorAdapter mAdapter;
@@ -55,7 +55,7 @@ public class BrowseArtistFragment extends BaseListFragment
             final String gSub = Protocol.LibraryArtistAlbums;
             String query = ((ArtistEntry) line).getArtist();
 
-            UserAction ua = null;
+            UserAction ua;
             switch (item.getItemId()) {
                 case BrowseMenuItems.QUEUE_NEXT:
                     ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_next), query));
@@ -69,9 +69,11 @@ public class BrowseArtistFragment extends BaseListFragment
                 case BrowseMenuItems.GET_SUB:
                     ua = new UserAction(gSub, query);
                     break;
+                default:
+                    return false;
             }
 
-            if (ua != null) getBus().post(new MessageEvent(ProtocolEventType.UserAction, ua));
+            getBus().post(new MessageEvent(ProtocolEventType.UserAction, ua));
             return true;
         } else {
             return false;
@@ -81,22 +83,20 @@ public class BrowseArtistFragment extends BaseListFragment
     @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri baseUri;
         baseUri = Artist.getContentUri();
-        return new CursorLoader(getActivity(),baseUri,
-                new String[] {Artist.ARTIST_NAME }, null,null,null);
+        return new CursorLoader(getActivity(), baseUri,
+                new String[] {Artist.ARTIST_NAME}, null, null, null);
     }
 
     @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter = new SimpleCursorAdapter(getActivity(),
                 R.layout.ui_list_single,
                 data,
-                new String[] { Artist.ARTIST_NAME },
-                new int[] { R.id.line_one },
+                new String[] {Artist.ARTIST_NAME},
+                new int[] {R.id.line_one},
                 0);
         this.setListAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }
 
-    @Override public void onLoaderReset(Loader<Cursor> loader) {
-
-    }
+    @Override public void onLoaderReset(Loader<Cursor> loader) { }
 }

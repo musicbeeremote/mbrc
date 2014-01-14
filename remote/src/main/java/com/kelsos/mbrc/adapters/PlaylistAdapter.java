@@ -36,10 +36,10 @@ public class PlaylistAdapter extends ArrayAdapter<Playlist> {
             row = layoutInflater.inflate(mResource, parent, false);
 
             holder = new TrackHolder();
-            holder.line_one = (TextView) row.findViewById(R.id.line_one);
-            holder.line_two = (TextView) row.findViewById(R.id.line_two);
-            holder.line_one.setTypeface(robotoLight);
-            holder.line_two.setTypeface(robotoLight);
+            holder.lineOne = (TextView) row.findViewById(R.id.line_one);
+            holder.lineTwo = (TextView) row.findViewById(R.id.line_two);
+            holder.lineOne.setTypeface(robotoLight);
+            holder.lineTwo.setTypeface(robotoLight);
 
             row.setTag(holder);
         } else {
@@ -47,14 +47,14 @@ public class PlaylistAdapter extends ArrayAdapter<Playlist> {
         }
 
         Playlist list = availablePlaylists.get(position);
-        holder.line_one.setText(list.getName());
-        holder.line_two.setText(Integer.toString(list.getCount()));
+        holder.lineOne.setText(list.getName());
+        holder.lineTwo.setText(Integer.toString(list.getCount()));
 
         return row;
     }
 
     static class TrackHolder {
-        TextView line_one;
-        TextView line_two;
+        TextView lineOne;
+        TextView lineTwo;
     }
 }

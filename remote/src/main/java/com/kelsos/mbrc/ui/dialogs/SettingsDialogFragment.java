@@ -26,10 +26,6 @@ public class SettingsDialogFragment extends DialogFragment {
     private int cport;
     private int cindex;
 
-    public interface SettingsDialogListener {
-        public void onDialogPositiveClick(DialogFragment dialog, ConnectionSettings settings);
-    }
-
     SettingsDialogListener mListener;
 
     @Override public void onAttach(Activity activity) {
@@ -69,35 +65,36 @@ public class SettingsDialogFragment extends DialogFragment {
 
         AlertDialog dialog = (AlertDialog) getDialog();
         if (dialog != null) {
-            Button confirm = dialog.getButton(Dialog.BUTTON_POSITIVE);
-            confirm.setOnClickListener(new Button.OnClickListener() {
-                @Override public void onClick(View view) {
-                    boolean shouldIClose = true;
-                    String hostname = host.getText().toString();
-                    String computerName = name.getText().toString();
-
-                    if (hostname.length() == 0 || computerName.length() == 0) {
-                        shouldIClose = false;
-                    }
-
-                    String portText = port.getText().toString();
-
-                    int portNum = portText.equals("") ? 0 : Integer.parseInt(portText);
-
-                    if (validatePortNumber(portNum) && shouldIClose) {
-                        ConnectionSettings settings = new ConnectionSettings(hostname, computerName, portNum, cindex);
-                        mListener.onDialogPositiveClick(SettingsDialogFragment.this, settings);
-                        dismiss();
-                    }
-                }
-            });
-        }
-        if (dialog != null) {
             name = (EditText) dialog.findViewById(R.id.settings_dialog_name);
             host = (EditText) dialog.findViewById(R.id.settings_dialog_host);
             port = (EditText) dialog.findViewById(R.id.settings_dialog_port);
         }
+        if (dialog != null) {
+            Button confirm = dialog.getButton(Dialog.BUTTON_POSITIVE);
+            if (confirm != null) {
+                confirm.setOnClickListener(new Button.OnClickListener() {
+                    @Override public void onClick(View view) {
+                        boolean shouldIClose = true;
+                        String hostname = host.getText().toString();
+                        String computerName = name.getText().toString();
 
+                        if (hostname.length() == 0 || computerName.length() == 0) {
+                            shouldIClose = false;
+                        }
+
+                        String portText = port.getText().toString();
+
+                        int portNum = portText.equals("") ? 0 : Integer.parseInt(portText);
+
+                        if (validatePortNumber(portNum) && shouldIClose) {
+                            ConnectionSettings settings = new ConnectionSettings(hostname, computerName, portNum, cindex);
+                            mListener.onDialogPositiveClick(SettingsDialogFragment.this, settings);
+                            dismiss();
+                        }
+                    }
+                });
+            }
+        }
 
         if (name != null || !name.getText().toString().equals("")) {
             name.setText(cname);
@@ -134,5 +131,9 @@ public class SettingsDialogFragment extends DialogFragment {
             caddress = args.getString("address");
             cname = args.getString("name");
         }
+    }
+
+    public interface SettingsDialogListener {
+        void onDialogPositiveClick(DialogFragment dialog, ConnectionSettings settings);
     }
 }

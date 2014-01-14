@@ -70,6 +70,8 @@ public class ConnectionManagerActivity extends BaseActivity implements SettingsD
             case android.R.id.home:
                 onBackPressed();
                 break;
+            default:
+                return false;
         }
         return true;
     }
@@ -103,6 +105,8 @@ public class ConnectionManagerActivity extends BaseActivity implements SettingsD
             case DELETE:
                 bus.post(new ChangeSettings(mi.position, SettingsAction.DELETE));
                 break;
+            default:
+                return false;
         }
         return true;
     }
@@ -139,10 +143,9 @@ public class ConnectionManagerActivity extends BaseActivity implements SettingsD
         if (mProgress != null) {
             mProgress.hide();
         }
-        String message = "";
+        String message;
         de.keyboardsurfer.android.widget.crouton.Style style = Style.INFO;
         switch (event.getReason()) {
-
             case NO_WIFI:
                 message = getString(R.string.con_man_no_wifi);
                 break;
@@ -154,6 +157,8 @@ public class ConnectionManagerActivity extends BaseActivity implements SettingsD
                 style = Style.CONFIRM;
                 message = getString(R.string.con_man_success);
                 break;
+            default:
+                return;
         }
 
         Crouton.makeText(this, message, style).show();

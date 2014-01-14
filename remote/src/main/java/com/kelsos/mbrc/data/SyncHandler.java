@@ -80,9 +80,9 @@ public class SyncHandler {
             }
         }
 
-        long cover_id = dbHelper.insertCover(new Cover(hash));
+        long coverId = dbHelper.insertCover(new Cover(hash));
         cachedTrack.setCoverHash(hash);
-        cachedTrack.setCoverId(cover_id);
+        cachedTrack.setCoverId(coverId);
         dbHelper.insertTrack(cachedTrack);
         cachedTrack = null;
         getNextTrack();

@@ -9,9 +9,9 @@ import com.kelsos.mbrc.constants.SocketEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.net.Protocol;
 
-public class Configuration {
+public final class Configuration {
 
-    private Configuration() {}
+    private Configuration() { }
 
     @Inject public static void initialize(Controller controller) {
         controller.register(ProtocolEventType.ReduceVolume, ReduceVolumeOnRingCommand.class);
@@ -56,8 +56,8 @@ public class Configuration {
         controller.register(UserInputEventType.StartDiscovery, StartDiscoveryCommand.class);
         controller.register(UserInputEventType.KeyVolumeUp, KeyVolumeUpCommand.class);
         controller.register(UserInputEventType.KeyVolumeDown, KeyVolumeDownCommand.class);
-        controller.register(SocketEventType.SocketDataAvailable, SocketDataAvailableCommand.class);
-        controller.register(SocketEventType.SocketStatusChanged, ConnectionStatusChangedCommand.class);
-        controller.register(SocketEventType.SocketHandshakeUpdate, HandleHanshake.class);
+        controller.register(SocketEventType.DATA_AVAILABLE, SocketDataAvailableCommand.class);
+        controller.register(SocketEventType.STATUS_CHANGED, ConnectionStatusChangedCommand.class);
+        controller.register(SocketEventType.HANDSHAKE_UPDATE, HandleHanshake.class);
     }
 }

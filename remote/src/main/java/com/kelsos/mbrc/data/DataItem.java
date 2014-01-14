@@ -4,10 +4,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.util.Log;
+import com.kelsos.mbrc.BuildConfig;
 
 public abstract class DataItem implements BaseColumns {
 
-    public DataItem() {}
+    public DataItem() { }
 
     public abstract ContentValues getContentValues();
 
@@ -30,8 +32,10 @@ public abstract class DataItem implements BaseColumns {
     public void notifyProvider(final Context context) {
         try {
             context.getContentResolver().notifyChange(getUri(), null, false);
-        }
-        catch (UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException e) {
+            if (BuildConfig.DEBUG) {
+                Log.d("mbrc-log", "notifyProvider", e);
+            }
         }
     }
 }

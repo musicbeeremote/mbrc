@@ -132,7 +132,9 @@ public class MainFragmentActivity extends BaseActivity {
     }
 
     @Subscribe public void showSetupDialog(DisplayDialog event) {
-        if (mDialog != null) return;
+        if (mDialog != null) {
+            return;
+        }
         if (event.getDialogType() == DisplayDialog.SETUP) {
             mDialog = new SetupDialogFragment();
             mDialog.show(getSupportFragmentManager(), "SetupDialogFragment");
@@ -141,7 +143,7 @@ public class MainFragmentActivity extends BaseActivity {
             mDialog.show(getSupportFragmentManager(), "UpgradeDialogFragment");
         } else if (event.getDialogType() == DisplayDialog.INSTALL) {
             mDialog = new UpgradeDialogFragment();
-            ((UpgradeDialogFragment)mDialog).setNewInstall(true);
+            ((UpgradeDialogFragment) mDialog).setNewInstall(true);
             mDialog.show(getSupportFragmentManager(), "UpgradeDialogFragment");
         }
 
@@ -197,6 +199,8 @@ public class MainFragmentActivity extends BaseActivity {
                 PlaylistFragment plFragment = new PlaylistFragment();
                 replaceFragment(plFragment, "playlist");
                 break;
+            default:
+                break;
         }
         navChanged = false;
     }
@@ -235,7 +239,9 @@ public class MainFragmentActivity extends BaseActivity {
     }
 
     @Subscribe public void handleLfmStatusChange(final LfmRatingChanged event) {
-        if (favoriteItem == null) return;
+        if (favoriteItem == null) {
+            return;
+        }
         switch (event.getStatus()) {
             case LOVED:
                 favoriteItem.setIcon(R.drawable.ic_action_rating_favorite);
@@ -244,6 +250,9 @@ public class MainFragmentActivity extends BaseActivity {
                 favoriteItem.setIcon(R.drawable.ic_media_lfm_banned);
                 break;
             case NORMAL:
+                favoriteItem.setIcon(R.drawable.ic_action_rating_favorite_disabled);
+                break;
+            default:
                 favoriteItem.setIcon(R.drawable.ic_action_rating_favorite_disabled);
                 break;
         }

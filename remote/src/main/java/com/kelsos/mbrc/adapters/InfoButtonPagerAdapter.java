@@ -8,6 +8,9 @@ import com.kelsos.mbrc.ui.fragments.TrackInfoFragment;
 
 public class InfoButtonPagerAdapter extends FragmentPagerAdapter {
     private static final int M_COUNT = 2;
+    public static final int BUTTONS = 0;
+    public static final int INFO = 1;
+
     public InfoButtonPagerAdapter(FragmentManager fragmentManager) {
         super(fragmentManager);
     }
@@ -18,11 +21,12 @@ public class InfoButtonPagerAdapter extends FragmentPagerAdapter {
 
     @Override public Fragment getItem(int position) {
         switch (position) {
-            case 0:
+            case BUTTONS:
                 return new ButtonFragment();
-            case 1:
+            case INFO:
                 return new TrackInfoFragment();
+            default:
+                return null;
         }
-        return null;
     }
 }

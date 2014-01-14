@@ -29,29 +29,50 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
     }
 
     @Override protected void handleReceive(Context context, Intent intent) {
-        if (intent.getAction().equals(TelephonyManager.ACTION_PHONE_STATE_CHANGED)) {
-            Bundle bundle = intent.getExtras();
-            if (null == bundle) return;
-            String state = bundle.getString(TelephonyManager.EXTRA_STATE);
-            if (state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)
-                    && settingsManager.isVolumeReducedOnRinging()) {
-                bus.post(new MessageEvent(ProtocolEventType.ReduceVolume));
-            }
-        } else if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
-            NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-            if (networkInfo.getState().equals(NetworkInfo.State.CONNECTED)) {
-                bus.post(new MessageEvent(UserInputEventType.StartConnection));
-            } else if (networkInfo.getState().equals(NetworkInfo.State.DISCONNECTING)) {
+        final String action = intent.getAction();
+        if (action == null) {
+            return;
+        }
 
-            }
-        } else if (intent.getAction().equals(NotificationService.NOTIFICATION_PLAY_PRESSED)) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerPlayPause, true)));
-        } else if (intent.getAction().equals(NotificationService.NOTIFICATION_NEXT_PRESSED)) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerNext, true)));
-        } else if (intent.getAction().equals(NotificationService.NOTIFICATION_CLOSE_PRESSED)) {
-            bus.post(new MessageEvent(UserInputEventType.CancelNotification));
-        } else if (intent.getAction().equals(NotificationService.NOTIFICATION_PREVIOUS_PRESSED)) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerPrevious, true)));
+        switch (action) {
+            case TelephonyManager.ACTION_PHONE_STATE_CHANGED:
+                Bundle bundle = intent.getExtras();
+                if (null == bundle) {
+                    return;
+                }
+                String state = bundle.getString(TelephonyManager.EXTRA_STATE);
+                if (state != null && state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)
+                        && settingsManager.isVolumeReducedOnRinging()) {
+                    bus.post(new MessageEvent(ProtocolEventType.ReduceVolume));
+                }
+                break;
+            case WifiManager.NETWORK_STATE_CHANGED_ACTION:
+                NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                NetworkInfo.State niState;
+                if (networkInfo != null) {
+                    niState = networkInfo.getState();
+                    if (niState.equals(NetworkInfo.State.CONNECTED)) {
+                        bus.post(new MessageEvent(UserInputEventType.StartConnection));
+                    }
+                }
+                break;
+            case NotificationService.NOTIFICATION_PLAY_PRESSED:
+                bus.post(new MessageEvent(ProtocolEventType.UserAction,
+                        new UserAction(Protocol.PlayerPlayPause, true)));
+                break;
+            case NotificationService.NOTIFICATION_NEXT_PRESSED:
+                bus.post(new MessageEvent(ProtocolEventType.UserAction,
+                        new UserAction(Protocol.PlayerNext, true)));
+                break;
+            case NotificationService.NOTIFICATION_CLOSE_PRESSED:
+                bus.post(new MessageEvent(UserInputEventType.CancelNotification));
+                break;
+            case NotificationService.NOTIFICATION_PREVIOUS_PRESSED:
+                bus.post(new MessageEvent(ProtocolEventType.UserAction,
+                        new UserAction(Protocol.PlayerPrevious, true)));
+                break;
+            default:
+                break;
         }
 
     }
@@ -62,13 +83,13 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
      * Android operating system.
      */
     private void installFilter() {
-        IntentFilter _nmFilter = new IntentFilter();
-        _nmFilter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
-        _nmFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        _nmFilter.addAction(NotificationService.NOTIFICATION_PLAY_PRESSED);
-        _nmFilter.addAction(NotificationService.NOTIFICATION_NEXT_PRESSED);
-        _nmFilter.addAction(NotificationService.NOTIFICATION_CLOSE_PRESSED);
-        _nmFilter.addAction(NotificationService.NOTIFICATION_PREVIOUS_PRESSED);
-        context.registerReceiver(this, _nmFilter);
+        IntentFilter nmFilter = new IntentFilter();
+        nmFilter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
+        nmFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        nmFilter.addAction(NotificationService.NOTIFICATION_PLAY_PRESSED);
+        nmFilter.addAction(NotificationService.NOTIFICATION_NEXT_PRESSED);
+        nmFilter.addAction(NotificationService.NOTIFICATION_CLOSE_PRESSED);
+        nmFilter.addAction(NotificationService.NOTIFICATION_PREVIOUS_PRESSED);
+        context.registerReceiver(this, nmFilter);
     }
 }

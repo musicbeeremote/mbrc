@@ -103,8 +103,8 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
 
     public synchronized int deleteItem(final DataItem item) {
         final SQLiteDatabase db = this.getWritableDatabase();
-        final int result = db.delete(item.getTableName(), Album._ID +
-                IS, new String[]{Long.toString(item.getId())});
+        final int result = db.delete(item.getTableName(), Album._ID
+                + IS, new String[]{Long.toString(item.getId())});
 
         if (result > 0) {
             item.notifyProvider(mContext);

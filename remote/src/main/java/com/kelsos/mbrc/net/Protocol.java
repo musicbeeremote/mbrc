@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.net;
 
-public class Protocol {
+public final class Protocol {
 
-    private Protocol() {}
+    private Protocol() { }
 
     public static final String Error = "error";
     public static final String Player = "player";

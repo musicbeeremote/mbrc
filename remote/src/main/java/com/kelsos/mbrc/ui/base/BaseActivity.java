@@ -19,7 +19,7 @@ import java.util.Map;
 
 public abstract class BaseActivity extends ActionBarActivity implements RoboContext {
     protected EventManager eventManager;
-    protected Map<Key<?>,Object> scopedObjects = new HashMap<>();
+    protected Map<Key<?>, Object> scopedObjects = new HashMap<>();
 
     @Inject ContentViewListener ignored; // BUG find a better place to put this
     @Inject private ScopedBus scopedBus;
@@ -36,11 +36,6 @@ public abstract class BaseActivity extends ActionBarActivity implements RoboCont
         super.onCreate(savedInstanceState);
         eventManager.fire(new OnCreateEvent(savedInstanceState));
         scopedBus.register(this);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -70,7 +65,7 @@ public abstract class BaseActivity extends ActionBarActivity implements RoboCont
     }
 
     @Override
-    protected void onNewIntent( Intent intent ) {
+    protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         eventManager.fire(new OnNewIntentEvent());
     }

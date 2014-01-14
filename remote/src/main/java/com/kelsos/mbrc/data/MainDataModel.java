@@ -56,7 +56,10 @@ public class MainDataModel {
         this.bus = bus;
         bus.register(this);
 
-        title = artist = album = year = "";
+        title = "";
+        artist = "";
+        album = "";
+        year = "";
         volume = MAX_VOLUME;
 
         isConnectionOn = false;
@@ -102,12 +105,16 @@ public class MainDataModel {
     }
 
     public void setLfmRating(String rating) {
-        if (rating.equals("Love")) {
-            lfmRating = LfmStatus.LOVED;
-        } else if (rating.equals("Ban")) {
-            lfmRating = LfmStatus.BANNED;
-        } else {
-            lfmRating = LfmStatus.NORMAL;
+        switch (rating) {
+            case "Love":
+                lfmRating = LfmStatus.LOVED;
+                break;
+            case "Ban":
+                lfmRating = LfmStatus.BANNED;
+                break;
+            default:
+                lfmRating = LfmStatus.NORMAL;
+                break;
         }
 
         bus.post(new LfmRatingChanged(lfmRating));
@@ -248,28 +255,28 @@ public class MainDataModel {
         if (!isConnectionOn) {
             setPlayState(Const.STOPPED);
         }
-        bus.post(new ConnectionStatusChange(isConnectionOn ?
-                (isHandShakeDone ?
-                        ConnectionStatus.CONNECTION_ACTIVE :
-                        ConnectionStatus.CONNECTION_ON) :
-                ConnectionStatus.CONNECTION_OFF));
+        bus.post(new ConnectionStatusChange(isConnectionOn
+                ? (isHandShakeDone
+                    ? ConnectionStatus.CONNECTION_ACTIVE
+                    : ConnectionStatus.CONNECTION_ON)
+                : ConnectionStatus.CONNECTION_OFF));
     }
 
     public void setHandShakeDone(boolean handShakeDone) {
         this.isHandShakeDone = handShakeDone;
-        bus.post(new ConnectionStatusChange(isConnectionOn ?
-                (isHandShakeDone ?
-                        ConnectionStatus.CONNECTION_ACTIVE :
-                        ConnectionStatus.CONNECTION_ON) :
-                ConnectionStatus.CONNECTION_OFF));
+        bus.post(new ConnectionStatusChange(isConnectionOn
+                ? (isHandShakeDone
+                    ? ConnectionStatus.CONNECTION_ACTIVE
+                    : ConnectionStatus.CONNECTION_ON)
+                : ConnectionStatus.CONNECTION_OFF));
     }
 
     @Produce public ConnectionStatusChange produceConnectionStatus() {
-        return new ConnectionStatusChange(isConnectionOn ?
-                (isHandShakeDone ?
-                        ConnectionStatus.CONNECTION_ACTIVE :
-                        ConnectionStatus.CONNECTION_ON) :
-                ConnectionStatus.CONNECTION_OFF);
+        return new ConnectionStatusChange(isConnectionOn
+                ? (isHandShakeDone
+                    ? ConnectionStatus.CONNECTION_ACTIVE
+                    : ConnectionStatus.CONNECTION_ON)
+                : ConnectionStatus.CONNECTION_OFF);
     }
 
     public boolean getIsConnectionActive() {
@@ -314,9 +321,13 @@ public class MainDataModel {
 
     public void setPlayState(String playState) {
         PlayState newState = PlayState.Undefined;
-        if (playState.equalsIgnoreCase(Const.PLAYING)) newState = PlayState.Playing;
-        else if (playState.equalsIgnoreCase(Const.STOPPED)) newState = PlayState.Stopped;
-        else if (playState.equalsIgnoreCase(Const.PAUSED)) newState = PlayState.Paused;
+        if (playState.equalsIgnoreCase(Const.PLAYING)) {
+            newState = PlayState.Playing;
+        } else if (playState.equalsIgnoreCase(Const.STOPPED)) {
+            newState = PlayState.Stopped;
+        } else if (playState.equalsIgnoreCase(Const.PAUSED)) {
+            newState = PlayState.Paused;
+        }
         this.playState = newState;
         bus.post(new PlayStateChange(this.playState));
         updateNotification();
@@ -331,7 +342,9 @@ public class MainDataModel {
     }
 
     public void setLyrics(String lyrics) {
-        if (lyrics == null || lyrics.equals(this.lyrics)) return;
+        if (lyrics == null || lyrics.equals(this.lyrics)) {
+            return;
+        }
         this.lyrics = lyrics.replace("<p>", "\r\n")
                 .replace("<br>", "\n")
                 .replace("&lt;", "<")

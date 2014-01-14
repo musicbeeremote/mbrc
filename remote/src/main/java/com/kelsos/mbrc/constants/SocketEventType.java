@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.constants;
 
-public class SocketEventType {
+public final class SocketEventType {
 
-    private SocketEventType () {}
+    private SocketEventType() { }
 
-    public static final String SocketDataAvailable = "SocketDataAvailable";
-    public static final String SocketStatusChanged = "SocketStatusChanged";
-    public static final String SocketHandshakeUpdate = "SocketHandshakeUpdate";
+    public static final String DATA_AVAILABLE = "SocketDataAvailable";
+    public static final String STATUS_CHANGED = "SocketStatusChanged";
+    public static final String HANDSHAKE_UPDATE = "SocketHandshakeUpdate";
 }

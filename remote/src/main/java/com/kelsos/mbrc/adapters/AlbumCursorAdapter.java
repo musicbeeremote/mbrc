@@ -24,11 +24,11 @@ public class AlbumCursorAdapter extends CursorAdapter {
     }
 
     @Override public void bindView(View view, Context context, Cursor cursor) {
-        final ImageView imageView = ((ImageView)view.findViewById(R.id.ui_grid_image));
+        final ImageView imageView = ((ImageView) view.findViewById(R.id.ui_grid_image));
         final Album album = new Album(cursor);
         final Uri uri = Uri.withAppendedPath(Cover.CONTENT_IMAGE_URI, album.getCoverHash());
-        ((TextView)view.findViewById(R.id.line_one)).setText(album.getAlbumName());
-        ((TextView)view.findViewById(R.id.line_two)).setText(album.getArtist());
+        ((TextView) view.findViewById(R.id.line_one)).setText(album.getAlbumName());
+        ((TextView) view.findViewById(R.id.line_two)).setText(album.getArtist());
         Picasso.with(context)
                 .load(uri)
                 .fit()

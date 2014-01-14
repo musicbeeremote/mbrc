@@ -6,11 +6,11 @@ public class DrawerEvent {
     private boolean closeDrawer;
     private DisplayFragment navigate;
 
-    public DrawerEvent () {
+    public DrawerEvent() {
         closeDrawer = true;
     }
 
-    public DrawerEvent (DisplayFragment navigate) {
+    public DrawerEvent(DisplayFragment navigate) {
         closeDrawer = false;
         this.navigate = navigate;
     }

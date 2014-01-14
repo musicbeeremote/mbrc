@@ -3,7 +3,7 @@ package com.kelsos.mbrc.data;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"index"})
+@JsonIgnoreProperties({ "index" })
 public class ConnectionSettings {
     private String address;
     private String name;

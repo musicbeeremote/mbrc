@@ -16,28 +16,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BrowseFragment extends BaseFragment {
-    private ViewPager mPager;
+    public static final int LIBRARY_SYNC = 1;
+    public static final int GROUP_ID = 15;
     private BrowsePagerAdapter mAdapter;
 
-    public BrowseFragment() {}
+    public BrowseFragment() { }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ui_fragment_search, container, false);
-        mPager = (ViewPager) view.findViewById(R.id.search_pager);
-        mPager.setAdapter(mAdapter);
-        TitlePageIndicator titleIndicator = (TitlePageIndicator) view.findViewById(R.id.search_categories);
-        titleIndicator.setViewPager(mPager);
+        ViewPager mPager;
+        if (view != null) {
+            mPager = (ViewPager) view.findViewById(R.id.search_pager);
+            mPager.setAdapter(mAdapter);
+            TitlePageIndicator titleIndicator = (TitlePageIndicator) view.findViewById(R.id.search_categories);
+            titleIndicator.setViewPager(mPager);
+        }
+
         return view;
     }
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case 1:
-                Map<String, String> req = new HashMap<String,String>();
-                req.put("type","full");
+            case LIBRARY_SYNC:
+                Map<String, String> req = new HashMap<>();
+                req.put("type", "full");
                 getBus().post(new MessageEvent(ProtocolEventType.UserAction,
                     new UserAction(Protocol.LibrarySync, req)));
                 break;
+            default:
+                return false;
         }
         return false;
     }
@@ -49,7 +56,7 @@ public class BrowseFragment extends BaseFragment {
     }
 
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.add(15,1,0,"Sync Library");
+        menu.add(GROUP_ID, LIBRARY_SYNC, 0, "Sync Library");
     }
 
     @Override public void onDestroy() {

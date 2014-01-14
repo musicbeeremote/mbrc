@@ -16,15 +16,15 @@ public class LibraryProvider extends ContentProvider {
     public static final String AUTHORITY = "com.kelsos.mbrc.provider";
     public static final String SCHEME = "content://";
     public static final Uri AUTHORITY_URI = Uri.parse(SCHEME + AUTHORITY);
-    private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
     private LibraryDbHelper dbHelper;
 
     static {
-        Album.addMatcherUris(sUriMatcher);
-        Artist.addMatcherUris(sUriMatcher);
-        Cover.addMatcherUris(sUriMatcher);
-        Genre.addMatcherUris(sUriMatcher);
-        Track.addMatcherUris(sUriMatcher);
+        Album.addMatcherUris(URI_MATCHER);
+        Artist.addMatcherUris(URI_MATCHER);
+        Cover.addMatcherUris(URI_MATCHER);
+        Genre.addMatcherUris(URI_MATCHER);
+        Track.addMatcherUris(URI_MATCHER);
     }
     @Override public boolean onCreate() {
         dbHelper = new LibraryDbHelper(getContext());
@@ -35,7 +35,7 @@ public class LibraryProvider extends ContentProvider {
         Cursor result = null;
         final long id;
         ContentResolver contentResolver = getContext().getContentResolver();
-        switch (sUriMatcher.match(uri)) {
+        switch (URI_MATCHER.match(uri)) {
             case Album.BASE_ITEM_CODE:
                 id = Long.parseLong(uri.getLastPathSegment());
                 result = dbHelper.getAlbumCursor(id);
@@ -45,15 +45,18 @@ public class LibraryProvider extends ContentProvider {
                 SQLiteQueryBuilder sqBuilder = new SQLiteQueryBuilder();
                 sqBuilder.setTables(String.format("%s al, %s ar, %s c, %s t",
                         Album.TABLE_NAME, Artist.TABLE_NAME, Cover.TABLE_NAME, Track.TABLE_NAME));
-                String datasel = "t."+Track.ALBUM_ID + " = " + "al."+Album._ID +
-                        " and " + "c."+Cover._ID + " = " + "t."+Track.COVER_ID + " and " +
-                "al."+Album.ARTIST_ID + " = " + "ar." + Artist._ID;
+                String datasel = "t." + Track.ALBUM_ID + " = " + "al."+ Album._ID
+                        + " and " + "c." + Cover._ID + " = " + "t." + Track.COVER_ID + " and "
+                        + "al." + Album.ARTIST_ID + " = " + "ar." + Artist._ID;
 
                result = sqBuilder.query(dbHelper.getReadableDatabase(),
-                        new String[] { "al." +Album._ID, Album.ALBUM_NAME, "al."+Album.ARTIST_ID, Artist.ARTIST_NAME, Cover.COVER_HASH },
+                        new String[] {"al." + Album._ID,
+                                Album.ALBUM_NAME, "al." + Album.ARTIST_ID,
+                                Artist.ARTIST_NAME,
+                                Cover.COVER_HASH },
                         datasel,
                         null,
-                       "al." +Album._ID,
+                       "al." + Album._ID,
                         null,
                         "ar."+ Artist.ARTIST_NAME + ", al." + Album.ALBUM_NAME + " ASC");
 
@@ -91,10 +94,10 @@ public class LibraryProvider extends ContentProvider {
                 result.setNotificationUri(contentResolver, uri);
                 break;
             case Genre.BASE_FILTER_CODE:
-                selection = Genre.GENRE_NAME + " LIKE ?";
-                String search = "%"+uri.getLastPathSegment()+"%";
-                selectionArgs = new String[] { search };
-                result = dbHelper.getAllGenresCursor(selection, selectionArgs, sortOrder);
+                String search = "%" + uri.getLastPathSegment() + "%";
+                result = dbHelper.getAllGenresCursor(Genre.GENRE_NAME + " LIKE ?",
+                        new String[] {search},
+                        sortOrder);
                 result.setNotificationUri(contentResolver, uri);
                 break;
             case Track.BASE_ITEM_CODE:
@@ -113,7 +116,7 @@ public class LibraryProvider extends ContentProvider {
     }
 
     @Override public String getType(Uri uri) {
-        switch (sUriMatcher.match(uri)) {
+        switch (URI_MATCHER.match(uri)) {
             case Album.BASE_ITEM_CODE:
                 return Album.TYPE_ITEM;
             case Album.BASE_URI_CODE:
@@ -155,7 +158,7 @@ public class LibraryProvider extends ContentProvider {
     }
 
     @Override public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException {
-        if (sUriMatcher.match(uri) != Cover.BASE_IMAGE_CODE) {
+        if (URI_MATCHER.match(uri) != Cover.BASE_IMAGE_CODE) {
             throw new IllegalArgumentException("Action not supported");
         } else {
             File file = new File(String.format("%s/%s", getContext().getFilesDir(), uri.getLastPathSegment()));

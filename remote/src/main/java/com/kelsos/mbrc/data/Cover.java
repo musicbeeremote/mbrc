@@ -10,16 +10,15 @@ public class Cover extends DataItem implements CoverColumns {
     private long id;
     private String coverHash;
     public static final String TABLE_NAME = "covers";
-    public static final String[] FIELDS = { _ID, COVER_HASH };
+    public static final String[] FIELDS = {_ID, COVER_HASH};
 
     public static final String CREATE_TABLE =
-            "create table " + TABLE_NAME + "(" + _ID + " integer primary key autoincrement," +
-                    COVER_HASH + " text unique " + ")";
+            "create table " + TABLE_NAME + "(" + _ID + " integer primary key autoincrement,"
+                    + COVER_HASH + " text unique " + ")";
     public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
 
     public static Uri getContentUri() {
-        return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME +
-                LibraryProvider.AUTHORITY), TABLE_NAME);
+        return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME + LibraryProvider.AUTHORITY), TABLE_NAME);
     }
 
     public static final Uri CONTENT_URI = Uri.withAppendedPath(LibraryProvider.AUTHORITY_URI, TABLE_NAME);

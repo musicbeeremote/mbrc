@@ -35,7 +35,7 @@ public class Controller extends RoboService {
     private static final TimeUnit KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS;
 
     public Controller() {
-        mExecutionQueue = new LinkedBlockingQueue<Runnable>();
+        mExecutionQueue = new LinkedBlockingQueue<>();
         mCommandExecutionThreadPool = new ThreadPoolExecutor(NUMBER_OF_CORES,
                 NUMBER_OF_CORES,
                 KEEP_ALIVE_TIME,
@@ -53,7 +53,7 @@ public class Controller extends RoboService {
 
     public void register(String type, Class<? extends ICommand> command) {
         if (commandMap == null) {
-            commandMap = new HashMap<String, Class<? extends ICommand>>();
+            commandMap = new HashMap<>();
         }
         if (!commandMap.containsKey(type)) {
             commandMap.put(type, command);
@@ -77,10 +77,14 @@ public class Controller extends RoboService {
 
     public void executeCommand(final IEvent event) {
         Class<? extends ICommand> commandClass = this.commandMap.get(event.getType());
-        if (commandClass == null) return;
+        if (commandClass == null) {
+            return;
+        }
         try {
             final ICommand commandInstance = injector.getInstance(commandClass);
-            if (commandInstance == null) return;
+            if (commandInstance == null) {
+                return;
+            }
             mCommandExecutionThreadPool.execute(new Runnable() {
                 @Override public void run() {
                     commandInstance.execute(event);

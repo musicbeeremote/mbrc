@@ -5,7 +5,7 @@ import com.kelsos.mbrc.enums.ConnectionStatus;
 public class ConnectionStatusChange {
     private ConnectionStatus status;
 
-    public ConnectionStatusChange(ConnectionStatus status){
+    public ConnectionStatusChange(ConnectionStatus status) {
         this.status = status;
     }
 

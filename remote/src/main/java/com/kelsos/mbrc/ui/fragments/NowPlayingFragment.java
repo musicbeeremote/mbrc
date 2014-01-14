@@ -65,7 +65,9 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
     }
 
     @Subscribe public void handlePlayingTrackChange(TrackInfoChange event) {
-        if (adapter == null || !adapter.getClass().equals(NowPlayingAdapter.class)) return;
+        if (adapter == null || !adapter.getClass().equals(NowPlayingAdapter.class)) {
+            return;
+        }
         adapter.setPlayingTrackIndex(adapter.getPosition(new MusicTrack(event.getArtist(), event.getTitle())));
         adapter.notifyDataSetChanged();
     }
@@ -149,20 +151,33 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
 
     private int calculateNewIndex(int from, int to, int index) {
         int dist = Math.abs(from - to);
-        if (dist == 1 && index == from ||
-                dist > 1 && from > to && index == from ||
-                dist > 1 && from < to && index == from) {
-            index = to;
-        } else if (dist == 1 && index == to) {
-            index = from;
-        } else if (dist > 1 && from > to && index == to ||
-                from > index && to < index) {
-            index += 1;
-        } else if (dist > 1 && from < to && index == to ||
-                from < index && to > index) {
-            index -= 1;
+        int rIndex = index;
+        if (dist == 1
+                && index == from
+                || dist > 1
+                && from > to
+                && index == from
+                || dist > 1
+                && from < to
+                && index == from) {
+            rIndex = to;
+        } else if (dist == 1
+                && index == to) {
+            rIndex = from;
+        } else if (dist > 1
+                && from > to
+                && index == to
+                || from > index
+                && to < index) {
+            rIndex += 1;
+        } else if (dist > 1
+                && from < to
+                && index == to
+                || from < index
+                && to > index) {
+            rIndex -= 1;
         }
-        return index;
+        return rIndex;
     }
 
     private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {

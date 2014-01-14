@@ -6,21 +6,20 @@ import android.database.Cursor;
 import android.net.Uri;
 
 public class Genre extends DataItem implements GenreColumns {
-    public static final String[] FIELDS ={_ID, GENRE_NAME} ;
+    public static final String[] FIELDS ={_ID, GENRE_NAME};
 
     private long id;
     private String genreName;
     public static final String TABLE_NAME = "genres";
 
     public static final String CREATE_TABLE =
-            "create table " + TABLE_NAME + "(" + _ID + " integer primary key autoincrement," +
-                    GENRE_NAME + " text unique " + ")";
+            "create table " + TABLE_NAME + "(" + _ID + " integer primary key autoincrement,"
+                    + GENRE_NAME + " text unique " + ")";
     public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
 
 
     public static Uri getContentUri() {
-        return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME +
-                LibraryProvider.AUTHORITY), TABLE_NAME);
+        return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME + LibraryProvider.AUTHORITY), TABLE_NAME);
     }
 
     public static final Uri CONTENT_URI = Uri.withAppendedPath(LibraryProvider.AUTHORITY_URI, TABLE_NAME);

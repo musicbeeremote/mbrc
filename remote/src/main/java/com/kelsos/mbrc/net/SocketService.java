@@ -26,6 +26,8 @@ import java.net.SocketTimeoutException;
 public class SocketService {
     public static final int MAX_RETRIES = 3;
     public static final int BUFFER_SIZE = 4096;
+    public static final int DELAY = 3;
+    public static final int SUB_START = 26;
     private static int numOfRetries;
     private MainThreadBusWrapper bus;
     private SettingsManager settingsManager;
@@ -37,7 +39,7 @@ public class SocketService {
     private DelayTimer cTimer;
     private DelayTimer.TimerFinishEvent timerFinishEvent = new DelayTimer.TimerFinishEvent() {
         public void onTimerFinish() {
-            cThread = new Thread(new socketConnection());
+            cThread = new Thread(new SocketConnection());
             cThread.start();
             numOfRetries++;
         }
@@ -48,7 +50,7 @@ public class SocketService {
         this.settingsManager = settingsManager;
         this.mapper = mapper;
 
-        cTimer = new DelayTimer(3, timerFinishEvent);
+        cTimer = new DelayTimer(DELAY, timerFinishEvent);
         numOfRetries = 0;
         shouldStop = false;
         socketManager(SocketAction.START);
@@ -58,15 +60,18 @@ public class SocketService {
         switch (action) {
             case RESET:
                 cleanupSocket();
-                if (cThread != null) cThread.interrupt();
+                if (cThread != null) {
+                    cThread.interrupt();
+                }
                 cThread = null;
                 shouldStop = false;
                 numOfRetries = 0;
                 cTimer.start();
                 break;
             case START:
-                if (sIsConnected() || cThreadIsAlive()) return;
-                else if (!sIsConnected() && cThreadIsAlive()) {
+                if (sIsConnected() || cThreadIsAlive()) {
+                    return;
+                } else if (!sIsConnected() && cThreadIsAlive()) {
                     cThread.interrupt();
                     cThread = null;
                 }
@@ -74,7 +79,9 @@ public class SocketService {
                 break;
             case RETRY:
                 cleanupSocket();
-                if (cThread != null) cThread.interrupt();
+                if (cThread != null) {
+                    cThread.interrupt();
+                }
                 cThread = null;
                 if (shouldStop) {
                     shouldStop = false;
@@ -101,8 +108,9 @@ public class SocketService {
     }
 
     private void cleanupSocket() {
-        if (!sIsConnected())
+        if (!sIsConnected()) {
             return;
+        }
         try {
             if (output != null) {
                 output.flush();
@@ -111,9 +119,7 @@ public class SocketService {
             }
             clSocket.close();
             clSocket = null;
-        } catch (IOException ignore) {
-
-        }
+        } catch (IOException ignore) { }
     }
 
     private boolean cThreadIsAlive() {
@@ -135,11 +141,13 @@ public class SocketService {
         }
     }
 
-    private class socketConnection implements Runnable {
+    private class SocketConnection implements Runnable {
         public void run() {
             SocketAddress socketAddress = settingsManager.getSocketAddress();
-            bus.post(new MessageEvent(SocketEventType.SocketHandshakeUpdate, false));
-            if (null == socketAddress) return;
+            bus.post(new MessageEvent(SocketEventType.HANDSHAKE_UPDATE, false));
+            if (null == socketAddress) {
+                return;
+            }
             BufferedReader input;
             try {
                 clSocket = new Socket();
@@ -149,13 +157,13 @@ public class SocketService {
 
                 String socketStatus = String.valueOf(clSocket.isConnected());
 
-                bus.post(new MessageEvent(SocketEventType.SocketStatusChanged, socketStatus));
+                bus.post(new MessageEvent(SocketEventType.STATUS_CHANGED, socketStatus));
                 while (clSocket.isConnected()) {
                     try {
                         final String incoming = input.readLine();
-                        if (incoming == null) throw new IOException();
-                        if (incoming.length() > 0)
-                            bus.post(new MessageEvent(SocketEventType.SocketDataAvailable, incoming));
+                        if (incoming != null && incoming.length() > 0) {
+                            bus.post(new MessageEvent(SocketEventType.DATA_AVAILABLE, incoming));
+                        }
                     } catch (IOException e) {
                         input.close();
                         clSocket.close();
@@ -165,7 +173,7 @@ public class SocketService {
             } catch (SocketTimeoutException e) {
                 bus.post(new NotifyUser(R.string.notification_connection_timeout));
             } catch (SocketException e) {
-                bus.post(new NotifyUser(e.toString().substring(26)));
+                bus.post(new NotifyUser(e.toString().substring(SUB_START)));
             } catch (IOException | NullPointerException ignored) {
             } finally {
                 if (output != null) {
@@ -174,7 +182,7 @@ public class SocketService {
                 }
                 clSocket = null;
 
-                bus.post(new MessageEvent(SocketEventType.SocketStatusChanged, false));
+                bus.post(new MessageEvent(SocketEventType.STATUS_CHANGED, false));
                 if (numOfRetries < MAX_RETRIES) {
                     socketManager(SocketAction.RETRY);
                 }

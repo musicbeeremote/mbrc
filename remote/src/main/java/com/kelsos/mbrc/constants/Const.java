@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.constants;
 
-public class Const {
+public final class Const {
 
-    private Const() {}
+    private Const() { }
 
     public static final String DATA = "data";
     public static final String TOGGLE = "toggle";

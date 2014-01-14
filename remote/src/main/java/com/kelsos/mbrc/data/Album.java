@@ -8,18 +8,17 @@ import android.net.Uri;
 public class Album extends DataItem implements AlbumColumns {
     public static final String TABLE_NAME = "albums";
     public static final String CREATE_TABLE =
-            "create table " + TABLE_NAME + "(" + _ID + " integer primary key autoincrement," +
-                    ALBUM_NAME + " text unique," + ARTIST_ID + " integer, " +
-                    "foreign key (" + ARTIST_ID + ") references " +
-                    Artist.TABLE_NAME + "(" + _ID + ") on delete cascade" + ")";
+            "create table " + TABLE_NAME + "(" + _ID + " integer primary key autoincrement,"
+                    + ALBUM_NAME + " text unique," + ARTIST_ID + " integer, "
+                    + "foreign key (" + ARTIST_ID + ") references "
+                    + Artist.TABLE_NAME + "(" + _ID + ") on delete cascade" + ")";
     public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
 
-    public static Uri URI() {
-        return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME +
-            LibraryProvider.AUTHORITY), TABLE_NAME);
+    public static Uri getContentUri() {
+        return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME + LibraryProvider.AUTHORITY), TABLE_NAME);
     }
 
-    public static String[] FIELDS = { _ID, ALBUM_NAME, ARTIST_ID };
+    public static final String[] FIELDS = {_ID, ALBUM_NAME, ARTIST_ID};
 
     public static final int BASE_URI_CODE = 0x33872c3;
     public static final int BASE_ITEM_CODE =  0x462395d;

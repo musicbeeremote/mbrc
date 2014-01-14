@@ -22,11 +22,9 @@ import com.kelsos.mbrc.data.GenreEntry;
 import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.activities.Profile;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
-import com.squareup.otto.Subscribe;
 
 public class BrowseGenreFragment extends BaseListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener {
@@ -41,7 +39,6 @@ public class BrowseGenreFragment extends BaseListFragment
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
-
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -70,7 +67,7 @@ public class BrowseGenreFragment extends BaseListFragment
             final String gSub = Protocol.LibraryGenreArtists;
             String query = ((GenreEntry) line).getName();
 
-            UserAction ua = null;
+            UserAction ua;
             switch (item.getItemId()) {
                 case BrowseMenuItems.QUEUE_NEXT:
                     ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_next), query));
@@ -84,9 +81,11 @@ public class BrowseGenreFragment extends BaseListFragment
                 case BrowseMenuItems.GET_SUB:
                     ua = new UserAction(gSub, query);
                     break;
+                default:
+                    return false;
             }
 
-            if (ua != null) getBus().post(new MessageEvent(ProtocolEventType.UserAction, ua));
+            getBus().post(new MessageEvent(ProtocolEventType.UserAction, ua));
             return true;
         } else {
             return false;
@@ -102,7 +101,7 @@ public class BrowseGenreFragment extends BaseListFragment
             baseUri = Genre.CONTENT_URI;
         }
 
-        return new CursorLoader(getActivity(),baseUri,Genre.FIELDS, null,null,null);
+        return new CursorLoader(getActivity(), baseUri, Genre.FIELDS, null, null, null);
     }
 
     @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
@@ -117,7 +116,7 @@ public class BrowseGenreFragment extends BaseListFragment
 
     @Override public boolean onQueryTextSubmit(String query) {
         mFilter = !TextUtils.isEmpty(query) ? query : null;
-        getLoaderManager().restartLoader(URL_LOADER, null,this);
+        getLoaderManager().restartLoader(URL_LOADER, null, this);
         mSearchView.setIconified(true);
         mSearchItem.collapseActionView();
         return false;
@@ -130,7 +129,7 @@ public class BrowseGenreFragment extends BaseListFragment
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_now_playing, menu);
-        mSearchView = new SearchView(((ActionBarActivity)getActivity()).getSupportActionBar().getThemedContext());
+        mSearchView = new SearchView(((ActionBarActivity) getActivity()).getSupportActionBar().getThemedContext());
         mSearchView.setQueryHint("Search for Genre");
         mSearchView.setIconifiedByDefault(true);
         mSearchItem = menu.findItem(R.id.now_playing_search_item);
@@ -140,7 +139,7 @@ public class BrowseGenreFragment extends BaseListFragment
 
     @Override public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        final Genre genre = new Genre((Cursor)mAdapter.getItem(position));
+        final Genre genre = new Genre((Cursor) mAdapter.getItem(position));
         Intent intent = new Intent(getActivity(), Profile.class);
         intent.putExtra("name", genre.getGenreName());
         intent.putExtra("id", genre.getId());

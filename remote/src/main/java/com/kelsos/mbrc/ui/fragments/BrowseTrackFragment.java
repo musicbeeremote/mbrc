@@ -59,6 +59,8 @@ public class BrowseTrackFragment extends BaseListFragment
                 case BrowseMenuItems.PLAY_NOW:
                     ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_now), query));
                     break;
+                default:
+                    return false;
             }
 
             //if (ua != null) bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
@@ -71,22 +73,20 @@ public class BrowseTrackFragment extends BaseListFragment
     @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri baseUri;
         baseUri = Track.getContentUri();
-        return new CursorLoader(getActivity(),baseUri,
-                new String[] { Track.TITLE, Artist.ARTIST_NAME }, null,null,null);
+        return new CursorLoader(getActivity(), baseUri,
+                new String[] {Track.TITLE, Artist.ARTIST_NAME}, null, null, null);
     }
 
     @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter = new SimpleCursorAdapter(getActivity(),
                 R.layout.ui_list_dual,
                 data,
-                new String[] { Track.TITLE, Artist.ARTIST_NAME },
-                new int[] { R.id.line_one, R.id.line_two },
+                new String[] {Track.TITLE, Artist.ARTIST_NAME},
+                new int[] {R.id.line_one, R.id.line_two},
                 0);
         this.setListAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }
 
-    @Override public void onLoaderReset(Loader<Cursor> loader) {
-
-    }
+    @Override public void onLoaderReset(Loader<Cursor> loader) { }
 }

@@ -22,6 +22,6 @@ public class GenreCursorAdapter extends CursorAdapter {
 
     @Override public void bindView(View view, Context context, Cursor cursor) {
         final Genre genre = new Genre(cursor);
-        ((TextView)view.findViewById(R.id.line_one)).setText(genre.getGenreName());
+        ((TextView) view.findViewById(R.id.line_one)).setText(genre.getGenreName());
     }
 }

@@ -8,7 +8,7 @@ public class GenreSearchResults {
     private List<GenreEntry> list;
     private boolean stored;
 
-    public GenreSearchResults(List<GenreEntry> list, boolean stored){
+    public GenreSearchResults(List<GenreEntry> list, boolean stored) {
         this.list = list;
         this.stored = stored;
     }

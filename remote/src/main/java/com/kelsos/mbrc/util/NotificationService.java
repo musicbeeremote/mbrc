@@ -52,7 +52,9 @@ public class NotificationService {
     }
 
     @Subscribe public void handleNotificationData(final NotificationDataAvailable event) {
-        if (!mSettings.isNotificationControlEnabled()) return;
+        if (!mSettings.isNotificationControlEnabled()) {
+            return;
+        }
         notificationBuilder(event.getTitle(), event.getArtist(), event.getAlbum(), event.getCover(), event.getState());
     }
 
@@ -134,15 +136,15 @@ public class NotificationService {
             return;
         }
 
-        mNormalView.setImageViewResource(R.id.notification_play, state == PlayState.Playing ?
-                R.drawable.ic_action_pause :
-                R.drawable.ic_action_play);
+        mNormalView.setImageViewResource(R.id.notification_play, state == PlayState.Playing
+                ? R.drawable.ic_action_pause
+                : R.drawable.ic_action_play);
 
         if (isJellyBean() && mExpandedView != null) {
 
-            mExpandedView.setImageViewResource(R.id.expanded_notification_playpause, state == PlayState.Playing ?
-                    R.drawable.ic_action_pause :
-                    R.drawable.ic_action_play);
+            mExpandedView.setImageViewResource(R.id.expanded_notification_playpause, state == PlayState.Playing
+                    ? R.drawable.ic_action_pause
+                    : R.drawable.ic_action_play);
         }
     }
 

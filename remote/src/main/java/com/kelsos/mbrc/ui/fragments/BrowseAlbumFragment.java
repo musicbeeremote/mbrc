@@ -27,14 +27,10 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
     private AlbumCursorAdapter mAdapter;
     private GridView mGridView;
 
-    @Override public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getLoaderManager().initLoader(URL_LOADER, null, this);
         View view = inflater.inflate(R.layout.ui_library_grid, container, false);
-        mGridView = (GridView)view.findViewById(R.id.mbrc_grid_view);
+        mGridView = (GridView) view.findViewById(R.id.mbrc_grid_view);
 
         return view;
     }
@@ -58,7 +54,7 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
             final String gSub = Protocol.LibraryAlbumTracks;
             String query = ((AlbumEntry) line).getAlbum();
 
-            UserAction ua = null;
+            UserAction ua;
             switch (item.getItemId()) {
                 case BrowseMenuItems.QUEUE_NEXT:
                     ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_next), query));
@@ -72,9 +68,11 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
                 case BrowseMenuItems.GET_SUB:
                     ua = new UserAction(gSub, query);
                     break;
+                default:
+                    return false;
             }
 
-            if (ua != null) getBus().post(new MessageEvent(ProtocolEventType.UserAction, ua));
+            getBus().post(new MessageEvent(ProtocolEventType.UserAction, ua));
             return true;
         } else {
             return false;
@@ -83,18 +81,16 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
 
     @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri baseUri;
-        baseUri = Album.URI();
-        return new CursorLoader(getActivity(),baseUri,
-                new String[] {Album.ALBUM_NAME, Artist.ARTIST_NAME}, null,null,null);
+        baseUri = Album.getContentUri();
+        return new CursorLoader(getActivity(), baseUri,
+                new String[] {Album.ALBUM_NAME, Artist.ARTIST_NAME}, null, null, null);
     }
 
     @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mAdapter = new AlbumCursorAdapter(getActivity(),data, 0);
+        mAdapter = new AlbumCursorAdapter(getActivity(), data, 0);
         mGridView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }
 
-    @Override public void onLoaderReset(Loader<Cursor> loader) {
-
-    }
+    @Override public void onLoaderReset(Loader<Cursor> loader) { }
 }

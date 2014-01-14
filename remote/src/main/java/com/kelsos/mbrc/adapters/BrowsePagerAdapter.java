@@ -14,7 +14,7 @@ public class BrowsePagerAdapter extends FragmentStatePagerAdapter {
     public static final int ARTISTS_FRAGMENT = 1;
     public static final int ALBUMS_FRAGMENT = 2;
     public static final int TRACKS_FRAGMENT = 3;
-    private final CharSequence pageTitles[] = new CharSequence[]{"Genre", "Artist", "Album", "Track"};
+    private final CharSequence[] pageTitles = new CharSequence[]{"Genre", "Artist", "Album", "Track"};
 
     public BrowsePagerAdapter(FragmentActivity activity) {
         super(activity.getSupportFragmentManager());
@@ -31,8 +31,9 @@ public class BrowsePagerAdapter extends FragmentStatePagerAdapter {
                 return new BrowseAlbumFragment();
             case TRACKS_FRAGMENT:
                 return new BrowseTrackFragment();
+            default:
+                return null;
         }
-        return null;
     }
 
     @Override public int getCount() {

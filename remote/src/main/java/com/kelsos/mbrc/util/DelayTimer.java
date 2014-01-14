@@ -49,7 +49,7 @@ public class DelayTimer {
      * The method is used to stop the timer.
      */
     public void stop() {
-        if (mFuture!=null) {
+        if (mFuture != null) {
             mFuture.cancel(true);
             if (BuildConfig.DEBUG) {
                 Log.d("mbrc-log", "stopping delay timer");
@@ -78,8 +78,9 @@ public class DelayTimer {
     }
 
     private void onTimerFinish() {
-        if (mTimerFinishListener != null)
+        if (mTimerFinishListener != null) {
             mTimerFinishListener.onTimerFinish();
+        }
     }
 
     private class DelayTimerTask implements Runnable {
@@ -96,6 +97,6 @@ public class DelayTimer {
      * The abstract method onTimerFinish() fires when the countdown finishes.
      */
     public interface TimerFinishEvent {
-        public abstract void onTimerFinish();
+        void onTimerFinish();
     }
 }

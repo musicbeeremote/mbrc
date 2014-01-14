@@ -50,7 +50,6 @@ public class MainFragment extends BaseFragment {
     @InjectView(R.id.track_rating_bar) RatingBar trackRating;
 
     private ShareActionProvider mShareActionProvider;
-    private boolean userChangingVolume;
     private int previousVol;
     private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture mProgressUpdateHandler;
@@ -64,6 +63,7 @@ public class MainFragment extends BaseFragment {
             }
         }
     };
+    public static final int TIME_PERIOD = 1;
 
     private void post(UserAction data) {
         getBus().post(new MessageEvent(ProtocolEventType.UserAction, data));
@@ -77,15 +77,9 @@ public class MainFragment extends BaseFragment {
             }
         }
 
-        public void onStopTrackingTouch(SeekBar seekBar) {
-            userChangingVolume = false;
+        public void onStopTrackingTouch(SeekBar seekBar) { }
 
-        }
-
-        public void onStartTrackingTouch(SeekBar seekBar) {
-            userChangingVolume = true;
-        }
-
+        public void onStartTrackingTouch(SeekBar seekBar) { }
 
     };
     private SeekBar.OnSeekBarChangeListener durationSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
@@ -96,11 +90,10 @@ public class MainFragment extends BaseFragment {
             }
         }
 
-        public void onStartTrackingTouch(SeekBar seekBar) {
-        }
+        public void onStartTrackingTouch(SeekBar seekBar) { }
 
-        public void onStopTrackingTouch(SeekBar seekBar) {
-        }
+        public void onStopTrackingTouch(SeekBar seekBar) { }
+
     };
     private ImageView.OnClickListener coverOnClick = new ImageView.OnClickListener() {
 
@@ -150,7 +143,6 @@ public class MainFragment extends BaseFragment {
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        userChangingVolume = false;
         mAdapter = new InfoButtonPagerAdapter(getChildFragmentManager());
     }
 
@@ -165,8 +157,8 @@ public class MainFragment extends BaseFragment {
 
     @Override public void onStart() {
         super.onStart();
-        SetTextViewTypeface();
-        RegisterListeners();
+        setTextViewTypeface();
+        registerListeners();
     }
 
     @Override public void onResume() {
@@ -177,35 +169,26 @@ public class MainFragment extends BaseFragment {
     /**
      * Registers the listeners for the interface elements used for interaction.
      */
-    private void RegisterListeners() {
+    private void registerListeners() {
         try {
             ratingWrapper.setVisibility(View.INVISIBLE);
             trackRating.setOnRatingBarChangeListener(ratingChangeListener);
             volumeSlider.setOnSeekBarChangeListener(volumeChangeListener);
             trackProgressSlider.setOnSeekBarChangeListener(durationSeekBarChangeListener);
             albumCover.setOnClickListener(coverOnClick);
-        } catch (Exception ignore) {
-
-        }
+        } catch (Exception ignore) { }
 
     }
 
     /**
      * Sets the typeface of the text views in the main activity to roboto.
      */
-    private void SetTextViewTypeface() {		/* Marquee Hack */
+    private void setTextViewTypeface() {
         try {
-
             Typeface robotoRegular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
             trackProgressCurrent.setTypeface(robotoRegular);
             trackDuration.setTypeface(robotoRegular);
-        } catch (Exception ignore) {
-
-        }
-    }
-
-    @Override public void onStop() {
-        super.onStop();
+        } catch (Exception ignore) { }
     }
 
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -228,7 +211,9 @@ public class MainFragment extends BaseFragment {
     }
 
     private void setShareIntent(Intent shareIntent) {
-        if (mShareActionProvider != null) mShareActionProvider.setShareIntent(shareIntent);
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
     }
 
     @Subscribe public void handleRatingChange(RatingChanged event) {
@@ -238,7 +223,9 @@ public class MainFragment extends BaseFragment {
     }
 
     @Subscribe public void handleCoverEvent(final CoverAvailable cevent) {
-        if (albumCover == null) return;
+        if (albumCover == null) {
+            return;
+        }
         if (cevent.getIsAvailable()) {
             albumCover.setImageBitmap(cevent.getCover());
         } else {
@@ -265,6 +252,8 @@ public class MainFragment extends BaseFragment {
             case Undefined:
                 stopTrackProgressAnimation();
                 break;
+            default:
+                stopTrackProgressAnimation();
         }
     }
 
@@ -281,9 +270,10 @@ public class MainFragment extends BaseFragment {
      * Starts the progress animation when called. If It was previously running then it restarts it.
      */
     private void trackProgressAnimation() {
-        if (!isVisible()) return;
+        if (!isVisible()){
+            return;
+        }
         /* If the scheduled tasks is not null then cancel it and clear it along with the timer to create them anew */
-        final int TIME_PERIOD = 1;
         stopTrackProgressAnimation();
 
         final Runnable updateProgress = new Runnable() {
@@ -293,13 +283,17 @@ public class MainFragment extends BaseFragment {
                 final int currentMinutes = currentProgress / SECONDS;
                 final int currentSeconds = currentProgress % SECONDS;
 
-                if (getActivity() == null) return;
+                if (getActivity() == null) {
+                    return;
+                }
 
                 getActivity().runOnUiThread(new Runnable() {
 
                     @Override public void run() {
                         try {
-                            if (trackProgressSlider == null) return;
+                            if (trackProgressSlider == null) {
+                                return;
+                            }
                             trackProgressSlider.setProgress(trackProgressSlider.getProgress() + MILLISECONDS);
                             trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
                         } catch (Exception ex) {
@@ -319,7 +313,9 @@ public class MainFragment extends BaseFragment {
     }
 
     private void activateStoppedState() {
-        if (trackProgressCurrent == null || trackProgressSlider == null) return;
+        if (trackProgressCurrent == null || trackProgressSlider == null) {
+            return;
+        }
         trackProgressSlider.setProgress(0);
         trackProgressCurrent.setText("00:00");
     }
@@ -345,7 +341,9 @@ public class MainFragment extends BaseFragment {
     @Subscribe public void handlePositionUpdate(UpdatePosition position) {
         final int total = position.getTotal();
         final int current = position.getCurrent();
-        if (trackProgressCurrent == null || trackProgressSlider == null || trackDuration == null) return;
+        if (trackProgressCurrent == null || trackProgressSlider == null || trackDuration == null) {
+            return;
+        }
         if (total == 0) {
             getBus().post(new MessageEvent(UserInputEventType.RequestPosition));
             return;
