@@ -48,10 +48,8 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
 
     public synchronized Cursor getAlbumCursor(final long id) {
         final SQLiteDatabase db = this.getReadableDatabase();
-        final Cursor cursor = db.query(Album.TABLE_NAME, Album.FIELDS,
-                Album._ID + IS, new String[]{Long.toString(id)},
-                null, null, null, null);
-        return cursor;
+        return db != null ? db.query(Album.TABLE_NAME, Album.FIELDS,
+                Album._ID + IS, new String[]{Long.toString(id)}, null, null, null, null) : null;
     }
 
     public synchronized Album getAlbum(final long id) {
@@ -66,15 +64,14 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
                                                   final String[] args,
                                                   final String sortOrder) {
         final SQLiteDatabase db = this.getReadableDatabase();
-        final Cursor cursor = db.query(Album.TABLE_NAME, Album.FIELDS, selection,
-                args, null, null, Album.ALBUM_NAME + ASC);
-        return cursor;
+        return db != null ? db.query(Album.TABLE_NAME, Album.FIELDS, selection,
+                args, null, null, Album.ALBUM_NAME + ASC) : null;
     }
 
     public synchronized List<Album> getAllAlbums(final String selection,
                                                  final String[] args,
                                                  final String sortOrder) {
-        final List<Album> result = new ArrayList<Album>();
+        final List<Album> result = new ArrayList<>();
         final Cursor cursor = getAllAlbumsCursor(selection, args, sortOrder);
 
         while (cursor.moveToNext()) {
@@ -91,9 +88,9 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         if (album.getId() > 0) {
             return album.getId();
         }
-        album.setArtistId(insertArtist(new Artist(album.getArtist(),"")));
+        album.setArtistId(insertArtist(new Artist(album.getArtist(), "")));
         SQLiteDatabase db = this.getWritableDatabase();
-        final long id = db.insert(Album.TABLE_NAME, null, album.getContentValues());
+        final long id = db != null ? db.insert(Album.TABLE_NAME, null, album.getContentValues()) : 0;
         if (id > 0) {
             album.notifyProvider(mContext);
         }
@@ -103,8 +100,9 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
 
     public synchronized int deleteItem(final DataItem item) {
         final SQLiteDatabase db = this.getWritableDatabase();
-        final int result = db.delete(item.getTableName(), Album._ID
-                + IS, new String[]{Long.toString(item.getId())});
+        final int result = db != null
+                    ? db.delete(item.getTableName(), Album._ID
+                    + IS, new String[]{Long.toString(item.getId())}) : 0;
 
         if (result > 0) {
             item.notifyProvider(mContext);
@@ -115,14 +113,17 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
     public synchronized long getAlbumId(final String albumName) {
         long id = -1;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.query(true, Album.TABLE_NAME, new String[]{Album._ID},
+        Cursor c = db != null ? db.query(true, Album.TABLE_NAME, new String[]{Album._ID},
                 Album.ALBUM_NAME + EQUALS, new String[]{albumName},
-                null, null, null, null);
+                null, null, null, null) : null;
 
-        if (c.moveToFirst()) {
-            id = c.getInt(c.getColumnIndex(Album._ID));
+        if (c != null) {
+            if (c.moveToFirst()) {
+                id = c.getInt(c.getColumnIndex(Album._ID));
+            }
+            c.close();
         }
-        c.close();
+
         return id;
     }
 
@@ -140,23 +141,23 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
 
     public synchronized Cursor getArtistCursor(final long id) {
         final SQLiteDatabase db = this.getReadableDatabase();
-        final Cursor cursor = db.query(Artist.TABLE_NAME, Artist.FIELDS,
+        return db != null ? db.query(Artist.TABLE_NAME, Artist.FIELDS,
                 Artist._ID + IS, new String[]{Long.toString(id)},
-                null, null, Artist.ARTIST_NAME + ASC, null);
-        return cursor;
+                null, null, Artist.ARTIST_NAME + ASC, null) : null;
     }
 
     public synchronized long getArtistId(final String artistName) {
         long id = -1;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.query(true, Artist.TABLE_NAME, new String[]{Artist._ID},
+        Cursor c = db != null ? db.query(true, Artist.TABLE_NAME, new String[]{Artist._ID},
                 Artist.ARTIST_NAME + EQUALS, new String[]{artistName},
-                null, null, null, null);
-
-        if (c.moveToFirst()) {
-            id = c.getInt(c.getColumnIndex(Artist._ID));
+                null, null, null, null) : null;
+        if (c != null) {
+            if (c.moveToFirst()) {
+                id = c.getInt(c.getColumnIndex(Artist._ID));
+            }
+            c.close();
         }
-        c.close();
 
         return id;
     }
@@ -165,15 +166,14 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
                                                    final String[] args,
                                                    final String sortOrder) {
         final SQLiteDatabase db = this.getReadableDatabase();
-        final Cursor cursor = db.query(Artist.TABLE_NAME, Artist.FIELDS, selection,
-                args, null, null, Artist.ARTIST_NAME + ASC);
-        return cursor;
+        return db != null ? db.query(Artist.TABLE_NAME, Artist.FIELDS, selection,
+                args, null, null, Artist.ARTIST_NAME + ASC) : null;
     }
 
     public synchronized List<Artist> getAllArtists(final String selection,
                                                    final String[] args,
                                                    final String sortOrder) {
-        final List<Artist> artistList = new ArrayList<Artist>();
+        final List<Artist> artistList = new ArrayList<>();
         final Cursor cursor = getAllArtistsCursor(selection, args, sortOrder);
 
         while (cursor.moveToNext()) {
@@ -186,13 +186,12 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
     }
 
     public synchronized long insertArtist(final Artist artist) {
-        long id = -1;
-        id = getArtistId(artist.getArtistName());
+        long id = getArtistId(artist.getArtistName());
         if (id > 0) {
             return id;
         }
         SQLiteDatabase db = this.getWritableDatabase();
-        id = db.insert(Artist.TABLE_NAME, null, artist.getContentValues());
+        id = db != null ? db.insert(Artist.TABLE_NAME, null, artist.getContentValues()) : 0;
         if (id > 0) {
             artist.notifyProvider(mContext);
         }
@@ -206,7 +205,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         }
 
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = db.insert(Genre.TABLE_NAME, null, genre.getContentValues());
+        long id = db != null ? db.insert(Genre.TABLE_NAME, null, genre.getContentValues()) : 0;
         if (id > 0) {
             genre.notifyProvider(mContext);
         }
@@ -216,23 +215,25 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
     public synchronized long getGenreId(final String genreName) {
         long id = -1;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.query(true, Genre.TABLE_NAME, new String[]{Genre._ID},
+        Cursor c = db != null ? db.query(true, Genre.TABLE_NAME, new String[]{Genre._ID},
                 Genre.GENRE_NAME + EQUALS, new String[]{genreName},
-                null, null, null, null);
+                null, null, null, null) : null;
 
-        if (c.moveToFirst()) {
-            id = c.getInt(c.getColumnIndex(Genre._ID));
+        if (c != null) {
+            if (c.moveToFirst()) {
+                id = c.getInt(c.getColumnIndex(Genre._ID));
+            }
+            c.close();
         }
-        c.close();
+
         return id;
     }
 
     public synchronized Cursor getGenreCursor(final long id) {
         final SQLiteDatabase db = this.getReadableDatabase();
-        final Cursor cursor = db.query(Genre.TABLE_NAME, Genre.FIELDS,
+        return db != null ? db.query(Genre.TABLE_NAME, Genre.FIELDS,
                 Genre._ID + IS, new String[]{Long.toString(id)},
-                null, null, Genre.GENRE_NAME + ASC, null);
-        return cursor;
+                null, null, Genre.GENRE_NAME + ASC, null) : null;
     }
 
     public synchronized Genre getGenre(final long id) {
@@ -251,15 +252,14 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
                                                   final String[] args,
                                                   final String sortOrder) {
         final SQLiteDatabase db = this.getReadableDatabase();
-        final Cursor cursor = db.query(Genre.TABLE_NAME, Genre.FIELDS,
-                selection, args, null, null, Genre.GENRE_NAME + ASC);
-        return cursor;
+        return db != null ? db.query(Genre.TABLE_NAME, Genre.FIELDS,
+                selection, args, null, null, Genre.GENRE_NAME + ASC) : null;
     }
 
     public synchronized List<Genre> getAllGenres(final String selection,
                                                  final String[] args,
                                                  final String sortOrder) {
-        final List<Genre> genreList = new ArrayList<Genre>();
+        final List<Genre> genreList = new ArrayList<>();
         final Cursor cursor = getAllGenresCursor(selection, args, sortOrder);
 
         while (cursor.moveToNext()) {
@@ -273,14 +273,16 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
     public synchronized long getCoverId(final String hash) {
         long id = -1;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.query(true, Cover.TABLE_NAME, new String[]{Cover._ID},
+        Cursor c = db != null ? db.query(true, Cover.TABLE_NAME, new String[]{Cover._ID},
                 Cover.COVER_HASH + EQUALS, new String[]{hash},
-                null, null, null, null);
+                null, null, null, null) : null;
 
-        if (c.moveToFirst()) {
-            id = c.getInt(c.getColumnIndex(Cover._ID));
+        if (c != null) {
+            if (c.moveToFirst()) {
+                id = c.getInt(c.getColumnIndex(Cover._ID));
+            }
+            c.close();
         }
-        c.close();
 
         return id;
     }
@@ -292,7 +294,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         }
 
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = db.insert(Cover.TABLE_NAME, null, cover.getContentValues());
+        long id = db != null ? db.insert(Cover.TABLE_NAME, null, cover.getContentValues()) : 0;
         if (id > 0) {
             cover.notifyProvider(mContext);
         }
@@ -301,9 +303,8 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
 
     public synchronized Cursor getCoverCursor(final long id) {
         final SQLiteDatabase db = this.getReadableDatabase();
-        final Cursor cursor = db.query(Cover.TABLE_NAME, Cover.FIELDS, Cover._ID + IS,
-                new String[]{Long.toString(id)}, null, null, null, null);
-        return cursor;
+        return db != null ? db.query(Cover.TABLE_NAME, Cover.FIELDS, Cover._ID + IS,
+                new String[]{Long.toString(id)}, null, null, null, null) : null;
     }
 
     public synchronized Cover getCover(final long id) {
@@ -322,15 +323,14 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
                                                   final String[] args,
                                                   final String sortOrder) {
         final SQLiteDatabase db = this.getReadableDatabase();
-        final Cursor cursor = db.query(Cover.TABLE_NAME, Cover.FIELDS, selection, args,
-                null, null, sortOrder, null);
-        return cursor;
+        return db != null ? db.query(Cover.TABLE_NAME, Cover.FIELDS, selection, args,
+                null, null, sortOrder, null) : null;
     }
 
     public synchronized List<Cover> getAllCovers(final String selection,
                                                  final String[] args,
                                                  final String sortOrder) {
-        final List<Cover> coverList = new ArrayList<Cover>();
+        final List<Cover> coverList = new ArrayList<>();
         final Cursor cursor = getAllCoversCursor(selection, args, sortOrder);
         while (cursor.moveToNext()) {
             Cover cover = new Cover(cursor);
@@ -343,16 +343,16 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
     public synchronized long getTrackId(String hash) {
         long id = -1;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.query(true, Track.TABLE_NAME, new String[]{Track._ID},
+        Cursor c = db != null ? db.query(true, Track.TABLE_NAME, new String[]{Track._ID},
                 Track.HASH + EQUALS, new String[]{hash},
-                null, null, null, null);
+                null, null, null, null) : null;
 
-        if (c.moveToFirst()) {
-            do {
+        if (c != null) {
+            if (c.moveToFirst()) {
                 id = c.getInt(c.getColumnIndex(Track._ID));
-            } while (c.moveToNext());
+            }
+            c.close();
         }
-        c.close();
 
         return id;
     }
@@ -363,7 +363,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         track.setCoverId(insertCover(new Cover(track.getCoverHash())));
         track.setAlbumId(insertAlbum(new Album(track.getAlbum(), track.getAlbumArtist())));
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = db.insert(Track.TABLE_NAME, null, track.getContentValues());
+        long id = db != null ? db.insert(Track.TABLE_NAME, null, track.getContentValues()) : 0;
         if (id > 0) {
             track.notifyProvider(mContext);
         }
@@ -372,9 +372,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
 
     public synchronized Cursor getTrackCursor(final long id) {
         final SQLiteDatabase db = this.getReadableDatabase();
-        final Cursor cursor = db.rawQuery(Track.SELECT_TRACK,
-                new String[]{Long.toString(id)});
-        return cursor;
+        return db != null ? db.rawQuery(Track.SELECT_TRACK, new String[]{Long.toString(id)}) : null;
     }
 
     public synchronized Track getTrack(final long id) {
@@ -393,14 +391,13 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
                                                   final String[] args,
                                                   final String sortOrder) {
         final SQLiteDatabase db = this.getReadableDatabase();
-        final Cursor cursor = db.rawQuery(Track.SELECT_TRACKS, args);
-        return cursor;
+        return db != null ? db.rawQuery(Track.SELECT_TRACKS, args) : null;
     }
 
     public synchronized List<Track> getAllTracks(final String selection,
                                                  final String[] args,
                                                  final String sortOrder) {
-        final List<Track> trackList = new ArrayList<Track>();
+        final List<Track> trackList = new ArrayList<>();
         final Cursor cursor = getAllTracksCursor(selection, args, sortOrder);
 
         while (cursor.moveToNext()) {

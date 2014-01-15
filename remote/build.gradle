@@ -29,6 +29,11 @@ def gitSha() {
     return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
 
+
+def versionMajor = 0
+def versionMinor = 9
+def versionPatch = 9
+
 dependencies {
     compile 'com.android.support:support-v4:19.0.0'
     compile 'com.android.support:appcompat-v7:19.0.0'
@@ -57,6 +62,7 @@ android {
         targetSdkVersion 19
         buildConfigField "String", "GIT_SHA", "\"${gitSha()}\";"
         buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\";"
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
     }
 
     compileOptions {
@@ -78,6 +84,7 @@ android {
             signingConfig signingConfigs.release
             debuggable false
             zipAlign true
+            versionNameSuffix ""
         }
         debug {
             packageNameSuffix ".debug"
