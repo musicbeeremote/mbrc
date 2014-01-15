@@ -35,7 +35,7 @@ public class Artist extends DataItem implements ArtistColumns {
     public static final String TYPE_ITEM = "vnd.android.cursor.item/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;
 
     public Artist(String artistName, String imageUrl) {
-        this.artistName = artistName;
+        this.artistName = artistName.length() > 0 ? artistName : "Unknown Artist";
         this.id = -1;
         this.imageUrl = imageUrl;
     }

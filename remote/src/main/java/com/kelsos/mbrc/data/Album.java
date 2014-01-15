@@ -40,7 +40,7 @@ public class Album extends DataItem implements AlbumColumns {
 
     public Album(String albumName, String artist) {
         this.id = -1;
-        this.albumName = albumName;
+        this.albumName = albumName.length() > 0 ? albumName : "Unknown Album";
         this.artist = artist;
     }
 
@@ -102,4 +102,13 @@ public class Album extends DataItem implements AlbumColumns {
     public void setCoverHash(String coverHash) {
         this.coverHash = coverHash;
     }
+
+    public int getTotalTracks() {
+        return totalTracks;
+    }
+
+    public void setTotalTracks(int totalTracks) {
+        this.totalTracks = totalTracks;
+    }
+
 }

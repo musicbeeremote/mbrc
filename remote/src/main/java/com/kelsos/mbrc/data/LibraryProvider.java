@@ -32,7 +32,7 @@ public class LibraryProvider extends ContentProvider {
     }
 
     @Override public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        Cursor result = null;
+        Cursor result;
         final long id;
         ContentResolver contentResolver = getContext().getContentResolver();
         switch (URI_MATCHER.match(uri)) {
@@ -72,8 +72,21 @@ public class LibraryProvider extends ContentProvider {
                 result.setNotificationUri(contentResolver, uri);
                 break;
             case Artist.BASE_GENRE_FILTER:
-//                SQLiteQueryBuilder sqBuilder = new SQLiteQueryBuilder();
-//                sqBuilder.setTables();
+                String genreId = uri.getLastPathSegment();
+                sqBuilder = new SQLiteQueryBuilder();
+                sqBuilder.setTables(String.format("%s ar, %s gen, %s t",
+                        Artist.TABLE_NAME, Genre.TABLE_NAME, Track.TABLE_NAME));
+                String dataSel = "ar." + Artist._ID + " = " + "t." + Track.ARTIST_ID
+                        + "and " + "t. " + Track.GENRE_ID + " = " + " gen." + Genre._ID
+                        + "and " + " gen." + Genre._ID + " = " + "?";
+                result = sqBuilder.query(dbHelper.getReadableDatabase(),
+                        new String[] {Artist.ARTIST_NAME},
+                        dataSel,
+                        new String[] {genreId},
+                        "ar." + Artist._ID,
+                        null,
+                        Artist.ARTIST_NAME + " ASC");
+                result.setNotificationUri(contentResolver, uri);
                 break;
             case Cover.BASE_ITEM_CODE:
                 id = Long.parseLong(uri.getLastPathSegment());

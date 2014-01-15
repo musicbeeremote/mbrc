@@ -40,7 +40,7 @@ public class Genre extends DataItem implements GenreColumns {
 
     public Genre(String genreName) {
         this.id = -1;
-        this.genreName = genreName;
+        this.genreName = genreName.length() > 0 ? genreName : "Unknown Genre";
     }
 
     public Genre(final Cursor cursor) {
