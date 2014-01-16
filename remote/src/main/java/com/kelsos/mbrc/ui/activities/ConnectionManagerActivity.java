@@ -114,7 +114,7 @@ public class ConnectionManagerActivity extends BaseActivity implements SettingsD
     Button.OnClickListener scanListener = new Button.OnClickListener() {
         @Override public void onClick(View view) {
             mProgress = ProgressDialog.show(mContext, getString(R.string.progress_scanning), getString(R.string.progress_scanning_message), true, false);
-            bus.post(new MessageEvent(UserInputEventType.StartDiscovery));
+            bus.post(new MessageEvent(UserInputEventType.START_DISCOVERY));
         }
     };
 

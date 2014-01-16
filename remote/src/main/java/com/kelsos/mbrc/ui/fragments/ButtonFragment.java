@@ -111,6 +111,6 @@ public class ButtonFragment extends BaseFragment {
     }
 
     private void post(UserAction data) {
-        getBus().post(new MessageEvent(ProtocolEventType.UserAction, data));
+        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, data));
     }
 }

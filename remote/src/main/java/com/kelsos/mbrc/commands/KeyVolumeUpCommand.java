@@ -32,7 +32,7 @@ public class KeyVolumeUpCommand implements ICommand {
                 volume = model.getVolume() + (20 - mod);
             }
 
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PLAYER_VOLUME, volume)));
+            bus.post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYER_VOLUME, volume)));
         }
     }
 }

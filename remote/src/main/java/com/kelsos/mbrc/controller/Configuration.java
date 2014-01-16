@@ -14,13 +14,13 @@ public final class Configuration {
     private Configuration() { }
 
     @Inject public static void initialize(Controller controller) {
-        controller.register(ProtocolEventType.ReduceVolume, ReduceVolumeOnRingCommand.class);
-        controller.register(ProtocolEventType.HandshakeComplete, VisualUpdateHandshakeComplete.class);
-        controller.register(ProtocolEventType.InformClientNotAllowed, NotifyNotAllowedCommand.class);
-        controller.register(ProtocolEventType.InformClientPluginOutOfDate, NotifyPluginOutOfDateCommand.class);
-        controller.register(ProtocolEventType.InitiateProtocolRequest, ProtocolRequest.class);
-        controller.register(ProtocolEventType.PluginVersionCheck, VersionCheckCommand.class);
-        controller.register(ProtocolEventType.UserAction, ProcessUserAction.class);
+        controller.register(ProtocolEventType.REDUCE_VOLUME, ReduceVolumeOnRingCommand.class);
+        controller.register(ProtocolEventType.HANDSHAKE_COMPLETE, VisualUpdateHandshakeComplete.class);
+        controller.register(ProtocolEventType.INFORM_CLIENT_NOT_ALLOWED, NotifyNotAllowedCommand.class);
+        controller.register(ProtocolEventType.INFORM_CLIENT_PLUGIN_OUT_OF_DATE, NotifyPluginOutOfDateCommand.class);
+        controller.register(ProtocolEventType.INITIATE_PROTOCOL_REQUEST, ProtocolRequest.class);
+        controller.register(ProtocolEventType.PLUGIN_VERSION_CHECK, VersionCheckCommand.class);
+        controller.register(ProtocolEventType.USER_ACTION, ProcessUserAction.class);
         controller.register(Protocol.NOW_PLAYING_TRACK, UpdateNowPlayingTrack.class);
         controller.register(Protocol.NOW_PLAYING_COVER, UpdateCover.class);
         controller.register(Protocol.NOW_PLAYING_RATING, UpdateRating.class);
@@ -49,13 +49,13 @@ public final class Configuration {
         controller.register(Protocol.PLAYLIST_GET_FILES, UpdatePlaylistTracks.class);
         controller.register(Protocol.LIBRARY_SYNC, HandleLibrarySync.class);
 
-        controller.register(UserInputEventType.SettingsChanged, RestartConnectionCommand.class);
-        controller.register(UserInputEventType.CancelNotification, CancelNotificationCommand.class);
-        controller.register(UserInputEventType.StartConnection, InitiateConnectionCommand.class);
-        controller.register(UserInputEventType.ResetConnection, RestartConnectionCommand.class);
-        controller.register(UserInputEventType.StartDiscovery, StartDiscoveryCommand.class);
-        controller.register(UserInputEventType.KeyVolumeUp, KeyVolumeUpCommand.class);
-        controller.register(UserInputEventType.KeyVolumeDown, KeyVolumeDownCommand.class);
+        controller.register(UserInputEventType.SETTINGS_CHANGED, RestartConnectionCommand.class);
+        controller.register(UserInputEventType.CANCEL_NOTIFICATION, CancelNotificationCommand.class);
+        controller.register(UserInputEventType.START_CONNECTION, InitiateConnectionCommand.class);
+        controller.register(UserInputEventType.RESET_CONNECTION, RestartConnectionCommand.class);
+        controller.register(UserInputEventType.START_DISCOVERY, StartDiscoveryCommand.class);
+        controller.register(UserInputEventType.KEY_VOLUME_UP, KeyVolumeUpCommand.class);
+        controller.register(UserInputEventType.KEY_VOLUME_DOWN, KeyVolumeDownCommand.class);
         controller.register(SocketEventType.DATA_AVAILABLE, SocketDataAvailableCommand.class);
         controller.register(SocketEventType.STATUS_CHANGED, ConnectionStatusChangedCommand.class);
         controller.register(SocketEventType.HANDSHAKE_UPDATE, HandleHanshake.class);

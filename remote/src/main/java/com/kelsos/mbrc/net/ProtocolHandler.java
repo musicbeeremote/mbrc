@@ -40,17 +40,17 @@ public class ProtocolHandler {
                 String context = node.path("context").getTextValue();
 
                 if (context.contains(Protocol.CLIENT_NOT_ALLOWED)) {
-                    bus.post(new MessageEvent(ProtocolEventType.InformClientNotAllowed));
+                    bus.post(new MessageEvent(ProtocolEventType.INFORM_CLIENT_NOT_ALLOWED));
                     return;
                 }
 
                 if (!isHandshakeComplete) {
                     if (context.contains(Protocol.PLAYER)) {
-                        bus.post(new MessageEvent(ProtocolEventType.InitiateProtocolRequest));
+                        bus.post(new MessageEvent(ProtocolEventType.INITIATE_PROTOCOL_REQUEST));
                     } else if (context.contains(Protocol.PROTOCOL)) {
 //                        node.path("data").getDoubleValue();
                         isHandshakeComplete = true;
-                        bus.post(new MessageEvent(ProtocolEventType.HandshakeComplete, true));
+                        bus.post(new MessageEvent(ProtocolEventType.HANDSHAKE_COMPLETE, true));
                     } else {
                         return;
                     }

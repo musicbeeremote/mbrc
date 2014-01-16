@@ -130,7 +130,7 @@ public class SettingsManager {
             if (!mSettings.contains(settings)) {
                 if (mSettings.size() == 0) {
                     updateDefault(0, settings);
-                    bus.post(new MessageEvent(UserInputEventType.SettingsChanged));
+                    bus.post(new MessageEvent(UserInputEventType.SETTINGS_CHANGED));
                 }
                 mSettings.add(settings);
                 storeSettings();
@@ -140,7 +140,7 @@ public class SettingsManager {
         } else {
             mSettings.set(settings.getIndex(), settings);
             if (settings.getIndex() == defaultIndex) {
-                bus.post(new MessageEvent(UserInputEventType.SettingsChanged));
+                bus.post(new MessageEvent(UserInputEventType.SETTINGS_CHANGED));
             }
             storeSettings();
         }
@@ -175,7 +175,7 @@ public class SettingsManager {
                 mSettings.remove(event.getIndex());
                 if (event.getIndex() == defaultIndex && mSettings.size() > 0) {
                     updateDefault(0, mSettings.get(0));
-                    bus.post(new MessageEvent(UserInputEventType.SettingsChanged));
+                    bus.post(new MessageEvent(UserInputEventType.SETTINGS_CHANGED));
                 } else {
                     updateDefault(0, new ConnectionSettings());
                 }
@@ -187,7 +187,7 @@ public class SettingsManager {
                 ConnectionSettings settings = mSettings.get(event.getIndex());
                 updateDefault(event.getIndex(), settings);
                 bus.post(new ConnectionSettingsChanged(mSettings, event.getIndex()));
-                bus.post(new MessageEvent(UserInputEventType.SettingsChanged));
+                bus.post(new MessageEvent(UserInputEventType.SETTINGS_CHANGED));
                 break;
         }
     }

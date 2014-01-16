@@ -43,7 +43,7 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
                 String state = bundle.getString(TelephonyManager.EXTRA_STATE);
                 if (state != null && state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)
                         && settingsManager.isVolumeReducedOnRinging()) {
-                    bus.post(new MessageEvent(ProtocolEventType.ReduceVolume));
+                    bus.post(new MessageEvent(ProtocolEventType.REDUCE_VOLUME));
                 }
                 break;
             case WifiManager.NETWORK_STATE_CHANGED_ACTION:
@@ -52,23 +52,23 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
                 if (networkInfo != null) {
                     niState = networkInfo.getState();
                     if (niState.equals(NetworkInfo.State.CONNECTED)) {
-                        bus.post(new MessageEvent(UserInputEventType.StartConnection));
+                        bus.post(new MessageEvent(UserInputEventType.START_CONNECTION));
                     }
                 }
                 break;
             case NotificationService.NOTIFICATION_PLAY_PRESSED:
-                bus.post(new MessageEvent(ProtocolEventType.UserAction,
+                bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
                         new UserAction(Protocol.PLAYER_PLAY_PAUSE, true)));
                 break;
             case NotificationService.NOTIFICATION_NEXT_PRESSED:
-                bus.post(new MessageEvent(ProtocolEventType.UserAction,
+                bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
                         new UserAction(Protocol.PLAYER_NEXT, true)));
                 break;
             case NotificationService.NOTIFICATION_CLOSE_PRESSED:
-                bus.post(new MessageEvent(UserInputEventType.CancelNotification));
+                bus.post(new MessageEvent(UserInputEventType.CANCEL_NOTIFICATION));
                 break;
             case NotificationService.NOTIFICATION_PREVIOUS_PRESSED:
-                bus.post(new MessageEvent(ProtocolEventType.UserAction,
+                bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
                         new UserAction(Protocol.PLAYER_PREVIOUS, true)));
                 break;
             default:

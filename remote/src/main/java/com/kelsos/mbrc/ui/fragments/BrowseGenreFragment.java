@@ -85,7 +85,7 @@ public class BrowseGenreFragment extends BaseListFragment
                     return false;
             }
 
-            getBus().post(new MessageEvent(ProtocolEventType.UserAction, ua));
+            getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, ua));
             return true;
         } else {
             return false;

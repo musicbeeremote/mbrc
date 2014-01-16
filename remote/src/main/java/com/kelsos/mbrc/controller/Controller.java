@@ -110,7 +110,7 @@ public class Controller extends RoboService {
     }
 
     @Override public void onDestroy() {
-        executeCommand(new MessageEvent(UserInputEventType.CancelNotification));
+        executeCommand(new MessageEvent(UserInputEventType.CANCEL_NOTIFICATION));
         super.onDestroy();
     }
 }

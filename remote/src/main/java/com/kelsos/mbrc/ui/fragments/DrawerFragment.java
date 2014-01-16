@@ -39,7 +39,7 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
     private TextView.OnLongClickListener connectButtonLongClick = new TextView.OnLongClickListener() {
         @Override
         public boolean onLongClick(View view) {
-            getBus().post(new MessageEvent(UserInputEventType.ResetConnection));
+            getBus().post(new MessageEvent(UserInputEventType.RESET_CONNECTION));
             return false;
         }
     };
@@ -47,7 +47,7 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
     private TextView.OnClickListener connectButtonClick = new TextView.OnClickListener() {
 
         public void onClick(View v) {
-            getBus().post(new MessageEvent(UserInputEventType.StartConnection));
+            getBus().post(new MessageEvent(UserInputEventType.START_CONNECTION));
         }
     };
 

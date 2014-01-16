@@ -122,7 +122,7 @@ public class MainDataModel {
 
     public void setPluginVersion(String pluginVersion) {
         this.pluginVersion = pluginVersion.substring(0, pluginVersion.lastIndexOf('.'));
-        bus.post(new MessageEvent(ProtocolEventType.PluginVersionCheck));
+        bus.post(new MessageEvent(ProtocolEventType.PLUGIN_VERSION_CHECK));
     }
 
     public String getPluginVersion() {
@@ -190,7 +190,7 @@ public class MainDataModel {
 
     private void updateNotification() {
         if (!isConnectionOn) {
-            bus.post(new MessageEvent(UserInputEventType.CancelNotification));
+            bus.post(new MessageEvent(UserInputEventType.CANCEL_NOTIFICATION));
         } else {
             bus.post(new NotificationDataAvailable(artist, title, album, cover, playState));
         }

@@ -118,7 +118,7 @@ public class MainFragmentActivity extends BaseActivity {
                 return true;
             case R.id.action_bar_favorite:
                 final UserAction loveAction = new UserAction(Protocol.NOW_PLAYING_LFM_RATING, Const.TOGGLE);
-                final MessageEvent userAction = new MessageEvent(ProtocolEventType.UserAction, loveAction);
+                final MessageEvent userAction = new MessageEvent(ProtocolEventType.USER_ACTION, loveAction);
                 getBus().post(userAction);
                 return true;
             default:
@@ -216,10 +216,10 @@ public class MainFragmentActivity extends BaseActivity {
     @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
-                getBus().post(new MessageEvent(UserInputEventType.KeyVolumeUp));
+                getBus().post(new MessageEvent(UserInputEventType.KEY_VOLUME_UP));
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-                getBus().post(new MessageEvent(UserInputEventType.KeyVolumeDown));
+                getBus().post(new MessageEvent(UserInputEventType.KEY_VOLUME_DOWN));
                 return true;
             default:
                 return super.onKeyDown(keyCode, event);

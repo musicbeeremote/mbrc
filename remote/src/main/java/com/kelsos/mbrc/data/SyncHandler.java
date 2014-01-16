@@ -49,7 +49,7 @@ public class SyncHandler {
             Map<String, Object> syncData = new HashMap<>();
             syncData.put("type", "meta");
             syncData.put("file", currentTrack);
-            bus.post(new MessageEvent(ProtocolEventType.UserAction,
+            bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
                     new UserAction(Protocol.LIBRARY_SYNC, syncData)));
             currentTrack++;
         }
@@ -62,7 +62,7 @@ public class SyncHandler {
             Map<String, Object> syncData = new HashMap<>();
             syncData.put("type", "meta");
             syncData.put("file", currentTrack);
-            bus.post(new MessageEvent(ProtocolEventType.UserAction,
+            bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
                     new UserAction(Protocol.LIBRARY_SYNC, syncData)));
             currentTrack += BATCH_SIZE;
         }
@@ -93,8 +93,8 @@ public class SyncHandler {
 //            Map<String, String> syncData = new HashMap<>();
 //            syncData.put("type", "cover");
 //            syncData.put("hash", track.getHash());
-//            bus.post(new MessageEvent(ProtocolEventType.UserAction,
-//                    new UserAction(Protocol.LibrarySync, syncData)));
+//            bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
+//                    new USER_ACTION(Protocol.LibrarySync, syncData)));
 //            cachedTrack = track;
 //        } else {
         dbHelper.insertTrack(track);

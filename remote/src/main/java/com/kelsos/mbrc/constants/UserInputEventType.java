@@ -4,12 +4,12 @@ public final class UserInputEventType {
 
     private UserInputEventType() { }
 
-    public static final String RequestPosition = "RequestPosition";
-    public static final String StartConnection = "StartConnection";
-    public static final String SettingsChanged = "SettingsChanged";
-    public static final String ResetConnection = "ResetConnection";
-    public static final String CancelNotification = "CancelNotification";
-    public static final String StartDiscovery = "StartDiscovery";
-    public static final String KeyVolumeUp = "KeyVolumeUp";
-    public static final String KeyVolumeDown = "KeyVolumeDown";
+    public static final String REQUEST_POSITION = "RequestPosition";
+    public static final String START_CONNECTION = "StartConnection";
+    public static final String SETTINGS_CHANGED = "SettingsChanged";
+    public static final String RESET_CONNECTION = "ResetConnection";
+    public static final String CANCEL_NOTIFICATION = "CancelNotification";
+    public static final String START_DISCOVERY = "StartDiscovery";
+    public static final String KEY_VOLUME_UP = "KeyVolumeUp";
+    public static final String KEY_VOLUME_DOWN = "KeyVolumeDown";
 }

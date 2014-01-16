@@ -63,7 +63,7 @@ public class BrowseTrackFragment extends BaseListFragment
                     return false;
             }
 
-            //if (ua != null) bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
+            //if (ua != null) bus.post(new MessageEvent(ProtocolEventType.USER_ACTION, ua));
             return true;
         } else {
             return false;

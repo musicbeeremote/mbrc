@@ -62,7 +62,7 @@ public class AppPreferenceView extends PreferenceActivity {
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
                         boolean value = (Boolean) newValue;
                         if (!value) {
-                            bus.post(new MessageEvent(UserInputEventType.CancelNotification));
+                            bus.post(new MessageEvent(UserInputEventType.CANCEL_NOTIFICATION));
                         }
                         return true;
                     }

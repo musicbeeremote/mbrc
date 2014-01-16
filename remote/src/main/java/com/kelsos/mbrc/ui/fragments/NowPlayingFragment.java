@@ -73,7 +73,7 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
     }
 
     public boolean onQueryTextSubmit(String query) {
-        getBus().post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NOW_PLAYING_LIST_SEARCH, query.trim())));
+        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.NOW_PLAYING_LIST_SEARCH, query.trim())));
         mSearchView.setIconified(true);
         mSearchItem.collapseActionView();
         return false;
@@ -111,7 +111,7 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
 
     @Override public void onStart() {
         super.onStart();
-        getBus().post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NOW_PLAYING_LIST, true)));
+        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.NOW_PLAYING_LIST, true)));
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -128,7 +128,7 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
         super.onListItemClick(l, v, position, id);
         adapter.setPlayingTrackIndex(position);
         adapter.notifyDataSetChanged();
-        getBus().post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NOW_PLAYING_PLAY, position + 1)));
+        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.NOW_PLAYING_PLAY, position + 1)));
     }
 
     private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
@@ -144,7 +144,7 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
                 Map<String, Integer> move = new HashMap<String, Integer>();
                 move.put("from", from);
                 move.put("to", to);
-                getBus().post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NOW_PLAYING_MOVE, move)));
+                getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.NOW_PLAYING_MOVE, move)));
             }
         }
     };
@@ -185,7 +185,7 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
             mTrack = adapter.getItem(which);
             adapter.remove(mTrack);
             adapter.notifyDataSetChanged();
-            getBus().post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NOW_PLAYING_REMOVE, which)));
+            getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.NOW_PLAYING_REMOVE, which)));
         }
     };
 

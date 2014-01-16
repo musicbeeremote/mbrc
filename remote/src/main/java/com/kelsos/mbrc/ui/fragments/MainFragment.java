@@ -66,7 +66,7 @@ public class MainFragment extends BaseFragment {
     public static final int TIME_PERIOD = 1;
 
     private void post(UserAction data) {
-        getBus().post(new MessageEvent(ProtocolEventType.UserAction, data));
+        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, data));
     }
 
     private SeekBar.OnSeekBarChangeListener volumeChangeListener = new SeekBar.OnSeekBarChangeListener() {
@@ -345,7 +345,7 @@ public class MainFragment extends BaseFragment {
             return;
         }
         if (total == 0) {
-            getBus().post(new MessageEvent(UserInputEventType.RequestPosition));
+            getBus().post(new MessageEvent(UserInputEventType.REQUEST_POSITION));
             return;
         }
         int currentSeconds = current / MILLISECONDS;

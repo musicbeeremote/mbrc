@@ -70,7 +70,7 @@ public class PlaylistActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(mTitle);
         bus.register(this);
-        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PLAYLIST_GET_FILES, mSrc)));
+        bus.post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYLIST_GET_FILES, mSrc)));
     }
 
     @Override public void onStop() {

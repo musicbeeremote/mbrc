@@ -79,7 +79,7 @@ public class VersionCheckCommand implements ICommand {
                     }
 
                     if (isOutOfDate) {
-                        bus.post(new MessageEvent(ProtocolEventType.InformClientPluginOutOfDate));
+                        bus.post(new MessageEvent(ProtocolEventType.INFORM_CLIENT_PLUGIN_OUT_OF_DATE));
                     }
                 }
 
