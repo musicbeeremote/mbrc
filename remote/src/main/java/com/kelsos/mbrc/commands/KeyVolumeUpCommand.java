@@ -11,6 +11,11 @@ import com.kelsos.mbrc.net.Protocol;
 import com.squareup.otto.Bus;
 
 public class KeyVolumeUpCommand implements ICommand {
+    public static final int GREATEST_NOT_MAX = 90;
+    public static final int STEP = 10;
+    public static final int MOD = STEP;
+    public static final int BASE = 0;
+    public static final int LIMIT = 5;
     private MainDataModel model;
     private Bus bus;
 
@@ -20,16 +25,16 @@ public class KeyVolumeUpCommand implements ICommand {
     }
 
     @Override public void execute(final IEvent e) {
-        if (model.getVolume() <= 90) {
-            int mod = model.getVolume() % 10;
+        if (model.getVolume() <= GREATEST_NOT_MAX) {
+            int mod = model.getVolume() % MOD;
             int volume;
 
-            if (mod == 0) {
-                volume = model.getVolume() + 10;
-            } else if (mod < 5) {
-                volume = model.getVolume() + (10 - mod);
+            if (mod == BASE) {
+                volume = model.getVolume() + STEP;
+            } else if (mod < LIMIT) {
+                volume = model.getVolume() + (STEP - mod);
             } else {
-                volume = model.getVolume() + (20 - mod);
+                volume = model.getVolume() + ((2 * STEP) - mod);
             }
 
             bus.post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYER_VOLUME, volume)));

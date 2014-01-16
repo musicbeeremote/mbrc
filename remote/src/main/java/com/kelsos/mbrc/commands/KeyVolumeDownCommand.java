@@ -11,6 +11,11 @@ import com.kelsos.mbrc.net.Protocol;
 import com.squareup.otto.Bus;
 
 public class KeyVolumeDownCommand implements ICommand {
+    public static final int LOWEST_NOT_ZERO = 10;
+    public static final int STEP = 10;
+    public static final int MOD = 10;
+    public static final int BASE = 0;
+    public static final int LIMIT = 5;
     private MainDataModel model;
     private Bus bus;
 
@@ -20,14 +25,14 @@ public class KeyVolumeDownCommand implements ICommand {
     }
 
     @Override public void execute(IEvent e) {
-        if (model.getVolume() >= 10) {
-            int mod = model.getVolume() % 10;
+        if (model.getVolume() >= LOWEST_NOT_ZERO) {
+            int mod = model.getVolume() % MOD;
             int volume;
 
-            if (mod == 0) {
-                volume = model.getVolume() - 10;
-            } else if (mod < 5) {
-                volume = model.getVolume() - (10 + mod);
+            if (mod == BASE) {
+                volume = model.getVolume() - STEP;
+            } else if (mod < LIMIT) {
+                volume = model.getVolume() - (STEP + mod);
             } else {
                 volume = model.getVolume() - mod;
             }

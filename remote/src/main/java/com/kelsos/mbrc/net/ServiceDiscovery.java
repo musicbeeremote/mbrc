@@ -75,22 +75,27 @@ public class ServiceDiscovery {
 
     private class ServiceListener implements Runnable {
 
+        public static final int BUFFER = 512;
+        public static final int PORT = 45345;
+        public static final int TIMEOUT = 2000;
+        public static final String HOST = "239.1.5.10";
+
         @Override public void run() {
             try {
 
-                MulticastSocket mSocket = new MulticastSocket(45345);
-                mSocket.setSoTimeout(2000);
-                InetAddress group = InetAddress.getByName("239.1.5.10");
+                MulticastSocket mSocket = new MulticastSocket(PORT);
+                mSocket.setSoTimeout(TIMEOUT);
+                InetAddress group = InetAddress.getByName(HOST);
                 mSocket.joinGroup(group);
 
                 DatagramPacket mPacket;
-                byte[] buffer = new byte[512];
+                byte[] buffer = new byte[BUFFER];
                 mPacket = new DatagramPacket(buffer, buffer.length);
                 Map<String, String> discoveryMessage = new Hashtable<>();
                 discoveryMessage.put("context", "discovery");
                 discoveryMessage.put("address", getWifiAddress());
                 byte[] discovery = mapper.writeValueAsBytes(discoveryMessage);
-                mSocket.send(new DatagramPacket(discovery, discovery.length, group, 45345));
+                mSocket.send(new DatagramPacket(discovery, discovery.length, group, PORT));
                 String incoming;
 
                 while (true) {

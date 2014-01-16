@@ -21,7 +21,8 @@ public abstract class BaseActivity extends ActionBarActivity implements RoboCont
     protected EventManager eventManager;
     protected Map<Key<?>, Object> scopedObjects = new HashMap<>();
 
-    @Inject ContentViewListener ignored; // BUG find a better place to put this
+    // BUG find a better place to put this
+    @Inject ContentViewListener ignored;
     @Inject private ScopedBus scopedBus;
 
     protected ScopedBus getBus() {
