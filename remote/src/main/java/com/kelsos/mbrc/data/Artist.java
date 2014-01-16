@@ -45,7 +45,7 @@ public class Artist extends DataItem implements ArtistColumns {
     public Artist(final Cursor cursor) {
         this.id = cursor.getLong(cursor.getColumnIndex(_ID));
         this.artistName = cursor.getString(cursor.getColumnIndex(ARTIST_NAME));
-        this.imageUrl = cursor.getString(cursor.getColumnIndex(IMAGE_URL));
+//        this.imageUrl = cursor.getString(cursor.getColumnIndex(IMAGE_URL));
     }
 
     public ContentValues getContentValues() {

@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,14 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ListView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.Artist;
-import com.kelsos.mbrc.data.ArtistEntry;
-import com.kelsos.mbrc.data.Queue;
-import com.kelsos.mbrc.data.UserAction;
+import com.kelsos.mbrc.data.*;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.net.Protocol;
+import com.kelsos.mbrc.ui.activities.Profile;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 
 public class BrowseArtistFragment extends BaseListFragment
@@ -84,7 +84,7 @@ public class BrowseArtistFragment extends BaseListFragment
         Uri baseUri;
         baseUri = Artist.getContentUri();
         return new CursorLoader(getActivity(), baseUri,
-                new String[] {Artist.ARTIST_NAME}, null, null, null);
+                new String[] {Artist.ARTIST_NAME, Artist._ID}, null, null, null);
     }
 
     @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
@@ -99,4 +99,14 @@ public class BrowseArtistFragment extends BaseListFragment
     }
 
     @Override public void onLoaderReset(Loader<Cursor> loader) { }
+
+    @Override public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        final Artist genre = new Artist((Cursor) mAdapter.getItem(position));
+        Intent intent = new Intent(getActivity(), Profile.class);
+        intent.putExtra("name", genre.getArtistName());
+        intent.putExtra("id", genre.getId());
+        intent.putExtra("type", "artist");
+        startActivity(intent);
+    }
 }

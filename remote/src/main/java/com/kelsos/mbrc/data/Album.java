@@ -18,14 +18,18 @@ public class Album extends DataItem implements AlbumColumns {
         return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME + LibraryProvider.AUTHORITY), TABLE_NAME);
     }
 
+    public static Uri CONTENT_ARTIST_URI = Uri.withAppendedPath(getContentUri(), "artist");
+
     public static final String[] FIELDS = {_ID, ALBUM_NAME, ARTIST_ID};
 
     public static final int BASE_URI_CODE = 0x33872c3;
     public static final int BASE_ITEM_CODE =  0x462395d;
+    public static final int BASE_ARTIST_FILTER = 0x92810d;
 
     public static void addMatcherUris(UriMatcher uriMatcher) {
         uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME, BASE_URI_CODE);
         uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME + "/#", BASE_ITEM_CODE);
+        uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME + "/artist/*", BASE_ARTIST_FILTER);
     }
 
     public static final String TYPE_DIR = "vnd.android.cursor.dir/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;

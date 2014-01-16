@@ -7,9 +7,13 @@ import android.view.*;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.base.BaseActivity;
 import com.kelsos.mbrc.ui.base.BaseFragment;
+import com.kelsos.mbrc.ui.fragments.ArtistAlbumsFragment;
 import com.kelsos.mbrc.ui.fragments.GenreArtistsFragment;
 
 public class Profile extends BaseActivity {
+
+    public static final String GENRE = "genre";
+    public static final String ARTIST = "artist";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,10 +24,19 @@ public class Profile extends BaseActivity {
         if (savedInstanceState == null) {
              Fragment fragment;
 
-            if (intent.getStringExtra("type").equals("genre")) {
-                fragment = GenreArtistsFragment.newInstance(intent.getLongExtra("id", 0));
-            } else {
-                fragment = new PlaceholderFragment();
+            String type = intent.getStringExtra("type");
+            long id = intent.getLongExtra("id", 0);
+            switch (type) {
+                case GENRE:
+
+                    fragment = GenreArtistsFragment.newInstance(id);
+                    break;
+                case ARTIST:
+                    fragment = ArtistAlbumsFragment.newInstance(id);
+                    break;
+                default:
+                    fragment = new PlaceholderFragment();
+                    break;
             }
 
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
