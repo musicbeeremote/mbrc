@@ -63,8 +63,8 @@ public class BrowseGenreFragment extends BaseListFragment
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             Object line = mAdapter.getItem(mi.position);
-            final String qContext = Protocol.LibraryQueueGenre;
-            final String gSub = Protocol.LibraryGenreArtists;
+            final String qContext = Protocol.LIBRARY_QUEUE_GENRE;
+            final String gSub = Protocol.LIBRARY_GENRE_ARTISTS;
             String query = ((GenreEntry) line).getName();
 
             UserAction ua;

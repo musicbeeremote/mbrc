@@ -25,12 +25,12 @@ public class VisualUpdateHandshakeComplete implements ICommand {
             return;
         }
 
-        service.sendData(new SocketMessage(Protocol.NowPlayingTrack, Protocol.Request));
-        service.sendData(new SocketMessage(Protocol.PlayerStatus, Protocol.Request));
-        service.sendData(new SocketMessage(Protocol.NowPlayingCover, Protocol.Request));
-        service.sendData(new SocketMessage(Protocol.NowPlayingLyrics, Protocol.Request));
-        service.sendData(new SocketMessage(Protocol.NowPlayingPosition, Protocol.Request));
-        service.sendData(new SocketMessage(Protocol.PluginVersion, Protocol.Request));
+        service.sendData(new SocketMessage(Protocol.NOW_PLAYING_TRACK, Protocol.REQUEST));
+        service.sendData(new SocketMessage(Protocol.PLAYER_STATUS, Protocol.REQUEST));
+        service.sendData(new SocketMessage(Protocol.NOW_PLAYING_COVER, Protocol.REQUEST));
+        service.sendData(new SocketMessage(Protocol.NOW_PLAYING_LYRICS, Protocol.REQUEST));
+        service.sendData(new SocketMessage(Protocol.NOW_PLAYING_POSITION, Protocol.REQUEST));
+        service.sendData(new SocketMessage(Protocol.PLUGIN_VERSION, Protocol.REQUEST));
     }
 }
 

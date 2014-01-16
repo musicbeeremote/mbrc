@@ -16,7 +16,7 @@ public class ProcessUserAction implements ICommand {
     }
 
     @Override public void execute(IEvent e) {
-        socket.sendData(new SocketMessage(((UserAction) e.getData()).getContext(), Protocol.Request,
+        socket.sendData(new SocketMessage(((UserAction) e.getData()).getContext(), Protocol.REQUEST,
                 ((UserAction) e.getData()).getData()));
     }
 }

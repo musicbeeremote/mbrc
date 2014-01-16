@@ -31,7 +31,7 @@ public class KeyVolumeDownCommand implements ICommand {
             } else {
                 volume = model.getVolume() - mod;
             }
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerVolume, volume)));
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PLAYER_VOLUME, volume)));
         }
     }
 }

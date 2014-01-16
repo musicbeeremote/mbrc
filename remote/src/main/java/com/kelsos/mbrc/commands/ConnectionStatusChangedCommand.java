@@ -23,7 +23,7 @@ public class ConnectionStatusChangedCommand implements ICommand {
     public void execute(IEvent e) {
         model.setConnectionState(e.getDataString());
         if (model.getIsConnectionActive()) {
-            service.sendData(new SocketMessage(Protocol.Player, Protocol.Request, "Android"));
+            service.sendData(new SocketMessage(Protocol.PLAYER, Protocol.REQUEST, "Android"));
         } else {
             notificationService.cancelNotification(NotificationService.NOW_PLAYING_PLACEHOLDER);
         }

@@ -117,7 +117,7 @@ public class MainFragmentActivity extends BaseActivity {
                 startActivity(openHelp);
                 return true;
             case R.id.action_bar_favorite:
-                final UserAction loveAction = new UserAction(Protocol.NowPlayingLfmRating, Const.TOGGLE);
+                final UserAction loveAction = new UserAction(Protocol.NOW_PLAYING_LFM_RATING, Const.TOGGLE);
                 final MessageEvent userAction = new MessageEvent(ProtocolEventType.UserAction, loveAction);
                 getBus().post(userAction);
                 return true;

@@ -19,6 +19,6 @@ public class ReduceVolumeOnRingCommand implements ICommand {
     }
 
     @Override public void execute(IEvent e) {
-        service.sendData(new SocketMessage(Protocol.PlayerVolume, Protocol.Request, (int) (model.getVolume() * TWENTY_PERCENT)));
+        service.sendData(new SocketMessage(Protocol.PLAYER_VOLUME, Protocol.REQUEST, (int) (model.getVolume() * TWENTY_PERCENT)));
     }
 }

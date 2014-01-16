@@ -32,7 +32,7 @@ public class PlaylistFragment extends BaseListFragment {
 
     @Override public void onStart() {
         super.onStart();
-        getBus().post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlaylistList, true)));
+        getBus().post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PLAYLIST_LIST, true)));
     }
 
     @Subscribe public void handlePlaylistsAvailable(AvailablePlaylists playlists) {
@@ -75,11 +75,11 @@ public class PlaylistFragment extends BaseListFragment {
             UserAction ua = null;
             switch (item.getItemId()) {
                 case GET_PLAYLIST:
-                    ua = new UserAction(Protocol.PlaylistGetFiles, query);
+                    ua = new UserAction(Protocol.PLAYLIST_GET_FILES, query);
                     openPlaylist(line);
                     break;
                 case PLAY_NOW:
-                    ua = new UserAction(Protocol.PlaylistPlayNow, query);
+                    ua = new UserAction(Protocol.PLAYLIST_PLAY_NOW, query);
                     break;
             }
 

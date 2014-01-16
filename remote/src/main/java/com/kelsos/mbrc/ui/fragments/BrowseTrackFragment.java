@@ -45,7 +45,7 @@ public class BrowseTrackFragment extends BaseListFragment
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             Object line = mAdapter.getItem(mi.position);
-            final String qContext = Protocol.LibraryQueueTrack;
+            final String qContext = Protocol.LIBRARY_QUEUE_TRACK;
             final String query = ((TrackEntry) line).getSrc();
 
             UserAction ua = null;

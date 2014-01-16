@@ -41,7 +41,7 @@ public class BrowseFragment extends BaseFragment {
                 Map<String, String> req = new HashMap<>();
                 req.put("type", "full");
                 getBus().post(new MessageEvent(ProtocolEventType.UserAction,
-                    new UserAction(Protocol.LibrarySync, req)));
+                    new UserAction(Protocol.LIBRARY_SYNC, req)));
                 break;
             default:
                 return false;

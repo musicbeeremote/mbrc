@@ -39,15 +39,15 @@ public class ProtocolHandler {
                 JsonNode node = mapper.readValue(reply, JsonNode.class);
                 String context = node.path("context").getTextValue();
 
-                if (context.contains(Protocol.ClientNotAllowed)) {
+                if (context.contains(Protocol.CLIENT_NOT_ALLOWED)) {
                     bus.post(new MessageEvent(ProtocolEventType.InformClientNotAllowed));
                     return;
                 }
 
                 if (!isHandshakeComplete) {
-                    if (context.contains(Protocol.Player)) {
+                    if (context.contains(Protocol.PLAYER)) {
                         bus.post(new MessageEvent(ProtocolEventType.InitiateProtocolRequest));
-                    } else if (context.contains(Protocol.Protocol)) {
+                    } else if (context.contains(Protocol.PROTOCOL)) {
 //                        node.path("data").getDoubleValue();
                         isHandshakeComplete = true;
                         bus.post(new MessageEvent(ProtocolEventType.HandshakeComplete, true));

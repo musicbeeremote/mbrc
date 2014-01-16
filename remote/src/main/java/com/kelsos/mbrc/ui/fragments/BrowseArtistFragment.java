@@ -51,8 +51,8 @@ public class BrowseArtistFragment extends BaseListFragment
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             Object line = mAdapter.getItem(mi.position);
-            final String qContext = Protocol.LibraryQueueArtist;
-            final String gSub = Protocol.LibraryArtistAlbums;
+            final String qContext = Protocol.LIBRARY_QUEUE_ARTIST;
+            final String gSub = Protocol.LIBRARY_ARTIST_ALBUMS;
             String query = ((ArtistEntry) line).getArtist();
 
             UserAction ua;

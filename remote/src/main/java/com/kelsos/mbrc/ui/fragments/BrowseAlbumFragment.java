@@ -50,8 +50,8 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             Object line = mAdapter.getItem(mi.position);
-            final String qContext = Protocol.LibraryQueueAlbum;
-            final String gSub = Protocol.LibraryAlbumTracks;
+            final String qContext = Protocol.LIBRARY_QUEUE_ALBUM;
+            final String gSub = Protocol.LIBRARY_ALBUM_TRACKS;
             String query = ((AlbumEntry) line).getAlbum();
 
             UserAction ua;

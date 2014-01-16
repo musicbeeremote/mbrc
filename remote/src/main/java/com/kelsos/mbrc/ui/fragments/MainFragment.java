@@ -59,7 +59,7 @@ public class MainFragment extends BaseFragment {
         @Override
         public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
             if (b) {
-                post(new UserAction(Protocol.NowPlayingRating, v));
+                post(new UserAction(Protocol.NOW_PLAYING_RATING, v));
             }
         }
     };
@@ -73,7 +73,7 @@ public class MainFragment extends BaseFragment {
 
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser) {
-                post(new UserAction(Protocol.PlayerVolume, String.valueOf(seekBar.getProgress())));
+                post(new UserAction(Protocol.PLAYER_VOLUME, String.valueOf(seekBar.getProgress())));
             }
         }
 
@@ -85,7 +85,7 @@ public class MainFragment extends BaseFragment {
     private SeekBar.OnSeekBarChangeListener durationSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser && progress != previousVol) {
-                post(new UserAction(Protocol.NowPlayingPosition, String.valueOf(progress)));
+                post(new UserAction(Protocol.NOW_PLAYING_POSITION, String.valueOf(progress)));
                 previousVol = progress;
             }
         }
@@ -163,7 +163,7 @@ public class MainFragment extends BaseFragment {
 
     @Override public void onResume() {
         super.onResume();
-        post(new UserAction(Protocol.NowPlayingPosition, true));
+        post(new UserAction(Protocol.NOW_PLAYING_POSITION, true));
     }
 
     /**
@@ -237,7 +237,7 @@ public class MainFragment extends BaseFragment {
         switch (change.getState()) {
             case Playing:
                 /* Start the animation if the track is playing*/
-                post(new UserAction(Protocol.NowPlayingPosition, true));
+                post(new UserAction(Protocol.NOW_PLAYING_POSITION, true));
                 trackProgressAnimation();
                 break;
             case Paused:

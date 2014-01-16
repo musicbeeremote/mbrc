@@ -27,35 +27,35 @@ public class ButtonFragment extends BaseFragment {
     private View.OnClickListener playButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            post(new UserAction(Protocol.PlayerPlayPause, true));
+            post(new UserAction(Protocol.PLAYER_PLAY_PAUSE, true));
         }
     };
     private View.OnClickListener previousButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            post(new UserAction(Protocol.PlayerPrevious, true));
+            post(new UserAction(Protocol.PLAYER_PREVIOUS, true));
         }
     };
     private View.OnClickListener nextButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            post(new UserAction(Protocol.PlayerNext, true));
+            post(new UserAction(Protocol.PLAYER_NEXT, true));
         }
     };
     private View.OnLongClickListener stopListener = new View.OnLongClickListener() {
         @Override public boolean onLongClick(View v) {
-            post(new UserAction(Protocol.PlayerStop, true));
+            post(new UserAction(Protocol.PLAYER_STOP, true));
             return true;
         }
     };
     private ImageButton.OnClickListener shuffleListener = new ImageButton.OnClickListener() {
         @Override public void onClick(View v) {
-            post(new UserAction(Protocol.PlayerShuffle, Const.TOGGLE));
+            post(new UserAction(Protocol.PLAYER_SHUFFLE, Const.TOGGLE));
         }
     };
     private ImageButton.OnClickListener repeatListener = new ImageButton.OnClickListener() {
         @Override public void onClick(View v) {
-            post(new UserAction(Protocol.PlayerRepeat, Const.TOGGLE));
+            post(new UserAction(Protocol.PLAYER_REPEAT, Const.TOGGLE));
         }
     };
 
@@ -94,7 +94,7 @@ public class ButtonFragment extends BaseFragment {
         switch (change.getState()) {
             case Playing:
                 playButton.setImageResource(R.drawable.ic_media_pause);
-                post(new UserAction(Protocol.NowPlayingPosition, true));
+                post(new UserAction(Protocol.NOW_PLAYING_POSITION, true));
                 break;
             case Paused:
                 playButton.setImageResource(R.drawable.ic_media_play);

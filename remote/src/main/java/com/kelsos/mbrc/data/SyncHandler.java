@@ -50,7 +50,7 @@ public class SyncHandler {
             syncData.put("type", "meta");
             syncData.put("file", currentTrack);
             bus.post(new MessageEvent(ProtocolEventType.UserAction,
-                    new UserAction(Protocol.LibrarySync, syncData)));
+                    new UserAction(Protocol.LIBRARY_SYNC, syncData)));
             currentTrack++;
         }
     }
@@ -63,7 +63,7 @@ public class SyncHandler {
             syncData.put("type", "meta");
             syncData.put("file", currentTrack);
             bus.post(new MessageEvent(ProtocolEventType.UserAction,
-                    new UserAction(Protocol.LibrarySync, syncData)));
+                    new UserAction(Protocol.LIBRARY_SYNC, syncData)));
             currentTrack += BATCH_SIZE;
         }
     }

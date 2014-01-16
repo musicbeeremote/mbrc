@@ -58,18 +58,18 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
                 break;
             case NotificationService.NOTIFICATION_PLAY_PRESSED:
                 bus.post(new MessageEvent(ProtocolEventType.UserAction,
-                        new UserAction(Protocol.PlayerPlayPause, true)));
+                        new UserAction(Protocol.PLAYER_PLAY_PAUSE, true)));
                 break;
             case NotificationService.NOTIFICATION_NEXT_PRESSED:
                 bus.post(new MessageEvent(ProtocolEventType.UserAction,
-                        new UserAction(Protocol.PlayerNext, true)));
+                        new UserAction(Protocol.PLAYER_NEXT, true)));
                 break;
             case NotificationService.NOTIFICATION_CLOSE_PRESSED:
                 bus.post(new MessageEvent(UserInputEventType.CancelNotification));
                 break;
             case NotificationService.NOTIFICATION_PREVIOUS_PRESSED:
                 bus.post(new MessageEvent(ProtocolEventType.UserAction,
-                        new UserAction(Protocol.PlayerPrevious, true)));
+                        new UserAction(Protocol.PLAYER_PREVIOUS, true)));
                 break;
             default:
                 break;
