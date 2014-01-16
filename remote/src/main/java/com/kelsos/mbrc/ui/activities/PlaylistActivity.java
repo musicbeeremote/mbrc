@@ -21,7 +21,7 @@ import roboguice.inject.InjectView;
 
 public class PlaylistActivity extends BaseActivity {
     @Inject private MainThreadBusWrapper bus;
-    @InjectView(android.R.id.list) ListView mList;
+    @InjectView(android.R.id.list) private ListView mList;
     private PlaylistTrackAdapter adapter;
     private String mTitle;
     private String mSrc;

@@ -23,12 +23,12 @@ import roboguice.inject.InjectView;
 
 
 public class MiniControlFragment extends BaseFragment {
-    @InjectView (R.id.mc_track_cover) ImageView trackCover;
-    @InjectView (R.id.mc_track_artist) TextView trackArtist;
-    @InjectView (R.id.mc_track_title) TextView trackTitle;
-    @InjectView (R.id.mc_next_track) ImageButton playNext;
-    @InjectView (R.id.mc_play_pause) ImageButton playPause;
-    @InjectView (R.id.mc_prev_track) ImageButton playPrevious;
+    @InjectView (R.id.mc_track_cover) private ImageView trackCover;
+    @InjectView (R.id.mc_track_artist) private TextView trackArtist;
+    @InjectView (R.id.mc_track_title) private TextView trackTitle;
+    @InjectView (R.id.mc_next_track) private ImageButton playNext;
+    @InjectView (R.id.mc_play_pause) private ImageButton playPause;
+    @InjectView (R.id.mc_prev_track) private ImageButton playPrevious;
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ui_fragment_mini_control, container, false);

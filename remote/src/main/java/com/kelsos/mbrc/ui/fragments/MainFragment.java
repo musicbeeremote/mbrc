@@ -41,13 +41,13 @@ public class MainFragment extends BaseFragment {
      * Total seconds in a minute (60)
      */
     public static final int SECONDS = 60;
-    @InjectView(R.id.main_track_progress_current) TextView trackProgressCurrent;
-    @InjectView(R.id.main_track_duration_total) TextView trackDuration;
-    @InjectView(R.id.main_volume_seeker) SeekBar volumeSlider;
-    @InjectView(R.id.main_track_progress_seeker) SeekBar trackProgressSlider;
-    @InjectView(R.id.main_album_cover_image_view) ImageView albumCover;
-    @InjectView(R.id.ratingWrapper) LinearLayout ratingWrapper;
-    @InjectView(R.id.track_rating_bar) RatingBar trackRating;
+    @InjectView(R.id.main_track_progress_current) private TextView trackProgressCurrent;
+    @InjectView(R.id.main_track_duration_total) private TextView trackDuration;
+    @InjectView(R.id.main_volume_seeker) private SeekBar volumeSlider;
+    @InjectView(R.id.main_track_progress_seeker) private SeekBar trackProgressSlider;
+    @InjectView(R.id.main_album_cover_image_view) private ImageView albumCover;
+    @InjectView(R.id.ratingWrapper) private LinearLayout ratingWrapper;
+    @InjectView(R.id.track_rating_bar) private RatingBar trackRating;
 
     private ShareActionProvider mShareActionProvider;
     private int previousVol;

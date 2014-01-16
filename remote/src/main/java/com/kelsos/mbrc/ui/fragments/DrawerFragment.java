@@ -28,8 +28,8 @@ import java.util.ArrayList;
 
 
 public class DrawerFragment extends BaseListFragment implements FragmentManager.OnBackStackChangedListener {
-    @InjectView(R.id.menuConnector) TextView menuConnector;
-    @InjectView(R.id.drawer_version_indicator) TextView versionIndicator;
+    @InjectView(R.id.menuConnector) private TextView menuConnector;
+    @InjectView(R.id.drawer_version_indicator) private TextView versionIndicator;
 
     private Typeface robotoLight;
     private DrawerLayout mDrawerLayout;

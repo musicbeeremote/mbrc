@@ -28,7 +28,7 @@ import java.util.Map;
 
 
 public class NowPlayingFragment extends BaseListFragment implements SearchView.OnQueryTextListener {
-    @Inject Injector injector;
+    @Inject private Injector injector;
     private NowPlayingAdapter adapter;
     private SearchView mSearchView;
     private MenuItem mSearchItem;

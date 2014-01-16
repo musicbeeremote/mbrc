@@ -30,10 +30,10 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import roboguice.inject.InjectView;
 
 public class ConnectionManagerActivity extends BaseActivity implements SettingsDialogFragment.SettingsDialogListener {
-    @Inject Bus bus;
-    @InjectView(R.id.connection_scan) Button scanButton;
-    @InjectView(R.id.connection_add) Button addButton;
-    @InjectView(R.id.connection_list) ListView connectionList;
+    @Inject private Bus bus;
+    @InjectView(R.id.connection_scan) private Button scanButton;
+    @InjectView(R.id.connection_add) private Button addButton;
+    @InjectView(R.id.connection_list) private ListView connectionList;
 
     private static final int GROUP_ID = 56;
     private static final int DEFAULT = 11;
