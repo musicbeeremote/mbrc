@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.view.*;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.base.BaseActivity;
+import com.kelsos.mbrc.ui.base.BaseFragment;
+import com.kelsos.mbrc.ui.fragments.GenreArtistsFragment;
 
 public class Profile extends BaseActivity {
 
@@ -13,15 +15,23 @@ public class Profile extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        final Intent intent = getIntent();
 
         if (savedInstanceState == null) {
+             Fragment fragment;
+
+            if (intent.getStringExtra("type").equals("genre")) {
+                fragment = GenreArtistsFragment.newInstance(intent.getLongExtra("id", 0));
+            } else {
+                fragment = new PlaceholderFragment();
+            }
+
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, fragment)
                     .commit();
         }
 
-        final Intent intent = getIntent();
         getSupportActionBar().setTitle(intent.getStringExtra("name"));
     }
 
@@ -51,7 +61,7 @@ public class Profile extends BaseActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class PlaceholderFragment extends BaseFragment {
 
         public PlaceholderFragment() {
         }

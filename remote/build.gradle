@@ -37,7 +37,6 @@ def versionPatch = 9
 dependencies {
     compile 'com.android.support:support-v4:19.0.0'
     compile 'com.android.support:appcompat-v7:19.0.0'
-    compile 'com.google.inject:guice:3.0:no_aop'
     compile 'org.roboguice:roboguice:2.0'
     compile 'com.squareup:otto:1.3.4'
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
@@ -45,6 +44,7 @@ dependencies {
     compile 'com.mobeta.android.dslv:drag-sort-listview:0.6.1@aar'
     compile 'com.squareup.picasso:picasso:2.1.1'
     compile 'de.keyboardsurfer.android.widget:crouton:1.8.2@aar'
+    compile 'com.google.inject:guice:3.0:no_aop'
 }
 
 android {
@@ -110,6 +110,7 @@ task wrapper(type: Wrapper) {
 apply plugin: 'checkstyle'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
+apply plugin: 'sonar-runner'
 
 checkstyle {
 
@@ -168,5 +169,21 @@ allprojects {
                 android.signingConfigs[configName].keyPassword = props['keyPass']
             }
         }
+    }
+}
+
+sonarRunner {
+    sonarProperties {
+        property "sonar.host.url", "http://localhost:9000"
+        property "sonar.jdbc.url", "jdbc:h2:tcp://localhost:9092/sonar"
+        property "sonar.jdbc.driverClassName", "org.h2.Driver"
+        property "sonar.jdbc.username", "sonar"
+        property "sonar.jdbc.password", "sonar"
+        property "sonar.branch", "gradle"
+        property "sonar.dynamicAnalysis", "reuseReports"
+        properties["sonar.sources"] = android.sourceSets.main.java.srcDirs
+        properties["sonar.tests"] = android.sourceSets.instrumentTest.java.srcDirs
+        properties["sonar.binaries"] = file("build/classes/debug")
+        property "sonar.surefire.reportsPath","build/instrumentTest-results/connected/"
     }
 }

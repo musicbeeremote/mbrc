@@ -21,6 +21,8 @@ public class Artist extends DataItem implements ArtistColumns {
         return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME + LibraryProvider.AUTHORITY), TABLE_NAME);
     }
 
+    public static final Uri CONTENT_GENRE_URI = Uri.withAppendedPath(getContentUri(), "genre");
+
     public static final int BASE_URI_CODE = 0xb450ddf;
     public static final int BASE_ITEM_CODE =  0x4213467;
     public static final int BASE_GENRE_FILTER = 0x099198;

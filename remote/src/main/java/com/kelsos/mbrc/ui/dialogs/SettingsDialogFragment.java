@@ -96,7 +96,7 @@ public class SettingsDialogFragment extends DialogFragment {
             }
         }
 
-        if (name != null || !name.getText().toString().equals("")) {
+        if (name != null && !name.getText().toString().equals("")) {
             name.setText(cname);
             host.setText(caddress);
             if (cport > 0) {

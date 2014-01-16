@@ -77,10 +77,10 @@ public class LibraryProvider extends ContentProvider {
                 sqBuilder.setTables(String.format("%s ar, %s gen, %s t",
                         Artist.TABLE_NAME, Genre.TABLE_NAME, Track.TABLE_NAME));
                 String dataSel = "ar." + Artist._ID + " = " + "t." + Track.ARTIST_ID
-                        + "and " + "t. " + Track.GENRE_ID + " = " + " gen." + Genre._ID
-                        + "and " + " gen." + Genre._ID + " = " + "?";
+                        + " and " + "t. " + Track.GENRE_ID + " = " + " gen." + Genre._ID
+                        + " and " + " gen." + Genre._ID + " = " + "?";
                 result = sqBuilder.query(dbHelper.getReadableDatabase(),
-                        new String[] {Artist.ARTIST_NAME},
+                        new String[] {Artist.ARTIST_NAME, "ar." + Artist._ID},
                         dataSel,
                         new String[] {genreId},
                         "ar." + Artist._ID,
