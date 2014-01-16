@@ -80,16 +80,16 @@ public class MiniControlFragment extends BaseFragment {
 
     @Subscribe public void handlePlayStateChange(PlayStateChange event) {
         switch (event.getState()) {
-            case Playing:
+            case PLAYING:
                 playPause.setImageResource(R.drawable.ic_action_pause);
                 break;
-            case Paused:
+            case PAUSED:
                 playPause.setImageResource(R.drawable.ic_action_play);
                 break;
-            case Stopped:
+            case STOPPED:
                 playPause.setImageResource(R.drawable.ic_action_play);
                 break;
-            case Undefined:
+            case UNDEFINED:
                 break;
             default:
                 playPause.setImageResource(R.drawable.ic_media_stop);

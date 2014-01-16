@@ -136,13 +136,13 @@ public class NotificationService {
             return;
         }
 
-        mNormalView.setImageViewResource(R.id.notification_play, state == PlayState.Playing
+        mNormalView.setImageViewResource(R.id.notification_play, state == PlayState.PLAYING
                 ? R.drawable.ic_action_pause
                 : R.drawable.ic_action_play);
 
         if (isJellyBean() && mExpandedView != null) {
 
-            mExpandedView.setImageViewResource(R.id.expanded_notification_playpause, state == PlayState.Playing
+            mExpandedView.setImageViewResource(R.id.expanded_notification_playpause, state == PlayState.PLAYING
                     ? R.drawable.ic_action_pause
                     : R.drawable.ic_action_play);
         }

@@ -235,21 +235,21 @@ public class MainFragment extends BaseFragment {
 
     @Subscribe public void handlePlayStateChange(final PlayStateChange change) {
         switch (change.getState()) {
-            case Playing:
+            case PLAYING:
                 /* Start the animation if the track is playing*/
                 post(new UserAction(Protocol.NOW_PLAYING_POSITION, true));
                 trackProgressAnimation();
                 break;
-            case Paused:
+            case PAUSED:
         /* Stop the animation if the track is paused*/
                 stopTrackProgressAnimation();
                 break;
-            case Stopped:
+            case STOPPED:
         /* Stop the animation if the track is paused*/
                 stopTrackProgressAnimation();
                 activateStoppedState();
                 break;
-            case Undefined:
+            case UNDEFINED:
                 stopTrackProgressAnimation();
                 break;
             default:

@@ -18,7 +18,7 @@ public class Album extends DataItem implements AlbumColumns {
         return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME + LibraryProvider.AUTHORITY), TABLE_NAME);
     }
 
-    public static Uri CONTENT_ARTIST_URI = Uri.withAppendedPath(getContentUri(), "artist");
+    public static final Uri CONTENT_ARTIST_URI = Uri.withAppendedPath(getContentUri(), "artist");
 
     public static final String[] FIELDS = {_ID, ALBUM_NAME, ARTIST_ID};
 

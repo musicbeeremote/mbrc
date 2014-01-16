@@ -92,17 +92,17 @@ public class ButtonFragment extends BaseFragment {
             return;
         }
         switch (change.getState()) {
-            case Playing:
+            case PLAYING:
                 playButton.setImageResource(R.drawable.ic_media_pause);
                 post(new UserAction(Protocol.NOW_PLAYING_POSITION, true));
                 break;
-            case Paused:
+            case PAUSED:
                 playButton.setImageResource(R.drawable.ic_media_play);
                 break;
-            case Stopped:
+            case STOPPED:
                 playButton.setImageResource(R.drawable.ic_media_stop);
                 break;
-            case Undefined:
+            case UNDEFINED:
                 playButton.setImageResource(R.drawable.ic_media_play);
                 break;
             default:

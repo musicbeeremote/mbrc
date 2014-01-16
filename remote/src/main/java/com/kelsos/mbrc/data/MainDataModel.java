@@ -68,7 +68,7 @@ public class MainDataModel {
         iShuffleActive = false;
         isScrobblingActive = false;
         isMuteActive = false;
-        playState = PlayState.Stopped;
+        playState = PlayState.STOPPED;
         cover = null;
         rating = 0;
         lyrics = "";
@@ -320,13 +320,13 @@ public class MainDataModel {
     }
 
     public void setPlayState(String playState) {
-        PlayState newState = PlayState.Undefined;
+        PlayState newState = PlayState.UNDEFINED;
         if (playState.equalsIgnoreCase(Const.PLAYING)) {
-            newState = PlayState.Playing;
+            newState = PlayState.PLAYING;
         } else if (playState.equalsIgnoreCase(Const.STOPPED)) {
-            newState = PlayState.Stopped;
+            newState = PlayState.STOPPED;
         } else if (playState.equalsIgnoreCase(Const.PAUSED)) {
-            newState = PlayState.Paused;
+            newState = PlayState.PAUSED;
         }
         this.playState = newState;
         bus.post(new PlayStateChange(this.playState));
