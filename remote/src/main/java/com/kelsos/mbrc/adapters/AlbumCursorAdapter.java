@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.Album;
-import com.kelsos.mbrc.data.Cover;
+import com.kelsos.mbrc.data.dbdata.Album;
+import com.kelsos.mbrc.data.dbdata.Cover;
 import com.squareup.picasso.Picasso;
 
 public class AlbumCursorAdapter extends CursorAdapter {

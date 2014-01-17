@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.data;
+package com.kelsos.mbrc.data.db;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import com.kelsos.mbrc.data.dbdata.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -1,9 +1,11 @@
-package com.kelsos.mbrc.data;
+package com.kelsos.mbrc.data.dbdata;
 
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
+import com.kelsos.mbrc.data.db.LibraryProvider;
+import com.kelsos.mbrc.data.interfaces.GenreColumns;
 
 public class Genre extends DataItem implements GenreColumns {
     public static final String[] FIELDS ={_ID, GENRE_NAME};

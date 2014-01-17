@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.data;
+package com.kelsos.mbrc.data.interfaces;
 
 public interface TrackColumns {
     String TITLE = "title";

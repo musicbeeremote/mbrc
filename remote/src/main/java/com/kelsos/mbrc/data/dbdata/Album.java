@@ -1,9 +1,11 @@
-package com.kelsos.mbrc.data;
+package com.kelsos.mbrc.data.dbdata;
 
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
+import com.kelsos.mbrc.data.db.LibraryProvider;
+import com.kelsos.mbrc.data.interfaces.AlbumColumns;
 
 public class Album extends DataItem implements AlbumColumns {
     public static final String TABLE_NAME = "albums";

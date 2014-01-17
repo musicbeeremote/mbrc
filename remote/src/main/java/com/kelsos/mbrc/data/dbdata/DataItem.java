@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.data;
+package com.kelsos.mbrc.data.dbdata;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 import com.kelsos.mbrc.BuildConfig;
+import com.kelsos.mbrc.data.db.LibraryProvider;
 
 public abstract class DataItem implements BaseColumns {
 

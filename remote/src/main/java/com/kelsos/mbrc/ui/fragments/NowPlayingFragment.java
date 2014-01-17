@@ -152,29 +152,17 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
     private int calculateNewIndex(int from, int to, int index) {
         int dist = Math.abs(from - to);
         int rIndex = index;
-        if (dist == 1
-                && index == from
-                || dist > 1
-                && from > to
-                && index == from
-                || dist > 1
-                && from < to
-                && index == from) {
+        if (dist == 1 && index == from
+                || dist > 1 && from > to && index == from
+                || dist > 1 && from < to && index == from) {
             rIndex = to;
-        } else if (dist == 1
-                && index == to) {
+        } else if (dist == 1 && index == to) {
             rIndex = from;
-        } else if (dist > 1
-                && from > to
-                && index == to
-                || from > index
-                && to < index) {
+        } else if (dist > 1 && from > to && index == to
+                || from > index && to < index) {
             rIndex += 1;
-        } else if (dist > 1
-                && from < to
-                && index == to
-                || from < index
-                && to > index) {
+        } else if (dist > 1 && from < to && index == to
+                || from < index && to > index) {
             rIndex -= 1;
         }
         return rIndex;

@@ -55,7 +55,7 @@
         </service>
 
         <provider
-            android:name="com.kelsos.mbrc.data.LibraryProvider"
+            android:name=".data.db.LibraryProvider"
             android:authorities="com.kelsos.mbrc.provider"
             android:enabled="true"
             android:exported="false" >

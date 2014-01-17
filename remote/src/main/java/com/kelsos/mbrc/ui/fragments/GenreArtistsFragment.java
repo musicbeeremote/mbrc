@@ -12,7 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.Artist;
+import com.kelsos.mbrc.data.dbdata.Artist;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 
 

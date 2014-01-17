@@ -17,31 +17,16 @@ import roboguice.service.RoboService;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class Controller extends RoboService {
 
     @Inject private Injector injector;
     @Inject private Bus bus;
+
     private Map<String, Class<? extends ICommand>> commandMap;
-    private final BlockingQueue<Runnable> mExecutionQueue;
-    private final ThreadPoolExecutor mCommandExecutionThreadPool;
-    private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
-    private static final int KEEP_ALIVE_TIME = 1;
-    private static final TimeUnit KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS;
 
     public Controller() {
-        mExecutionQueue = new LinkedBlockingQueue<>();
-        mCommandExecutionThreadPool = new ThreadPoolExecutor(NUMBER_OF_CORES,
-                NUMBER_OF_CORES,
-                KEEP_ALIVE_TIME,
-                KEEP_ALIVE_TIME_UNIT,
-                mExecutionQueue);
-
         if (BuildConfig.DEBUG) {
             Log.d("mbrc-log", "Controller initialized");
         }
@@ -51,6 +36,11 @@ public class Controller extends RoboService {
         return null;
     }
 
+    /**
+     * Registers an association between an event type (String) and a command
+     * @param type The event type associated.
+     * @param command The command associated with the event type.
+     */
     public void register(String type, Class<? extends ICommand> command) {
         if (commandMap == null) {
             commandMap = new HashMap<>();
@@ -60,6 +50,11 @@ public class Controller extends RoboService {
         }
     }
 
+    /**
+     * Removes an association between an event type (String) and a command
+     * @param type The event The event type associated.
+     * @param command The command associated with the event type.
+     */
     public void unregister(String type, Class<? extends ICommand> command) {
         if (commandMap.containsKey(type) && commandMap.get(type).equals(command)) {
             commandMap.remove(type);
@@ -69,13 +64,18 @@ public class Controller extends RoboService {
     /**
      * Subscriber - Handler to the MessageEvents posted through the event bus.
      * Responsible for passing the event to the executeCommand function.
-     * @param event
+     * @param event The {@link MessageEvent} passed to the controller
      */
     @Subscribe public void handleUserActionEvents(MessageEvent event) {
         executeCommand(event);
     }
 
-    public void executeCommand(final IEvent event) {
+    /**
+     * Checks for a Command associated with the event passed.
+     * Instantiates the Command and executes it.
+     * @param event the event passed for execution
+     */
+    private void executeCommand(final IEvent event) {
         Class<? extends ICommand> commandClass = this.commandMap.get(event.getType());
         if (commandClass == null) {
             return;
@@ -85,11 +85,9 @@ public class Controller extends RoboService {
             if (commandInstance == null) {
                 return;
             }
-            mCommandExecutionThreadPool.execute(new Runnable() {
-                @Override public void run() {
-                    commandInstance.execute(event);
-                }
-            });
+
+            commandInstance.execute(event);
+
         } catch (Exception ex) {
             if (BuildConfig.DEBUG) {
                 Log.d("mbrc-log", "executing command for type: \t" + event.getType(), ex);
@@ -103,10 +101,6 @@ public class Controller extends RoboService {
         Configuration.initialize(this);
         bus.register(this);
         return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override public void onStart(Intent intent, int startId) {
-        super.onStart(intent, startId);
     }
 
     @Override public void onDestroy() {

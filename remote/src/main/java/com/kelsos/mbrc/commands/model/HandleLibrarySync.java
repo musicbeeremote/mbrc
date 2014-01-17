@@ -2,7 +2,7 @@ package com.kelsos.mbrc.commands.model;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.SyncHandler;
-import com.kelsos.mbrc.data.Track;
+import com.kelsos.mbrc.data.dbdata.Track;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import org.codehaus.jackson.JsonNode;

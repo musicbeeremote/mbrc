@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.data;
+package com.kelsos.mbrc.data.interfaces;
 
 public interface AlbumColumns {
     String ALBUM_NAME = "album_name";

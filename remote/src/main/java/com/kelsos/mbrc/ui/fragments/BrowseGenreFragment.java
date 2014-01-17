@@ -17,7 +17,7 @@ import android.widget.ListView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.GenreCursorAdapter;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.Genre;
+import com.kelsos.mbrc.data.dbdata.Genre;
 import com.kelsos.mbrc.data.GenreEntry;
 import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;

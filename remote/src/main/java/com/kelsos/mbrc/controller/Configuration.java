@@ -9,10 +9,17 @@ import com.kelsos.mbrc.constants.SocketEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.net.Protocol;
 
+/**
+ * Used to initialize the controller's configuration.
+ */
 public final class Configuration {
 
     private Configuration() { }
 
+    /**
+     * Initializes the mapping between events and commands for the passed controller.
+     * @param controller The active controller.
+     */
     @Inject public static void initialize(Controller controller) {
         controller.register(ProtocolEventType.REDUCE_VOLUME, ReduceVolumeOnRingCommand.class);
         controller.register(ProtocolEventType.HANDSHAKE_COMPLETE, VisualUpdateHandshakeComplete.class);

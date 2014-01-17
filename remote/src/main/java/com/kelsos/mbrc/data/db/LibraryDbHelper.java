@@ -1,9 +1,11 @@
-package com.kelsos.mbrc.data;
+package com.kelsos.mbrc.data.db;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import com.kelsos.mbrc.data.dbdata.DataItem;
+import com.kelsos.mbrc.data.dbdata.*;
 
 import java.util.ArrayList;
 import java.util.List;
