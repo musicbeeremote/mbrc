@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.ui.activities.AppPreferenceView;
+import com.kelsos.mbrc.ui.activities.SettingsActivityGB;
 
 public class SetupDialogFragment extends DialogFragment {
     @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -18,7 +18,7 @@ public class SetupDialogFragment extends DialogFragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                startActivity(new Intent(getActivity(), AppPreferenceView.class));
+                                startActivity(new Intent(getActivity(), SettingsActivityGB.class));
                             }
                         })
                 .setNegativeButton(R.string.dialog_application_setup_negative, new DialogInterface.OnClickListener() {

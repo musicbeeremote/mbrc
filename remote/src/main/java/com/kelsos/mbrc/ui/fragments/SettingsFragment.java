@@ -1,12 +1,13 @@
-package com.kelsos.mbrc.ui.activities;
+package com.kelsos.mbrc.ui.fragments;
 
+
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import com.google.inject.Inject;
@@ -14,23 +15,42 @@ import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity;
 import com.squareup.otto.Bus;
 
-public class AppPreferenceView extends PreferenceActivity {
+/**
+ * A {@link android.preference.PreferenceFragment} subclass.
+ * Used on devices with API > 11;
+ * Use the {@link SettingsFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ *
+ */
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+public class SettingsFragment extends PreferenceFragment {
     @Inject private Bus bus;
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @return A new instance of fragment SettingsFragment.
+     */
+    public static SettingsFragment newInstance() {
+        return new SettingsFragment();
+    }
+
+    public SettingsFragment() { }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setTitle(R.string.main_menu_title_settings);
+        setHasOptionsMenu(true);
         addPreferencesFromResource(R.xml.application_settings);
-        final Context mContext = this;
 
         final Preference mOpenSource = findPreference(getResources().getString(R.string.preferences_open_source));
         final Preference mManager = findPreference(getResources().getString(R.string.preferences_key_connection_manager));
         final Preference mVersion = findPreference(getResources().getString(R.string.settings_version));
+        final Preference mBuild = findPreference(getResources().getString(R.string.pref_key_build_time));
+        final Preference mRevision = findPreference(getResources().getString(R.string.pref_key_revision));
         if (mOpenSource != null) {
             mOpenSource.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override public boolean onPreferenceClick(Preference preference) {
@@ -43,7 +63,7 @@ public class AppPreferenceView extends PreferenceActivity {
         if (mManager != null) {
             mManager.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override public boolean onPreferenceClick(Preference preference) {
-                    startActivity(new Intent(mContext, ConnectionManagerActivity.class));
+                    startActivity(new Intent(getActivity(), ConnectionManagerActivity.class));
                     return false;
                 }
             });
@@ -51,6 +71,14 @@ public class AppPreferenceView extends PreferenceActivity {
 
         if (mVersion != null) {
             mVersion.setSummary(String.format(getResources().getString(R.string.settings_version_number), BuildConfig.VERSION_NAME));
+        }
+
+        if (mBuild != null) {
+            mBuild.setSummary(BuildConfig.BUILD_TIME);
+        }
+
+        if (mRevision != null) {
+            mRevision.setSummary(BuildConfig.GIT_SHA);
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -82,9 +110,9 @@ public class AppPreferenceView extends PreferenceActivity {
     }
 
     private void showLicenseDialog() {
-        final WebView webView = new WebView(this);
+        final WebView webView = new WebView(getActivity());
         webView.loadUrl("file:///android_asset/license.html");
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(getActivity())
                 .setView(webView)
                 .setPositiveButton(android.R.string.ok, null)
                 .setTitle("MusicBee Remote license")
@@ -93,9 +121,9 @@ public class AppPreferenceView extends PreferenceActivity {
     }
 
     private void showOpenSourceLicenseDialog() {
-        final WebView webView = new WebView(this);
+        final WebView webView = new WebView(getActivity());
         webView.loadUrl("file:///android_asset/licenses.html");
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(getActivity())
                 .setView(webView)
                 .setPositiveButton(android.R.string.ok, null)
                 .setTitle("Open source licenses")
@@ -107,7 +135,7 @@ public class AppPreferenceView extends PreferenceActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                getActivity().finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

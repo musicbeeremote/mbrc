@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.activities;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.*;
 import android.support.v4.widget.DrawerLayout;
@@ -109,7 +110,11 @@ public class MainFragmentActivity extends BaseActivity {
 
                 return true;
             case R.id.actionbar_settings:
-                startActivity(new Intent(this, AppPreferenceView.class));
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
+                    startActivity(new Intent(this, SettingsActivity.class));
+                } else {
+                    startActivity(new Intent(this, SettingsActivityGB.class));
+                }
                 return true;
             case R.id.actionbar_help:
                 Intent openHelp = new Intent(Intent.ACTION_VIEW);

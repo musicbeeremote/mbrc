@@ -34,7 +34,8 @@
             </intent-filter>
         </activity>
         <activity android:name="com.kelsos.mbrc.ui.activities.Profile" />
-        <activity android:name="com.kelsos.mbrc.ui.activities.AppPreferenceView" />
+        <activity android:name=".ui.activities.SettingsActivityGB" />
+        <activity android:name=".ui.activities.SettingsActivity" />
         <activity android:name="com.kelsos.mbrc.ui.activities.PlaylistActivity" />
         <activity
             android:name="com.kelsos.mbrc.ui.activities.ConnectionManagerActivity"
