@@ -4,17 +4,22 @@ buildscript {
     repositories {
         mavenCentral()
         mavenLocal()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.7.+'
+//        classpath 'com.squareup.gradle:gradle-android-test-plugin:0.9.1-SNAPSHOT'
     }
 }
 
 apply plugin: 'android'
+//apply plugin: 'android-test'
 
 repositories {
     /** Temporary for vpi **/
     maven { url "http://dl.bintray.com/populov/maven" }
+//    /** For gradle android test snapshot **/
+//    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     mavenCentral()
     mavenLocal()
 }
@@ -45,6 +50,12 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.1.1'
     compile 'de.keyboardsurfer.android.widget:crouton:1.8.2@aar'
     compile 'com.google.inject:guice:3.0:no_aop'
+
+//    testCompile 'junit:junit:4.10'
+//    testCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
+//
+//    instrumentTestCompile 'junit:junit:4.10'
+//    instrumentTestCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
 }
 
 android {
@@ -71,7 +82,7 @@ android {
     }
 
     sourceSets {
-        instrumentTest.setRoot('tests')
+        instrumentTest.setRoot('src/test')
     }
 
     signingConfigs {
@@ -84,7 +95,6 @@ android {
             signingConfig signingConfigs.release
             debuggable false
             zipAlign true
-            versionNameSuffix ""
         }
         debug {
             packageNameSuffix ".debug"
@@ -93,7 +103,7 @@ android {
     }
 
     productFlavors {
-        defaultFlavor {}
+        free {}
     }
 
     lintOptions {
@@ -113,11 +123,10 @@ apply plugin: 'pmd'
 apply plugin: 'sonar-runner'
 
 checkstyle {
-
+    configFile = file("$rootDir/config/quality/checkstyle/checkstyle.xml")
 }
 
 task checkstyle(type: Checkstyle) {
-    configFile = file("$rootDir/config/quality/checkstyle/checkstyle.xml")
     source 'src/main/java'
     include '**/*.java'
     exclude '**/gen/**'
@@ -126,8 +135,9 @@ task checkstyle(type: Checkstyle) {
 }
 
 task findbugs(type: FindBugs) {
+    ignoreFailures = true
     excludeFilter file("$rootDir/config/quality/findbugs/findbugs-filter.xml")
-    classes = fileTree('build/classes/debug/')
+    classes = fileTree('build/classes/free/debug/')
     source = fileTree('src/main/java/')
     classpath = files( project.configurations.compile.asPath )
     effort = 'max'
