@@ -32,7 +32,7 @@ public class Track extends DataItem implements TrackColumns {
 
     public static final String CREATE_TABLE =
             "create table " + TABLE_NAME + "(" + _ID
-            + " integer primary key autoincrement," + HASH + " text ,"//unique
+            + " integer primary key autoincrement," + HASH + " text ,"
             + TITLE + " text," + ALBUM_ID + " integer, " + GENRE_ID + " integer,"
             + ARTIST_ID + " integer," + YEAR + " text," + TRACK_NO + " integer,"
             + COVER_ID + " integer, " + UPDATED + " datetime, "
@@ -43,7 +43,8 @@ public class Track extends DataItem implements TrackColumns {
             + "foreign key (" + GENRE_ID + ") references "
             + Genre.TABLE_NAME + "("+ _ID + ") on delete cascade, "
             + "foreign key (" + COVER_ID + ") references "
-            + Cover.TABLE_NAME + "("+ _ID + ") on delete cascade " + ")";
+            + Cover.TABLE_NAME + "("+ _ID + ") on delete cascade, "
+            + "unique(" + HASH + ") on conflict ignore" + ")";
 
     public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
     public static final String SELECT_TRACKS =
@@ -57,7 +58,13 @@ public class Track extends DataItem implements TrackColumns {
     " and g." + _ID + " = t." + GENRE_ID + " and c." + _ID + " = t." + COVER_ID
     + " order by " + " ar." + Artist.ARTIST_NAME + " ASC" + ", al." + Album.ALBUM_NAME
     + " ASC" + ", t." + TRACK_NO + " ASC";
+
     public static final String SELECT_TRACK = SELECT_TRACKS + " and t." + _ID + " = ?";
+    public static final String INSERT = "insert into " + TABLE_NAME + " (" + HASH + ", "
+            + TITLE + ", " + GENRE_ID + ", " + ARTIST_ID + ", " + YEAR + ", " + TRACK_NO
+            + ") values (?, ?, (select _id from genres where genre_name = ?), "
+            + "(select _id from artists where artist_name = ?), ?, ?)";
+
 
 
     public static Uri getContentUri() {

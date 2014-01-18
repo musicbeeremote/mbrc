@@ -16,7 +16,11 @@ public class Artist extends DataItem implements ArtistColumns {
 
     public static final String CREATE_TABLE =
             "create table " + TABLE_NAME + "(" + _ID + " integer primary key autoincrement,"
-            + ARTIST_NAME + " text unique," + IMAGE_URL + " text" + ")";
+            + ARTIST_NAME + " text," + IMAGE_URL + " text," + "unique("+ ARTIST_NAME
+            + ") on conflict ignore" + ")";
+
+    public static final String INSERT = "insert into " + TABLE_NAME + " (" + ARTIST_NAME + ") values (?)";
+
     public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
 
     public static Uri getContentUri() {

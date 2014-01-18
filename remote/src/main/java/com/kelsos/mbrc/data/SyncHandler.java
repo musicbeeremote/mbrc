@@ -17,12 +17,13 @@ import com.squareup.otto.Bus;
 
 import java.io.FileOutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Singleton
 public class SyncHandler {
 
-    public static final int BATCH_SIZE = 100;
+    public static final int BATCH_SIZE = 50;
     private Context mContext;
     private NotificationService mNotification;
     private Bus bus;
@@ -91,16 +92,7 @@ public class SyncHandler {
         getNextTrack();
     }
 
-    public void createEntry(Track track) {
-//        if (dbHelper.getCoverId(track.getCoverHash()) <= 0) {
-//            Map<String, String> syncData = new HashMap<>();
-//            syncData.put("type", "cover");
-//            syncData.put("hash", track.getHash());
-//            bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
-//                    new USER_ACTION(Protocol.LibrarySync, syncData)));
-//            cachedTrack = track;
-//        } else {
-        dbHelper.insertTrack(track);
-//        }
+    public void processBatch(final List<Track> trackList) {
+        dbHelper.processBatch(trackList);
     }
 }

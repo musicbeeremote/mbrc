@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.commands.model;
 
+import android.util.Log;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.SyncHandler;
 import com.kelsos.mbrc.data.dbdata.Track;
@@ -7,6 +8,9 @@ import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HandleLibrarySync implements ICommand {
     private SyncHandler handler;
@@ -32,11 +36,16 @@ public class HandleLibrarySync implements ICommand {
             handler.updateCover(image, sha1);
         } else if (type.equals("meta")) {
             ArrayNode trackNode = (ArrayNode) node.path("data");
-            for (int i = 0; i < node.size(); i++) {
+            List<Track> list = new ArrayList<>();
+            for (int i = 0; i < trackNode.size(); i++) {
                 JsonNode jNode = trackNode.get(i);
-                Track track = new Track(jNode);
-                handler.createEntry(track);
+                list.add(new Track(jNode));
             }
+
+            handler.processBatch(list);
+
+            Log.d("mbrc-log", "Processing batch of " + list.size());
+
             handler.getNextBunch();
         }
     }

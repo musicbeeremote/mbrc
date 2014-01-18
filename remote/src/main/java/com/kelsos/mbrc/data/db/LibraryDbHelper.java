@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 import com.kelsos.mbrc.data.dbdata.*;
 
@@ -17,6 +18,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
     public static final String ASC = " ASC";
     public static final String EQUALS = " = ?";
     private final Context mContext;
+    private SQLiteDatabase mDb;
 
     public LibraryDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -344,6 +346,56 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         }
 
         return id;
+    }
+
+    public synchronized void processBatch(final List<Track> list) {
+        mDb = getWritableDatabase();
+        if (mDb != null) {
+            mDb.beginTransaction();
+            SQLiteStatement artistStatement = mDb.compileStatement(Artist.INSERT);
+            SQLiteStatement genreStatement = mDb.compileStatement(Genre.INSERT);
+            SQLiteStatement albumStatement = mDb.compileStatement(Album.INSERT);
+            SQLiteStatement trackStatement = mDb.compileStatement(Track.INSERT);
+
+            for(Track track : list) {
+                if (artistStatement != null) {
+                    artistStatement.bindString(1, track.getArtist());
+                    artistStatement.execute();
+                    artistStatement.clearBindings();
+
+                    artistStatement.bindString(1, track.getAlbumArtist());
+                    artistStatement.execute();
+                    artistStatement.clearBindings();
+                }
+
+                if (genreStatement != null) {
+                    genreStatement.bindString(1, track.getGenre());
+                    genreStatement.execute();
+                    genreStatement.clearBindings();
+                }
+
+
+                if (albumStatement != null) {
+                    albumStatement.bindString(1, track.getAlbum());
+                    albumStatement.bindString(2, track.getAlbumArtist());
+                    albumStatement.execute();
+                    albumStatement.clearBindings();
+                }
+
+                if (trackStatement != null) {
+                    trackStatement.bindString(1, track.getHash());
+                    trackStatement.bindString(2, track.getTitle());
+                    trackStatement.bindString(3, track.getGenre());
+                    trackStatement.bindString(4, track.getArtist());
+                    trackStatement.bindString(5, track.getYear());
+                    trackStatement.bindLong(6, track.getTrackNo());
+                    trackStatement.execute();
+                    trackStatement.clearBindings();
+                }
+            }
+            mDb.setTransactionSuccessful();
+            mDb.endTransaction();
+        }
     }
 
     public synchronized long insertTrack(final Track track) {

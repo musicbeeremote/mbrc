@@ -11,10 +11,15 @@ public class Album extends DataItem implements AlbumColumns {
     public static final String TABLE_NAME = "albums";
     public static final String CREATE_TABLE =
             "create table " + TABLE_NAME + "(" + _ID + " integer primary key autoincrement,"
-                    + ALBUM_NAME + " text unique," + ARTIST_ID + " integer, "
+                    + ALBUM_NAME + " text," + ARTIST_ID + " integer, "
                     + "foreign key (" + ARTIST_ID + ") references "
-                    + Artist.TABLE_NAME + "(" + _ID + ") on delete cascade" + ")";
+                    + Artist.TABLE_NAME + "(" + _ID + ") on delete cascade,"
+                    + "unique(" + ALBUM_NAME + ") on conflict ignore" + ")";
+
     public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
+    public static final String INSERT = "insert into " + TABLE_NAME + " (" + ALBUM_NAME + ", "
+            + ARTIST_ID +") values (?, (select _id from artists where artist_name = ?))";
+
 
     public static Uri getContentUri() {
         return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME + LibraryProvider.AUTHORITY), TABLE_NAME);
