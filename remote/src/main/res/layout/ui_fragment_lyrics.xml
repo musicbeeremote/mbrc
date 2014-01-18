@@ -9,7 +9,7 @@
               android:background="@color/mbrc_background">
 
     <ListView
-            android:id="@+id/lyrics_list_view"
+            android:id="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="0dip"
             android:layout_weight="1"
