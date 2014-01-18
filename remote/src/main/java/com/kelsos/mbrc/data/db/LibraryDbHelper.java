@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import com.kelsos.mbrc.data.dbdata.DataItem;
+import android.util.Log;
 import com.kelsos.mbrc.data.dbdata.*;
 
 import java.util.ArrayList;
@@ -93,10 +93,6 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         album.setArtistId(insertArtist(new Artist(album.getArtist(), "")));
         SQLiteDatabase db = this.getWritableDatabase();
         final long id = db != null ? db.insert(Album.TABLE_NAME, null, album.getContentValues()) : 0;
-        if (id > 0) {
-            album.notifyProvider(mContext);
-        }
-
         return id;
     }
 
@@ -194,9 +190,6 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         }
         SQLiteDatabase db = this.getWritableDatabase();
         id = db != null ? db.insert(Artist.TABLE_NAME, null, artist.getContentValues()) : 0;
-        if (id > 0) {
-            artist.notifyProvider(mContext);
-        }
         return id;
     }
 
@@ -208,9 +201,6 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = db != null ? db.insert(Genre.TABLE_NAME, null, genre.getContentValues()) : 0;
-        if (id > 0) {
-            genre.notifyProvider(mContext);
-        }
         return id;
     }
 
@@ -297,9 +287,6 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = db != null ? db.insert(Cover.TABLE_NAME, null, cover.getContentValues()) : 0;
-        if (id > 0) {
-            cover.notifyProvider(mContext);
-        }
         return id;
     }
 
@@ -366,9 +353,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         track.setAlbumId(insertAlbum(new Album(track.getAlbum(), track.getAlbumArtist())));
         SQLiteDatabase db = this.getWritableDatabase();
         long id = db != null ? db.insert(Track.TABLE_NAME, null, track.getContentValues()) : 0;
-        if (id > 0) {
-            track.notifyProvider(mContext);
-        }
+        Log.d("mbrc-log", "inserting track with id " + id + " and title" + track.getTitle());
         return id;
     }
 

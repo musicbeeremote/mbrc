@@ -40,10 +40,6 @@ public class MainDataModel {
     private boolean isScrobblingActive;
     private boolean isMuteActive;
     private PlayState playState;
-    private List<TrackEntry> searchTracks;
-    private List<AlbumEntry> searchAlbums;
-    private List<GenreEntry> searchGenres;
-    private List<ArtistEntry> searchArtists;
     private List<MusicTrack> nowPlayingList;
     private List<Playlist> availablePlaylists;
     private List<TrackEntry> playlistTracks;
@@ -73,10 +69,6 @@ public class MainDataModel {
         rating = 0;
         lyrics = "";
 
-        searchArtists = new ArrayList<>();
-        searchAlbums = new ArrayList<>();
-        searchGenres = new ArrayList<>();
-        searchTracks = new ArrayList<>();
         nowPlayingList = new ArrayList<>();
         availablePlaylists = new ArrayList<>();
         playlistTracks = new ArrayList<>();
@@ -141,42 +133,6 @@ public class MainDataModel {
     @Produce public NowPlayingListAvailable produceNowPlayingListAvailable() {
         int index = nowPlayingList.indexOf(new MusicTrack(artist, title));
         return new NowPlayingListAvailable(nowPlayingList, index);
-    }
-
-    public void setSearchArtists(List<ArtistEntry> searchArtists) {
-        this.searchArtists = searchArtists;
-        bus.post(new ArtistSearchResults(this.searchArtists, false));
-    }
-
-    @Produce public ArtistSearchResults produceArtistSearchResults() {
-        return new ArtistSearchResults(searchArtists, true);
-    }
-
-    public void setSearchTracks(List<TrackEntry> searchTracks) {
-        this.searchTracks = searchTracks;
-        bus.post(new TrackSearchResults(searchTracks, false));
-    }
-
-    @Produce public TrackSearchResults produceTrackSearchResults() {
-        return new TrackSearchResults(searchTracks, true);
-    }
-
-    public void setSearchAlbums(List<AlbumEntry> searchAlbums) {
-        this.searchAlbums = searchAlbums;
-        bus.post(new AlbumSearchResults(searchAlbums, false));
-    }
-
-    @Produce public AlbumSearchResults produceAlbumSearchResults() {
-        return new AlbumSearchResults(searchAlbums, true);
-    }
-
-    public void setSearchGenres(List<GenreEntry> searchGenres) {
-        this.searchGenres = searchGenres;
-        bus.post(new GenreSearchResults(searchGenres, false));
-    }
-
-    @Produce public GenreSearchResults produceGenreSearchResults() {
-        return new GenreSearchResults(searchGenres, true);
     }
 
     public void setRating(double rating) {

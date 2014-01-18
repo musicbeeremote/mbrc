@@ -142,6 +142,24 @@ public class LibraryProvider extends ContentProvider {
                 result = dbHelper.getAllTracksCursor(selection, selectionArgs, sortOrder);
                 result.setNotificationUri(contentResolver, uri);
                 break;
+            case Track.BASE_ALBUM_FILTER_CODE:
+                String albumId = uri.getLastPathSegment();
+                sqBuilder = new SQLiteQueryBuilder();
+                sqBuilder.setTables(Track.TABLE_NAME);
+                dataSel = Track.ALBUM_ID + " = " + " ?";
+                result = sqBuilder.query(dbHelper.getReadableDatabase(),
+                        new String[]{
+                                Track._ID,
+                                Track.TITLE,
+                                Track.TRACK_NO
+                        },
+                        dataSel,
+                        new String[]{albumId},
+                        Track._ID,
+                        null,
+                        Track.TRACK_NO + " ASC");
+                result.setNotificationUri(contentResolver, uri);
+                break;
             default:
                 throw new IllegalArgumentException(String.format("Unknown Uri %s", uri));
         }

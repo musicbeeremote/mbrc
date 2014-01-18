@@ -32,7 +32,7 @@ public class Track extends DataItem implements TrackColumns {
 
     public static final String CREATE_TABLE =
             "create table " + TABLE_NAME + "(" + _ID
-            + " integer primary key autoincrement," + HASH + " text unique,"
+            + " integer primary key autoincrement," + HASH + " text ,"//unique
             + TITLE + " text," + ALBUM_ID + " integer, " + GENRE_ID + " integer,"
             + ARTIST_ID + " integer," + YEAR + " text," + TRACK_NO + " integer,"
             + COVER_ID + " integer, " + UPDATED + " datetime, "
@@ -54,7 +54,9 @@ public class Track extends DataItem implements TrackColumns {
     " from " + Album.TABLE_NAME + " al, " + Artist.TABLE_NAME + " ar, " + Cover.TABLE_NAME +
     " c, " + Genre.TABLE_NAME + " g, " + TABLE_NAME + " t " +
     " where al." + _ID + " = t." + ALBUM_ID + " and ar." + _ID + " = t." + ARTIST_ID +
-    " and g." + _ID + " = t." + GENRE_ID + " and c." + _ID + " = t." + COVER_ID;
+    " and g." + _ID + " = t." + GENRE_ID + " and c." + _ID + " = t." + COVER_ID
+    + " order by " + " ar." + Artist.ARTIST_NAME + " ASC" + ", al." + Album.ALBUM_NAME
+    + " ASC" + ", t." + TRACK_NO + " ASC";
     public static final String SELECT_TRACK = SELECT_TRACKS + " and t." + _ID + " = ?";
 
 
@@ -63,12 +65,16 @@ public class Track extends DataItem implements TrackColumns {
                 LibraryProvider.AUTHORITY), TABLE_NAME);
     }
 
+    public static final Uri CONTENT_ALBUM_URI = Uri.withAppendedPath(getContentUri(), "album");
+
     public static final int BASE_URI_CODE = 0x8ee72c3;
     public static final int BASE_ITEM_CODE =  0x63b3c5d;
+    public static final int BASE_ALBUM_FILTER_CODE = 0x3821dd2e;
 
     public static void addMatcherUris(UriMatcher uriMatcher) {
         uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME, BASE_URI_CODE);
         uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME + "/#", BASE_ITEM_CODE);
+        uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME + "/album/*", BASE_ALBUM_FILTER_CODE);
     }
 
     public static final String TYPE_DIR = "vnd.android.cursor.dir/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;
@@ -91,22 +97,6 @@ public class Track extends DataItem implements TrackColumns {
         this.albumArtist = node.path("album_artist").asText();
         this.coverHash = node.path("cover_hash").asText();
         this.artistImageUrl = node.path("artist_image_url").asText();
-    }
-
-    public Track() {
-        this.id = -1;
-        this.hash = "";
-        this.title = "";
-        this.albumId = -1;
-        this.album = "";
-        this.genreId = -1;
-        this.genre = "";
-        this.artistId = -1;
-        this.artist = "";
-        this.year = "";
-        this.trackNo = -1;
-        this.coverId = -1;
-        this.artistImageUrl = "";
     }
 
     public Track(final Cursor cursor) {

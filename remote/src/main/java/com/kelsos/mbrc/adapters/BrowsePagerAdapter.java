@@ -3,10 +3,10 @@ package com.kelsos.mbrc.adapters;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import com.kelsos.mbrc.ui.fragments.BrowseAlbumFragment;
-import com.kelsos.mbrc.ui.fragments.BrowseArtistFragment;
-import com.kelsos.mbrc.ui.fragments.BrowseGenreFragment;
-import com.kelsos.mbrc.ui.fragments.BrowseTrackFragment;
+import com.kelsos.mbrc.ui.fragments.browse.BrowseAlbumFragment;
+import com.kelsos.mbrc.ui.fragments.browse.BrowseArtistFragment;
+import com.kelsos.mbrc.ui.fragments.browse.BrowseGenreFragment;
+import com.kelsos.mbrc.ui.fragments.browse.BrowseTrackFragment;
 
 public class BrowsePagerAdapter extends FragmentStatePagerAdapter {
     public static final int TOTAL_FRAGMENTS = 4;

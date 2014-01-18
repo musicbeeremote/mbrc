@@ -43,13 +43,6 @@ public final class Configuration {
         controller.register(Protocol.NOW_PLAYING_LFM_RATING, UpdateLfmRating.class);
         controller.register(Protocol.NOW_PLAYING_REMOVE, UpdateNowPlayingTrackRemoval.class);
         controller.register(Protocol.NOW_PLAYING_MOVE, UpdateNowPlayingTrackMoved.class);
-        controller.register(Protocol.LIBRARY_SEARCH_ARTIST, UpdateArtistSearchResults.class);
-        controller.register(Protocol.LIBRARY_SEARCH_ALBUM, UpdateAlbumSearchResults.class);
-        controller.register(Protocol.LIBRARY_SEARCH_GENRE, UpdateGenreSearchResults.class);
-        controller.register(Protocol.LIBRARY_SEARCH_TITLE, UpdateTrackSearchResults.class);
-        controller.register(Protocol.LIBRARY_ARTIST_ALBUMS, UpdateAlbumSearchResults.class);
-        controller.register(Protocol.LIBRARY_GENRE_ARTISTS, UpdateArtistSearchResults.class);
-        controller.register(Protocol.LIBRARY_ALBUM_TRACKS, UpdateTrackSearchResults.class);
         controller.register(Protocol.NOW_PLAYING_POSITION, UpdatePlaybackPositionCommand.class);
         controller.register(Protocol.PLUGIN_VERSION, UpdatePluginVersionCommand.class);
         controller.register(Protocol.PLAYLIST_LIST, UpdateAvailablePlaylists.class);

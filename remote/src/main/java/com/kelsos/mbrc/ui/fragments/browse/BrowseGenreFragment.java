@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.fragments;
+package com.kelsos.mbrc.ui.fragments.browse;
 
 
 import android.content.Intent;
@@ -16,13 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.GenreCursorAdapter;
-import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.dbdata.Genre;
-import com.kelsos.mbrc.data.GenreEntry;
-import com.kelsos.mbrc.data.Queue;
-import com.kelsos.mbrc.data.UserAction;
-import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.activities.Profile;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 
@@ -47,7 +41,7 @@ public class BrowseGenreFragment extends BaseListFragment
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getLoaderManager().initLoader(URL_LOADER, null, this);
-        return inflater.inflate(R.layout.ui_fragment_library_simpl, container, false);
+        return inflater.inflate(R.layout.fragment_library, container, false);
     }
 
     @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -63,29 +57,6 @@ public class BrowseGenreFragment extends BaseListFragment
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             Object line = mAdapter.getItem(mi.position);
-            final String qContext = Protocol.LIBRARY_QUEUE_GENRE;
-            final String gSub = Protocol.LIBRARY_GENRE_ARTISTS;
-            String query = ((GenreEntry) line).getName();
-
-            UserAction ua;
-            switch (item.getItemId()) {
-                case BrowseMenuItems.QUEUE_NEXT:
-                    ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_next), query));
-                    break;
-                case BrowseMenuItems.QUEUE_LAST:
-                    ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_last), query));
-                    break;
-                case BrowseMenuItems.PLAY_NOW:
-                    ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_now), query));
-                    break;
-                case BrowseMenuItems.GET_SUB:
-                    ua = new UserAction(gSub, query);
-                    break;
-                default:
-                    return false;
-            }
-
-            getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, ua));
             return true;
         } else {
             return false;

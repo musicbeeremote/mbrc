@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.fragments;
+package com.kelsos.mbrc.ui.fragments.browse;
 
 public final class BrowseMenuItems {
     private BrowseMenuItems() { }

@@ -7,13 +7,15 @@ import android.view.*;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.base.BaseActivity;
 import com.kelsos.mbrc.ui.base.BaseFragment;
-import com.kelsos.mbrc.ui.fragments.ArtistAlbumsFragment;
-import com.kelsos.mbrc.ui.fragments.GenreArtistsFragment;
+import com.kelsos.mbrc.ui.fragments.profile.AlbumTracksFragment;
+import com.kelsos.mbrc.ui.fragments.profile.ArtistAlbumsFragment;
+import com.kelsos.mbrc.ui.fragments.profile.GenreArtistsFragment;
 
 public class Profile extends BaseActivity {
 
     public static final String GENRE = "genre";
     public static final String ARTIST = "artist";
+    public static final String ALBUM = "album";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +35,9 @@ public class Profile extends BaseActivity {
                     break;
                 case ARTIST:
                     fragment = ArtistAlbumsFragment.newInstance(id);
+                    break;
+                case ALBUM:
+                    fragment = AlbumTracksFragment.newInstance(id);
                     break;
                 default:
                     fragment = new PlaceholderFragment();

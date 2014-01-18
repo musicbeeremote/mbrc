@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.fragments;
+package com.kelsos.mbrc.ui.fragments.browse;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;

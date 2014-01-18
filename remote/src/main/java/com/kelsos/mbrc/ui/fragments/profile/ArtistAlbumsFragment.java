@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.fragments;
+package com.kelsos.mbrc.ui.fragments.profile;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.data.dbdata.Album;
 import com.kelsos.mbrc.data.dbdata.Artist;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 
@@ -19,18 +20,21 @@ import com.kelsos.mbrc.ui.base.BaseListFragment;
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link GenreArtistsFragment.OnFragmentInteractionListener} interface
+ * {@link ArtistAlbumsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link GenreArtistsFragment#newInstance} factory method to
+ * Use the {@link ArtistAlbumsFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class GenreArtistsFragment extends BaseListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String GENRE_ID = "genreId";
-    private static final int URL_LOADER = 0x15;
+public class ArtistAlbumsFragment extends BaseListFragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARTIST_ID = "artistId";
+    private static final int URL_LOADER = 0x832d;
 
     // TODO: Rename and change types of parameters
-    private long genreId;
+    private long artistId;
 
     private OnFragmentInteractionListener mListener;
     private SimpleCursorAdapter mAdapter;
@@ -40,18 +44,18 @@ public class GenreArtistsFragment extends BaseListFragment implements LoaderMana
      * this fragment using the provided parameters.
      *
      *
-     * @param genreId The id of the genre.
-     * @return A new instance of fragment GenreArtistsFragment.
+     * @param artistId Parameter 1.
+     * @return A new instance of fragment ArtistAlbumsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static GenreArtistsFragment newInstance(long genreId) {
-        GenreArtistsFragment fragment = new GenreArtistsFragment();
+    public static ArtistAlbumsFragment newInstance(long artistId) {
+        ArtistAlbumsFragment fragment = new ArtistAlbumsFragment();
         Bundle args = new Bundle();
-        args.putLong(GENRE_ID, genreId);
+        args.putLong(ARTIST_ID, artistId);
         fragment.setArguments(args);
         return fragment;
     }
-    public GenreArtistsFragment() {
+    public ArtistAlbumsFragment() {
         // Required empty public constructor
     }
 
@@ -59,7 +63,7 @@ public class GenreArtistsFragment extends BaseListFragment implements LoaderMana
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            genreId = getArguments().getLong(GENRE_ID);
+            artistId = getArguments().getLong(ARTIST_ID);
         }
     }
 
@@ -68,7 +72,7 @@ public class GenreArtistsFragment extends BaseListFragment implements LoaderMana
                              Bundle savedInstanceState) {
         getLoaderManager().initLoader(URL_LOADER, null, this);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_genre_artists, container, false);
+        return inflater.inflate(R.layout.fragment_artist_albums, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -97,17 +101,17 @@ public class GenreArtistsFragment extends BaseListFragment implements LoaderMana
 
     @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         Uri baseUri;
-        baseUri = Uri.withAppendedPath(Artist.CONTENT_GENRE_URI, Uri.encode(String.valueOf(genreId)));
+        baseUri = Uri.withAppendedPath(Album.CONTENT_ARTIST_URI, Uri.encode(String.valueOf(artistId)));
         return new CursorLoader(getActivity(), baseUri,
-                new String[] {Artist.ARTIST_NAME}, null, null, null);
+                new String[] {Album.ALBUM_NAME,Artist.ARTIST_NAME}, null, null, null);
     }
 
     @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mAdapter = new SimpleCursorAdapter(getActivity(),
-                R.layout.ui_list_single,
+                R.layout.ui_list_dual,
                 cursor,
-                new String[] {Artist.ARTIST_NAME},
-                new int[] {R.id.line_one},
+                new String[] {Artist.ARTIST_NAME, Album.ALBUM_NAME},
+                new int[] {R.id.line_one, R.id.line_two},
                 0);
 
         this.setListAdapter(mAdapter);
@@ -117,7 +121,6 @@ public class GenreArtistsFragment extends BaseListFragment implements LoaderMana
     @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
     }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

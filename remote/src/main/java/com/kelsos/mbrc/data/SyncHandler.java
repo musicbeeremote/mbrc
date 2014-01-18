@@ -22,7 +22,7 @@ import java.util.Map;
 @Singleton
 public class SyncHandler {
 
-    public static final int BATCH_SIZE = 50;
+    public static final int BATCH_SIZE = 100;
     private Context mContext;
     private NotificationService mNotification;
     private Bus bus;
@@ -67,7 +67,7 @@ public class SyncHandler {
             syncData.put("file", currentTrack);
             bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
                     new UserAction(Protocol.LIBRARY_SYNC, syncData)));
-            currentTrack += BATCH_SIZE;
+            currentTrack += BATCH_SIZE + currentTrack <= numberOfTracks ? BATCH_SIZE : numberOfTracks - currentTrack;
         }
     }
 
