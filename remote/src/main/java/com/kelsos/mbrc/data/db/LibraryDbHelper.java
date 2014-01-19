@@ -387,8 +387,9 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
                     trackStatement.bindString(2, track.getTitle());
                     trackStatement.bindString(3, track.getGenre());
                     trackStatement.bindString(4, track.getArtist());
-                    trackStatement.bindString(5, track.getYear());
-                    trackStatement.bindLong(6, track.getTrackNo());
+                    trackStatement.bindString(5, track.getAlbum());
+                    trackStatement.bindString(6, track.getYear());
+                    trackStatement.bindLong(7, track.getTrackNo());
                     trackStatement.execute();
                     trackStatement.clearBindings();
                 }

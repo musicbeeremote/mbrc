@@ -45,17 +45,16 @@ public class LibraryProvider extends ContentProvider {
                 break;
             case Album.BASE_URI_CODE:
                 SQLiteQueryBuilder sqBuilder = new SQLiteQueryBuilder();
-                sqBuilder.setTables(String.format("%s al, %s ar, %s c, %s t",
-                        Album.TABLE_NAME, Artist.TABLE_NAME, Cover.TABLE_NAME, Track.TABLE_NAME));
+                sqBuilder.setTables(String.format("%s al, %s ar, %s t",
+                        Album.TABLE_NAME, Artist.TABLE_NAME, Track.TABLE_NAME));
                 dataSel = "t." + Track.ALBUM_ID + " = " + "al."+ Album._ID
-                        + " and " + "c." + Cover._ID + " = " + "t." + Track.COVER_ID + " and "
-                        + "al." + Album.ARTIST_ID + " = " + "ar." + Artist._ID;
+                        + " and " + "al." + Album.ARTIST_ID + " = " + "ar." + Artist._ID;
 
                result = sqBuilder.query(dbHelper.getReadableDatabase(),
                         new String[] {"al." + Album._ID,
-                                Album.ALBUM_NAME, "al." + Album.ARTIST_ID,
-                                Artist.ARTIST_NAME,
-                                Cover.COVER_HASH },
+                                Album.ALBUM_NAME,
+                                "al." + Album.ARTIST_ID,
+                                Artist.ARTIST_NAME},
                         dataSel,
                         null,
                        "al." + Album._ID,

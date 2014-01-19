@@ -48,22 +48,24 @@ public class Track extends DataItem implements TrackColumns {
 
     public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
     public static final String SELECT_TRACKS =
-            "select t." + _ID + ", t." + HASH + ", t."+ TITLE + ", t." + ALBUM_ID + ", al." +
-    Album.ALBUM_NAME + ", t." + GENRE_ID + ", g." + Genre.GENRE_NAME + ", t." + ARTIST_ID +
-    ", ar." + Artist.ARTIST_NAME + ", t." + YEAR + ", t." + TRACK_NO + ", t." + COVER_ID +
-    ", c." + Cover.COVER_HASH + ", t." + UPDATED +
-    " from " + Album.TABLE_NAME + " al, " + Artist.TABLE_NAME + " ar, " + Cover.TABLE_NAME +
-    " c, " + Genre.TABLE_NAME + " g, " + TABLE_NAME + " t " +
-    " where al." + _ID + " = t." + ALBUM_ID + " and ar." + _ID + " = t." + ARTIST_ID +
-    " and g." + _ID + " = t." + GENRE_ID + " and c." + _ID + " = t." + COVER_ID
-    + " order by " + " ar." + Artist.ARTIST_NAME + " ASC" + ", al." + Album.ALBUM_NAME
-    + " ASC" + ", t." + TRACK_NO + " ASC";
+            "select t." + _ID + ", t." + HASH + ", t." + TITLE + ", t." + ALBUM_ID + ", al." +
+                    Album.ALBUM_NAME + ", t." + GENRE_ID + ", g." + Genre.GENRE_NAME + ", t." + ARTIST_ID +
+                    ", ar." + Artist.ARTIST_NAME + ", t." + YEAR + ", t." + TRACK_NO + ", t." + COVER_ID +
+                    ", t." + UPDATED +
+                    " from " + Album.TABLE_NAME + " al, " + Artist.TABLE_NAME + " ar,"
+                    + Genre.TABLE_NAME + " g, " + TABLE_NAME + " t " +
+                    " where al." + _ID + " = t." + ALBUM_ID + " and ar." + _ID + " = t." + ARTIST_ID +
+                    " and g." + _ID + " = t." + GENRE_ID
+                    + " order by " + " ar." + Artist.ARTIST_NAME + " ASC" + ", al." + Album.ALBUM_NAME
+                    + " ASC" + ", t." + TRACK_NO + " ASC";
 
     public static final String SELECT_TRACK = SELECT_TRACKS + " and t." + _ID + " = ?";
     public static final String INSERT = "insert into " + TABLE_NAME + " (" + HASH + ", "
-            + TITLE + ", " + GENRE_ID + ", " + ARTIST_ID + ", " + YEAR + ", " + TRACK_NO
+            + TITLE + ", " + GENRE_ID + ", " + ARTIST_ID + ", " + ALBUM_ID + ", "
+            + YEAR + ", " + TRACK_NO
             + ") values (?, ?, (select _id from genres where genre_name = ?), "
-            + "(select _id from artists where artist_name = ?), ?, ?)";
+            + "(select _id from artists where artist_name = ?),"
+            + " (select _id from albums where album_name = ?), ?, ?)";
 
 
 
