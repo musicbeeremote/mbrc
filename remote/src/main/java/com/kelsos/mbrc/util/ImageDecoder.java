@@ -16,7 +16,7 @@ import roboguice.util.RoboAsyncTask;
 
 public class ImageDecoder extends RoboAsyncTask<Bitmap> {
     @Inject private MainDataModel model;
-    @InjectResource(R.drawable.ic_image_no_cover) Drawable noCover;
+    @InjectResource(R.drawable.ic_image_no_cover) private Drawable noCover;
 
     private String image;
 

@@ -94,8 +94,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         }
         album.setArtistId(insertArtist(new Artist(album.getArtist(), "")));
         SQLiteDatabase db = this.getWritableDatabase();
-        final long id = db != null ? db.insert(Album.TABLE_NAME, null, album.getContentValues()) : 0;
-        return id;
+        return db != null ? db.insert(Album.TABLE_NAME, null, album.getContentValues()) : 0;
     }
 
     public synchronized int deleteItem(final DataItem item) {
@@ -202,8 +201,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         }
 
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = db != null ? db.insert(Genre.TABLE_NAME, null, genre.getContentValues()) : 0;
-        return id;
+        return db != null ? db.insert(Genre.TABLE_NAME, null, genre.getContentValues()) : 0;
     }
 
     public synchronized long getGenreId(final String genreName) {
@@ -288,8 +286,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         }
 
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = db != null ? db.insert(Cover.TABLE_NAME, null, cover.getContentValues()) : 0;
-        return id;
+        return db != null ? db.insert(Cover.TABLE_NAME, null, cover.getContentValues()) : 0;
     }
 
     public synchronized Cursor getCoverCursor(final long id) {
@@ -348,6 +345,11 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         return id;
     }
 
+    /**
+     * Receives a batch list of track meta data in json format and inserts them
+     * in the database using compiled statements
+     * @param list A list containing track items
+     */
     public synchronized void processBatch(final List<Track> list) {
         mDb = getWritableDatabase();
         if (mDb != null) {

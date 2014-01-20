@@ -111,14 +111,14 @@ public class ConnectionManagerActivity extends BaseActivity implements SettingsD
         return true;
     }
 
-    Button.OnClickListener scanListener = new Button.OnClickListener() {
+    private Button.OnClickListener scanListener = new Button.OnClickListener() {
         @Override public void onClick(View view) {
             mProgress = ProgressDialog.show(mContext, getString(R.string.progress_scanning), getString(R.string.progress_scanning_message), true, false);
             bus.post(new MessageEvent(UserInputEventType.START_DISCOVERY));
         }
     };
 
-    Button.OnClickListener addListener = new Button.OnClickListener() {
+    private Button.OnClickListener addListener = new Button.OnClickListener() {
         @Override public void onClick(View view) {
             SettingsDialogFragment settingsDialog = new SettingsDialogFragment();
             Bundle args = new Bundle();

@@ -13,10 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.*;
 import com.kelsos.mbrc.data.dbdata.Artist;
 import com.kelsos.mbrc.data.dbdata.Track;
-import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 
 public class BrowseTrackFragment extends BaseListFragment
@@ -47,25 +45,6 @@ public class BrowseTrackFragment extends BaseListFragment
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             Object line = mAdapter.getItem(mi.position);
-            final String qContext = Protocol.LIBRARY_QUEUE_TRACK;
-            final String query = ((TrackEntry) line).getSrc();
-
-            UserAction ua = null;
-            switch (item.getItemId()) {
-                case BrowseMenuItems.QUEUE_NEXT:
-                    ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_next), query));
-                    break;
-                case BrowseMenuItems.QUEUE_LAST:
-                    ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_last), query));
-                    break;
-                case BrowseMenuItems.PLAY_NOW:
-                    ua = new UserAction(qContext, new Queue(getString(R.string.mqueue_now), query));
-                    break;
-                default:
-                    return false;
-            }
-
-            //if (ua != null) bus.post(new MessageEvent(ProtocolEventType.USER_ACTION, ua));
             return true;
         } else {
             return false;

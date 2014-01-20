@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.fragments.profile;
 
-import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,10 +28,8 @@ public class GenreArtistsFragment extends BaseListFragment implements LoaderMana
     private static final String GENRE_ID = "genreId";
     private static final int URL_LOADER = 0x15;
 
-    // TODO: Rename and change types of parameters
     private long genreId;
 
-    private OnFragmentInteractionListener mListener;
     private SimpleCursorAdapter mAdapter;
 
     /**
@@ -69,30 +66,6 @@ public class GenreArtistsFragment extends BaseListFragment implements LoaderMana
         getLoaderManager().initLoader(URL_LOADER, null, this);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_genre_artists, container, false);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-//        try {
-//            mListener = (OnFragmentInteractionListener) activity;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(activity.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {

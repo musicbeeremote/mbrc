@@ -97,7 +97,7 @@ public class MainFragment extends BaseFragment {
     };
     private ImageView.OnClickListener coverOnClick = new ImageView.OnClickListener() {
 
-        boolean isActive = false;
+        private boolean isActive = false;
 
         @Override
         public void onClick(View view) {

@@ -35,7 +35,7 @@ public class RemoteApplication extends Application {
         injector.getInstance(SocketService.class);
         injector.getInstance(RemoteBroadcastReceiver.class);
         injector.getInstance(NotificationService.class);
-        // Temporary because I have an issue with the context injection on the command;
+        //Temporary because I have an issue with the context injection on the command;
         injector.getInstance(SyncHandler.class);
 
         //HACK: Force overflow code courtesy of Timo Ohr http://stackoverflow.com/a/11438245

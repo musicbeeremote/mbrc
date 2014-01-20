@@ -27,6 +27,7 @@ public class LibraryProvider extends ContentProvider {
         Genre.addMatcherUris(URI_MATCHER);
         Track.addMatcherUris(URI_MATCHER);
     }
+
     @Override public boolean onCreate() {
         dbHelper = new LibraryDbHelper(getContext());
         return false;
@@ -36,7 +37,6 @@ public class LibraryProvider extends ContentProvider {
         Cursor result;
         final long id;
         ContentResolver contentResolver = getContext().getContentResolver();
-        String dataSel;
         switch (URI_MATCHER.match(uri)) {
             case Album.BASE_ITEM_CODE:
                 id = Long.parseLong(uri.getLastPathSegment());
@@ -44,42 +44,10 @@ public class LibraryProvider extends ContentProvider {
                 result.setNotificationUri(contentResolver, uri);
                 break;
             case Album.BASE_URI_CODE:
-                SQLiteQueryBuilder sqBuilder = new SQLiteQueryBuilder();
-                sqBuilder.setTables(String.format("%s al, %s ar, %s t",
-                        Album.TABLE_NAME, Artist.TABLE_NAME, Track.TABLE_NAME));
-                dataSel = "t." + Track.ALBUM_ID + " = " + "al."+ Album._ID
-                        + " and " + "al." + Album.ARTIST_ID + " = " + "ar." + Artist._ID;
-
-               result = sqBuilder.query(dbHelper.getReadableDatabase(),
-                        new String[] {"al." + Album._ID,
-                                Album.ALBUM_NAME,
-                                "al." + Album.ARTIST_ID,
-                                Artist.ARTIST_NAME},
-                        dataSel,
-                        null,
-                       "al." + Album._ID,
-                        null,
-                        "ar."+ Artist.ARTIST_NAME + ", al." + Album.ALBUM_NAME + " ASC");
-
-                result.setNotificationUri(contentResolver, uri);
+                result = getAlbumsCursor(uri, contentResolver);
                 break;
             case Album.BASE_ARTIST_FILTER:
-                String artistId = uri.getLastPathSegment();
-                sqBuilder = new SQLiteQueryBuilder();
-                sqBuilder.setTables(String.format("%s al, %s ar", Album.TABLE_NAME, Artist.TABLE_NAME));
-                dataSel = "ar." + Artist._ID + " = " + "al." + Album.ARTIST_ID + " and "
-                        + "al." + Album.ARTIST_ID + " = " + "?";
-                result = sqBuilder.query(dbHelper.getReadableDatabase(),
-                        new String[]{"al." + Album.ALBUM_NAME,
-                                "al." + Album._ID,
-                                "ar." + Artist.ARTIST_NAME
-                        },
-                        dataSel,
-                        new String[]{artistId},
-                        "al." + Album._ID,
-                        null,
-                        "al." + Album.ALBUM_NAME + " ASC");
-                result.setNotificationUri(contentResolver, uri);
+                result = getAlbumsForArtistCursor(uri, contentResolver);
                 break;
             case Artist.BASE_ITEM_CODE:
                 id = Long.parseLong(uri.getLastPathSegment());
@@ -91,21 +59,7 @@ public class LibraryProvider extends ContentProvider {
                 result.setNotificationUri(contentResolver, uri);
                 break;
             case Artist.BASE_GENRE_FILTER:
-                String genreId = uri.getLastPathSegment();
-                sqBuilder = new SQLiteQueryBuilder();
-                sqBuilder.setTables(String.format("%s ar, %s gen, %s t",
-                        Artist.TABLE_NAME, Genre.TABLE_NAME, Track.TABLE_NAME));
-                dataSel = "ar." + Artist._ID + " = " + "t." + Track.ARTIST_ID
-                        + " and " + "t. " + Track.GENRE_ID + " = " + " gen." + Genre._ID
-                        + " and " + " gen." + Genre._ID + " = " + "?";
-                result = sqBuilder.query(dbHelper.getReadableDatabase(),
-                        new String[] {Artist.ARTIST_NAME, "ar." + Artist._ID},
-                        dataSel,
-                        new String[] {genreId},
-                        "ar." + Artist._ID,
-                        null,
-                        Artist.ARTIST_NAME + " ASC");
-                result.setNotificationUri(contentResolver, uri);
+                result = getArtistsForGenreCursor(uri, contentResolver);
                 break;
             case Cover.BASE_ITEM_CODE:
                 id = Long.parseLong(uri.getLastPathSegment());
@@ -142,26 +96,102 @@ public class LibraryProvider extends ContentProvider {
                 result.setNotificationUri(contentResolver, uri);
                 break;
             case Track.BASE_ALBUM_FILTER_CODE:
-                String albumId = uri.getLastPathSegment();
-                sqBuilder = new SQLiteQueryBuilder();
-                sqBuilder.setTables(Track.TABLE_NAME);
-                dataSel = Track.ALBUM_ID + " = " + " ?";
-                result = sqBuilder.query(dbHelper.getReadableDatabase(),
-                        new String[]{
-                                Track._ID,
-                                Track.TITLE,
-                                Track.TRACK_NO
-                        },
-                        dataSel,
-                        new String[]{albumId},
-                        Track._ID,
-                        null,
-                        Track.TRACK_NO + " ASC");
-                result.setNotificationUri(contentResolver, uri);
+                result = getTracksForAlbumCursor(uri, contentResolver);
                 break;
             default:
                 throw new IllegalArgumentException(String.format("Unknown Uri %s", uri));
         }
+        return result;
+    }
+
+    private Cursor getTracksForAlbumCursor(Uri uri, ContentResolver contentResolver) {
+        SQLiteQueryBuilder sqBuilder;
+        String dataSel;
+        Cursor result;
+        String albumId = uri.getLastPathSegment();
+        sqBuilder = new SQLiteQueryBuilder();
+        sqBuilder.setTables(Track.TABLE_NAME);
+        dataSel = Track.ALBUM_ID + " = " + " ?";
+        result = sqBuilder.query(dbHelper.getReadableDatabase(),
+                new String[]{
+                        Track._ID,
+                        Track.TITLE,
+                        Track.TRACK_NO
+                },
+                dataSel,
+                new String[]{albumId},
+                Track._ID,
+                null,
+                Track.TRACK_NO + " ASC");
+        result.setNotificationUri(contentResolver, uri);
+        return result;
+    }
+
+    private Cursor getArtistsForGenreCursor(Uri uri, ContentResolver contentResolver) {
+        SQLiteQueryBuilder sqBuilder;
+        String dataSel;
+        Cursor result;
+        String genreId = uri.getLastPathSegment();
+        sqBuilder = new SQLiteQueryBuilder();
+        sqBuilder.setTables(String.format("%s ar, %s gen, %s t",
+                Artist.TABLE_NAME, Genre.TABLE_NAME, Track.TABLE_NAME));
+        dataSel = "ar." + Artist._ID + " = " + "t." + Track.ARTIST_ID
+                + " and " + "t. " + Track.GENRE_ID + " = " + " gen." + Genre._ID
+                + " and " + " gen." + Genre._ID + " = " + "?";
+        result = sqBuilder.query(dbHelper.getReadableDatabase(),
+                new String[] {Artist.ARTIST_NAME, "ar." + Artist._ID},
+                dataSel,
+                new String[] {genreId},
+                "ar." + Artist._ID,
+                null,
+                Artist.ARTIST_NAME + " ASC");
+        result.setNotificationUri(contentResolver, uri);
+        return result;
+    }
+
+    private Cursor getAlbumsForArtistCursor(Uri uri, ContentResolver contentResolver) {
+        SQLiteQueryBuilder sqBuilder;
+        String dataSel;
+        Cursor result;
+        String artistId = uri.getLastPathSegment();
+        sqBuilder = new SQLiteQueryBuilder();
+        sqBuilder.setTables(String.format("%s al, %s ar", Album.TABLE_NAME, Artist.TABLE_NAME));
+        dataSel = "ar." + Artist._ID + " = " + "al." + Album.ARTIST_ID + " and "
+                + "al." + Album.ARTIST_ID + " = " + "?";
+        result = sqBuilder.query(dbHelper.getReadableDatabase(),
+                new String[]{"al." + Album.ALBUM_NAME,
+                        "al." + Album._ID,
+                        "ar." + Artist.ARTIST_NAME
+                },
+                dataSel,
+                new String[]{artistId},
+                "al." + Album._ID,
+                null,
+                "al." + Album.ALBUM_NAME + " ASC");
+        result.setNotificationUri(contentResolver, uri);
+        return result;
+    }
+
+    private Cursor getAlbumsCursor(Uri uri, ContentResolver contentResolver) {
+        String dataSel;
+        Cursor result;SQLiteQueryBuilder sqBuilder = new SQLiteQueryBuilder();
+        sqBuilder.setTables(String.format("%s al, %s ar, %s t",
+                Album.TABLE_NAME, Artist.TABLE_NAME, Track.TABLE_NAME));
+        dataSel = "t." + Track.ALBUM_ID + " = " + "al."+ Album._ID
+                + " and " + "al." + Album.ARTIST_ID + " = " + "ar." + Artist._ID;
+
+        result = sqBuilder.query(dbHelper.getReadableDatabase(),
+                 new String[] {"al." + Album._ID,
+                         Album.ALBUM_NAME,
+                         "al." + Album.ARTIST_ID,
+                         Artist.ARTIST_NAME},
+                 dataSel,
+                 null,
+                "al." + Album._ID,
+                 null,
+                 "ar."+ Artist.ARTIST_NAME + ", al." + Album.ALBUM_NAME + " ASC");
+
+        result.setNotificationUri(contentResolver, uri);
         return result;
     }
 

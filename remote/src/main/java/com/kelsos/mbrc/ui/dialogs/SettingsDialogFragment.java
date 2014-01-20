@@ -26,7 +26,7 @@ public class SettingsDialogFragment extends DialogFragment {
     private int cport;
     private int cindex;
 
-    SettingsDialogListener mListener;
+    private SettingsDialogListener mListener;
 
     @Override public void onAttach(Activity activity) {
         super.onAttach(activity);

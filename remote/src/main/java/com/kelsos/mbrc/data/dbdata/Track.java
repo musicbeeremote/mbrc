@@ -121,7 +121,6 @@ public class Track extends DataItem implements TrackColumns {
         this.year = cursor.getString(cursor.getColumnIndex(YEAR));
         this.trackNo = cursor.getInt(cursor.getColumnIndex(TRACK_NO));
         this.coverId = cursor.getLong(cursor.getColumnIndex(COVER_ID));
-        //this.updated = updated;
     }
 
     public ContentValues getContentValues() {

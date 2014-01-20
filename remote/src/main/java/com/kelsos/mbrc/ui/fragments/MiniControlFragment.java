@@ -59,20 +59,20 @@ public class MiniControlFragment extends BaseFragment {
         trackTitle.setText(event.getTitle());
     }
 
-    ImageButton.OnClickListener playNextListener = new ImageButton.OnClickListener(){
+    private ImageButton.OnClickListener playNextListener = new ImageButton.OnClickListener(){
 
         @Override public void onClick(View view) {
             getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYER_NEXT, true)));
         }
     };
 
-    ImageButton.OnClickListener playPauseListener = new ImageButton.OnClickListener() {
+    private ImageButton.OnClickListener playPauseListener = new ImageButton.OnClickListener() {
         @Override public void onClick(View view) {
             getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYER_PLAY_PAUSE, true)));
         }
     };
 
-    ImageButton.OnClickListener playPreviousListener = new ImageButton.OnClickListener() {
+    private ImageButton.OnClickListener playPreviousListener = new ImageButton.OnClickListener() {
         @Override public void onClick(View view) {
             getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYER_PREVIOUS, true)));
         }

@@ -40,12 +40,10 @@ public class NotificationService {
     private Notification mNotification;
     private NotificationManager mNotificationManager;
     private Context mContext;
-    private MainThreadBusWrapper bus;
     private SettingsManager mSettings;
 
     @Inject public NotificationService(Context context, MainThreadBusWrapper bus, SettingsManager mSettings) {
         this.mContext = context;
-        this.bus = bus;
         this.mSettings = mSettings;
         mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         bus.register(this);

@@ -26,9 +26,6 @@ public class HandleLibrarySync implements ICommand {
         if (type.equals("full")) {
             int totalFiles = node.path("payload").asInt();
             handler.initFullSyncProcess(totalFiles);
-
-        } else if (type.equals("partial")) {
-
         } else if (type.equals("cover")) {
             JsonNode payload = node.path("payload");
             String sha1 = payload.path("hash").asText();

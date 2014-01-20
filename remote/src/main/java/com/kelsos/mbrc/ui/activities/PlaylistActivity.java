@@ -25,7 +25,6 @@ public class PlaylistActivity extends BaseActivity {
     private PlaylistTrackAdapter adapter;
     private String mTitle;
     private String mSrc;
-
     private DragSortListView mDslv;
     private DragSortController mController;
 
@@ -36,9 +35,6 @@ public class PlaylistActivity extends BaseActivity {
     public boolean dragEnabled = true;
 
     public DragSortController buildController(DragSortListView dslv) {
-        // defaults are
-        // dragStartMode = onDown
-        // removeMode = flingRight
         DragSortController controller = new DragSortController(dslv);
         controller.setDragHandleId(R.id.drag_handle);
         controller.setFlingHandleId(R.id.click_remove);
@@ -56,8 +52,6 @@ public class PlaylistActivity extends BaseActivity {
         mTitle = intent.getStringExtra("name");
         mSrc = intent.getStringExtra("src");
         mDslv = (DragSortListView) mList;
-        //mDslv.setDropListener(onDrop);
-        //mDslv.setRemoveListener(onRemove);
         registerForContextMenu(mList);
         mController = buildController(mDslv);
         mDslv.setFloatViewManager(mController);
