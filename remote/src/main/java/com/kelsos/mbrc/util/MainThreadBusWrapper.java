@@ -11,7 +11,7 @@ public class MainThreadBusWrapper {
 
     @Inject public MainThreadBusWrapper(final Bus bus) {
         if (bus == null) {
-            throw new NullPointerException("Bus is null");
+            throw new IllegalArgumentException("Bus is null");
         }
         this.bus = bus;
     }

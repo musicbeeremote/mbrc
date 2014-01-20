@@ -119,7 +119,11 @@ public class SocketService {
             }
             clSocket.close();
             clSocket = null;
-        } catch (IOException ignore) { }
+        } catch (IOException e) {
+            if (BuildConfig.DEBUG) {
+                Log.d(BuildConfig.PACKAGE_NAME, "io exception on socket cleanup", e);
+            }
+        }
     }
 
     private boolean cThreadIsAlive() {
@@ -174,7 +178,10 @@ public class SocketService {
                 bus.post(new NotifyUser(R.string.notification_connection_timeout));
             } catch (SocketException e) {
                 bus.post(new NotifyUser(e.toString().substring(SUB_START)));
-            } catch (IOException | NullPointerException ignored) {
+            } catch (IOException e) {
+                if (BuildConfig.DEBUG) {
+                    Log.d(BuildConfig.PACKAGE_NAME, "socket io/null pointer", e);
+                }
             } finally {
                 if (output != null) {
                     output.flush();
@@ -187,7 +194,7 @@ public class SocketService {
                     socketManager(SocketAction.RETRY);
                 }
                 if (BuildConfig.DEBUG) {
-                    Log.d("mbrc-log", "socket closed");
+                    Log.d(BuildConfig.PACKAGE_NAME, "socket closed");
                 }
             }
         }

@@ -2,8 +2,10 @@ package com.kelsos.mbrc.data;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
@@ -190,8 +192,10 @@ public class MainDataModel {
         } else {
             try {
                 new ImageDecoder(context, base64format).execute();
-            } catch (Exception ignore) {
-
+            } catch (Exception e) {
+                if (BuildConfig.DEBUG) {
+                    Log.d(BuildConfig.PACKAGE_NAME, "image decoder", e);
+                }
             }
         }
     }

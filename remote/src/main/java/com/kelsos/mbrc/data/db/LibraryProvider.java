@@ -174,7 +174,8 @@ public class LibraryProvider extends ContentProvider {
 
     private Cursor getAlbumsCursor(Uri uri, ContentResolver contentResolver) {
         String dataSel;
-        Cursor result;SQLiteQueryBuilder sqBuilder = new SQLiteQueryBuilder();
+        Cursor result;
+        SQLiteQueryBuilder sqBuilder = new SQLiteQueryBuilder();
         sqBuilder.setTables(String.format("%s al, %s ar, %s t",
                 Album.TABLE_NAME, Artist.TABLE_NAME, Track.TABLE_NAME));
         dataSel = "t." + Track.ALBUM_ID + " = " + "al."+ Album._ID

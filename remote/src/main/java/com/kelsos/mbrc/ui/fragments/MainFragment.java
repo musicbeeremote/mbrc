@@ -103,40 +103,44 @@ public class MainFragment extends BaseFragment {
         public void onClick(View view) {
 
             if (!isActive) {
-                final int fadeInDuration = 300;
-                final int timeBetween = 3000;
-                final int fadeOutDuration = 800;
-
-                Animation fadeIn = new AlphaAnimation(0, 1);
-                fadeIn.setInterpolator(new DecelerateInterpolator());
-                fadeIn.setDuration(fadeInDuration);
-
-                Animation fadeOut = new AlphaAnimation(1, 0);
-                fadeOut.setInterpolator(new AccelerateInterpolator());
-                fadeOut.setStartOffset(fadeInDuration + timeBetween);
-                fadeOut.setDuration(fadeOutDuration);
-
-                AnimationSet animation = new AnimationSet(false);
-                animation.addAnimation(fadeIn);
-                animation.addAnimation(fadeOut);
-                animation.setRepeatCount(1);
-
-                animation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override public void onAnimationStart(Animation animation) {
-                        isActive = true;
-                    }
-
-                    @Override public void onAnimationEnd(Animation animation) {
-                        isActive = false;
-                        ratingWrapper.setVisibility(View.INVISIBLE);
-                    }
-
-                    @Override public void onAnimationRepeat(Animation animation) {
-                    }
-                });
-                ratingWrapper.setVisibility(View.VISIBLE);
-                ratingWrapper.startAnimation(animation);
+                animateRatingBar();
             }
+        }
+
+        private void animateRatingBar() {
+            final int fadeInDuration = 300;
+            final int timeBetween = 3000;
+            final int fadeOutDuration = 800;
+
+            Animation fadeIn = new AlphaAnimation(0, 1);
+            fadeIn.setInterpolator(new DecelerateInterpolator());
+            fadeIn.setDuration(fadeInDuration);
+
+            Animation fadeOut = new AlphaAnimation(1, 0);
+            fadeOut.setInterpolator(new AccelerateInterpolator());
+            fadeOut.setStartOffset(fadeInDuration + timeBetween);
+            fadeOut.setDuration(fadeOutDuration);
+
+            AnimationSet animation = new AnimationSet(false);
+            animation.addAnimation(fadeIn);
+            animation.addAnimation(fadeOut);
+            animation.setRepeatCount(1);
+
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override public void onAnimationStart(Animation animation) {
+                    isActive = true;
+                }
+
+                @Override public void onAnimationEnd(Animation animation) {
+                    isActive = false;
+                    ratingWrapper.setVisibility(View.INVISIBLE);
+                }
+
+                @Override public void onAnimationRepeat(Animation animation) {
+                }
+            });
+            ratingWrapper.setVisibility(View.VISIBLE);
+            ratingWrapper.startAnimation(animation);
         }
     };
 
@@ -176,7 +180,11 @@ public class MainFragment extends BaseFragment {
             volumeSlider.setOnSeekBarChangeListener(volumeChangeListener);
             trackProgressSlider.setOnSeekBarChangeListener(durationSeekBarChangeListener);
             albumCover.setOnClickListener(coverOnClick);
-        } catch (Exception ignore) { }
+        } catch (Exception e) {
+            if (BuildConfig.DEBUG) {
+                Log.d(BuildConfig.PACKAGE_NAME, "listener registration", e);
+            }
+        }
 
     }
 
@@ -188,7 +196,11 @@ public class MainFragment extends BaseFragment {
             Typeface robotoRegular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
             trackProgressCurrent.setTypeface(robotoRegular);
             trackDuration.setTypeface(robotoRegular);
-        } catch (Exception ignore) { }
+        } catch (Exception e) {
+            if (BuildConfig.DEBUG){
+                Log.d(BuildConfig.PACKAGE_NAME, "setting typeface", e);
+            }
+        }
     }
 
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
