@@ -8,18 +8,14 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.7.+'
-//        classpath 'com.squareup.gradle:gradle-android-test-plugin:0.9.1-SNAPSHOT'
     }
 }
 
 apply plugin: 'android'
-//apply plugin: 'android-test'
 
 repositories {
-    /** Temporary for vpi **/
     maven { url "http://dl.bintray.com/populov/maven" }
-//    /** For gradle android test snapshot **/
-//    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     mavenCentral()
     mavenLocal()
 }
@@ -51,11 +47,8 @@ dependencies {
     compile 'de.keyboardsurfer.android.widget:crouton:1.8.2@aar'
     compile 'com.google.inject:guice:3.0:no_aop'
 
-//    testCompile 'junit:junit:4.10'
-//    testCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
-//
-//    instrumentTestCompile 'junit:junit:4.10'
-//    instrumentTestCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
+    instrumentTestCompile 'junit:junit:4.10'
+    instrumentTestCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
 }
 
 android {
@@ -193,7 +186,7 @@ sonarRunner {
         property "sonar.dynamicAnalysis", "reuseReports"
         properties["sonar.sources"] = android.sourceSets.main.java.srcDirs
         properties["sonar.tests"] = android.sourceSets.instrumentTest.java.srcDirs
-        properties["sonar.binaries"] = file("build/classes/debug")
+        properties["sonar.binaries"] = file("build/classes/free/debug")
         property "sonar.surefire.reportsPath","build/instrumentTest-results/connected/"
     }
 }
