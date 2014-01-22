@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:mbrc="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:id="@+id/mainLinearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
@@ -8,9 +10,8 @@
     <RelativeLayout
             android:id="@+id/frameLayout"
             android:layout_width="@dimen/mbrc_cover"
-            android:layout_height="@dimen/mbrc_cover"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="@dimen/side_margin">
+            android:layout_weight="2"
+            android:layout_height="0dp">
 
         <ImageView
                 android:id="@+id/main_album_cover_image_view"
@@ -19,7 +20,7 @@
                 android:adjustViewBounds="false"
                 android:background="@drawable/ic_cover_background"
                 android:contentDescription="@string/main_image_view_cover_description"
-                android:scaleType="fitCenter"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_image_no_cover"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
@@ -50,6 +51,25 @@
         </LinearLayout>
 
     </RelativeLayout>
+
+    <com.viewpagerindicator.LinePageIndicator
+        android:id="@+id/mbrc_main_infoindicator"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        mbrc:strokeWidth="4dp"
+        mbrc:lineWidth="@dimen/mbrc_indicator_line_width"
+        mbrc:unselectedColor="@android:color/transparent"
+        mbrc:selectedColor="@color/pressed_mbrc_dark"
+        />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/mbrc_main_infopager"
+        tools:layout="@layout/ui_main_buttons"
+        tools:context="com.kelsos.mbrc.ui.fragments.ActionsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:padding="@dimen/side_margin_half"/>
 
     <LinearLayout
         android:id="@+id/main_track_progress_group"
@@ -94,4 +114,4 @@
             android:textSize="@dimen/mbrc_duration_text_size"/>
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

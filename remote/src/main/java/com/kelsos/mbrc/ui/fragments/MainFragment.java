@@ -43,13 +43,11 @@ public class MainFragment extends BaseFragment {
     public static final int SECONDS = 60;
     @InjectView(R.id.main_track_progress_current) private TextView trackProgressCurrent;
     @InjectView(R.id.main_track_duration_total) private TextView trackDuration;
-    @InjectView(R.id.main_volume_seeker) private SeekBar volumeSlider;
     @InjectView(R.id.main_track_progress_seeker) private SeekBar trackProgressSlider;
     @InjectView(R.id.main_album_cover_image_view) private ImageView albumCover;
     @InjectView(R.id.ratingWrapper) private LinearLayout ratingWrapper;
     @InjectView(R.id.track_rating_bar) private RatingBar trackRating;
 
-    private ShareActionProvider mShareActionProvider;
     private int previousVol;
     private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture mProgressUpdateHandler;
@@ -69,19 +67,6 @@ public class MainFragment extends BaseFragment {
         getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, data));
     }
 
-    private SeekBar.OnSeekBarChangeListener volumeChangeListener = new SeekBar.OnSeekBarChangeListener() {
-
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            if (fromUser) {
-                post(new UserAction(Protocol.PLAYER_VOLUME, String.valueOf(seekBar.getProgress())));
-            }
-        }
-
-        public void onStopTrackingTouch(SeekBar seekBar) { }
-
-        public void onStartTrackingTouch(SeekBar seekBar) { }
-
-    };
     private SeekBar.OnSeekBarChangeListener durationSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser && progress != previousVol) {
@@ -177,7 +162,6 @@ public class MainFragment extends BaseFragment {
         try {
             ratingWrapper.setVisibility(View.INVISIBLE);
             trackRating.setOnRatingBarChangeListener(ratingChangeListener);
-            volumeSlider.setOnSeekBarChangeListener(volumeChangeListener);
             trackProgressSlider.setOnSeekBarChangeListener(durationSeekBarChangeListener);
             albumCover.setOnClickListener(coverOnClick);
         } catch (Exception e) {
@@ -205,8 +189,6 @@ public class MainFragment extends BaseFragment {
 
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.share, menu);
-        MenuItem shareItem = menu.findItem(R.id.actionbar_share);
-        mShareActionProvider = (ShareActionProvider) shareItem.getActionProvider();
     }
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {
@@ -223,9 +205,7 @@ public class MainFragment extends BaseFragment {
     }
 
     private void setShareIntent(Intent shareIntent) {
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(shareIntent);
-        }
+
     }
 
     @Subscribe public void handleRatingChange(RatingChanged event) {
