@@ -12,6 +12,8 @@ import com.kelsos.mbrc.data.dbdata.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Hashtable;
+import java.util.Map;
 
 public class LibraryProvider extends ContentProvider {
     public static final String AUTHORITY = "com.kelsos.mbrc.provider";
@@ -19,6 +21,7 @@ public class LibraryProvider extends ContentProvider {
     public static final Uri AUTHORITY_URI = Uri.parse(SCHEME + AUTHORITY);
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
     private LibraryDbHelper dbHelper;
+    private final Map<Integer,String> types;
 
     static {
         Album.addMatcherUris(URI_MATCHER);
@@ -26,6 +29,22 @@ public class LibraryProvider extends ContentProvider {
         Cover.addMatcherUris(URI_MATCHER);
         Genre.addMatcherUris(URI_MATCHER);
         Track.addMatcherUris(URI_MATCHER);
+    }
+
+    public LibraryProvider() {
+        types = new Hashtable<>();
+        //Creates map of types to avoid switch
+        types.put(Album.BASE_ITEM_CODE, Album.TYPE_ITEM);
+        types.put(Album.BASE_URI_CODE, Album.TYPE_DIR);
+        types.put(Artist.BASE_ITEM_CODE, Artist.TYPE_ITEM);
+        types.put(Artist.BASE_URI_CODE, Artist.TYPE_DIR);
+        types.put(Cover.BASE_ITEM_CODE, Cover.CONTENT_ITEM_TYPE);
+        types.put(Cover.BASE_URI_CODE, Cover.CONTENT_TYPE);
+        types.put(Genre.BASE_ITEM_CODE, Genre.CONTENT_ITEM_TYPE);
+        types.put(Genre.BASE_URI_CODE, Genre.CONTENT_TYPE);
+        types.put(Genre.BASE_FILTER_CODE, Genre.CONTENT_TYPE);
+        types.put(Track.BASE_ITEM_CODE, Track.TYPE_ITEM);
+        types.put(Track.BASE_URI_CODE, Track.TYPE_DIR);
     }
 
     @Override public boolean onCreate() {
@@ -197,33 +216,11 @@ public class LibraryProvider extends ContentProvider {
     }
 
     @Override public String getType(Uri uri) {
-        switch (URI_MATCHER.match(uri)) {
-            case Album.BASE_ITEM_CODE:
-                return Album.TYPE_ITEM;
-            case Album.BASE_URI_CODE:
-                return Album.TYPE_DIR;
-            case Artist.BASE_ITEM_CODE:
-                return Artist.TYPE_ITEM;
-            case Artist.BASE_URI_CODE:
-                return Artist.TYPE_DIR;
-            case Cover.BASE_ITEM_CODE:
-                return Cover.CONTENT_ITEM_TYPE;
-            case Cover.BASE_URI_CODE:
-                return Cover.CONTENT_TYPE;
-            case Genre.BASE_ITEM_CODE:
-                return Genre.CONTENT_ITEM_TYPE;
-            case Genre.BASE_URI_CODE:
-                return Genre.CONTENT_TYPE;
-            case Genre.BASE_FILTER_CODE:
-                return Genre.CONTENT_TYPE;
-            case Track.BASE_ITEM_CODE:
-                return Track.TYPE_ITEM;
-            case Track.BASE_URI_CODE:
-                return Track.TYPE_DIR;
-            default:
-                throw new IllegalArgumentException(String.format("Unknown Uri %s", uri));
-            
+        String uriType = types.get(URI_MATCHER.match(uri));
+        if (uriType == null || uriType.equals("")) {
+            throw new IllegalArgumentException(String.format("Invalid uri: %s", uri));
         }
+        return uriType;
     }
 
     @Override public Uri insert(Uri uri, ContentValues values) {

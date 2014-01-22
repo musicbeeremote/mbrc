@@ -170,7 +170,9 @@ public class SocketService {
                         }
                     } catch (IOException e) {
                         input.close();
-                        clSocket.close();
+                        if (clSocket != null) {
+                            clSocket.close();
+                        }
                         throw e;
                     }
                 }
