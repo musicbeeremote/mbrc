@@ -48,7 +48,8 @@ public class MainFragmentActivity extends BaseActivity {
         mDrawerMenu = findViewById(R.id.drawer_menu);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
+                R.drawable.mbrc_dark_compo_ic_navigation_drawer,
+                R.string.drawer_open, R.string.drawer_close) {
             public void onDrawerClosed(View view) {
                 invalidateOptionsMenu();
                 if (navChanged) {

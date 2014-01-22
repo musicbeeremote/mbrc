@@ -16,6 +16,6 @@
             android:dividerHeight="0dp"
             android:divider="@null"
             android:fastScrollEnabled="true"
-            android:listSelector="@drawable/abc_list_selector_holo_dark" />
+            android:listSelector="@drawable/mbrc_dark_compo_list_selector_holo_dark" />
 
 </LinearLayout>
