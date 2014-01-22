@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
+              android:layout_height="@dimen/mbrc_info_tab_height"
               android:gravity="center_vertical|center_horizontal">
 
     <ImageButton

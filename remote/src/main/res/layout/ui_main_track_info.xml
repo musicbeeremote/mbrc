@@ -9,7 +9,7 @@
               android:paddingBottom="4dp"
               android:paddingTop="4dp"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
+              android:layout_height="@dimen/mbrc_info_tab_height"
               android:gravity="center_vertical|left">
 
     <LinearLayout

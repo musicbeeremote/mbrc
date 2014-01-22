@@ -9,6 +9,7 @@
     <dimen name="mbrc_top_text">50dp</dimen>
     <dimen name="mbrc_control_button">44dp</dimen>
     <dimen name="mbrc_control_distance">24dp</dimen>
+    <dimen name="mbrc_indicator_line_width">190dp</dimen>
     <dimen name="mbrc_secondary_control_button">44dp</dimen>
     <dimen name="mbrc_secondary_control_distance">8dp</dimen>
 </resources>
