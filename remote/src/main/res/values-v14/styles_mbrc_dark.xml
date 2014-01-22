@@ -19,7 +19,7 @@
 
 <resources>
 
-    <style name="Theme.Mbrc_dark" parent="@style/Theme.AppCompat">
+    <style name="Theme.Mbrc_dark" parent="@style/mbrc_dark_compo">
         <item name="android:actionBarItemBackground">@drawable/selectable_background_mbrc_dark</item>
         <item name="android:popupMenuStyle">@style/PopupMenu.Mbrc_dark</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Mbrc_dark</item>

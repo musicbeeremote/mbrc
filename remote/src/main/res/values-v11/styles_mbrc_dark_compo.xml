@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <style name="AutoCompleteTextViewmbrc_dark_compo" parent="android:Widget.Holo.AutoCompleteTextView">
+      <item name="android:dropDownSelector">@drawable/mbrc_dark_compo_list_selector_holo_dark</item>
+	    <item name="android:background">@drawable/mbrc_dark_compo_edit_text_holo_dark</item>
+  </style>
+
+  <style name="Buttonmbrc_dark_compo" parent="android:Widget.Holo.Button">
+	  <item name="android:background">@drawable/mbrc_dark_compo_btn_default_holo_dark</item>
+  </style>
+
+  <style name="ImageButtonmbrc_dark_compo" parent="android:Widget.Holo.ImageButton">
+	  <item name="android:background">@drawable/mbrc_dark_compo_btn_default_holo_dark</item>
+  </style>
+
+  <style name="Spinnermbrc_dark_compo" parent="android:Widget.Holo.Spinner">
+      <item name="android:background">@drawable/mbrc_dark_compo_spinner_background_holo_dark</item>
+      <item name="android:dropDownSelector">@drawable/mbrc_dark_compo_list_selector_holo_dark</item>
+  </style>
+
+  <style name="ProgressBarmbrc_dark_compo" parent="android:Widget.Holo.ProgressBar.Horizontal">
+      <item name="android:progressDrawable">@drawable/mbrc_dark_compo_progress_horizontal_holo_dark</item>
+      <item name="android:indeterminateDrawable">@drawable/mbrc_dark_compo_progress_indeterminate_horizontal_holo_dark</item>
+  </style>
+
+  <style name="SeekBarmbrc_dark_compo" parent="android:Widget.Holo.SeekBar">
+      <item name="android:progressDrawable">@drawable/mbrc_dark_compo_scrubber_progress_horizontal_holo_dark</item>
+      <item name="android:indeterminateDrawable">@drawable/mbrc_dark_compo_scrubber_progress_horizontal_holo_dark</item>
+      <item name="android:thumb">@drawable/mbrc_dark_compo_scrubber_control_selector_holo_dark</item>
+  </style>
+
+  <style name="RatingBarmbrc_dark_compo" parent="android:Widget.Holo.RatingBar">
+      <item name="android:progressDrawable">@drawable/mbrc_dark_compo_ratingbar_full_holo_dark</item>
+      <item name="android:indeterminateDrawable">@drawable/mbrc_dark_compo_ratingbar_full_holo_dark</item>
+  </style>
+
+  <style name="RatingBarBigmbrc_dark_compo" parent="android:Widget.Holo.RatingBar.Indicator">
+      <item name="android:progressDrawable">@drawable/mbrc_dark_compo_ratingbar_holo_dark</item>
+      <item name="android:indeterminateDrawable">@drawable/mbrc_dark_compo_ratingbar_holo_dark</item>
+  </style>
+
+  <style name="RatingBarSmallmbrc_dark_compo" parent="android:Widget.Holo.RatingBar.Small">
+      <item name="android:progressDrawable">@drawable/mbrc_dark_compo_ratingbar_small_holo_dark</item>
+      <item name="android:indeterminateDrawable">@drawable/mbrc_dark_compo_ratingbar_small_holo_dark</item>
+  </style>
+
+  <style name="Togglembrc_dark_compo" parent="android:Widget.Holo.Button.Toggle">
+      <item name="android:background">@drawable/mbrc_dark_compo_btn_toggle_holo_dark</item>
+  </style>
+
+</resources>
