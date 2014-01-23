@@ -10,8 +10,8 @@ import com.google.inject.Injector;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.NowPlayingAdapter;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.MusicTrack;
 import com.kelsos.mbrc.data.UserAction;
+import com.kelsos.mbrc.data.dbdata.NowPlayingTrack;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.NowPlayingListAvailable;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
@@ -32,7 +32,7 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
     private NowPlayingAdapter adapter;
     private SearchView mSearchView;
     private MenuItem mSearchItem;
-    private MusicTrack mTrack;
+    private NowPlayingTrack mTrack;
 
     private DragSortListView mDslv;
     private DragSortController mController;
@@ -68,7 +68,7 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
         if (adapter == null || !adapter.getClass().equals(NowPlayingAdapter.class)) {
             return;
         }
-        adapter.setPlayingTrackIndex(adapter.getPosition(new MusicTrack(event.getArtist(), event.getTitle())));
+        adapter.setPlayingTrackIndex(adapter.getPosition(new NowPlayingTrack(event.getArtist(), event.getTitle())));
         adapter.notifyDataSetChanged();
     }
 
@@ -141,7 +141,7 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
 
                 adapter.setPlayingTrackIndex(calculateNewIndex(from, to, adapter.getPlayingTrackIndex()));
 
-                Map<String, Integer> move = new HashMap<String, Integer>();
+                Map<String, Integer> move = new HashMap<>();
                 move.put("from", from);
                 move.put("to", to);
                 getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.NOW_PLAYING_MOVE, move)));

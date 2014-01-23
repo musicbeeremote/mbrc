@@ -2,7 +2,7 @@ package com.kelsos.mbrc.commands.model;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.MainDataModel;
-import com.kelsos.mbrc.data.TrackEntry;
+import com.kelsos.mbrc.data.dbdata.NowPlayingTrack;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import org.codehaus.jackson.JsonNode;
@@ -19,11 +19,11 @@ public class UpdatePlaylistTracks implements ICommand {
     }
 
     @Override public void execute(IEvent e) {
-        ArrayList<TrackEntry> tracks = new ArrayList<TrackEntry>();
+        ArrayList<NowPlayingTrack> tracks = new ArrayList<>();
         ArrayNode node = (ArrayNode) e.getData();
         for (int i = 0; i < node.size(); i++) {
             JsonNode jNode = node.get(i);
-            TrackEntry entry = new TrackEntry(jNode);
+            NowPlayingTrack entry = new NowPlayingTrack(jNode);
             tracks.add(entry);
         }
         model.setPlaylistTracks(tracks);

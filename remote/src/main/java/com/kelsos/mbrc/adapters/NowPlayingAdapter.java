@@ -10,18 +10,18 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.MusicTrack;
+import com.kelsos.mbrc.data.dbdata.NowPlayingTrack;
 
 import java.util.List;
 
-public class NowPlayingAdapter extends ArrayAdapter<MusicTrack> {
+public class NowPlayingAdapter extends ArrayAdapter<NowPlayingTrack> {
     private Context mContext;
     private int mResource;
-    private List<MusicTrack> nowPlayingList;
+    private List<NowPlayingTrack> nowPlayingList;
     private int playingTrackIndex;
     private Typeface robotoLight;
 
-    public NowPlayingAdapter(Context context, int resource, List<MusicTrack> objects) {
+    public NowPlayingAdapter(Context context, int resource, List<NowPlayingTrack> objects) {
         super(context, resource, objects);
         this.mResource = resource;
         this.mContext = context;
@@ -49,7 +49,7 @@ public class NowPlayingAdapter extends ArrayAdapter<MusicTrack> {
             holder = (TrackHolder) row.getTag();
         }
 
-        MusicTrack track = nowPlayingList.get(position);
+        NowPlayingTrack track = nowPlayingList.get(position);
         holder.title.setText(track.getTitle());
         holder.artist.setText(track.getArtist());
         if (position == playingTrackIndex) {

@@ -9,6 +9,7 @@ import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.data.dbdata.NowPlayingTrack;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.enums.PlayState;
@@ -42,9 +43,9 @@ public class MainDataModel {
     private boolean isScrobblingActive;
     private boolean isMuteActive;
     private PlayState playState;
-    private List<MusicTrack> nowPlayingList;
+    private List<NowPlayingTrack> nowPlayingList;
     private List<Playlist> availablePlaylists;
-    private List<TrackEntry> playlistTracks;
+    private List<NowPlayingTrack> playlistTracks;
     private LfmStatus lfmRating;
     private String pluginVersion;
 
@@ -85,7 +86,7 @@ public class MainDataModel {
         bus.post(new AvailablePlaylists(this.availablePlaylists, false));
     }
 
-    public void setPlaylistTracks(List<TrackEntry> tracks) {
+    public void setPlaylistTracks(List<NowPlayingTrack> tracks) {
         this.playlistTracks = tracks;
         bus.post(new PlaylistTracksAvailable(this.playlistTracks, false));
     }
@@ -127,13 +128,13 @@ public class MainDataModel {
         return new LfmRatingChanged(lfmRating);
     }
 
-    public void setNowPlayingList(List<MusicTrack> nowPlayingList) {
+    public void setNowPlayingList(List<NowPlayingTrack> nowPlayingList) {
         this.nowPlayingList = nowPlayingList;
-        bus.post(new NowPlayingListAvailable(nowPlayingList, nowPlayingList.indexOf(new MusicTrack(artist, title))));
+        bus.post(new NowPlayingListAvailable(nowPlayingList, nowPlayingList.indexOf(new NowPlayingTrack(artist, title))));
     }
 
     @Produce public NowPlayingListAvailable produceNowPlayingListAvailable() {
-        int index = nowPlayingList.indexOf(new MusicTrack(artist, title));
+        int index = nowPlayingList.indexOf(new NowPlayingTrack(artist, title));
         return new NowPlayingListAvailable(nowPlayingList, index);
     }
 

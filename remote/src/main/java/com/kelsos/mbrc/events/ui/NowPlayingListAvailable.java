@@ -1,19 +1,19 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.data.MusicTrack;
+import com.kelsos.mbrc.data.dbdata.NowPlayingTrack;
 
 import java.util.List;
 
 public class NowPlayingListAvailable {
-    private List<MusicTrack> list;
+    private List<NowPlayingTrack> list;
     private int index;
 
-    public NowPlayingListAvailable(List<MusicTrack> list, int index) {
+    public NowPlayingListAvailable(List<NowPlayingTrack> list, int index) {
         this.list = list;
         this.index = index;
     }
 
-    public List<MusicTrack> getList() {
+    public List<NowPlayingTrack> getList() {
         return this.list;
     }
 

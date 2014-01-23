@@ -18,7 +18,6 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
     public static final String ASC = " ASC";
     public static final String EQUALS = " = ?";
     private final Context mContext;
-    private SQLiteDatabase mDb;
 
     public LibraryDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -31,6 +30,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         db.execSQL(Cover.CREATE_TABLE);
         db.execSQL(Genre.CREATE_TABLE);
         db.execSQL(Track.CREATE_TABLE);
+        db.execSQL(NowPlayingTrack.CREATE_TABLE);
     }
 
     @Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -39,7 +39,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         db.execSQL(Cover.DROP_TABLE);
         db.execSQL(Genre.DROP_TABLE);
         db.execSQL(Track.DROP_TABLE);
-
+        db.execSQL(NowPlayingTrack.DROP_TABLE);
         onCreate(db);
     }
 
@@ -346,12 +346,37 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Used to batch insert now playlist data in the library
+     * @param list A list of now playing tracks
+     */
+    public synchronized void batchNowPlayingInsert(final List<NowPlayingTrack> list) {
+        SQLiteDatabase mDb = getWritableDatabase();
+        if (mDb != null) {
+            mDb.beginTransaction();
+            SQLiteStatement stm = mDb.compileStatement(NowPlayingTrack.INSERT);
+            for (NowPlayingTrack track : list) {
+                if (stm != null) {
+                    stm.bindString(1, track.getArtist());
+                    stm.bindString(2, track.getTitle());
+                    stm.bindString(3, track.getSrc());
+                    stm.bindLong(4, track.getPosition());
+                    stm.execute();
+                    stm.clearBindings();
+                }
+            }
+            mDb.setTransactionSuccessful();
+            mDb.endTransaction();
+            mDb.close();
+        }
+    }
+
+    /**
      * Receives a batch list of track meta data in json format and inserts them
      * in the database using compiled statements
      * @param list A list containing track items
      */
     public synchronized void processBatch(final List<Track> list) {
-        mDb = getWritableDatabase();
+        SQLiteDatabase mDb = getWritableDatabase();
         if (mDb != null) {
             mDb.beginTransaction();
             SQLiteStatement artistStatement = mDb.compileStatement(Artist.INSERT);
@@ -398,6 +423,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
             }
             mDb.setTransactionSuccessful();
             mDb.endTransaction();
+            mDb.close();
         }
     }
 

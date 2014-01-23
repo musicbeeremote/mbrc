@@ -1,19 +1,19 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.data.TrackEntry;
+import com.kelsos.mbrc.data.dbdata.NowPlayingTrack;
 
 import java.util.List;
 
 public class PlaylistTracksAvailable {
-    private List<TrackEntry> playlistTracks;
+    private List<NowPlayingTrack> playlistTracks;
     private boolean stored;
 
-    public PlaylistTracksAvailable(List<TrackEntry> playlistTracks, boolean stored) {
+    public PlaylistTracksAvailable(List<NowPlayingTrack> playlistTracks, boolean stored) {
         this.playlistTracks = playlistTracks;
         this.stored = stored;
     }
 
-    public List<TrackEntry> getPlaylistTracks() {
+    public List<NowPlayingTrack> getPlaylistTracks() {
         return playlistTracks;
     }
 
