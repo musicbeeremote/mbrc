@@ -150,5 +150,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="pref_key_build_time">build_time</string>
     <string name="pref_key_revision">Revision</string>
+    <string name="popup_scrobble">Scrobble to Last.fm</string>
+    <string name="popup_auto_dj">Toggle Auto DJ</string>
 
 </resources>
