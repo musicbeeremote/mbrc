@@ -25,7 +25,7 @@
         <item name="dropDownListViewStyle">@style/DropDownListView.Mbrc_dark</item>
         <item name="actionBarTabStyle">@style/ActionBarTabStyle.Mbrc_dark</item>
         <item name="actionDropDownStyle">@style/DropDownNav.Mbrc_dark</item>
-        <item name="actionBarStyle">@style/ActionBar.Solid.Mbrc_dark</item>
+        <item name="actionBarStyle">@style/ActionBar.Transparent.Mbrc_dark</item>
         <item name="actionModeBackground">@drawable/cab_background_top_mbrc_dark</item>
         <item name="actionModeSplitBackground">@drawable/cab_background_bottom_mbrc_dark</item>
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Mbrc_dark</item>

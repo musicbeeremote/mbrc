@@ -25,7 +25,7 @@
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Mbrc_dark</item>
         <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Mbrc_dark</item>
         <item name="android:actionDropDownStyle">@style/DropDownNav.Mbrc_dark</item>
-        <item name="android:actionBarStyle">@style/ActionBar.Solid.Mbrc_dark</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Transparent.Mbrc_dark</item>
         <item name="android:actionModeBackground">@drawable/cab_background_top_mbrc_dark</item>
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_mbrc_dark</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Mbrc_dark</item>
