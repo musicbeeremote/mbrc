@@ -67,6 +67,7 @@ android {
         buildConfigField "String", "GIT_SHA", "\"${gitSha()}\";"
         buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\";"
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+        versionCode 85
     }
 
     compileOptions {

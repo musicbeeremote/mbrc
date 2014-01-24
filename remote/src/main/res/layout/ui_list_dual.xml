@@ -6,7 +6,8 @@
               android:layout_gravity="center_vertical"
               android:clickable="false"
               android:background="@drawable/ui_list_item_background"
-              android:gravity="center_vertical">
+              android:gravity="center_vertical"
+              android:baselineAligned="false">
 
     <LinearLayout
             android:layout_width="0dip"
