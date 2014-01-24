@@ -15,7 +15,7 @@ public class Cover extends DataItem implements CoverColumns {
     public static final String[] FIELDS = {_ID, COVER_HASH};
 
     public static final String CREATE_TABLE =
-            "create table " + TABLE_NAME + "(" + _ID + " integer primary key autoincrement,"
+            "create table " + TABLE_NAME + "(" + _ID + " integer primary key,"
                     + COVER_HASH + " text unique " + ")";
     public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
 

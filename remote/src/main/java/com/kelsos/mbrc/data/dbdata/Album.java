@@ -10,7 +10,7 @@ import com.kelsos.mbrc.data.interfaces.AlbumColumns;
 public class Album extends DataItem implements AlbumColumns {
     public static final String TABLE_NAME = "albums";
     public static final String CREATE_TABLE =
-            "create table " + TABLE_NAME + "(" + _ID + " integer primary key autoincrement,"
+            "create table " + TABLE_NAME + "(" + _ID + " integer primary key,"
                     + ALBUM_NAME + " text," + ARTIST_ID + " integer, "
                     + "foreign key (" + ARTIST_ID + ") references "
                     + Artist.TABLE_NAME + "(" + _ID + ") on delete cascade,"

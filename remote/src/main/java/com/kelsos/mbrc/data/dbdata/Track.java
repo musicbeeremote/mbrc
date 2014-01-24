@@ -32,7 +32,7 @@ public class Track extends DataItem implements TrackColumns {
 
     public static final String CREATE_TABLE =
             "create table " + TABLE_NAME + "(" + _ID
-            + " integer primary key autoincrement," + HASH + " text ,"
+            + " integer primary key," + HASH + " text ,"
             + TITLE + " text," + ALBUM_ID + " integer, " + GENRE_ID + " integer,"
             + ARTIST_ID + " integer," + YEAR + " text," + TRACK_NO + " integer,"
             + COVER_ID + " integer, " + UPDATED + " datetime, "

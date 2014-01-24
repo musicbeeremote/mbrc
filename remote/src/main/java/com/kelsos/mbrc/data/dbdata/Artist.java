@@ -15,7 +15,7 @@ public class Artist extends DataItem implements ArtistColumns {
     public static final String[] FIELDS = {_ID, ARTIST_NAME };
 
     public static final String CREATE_TABLE =
-            "create table " + TABLE_NAME + "(" + _ID + " integer primary key autoincrement,"
+            "create table " + TABLE_NAME + "(" + _ID + " integer primary key,"
             + ARTIST_NAME + " text," + IMAGE_URL + " text," + "unique("+ ARTIST_NAME
             + ") on conflict ignore" + ")";
 

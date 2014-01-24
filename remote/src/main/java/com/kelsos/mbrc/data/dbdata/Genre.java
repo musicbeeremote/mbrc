@@ -15,7 +15,7 @@ public class Genre extends DataItem implements GenreColumns {
     public static final String TABLE_NAME = "genres";
 
     public static final String CREATE_TABLE =
-            "create table " + TABLE_NAME + "(" + _ID + " integer primary key autoincrement,"
+            "create table " + TABLE_NAME + "(" + _ID + " integer primary key,"
                     + GENRE_NAME + " text, unique( " + GENRE_NAME + ") on conflict ignore" + ")";
 
     public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
