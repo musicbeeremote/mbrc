@@ -19,9 +19,15 @@ public class AlbumCursorAdapter extends CursorAdapter {
         return LayoutInflater.from(context).inflate(R.layout.ui_list_dual, parent, false);
     }
 
-    @Override public void bindView(View view, Context context, Cursor cursor) {
+    @Override public void bindView(final View view, Context context, Cursor cursor) {
         final Album album = new Album(cursor);
         ((TextView) view.findViewById(R.id.line_one)).setText(album.getAlbumName());
         ((TextView) view.findViewById(R.id.line_two)).setText(album.getArtist());
+        view.findViewById(R.id.ui_item_context_indicator).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                view.showContextMenu();
+            }
+        });
     }
 }

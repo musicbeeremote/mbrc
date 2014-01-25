@@ -45,6 +45,7 @@
 
     <LinearLayout
             android:id="@+id/ui_item_context_indicator"
+            android:background="@drawable/selectable_background_mbrc_dark"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingLeft="@dimen/side_margin_half"

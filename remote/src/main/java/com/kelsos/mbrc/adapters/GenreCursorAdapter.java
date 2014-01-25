@@ -17,11 +17,17 @@ public class GenreCursorAdapter extends CursorAdapter {
     }
 
     @Override public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-        return LayoutInflater.from(context).inflate(R.layout.ui_list_dual, viewGroup, false);
+        return LayoutInflater.from(context).inflate(R.layout.ui_list_single, viewGroup, false);
     }
 
-    @Override public void bindView(View view, Context context, Cursor cursor) {
+    @Override public void bindView(final View view, final Context context, Cursor cursor) {
         final Genre genre = new Genre(cursor);
         ((TextView) view.findViewById(R.id.line_one)).setText(genre.getGenreName());
+        view.findViewById(R.id.ui_item_context_indicator).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                view.showContextMenu();
+            }
+        });
     }
 }

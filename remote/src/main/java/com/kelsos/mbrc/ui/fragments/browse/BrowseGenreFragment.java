@@ -56,7 +56,17 @@ public class BrowseGenreFragment extends BaseListFragment
     @Override public boolean onContextItemSelected(android.view.MenuItem item) {
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            Object line = mAdapter.getItem(mi.position);
+            int position = mi != null ? mi.position : 0;
+            final Cursor line = (Cursor)mAdapter.getItem(position);
+            final Genre genre = new Genre(line);
+
+            switch (item.getItemId()) {
+                case BrowseMenuItems.GET_SUB:
+                    ShowArtists(genre);
+                    break;
+                default:
+                    break;
+            }
             return true;
         } else {
             return false;
@@ -89,7 +99,6 @@ public class BrowseGenreFragment extends BaseListFragment
         mFilter = !TextUtils.isEmpty(query) ? query : null;
         getLoaderManager().restartLoader(URL_LOADER, null, this);
         mSearchView.setIconified(true);
-        mSearchItem.collapseActionView();
         return false;
     }
 
@@ -104,13 +113,15 @@ public class BrowseGenreFragment extends BaseListFragment
         mSearchView.setQueryHint("Search for Genre");
         mSearchView.setIconifiedByDefault(true);
         mSearchItem = menu.findItem(R.id.now_playing_search_item);
-        mSearchItem.setActionView(mSearchView);
-        mSearchView.setOnQueryTextListener(this);
     }
 
     @Override public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         final Genre genre = new Genre((Cursor) mAdapter.getItem(position));
+        ShowArtists(genre);
+    }
+
+    private void ShowArtists(final Genre genre) {
         Intent intent = new Intent(getActivity(), Profile.class);
         intent.putExtra("name", genre.getGenreName());
         intent.putExtra("id", genre.getId());
