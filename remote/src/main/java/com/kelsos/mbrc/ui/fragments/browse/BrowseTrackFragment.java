@@ -6,13 +6,13 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.adapters.TrackCursorAdapter;
 import com.kelsos.mbrc.data.dbdata.Artist;
 import com.kelsos.mbrc.data.dbdata.Track;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
@@ -21,7 +21,7 @@ public class BrowseTrackFragment extends BaseListFragment
     implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int GROUP_ID = 14;
     private static final int URL_LOADER = 0x53;
-    private SimpleCursorAdapter mAdapter;
+    private TrackCursorAdapter mAdapter;
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -59,12 +59,7 @@ public class BrowseTrackFragment extends BaseListFragment
     }
 
     @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mAdapter = new SimpleCursorAdapter(getActivity(),
-                R.layout.ui_list_dual,
-                data,
-                new String[] {Track.TITLE, Artist.ARTIST_NAME},
-                new int[] {R.id.line_one, R.id.line_two},
-                0);
+        mAdapter = new TrackCursorAdapter(getActivity(), data, 0);
         this.setListAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.adapters.ArtistCursorAdapter;
 import com.kelsos.mbrc.data.dbdata.Artist;
 import com.kelsos.mbrc.ui.activities.Profile;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
@@ -23,7 +23,7 @@ public class BrowseArtistFragment extends BaseListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int GROUP_ID = 12;
     private static final int URL_LOADER = 0x12;
-    private SimpleCursorAdapter mAdapter;
+    private ArtistCursorAdapter mAdapter;
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -63,12 +63,7 @@ public class BrowseArtistFragment extends BaseListFragment
     }
 
     @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mAdapter = new SimpleCursorAdapter(getActivity(),
-                R.layout.ui_list_single,
-                data,
-                new String[] {Artist.ARTIST_NAME},
-                new int[] {R.id.line_one},
-                0);
+        mAdapter = new ArtistCursorAdapter(getActivity(), data, 0);
         this.setListAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }
