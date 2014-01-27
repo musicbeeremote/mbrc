@@ -26,6 +26,12 @@ public class BrowseAlbumFragment extends BaseListFragment implements LoaderCallb
     private static final int URL_LOADER = 2;
     private AlbumCursorAdapter mAdapter;
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        registerForContextMenu(getListView());
+    }
+
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getLoaderManager().initLoader(URL_LOADER, null, this);
         return inflater.inflate(R.layout.fragment_library, container, false);
@@ -38,18 +44,25 @@ public class BrowseAlbumFragment extends BaseListFragment implements LoaderCallb
         menu.add(GROUP_ID, BrowseMenuItems.PLAY_NOW, 0, R.string.search_context_play_now);
         menu.add(GROUP_ID, BrowseMenuItems.GET_SUB, 0, R.string.search_context_get_tracks);
         menu.add(GROUP_ID, BrowseMenuItems.PLAYLIST, 0, getString(R.string.search_context_playlist));
-        super.onCreateContextMenu(menu, v, menuInfo);
     }
 
     @Override
     public boolean onContextItemSelected(android.view.MenuItem item) {
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            Object line = mAdapter.getItem(mi.position);
+            int position = mi != null ? mi.position : 0;
+            final Album album = new Album((Cursor) mAdapter.getItem(position));
+            switch (item.getItemId()) {
+                case BrowseMenuItems.GET_SUB:
+                    showTracks(album);
+                    break;
+                default:
+                    break;
+            }
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -70,6 +83,10 @@ public class BrowseAlbumFragment extends BaseListFragment implements LoaderCallb
     @Override public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         final Album album = new Album((Cursor) mAdapter.getItem(position));
+        showTracks(album);
+    }
+
+    private void showTracks(final Album album) {
         Intent intent = new Intent(getActivity(), Profile.class);
         intent.putExtra("name", album.getAlbumName());
         intent.putExtra("id", album.getId());

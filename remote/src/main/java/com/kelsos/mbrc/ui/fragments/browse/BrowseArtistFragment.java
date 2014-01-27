@@ -47,7 +47,17 @@ public class BrowseArtistFragment extends BaseListFragment
     @Override public boolean onContextItemSelected(android.view.MenuItem item) {
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            Object line = mAdapter.getItem(mi.position);
+            int position = mi != null ? mi.position : 0;
+            final Artist artist = new Artist((Cursor) mAdapter.getItem(position));
+
+            switch (item.getItemId()) {
+                case BrowseMenuItems.GET_SUB:
+                    showAlbums(artist);
+                    break;
+                default:
+                    break;
+
+            }
 
             return true;
         } else {
@@ -73,6 +83,10 @@ public class BrowseArtistFragment extends BaseListFragment
     @Override public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         final Artist genre = new Artist((Cursor) mAdapter.getItem(position));
+        showAlbums(genre);
+    }
+
+    private void showAlbums(final Artist genre) {
         Intent intent = new Intent(getActivity(), Profile.class);
         intent.putExtra("name", genre.getArtistName());
         intent.putExtra("id", genre.getId());
