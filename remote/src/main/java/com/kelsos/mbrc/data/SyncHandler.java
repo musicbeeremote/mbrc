@@ -29,7 +29,7 @@ public class SyncHandler {
     private Bus bus;
     private LibraryDbHelper dbHelper;
     private int numberOfTracks;
-    private int currentTrack;
+    private int offset;
     private Track cachedTrack;
 
     @Inject public SyncHandler(Context mContext, NotificationService mNotification, Bus bus) {
@@ -41,35 +41,27 @@ public class SyncHandler {
 
     public void initFullSyncProcess(int numberOfTracks) {
         this.numberOfTracks = numberOfTracks;
-        this.currentTrack = 0;
-        getNextTrack();
+        this.offset = 0;
+        getNextBatch();
     }
 
 
-    public void getNextTrack() {
+    public void getNextBatch() {
 
-        if (currentTrack < numberOfTracks) {
-            mNotification.librarySyncNotification(numberOfTracks, currentTrack + 1);
+        if (offset < numberOfTracks) {
+
+            mNotification.librarySyncNotification(numberOfTracks, offset);
             Map<String, Object> syncData = new HashMap<>();
             syncData.put("type", "meta");
-            syncData.put("file", currentTrack);
+            syncData.put("offset", offset);
+            syncData.put("limit", BATCH_SIZE);
             bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
                     new UserAction(Protocol.LIBRARY_SYNC, syncData)));
-            currentTrack++;
+            offset += BATCH_SIZE;
+        } else {
+            mNotification.librarySyncNotification(numberOfTracks, numberOfTracks);
         }
-    }
 
-    public void getNextBunch() {
-
-        if (currentTrack < numberOfTracks) {
-            mNotification.librarySyncNotification(numberOfTracks, currentTrack + BATCH_SIZE);
-            Map<String, Object> syncData = new HashMap<>();
-            syncData.put("type", "meta");
-            syncData.put("file", currentTrack);
-            bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
-                    new UserAction(Protocol.LIBRARY_SYNC, syncData)));
-            currentTrack += BATCH_SIZE + currentTrack <= numberOfTracks ? BATCH_SIZE : numberOfTracks - currentTrack;
-        }
     }
 
     public void updateCover(String image, String hash) {
@@ -89,7 +81,6 @@ public class SyncHandler {
         cachedTrack.setCoverId(coverId);
         dbHelper.insertTrack(cachedTrack);
         cachedTrack = null;
-        getNextTrack();
     }
 
     public void processBatch(final List<Track> trackList) {

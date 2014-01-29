@@ -43,7 +43,7 @@ public class HandleLibrarySync implements ICommand {
 
             Log.d("mbrc-log", "Processing batch of " + list.size());
 
-            handler.getNextBunch();
+            handler.getNextBatch();
         }
     }
 }
