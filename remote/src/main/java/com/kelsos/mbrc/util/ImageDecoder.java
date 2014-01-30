@@ -31,7 +31,7 @@ public class ImageDecoder extends RoboAsyncTask<Bitmap> {
             return BitmapFactory.decodeByteArray(decodedImage, 0, decodedImage.length);
         } catch (Exception ex) {
             if (BuildConfig.DEBUG) {
-                Log.d("mbrc-log", "image processing", ex);
+                Log.d(BuildConfig.PACKAGE_NAME, "image processing", ex);
             }
         }
         return ((BitmapDrawable) noCover).getBitmap();

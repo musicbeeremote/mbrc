@@ -2,6 +2,7 @@ package com.kelsos.mbrc.commands.model;
 
 import android.util.Log;
 import com.google.inject.Inject;
+import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.data.SyncHandler;
 import com.kelsos.mbrc.data.dbdata.Track;
 import com.kelsos.mbrc.interfaces.ICommand;
@@ -41,7 +42,7 @@ public class HandleLibrarySync implements ICommand {
 
             handler.processBatch(list);
 
-            Log.d("mbrc-log", "Processing batch of " + list.size());
+            Log.d(BuildConfig.PACKAGE_NAME, "Processing batch of " + list.size());
 
             handler.getNextBatch();
         }

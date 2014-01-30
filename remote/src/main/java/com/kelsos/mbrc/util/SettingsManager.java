@@ -60,7 +60,7 @@ public class SettingsManager {
                 }
             } catch (IOException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d("mbrc-log", "connection-settings", e);
+                    Log.d(BuildConfig.PACKAGE_NAME, "connection-settings", e);
                 }
             }
         }
@@ -120,7 +120,7 @@ public class SettingsManager {
             bus.post(new ConnectionSettingsChanged(mSettings, 0));
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
-                Log.d("mbrc-log", "Settings store", e);
+                Log.d(BuildConfig.PACKAGE_NAME, "Settings store", e);
             }
         }
     }
@@ -222,7 +222,7 @@ public class SettingsManager {
             editor.commit();
 
             if (BuildConfig.DEBUG) {
-                Log.d("mbrc-log", "update or fresh install");
+                Log.d(BuildConfig.PACKAGE_NAME, "update or fresh install");
             }
         }
     }

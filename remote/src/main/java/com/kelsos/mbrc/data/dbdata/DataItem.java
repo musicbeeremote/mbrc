@@ -35,7 +35,7 @@ public abstract class DataItem implements BaseColumns {
             context.getContentResolver().notifyChange(getUri(), null, false);
         } catch (UnsupportedOperationException e) {
             if (BuildConfig.DEBUG) {
-                Log.d("mbrc-log", "notifyProvider", e);
+                Log.d(BuildConfig.PACKAGE_NAME, "notifyProvider", e);
             }
         }
     }

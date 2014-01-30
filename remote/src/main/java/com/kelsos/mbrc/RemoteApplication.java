@@ -47,7 +47,7 @@ public class RemoteApplication extends Application {
             }
         } catch (Exception ex) {
             if (BuildConfig.DEBUG) {
-                Log.d("mbrc-log", "force overflow hack", ex);
+                Log.d(BuildConfig.PACKAGE_NAME, "force overflow hack", ex);
             }
         }
     }

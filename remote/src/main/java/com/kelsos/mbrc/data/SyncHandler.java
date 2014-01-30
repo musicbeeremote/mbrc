@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.data;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
@@ -8,8 +9,7 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.db.LibraryDbHelper;
-import com.kelsos.mbrc.data.dbdata.Cover;
-import com.kelsos.mbrc.data.dbdata.Track;
+import com.kelsos.mbrc.data.dbdata.*;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.util.NotificationService;
@@ -60,6 +60,11 @@ public class SyncHandler {
             offset += BATCH_SIZE;
         } else {
             mNotification.librarySyncNotification(numberOfTracks, numberOfTracks);
+            ContentResolver contentResolver = mContext.getContentResolver();
+            contentResolver.notifyChange(Track.getContentUri(), null, false);
+            contentResolver.notifyChange(Album.getContentUri(), null, false);
+            contentResolver.notifyChange(Artist.getContentUri(), null, false);
+            contentResolver.notifyChange(Genre.getContentUri(), null, false);
         }
 
     }
@@ -72,7 +77,7 @@ public class SyncHandler {
             outputStream.close();
         }  catch (Exception ex) {
             if (BuildConfig.DEBUG) {
-                Log.d("mbrc-log", "saving cover", ex);
+                Log.d(BuildConfig.PACKAGE_NAME, "saving cover", ex);
             }
         }
 

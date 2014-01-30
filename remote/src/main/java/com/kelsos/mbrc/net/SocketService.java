@@ -140,7 +140,7 @@ public class SocketService {
             }
         } catch (Exception ignored) {
             if (BuildConfig.DEBUG) {
-                Log.d("mbrc-log", "socket send data exception", ignored);
+                Log.d(BuildConfig.PACKAGE_NAME, "socket send data exception", ignored);
             }
         }
     }

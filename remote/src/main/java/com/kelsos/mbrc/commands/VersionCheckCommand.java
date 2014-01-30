@@ -49,7 +49,7 @@ public class VersionCheckCommand implements ICommand {
 
                 if (nextCheck.after(now)) {
                     if (BuildConfig.DEBUG) {
-                        Log.d("mbrc-log", "waiting for next check: " + Long.toString(nextCheck.getTime()));
+                        Log.d(BuildConfig.PACKAGE_NAME, "waiting for next check: " + Long.toString(nextCheck.getTime()));
                     }
                     return;
                 }
@@ -85,30 +85,30 @@ public class VersionCheckCommand implements ICommand {
 
                 manager.setLastUpdated(now);
                 if (BuildConfig.DEBUG) {
-                    Log.d("mbrc-log", "last check on: " + Long.toString(now.getTime()));
-                    Log.d("mbrc-log", "plugin reported version: " + model.getPluginVersion());
-                    Log.d("mbrc-log", "plugin suggested version: " + suggestedVersion);
+                    Log.d(BuildConfig.PACKAGE_NAME, "last check on: " + Long.toString(now.getTime()));
+                    Log.d(BuildConfig.PACKAGE_NAME, "plugin reported version: " + model.getPluginVersion());
+                    Log.d(BuildConfig.PACKAGE_NAME, "plugin suggested version: " + suggestedVersion);
                 }
 
             } catch (MalformedURLException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d("mbrc-log", "version check MalformedURLException", e);
+                    Log.d(BuildConfig.PACKAGE_NAME, "version check MalformedURLException", e);
                 }
             } catch (JsonMappingException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d("mbrc-log", "version check JsonMappingException", e);
+                    Log.d(BuildConfig.PACKAGE_NAME, "version check JsonMappingException", e);
                 }
             } catch (JsonParseException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d("mbrc-log", "version check parse", e);
+                    Log.d(BuildConfig.PACKAGE_NAME, "version check parse", e);
                 }
             } catch (IOException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d("mbrc-log", "version check IOException", e);
+                    Log.d(BuildConfig.PACKAGE_NAME, "version check IOException", e);
                 }
             } catch (NumberFormatException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d("mbrc-log", "version check NumberFormatException", e);
+                    Log.d(BuildConfig.PACKAGE_NAME, "version check NumberFormatException", e);
                 }
             }
         }

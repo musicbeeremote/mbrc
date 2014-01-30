@@ -52,7 +52,7 @@ public class DelayTimer {
         if (mFuture != null) {
             mFuture.cancel(true);
             if (BuildConfig.DEBUG) {
-                Log.d("mbrc-log", "stopping delay timer");
+                Log.d(BuildConfig.PACKAGE_NAME, "stopping delay timer");
             }
 
         }
@@ -88,7 +88,7 @@ public class DelayTimer {
             stop();
             onTimerFinish();
             if (BuildConfig.DEBUG) {
-                Log.d("mbrc-log", "delay timer tick");
+                Log.d(BuildConfig.PACKAGE_NAME, "delay timer tick");
             }
         }
     }

@@ -19,7 +19,7 @@ public class SocketDataAvailableCommand implements ICommand {
             handler.preProcessIncoming(e.getDataString());
         } catch (Exception ex) {
             if (BuildConfig.DEBUG) {
-                Log.d("mbrc-log", "message processing", ex);
+                Log.d(BuildConfig.PACKAGE_NAME, "message processing", ex);
             }
         }
 

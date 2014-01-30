@@ -28,7 +28,7 @@ public class Controller extends RoboService {
 
     public Controller() {
         if (BuildConfig.DEBUG) {
-            Log.d("mbrc-log", "Controller initialized");
+            Log.d(BuildConfig.PACKAGE_NAME, "Controller initialized");
         }
     }
 
@@ -90,8 +90,8 @@ public class Controller extends RoboService {
 
         } catch (Exception ex) {
             if (BuildConfig.DEBUG) {
-                Log.d("mbrc-log", "executing command for type: \t" + event.getType(), ex);
-                Log.d("mbrc-log", "command data: \t" + event.getData());
+                Log.d(BuildConfig.PACKAGE_NAME, "executing command for type: \t" + event.getType(), ex);
+                Log.d(BuildConfig.PACKAGE_NAME, "command data: \t" + event.getData());
             }
         }
 

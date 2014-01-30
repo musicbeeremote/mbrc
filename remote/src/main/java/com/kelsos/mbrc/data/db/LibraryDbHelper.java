@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
+import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.data.dbdata.*;
 
 import java.util.ArrayList;
@@ -434,7 +435,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         track.setAlbumId(insertAlbum(new Album(track.getAlbum(), track.getAlbumArtist())));
         SQLiteDatabase db = this.getWritableDatabase();
         long id = db != null ? db.insert(Track.TABLE_NAME, null, track.getContentValues()) : 0;
-        Log.d("mbrc-log", "inserting track with id " + id + " and title" + track.getTitle());
+        Log.d(BuildConfig.PACKAGE_NAME, "inserting track with id " + id + " and title" + track.getTitle());
         return id;
     }
 

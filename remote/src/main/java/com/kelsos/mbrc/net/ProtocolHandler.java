@@ -61,7 +61,7 @@ public class ProtocolHandler {
 
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
-                Log.d("mbrc-log", "Incoming message pre-processor", e);
+                Log.d(BuildConfig.PACKAGE_NAME, "Incoming message pre-processor", e);
 
             }
         }
