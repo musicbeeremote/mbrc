@@ -11,7 +11,7 @@ import android.widget.ListView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistAdapter;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.Playlist;
+import com.kelsos.mbrc.data.dbdata.Playlist;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.AvailablePlaylists;
@@ -19,6 +19,9 @@ import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.activities.PlaylistActivity;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.squareup.otto.Subscribe;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PlaylistFragment extends BaseListFragment {
     private static final int GROUP_ID = 1;
@@ -32,7 +35,9 @@ public class PlaylistFragment extends BaseListFragment {
 
     @Override public void onStart() {
         super.onStart();
-        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYLIST_LIST, true)));
+        Map<String, String> map = new HashMap<>();
+        map.put("type",Protocol.PLAYLISTS_GET);
+        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYLISTS, map)));
     }
 
     @Subscribe public void handlePlaylistsAvailable(AvailablePlaylists playlists) {
@@ -52,11 +57,11 @@ public class PlaylistFragment extends BaseListFragment {
         openPlaylist(list);
     }
 
-    private void openPlaylist(Playlist list) {
+    private void openPlaylist(final Playlist list) {
         Intent intent = new Intent(this.getActivity(), PlaylistActivity.class);
         intent.putExtra("name", list.getName());
-        intent.putExtra("count", list.getCount());
-        intent.putExtra("src", list.getSrc());
+        intent.putExtra("tracks", list.getTracks());
+        intent.putExtra("hash", list.getHash());
         startActivity(intent);
     }
 
@@ -70,7 +75,7 @@ public class PlaylistFragment extends BaseListFragment {
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             Playlist line = adapter.getItem(mi.position);
-            String query = line.getSrc();
+            String query = line.getHash();
 
             UserAction ua = null;
             switch (item.getItemId()) {

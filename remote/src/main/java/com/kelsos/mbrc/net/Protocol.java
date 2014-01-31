@@ -38,27 +38,12 @@ public final class Protocol {
     public static final String NOW_PLAYING_MOVE = "nowplayinglistmove";
     public static final String NOW_PLAYING_LIST_SEARCH = "nowplayinglistsearch";
 
-    public static final String LIBRARY_SEARCH_ARTIST = "librarysearchartist";
-    public static final String LIBRARY_SEARCH_ALBUM = "librarysearchalbum";
-    public static final String LIBRARY_SEARCH_GENRE = "librarysearchgenre";
-    public static final String LIBRARY_SEARCH_TITLE = "librarysearchtitle";
-
-    public static final String LIBRARY_ARTIST_ALBUMS = "libraryartistalbums";
-    public static final String LIBRARY_GENRE_ARTISTS = "librarygenreartists";
-    public static final String LIBRARY_ALBUM_TRACKS = "libraryalbumtracks";
-
-    public static final String LIBRARY_QUEUE_GENRE = "libraryqueuegenre";
-    public static final String LIBRARY_QUEUE_ARTIST = "libraryqueueartist";
-    public static final String LIBRARY_QUEUE_ALBUM = "libraryqueuealbum";
-    public static final String LIBRARY_QUEUE_TRACK = "libraryqueuetrack";
-
     public static final String PLAYLIST_LIST = "playlistlist";
     public static final String PLAYLIST_GET_FILES = "playlistgetfiles";
     public static final String PLAYLIST_PLAY_NOW = "playlistplaynow";
-    public static final String PLAYLIST_REMOVE = "playlistremove";
-    public static final String PLAYLIST_MOVE = "playlistmove";
-    public static final String PLAYLIST_ADD_FILES = "playlistaddfiles";
-    public static final String PLAYLIST_CREATE = "playlistcreate";
+
+    public static final String PLAYLISTS = "playlists";
+    public static final String PLAYLISTS_GET = "get";
 
     public static final String LIBRARY_SYNC = "librarysync";
 

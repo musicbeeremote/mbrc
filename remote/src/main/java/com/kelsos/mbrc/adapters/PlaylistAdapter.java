@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.Playlist;
+import com.kelsos.mbrc.data.dbdata.Playlist;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class PlaylistAdapter extends ArrayAdapter<Playlist> {
 
         Playlist list = availablePlaylists.get(position);
         holder.lineOne.setText(list.getName());
-        holder.lineTwo.setText(Integer.toString(list.getCount()));
+        holder.lineTwo.setText(Integer.toString(list.getTracks()));
 
         return row;
     }

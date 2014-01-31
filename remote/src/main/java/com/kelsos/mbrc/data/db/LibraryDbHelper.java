@@ -32,6 +32,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         db.execSQL(Genre.CREATE_TABLE);
         db.execSQL(Track.CREATE_TABLE);
         db.execSQL(NowPlayingTrack.CREATE_TABLE);
+        db.execSQL(Playlist.CREATE_TABLE);
     }
 
     @Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -41,6 +42,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         db.execSQL(Genre.DROP_TABLE);
         db.execSQL(Track.DROP_TABLE);
         db.execSQL(NowPlayingTrack.DROP_TABLE);
+        db.execSQL(Playlist.DROP_TABLE);
         onCreate(db);
     }
 

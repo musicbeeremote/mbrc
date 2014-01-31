@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.data.Playlist;
+import com.kelsos.mbrc.data.dbdata.Playlist;
 
 import java.util.List;
 
