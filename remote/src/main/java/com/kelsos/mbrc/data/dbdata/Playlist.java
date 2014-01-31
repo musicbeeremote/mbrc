@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.data.dbdata;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import com.kelsos.mbrc.data.interfaces.PlaylistColumns;
 import org.codehaus.jackson.JsonNode;
 
@@ -12,6 +13,10 @@ public class Playlist extends DataItem implements PlaylistColumns {
 
     public static final String TABLE_NAME = "playlists";
     public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
+    public static final String INSERT = "insert into " + TABLE_NAME + " ("
+            + PLAYLIST_NAME + ","
+            + PLAYLIST_HASH + ","
+            + PLAYLIST_TRACKS + ") values (?, ?, ?)";
     public static final String CREATE_TABLE =
             "create table " + TABLE_NAME
             + "(" + _ID + " integer primary key,"
@@ -30,6 +35,13 @@ public class Playlist extends DataItem implements PlaylistColumns {
         this.name = node.path("name").getTextValue();
         this.tracks = node.path("tracks").getIntValue();
         this.hash = node.path("hash").getTextValue();
+    }
+
+    public Playlist(final Cursor cursor) {
+        this.id = cursor.getLong(cursor.getColumnIndex(_ID));
+        this.name = cursor.getString(cursor.getColumnIndex(PLAYLIST_NAME));
+        this.hash = cursor.getString(cursor.getColumnIndex(PLAYLIST_HASH));
+        this.tracks = cursor.getInt(cursor.getColumnIndex(PLAYLIST_TRACKS));
     }
 
     public int getTracks() {

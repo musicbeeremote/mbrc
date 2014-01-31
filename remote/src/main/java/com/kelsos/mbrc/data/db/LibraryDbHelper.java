@@ -374,6 +374,30 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Used to batch insert playlists in the sqlite database
+     * @param list The list of playlists
+     */
+    public synchronized void batchInsertPlaylists(final List<Playlist> list) {
+        final SQLiteDatabase mDb = getWritableDatabase();
+        if (mDb != null) {
+            mDb.beginTransaction();
+            SQLiteStatement stm = mDb.compileStatement(Playlist.INSERT);
+            for (Playlist playlist : list) {
+                if (stm != null) {
+                    stm.bindString(1, playlist.getName());
+                    stm.bindString(2, playlist.getHash());
+                    stm.bindLong(3, playlist.getTracks());
+                    stm.execute();
+                    stm.clearBindings();
+                }
+            }
+            mDb.setTransactionSuccessful();
+            mDb.endTransaction();
+            mDb.close();
+        }
+    }
+
+    /**
      * Receives a batch list of track meta data in json format and inserts them
      * in the database using compiled statements
      * @param list A list containing track items
@@ -428,6 +452,22 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
             mDb.endTransaction();
             mDb.close();
         }
+    }
+
+    public synchronized Cursor getAllPlaylistsCursor(final String sortOrder) {
+        final SQLiteDatabase db = this.getReadableDatabase();
+        return db != null
+                ? db.query(Playlist.TABLE_NAME,
+                new String[]{
+                        Playlist._ID,
+                        Playlist.PLAYLIST_NAME,
+                        Playlist.PLAYLIST_HASH,
+                        Playlist.PLAYLIST_TRACKS
+                },
+                null, null,
+                null, null,
+                sortOrder, null)
+                : null;
     }
 
     public synchronized long insertTrack(final Track track) {
