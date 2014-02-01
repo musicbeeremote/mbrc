@@ -1,7 +1,8 @@
 package com.kelsos.mbrc.commands.model;
 
+import android.content.Context;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.data.MainDataModel;
+import com.kelsos.mbrc.data.db.LibraryDbHelper;
 import com.kelsos.mbrc.data.dbdata.Playlist;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
@@ -11,10 +12,10 @@ import org.codehaus.jackson.node.ArrayNode;
 import java.util.ArrayList;
 
 public class UpdateAvailablePlaylists implements ICommand {
-    private MainDataModel model;
+    private LibraryDbHelper mHelper;
 
-    @Inject public UpdateAvailablePlaylists(MainDataModel model) {
-        this.model = model;
+    @Inject public UpdateAvailablePlaylists(Context mContext) {
+        mHelper = new LibraryDbHelper(mContext);
     }
 
     @Override public void execute(IEvent e) {
@@ -25,6 +26,6 @@ public class UpdateAvailablePlaylists implements ICommand {
             Playlist entry = new Playlist(jNode);
             playlists.add(entry);
         }
-        model.setAvailablePlaylists(playlists);
+        mHelper.batchInsertPlaylists(playlists);
     }
 }

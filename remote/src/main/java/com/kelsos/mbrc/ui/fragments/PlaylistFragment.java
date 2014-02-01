@@ -1,7 +1,12 @@
 package com.kelsos.mbrc.ui.fragments;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,27 +14,27 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.adapters.PlaylistAdapter;
+import com.kelsos.mbrc.adapters.PlaylistCursorAdapter;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.dbdata.Playlist;
 import com.kelsos.mbrc.data.UserAction;
+import com.kelsos.mbrc.data.dbdata.Playlist;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.AvailablePlaylists;
 import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.activities.PlaylistActivity;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
-import com.squareup.otto.Subscribe;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlaylistFragment extends BaseListFragment {
+public class PlaylistFragment extends BaseListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int GROUP_ID = 1;
     private static final int PLAY_NOW = 1;
     private static final int GET_PLAYLIST = 2;
-    private PlaylistAdapter adapter;
+    private static final int URL_LOADER = 0x873ef32;
+    private PlaylistCursorAdapter adapter;
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getLoaderManager().initLoader(URL_LOADER, null, this);
         return inflater.inflate(R.layout.ui_fragment_playlist, container, false);
     }
 
@@ -40,12 +45,6 @@ public class PlaylistFragment extends BaseListFragment {
         getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYLISTS, map)));
     }
 
-    @Subscribe public void handlePlaylistsAvailable(AvailablePlaylists playlists) {
-        adapter = new PlaylistAdapter(getActivity(), R.layout.ui_list_dual, playlists.getList());
-        setListAdapter(adapter);
-        adapter.notifyDataSetChanged();
-    }
-
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         registerForContextMenu(getListView());
@@ -53,7 +52,7 @@ public class PlaylistFragment extends BaseListFragment {
 
     @Override public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        Playlist list = adapter.getItem(position);
+        Playlist list = new Playlist((Cursor) adapter.getItem(position));
         openPlaylist(list);
     }
 
@@ -74,7 +73,7 @@ public class PlaylistFragment extends BaseListFragment {
     @Override public boolean onContextItemSelected(android.view.MenuItem item) {
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            Playlist line = adapter.getItem(mi.position);
+            Playlist line = new Playlist((Cursor) adapter.getItem(mi.position));
             String query = line.getHash();
 
             UserAction ua = null;
@@ -95,4 +94,22 @@ public class PlaylistFragment extends BaseListFragment {
         }
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Uri baseUri;
+        baseUri = Playlist.getContentUri();
+        return new CursorLoader(getActivity(), baseUri, null, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        adapter = new PlaylistCursorAdapter(getActivity(), cursor, 0);
+        this.setListAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+
+    }
 }

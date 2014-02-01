@@ -395,6 +395,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
             mDb.endTransaction();
             mDb.close();
         }
+        mContext.getContentResolver().notifyChange(Playlist.getContentUri(), null, false);
     }
 
     /**

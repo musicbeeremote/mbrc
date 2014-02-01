@@ -29,6 +29,7 @@ public class LibraryProvider extends ContentProvider {
         Cover.addMatcherUris(URI_MATCHER);
         Genre.addMatcherUris(URI_MATCHER);
         Track.addMatcherUris(URI_MATCHER);
+        Playlist.addMatcherUris(URI_MATCHER);
     }
 
     public LibraryProvider() {
@@ -45,6 +46,8 @@ public class LibraryProvider extends ContentProvider {
         types.put(Genre.BASE_FILTER_CODE, Genre.CONTENT_TYPE);
         types.put(Track.BASE_ITEM_CODE, Track.TYPE_ITEM);
         types.put(Track.BASE_URI_CODE, Track.TYPE_DIR);
+        types.put(Playlist.BASE_ITEM_CODE, Track.TYPE_ITEM);
+        types.put(Playlist.BASE_URI_CODE, Track.TYPE_DIR);
     }
 
     @Override public boolean onCreate() {
@@ -116,6 +119,9 @@ public class LibraryProvider extends ContentProvider {
                 break;
             case Track.BASE_ALBUM_FILTER_CODE:
                 result = getTracksForAlbumCursor(uri, contentResolver);
+                break;
+            case Playlist.BASE_URI_CODE:
+                result = dbHelper.getAllPlaylistsCursor(null);
                 break;
             default:
                 throw new IllegalArgumentException(String.format("Unknown Uri %s", uri));

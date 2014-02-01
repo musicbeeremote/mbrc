@@ -10,7 +10,6 @@ import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.dbdata.NowPlayingTrack;
-import com.kelsos.mbrc.data.dbdata.Playlist;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.enums.PlayState;
@@ -45,7 +44,6 @@ public class MainDataModel {
     private boolean isMuteActive;
     private PlayState playState;
     private List<NowPlayingTrack> nowPlayingList;
-    private List<Playlist> availablePlaylists;
     private List<NowPlayingTrack> playlistTracks;
     private LfmStatus lfmRating;
     private String pluginVersion;
@@ -74,17 +72,11 @@ public class MainDataModel {
         lyrics = "";
 
         nowPlayingList = new ArrayList<>();
-        availablePlaylists = new ArrayList<>();
         playlistTracks = new ArrayList<>();
 
         lfmRating = LfmStatus.NORMAL;
         pluginVersion = "";
 
-    }
-
-    public void setAvailablePlaylists(List<Playlist> playlists) {
-        this.availablePlaylists = playlists;
-        bus.post(new AvailablePlaylists(this.availablePlaylists, false));
     }
 
     public void setPlaylistTracks(List<NowPlayingTrack> tracks) {
@@ -94,10 +86,6 @@ public class MainDataModel {
 
     @Produce public PlaylistTracksAvailable producePlaylistTrack() {
         return new PlaylistTracksAvailable(this.playlistTracks, true);
-    }
-
-    @Produce public AvailablePlaylists availablePlaylistsChanged() {
-        return new AvailablePlaylists(this.availablePlaylists, true);
     }
 
     public void setLfmRating(String rating) {
