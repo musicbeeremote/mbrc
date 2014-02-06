@@ -46,7 +46,7 @@ public final class Configuration {
         controller.register(Protocol.NOW_PLAYING_POSITION, UpdatePlaybackPositionCommand.class);
         controller.register(Protocol.PLUGIN_VERSION, UpdatePluginVersionCommand.class);
         controller.register(Protocol.PLAYLIST_LIST, UpdateAvailablePlaylists.class);
-        controller.register(Protocol.PLAYLIST_GET_FILES, UpdatePlaylistTracks.class);
+        controller.register(Protocol.PLAYLISTS, UpdatePlaylists.class);
         controller.register(Protocol.LIBRARY_SYNC, HandleLibrarySync.class);
 
         controller.register(UserInputEventType.SETTINGS_CHANGED, RestartConnectionCommand.class);

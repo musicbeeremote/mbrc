@@ -73,7 +73,8 @@ public class PlaylistFragment extends BaseListFragment implements LoaderManager.
     @Override public boolean onContextItemSelected(android.view.MenuItem item) {
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            Playlist line = new Playlist((Cursor) adapter.getItem(mi.position));
+            int position = mi != null ? mi.position : 0;
+            Playlist line = new Playlist((Cursor) adapter.getItem(position));
             String query = line.getHash();
 
             UserAction ua = null;

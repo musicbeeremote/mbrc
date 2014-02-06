@@ -19,12 +19,15 @@ import com.mobeta.android.dslv.DragSortListView;
 import com.squareup.otto.Subscribe;
 import roboguice.inject.InjectView;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class PlaylistActivity extends BaseActivity {
     @Inject private MainThreadBusWrapper bus;
     @InjectView(android.R.id.list) private ListView mList;
     private PlaylistTrackAdapter adapter;
     private String mTitle;
-    private String mSrc;
+    private String mHash;
     private DragSortListView mDslv;
     private DragSortController mController;
 
@@ -50,7 +53,7 @@ public class PlaylistActivity extends BaseActivity {
         setContentView(R.layout.ui_fragment_nowplaying);
         Intent intent = getIntent();
         mTitle = intent.getStringExtra("name");
-        mSrc = intent.getStringExtra("src");
+        mHash = intent.getStringExtra("hash");
         mDslv = (DragSortListView) mList;
         registerForContextMenu(mList);
         mController = buildController(mDslv);
@@ -63,13 +66,10 @@ public class PlaylistActivity extends BaseActivity {
         super.onStart();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(mTitle);
-        bus.register(this);
-        bus.post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYLIST_GET_FILES, mSrc)));
-    }
-
-    @Override public void onStop() {
-        super.onStop();
-        bus.unregister(this);
+        Map<String, String> message = new HashMap<>();
+        message.put("type", "gettracks");
+        message.put("hash", mHash);
+        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYLISTS, message)));
     }
 
     @Subscribe public void handlePlaylistData(PlaylistTracksAvailable event) {
