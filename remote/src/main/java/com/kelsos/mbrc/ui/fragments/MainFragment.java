@@ -52,6 +52,7 @@ public class MainFragment extends BaseFragment {
     private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture mProgressUpdateHandler;
     private InfoButtonPagerAdapter mAdapter;
+    private boolean isTablet;
 
     private RatingBar.OnRatingBarChangeListener ratingChangeListener = new RatingBar.OnRatingBarChangeListener() {
         @Override
@@ -132,15 +133,20 @@ public class MainFragment extends BaseFragment {
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mAdapter = new InfoButtonPagerAdapter(getChildFragmentManager());
+        isTablet = getResources().getBoolean(R.bool.isTablet);
+        if (!isTablet) {
+            mAdapter = new InfoButtonPagerAdapter(getChildFragmentManager());
+        }
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ui_fragment_main, container, false);
-        ViewPager mPager = (ViewPager) view.findViewById(R.id.mbrc_main_infopager);
-        mPager.setAdapter(mAdapter);
-        LinePageIndicator mIndicator = (LinePageIndicator) view.findViewById(R.id.mbrc_main_infoindicator);
-        mIndicator.setViewPager(mPager);
+        if (!isTablet) {
+            ViewPager mPager = (ViewPager) view.findViewById(R.id.mbrc_main_infopager);
+            mPager.setAdapter(mAdapter);
+            LinePageIndicator mIndicator = (LinePageIndicator) view.findViewById(R.id.mbrc_main_infoindicator);
+            mIndicator.setViewPager(mPager);
+        }
         return view;
     }
 
