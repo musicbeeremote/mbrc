@@ -4,7 +4,8 @@ buildscript {
     repositories {
         mavenCentral()
         mavenLocal()
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven {url 'https://oss.sonatype.org/content/repositories/snapshots/'}
+        maven {url 'https://raw.github.com/kelsos/drag-sort-listview/library/repo'}
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.8.+'
@@ -15,6 +16,7 @@ apply plugin: 'android'
 
 repositories {
     maven { url "http://dl.bintray.com/populov/maven" }
+    maven { url 'https://raw.github.com/kelsos/drag-sort-listview/library/repo' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     mavenCentral()
     mavenLocal()

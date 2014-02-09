@@ -16,7 +16,7 @@ Building
 To build the application the usage of [Maven Android SDK Deployer](https://github.com/mosabua/maven-android-sdk-deployer) is required. After cloning the SDK Deployer repository in a directory you need to run:
 ``mvn install -P 4.3`` to install the necessary libraries to build the application with Maven and the Android Maven Plugin. The application also depends on **DragSortListView**. You should use the [fork](https://github.com/kelsos/drag-sort-listview) since the library is no longer maintained and the original will require some modifications to build.
 ### Latest development
-The latest development version have moved to the new Gradle based Android build system **DragSortListView** is required to be installed in the local maven repository as an ``aar`` artifact.
+The latest development version have moved to the new Gradle based Android build system.
 
 Credits
 -----------
