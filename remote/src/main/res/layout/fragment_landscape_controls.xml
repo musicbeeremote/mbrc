@@ -1,0 +1,128 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.kelsos.mbrc.ui.fragments.LandscapeControls">
+
+    <LinearLayout android:orientation="horizontal"
+                  android:background="@drawable/ui_track_info_background"
+                  android:paddingLeft="@dimen/side_margin_half"
+                  android:paddingRight="@dimen/side_margin_half"
+                  android:paddingBottom="4dp"
+                  android:paddingTop="4dp"
+                  android:layout_width="match_parent"
+                  android:layout_height="@dimen/mbrc_info_tab_height"
+                  android:gravity="center_vertical|left">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dip"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:ellipsize="end"
+                tools:text="Crimson Flower"
+                android:textSize="@dimen/mbrc_title_text_size"
+                android:textStyle="bold"
+                android:id="@+id/track_title"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textSize="@dimen/mbrc_album_text_size"
+                tools:text="Circus Black"
+                android:id="@+id/track_album"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/mbrc_album_text_size"
+                android:singleLine="true"
+                android:ellipsize="end"
+                tools:text="Amberian Dawn"
+                android:id="@+id/track_artist"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/mbrc_album_text_size"
+                android:singleLine="true"
+                android:ellipsize="end"
+                tools:text="2012"
+                android:id="@+id/track_year"/>
+        </LinearLayout>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:id="@+id/mbrc_info_overflow"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_core_overflow"
+            android:background="@drawable/selectable_background_mbrc_dark"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout android:orientation="horizontal"
+                  android:layout_width="match_parent"
+                  android:layout_height="@dimen/mbrc_info_tab_height"
+                  android:gravity="center_vertical|center_horizontal"
+                  android:layout_gravity="center">
+
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/main_repeat_button"
+            android:background="@drawable/selectable_background_mbrc_dark"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_media_repeat"/>
+
+        <ImageButton
+            android:id="@+id/main_button_previous"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/selectable_background_mbrc_dark"
+            android:contentDescription="@string/main_button_previous_description"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_media_previous"/>
+
+        <ImageButton
+            android:id="@+id/main_button_play_pause"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:background="@drawable/selectable_background_mbrc_dark"
+            android:layout_marginLeft="13dp"
+            android:layout_marginRight="13dp"
+            android:clickable="true"
+            android:contentDescription="@string/main_button_play_pause_description"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_media_play"/>
+
+        <ImageButton
+            android:id="@+id/main_button_next"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/selectable_background_mbrc_dark"
+            android:contentDescription="@string/main_button_next_description"
+            android:layout_marginRight="20dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_media_next"/>
+
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/selectable_background_mbrc_dark"
+            android:id="@+id/main_shuffle_button"
+            android:src="@drawable/ic_media_shuffle"
+            android:layout_gravity="center_vertical"/>
+
+    </LinearLayout>
+
+
+</FrameLayout>

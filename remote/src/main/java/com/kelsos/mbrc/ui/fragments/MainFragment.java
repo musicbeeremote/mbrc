@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -141,7 +142,7 @@ public class MainFragment extends BaseFragment {
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ui_fragment_main, container, false);
-        if (!isTablet) {
+        if (!isTablet && !isLandscape()) {
             ViewPager mPager = (ViewPager) view.findViewById(R.id.mbrc_main_infopager);
             mPager.setAdapter(mAdapter);
             LinePageIndicator mIndicator = (LinePageIndicator) view.findViewById(R.id.mbrc_main_infoindicator);
@@ -214,7 +215,7 @@ public class MainFragment extends BaseFragment {
 
     }
 
-    @Subscribe public void handleRatingChange(RatingChanged event) {
+    @Subscribe public void handleRatingChange(final RatingChanged event) {
         if (trackRating != null) {
             trackRating.setRating(event.getRating());
         }
@@ -364,5 +365,21 @@ public class MainFragment extends BaseFragment {
         trackProgressSlider.setProgress(current);
 
         trackProgressAnimation();
+    }
+
+    /**
+     * Returns true if the orientation is landscape and false if it is horizontal.
+     * @return true or false
+     */
+    public boolean isLandscape() {
+        boolean result;
+        final Display display = ((WindowManager) getActivity()
+                .getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay();
+
+        int orientation = display.getRotation();
+        result = orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270;
+
+        return result;
     }
 }

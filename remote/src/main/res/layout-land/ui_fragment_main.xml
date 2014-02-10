@@ -48,4 +48,63 @@
         </LinearLayout>
     </FrameLayout>
 
+    <fragment
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:name="com.kelsos.mbrc.ui.fragments.LandscapeControls"
+        android:id="@+id/fragment"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/album_cover_area"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        tools:layout="@layout/fragment_landscape_controls"/>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/mbrc_transparent_dark"
+        android:padding="@dimen/side_margin_half"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/album_cover_area">
+
+        <TextView
+            android:id="@+id/main_track_progress_current"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/main_label_duration_current"
+            android:textColor="@color/mbrc_title"
+            android:textSize="@dimen/mbrc_duration_text_size"/>
+
+        <SeekBar
+            android:id="@+id/main_track_progress_seeker"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:maxHeight="6dp"
+            android:minHeight="6dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:progress="0"
+            android:progressDrawable="@drawable/ic_duration_bar_progress"
+            android:secondaryProgress="0"
+            android:thumb="@null"
+            android:thumbOffset="6dp"/>
+
+        <TextView
+            android:id="@+id/main_track_duration_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="@string/main_label_duration_total"
+            android:textColor="@color/mbrc_title"
+            android:textSize="@dimen/mbrc_duration_text_size"/>
+    </LinearLayout>
+
 </RelativeLayout>
