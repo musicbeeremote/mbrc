@@ -38,7 +38,7 @@
 
             <RatingBar
                     android:id="@+id/track_rating_bar"
-                    style="@style/RatingBar"
+                    style="@style/RatingBarmbrc_dark_compo"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
                     android:numStars="5"
@@ -55,10 +55,10 @@
         android:id="@+id/fragment"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/album_cover_area"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        tools:layout="@layout/fragment_landscape_controls"/>
+        tools:layout="@layout/fragment_landscape_controls"
+        android:layout_above="@+id/linearLayout"/>
 
     <LinearLayout
         android:id="@+id/linearLayout"
