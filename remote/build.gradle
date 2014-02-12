@@ -5,7 +5,6 @@ buildscript {
         mavenCentral()
         mavenLocal()
         maven {url 'https://oss.sonatype.org/content/repositories/snapshots/'}
-        maven {url 'https://raw.github.com/kelsos/drag-sort-listview/library/repo'}
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.8.+'
@@ -16,7 +15,7 @@ apply plugin: 'android'
 
 repositories {
     maven { url "http://dl.bintray.com/populov/maven" }
-    maven { url 'https://raw.github.com/kelsos/drag-sort-listview/library/repo' }
+    maven { url 'http://dl.bintray.com/kelsos/maven' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     mavenCentral()
     mavenLocal()
@@ -38,8 +37,8 @@ def versionMinor = 9
 def versionPatch = 9
 
 dependencies {
-    compile 'com.android.support:support-v4:19.0.0'
-    compile 'com.android.support:appcompat-v7:19.0.0'
+    compile 'com.android.support:support-v4:19.0.1'
+    compile 'com.android.support:appcompat-v7:19.0.1'
     compile 'org.roboguice:roboguice:2.0'
     compile 'com.squareup:otto:1.3.4'
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
