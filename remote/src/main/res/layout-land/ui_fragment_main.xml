@@ -9,7 +9,7 @@
     <FrameLayout
             android:id="@+id/album_cover_area"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/mbrc_cover"
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true">
 
@@ -36,16 +36,16 @@
                 android:gravity="center_vertical|center_horizontal"
                 android:layout_marginBottom="1dp">
 
-            <RatingBar
-                    android:id="@+id/track_rating_bar"
-                    style="@style/RatingBarmbrc_dark_compo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:numStars="5"
-                    android:stepSize="0.5"
-                    android:layout_gravity="center"
-                    />
         </LinearLayout>
+
+        <RatingBar
+                android:id="@+id/track_rating_bar"
+                style="@style/RatingBarmbrc_dark_compo"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:numStars="5"
+                android:stepSize="0.5"
+                android:layout_gravity="center"/>
     </FrameLayout>
 
     <fragment
@@ -67,10 +67,9 @@
         android:layout_height="wrap_content"
         android:background="@color/mbrc_transparent_dark"
         android:padding="@dimen/side_margin_half"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/album_cover_area">
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
 
         <TextView
             android:id="@+id/main_track_progress_current"
