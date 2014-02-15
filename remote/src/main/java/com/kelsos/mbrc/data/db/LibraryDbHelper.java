@@ -33,6 +33,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         db.execSQL(Track.CREATE_TABLE);
         db.execSQL(NowPlayingTrack.CREATE_TABLE);
         db.execSQL(Playlist.CREATE_TABLE);
+        db.execSQL(PlaylistTrack.CREATE_TABLE);
     }
 
     @Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -43,6 +44,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         db.execSQL(Track.DROP_TABLE);
         db.execSQL(NowPlayingTrack.DROP_TABLE);
         db.execSQL(Playlist.DROP_TABLE);
+        db.execSQL(PlaylistTrack.DROP_TABLE);
         onCreate(db);
     }
 
@@ -396,6 +398,32 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
             mDb.close();
         }
         mContext.getContentResolver().notifyChange(Playlist.getContentUri(), null, false);
+    }
+
+    /**
+     * Used to batch insert the playlist tracks in the database
+     * @param list The list of playlist tracks
+     */
+    public synchronized void batchInsertPlaylistTracks(final List<PlaylistTrack> list) {
+        final SQLiteDatabase mDb = getWritableDatabase();
+        if (mDb != null) {
+            mDb.beginTransaction();
+            SQLiteStatement stm = mDb.compileStatement(PlaylistTrack.INSERT);
+            for (PlaylistTrack track: list) {
+                if (stm != null) {
+                    stm.bindString(1, track.getArtist());
+                    stm.bindString(2, track.getTitle());
+                    stm.bindLong(3, track.getIndex());
+                    stm.bindString(4, track.getPlaylistHash());
+                    stm.execute();
+                    stm.clearBindings();
+                }
+            }
+            mDb.setTransactionSuccessful();
+            mDb.endTransaction();
+            mDb.close();
+        }
+        mContext.getContentResolver().notifyChange(PlaylistTrack.getContentUri(), null, false);
     }
 
     /**

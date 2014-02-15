@@ -4,8 +4,8 @@ import android.content.Context;
 import android.util.Log;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.db.LibraryDbHelper;
-import com.kelsos.mbrc.data.dbdata.NowPlayingTrack;
 import com.kelsos.mbrc.data.dbdata.Playlist;
+import com.kelsos.mbrc.data.dbdata.PlaylistTrack;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import org.codehaus.jackson.JsonNode;
@@ -24,13 +24,15 @@ public class UpdatePlaylists implements ICommand {
     @Override public void execute(IEvent e) {
         JsonNode jNode = (JsonNode) e.getData();
         if (jNode.path("type").asText().equals("gettracks"))  {
-            List<NowPlayingTrack> tracks = new ArrayList<>();
+            List<PlaylistTrack> tracks = new ArrayList<>();
             ArrayNode node = (ArrayNode) jNode.path("files");
             for (int i = 0; i < node.size(); i++) {
                 JsonNode cNode = node.get(i);
-                NowPlayingTrack entry = new NowPlayingTrack(cNode);
+                PlaylistTrack entry = new PlaylistTrack(cNode);
+                entry.setPlaylistHash(jNode.path("playlist_hash").asText());
                 tracks.add(entry);
             }
+            mHelper.batchInsertPlaylistTracks(tracks);
             Log.d("received","total tracks:" + tracks.size());
         } else if (jNode.path("type").asText().equals("get")) {
             ArrayList<Playlist> playlists = new ArrayList<>();
