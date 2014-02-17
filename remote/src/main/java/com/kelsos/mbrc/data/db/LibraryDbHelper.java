@@ -414,7 +414,8 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
                     stm.bindString(1, track.getArtist());
                     stm.bindString(2, track.getTitle());
                     stm.bindLong(3, track.getIndex());
-                    stm.bindString(4, track.getPlaylistHash());
+                    stm.bindString(4, track.getHash());
+                    stm.bindString(5, track.getPlaylistHash());
                     stm.execute();
                     stm.clearBindings();
                 }

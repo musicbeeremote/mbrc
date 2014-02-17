@@ -5,4 +5,5 @@ public interface PlaylistTrackColumns {
     String TITLE = "plt_title";
     String INDEX = "plt_index";
     String PLAYLIST_ID = "playlist_id";
+    String HASH = "plt_hash";
 }
