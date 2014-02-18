@@ -109,8 +109,8 @@ public class LibraryProvider extends ContentProvider {
                 result.setNotificationUri(contentResolver, uri);
                 break;
             case Genre.BASE_FILTER_CODE:
-                String search = "%" + uri.getLastPathSegment() + "%";
-                result = dbHelper.getAllGenresCursor(Genre.GENRE_NAME + " LIKE ?",
+                String search = String.format("%%%s%%", uri.getLastPathSegment());
+                result = dbHelper.getAllGenresCursor(String.format("%s LIKE ?", Genre.GENRE_NAME),
                         new String[]{search}
                 );
                 result.setNotificationUri(contentResolver, uri);
@@ -193,7 +193,7 @@ public class LibraryProvider extends ContentProvider {
             String albumId = uri.getLastPathSegment();
             sqBuilder = new SQLiteQueryBuilder();
             sqBuilder.setTables(Track.TABLE_NAME);
-            dataSel = Track.ALBUM_ID + " = " + " ?";
+            dataSel = String.format("%s = ?", Track.ALBUM_ID);
             result = sqBuilder.query(db,
                     new String[]{
                             Track._ID,
@@ -204,7 +204,7 @@ public class LibraryProvider extends ContentProvider {
                     new String[]{albumId},
                     Track._ID,
                     null,
-                    Track.TRACK_NO + " ASC"
+                    String.format("%s ASC", Track.TRACK_NO)
             );
             if (result != null) {
                 result.setNotificationUri(contentResolver, uri);
@@ -222,13 +222,22 @@ public class LibraryProvider extends ContentProvider {
             String genreId = uri.getLastPathSegment();
             sqBuilder = new SQLiteQueryBuilder();
             sqBuilder.setTables(String.format("%s ar, %s gen, %s t",
-                    Artist.TABLE_NAME, Genre.TABLE_NAME, Track.TABLE_NAME));
-            dataSel = "ar." + Artist._ID + " = " + "t." + Track.ARTIST_ID
-                    + " and " + "t. " + Track.GENRE_ID + " = " + " gen." + Genre._ID
-                    + " and " + " gen." + Genre._ID + " = " + "?";
+                    Artist.TABLE_NAME,
+                    Genre.TABLE_NAME,
+                    Track.TABLE_NAME));
+
+            dataSel = String.format("ar.%s = t.%s and t. %s =  gen.%s and  gen.%s = ?",
+                    Artist._ID,
+                    Track.ARTIST_ID,
+                    Track.GENRE_ID,
+                    Genre._ID,
+                    Genre._ID);
 
             result = sqBuilder.query(db,
-                    new String[]{Artist.ARTIST_NAME, "ar." + Artist._ID},
+                    new String[]{
+                            Artist.ARTIST_NAME,
+                            String.format("ar.%s", Artist._ID)
+                    },
                     dataSel,
                     new String[]{genreId},
                     String.format("ar.%s", Artist._ID),
@@ -251,19 +260,22 @@ public class LibraryProvider extends ContentProvider {
             String artistId = uri.getLastPathSegment();
             sqBuilder = new SQLiteQueryBuilder();
             sqBuilder.setTables(String.format("%s al, %s ar", Album.TABLE_NAME, Artist.TABLE_NAME));
-            dataSel = "ar." + Artist._ID + " = " + "al." + Album.ARTIST_ID + " and "
-                    + "al." + Album.ARTIST_ID + " = " + "?";
+            dataSel = String.format("ar.%s = al.%s and al.%s = ?",
+                    Artist._ID,
+                    Album.ARTIST_ID,
+                    Album.ARTIST_ID);
 
             result = sqBuilder.query(db,
-                    new String[]{"al." + Album.ALBUM_NAME,
-                            "al." + Album._ID,
-                            "ar." + Artist.ARTIST_NAME
+                    new String[]{
+                            String.format("al.%s", Album.ALBUM_NAME),
+                            String.format("al.%s", Album._ID),
+                            String.format("ar.%s", Artist.ARTIST_NAME)
                     },
                     dataSel,
                     new String[]{artistId},
-                    "al." + Album._ID,
+                    String.format("al.%s", Album._ID),
                     null,
-                    "al." + Album.ALBUM_NAME + " ASC"
+                    String.format("al.%s ASC", Album.ALBUM_NAME)
             );
             if (result != null) {
                 result.setNotificationUri(contentResolver, uri);
@@ -280,20 +292,23 @@ public class LibraryProvider extends ContentProvider {
             SQLiteQueryBuilder sqBuilder = new SQLiteQueryBuilder();
             sqBuilder.setTables(String.format("%s al, %s ar, %s t",
                     Album.TABLE_NAME, Artist.TABLE_NAME, Track.TABLE_NAME));
-            dataSel = "t." + Track.ALBUM_ID + " = " + "al." + Album._ID
-                    + " and " + "al." + Album.ARTIST_ID + " = " + "ar." + Artist._ID;
-
+            dataSel = String.format("t.%s = al.%s and al.%s = ar.%s",
+                    Track.ALBUM_ID,
+                    Album._ID,
+                    Album.ARTIST_ID,
+                    Artist._ID);
 
             result = sqBuilder.query(db,
-                    new String[]{"al." + Album._ID,
+                    new String[]{
+                            String.format("al.%s", Album._ID),
                             Album.ALBUM_NAME,
-                            "al." + Album.ARTIST_ID,
+                            String.format("al.%s", Album.ARTIST_ID),
                             Artist.ARTIST_NAME},
                     dataSel,
                     null,
-                    "al." + Album._ID,
+                    String.format("al.%s", Album._ID),
                     null,
-                    "ar." + Artist.ARTIST_NAME + ", al." + Album.ALBUM_NAME + " ASC"
+                    String.format("ar.%s, al.%s ASC", Artist.ARTIST_NAME, Album.ALBUM_NAME)
             );
 
             if (result != null) {
