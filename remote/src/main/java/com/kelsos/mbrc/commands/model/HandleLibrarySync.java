@@ -24,15 +24,16 @@ public class HandleLibrarySync implements ICommand {
         JsonNode node = (JsonNode) e.getData();
         String type = node.path("type").asText();
 
-        if (type.equals("full")) {
-            int totalFiles = node.path("payload").asInt();
-            handler.initFullSyncProcess(totalFiles);
-        } else if (type.equals("cover")) {
+        if (type.equals("cover")) {
             JsonNode payload = node.path("payload");
             String sha1 = payload.path("hash").asText();
             String image = payload.path("image").asText();
             handler.updateCover(image, sha1);
         } else if (type.equals("meta")) {
+            int limit = node.path("limit").asInt(50);
+            int offset = node.path("offset").asInt(0);
+            int total = node.path("total").asInt(0);
+
             ArrayNode trackNode = (ArrayNode) node.path("data");
             List<Track> list = new ArrayList<>();
             for (int i = 0; i < trackNode.size(); i++) {
@@ -44,7 +45,7 @@ public class HandleLibrarySync implements ICommand {
 
             Log.d(BuildConfig.PACKAGE_NAME, "Processing batch of " + list.size());
 
-            handler.getNextBatch();
+            handler.getNextBatch(total, offset, limit);
         }
     }
 }

@@ -23,13 +23,10 @@ import java.util.Map;
 @Singleton
 public class SyncHandler {
 
-    public static final int BATCH_SIZE = 50;
     private Context mContext;
     private NotificationService mNotification;
     private Bus bus;
     private LibraryDbHelper dbHelper;
-    private int numberOfTracks;
-    private int offset;
     private Track cachedTrack;
 
     @Inject public SyncHandler(Context mContext, NotificationService mNotification, Bus bus) {
@@ -39,27 +36,25 @@ public class SyncHandler {
         dbHelper = new LibraryDbHelper(mContext);
     }
 
-    public void initFullSyncProcess(int numberOfTracks) {
-        this.numberOfTracks = numberOfTracks;
-        this.offset = 0;
-        getNextBatch();
-    }
+    /**
+     * Sends a request to get the next part of the library data.
+     * @param total Represents the total number of tracks available.
+     * @param offset Represents the index of the starting track.
+     * @param limit Represents the number of tracks contained to the message.
+     */
+    public void getNextBatch(int total, int offset, int limit) {
 
+        if (offset < total) {
 
-    public void getNextBatch() {
-
-        if (offset < numberOfTracks) {
-
-            mNotification.librarySyncNotification(numberOfTracks, offset);
+            mNotification.librarySyncNotification(total, offset);
             Map<String, Object> syncData = new HashMap<>();
             syncData.put("type", "meta");
-            syncData.put("offset", offset);
-            syncData.put("limit", BATCH_SIZE);
+            syncData.put("offset", offset + limit);
+            syncData.put("limit", limit);
             bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
-                    new UserAction(Protocol.LIBRARY_SYNC, syncData)));
-            offset += BATCH_SIZE;
+                    new UserAction(Protocol.LIBRARY, syncData)));
         } else {
-            mNotification.librarySyncNotification(numberOfTracks, numberOfTracks);
+            mNotification.librarySyncNotification(total, total);
             ContentResolver contentResolver = mContext.getContentResolver();
             contentResolver.notifyChange(Track.getContentUri(), null, false);
             contentResolver.notifyChange(Album.getContentUri(), null, false);

@@ -38,10 +38,12 @@ public class BrowseFragment extends BaseFragment {
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case LIBRARY_SYNC:
-                Map<String, String> req = new HashMap<>();
-                req.put("type", "full");
+                Map<String, Object> req = new HashMap<>();
+                req.put("type", "meta");
+                req.put("offset", 0);
+                req.put("limit", 50);
                 getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION,
-                    new UserAction(Protocol.LIBRARY_SYNC, req)));
+                    new UserAction(Protocol.LIBRARY, req)));
                 break;
             default:
                 return false;

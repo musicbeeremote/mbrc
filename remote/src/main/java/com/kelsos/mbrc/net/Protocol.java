@@ -45,7 +45,7 @@ public final class Protocol {
     public static final String PLAYLISTS = "playlists";
     public static final String PLAYLISTS_GET = "get";
 
-    public static final String LIBRARY_SYNC = "librarysync";
+    public static final String LIBRARY = "library";
 
     public static final String REQUEST = "req";
     public static final String REPLY = "rep";

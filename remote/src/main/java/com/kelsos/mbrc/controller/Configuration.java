@@ -47,7 +47,7 @@ public final class Configuration {
         controller.register(Protocol.PLUGIN_VERSION, UpdatePluginVersionCommand.class);
         controller.register(Protocol.PLAYLIST_LIST, UpdateAvailablePlaylists.class);
         controller.register(Protocol.PLAYLISTS, UpdatePlaylists.class);
-        controller.register(Protocol.LIBRARY_SYNC, HandleLibrarySync.class);
+        controller.register(Protocol.LIBRARY, HandleLibrarySync.class);
 
         controller.register(UserInputEventType.SETTINGS_CHANGED, RestartConnectionCommand.class);
         controller.register(UserInputEventType.CANCEL_NOTIFICATION, CancelNotificationCommand.class);

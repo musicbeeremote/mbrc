@@ -9,16 +9,14 @@ import com.kelsos.mbrc.data.interfaces.AlbumColumns;
 
 public class Album extends DataItem implements AlbumColumns {
     public static final String TABLE_NAME = "albums";
-    public static final String CREATE_TABLE =
-            "create table " + TABLE_NAME + "(" + _ID + " integer primary key,"
-                    + ALBUM_NAME + " text," + ARTIST_ID + " integer, "
-                    + "foreign key (" + ARTIST_ID + ") references "
-                    + Artist.TABLE_NAME + "(" + _ID + ") on delete cascade,"
-                    + "unique(" + ALBUM_NAME + ") on conflict ignore" + ")";
+    public static final String CREATE_TABLE = String.format("create table %s (%s integer primary key, "
+            + "%s text, %s integer, %s cover_hash, foreign key (%s) references "
+            + "%s (%s) on delete cascade, unique(%s) on conflict ignore)",
+            TABLE_NAME, _ID, ALBUM_NAME, ARTIST_ID, COVER_HASH, ARTIST_ID, "artists",_ID, ALBUM_NAME);
 
-    public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
-    public static final String INSERT = "insert into " + TABLE_NAME + " (" + ALBUM_NAME + ", "
-            + ARTIST_ID +") values (?, (select _id from artists where artist_name = ?))";
+    public static final String DROP_TABLE = String.format("drop table if exists %s", TABLE_NAME);
+    public static final String INSERT = String.format("insert into %s (%s , %s) values "
+            + "(?, (select _id from artists where artist_name = ?))", TABLE_NAME, ALBUM_NAME, ARTIST_ID);
 
 
     public static Uri getContentUri() {
@@ -60,6 +58,7 @@ public class Album extends DataItem implements AlbumColumns {
         this.albumName = cursor.getString(cursor.getColumnIndex(ALBUM_NAME));
         this.artistId = cursor.getLong(cursor.getColumnIndex(ARTIST_ID));
         this.artist = cursor.getString(cursor.getColumnIndex(Artist.ARTIST_NAME));
+       // this.coverHash = cursor.getString(cursor.getColumnIndex(COVER_HASH));
     }
 
     public ContentValues getContentValues() {

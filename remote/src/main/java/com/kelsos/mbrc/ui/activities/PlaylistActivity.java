@@ -74,7 +74,7 @@ public class PlaylistActivity extends BaseActivity implements LoaderManager.Load
         getSupportActionBar().setTitle(mTitle);
         Map<String, String> message = new HashMap<>();
         message.put("type", "gettracks");
-        message.put("hash", mHash);
+        message.put("playlist_hash", mHash);
         getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYLISTS, message)));
     }
 
