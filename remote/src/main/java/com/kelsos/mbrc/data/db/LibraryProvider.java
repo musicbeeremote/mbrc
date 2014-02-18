@@ -1,9 +1,6 @@
 package com.kelsos.mbrc.data.db;
 
-import android.content.ContentProvider;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.UriMatcher;
+import android.content.*;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -22,6 +19,7 @@ public class LibraryProvider extends ContentProvider {
     public static final Uri AUTHORITY_URI = Uri.parse(SCHEME + AUTHORITY);
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
     private final Map<Integer, String> types;
+    private Context mContext;
 
     static {
         Album.addMatcherUris(URI_MATCHER);
@@ -57,7 +55,8 @@ public class LibraryProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        dbHelper = new LibraryDbHelper(getContext());
+        mContext = getContext();
+        dbHelper = new LibraryDbHelper(mContext);
         return false;
     }
 
@@ -65,7 +64,8 @@ public class LibraryProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Cursor result;
         final long id;
-        ContentResolver contentResolver = getContext().getContentResolver();
+        final ContentResolver contentResolver = mContext.getContentResolver();
+
         switch (URI_MATCHER.match(uri)) {
             case Album.BASE_ITEM_CODE:
                 id = Long.parseLong(uri.getLastPathSegment());
@@ -84,7 +84,7 @@ public class LibraryProvider extends ContentProvider {
                 result.setNotificationUri(contentResolver, uri);
                 break;
             case Artist.BASE_URI_CODE:
-                result = dbHelper.getAllArtistsCursor(selection, selectionArgs, sortOrder);
+                result = dbHelper.getAllArtistsCursor(selection, selectionArgs);
                 result.setNotificationUri(contentResolver, uri);
                 break;
             case Artist.BASE_GENRE_FILTER:
@@ -105,14 +105,14 @@ public class LibraryProvider extends ContentProvider {
                 result.setNotificationUri(contentResolver, uri);
                 break;
             case Genre.BASE_URI_CODE:
-                result = dbHelper.getAllGenresCursor(selection, selectionArgs, sortOrder);
+                result = dbHelper.getAllGenresCursor(selection, selectionArgs);
                 result.setNotificationUri(contentResolver, uri);
                 break;
             case Genre.BASE_FILTER_CODE:
                 String search = "%" + uri.getLastPathSegment() + "%";
                 result = dbHelper.getAllGenresCursor(Genre.GENRE_NAME + " LIKE ?",
-                        new String[]{search},
-                        sortOrder);
+                        new String[]{search}
+                );
                 result.setNotificationUri(contentResolver, uri);
                 break;
             case Track.BASE_ITEM_CODE:
@@ -121,7 +121,7 @@ public class LibraryProvider extends ContentProvider {
                 result.setNotificationUri(contentResolver, uri);
                 break;
             case Track.BASE_URI_CODE:
-                result = dbHelper.getAllTracksCursor(selection, selectionArgs, sortOrder);
+                result = dbHelper.getAllTracksCursor(selectionArgs);
                 result.setNotificationUri(contentResolver, uri);
                 break;
             case Track.BASE_ALBUM_FILTER_CODE:
@@ -332,7 +332,7 @@ public class LibraryProvider extends ContentProvider {
         if (URI_MATCHER.match(uri) != Cover.BASE_IMAGE_CODE) {
             throw new IllegalArgumentException("Action not supported");
         } else {
-            File file = new File(String.format("%s/%s", getContext().getFilesDir(), uri.getLastPathSegment()));
+            File file = new File(String.format("%s/%s", mContext.getFilesDir(), uri.getLastPathSegment()));
             return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
         }
     }
