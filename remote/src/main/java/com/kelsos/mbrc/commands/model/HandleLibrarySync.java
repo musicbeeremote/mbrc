@@ -1,9 +1,8 @@
 package com.kelsos.mbrc.commands.model;
 
-import android.util.Log;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.data.SyncHandler;
+import com.kelsos.mbrc.data.dbdata.Cover;
 import com.kelsos.mbrc.data.dbdata.Track;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
@@ -25,10 +24,23 @@ public class HandleLibrarySync implements ICommand {
         String type = node.path("type").asText();
 
         if (type.equals("cover")) {
-            JsonNode payload = node.path("payload");
-            String sha1 = payload.path("hash").asText();
-            String image = payload.path("image").asText();
-            handler.updateCover(image, sha1);
+            int limit = node.path("limit").asInt(5);
+            int offset = node.path("offset").asInt(0);
+            int total = node.path("total").asInt(0);
+
+            ArrayNode coverNode = (ArrayNode) node.path("data");
+            final int size = coverNode.size();
+            List<Cover> list = new ArrayList<>();
+
+            for(int i = 0; i < size; i++) {
+                JsonNode jNode = coverNode.get(i);
+                String image = jNode.path("image").asText();
+                String hash = jNode.path("coverhash").asText();
+                String albumId = jNode.path("album_id").asText();
+                handler.updateCover(image, hash);
+                list.add(new Cover(albumId, hash));
+            }
+
         } else if (type.equals("meta")) {
             int limit = node.path("limit").asInt(50);
             int offset = node.path("offset").asInt(0);
@@ -36,15 +48,13 @@ public class HandleLibrarySync implements ICommand {
 
             ArrayNode trackNode = (ArrayNode) node.path("data");
             List<Track> list = new ArrayList<>();
-            for (int i = 0; i < trackNode.size(); i++) {
+            final int size = trackNode.size();
+            for (int i = 0; i < size; i++) {
                 JsonNode jNode = trackNode.get(i);
                 list.add(new Track(jNode));
             }
 
             handler.processBatch(list);
-
-            Log.d(BuildConfig.PACKAGE_NAME, "Processing batch of " + list.size());
-
             handler.getNextBatch(total, offset, limit);
         }
     }

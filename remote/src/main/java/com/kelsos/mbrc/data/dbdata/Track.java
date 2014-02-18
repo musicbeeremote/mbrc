@@ -16,7 +16,6 @@ public class Track extends DataItem implements TrackColumns {
     private String hash;
     private String title;
     private long albumId;
-    private String artistImageUrl;
     private String album;
     private String albumArtist;
     private long genreId;
@@ -25,8 +24,6 @@ public class Track extends DataItem implements TrackColumns {
     private String artist;
     private String year;
     private int trackNo;
-    private long coverId;
-    private String coverHash;
     private Date updated;
     public static final String TABLE_NAME = "tracks";
 
@@ -42,8 +39,6 @@ public class Track extends DataItem implements TrackColumns {
             + Album.TABLE_NAME + "("+ _ID + ") on delete cascade, "
             + "foreign key (" + GENRE_ID + ") references "
             + Genre.TABLE_NAME + "("+ _ID + ") on delete cascade, "
-            + "foreign key (" + COVER_ID + ") references "
-            + Cover.TABLE_NAME + "("+ _ID + ") on delete cascade, "
             + "unique(" + HASH + ") on conflict ignore" + ")";
 
     public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
@@ -60,14 +55,12 @@ public class Track extends DataItem implements TrackColumns {
                     + " ASC" + ", t." + TRACK_NO + " ASC";
 
     public static final String SELECT_TRACK = SELECT_TRACKS + " and t." + _ID + " = ?";
-    public static final String INSERT = "insert into " + TABLE_NAME + " (" + HASH + ", "
-            + TITLE + ", " + GENRE_ID + ", " + ARTIST_ID + ", " + ALBUM_ID + ", "
-            + YEAR + ", " + TRACK_NO
-            + ") values (?, ?, (select _id from genres where genre_name = ?), "
-            + "(select _id from artists where artist_name = ?),"
-            + " (select _id from albums where album_name = ?), ?, ?)";
-
-
+    public static final String INSERT =
+            String.format("insert into %s (%s, %s, %s, %s, %s, %s, %s) " +
+                    "values (?, ?, (select _id from genres where genre_name = ?)," +
+                    " (select _id from artists where artist_name = ?)," +
+                    " (select _id from albums where album_name = ?), ?, ?)",
+                    TABLE_NAME, HASH, TITLE, GENRE_ID, ARTIST_ID, ALBUM_ID, YEAR, TRACK_NO);
 
     public static Uri getContentUri() {
         return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME +
@@ -102,10 +95,7 @@ public class Track extends DataItem implements TrackColumns {
         this.artist = node.path("artist").asText();
         this.year = node.path("year").asText();
         this.trackNo = node.path("track_no").asInt();
-        this.coverId = -1;
         this.albumArtist = node.path("album_artist").asText();
-        this.coverHash = node.path("cover_hash").asText();
-        this.artistImageUrl = node.path("artist_image_url").asText();
     }
 
     public Track(final Cursor cursor) {
@@ -120,7 +110,6 @@ public class Track extends DataItem implements TrackColumns {
         this.artist = cursor.getString(cursor.getColumnIndex(Artist.ARTIST_NAME));
         this.year = cursor.getString(cursor.getColumnIndex(YEAR));
         this.trackNo = cursor.getInt(cursor.getColumnIndex(TRACK_NO));
-        this.coverId = cursor.getLong(cursor.getColumnIndex(COVER_ID));
     }
 
     public ContentValues getContentValues() {
@@ -132,7 +121,6 @@ public class Track extends DataItem implements TrackColumns {
         values.put(ARTIST_ID, artistId);
         values.put(YEAR, year);
         values.put(TRACK_NO, trackNo);
-        values.put(COVER_ID, coverId);
         values.put(UPDATED, RemoteUtils.currentTime());
         return values;
     }
@@ -236,14 +224,6 @@ public class Track extends DataItem implements TrackColumns {
         this.trackNo = trackNo;
     }
 
-    public long getCoverId() {
-        return coverId;
-    }
-
-    public void setCoverId(long coverId) {
-        this.coverId = coverId;
-    }
-
     public String getAlbumArtist() {
         return albumArtist;
     }
@@ -252,19 +232,4 @@ public class Track extends DataItem implements TrackColumns {
         this.albumArtist = albumArtist;
     }
 
-    public String getCoverHash() {
-        return coverHash;
-    }
-
-    public void setCoverHash(String coverHash) {
-        this.coverHash = coverHash;
-    }
-
-    public String getArtistImageUrl() {
-        return artistImageUrl;
-    }
-
-    public void setArtistImageUrl(String artistImageUrl) {
-        this.artistImageUrl = artistImageUrl;
-    }
 }

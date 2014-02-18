@@ -40,8 +40,6 @@ public class LibraryProvider extends ContentProvider {
         types.put(Album.BASE_URI_CODE, Album.TYPE_DIR);
         types.put(Artist.BASE_ITEM_CODE, Artist.TYPE_ITEM);
         types.put(Artist.BASE_URI_CODE, Artist.TYPE_DIR);
-        types.put(Cover.BASE_ITEM_CODE, Cover.CONTENT_ITEM_TYPE);
-        types.put(Cover.BASE_URI_CODE, Cover.CONTENT_TYPE);
         types.put(Genre.BASE_ITEM_CODE, Genre.CONTENT_ITEM_TYPE);
         types.put(Genre.BASE_URI_CODE, Genre.CONTENT_TYPE);
         types.put(Genre.BASE_FILTER_CODE, Genre.CONTENT_TYPE);
@@ -89,15 +87,6 @@ public class LibraryProvider extends ContentProvider {
                 break;
             case Artist.BASE_GENRE_FILTER:
                 result = getArtistsForGenreCursor(uri, contentResolver);
-                break;
-            case Cover.BASE_ITEM_CODE:
-                id = Long.parseLong(uri.getLastPathSegment());
-                result = dbHelper.getCoverCursor(id);
-                result.setNotificationUri(contentResolver, uri);
-                break;
-            case Cover.BASE_URI_CODE:
-                result = dbHelper.getAllCoversCursor(selection, selectionArgs, sortOrder);
-                result.setNotificationUri(contentResolver, uri);
                 break;
             case Genre.BASE_ITEM_CODE:
                 id = Long.parseLong(uri.getLastPathSegment());

@@ -27,7 +27,6 @@ public class SyncHandler {
     private NotificationService mNotification;
     private Bus bus;
     private LibraryDbHelper dbHelper;
-    private Track cachedTrack;
 
     @Inject public SyncHandler(Context mContext, NotificationService mNotification, Bus bus) {
         this.mContext = mContext;
@@ -75,12 +74,6 @@ public class SyncHandler {
                 Log.d(BuildConfig.PACKAGE_NAME, "saving cover", ex);
             }
         }
-
-        long coverId = dbHelper.insertCover(new Cover(hash));
-        cachedTrack.setCoverHash(hash);
-        cachedTrack.setCoverId(coverId);
-        dbHelper.insertTrack(cachedTrack);
-        cachedTrack = null;
     }
 
     public void processBatch(final List<Track> trackList) {
