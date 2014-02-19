@@ -7,7 +7,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import com.kelsos.mbrc.data.dbdata.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LibraryDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
@@ -291,4 +293,46 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
         return db != null ? db.rawQuery(Track.SELECT_TRACKS, args) : null;
     }
 
+    /**
+     * Returns a map of the album_id field (combination of Album Artist and
+     * Album name, to the database ids.
+     * @return The map of album_ids to row ids in the database
+     */
+    public synchronized Map<String, Long> getAlbumIdMapping() {
+        Map<String, Long> ids = new HashMap<>();
+        final SQLiteDatabase db = this.getReadableDatabase();
+        if (db != null){
+            final Cursor cursor = db.rawQuery(Album.SELECT_ALBUM_ID, null);
+            while(cursor.moveToNext()) {
+                String albumId = cursor.getString(cursor.getColumnIndex("album_id"));
+                long column_id = cursor.getLong(cursor.getColumnIndex("_id"));
+                ids.put(albumId, column_id);
+            }
+        }
+        return ids;
+    }
+
+    /**
+     * Gets a list of covers and updates the cover hashes in the database
+     * @param list The list of covers.
+     */
+    public synchronized void updateCoverHashes(List<Cover> list) {
+        final Map<String, Long> ids = getAlbumIdMapping();
+        final SQLiteDatabase mDb = getWritableDatabase();
+        if (mDb != null) {
+            mDb.beginTransaction();
+            SQLiteStatement stm = mDb.compileStatement(Album.UPDATE_COVER);
+            for (Cover cover : list) {
+                if (stm != null) {
+                    stm.bindString(1, cover.getCoverHash());
+                    stm.bindLong(2, ids.get(cover.getAlbumId()));
+                    stm.execute();
+                    stm.clearBindings();
+                }
+            }
+            mDb.setTransactionSuccessful();
+            mDb.endTransaction();
+            mDb.close();
+        }
+    }
 }

@@ -17,6 +17,15 @@ public class Album extends DataItem implements AlbumColumns {
     public static final String DROP_TABLE = String.format("drop table if exists %s", TABLE_NAME);
     public static final String INSERT = String.format("insert into %s (%s , %s) values "
             + "(?, (select _id from artists where artist_name = ?))", TABLE_NAME, ALBUM_NAME, ARTIST_ID);
+    public static final String SELECT_ALBUM_ID =
+            "select (artist_name || album_name) as album_id, al._id as _id "
+                    + "from artists ar, albums al "
+                    + "where ar._id = al.artist_id";
+
+    public static final String UPDATE_COVER =
+            "update albums " +
+            "set cover_hash = ? " +
+            "where _id = ?";
 
 
     public static Uri getContentUri() {

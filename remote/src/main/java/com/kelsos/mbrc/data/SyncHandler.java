@@ -63,6 +63,10 @@ public class SyncHandler {
 
     }
 
+    public void setCovers(final List<Cover> list) {
+        dbHelper.updateCoverHashes(list);
+    }
+
     public void updateCover(String image, String hash) {
         FileOutputStream outputStream;
         try {

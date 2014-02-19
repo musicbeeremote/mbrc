@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.commands.model;
 
+import android.util.Log;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.SyncHandler;
 import com.kelsos.mbrc.data.dbdata.Cover;
@@ -39,6 +40,12 @@ public class HandleLibrarySync implements ICommand {
                 String albumId = jNode.path("album_id").asText();
                 handler.updateCover(image, hash);
                 list.add(new Cover(albumId, hash));
+            }
+
+            handler.setCovers(list);
+
+            if (offset < total) {
+                Log.d("ougk", "more");
             }
 
         } else if (type.equals("meta")) {
