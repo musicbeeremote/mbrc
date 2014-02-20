@@ -11,30 +11,35 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.GridView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumCursorAdapter;
 import com.kelsos.mbrc.data.dbdata.Album;
 import com.kelsos.mbrc.data.dbdata.Artist;
 import com.kelsos.mbrc.ui.activities.Profile;
-import com.kelsos.mbrc.ui.base.BaseListFragment;
+import com.kelsos.mbrc.ui.base.BaseFragment;
 
 import static android.support.v4.app.LoaderManager.LoaderCallbacks;
 
-public class BrowseAlbumFragment extends BaseListFragment implements LoaderCallbacks<Cursor> {
+public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks<Cursor>, GridView.OnItemClickListener {
     private static final int GROUP_ID = 13;
     private static final int URL_LOADER = 2;
     private AlbumCursorAdapter mAdapter;
+    private GridView mGrid;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        registerForContextMenu(getListView());
+        registerForContextMenu(mGrid);
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getLoaderManager().initLoader(URL_LOADER, null, this);
-        return inflater.inflate(R.layout.fragment_library, container, false);
+        final View view = inflater.inflate(R.layout.ui_library_grid, container, false);
+        if (view != null) {
+            mGrid = (GridView) view.findViewById(R.id.mbrc_grid_view);
+        }
+        return view;
     }
 
     @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -74,17 +79,11 @@ public class BrowseAlbumFragment extends BaseListFragment implements LoaderCallb
 
     @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter = new AlbumCursorAdapter(getActivity(), data, 0);
-        this.setListAdapter(mAdapter);
+        mGrid.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }
 
     @Override public void onLoaderReset(Loader<Cursor> loader) { }
-
-    @Override public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-        final Album album = new Album((Cursor) mAdapter.getItem(position));
-        showTracks(album);
-    }
 
     private void showTracks(final Album album) {
         Intent intent = new Intent(getActivity(), Profile.class);
@@ -92,5 +91,11 @@ public class BrowseAlbumFragment extends BaseListFragment implements LoaderCallb
         intent.putExtra("id", album.getId());
         intent.putExtra("type", "album");
         startActivity(intent);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        final Album album = new Album((Cursor) mAdapter.getItem(position));
+        showTracks(album);
     }
 }

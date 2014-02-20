@@ -65,7 +65,7 @@ public class Album extends DataItem implements AlbumColumns {
         this.albumName = cursor.getString(cursor.getColumnIndex(ALBUM_NAME));
         this.artistId = cursor.getLong(cursor.getColumnIndex(ARTIST_ID));
         this.artist = cursor.getString(cursor.getColumnIndex(Artist.ARTIST_NAME));
-       // this.coverHash = cursor.getString(cursor.getColumnIndex(COVER_HASH));
+        this.coverHash = cursor.getString(cursor.getColumnIndex(COVER_HASH));
     }
 
     public ContentValues getContentValues() {

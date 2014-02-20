@@ -13,8 +13,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/mbrc_grid_item_width"/>
 
-    <LinearLayout
-            android:orientation="vertical"
+    <RelativeLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:paddingLeft="@dimen/side_margin_half"
             android:paddingRight="@dimen/side_margin_half"
@@ -22,8 +22,17 @@
             android:layout_weight="1"
             android:id="@+id/linearLayout"
             >
-
-        <TextView
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/side_margin_half"
+            android:background="@drawable/selectable_background_mbrc_dark"
+            android:gravity="center_vertical"
+            android:layout_toLeftOf="@+id/ui_item_context_indicator"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+            <TextView
                 tools:text="Title"
                 android:id="@+id/line_one"
                 android:textColor="@color/mbrc_title"
@@ -35,7 +44,7 @@
                 android:textSize="@dimen/mbrc_grid_line_one_size"
                 android:layout_height="wrap_content"/>
 
-        <TextView
+            <TextView
                 tools:text="artist"
                 android:ellipsize="end"
                 android:fontFamily="sans-serif"
@@ -46,8 +55,25 @@
                 android:textSize="@dimen/mbrc_grid_line_two_size"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="false"/>
+            />
+        </LinearLayout>
 
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ui_item_context_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/side_margin_half"
+            android:background="@drawable/selectable_background_mbrc_dark"
+            android:gravity="center_vertical"
+            android:layout_alignParentEnd="true">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/mbrc_list_context_indicator_height"
+                android:src="@drawable/ic_context_indicator"/>
+        </LinearLayout>
+
+
+    </RelativeLayout>
 
 </LinearLayout>
