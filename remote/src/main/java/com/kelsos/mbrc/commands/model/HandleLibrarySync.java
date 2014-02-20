@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.commands.model;
 
-import android.util.Log;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.SyncHandler;
 import com.kelsos.mbrc.data.dbdata.Cover;
@@ -45,7 +44,7 @@ public class HandleLibrarySync implements ICommand {
             handler.setCovers(list);
 
             if (offset < total) {
-                Log.d("ougk", "more");
+                handler.requestNextBatch(total,offset,limit);
             }
 
         } else if (type.equals("meta")) {

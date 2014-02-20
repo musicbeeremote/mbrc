@@ -68,6 +68,9 @@ public class SyncHandler {
     }
 
     public void updateCover(String image, String hash) {
+        if (hash == null || hash.equals("")) {
+            return;
+        }
         FileOutputStream outputStream;
         try {
             outputStream = mContext.openFileOutput(hash, Context.MODE_PRIVATE);
@@ -82,5 +85,15 @@ public class SyncHandler {
 
     public void processBatch(final List<Track> trackList) {
         dbHelper.processBatch(trackList);
+    }
+
+    public void requestNextBatch(int total, int offset, int limit) {
+        Map<String, Object> syncData = new HashMap<>();
+        syncData.put("type", "cover");
+        syncData.put("offset", offset + limit);
+        syncData.put("limit", limit);
+        bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
+                new UserAction(Protocol.LIBRARY, syncData)));
+
     }
 }

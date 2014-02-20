@@ -325,7 +325,14 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
             for (Cover cover : list) {
                 if (stm != null) {
                     stm.bindString(1, cover.getCoverHash());
-                    stm.bindLong(2, ids.get(cover.getAlbumId()));
+                    long id = 0;
+                    if (cover.getAlbumId() != null) {
+                        final Long num = ids.get(cover.getAlbumId());
+                        if (num != null) {
+                            id = num;
+                        }
+                    }
+                    stm.bindLong(2, id);
                     stm.execute();
                     stm.clearBindings();
                 }
