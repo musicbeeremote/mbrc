@@ -38,6 +38,7 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
         final View view = inflater.inflate(R.layout.ui_library_grid, container, false);
         if (view != null) {
             mGrid = (GridView) view.findViewById(R.id.mbrc_grid_view);
+            mGrid.setOnItemClickListener(this);
         }
         return view;
     }

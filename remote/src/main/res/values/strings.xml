@@ -152,5 +152,6 @@
     <string name="pref_key_revision">Revision</string>
     <string name="popup_scrobble">Scrobble to Last.fm</string>
     <string name="popup_auto_dj">Toggle Auto DJ</string>
+    <string name="track_count">%d tracks</string>
 
 </resources>

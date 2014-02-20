@@ -10,10 +10,14 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.dbdata.Track;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
+import roboguice.inject.InjectView;
 
 /**
  * A fragment representing a list of Items.
@@ -21,13 +25,19 @@ import com.kelsos.mbrc.ui.base.BaseListFragment;
  * <p />
  * interface.
  */
-public class AlbumTracksFragment extends BaseListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class AlbumTracksFragment extends BaseListFragment
+        implements LoaderManager.LoaderCallbacks<Cursor>, AbsListView.OnScrollListener {
 
     private static final String ALBUM_ID = "albumId";
     public static final int URL_LOADER = 0x928a;
 
     private long albumId;
     private SimpleCursorAdapter mAdapter;
+    @InjectView(R.id.album_header) private View mHeader;
+    @InjectView(R.id.header_album) private TextView mAlbum;
+    @InjectView(R.id.header_artist) private TextView mArtist;
+    @InjectView(R.id.header_tracks) private TextView mTracks;
+    @InjectView(R.id.header_artwork) private ImageView mArtwork;
 
     public static AlbumTracksFragment newInstance(long albumId) {
         AlbumTracksFragment fragment = new AlbumTracksFragment();
@@ -75,13 +85,16 @@ public class AlbumTracksFragment extends BaseListFragment implements LoaderManag
 
     @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mAdapter = new SimpleCursorAdapter(getActivity(),
-                R.layout.ui_list_dual,
+                R.layout.ui_list_single,
                 cursor,
-                new String[] {Track.TITLE, Track.TRACK_NO},
-                new int[] {R.id.line_one, R.id.line_two},
+                new String[] {Track.TITLE},
+                new int[] {R.id.line_one},
                 0);
 
+        this.getListView().addHeaderView(mHeader);
         this.setListAdapter(mAdapter);
+
+        mTracks.setText(getString(R.string.track_count, mAdapter.getCount()));
         mAdapter.notifyDataSetChanged();
     }
 
@@ -90,4 +103,24 @@ public class AlbumTracksFragment extends BaseListFragment implements LoaderManag
     }
 
 
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        if (mHeader == null) {
+            return;
+        }
+
+        final View top = view.getChildAt(firstVisibleItem);
+        if (top == null) {
+            return;
+        }
+
+        if (firstVisibleItem != 0) {
+            //mHeader.
+        }
+    }
 }

@@ -1,13 +1,55 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="com.kelsos.mbrc.ui.fragments.profile.AlbumTracksFragment">
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.kelsos.mbrc.ui.fragments.profile.AlbumTracksFragment">
 
-    <ListView
+        <LinearLayout
+            android:id="@+id/album_header"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|top">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:id="@+id/header_artwork"/>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/header_album"
+                    tools:text="Album Name"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/header_artist"
+                    tools:text="Artist"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/header_tracks"
+                    tools:text="18 tracks"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ListView
             android:id="@android:id/list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/side_margin_half"
             android:layout_marginBottom="@dimen/side_margin_half"
             android:layout_marginLeft="@dimen/side_margin"
@@ -15,8 +57,8 @@
             android:drawSelectorOnTop="true"
             android:dividerHeight="@dimen/side_margin_half"
             android:divider="@null"
-            android:fastScrollEnabled="true"
+            android:fastScrollEnabled="false"
             android:listSelector="@drawable/mbrc_dark_compo_list_selector_holo_dark"
             tools:listitem="@layout/ui_list_single"/>
 
-</FrameLayout>
+    </LinearLayout>
