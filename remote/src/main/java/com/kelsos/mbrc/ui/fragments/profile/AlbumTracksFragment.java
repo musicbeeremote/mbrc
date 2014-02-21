@@ -1,12 +1,12 @@
 package com.kelsos.mbrc.ui.fragments.profile;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.adapters.AlbumProfileCursorAdapter;
 import com.kelsos.mbrc.data.dbdata.Track;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 import roboguice.inject.InjectView;
@@ -32,7 +33,9 @@ public class AlbumTracksFragment extends BaseListFragment
     public static final int URL_LOADER = 0x928a;
 
     private long albumId;
-    private SimpleCursorAdapter mAdapter;
+    private AlbumProfileCursorAdapter mAdapter;
+    private Context mContext;
+
     @InjectView(R.id.album_header) private View mHeader;
     @InjectView(R.id.header_album) private TextView mAlbum;
     @InjectView(R.id.header_artist) private TextView mArtist;
@@ -59,6 +62,7 @@ public class AlbumTracksFragment extends BaseListFragment
         if (getArguments() != null) {
             albumId = getArguments().getLong(ALBUM_ID);
         }
+        mContext = getActivity();
     }
 
     @Override
@@ -84,14 +88,7 @@ public class AlbumTracksFragment extends BaseListFragment
 
 
     @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        mAdapter = new SimpleCursorAdapter(getActivity(),
-                R.layout.ui_list_single,
-                cursor,
-                new String[] {Track.TITLE},
-                new int[] {R.id.line_one},
-                0);
-
-        this.getListView().addHeaderView(mHeader);
+        mAdapter = new AlbumProfileCursorAdapter(mContext,cursor,0);
         this.setListAdapter(mAdapter);
 
         mTracks.setText(getString(R.string.track_count, mAdapter.getCount()));
