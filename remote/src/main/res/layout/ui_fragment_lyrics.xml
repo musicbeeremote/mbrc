@@ -5,8 +5,7 @@
               android:layout_height="fill_parent"
               android:baselineAligned="true"
               android:gravity="top"
-              android:orientation="vertical"
-              android:background="@color/mbrc_background">
+              android:orientation="vertical">
 
     <ListView
             android:id="@android:id/list"

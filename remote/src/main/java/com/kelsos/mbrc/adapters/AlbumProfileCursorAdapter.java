@@ -22,7 +22,7 @@ public class AlbumProfileCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        final Track track = new Track (cursor);
-        ((TextView) view.findViewById(R.id.line_one)).setText(track.getTitle());
+        final String title = cursor.getString(cursor.getColumnIndex(Track.TITLE));
+        ((TextView) view.findViewById(R.id.line_one)).setText(title);
     }
 }

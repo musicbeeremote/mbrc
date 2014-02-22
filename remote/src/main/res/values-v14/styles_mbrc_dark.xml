@@ -29,8 +29,7 @@
         <item name="android:actionModeBackground">@drawable/cab_background_top_mbrc_dark</item>
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_mbrc_dark</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Mbrc_dark</item>
-        
-        
+        <item name="android:windowBackground">@color/mbrc_background</item>
     </style>
 
     <style name="ActionBar.Solid.Mbrc_dark" parent="@style/Widget.AppCompat.ActionBar.Solid">

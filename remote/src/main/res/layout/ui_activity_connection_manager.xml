@@ -6,7 +6,6 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:divider="@drawable/abc_list_divider_holo_dark"
-              android:background="@color/mbrc_background"
               android:showDividers="middle"
               android:baselineAligned="false">
 

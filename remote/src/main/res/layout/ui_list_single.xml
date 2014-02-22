@@ -19,7 +19,9 @@
             android:singleLine="true"
             android:text="@string/artist_placeholder"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="@dimen/list_item_one"/>
+            android:textSize="@dimen/list_item_one"
+            android:fontFamily="san-serif-light"
+            android:focusableInTouchMode="false"/>
 
     <LinearLayout
             android:id="@+id/ui_item_context_indicator"

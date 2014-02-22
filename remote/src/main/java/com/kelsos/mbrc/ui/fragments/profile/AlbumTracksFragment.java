@@ -7,18 +7,19 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumProfileCursorAdapter;
 import com.kelsos.mbrc.data.dbdata.Track;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
-import roboguice.inject.InjectView;
+
+import static android.widget.AbsListView.OnScrollListener;
 
 /**
  * A fragment representing a list of Items.
@@ -27,7 +28,7 @@ import roboguice.inject.InjectView;
  * interface.
  */
 public class AlbumTracksFragment extends BaseListFragment
-        implements LoaderManager.LoaderCallbacks<Cursor>, AbsListView.OnScrollListener {
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String ALBUM_ID = "albumId";
     public static final int URL_LOADER = 0x928a;
@@ -36,11 +37,11 @@ public class AlbumTracksFragment extends BaseListFragment
     private AlbumProfileCursorAdapter mAdapter;
     private Context mContext;
 
-    @InjectView(R.id.album_header) private View mHeader;
-    @InjectView(R.id.header_album) private TextView mAlbum;
-    @InjectView(R.id.header_artist) private TextView mArtist;
-    @InjectView(R.id.header_tracks) private TextView mTracks;
-    @InjectView(R.id.header_artwork) private ImageView mArtwork;
+    private int mOldHeaderHeight = -1;
+    private LinearLayout mMarginView;
+    private ListView mListView;
+    private View mListViewBackgroundView;
+    private View mHeader;
 
     public static AlbumTracksFragment newInstance(long albumId) {
         AlbumTracksFragment fragment = new AlbumTracksFragment();
@@ -70,7 +71,19 @@ public class AlbumTracksFragment extends BaseListFragment
                              Bundle savedInstanceState) {
         getLoaderManager().initLoader(URL_LOADER, null, this);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_album_tracks, container, false);
+        final View view = inflater.inflate(R.layout.fragment_album_tracks, container, false);
+        if (view != null) {
+            mHeader = view.findViewById(R.id.album_header);
+            mMarginView = (LinearLayout) view.findViewById(R.id.album_profile);
+            mListView = (ListView) view.findViewById(android.R.id.list);
+            mListViewBackgroundView = view.findViewById(R.id.listview_background);
+            mListView.setOnScrollListener(mOnScrollListener);
+            int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(LinearLayout.LayoutParams.MATCH_PARENT, View.MeasureSpec.EXACTLY);
+            int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(LinearLayout.LayoutParams.WRAP_CONTENT, View.MeasureSpec.EXACTLY);
+            mHeader.measure(widthMeasureSpec,heightMeasureSpec);
+            setHeaderHeight(mHeader.getMeasuredHeight());
+        }
+        return view;
     }
 
     @Override
@@ -85,13 +98,9 @@ public class AlbumTracksFragment extends BaseListFragment
                 new String[] {Track._ID, Track.TITLE, Track.TRACK_NO}, null, null, null);
     }
 
-
-
     @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mAdapter = new AlbumProfileCursorAdapter(mContext,cursor,0);
         this.setListAdapter(mAdapter);
-
-        mTracks.setText(getString(R.string.track_count, mAdapter.getCount()));
         mAdapter.notifyDataSetChanged();
     }
 
@@ -99,25 +108,53 @@ public class AlbumTracksFragment extends BaseListFragment
 
     }
 
+    private OnScrollListener mOnScrollListener = new OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            // empty
+        }
 
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            final View top = view.getChildAt(0);
+            if (top == null) {
+                scrollToPosition(0);
+            } else if (top != mMarginView) {
+                scrollToPosition(mHeader.getHeight());
+            } else {
+                scrollToPosition(-top.getTop());
+            }
+        }
+    };
+
+    private void scrollToPosition(int position) {
+
+        int cHeaderHeight = mHeader.getHeight();
+        if (cHeaderHeight != mOldHeaderHeight) {
+            setHeaderHeight(cHeaderHeight);
+        }
+
+        int headerHeight = cHeaderHeight - ((ActionBarActivity)getActivity())
+                .getSupportActionBar()
+                .getHeight();
+        float ratio = (float) Math.min(Math.max(position, 0), headerHeight) / headerHeight;
+        int newAlpha = (int) (ratio * 255);
 
     }
 
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (mHeader == null) {
-            return;
+    private void setHeaderHeight(int headerHeight) {
+        ViewGroup.LayoutParams params = mMarginView.getLayoutParams();
+        params.height = headerHeight;
+        mMarginView.setLayoutParams(params);
+
+        if (mListViewBackgroundView != null) {
+            LinearLayout.LayoutParams params2 = (LinearLayout.LayoutParams) mListViewBackgroundView.getLayoutParams();
+            params2.topMargin = headerHeight;
+            mListViewBackgroundView.setLayoutParams(params2);
         }
 
-        final View top = view.getChildAt(firstVisibleItem);
-        if (top == null) {
-            return;
-        }
+        mOldHeaderHeight = headerHeight;
 
-        if (firstVisibleItem != 0) {
-            //mHeader.
-        }
     }
+
 }

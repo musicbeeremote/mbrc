@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    android:id="@+id/album_header"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal|top"
+    android:orientation="horizontal"
+    android:padding="@dimen/side_margin">
+
+    <ImageView
+        android:id="@+id/header_artwork"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@drawable/ui_list_item_background"/>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/side_margin_half">
+
+        <TextView
+            android:id="@+id/header_album"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textSize="20sp"
+            tools:text="Album Name"/>
+
+        <TextView
+            android:id="@+id/header_artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textSize="16sp"
+            tools:text="Artist"/>
+
+        <TextView
+            android:id="@+id/header_tracks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            tools:text="18 tracks"/>
+
+    </LinearLayout>
+</LinearLayout>
