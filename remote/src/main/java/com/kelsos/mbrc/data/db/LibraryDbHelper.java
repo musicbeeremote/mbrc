@@ -52,29 +52,6 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Given an id it returns a @{link Cursor} containing the album information.
-     *
-     * @param id The id of the album in the database.
-     * @return A cursor containing the album.
-     */
-    public synchronized Cursor getAlbumCursor(final long id) {
-        final SQLiteDatabase db = this.getReadableDatabase();
-        return db != null
-                ? db.query(Album.TABLE_NAME,
-                new String[]{
-                        Album._ID,
-                        Album.ALBUM_NAME,
-                        Album.ARTIST_ID
-                },
-                Album._ID + IS,
-                new String[]{
-                        Long.toString(id)
-                },
-                null, null, null, null)
-                : null;
-    }
-
-    /**
      * Given an id it returns an @{link Artist} object with the related information;
      * @param id The id of the artist in the database.
      * @return The Artist object.

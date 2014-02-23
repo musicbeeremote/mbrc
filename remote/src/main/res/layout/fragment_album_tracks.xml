@@ -7,16 +7,10 @@
     android:id="@+id/album_profile"
     tools:context="com.kelsos.mbrc.ui.fragments.profile.AlbumTracksFragment">
 
-    <include
-        layout="@layout/album_profile_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"/>
-
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/side_margin_half"
         android:layout_marginLeft="@dimen/side_margin"
         android:layout_marginRight="@dimen/side_margin"

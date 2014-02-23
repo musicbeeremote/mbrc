@@ -27,7 +27,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingLeft="@dimen/side_margin_half"
-            android:background="@drawable/selectable_background_mbrc_dark"
             android:gravity="center_vertical"
             android:layout_toLeftOf="@+id/ui_item_context_indicator"
             android:layout_alignParentLeft="true"

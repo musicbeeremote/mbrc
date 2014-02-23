@@ -66,9 +66,7 @@ public class LibraryProvider extends ContentProvider {
 
         switch (URI_MATCHER.match(uri)) {
             case Album.BASE_ITEM_CODE:
-                id = Long.parseLong(uri.getLastPathSegment());
-                result = dbHelper.getAlbumCursor(id);
-                result.setNotificationUri(contentResolver, uri);
+                result = getAlbumCursor(uri);
                 break;
             case Album.BASE_URI_CODE:
                 result = getAlbumsCursor(uri, contentResolver);
@@ -130,6 +128,44 @@ public class LibraryProvider extends ContentProvider {
                 break;
             default:
                 throw new IllegalArgumentException(String.format("Unknown Uri %s", uri));
+        }
+        return result;
+    }
+
+    private Cursor getAlbumCursor(Uri uri) {
+
+        final SQLiteDatabase db = dbHelper.getReadableDatabase();
+        SQLiteQueryBuilder sqBuilder;
+        String dataSel;
+        Cursor result = null;
+        if (db != null) {
+            long id = Long.parseLong(uri.getLastPathSegment());
+            sqBuilder = new SQLiteQueryBuilder();
+            sqBuilder.setTables(String.format("%s al, %s ar, %s t",
+                    Album.TABLE_NAME, Artist.TABLE_NAME, Track.TABLE_NAME));
+            dataSel = String.format("t.%s = al.%s and al.%s = ar.%s and al.%s = ?",
+                    Track.ALBUM_ID,
+                    Album._ID,
+                    Album.ARTIST_ID,
+                    Artist._ID,
+                    Album._ID);
+
+            result = sqBuilder.query(db,
+                    new String[]{
+                            String.format("al.%s", Album._ID),
+                            Album.ALBUM_NAME,
+                            String.format("al.%s", Album.ARTIST_ID),
+                            Artist.ARTIST_NAME,
+                            Album.COVER_HASH
+                    },
+                    dataSel,
+                    new String[] {
+                            String.valueOf(id)
+                    },
+                    String.format("al.%s", Album._ID),
+                    null,
+                    String.format("ar.%s, al.%s ASC", Artist.ARTIST_NAME, Album.ALBUM_NAME)
+            );
         }
         return result;
     }

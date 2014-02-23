@@ -7,17 +7,20 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.view.ViewTreeObserver;
+import android.widget.*;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumProfileCursorAdapter;
+import com.kelsos.mbrc.data.dbdata.Album;
+import com.kelsos.mbrc.data.dbdata.Artist;
+import com.kelsos.mbrc.data.dbdata.Cover;
 import com.kelsos.mbrc.data.dbdata.Track;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
+import com.squareup.picasso.Picasso;
+import roboguice.inject.InjectView;
 
 import static android.widget.AbsListView.OnScrollListener;
 
@@ -38,10 +41,19 @@ public class AlbumTracksFragment extends BaseListFragment
     private Context mContext;
 
     private int mOldHeaderHeight = -1;
-    private LinearLayout mMarginView;
+    private int mLastDampedScroll;
+    private FrameLayout mMarginView;
     private ListView mListView;
     private View mListViewBackgroundView;
     private View mHeader;
+    private View mContentView;
+    private int mLastScrollPosition;
+    private boolean isInit;
+
+    @InjectView(R.id.header_tracks) private TextView mTracks;
+    @InjectView(R.id.header_album) private TextView mAlbum;
+    @InjectView(R.id.header_artist) private TextView mArtist;
+    @InjectView(R.id.header_artwork) private ImageView mArtwork;
 
     public static AlbumTracksFragment newInstance(long albumId) {
         AlbumTracksFragment fragment = new AlbumTracksFragment();
@@ -71,19 +83,65 @@ public class AlbumTracksFragment extends BaseListFragment
                              Bundle savedInstanceState) {
         getLoaderManager().initLoader(URL_LOADER, null, this);
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_album_tracks, container, false);
-        if (view != null) {
-            mHeader = view.findViewById(R.id.album_header);
-            mMarginView = (LinearLayout) view.findViewById(R.id.album_profile);
-            mListView = (ListView) view.findViewById(android.R.id.list);
-            mListViewBackgroundView = view.findViewById(R.id.listview_background);
+        mContentView = inflater.inflate(R.layout.fragment_album_tracks, container, false);
+        if (mContentView != null) {
+            View header = inflater.inflate(R.layout.album_profile_header, null, false);
+            mHeader = header.findViewById(R.id.album_header);
+            mListView = (ListView) mContentView.findViewById(android.R.id.list);
+            mMarginView = new FrameLayout(mListView.getContext());
+            mMarginView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+            mMarginView.addView(header);
+            mListView.addHeaderView(mMarginView);
+            mListViewBackgroundView = mContentView.findViewById(R.id.listview_background);
             mListView.setOnScrollListener(mOnScrollListener);
             int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(LinearLayout.LayoutParams.MATCH_PARENT, View.MeasureSpec.EXACTLY);
             int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(LinearLayout.LayoutParams.WRAP_CONTENT, View.MeasureSpec.EXACTLY);
             mHeader.measure(widthMeasureSpec,heightMeasureSpec);
             setHeaderHeight(mHeader.getMeasuredHeight());
+            mContentView.getRootView()
+                    .getViewTreeObserver()
+                    .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    int headerHeight = mHeader.getHeight();
+                    if (!isInit && headerHeight != 0) {
+                        setHeaderHeight(headerHeight);
+                        isInit = true;
+                    }
+                }
+            });
+
         }
-        return view;
+        return mContentView;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        final Uri uri = Uri.withAppendedPath(Album.getContentUri(), String.valueOf(albumId));
+        final Cursor cursor = getActivity().getContentResolver().query(uri,
+                new String[]{
+                        Album._ID,
+                        Album.ALBUM_NAME,
+                        Album.ARTIST_ID,
+                        Artist.ARTIST_NAME,
+                        Album.COVER_HASH
+                }, null, null, null
+        );
+
+        cursor.moveToFirst();
+        final Album album = new Album(cursor);
+        final Uri artUri = Uri.withAppendedPath(Cover.CONTENT_IMAGE_URI, album.getCoverHash());
+
+        mAlbum.setText(album.getAlbumName());
+        mArtist.setText(album.getArtist());
+
+        Picasso.with(mContext)
+                .load(artUri)
+                .fit()
+                .placeholder(R.color.mbrc_transparent_dark)
+                .error(R.drawable.ic_image_no_cover)
+                .into(mArtwork);
     }
 
     @Override
@@ -101,6 +159,7 @@ public class AlbumTracksFragment extends BaseListFragment
     @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mAdapter = new AlbumProfileCursorAdapter(mContext,cursor,0);
         this.setListAdapter(mAdapter);
+        mTracks.setText(getString(R.string.track_count, mAdapter.getCount()));
         mAdapter.notifyDataSetChanged();
     }
 
@@ -134,11 +193,13 @@ public class AlbumTracksFragment extends BaseListFragment
             setHeaderHeight(cHeaderHeight);
         }
 
-        int headerHeight = cHeaderHeight - ((ActionBarActivity)getActivity())
-                .getSupportActionBar()
-                .getHeight();
-        float ratio = (float) Math.min(Math.max(position, 0), headerHeight) / headerHeight;
-        int newAlpha = (int) (ratio * 255);
+//        int headerHeight = cHeaderHeight - ((ActionBarActivity)getActivity())
+//                .getSupportActionBar()
+//                .getHeight();
+        //float ratio = (float) Math.min(Math.max(position, 0), headerHeight) / headerHeight;
+        //int newAlpha = (int) (ratio * 255);
+
+        //parallaxScrolling(position);
 
     }
 
@@ -155,6 +216,23 @@ public class AlbumTracksFragment extends BaseListFragment
 
         mOldHeaderHeight = headerHeight;
 
+    }
+
+    private void parallaxScrolling(int position) {
+        float damping = 0.25f;
+        int dampedScroll = (int) (position * damping);
+        int offset = mLastDampedScroll - dampedScroll;
+        mHeader.offsetTopAndBottom(offset);
+
+        if (mListViewBackgroundView != null) {
+            offset = mLastScrollPosition - position;
+            mListViewBackgroundView.offsetTopAndBottom(offset);
+        }
+
+        if (isInit) {
+            mLastScrollPosition = position;
+            mLastDampedScroll = dampedScroll;
+        }
     }
 
 }
