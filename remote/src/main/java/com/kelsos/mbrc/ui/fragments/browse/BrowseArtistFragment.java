@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +19,11 @@ import com.kelsos.mbrc.adapters.ArtistCursorAdapter;
 import com.kelsos.mbrc.data.dbdata.Artist;
 import com.kelsos.mbrc.ui.activities.Profile;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
+import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 
 public class BrowseArtistFragment extends BaseListFragment
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+        implements LoaderManager.LoaderCallbacks<Cursor>,
+        PlaylistDialogFragment.onPlaylistSelectedListener{
     private static final int GROUP_ID = 12;
     private static final int URL_LOADER = 0x12;
     private ArtistCursorAdapter mAdapter;
@@ -53,6 +56,11 @@ public class BrowseArtistFragment extends BaseListFragment
             switch (item.getItemId()) {
                 case BrowseMenuItems.GET_SUB:
                     showAlbums(artist);
+                    break;
+                case BrowseMenuItems.PLAYLIST:
+                    final PlaylistDialogFragment dlFragment = new PlaylistDialogFragment();
+                    dlFragment.setOnPlaylistSelectedListener(this);
+                    dlFragment.show(getFragmentManager(), "playlist");
                     break;
                 default:
                     break;
@@ -92,5 +100,15 @@ public class BrowseArtistFragment extends BaseListFragment
         intent.putExtra("id", genre.getId());
         intent.putExtra("type", "artist");
         startActivity(intent);
+    }
+
+    @Override
+    public void onPlaylistSelected(String hash) {
+        Log.d("i:", hash);
+    }
+
+    @Override
+    public void onNewPlaylistSelected() {
+        Log.d("i:", "New");
     }
 }

@@ -18,9 +18,10 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="@string/artist_placeholder"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/mbrc_title"
             android:textSize="@dimen/list_item_one"
-            android:fontFamily="san-serif-light"
+            android:fontFamily="sans-serif-light"
+            android:textStyle="normal"
             android:focusableInTouchMode="false"/>
 
     <LinearLayout
@@ -35,6 +36,7 @@
         <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/mbrc_list_context_indicator_height"
-                android:src="@drawable/ic_context_indicator"/>
+                android:src="@drawable/ic_context_indicator"
+                android:contentDescription="@string/context_indicator_description"/>
     </LinearLayout>
 </LinearLayout>

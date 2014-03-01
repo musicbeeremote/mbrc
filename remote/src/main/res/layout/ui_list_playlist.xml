@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:paddingLeft="@dimen/side_margin_half"
+              android:paddingRight="@dimen/side_margin_half"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/line_one"
+        android:textColor="@color/mbrc_title"
+        android:gravity="center_vertical"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-light"
+        android:textSize="@dimen/playlist_entry_text_size"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/playlist_entry_height"
+        android:textAlignment="viewStart"
+        tools:text="Playlist Name"/>
+
+    <View android:id="@+id/divider"
+          android:layout_width="match_parent"
+          android:layout_height="0.5dip"
+          android:paddingRight="@dimen/side_margin_extra"
+          android:paddingLeft="@dimen/side_margin_extra"
+          android:background="@color/mbrc_dark_compo_color" />
+
+</LinearLayout>

@@ -86,24 +86,25 @@ public class ConnectionManagerActivity extends BaseActivity implements SettingsD
 
     @Override public boolean onContextItemSelected(android.view.MenuItem item) {
         AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        final int position = mi.position;
         switch (item.getItemId()) {
             case DEFAULT:
-                bus.post(new ChangeSettings(mi.position, SettingsAction.DEFAULT));
+                bus.post(new ChangeSettings(position, SettingsAction.DEFAULT));
                 break;
             case EDIT:
                 SettingsDialogFragment settingsDialog = new SettingsDialogFragment();
                 ConnectionSettingsAdapter mAdapter = (ConnectionSettingsAdapter) connectionList.getAdapter();
                 Bundle args = new Bundle();
-                ConnectionSettings mSettings = mAdapter.getItem(mi.position);
+                ConnectionSettings mSettings = mAdapter.getItem(position);
                 args.putString("address", mSettings.getAddress());
                 args.putString("name", mSettings.getName());
                 args.putInt("port", mSettings.getPort());
-                args.putInt("index", mi.position);
+                args.putInt("index", position);
                 settingsDialog.setArguments(args);
                 settingsDialog.show(getSupportFragmentManager(), "settings_dialog");
                 break;
             case DELETE:
-                bus.post(new ChangeSettings(mi.position, SettingsAction.DELETE));
+                bus.post(new ChangeSettings(position, SettingsAction.DELETE));
                 break;
             default:
                 return false;

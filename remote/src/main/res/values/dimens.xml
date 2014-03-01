@@ -26,5 +26,9 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="mbrc_info_tab_height">80dp</dimen>
+    <dimen name="dialog_title_height">54dp</dimen>
+    <dimen name="dialog_title_margin">16dip</dimen>
+    <dimen name="playlist_entry_text_size">18sp</dimen>
+    <dimen name="playlist_entry_height">48dp</dimen>
 
 </resources>

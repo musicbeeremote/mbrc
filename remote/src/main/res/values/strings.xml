@@ -153,5 +153,9 @@
     <string name="popup_scrobble">Scrobble to Last.fm</string>
     <string name="popup_auto_dj">Toggle Auto DJ</string>
     <string name="track_count">%d tracks</string>
+    <string name="context_indicator_description">Image button used to open a context menu</string>
+    <string name="profile_header_cover_description">Displays the cover of the selected album</string>
+    <string name="text_create_new">Create New</string>
+    <string name="playlist_dialog_title">Add to Playlist</string>
 
 </resources>

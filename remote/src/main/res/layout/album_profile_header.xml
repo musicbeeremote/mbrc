@@ -14,6 +14,7 @@
         android:id="@+id/header_artwork"
         android:layout_width="80dp"
         android:layout_height="80dp"
+        android:contentDescription="@string/profile_header_cover_description"
         android:background="@drawable/ui_list_item_background"/>
 
     <LinearLayout
@@ -31,6 +32,8 @@
             android:singleLine="true"
             android:textSize="20sp"
             android:textStyle="bold"
+            android:textColor="@color/mbrc_title"
+            android:fontFamily="sans-serif-light"
             tools:text="Album Name"/>
 
         <TextView

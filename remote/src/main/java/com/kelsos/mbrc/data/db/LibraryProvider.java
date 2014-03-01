@@ -284,11 +284,18 @@ public class LibraryProvider extends ContentProvider {
         if (db != null) {
             String artistId = uri.getLastPathSegment();
             sqBuilder = new SQLiteQueryBuilder();
-            sqBuilder.setTables(String.format("%s al, %s ar", Album.TABLE_NAME, Artist.TABLE_NAME));
-            dataSel = String.format("ar.%s = al.%s and al.%s = ?",
+            sqBuilder.setTables(String.format("%s al, %s tr, %s ar", Album.TABLE_NAME,
+                    Track.TABLE_NAME,
+                    Artist.TABLE_NAME));
+            dataSel = String.format("((tr.%s = ? and tr.%s = ar.%s) or (al.%s = ? and al.%s = ar.%s)) and al.%s = tr.%s",
+                    Track.ARTIST_ID,
+                    Track.ARTIST_ID,
                     Artist._ID,
                     Album.ARTIST_ID,
-                    Album.ARTIST_ID);
+                    Album.ARTIST_ID,
+                    Artist._ID,
+                    Album._ID,
+                    Track.ALBUM_ID);
 
             result = sqBuilder.query(db,
                     new String[]{
@@ -297,7 +304,7 @@ public class LibraryProvider extends ContentProvider {
                             String.format("ar.%s", Artist.ARTIST_NAME)
                     },
                     dataSel,
-                    new String[]{artistId},
+                    new String[]{artistId, artistId},
                     String.format("al.%s", Album._ID),
                     null,
                     String.format("al.%s ASC", Album.ALBUM_NAME)

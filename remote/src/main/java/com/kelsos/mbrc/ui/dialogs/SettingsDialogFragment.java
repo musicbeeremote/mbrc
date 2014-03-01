@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
 
@@ -42,8 +43,12 @@ public class SettingsDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        builder.setView(inflater.inflate(R.layout.ui_dialog_settings, null))
-                .setTitle(R.string.dialog_application_setup_title)
+        final View view = inflater.inflate(R.layout.ui_dialog_settings, null);
+        if (view != null) {
+            ((TextView) view.findViewById(R.id.dialog_title)).setText(getString(R.string.settings_dialog_add));
+        }
+        builder.setView(view)
+                .setTitle(null)
                 .setPositiveButton(R.string.settings_dialog_add,
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -116,10 +121,6 @@ public class SettingsDialogFragment extends DialogFragment {
         } else {
             return true;
         }
-    }
-
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override public void onCreate(Bundle savedInstanceState) {

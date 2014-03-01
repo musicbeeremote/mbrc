@@ -21,8 +21,14 @@ public class AlbumProfileCursorAdapter extends CursorAdapter {
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+    public void bindView(final View view, Context context, Cursor cursor) {
         final String title = cursor.getString(cursor.getColumnIndex(Track.TITLE));
         ((TextView) view.findViewById(R.id.line_one)).setText(title);
+        view.findViewById(R.id.ui_item_context_indicator).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                view.showContextMenu();
+            }
+        });
     }
 }

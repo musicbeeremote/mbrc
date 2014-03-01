@@ -7,10 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
+import android.view.*;
 import android.widget.*;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumProfileCursorAdapter;
@@ -19,6 +16,7 @@ import com.kelsos.mbrc.data.dbdata.Artist;
 import com.kelsos.mbrc.data.dbdata.Cover;
 import com.kelsos.mbrc.data.dbdata.Track;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
+import com.kelsos.mbrc.ui.fragments.browse.BrowseMenuItems;
 import com.squareup.picasso.Picasso;
 import roboguice.inject.InjectView;
 
@@ -54,6 +52,7 @@ public class AlbumTracksFragment extends BaseListFragment
     @InjectView(R.id.header_album) private TextView mAlbum;
     @InjectView(R.id.header_artist) private TextView mArtist;
     @InjectView(R.id.header_artwork) private ImageView mArtwork;
+    private static final int GROUP_ID = 0x83721e;
 
     public static AlbumTracksFragment newInstance(long albumId) {
         AlbumTracksFragment fragment = new AlbumTracksFragment();
@@ -96,6 +95,7 @@ public class AlbumTracksFragment extends BaseListFragment
             mListView.setOnScrollListener(mOnScrollListener);
             int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(LinearLayout.LayoutParams.MATCH_PARENT, View.MeasureSpec.EXACTLY);
             int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(LinearLayout.LayoutParams.WRAP_CONTENT, View.MeasureSpec.EXACTLY);
+            mMarginView.setOnLongClickListener(null);
             mHeader.measure(widthMeasureSpec,heightMeasureSpec);
             setHeaderHeight(mHeader.getMeasuredHeight());
             mContentView.getRootView()
@@ -149,6 +149,7 @@ public class AlbumTracksFragment extends BaseListFragment
         super.onListItemClick(l, v, position, id);
 
     }
+
     @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         Uri baseUri;
         baseUri = Uri.withAppendedPath(Track.CONTENT_ALBUM_URI, Uri.encode(String.valueOf(albumId)));
@@ -235,4 +236,35 @@ public class AlbumTracksFragment extends BaseListFragment
         }
     }
 
+    @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        menu.setHeaderTitle(R.string.search_context_header);
+        menu.add(GROUP_ID, BrowseMenuItems.QUEUE_NEXT, 0, R.string.search_context_queue_next);
+        menu.add(GROUP_ID, BrowseMenuItems.QUEUE_LAST, 0, R.string.search_context_queue_last);
+        menu.add(GROUP_ID, BrowseMenuItems.PLAY_NOW, 0, R.string.search_context_play_now);
+        menu.add(GROUP_ID, BrowseMenuItems.PLAYLIST, 0, getString(R.string.search_context_playlist));
+    }
+
+    @Override public boolean onContextItemSelected(android.view.MenuItem item) {
+        if (item.getGroupId() == GROUP_ID) {
+            AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            int position = mi != null ? mi.position : 0;
+            //final Artist artist = new Artist((Cursor) mAdapter.getItem(position));
+
+            switch (item.getItemId()) {
+                default:
+                    break;
+
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        registerForContextMenu(getListView());
+    }
 }
