@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,6 +28,8 @@ public class PlaylistDialogFragment extends DialogFragment
     private onPlaylistSelectedListener mListener;
     private ListView mList;
     private SimpleCursorAdapter mAdapter;
+    private AlertDialog mDialog;
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         getLoaderManager().initLoader(URL_LOADER, null, this);
@@ -36,11 +39,18 @@ public class PlaylistDialogFragment extends DialogFragment
         mList = ((ListView)view.findViewById(R.id.playlist_list));
         mList.setOnItemClickListener(this);
         ((TextView)view.findViewById(R.id.dialog_title)).setText(getString(R.string.playlist_dialog_title));
-        ((Button)view.findViewById(R.id.new_playlist_button)).setOnClickListener(onNewClick);
+        view.findViewById(R.id.new_playlist_button).setOnClickListener(onNewClick);
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(activity);
         mBuilder.setView(view);
         mBuilder.setTitle(null);
-        return mBuilder.create();
+        mBuilder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        mDialog = mBuilder.create();
+        return mDialog;
     }
 
     @Override
@@ -78,7 +88,7 @@ public class PlaylistDialogFragment extends DialogFragment
 
     /**
      * Setter of the {@link com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment.onPlaylistSelectedListener}
-     * @param mListener
+     * @param mListener the listener
      */
     public void setOnPlaylistSelectedListener(onPlaylistSelectedListener mListener) {
         this.mListener = mListener;
@@ -89,6 +99,7 @@ public class PlaylistDialogFragment extends DialogFragment
         public void onClick(View v) {
             if (mListener != null) {
                 mListener.onNewPlaylistSelected();
+                mDialog.dismiss();
             }
         }
     };

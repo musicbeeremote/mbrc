@@ -157,5 +157,7 @@
     <string name="profile_header_cover_description">Displays the cover of the selected album</string>
     <string name="text_create_new">Create New</string>
     <string name="playlist_dialog_title">Add to Playlist</string>
+    <string name="dialog_new_playlist_name">Playlist Name</string>
+    <string name="playlist_dialog_new_title">Create Playlist</string>
 
 </resources>
