@@ -14,18 +14,31 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumCursorAdapter;
+import com.kelsos.mbrc.constants.ProtocolEventType;
+import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.data.dbdata.Album;
 import com.kelsos.mbrc.data.dbdata.Artist;
+import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.activities.Profile;
 import com.kelsos.mbrc.ui.base.BaseFragment;
+import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
+import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.support.v4.app.LoaderManager.LoaderCallbacks;
 
-public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks<Cursor>, GridView.OnItemClickListener {
+public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks<Cursor>,
+        GridView.OnItemClickListener,
+        PlaylistDialogFragment.onPlaylistSelectedListener,
+        CreateNewPlaylistDialog.onPlaylistNameSelectedListener {
     private static final int GROUP_ID = 13;
     private static final int URL_LOADER = 2;
     private AlbumCursorAdapter mAdapter;
     private GridView mGrid;
+    private Album album;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -57,11 +70,15 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             int position = mi != null ? mi.position : 0;
-            final Album album = new Album((Cursor) mAdapter.getItem(position));
+            album = new Album((Cursor) mAdapter.getItem(position));
             switch (item.getItemId()) {
                 case BrowseMenuItems.GET_SUB:
                     showTracks(album);
                     break;
+                case BrowseMenuItems.PLAYLIST:
+                    final PlaylistDialogFragment dlFragment = new PlaylistDialogFragment();
+                    dlFragment.setOnPlaylistSelectedListener(this);
+                    dlFragment.show(getFragmentManager(), "playlist");
                 default:
                     break;
             }
@@ -98,5 +115,38 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         final Album album = new Album((Cursor) mAdapter.getItem(position));
         showTracks(album);
+    }
+
+    @Override
+    public void onPlaylistSelected(String hash) {
+        Map<String, String> message = getMapBase();
+        message.put("type", "add");
+        message.put("hash", hash);
+        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION,
+                new UserAction(Protocol.PLAYLISTS, message)));
+    }
+
+    @Override
+    public void onNewPlaylistSelected() {
+        final CreateNewPlaylistDialog npDialog = new CreateNewPlaylistDialog();
+        npDialog.setOnPlaylistNameSelectedListener(this);
+        npDialog.show(getFragmentManager(), "npDialog");
+    }
+
+    private Map<String, String> getMapBase() {
+        Map<String, String> message = new HashMap<>();
+        message.put("selection", "album");
+        message.put("data", album.getAlbumName());
+        return message;
+    }
+
+
+    @Override
+    public void onPlaylistNameSelected(String name) {
+        Map<String, String> message = getMapBase();
+        message.put("type", "create");
+        message.put("name", name);
+        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION,
+                new UserAction(Protocol.PLAYLISTS, message)));
     }
 }

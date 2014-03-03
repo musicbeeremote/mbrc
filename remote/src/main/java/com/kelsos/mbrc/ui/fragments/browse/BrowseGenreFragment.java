@@ -8,43 +8,53 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.SearchView;
-import android.text.TextUtils;
 import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.GenreCursorAdapter;
+import com.kelsos.mbrc.constants.ProtocolEventType;
+import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.data.dbdata.Genre;
+import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.activities.Profile;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
+import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
+import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class BrowseGenreFragment extends BaseListFragment
-        implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener {
+        implements LoaderManager.LoaderCallbacks<Cursor>,
+        PlaylistDialogFragment.onPlaylistSelectedListener,
+        CreateNewPlaylistDialog.onPlaylistNameSelectedListener {
     private static final int GROUP_ID = 11;
     private static final int URL_LOADER = 1;
     private GenreCursorAdapter mAdapter;
-    private String mFilter;
-    private SearchView mSearchView;
-    private MenuItem mSearchItem;
+    private Genre genre;
 
-    @Override public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
-    @Override public void onActivityCreated(Bundle savedInstanceState) {
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         registerForContextMenu(getListView());
     }
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getLoaderManager().initLoader(URL_LOADER, null, this);
         return inflater.inflate(R.layout.fragment_library, container, false);
     }
 
-    @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.setHeaderTitle(R.string.search_context_header);
         menu.add(GROUP_ID, BrowseMenuItems.QUEUE_NEXT, 0, R.string.search_context_queue_next);
         menu.add(GROUP_ID, BrowseMenuItems.QUEUE_LAST, 0, R.string.search_context_queue_last);
@@ -53,17 +63,22 @@ public class BrowseGenreFragment extends BaseListFragment
         menu.add(GROUP_ID, BrowseMenuItems.PLAYLIST, 0, getString(R.string.search_context_playlist));
     }
 
-    @Override public boolean onContextItemSelected(android.view.MenuItem item) {
+    @Override
+    public boolean onContextItemSelected(android.view.MenuItem item) {
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             int position = mi != null ? mi.position : 0;
-            final Cursor line = (Cursor)mAdapter.getItem(position);
-            final Genre genre = new Genre(line);
+            final Cursor line = (Cursor) mAdapter.getItem(position);
+            genre = new Genre(line);
 
             switch (item.getItemId()) {
                 case BrowseMenuItems.GET_SUB:
                     ShowArtists(genre);
                     break;
+                case BrowseMenuItems.PLAYLIST:
+                    final PlaylistDialogFragment dlFragment = new PlaylistDialogFragment();
+                    dlFragment.setOnPlaylistSelectedListener(this);
+                    dlFragment.show(getFragmentManager(), "playlist");
                 default:
                     break;
             }
@@ -74,48 +89,32 @@ public class BrowseGenreFragment extends BaseListFragment
 
     }
 
-    @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri baseUri;
-        if (mFilter != null) {
-            baseUri = Uri.withAppendedPath(Genre.CONTENT_FILTER_URI, Uri.encode(mFilter));
-        } else {
-            baseUri = Genre.CONTENT_URI;
-        }
-
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        final Uri baseUri = Genre.CONTENT_URI;
         return new CursorLoader(getActivity(), baseUri, Genre.FIELDS, null, null, null);
     }
 
-    @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter = new GenreCursorAdapter(getActivity(), data, 0);
         setListAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }
 
-    @Override public void onLoaderReset(Loader<Cursor> loader) {
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
         mAdapter.swapCursor(null);
     }
 
-    @Override public boolean onQueryTextSubmit(String query) {
-        mFilter = !TextUtils.isEmpty(query) ? query : null;
-        getLoaderManager().restartLoader(URL_LOADER, null, this);
-        mSearchView.setIconified(true);
-        return false;
-    }
-
-    @Override public boolean onQueryTextChange(String newText) {
-        return false;
-    }
-
-    @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_now_playing, menu);
-        mSearchView = new SearchView(((ActionBarActivity) getActivity()).getSupportActionBar().getThemedContext());
-        mSearchView.setQueryHint("Search for Genre");
-        mSearchView.setIconifiedByDefault(true);
-        mSearchItem = menu.findItem(R.id.now_playing_search_item);
     }
 
-    @Override public void onListItemClick(ListView l, View v, int position, long id) {
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         final Genre genre = new Genre((Cursor) mAdapter.getItem(position));
         ShowArtists(genre);
@@ -127,5 +126,38 @@ public class BrowseGenreFragment extends BaseListFragment
         intent.putExtra("id", genre.getId());
         intent.putExtra("type", "genre");
         startActivity(intent);
+    }
+
+    @Override
+    public void onPlaylistSelected(String hash) {
+        Map<String, String> message = getMapBase();
+        message.put("type", "add");
+        message.put("hash", hash);
+        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION,
+                new UserAction(Protocol.PLAYLISTS, message)));
+    }
+
+    @Override
+    public void onNewPlaylistSelected() {
+        final CreateNewPlaylistDialog npDialog = new CreateNewPlaylistDialog();
+        npDialog.setOnPlaylistNameSelectedListener(this);
+        npDialog.show(getFragmentManager(), "npDialog");
+    }
+
+    private Map<String, String> getMapBase() {
+        Map<String, String> message = new HashMap<>();
+        message.put("selection", "genre");
+        message.put("data", genre.getGenreName());
+        return message;
+    }
+
+
+    @Override
+    public void onPlaylistNameSelected(String name) {
+        Map<String, String> message = getMapBase();
+        message.put("type", "create");
+        message.put("name", name);
+        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION,
+                new UserAction(Protocol.PLAYLISTS, message)));
     }
 }
