@@ -7,7 +7,7 @@ buildscript {
         maven {url 'https://oss.sonatype.org/content/repositories/snapshots/'}
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.8.+'
+        classpath 'com.android.tools.build:gradle:0.9.+'
     }
 }
 
@@ -37,19 +37,19 @@ def versionMinor = 9
 def versionPatch = 9
 
 dependencies {
-    compile 'com.android.support:support-v4:19.0.1'
-    compile 'com.android.support:appcompat-v7:19.0.1'
+    compile 'com.android.support:support-v4:19.1.0'
+    compile 'com.android.support:appcompat-v7:19.1.0'
     compile 'org.roboguice:roboguice:2.0'
     compile 'com.squareup:otto:1.3.4'
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
     compile 'com.viewpagerindicator:library:2.4.1@aar'
     compile 'com.mobeta.android.dslv:drag-sort-listview:0.6.1@aar'
     compile 'com.squareup.picasso:picasso:2.2.0'
-    compile 'de.keyboardsurfer.android.widget:crouton:1.8.3@aar'
+    compile 'de.keyboardsurfer.android.widget:crouton:1.8.4@aar'
     compile 'com.google.inject:guice:3.0:no_aop'
 
-    instrumentTestCompile 'junit:junit:4.10'
-    instrumentTestCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
+    androidTestCompile 'junit:junit:4.10'
+    androidTestCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
 }
 
 android {
@@ -60,7 +60,7 @@ android {
     }
 
     compileSdkVersion 19
-    buildToolsVersion "19.0.2"
+    buildToolsVersion "19.0.3"
 
     defaultConfig {
         minSdkVersion 10
