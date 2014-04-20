@@ -37,6 +37,17 @@
         </license>
     </licenses>
 
+    <repositories>
+        <repository>
+            <id>vpiaar</id>
+            <url>http://dl.bintray.com/populov/maven</url>
+        </repository>
+        <repository>
+            <id>personal</id>
+            <url>http://dl.bintray.com/kelsos/maven</url>
+        </repository>
+    </repositories>
+
     <!-- utf8 source encoding -->
     <properties>
         <java.version>1.7</java.version>
@@ -50,7 +61,7 @@
         <roboguice-sherlock.version>1.5</roboguice-sherlock.version>
         <jackson.version>1.9.13</jackson.version>
         <vpi.version>2.4.1</vpi.version>
-        <dslv.version>0.6.1-SNAPSHOT</dslv.version>
+        <dslv.version>0.6.1</dslv.version>
         <crouton.version>1.8.4</crouton.version>
         <mvn-android.version>3.8.2</mvn-android.version>
         <android.platform>19</android.platform>
@@ -95,7 +106,7 @@
             <groupId>com.actionbarsherlock</groupId>
             <artifactId>actionbarsherlock</artifactId>
             <version>${abs.version}</version>
-            <type>apklib</type>
+            <type>aar</type>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.android</groupId>
@@ -121,7 +132,7 @@
             <groupId>com.viewpagerindicator</groupId>
             <artifactId>library</artifactId>
             <version>${vpi.version}</version>
-            <type>apklib</type>
+            <type>aar</type>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.android</groupId>
@@ -134,13 +145,14 @@
             <groupId>com.mobeta.android.dslv</groupId>
             <artifactId>drag-sort-listview</artifactId>
             <version>${dslv.version}</version>
-            <type>apklib</type>
+            <type>aar</type>
         </dependency>
 
         <dependency>
             <groupId>de.keyboardsurfer.android.widget</groupId>
             <artifactId>crouton</artifactId>
             <version>${crouton.version}</version>
+            <type>aar</type>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.android</groupId>
