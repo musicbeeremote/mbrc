@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!-- application info-->
     <groupId>com.kelsos.mbrc</groupId>
     <artifactId>mbrc</artifactId>
-    <version>0.9.9-SNAPSHOT</version>
+    <version>0.9.10-SNAPSHOT</version>
     <packaging>apk</packaging>
     <name>MusicBee Remote</name>
 
@@ -23,7 +22,8 @@
         <url>https://github.com/kelsos/mbrc/</url>
         <connection>scm:git:git://github.com:kelsos/mbrc.git</connection>
         <developerConnection>scm:git:git@github.com:kelsos/mbrc.git</developerConnection>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
 
     <issueManagement>
         <system>GitHub Issues</system>
@@ -238,7 +238,7 @@
                                         <argument>SHA1</argument>
                                     </arguments>
                                     <removeExistingSignatures>true</removeExistingSignatures>
-                                    <archiveDirectory/>
+                                    <archiveDirectory />
                                     <includes>
                                         <include>${project.build.directory}/${project.artifactId}.apk</include>
                                     </includes>
