@@ -44,7 +44,6 @@ public class MainDataModel {
     private boolean isMuteActive;
     private PlayState playState;
     private List<NowPlayingTrack> nowPlayingList;
-    private List<NowPlayingTrack> playlistTracks;
     private LfmStatus lfmRating;
     private String pluginVersion;
 
@@ -72,20 +71,10 @@ public class MainDataModel {
         lyrics = "";
 
         nowPlayingList = new ArrayList<>();
-        playlistTracks = new ArrayList<>();
 
         lfmRating = LfmStatus.NORMAL;
         pluginVersion = "";
 
-    }
-
-    public void setPlaylistTracks(List<NowPlayingTrack> tracks) {
-        this.playlistTracks = tracks;
-        bus.post(new PlaylistTracksAvailable(this.playlistTracks, false));
-    }
-
-    @Produce public PlaylistTracksAvailable producePlaylistTrack() {
-        return new PlaylistTracksAvailable(this.playlistTracks, true);
     }
 
     public void setLfmRating(String rating) {
@@ -179,6 +168,8 @@ public class MainDataModel {
     public void setCover(String base64format) {
         if (base64format == null || base64format.equals("")) {
             cover = null;
+            bus.post(new CoverAvailable());
+            updateNotification();
         } else {
             try {
                 new ImageDecoder(context, base64format).execute();
