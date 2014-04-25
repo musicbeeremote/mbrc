@@ -26,6 +26,10 @@ import java.util.List;
 public class MainDataModel {
 
     public static final int MAX_VOLUME = 100;
+    public static final String LOVE = "Love";
+    public static final String BAN = "Ban";
+    public static final String ALL = "All";
+    public static final String EMPTY = "";
     private MainThreadBusWrapper bus;
     private Context context;
     private float rating;
@@ -53,10 +57,10 @@ public class MainDataModel {
         this.bus = bus;
         bus.register(this);
 
-        title = "";
-        artist = "";
-        album = "";
-        year = "";
+        title = EMPTY;
+        artist = EMPTY;
+        album = EMPTY;
+        year = EMPTY;
         volume = MAX_VOLUME;
 
         isConnectionOn = false;
@@ -68,21 +72,21 @@ public class MainDataModel {
         playState = PlayState.STOPPED;
         cover = null;
         rating = 0;
-        lyrics = "";
+        lyrics = EMPTY;
 
         nowPlayingList = new ArrayList<>();
 
         lfmRating = LfmStatus.NORMAL;
-        pluginVersion = "";
+        pluginVersion = EMPTY;
 
     }
 
     public void setLfmRating(String rating) {
         switch (rating) {
-            case "Love":
+            case LOVE:
                 lfmRating = LfmStatus.LOVED;
                 break;
-            case "Ban":
+            case BAN:
                 lfmRating = LfmStatus.BANNED;
                 break;
             default:
@@ -166,7 +170,7 @@ public class MainDataModel {
     }
 
     public void setCover(String base64format) {
-        if (base64format == null || base64format.equals("")) {
+        if (base64format == null || base64format.equals(EMPTY)) {
             cover = null;
             bus.post(new CoverAvailable());
             updateNotification();
@@ -225,7 +229,7 @@ public class MainDataModel {
     }
 
     public void setRepeatState(String repeatButtonActive) {
-        isRepeatActive = (repeatButtonActive.equals("All"));
+        isRepeatActive = (repeatButtonActive.equals(ALL));
         bus.post(new RepeatChange(this.isRepeatActive));
     }
 

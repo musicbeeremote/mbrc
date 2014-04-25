@@ -301,7 +301,9 @@ public class LibraryProvider extends ContentProvider {
                     new String[]{
                             String.format("al.%s", Album.ALBUM_NAME),
                             String.format("al.%s", Album._ID),
-                            String.format("ar.%s", Artist.ARTIST_NAME)
+                            String.format("ar.%s", Artist.ARTIST_NAME),
+                            String.format("al.%s", Album.ARTIST_ID),
+                            String.format("al.%s", Album.COVER_HASH)
                     },
                     dataSel,
                     new String[]{artistId, artistId},

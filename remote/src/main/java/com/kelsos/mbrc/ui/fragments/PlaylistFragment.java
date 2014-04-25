@@ -84,7 +84,10 @@ public class PlaylistFragment extends BaseListFragment implements LoaderManager.
                     openPlaylist(line);
                     break;
                 case PLAY_NOW:
-                    ua = new UserAction(Protocol.PLAYLIST_PLAY_NOW, query);
+                    Map<String, String> message = new HashMap<>();
+                    message.put("type", Protocol.PLAY);
+                    message.put("data", query);
+                    ua = new UserAction(Protocol.PLAYLISTS, message);
                     break;
             }
 

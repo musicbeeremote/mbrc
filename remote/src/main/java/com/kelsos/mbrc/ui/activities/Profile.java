@@ -30,7 +30,6 @@ public class Profile extends BaseActivity {
             long id = intent.getLongExtra("id", 0);
             switch (type) {
                 case GENRE:
-
                     fragment = GenreArtistsFragment.newInstance(id);
                     break;
                 case ARTIST:

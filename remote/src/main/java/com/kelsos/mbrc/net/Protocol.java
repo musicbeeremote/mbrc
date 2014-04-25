@@ -40,7 +40,7 @@ public final class Protocol {
 
     public static final String PLAYLIST_LIST = "playlistlist";
     public static final String PLAYLIST_GET_FILES = "playlistgetfiles";
-    public static final String PLAYLIST_PLAY_NOW = "playlistplaynow";
+    public static final String PLAY = "play";
 
     public static final String PLAYLISTS = "playlists";
     public static final String PLAYLISTS_GET = "get";
