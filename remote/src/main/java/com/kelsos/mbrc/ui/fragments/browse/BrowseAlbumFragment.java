@@ -79,6 +79,12 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
                     final PlaylistDialogFragment dlFragment = new PlaylistDialogFragment();
                     dlFragment.setOnPlaylistSelectedListener(this);
                     dlFragment.show(getFragmentManager(), "playlist");
+                case BrowseMenuItems.PLAY_NOW:
+                    break;
+                case BrowseMenuItems.QUEUE_LAST:
+                    break;
+                case BrowseMenuItems.QUEUE_NEXT:
+                    break;
                 default:
                     break;
             }
