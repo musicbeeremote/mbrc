@@ -46,7 +46,8 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
         registerForContextMenu(mGrid);
     }
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getLoaderManager().initLoader(URL_LOADER, null, this);
         final View view = inflater.inflate(R.layout.ui_library_grid, container, false);
         if (view != null) {
@@ -56,7 +57,8 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
         return view;
     }
 
-    @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.setHeaderTitle(R.string.search_context_header);
         menu.add(GROUP_ID, BrowseMenuItems.QUEUE_NEXT, 0, R.string.search_context_queue_next);
         menu.add(GROUP_ID, BrowseMenuItems.QUEUE_LAST, 0, R.string.search_context_queue_last);
@@ -71,6 +73,7 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             int position = mi != null ? mi.position : 0;
             album = new Album((Cursor) mAdapter.getItem(position));
+
             switch (item.getItemId()) {
                 case BrowseMenuItems.GET_SUB:
                     showTracks(album);
@@ -80,10 +83,13 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
                     dlFragment.setOnPlaylistSelectedListener(this);
                     dlFragment.show(getFragmentManager(), "playlist");
                 case BrowseMenuItems.PLAY_NOW:
+                    QueueTrack("now");
                     break;
                 case BrowseMenuItems.QUEUE_LAST:
+                    QueueTrack("last");
                     break;
                 case BrowseMenuItems.QUEUE_NEXT:
+                    QueueTrack("next");
                     break;
                 default:
                     break;
@@ -94,20 +100,32 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
         return false;
     }
 
-    @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+    private void QueueTrack(String position) {
+        final Map<String, String> message = getMapBase();
+        message.put("type", "queue");
+        message.put("position", position);
+        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION,
+                new UserAction(Protocol.NOW_PLAYING, message)));
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri baseUri;
         baseUri = Album.getContentUri();
         return new CursorLoader(getActivity(), baseUri,
-                new String[] {Album.ALBUM_NAME, Artist.ARTIST_NAME}, null, null, null);
+                new String[]{Album.ALBUM_NAME, Artist.ARTIST_NAME}, null, null, null);
     }
 
-    @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter = new AlbumCursorAdapter(getActivity(), data, 0);
         mGrid.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }
 
-    @Override public void onLoaderReset(Loader<Cursor> loader) { }
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+    }
 
     private void showTracks(final Album album) {
         Intent intent = new Intent(getActivity(), Profile.class);

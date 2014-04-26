@@ -2,6 +2,8 @@ package com.kelsos.mbrc.net;
 
 public final class Protocol {
 
+
+
     private Protocol() { }
 
     public static final String ERROR = "error";
@@ -37,6 +39,7 @@ public final class Protocol {
     public static final String NOW_PLAYING_REMOVE = "nowplayinglistremove";
     public static final String NOW_PLAYING_MOVE = "nowplayinglistmove";
     public static final String NOW_PLAYING_LIST_SEARCH = "nowplayinglistsearch";
+    public static final String NOW_PLAYING = "nowplaying";
 
     public static final String PLAYLIST_LIST = "playlistlist";
     public static final String PLAYLIST_GET_FILES = "playlistgetfiles";

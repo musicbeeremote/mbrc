@@ -79,6 +79,15 @@ public class BrowseGenreFragment extends BaseListFragment
                     final PlaylistDialogFragment dlFragment = new PlaylistDialogFragment();
                     dlFragment.setOnPlaylistSelectedListener(this);
                     dlFragment.show(getFragmentManager(), "playlist");
+                case BrowseMenuItems.PLAY_NOW:
+                    QueueTrack("now");
+                    break;
+                case BrowseMenuItems.QUEUE_LAST:
+                    QueueTrack("last");
+                    break;
+                case BrowseMenuItems.QUEUE_NEXT:
+                    QueueTrack("next");
+                    break;
                 default:
                     break;
             }
@@ -87,6 +96,14 @@ public class BrowseGenreFragment extends BaseListFragment
             return false;
         }
 
+    }
+
+    private void QueueTrack(String position) {
+        final Map<String, String> message = getMapBase();
+        message.put("type", "queue");
+        message.put("position", position);
+        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION,
+                new UserAction(Protocol.NOW_PLAYING, message)));
     }
 
     @Override

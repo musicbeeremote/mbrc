@@ -111,7 +111,9 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
 
     @Override public void onStart() {
         super.onStart();
-        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.NOW_PLAYING_LIST, true)));
+        Map<String, String> message = new HashMap<>();
+        message.put("type", "list");
+        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.NOW_PLAYING, message)));
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -141,10 +143,11 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
 
                 adapter.setPlayingTrackIndex(calculateNewIndex(from, to, adapter.getPlayingTrackIndex()));
 
-                Map<String, Integer> move = new HashMap<>();
+                Map<String, Object> move = new HashMap<>();
+                move.put("type", "move");
                 move.put("from", from);
                 move.put("to", to);
-                getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.NOW_PLAYING_MOVE, move)));
+                getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.NOW_PLAYING, move)));
             }
         }
     };
@@ -173,7 +176,10 @@ public class NowPlayingFragment extends BaseListFragment implements SearchView.O
             mTrack = adapter.getItem(which);
             adapter.remove(mTrack);
             adapter.notifyDataSetChanged();
-            getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.NOW_PLAYING_REMOVE, which)));
+            Map<String, Object> remove = new HashMap<>();
+            remove.put("type","remove");
+            remove.put("index", which);
+            getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.NOW_PLAYING, remove)));
         }
     };
 
