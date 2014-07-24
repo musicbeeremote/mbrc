@@ -3,7 +3,6 @@ package com.kelsos.mbrc.ui.activities;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.*;
 import android.support.v4.widget.DrawerLayout;
@@ -23,7 +22,10 @@ import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseActivity;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
-import com.kelsos.mbrc.ui.fragments.*;
+import com.kelsos.mbrc.ui.fragments.CurrentQueueFragment;
+import com.kelsos.mbrc.ui.fragments.LyricsFragment;
+import com.kelsos.mbrc.ui.fragments.MainFragment;
+import com.kelsos.mbrc.ui.fragments.PlaylistFragment;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseFragment;
 import com.squareup.otto.Subscribe;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -112,11 +114,7 @@ public class MainFragmentActivity extends BaseActivity {
 
                 return true;
             case R.id.actionbar_settings:
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-                    startActivity(new Intent(this, SettingsActivity.class));
-                } else {
-                    startActivity(new Intent(this, SettingsActivityGB.class));
-                }
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.actionbar_help:
                 Intent openHelp = new Intent(Intent.ACTION_VIEW);
@@ -195,7 +193,7 @@ public class MainFragmentActivity extends BaseActivity {
                 replaceFragment(slsFragment, "library_search");
                 break;
             case NOW_PLAYING_LIST:
-                NowPlayingFragment npFragment = new NowPlayingFragment();
+                CurrentQueueFragment npFragment = new CurrentQueueFragment();
                 replaceFragment(npFragment, "now_playing_list");
                 break;
             case LYRICS:

@@ -107,6 +107,7 @@ public class PlaylistFragment extends BaseListFragment implements LoaderManager.
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        cursor.setNotificationUri(getActivity().getContentResolver(), Playlist.getContentUri());
         adapter = new PlaylistCursorAdapter(getActivity(), cursor, 0);
         this.setListAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -114,6 +115,6 @@ public class PlaylistFragment extends BaseListFragment implements LoaderManager.
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
+        adapter.swapCursor(null);
     }
 }

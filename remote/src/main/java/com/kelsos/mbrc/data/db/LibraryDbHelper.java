@@ -157,7 +157,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
             mDb.endTransaction();
             mDb.close();
         }
-        mContext.getContentResolver().notifyChange(Playlist.getContentUri(), null, false);
+        mContext.getContentResolver().notifyChange(Playlist.getContentUri(), null);
     }
 
     /**
@@ -184,7 +184,7 @@ public class LibraryDbHelper extends SQLiteOpenHelper {
             mDb.endTransaction();
             mDb.close();
         }
-        mContext.getContentResolver().notifyChange(PlaylistTrack.getContentUri(), null, false);
+        mContext.getContentResolver().notifyChange(PlaylistTrack.getContentUri(), null, true);
     }
 
     /**

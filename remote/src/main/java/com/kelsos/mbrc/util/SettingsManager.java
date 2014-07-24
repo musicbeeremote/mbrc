@@ -116,7 +116,7 @@ public class SettingsManager {
         SharedPreferences.Editor editor = mPreferences.edit();
         try {
             editor.putString(mContext.getString(R.string.settings_key_array), mMapper.writeValueAsString(mSettings));
-            editor.commit();
+            editor.apply();
             bus.post(new ConnectionSettingsChanged(mSettings, 0));
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
@@ -151,14 +151,14 @@ public class SettingsManager {
         editor.putString(mContext.getString(R.string.settings_key_hostname), settings.getAddress());
         editor.putInt(mContext.getString(R.string.settings_key_port), settings.getPort());
         editor.putInt(mContext.getString(R.string.settings_key_default_index), index);
-        editor.commit();
+        editor.apply();
         defaultIndex = index;
     }
 
     public void setLastUpdated(Date lastChecked) {
         SharedPreferences.Editor editor = mPreferences.edit();
         editor.putLong(mContext.getString(R.string.settings_key_last_update_check), lastChecked.getTime());
-        editor.commit();
+        editor.apply();
     }
 
     public Date getLastUpdated() {
@@ -219,7 +219,7 @@ public class SettingsManager {
 
             SharedPreferences.Editor editor = mPreferences.edit();
             editor.putLong(mContext.getString(R.string.settings_key_last_version_run), currentVersion);
-            editor.commit();
+            editor.apply();
 
             if (BuildConfig.DEBUG) {
                 Log.d(BuildConfig.PACKAGE_NAME, "update or fresh install");

@@ -33,6 +33,7 @@ public class SyncHandler {
         this.mNotification = mNotification;
         this.bus = bus;
         dbHelper = new LibraryDbHelper(mContext);
+
     }
 
     /**
@@ -43,7 +44,7 @@ public class SyncHandler {
      */
     public void getNextBatch(int total, int offset, int limit) {
 
-        if (offset < total) {
+        if ((offset + limit) < total) {
 
             mNotification.librarySyncNotification(total, offset);
             Map<String, Object> syncData = new HashMap<>();
@@ -59,6 +60,7 @@ public class SyncHandler {
             contentResolver.notifyChange(Album.getContentUri(), null, false);
             contentResolver.notifyChange(Artist.getContentUri(), null, false);
             contentResolver.notifyChange(Genre.getContentUri(), null, false);
+            requestNextBatch(0,0,5);
         }
 
     }
@@ -95,5 +97,19 @@ public class SyncHandler {
         bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
                 new UserAction(Protocol.LIBRARY, syncData)));
 
+    }
+
+    /**
+     * Q
+     * @param limit
+     * @param offset
+     */
+    public void getQueueTracks(int limit, int offset) {
+        HashMap<String, Object> message = new HashMap<>();
+        message.put("type", "list");
+        message.put("offset", offset + limit);
+        message.put("limit", limit);
+        bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
+                new UserAction(Protocol.NOW_PLAYING, message)));
     }
 }

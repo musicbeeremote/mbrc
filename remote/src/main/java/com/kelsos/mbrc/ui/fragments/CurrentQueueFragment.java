@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class NowPlayingFragment extends BaseListFragment implements SearchView.OnQueryTextListener {
+public class CurrentQueueFragment extends BaseListFragment implements SearchView.OnQueryTextListener {
     @Inject private Injector injector;
     private NowPlayingAdapter adapter;
     private SearchView mSearchView;

@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public class DelayTimer {
+    private static final String TAG = DelayTimer.class.getSimpleName();
     private int delay;
     private boolean isRunning;
     private final ScheduledExecutorService mScheduler = Executors.newScheduledThreadPool(1);
@@ -52,7 +53,7 @@ public class DelayTimer {
         if (mFuture != null) {
             mFuture.cancel(true);
             if (BuildConfig.DEBUG) {
-                Log.d(BuildConfig.PACKAGE_NAME, "stopping delay timer");
+                Log.d(TAG, "stopping delay timer");
             }
 
         }
@@ -88,7 +89,7 @@ public class DelayTimer {
             stop();
             onTimerFinish();
             if (BuildConfig.DEBUG) {
-                Log.d(BuildConfig.PACKAGE_NAME, "delay timer tick");
+                Log.d(TAG, "delay timer tick");
             }
         }
     }

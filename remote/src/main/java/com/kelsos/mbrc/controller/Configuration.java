@@ -38,8 +38,8 @@ public final class Configuration {
         controller.register(Protocol.PLAYER_MUTE, UpdateMute.class);
         controller.register(Protocol.PLAYER_SHUFFLE, UpdateShuffle.class);
         controller.register(Protocol.PLAYER_SCROBBLE, UpdateLastFm.class);
+        controller.register(Protocol.NOW_PLAYING, HandleNowPlaying.class);
         controller.register(Protocol.NOW_PLAYING_LYRICS, UpdateLyrics.class);
-        controller.register(Protocol.NOW_PLAYING_LIST, UpdateNowPlayingList.class);
         controller.register(Protocol.NOW_PLAYING_LFM_RATING, UpdateLfmRating.class);
         controller.register(Protocol.NOW_PLAYING_REMOVE, UpdateNowPlayingTrackRemoval.class);
         controller.register(Protocol.NOW_PLAYING_MOVE, UpdateNowPlayingTrackMoved.class);

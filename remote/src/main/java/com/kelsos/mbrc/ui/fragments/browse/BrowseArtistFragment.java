@@ -160,7 +160,6 @@ public class BrowseArtistFragment extends BaseListFragment
         return message;
     }
 
-
     @Override
     public void onPlaylistNameSelected(String name) {
         Map<String, String> message = getMapBase();
