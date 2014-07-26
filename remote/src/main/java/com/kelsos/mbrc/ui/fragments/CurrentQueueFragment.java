@@ -1,8 +1,10 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.SearchView;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.*;
 import android.widget.ListView;
 import com.google.inject.Inject;
@@ -13,7 +15,6 @@ import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.data.dbdata.NowPlayingTrack;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.NowPlayingListAvailable;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.events.ui.TrackMoved;
 import com.kelsos.mbrc.events.ui.TrackRemoval;
@@ -27,11 +28,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class CurrentQueueFragment extends BaseListFragment implements SearchView.OnQueryTextListener {
+public class CurrentQueueFragment extends BaseListFragment implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
     @Inject private Injector injector;
     private NowPlayingAdapter adapter;
-    private SearchView mSearchView;
-    private MenuItem mSearchItem;
     private NowPlayingTrack mTrack;
 
     private DragSortListView mDslv;
@@ -57,42 +56,19 @@ public class CurrentQueueFragment extends BaseListFragment implements SearchView
         return controller;
     }
 
-    @Subscribe public void handleNowPlayingListAvailable(NowPlayingListAvailable event) {
-        adapter = new NowPlayingAdapter(getActivity(), R.layout.ui_list_track_item, event.getList());
-        setListAdapter(adapter);
-        adapter.setPlayingTrackIndex(event.getIndex());
-        this.getListView().setSelection(event.getIndex());
-    }
-
     @Subscribe public void handlePlayingTrackChange(TrackInfoChange event) {
         if (adapter == null || !adapter.getClass().equals(NowPlayingAdapter.class)) {
             return;
         }
-        adapter.setPlayingTrackIndex(adapter.getPosition(new NowPlayingTrack(event.getArtist(), event.getTitle())));
+        //adapter.setPlayingTrackIndex(adapter.getPosition(new NowPlayingTrack(event.getArtist(), event.getTitle())));
         adapter.notifyDataSetChanged();
-    }
-
-    public boolean onQueryTextSubmit(String query) {
-        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.NOW_PLAYING_LIST_SEARCH, query.trim())));
-        mSearchView.setIconified(true);
-        mSearchItem.collapseActionView();
-        return false;
-    }
-
-    public boolean onQueryTextChange(String newText) {
-        return true;
     }
 
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        mSearchView = new SearchView(((ActionBarActivity) getActivity()).getSupportActionBar().getThemedContext());
-        mSearchView.setQueryHint(getString(R.string.now_playing_search_hint));
-        mSearchView.setIconifiedByDefault(true);
 
         inflater.inflate(R.menu.menu_now_playing, menu);
-        mSearchItem = menu.findItem(R.id.now_playing_search_item);
-        mSearchItem.setActionView(mSearchView);
-        mSearchView.setOnQueryTextListener(this);
+
     }
 
     @Override public void onCreate(Bundle savedInstanceState) {
@@ -128,7 +104,7 @@ public class CurrentQueueFragment extends BaseListFragment implements SearchView
 
     @Override public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        adapter.setPlayingTrackIndex(position);
+        //adapter.setPlayingTrackIndex(position);
         adapter.notifyDataSetChanged();
         getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.NOW_PLAYING_PLAY, position + 1)));
     }
@@ -136,12 +112,12 @@ public class CurrentQueueFragment extends BaseListFragment implements SearchView
     private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
         @Override public void drop(int from, int to) {
             if (from != to) {
-                mTrack = adapter.getItem(from);
-                adapter.remove(mTrack);
-                adapter.insert(mTrack, to);
+               // mTrack = adapter.getItem(from);
+                //adapter.remove(mTrack);
+               // adapter.insert(mTrack, to);
                 adapter.notifyDataSetChanged();
 
-                adapter.setPlayingTrackIndex(calculateNewIndex(from, to, adapter.getPlayingTrackIndex()));
+                //adapter.setPlayingTrackIndex(calculateNewIndex(from, to, adapter.getPlayingTrackIndex()));
 
                 Map<String, Object> move = new HashMap<>();
                 move.put("type", "move");
@@ -173,8 +149,8 @@ public class CurrentQueueFragment extends BaseListFragment implements SearchView
 
     private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
         @Override public void remove(int which) {
-            mTrack = adapter.getItem(which);
-            adapter.remove(mTrack);
+            //mTrack = adapter.getItem(which);
+            //adapter.remove(mTrack);
             adapter.notifyDataSetChanged();
             Map<String, Object> remove = new HashMap<>();
             remove.put("type","remove");
@@ -186,16 +162,36 @@ public class CurrentQueueFragment extends BaseListFragment implements SearchView
     @Subscribe public void handleTrackMoved(TrackMoved event) {
         // In case the action failed revert the change
         if (!event.isSuccess()) {
-            mTrack = adapter.getItem(event.getTo());
-            adapter.remove(mTrack);
-            adapter.insert(mTrack, event.getFrom());
+            //mTrack = adapter.getItem(event.getTo());
+            //adapter.remove(mTrack);
+           // adapter.insert(mTrack, event.getFrom());
         }
     }
 
     @Subscribe public void handleTrackRemoval(TrackRemoval event) {
         // In case the action failed revert the change
         if (!event.isSuccess()) {
-            adapter.insert(mTrack, event.getIndex());
+            //adapter.insert(mTrack, event.getIndex());
         }
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Uri baseUri;
+        baseUri = NowPlayingTrack.getContentUri();
+        return new CursorLoader(getActivity(), baseUri, null, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        cursor.setNotificationUri(getActivity().getContentResolver(), NowPlayingTrack.getContentUri());
+        adapter = new NowPlayingAdapter(getActivity(), cursor, 0);
+        this.setListAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        adapter.swapCursor(null);
     }
 }

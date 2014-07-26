@@ -12,6 +12,7 @@ import com.kelsos.mbrc.data.db.LibraryDbHelper;
 import com.kelsos.mbrc.data.dbdata.*;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.net.Protocol;
+import com.kelsos.mbrc.util.DaoSessionManager;
 import com.kelsos.mbrc.util.NotificationService;
 import com.squareup.otto.Bus;
 
@@ -27,12 +28,14 @@ public class SyncHandler {
     private NotificationService mNotification;
     private Bus bus;
     private LibraryDbHelper dbHelper;
+    private DaoSessionManager mDaoSessionManager;
 
-    @Inject public SyncHandler(Context mContext, NotificationService mNotification, Bus bus) {
+    @Inject public SyncHandler(Context mContext, NotificationService mNotification, Bus bus, DaoSessionManager mDaoSessionManager) {
         this.mContext = mContext;
         this.mNotification = mNotification;
         this.bus = bus;
         dbHelper = new LibraryDbHelper(mContext);
+        this.mDaoSessionManager = mDaoSessionManager;
 
     }
 
@@ -85,8 +88,13 @@ public class SyncHandler {
         }
     }
 
-    public void processBatch(final List<Track> trackList) {
-        dbHelper.processBatch(trackList);
+    public void processBatch(final List<com.kelsos.mbrc.dao.Track> trackList) {
+        mDaoSessionManager.getDaoSession().runInTx(new Runnable() {
+            @Override
+            public void run() {
+                mDaoSessionManager.getDaoSession().getTrackDao().insertInTx(trackList);
+            }
+        });
     }
 
     public void requestNextBatch(int total, int offset, int limit) {
@@ -100,9 +108,9 @@ public class SyncHandler {
     }
 
     /**
-     * Q
-     * @param limit
-     * @param offset
+     * Requests the Queue tracks from the plugin
+     * @param limit Represents the number of tracks contained to the message.
+     * @param offset Represents the index of the starting track.
      */
     public void getQueueTracks(int limit, int offset) {
         HashMap<String, Object> message = new HashMap<>();

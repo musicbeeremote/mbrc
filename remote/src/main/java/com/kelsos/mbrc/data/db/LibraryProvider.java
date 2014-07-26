@@ -29,6 +29,7 @@ public class LibraryProvider extends ContentProvider {
         Track.addMatcherUris(URI_MATCHER);
         Playlist.addMatcherUris(URI_MATCHER);
         PlaylistTrack.addMatcherUris(URI_MATCHER);
+        NowPlayingTrack.addMatcherUris(URI_MATCHER);
     }
 
     private LibraryDbHelper dbHelper;
@@ -126,6 +127,8 @@ public class LibraryProvider extends ContentProvider {
             case PlaylistTrack.BASE_HASH_CODE:
                 result = getPlaylistTracks(uri, contentResolver);
                 break;
+            case NowPlayingTrack.BASE_URI_CODE:
+
             default:
                 throw new IllegalArgumentException(String.format("Unknown Uri %s", uri));
         }

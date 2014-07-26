@@ -9,7 +9,6 @@ import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.data.dbdata.NowPlayingTrack;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.enums.PlayState;
@@ -18,9 +17,6 @@ import com.kelsos.mbrc.events.ui.*;
 import com.kelsos.mbrc.util.ImageDecoder;
 import com.kelsos.mbrc.util.MainThreadBusWrapper;
 import com.squareup.otto.Produce;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Singleton
 public class MainDataModel {
@@ -47,7 +43,6 @@ public class MainDataModel {
     private boolean isScrobblingActive;
     private boolean isMuteActive;
     private PlayState playState;
-    private List<NowPlayingTrack> nowPlayingList;
     private LfmStatus lfmRating;
     private String pluginVersion;
 
@@ -73,8 +68,6 @@ public class MainDataModel {
         cover = null;
         rating = 0;
         lyrics = EMPTY;
-
-        nowPlayingList = new ArrayList<>();
 
         lfmRating = LfmStatus.NORMAL;
         pluginVersion = EMPTY;
@@ -108,16 +101,6 @@ public class MainDataModel {
 
     @Produce public LfmRatingChanged produceLfmRating() {
         return new LfmRatingChanged(lfmRating);
-    }
-
-    public void setNowPlayingList(List<NowPlayingTrack> nowPlayingList) {
-        this.nowPlayingList = nowPlayingList;
-        bus.post(new NowPlayingListAvailable(nowPlayingList, nowPlayingList.indexOf(new NowPlayingTrack(artist, title))));
-    }
-
-    @Produce public NowPlayingListAvailable produceNowPlayingListAvailable() {
-        int index = nowPlayingList.indexOf(new NowPlayingTrack(artist, title));
-        return new NowPlayingListAvailable(nowPlayingList, index);
     }
 
     public void setRating(double rating) {

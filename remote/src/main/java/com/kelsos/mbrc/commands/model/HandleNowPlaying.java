@@ -3,7 +3,6 @@ package com.kelsos.mbrc.commands.model;
 import android.content.Context;
 import android.util.Log;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.data.MainDataModel;
 import com.kelsos.mbrc.data.SyncHandler;
 import com.kelsos.mbrc.data.db.LibraryDbHelper;
 import com.kelsos.mbrc.data.dbdata.NowPlayingTrack;
@@ -17,12 +16,10 @@ import java.util.List;
 
 public class HandleNowPlaying implements ICommand {
     private static final String TAG = HandleNowPlaying.class.getCanonicalName();
-    private MainDataModel model;
     private LibraryDbHelper mHelper;
     private SyncHandler mHandler;
 
-    @Inject public HandleNowPlaying(MainDataModel model, Context context, SyncHandler mHandler) {
-        this.model = model;
+    @Inject public HandleNowPlaying(Context context, SyncHandler mHandler) {
         this.mHelper = new LibraryDbHelper(context);
         this.mHandler = mHandler;
     }

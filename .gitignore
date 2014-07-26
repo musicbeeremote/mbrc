@@ -34,3 +34,4 @@ build
 # Maven created directories
 target/
 gen-external-apklibs/
+remote/src/main/java-gen

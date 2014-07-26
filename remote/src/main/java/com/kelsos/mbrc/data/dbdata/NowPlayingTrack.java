@@ -1,6 +1,9 @@
 package com.kelsos.mbrc.data.dbdata;
 
 import android.content.ContentValues;
+import android.content.UriMatcher;
+import android.net.Uri;
+import com.kelsos.mbrc.data.db.LibraryProvider;
 import com.kelsos.mbrc.data.interfaces.NowPlayingTrackColumns;
 import org.codehaus.jackson.JsonNode;
 
@@ -32,6 +35,22 @@ public class NowPlayingTrack extends DataItem implements NowPlayingTrackColumns 
         this.title = jNode.path("title").getTextValue();
         this.src = jNode.path("hash").getTextValue();
         this.position = jNode.path("position").asInt(0);
+    }
+
+    public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;
+    public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;
+
+    public static final int BASE_URI_CODE = 0x3a2a7c3;
+    public static final int BASE_ITEM_CODE =  0x3621d5d;
+
+    public static Uri getContentUri() {
+        return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME +
+                LibraryProvider.AUTHORITY), TABLE_NAME);
+    }
+
+    public static void addMatcherUris(UriMatcher uriMatcher) {
+        uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME, BASE_URI_CODE);
+        uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME + "/#", BASE_ITEM_CODE);
     }
 
     public String getArtist() {

@@ -1,2 +1,3 @@
 include ':remote'
+include ':MyDaoGenerator'
 

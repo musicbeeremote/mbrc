@@ -11,6 +11,7 @@ import com.kelsos.mbrc.data.MainDataModel;
 import com.kelsos.mbrc.data.SyncHandler;
 import com.kelsos.mbrc.net.ProtocolHandler;
 import com.kelsos.mbrc.net.SocketService;
+import com.kelsos.mbrc.util.DaoSessionManager;
 import com.kelsos.mbrc.util.NotificationService;
 import com.kelsos.mbrc.util.RemoteBroadcastReceiver;
 import roboguice.RoboGuice;
@@ -36,6 +37,7 @@ public class RemoteApplication extends Application {
         injector.getInstance(RemoteBroadcastReceiver.class);
         injector.getInstance(NotificationService.class);
         injector.getInstance(SyncHandler.class);
+        injector.getInstance(DaoSessionManager.class);
 
         //HACK: Force overflow code courtesy of Timo Ohr http://stackoverflow.com/a/11438245
         try {
