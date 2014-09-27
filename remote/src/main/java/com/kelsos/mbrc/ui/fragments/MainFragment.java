@@ -23,6 +23,8 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
 import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseFragment;
+import com.noveogroup.android.log.Logger;
+import com.noveogroup.android.log.LoggerManager;
 import com.squareup.otto.Subscribe;
 import com.viewpagerindicator.LinePageIndicator;
 import roboguice.inject.InjectView;
@@ -34,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class MainFragment extends BaseFragment {
+    private static final Logger logger = LoggerManager.getLogger();
     /**
      * Total milliseconds in a second (1000)
      */
@@ -173,7 +176,7 @@ public class MainFragment extends BaseFragment {
             albumCover.setOnClickListener(coverOnClick);
         } catch (Exception e) {
             if (BuildConfig.DEBUG) {
-                Log.d(BuildConfig.PACKAGE_NAME, "listener registration", e);
+                logger.d("listener registration", e);
             }
         }
 
@@ -189,7 +192,7 @@ public class MainFragment extends BaseFragment {
             trackDuration.setTypeface(robotoRegular);
         } catch (Exception e) {
             if (BuildConfig.DEBUG){
-                Log.d(BuildConfig.PACKAGE_NAME, "setting typeface", e);
+                logger.d("setting typeface", e);
             }
         }
     }

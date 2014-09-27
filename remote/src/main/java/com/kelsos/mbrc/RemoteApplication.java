@@ -2,7 +2,6 @@ package com.kelsos.mbrc;
 
 import android.app.Application;
 import android.content.Intent;
-import android.util.Log;
 import android.view.ViewConfiguration;
 import com.google.inject.Stage;
 import com.google.inject.util.Modules;
@@ -13,12 +12,16 @@ import com.kelsos.mbrc.net.ProtocolHandler;
 import com.kelsos.mbrc.net.SocketService;
 import com.kelsos.mbrc.util.NotificationService;
 import com.kelsos.mbrc.util.RemoteBroadcastReceiver;
+import com.noveogroup.android.log.Logger;
+import com.noveogroup.android.log.LoggerManager;
 import roboguice.RoboGuice;
 import roboguice.inject.RoboInjector;
 
 import java.lang.reflect.Field;
 
 public class RemoteApplication extends Application {
+
+    private static final Logger logger = LoggerManager.getLogger();
 
     public void onCreate() {
         super.onCreate();
@@ -47,7 +50,7 @@ public class RemoteApplication extends Application {
             }
         } catch (Exception ex) {
             if (BuildConfig.DEBUG) {
-                Log.d(BuildConfig.PACKAGE_NAME, "force overflow hack", ex);
+                logger.i("force overflow hack");
             }
         }
     }

@@ -40,10 +40,10 @@ public class HandleLibrarySync implements ICommand {
                 list.add(new Cover(albumId, hash));
             }
 
-            handler.setCovers(list);
+            handler.setCovers();
 
             if (offset < total) {
-                handler.requestNextBatch(total,offset,limit);
+                handler.requestNextBatch(offset,limit);
             }
 
         } else if (type.equals("meta")) {

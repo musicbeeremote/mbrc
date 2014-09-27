@@ -2,7 +2,6 @@ package com.kelsos.mbrc.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
@@ -15,6 +14,8 @@ import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.NotifyUser;
+import com.noveogroup.android.log.Logger;
+import com.noveogroup.android.log.LoggerManager;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 import org.codehaus.jackson.JsonNode;
@@ -30,6 +31,7 @@ import java.util.List;
 
 @Singleton
 public class SettingsManager {
+    private static final Logger logger = LoggerManager.getLogger();
     private SharedPreferences mPreferences;
     private Context mContext;
     private MainThreadBusWrapper bus;
@@ -60,7 +62,7 @@ public class SettingsManager {
                 }
             } catch (IOException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d(BuildConfig.PACKAGE_NAME, "connection-settings", e);
+                    logger.d("connection-settings", e);
                 }
             }
         }
@@ -120,7 +122,7 @@ public class SettingsManager {
             bus.post(new ConnectionSettingsChanged(mSettings, 0));
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
-                Log.d(BuildConfig.PACKAGE_NAME, "Settings store", e);
+                logger.d("Settings store", e);
             }
         }
     }
@@ -222,7 +224,7 @@ public class SettingsManager {
             editor.apply();
 
             if (BuildConfig.DEBUG) {
-                Log.d(BuildConfig.PACKAGE_NAME, "update or fresh install");
+                logger.d("update or fresh install");
             }
         }
     }

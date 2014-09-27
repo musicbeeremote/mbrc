@@ -6,15 +6,17 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Base64;
-import android.util.Log;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.MainDataModel;
+import com.noveogroup.android.log.Logger;
+import com.noveogroup.android.log.LoggerManager;
 import roboguice.inject.InjectResource;
 import roboguice.util.RoboAsyncTask;
 
 public class ImageDecoder extends RoboAsyncTask<Bitmap> {
+    private static final Logger logger = LoggerManager.getLogger();
     @Inject private MainDataModel model;
     @InjectResource(R.drawable.ic_image_no_cover) private Drawable noCover;
 
@@ -31,7 +33,7 @@ public class ImageDecoder extends RoboAsyncTask<Bitmap> {
             return BitmapFactory.decodeByteArray(decodedImage, 0, decodedImage.length);
         } catch (Exception ex) {
             if (BuildConfig.DEBUG) {
-                Log.d(BuildConfig.PACKAGE_NAME, "image processing", ex);
+                logger.d("image processing", ex);
             }
         }
         return ((BitmapDrawable) noCover).getBitmap();

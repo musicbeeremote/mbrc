@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.net;
 
-import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
@@ -14,6 +13,8 @@ import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.util.DelayTimer;
 import com.kelsos.mbrc.util.MainThreadBusWrapper;
 import com.kelsos.mbrc.util.SettingsManager;
+import com.noveogroup.android.log.Logger;
+import com.noveogroup.android.log.LoggerManager;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.*;
@@ -24,6 +25,7 @@ import java.net.SocketTimeoutException;
 
 @Singleton
 public class SocketService {
+    private static final Logger logger = LoggerManager.getLogger();
     public static final int MAX_RETRIES = 3;
     public static final int BUFFER_SIZE = 4096;
     public static final int DELAY = 3;
@@ -121,7 +123,7 @@ public class SocketService {
             clSocket = null;
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
-                Log.d(BuildConfig.PACKAGE_NAME, "io exception on socket cleanup", e);
+                logger.d("io exception on socket cleanup", e);
             }
         }
     }
@@ -140,7 +142,7 @@ public class SocketService {
             }
         } catch (Exception ignored) {
             if (BuildConfig.DEBUG) {
-                Log.d(BuildConfig.PACKAGE_NAME, "socket send data exception", ignored);
+                logger.d("socket send data exception", ignored);
             }
         }
     }
@@ -182,7 +184,7 @@ public class SocketService {
                 bus.post(new NotifyUser(e.toString().substring(SUB_START)));
             } catch (IOException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d(BuildConfig.PACKAGE_NAME, "socket io/null pointer", e);
+                    logger.d("socket io/null pointer", e);
                 }
             } finally {
                 if (output != null) {
@@ -196,7 +198,7 @@ public class SocketService {
                     socketManager(SocketAction.RETRY);
                 }
                 if (BuildConfig.DEBUG) {
-                    Log.d(BuildConfig.PACKAGE_NAME, "socket closed");
+                    logger.d("socket closed");
                 }
             }
         }

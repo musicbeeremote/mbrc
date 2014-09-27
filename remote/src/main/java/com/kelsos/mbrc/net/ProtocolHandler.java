@@ -1,11 +1,12 @@
 package com.kelsos.mbrc.net;
 
-import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.noveogroup.android.log.Logger;
+import com.noveogroup.android.log.LoggerManager;
 import com.squareup.otto.Bus;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -14,6 +15,7 @@ import java.io.IOException;
 
 @Singleton
 public class ProtocolHandler {
+    private static final Logger logger = LoggerManager.getLogger();
     private Bus bus;
     private boolean isHandshakeComplete;
     private ObjectMapper mapper;
@@ -61,7 +63,7 @@ public class ProtocolHandler {
 
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
-                Log.d(BuildConfig.PACKAGE_NAME, "Incoming message pre-processor", e);
+                logger.d("Incoming message pre-processor", e);
 
             }
         }

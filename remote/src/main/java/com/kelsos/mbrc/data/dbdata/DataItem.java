@@ -1,11 +1,8 @@
 package com.kelsos.mbrc.data.dbdata;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.util.Log;
-import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.data.db.LibraryProvider;
 
 public abstract class DataItem implements BaseColumns {
@@ -30,13 +27,4 @@ public abstract class DataItem implements BaseColumns {
                         + LibraryProvider.AUTHORITY), getTableName());
     }
 
-    public void notifyProvider(final Context context) {
-        try {
-            context.getContentResolver().notifyChange(getUri(), null, false);
-        } catch (UnsupportedOperationException e) {
-            if (BuildConfig.DEBUG) {
-                Log.d(BuildConfig.PACKAGE_NAME, "notifyProvider", e);
-            }
-        }
-    }
 }

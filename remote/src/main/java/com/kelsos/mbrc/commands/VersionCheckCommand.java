@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.commands;
 
-import android.util.Log;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.constants.ProtocolEventType;
@@ -9,6 +8,8 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.util.SettingsManager;
+import com.noveogroup.android.log.Logger;
+import com.noveogroup.android.log.LoggerManager;
 import com.squareup.otto.Bus;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
@@ -22,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class VersionCheckCommand implements ICommand {
+    private static final Logger logger = LoggerManager.getLogger();
     private MainDataModel model;
     private ObjectMapper mapper;
     private SettingsManager manager;
@@ -49,7 +51,7 @@ public class VersionCheckCommand implements ICommand {
 
                 if (nextCheck.after(now)) {
                     if (BuildConfig.DEBUG) {
-                        Log.d(BuildConfig.PACKAGE_NAME, "waiting for next check: " + Long.toString(nextCheck.getTime()));
+                        logger.e("waiting for next check: " + Long.toString(nextCheck.getTime()));
                     }
                     return;
                 }
@@ -85,30 +87,30 @@ public class VersionCheckCommand implements ICommand {
 
                 manager.setLastUpdated(now);
                 if (BuildConfig.DEBUG) {
-                    Log.d(BuildConfig.PACKAGE_NAME, "last check on: " + Long.toString(now.getTime()));
-                    Log.d(BuildConfig.PACKAGE_NAME, "plugin reported version: " + model.getPluginVersion());
-                    Log.d(BuildConfig.PACKAGE_NAME, "plugin suggested version: " + suggestedVersion);
+                    logger.e("last check on: " + Long.toString(now.getTime()));
+                    logger.e("plugin reported version: " + model.getPluginVersion());
+                    logger.e("plugin suggested version: " + suggestedVersion);
                 }
 
             } catch (MalformedURLException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d(BuildConfig.PACKAGE_NAME, "version check MalformedURLException", e);
+                    logger.e("version check MalformedURLException", e);
                 }
             } catch (JsonMappingException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d(BuildConfig.PACKAGE_NAME, "version check JsonMappingException", e);
+                    logger.e("version check JsonMappingException", e);
                 }
             } catch (JsonParseException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d(BuildConfig.PACKAGE_NAME, "version check parse", e);
+                    logger.e("version check parse", e);
                 }
             } catch (IOException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d(BuildConfig.PACKAGE_NAME, "version check IOException", e);
+                    logger.e("version check IOException", e);
                 }
             } catch (NumberFormatException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d(BuildConfig.PACKAGE_NAME, "version check NumberFormatException", e);
+                    logger.e("version check NumberFormatException", e);
                 }
             }
         }

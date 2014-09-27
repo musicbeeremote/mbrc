@@ -2,7 +2,6 @@ package com.kelsos.mbrc.data;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
@@ -16,10 +15,14 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
 import com.kelsos.mbrc.util.ImageDecoder;
 import com.kelsos.mbrc.util.MainThreadBusWrapper;
+import com.noveogroup.android.log.Logger;
+import com.noveogroup.android.log.LoggerManager;
 import com.squareup.otto.Produce;
 
 @Singleton
 public class MainDataModel {
+
+    private static final Logger logger = LoggerManager.getLogger();
 
     public static final int MAX_VOLUME = 100;
     public static final String LOVE = "Love";
@@ -162,7 +165,7 @@ public class MainDataModel {
                 new ImageDecoder(context, base64format).execute();
             } catch (Exception e) {
                 if (BuildConfig.DEBUG) {
-                    Log.d(BuildConfig.PACKAGE_NAME, "image decoder", e);
+                    logger.d("image decoder", e);
                 }
             }
         }

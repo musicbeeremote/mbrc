@@ -3,25 +3,29 @@ package com.kelsos.mbrc.data;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.util.Base64;
-import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.dbdata.*;
+import com.kelsos.mbrc.data.dbdata.Album;
+import com.kelsos.mbrc.data.dbdata.Artist;
+import com.kelsos.mbrc.data.dbdata.Genre;
+import com.kelsos.mbrc.data.dbdata.Track;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.util.NotificationService;
+import com.noveogroup.android.log.Logger;
+import com.noveogroup.android.log.LoggerManager;
 import com.squareup.otto.Bus;
 
 import java.io.FileOutputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Singleton
 public class SyncHandler {
 
+    private static final Logger logger = LoggerManager.getLogger();
     private Context mContext;
     private NotificationService mNotification;
     private Bus bus;
@@ -58,13 +62,13 @@ public class SyncHandler {
             contentResolver.notifyChange(Album.getContentUri(), null, false);
             contentResolver.notifyChange(Artist.getContentUri(), null, false);
             contentResolver.notifyChange(Genre.getContentUri(), null, false);
-            requestNextBatch(0,0,5);
+            requestNextBatch(0,5);
         }
 
     }
 
-    public void setCovers(final List<Cover> list) {
-        //dbHelper.updateCoverHashes(list);
+    public void setCovers() {
+
     }
 
     public void updateCover(String image, String hash) {
@@ -78,16 +82,12 @@ public class SyncHandler {
             outputStream.close();
         }  catch (Exception ex) {
             if (BuildConfig.DEBUG) {
-                Log.d(BuildConfig.PACKAGE_NAME, "saving cover", ex);
+                logger.d("saving cover", ex);
             }
         }
     }
 
-    public void processBatch(final List<Track> trackList) {
-
-    }
-
-    public void requestNextBatch(int total, int offset, int limit) {
+    public void requestNextBatch(int offset, int limit) {
         Map<String, Object> syncData = new HashMap<>();
         syncData.put("type", "cover");
         syncData.put("offset", offset + limit);

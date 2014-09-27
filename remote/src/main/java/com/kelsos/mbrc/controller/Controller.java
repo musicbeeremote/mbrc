@@ -2,7 +2,6 @@ package com.kelsos.mbrc.controller;
 
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -11,6 +10,8 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
+import com.noveogroup.android.log.Logger;
+import com.noveogroup.android.log.LoggerManager;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.service.RoboService;
@@ -20,7 +21,7 @@ import java.util.Map;
 
 @Singleton
 public class Controller extends RoboService {
-
+    private static final Logger logger = LoggerManager.getLogger();
     @Inject private Injector injector;
     @Inject private Bus bus;
 
@@ -28,7 +29,7 @@ public class Controller extends RoboService {
 
     public Controller() {
         if (BuildConfig.DEBUG) {
-            Log.d(BuildConfig.PACKAGE_NAME, "Controller initialized");
+            logger.d( "Controller initialized");
         }
     }
 
@@ -55,6 +56,7 @@ public class Controller extends RoboService {
      * @param type The event The event type associated.
      * @param command The command associated with the event type.
      */
+    @SuppressWarnings("UnusedDeclaration")
     public void unregister(String type, Class<? extends ICommand> command) {
         if (commandMap.containsKey(type) && commandMap.get(type).equals(command)) {
             commandMap.remove(type);
@@ -90,8 +92,8 @@ public class Controller extends RoboService {
 
         } catch (Exception ex) {
             if (BuildConfig.DEBUG) {
-                Log.d(BuildConfig.PACKAGE_NAME, "executing command for type: \t" + event.getType(), ex);
-                Log.d(BuildConfig.PACKAGE_NAME, "command data: \t" + event.getData());
+                logger.d( "executing command for type: \t" + event.getType(), ex);
+                logger.d( "command data: \t" + event.getData());
             }
         }
 
