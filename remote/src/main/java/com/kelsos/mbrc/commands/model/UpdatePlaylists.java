@@ -4,7 +4,6 @@ import android.content.Context;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
-import com.kelsos.mbrc.data.db.LibraryDbHelper;
 import com.kelsos.mbrc.data.dbdata.Playlist;
 import com.kelsos.mbrc.data.dbdata.PlaylistTrack;
 import com.kelsos.mbrc.events.MessageEvent;
@@ -21,11 +20,11 @@ import java.util.List;
 import java.util.Map;
 
 public class UpdatePlaylists implements ICommand {
-    private LibraryDbHelper mHelper;
+
     private Bus bus;
 
     @Inject public UpdatePlaylists(final Context context, final Bus bus) {
-        mHelper = new LibraryDbHelper(context);
+
         this.bus = bus;
     }
 
@@ -43,11 +42,11 @@ public class UpdatePlaylists implements ICommand {
             for (int i = 0; i < node.size(); i++) {
                 JsonNode cNode = node.get(i);
                 PlaylistTrack entry = new PlaylistTrack(cNode);
-                entry.setPlaylistHash(jNode.path("playlist_hash").asText());
+                //entry.setPlaylistHash(jNode.path("playlist_hash").asText());
                 tracks.add(entry);
             }
 
-            mHelper.batchInsertPlaylistTracks(tracks);
+    //        mHelper.batchInsertPlaylistTracks(tracks);
 
             if (offset + limit <= total) {
                 Map<String, Object> message = new HashMap<>();
@@ -66,7 +65,7 @@ public class UpdatePlaylists implements ICommand {
                 Playlist entry = new Playlist(cNode);
                 playlists.add(entry);
             }
-            mHelper.batchInsertPlaylists(playlists);
+      //      mHelper.batchInsertPlaylists(playlists);
         }
 
 

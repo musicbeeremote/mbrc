@@ -63,7 +63,7 @@ public class ArtistAlbumsFragment extends BaseFragment implements LoaderManager.
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             int position = mi != null ? mi.position : 0;
-            album = new Album((Cursor) mAdapter.getItem(position));
+            album = new Album();
             switch (item.getItemId()) {
                 case BrowseMenuItems.GET_SUB:
                     showTracks(album);
@@ -146,7 +146,7 @@ public class ArtistAlbumsFragment extends BaseFragment implements LoaderManager.
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        album = new Album((Cursor) mAdapter.getItem(position));
+        album = new Album();
         showTracks(album);
     }
 

@@ -18,7 +18,7 @@
 -->
 
 <resources>
-    <color name="pressed_mbrc_dark">#CCFFDC14</color>
+    <color name="pressed_mbrc_dark">#CCfdd835</color>
     <color name="mbrc_background">#ff191919</color>
     <color name="mbrc_drawer_seperator">#0e0e0e</color>
     <color name="mbrc_subtitle">#ffa4a4a4</color>

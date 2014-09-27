@@ -70,30 +70,6 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
     @Override
     public boolean onContextItemSelected(android.view.MenuItem item) {
         if (item.getGroupId() == GROUP_ID) {
-            AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            int position = mi != null ? mi.position : 0;
-            album = new Album((Cursor) mAdapter.getItem(position));
-
-            switch (item.getItemId()) {
-                case BrowseMenuItems.GET_SUB:
-                    showTracks(album);
-                    break;
-                case BrowseMenuItems.PLAYLIST:
-                    final PlaylistDialogFragment dlFragment = new PlaylistDialogFragment();
-                    dlFragment.setOnPlaylistSelectedListener(this);
-                    dlFragment.show(getFragmentManager(), "playlist");
-                case BrowseMenuItems.PLAY_NOW:
-                    QueueTrack("now");
-                    break;
-                case BrowseMenuItems.QUEUE_LAST:
-                    QueueTrack("last");
-                    break;
-                case BrowseMenuItems.QUEUE_NEXT:
-                    QueueTrack("next");
-                    break;
-                default:
-                    break;
-            }
             return true;
         }
 
@@ -137,8 +113,7 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        final Album album = new Album((Cursor) mAdapter.getItem(position));
-        showTracks(album);
+        
     }
 
     @Override

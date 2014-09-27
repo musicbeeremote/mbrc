@@ -8,11 +8,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.db.LibraryDbHelper;
 import com.kelsos.mbrc.data.dbdata.*;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.net.Protocol;
-import com.kelsos.mbrc.util.DaoSessionManager;
 import com.kelsos.mbrc.util.NotificationService;
 import com.squareup.otto.Bus;
 
@@ -27,15 +25,12 @@ public class SyncHandler {
     private Context mContext;
     private NotificationService mNotification;
     private Bus bus;
-    private LibraryDbHelper dbHelper;
-    private DaoSessionManager mDaoSessionManager;
 
-    @Inject public SyncHandler(Context mContext, NotificationService mNotification, Bus bus, DaoSessionManager mDaoSessionManager) {
+    @Inject public SyncHandler(Context mContext, NotificationService mNotification, Bus bus) {
         this.mContext = mContext;
         this.mNotification = mNotification;
         this.bus = bus;
-        dbHelper = new LibraryDbHelper(mContext);
-        this.mDaoSessionManager = mDaoSessionManager;
+
 
     }
 
@@ -69,7 +64,7 @@ public class SyncHandler {
     }
 
     public void setCovers(final List<Cover> list) {
-        dbHelper.updateCoverHashes(list);
+        //dbHelper.updateCoverHashes(list);
     }
 
     public void updateCover(String image, String hash) {
@@ -88,13 +83,8 @@ public class SyncHandler {
         }
     }
 
-    public void processBatch(final List<com.kelsos.mbrc.dao.Track> trackList) {
-        mDaoSessionManager.getDaoSession().runInTx(new Runnable() {
-            @Override
-            public void run() {
-                mDaoSessionManager.getDaoSession().getTrackDao().insertInTx(trackList);
-            }
-        });
+    public void processBatch(final List<Track> trackList) {
+
     }
 
     public void requestNextBatch(int total, int offset, int limit) {

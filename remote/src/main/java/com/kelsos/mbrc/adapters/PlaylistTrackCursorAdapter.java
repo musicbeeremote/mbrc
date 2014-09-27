@@ -23,7 +23,7 @@ public class PlaylistTrackCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(final View view, Context context, Cursor cursor) {
-        final PlaylistTrack track = new PlaylistTrack(cursor);
+        final PlaylistTrack track = new PlaylistTrack();
         ((TextView) view.findViewById(R.id.line_one)).setText(track.getTitle());
         ((TextView) view.findViewById(R.id.line_two)).setText(track.getArtist());
         view.findViewById(R.id.ui_item_context_indicator).setOnClickListener(new View.OnClickListener() {

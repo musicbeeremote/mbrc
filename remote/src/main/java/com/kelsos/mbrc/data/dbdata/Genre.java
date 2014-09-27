@@ -4,43 +4,26 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import com.kelsos.mbrc.data.db.LibraryProvider;
 import com.kelsos.mbrc.data.interfaces.GenreColumns;
 
+@DatabaseTable(tableName = Genre.TABLE_NAME)
 public class Genre extends DataItem implements GenreColumns {
-    public static final String[] FIELDS ={_ID, GENRE_NAME};
 
-    private long id;
-    private String genreName;
     public static final String TABLE_NAME = "genres";
-
-    public static final String CREATE_TABLE =
-            "create table " + TABLE_NAME + "(" + _ID + " integer primary key,"
-                    + GENRE_NAME + " text, unique( " + GENRE_NAME + ") on conflict ignore" + ")";
-
-    public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
-    public static final String INSERT = "insert into " + TABLE_NAME + " (" + GENRE_NAME + ") values (?)";
-
-
-    public static Uri getContentUri() {
-        return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME + LibraryProvider.AUTHORITY), TABLE_NAME);
-    }
-
     public static final Uri CONTENT_URI = Uri.withAppendedPath(LibraryProvider.AUTHORITY_URI, TABLE_NAME);
     public static final Uri CONTENT_FILTER_URI = Uri.withAppendedPath(CONTENT_URI, "filter");
-
-    public static final int BASE_URI_CODE = 0x31847c3;
-    public static final int BASE_ITEM_CODE =  0x1e2395d;
-    public static final int BASE_FILTER_CODE = 0x214569;
-
-    public static void addMatcherUris(UriMatcher uriMatcher) {
-        uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME, BASE_URI_CODE);
-        uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME + "/#", BASE_ITEM_CODE);
-        uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME + "/filter/*", BASE_FILTER_CODE);
-    }
-
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;
     public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;
+    public static final int BASE_URI_CODE = 0x31847c3;
+    public static final int BASE_ITEM_CODE = 0x1e2395d;
+    public static final int BASE_FILTER_CODE = 0x214569;
+    @DatabaseField(generatedId = true)
+    private long id;
+    @DatabaseField
+    private String genreName;
 
     public Genre(String genreName) {
         this.id = -1;
@@ -52,13 +35,24 @@ public class Genre extends DataItem implements GenreColumns {
         this.genreName = cursor.getString(cursor.getColumnIndex(GENRE_NAME));
     }
 
+    public static Uri getContentUri() {
+        return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME + LibraryProvider.AUTHORITY), TABLE_NAME);
+    }
+
+    public static void addMatcherUris(UriMatcher uriMatcher) {
+        uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME, BASE_URI_CODE);
+        uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME + "/#", BASE_ITEM_CODE);
+        uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME + "/filter/*", BASE_FILTER_CODE);
+    }
+
     public ContentValues getContentValues() {
         ContentValues values = new ContentValues();
         values.put(GENRE_NAME, genreName);
         return values;
     }
 
-    @Override public String getTableName() {
+    @Override
+    public String getTableName() {
         return TABLE_NAME;
     }
 

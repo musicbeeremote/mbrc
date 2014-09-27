@@ -22,9 +22,9 @@ public class TrackCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(final View view, Context context, Cursor cursor) {
-        final Track album = new Track(cursor);
+        final Track album = new Track();
         ((TextView) view.findViewById(R.id.line_one)).setText(album.getTitle());
-        ((TextView) view.findViewById(R.id.line_two)).setText(album.getArtist());
+        ((TextView) view.findViewById(R.id.line_two)).setText(album.getArtist().getArtistName());
         view.findViewById(R.id.ui_item_context_indicator).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

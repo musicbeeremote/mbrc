@@ -92,14 +92,7 @@ public class PlaylistActivity extends BaseActivity implements LoaderManager.Load
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         Uri baseUri;
         baseUri = Uri.withAppendedPath(PlaylistTrack.CONTENT_HASH_URI, Uri.encode(String.valueOf(mHash)));
-        return new CursorLoader(this, baseUri,
-                new String[] {
-                        PlaylistTrack._ID,
-                        PlaylistTrack.ARTIST,
-                        PlaylistTrack.TITLE,
-                        PlaylistTrack.HASH
-                },
-                null, null, null);
+        return new CursorLoader(this, baseUri, null, null, null, null);
     }
 
     @Override

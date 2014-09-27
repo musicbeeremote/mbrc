@@ -4,8 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.SyncHandler;
-import com.kelsos.mbrc.data.db.LibraryDbHelper;
-import com.kelsos.mbrc.data.dbdata.NowPlayingTrack;
+import com.kelsos.mbrc.data.dbdata.QueueTrack;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import org.codehaus.jackson.JsonNode;
@@ -16,11 +15,9 @@ import java.util.List;
 
 public class HandleNowPlaying implements ICommand {
     private static final String TAG = HandleNowPlaying.class.getCanonicalName();
-    private LibraryDbHelper mHelper;
     private SyncHandler mHandler;
 
     @Inject public HandleNowPlaying(Context context, SyncHandler mHandler) {
-        this.mHelper = new LibraryDbHelper(context);
         this.mHandler = mHandler;
     }
 
@@ -35,12 +32,12 @@ public class HandleNowPlaying implements ICommand {
             int total = node.path("total").asInt(0);
             ArrayNode listData = (ArrayNode) node.path("data");
             final int size = listData.size();
-            List<NowPlayingTrack> list = new ArrayList<>();
+            List<QueueTrack> list = new ArrayList<>();
 
             for(int i = 0; i < size; i++) {
                 JsonNode jNode = listData.get(i);
-                list.add(new NowPlayingTrack(jNode));
-                mHelper.batchNowPlayingInsert(list);
+                list.add(new QueueTrack(jNode));
+                //mHelper.batchNowPlayingInsert(list);
 
             }
 

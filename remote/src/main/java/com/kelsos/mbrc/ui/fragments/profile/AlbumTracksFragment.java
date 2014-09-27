@@ -11,13 +11,9 @@ import android.view.*;
 import android.widget.*;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumProfileCursorAdapter;
-import com.kelsos.mbrc.data.dbdata.Album;
-import com.kelsos.mbrc.data.dbdata.Artist;
-import com.kelsos.mbrc.data.dbdata.Cover;
 import com.kelsos.mbrc.data.dbdata.Track;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseMenuItems;
-import com.squareup.picasso.Picasso;
 import roboguice.inject.InjectView;
 
 import static android.widget.AbsListView.OnScrollListener;
@@ -118,30 +114,6 @@ public class AlbumTracksFragment extends BaseListFragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        final Uri uri = Uri.withAppendedPath(Album.getContentUri(), String.valueOf(albumId));
-        final Cursor cursor = getActivity().getContentResolver().query(uri,
-                new String[]{
-                        Album._ID,
-                        Album.ALBUM_NAME,
-                        Album.ARTIST_ID,
-                        Artist.ARTIST_NAME,
-                        Album.COVER_HASH
-                }, null, null, null
-        );
-
-        cursor.moveToFirst();
-        final Album album = new Album(cursor);
-        final Uri artUri = Uri.withAppendedPath(Cover.CONTENT_IMAGE_URI, album.getCoverHash());
-
-        mAlbum.setText(album.getAlbumName());
-        mArtist.setText(album.getArtist());
-
-        Picasso.with(mContext)
-                .load(artUri)
-                .fit()
-                .placeholder(R.color.mbrc_transparent_dark)
-                .error(R.drawable.ic_image_no_cover)
-                .into(mArtwork);
     }
 
     @Override
@@ -193,15 +165,6 @@ public class AlbumTracksFragment extends BaseListFragment
         if (cHeaderHeight != mOldHeaderHeight) {
             setHeaderHeight(cHeaderHeight);
         }
-
-//        int headerHeight = cHeaderHeight - ((ActionBarActivity)getActivity())
-//                .getSupportActionBar()
-//                .getHeight();
-        //float ratio = (float) Math.min(Math.max(position, 0), headerHeight) / headerHeight;
-        //int newAlpha = (int) (ratio * 255);
-
-        //parallaxScrolling(position);
-
     }
 
     private void setHeaderHeight(int headerHeight) {
@@ -219,23 +182,6 @@ public class AlbumTracksFragment extends BaseListFragment
 
     }
 
-    private void parallaxScrolling(int position) {
-        float damping = 0.25f;
-        int dampedScroll = (int) (position * damping);
-        int offset = mLastDampedScroll - dampedScroll;
-        mHeader.offsetTopAndBottom(offset);
-
-        if (mListViewBackgroundView != null) {
-            offset = mLastScrollPosition - position;
-            mListViewBackgroundView.offsetTopAndBottom(offset);
-        }
-
-        if (isInit) {
-            mLastScrollPosition = position;
-            mLastDampedScroll = dampedScroll;
-        }
-    }
-
     @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.setHeaderTitle(R.string.search_context_header);
         menu.add(GROUP_ID, BrowseMenuItems.QUEUE_NEXT, 0, R.string.search_context_queue_next);
@@ -246,10 +192,6 @@ public class AlbumTracksFragment extends BaseListFragment
 
     @Override public boolean onContextItemSelected(android.view.MenuItem item) {
         if (item.getGroupId() == GROUP_ID) {
-            AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            int position = mi != null ? mi.position : 0;
-            //final Artist artist = new Artist((Cursor) mAdapter.getItem(position));
-
             switch (item.getItemId()) {
                 default:
                     break;

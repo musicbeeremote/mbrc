@@ -109,7 +109,7 @@ public class BrowseGenreFragment extends BaseListFragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         final Uri baseUri = Genre.CONTENT_URI;
-        return new CursorLoader(getActivity(), baseUri, Genre.FIELDS, null, null, null);
+        return new CursorLoader(getActivity(), baseUri, null, null, null, null);
     }
 
     @Override

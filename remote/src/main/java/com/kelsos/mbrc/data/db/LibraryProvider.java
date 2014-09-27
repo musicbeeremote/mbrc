@@ -29,10 +29,10 @@ public class LibraryProvider extends ContentProvider {
         Track.addMatcherUris(URI_MATCHER);
         Playlist.addMatcherUris(URI_MATCHER);
         PlaylistTrack.addMatcherUris(URI_MATCHER);
-        NowPlayingTrack.addMatcherUris(URI_MATCHER);
+        QueueTrack.addMatcherUris(URI_MATCHER);
     }
 
-    private LibraryDbHelper dbHelper;
+
 
     public LibraryProvider() {
         types = new Hashtable<>();
@@ -55,13 +55,12 @@ public class LibraryProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         mContext = getContext();
-        dbHelper = new LibraryDbHelper(mContext);
         return false;
     }
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        Cursor result;
+        Cursor result = null;
         final long id;
         final ContentResolver contentResolver = mContext.getContentResolver();
 
@@ -76,47 +75,27 @@ public class LibraryProvider extends ContentProvider {
                 result = getAlbumsForArtistCursor(uri, contentResolver);
                 break;
             case Artist.BASE_ITEM_CODE:
-                id = Long.parseLong(uri.getLastPathSegment());
-                result = dbHelper.getArtistCursor(id);
-                result.setNotificationUri(contentResolver, uri);
                 break;
             case Artist.BASE_URI_CODE:
-                result = dbHelper.getAllArtistsCursor(selection, selectionArgs);
-                result.setNotificationUri(contentResolver, uri);
                 break;
             case Artist.BASE_GENRE_FILTER:
-                result = getArtistsForGenreCursor(uri, contentResolver);
                 break;
             case Genre.BASE_ITEM_CODE:
-                id = Long.parseLong(uri.getLastPathSegment());
-                result = dbHelper.getGenreCursor(id);
-                result.setNotificationUri(contentResolver, uri);
+
                 break;
             case Genre.BASE_URI_CODE:
-                result = dbHelper.getAllGenresCursor(selection, selectionArgs);
-                result.setNotificationUri(contentResolver, uri);
                 break;
             case Genre.BASE_FILTER_CODE:
-                String search = String.format("%%%s%%", uri.getLastPathSegment());
-                result = dbHelper.getAllGenresCursor(String.format("%s LIKE ?", Genre.GENRE_NAME),
-                        new String[]{search}
-                );
-                result.setNotificationUri(contentResolver, uri);
+
                 break;
             case Track.BASE_ITEM_CODE:
-                id = Long.parseLong(uri.getLastPathSegment());
-                result = dbHelper.getTrackCursor(id);
-                result.setNotificationUri(contentResolver, uri);
                 break;
             case Track.BASE_URI_CODE:
-                result = dbHelper.getAllTracksCursor(selectionArgs);
-                result.setNotificationUri(contentResolver, uri);
                 break;
             case Track.BASE_ALBUM_FILTER_CODE:
-                result = getTracksForAlbumCursor(uri, contentResolver);
+
                 break;
             case Playlist.BASE_URI_CODE:
-                result = dbHelper.getAllPlaylistsCursor(null);
                 break;
             case PlaylistTrack.BASE_URI_CODE:
                 result = null;
@@ -125,9 +104,9 @@ public class LibraryProvider extends ContentProvider {
                 result = null;
                 break;
             case PlaylistTrack.BASE_HASH_CODE:
-                result = getPlaylistTracks(uri, contentResolver);
+
                 break;
-            case NowPlayingTrack.BASE_URI_CODE:
+            case QueueTrack.BASE_URI_CODE:
 
             default:
                 throw new IllegalArgumentException(String.format("Unknown Uri %s", uri));
@@ -137,7 +116,7 @@ public class LibraryProvider extends ContentProvider {
 
     private Cursor getAlbumCursor(Uri uri) {
 
-        final SQLiteDatabase db = dbHelper.getReadableDatabase();
+        final SQLiteDatabase db = null;
         SQLiteQueryBuilder sqBuilder;
         String dataSel;
         Cursor result = null;
@@ -173,114 +152,8 @@ public class LibraryProvider extends ContentProvider {
         return result;
     }
 
-    private Cursor getPlaylistTracks(Uri uri, ContentResolver contentResolver) {
-        final SQLiteDatabase db = dbHelper.getReadableDatabase();
-        SQLiteQueryBuilder sqBuilder;
-        String dataSel;
-        Cursor result = null;
-        if (db != null) {
-            String hash = uri.getLastPathSegment();
-            sqBuilder = new SQLiteQueryBuilder();
-            sqBuilder.setTables(String.format("%s pl, %s pltr",
-                    Playlist.TABLE_NAME, PlaylistTrack.TABLE_NAME));
-
-            dataSel = String.format("pltr.%s = pl.%s and pl.%s = ?",
-                    PlaylistTrack.PLAYLIST_ID, Playlist._ID,
-                    Playlist.PLAYLIST_HASH);
-
-            result = sqBuilder.query(db,
-                    new String[]{
-                            String.format("pltr.%s", PlaylistTrack._ID),
-                            PlaylistTrack.PLAYLIST_ID,
-                            PlaylistTrack.ARTIST,
-                            PlaylistTrack.TITLE,
-                            PlaylistTrack.HASH,
-                            PlaylistTrack.INDEX,
-                    },
-                    dataSel,
-                    new String[]{hash},
-                    String.format("pltr.%s", PlaylistTrack._ID),
-                    null,
-                    String.format("%s ASC", PlaylistTrack.INDEX)
-            );
-
-            if (result != null) {
-                result.setNotificationUri(contentResolver, uri);
-            }
-        }
-
-        return result;
-    }
-
-    private Cursor getTracksForAlbumCursor(Uri uri, ContentResolver contentResolver) {
-        final SQLiteDatabase db = dbHelper.getReadableDatabase();
-        SQLiteQueryBuilder sqBuilder;
-        String dataSel;
-        Cursor result = null;
-        if (db != null) {
-            String albumId = uri.getLastPathSegment();
-            sqBuilder = new SQLiteQueryBuilder();
-            sqBuilder.setTables(Track.TABLE_NAME);
-            dataSel = String.format("%s = ?", Track.ALBUM_ID);
-            result = sqBuilder.query(db,
-                    new String[]{
-                            Track._ID,
-                            Track.TITLE,
-                            Track.TRACK_NO
-                    },
-                    dataSel,
-                    new String[]{albumId},
-                    Track._ID,
-                    null,
-                    String.format("%s ASC", Track.TRACK_NO)
-            );
-            if (result != null) {
-                result.setNotificationUri(contentResolver, uri);
-            }
-        }
-        return result;
-    }
-
-    private Cursor getArtistsForGenreCursor(Uri uri, ContentResolver contentResolver) {
-        final SQLiteDatabase db = dbHelper.getReadableDatabase();
-        SQLiteQueryBuilder sqBuilder;
-        String dataSel;
-        Cursor result = null;
-        if (db != null) {
-            String genreId = uri.getLastPathSegment();
-            sqBuilder = new SQLiteQueryBuilder();
-            sqBuilder.setTables(String.format("%s ar, %s gen, %s t",
-                    Artist.TABLE_NAME,
-                    Genre.TABLE_NAME,
-                    Track.TABLE_NAME));
-
-            dataSel = String.format("ar.%s = t.%s and t. %s =  gen.%s and  gen.%s = ?",
-                    Artist._ID,
-                    Track.ARTIST_ID,
-                    Track.GENRE_ID,
-                    Genre._ID,
-                    Genre._ID);
-
-            result = sqBuilder.query(db,
-                    new String[]{
-                            Artist.ARTIST_NAME,
-                            String.format("ar.%s", Artist._ID)
-                    },
-                    dataSel,
-                    new String[]{genreId},
-                    String.format("ar.%s", Artist._ID),
-                    null,
-                    String.format("%s ASC", Artist.ARTIST_NAME)
-            );
-            if (result != null) {
-                result.setNotificationUri(contentResolver, uri);
-            }
-        }
-        return result;
-    }
-
     private Cursor getAlbumsForArtistCursor(Uri uri, ContentResolver contentResolver) {
-        final SQLiteDatabase db = dbHelper.getReadableDatabase();
+        final SQLiteDatabase db = null;
         SQLiteQueryBuilder sqBuilder;
         String dataSel;
         Cursor result = null;
@@ -322,7 +195,7 @@ public class LibraryProvider extends ContentProvider {
     }
 
     private Cursor getAlbumsCursor(Uri uri, ContentResolver contentResolver) {
-        final SQLiteDatabase db = dbHelper.getReadableDatabase();
+        final SQLiteDatabase db = null;
         String dataSel;
         Cursor result = null;
         if (db != null) {

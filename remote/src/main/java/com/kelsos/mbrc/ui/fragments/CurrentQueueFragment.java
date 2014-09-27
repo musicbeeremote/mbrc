@@ -13,7 +13,7 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.NowPlayingAdapter;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
-import com.kelsos.mbrc.data.dbdata.NowPlayingTrack;
+import com.kelsos.mbrc.data.dbdata.QueueTrack;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.events.ui.TrackMoved;
@@ -31,7 +31,7 @@ import java.util.Map;
 public class CurrentQueueFragment extends BaseListFragment implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
     @Inject private Injector injector;
     private NowPlayingAdapter adapter;
-    private NowPlayingTrack mTrack;
+    private QueueTrack mTrack;
 
     private DragSortListView mDslv;
     private DragSortController mController;
@@ -178,13 +178,13 @@ public class CurrentQueueFragment extends BaseListFragment implements android.su
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         Uri baseUri;
-        baseUri = NowPlayingTrack.getContentUri();
+        baseUri = QueueTrack.getContentUri();
         return new CursorLoader(getActivity(), baseUri, null, null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        cursor.setNotificationUri(getActivity().getContentResolver(), NowPlayingTrack.getContentUri());
+        cursor.setNotificationUri(getActivity().getContentResolver(), QueueTrack.getContentUri());
         adapter = new NowPlayingAdapter(getActivity(), cursor, 0);
         this.setListAdapter(adapter);
         adapter.notifyDataSetChanged();
