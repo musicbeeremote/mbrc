@@ -8,12 +8,14 @@ public class ConnectionSettings {
     private String address;
     private String name;
     private int port;
+    private int httpPort;
     private int index;
 
     public ConnectionSettings(JsonNode node) {
         this.address = node.path("address").asText();
         this.name = node.path("name").asText();
         this.port = node.path("port").asInt();
+        this.httpPort = node.path("httpPort").asInt();
         this.index = -1;
     }
 
