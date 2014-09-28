@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.rest;
 
 import com.kelsos.mbrc.rest.responses.*;
+import retrofit.Callback;
 import retrofit.http.*;
 
 import java.util.List;
@@ -8,89 +9,137 @@ import java.util.List;
 
 public interface RemoteApi {
     @GET("/player/volume")
-    ValueResponse getVolume();
+    void getVolume(Callback<ValueResponse> cb);
+
     @PUT("/player/volume")
-    SuccessResponse updateVolume(@Query("value") int volume);
+    void updateVolume(@Query("value") int volume, Callback<SuccessResponse> cb);
+
     @PUT("/track/rating")
-    SuccessResponse updateRating(@Query("rating") float rating);
+    void updateRating(@Query("rating") float rating, Callback<SuccessResponse> cb);
+
     @PUT("/track/position")
-    TrackPositionResponse updatePosition(@Query("position") int position);
+    void updatePosition(@Query("position") int position, Callback<TrackPositionResponse> cb);
+
     @PUT("/player/shuffle")
-    SuccessResponse updateShuffleState(@Query("enabled") boolean enabled);
+    void updateShuffleState(@Query("enabled") boolean enabled, Callback<SuccessResponse> cb);
+
     @PUT("/player/scrobble")
-    SuccessResponse updateScrobbleState(@Query("enabled") boolean enabled);
+    void updateScrobbleState(@Query("enabled") boolean enabled, Callback<SuccessResponse> cb);
+
     @PUT("/player/repeat")
-    SuccessResponse updateRepeatState(@Query("enabled") boolean enabled);
+    void updateRepeatState(@Query("enabled") boolean enabled, Callback<SuccessResponse> cb);
+
     @PUT("/player/mute")
-    SuccessResponse updateMuteState(@Query("enabled") boolean enabled);
+    void updateMuteState(@Query("enabled") boolean enabled, Callback<SuccessResponse> cb);
+
     @PUT("/player/autodj")
-    SuccessResponse updateAutoDjState(@Query("enabled") boolean enabled);
+    void updateAutoDjState(@Query("enabled") boolean enabled, Callback<SuccessResponse> cb);
+
     @GET("/player/previous")
-    SuccessResponse playPrevious();
+    void playPrevious(Callback<SuccessResponse> cb);
+
     @GET("/player/next")
-    SuccessResponse playNext();
+    void playNext(Callback<SuccessResponse> cb);
+
     @PUT("/playlists/play")
-    SuccessResponse playPlaylist(@Query("path") String path);
+    void playPlaylist(@Query("path") String path, Callback<SuccessResponse> cb);
+
     @GET("/player/stop")
-    SuccessResponse playbackStop();
+    void playbackStop(Callback<SuccessResponse> cb);
+
     @GET("/player/play")
-    SuccessResponse playbackStart();
+    void playbackStart(Callback<SuccessResponse> cb);
+
     @GET("/player/pause")
-    SuccessResponse playbackPause();
+    void playbackPause(Callback<SuccessResponse> cb);
+
     @DELETE("/nowplaying/{id}")
-    SuccessResponse nowPlayingRemoveTrack(@Path("id") int id);
+    void nowPlayingRemoveTrack(@Path("id") int id, Callback<SuccessResponse> cb);
+
     @PUT("/nowplaying/play")
-    SuccessResponse nowPlayingPlayTrack(@Query("path") String path);
+    void nowPlayingPlayTrack(@Query("path") String path, Callback<SuccessResponse> cb);
+
     @PUT("/nowplaying/move")
-    SuccessResponse nowPlayingMoveTrack(@Query("from") int from, @Query("to") int to);
+    void nowPlayingMoveTrack(@Query("from") int from, @Query("to") int to, Callback<SuccessResponse> cb);
+
     @PUT("/playlists/{id}/tracks/move")
-    SuccessResponse playlistMoveTrack(@Path("id") int id, @Query("from") int from, @Query("to") int to);
+    void playlistMoveTrack(@Path("id") int id,
+                           @Query("from") int from,
+                           @Query("to") int to,
+                           Callback<SuccessResponse> cb);
+
     @GET("/track/rating")
-    RatingResponse getTrackRating();
+    void getTrackRating(Callback<RatingResponse> cb);
+
     @GET("/track/position")
-    TrackPositionResponse getCurrentPosition();
+    void getCurrentPosition(Callback<TrackPositionResponse> cb);
+
     @GET("/track/lyrics")
-    LyricsResponse getTrackLyrics();
+    void getTrackLyrics(Callback<LyricsResponse> cb);
+
     @GET("/track/cover")
-    CoverResponse getTrackCover();
+    void getTrackCover(Callback<CoverResponse> cb);
+
     @GET("/track")
-    TrackResponse getTrackInfo();
+    void getTrackInfo(Callback<TrackResponse> cb);
+
     @GET("/player/shuffle")
-    StateResponse getShuffleState();
+    void getShuffleState(Callback<StateResponse> cb);
+
     @GET("/player/scrobble")
-    StateResponse getScrobbleState();
+    void getScrobbleState(Callback<StateResponse> cb);
+
     @GET("/player/repeat")
-    TextValueResponse getRepeatMode();
+    void getRepeatMode(Callback<TextValueResponse> cb);
+
     @GET("/player/playstate")
-    TextValueResponse getPlaystate();
+    void getPlaystate(Callback<TextValueResponse> cb);
+
     @GET("/playlists/{id}/tracks")
-    PaginatedDataResponse getPlaylistTracks(@Path("id") int id, @Query("offset") int offset, @Query("limit") int limit);
+    void getPlaylistTracks(@Path("id") int id,
+                           @Query("offset") int offset,
+                           @Query("limit") int limit,
+                           Callback<PaginatedDataResponse> cb);
+
     @GET("/player/status")
-    PlayerStatusResponse getPlayerStatus();
+    void getPlayerStatus(Callback<PlayerStatusResponse> cb);
+
     @GET("/player/mute")
-    StateResponse getMuteState();
+    void getMuteState(Callback<StateResponse> cb);
+
     @GET("/library/genres")
-    PaginatedDataResponse getLibraryGenres(@Query("offset") int offset, @Query("limit") int limit);
+    void getLibraryGenres(@Query("offset") int offset, @Query("limit") int limit, Callback<PaginatedDataResponse> cb);
+
     @GET("/library/tracks")
-    PaginatedDataResponse getLibraryTracks(@Query("offset") int offset, @Query("limit") int limit);
+    void getLibraryTracks(@Query("offset") int offset, @Query("limit") int limit, Callback<PaginatedDataResponse> cb);
+
     @GET("/library/covers")
-    PaginatedDataResponse getLibraryCoverss(@Query("offset") int offset, @Query("limit") int limit);
+    void getLibraryCoverss(@Query("offset") int offset, @Query("limit") int limit, Callback<PaginatedDataResponse> cb);
+
     @GET("/library/artists")
-    PaginatedDataResponse getLibraryArtists(@Query("offset") int offset, @Query("limit") int limit);
+    void getLibraryArtists(@Query("offset") int offset, @Query("limit") int limit, Callback<PaginatedDataResponse> cb);
+
     @GET("/library/albums")
-    PaginatedDataResponse getLibraryAlbums(@Query("offset") int offset, @Query("limit") int limit);
+    void getLibraryAlbums(@Query("offset") int offset, @Query("limit") int limit, Callback<PaginatedDataResponse> cb);
+
     @GET("/library/autodj")
-    StateResponse getAutodjState();
+    void getAutodjState(Callback<StateResponse> cb);
+
     @DELETE("/playlists/{id}/tracks")
-    SuccessResponse deletePlaylistTrack(@Path("id") int id, @Query("index") int index);
+    void deletePlaylistTrack(@Path("id") int id, @Query("index") int index, Callback<SuccessResponse> cb);
+
     @DELETE("/playlists/{id}")
-    SuccessResponse deletePlaylist(@Path("id") int id);
+    void deletePlaylist(@Path("id") int id, Callback<SuccessResponse> cb);
+
     @PUT("/playlists")
-    SuccessResponse createPlaylist(@Query("name") String name, @Query("list") List<String> list);
+    void createPlaylist(@Query("name") String name, @Query("list") List<String> list, Callback<SuccessResponse> cb);
+
     @GET("/playlists")
-    PaginatedDataResponse getPlaylists(@Query("offset") int offset, @Query("limit") int limit);
+    void getPlaylists(@Query("offset") int offset, @Query("limit") int limit, Callback<PaginatedDataResponse> cb);
+
     @GET("/nowplaying")
-    PaginatedDataResponse getNowPlayingList(@Query("offset") int offset, @Query("limit") int limit);
+    void getNowPlayingList(@Query("offset") int offset, @Query("limit") int limit, Callback<PaginatedDataResponse> cb);
+
     @PUT("/playlists/{id}/tracks")
-    SuccessResponse addTracksToPlaylist(@Path("id") int id, List<String> list);
+    void addTracksToPlaylist(@Path("id") int id, List<String> list, Callback<SuccessResponse> cb);
 }
