@@ -1,13 +1,20 @@
 package com.kelsos.mbrc.rest;
 
+import com.kelsos.mbrc.converter.JacksonConverter;
 import com.kelsos.mbrc.rest.responses.*;
+import org.codehaus.jackson.map.ObjectMapper;
 import retrofit.Callback;
+import retrofit.client.Response;
+import retrofit.converter.Converter;
 import retrofit.http.*;
 
 import java.util.List;
 
 
 public interface RemoteApi {
+    Converter DATA_CONVERTER = new JacksonConverter(new ObjectMapper());
+    String API_URL = "http://192.168.100.223:8189";
+
     @GET("/player/volume")
     void getVolume(Callback<ValueResponse> cb);
 
@@ -79,6 +86,10 @@ public interface RemoteApi {
 
     @GET("/track/cover")
     void getTrackCover(Callback<CoverResponse> cb);
+
+    @GET("/track/cover/raw")
+    @Streaming
+    void getTrackCoverData(Callback<Response> cb);
 
     @GET("/track")
     void getTrackInfo(Callback<TrackResponse> cb);
