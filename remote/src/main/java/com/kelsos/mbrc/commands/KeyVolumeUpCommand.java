@@ -1,14 +1,15 @@
 package com.kelsos.mbrc.commands;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.MainDataModel;
-import com.kelsos.mbrc.data.UserAction;
-import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
-import com.kelsos.mbrc.net.Protocol;
+import com.kelsos.mbrc.rest.RemoteApi;
+import com.kelsos.mbrc.rest.responses.SuccessResponse;
 import com.squareup.otto.Bus;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class KeyVolumeUpCommand implements ICommand {
     public static final int GREATEST_NOT_MAX = 90;
@@ -16,6 +17,10 @@ public class KeyVolumeUpCommand implements ICommand {
     public static final int MOD = STEP;
     public static final int BASE = 0;
     public static final int LIMIT = 5;
+
+    @Inject
+    private RemoteApi api;
+
     private MainDataModel model;
     private Bus bus;
 
@@ -37,7 +42,17 @@ public class KeyVolumeUpCommand implements ICommand {
                 volume = model.getVolume() + ((2 * STEP) - mod);
             }
 
-            bus.post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYER_VOLUME, volume)));
+            api.updateVolume(volume, new Callback<SuccessResponse>() {
+                @Override
+                public void success(SuccessResponse successResponse, Response response) {
+
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+
+                }
+            });
         }
     }
 }

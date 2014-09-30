@@ -5,17 +5,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.constants.Const;
-import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.UserAction;
-import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RepeatChange;
 import com.kelsos.mbrc.events.ui.ShuffleChange;
-import com.kelsos.mbrc.net.Protocol;
+import com.kelsos.mbrc.rest.RemoteApi;
+import com.kelsos.mbrc.rest.responses.SuccessResponse;
 import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.squareup.otto.Subscribe;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 import roboguice.inject.InjectView;
 
 public class ButtonFragment extends BaseFragment {
@@ -24,38 +25,81 @@ public class ButtonFragment extends BaseFragment {
     @InjectView(R.id.main_button_next) private ImageButton nextButton;
     @InjectView(R.id.main_shuffle_button) private ImageButton shuffleButton;
     @InjectView(R.id.main_repeat_button) private ImageButton repeatButton;
+
+    @Inject
+    private RemoteApi api;
     private View.OnClickListener playButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            post(new UserAction(Protocol.PLAYER_PLAY_PAUSE, true));
+            api.playbackStart(new Callback<SuccessResponse>() {
+                @Override
+                public void success(SuccessResponse successResponse, Response response) {
+
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+
+                }
+            });
         }
     };
     private View.OnClickListener previousButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            post(new UserAction(Protocol.PLAYER_PREVIOUS, true));
+            api.playPrevious(new Callback<SuccessResponse>() {
+                @Override
+                public void success(SuccessResponse successResponse, Response response) {
+
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+
+                }
+            });
         }
     };
     private View.OnClickListener nextButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            post(new UserAction(Protocol.PLAYER_NEXT, true));
+            api.playNext(new Callback<SuccessResponse>() {
+                @Override
+                public void success(SuccessResponse successResponse, Response response) {
+
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+
+                }
+            });
         }
     };
     private View.OnLongClickListener stopListener = new View.OnLongClickListener() {
         @Override public boolean onLongClick(View v) {
-            post(new UserAction(Protocol.PLAYER_STOP, true));
+            api.playbackStop(new Callback<SuccessResponse>() {
+                @Override
+                public void success(SuccessResponse successResponse, Response response) {
+
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+
+                }
+            });
             return true;
         }
     };
     private ImageButton.OnClickListener shuffleListener = new ImageButton.OnClickListener() {
         @Override public void onClick(View v) {
-            post(new UserAction(Protocol.PLAYER_SHUFFLE, Const.TOGGLE));
+            //api.updateShuffleState();
         }
     };
     private ImageButton.OnClickListener repeatListener = new ImageButton.OnClickListener() {
         @Override public void onClick(View v) {
-            post(new UserAction(Protocol.PLAYER_REPEAT, Const.TOGGLE));
+            //api.updateRepeatState()
         }
     };
 
@@ -94,7 +138,7 @@ public class ButtonFragment extends BaseFragment {
         switch (change.getState()) {
             case PLAYING:
                 playButton.setImageResource(R.drawable.ic_media_pause);
-                post(new UserAction(Protocol.NOW_PLAYING_POSITION, true));
+
                 break;
             case PAUSED:
                 playButton.setImageResource(R.drawable.ic_media_play);
@@ -110,7 +154,4 @@ public class ButtonFragment extends BaseFragment {
         }
     }
 
-    private void post(UserAction data) {
-        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, data));
-    }
 }

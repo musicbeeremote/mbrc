@@ -15,17 +15,15 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.InfoButtonPagerAdapter;
-import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
-import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.noveogroup.android.log.Logger;
 import com.noveogroup.android.log.LoggerManager;
 import com.squareup.otto.Subscribe;
+import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
 import roboguice.inject.InjectView;
 
@@ -36,7 +34,6 @@ import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class MainFragment extends BaseFragment {
-    private static final Logger logger = LoggerManager.getLogger();
     /**
      * Total milliseconds in a second (1000)
      */
@@ -45,45 +42,46 @@ public class MainFragment extends BaseFragment {
      * Total seconds in a minute (60)
      */
     public static final int SECONDS = 60;
-    @InjectView(R.id.main_track_progress_current) private TextView trackProgressCurrent;
-    @InjectView(R.id.main_track_duration_total) private TextView trackDuration;
-    @InjectView(R.id.main_track_progress_seeker) private SeekBar trackProgressSlider;
-    @InjectView(R.id.main_album_cover_image_view) private ImageView albumCover;
-    @InjectView(R.id.ratingWrapper) private LinearLayout ratingWrapper;
-    @InjectView(R.id.track_rating_bar) private RatingBar trackRating;
-
-    private int previousVol;
-    private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
-    private ScheduledFuture mProgressUpdateHandler;
-    private InfoButtonPagerAdapter mAdapter;
-    private boolean isTablet;
-
-    private RatingBar.OnRatingBarChangeListener ratingChangeListener = new RatingBar.OnRatingBarChangeListener() {
-        @Override
-        public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-            if (b) {
-                post(new UserAction(Protocol.NOW_PLAYING_RATING, v));
-            }
-        }
-    };
     public static final int TIME_PERIOD = 1;
-
-    private void post(UserAction data) {
-        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, data));
-    }
-
+    private static final Logger logger = LoggerManager.getLogger();
+    private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
+    @InjectView(R.id.main_track_progress_current)
+    private TextView trackProgressCurrent;
+    @InjectView(R.id.main_track_duration_total)
+    private TextView trackDuration;
+    @InjectView(R.id.main_track_progress_seeker)
+    private SeekBar trackProgressSlider;
+    @InjectView(R.id.main_album_cover_image_view)
+    private ImageView albumCover;
+    @InjectView(R.id.ratingWrapper)
+    private LinearLayout ratingWrapper;
+    @InjectView(R.id.track_rating_bar)
+    private RatingBar trackRating;
+    private int previousVol;
     private SeekBar.OnSeekBarChangeListener durationSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser && progress != previousVol) {
-                post(new UserAction(Protocol.NOW_PLAYING_POSITION, String.valueOf(progress)));
                 previousVol = progress;
             }
         }
 
-        public void onStartTrackingTouch(SeekBar seekBar) { }
+        public void onStartTrackingTouch(SeekBar seekBar) {
+        }
 
-        public void onStopTrackingTouch(SeekBar seekBar) { }
+        public void onStopTrackingTouch(SeekBar seekBar) {
+        }
 
+    };
+    private ScheduledFuture mProgressUpdateHandler;
+    private InfoButtonPagerAdapter mAdapter;
+    private boolean isTablet;
+    private RatingBar.OnRatingBarChangeListener ratingChangeListener = new RatingBar.OnRatingBarChangeListener() {
+        @Override
+        public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+            if (b) {
+
+            }
+        }
     };
     private ImageView.OnClickListener coverOnClick = new ImageView.OnClickListener() {
 
@@ -117,16 +115,19 @@ public class MainFragment extends BaseFragment {
             animation.setRepeatCount(1);
 
             animation.setAnimationListener(new Animation.AnimationListener() {
-                @Override public void onAnimationStart(Animation animation) {
+                @Override
+                public void onAnimationStart(Animation animation) {
                     isActive = true;
                 }
 
-                @Override public void onAnimationEnd(Animation animation) {
+                @Override
+                public void onAnimationEnd(Animation animation) {
                     isActive = false;
                     ratingWrapper.setVisibility(View.INVISIBLE);
                 }
 
-                @Override public void onAnimationRepeat(Animation animation) {
+                @Override
+                public void onAnimationRepeat(Animation animation) {
                 }
             });
             ratingWrapper.setVisibility(View.VISIBLE);
@@ -134,7 +135,8 @@ public class MainFragment extends BaseFragment {
         }
     };
 
-    @Override public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         isTablet = getResources().getBoolean(R.bool.isTablet);
@@ -143,7 +145,8 @@ public class MainFragment extends BaseFragment {
         }
     }
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ui_fragment_main, container, false);
         if (!isTablet && !isLandscape()) {
             ViewPager mPager = (ViewPager) view.findViewById(R.id.mbrc_main_infopager);
@@ -154,15 +157,16 @@ public class MainFragment extends BaseFragment {
         return view;
     }
 
-    @Override public void onStart() {
+    @Override
+    public void onStart() {
         super.onStart();
         setTextViewTypeface();
         registerListeners();
     }
 
-    @Override public void onResume() {
+    @Override
+    public void onResume() {
         super.onResume();
-        post(new UserAction(Protocol.NOW_PLAYING_POSITION, true));
     }
 
     /**
@@ -191,17 +195,19 @@ public class MainFragment extends BaseFragment {
             trackProgressCurrent.setTypeface(robotoRegular);
             trackDuration.setTypeface(robotoRegular);
         } catch (Exception e) {
-            if (BuildConfig.DEBUG){
+            if (BuildConfig.DEBUG) {
                 logger.d("setting typeface", e);
             }
         }
     }
 
-    @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.share, menu);
     }
 
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.actionbar_share:
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
@@ -218,28 +224,31 @@ public class MainFragment extends BaseFragment {
 
     }
 
-    @Subscribe public void handleRatingChange(final RatingChanged event) {
+    @Subscribe
+    public void handleRatingChange(final RatingChanged event) {
         if (trackRating != null) {
             trackRating.setRating(event.getRating());
         }
     }
 
-    @Subscribe public void handleCoverEvent(final CoverAvailable cevent) {
+    @Subscribe
+    public void handleCoverEvent(final CoverAvailable cevent) {
         if (albumCover == null) {
             return;
         }
-        if (cevent.getIsAvailable()) {
-            albumCover.setImageBitmap(cevent.getCover());
-        } else {
-            albumCover.setImageResource(R.drawable.ic_image_no_cover);
-        }
+
+        Picasso.with(getActivity().getBaseContext())
+                .load(cevent.getCoverUrl())
+                .placeholder(R.drawable.ic_image_no_cover)
+                .fit()
+                .into(albumCover);
     }
 
-    @Subscribe public void handlePlayStateChange(final PlayStateChange change) {
+    @Subscribe
+    public void handlePlayStateChange(final PlayStateChange change) {
         switch (change.getState()) {
             case PLAYING:
                 /* Start the animation if the track is playing*/
-                post(new UserAction(Protocol.NOW_PLAYING_POSITION, true));
                 trackProgressAnimation();
                 break;
             case PAUSED:
@@ -272,14 +281,15 @@ public class MainFragment extends BaseFragment {
      * Starts the progress animation when called. If It was previously running then it restarts it.
      */
     private void trackProgressAnimation() {
-        if (!isVisible()){
+        if (!isVisible()) {
             return;
         }
         /* If the scheduled tasks is not null then cancel it and clear it along with the timer to create them anew */
         stopTrackProgressAnimation();
 
         final Runnable updateProgress = new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
 
                 int currentProgress = trackProgressSlider.getProgress() / MILLISECONDS;
                 final int currentMinutes = currentProgress / SECONDS;
@@ -291,7 +301,8 @@ public class MainFragment extends BaseFragment {
 
                 getActivity().runOnUiThread(new Runnable() {
 
-                    @Override public void run() {
+                    @Override
+                    public void run() {
                         try {
                             if (trackProgressSlider == null) {
                                 return;
@@ -322,14 +333,16 @@ public class MainFragment extends BaseFragment {
         trackProgressCurrent.setText("00:00");
     }
 
-    @Subscribe public void handleTrackInfoChange(final TrackInfoChange change) {
+    @Subscribe
+    public void handleTrackInfoChange(final TrackInfoChange change) {
         ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
         actionBar.setTitle(change.getTitle());
         actionBar.setSubtitle(change.getAlbum());
         actionBar.setDisplayShowTitleEnabled(true);
     }
 
-    @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChange change) {
+    @Subscribe
+    public void handleConnectionStatusChange(final ConnectionStatusChange change) {
         if (change.getStatus() == ConnectionStatus.CONNECTION_OFF) {
             stopTrackProgressAnimation();
             activateStoppedState();
@@ -340,7 +353,8 @@ public class MainFragment extends BaseFragment {
      * Responsible for updating the displays and seekbar responsible for the display of the track duration and the
      * current progress of playback
      */
-    @Subscribe public void handlePositionUpdate(UpdatePosition position) {
+    @Subscribe
+    public void handlePositionUpdate(UpdatePosition position) {
         final int total = position.getTotal();
         final int current = position.getCurrent();
         if (trackProgressCurrent == null || trackProgressSlider == null || trackDuration == null) {
@@ -372,6 +386,7 @@ public class MainFragment extends BaseFragment {
 
     /**
      * Returns true if the orientation is landscape and false if it is horizontal.
+     *
      * @return true or false
      */
     public boolean isLandscape() {

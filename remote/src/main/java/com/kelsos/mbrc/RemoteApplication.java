@@ -8,7 +8,6 @@ import com.google.inject.util.Modules;
 import com.kelsos.mbrc.controller.Controller;
 import com.kelsos.mbrc.data.MainDataModel;
 import com.kelsos.mbrc.data.SyncHandler;
-import com.kelsos.mbrc.net.ProtocolHandler;
 import com.kelsos.mbrc.net.SocketService;
 import com.kelsos.mbrc.util.NotificationService;
 import com.kelsos.mbrc.util.RemoteBroadcastReceiver;
@@ -34,7 +33,7 @@ public class RemoteApplication extends Application {
 
         //Initialization of the background service
         injector.getInstance(MainDataModel.class);
-        injector.getInstance(ProtocolHandler.class);
+
         injector.getInstance(SocketService.class);
         injector.getInstance(RemoteBroadcastReceiver.class);
         injector.getInstance(NotificationService.class);

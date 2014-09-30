@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
@@ -13,7 +12,6 @@ import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
-import com.kelsos.mbrc.util.ImageDecoder;
 import com.kelsos.mbrc.util.MainThreadBusWrapper;
 import com.noveogroup.android.log.Logger;
 import com.noveogroup.android.log.LoggerManager;
@@ -155,58 +153,19 @@ public class MainDataModel {
         return this.volume;
     }
 
-    public void setCover(String base64format) {
-        if (base64format == null || base64format.equals(EMPTY)) {
-            cover = null;
-            bus.post(new CoverAvailable());
-            updateNotification();
-        } else {
-            try {
-                new ImageDecoder(context, base64format).execute();
-            } catch (Exception e) {
-                if (BuildConfig.DEBUG) {
-                    logger.d("image decoder", e);
-                }
-            }
-        }
-    }
-
-    public void setAlbumCover(Bitmap cover) {
-        this.cover = cover;
-        bus.post(new CoverAvailable(cover));
-        updateNotification();
-    }
-
-    @Produce public CoverAvailable produceAvailableCover() {
-        return cover == null ? new CoverAvailable() : new CoverAvailable(cover);
-    }
-
     public void setConnectionState(String connectionActive) {
         isConnectionOn = Boolean.parseBoolean(connectionActive);
         if (!isConnectionOn) {
             setPlayState(Const.STOPPED);
         }
         bus.post(new ConnectionStatusChange(isConnectionOn
-                ? (isHandShakeDone
-                    ? ConnectionStatus.CONNECTION_ACTIVE
-                    : ConnectionStatus.CONNECTION_ON)
-                : ConnectionStatus.CONNECTION_OFF));
-    }
-
-    public void setHandShakeDone(boolean handShakeDone) {
-        this.isHandShakeDone = handShakeDone;
-        bus.post(new ConnectionStatusChange(isConnectionOn
-                ? (isHandShakeDone
-                    ? ConnectionStatus.CONNECTION_ACTIVE
-                    : ConnectionStatus.CONNECTION_ON)
+                ? ConnectionStatus.CONNECTION_ACTIVE
                 : ConnectionStatus.CONNECTION_OFF));
     }
 
     @Produce public ConnectionStatusChange produceConnectionStatus() {
         return new ConnectionStatusChange(isConnectionOn
-                ? (isHandShakeDone
                     ? ConnectionStatus.CONNECTION_ACTIVE
-                    : ConnectionStatus.CONNECTION_ON)
                 : ConnectionStatus.CONNECTION_OFF);
     }
 

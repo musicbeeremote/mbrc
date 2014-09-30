@@ -10,9 +10,7 @@ import android.telephony.TelephonyManager;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.net.Protocol;
 import com.squareup.otto.Bus;
 import roboguice.receiver.RoboBroadcastReceiver;
 
@@ -57,19 +55,19 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
                 }
                 break;
             case NotificationService.NOTIFICATION_PLAY_PRESSED:
-                bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
-                        new UserAction(Protocol.PLAYER_PLAY_PAUSE, true)));
+//                bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
+//                        new UserAction(Notification.PLAYER_PLAY_PAUSE, true)));
                 break;
             case NotificationService.NOTIFICATION_NEXT_PRESSED:
-                bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
-                        new UserAction(Protocol.PLAYER_NEXT, true)));
+//                bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
+//                        new UserAction(Notification.PLAYER_NEXT, true)));
                 break;
             case NotificationService.NOTIFICATION_CLOSE_PRESSED:
                 bus.post(new MessageEvent(UserInputEventType.CANCEL_NOTIFICATION));
                 break;
             case NotificationService.NOTIFICATION_PREVIOUS_PRESSED:
-                bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
-                        new UserAction(Protocol.PLAYER_PREVIOUS, true)));
+//                bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,
+//                        new UserAction(Notification.PLAYER_PREVIOUS, true)));
                 break;
             default:
                 break;

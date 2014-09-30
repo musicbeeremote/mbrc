@@ -14,6 +14,7 @@ import java.util.List;
 public interface RemoteApi {
     Converter DATA_CONVERTER = new JacksonConverter(new ObjectMapper());
     String API_URL = "http://192.168.100.223:8189";
+    String COVER_URL = RemoteApi.API_URL + "/track/cover/raw";
 
     @GET("/player/volume")
     void getVolume(Callback<ValueResponse> cb);

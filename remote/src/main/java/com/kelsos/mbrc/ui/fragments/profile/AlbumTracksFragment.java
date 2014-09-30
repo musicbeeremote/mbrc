@@ -76,7 +76,7 @@ public class AlbumTracksFragment extends BaseListFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getLoaderManager().initLoader(URL_LOADER, null, this);
+        //getLoaderManager().initLoader(URL_LOADER, null, this);
         // Inflate the layout for this fragment
         mContentView = inflater.inflate(R.layout.fragment_album_tracks, container, false);
         if (mContentView != null) {

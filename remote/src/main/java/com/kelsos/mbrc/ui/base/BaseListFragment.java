@@ -1,13 +1,11 @@
 package com.kelsos.mbrc.ui.base;
 
-import com.google.inject.Inject;
-import roboguice.RoboGuice;
-
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.view.View;
+import com.google.inject.Inject;
+import roboguice.fragment.provided.RoboListFragment;
 
-public abstract class BaseListFragment extends ListFragment {
+public abstract class BaseListFragment extends RoboListFragment {
     @Inject private ScopedBus scopedBus;
     protected ScopedBus getBus() {
         return scopedBus;
@@ -15,14 +13,12 @@ public abstract class BaseListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        RoboGuice.getInjector(getActivity()).injectMembersWithoutViews(this);
         scopedBus.register(this);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        RoboGuice.getInjector(getActivity()).injectViewMembers(this);
     }
 
     @Override public void onPause() {

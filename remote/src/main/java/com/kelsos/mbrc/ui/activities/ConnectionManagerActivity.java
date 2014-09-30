@@ -3,7 +3,7 @@ package com.kelsos.mbrc.ui.activities;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import android.app.DialogFragment;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -101,7 +101,7 @@ public class ConnectionManagerActivity extends BaseActivity implements SettingsD
                 args.putInt("port", mSettings.getPort());
                 args.putInt("index", position);
                 settingsDialog.setArguments(args);
-                settingsDialog.show(getSupportFragmentManager(), "settings_dialog");
+                settingsDialog.show(getFragmentManager(), "settings_dialog");
                 break;
             case DELETE:
                 bus.post(new ChangeSettings(position, SettingsAction.DELETE));
@@ -125,11 +125,12 @@ public class ConnectionManagerActivity extends BaseActivity implements SettingsD
             Bundle args = new Bundle();
             args.putInt("index", -1);
             settingsDialog.setArguments(args);
-            settingsDialog.show(getSupportFragmentManager(), "settings_dialog");
+            settingsDialog.show(getFragmentManager(), "settings_dialog");
         }
     };
 
-    @Override public void onDialogPositiveClick(DialogFragment dialog, ConnectionSettings settings) {
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, ConnectionSettings settings) {
         bus.post(settings);
     }
 

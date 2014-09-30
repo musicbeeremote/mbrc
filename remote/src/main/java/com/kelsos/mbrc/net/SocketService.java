@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.Const;
+import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.SocketEventType;
 import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.enums.SocketAction;
@@ -15,6 +16,7 @@ import com.kelsos.mbrc.util.MainThreadBusWrapper;
 import com.kelsos.mbrc.util.SettingsManager;
 import com.noveogroup.android.log.Logger;
 import com.noveogroup.android.log.LoggerManager;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.*;
@@ -61,36 +63,13 @@ public class SocketService {
     public void socketManager(SocketAction action) {
         switch (action) {
             case RESET:
-                cleanupSocket();
-                if (cThread != null) {
-                    cThread.interrupt();
-                }
-                cThread = null;
-                shouldStop = false;
-                numOfRetries = 0;
-                cTimer.start();
+                SocketReset();
                 break;
             case START:
-                if (sIsConnected() || cThreadIsAlive()) {
-                    return;
-                } else if (!sIsConnected() && cThreadIsAlive()) {
-                    cThread.interrupt();
-                    cThread = null;
-                }
-                cTimer.start();
+                SocketStart();
                 break;
             case RETRY:
-                cleanupSocket();
-                if (cThread != null) {
-                    cThread.interrupt();
-                }
-                cThread = null;
-                if (shouldStop) {
-                    shouldStop = false;
-                    numOfRetries = 0;
-                    return;
-                }
-                cTimer.start();
+                SocketRetry();
                 break;
             case STOP:
                 shouldStop = true;
@@ -98,6 +77,41 @@ public class SocketService {
             default:
                 break;
         }
+    }
+
+    private void SocketRetry() {
+        cleanupSocket();
+        if (cThread != null) {
+            cThread.interrupt();
+        }
+        cThread = null;
+        if (shouldStop) {
+            shouldStop = false;
+            numOfRetries = 0;
+            return;
+        }
+        cTimer.start();
+    }
+
+    private void SocketReset() {
+        cleanupSocket();
+        if (cThread != null) {
+            cThread.interrupt();
+        }
+        cThread = null;
+        shouldStop = false;
+        numOfRetries = 0;
+        cTimer.start();
+    }
+
+    private void SocketStart() {
+        if (sIsConnected() || cThreadIsAlive()) {
+            return;
+        } else if (!sIsConnected() && cThreadIsAlive()) {
+            cThread.interrupt();
+            cThread = null;
+        }
+        cTimer.start();
     }
 
     /**
@@ -147,10 +161,36 @@ public class SocketService {
         }
     }
 
+    public void preProcessIncoming(final String incoming) {
+        try {
+            final String[] replies = incoming.split("\r\n");
+            for (String reply : replies) {
+
+                logger.d("incoming::", reply);
+                JsonNode node = mapper.readValue(reply, JsonNode.class);
+                String context = node.path("message").getTextValue();
+
+                if (context.contains(Notification.CLIENT_NOT_ALLOWED)) {
+                    bus.post(new MessageEvent(ProtocolEventType.INFORM_CLIENT_NOT_ALLOWED));
+                    return;
+                }
+
+                bus.post(new MessageEvent(context));
+            }
+
+        } catch (IOException e) {
+            if (BuildConfig.DEBUG) {
+                logger.d("Incoming message pre-processor", e);
+
+            }
+        }
+
+    }
+
     private class SocketConnection implements Runnable {
         public void run() {
             SocketAddress socketAddress = settingsManager.getSocketAddress();
-            bus.post(new MessageEvent(SocketEventType.HANDSHAKE_UPDATE, false));
+
             if (null == socketAddress) {
                 return;
             }
@@ -158,8 +198,11 @@ public class SocketService {
             try {
                 clSocket = new Socket();
                 clSocket.connect(socketAddress);
-                output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(clSocket.getOutputStream()), BUFFER_SIZE), true);
-                input = new BufferedReader(new InputStreamReader(clSocket.getInputStream()), BUFFER_SIZE);
+                final OutputStreamWriter out = new OutputStreamWriter(clSocket.getOutputStream());
+                final BufferedWriter wr = new BufferedWriter(out, BUFFER_SIZE);
+                output = new PrintWriter(wr, true);
+                final InputStreamReader in = new InputStreamReader(clSocket.getInputStream());
+                input = new BufferedReader(in, BUFFER_SIZE);
 
                 String socketStatus = String.valueOf(clSocket.isConnected());
 
@@ -168,7 +211,7 @@ public class SocketService {
                     try {
                         final String incoming = input.readLine();
                         if (incoming != null && incoming.length() > 0) {
-                            bus.post(new MessageEvent(SocketEventType.DATA_AVAILABLE, incoming));
+                            preProcessIncoming(incoming);
                         }
                     } catch (IOException e) {
                         input.close();

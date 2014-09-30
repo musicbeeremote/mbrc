@@ -6,6 +6,9 @@ import com.kelsos.mbrc.rest.RemoteApi;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 public class RemoteApiProvider implements Provider<RemoteApi> {
 
     @Inject
@@ -21,9 +24,12 @@ public class RemoteApiProvider implements Provider<RemoteApi> {
             }
         };
 
+        Executor executor = Executors.newSingleThreadExecutor();
+
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(RemoteApi.API_URL)
                 .setConverter(RemoteApi.DATA_CONVERTER)
+                .setExecutors(executor, executor)
                 .setRequestInterceptor(interceptor)
                 .build();
 

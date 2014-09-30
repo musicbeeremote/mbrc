@@ -32,7 +32,7 @@ public class BrowseTrackFragment extends BaseListFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getLoaderManager().initLoader(URL_LOADER, null, this);
+
         return inflater.inflate(R.layout.fragment_library, container, false);
     }
 

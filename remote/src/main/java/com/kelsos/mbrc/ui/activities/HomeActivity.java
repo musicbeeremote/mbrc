@@ -1,37 +1,34 @@
 package com.kelsos.mbrc.ui.activities;
 
+import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.*;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.view.*;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.constants.Const;
-import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
 import com.kelsos.mbrc.events.ui.LfmRatingChanged;
 import com.kelsos.mbrc.events.ui.NotifyUser;
-import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseActivity;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
-import com.kelsos.mbrc.ui.fragments.CurrentQueueFragment;
-import com.kelsos.mbrc.ui.fragments.LyricsFragment;
-import com.kelsos.mbrc.ui.fragments.MainFragment;
-import com.kelsos.mbrc.ui.fragments.PlaylistFragment;
+import com.kelsos.mbrc.ui.fragments.*;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseFragment;
 import com.squareup.otto.Subscribe;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class MainFragmentActivity extends BaseActivity {
+public class HomeActivity extends BaseActivity {
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private View mDrawerMenu;
@@ -80,7 +77,7 @@ public class MainFragmentActivity extends BaseActivity {
         MainFragment mFragment = new MainFragment();
         mFragment.setArguments(getIntent().getExtras());
 
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, mFragment, "main_fragment");
         fragmentTransaction.commit();
     }
@@ -113,18 +110,12 @@ public class MainFragmentActivity extends BaseActivity {
                 }
 
                 return true;
-            case R.id.actionbar_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
-                return true;
             case R.id.actionbar_help:
                 Intent openHelp = new Intent(Intent.ACTION_VIEW);
                 openHelp.setData(Uri.parse("http://kelsos.net/musicbeeremote/help/"));
                 startActivity(openHelp);
                 return true;
             case R.id.action_bar_favorite:
-                final UserAction loveAction = new UserAction(Protocol.NOW_PLAYING_LFM_RATING, Const.TOGGLE);
-                final MessageEvent userAction = new MessageEvent(ProtocolEventType.USER_ACTION, loveAction);
-                getBus().post(userAction);
                 return true;
             default:
                 return false;
@@ -142,14 +133,14 @@ public class MainFragmentActivity extends BaseActivity {
         }
         if (event.getDialogType() == DisplayDialog.SETUP) {
             mDialog = new SetupDialogFragment();
-            mDialog.show(getSupportFragmentManager(), "SetupDialogFragment");
+            mDialog.show(getFragmentManager(), "SetupDialogFragment");
         } else if (event.getDialogType() == DisplayDialog.UPGRADE) {
             mDialog = new UpgradeDialogFragment();
-            mDialog.show(getSupportFragmentManager(), "UpgradeDialogFragment");
+            mDialog.show(getFragmentManager(), "UpgradeDialogFragment");
         } else if (event.getDialogType() == DisplayDialog.INSTALL) {
             mDialog = new UpgradeDialogFragment();
             ((UpgradeDialogFragment) mDialog).setNewInstall(true);
-            mDialog.show(getSupportFragmentManager(), "UpgradeDialogFragment");
+            mDialog.show(getFragmentManager(), "UpgradeDialogFragment");
         }
 
     }
@@ -166,7 +157,7 @@ public class MainFragmentActivity extends BaseActivity {
 
     private void replaceFragment(Fragment fragment, String tag) {
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         int bsCount = fragmentManager.getBackStackEntryCount();
 
         for (int i = 0; i < bsCount; i++) {
@@ -184,7 +175,7 @@ public class MainFragmentActivity extends BaseActivity {
     private void navigateToView() {
         switch (mDisplay) {
             case HOME:
-                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                if (getFragmentManager().getBackStackEntryCount() > 0) {
                     onBackPressed();
                 }
                 break;
@@ -204,6 +195,9 @@ public class MainFragmentActivity extends BaseActivity {
                 PlaylistFragment plFragment = new PlaylistFragment();
                 replaceFragment(plFragment, "playlist");
                 break;
+            case SETTINGS:
+                SettingsFragment sFragment = new SettingsFragment();
+                replaceFragment(sFragment, "settings");
             default:
                 break;
         }

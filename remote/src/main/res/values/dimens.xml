@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <dimen name="zero_dp">0dp</dimen>
     <dimen name="side_margin">16dp</dimen>
     <dimen name="side_margin_extra">24dp</dimen>
@@ -30,5 +31,6 @@
     <dimen name="dialog_title_margin">16dip</dimen>
     <dimen name="playlist_entry_text_size">18sp</dimen>
     <dimen name="playlist_entry_height">48dp</dimen>
+    <dimen name="navigation_drawer_width">240dp</dimen>
 
 </resources>

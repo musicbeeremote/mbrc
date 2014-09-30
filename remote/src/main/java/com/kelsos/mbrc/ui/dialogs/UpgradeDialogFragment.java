@@ -3,12 +3,10 @@ package com.kelsos.mbrc.ui.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import android.app.DialogFragment;
 import android.webkit.WebView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.ui.activities.SettingsActivity;
 
 public class UpgradeDialogFragment extends DialogFragment {
     private boolean isNewInstall;
@@ -28,7 +26,7 @@ public class UpgradeDialogFragment extends DialogFragment {
         if (isNewInstall) {
             builder.setPositiveButton(R.string.dialog_application_setup_positive, new DialogInterface.OnClickListener() {
                 @Override public void onClick(DialogInterface dialog, int which) {
-                    startActivity(new Intent(getActivity(), SettingsActivity.class));
+
                 }
             });
         }

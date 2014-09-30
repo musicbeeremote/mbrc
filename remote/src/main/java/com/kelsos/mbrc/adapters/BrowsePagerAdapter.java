@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.adapters;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.app.Fragment;
+import android.app.Activity;
+import android.support.v13.app.FragmentStatePagerAdapter;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseAlbumFragment;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseArtistFragment;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseGenreFragment;
@@ -16,8 +16,8 @@ public class BrowsePagerAdapter extends FragmentStatePagerAdapter {
     public static final int TRACKS_FRAGMENT = 3;
     private final CharSequence[] pageTitles = new CharSequence[]{"Genre", "Artist", "Album", "Track"};
 
-    public BrowsePagerAdapter(FragmentActivity activity) {
-        super(activity.getSupportFragmentManager());
+    public BrowsePagerAdapter(Activity activity) {
+        super(activity.getFragmentManager());
     }
 
     @Override public Fragment getItem(int position) {

@@ -1,18 +1,18 @@
-package com.kelsos.mbrc.commands.model;
+package com.kelsos.mbrc.commands;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.MainDataModel;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 
-public class UpdatePlayState implements ICommand {
+public class RequestLyrics implements ICommand {
     private MainDataModel model;
 
-    @Inject public UpdatePlayState(MainDataModel model) {
+    @Inject public RequestLyrics(MainDataModel model) {
         this.model = model;
     }
 
     @Override public void execute(IEvent e) {
-        model.setPlayState(e.getDataString());
+        model.setLyrics(e.getDataString());
     }
 }

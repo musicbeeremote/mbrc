@@ -1,20 +1,20 @@
-package com.kelsos.mbrc.commands.model;
+package com.kelsos.mbrc.commands;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.MainDataModel;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
-import org.codehaus.jackson.node.TextNode;
+import org.codehaus.jackson.node.BooleanNode;
 
-public class UpdateCover implements ICommand {
+public class RequestMuteState implements ICommand {
     private MainDataModel model;
 
-    @Inject public UpdateCover(MainDataModel model) {
+    @Inject public RequestMuteState(MainDataModel model) {
         this.model = model;
     }
 
     @Override
     public void execute(IEvent e) {
-        model.setCover(((TextNode) e.getData()).getTextValue());
+        model.setMuteState(((BooleanNode) e.getData()).asBoolean());
     }
 }

@@ -7,12 +7,12 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
+import android.app.DialogFragment;
+import android.app.Activity;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,7 +33,7 @@ public class PlaylistDialogFragment extends DialogFragment
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         getLoaderManager().initLoader(URL_LOADER, null, this);
-        final FragmentActivity activity = getActivity();
+        final Activity activity = getActivity();
         final LayoutInflater inflater = activity.getLayoutInflater();
         final View view = inflater.inflate(R.layout.playlist_add, null);
         mList = ((ListView)view.findViewById(R.id.playlist_list));

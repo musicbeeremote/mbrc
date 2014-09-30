@@ -19,12 +19,8 @@ import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.data.dbdata.Playlist;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.activities.PlaylistActivity;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class PlaylistFragment extends BaseListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int GROUP_ID = 1;
@@ -34,15 +30,12 @@ public class PlaylistFragment extends BaseListFragment implements LoaderManager.
     private PlaylistCursorAdapter adapter;
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getLoaderManager().initLoader(URL_LOADER, null, this);
+       // getLoaderManager().initLoader(URL_LOADER, null, this);
         return inflater.inflate(R.layout.ui_fragment_playlist, container, false);
     }
 
     @Override public void onStart() {
         super.onStart();
-        Map<String, String> map = new HashMap<>();
-        map.put("type",Protocol.PLAYLISTS_GET);
-        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYLISTS, map)));
     }
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {
@@ -80,14 +73,14 @@ public class PlaylistFragment extends BaseListFragment implements LoaderManager.
             UserAction ua = null;
             switch (item.getItemId()) {
                 case GET_PLAYLIST:
-                    ua = new UserAction(Protocol.PLAYLIST_GET_FILES, query);
+          //          ua = new UserAction(Notification.PLAYLIST_GET_FILES, query);
                     openPlaylist(line);
                     break;
                 case PLAY_NOW:
-                    Map<String, String> message = new HashMap<>();
-                    message.put("type", Protocol.PLAY);
-                    message.put("data", query);
-                    ua = new UserAction(Protocol.PLAYLISTS, message);
+//                    Map<String, String> message = new HashMap<>();
+//                    message.put("type", Notification.PLAY);
+//                    message.put("data", query);
+//                    ua = new UserAction(Notification.PLAYLISTS, message);
                     break;
             }
 
@@ -107,10 +100,10 @@ public class PlaylistFragment extends BaseListFragment implements LoaderManager.
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        cursor.setNotificationUri(getActivity().getContentResolver(), Playlist.getContentUri());
-        adapter = new PlaylistCursorAdapter(getActivity(), cursor, 0);
-        this.setListAdapter(adapter);
-        adapter.notifyDataSetChanged();
+//        cursor.setNotificationUri(getActivity().getContentResolver(), Playlist.getContentUri());
+//        adapter = new PlaylistCursorAdapter(getActivity(), cursor, 0);
+//        this.setListAdapter(adapter);
+//        adapter.notifyDataSetChanged();
     }
 
     @Override

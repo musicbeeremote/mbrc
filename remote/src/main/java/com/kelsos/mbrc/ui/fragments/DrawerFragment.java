@@ -2,7 +2,7 @@ package com.kelsos.mbrc.ui.fragments;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
+import android.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,7 +60,7 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
         if (savedInstanceState != null) {
             mSelection = savedInstanceState.getInt("mSelection");
         }
-        getActivity().getSupportFragmentManager().addOnBackStackChangedListener(this);
+        getActivity().getFragmentManager().addOnBackStackChangedListener(this);
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,12 +73,13 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
         menuConnector.setOnLongClickListener(connectButtonLongClick);
         menuConnector.setTypeface(robotoLight);
 
-        ArrayList<NavigationEntry> nav = new ArrayList<NavigationEntry>();
+        ArrayList<NavigationEntry> nav = new ArrayList<>();
         nav.add(new NavigationEntry(getString(R.string.nav_home)));
         nav.add(new NavigationEntry(getString(R.string.nav_library)));
         nav.add(new NavigationEntry(getString(R.string.nav_currentqueue)));
         nav.add(new NavigationEntry(getString(R.string.nav_lyrics)));
         nav.add(new NavigationEntry(getString(R.string.nav_playlists)));
+        nav.add(new NavigationEntry(getString(R.string.nav_settings)));
 
         setListAdapter(new DrawerAdapter(getActivity(), R.layout.ui_drawer_item, nav));
         getListView().setOnItemClickListener(new DrawerOnClickListener());
@@ -101,10 +102,6 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
                 menuConnector.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_connectivy_off, 0, 0, 0);
                 menuConnector.setText(R.string.drawer_connection_status_off);
                 break;
-            case CONNECTION_ON:
-                menuConnector.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_connectivity_connected, 0, 0, 0);
-                menuConnector.setText(R.string.drawer_connection_status_on);
-                break;
             case CONNECTION_ACTIVE:
                 menuConnector.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_connectivity_active, 0, 0, 0);
                 menuConnector.setText(R.string.drawer_connection_status_active);
@@ -116,7 +113,7 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
     }
 
     @Override public void onBackStackChanged() {
-        if (!mBackstackChanging && getActivity().getSupportFragmentManager().getBackStackEntryCount() == 0) {
+        if (!mBackstackChanging && getActivity().getFragmentManager().getBackStackEntryCount() == 0) {
             mSelection = 0;
             getListView().setItemChecked(mSelection, true);
         }

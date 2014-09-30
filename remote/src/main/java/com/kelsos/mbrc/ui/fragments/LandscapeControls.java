@@ -9,15 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.constants.Const;
-import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.UserAction;
-import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RepeatChange;
 import com.kelsos.mbrc.events.ui.ShuffleChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
-import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.squareup.otto.Subscribe;
 import roboguice.inject.InjectView;
@@ -57,38 +52,38 @@ public class LandscapeControls extends BaseFragment {
     private View.OnClickListener playButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            post(new UserAction(Protocol.PLAYER_PLAY_PAUSE, true));
+
         }
     };
     private View.OnClickListener previousButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            post(new UserAction(Protocol.PLAYER_PREVIOUS, true));
+
         }
     };
     private View.OnClickListener nextButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
-            post(new UserAction(Protocol.PLAYER_NEXT, true));
+
         }
     };
     private View.OnLongClickListener stopListener = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            post(new UserAction(Protocol.PLAYER_STOP, true));
+
             return true;
         }
     };
     private ImageButton.OnClickListener shuffleListener = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View v) {
-            post(new UserAction(Protocol.PLAYER_SHUFFLE, Const.TOGGLE));
+
         }
     };
     private ImageButton.OnClickListener repeatListener = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View v) {
-            post(new UserAction(Protocol.PLAYER_REPEAT, Const.TOGGLE));
+
         }
     };
 
@@ -116,10 +111,10 @@ public class LandscapeControls extends BaseFragment {
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.popup_scrobble:
-                        post(new UserAction(Protocol.PLAYER_SCROBBLE, Const.TOGGLE));
+
                         break;
                     case R.id.popup_auto_dj:
-                        post(new UserAction(Protocol.PLAYER_AUTO_DJ, Const.TOGGLE));
+
                         break;
                     default:
                         return false;
@@ -191,7 +186,7 @@ public class LandscapeControls extends BaseFragment {
         switch (change.getState()) {
             case PLAYING:
                 playButton.setImageResource(R.drawable.ic_media_pause);
-                post(new UserAction(Protocol.NOW_PLAYING_POSITION, true));
+
                 break;
             case PAUSED:
                 playButton.setImageResource(R.drawable.ic_media_play);
@@ -205,14 +200,6 @@ public class LandscapeControls extends BaseFragment {
             default:
                 break;
         }
-    }
-
-    /**
-     * Used to post a @{ProtocolEventType.USER_ACTION} to the event bus.
-     * @param data The user action that will be passed to the socket.
-     */
-    private void post(final UserAction data) {
-        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, data));
     }
 
 }

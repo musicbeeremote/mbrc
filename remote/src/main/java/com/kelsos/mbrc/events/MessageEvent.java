@@ -6,10 +6,8 @@ import org.codehaus.jackson.node.TextNode;
 public class MessageEvent implements IEvent {
     private String type;
     private Object data;
-    private boolean processed;
 
     public MessageEvent() {
-        this.processed = false;
         this.type = "";
         this.data = null;
     }
@@ -17,13 +15,11 @@ public class MessageEvent implements IEvent {
     public MessageEvent(String type) {
         this.type = type;
         data = "";
-        this.processed = false;
     }
 
     public MessageEvent(String type, Object data) {
         this.type = type;
         this.data = data;
-        this.processed = false;
     }
 
     public String getType() {
@@ -47,22 +43,11 @@ public class MessageEvent implements IEvent {
     public void init(String type, Object data) {
         this.type = type;
         this.data = data;
-        this.processed = false;
     }
 
     public void init(String type) {
         this.type = type;
         this.data = null;
-        this.processed = false;
     }
 
-    public void reset() {
-        this.type = "";
-        this.data = null;
-        this.processed = false;
-    }
-
-    public boolean isProcessed() {
-        return processed;
-    }
 }

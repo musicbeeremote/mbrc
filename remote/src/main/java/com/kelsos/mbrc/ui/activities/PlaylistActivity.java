@@ -12,19 +12,12 @@ import android.widget.ListView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistTrackCursorAdapter;
-import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.data.dbdata.PlaylistTrack;
-import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseActivity;
 import com.kelsos.mbrc.util.MainThreadBusWrapper;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import roboguice.inject.InjectView;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class PlaylistActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int URL_LOADER = 0x721ae;
@@ -69,13 +62,9 @@ public class PlaylistActivity extends BaseActivity implements LoaderManager.Load
 
     @Override public void onStart() {
         super.onStart();
-        getSupportLoaderManager().initLoader(URL_LOADER, null, this);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(mTitle);
-        Map<String, String> message = new HashMap<>();
-        message.put("type", "gettracks");
-        message.put("playlist_hash", mHash);
-        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYLISTS, message)));
     }
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {

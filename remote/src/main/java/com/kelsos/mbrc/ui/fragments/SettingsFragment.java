@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.ui.fragments;
 
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Build;
@@ -25,7 +24,6 @@ import com.squareup.otto.Bus;
  * create an instance of this fragment.
  *
  */
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SettingsFragment extends PreferenceFragment {
     @Inject private Bus bus;
     /**

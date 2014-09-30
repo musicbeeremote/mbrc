@@ -16,7 +16,7 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
-import com.kelsos.mbrc.ui.activities.MainFragmentActivity;
+import com.kelsos.mbrc.ui.activities.HomeActivity;
 import com.squareup.otto.Subscribe;
 
 @Singleton
@@ -149,7 +149,7 @@ public class NotificationService {
     private PendingIntent getPendingIntent(int id) {
         switch (id) {
             case OPEN:
-                Intent notificationIntent = new Intent(mContext, MainFragmentActivity.class);
+                Intent notificationIntent = new Intent(mContext, HomeActivity.class);
                 return PendingIntent.getActivity(mContext, 0, notificationIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
             case PLAY:

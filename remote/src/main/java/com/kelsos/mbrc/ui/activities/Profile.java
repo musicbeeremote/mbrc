@@ -2,7 +2,7 @@ package com.kelsos.mbrc.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.view.*;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.base.BaseActivity;
@@ -44,7 +44,7 @@ public class Profile extends BaseActivity {
             }
 
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportFragmentManager().beginTransaction()
+            getFragmentManager().beginTransaction()
                     .add(R.id.container, fragment)
                     .commit();
         }

@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.adapters;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.support.v13.app.FragmentPagerAdapter;
 import com.kelsos.mbrc.ui.fragments.ButtonFragment;
 import com.kelsos.mbrc.ui.fragments.TrackInfoFragment;
 

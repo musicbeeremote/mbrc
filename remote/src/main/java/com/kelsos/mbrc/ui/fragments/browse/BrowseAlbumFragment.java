@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.fragments.browse;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,13 +13,8 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumCursorAdapter;
-import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.data.dbdata.Album;
 import com.kelsos.mbrc.data.dbdata.Artist;
-import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.net.Protocol;
-import com.kelsos.mbrc.ui.activities.Profile;
 import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
@@ -48,7 +42,7 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getLoaderManager().initLoader(URL_LOADER, null, this);
+
         final View view = inflater.inflate(R.layout.ui_library_grid, container, false);
         if (view != null) {
             mGrid = (GridView) view.findViewById(R.id.mbrc_grid_view);
@@ -76,14 +70,6 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
         return false;
     }
 
-    private void QueueTrack(String position) {
-        final Map<String, String> message = getMapBase();
-        message.put("type", "queue");
-        message.put("position", position);
-        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION,
-                new UserAction(Protocol.NOW_PLAYING, message)));
-    }
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri baseUri;
@@ -103,14 +89,6 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
     public void onLoaderReset(Loader<Cursor> loader) {
     }
 
-    private void showTracks(final Album album) {
-        Intent intent = new Intent(getActivity(), Profile.class);
-        intent.putExtra("name", album.getAlbumName());
-        intent.putExtra("id", album.getId());
-        intent.putExtra("type", "album");
-        startActivity(intent);
-    }
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         
@@ -118,11 +96,7 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
 
     @Override
     public void onPlaylistSelected(String hash) {
-        Map<String, String> message = getMapBase();
-        message.put("type", "add");
-        message.put("hash", hash);
-        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION,
-                new UserAction(Protocol.PLAYLISTS, message)));
+
     }
 
     @Override
@@ -142,10 +116,6 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
 
     @Override
     public void onPlaylistNameSelected(String name) {
-        Map<String, String> message = getMapBase();
-        message.put("type", "create");
-        message.put("name", name);
-        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION,
-                new UserAction(Protocol.PLAYLISTS, message)));
+
     }
 }

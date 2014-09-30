@@ -15,11 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistCursorAdapter;
-import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.data.dbdata.Artist;
-import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.activities.Profile;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
@@ -45,7 +41,7 @@ public class BrowseArtistFragment extends BaseListFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getLoaderManager().initLoader(URL_LOADER, null, this);
+
         return inflater.inflate(R.layout.fragment_library, container, false);
     }
 
@@ -96,11 +92,7 @@ public class BrowseArtistFragment extends BaseListFragment
     }
 
     private void QueueTrack(String position) {
-        final Map<String, String> message = getMapBase();
-        message.put("type", "queue");
-        message.put("position", position);
-        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION,
-                new UserAction(Protocol.NOW_PLAYING, message)));
+
     }
 
     @Override
@@ -139,11 +131,7 @@ public class BrowseArtistFragment extends BaseListFragment
 
     @Override
     public void onPlaylistSelected(String hash) {
-        Map<String, String> message = getMapBase();
-        message.put("type", "add");
-        message.put("hash", hash);
-        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION,
-                new UserAction(Protocol.PLAYLISTS, message)));
+
     }
 
     @Override
@@ -162,10 +150,6 @@ public class BrowseArtistFragment extends BaseListFragment
 
     @Override
     public void onPlaylistNameSelected(String name) {
-        Map<String, String> message = getMapBase();
-        message.put("type", "create");
-        message.put("name", name);
-        getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION,
-                new UserAction(Protocol.PLAYLISTS, message)));
+
     }
 }

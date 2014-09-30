@@ -5,15 +5,8 @@ import android.support.v4.view.ViewPager;
 import android.view.*;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.BrowsePagerAdapter;
-import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.UserAction;
-import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.viewpagerindicator.TitlePageIndicator;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class BrowseFragment extends BaseFragment {
     public static final int LIBRARY_SYNC = 1;
@@ -38,12 +31,7 @@ public class BrowseFragment extends BaseFragment {
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case LIBRARY_SYNC:
-                Map<String, Object> req = new HashMap<>();
-                req.put("type", "meta");
-                req.put("offset", 0);
-                req.put("limit", 50);
-                getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION,
-                    new UserAction(Protocol.LIBRARY, req)));
+
                 break;
             default:
                 return false;

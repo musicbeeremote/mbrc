@@ -9,15 +9,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.UserAction;
-import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.CoverAvailable;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
-import com.kelsos.mbrc.net.Protocol;
 import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.squareup.otto.Subscribe;
+import com.squareup.picasso.Picasso;
 import roboguice.inject.InjectView;
 
 
@@ -47,11 +44,11 @@ public class MiniControlFragment extends BaseFragment {
         if (trackCover == null) {
             return;
         }
-        if (event.getIsAvailable()) {
-            trackCover.setImageBitmap(event.getCover());
-        } else {
-            trackCover.setImageResource(R.drawable.ic_image_no_cover);
-        }
+        Picasso.with(getActivity().getBaseContext())
+                .load(event.getCoverUrl())
+                .placeholder(R.drawable.ic_image_no_cover)
+                .fit()
+                .into(trackCover);
     }
 
     @Subscribe public void handleTrackInfoChange(TrackInfoChange event) {
@@ -62,19 +59,19 @@ public class MiniControlFragment extends BaseFragment {
     private ImageButton.OnClickListener playNextListener = new ImageButton.OnClickListener(){
 
         @Override public void onClick(View view) {
-            getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYER_NEXT, true)));
+            //getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Notification.PLAYER_NEXT, true)));
         }
     };
 
     private ImageButton.OnClickListener playPauseListener = new ImageButton.OnClickListener() {
         @Override public void onClick(View view) {
-            getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYER_PLAY_PAUSE, true)));
+            //getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Notification.PLAYER_PLAY_PAUSE, true)));
         }
     };
 
     private ImageButton.OnClickListener playPreviousListener = new ImageButton.OnClickListener() {
         @Override public void onClick(View view) {
-            getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Protocol.PLAYER_PREVIOUS, true)));
+            //getBus().post(new MessageEvent(ProtocolEventType.USER_ACTION, new UserAction(Notification.PLAYER_PREVIOUS, true)));
         }
     };
 
