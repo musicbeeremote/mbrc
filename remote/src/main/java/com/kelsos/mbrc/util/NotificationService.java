@@ -6,7 +6,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
@@ -16,8 +15,10 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
+import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.ui.activities.HomeActivity;
 import com.squareup.otto.Subscribe;
+import com.squareup.picasso.Picasso;
 
 @Singleton
 public class NotificationService {
@@ -53,56 +54,50 @@ public class NotificationService {
         if (!mSettings.isNotificationControlEnabled()) {
             return;
         }
-        notificationBuilder(event.getTitle(), event.getArtist(), event.getAlbum(), event.getCover(), event.getState());
+        notificationBuilder(event.getTitle(), event.getArtist(), event.getAlbum(), event.getState());
     }
 
-    private boolean isJellyBean() {
+    private boolean atLeastJellyBean() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     }
 
-    private void updateNormalNotification(final String artist, final String title, final Bitmap cover) {
+    private void updateNormalNotification(final String artist, final String title, Notification notification) {
         mNormalView.setTextViewText(R.id.notification_artist, artist);
         mNormalView.setTextViewText(R.id.notification_title, title);
-        if (cover != null) {
-            mNormalView.setImageViewBitmap(R.id.notification_album_art, cover);
-        } else {
-            mNormalView.setImageViewResource(R.id.notification_album_art, R.drawable.ic_image_no_cover);
-        }
+        final String requestUrl = String.format("%s?t=%s", RemoteApi.COVER_URL, RemoteUtils.getTimeStamp());
+        Picasso.with(mContext)
+                .load(requestUrl)
+                .placeholder(R.drawable.ic_image_no_cover)
+                .into(mNormalView, R.id.notification_album_art, NOW_PLAYING_PLACEHOLDER, notification);
     }
 
-    private void updateExpandedNotification(final String artist, final String title, final String album,
-                                            final Bitmap cover) {
+    private void updateExpandedNotification(final String artist, final String title, final String album, Notification notification) {
         mExpandedView.setTextViewText(R.id.expanded_notification_line_one, title);
         mExpandedView.setTextViewText(R.id.expanded_notification_line_two, artist);
         mExpandedView.setTextViewText(R.id.expanded_notification_line_three, album);
 
-        if (cover != null) {
-            mExpandedView.setImageViewBitmap(R.id.expanded_notification_cover, cover);
-        } else {
-            mExpandedView.setImageViewResource(R.id.expanded_notification_cover, R.drawable.ic_image_no_cover);
-        }
+        final String requestUrl = String.format("%s?t=%s", RemoteApi.COVER_URL, RemoteUtils.getTimeStamp());
+        Picasso.with(mContext)
+                .load(requestUrl)
+                .placeholder(R.drawable.ic_image_no_cover)
+                .into(mExpandedView, R.id.expanded_notification_cover, NOW_PLAYING_PLACEHOLDER, notification);
     }
 
     /**
      * Creates an ongoing notification that displays the cover and information about the playing track,
      * and also provides controls to skip or play/pause.
-     *
-     * @param title  The title of the track playing.
+     *  @param title  The title of the track playing.
      * @param artist The artist of the track playing.
-     * @param cover  The cover Bitmap.
      * @param state  The current play state is used to display the proper play or pause icon.
      */
     @SuppressLint("NewApi")
-    private void notificationBuilder(final String title, final String artist, final String album, final Bitmap cover,
+    private void notificationBuilder(final String title, final String artist, final String album,
                                      final PlayState state) {
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            return;
-        }
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
         mNormalView = new RemoteViews(mContext.getPackageName(), R.layout.ui_notification_control);
-        updateNormalNotification(artist, title, cover);
+
 
         mBuilder.setContentIntent(getPendingIntent(OPEN));
         mNormalView.setOnClickPendingIntent(R.id.notification_play, getPendingIntent(PLAY));
@@ -110,10 +105,10 @@ public class NotificationService {
         mNormalView.setOnClickPendingIntent(R.id.notification_close, getPendingIntent(CLOSE));
 
         mNotification = mBuilder.build();
-
-        if (isJellyBean()) {
+        updateNormalNotification(artist, title, mNotification);
+        if (atLeastJellyBean()) {
             mExpandedView = new RemoteViews(mContext.getPackageName(), R.layout.ui_notification_control_expanded);
-            updateExpandedNotification(artist, title, album, cover);
+            updateExpandedNotification(artist, title, album, mNotification);
             mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_playpause, getPendingIntent(PLAY));
             mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_next, getPendingIntent(NEXT));
             mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_previous, getPendingIntent(PREVIOUS));
@@ -138,7 +133,7 @@ public class NotificationService {
                 ? R.drawable.ic_action_pause
                 : R.drawable.ic_action_play);
 
-        if (isJellyBean() && mExpandedView != null) {
+        if (atLeastJellyBean() && mExpandedView != null) {
 
             mExpandedView.setImageViewResource(R.id.expanded_notification_playpause, state == PlayState.PLAYING
                     ? R.drawable.ic_action_pause

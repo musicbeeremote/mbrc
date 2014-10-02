@@ -6,6 +6,7 @@ import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.util.MainThreadBusWrapper;
+import com.kelsos.mbrc.util.RemoteUtils;
 
 public class RequestCoverData implements ICommand {
     private MainThreadBusWrapper bus;
@@ -16,7 +17,7 @@ public class RequestCoverData implements ICommand {
 
     @Override
     public void execute(IEvent e) {
-
-        bus.post(new CoverAvailable(RemoteApi.COVER_URL));
+        final String requestUrl = String.format("%s?t=%s", RemoteApi.COVER_URL, RemoteUtils.getTimeStamp());
+        bus.post(new CoverAvailable(requestUrl));
     }
 }

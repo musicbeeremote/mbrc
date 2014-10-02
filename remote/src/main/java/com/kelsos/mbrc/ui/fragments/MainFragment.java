@@ -141,7 +141,7 @@ public class MainFragment extends BaseFragment {
         setHasOptionsMenu(true);
         isTablet = getResources().getBoolean(R.bool.isTablet);
         if (!isTablet) {
-            mAdapter = new InfoButtonPagerAdapter(getChildFragmentManager());
+            mAdapter = new InfoButtonPagerAdapter(getFragmentManager());
         }
     }
 
@@ -242,6 +242,7 @@ public class MainFragment extends BaseFragment {
                 .placeholder(R.drawable.ic_image_no_cover)
                 .fit()
                 .into(albumCover);
+        logger.d("cover event received");
     }
 
     @Subscribe

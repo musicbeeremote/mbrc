@@ -20,4 +20,9 @@ public final class RemoteUtils {
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         return sdf.format(new Date());
     }
+
+    public static String getTimeStamp() {
+        final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyymmddhhmmss");
+        return simpleDateFormat.format(new Date());
+    }
 }

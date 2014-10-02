@@ -117,7 +117,7 @@ public class MainDataModel {
         if (!isConnectionOn) {
             bus.post(new MessageEvent(UserInputEventType.CANCEL_NOTIFICATION));
         } else {
-            bus.post(new NotificationDataAvailable(artist, title, album, cover, playState));
+            bus.post(new NotificationDataAvailable(artist, title, album, playState));
         }
     }
 
