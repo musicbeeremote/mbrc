@@ -6,9 +6,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.dbdata.LibraryArtist;
 
 public class ArtistCursorAdapter extends CursorAdapter {
 
@@ -23,13 +21,6 @@ public class ArtistCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(final View view, Context context, Cursor cursor) {
-        final LibraryArtist artist = new LibraryArtist(cursor);
-        ((TextView) view.findViewById(R.id.line_one)).setText(artist.getArtistName());
-        view.findViewById(R.id.ui_item_context_indicator).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                view.showContextMenu();
-            }
-        });
+
     }
 }

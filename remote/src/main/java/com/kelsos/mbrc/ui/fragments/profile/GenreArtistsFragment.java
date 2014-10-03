@@ -5,13 +5,11 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistCursorAdapter;
@@ -65,24 +63,6 @@ public class GenreArtistsFragment extends BaseListFragment
     @Override
     public boolean onContextItemSelected(android.view.MenuItem item) {
         if (item.getGroupId() == GROUP_ID) {
-            AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            int position = mi != null ? mi.position : 0;
-            artist = new LibraryArtist((Cursor) mAdapter.getItem(position));
-
-            switch (item.getItemId()) {
-                case BrowseMenuItems.GET_SUB:
-                    showAlbums(artist);
-                    break;
-                case BrowseMenuItems.PLAYLIST:
-                    final PlaylistDialogFragment dlFragment = new PlaylistDialogFragment();
-                    dlFragment.setOnPlaylistSelectedListener(this);
-                    dlFragment.show(getFragmentManager(), "playlist");
-                    break;
-                default:
-                    break;
-
-            }
-
             return true;
         } else {
             return false;
@@ -122,10 +102,7 @@ public class GenreArtistsFragment extends BaseListFragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Uri baseUri;
-        baseUri = Uri.withAppendedPath(LibraryArtist.CONTENT_GENRE_URI, Uri.encode(String.valueOf(genreId)));
-        return new CursorLoader(getActivity(), baseUri,
-                new String[]{LibraryArtist.ARTIST_NAME}, null, null, null);
+        return null;
     }
 
     @Override
@@ -138,8 +115,6 @@ public class GenreArtistsFragment extends BaseListFragment
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        final LibraryArtist artist = new LibraryArtist((Cursor) mAdapter.getItem(position));
-        showAlbums(artist);
     }
 
     @Override
@@ -164,7 +139,7 @@ public class GenreArtistsFragment extends BaseListFragment
 
     private void showAlbums(final LibraryArtist artist) {
         Intent intent = new Intent(getActivity(), Profile.class);
-        intent.putExtra("name", artist.getArtistName());
+        intent.putExtra("name", artist.getName());
         intent.putExtra("id", artist.getId());
         intent.putExtra("type", "artist");
         startActivity(intent);

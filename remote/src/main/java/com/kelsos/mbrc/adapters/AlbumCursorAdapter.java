@@ -24,23 +24,6 @@ public class AlbumCursorAdapter extends CursorAdapter {
     }
 
     @Override public void bindView(final View view, Context context, Cursor cursor) {
-        final LibraryAlbum album = new LibraryAlbum();
-        final ImageView imageView = ((ImageView)view.findViewById(R.id.ui_grid_image));
-        final Uri uri = Uri.withAppendedPath(LibraryCover.CONTENT_IMAGE_URI, album.getCoverHash());
-        ((TextView) view.findViewById(R.id.line_one)).setText(album.getAlbumName());
-        ((TextView) view.findViewById(R.id.line_two)).setText(album.getArtist().getArtistName());
-        view.findViewById(R.id.ui_item_context_indicator).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                view.showContextMenu();
-            }
-        });
 
-        Picasso.with(context)
-                .load(uri)
-                .fit()
-                .placeholder(R.color.mbrc_transparent_dark)
-                .error(R.drawable.ic_image_no_cover)
-                .into(imageView);
     }
 }

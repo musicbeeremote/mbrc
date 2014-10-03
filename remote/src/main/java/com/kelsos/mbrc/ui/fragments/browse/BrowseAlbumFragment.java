@@ -1,9 +1,7 @@
 package com.kelsos.mbrc.ui.fragments.browse;
 
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -14,13 +12,9 @@ import android.widget.GridView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumCursorAdapter;
 import com.kelsos.mbrc.data.dbdata.LibraryAlbum;
-import com.kelsos.mbrc.data.dbdata.LibraryArtist;
 import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static android.support.v4.app.LoaderManager.LoaderCallbacks;
 
@@ -72,10 +66,7 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri baseUri;
-        baseUri = LibraryAlbum.getContentUri();
-        return new CursorLoader(getActivity(), baseUri,
-                new String[]{LibraryAlbum.ALBUM_NAME, LibraryArtist.ARTIST_NAME}, null, null, null);
+        return null;
     }
 
     @Override
@@ -104,13 +95,6 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
         final CreateNewPlaylistDialog npDialog = new CreateNewPlaylistDialog();
         npDialog.setOnPlaylistNameSelectedListener(this);
         npDialog.show(getFragmentManager(), "npDialog");
-    }
-
-    private Map<String, String> getMapBase() {
-        Map<String, String> message = new HashMap<>();
-        message.put("selection", "album");
-        message.put("data", album.getAlbumName());
-        return message;
     }
 
 

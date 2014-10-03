@@ -2,17 +2,14 @@ package com.kelsos.mbrc.ui.activities;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
 import android.widget.ListView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistTrackCursorAdapter;
-import com.kelsos.mbrc.data.dbdata.PlaylistTrack;
 import com.kelsos.mbrc.ui.base.BaseActivity;
 import com.kelsos.mbrc.util.MainThreadBusWrapper;
 import com.mobeta.android.dslv.DragSortController;
@@ -79,9 +76,7 @@ public class PlaylistActivity extends BaseActivity implements LoaderManager.Load
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Uri baseUri;
-        baseUri = Uri.withAppendedPath(PlaylistTrack.CONTENT_HASH_URI, Uri.encode(String.valueOf(mHash)));
-        return new CursorLoader(this, baseUri, null, null, null, null);
+        return null;
     }
 
     @Override

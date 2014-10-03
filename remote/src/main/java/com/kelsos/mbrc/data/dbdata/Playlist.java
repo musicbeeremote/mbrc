@@ -1,92 +1,65 @@
 package com.kelsos.mbrc.data.dbdata;
 
-import android.content.ContentValues;
-import android.content.UriMatcher;
-import android.database.Cursor;
-import android.net.Uri;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.kelsos.mbrc.data.db.LibraryProvider;
-import com.kelsos.mbrc.data.interfaces.PlaylistColumns;
-import org.codehaus.jackson.JsonNode;
 @DatabaseTable(tableName = Playlist.TABLE_NAME)
-public class Playlist extends DataItem implements PlaylistColumns {
-    @DatabaseField(generatedId = true)
-    private long id;
-    @DatabaseField
-    private String name;
-    @DatabaseField
-    private String hash;
-    @DatabaseField
-    private int tracks;
+public class Playlist {
 
     public static final String TABLE_NAME = "playlists";
 
+    @DatabaseField(generatedId = true)
+    private long id;
 
-    public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;
-    public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;
+    @DatabaseField
+    private String name;
 
-    public static final int BASE_URI_CODE = 0x3ae47c3;
-    public static final int BASE_ITEM_CODE =  0x2e21f5d;
+    @DatabaseField
+    private int tracks;
 
-    public static void addMatcherUris(UriMatcher uriMatcher) {
-        uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME, BASE_URI_CODE);
-        uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME + "/#", BASE_ITEM_CODE);
+    @DatabaseField
+    private boolean readOnly;
+
+    @DatabaseField
+    private String path;
+
+
+    public long getId() {
+        return id;
     }
 
-    public Playlist(String name, String hash, int tracks) {
-        this.name = name;
-        this.hash = hash;
-        this.tracks = tracks;
-    }
-
-    public Playlist(JsonNode node) {
-        this.name = node.path("name").getTextValue();
-        this.tracks = node.path("tracks").getIntValue();
-        this.hash = node.path("hash").getTextValue();
-    }
-
-    public Playlist(final Cursor cursor) {
-        this.id = cursor.getLong(cursor.getColumnIndex(_ID));
-        this.name = cursor.getString(cursor.getColumnIndex(PLAYLIST_NAME));
-        this.hash = cursor.getString(cursor.getColumnIndex(PLAYLIST_HASH));
-        this.tracks = cursor.getInt(cursor.getColumnIndex(PLAYLIST_TRACKS));
-    }
-
-    public static Uri getContentUri() {
-        return Uri.withAppendedPath(Uri.parse(LibraryProvider.SCHEME +
-                LibraryProvider.AUTHORITY), TABLE_NAME);
-    }
-
-    public int getTracks() {
-        return tracks;
-    }
-
-    public String getHash() {
-        return hash;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    @Override
-    public ContentValues getContentValues() {
-        return null;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @Override
-    public String getTableName() {
-        return TABLE_NAME;
+    public int getTracks() {
+        return tracks;
     }
 
-    @Override
-    public long getId() {
-        return id;
+    public void setTracks(int tracks) {
+        this.tracks = tracks;
     }
 
-    @Override
-    public void setId(long id) {
-        this.id = id;
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

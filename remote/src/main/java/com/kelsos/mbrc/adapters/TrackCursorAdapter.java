@@ -24,7 +24,7 @@ public class TrackCursorAdapter extends CursorAdapter {
     public void bindView(final View view, Context context, Cursor cursor) {
         final LibraryTrack album = new LibraryTrack();
         ((TextView) view.findViewById(R.id.line_one)).setText(album.getTitle());
-        ((TextView) view.findViewById(R.id.line_two)).setText(album.getArtist().getArtistName());
+        ((TextView) view.findViewById(R.id.line_two)).setText(album.getArtist().getName());
         view.findViewById(R.id.ui_item_context_indicator).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

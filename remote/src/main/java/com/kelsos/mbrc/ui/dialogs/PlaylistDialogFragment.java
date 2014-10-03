@@ -1,26 +1,15 @@
 package com.kelsos.mbrc.ui.dialogs;
 
 
-import android.app.AlertDialog;
-import android.app.Dialog;
+import android.app.*;
 import android.content.DialogInterface;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Bundle;
-import android.app.DialogFragment;
-import android.app.Activity;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.Loader;
-import android.widget.SimpleCursorAdapter;
+import android.database.Cursor;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.dbdata.Playlist;
 
 public class PlaylistDialogFragment extends DialogFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, ListView.OnItemClickListener {
@@ -55,21 +44,12 @@ public class PlaylistDialogFragment extends DialogFragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Uri baseUri;
-        baseUri = Playlist.getContentUri();
-        return new CursorLoader(getActivity(), baseUri, null, null, null, null);
+        return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        mAdapter = new SimpleCursorAdapter(getActivity(),
-                R.layout.ui_list_playlist,
-                cursor,
-                new String[]{Playlist.PLAYLIST_NAME},
-                new int[]{R.id.line_one},
-                0);
-        mList.setAdapter(mAdapter);
-        mAdapter.notifyDataSetChanged();
+
     }
 
     @Override
@@ -79,11 +59,7 @@ public class PlaylistDialogFragment extends DialogFragment
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (mListener != null) {
-            final Cursor cursor = (Cursor) mAdapter.getItem(position);
-            final Playlist playlist = new Playlist(cursor);
-            mListener.onPlaylistSelected(playlist.getHash());
-        }
+
     }
 
     /**

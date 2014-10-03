@@ -2,10 +2,8 @@ package com.kelsos.mbrc.ui.fragments.profile;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -16,22 +14,12 @@ import android.widget.GridView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumCursorAdapter;
 import com.kelsos.mbrc.data.dbdata.LibraryAlbum;
-import com.kelsos.mbrc.data.dbdata.LibraryArtist;
 import com.kelsos.mbrc.ui.activities.Profile;
 import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseMenuItems;
 
-
-/**
- * A simple {@link android.support.v4.app.Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ArtistAlbumsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ArtistAlbumsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ArtistAlbumsFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor>,
         GridView.OnItemClickListener,
         PlaylistDialogFragment.onPlaylistSelectedListener,
@@ -127,10 +115,7 @@ public class ArtistAlbumsFragment extends BaseFragment implements LoaderManager.
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Uri baseUri;
-        baseUri = Uri.withAppendedPath(LibraryAlbum.CONTENT_ARTIST_URI, Uri.encode(String.valueOf(artistId)));
-        return new CursorLoader(getActivity(), baseUri,
-                new String[]{LibraryAlbum.ALBUM_NAME, LibraryArtist.ARTIST_NAME}, null, null, null);
+        return null;
     }
 
     @Override
@@ -167,7 +152,7 @@ public class ArtistAlbumsFragment extends BaseFragment implements LoaderManager.
 
     private void showTracks(final LibraryAlbum album) {
         Intent intent = new Intent(getActivity(), Profile.class);
-        intent.putExtra("name", album.getAlbumName());
+        intent.putExtra("name", album.getName());
         intent.putExtra("id", album.getId());
         intent.putExtra("type", "album");
         startActivity(intent);

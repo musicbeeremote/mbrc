@@ -6,9 +6,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.dbdata.LibraryTrack;
 
 public class AlbumProfileCursorAdapter extends CursorAdapter {
     public AlbumProfileCursorAdapter(Context context, Cursor c, int flags) {
@@ -22,13 +20,6 @@ public class AlbumProfileCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(final View view, Context context, Cursor cursor) {
-        final String title = cursor.getString(cursor.getColumnIndex(LibraryTrack.TITLE));
-        ((TextView) view.findViewById(R.id.line_one)).setText(title);
-        view.findViewById(R.id.ui_item_context_indicator).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                view.showContextMenu();
-            }
-        });
+
     }
 }
