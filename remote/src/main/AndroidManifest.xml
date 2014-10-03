@@ -19,7 +19,6 @@
         android:theme="@style/Theme.Mbrc_dark" >
         <activity
             android:name=".ui.activities.HomeActivity"
-            android:label="@string/title_activity_home"
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustNothing" >
             <intent-filter>
