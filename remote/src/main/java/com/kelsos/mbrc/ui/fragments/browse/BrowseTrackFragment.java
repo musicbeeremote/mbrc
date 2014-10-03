@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.TrackCursorAdapter;
-import com.kelsos.mbrc.data.dbdata.Artist;
-import com.kelsos.mbrc.data.dbdata.Track;
+import com.kelsos.mbrc.data.dbdata.LibraryArtist;
+import com.kelsos.mbrc.data.dbdata.LibraryTrack;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 
@@ -22,7 +22,7 @@ public class BrowseTrackFragment extends BaseListFragment
     private static final int GROUP_ID = 14;
     private static final int URL_LOADER = 0x53;
     private TrackCursorAdapter mAdapter;
-    private Track track;
+    private LibraryTrack track;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -57,9 +57,9 @@ public class BrowseTrackFragment extends BaseListFragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri baseUri;
-        baseUri = Track.getContentUri();
+        baseUri = LibraryTrack.getContentUri();
         return new CursorLoader(getActivity(), baseUri,
-                new String[]{Track.TITLE, Artist.ARTIST_NAME}, null, null, null);
+                new String[]{LibraryTrack.TITLE, LibraryArtist.ARTIST_NAME}, null, null, null);
     }
 
     @Override

@@ -15,7 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistCursorAdapter;
-import com.kelsos.mbrc.data.dbdata.Artist;
+import com.kelsos.mbrc.data.dbdata.LibraryArtist;
 import com.kelsos.mbrc.ui.activities.Profile;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
@@ -39,7 +39,7 @@ public class GenreArtistsFragment extends BaseListFragment
     private static final int GROUP_ID = 2983;
     private static final int URL_LOADER = 0x15;
     private ArtistCursorAdapter mAdapter;
-    private Artist artist;
+    private LibraryArtist artist;
     private long genreId;
 
     public GenreArtistsFragment() {
@@ -67,7 +67,7 @@ public class GenreArtistsFragment extends BaseListFragment
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             int position = mi != null ? mi.position : 0;
-            artist = new Artist((Cursor) mAdapter.getItem(position));
+            artist = new LibraryArtist((Cursor) mAdapter.getItem(position));
 
             switch (item.getItemId()) {
                 case BrowseMenuItems.GET_SUB:
@@ -123,9 +123,9 @@ public class GenreArtistsFragment extends BaseListFragment
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         Uri baseUri;
-        baseUri = Uri.withAppendedPath(Artist.CONTENT_GENRE_URI, Uri.encode(String.valueOf(genreId)));
+        baseUri = Uri.withAppendedPath(LibraryArtist.CONTENT_GENRE_URI, Uri.encode(String.valueOf(genreId)));
         return new CursorLoader(getActivity(), baseUri,
-                new String[]{Artist.ARTIST_NAME}, null, null, null);
+                new String[]{LibraryArtist.ARTIST_NAME}, null, null, null);
     }
 
     @Override
@@ -138,7 +138,7 @@ public class GenreArtistsFragment extends BaseListFragment
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        final Artist artist = new Artist((Cursor) mAdapter.getItem(position));
+        final LibraryArtist artist = new LibraryArtist((Cursor) mAdapter.getItem(position));
         showAlbums(artist);
     }
 
@@ -162,7 +162,7 @@ public class GenreArtistsFragment extends BaseListFragment
 
     }
 
-    private void showAlbums(final Artist artist) {
+    private void showAlbums(final LibraryArtist artist) {
         Intent intent = new Intent(getActivity(), Profile.class);
         intent.putExtra("name", artist.getArtistName());
         intent.putExtra("id", artist.getId());

@@ -13,7 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.GenreCursorAdapter;
-import com.kelsos.mbrc.data.dbdata.Genre;
+import com.kelsos.mbrc.data.dbdata.LibraryGenre;
 import com.kelsos.mbrc.ui.activities.Profile;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
@@ -29,7 +29,7 @@ public class BrowseGenreFragment extends BaseListFragment
     private static final int GROUP_ID = 11;
     private static final int URL_LOADER = 1;
     private GenreCursorAdapter mAdapter;
-    private Genre genre;
+    private LibraryGenre genre;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,7 +65,7 @@ public class BrowseGenreFragment extends BaseListFragment
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             int position = mi != null ? mi.position : 0;
             final Cursor line = (Cursor) mAdapter.getItem(position);
-            genre = new Genre(line);
+            genre = new LibraryGenre(line);
 
             switch (item.getItemId()) {
                 case BrowseMenuItems.GET_SUB:
@@ -100,7 +100,7 @@ public class BrowseGenreFragment extends BaseListFragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        final Uri baseUri = Genre.CONTENT_URI;
+        final Uri baseUri = LibraryGenre.CONTENT_URI;
         return new CursorLoader(getActivity(), baseUri, null, null, null, null);
     }
 
@@ -125,11 +125,11 @@ public class BrowseGenreFragment extends BaseListFragment
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        final Genre genre = new Genre((Cursor) mAdapter.getItem(position));
+        final LibraryGenre genre = new LibraryGenre((Cursor) mAdapter.getItem(position));
         ShowArtists(genre);
     }
 
-    private void ShowArtists(final Genre genre) {
+    private void ShowArtists(final LibraryGenre genre) {
         Intent intent = new Intent(getActivity(), Profile.class);
         intent.putExtra("name", genre.getGenreName());
         intent.putExtra("id", genre.getId());

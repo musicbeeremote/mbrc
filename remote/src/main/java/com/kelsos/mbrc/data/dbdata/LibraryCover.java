@@ -4,7 +4,7 @@ import android.content.UriMatcher;
 import android.net.Uri;
 import com.kelsos.mbrc.data.db.LibraryProvider;
 
-public class Cover {
+public class LibraryCover {
     public static final int BASE_IMAGE_CODE = 0x92358;
     private static final String TABLE_NAME = "covers";
     public static final Uri CONTENT_URI = Uri.withAppendedPath(LibraryProvider.AUTHORITY_URI, TABLE_NAME);
@@ -12,7 +12,7 @@ public class Cover {
     private String albumId;
     private String coverHash;
 
-    public Cover(String albumId, String coverHash) {
+    public LibraryCover(String albumId, String coverHash) {
         this.albumId = albumId;
         this.coverHash = coverHash;
     }

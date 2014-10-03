@@ -22,11 +22,11 @@ public class LibraryProvider extends ContentProvider {
     private Context mContext;
 
     static {
-        Album.addMatcherUris(URI_MATCHER);
-        Artist.addMatcherUris(URI_MATCHER);
-        Cover.addMatcherUris(URI_MATCHER);
-        Genre.addMatcherUris(URI_MATCHER);
-        Track.addMatcherUris(URI_MATCHER);
+        LibraryAlbum.addMatcherUris(URI_MATCHER);
+        LibraryArtist.addMatcherUris(URI_MATCHER);
+        LibraryCover.addMatcherUris(URI_MATCHER);
+        LibraryGenre.addMatcherUris(URI_MATCHER);
+        LibraryTrack.addMatcherUris(URI_MATCHER);
         Playlist.addMatcherUris(URI_MATCHER);
         PlaylistTrack.addMatcherUris(URI_MATCHER);
         QueueTrack.addMatcherUris(URI_MATCHER);
@@ -37,17 +37,17 @@ public class LibraryProvider extends ContentProvider {
     public LibraryProvider() {
         types = new Hashtable<>();
         //Creates map of types to avoid switch
-        types.put(Album.BASE_ITEM_CODE, Album.TYPE_ITEM);
-        types.put(Album.BASE_URI_CODE, Album.TYPE_DIR);
-        types.put(Artist.BASE_ITEM_CODE, Artist.TYPE_ITEM);
-        types.put(Artist.BASE_URI_CODE, Artist.TYPE_DIR);
-        types.put(Genre.BASE_ITEM_CODE, Genre.CONTENT_ITEM_TYPE);
-        types.put(Genre.BASE_URI_CODE, Genre.CONTENT_TYPE);
-        types.put(Genre.BASE_FILTER_CODE, Genre.CONTENT_TYPE);
-        types.put(Track.BASE_ITEM_CODE, Track.TYPE_ITEM);
-        types.put(Track.BASE_URI_CODE, Track.TYPE_DIR);
-        types.put(Playlist.BASE_ITEM_CODE, Track.TYPE_ITEM);
-        types.put(Playlist.BASE_URI_CODE, Track.TYPE_DIR);
+        types.put(LibraryAlbum.BASE_ITEM_CODE, LibraryAlbum.TYPE_ITEM);
+        types.put(LibraryAlbum.BASE_URI_CODE, LibraryAlbum.TYPE_DIR);
+        types.put(LibraryArtist.BASE_ITEM_CODE, LibraryArtist.TYPE_ITEM);
+        types.put(LibraryArtist.BASE_URI_CODE, LibraryArtist.TYPE_DIR);
+        types.put(LibraryGenre.BASE_ITEM_CODE, LibraryGenre.CONTENT_ITEM_TYPE);
+        types.put(LibraryGenre.BASE_URI_CODE, LibraryGenre.CONTENT_TYPE);
+        types.put(LibraryGenre.BASE_FILTER_CODE, LibraryGenre.CONTENT_TYPE);
+        types.put(LibraryTrack.BASE_ITEM_CODE, LibraryTrack.TYPE_ITEM);
+        types.put(LibraryTrack.BASE_URI_CODE, LibraryTrack.TYPE_DIR);
+        types.put(Playlist.BASE_ITEM_CODE, LibraryTrack.TYPE_ITEM);
+        types.put(Playlist.BASE_URI_CODE, LibraryTrack.TYPE_DIR);
         types.put(PlaylistTrack.BASE_ITEM_CODE, PlaylistTrack.TYPE_ITEM);
         types.put(PlaylistTrack.BASE_URI_CODE, PlaylistTrack.TYPE_DIR);
     }
@@ -65,34 +65,34 @@ public class LibraryProvider extends ContentProvider {
         final ContentResolver contentResolver = mContext.getContentResolver();
 
         switch (URI_MATCHER.match(uri)) {
-            case Album.BASE_ITEM_CODE:
+            case LibraryAlbum.BASE_ITEM_CODE:
                 result = getAlbumCursor(uri);
                 break;
-            case Album.BASE_URI_CODE:
+            case LibraryAlbum.BASE_URI_CODE:
                 result = getAlbumsCursor(uri, contentResolver);
                 break;
-            case Album.BASE_ARTIST_FILTER:
+            case LibraryAlbum.BASE_ARTIST_FILTER:
                 result = getAlbumsForArtistCursor(uri, contentResolver);
                 break;
-            case Artist.BASE_ITEM_CODE:
+            case LibraryArtist.BASE_ITEM_CODE:
                 break;
-            case Artist.BASE_URI_CODE:
+            case LibraryArtist.BASE_URI_CODE:
                 break;
-            case Artist.BASE_GENRE_FILTER:
+            case LibraryArtist.BASE_GENRE_FILTER:
                 break;
-            case Genre.BASE_ITEM_CODE:
+            case LibraryGenre.BASE_ITEM_CODE:
 
                 break;
-            case Genre.BASE_URI_CODE:
+            case LibraryGenre.BASE_URI_CODE:
                 break;
-            case Genre.BASE_FILTER_CODE:
+            case LibraryGenre.BASE_FILTER_CODE:
 
                 break;
-            case Track.BASE_ITEM_CODE:
+            case LibraryTrack.BASE_ITEM_CODE:
                 break;
-            case Track.BASE_URI_CODE:
+            case LibraryTrack.BASE_URI_CODE:
                 break;
-            case Track.BASE_ALBUM_FILTER_CODE:
+            case LibraryTrack.BASE_ALBUM_FILTER_CODE:
 
                 break;
             case Playlist.BASE_URI_CODE:
@@ -124,29 +124,29 @@ public class LibraryProvider extends ContentProvider {
             long id = Long.parseLong(uri.getLastPathSegment());
             sqBuilder = new SQLiteQueryBuilder();
             sqBuilder.setTables(String.format("%s al, %s ar, %s t",
-                    Album.TABLE_NAME, Artist.TABLE_NAME, Track.TABLE_NAME));
+                    LibraryAlbum.TABLE_NAME, LibraryArtist.TABLE_NAME, LibraryTrack.TABLE_NAME));
             dataSel = String.format("t.%s = al.%s and al.%s = ar.%s and al.%s = ?",
-                    Track.ALBUM_ID,
-                    Album._ID,
-                    Album.ARTIST_ID,
-                    Artist._ID,
-                    Album._ID);
+                    LibraryTrack.ALBUM_ID,
+                    LibraryAlbum._ID,
+                    LibraryAlbum.ARTIST_ID,
+                    LibraryArtist._ID,
+                    LibraryAlbum._ID);
 
             result = sqBuilder.query(db,
                     new String[]{
-                            String.format("al.%s", Album._ID),
-                            Album.ALBUM_NAME,
-                            String.format("al.%s", Album.ARTIST_ID),
-                            Artist.ARTIST_NAME,
-                            Album.COVER_HASH
+                            String.format("al.%s", LibraryAlbum._ID),
+                            LibraryAlbum.ALBUM_NAME,
+                            String.format("al.%s", LibraryAlbum.ARTIST_ID),
+                            LibraryArtist.ARTIST_NAME,
+                            LibraryAlbum.COVER_HASH
                     },
                     dataSel,
                     new String[] {
                             String.valueOf(id)
                     },
-                    String.format("al.%s", Album._ID),
+                    String.format("al.%s", LibraryAlbum._ID),
                     null,
-                    String.format("ar.%s, al.%s ASC", Artist.ARTIST_NAME, Album.ALBUM_NAME)
+                    String.format("ar.%s, al.%s ASC", LibraryArtist.ARTIST_NAME, LibraryAlbum.ALBUM_NAME)
             );
         }
         return result;
@@ -160,32 +160,32 @@ public class LibraryProvider extends ContentProvider {
         if (db != null) {
             String artistId = uri.getLastPathSegment();
             sqBuilder = new SQLiteQueryBuilder();
-            sqBuilder.setTables(String.format("%s al, %s tr, %s ar", Album.TABLE_NAME,
-                    Track.TABLE_NAME,
-                    Artist.TABLE_NAME));
+            sqBuilder.setTables(String.format("%s al, %s tr, %s ar", LibraryAlbum.TABLE_NAME,
+                    LibraryTrack.TABLE_NAME,
+                    LibraryArtist.TABLE_NAME));
             dataSel = String.format("((tr.%s = ? and tr.%s = ar.%s) or (al.%s = ? and al.%s = ar.%s)) and al.%s = tr.%s",
-                    Track.ARTIST_ID,
-                    Track.ARTIST_ID,
-                    Artist._ID,
-                    Album.ARTIST_ID,
-                    Album.ARTIST_ID,
-                    Artist._ID,
-                    Album._ID,
-                    Track.ALBUM_ID);
+                    LibraryTrack.ARTIST_ID,
+                    LibraryTrack.ARTIST_ID,
+                    LibraryArtist._ID,
+                    LibraryAlbum.ARTIST_ID,
+                    LibraryAlbum.ARTIST_ID,
+                    LibraryArtist._ID,
+                    LibraryAlbum._ID,
+                    LibraryTrack.ALBUM_ID);
 
             result = sqBuilder.query(db,
                     new String[]{
-                            String.format("al.%s", Album.ALBUM_NAME),
-                            String.format("al.%s", Album._ID),
-                            String.format("ar.%s", Artist.ARTIST_NAME),
-                            String.format("al.%s", Album.ARTIST_ID),
-                            String.format("al.%s", Album.COVER_HASH)
+                            String.format("al.%s", LibraryAlbum.ALBUM_NAME),
+                            String.format("al.%s", LibraryAlbum._ID),
+                            String.format("ar.%s", LibraryArtist.ARTIST_NAME),
+                            String.format("al.%s", LibraryAlbum.ARTIST_ID),
+                            String.format("al.%s", LibraryAlbum.COVER_HASH)
                     },
                     dataSel,
                     new String[]{artistId, artistId},
-                    String.format("al.%s", Album._ID),
+                    String.format("al.%s", LibraryAlbum._ID),
                     null,
-                    String.format("al.%s ASC", Album.ALBUM_NAME)
+                    String.format("al.%s ASC", LibraryAlbum.ALBUM_NAME)
             );
             if (result != null) {
                 result.setNotificationUri(contentResolver, uri);
@@ -201,26 +201,26 @@ public class LibraryProvider extends ContentProvider {
         if (db != null) {
             SQLiteQueryBuilder sqBuilder = new SQLiteQueryBuilder();
             sqBuilder.setTables(String.format("%s al, %s ar, %s t",
-                    Album.TABLE_NAME, Artist.TABLE_NAME, Track.TABLE_NAME));
+                    LibraryAlbum.TABLE_NAME, LibraryArtist.TABLE_NAME, LibraryTrack.TABLE_NAME));
             dataSel = String.format("t.%s = al.%s and al.%s = ar.%s",
-                    Track.ALBUM_ID,
-                    Album._ID,
-                    Album.ARTIST_ID,
-                    Artist._ID);
+                    LibraryTrack.ALBUM_ID,
+                    LibraryAlbum._ID,
+                    LibraryAlbum.ARTIST_ID,
+                    LibraryArtist._ID);
 
             result = sqBuilder.query(db,
                     new String[]{
-                            String.format("al.%s", Album._ID),
-                            Album.ALBUM_NAME,
-                            String.format("al.%s", Album.ARTIST_ID),
-                            Artist.ARTIST_NAME,
-                            Album.COVER_HASH
+                            String.format("al.%s", LibraryAlbum._ID),
+                            LibraryAlbum.ALBUM_NAME,
+                            String.format("al.%s", LibraryAlbum.ARTIST_ID),
+                            LibraryArtist.ARTIST_NAME,
+                            LibraryAlbum.COVER_HASH
                     },
                     dataSel,
                     null,
-                    String.format("al.%s", Album._ID),
+                    String.format("al.%s", LibraryAlbum._ID),
                     null,
-                    String.format("ar.%s, al.%s ASC", Artist.ARTIST_NAME, Album.ALBUM_NAME)
+                    String.format("ar.%s, al.%s ASC", LibraryArtist.ARTIST_NAME, LibraryAlbum.ALBUM_NAME)
             );
 
             if (result != null) {
@@ -256,7 +256,7 @@ public class LibraryProvider extends ContentProvider {
 
     @Override
     public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException {
-        if (URI_MATCHER.match(uri) != Cover.BASE_IMAGE_CODE) {
+        if (URI_MATCHER.match(uri) != LibraryCover.BASE_IMAGE_CODE) {
             throw new IllegalArgumentException("Action not supported");
         } else {
             File file = new File(String.format("%s/%s", mContext.getFilesDir(), uri.getLastPathSegment()));

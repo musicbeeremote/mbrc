@@ -9,8 +9,8 @@ import com.j256.ormlite.table.DatabaseTable;
 import com.kelsos.mbrc.data.db.LibraryProvider;
 import com.kelsos.mbrc.data.interfaces.GenreColumns;
 
-@DatabaseTable(tableName = Genre.TABLE_NAME)
-public class Genre extends DataItem implements GenreColumns {
+@DatabaseTable(tableName = LibraryGenre.TABLE_NAME)
+public class LibraryGenre extends DataItem implements GenreColumns {
 
     public static final String TABLE_NAME = "genres";
     public static final Uri CONTENT_URI = Uri.withAppendedPath(LibraryProvider.AUTHORITY_URI, TABLE_NAME);
@@ -25,12 +25,12 @@ public class Genre extends DataItem implements GenreColumns {
     @DatabaseField
     private String genreName;
 
-    public Genre(String genreName) {
+    public LibraryGenre(String genreName) {
         this.id = -1;
         this.genreName = genreName.length() > 0 ? genreName : "Unknown Genre";
     }
 
-    public Genre(final Cursor cursor) {
+    public LibraryGenre(final Cursor cursor) {
         this.id = cursor.getLong(cursor.getColumnIndex(_ID));
         this.genreName = cursor.getString(cursor.getColumnIndex(GENRE_NAME));
     }

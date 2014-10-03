@@ -2,32 +2,35 @@ package com.kelsos.mbrc.data.dbdata;
 
 import android.content.ContentValues;
 import android.content.UriMatcher;
+import android.database.Cursor;
 import android.net.Uri;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.kelsos.mbrc.data.db.LibraryProvider;
-import com.kelsos.mbrc.data.interfaces.AlbumColumns;
+import com.kelsos.mbrc.data.interfaces.ArtistColumns;
 
-@DatabaseTable(tableName = Album.TABLE_NAME)
-public class Album extends DataItem implements AlbumColumns {
-    public static final String TABLE_NAME = "albums";
+@DatabaseTable(tableName = LibraryArtist.TABLE_NAME)
+public class LibraryArtist extends DataItem implements ArtistColumns {
+    public static final String TABLE_NAME = "artists";
     public static final String TYPE_DIR = "vnd.android.cursor.dir/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;
     public static final String TYPE_ITEM = "vnd.android.cursor.item/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;
-    public static final Uri CONTENT_ARTIST_URI = Uri.withAppendedPath(getContentUri(), "artist");
-    public static final int BASE_URI_CODE = 0x33872c3;
-    public static final int BASE_ITEM_CODE = 0x462395d;
-    public static final int BASE_ARTIST_FILTER = 0x92810d;
+    public static final Uri CONTENT_GENRE_URI = Uri.withAppendedPath(getContentUri(), "genre");
+    public static final int BASE_URI_CODE = 0xb450ddf;
+    public static final int BASE_ITEM_CODE = 0x4213467;
+    public static final int BASE_GENRE_FILTER = 0x099198;
+    @DatabaseField
+    private String artistName;
     @DatabaseField(generatedId = true)
     private long id;
-    @DatabaseField
-    private String albumName;
-    @DatabaseField(canBeNull = false, foreign = true)
-    private Artist artist;
-    private String coverHash;
 
-    public Album() {
-        // Required no-arg constructor
+    public LibraryArtist(String artistName) {
+        this.artistName = artistName.length() > 0 ? artistName : "Unknown Artist";
+        this.id = -1;
+    }
 
+    public LibraryArtist(final Cursor cursor) {
+        this.id = cursor.getLong(cursor.getColumnIndex(_ID));
+        this.artistName = cursor.getString(cursor.getColumnIndex(ARTIST_NAME));
     }
 
     public static Uri getContentUri() {
@@ -37,11 +40,12 @@ public class Album extends DataItem implements AlbumColumns {
     public static void addMatcherUris(UriMatcher uriMatcher) {
         uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME, BASE_URI_CODE);
         uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME + "/#", BASE_ITEM_CODE);
-        uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME + "/artist/*", BASE_ARTIST_FILTER);
+        uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME + "/genre/*", BASE_GENRE_FILTER);
     }
 
     public ContentValues getContentValues() {
         ContentValues values = new ContentValues();
+        values.put(ARTIST_NAME, artistName);
         return values;
     }
 
@@ -50,20 +54,12 @@ public class Album extends DataItem implements AlbumColumns {
         return TABLE_NAME;
     }
 
-    public Artist getArtist() {
-        return artist;
+    public String getArtistName() {
+        return artistName;
     }
 
-    public void setArtist(Artist artist) {
-        this.artist = artist;
-    }
-
-    public String getAlbumName() {
-        return albumName;
-    }
-
-    public void setAlbumName(String albumName) {
-        this.albumName = albumName;
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
     }
 
     public long getId() {
@@ -74,11 +70,4 @@ public class Album extends DataItem implements AlbumColumns {
         this.id = id;
     }
 
-    public String getCoverHash() {
-        return coverHash;
-    }
-
-    public void setCoverHash(String coverHash) {
-        this.coverHash = coverHash;
-    }
 }

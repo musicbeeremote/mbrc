@@ -13,8 +13,8 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumCursorAdapter;
-import com.kelsos.mbrc.data.dbdata.Album;
-import com.kelsos.mbrc.data.dbdata.Artist;
+import com.kelsos.mbrc.data.dbdata.LibraryAlbum;
+import com.kelsos.mbrc.data.dbdata.LibraryArtist;
 import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
@@ -32,7 +32,7 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
     private static final int URL_LOADER = 2;
     private AlbumCursorAdapter mAdapter;
     private GridView mGrid;
-    private Album album;
+    private LibraryAlbum album;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -73,9 +73,9 @@ public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri baseUri;
-        baseUri = Album.getContentUri();
+        baseUri = LibraryAlbum.getContentUri();
         return new CursorLoader(getActivity(), baseUri,
-                new String[]{Album.ALBUM_NAME, Artist.ARTIST_NAME}, null, null, null);
+                new String[]{LibraryAlbum.ALBUM_NAME, LibraryArtist.ARTIST_NAME}, null, null, null);
     }
 
     @Override

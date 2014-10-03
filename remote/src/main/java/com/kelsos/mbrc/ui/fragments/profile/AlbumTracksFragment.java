@@ -11,7 +11,7 @@ import android.view.*;
 import android.widget.*;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumProfileCursorAdapter;
-import com.kelsos.mbrc.data.dbdata.Track;
+import com.kelsos.mbrc.data.dbdata.LibraryTrack;
 import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseMenuItems;
 import roboguice.inject.InjectView;
@@ -124,9 +124,9 @@ public class AlbumTracksFragment extends BaseListFragment
 
     @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         Uri baseUri;
-        baseUri = Uri.withAppendedPath(Track.CONTENT_ALBUM_URI, Uri.encode(String.valueOf(albumId)));
+        baseUri = Uri.withAppendedPath(LibraryTrack.CONTENT_ALBUM_URI, Uri.encode(String.valueOf(albumId)));
         return new CursorLoader(getActivity(), baseUri,
-                new String[] {Track._ID, Track.TITLE, Track.TRACK_NO}, null, null, null);
+                new String[] {LibraryTrack._ID, LibraryTrack.TITLE, LibraryTrack.TRACK_NO}, null, null, null);
     }
 
     @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {

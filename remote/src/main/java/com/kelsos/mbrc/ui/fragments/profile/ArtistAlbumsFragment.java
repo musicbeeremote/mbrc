@@ -15,8 +15,8 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumCursorAdapter;
-import com.kelsos.mbrc.data.dbdata.Album;
-import com.kelsos.mbrc.data.dbdata.Artist;
+import com.kelsos.mbrc.data.dbdata.LibraryAlbum;
+import com.kelsos.mbrc.data.dbdata.LibraryArtist;
 import com.kelsos.mbrc.ui.activities.Profile;
 import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
@@ -42,7 +42,7 @@ public class ArtistAlbumsFragment extends BaseFragment implements LoaderManager.
     private static final int GROUP_ID = 92;
     private AlbumCursorAdapter mAdapter;
     private GridView mGrid;
-    private Album album;
+    private LibraryAlbum album;
     private long artistId;
 
     public ArtistAlbumsFragment() {
@@ -63,7 +63,7 @@ public class ArtistAlbumsFragment extends BaseFragment implements LoaderManager.
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             int position = mi != null ? mi.position : 0;
-            album = new Album();
+            album = new LibraryAlbum();
             switch (item.getItemId()) {
                 case BrowseMenuItems.GET_SUB:
                     showTracks(album);
@@ -128,9 +128,9 @@ public class ArtistAlbumsFragment extends BaseFragment implements LoaderManager.
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         Uri baseUri;
-        baseUri = Uri.withAppendedPath(Album.CONTENT_ARTIST_URI, Uri.encode(String.valueOf(artistId)));
+        baseUri = Uri.withAppendedPath(LibraryAlbum.CONTENT_ARTIST_URI, Uri.encode(String.valueOf(artistId)));
         return new CursorLoader(getActivity(), baseUri,
-                new String[]{Album.ALBUM_NAME, Artist.ARTIST_NAME}, null, null, null);
+                new String[]{LibraryAlbum.ALBUM_NAME, LibraryArtist.ARTIST_NAME}, null, null, null);
     }
 
     @Override
@@ -146,7 +146,7 @@ public class ArtistAlbumsFragment extends BaseFragment implements LoaderManager.
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        album = new Album();
+        album = new LibraryAlbum();
         showTracks(album);
     }
 
@@ -165,7 +165,7 @@ public class ArtistAlbumsFragment extends BaseFragment implements LoaderManager.
 
     }
 
-    private void showTracks(final Album album) {
+    private void showTracks(final LibraryAlbum album) {
         Intent intent = new Intent(getActivity(), Profile.class);
         intent.putExtra("name", album.getAlbumName());
         intent.putExtra("id", album.getId());

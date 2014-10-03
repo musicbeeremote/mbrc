@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.dbdata.Artist;
+import com.kelsos.mbrc.data.dbdata.LibraryArtist;
 
 public class ArtistCursorAdapter extends CursorAdapter {
 
@@ -23,7 +23,7 @@ public class ArtistCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(final View view, Context context, Cursor cursor) {
-        final Artist artist = new Artist(cursor);
+        final LibraryArtist artist = new LibraryArtist(cursor);
         ((TextView) view.findViewById(R.id.line_one)).setText(artist.getArtistName());
         view.findViewById(R.id.ui_item_context_indicator).setOnClickListener(new View.OnClickListener() {
             @Override

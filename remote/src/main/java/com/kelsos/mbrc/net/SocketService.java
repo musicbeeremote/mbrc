@@ -161,23 +161,9 @@ public class SocketService {
         }
     }
 
-    public void preProcessIncoming(final String incoming) {
+    public void tryProcessIncoming(final String incoming) {
         try {
-            final String[] replies = incoming.split("\r\n");
-            for (String reply : replies) {
-
-                logger.d("incoming::", reply);
-                JsonNode node = mapper.readValue(reply, JsonNode.class);
-                String context = node.path("message").getTextValue();
-
-                if (context.contains(Notification.CLIENT_NOT_ALLOWED)) {
-                    bus.post(new MessageEvent(ProtocolEventType.INFORM_CLIENT_NOT_ALLOWED));
-                    return;
-                }
-
-                bus.post(new MessageEvent(context));
-            }
-
+            processIncoming(incoming);
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
                 logger.d("Incoming message pre-processor", e);
@@ -185,6 +171,23 @@ public class SocketService {
             }
         }
 
+    }
+
+    private void processIncoming(String incoming) throws IOException {
+        final String[] replies = incoming.split("\r\n");
+        for (String reply : replies) {
+            
+            logger.d("incoming::", reply);
+            JsonNode node = mapper.readValue(reply, JsonNode.class);
+            String context = node.path("message").getTextValue();
+
+            if (context.contains(Notification.CLIENT_NOT_ALLOWED)) {
+                bus.post(new MessageEvent(ProtocolEventType.INFORM_CLIENT_NOT_ALLOWED));
+                return;
+            }
+
+            bus.post(new MessageEvent(context));
+        }
     }
 
     private class SocketConnection implements Runnable {
@@ -211,7 +214,7 @@ public class SocketService {
                     try {
                         final String incoming = input.readLine();
                         if (incoming != null && incoming.length() > 0) {
-                            preProcessIncoming(incoming);
+                            tryProcessIncoming(incoming);
                         }
                     } catch (IOException e) {
                         input.close();

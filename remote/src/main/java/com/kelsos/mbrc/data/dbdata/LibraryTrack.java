@@ -11,8 +11,8 @@ import com.kelsos.mbrc.util.RemoteUtils;
 
 import java.util.Date;
 
-@DatabaseTable(tableName = Track.TABLE_NAME)
-public class Track extends DataItem implements TrackColumns {
+@DatabaseTable(tableName = LibraryTrack.TABLE_NAME)
+public class LibraryTrack extends DataItem implements TrackColumns {
     public static final String TABLE_NAME = "tracks";
     public static final String TYPE_DIR = "vnd.android.cursor.dir/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;
     public static final String TYPE_ITEM = "vnd.android.cursor.item/vnd.com.kelsos.mbrc.provider." + TABLE_NAME;
@@ -27,9 +27,9 @@ public class Track extends DataItem implements TrackColumns {
     @DatabaseField
     private String title;
     @DatabaseField(foreign = true)
-    private Album album;
+    private LibraryAlbum album;
     @DatabaseField(foreign = true)
-    private Artist artist;
+    private LibraryArtist artist;
     @DatabaseField
     private String year;
     @DatabaseField
@@ -49,11 +49,11 @@ public class Track extends DataItem implements TrackColumns {
         uriMatcher.addURI(LibraryProvider.AUTHORITY, TABLE_NAME + "/album/*", BASE_ALBUM_FILTER_CODE);
     }
 
-    public void setAlbum(Album album) {
+    public void setAlbum(LibraryAlbum album) {
         this.album = album;
     }
 
-    public void setArtist(Artist artist) {
+    public void setArtist(LibraryArtist artist) {
         this.artist = artist;
     }
 
@@ -80,7 +80,7 @@ public class Track extends DataItem implements TrackColumns {
         this.id = id;
     }
 
-    public Album getAlbum() {
+    public LibraryAlbum getAlbum() {
         return album;
     }
 
@@ -108,7 +108,7 @@ public class Track extends DataItem implements TrackColumns {
         this.title = title;
     }
 
-    public Artist getArtist() {
+    public LibraryArtist getArtist() {
         return artist;
     }
 

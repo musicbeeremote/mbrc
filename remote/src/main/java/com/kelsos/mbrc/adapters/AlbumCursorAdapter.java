@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.dbdata.Album;
-import com.kelsos.mbrc.data.dbdata.Cover;
+import com.kelsos.mbrc.data.dbdata.LibraryAlbum;
+import com.kelsos.mbrc.data.dbdata.LibraryCover;
 import com.squareup.picasso.Picasso;
 
 public class AlbumCursorAdapter extends CursorAdapter {
@@ -24,9 +24,9 @@ public class AlbumCursorAdapter extends CursorAdapter {
     }
 
     @Override public void bindView(final View view, Context context, Cursor cursor) {
-        final Album album = new Album();
+        final LibraryAlbum album = new LibraryAlbum();
         final ImageView imageView = ((ImageView)view.findViewById(R.id.ui_grid_image));
-        final Uri uri = Uri.withAppendedPath(Cover.CONTENT_IMAGE_URI, album.getCoverHash());
+        final Uri uri = Uri.withAppendedPath(LibraryCover.CONTENT_IMAGE_URI, album.getCoverHash());
         ((TextView) view.findViewById(R.id.line_one)).setText(album.getAlbumName());
         ((TextView) view.findViewById(R.id.line_two)).setText(album.getArtist().getArtistName());
         view.findViewById(R.id.ui_item_context_indicator).setOnClickListener(new View.OnClickListener() {
