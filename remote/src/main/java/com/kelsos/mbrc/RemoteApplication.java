@@ -9,6 +9,7 @@ import com.kelsos.mbrc.controller.Controller;
 import com.kelsos.mbrc.data.MainDataModel;
 import com.kelsos.mbrc.data.SyncHandler;
 import com.kelsos.mbrc.net.SocketService;
+import com.kelsos.mbrc.rest.RemoteClient;
 import com.kelsos.mbrc.util.NotificationService;
 import com.kelsos.mbrc.util.RemoteBroadcastReceiver;
 import com.noveogroup.android.log.Logger;
@@ -38,6 +39,7 @@ public class RemoteApplication extends Application {
         injector.getInstance(RemoteBroadcastReceiver.class);
         injector.getInstance(NotificationService.class);
         injector.getInstance(SyncHandler.class);
+        injector.getInstance(RemoteClient.class);
 
         //HACK: Force overflow code courtesy of Timo Ohr http://stackoverflow.com/a/11438245
         try {
