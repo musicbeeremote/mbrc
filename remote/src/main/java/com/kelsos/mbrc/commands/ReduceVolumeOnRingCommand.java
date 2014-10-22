@@ -6,10 +6,6 @@ import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.net.SocketService;
 import com.kelsos.mbrc.rest.RemoteApi;
-import com.kelsos.mbrc.rest.responses.SuccessResponse;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 public class ReduceVolumeOnRingCommand implements ICommand {
     public static final double TWENTY_PERCENT = 0.2;
@@ -26,16 +22,6 @@ public class ReduceVolumeOnRingCommand implements ICommand {
 
     @Override public void execute(IEvent e) {
         int volume = (int) (model.getVolume() * TWENTY_PERCENT);
-        api.updateVolume(volume, new Callback<SuccessResponse>() {
-            @Override
-            public void success(SuccessResponse successResponse, Response response) {
-
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-
-            }
-        });
+        api.updateVolume(volume);
     }
 }

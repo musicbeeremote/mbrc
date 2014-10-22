@@ -5,11 +5,7 @@ import com.kelsos.mbrc.data.Model;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.rest.RemoteApi;
-import com.kelsos.mbrc.rest.responses.SuccessResponse;
 import com.squareup.otto.Bus;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 public class KeyVolumeDownCommand implements ICommand {
     public static final int LOWEST_NOT_ZERO = 10;
@@ -41,17 +37,7 @@ public class KeyVolumeDownCommand implements ICommand {
                 volume = model.getVolume() - mod;
             }
 
-            api.updateVolume(volume, new Callback<SuccessResponse>() {
-                @Override
-                public void success(SuccessResponse successResponse, Response response) {
-
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-
-                }
-            });
+            api.updateVolume(volume);
         }
     }
 }

@@ -31,43 +31,15 @@ public class ButtonFragment extends BaseFragment {
     @InjectView(R.id.main_repeat_button)
     private ImageButton repeatButton;
 
-    private View.OnClickListener playButtonListener = new View.OnClickListener() {
-
-        public void onClick(View v) {
-            getBus().post(new PlayPressedEvent());
-        }
+    private View.OnClickListener playButtonListener = v -> getBus().post(new PlayPressedEvent());
+    private View.OnClickListener previousButtonListener = v -> getBus().post(new PreviousPressedEvent());
+    private View.OnClickListener nextButtonListener = v -> getBus().post(new NextPressedEvent());
+    private View.OnLongClickListener stopListener = v -> {
+        getBus().post(new StopPressedEvent());
+        return true;
     };
-    private View.OnClickListener previousButtonListener = new View.OnClickListener() {
-
-        public void onClick(View v) {
-            getBus().post(new PreviousPressedEvent());
-        }
-    };
-    private View.OnClickListener nextButtonListener = new View.OnClickListener() {
-
-        public void onClick(View v) {
-            getBus().post(new NextPressedEvent());
-        }
-    };
-    private View.OnLongClickListener stopListener = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            getBus().post(new StopPressedEvent());
-            return true;
-        }
-    };
-    private ImageButton.OnClickListener shuffleListener = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            getBus().post(new ShufflePressedEvent());
-        }
-    };
-    private ImageButton.OnClickListener repeatListener = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            getBus().post(new RepeatChangeEvent());
-        }
-    };
+    private ImageButton.OnClickListener shuffleListener = v -> getBus().post(new ShufflePressedEvent());
+    private ImageButton.OnClickListener repeatListener = v -> getBus().post(new RepeatChangeEvent());
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

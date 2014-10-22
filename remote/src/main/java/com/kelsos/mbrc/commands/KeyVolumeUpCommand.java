@@ -5,11 +5,7 @@ import com.kelsos.mbrc.data.Model;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.rest.RemoteApi;
-import com.kelsos.mbrc.rest.responses.SuccessResponse;
 import com.squareup.otto.Bus;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 public class KeyVolumeUpCommand implements ICommand {
     public static final int GREATEST_NOT_MAX = 90;
@@ -42,17 +38,7 @@ public class KeyVolumeUpCommand implements ICommand {
                 volume = model.getVolume() + ((2 * STEP) - mod);
             }
 
-            api.updateVolume(volume, new Callback<SuccessResponse>() {
-                @Override
-                public void success(SuccessResponse successResponse, Response response) {
-
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-
-                }
-            });
+            api.updateVolume(volume);
         }
     }
 }

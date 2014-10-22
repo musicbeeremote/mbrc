@@ -5,10 +5,8 @@ import com.kelsos.mbrc.data.Model;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.rest.RemoteApi;
-import com.kelsos.mbrc.rest.responses.TrackResponse;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class RequestTrackData implements ICommand {
     private Model model;
@@ -21,19 +19,14 @@ public class RequestTrackData implements ICommand {
     }
 
     @Override public void execute(IEvent e) {
-        api.getTrackInfo(new Callback<TrackResponse>() {
-            @Override
-            public void success(TrackResponse trackResponse, Response response) {
-                model.setTrackInfo(trackResponse.getArtist(),
-                        trackResponse.getAlbum(),
-                        trackResponse.getTitle(),
-                        trackResponse.getYear());
-            }
 
-            @Override
-            public void failure(RetrofitError error) {
+        api.getTrackInfo()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(resp -> model.setTrackInfo(resp.getArtist(),
+                        resp.getAlbum(),
+                        resp.getTitle(),
+                        resp.getYear()));
 
-            }
-        });
     }
 }

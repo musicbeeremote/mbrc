@@ -3,10 +3,10 @@ package com.kelsos.mbrc.rest;
 import com.kelsos.mbrc.converter.JacksonConverter;
 import com.kelsos.mbrc.rest.responses.*;
 import org.codehaus.jackson.map.ObjectMapper;
-import retrofit.Callback;
 import retrofit.client.Response;
 import retrofit.converter.Converter;
 import retrofit.http.*;
+import rx.Observable;
 
 import java.util.List;
 
@@ -17,141 +17,139 @@ public interface RemoteApi {
     String COVER_URL = RemoteApi.API_URL + "/track/cover/raw";
 
     @GET("/player/volume")
-    void getVolume(Callback<ValueResponse> cb);
+    Observable<ValueResponse> getVolume();
 
     @PUT("/player/volume")
-    void updateVolume(@Query("value") int volume, Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> updateVolume(@Query("value") int volume);
 
     @PUT("/track/rating")
-    void updateRating(@Query("rating") float rating, Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> updateRating(@Query("rating") float rating);
 
     @PUT("/track/position")
-    void updatePosition(@Query("position") int position, Callback<TrackPositionResponse> cb);
+    Observable<TrackPositionResponse> updatePosition(@Query("position") int position);
 
     @PUT("/player/shuffle")
-    void updateShuffleState(@Query("enabled") boolean enabled, Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> updateShuffleState(@Query("enabled") boolean enabled);
 
     @PUT("/player/scrobble")
-    void updateScrobbleState(@Query("enabled") boolean enabled, Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> updateScrobbleState(@Query("enabled") boolean enabled);
 
     @PUT("/player/repeat")
-    void updateRepeatState(@Query("enabled") String mode, Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> updateRepeatState(@Query("enabled") String mode);
 
     @PUT("/player/mute")
-    void updateMuteState(@Query("enabled") boolean enabled, Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> updateMuteState(@Query("enabled") boolean enabled);
 
     @PUT("/player/autodj")
-    void updateAutoDjState(@Query("enabled") boolean enabled, Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> updateAutoDjState(@Query("enabled") boolean enabled);
 
     @GET("/player/previous")
-    void playPrevious(Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> playPrevious();
 
     @GET("/player/next")
-    void playNext(Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> playNext();
 
     @PUT("/playlists/play")
-    void playPlaylist(@Query("path") String path, Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> playPlaylist(@Query("path") String path);
 
     @GET("/player/stop")
-    void playbackStop(Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> playbackStop();
 
     @GET("/player/play")
-    void playbackStart(Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> playbackStart();
 
     @GET("/player/pause")
-    void playbackPause(Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> playbackPause();
 
     @DELETE("/nowplaying/{id}")
-    void nowPlayingRemoveTrack(@Path("id") int id, Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> nowPlayingRemoveTrack(@Path("id") int id);
 
     @PUT("/nowplaying/play")
-    void nowPlayingPlayTrack(@Query("path") String path, Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> nowPlayingPlayTrack(@Query("path") String path);
 
     @PUT("/nowplaying/move")
-    void nowPlayingMoveTrack(@Query("from") int from, @Query("to") int to, Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> nowPlayingMoveTrack(@Query("from") int from, @Query("to") int to);
 
     @PUT("/playlists/{id}/tracks/move")
-    void playlistMoveTrack(@Path("id") int id,
+    Observable<SuccessResponse> playlistMoveTrack(@Path("id") int id,
                            @Query("from") int from,
-                           @Query("to") int to,
-                           Callback<SuccessResponse> cb);
+                           @Query("to") int to);
 
     @GET("/track/rating")
-    void getTrackRating(Callback<RatingResponse> cb);
+    Observable<RatingResponse> getTrackRating();
 
     @GET("/track/position")
-    void getCurrentPosition(Callback<TrackPositionResponse> cb);
+    Observable<TrackPositionResponse> getCurrentPosition();
 
     @GET("/track/lyrics")
-    void getTrackLyrics(Callback<LyricsResponse> cb);
+    Observable<LyricsResponse> getTrackLyrics();
 
     @GET("/track/cover")
-    void getTrackCover(Callback<CoverResponse> cb);
+    Observable<CoverResponse> getTrackCover();
 
     @GET("/track/cover/raw")
     @Streaming
-    void getTrackCoverData(Callback<Response> cb);
+    Observable<Response> getTrackCoverData();
 
     @GET("/track")
-    void getTrackInfo(Callback<TrackResponse> cb);
+    Observable<TrackResponse> getTrackInfo();
 
     @GET("/player/shuffle")
-    void getShuffleState(Callback<StateResponse> cb);
+    Observable<StateResponse> getShuffleState();
 
     @GET("/player/scrobble")
-    void getScrobbleState(Callback<StateResponse> cb);
+    Observable<StateResponse> getScrobbleState();
 
     @GET("/player/repeat")
-    void getRepeatMode(Callback<TextValueResponse> cb);
+    Observable<TextValueResponse> getRepeatMode();
 
     @GET("/player/playstate")
-    void getPlaystate(Callback<TextValueResponse> cb);
+    Observable<TextValueResponse> getPlaystate();
 
     @GET("/playlists/{id}/tracks")
-    void getPlaylistTracks(@Path("id") int id,
+    Observable<PaginatedDataResponse> getPlaylistTracks(@Path("id") int id,
                            @Query("offset") int offset,
-                           @Query("limit") int limit,
-                           Callback<PaginatedDataResponse> cb);
+                           @Query("limit") int limit);
 
     @GET("/player/status")
-    void getPlayerStatus(Callback<PlayerStatusResponse> cb);
+    Observable<PlayerStatusResponse> getPlayerStatus();
 
     @GET("/player/mute")
-    void getMuteState(Callback<StateResponse> cb);
+    Observable<StateResponse> getMuteState();
 
     @GET("/library/genres")
-    void getLibraryGenres(@Query("offset") int offset, @Query("limit") int limit, Callback<PaginatedDataResponse> cb);
+    Observable<PaginatedDataResponse> getLibraryGenres(@Query("offset") int offset, @Query("limit") int limit);
 
     @GET("/library/tracks")
-    void getLibraryTracks(@Query("offset") int offset, @Query("limit") int limit, Callback<PaginatedDataResponse> cb);
+    Observable<PaginatedDataResponse> getLibraryTracks(@Query("offset") int offset, @Query("limit") int limit);
 
     @GET("/library/covers")
-    void getLibraryCoverss(@Query("offset") int offset, @Query("limit") int limit, Callback<PaginatedDataResponse> cb);
+    Observable<PaginatedDataResponse> getLibraryCoverss(@Query("offset") int offset, @Query("limit") int limit);
 
     @GET("/library/artists")
-    void getLibraryArtists(@Query("offset") int offset, @Query("limit") int limit, Callback<PaginatedDataResponse> cb);
+    Observable<PaginatedDataResponse> getLibraryArtists(@Query("offset") int offset, @Query("limit") int limit);
 
     @GET("/library/albums")
-    void getLibraryAlbums(@Query("offset") int offset, @Query("limit") int limit, Callback<PaginatedDataResponse> cb);
+    Observable<PaginatedDataResponse> getLibraryAlbums(@Query("offset") int offset, @Query("limit") int limit);
 
     @GET("/library/autodj")
-    void getAutodjState(Callback<StateResponse> cb);
+    Observable<StateResponse> getAutodjState();
 
     @DELETE("/playlists/{id}/tracks")
-    void deletePlaylistTrack(@Path("id") int id, @Query("index") int index, Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> deletePlaylistTrack(@Path("id") int id, @Query("index") int index);
 
     @DELETE("/playlists/{id}")
-    void deletePlaylist(@Path("id") int id, Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> deletePlaylist(@Path("id") int id);
 
     @PUT("/playlists")
-    void createPlaylist(@Query("name") String name, @Query("list") List<String> list, Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> createPlaylist(@Query("name") String name, @Query("list") List<String> list);
 
     @GET("/playlists")
-    void getPlaylists(@Query("offset") int offset, @Query("limit") int limit, Callback<PaginatedDataResponse> cb);
+    Observable<PaginatedDataResponse> getPlaylists(@Query("offset") int offset, @Query("limit") int limit);
 
     @GET("/nowplaying")
-    void getNowPlayingList(@Query("offset") int offset, @Query("limit") int limit, Callback<PaginatedDataResponse> cb);
+    Observable<PaginatedDataResponse> getNowPlayingList(@Query("offset") int offset, @Query("limit") int limit);
 
     @PUT("/playlists/{id}/tracks")
-    void addTracksToPlaylist(@Path("id") int id, List<String> list, Callback<SuccessResponse> cb);
+    Observable<SuccessResponse> addTracksToPlaylist(@Path("id") int id, List<String> list);
 }

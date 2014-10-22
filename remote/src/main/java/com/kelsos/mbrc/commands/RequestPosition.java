@@ -5,11 +5,9 @@ import com.kelsos.mbrc.events.ui.UpdatePosition;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.rest.RemoteApi;
-import com.kelsos.mbrc.rest.responses.TrackPositionResponse;
 import com.kelsos.mbrc.util.MainThreadBusWrapper;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class RequestPosition implements ICommand {
 
@@ -18,25 +16,16 @@ public class RequestPosition implements ICommand {
 
     private MainThreadBusWrapper bus;
 
-    @Inject public RequestPosition(MainThreadBusWrapper bus) {
+    @Inject
+    public RequestPosition(MainThreadBusWrapper bus) {
         this.bus = bus;
     }
 
     public void execute(IEvent e) {
-        api.getCurrentPosition(new Callback<TrackPositionResponse>() {
-            @Override
-            public void success(TrackPositionResponse trackPositionResponse, Response response) {
-                int position = trackPositionResponse.getPosition();
-                int duration = trackPositionResponse.getDuration();
-                UpdatePosition event = new UpdatePosition(position, duration);
-                bus.post(event);
-            }
 
-            @Override
-            public void failure(RetrofitError error) {
-
-            }
-        });
-
+        api.getCurrentPosition()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(resp -> bus.post(new UpdatePosition(resp.getPosition(), resp.getDuration())));
     }
 }

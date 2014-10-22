@@ -19,7 +19,7 @@
                 android:layout_height="@dimen/mbrc_cover"
                 android:adjustViewBounds="false"
                 android:contentDescription="@string/main_image_view_cover_description"
-                android:scaleType="fitCenter"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_image_no_cover"/>
 
         <LinearLayout
