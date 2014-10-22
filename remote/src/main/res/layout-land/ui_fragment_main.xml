@@ -27,7 +27,7 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/mbrc_transparent_dark"
+                android:background="@color/remote_transparent"
                 android:layout_gravity="center_horizontal|bottom"
                 android:id="@+id/ratingWrapper"
                 android:layout_marginLeft="1dp"
@@ -40,7 +40,6 @@
 
         <RatingBar
                 android:id="@+id/track_rating_bar"
-                style="@style/RatingBarmbrc_dark_compo"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:numStars="5"
@@ -65,7 +64,7 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/mbrc_transparent_dark"
+        android:background="@color/remote_transparent"
         android:padding="@dimen/side_margin_half"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
@@ -76,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/main_label_duration_current"
-            android:textColor="@color/mbrc_title"
+            android:textColor="@color/remote_text"
             android:textSize="@dimen/mbrc_duration_text_size"/>
 
         <SeekBar
@@ -102,7 +101,7 @@
             android:layout_height="wrap_content"
             android:gravity="right"
             android:text="@string/main_label_duration_total"
-            android:textColor="@color/mbrc_title"
+            android:textColor="@color/remote_text"
             android:textSize="@dimen/mbrc_duration_text_size"/>
     </LinearLayout>
 

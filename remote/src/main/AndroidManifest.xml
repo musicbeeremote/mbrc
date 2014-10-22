@@ -16,7 +16,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/application_name"
         android:logo="@drawable/ic_launcher"
-        android:theme="@style/Theme.Mbrc_dark" >
+        android:theme="@style/Theme.RemoteLight" >
         <activity
             android:name=".ui.activities.HomeActivity"
             android:launchMode="singleTop"

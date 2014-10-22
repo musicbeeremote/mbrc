@@ -1,16 +1,16 @@
 package com.kelsos.mbrc.commands;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.data.MainDataModel;
+import com.kelsos.mbrc.data.Model;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.util.NotificationService;
 
 public class ConnectionStatusChangedCommand implements ICommand {
-    private MainDataModel model;
+    private Model model;
     private NotificationService notificationService;
 
-    @Inject public ConnectionStatusChangedCommand(MainDataModel model, NotificationService notificationService) {
+    @Inject public ConnectionStatusChangedCommand(Model model, NotificationService notificationService) {
         this.model = model;
         this.notificationService = notificationService;
     }

@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.commands;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.data.MainDataModel;
+import com.kelsos.mbrc.data.Model;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.net.SocketService;
@@ -16,10 +16,10 @@ public class ReduceVolumeOnRingCommand implements ICommand {
 
     @Inject
     private RemoteApi api;
-    private MainDataModel model;
+    private Model model;
     private SocketService service;
 
-    @Inject public ReduceVolumeOnRingCommand(MainDataModel model, SocketService service) {
+    @Inject public ReduceVolumeOnRingCommand(Model model, SocketService service) {
         this.model = model;
         this.service = service;
     }

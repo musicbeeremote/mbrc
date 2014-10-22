@@ -10,6 +10,7 @@
             android:id="@+id/expanded_notification_cover"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_alignParentBottom="true"
             android:src="@drawable/ic_image_no_cover"
             android:scaleType="fitXY"/>
@@ -34,7 +35,7 @@
                 android:id="@+id/expanded_notification_line_one"
                 android:fontFamily="sans-serif-light"
                 android:textSize="@dimen/mbrc_notification_expanded_text_big"
-                android:textColor="@color/mbrc_title"
+                android:textColor="@color/remote_text"
                 />
 
         <TextView
@@ -44,7 +45,7 @@
                 android:singleLine="true"
                 android:ellipsize="end"
                 android:id="@+id/expanded_notification_line_two"
-                android:textColor="@color/mbrc_subtitle"
+                android:textColor="@color/remote_secondary_text"
                 />
 
         <TextView
@@ -53,7 +54,7 @@
                 android:text="@string/album_placeholder"
                 android:singleLine="true"
                 android:ellipsize="end"
-                android:textColor="@color/mbrc_subtitle"
+                android:textColor="@color/remote_secondary_text"
                 android:id="@+id/expanded_notification_line_three"
                 />
     </LinearLayout>
@@ -62,7 +63,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:id="@+id/expanded_notification_divider"
-            android:background="@drawable/abc_list_divider_holo_dark"
+            android:background="@color/remote_transparent"
             android:layout_above="@+id/expanded_notification_button_bar"
             android:layout_toRightOf="@+id/expanded_notification_cover"/>
 

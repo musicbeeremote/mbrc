@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.rest;
 
 import com.google.inject.Inject;
+import com.kelsos.mbrc.data.Model;
 import com.kelsos.mbrc.events.actions.*;
 import com.kelsos.mbrc.rest.responses.SuccessResponse;
 import com.noveogroup.android.log.Logger;
@@ -17,16 +18,18 @@ public class RemoteClient {
 
     private Bus bus;
     private RemoteApi api;
+    private Model model;
 
     @Inject
-    public RemoteClient(Bus bus, RemoteApi api) {
+    public RemoteClient(Bus bus, RemoteApi api, Model model) {
         this.bus = bus;
         this.api = api;
         this.bus.register(this);
+        this.model = model;
     }
 
     @Subscribe
-    public void handleVolumeChange(ChangeVolumeEvent event) {
+    public void handleVolumeChange(VolumeEvent event) {
 
         final Callback<SuccessResponse> cb = new Callback<SuccessResponse>() {
             @Override
@@ -109,11 +112,36 @@ public class RemoteClient {
 
     @Subscribe
     public void handleShufflePressed(ShufflePressedEvent event) {
-        logger.d("Event Received for shuffle button");
+        final Callback<SuccessResponse> cb = new Callback<SuccessResponse>() {
+            @Override
+            public void success(SuccessResponse successResponse, Response response) {
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        };
+        api.updateShuffleState(!model.isShuffleActive(), cb);
     }
 
     @Subscribe
     public void handleRepeatPressed(RepeatChangeEvent event) {
-        logger.d("Event Received for repeat button");
+        final Callback<SuccessResponse> cb = new Callback<SuccessResponse>() {
+            @Override
+            public void success(SuccessResponse successResponse, Response response) {
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        };
+        final String mode = model.isRepeatActive() ? "none" : "all";
+        api.updateRepeatState(mode, cb);
     }
+
+
 }

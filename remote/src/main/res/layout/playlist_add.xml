@@ -25,8 +25,7 @@
 
     <View android:id="@+id/titleDividerTop"
           android:layout_width="match_parent"
-          android:layout_height="1dip"
-          android:background="@color/mbrc_dark_compo_color" />
+          android:layout_height="1dip" />
 
     <ListView
         android:layout_width="match_parent"

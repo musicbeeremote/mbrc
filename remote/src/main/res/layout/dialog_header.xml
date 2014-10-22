@@ -21,7 +21,7 @@
                    android:src="@null" />
         <TextView
             android:id="@+id/dialog_title"
-            android:textColor="@color/mbrc_title"
+            android:textColor="@color/remote_text"
             android:singleLine="true"
             android:ellipsize="end"
             android:textSize="22sp"
@@ -34,7 +34,6 @@
 
     <View android:id="@+id/titleDividerTop"
           android:layout_width="match_parent"
-          android:layout_height="2dip"
-          android:background="@color/mbrc_dark_compo_color" />
+          android:layout_height="2dip"/>
 
 </LinearLayout>

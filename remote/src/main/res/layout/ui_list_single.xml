@@ -18,7 +18,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="@string/artist_placeholder"
-            android:textColor="@color/mbrc_title"
+            android:textColor="@color/remote_text"
             android:textSize="@dimen/list_item_one"
             android:fontFamily="sans-serif-light"
             android:textStyle="normal"

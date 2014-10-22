@@ -3,10 +3,11 @@ package com.kelsos.mbrc;
 import android.app.Application;
 import android.content.Intent;
 import android.view.ViewConfiguration;
+import com.google.inject.Module;
 import com.google.inject.Stage;
 import com.google.inject.util.Modules;
 import com.kelsos.mbrc.controller.Controller;
-import com.kelsos.mbrc.data.MainDataModel;
+import com.kelsos.mbrc.data.Model;
 import com.kelsos.mbrc.data.SyncHandler;
 import com.kelsos.mbrc.net.SocketService;
 import com.kelsos.mbrc.rest.RemoteClient;
@@ -25,15 +26,15 @@ public class RemoteApplication extends Application {
 
     public void onCreate() {
         super.onCreate();
-        RoboGuice.setBaseApplicationInjector(this, Stage.PRODUCTION,
-                Modules.override(RoboGuice.newDefaultRoboModule(this))
-                        .with(new RemoteModule()));
+        final Modules.OverriddenModuleBuilder override = Modules.override(RoboGuice.newDefaultRoboModule(this));
+        final Module module = override.with(new RemoteModule());
+        RoboGuice.setBaseApplicationInjector(this, Stage.PRODUCTION, module);
         final RoboInjector injector = RoboGuice.getInjector(this);
 
         startService(new Intent(this, Controller.class));
 
         //Initialization of the background service
-        injector.getInstance(MainDataModel.class);
+        injector.getInstance(Model.class);
 
         injector.getInstance(SocketService.class);
         injector.getInstance(RemoteBroadcastReceiver.class);

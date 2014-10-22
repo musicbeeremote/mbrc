@@ -59,7 +59,6 @@
         mbrc:strokeWidth="4dp"
         mbrc:lineWidth="@dimen/mbrc_indicator_line_width"
         mbrc:unselectedColor="@android:color/transparent"
-        mbrc:selectedColor="@color/pressed_mbrc_dark"
         />
 
     <android.support.v4.view.ViewPager
@@ -76,7 +75,7 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/mbrc_transparent_dark"
+        android:background="@color/remote_transparent"
         android:padding="@dimen/side_margin_half">
 
         <TextView
@@ -84,7 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/main_label_duration_current"
-            android:textColor="@color/mbrc_title"
+            android:textColor="@color/remote_text"
             android:textSize="@dimen/mbrc_duration_text_size"/>
 
         <SeekBar
@@ -110,7 +109,7 @@
             android:layout_height="wrap_content"
             android:gravity="right"
             android:text="@string/main_label_duration_total"
-            android:textColor="@color/mbrc_title"
+            android:textColor="@color/remote_text"
             android:textSize="@dimen/mbrc_duration_text_size"/>
     </LinearLayout>
 

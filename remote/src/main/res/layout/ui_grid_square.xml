@@ -34,7 +34,7 @@
             <TextView
                 tools:text="Title"
                 android:id="@+id/line_one"
-                android:textColor="@color/mbrc_title"
+                android:textColor="@color/remote_text"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:layout_width="match_parent"
@@ -47,7 +47,7 @@
                 tools:text="artist"
                 android:ellipsize="end"
                 android:fontFamily="sans-serif"
-                android:textColor="@color/mbrc_subtitle"
+                android:textColor="@color/remote_secondary_text"
                 android:id="@+id/line_two"
                 android:singleLine="true"
                 android:textStyle="normal"

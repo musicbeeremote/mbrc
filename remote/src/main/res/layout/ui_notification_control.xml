@@ -28,7 +28,7 @@
 			android:layout_height="wrap_content"
 			android:layout_width="match_parent"
 			android:textSize="17sp"
-			android:textColor="@color/mbrc_title"
+			android:textColor="@color/remote_text"
             android:textStyle="bold"/>
 
 		<TextView

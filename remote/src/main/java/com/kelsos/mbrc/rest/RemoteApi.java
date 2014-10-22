@@ -35,7 +35,7 @@ public interface RemoteApi {
     void updateScrobbleState(@Query("enabled") boolean enabled, Callback<SuccessResponse> cb);
 
     @PUT("/player/repeat")
-    void updateRepeatState(@Query("enabled") boolean enabled, Callback<SuccessResponse> cb);
+    void updateRepeatState(@Query("enabled") String mode, Callback<SuccessResponse> cb);
 
     @PUT("/player/mute")
     void updateMuteState(@Query("enabled") boolean enabled, Callback<SuccessResponse> cb);

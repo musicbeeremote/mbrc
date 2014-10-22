@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.commands;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.data.MainDataModel;
+import com.kelsos.mbrc.data.Model;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.rest.RemoteApi;
@@ -20,10 +20,10 @@ public class KeyVolumeDownCommand implements ICommand {
 
     @Inject
     private RemoteApi api;
-    private MainDataModel model;
+    private Model model;
     private Bus bus;
 
-    @Inject public KeyVolumeDownCommand(MainDataModel model, Bus bus) {
+    @Inject public KeyVolumeDownCommand(Model model, Bus bus) {
         this.model = model;
         this.bus = bus;
     }

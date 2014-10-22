@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.commands;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.data.MainDataModel;
+import com.kelsos.mbrc.data.Model;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.rest.RemoteApi;
@@ -11,12 +11,12 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class RequestTrackData implements ICommand {
-    private MainDataModel model;
+    private Model model;
 
     @Inject
     private RemoteApi api;
 
-    @Inject public RequestTrackData(MainDataModel model) {
+    @Inject public RequestTrackData(Model model) {
         this.model = model;
     }
 

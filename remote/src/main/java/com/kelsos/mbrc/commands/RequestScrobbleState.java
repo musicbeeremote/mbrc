@@ -1,15 +1,15 @@
 package com.kelsos.mbrc.commands;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.data.MainDataModel;
+import com.kelsos.mbrc.data.Model;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import org.codehaus.jackson.node.BooleanNode;
 
 public class RequestScrobbleState implements ICommand {
-    private MainDataModel model;
+    private Model model;
 
-    @Inject public RequestScrobbleState(MainDataModel model) {
+    @Inject public RequestScrobbleState(Model model) {
         this.model = model;
     }
 

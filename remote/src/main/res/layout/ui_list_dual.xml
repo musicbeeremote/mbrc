@@ -40,7 +40,7 @@
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textSize="@dimen/list_item_two"
-                android:textColor="@color/mbrc_subtitle"/>
+                android:textColor="@color/remote_secondary_text"/>
     </LinearLayout>
 
     <LinearLayout

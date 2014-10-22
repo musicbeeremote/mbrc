@@ -3,7 +3,7 @@ package com.kelsos.mbrc.commands;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.MainDataModel;
+import com.kelsos.mbrc.data.Model;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
@@ -24,12 +24,12 @@ import java.util.Date;
 
 public class VersionCheckCommand implements ICommand {
     private static final Logger logger = LoggerManager.getLogger();
-    private MainDataModel model;
+    private Model model;
     private ObjectMapper mapper;
     private SettingsManager manager;
     private Bus bus;
 
-    @Inject public VersionCheckCommand(MainDataModel model, ObjectMapper mapper, SettingsManager manager, Bus bus) {
+    @Inject public VersionCheckCommand(Model model, ObjectMapper mapper, SettingsManager manager, Bus bus) {
         this.model = model;
         this.mapper = mapper;
         this.manager = manager;
