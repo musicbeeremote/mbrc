@@ -11,6 +11,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.view.*;
+import com.github.mrengineer13.snackbar.SnackBar;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.enums.DisplayFragment;
@@ -25,8 +26,6 @@ import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.kelsos.mbrc.ui.fragments.*;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseFragment;
 import com.squareup.otto.Subscribe;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class HomeActivity extends BaseActivity {
     private ActionBarDrawerToggle mDrawerToggle;
@@ -36,6 +35,7 @@ public class HomeActivity extends BaseActivity {
     private boolean navChanged;
     private DialogFragment mDialog;
     private MenuItem favoriteItem;
+    private SnackBar mSnackBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,6 +79,7 @@ public class HomeActivity extends BaseActivity {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, mFragment, "main_fragment");
         fragmentTransaction.commit();
+        mSnackBar = new SnackBar(this);
     }
 
     private void closeDrawer() {
@@ -204,11 +205,11 @@ public class HomeActivity extends BaseActivity {
     }
 
     @Subscribe public void handleUserNotification(NotifyUser event) {
-        if (event.isFromResource()) {
-            Crouton.makeText(this, event.getResId(), Style.INFO).show();
-        } else {
-            Crouton.makeText(this, event.getMessage(), Style.INFO).show();
-        }
+        String message = event.isFromResource() ?
+                getString(event.getResId()) :
+                event.getMessage();
+
+        mSnackBar.show(message);
     }
 
     @Override public boolean onKeyDown(int keyCode, KeyEvent event) {

@@ -2,7 +2,6 @@ package com.kelsos.mbrc.ui.base;
 
 import android.os.Bundle;
 import com.google.inject.Inject;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 import roboguice.activity.RoboActionBarActivity;
 
 public abstract class BaseActivity extends RoboActionBarActivity {
@@ -35,7 +34,6 @@ public abstract class BaseActivity extends RoboActionBarActivity {
     protected void onDestroy() {
         try {
             scopedBus.unregister(this);
-            Crouton.cancelAllCroutons();
         } finally {
             super.onDestroy();
         }
