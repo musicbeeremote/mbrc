@@ -52,6 +52,11 @@
             android:enabled="true"
             android:exported="false" >
         </provider>
+
+        <meta-data android:name="roboguice.modules"
+                   android:value="com.kelsos.mbrc.RemoteModule"/>
+        <meta-data android:name="roboguice.annotations.packages"
+                   android:value="roboguice,mbrc"/>
     </application>
 
 </manifest>

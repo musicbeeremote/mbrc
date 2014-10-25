@@ -3,7 +3,6 @@ package com.kelsos.mbrc.ui.fragments;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -13,19 +12,10 @@ import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RepeatChange;
 import com.kelsos.mbrc.events.ui.ShuffleChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
-import com.kelsos.mbrc.ui.base.BaseFragment;
-import com.squareup.otto.Subscribe;
+import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
 
-
-/**
- * A simple {@link com.kelsos.mbrc.ui.base.BaseFragment} subclass.
- * Used to to display the track information and controls while on
- * landscape mode.
- * Use the {@link LandscapeControls#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class LandscapeControls extends BaseFragment {
+public class LandscapeControls extends RoboFragment {
 
     @InjectView(R.id.track_title)
     private TextView trackTitle;
@@ -49,42 +39,21 @@ public class LandscapeControls extends BaseFragment {
     private ImageButton repeatButton;
 
 
-    private View.OnClickListener playButtonListener = new View.OnClickListener() {
+    private View.OnClickListener playButtonListener = v -> {
 
-        public void onClick(View v) {
-
-        }
     };
-    private View.OnClickListener previousButtonListener = new View.OnClickListener() {
+    private View.OnClickListener previousButtonListener = v -> {
 
-        public void onClick(View v) {
-
-        }
     };
-    private View.OnClickListener nextButtonListener = new View.OnClickListener() {
+    private View.OnClickListener nextButtonListener = v -> {
 
-        public void onClick(View v) {
-
-        }
     };
-    private View.OnLongClickListener stopListener = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
+    private View.OnLongClickListener stopListener = v -> true;
+    private ImageButton.OnClickListener shuffleListener = v -> {
 
-            return true;
-        }
     };
-    private ImageButton.OnClickListener shuffleListener = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+    private ImageButton.OnClickListener repeatListener = v -> {
 
-        }
-    };
-    private ImageButton.OnClickListener repeatListener = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-        }
     };
 
     public LandscapeControls() {
@@ -106,29 +75,21 @@ public class LandscapeControls extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         final PopupMenu menu = new PopupMenu(getActivity(), overflowButton);
         menu.inflate(R.menu.info_popup);
-        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.popup_scrobble:
+        menu.setOnMenuItemClickListener(menuItem -> {
+            switch (menuItem.getItemId()) {
+                case R.id.popup_scrobble:
 
-                        break;
-                    case R.id.popup_auto_dj:
+                    break;
+                case R.id.popup_auto_dj:
 
-                        break;
-                    default:
-                        return false;
+                    break;
+                default:
+                    return false;
 
-                }
-                return false;
             }
+            return false;
         });
-        overflowButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                menu.show();
-            }
-        });
+        overflowButton.setOnClickListener(v -> menu.show());
     }
 
     @Override
@@ -143,7 +104,6 @@ public class LandscapeControls extends BaseFragment {
         return inflater.inflate(R.layout.fragment_landscape_controls, container, false);
     }
 
-    @Subscribe
     public void setTrackInfo(TrackInfoChange trackInfo) {
         trackTitle.setText(trackInfo.getTitle());
         trackArtist.setText(trackInfo.getArtist());
@@ -162,7 +122,6 @@ public class LandscapeControls extends BaseFragment {
         repeatButton.setOnClickListener(repeatListener);
     }
 
-    @Subscribe
     public void handleShuffleChange(ShuffleChange change) {
         if (shuffleButton == null) {
             return;
@@ -170,7 +129,6 @@ public class LandscapeControls extends BaseFragment {
         shuffleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_shuffle : R.drawable.ic_media_shuffle_off);
     }
 
-    @Subscribe
     public void updateRepeatButtonState(RepeatChange change) {
         if (repeatButton == null) {
             return;
@@ -178,7 +136,6 @@ public class LandscapeControls extends BaseFragment {
         repeatButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_repeat : R.drawable.ic_media_repeat_off);
     }
 
-    @Subscribe
     public void handlePlayStateChange(final PlayStateChange change) {
         if (playButton == null) {
             return;

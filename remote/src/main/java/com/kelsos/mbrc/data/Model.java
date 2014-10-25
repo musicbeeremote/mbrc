@@ -11,22 +11,14 @@ import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
-import com.kelsos.mbrc.util.MainThreadBusWrapper;
-import com.noveogroup.android.log.Logger;
-import com.noveogroup.android.log.LoggerManager;
-import com.squareup.otto.Produce;
 
 @Singleton
 public class Model {
-
-    private static final Logger logger = LoggerManager.getLogger();
-
     public static final int MAX_VOLUME = 100;
     public static final String LOVE = "Love";
     public static final String BAN = "Ban";
     public static final String ALL = "All";
     public static final String EMPTY = "";
-    private MainThreadBusWrapper bus;
     private float rating;
     private String title;
     private String artist;
@@ -43,11 +35,11 @@ public class Model {
     private LfmStatus lfmRating;
     private String pluginVersion;
 
-    @Inject
-    public Model(MainThreadBusWrapper bus, Context context) {
-        this.bus = bus;
-        bus.register(this);
 
+
+
+    @Inject
+    public Model(Context context) {
         title = EMPTY;
         artist = EMPTY;
         album = EMPTY;
@@ -81,36 +73,28 @@ public class Model {
                 break;
         }
 
-        bus.post(new LfmRatingChanged(lfmRating));
+        new LfmRatingChanged(lfmRating);
     }
 
     public void setPluginVersion(String pluginVersion) {
         this.pluginVersion = pluginVersion.substring(0, pluginVersion.lastIndexOf('.'));
-        bus.post(new MessageEvent(ProtocolEventType.PLUGIN_VERSION_CHECK));
+        new MessageEvent(ProtocolEventType.PLUGIN_VERSION_CHECK);
     }
 
     public String getPluginVersion() {
         return pluginVersion;
     }
 
-    @Produce public LfmRatingChanged produceLfmRating() {
-        return new LfmRatingChanged(lfmRating);
-    }
-
     public void setRating(double rating) {
         this.rating = (float) rating;
-        bus.post(new RatingChanged(this.rating));
-    }
-
-    @Produce public RatingChanged produceRatingChanged() {
-        return new RatingChanged(this.rating);
+        new RatingChanged(this.rating);
     }
 
     private void updateNotification() {
         if (!isConnectionOn) {
-            bus.post(new MessageEvent(UserInputEventType.CANCEL_NOTIFICATION));
+            new MessageEvent(UserInputEventType.CANCEL_NOTIFICATION);
         } else {
-            bus.post(new NotificationDataAvailable(artist, title, album, playState));
+            new NotificationDataAvailable(artist, title, album, playState);
         }
     }
 
@@ -119,12 +103,8 @@ public class Model {
         this.album = album;
         this.year = year;
         this.title = title;
-        bus.post(new TrackInfoChange(artist, title, album, year));
+        new TrackInfoChange(artist, title, album, year);
         updateNotification();
-    }
-
-    @Produce public TrackInfoChange produceTrackInfo() {
-        return new TrackInfoChange(artist, title, album, year);
     }
 
     public String getArtist() {
@@ -138,7 +118,7 @@ public class Model {
     public void setVolume(int volume) {
         if (volume != this.volume) {
             this.volume = volume;
-            bus.post(new VolumeChange(this.volume));
+            new VolumeChange(this.volume);
         }
     }
 
@@ -151,14 +131,8 @@ public class Model {
         if (!isConnectionOn) {
             setPlayState(Const.STOPPED);
         }
-        bus.post(new ConnectionStatusChange(isConnectionOn
+        new ConnectionStatusChange(isConnectionOn
                 ? ConnectionStatus.CONNECTION_ACTIVE
-                : ConnectionStatus.CONNECTION_OFF));
-    }
-
-    @Produce public ConnectionStatusChange produceConnectionStatus() {
-        return new ConnectionStatusChange(isConnectionOn
-                    ? ConnectionStatus.CONNECTION_ACTIVE
                 : ConnectionStatus.CONNECTION_OFF);
     }
 
@@ -168,38 +142,21 @@ public class Model {
 
     public void setRepeatState(String repeatButtonActive) {
         repeatActive = (repeatButtonActive.equals(ALL));
-        bus.post(new RepeatChange(this.isRepeatActive()));
-    }
-
-    @Produce public RepeatChange produceRepeatChange() {
-        return new RepeatChange(this.isRepeatActive());
+        new RepeatChange(this.isRepeatActive());
     }
 
     public void setShuffleState(boolean shuffleButtonActive) {
         shuffleActive = shuffleButtonActive;
-        bus.post(new ShuffleChange(isShuffleActive()));
-    }
-
-    @Produce public ShuffleChange produceShuffleChange() {
-        return new ShuffleChange(this.isShuffleActive());
+        new ShuffleChange(isShuffleActive());
     }
 
     public void setScrobbleState(boolean scrobbleButtonActive) {
         isScrobblingActive = scrobbleButtonActive;
-        bus.post(new ScrobbleChange(isScrobblingActive));
-    }
-
-    @Produce public ScrobbleChange produceScrobbleChange() {
-        return new ScrobbleChange(this.isScrobblingActive);
+        new ScrobbleChange(isScrobblingActive);
     }
 
     public void setMuteState(boolean isMuteActive) {
         this.isMuteActive = isMuteActive;
-        bus.post(isMuteActive ? new VolumeChange() : new VolumeChange(volume));
-    }
-
-    @Produce public VolumeChange produceVolumeChange() {
-        return isMuteActive ? new VolumeChange() : new VolumeChange(volume);
     }
 
     public void setPlayState(String playState) {
@@ -212,16 +169,8 @@ public class Model {
             newState = PlayState.PAUSED;
         }
         this.playState = newState;
-        bus.post(new PlayStateChange(this.playState));
+        new PlayStateChange(this.playState);
         updateNotification();
-    }
-
-    @Produce public PlayStateChange producePlayState() {
-        return new PlayStateChange(this.playState);
-    }
-
-    @Produce public LyricsUpdated produceLyricsUpdate() {
-        return new LyricsUpdated(lyrics);
     }
 
     public void setLyrics(String lyrics) {
@@ -238,7 +187,7 @@ public class Model {
                 .replace("<p>", "\r\n")
                 .replace("<br>", "\n")
                 .trim();
-        bus.post(new LyricsUpdated(this.lyrics));
+        new LyricsUpdated(this.lyrics);
     }
 
     public boolean isRepeatActive() {
@@ -248,5 +197,6 @@ public class Model {
     public boolean isShuffleActive() {
         return shuffleActive;
     }
+
 }
 

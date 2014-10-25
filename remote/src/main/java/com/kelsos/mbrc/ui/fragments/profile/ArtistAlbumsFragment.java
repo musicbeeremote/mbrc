@@ -15,12 +15,12 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumCursorAdapter;
 import com.kelsos.mbrc.data.dbdata.LibraryAlbum;
 import com.kelsos.mbrc.ui.activities.Profile;
-import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseMenuItems;
+import roboguice.fragment.provided.RoboFragment;
 
-public class ArtistAlbumsFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor>,
+public class ArtistAlbumsFragment extends RoboFragment implements LoaderManager.LoaderCallbacks<Cursor>,
         GridView.OnItemClickListener,
         PlaylistDialogFragment.onPlaylistSelectedListener,
         CreateNewPlaylistDialog.onPlaylistNameSelectedListener {

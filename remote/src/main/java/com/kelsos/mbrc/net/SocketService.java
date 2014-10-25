@@ -12,12 +12,10 @@ import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.util.DelayTimer;
-import com.kelsos.mbrc.util.MainThreadBusWrapper;
 import com.kelsos.mbrc.util.SettingsManager;
-import com.noveogroup.android.log.Logger;
-import com.noveogroup.android.log.LoggerManager;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import roboguice.util.Ln;
 
 import java.io.*;
 import java.net.Socket;
@@ -27,13 +25,11 @@ import java.net.SocketTimeoutException;
 
 @Singleton
 public class SocketService {
-    private static final Logger logger = LoggerManager.getLogger();
     public static final int MAX_RETRIES = 3;
     public static final int BUFFER_SIZE = 4096;
     public static final int DELAY = 3;
     public static final int SUB_START = 26;
     private static int numOfRetries;
-    private MainThreadBusWrapper bus;
     private SettingsManager settingsManager;
     private ObjectMapper mapper;
     private boolean shouldStop;
@@ -41,18 +37,16 @@ public class SocketService {
     private PrintWriter output;
     private Thread cThread;
     private DelayTimer cTimer;
-    private DelayTimer.TimerFinishEvent timerFinishEvent = new DelayTimer.TimerFinishEvent() {
-        public void onTimerFinish() {
+
+    @Inject public SocketService(SettingsManager settingsManager, ObjectMapper mapper) {
+        this.settingsManager = settingsManager;
+        this.mapper = mapper;
+
+        DelayTimer.TimerFinishEvent timerFinishEvent = () -> {
             cThread = new Thread(new SocketConnection());
             cThread.start();
             numOfRetries++;
-        }
-    };
-
-    @Inject public SocketService(SettingsManager settingsManager, MainThreadBusWrapper bus, ObjectMapper mapper) {
-        this.bus = bus;
-        this.settingsManager = settingsManager;
-        this.mapper = mapper;
+        };
 
         cTimer = new DelayTimer(DELAY, timerFinishEvent);
         numOfRetries = 0;
@@ -137,7 +131,7 @@ public class SocketService {
             clSocket = null;
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
-                logger.d("io exception on socket cleanup", e);
+                Ln.e(e, "io exception on socket cleanup");
             }
         }
     }
@@ -156,7 +150,7 @@ public class SocketService {
             }
         } catch (Exception ignored) {
             if (BuildConfig.DEBUG) {
-                logger.d("socket send data exception", ignored);
+                Ln.e(ignored, "socket send data exception");
             }
         }
     }
@@ -166,8 +160,7 @@ public class SocketService {
             processIncoming(incoming);
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
-                logger.d("Incoming message pre-processor", e);
-
+                Ln.e(e, "Incoming message pre-processor");
             }
         }
 
@@ -177,16 +170,16 @@ public class SocketService {
         final String[] replies = incoming.split("\r\n");
         for (String reply : replies) {
             
-            logger.d("incoming::", reply);
+            Ln.d("incoming::%", reply);
             JsonNode node = mapper.readValue(reply, JsonNode.class);
             String context = node.path("message").getTextValue();
 
             if (context.contains(Notification.CLIENT_NOT_ALLOWED)) {
-                bus.post(new MessageEvent(ProtocolEventType.INFORM_CLIENT_NOT_ALLOWED));
+                new MessageEvent(ProtocolEventType.INFORM_CLIENT_NOT_ALLOWED);
                 return;
             }
 
-            bus.post(new MessageEvent(context));
+            new MessageEvent(context);
         }
     }
 
@@ -209,7 +202,7 @@ public class SocketService {
 
                 String socketStatus = String.valueOf(clSocket.isConnected());
 
-                bus.post(new MessageEvent(SocketEventType.STATUS_CHANGED, socketStatus));
+                //new MessageEvent(SocketEventType.STATUS_CHANGED, socketStatus));
                 while (clSocket.isConnected()) {
                     try {
                         final String incoming = input.readLine();
@@ -225,12 +218,12 @@ public class SocketService {
                     }
                 }
             } catch (SocketTimeoutException e) {
-                bus.post(new NotifyUser(R.string.notification_connection_timeout));
+                new NotifyUser(R.string.notification_connection_timeout);
             } catch (SocketException e) {
-                bus.post(new NotifyUser(e.toString().substring(SUB_START)));
+                new NotifyUser(e.toString().substring(SUB_START));
             } catch (IOException e) {
                 if (BuildConfig.DEBUG) {
-                    logger.d("socket io/null pointer", e);
+                    Ln.e(e, "socket io/null pointer");
                 }
             } finally {
                 if (output != null) {
@@ -239,12 +232,12 @@ public class SocketService {
                 }
                 clSocket = null;
 
-                bus.post(new MessageEvent(SocketEventType.STATUS_CHANGED, false));
+                new MessageEvent(SocketEventType.STATUS_CHANGED, false);
                 if (numOfRetries < MAX_RETRIES) {
                     socketManager(SocketAction.RETRY);
                 }
                 if (BuildConfig.DEBUG) {
-                    logger.d("socket closed");
+                    Ln.d("socket closed");
                 }
             }
         }

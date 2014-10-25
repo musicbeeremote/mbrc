@@ -10,11 +10,9 @@ import com.kelsos.mbrc.events.actions.*;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RepeatChange;
 import com.kelsos.mbrc.events.ui.ShuffleChange;
-import com.kelsos.mbrc.ui.base.BaseFragment;
-import com.squareup.otto.Subscribe;
+import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
-
-public class ButtonFragment extends BaseFragment {
+public class ButtonFragment extends RoboFragment {
 
     @InjectView(R.id.main_button_play_pause)
     private ImageButton playButton;
@@ -31,15 +29,17 @@ public class ButtonFragment extends BaseFragment {
     @InjectView(R.id.main_repeat_button)
     private ImageButton repeatButton;
 
-    private View.OnClickListener playButtonListener = v -> getBus().post(new PlayPressedEvent());
-    private View.OnClickListener previousButtonListener = v -> getBus().post(new PreviousPressedEvent());
-    private View.OnClickListener nextButtonListener = v -> getBus().post(new NextPressedEvent());
+
+
+    private View.OnClickListener playButtonListener = v -> new PlayPressedEvent();
+    private View.OnClickListener previousButtonListener = v -> new PreviousPressedEvent();
+    private View.OnClickListener nextButtonListener = v -> new NextPressedEvent();
     private View.OnLongClickListener stopListener = v -> {
-        getBus().post(new StopPressedEvent());
+        new StopPressedEvent();
         return true;
     };
-    private ImageButton.OnClickListener shuffleListener = v -> getBus().post(new ShufflePressedEvent());
-    private ImageButton.OnClickListener repeatListener = v -> getBus().post(new RepeatChangeEvent());
+    private ImageButton.OnClickListener shuffleListener = v -> new ShufflePressedEvent();
+    private ImageButton.OnClickListener repeatListener = v -> new RepeatChangeEvent();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class ButtonFragment extends BaseFragment {
         repeatButton.setOnClickListener(repeatListener);
     }
 
-    @Subscribe
+
     public void handleShuffleChange(ShuffleChange change) {
         if (shuffleButton == null) {
             return;
@@ -65,7 +65,7 @@ public class ButtonFragment extends BaseFragment {
         shuffleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_shuffle : R.drawable.ic_media_shuffle_off);
     }
 
-    @Subscribe
+
     public void updateRepeatButtonState(RepeatChange change) {
         if (repeatButton == null) {
             return;
@@ -73,7 +73,7 @@ public class ButtonFragment extends BaseFragment {
         repeatButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_repeat : R.drawable.ic_media_repeat_off);
     }
 
-    @Subscribe
+
     public void handlePlayStateChange(final PlayStateChange change) {
         if (playButton == null) {
             return;

@@ -12,13 +12,13 @@ import android.widget.GridView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumCursorAdapter;
 import com.kelsos.mbrc.data.dbdata.LibraryAlbum;
-import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+import roboguice.fragment.provided.RoboFragment;
 
 import static android.support.v4.app.LoaderManager.LoaderCallbacks;
 
-public class BrowseAlbumFragment extends BaseFragment implements LoaderCallbacks<Cursor>,
+public class BrowseAlbumFragment extends RoboFragment implements LoaderCallbacks<Cursor>,
         GridView.OnItemClickListener,
         PlaylistDialogFragment.onPlaylistSelectedListener,
         CreateNewPlaylistDialog.onPlaylistNameSelectedListener {

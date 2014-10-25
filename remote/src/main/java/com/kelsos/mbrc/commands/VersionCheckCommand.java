@@ -8,13 +8,11 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.util.SettingsManager;
-import com.noveogroup.android.log.Logger;
-import com.noveogroup.android.log.LoggerManager;
-import com.squareup.otto.Bus;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import roboguice.util.Ln;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -23,25 +21,25 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class VersionCheckCommand implements ICommand {
-    private static final Logger logger = LoggerManager.getLogger();
     private Model model;
     private ObjectMapper mapper;
     private SettingsManager manager;
-    private Bus bus;
 
-    @Inject public VersionCheckCommand(Model model, ObjectMapper mapper, SettingsManager manager, Bus bus) {
+    @Inject
+    public VersionCheckCommand(Model model, ObjectMapper mapper, SettingsManager manager) {
         this.model = model;
         this.mapper = mapper;
         this.manager = manager;
-        this.bus = bus;
     }
 
-    @Override public void execute(IEvent e) {
+    @Override
+    public void execute(IEvent e) {
         new Thread(new VersionChecker()).start();
     }
 
     private class VersionChecker implements Runnable {
-        @Override public void run() {
+        @Override
+        public void run() {
             try {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(manager.getLastUpdated().getTime());
@@ -51,7 +49,7 @@ public class VersionCheckCommand implements ICommand {
 
                 if (nextCheck.after(now)) {
                     if (BuildConfig.DEBUG) {
-                        logger.e("waiting for next check: " + Long.toString(nextCheck.getTime()));
+                        Ln.e("waiting for next check: " + Long.toString(nextCheck.getTime()));
                     }
                     return;
                 }
@@ -81,36 +79,36 @@ public class VersionCheckCommand implements ICommand {
                     }
 
                     if (isOutOfDate) {
-                        bus.post(new MessageEvent(ProtocolEventType.INFORM_CLIENT_PLUGIN_OUT_OF_DATE));
+                        new MessageEvent(ProtocolEventType.INFORM_CLIENT_PLUGIN_OUT_OF_DATE);
                     }
                 }
 
                 manager.setLastUpdated(now);
                 if (BuildConfig.DEBUG) {
-                    logger.e("last check on: " + Long.toString(now.getTime()));
-                    logger.e("plugin reported version: " + model.getPluginVersion());
-                    logger.e("plugin suggested version: " + suggestedVersion);
+                    Ln.e("last check on: " + Long.toString(now.getTime()));
+                    Ln.e("plugin reported version: " + model.getPluginVersion());
+                    Ln.e("plugin suggested version: " + suggestedVersion);
                 }
 
             } catch (MalformedURLException e) {
                 if (BuildConfig.DEBUG) {
-                    logger.e("version check MalformedURLException", e);
+                    Ln.e(e, "version check MalformedURLException");
                 }
             } catch (JsonMappingException e) {
                 if (BuildConfig.DEBUG) {
-                    logger.e("version check JsonMappingException", e);
+                    Ln.e(e, "version check JsonMappingException");
                 }
             } catch (JsonParseException e) {
                 if (BuildConfig.DEBUG) {
-                    logger.e("version check parse", e);
+                    Ln.e(e, "version check parse");
                 }
             } catch (IOException e) {
                 if (BuildConfig.DEBUG) {
-                    logger.e("version check IOException", e);
+                    Ln.e(e, "version check IOException");
                 }
             } catch (NumberFormatException e) {
                 if (BuildConfig.DEBUG) {
-                    logger.e("version check NumberFormatException", e);
+                    Ln.e(e, "version check NumberFormatException");
                 }
             }
         }

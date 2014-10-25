@@ -14,9 +14,9 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistCursorAdapter;
 import com.kelsos.mbrc.data.dbdata.Playlist;
 import com.kelsos.mbrc.ui.activities.PlaylistActivity;
-import com.kelsos.mbrc.ui.base.BaseListFragment;
+import roboguice.fragment.provided.RoboListFragment;
 
-public class PlaylistFragment extends BaseListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class PlaylistFragment extends RoboListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int GROUP_ID = 1;
     private static final int PLAY_NOW = 1;
     private static final int GET_PLAYLIST = 2;

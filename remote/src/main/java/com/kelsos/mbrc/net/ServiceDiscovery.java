@@ -9,7 +9,6 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.enums.DiscoveryStop;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
-import com.kelsos.mbrc.util.MainThreadBusWrapper;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -27,18 +26,16 @@ public class ServiceDiscovery {
     private WifiManager.MulticastLock mLock;
     private ObjectMapper mapper;
     private Context mContext;
-    private MainThreadBusWrapper bus;
 
-    @Inject public ServiceDiscovery(Context context, ObjectMapper mapper, MainThreadBusWrapper bus) {
+    @Inject public ServiceDiscovery(Context context, ObjectMapper mapper) {
         this.mContext = context;
         manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         this.mapper = mapper;
-        this.bus = bus;
     }
 
     public void startDiscovery() {
         if (!isWifiConnected()) {
-            bus.post(new DiscoveryStopped(DiscoveryStop.NO_WIFI));
+            new DiscoveryStopped(DiscoveryStop.NO_WIFI);
             return;
         }
         mLock = manager.createMulticastLock("locked");
@@ -105,21 +102,20 @@ public class ServiceDiscovery {
                     JsonNode node = mapper.readValue(incoming, JsonNode.class);
                     if (node.path("context").asText().equals("notify")) {
                         ConnectionSettings settings = new ConnectionSettings(node);
-                        bus.post(settings);
                         break;
                     }
                 }
 
-                bus.post(new DiscoveryStopped(DiscoveryStop.COMPLETE));
+                new DiscoveryStopped(DiscoveryStop.COMPLETE);
                 mSocket.leaveGroup(group);
                 mSocket.close();
                 stopDiscovery();
 
             } catch (InterruptedIOException e) {
-                bus.post(new DiscoveryStopped(DiscoveryStop.NOT_FOUND));
+                new DiscoveryStopped(DiscoveryStop.NOT_FOUND);
                 stopDiscovery();
             } catch (IOException e) {
-                bus.post(new DiscoveryStopped(DiscoveryStop.NOT_FOUND));
+                new DiscoveryStopped(DiscoveryStop.NOT_FOUND);
             }
         }
     }

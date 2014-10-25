@@ -20,21 +20,18 @@ public final class Configuration {
      */
     @Inject public static void initialize(Controller controller) {
         controller.register(ProtocolEventType.REDUCE_VOLUME, ReduceVolumeOnRingCommand.class);
-        controller.register(ProtocolEventType.INFORM_CLIENT_NOT_ALLOWED, NotifyNotAllowedCommand.class);
         controller.register(ProtocolEventType.INFORM_CLIENT_PLUGIN_OUT_OF_DATE, NotifyPluginOutOfDateCommand.class);
         controller.register(ProtocolEventType.PLUGIN_VERSION_CHECK, VersionCheckCommand.class);
         controller.register(Notification.TRACK_CHANGED, RequestTrackData.class);
-        controller.register(Notification.COVER_CHANGED, RequestCoverData.class);
         controller.register(Notification.PLAY_STATUS_CHANGED, RequestPlayState.class);
         controller.register(Notification.REPEAT_STATUS_CHANGED, RequestRepeatState.class);
         controller.register(Notification.VOLUME_CHANGED, RequestVolume.class);
         controller.register(Notification.MUTE_STATUS_CHANGED, RequestMuteState.class);
         controller.register(Notification.SHUFFLE_STATUS_CHANGED, RequestShuffleState.class);
         controller.register(Notification.SCROBBLE_STATUS_CHANGED, RequestScrobbleState.class);
-        controller.register(Notification.NOWPLAYING_LIST_CHANGED, RequestNowPlayingList.class);
         controller.register(Notification.LYRICS_CHANGED, RequestLyrics.class);
-        controller.register(Notification.AUTODJ_STOPPED, AutoDjStopped.class);
-        controller.register(Notification.AUTODJ_STARTED, AutoDjStarted.class);
+
+
         controller.register(Notification.POSITION_CHANGED, RequestPosition.class);
 
         controller.register(UserInputEventType.SETTINGS_CHANGED, RestartConnectionCommand.class);

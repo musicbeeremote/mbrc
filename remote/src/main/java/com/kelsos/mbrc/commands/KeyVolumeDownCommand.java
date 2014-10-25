@@ -5,7 +5,6 @@ import com.kelsos.mbrc.data.Model;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.rest.RemoteApi;
-import com.squareup.otto.Bus;
 
 public class KeyVolumeDownCommand implements ICommand {
     public static final int LOWEST_NOT_ZERO = 10;
@@ -17,11 +16,10 @@ public class KeyVolumeDownCommand implements ICommand {
     @Inject
     private RemoteApi api;
     private Model model;
-    private Bus bus;
 
-    @Inject public KeyVolumeDownCommand(Model model, Bus bus) {
+
+    @Inject public KeyVolumeDownCommand(Model model) {
         this.model = model;
-        this.bus = bus;
     }
 
     @Override public void execute(IEvent e) {

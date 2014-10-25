@@ -9,13 +9,11 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.view.MenuItem;
 import android.webkit.WebView;
-import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity;
-import com.squareup.otto.Bus;
 
 /**
  * A {@link android.preference.PreferenceFragment} subclass.
@@ -25,7 +23,6 @@ import com.squareup.otto.Bus;
  *
  */
 public class SettingsFragment extends PreferenceFragment {
-    @Inject private Bus bus;
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -50,20 +47,16 @@ public class SettingsFragment extends PreferenceFragment {
         final Preference mBuild = findPreference(getResources().getString(R.string.pref_key_build_time));
         final Preference mRevision = findPreference(getResources().getString(R.string.pref_key_revision));
         if (mOpenSource != null) {
-            mOpenSource.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override public boolean onPreferenceClick(Preference preference) {
-                    showOpenSourceLicenseDialog();
-                    return false;
-                }
+            mOpenSource.setOnPreferenceClickListener(preference -> {
+                showOpenSourceLicenseDialog();
+                return false;
             });
         }
 
         if (mManager != null) {
-            mManager.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override public boolean onPreferenceClick(Preference preference) {
-                    startActivity(new Intent(getActivity(), ConnectionManagerActivity.class));
-                    return false;
-                }
+            mManager.setOnPreferenceClickListener(preference -> {
+                startActivity(new Intent(getActivity(), ConnectionManagerActivity.class));
+                return false;
             });
         }
 
@@ -83,26 +76,21 @@ public class SettingsFragment extends PreferenceFragment {
             final Preference mShowNotification = findPreference(getResources().
                     getString(R.string.settings_key_notification_control));
             if (mShowNotification != null) {
-                mShowNotification.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                    @Override
-                    public boolean onPreferenceChange(Preference preference, Object newValue) {
-                        boolean value = (Boolean) newValue;
-                        if (!value) {
-                            bus.post(new MessageEvent(UserInputEventType.CANCEL_NOTIFICATION));
-                        }
-                        return true;
+                mShowNotification.setOnPreferenceChangeListener((preference, newValue) -> {
+                    boolean value = (Boolean) newValue;
+                    if (!value) {
+                        new MessageEvent(UserInputEventType.CANCEL_NOTIFICATION);
                     }
+                    return true;
                 });
             }
         }
 
         final Preference mLicense = findPreference(getResources().getString(R.string.settings_key_license));
         if (mLicense != null) {
-            mLicense.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override public boolean onPreferenceClick(Preference preference) {
-                    showLicenseDialog();
-                    return false;
-                }
+            mLicense.setOnPreferenceClickListener(preference -> {
+                showLicenseDialog();
+                return false;
             });
         }
     }

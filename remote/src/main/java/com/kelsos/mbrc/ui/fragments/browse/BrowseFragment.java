@@ -5,9 +5,9 @@ import android.support.v4.view.ViewPager;
 import android.view.*;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.BrowsePagerAdapter;
-import com.kelsos.mbrc.ui.base.BaseFragment;
+import roboguice.fragment.provided.RoboFragment;
 
-public class BrowseFragment extends BaseFragment {
+public class BrowseFragment extends RoboFragment {
     public static final int LIBRARY_SYNC = 1;
     public static final int GROUP_ID = 15;
     private BrowsePagerAdapter mAdapter;

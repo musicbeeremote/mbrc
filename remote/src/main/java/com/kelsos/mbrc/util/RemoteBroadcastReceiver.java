@@ -11,17 +11,14 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.squareup.otto.Bus;
 import roboguice.receiver.RoboBroadcastReceiver;
 
 public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
     private SettingsManager settingsManager;
-    private Bus bus;
     private Context context;
 
-    @Inject public RemoteBroadcastReceiver(SettingsManager settingsManager, Bus bus, Context context) {
+    @Inject public RemoteBroadcastReceiver(SettingsManager settingsManager, Context context) {
         this.settingsManager = settingsManager;
-        this.bus = bus;
         this.context = context;
         this.installFilter();
     }
@@ -41,7 +38,7 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
                 String state = bundle.getString(TelephonyManager.EXTRA_STATE);
                 if (state != null && state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)
                         && settingsManager.isVolumeReducedOnRinging()) {
-                    bus.post(new MessageEvent(ProtocolEventType.REDUCE_VOLUME));
+                    new MessageEvent(ProtocolEventType.REDUCE_VOLUME);
                 }
                 break;
             case WifiManager.NETWORK_STATE_CHANGED_ACTION:
@@ -50,7 +47,7 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
                 if (networkInfo != null) {
                     niState = networkInfo.getState();
                     if (niState.equals(NetworkInfo.State.CONNECTED)) {
-                        bus.post(new MessageEvent(UserInputEventType.START_CONNECTION));
+                        new MessageEvent(UserInputEventType.START_CONNECTION);
                     }
                 }
                 break;
@@ -63,7 +60,7 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
 //                        new UserAction(Notification.PLAYER_NEXT, true)));
                 break;
             case NotificationService.NOTIFICATION_CLOSE_PRESSED:
-                bus.post(new MessageEvent(UserInputEventType.CANCEL_NOTIFICATION));
+                new MessageEvent(UserInputEventType.CANCEL_NOTIFICATION);
                 break;
             case NotificationService.NOTIFICATION_PREVIOUS_PRESSED:
 //                bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,

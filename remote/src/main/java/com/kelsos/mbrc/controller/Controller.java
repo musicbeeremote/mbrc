@@ -10,26 +10,21 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
-import com.noveogroup.android.log.Logger;
-import com.noveogroup.android.log.LoggerManager;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 import roboguice.service.RoboService;
+import roboguice.util.Ln;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Singleton
 public class Controller extends RoboService {
-    private static final Logger logger = LoggerManager.getLogger();
     @Inject private Injector injector;
-    @Inject private Bus bus;
 
     private Map<String, Class<? extends ICommand>> commandMap;
 
     public Controller() {
         if (BuildConfig.DEBUG) {
-            logger.d( "Controller initialized");
+            Ln.d( "Controller initialized");
         }
     }
 
@@ -64,15 +59,6 @@ public class Controller extends RoboService {
     }
 
     /**
-     * Subscriber - Handler to the MessageEvents posted through the event bus.
-     * Responsible for passing the event to the executeCommand function.
-     * @param event The {@link MessageEvent} passed to the controller
-     */
-    @Subscribe public void handleUserActionEvents(MessageEvent event) {
-        executeCommand(event);
-    }
-
-    /**
      * Checks for a Command associated with the event passed.
      * Instantiates the Command and executes it.
      * @param event the event passed for execution
@@ -92,8 +78,8 @@ public class Controller extends RoboService {
 
         } catch (Exception ex) {
             if (BuildConfig.DEBUG) {
-                logger.d( "executing command for type: \t" + event.getType(), ex);
-                logger.d( "command data: \t" + event.getData());
+                Ln.d("executing command for type: \t" + event.getType(), ex);
+                Ln.d( "command data: \t" + event.getData());
             }
         }
 
@@ -101,7 +87,6 @@ public class Controller extends RoboService {
 
     @Override public int onStartCommand(Intent intent, int flags, int startId) {
         Configuration.initialize(this);
-        bus.register(this);
         return super.onStartCommand(intent, flags, startId);
     }
 

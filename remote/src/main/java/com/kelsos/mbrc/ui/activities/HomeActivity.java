@@ -2,32 +2,29 @@ package com.kelsos.mbrc.ui.activities;
 
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.*;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.enums.DisplayFragment;
-import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
 import com.kelsos.mbrc.events.ui.LfmRatingChanged;
 import com.kelsos.mbrc.events.ui.NotifyUser;
-import com.kelsos.mbrc.ui.base.BaseActivity;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.kelsos.mbrc.ui.fragments.*;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseFragment;
-import com.squareup.otto.Subscribe;
+import roboguice.activity.RoboActionBarActivity;
 
-public class HomeActivity extends BaseActivity {
+public class HomeActivity extends RoboActionBarActivity {
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private View mDrawerMenu;
@@ -127,7 +124,7 @@ public class HomeActivity extends BaseActivity {
         mDrawerToggle.syncState();
     }
 
-    @Subscribe public void showSetupDialog(DisplayDialog event) {
+    public void showSetupDialog(DisplayDialog event) {
         if (mDialog != null) {
             return;
         }
@@ -145,7 +142,7 @@ public class HomeActivity extends BaseActivity {
 
     }
 
-    @Subscribe public void handleDrawerEvent(DrawerEvent event) {
+    public void handleDrawerEvent(DrawerEvent event) {
         if (event.isCloseDrawer()) {
             closeDrawer();
         } else {
@@ -204,7 +201,7 @@ public class HomeActivity extends BaseActivity {
         navChanged = false;
     }
 
-    @Subscribe public void handleUserNotification(NotifyUser event) {
+    public void handleUserNotification(NotifyUser event) {
         String message = event.isFromResource() ?
                 getString(event.getResId()) :
                 event.getMessage();
@@ -215,10 +212,10 @@ public class HomeActivity extends BaseActivity {
     @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
-                getBus().post(new MessageEvent(UserInputEventType.KEY_VOLUME_UP));
+
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-                getBus().post(new MessageEvent(UserInputEventType.KEY_VOLUME_DOWN));
+
                 return true;
             default:
                 return super.onKeyDown(keyCode, event);
@@ -237,7 +234,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    @Subscribe public void handleLfmStatusChange(final LfmRatingChanged event) {
+    public void handleLfmStatusChange(final LfmRatingChanged event) {
         if (favoriteItem == null) {
             return;
         }

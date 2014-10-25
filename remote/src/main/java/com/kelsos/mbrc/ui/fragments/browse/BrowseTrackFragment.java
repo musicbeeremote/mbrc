@@ -11,10 +11,10 @@ import android.view.ViewGroup;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.TrackCursorAdapter;
 import com.kelsos.mbrc.data.dbdata.LibraryTrack;
-import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+import roboguice.fragment.provided.RoboListFragment;
 
-public class BrowseTrackFragment extends BaseListFragment
+public class BrowseTrackFragment extends RoboListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, PlaylistDialogFragment.onPlaylistSelectedListener {
     private static final int GROUP_ID = 14;
     private static final int URL_LOADER = 0x53;

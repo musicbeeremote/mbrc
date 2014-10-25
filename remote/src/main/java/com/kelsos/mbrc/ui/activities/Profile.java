@@ -1,17 +1,17 @@
 package com.kelsos.mbrc.ui.activities;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.*;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.ui.base.BaseActivity;
-import com.kelsos.mbrc.ui.base.BaseFragment;
 import com.kelsos.mbrc.ui.fragments.profile.AlbumTracksFragment;
 import com.kelsos.mbrc.ui.fragments.profile.ArtistAlbumsFragment;
 import com.kelsos.mbrc.ui.fragments.profile.GenreArtistsFragment;
+import roboguice.activity.RoboActionBarActivity;
+import roboguice.fragment.provided.RoboFragment;
 
-public class Profile extends BaseActivity {
+public class Profile extends RoboActionBarActivity {
 
     public static final String GENRE = "genre";
     public static final String ARTIST = "artist";
@@ -78,7 +78,7 @@ public class Profile extends BaseActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends BaseFragment {
+    public static class PlaceholderFragment extends RoboFragment {
 
         public PlaceholderFragment() {
         }

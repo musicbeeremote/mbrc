@@ -12,11 +12,11 @@ import android.widget.ListView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistCursorAdapter;
 import com.kelsos.mbrc.data.dbdata.LibraryArtist;
-import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+import roboguice.fragment.provided.RoboListFragment;
 
-public class BrowseArtistFragment extends BaseListFragment
+public class BrowseArtistFragment extends RoboListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>,
         PlaylistDialogFragment.onPlaylistSelectedListener,
         CreateNewPlaylistDialog.onPlaylistNameSelectedListener {

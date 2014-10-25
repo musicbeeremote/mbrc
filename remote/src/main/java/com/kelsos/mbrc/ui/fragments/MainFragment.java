@@ -19,13 +19,11 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
-import com.kelsos.mbrc.ui.base.BaseFragment;
-import com.noveogroup.android.log.Logger;
-import com.noveogroup.android.log.LoggerManager;
-import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
+import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
+import roboguice.util.Ln;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -33,7 +31,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
-public class MainFragment extends BaseFragment {
+public class MainFragment extends RoboFragment {
     /**
      * Total milliseconds in a second (1000)
      */
@@ -43,7 +41,6 @@ public class MainFragment extends BaseFragment {
      */
     public static final int SECONDS = 60;
     public static final int TIME_PERIOD = 1;
-    private static final Logger logger = LoggerManager.getLogger();
     private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
     @InjectView(R.id.main_track_progress_current)
     private TextView trackProgressCurrent;
@@ -180,7 +177,7 @@ public class MainFragment extends BaseFragment {
             albumCover.setOnClickListener(coverOnClick);
         } catch (Exception e) {
             if (BuildConfig.DEBUG) {
-                logger.d("listener registration", e);
+                Ln.e(e, "listener registration");
             }
         }
 
@@ -196,7 +193,7 @@ public class MainFragment extends BaseFragment {
             trackDuration.setTypeface(robotoRegular);
         } catch (Exception e) {
             if (BuildConfig.DEBUG) {
-                logger.d("setting typeface", e);
+                Ln.e(e, "setting typeface");
             }
         }
     }
@@ -224,14 +221,12 @@ public class MainFragment extends BaseFragment {
 
     }
 
-    @Subscribe
     public void handleRatingChange(final RatingChanged event) {
         if (trackRating != null) {
             trackRating.setRating(event.getRating());
         }
     }
 
-    @Subscribe
     public void handleCoverEvent(final CoverAvailable cevent) {
         if (albumCover == null) {
             return;
@@ -242,10 +237,9 @@ public class MainFragment extends BaseFragment {
                 .placeholder(R.drawable.ic_image_no_cover)
                 .fit()
                 .into(albumCover);
-        logger.d("cover event received");
+        Ln.d("cover event received");
     }
 
-    @Subscribe
     public void handlePlayStateChange(final PlayStateChange change) {
         switch (change.getState()) {
             case PLAYING:
@@ -288,37 +282,30 @@ public class MainFragment extends BaseFragment {
         /* If the scheduled tasks is not null then cancel it and clear it along with the timer to create them anew */
         stopTrackProgressAnimation();
 
-        final Runnable updateProgress = new Runnable() {
-            @Override
-            public void run() {
+        final Runnable updateProgress = () -> {
 
-                int currentProgress = trackProgressSlider.getProgress() / MILLISECONDS;
-                final int currentMinutes = currentProgress / SECONDS;
-                final int currentSeconds = currentProgress % SECONDS;
+            int currentProgress = trackProgressSlider.getProgress() / MILLISECONDS;
+            final int currentMinutes = currentProgress / SECONDS;
+            final int currentSeconds = currentProgress % SECONDS;
 
-                if (getActivity() == null) {
-                    return;
-                }
-
-                getActivity().runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        try {
-                            if (trackProgressSlider == null) {
-                                return;
-                            }
-                            trackProgressSlider.setProgress(trackProgressSlider.getProgress() + MILLISECONDS);
-                            trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
-                        } catch (Exception ex) {
-
-                            if (BuildConfig.DEBUG) {
-                                Log.d("mbrc-log:", "animation timer", ex);
-                            }
-                        }
-                    }
-                });
+            if (getActivity() == null) {
+                return;
             }
+
+            getActivity().runOnUiThread(() -> {
+                try {
+                    if (trackProgressSlider == null) {
+                        return;
+                    }
+                    trackProgressSlider.setProgress(trackProgressSlider.getProgress() + MILLISECONDS);
+                    trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
+                } catch (Exception ex) {
+
+                    if (BuildConfig.DEBUG) {
+                        Log.d("mbrc-log:", "animation timer", ex);
+                    }
+                }
+            });
         };
 
         mProgressUpdateHandler = progressScheduler.scheduleAtFixedRate(updateProgress, 0,
@@ -334,7 +321,6 @@ public class MainFragment extends BaseFragment {
         trackProgressCurrent.setText("00:00");
     }
 
-    @Subscribe
     public void handleTrackInfoChange(final TrackInfoChange change) {
         ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
         actionBar.setTitle(change.getTitle());
@@ -342,7 +328,7 @@ public class MainFragment extends BaseFragment {
         actionBar.setDisplayShowTitleEnabled(true);
     }
 
-    @Subscribe
+
     public void handleConnectionStatusChange(final ConnectionStatusChange change) {
         if (change.getStatus() == ConnectionStatus.CONNECTION_OFF) {
             stopTrackProgressAnimation();
@@ -354,7 +340,7 @@ public class MainFragment extends BaseFragment {
      * Responsible for updating the displays and seekbar responsible for the display of the track duration and the
      * current progress of playback
      */
-    @Subscribe
+
     public void handlePositionUpdate(UpdatePosition position) {
         final int total = position.getTotal();
         final int current = position.getCurrent();
@@ -362,7 +348,7 @@ public class MainFragment extends BaseFragment {
             return;
         }
         if (total == 0) {
-            getBus().post(new MessageEvent(UserInputEventType.REQUEST_POSITION));
+            new MessageEvent(UserInputEventType.REQUEST_POSITION);
             return;
         }
         int currentSeconds = current / MILLISECONDS;

@@ -9,8 +9,8 @@ import android.view.*;
 import android.widget.*;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumProfileCursorAdapter;
-import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseMenuItems;
+import roboguice.fragment.provided.RoboListFragment;
 import roboguice.inject.InjectView;
 
 import static android.widget.AbsListView.OnScrollListener;
@@ -21,7 +21,7 @@ import static android.widget.AbsListView.OnScrollListener;
  * <p />
  * interface.
  */
-public class AlbumTracksFragment extends BaseListFragment
+public class AlbumTracksFragment extends RoboListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String ALBUM_ID = "albumId";

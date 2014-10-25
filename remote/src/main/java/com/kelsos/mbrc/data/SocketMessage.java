@@ -7,18 +7,6 @@ public class SocketMessage {
     @JsonProperty private String type;
     @JsonProperty private Object data;
 
-    public SocketMessage() {
-        this.context = "uninitialized";
-        this.data = "missing";
-        this.type = "error";
-    }
-
-    public SocketMessage(String context, String type) {
-        this.context = context;
-        this.type = type;
-        this.data = "";
-    }
-
     public SocketMessage(String context, String type, Object data) {
         this.context = context;
         this.data = data;

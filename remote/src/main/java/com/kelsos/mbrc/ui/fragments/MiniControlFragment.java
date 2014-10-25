@@ -12,14 +12,13 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.events.ui.CoverAvailable;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
-import com.kelsos.mbrc.ui.base.BaseFragment;
-import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
+import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
 
 
 
-public class MiniControlFragment extends BaseFragment {
+public class MiniControlFragment extends RoboFragment {
     @InjectView (R.id.mc_track_cover) private ImageView trackCover;
     @InjectView (R.id.mc_track_artist) private TextView trackArtist;
     @InjectView (R.id.mc_track_title) private TextView trackTitle;
@@ -40,7 +39,7 @@ public class MiniControlFragment extends BaseFragment {
         trackTitle.setTypeface(robotoLight);
     }
 
-    @Subscribe public void handleCoverChange(CoverAvailable event) {
+    public void handleCoverChange(CoverAvailable event) {
         if (trackCover == null) {
             return;
         }
@@ -51,7 +50,7 @@ public class MiniControlFragment extends BaseFragment {
                 .into(trackCover);
     }
 
-    @Subscribe public void handleTrackInfoChange(TrackInfoChange event) {
+    public void handleTrackInfoChange(TrackInfoChange event) {
         trackArtist.setText(event.getArtist());
         trackTitle.setText(event.getTitle());
     }
@@ -75,7 +74,7 @@ public class MiniControlFragment extends BaseFragment {
         }
     };
 
-    @Subscribe public void handlePlayStateChange(PlayStateChange event) {
+    public void handlePlayStateChange(PlayStateChange event) {
         switch (event.getState()) {
             case PLAYING:
                 playPause.setImageResource(R.drawable.ic_action_pause);

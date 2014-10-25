@@ -6,19 +6,13 @@ import android.widget.ListView;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.events.ui.TrackInfoChange;
-import com.kelsos.mbrc.events.ui.TrackMoved;
-import com.kelsos.mbrc.events.ui.TrackRemoval;
-import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
-import com.squareup.otto.Subscribe;
+import roboguice.fragment.provided.RoboListFragment;
 
 
-public class CurrentQueueFragment extends BaseListFragment {
+public class CurrentQueueFragment extends RoboListFragment {
     @Inject private Injector injector;
-
-
 
     private DragSortListView mDslv;
     private DragSortController mController;
@@ -43,15 +37,8 @@ public class CurrentQueueFragment extends BaseListFragment {
         return controller;
     }
 
-    @Subscribe public void handlePlayingTrackChange(TrackInfoChange event) {
-
-    }
-
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
-
         inflater.inflate(R.menu.menu_now_playing, menu);
-
     }
 
     @Override public void onCreate(Bundle savedInstanceState) {
@@ -68,10 +55,6 @@ public class CurrentQueueFragment extends BaseListFragment {
         injector.injectMembers(getListView());
     }
 
-    @Override public void onStart() {
-        super.onStart();
-    }
-
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View mView = inflater.inflate(R.layout.ui_fragment_nowplaying, container, false);
         mDslv = (DragSortListView) mView.findViewById(android.R.id.list);
@@ -86,11 +69,8 @@ public class CurrentQueueFragment extends BaseListFragment {
         super.onListItemClick(l, v, position, id);
     }
 
-    private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
-        @Override public void drop(int from, int to) {
-            if (from != to) {
-
-            }
+    private DragSortListView.DropListener onDrop = (from, to) -> {
+        if (from != to) {
         }
     };
 
@@ -113,25 +93,9 @@ public class CurrentQueueFragment extends BaseListFragment {
         return rIndex;
     }
 
-    private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
-        @Override public void remove(int which) {
+    private DragSortListView.RemoveListener onRemove = which -> {
 
-        }
     };
-
-    @Subscribe public void handleTrackMoved(TrackMoved event) {
-        // In case the action failed revert the change
-        if (!event.isSuccess()) {
-
-        }
-    }
-
-    @Subscribe public void handleTrackRemoval(TrackRemoval event) {
-        // In case the action failed revert the change
-        if (!event.isSuccess()) {
-
-        }
-    }
 
 
 }

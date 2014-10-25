@@ -7,18 +7,16 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
 import android.widget.ListView;
-import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistTrackCursorAdapter;
-import com.kelsos.mbrc.ui.base.BaseActivity;
-import com.kelsos.mbrc.util.MainThreadBusWrapper;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
+import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
-public class PlaylistActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class PlaylistActivity extends RoboActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int URL_LOADER = 0x721ae;
-    @Inject private MainThreadBusWrapper bus;
+
     @InjectView(android.R.id.list) private ListView mList;
     private PlaylistTrackCursorAdapter mAdapter;
     private String mTitle;

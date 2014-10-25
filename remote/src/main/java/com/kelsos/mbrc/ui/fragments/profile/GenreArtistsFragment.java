@@ -15,10 +15,10 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistCursorAdapter;
 import com.kelsos.mbrc.data.dbdata.LibraryArtist;
 import com.kelsos.mbrc.ui.activities.Profile;
-import com.kelsos.mbrc.ui.base.BaseListFragment;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseMenuItems;
+import roboguice.fragment.provided.RoboListFragment;
 
 
 /**
@@ -29,7 +29,7 @@ import com.kelsos.mbrc.ui.fragments.browse.BrowseMenuItems;
  * Use the {@link GenreArtistsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GenreArtistsFragment extends BaseListFragment
+public class GenreArtistsFragment extends RoboListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>,
         PlaylistDialogFragment.onPlaylistSelectedListener,
         CreateNewPlaylistDialog.onPlaylistNameSelectedListener {

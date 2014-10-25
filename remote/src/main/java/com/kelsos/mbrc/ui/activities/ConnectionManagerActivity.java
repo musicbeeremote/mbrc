@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.ui.activities;
 
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.app.DialogFragment;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,7 +11,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import com.github.mrengineer13.snackbar.SnackBar;
-import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ConnectionSettingsAdapter;
 import com.kelsos.mbrc.constants.UserInputEventType;
@@ -22,14 +21,11 @@ import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.events.ui.NotifyUser;
-import com.kelsos.mbrc.ui.base.BaseActivity;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
+import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
-public class ConnectionManagerActivity extends BaseActivity implements SettingsDialogFragment.SettingsDialogListener {
-    @Inject private Bus bus;
+public class ConnectionManagerActivity extends RoboActionBarActivity implements SettingsDialogFragment.SettingsDialogListener {
     @InjectView(R.id.connection_scan) private Button scanButton;
     @InjectView(R.id.connection_add) private Button addButton;
     @InjectView(R.id.connection_list) private ListView connectionList;
@@ -51,19 +47,15 @@ public class ConnectionManagerActivity extends BaseActivity implements SettingsD
 
     @Override protected void onStart() {
         super.onStart();
-        bus.register(this);
+
         mContext = this;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.connection_manager_title);
         scanButton.setOnClickListener(scanListener);
         addButton.setOnClickListener(addListener);
         registerForContextMenu(connectionList);
-        connectionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                bus.post(new ChangeSettings(position, SettingsAction.DEFAULT));
-            }
-        });
+        connectionList.setOnItemClickListener((parent, view, position, id)
+                -> new ChangeSettings(position, SettingsAction.DEFAULT));
     }
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {
@@ -90,7 +82,7 @@ public class ConnectionManagerActivity extends BaseActivity implements SettingsD
         final int position = mi.position;
         switch (item.getItemId()) {
             case DEFAULT:
-                bus.post(new ChangeSettings(position, SettingsAction.DEFAULT));
+                new ChangeSettings(position, SettingsAction.DEFAULT);
                 break;
             case EDIT:
                 SettingsDialogFragment settingsDialog = new SettingsDialogFragment();
@@ -105,7 +97,7 @@ public class ConnectionManagerActivity extends BaseActivity implements SettingsD
                 settingsDialog.show(getFragmentManager(), "settings_dialog");
                 break;
             case DELETE:
-                bus.post(new ChangeSettings(position, SettingsAction.DELETE));
+                new ChangeSettings(position, SettingsAction.DELETE);
                 break;
             default:
                 return false;
@@ -116,33 +108,31 @@ public class ConnectionManagerActivity extends BaseActivity implements SettingsD
     private Button.OnClickListener scanListener = new Button.OnClickListener() {
         @Override public void onClick(View view) {
             mProgress = ProgressDialog.show(mContext, getString(R.string.progress_scanning), getString(R.string.progress_scanning_message), true, false);
-            bus.post(new MessageEvent(UserInputEventType.START_DISCOVERY));
+            new MessageEvent(UserInputEventType.START_DISCOVERY);
         }
     };
 
-    private Button.OnClickListener addListener = new Button.OnClickListener() {
-        @Override public void onClick(View view) {
-            SettingsDialogFragment settingsDialog = new SettingsDialogFragment();
-            Bundle args = new Bundle();
-            args.putInt("index", -1);
-            settingsDialog.setArguments(args);
-            settingsDialog.show(getFragmentManager(), "settings_dialog");
-        }
+    private Button.OnClickListener addListener = view -> {
+        SettingsDialogFragment settingsDialog = new SettingsDialogFragment();
+        Bundle args = new Bundle();
+        args.putInt("index", -1);
+        settingsDialog.setArguments(args);
+        settingsDialog.show(getFragmentManager(), "settings_dialog");
     };
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, ConnectionSettings settings) {
-        bus.post(settings);
+
     }
 
-    @Subscribe public void handleConnectionSettingsChange(ConnectionSettingsChanged event) {
+    public void handleConnectionSettingsChange(ConnectionSettingsChanged event) {
         ConnectionSettingsAdapter mAdapter = new ConnectionSettingsAdapter(this,
                 R.layout.ui_list_connection_settings, event.getmSettings());
         mAdapter.setDefaultIndex(event.getDefaultIndex());
         connectionList.setAdapter(mAdapter);
     }
 
-    @Subscribe public void handleDiscoveryStopped(DiscoveryStopped event) {
+    public void handleDiscoveryStopped(DiscoveryStopped event) {
         if (mProgress != null) {
             mProgress.hide();
         }
@@ -164,7 +154,7 @@ public class ConnectionManagerActivity extends BaseActivity implements SettingsD
         mSnackBar.show(message);
     }
 
-    @Subscribe public void handleUserNotification(NotifyUser event) {
+    public void handleUserNotification(NotifyUser event) {
         String message = event.isFromResource() ?
                 getString(event.getResId()) :
                 event.getMessage();

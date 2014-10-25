@@ -17,7 +17,6 @@ import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.ui.activities.HomeActivity;
-import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 @Singleton
@@ -43,14 +42,13 @@ public class NotificationService {
     private Context mContext;
     private SettingsManager mSettings;
 
-    @Inject public NotificationService(Context context, MainThreadBusWrapper bus, SettingsManager mSettings) {
+    @Inject public NotificationService(Context context, SettingsManager mSettings) {
         this.mContext = context;
         this.mSettings = mSettings;
         mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        bus.register(this);
     }
 
-    @Subscribe public void handleNotificationData(final NotificationDataAvailable event) {
+    public void handleNotificationData(final NotificationDataAvailable event) {
         if (!mSettings.isNotificationControlEnabled()) {
             return;
         }

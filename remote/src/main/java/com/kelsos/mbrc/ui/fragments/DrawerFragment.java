@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.app.FragmentManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,14 +20,13 @@ import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
-import com.kelsos.mbrc.ui.base.BaseListFragment;
-import com.squareup.otto.Subscribe;
+import roboguice.fragment.provided.RoboListFragment;
 import roboguice.inject.InjectView;
 
 import java.util.ArrayList;
 
 
-public class DrawerFragment extends BaseListFragment implements FragmentManager.OnBackStackChangedListener {
+public class DrawerFragment extends RoboListFragment implements FragmentManager.OnBackStackChangedListener {
     @InjectView(R.id.menuConnector) private TextView menuConnector;
     @InjectView(R.id.drawer_version_indicator) private TextView versionIndicator;
 
@@ -36,20 +35,12 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
     private int mSelection;
     private boolean mBackstackChanging;
 
-    private TextView.OnLongClickListener connectButtonLongClick = new TextView.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View view) {
-            getBus().post(new MessageEvent(UserInputEventType.RESET_CONNECTION));
-            return false;
-        }
+    private TextView.OnLongClickListener connectButtonLongClick = view -> {
+        new MessageEvent(UserInputEventType.RESET_CONNECTION);
+        return false;
     };
 
-    private TextView.OnClickListener connectButtonClick = new TextView.OnClickListener() {
-
-        public void onClick(View v) {
-            getBus().post(new MessageEvent(UserInputEventType.START_CONNECTION));
-        }
-    };
+    private TextView.OnClickListener connectButtonClick = v -> new MessageEvent(UserInputEventType.START_CONNECTION);
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +84,7 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
         versionIndicator.setText(String.format(getString(R.string.ui_drawer_menu_version), BuildConfig.VERSION_NAME));
     }
 
-    @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChange change) {
+    public void handleConnectionStatusChange(final ConnectionStatusChange change) {
         if (menuConnector == null) {
             return;
         }
@@ -142,7 +133,7 @@ public class DrawerFragment extends BaseListFragment implements FragmentManager.
                 dEvent = new DrawerEvent();
             }
 
-            getBus().post(dEvent);
+            dEvent.getNavigate();
         }
     }
 }
