@@ -77,6 +77,9 @@ public class HomeActivity extends RoboActionBarActivity {
         fragmentTransaction.replace(R.id.fragment_container, mFragment, "main_fragment");
         fragmentTransaction.commit();
         mSnackBar = new SnackBar(this);
+
+
+
     }
 
     private void closeDrawer() {

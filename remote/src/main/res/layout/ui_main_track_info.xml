@@ -1,67 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="horizontal"
-              android:background="@drawable/ui_track_info_background"
-              android:paddingLeft="@dimen/side_margin_half"
-              android:paddingRight="@dimen/side_margin_half"
-              android:paddingBottom="4dp"
-              android:paddingTop="4dp"
-              android:layout_width="match_parent"
-              android:layout_height="@dimen/mbrc_info_tab_height"
-              android:gravity="center_vertical|left">
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                    xmlns:tools="http://schemas.android.com/tools"
+                                    android:orientation="horizontal"
+                                    android:paddingLeft="@dimen/side_margin_half"
+                                    android:paddingRight="@dimen/side_margin_half"
+                                    android:paddingBottom="4dp"
+                                    android:paddingTop="4dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/mbrc_info_tab_height"
+                                    android:gravity="center_vertical|start">
 
     <LinearLayout
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_width="0dip"
-            android:layout_height="match_parent">
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:ellipsize="end"
-                tools:text="Crimson Flower"
-                android:textSize="@dimen/mbrc_title_text_size"
-                android:textStyle="bold"
-                android:id="@+id/track_title"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="end"
+            tools:text="Crimson Flower"
+            android:textSize="@dimen/mbrc_title_text_size"
+            android:textStyle="bold"
+            android:id="@+id/track_title"/>
 
         <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:ellipsize="end"
-                android:textSize="@dimen/mbrc_album_text_size"
-                tools:text="Circus Black"
-                android:id="@+id/track_album"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textSize="@dimen/mbrc_album_text_size"
+            tools:text="Circus Black"
+            android:id="@+id/track_album"/>
 
         <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/mbrc_album_text_size"
-                android:singleLine="true"
-                android:ellipsize="end"
-                tools:text="Amberian Dawn"
-                android:id="@+id/track_artist"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/mbrc_album_text_size"
+            android:singleLine="true"
+            android:ellipsize="end"
+            tools:text="Amberian Dawn"
+            android:id="@+id/track_artist"/>
 
         <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/mbrc_album_text_size"
-                android:singleLine="true"
-                android:ellipsize="end"
-                tools:text="2012"
-                android:id="@+id/track_year"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/mbrc_album_text_size"
+            android:singleLine="true"
+            android:ellipsize="end"
+            tools:text="2012"
+            android:id="@+id/track_year"/>
     </LinearLayout>
 
     <ImageButton
-            android:layout_width="wrap_content"
-            android:id="@+id/mbrc_info_overflow"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_core_overflow"
-            android:background="@drawable/selectable_background_mbrc_dark"/>
+        android:layout_gravity="end|center_vertical"
+        android:layout_width="wrap_content"
+        android:id="@+id/mbrc_info_overflow"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_core_overflow"
+        android:background="@drawable/selectable_background_mbrc_dark"/>
 
 
-</LinearLayout>
+</android.support.v7.widget.CardView>

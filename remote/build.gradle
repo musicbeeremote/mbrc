@@ -88,6 +88,7 @@ dependencies {
     androidTestCompile 'org.robolectric:robolectric:2.3'
     compile 'com.android.support:support-v13:21.0.0'
     compile 'com.android.support:appcompat-v7:21.0.0'
+    compile 'com.android.support:cardview-v7:21.0.0'
     provided 'org.roboguice:roboblender:3.0'
     compile 'org.roboguice:roboguice:3.0'
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
@@ -170,6 +171,12 @@ allprojects {
                 android.signingConfigs[configName].keyAlias = props['keyAlias']
                 android.signingConfigs[configName].keyPassword = props['keyPass']
             }
+        }
+    }
+
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-AguiceAnnotationDatabasePackageName=mbrc"
         }
     }
 }

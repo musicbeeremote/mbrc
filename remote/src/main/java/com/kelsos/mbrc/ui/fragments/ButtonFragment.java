@@ -5,13 +5,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.events.actions.*;
-import com.kelsos.mbrc.events.ui.PlayStateChange;
+import com.kelsos.mbrc.enums.PlayState;
+import com.kelsos.mbrc.events.actions.RepeatChangeEvent;
+import com.kelsos.mbrc.events.actions.ShufflePressedEvent;
 import com.kelsos.mbrc.events.ui.RepeatChange;
 import com.kelsos.mbrc.events.ui.ShuffleChange;
+import com.kelsos.mbrc.rest.RemoteApi;
 import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
+import roboguice.util.Ln;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 public class ButtonFragment extends RoboFragment {
 
     @InjectView(R.id.main_button_play_pause)
@@ -29,13 +36,18 @@ public class ButtonFragment extends RoboFragment {
     @InjectView(R.id.main_repeat_button)
     private ImageButton repeatButton;
 
+    @Inject
+    private RemoteApi api;
+
+    private View.OnClickListener playButtonListener = v ->
+            api.playbackStart()
+                    .flatMap(resp -> api.getPlaystate())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(resp -> UpdatePlaystate(PlayState.valueOf(resp.getValue().toUpperCase())));
 
 
-    private View.OnClickListener playButtonListener = v -> new PlayPressedEvent();
-    private View.OnClickListener previousButtonListener = v -> new PreviousPressedEvent();
-    private View.OnClickListener nextButtonListener = v -> new NextPressedEvent();
     private View.OnLongClickListener stopListener = v -> {
-        new StopPressedEvent();
         return true;
     };
     private ImageButton.OnClickListener shuffleListener = v -> new ShufflePressedEvent();
@@ -51,8 +63,19 @@ public class ButtonFragment extends RoboFragment {
         super.onStart();
         playButton.setOnClickListener(playButtonListener);
         playButton.setOnLongClickListener(stopListener);
-        previousButton.setOnClickListener(previousButtonListener);
-        nextButton.setOnClickListener(nextButtonListener);
+
+        previousButton.setOnClickListener(v ->
+                api.playPrevious()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(resp -> Ln.d(resp.isSuccess())));
+
+        nextButton.setOnClickListener(v ->
+                api.playNext()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(resp -> Ln.d(resp.isSuccess())));
+
         shuffleButton.setOnClickListener(shuffleListener);
         repeatButton.setOnClickListener(repeatListener);
     }
@@ -74,11 +97,11 @@ public class ButtonFragment extends RoboFragment {
     }
 
 
-    public void handlePlayStateChange(final PlayStateChange change) {
+    public void UpdatePlaystate(final PlayState state) {
         if (playButton == null) {
             return;
         }
-        switch (change.getState()) {
+        switch (state) {
             case PLAYING:
                 playButton.setImageResource(R.drawable.ic_media_pause);
                 break;
