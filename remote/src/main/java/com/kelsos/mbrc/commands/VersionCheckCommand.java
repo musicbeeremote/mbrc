@@ -2,9 +2,7 @@ package com.kelsos.mbrc.commands;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
-import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.Model;
-import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.util.SettingsManager;
@@ -79,7 +77,7 @@ public class VersionCheckCommand implements ICommand {
                     }
 
                     if (isOutOfDate) {
-                        new MessageEvent(ProtocolEventType.INFORM_CLIENT_PLUGIN_OUT_OF_DATE);
+                        ///
                     }
                 }
 

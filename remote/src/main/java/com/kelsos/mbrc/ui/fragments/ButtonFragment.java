@@ -82,41 +82,28 @@ public class ButtonFragment extends RoboFragment {
 
 
     public void handleShuffleChange(ShuffleChange change) {
-        if (shuffleButton == null) {
-            return;
-        }
         shuffleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_shuffle : R.drawable.ic_media_shuffle_off);
     }
 
 
     public void updateRepeatButtonState(RepeatChange change) {
-        if (repeatButton == null) {
-            return;
-        }
         repeatButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_repeat : R.drawable.ic_media_repeat_off);
     }
 
 
     public void UpdatePlaystate(final PlayState state) {
-        if (playButton == null) {
-            return;
-        }
+        int resId = R.drawable.ic_media_play;
         switch (state) {
             case PLAYING:
-                playButton.setImageResource(R.drawable.ic_media_pause);
-                break;
-            case PAUSED:
-                playButton.setImageResource(R.drawable.ic_media_play);
+                resId = R.drawable.ic_media_pause;
                 break;
             case STOPPED:
-                playButton.setImageResource(R.drawable.ic_media_stop);
-                break;
-            case UNDEFINED:
-                playButton.setImageResource(R.drawable.ic_media_play);
+                resId = R.drawable.ic_media_stop;
                 break;
             default:
                 break;
         }
+        playButton.setImageResource(resId);
     }
 
 }

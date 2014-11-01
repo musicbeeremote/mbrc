@@ -8,7 +8,6 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
 import roboguice.receiver.RoboBroadcastReceiver;
@@ -38,7 +37,7 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
                 String state = bundle.getString(TelephonyManager.EXTRA_STATE);
                 if (state != null && state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)
                         && settingsManager.isVolumeReducedOnRinging()) {
-                    new MessageEvent(ProtocolEventType.REDUCE_VOLUME);
+
                 }
                 break;
             case WifiManager.NETWORK_STATE_CHANGED_ACTION:

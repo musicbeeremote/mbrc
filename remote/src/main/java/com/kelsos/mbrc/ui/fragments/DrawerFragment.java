@@ -17,6 +17,7 @@ import com.kelsos.mbrc.adapters.DrawerAdapter;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.NavigationEntry;
 import com.kelsos.mbrc.enums.DisplayFragment;
+import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
@@ -40,7 +41,7 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
         return false;
     };
 
-    private TextView.OnClickListener connectButtonClick = v -> new MessageEvent(UserInputEventType.START_CONNECTION);
+    private TextView.OnClickListener connectButtonClick = v -> Events.Messages.onNext(new MessageEvent(UserInputEventType.START_CONNECTION));
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -5,10 +5,11 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.Const;
-import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.SocketEventType;
+import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.enums.SocketAction;
+import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.util.DelayTimer;
@@ -16,12 +17,14 @@ import com.kelsos.mbrc.util.SettingsManager;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import roboguice.util.Ln;
+import rx.schedulers.Schedulers;
 
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.*;
 
 @Singleton
 public class SocketService {
@@ -35,23 +38,42 @@ public class SocketService {
     private boolean shouldStop;
     private Socket clSocket;
     private PrintWriter output;
-    private Thread cThread;
     private DelayTimer cTimer;
+
+    private static final int KEEP_ALIVE_TIME = 1;
+    private static final TimeUnit KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS;
+    private final BlockingQueue<Runnable> mSocketQueue;
+    private ThreadPoolExecutor mSocketThreadPool;
+    private Future mFuture;
 
     @Inject public SocketService(SettingsManager settingsManager, ObjectMapper mapper) {
         this.settingsManager = settingsManager;
         this.mapper = mapper;
+        this.mSocketQueue = new LinkedBlockingQueue<>();
+        final int SINGLE_THREAD = 1;
+        this.mSocketThreadPool = new ThreadPoolExecutor(
+                SINGLE_THREAD,
+                SINGLE_THREAD,
+                KEEP_ALIVE_TIME,
+                KEEP_ALIVE_TIME_UNIT,
+                mSocketQueue
+        );
 
-        DelayTimer.TimerFinishEvent timerFinishEvent = () -> {
-            cThread = new Thread(new SocketConnection());
-            cThread.start();
+        cTimer = new DelayTimer(DELAY, () -> {
+            mFuture = mSocketThreadPool.submit(new SocketConnection());
             numOfRetries++;
-        };
-
-        cTimer = new DelayTimer(DELAY, timerFinishEvent);
+        });
         numOfRetries = 0;
         shouldStop = false;
         socketManager(SocketAction.START);
+        SubscribeToEvents();
+    }
+
+
+    private void SubscribeToEvents(){
+        Events.Messages.subscribeOn(Schedulers.io())
+                .filter(msg -> msg.getType().equals(UserInputEventType.START_CONNECTION))
+                .subscribe(event -> socketManager(SocketAction.START));
     }
 
     public void socketManager(SocketAction action) {
@@ -75,10 +97,7 @@ public class SocketService {
 
     private void SocketRetry() {
         cleanupSocket();
-        if (cThread != null) {
-            cThread.interrupt();
-        }
-        cThread = null;
+        mFuture.cancel(true);
         if (shouldStop) {
             shouldStop = false;
             numOfRetries = 0;
@@ -89,22 +108,13 @@ public class SocketService {
 
     private void SocketReset() {
         cleanupSocket();
-        if (cThread != null) {
-            cThread.interrupt();
-        }
-        cThread = null;
+        mFuture.cancel(true);
         shouldStop = false;
         numOfRetries = 0;
         cTimer.start();
     }
 
     private void SocketStart() {
-        if (sIsConnected() || cThreadIsAlive()) {
-            return;
-        } else if (!sIsConnected() && cThreadIsAlive()) {
-            cThread.interrupt();
-            cThread = null;
-        }
         cTimer.start();
     }
 
@@ -134,10 +144,6 @@ public class SocketService {
                 Ln.e(e, "io exception on socket cleanup");
             }
         }
-    }
-
-    private boolean cThreadIsAlive() {
-        return cThread != null && cThread.isAlive();
     }
 
     public void sendData(SocketMessage message) {
@@ -175,16 +181,17 @@ public class SocketService {
             String context = node.path("message").getTextValue();
 
             if (context.contains(Notification.CLIENT_NOT_ALLOWED)) {
-                new MessageEvent(ProtocolEventType.INFORM_CLIENT_NOT_ALLOWED);
+
                 return;
             }
 
-            new MessageEvent(context);
+            Events.Messages.onNext(new MessageEvent(context));
         }
     }
 
     private class SocketConnection implements Runnable {
         public void run() {
+            Ln.d("Socket Running");
             SocketAddress socketAddress = settingsManager.getSocketAddress();
 
             if (null == socketAddress) {
@@ -202,20 +209,10 @@ public class SocketService {
 
                 String socketStatus = String.valueOf(clSocket.isConnected());
 
-                //new MessageEvent(SocketEventType.STATUS_CHANGED, socketStatus));
+                Events.Messages.onNext(new MessageEvent(SocketEventType.STATUS_CHANGED, socketStatus));
+
                 while (clSocket.isConnected()) {
-                    try {
-                        final String incoming = input.readLine();
-                        if (incoming != null && incoming.length() > 0) {
-                            tryProcessIncoming(incoming);
-                        }
-                    } catch (IOException e) {
-                        input.close();
-                        if (clSocket != null) {
-                            clSocket.close();
-                        }
-                        throw e;
-                    }
+                    readFromSocket(input);
                 }
             } catch (SocketTimeoutException e) {
                 new NotifyUser(R.string.notification_connection_timeout);
@@ -232,13 +229,28 @@ public class SocketService {
                 }
                 clSocket = null;
 
-                new MessageEvent(SocketEventType.STATUS_CHANGED, false);
+                Events.Messages.onNext(new MessageEvent(SocketEventType.STATUS_CHANGED, false));
                 if (numOfRetries < MAX_RETRIES) {
                     socketManager(SocketAction.RETRY);
                 }
                 if (BuildConfig.DEBUG) {
                     Ln.d("socket closed");
                 }
+            }
+        }
+
+        private void readFromSocket(BufferedReader input) throws IOException {
+            try {
+                final String incoming = input.readLine();
+                if (incoming != null && incoming.length() > 0) {
+                    tryProcessIncoming(incoming);
+                }
+            } catch (IOException e) {
+                input.close();
+                if (clSocket != null) {
+                    clSocket.close();
+                }
+                throw e;
             }
         }
     }

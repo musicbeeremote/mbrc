@@ -4,13 +4,16 @@ import android.content.Context;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.constants.Const;
-import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.enums.PlayState;
+import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
+import com.kelsos.mbrc.net.Notification;
+import roboguice.util.Ln;
+import rx.schedulers.Schedulers;
 
 @Singleton
 public class Model {
@@ -58,6 +61,12 @@ public class Model {
         lfmRating = LfmStatus.NORMAL;
         pluginVersion = EMPTY;
 
+        Events.Messages.subscribeOn(Schedulers.io())
+                .filter(msg -> msg.getType().equals(Notification.PLAY_STATUS_CHANGED))
+                .subscribe(event -> Ln.d("PlayStatus changed"));
+
+        Ln.d("Model instantiated");
+
     }
 
     public void setLfmRating(String rating) {
@@ -78,7 +87,6 @@ public class Model {
 
     public void setPluginVersion(String pluginVersion) {
         this.pluginVersion = pluginVersion.substring(0, pluginVersion.lastIndexOf('.'));
-        new MessageEvent(ProtocolEventType.PLUGIN_VERSION_CHECK);
     }
 
     public String getPluginVersion() {

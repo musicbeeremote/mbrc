@@ -46,13 +46,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    sourceSets {
-        main {
-            java.srcDirs = ['src/main/java', 'src/main/java-gen']
-        }
-        instrumentTest.setRoot('src/test')
-    }
-
     signingConfigs {
         release {
             storeFile file('placeholder')
@@ -67,7 +60,7 @@ android {
         release {
             signingConfig signingConfigs.release
             debuggable false
-            zipAlign true
+            zipAlignEnabled true
         }
         debug {
             applicationIdSuffix ".debug"
@@ -83,13 +76,9 @@ android {
 
 dependencies {
     compile 'com.squareup.retrofit:retrofit:1.6.1'
-
-    androidTestCompile 'junit:junit:4.10'
-    androidTestCompile 'org.robolectric:robolectric:2.3'
     compile 'com.android.support:support-v13:21.0.0'
     compile 'com.android.support:appcompat-v7:21.0.0'
     compile 'com.android.support:cardview-v7:21.0.0'
-    provided 'org.roboguice:roboblender:3.0'
     compile 'org.roboguice:roboguice:3.0'
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
     compile 'com.viewpagerindicator:library:2.4.1@aar'
@@ -102,6 +91,10 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.0.0'
     compile 'com.netflix.rxjava:rxjava-android:0.20.6'
 
+    provided 'org.roboguice:roboblender:3.0'
+
+    androidTestCompile 'junit:junit:4.10'
+    androidTestCompile 'org.robolectric:robolectric:2.3'
 }
 
 idea {
@@ -113,6 +106,10 @@ idea {
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.1'
+}
+
+project.tasks.withType(JavaCompile) { task ->
+    options.compilerArgs << "-AguiceAnnotationDatabasePackageName=mbrc"
 }
 
 checkstyle {
@@ -171,12 +168,6 @@ allprojects {
                 android.signingConfigs[configName].keyAlias = props['keyAlias']
                 android.signingConfigs[configName].keyPassword = props['keyPass']
             }
-        }
-    }
-
-    gradle.projectsEvaluated {
-        tasks.withType(JavaCompile) {
-            options.compilerArgs << "-AguiceAnnotationDatabasePackageName=mbrc"
         }
     }
 }
