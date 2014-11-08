@@ -3,7 +3,6 @@ package com.kelsos.mbrc.net;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
-import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.SocketEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
@@ -11,7 +10,6 @@ import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.util.DelayTimer;
 import com.kelsos.mbrc.util.SettingsManager;
 import org.codehaus.jackson.JsonNode;
@@ -24,7 +22,6 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.concurrent.*;
 
 @Singleton
 public class SocketService {
@@ -39,28 +36,15 @@ public class SocketService {
     private Socket clSocket;
     private PrintWriter output;
     private DelayTimer cTimer;
-
-    private static final int KEEP_ALIVE_TIME = 1;
-    private static final TimeUnit KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS;
-    private final BlockingQueue<Runnable> mSocketQueue;
-    private ThreadPoolExecutor mSocketThreadPool;
-    private Future mFuture;
+    private Thread mThread;
 
     @Inject public SocketService(SettingsManager settingsManager, ObjectMapper mapper) {
         this.settingsManager = settingsManager;
         this.mapper = mapper;
-        this.mSocketQueue = new LinkedBlockingQueue<>();
-        final int SINGLE_THREAD = 1;
-        this.mSocketThreadPool = new ThreadPoolExecutor(
-                SINGLE_THREAD,
-                SINGLE_THREAD,
-                KEEP_ALIVE_TIME,
-                KEEP_ALIVE_TIME_UNIT,
-                mSocketQueue
-        );
 
         cTimer = new DelayTimer(DELAY, () -> {
-            mFuture = mSocketThreadPool.submit(new SocketConnection());
+            mThread = new Thread(new SocketConnection());
+            mThread.start();
             numOfRetries++;
         });
         numOfRetries = 0;
@@ -95,9 +79,16 @@ public class SocketService {
         }
     }
 
+    private void stopThread() {
+        if (mThread != null && mThread.isAlive()){
+            mThread.interrupt();
+            mThread = null;
+        }
+    }
+
     private void SocketRetry() {
         cleanupSocket();
-        mFuture.cancel(true);
+        stopThread();
         if (shouldStop) {
             shouldStop = false;
             numOfRetries = 0;
@@ -108,14 +99,16 @@ public class SocketService {
 
     private void SocketReset() {
         cleanupSocket();
-        mFuture.cancel(true);
+        stopThread();
         shouldStop = false;
         numOfRetries = 0;
         cTimer.start();
     }
 
     private void SocketStart() {
-        cTimer.start();
+        if(!sIsConnected()){
+            cTimer.start();
+        }
     }
 
     /**
@@ -176,7 +169,7 @@ public class SocketService {
         final String[] replies = incoming.split("\r\n");
         for (String reply : replies) {
             
-            Ln.d("incoming::%", reply);
+            Ln.d("incoming::%s", reply);
             JsonNode node = mapper.readValue(reply, JsonNode.class);
             String context = node.path("message").getTextValue();
 
@@ -215,9 +208,9 @@ public class SocketService {
                     readFromSocket(input);
                 }
             } catch (SocketTimeoutException e) {
-                new NotifyUser(R.string.notification_connection_timeout);
+                Ln.e(e, "Connection Timeout");
             } catch (SocketException e) {
-                new NotifyUser(e.toString().substring(SUB_START));
+                Ln.d(e.toString().substring(SUB_START));
             } catch (IOException e) {
                 if (BuildConfig.DEBUG) {
                     Ln.e(e, "socket io/null pointer");

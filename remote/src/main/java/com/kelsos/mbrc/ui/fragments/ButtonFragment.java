@@ -41,6 +41,7 @@ public class ButtonFragment extends RoboFragment {
 
     private View.OnClickListener playButtonListener = v ->
             api.playbackStart()
+                    .doOnError(error -> Ln.e(error, "Request Failed"))
                     .flatMap(resp -> api.getPlaystate())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

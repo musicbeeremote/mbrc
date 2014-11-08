@@ -93,16 +93,13 @@ public class AlbumTracksFragment extends RoboListFragment
             setHeaderHeight(mHeader.getMeasuredHeight());
             mContentView.getRootView()
                     .getViewTreeObserver()
-                    .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    int headerHeight = mHeader.getHeight();
-                    if (!isInit && headerHeight != 0) {
-                        setHeaderHeight(headerHeight);
-                        isInit = true;
-                    }
-                }
-            });
+                    .addOnGlobalLayoutListener(() -> {
+                        int headerHeight = mHeader.getHeight();
+                        if (!isInit && headerHeight != 0) {
+                            setHeaderHeight(headerHeight);
+                            isInit = true;
+                        }
+                    });
 
         }
         return mContentView;

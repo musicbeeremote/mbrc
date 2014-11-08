@@ -12,6 +12,7 @@ import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
 import com.kelsos.mbrc.net.Notification;
+import com.kelsos.mbrc.rest.RemoteApi;
 import roboguice.util.Ln;
 import rx.schedulers.Schedulers;
 
@@ -42,7 +43,7 @@ public class Model {
 
 
     @Inject
-    public Model(Context context) {
+    public Model(Context context, RemoteApi api) {
         title = EMPTY;
         artist = EMPTY;
         album = EMPTY;
@@ -64,6 +65,12 @@ public class Model {
         Events.Messages.subscribeOn(Schedulers.io())
                 .filter(msg -> msg.getType().equals(Notification.PLAY_STATUS_CHANGED))
                 .subscribe(event -> Ln.d("PlayStatus changed"));
+
+        Events.Messages.subscribeOn(Schedulers.io())
+                .doOnError(err -> Ln.d("Error %s", err.getMessage()))
+                .filter(msg -> msg.getType().equals(Notification.LYRICS_CHANGED))
+                .flatMap(resp -> api.getTrackLyrics())
+                .subscribe(resp -> setLyrics(resp.getLyrics()));
 
         Ln.d("Model instantiated");
 
@@ -196,6 +203,7 @@ public class Model {
                 .replace("<br>", "\n")
                 .trim();
         new LyricsUpdated(this.lyrics);
+        Ln.d("Lyrics: %s", lyrics);
     }
 
     public boolean isRepeatActive() {

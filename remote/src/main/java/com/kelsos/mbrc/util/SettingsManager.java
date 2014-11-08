@@ -73,6 +73,13 @@ public class SettingsManager {
             serverPort = Integer.parseInt(mPreferences.getString(mContext.getString(R.string.settings_key_port), "0"));
         }
 
+        /**
+         * Debug Hardcoded settings
+         */
+        if (BuildConfig.DEBUG) {
+            serverAddress = "192.168.100.136";
+            serverPort = 3000;
+        }
 
         if (nullOrEmpty(serverAddress) || serverPort == 0) {
             new DisplayDialog(DisplayDialog.SETUP);
