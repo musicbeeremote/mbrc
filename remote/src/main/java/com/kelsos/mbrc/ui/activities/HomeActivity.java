@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.activities;
 
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -14,12 +13,9 @@ import android.view.*;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.DisplayFragment;
-import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.DrawerSelection;
 import com.kelsos.mbrc.events.ui.LfmRatingChanged;
 import com.kelsos.mbrc.events.ui.NotifyUser;
-import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
-import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.kelsos.mbrc.ui.fragments.*;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseFragment;
 import roboguice.activity.RoboActionBarActivity;
@@ -31,9 +27,9 @@ public class HomeActivity extends RoboActionBarActivity {
     private View mDrawerMenu;
     private DisplayFragment mDisplay;
     private boolean navChanged;
-    private DialogFragment mDialog;
     private MenuItem favoriteItem;
     private SnackBar mSnackBar;
+    private DrawerFragment mDrawerFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,7 +39,7 @@ public class HomeActivity extends RoboActionBarActivity {
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerMenu = findViewById(R.id.drawer_menu);
-        DrawerFragment mDrawerFragment = (DrawerFragment) getFragmentManager().findFragmentById(R.id.drawer_menu);
+        mDrawerFragment = (DrawerFragment) getFragmentManager().findFragmentById(R.id.drawer_menu);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.drawer_open, R.string.drawer_close) {
@@ -130,24 +126,6 @@ public class HomeActivity extends RoboActionBarActivity {
         mDrawerToggle.syncState();
     }
 
-    public void showSetupDialog(DisplayDialog event) {
-        if (mDialog != null) {
-            return;
-        }
-        if (event.getDialogType() == DisplayDialog.SETUP) {
-            mDialog = new SetupDialogFragment();
-            mDialog.show(getFragmentManager(), "SetupDialogFragment");
-        } else if (event.getDialogType() == DisplayDialog.UPGRADE) {
-            mDialog = new UpgradeDialogFragment();
-            mDialog.show(getFragmentManager(), "UpgradeDialogFragment");
-        } else if (event.getDialogType() == DisplayDialog.INSTALL) {
-            mDialog = new UpgradeDialogFragment();
-            ((UpgradeDialogFragment) mDialog).setNewInstall(true);
-            mDialog.show(getFragmentManager(), "UpgradeDialogFragment");
-        }
-
-    }
-
     public void handleDrawerEvent(DrawerSelection event) {
         if (event.isCloseDrawer()) {
             closeDrawer();
@@ -199,8 +177,8 @@ public class HomeActivity extends RoboActionBarActivity {
                 replaceFragment(plFragment, "playlist");
                 break;
             case SETTINGS:
-                SettingsFragment sFragment = new SettingsFragment();
-                replaceFragment(sFragment, "settings");
+                Intent openSettingsIntent = new Intent(this, Settings.class);
+                startActivity(openSettingsIntent);
             default:
                 break;
         }
@@ -208,9 +186,9 @@ public class HomeActivity extends RoboActionBarActivity {
     }
 
     public void handleUserNotification(NotifyUser event) {
-        String message = event.isFromResource() ?
-                getString(event.getResId()) :
-                event.getMessage();
+        String message = event.isFromResource()
+                ? getString(event.getResId())
+                : event.getMessage();
 
         mSnackBar.show(message);
     }
@@ -258,5 +236,10 @@ public class HomeActivity extends RoboActionBarActivity {
                 favoriteItem.setIcon(R.drawable.ic_action_rating_favorite_disabled);
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

@@ -41,7 +41,6 @@ public class Controller extends RoboService {
 
     @Override public int onStartCommand(Intent intent, int flags, int startId) {
         Events.Messages.onNext(new MessageEvent(UserInputEventType.START_CONNECTION));
-        discovery.startDiscovery();
         return super.onStartCommand(intent, flags, startId);
     }
 

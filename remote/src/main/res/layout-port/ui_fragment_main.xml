@@ -45,19 +45,13 @@
         </LinearLayout>
     </FrameLayout>
 
-    <com.viewpagerindicator.LinePageIndicator
-            android:id="@+id/mbrc_main_infoindicator"
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
-            mbrc:strokeWidth="4dp"
-            mbrc:lineWidth="@dimen/mbrc_indicator_line_width"
-            mbrc:unselectedColor="@android:color/transparent"
-            />
 
-    <android.support.v4.view.ViewPager
-            android:id="@+id/mbrc_main_infopager"
+
+    <fragment
+            android:id="@+id/mbrc_controls"
             tools:layout="@layout/ui_main_buttons"
-            tools:context="com.kelsos.mbrc.ui.fragments.ActionsFragment"
+            tools:context="com.kelsos.mbrc.ui.fragments.ButtonFragment"
+            android:name="com.kelsos.mbrc.ui.fragments.ButtonFragment"
             android:layout_width="match_parent"
             android:layout_height="103dp"
             android:padding="@dimen/side_margin_half"/>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:mbrc="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:id="@+id/mainLinearLayout"
                 android:layout_width="match_parent"
@@ -23,6 +22,7 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_image_no_cover"
                 android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 />
 
@@ -37,6 +37,7 @@
                 android:layout_marginRight="1dp"
                 android:layout_marginBottom="1dp"
                 android:layout_alignParentLeft="false"
+                android:layout_alignParentStart="false"
                 android:layout_alignParentTop="false"
                 android:layout_alignParentBottom="true">
 
@@ -52,22 +53,13 @@
 
     </RelativeLayout>
 
-    <com.viewpagerindicator.LinePageIndicator
-        android:id="@+id/mbrc_main_infoindicator"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        mbrc:strokeWidth="4dp"
-        mbrc:lineWidth="@dimen/mbrc_indicator_line_width"
-        mbrc:unselectedColor="@android:color/transparent"
-        />
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/mbrc_main_infopager"
+    <fragment
+        android:id="@+id/mbrc_controls"
         tools:layout="@layout/ui_main_buttons"
-        tools:context="com.kelsos.mbrc.ui.fragments.ActionsFragment"
+        tools:context="com.kelsos.mbrc.ui.fragments.ButtonFragment"
+        android:name="com.kelsos.mbrc.ui.fragments.ButtonFragment"
         android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
+        android:layout_height="103dp"
         android:padding="@dimen/side_margin_half"/>
 
     <LinearLayout
@@ -107,7 +99,7 @@
             android:id="@+id/main_track_duration_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="right"
+            android:gravity="end"
             android:text="@string/main_label_duration_total"
             android:textColor="@color/remote_text"
             android:textSize="@dimen/mbrc_duration_text_size"/>

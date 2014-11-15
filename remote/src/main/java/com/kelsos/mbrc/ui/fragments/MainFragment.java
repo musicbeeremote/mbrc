@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -14,17 +13,23 @@ import android.widget.*;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.adapters.InfoButtonPagerAdapter;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.enums.ConnectionStatus;
+import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
+import com.kelsos.mbrc.net.Notification;
+import com.kelsos.mbrc.rest.RemoteApi;
+import com.kelsos.mbrc.util.RemoteUtils;
 import com.squareup.picasso.Picasso;
-import com.viewpagerindicator.LinePageIndicator;
 import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
 import roboguice.util.Ln;
+import rx.android.observables.AndroidObservable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
+import javax.inject.Inject;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -54,6 +59,9 @@ public class MainFragment extends RoboFragment {
     private LinearLayout ratingWrapper;
     @InjectView(R.id.track_rating_bar)
     private RatingBar trackRating;
+    @Inject
+    private RemoteApi api;
+
     private int previousVol;
     private SeekBar.OnSeekBarChangeListener durationSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -70,14 +78,11 @@ public class MainFragment extends RoboFragment {
 
     };
     private ScheduledFuture mProgressUpdateHandler;
-    private InfoButtonPagerAdapter mAdapter;
-    private boolean isTablet;
-    private RatingBar.OnRatingBarChangeListener ratingChangeListener = new RatingBar.OnRatingBarChangeListener() {
-        @Override
-        public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-            if (b) {
 
-            }
+    private boolean isTablet;
+    private RatingBar.OnRatingBarChangeListener ratingChangeListener = (ratingBar, v, b) -> {
+        if (b) {
+
         }
     };
     private ImageView.OnClickListener coverOnClick = new ImageView.OnClickListener() {
@@ -137,21 +142,11 @@ public class MainFragment extends RoboFragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         isTablet = getResources().getBoolean(R.bool.isTablet);
-        if (!isTablet) {
-            mAdapter = new InfoButtonPagerAdapter(getFragmentManager());
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.ui_fragment_main, container, false);
-        if (!isTablet && !isLandscape()) {
-            ViewPager mPager = (ViewPager) view.findViewById(R.id.mbrc_main_infopager);
-            mPager.setAdapter(mAdapter);
-            LinePageIndicator mIndicator = (LinePageIndicator) view.findViewById(R.id.mbrc_main_infoindicator);
-            mIndicator.setViewPager(mPager);
-        }
-        return view;
+        return inflater.inflate(R.layout.ui_fragment_main, container, false);
     }
 
     @Override
@@ -159,6 +154,28 @@ public class MainFragment extends RoboFragment {
         super.onStart();
         setTextViewTypeface();
         registerListeners();
+
+        Picasso.with(getActivity())
+                .load(String.format("%s?t=%s", RemoteApi.COVER_URL, RemoteUtils.getTimeStamp()))
+                .placeholder(R.drawable.ic_image_no_cover)
+                .fit()
+                .into(albumCover);
+
+        AndroidObservable.bindFragment(this, Events.Messages)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(err -> Ln.d("Error %s", err.getMessage()))
+                .filter(msg -> msg.getType().equals(Notification.PLAY_STATUS_CHANGED))
+                .flatMap(resp -> api.getPlaystate())
+                .subscribe(resp -> handlePlayStateChange(resp.getValue()));
+
+        AndroidObservable.bindFragment(this, api.getCurrentPosition())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .doOnError(err -> Ln.d("Error %s", err.getMessage()))
+                .subscribe(update -> handlePositionUpdate(update.getPosition(), update.getDuration()));
+
+
     }
 
     @Override
@@ -240,23 +257,17 @@ public class MainFragment extends RoboFragment {
         Ln.d("cover event received");
     }
 
-    public void handlePlayStateChange(final PlayStateChange change) {
-        switch (change.getState()) {
-            case PLAYING:
-                /* Start the animation if the track is playing*/
+    public void handlePlayStateChange(final String change) {
+        switch (change.toUpperCase()) {
+            case "PLAYING":
                 trackProgressAnimation();
                 break;
-            case PAUSED:
-        /* Stop the animation if the track is paused*/
+            case "PAUSED":
                 stopTrackProgressAnimation();
                 break;
-            case STOPPED:
-        /* Stop the animation if the track is paused*/
+            case "STOPPED":
                 stopTrackProgressAnimation();
                 activateStoppedState();
-                break;
-            case UNDEFINED:
-                stopTrackProgressAnimation();
                 break;
             default:
                 stopTrackProgressAnimation();
@@ -341,9 +352,7 @@ public class MainFragment extends RoboFragment {
      * current progress of playback
      */
 
-    public void handlePositionUpdate(UpdatePosition position) {
-        final int total = position.getTotal();
-        final int current = position.getCurrent();
+    public void handlePositionUpdate(int current, int total) {
         if (trackProgressCurrent == null || trackProgressSlider == null || trackDuration == null) {
             return;
         }

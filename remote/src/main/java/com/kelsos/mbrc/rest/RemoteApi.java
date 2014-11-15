@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface RemoteApi {
     Converter DATA_CONVERTER = new JacksonConverter(new ObjectMapper());
-    String API_URL = "http://192.168.100.136:8188";
+    String API_URL = "http://development.lan:8188";
     String COVER_URL = RemoteApi.API_URL + "/track/cover/raw";
 
     @GET("/player/volume")

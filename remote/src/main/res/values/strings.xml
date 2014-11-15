@@ -169,5 +169,6 @@
     <string name="action_example">Example action</string>
     <string name="app_name">MusicBee Remote</string>
     <string name="nav_settings">Settings</string>
+    <string name="title_activity_settings">Settings</string>
 
 </resources>

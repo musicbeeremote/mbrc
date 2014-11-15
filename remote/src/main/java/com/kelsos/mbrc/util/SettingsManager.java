@@ -77,8 +77,8 @@ public class SettingsManager {
          * Debug Hardcoded settings
          */
         if (BuildConfig.DEBUG) {
-            serverAddress = "192.168.100.136";
-            serverPort = 3000;
+            serverAddress = BuildConfig.DEVHOST;
+            serverPort = BuildConfig.DEVSOCKPORT;
         }
 
         if (nullOrEmpty(serverAddress) || serverPort == 0) {

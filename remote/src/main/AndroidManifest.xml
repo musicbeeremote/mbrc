@@ -18,11 +18,12 @@
         android:logo="@drawable/ic_launcher"
         android:theme="@style/Theme.RemoteLight" >
         <activity
-            android:name=".ui.activities.HomeActivity"
+            android:name="com.kelsos.mbrc.ui.activities.HomeActivity"
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustNothing" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -53,10 +54,21 @@
             android:exported="false" >
         </provider>
 
-        <meta-data android:name="roboguice.modules"
-                   android:value="com.kelsos.mbrc.RemoteModule"/>
-        <meta-data android:name="roboguice.annotations.packages"
-                   android:value="roboguice,mbrc"/>
+        <meta-data
+            android:name="roboguice.modules"
+            android:value="com.kelsos.mbrc.RemoteModule" />
+        <meta-data
+            android:name="roboguice.annotations.packages"
+            android:value="roboguice,mbrc" />
+
+        <activity
+            android:name="com.kelsos.mbrc.ui.activities.Settings"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName="com.kelsos.mbrc.ui.activities.HomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.kelsos.mbrc.ui.activities.HomeActivity" />
+        </activity>
     </application>
 
 </manifest>

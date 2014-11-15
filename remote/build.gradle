@@ -35,8 +35,10 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 21
-        buildConfigField "String", "GIT_SHA", "\"${gitSha()}\";"
-        buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\";"
+        buildConfigField "String", "GIT_SHA", "\"${gitSha()}\""
+        buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
+        buildConfigField "String", "DEVHOST", "\"development.lan\""
+        buildConfigField "int", "DEVSOCKPORT", "3000"
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         versionCode 91
     }
@@ -60,7 +62,7 @@ android {
         release {
             signingConfig signingConfigs.release
             debuggable false
-            zipAlignEnabled true
+            zipAlign true
         }
         debug {
             applicationIdSuffix ".debug"
@@ -81,7 +83,6 @@ dependencies {
     compile 'com.android.support:cardview-v7:21.0.0'
     compile 'org.roboguice:roboguice:3.0'
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
-    compile 'com.viewpagerindicator:library:2.4.1@aar'
     compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
     compile 'com.nhaarman.listviewanimations:lib-manipulation:3.1.0@aar'
     compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
