@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.data;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.constants.Const;
@@ -13,8 +15,12 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
 import com.kelsos.mbrc.net.Notification;
 import com.kelsos.mbrc.rest.RemoteApi;
+import com.kelsos.mbrc.util.RemoteUtils;
+import retrofit.client.Response;
 import roboguice.util.Ln;
 import rx.schedulers.Schedulers;
+
+import java.io.InputStream;
 
 @Singleton
 public class Model {
@@ -38,12 +44,14 @@ public class Model {
     private PlayState playState;
     private LfmStatus lfmRating;
     private String pluginVersion;
-
-
+    private Bitmap albumCover;
+    private RemoteApi api;
 
 
     @Inject
     public Model(Context context, RemoteApi api) {
+        this.api = api;
+
         title = EMPTY;
         artist = EMPTY;
         album = EMPTY;
@@ -62,18 +70,43 @@ public class Model {
         lfmRating = LfmStatus.NORMAL;
         pluginVersion = EMPTY;
 
+
         Events.Messages.subscribeOn(Schedulers.io())
                 .filter(msg -> msg.getType().equals(Notification.PLAY_STATUS_CHANGED))
                 .subscribe(event -> Ln.d("PlayStatus changed"));
 
         Events.Messages.subscribeOn(Schedulers.io())
-                .doOnError(err -> Ln.d("Error %s", err.getMessage()))
                 .filter(msg -> msg.getType().equals(Notification.LYRICS_CHANGED))
                 .flatMap(resp -> api.getTrackLyrics())
                 .subscribe(resp -> setLyrics(resp.getLyrics()));
 
+        Events.Messages.subscribeOn(Schedulers.io())
+                .filter(msg -> msg.getType().equals(Notification.COVER_CHANGED))
+                .subscribe(resp -> requestCover());
+
         Ln.d("Model instantiated");
 
+    }
+
+    private void createBitmap(Response response) {
+        try {
+            final InputStream stream = response.getBody().in();
+            albumCover = BitmapFactory.decodeStream(stream);
+            Events.CoverAvailableNotification.onNext(new CoverAvailable(albumCover));
+        } catch (Exception ex) {
+            Ln.d("Exception while creating bitmap :: %s", ex.getMessage());
+        }
+    }
+
+    public void requestCover() {
+        api.getTrackCoverData(RemoteUtils.getTimeStamp())
+                .subscribeOn(Schedulers.io())
+                .subscribe(this::createBitmap,
+                        error -> Ln.d("Error will decoding stream :: %s", error.getMessage()));
+    }
+
+    public Bitmap getAlbumCover() {
+        return albumCover;
     }
 
     public void setLfmRating(String rating) {
@@ -92,12 +125,12 @@ public class Model {
         new LfmRatingChanged(lfmRating);
     }
 
-    public void setPluginVersion(String pluginVersion) {
-        this.pluginVersion = pluginVersion.substring(0, pluginVersion.lastIndexOf('.'));
-    }
-
     public String getPluginVersion() {
         return pluginVersion;
+    }
+
+    public void setPluginVersion(String pluginVersion) {
+        this.pluginVersion = pluginVersion.substring(0, pluginVersion.lastIndexOf('.'));
     }
 
     public void setRating(double rating) {
@@ -130,15 +163,15 @@ public class Model {
         return this.title;
     }
 
+    public int getVolume() {
+        return this.volume;
+    }
+
     public void setVolume(int volume) {
         if (volume != this.volume) {
             this.volume = volume;
             new VolumeChange(this.volume);
         }
-    }
-
-    public int getVolume() {
-        return this.volume;
     }
 
     public void setConnectionState(String connectionActive) {
@@ -203,7 +236,6 @@ public class Model {
                 .replace("<br>", "\n")
                 .trim();
         new LyricsUpdated(this.lyrics);
-        Ln.d("Lyrics: %s", lyrics);
     }
 
     public boolean isRepeatActive() {

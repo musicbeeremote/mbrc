@@ -2,6 +2,7 @@ package com.kelsos.mbrc.ui.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -17,11 +18,11 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.*;
+import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
+import com.kelsos.mbrc.events.ui.RatingChanged;
+import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.net.Notification;
 import com.kelsos.mbrc.rest.RemoteApi;
-import com.kelsos.mbrc.util.RemoteUtils;
-import com.squareup.picasso.Picasso;
 import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
 import roboguice.util.Ln;
@@ -82,6 +83,12 @@ public class MainFragment extends RoboFragment {
     private boolean isTablet;
     private RatingBar.OnRatingBarChangeListener ratingChangeListener = (ratingBar, v, b) -> {
         if (b) {
+
+            AndroidObservable.bindFragment(this, api.updateRating(v))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(resp -> Ln.d("Success %b", resp.isSuccess()),
+                            error -> Ln.d("error %s", error.getMessage()));
 
         }
     };
@@ -155,11 +162,11 @@ public class MainFragment extends RoboFragment {
         setTextViewTypeface();
         registerListeners();
 
-        Picasso.with(getActivity())
-                .load(String.format("%s?t=%s", RemoteApi.COVER_URL, RemoteUtils.getTimeStamp()))
-                .placeholder(R.drawable.ic_image_no_cover)
-                .fit()
-                .into(albumCover);
+        AndroidObservable.bindFragment(this, Events.CoverAvailableNotification)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(notification -> updateAlbumCover(notification.getCover()),
+                        error -> Ln.d("Error :: %s", error.getMessage()));
 
         AndroidObservable.bindFragment(this, Events.Messages)
                 .subscribeOn(Schedulers.io())
@@ -176,6 +183,10 @@ public class MainFragment extends RoboFragment {
                 .subscribe(update -> handlePositionUpdate(update.getPosition(), update.getDuration()));
 
 
+    }
+
+    private void updateAlbumCover(final Bitmap bitmap) {
+        albumCover.setImageBitmap(bitmap);
     }
 
     @Override
@@ -242,19 +253,6 @@ public class MainFragment extends RoboFragment {
         if (trackRating != null) {
             trackRating.setRating(event.getRating());
         }
-    }
-
-    public void handleCoverEvent(final CoverAvailable cevent) {
-        if (albumCover == null) {
-            return;
-        }
-
-        Picasso.with(getActivity().getBaseContext())
-                .load(cevent.getCoverUrl())
-                .placeholder(R.drawable.ic_image_no_cover)
-                .fit()
-                .into(albumCover);
-        Ln.d("cover event received");
     }
 
     public void handlePlayStateChange(final String change) {

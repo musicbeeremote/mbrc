@@ -89,7 +89,7 @@ public interface RemoteApi {
 
     @GET("/track/cover/raw")
     @Streaming
-    Observable<Response> getTrackCoverData();
+    Observable<Response> getTrackCoverData(@Query("t") String timestamp);
 
     @GET("/track")
     Observable<TrackResponse> getTrackInfo();

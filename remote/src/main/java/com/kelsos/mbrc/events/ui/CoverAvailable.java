@@ -1,13 +1,15 @@
 package com.kelsos.mbrc.events.ui;
 
-public class CoverAvailable {
-    private String coverUrl;
+import android.graphics.Bitmap;
 
-    public CoverAvailable(String url) {
-        coverUrl = url;
+public class CoverAvailable {
+    private Bitmap cover;
+
+    public CoverAvailable(Bitmap cover) {
+        this.cover = cover;
     }
 
-    public String getCoverUrl() {
-        return coverUrl;
+    public Bitmap getCover() {
+        return cover;
     }
 }
