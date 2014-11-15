@@ -8,8 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.TextView;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
@@ -20,30 +18,35 @@ import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
-import com.kelsos.mbrc.events.ui.DrawerEvent;
+import com.kelsos.mbrc.events.ui.DrawerSelection;
 import roboguice.fragment.provided.RoboListFragment;
 import roboguice.inject.InjectView;
+import rx.Observable;
 
 import java.util.ArrayList;
 
 
 public class DrawerFragment extends RoboListFragment implements FragmentManager.OnBackStackChangedListener {
-    @InjectView(R.id.menuConnector) private TextView menuConnector;
-    @InjectView(R.id.drawer_version_indicator) private TextView versionIndicator;
+
+    @InjectView(R.id.menuConnector)
+    private TextView menuConnector;
+    @InjectView(R.id.drawer_version_indicator)
+    private TextView versionIndicator;
 
     private Typeface robotoLight;
     private DrawerLayout mDrawerLayout;
     private int mSelection;
     private boolean mBackstackChanging;
-
+    private Observable<DrawerSelection> drawerSelectionObservable;
     private TextView.OnLongClickListener connectButtonLongClick = view -> {
         new MessageEvent(UserInputEventType.RESET_CONNECTION);
         return false;
     };
+    private TextView.OnClickListener connectButtonClick = v ->
+            Events.Messages.onNext(new MessageEvent(UserInputEventType.START_CONNECTION));
 
-    private TextView.OnClickListener connectButtonClick = v -> Events.Messages.onNext(new MessageEvent(UserInputEventType.START_CONNECTION));
-
-    @Override public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         robotoLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
         mSelection = 0;
@@ -53,13 +56,16 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
             mSelection = savedInstanceState.getInt("mSelection");
         }
         getActivity().getFragmentManager().addOnBackStackChangedListener(this);
+        createObservable();
     }
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ui_fragment_drawer, container, false);
     }
 
-    @Override public void onStart() {
+    @Override
+    public void onStart() {
         super.onStart();
         menuConnector.setOnClickListener(connectButtonClick);
         menuConnector.setOnLongClickListener(connectButtonLongClick);
@@ -74,7 +80,6 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
         nav.add(new NavigationEntry(getString(R.string.nav_settings)));
 
         setListAdapter(new DrawerAdapter(getActivity(), R.layout.ui_drawer_item, nav));
-        getListView().setOnItemClickListener(new DrawerOnClickListener());
         getListView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         getListView().setItemChecked(mSelection, true);
 
@@ -83,6 +88,30 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
         }
 
         versionIndicator.setText(String.format(getString(R.string.ui_drawer_menu_version), BuildConfig.VERSION_NAME));
+
+
+    }
+
+    private void createObservable() {
+        drawerSelectionObservable = Observable.create(subscriber ->
+                getListView().setOnItemClickListener((parent, view, position, id) -> {
+                    mBackstackChanging = true;
+                    DrawerSelection dEvent;
+                    if (mSelection != position) {
+
+                        getListView().setItemChecked(position, true);
+                        mSelection = position;
+
+                        DisplayFragment dfrag = DisplayFragment.values()[position];
+                        dEvent = new DrawerSelection(dfrag);
+                    } else {
+                        dEvent = new DrawerSelection();
+                    }
+
+                    subscriber.onNext(dEvent);
+
+                    dEvent.getNavigate();
+                }));
     }
 
     public void handleConnectionStatusChange(final ConnectionStatusChange change) {
@@ -104,7 +133,8 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
 
     }
 
-    @Override public void onBackStackChanged() {
+    @Override
+    public void onBackStackChanged() {
         if (!mBackstackChanging && getActivity().getFragmentManager().getBackStackEntryCount() == 0) {
             mSelection = 0;
             getListView().setItemChecked(mSelection, true);
@@ -113,28 +143,13 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
 
     }
 
-    @Override public void onSaveInstanceState(Bundle outState) {
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
         outState.putInt("mSelection", mSelection);
         super.onSaveInstanceState(outState);
     }
 
-    private class DrawerOnClickListener implements ListView.OnItemClickListener {
-
-        @Override public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
-            mBackstackChanging = true;
-            DrawerEvent dEvent;
-            if (mSelection != i) {
-
-                getListView().setItemChecked(i, true);
-                mSelection = i;
-
-                DisplayFragment dfrag = DisplayFragment.values()[i];
-                dEvent = new DrawerEvent(dfrag);
-            } else {
-                dEvent = new DrawerEvent();
-            }
-
-            dEvent.getNavigate();
-        }
+    public Observable<DrawerSelection> getDrawerSelectionObservable() {
+        return drawerSelectionObservable;
     }
 }

@@ -2,15 +2,15 @@ package com.kelsos.mbrc.events.ui;
 
 import com.kelsos.mbrc.enums.DisplayFragment;
 
-public class DrawerEvent {
+public class DrawerSelection {
     private boolean closeDrawer;
     private DisplayFragment navigate;
 
-    public DrawerEvent() {
+    public DrawerSelection() {
         closeDrawer = true;
     }
 
-    public DrawerEvent(DisplayFragment navigate) {
+    public DrawerSelection(DisplayFragment navigate) {
         closeDrawer = false;
         this.navigate = navigate;
     }

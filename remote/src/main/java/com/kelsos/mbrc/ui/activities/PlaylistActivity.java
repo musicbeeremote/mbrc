@@ -9,8 +9,6 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistTrackCursorAdapter;
-import com.mobeta.android.dslv.DragSortController;
-import com.mobeta.android.dslv.DragSortListView;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
@@ -21,25 +19,6 @@ public class PlaylistActivity extends RoboActionBarActivity implements LoaderMan
     private PlaylistTrackCursorAdapter mAdapter;
     private String mTitle;
     private String mHash;
-    private DragSortListView mDslv;
-    private DragSortController mController;
-
-    public int dragStartMode = DragSortController.ON_DOWN;
-    public boolean removeEnabled = true;
-    public int removeMode = DragSortController.FLING_REMOVE;
-    public boolean sortEnabled = true;
-    public boolean dragEnabled = true;
-
-    public DragSortController buildController(DragSortListView dslv) {
-        DragSortController controller = new DragSortController(dslv);
-        controller.setDragHandleId(R.id.drag_handle);
-        controller.setFlingHandleId(R.id.click_remove);
-        controller.setRemoveEnabled(removeEnabled);
-        controller.setSortEnabled(sortEnabled);
-        controller.setDragInitMode(dragStartMode);
-        controller.setRemoveMode(removeMode);
-        return controller;
-    }
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,12 +26,8 @@ public class PlaylistActivity extends RoboActionBarActivity implements LoaderMan
         Intent intent = getIntent();
         mTitle = intent.getStringExtra("name");
         mHash = intent.getStringExtra("hash");
-        mDslv = (DragSortListView) mList;
+
         registerForContextMenu(mList);
-        mController = buildController(mDslv);
-        mDslv.setFloatViewManager(mController);
-        mDslv.setOnTouchListener(mController);
-        mDslv.setDragEnabled(dragEnabled);
     }
 
     @Override public void onStart() {

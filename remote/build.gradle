@@ -30,7 +30,7 @@ android {
     }
 
     compileSdkVersion 21
-    buildToolsVersion "21.1.0"
+    buildToolsVersion "21.1.1"
 
     defaultConfig {
         minSdkVersion 15
@@ -82,14 +82,16 @@ dependencies {
     compile 'org.roboguice:roboguice:3.0'
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
     compile 'com.viewpagerindicator:library:2.4.1@aar'
-    compile 'com.mobeta.android.dslv:drag-sort-listview:0.6.1@aar'
+    compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
+    compile 'com.nhaarman.listviewanimations:lib-manipulation:3.1.0@aar'
+    compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
     compile 'com.squareup.picasso:picasso:2.4.0'
     compile 'com.github.mrengineer13:snackbar:0.4.0'
     compile 'com.squareup.retrofit:retrofit:1.6.1'
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
-    compile 'com.netflix.rxjava:rxjava-android:0.20.6'
+    compile 'io.reactivex:rxandroid:0.23.0'
     provided 'org.roboguice:roboblender:3.0'
     androidTestCompile 'junit:junit:4.10'
     androidTestCompile 'org.robolectric:robolectric:2.3'

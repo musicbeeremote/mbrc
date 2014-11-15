@@ -15,7 +15,7 @@ import com.github.mrengineer13.snackbar.SnackBar;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.ui.DisplayDialog;
-import com.kelsos.mbrc.events.ui.DrawerEvent;
+import com.kelsos.mbrc.events.ui.DrawerSelection;
 import com.kelsos.mbrc.events.ui.LfmRatingChanged;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
@@ -23,6 +23,7 @@ import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.kelsos.mbrc.ui.fragments.*;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseFragment;
 import roboguice.activity.RoboActionBarActivity;
+import rx.android.observables.AndroidObservable;
 
 public class HomeActivity extends RoboActionBarActivity {
     private ActionBarDrawerToggle mDrawerToggle;
@@ -42,6 +43,7 @@ public class HomeActivity extends RoboActionBarActivity {
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerMenu = findViewById(R.id.drawer_menu);
+        DrawerFragment mDrawerFragment = (DrawerFragment) getFragmentManager().findFragmentById(R.id.drawer_menu);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.drawer_open, R.string.drawer_close) {
@@ -78,7 +80,8 @@ public class HomeActivity extends RoboActionBarActivity {
         fragmentTransaction.commit();
         mSnackBar = new SnackBar(this);
 
-
+        AndroidObservable.bindActivity(this, mDrawerFragment.getDrawerSelectionObservable())
+                .subscribe(this::handleDrawerEvent);
 
     }
 
@@ -145,7 +148,7 @@ public class HomeActivity extends RoboActionBarActivity {
 
     }
 
-    public void handleDrawerEvent(DrawerEvent event) {
+    public void handleDrawerEvent(DrawerSelection event) {
         if (event.isCloseDrawer()) {
             closeDrawer();
         } else {

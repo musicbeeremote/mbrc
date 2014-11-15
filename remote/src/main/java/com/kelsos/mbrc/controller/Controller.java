@@ -8,6 +8,7 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.Model;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.net.ServiceDiscovery;
 import com.kelsos.mbrc.net.SocketService;
 import com.kelsos.mbrc.util.NotificationService;
 import com.kelsos.mbrc.util.RemoteBroadcastReceiver;
@@ -25,6 +26,9 @@ public class Controller extends RoboService {
     private RemoteBroadcastReceiver receiver;
     @Inject
     private NotificationService notificationService;
+    @Inject
+    private ServiceDiscovery discovery;
+
 
     public Controller() {
         Ln.d("Application Controller Initialized");
@@ -37,6 +41,7 @@ public class Controller extends RoboService {
 
     @Override public int onStartCommand(Intent intent, int flags, int startId) {
         Events.Messages.onNext(new MessageEvent(UserInputEventType.START_CONNECTION));
+        discovery.startDiscovery();
         return super.onStartCommand(intent, flags, startId);
     }
 
