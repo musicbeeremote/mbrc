@@ -6,8 +6,6 @@
           android:icon="@drawable/ic_action_rating_favorite_disabled"
           android:title="@string/mbrc_actionbar_love"
           mbrc:showAsAction="always"/>
-    <item android:id="@+id/actionbar_settings"
-          android:title="@string/main_menu_settings"/>
     <item android:id="@+id/actionbar_help"
           android:title="@string/main_menu_help"/>
 </menu>

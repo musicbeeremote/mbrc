@@ -12,6 +12,7 @@ import com.kelsos.mbrc.net.ServiceDiscovery;
 import com.kelsos.mbrc.net.SocketService;
 import com.kelsos.mbrc.util.NotificationService;
 import com.kelsos.mbrc.util.RemoteBroadcastReceiver;
+import com.kelsos.mbrc.util.SettingsManager;
 import roboguice.service.RoboService;
 import roboguice.util.Ln;
 
@@ -28,7 +29,8 @@ public class Controller extends RoboService {
     private NotificationService notificationService;
     @Inject
     private ServiceDiscovery discovery;
-
+    @Inject
+    private SettingsManager settingsManager;
 
     public Controller() {
         Ln.d("Application Controller Initialized");
@@ -41,6 +43,7 @@ public class Controller extends RoboService {
 
     @Override public int onStartCommand(Intent intent, int flags, int startId) {
         Events.Messages.onNext(new MessageEvent(UserInputEventType.START_CONNECTION));
+        discovery.startDiscovery();
         return super.onStartCommand(intent, flags, startId);
     }
 

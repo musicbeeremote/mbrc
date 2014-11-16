@@ -7,12 +7,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
+import com.kelsos.mbrc.events.ui.ConnectionStatusChange.Status;
 import com.kelsos.mbrc.net.Notification;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.util.RemoteUtils;
@@ -84,6 +84,14 @@ public class Model {
                 .filter(msg -> msg.getType().equals(Notification.COVER_CHANGED))
                 .subscribe(resp -> requestCover());
 
+        Events.Messages.subscribeOn(Schedulers.io())
+                .filter(msg -> msg.getType().equals(Notification.TRACK_CHANGED))
+                .flatMap(resp -> api.getTrackInfo())
+                .subscribe(resp -> setTrackInfo(resp.getArtist(),
+                        resp.getAlbum(),
+                        resp.getTitle(),
+                        resp.getYear()));
+
         Ln.d("Model instantiated");
 
     }
@@ -151,7 +159,7 @@ public class Model {
         this.album = album;
         this.year = year;
         this.title = title;
-        new TrackInfoChange(artist, title, album, year);
+        Events.TrackInfoChangeNotification.onNext(new TrackInfoChange(artist, title, album, year));
         updateNotification();
     }
 
@@ -180,8 +188,8 @@ public class Model {
             setPlayState(Const.STOPPED);
         }
         new ConnectionStatusChange(isConnectionOn
-                ? ConnectionStatus.CONNECTION_ACTIVE
-                : ConnectionStatus.CONNECTION_OFF);
+                ? Status.CONNECTION_ACTIVE
+                : Status.CONNECTION_OFF);
     }
 
     public boolean getIsConnectionActive() {

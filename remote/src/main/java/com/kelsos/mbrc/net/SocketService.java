@@ -168,8 +168,7 @@ public class SocketService {
     private void processIncoming(String incoming) throws IOException {
         final String[] replies = incoming.split("\r\n");
         for (String reply : replies) {
-            
-            Ln.d("incoming::%s", reply);
+
             JsonNode node = mapper.readValue(reply, JsonNode.class);
             String context = node.path("message").getTextValue();
 

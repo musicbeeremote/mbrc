@@ -1,15 +1,18 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.enums.ConnectionStatus;
-
 public class ConnectionStatusChange {
-    private ConnectionStatus status;
+    private Status status;
 
-    public ConnectionStatusChange(ConnectionStatus status) {
+    public ConnectionStatusChange(Status status) {
         this.status = status;
     }
 
-    public ConnectionStatus getStatus() {
+    public Status getStatus() {
         return this.status;
+    }
+
+    public static enum Status {
+        CONNECTION_OFF,
+        CONNECTION_ACTIVE
     }
 }

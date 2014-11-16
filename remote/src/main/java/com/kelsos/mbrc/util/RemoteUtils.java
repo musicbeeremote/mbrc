@@ -25,4 +25,8 @@ public final class RemoteUtils {
         final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyymmddhhmmss");
         return simpleDateFormat.format(new Date());
     }
+
+    public static boolean isNullOrEmpty(String string){
+        return (string == null || string.equals(""));
+    }
 }

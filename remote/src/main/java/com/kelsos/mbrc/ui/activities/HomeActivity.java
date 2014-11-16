@@ -19,6 +19,7 @@ import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.fragments.*;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseFragment;
 import roboguice.activity.RoboActionBarActivity;
+import rx.Subscription;
 import rx.android.observables.AndroidObservable;
 
 public class HomeActivity extends RoboActionBarActivity {
@@ -30,6 +31,7 @@ public class HomeActivity extends RoboActionBarActivity {
     private MenuItem favoriteItem;
     private SnackBar mSnackBar;
     private DrawerFragment mDrawerFragment;
+    private Subscription mDrawerEventSub;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,7 +78,8 @@ public class HomeActivity extends RoboActionBarActivity {
         fragmentTransaction.commit();
         mSnackBar = new SnackBar(this);
 
-        AndroidObservable.bindActivity(this, mDrawerFragment.getDrawerSelectionObservable())
+        mDrawerEventSub = AndroidObservable.bindActivity(this,
+                mDrawerFragment.getDrawerSelectionObservable())
                 .subscribe(this::handleDrawerEvent);
 
     }
@@ -87,7 +90,8 @@ public class HomeActivity extends RoboActionBarActivity {
         }
     }
 
-    @Override public void onConfigurationChanged(Configuration newConfig) {
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
@@ -99,7 +103,8 @@ public class HomeActivity extends RoboActionBarActivity {
         return true;
     }
 
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
@@ -121,7 +126,8 @@ public class HomeActivity extends RoboActionBarActivity {
         }
     }
 
-    @Override protected void onPostCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
     }
@@ -158,6 +164,9 @@ public class HomeActivity extends RoboActionBarActivity {
             case HOME:
                 if (getFragmentManager().getBackStackEntryCount() > 0) {
                     onBackPressed();
+                } else {
+                    MainFragment mainFragment = new MainFragment();
+                    replaceFragment(mainFragment, "main_fragment");
                 }
                 break;
             case SEARCH:
@@ -193,7 +202,8 @@ public class HomeActivity extends RoboActionBarActivity {
         mSnackBar.show(message);
     }
 
-    @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
 

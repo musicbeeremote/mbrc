@@ -8,8 +8,8 @@ import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.ConnectionSettings;
+import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DisplayDialog;
@@ -18,6 +18,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import roboguice.util.Ln;
+import rx.schedulers.Schedulers;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -25,6 +26,8 @@ import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.kelsos.mbrc.util.RemoteUtils.isNullOrEmpty;
 
 @Singleton
 public class SettingsManager {
@@ -35,8 +38,8 @@ public class SettingsManager {
     private int defaultIndex;
     private boolean isFirstRun;
 
-    @Inject public SettingsManager(Context context, SharedPreferences preferences,
-                                   ObjectMapper mapper) {
+    @Inject
+    public SettingsManager(Context context, SharedPreferences preferences, ObjectMapper mapper) {
         this.mPreferences = preferences;
         this.mContext = context;
         this.mMapper = mapper;
@@ -44,7 +47,7 @@ public class SettingsManager {
         String sVal = preferences.getString(context.getString(R.string.settings_key_array), null);
         mSettings = new ArrayList<>();
 
-        if (sVal != null && !sVal.equals("")) {
+        if (!isNullOrEmpty(sVal)) {
             ArrayNode node;
             try {
                 node = mMapper.readValue(sVal, ArrayNode.class);
@@ -61,6 +64,10 @@ public class SettingsManager {
         }
         defaultIndex = mPreferences.getInt(mContext.getString(R.string.settings_key_default_index), 0);
         checkForFirstRunAfterUpdate();
+        Events.ConnectionSettingsNotification
+                .subscribeOn(Schedulers.io())
+                .subscribe(this::handleConnectionSettings,
+                        error -> Ln.d("Error::%s", error.getMessage()));
     }
 
     public SocketAddress getSocketAddress() {
@@ -167,10 +174,6 @@ public class SettingsManager {
         return new Date(mPreferences.getLong(mContext.getString(R.string.settings_key_last_update_check), 0));
     }
 
-    public ConnectionSettingsChanged produceConnectionSettings() {
-        return new ConnectionSettingsChanged(mSettings, defaultIndex);
-    }
-
     public void handleSettingsChange(ChangeSettings event) {
         switch (event.getAction()) {
             case DELETE:
@@ -194,23 +197,6 @@ public class SettingsManager {
         }
     }
 
-    public SearchDefaultAction produceAction() {
-        return new SearchDefaultAction(mPreferences.getString(
-                mContext.getString(R.string.settings_search_default_key),
-                mContext.getString(R.string.search_click_default_value)));
-    }
-
-    public DisplayDialog produceDisplayDialog() {
-        int run = DisplayDialog.NONE;
-        if (isFirstRun && checkIfRemoteSettingsExist()) {
-            run = DisplayDialog.UPGRADE;
-        } else if (isFirstRun && !checkIfRemoteSettingsExist()) {
-            run = DisplayDialog.INSTALL;
-        }
-        isFirstRun = false;
-        return new DisplayDialog(run);
-    }
-    
     private void checkForFirstRunAfterUpdate() {
         long lastVersionCode = mPreferences.getLong(mContext.
                 getString(R.string.settings_key_last_version_run), 0);

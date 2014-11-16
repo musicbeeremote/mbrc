@@ -19,7 +19,7 @@ import com.kelsos.mbrc.enums.SettingsAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
-import com.kelsos.mbrc.events.ui.DiscoveryStopped;
+import com.kelsos.mbrc.events.ui.DiscoveryStatus;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
 import roboguice.activity.RoboActionBarActivity;
@@ -132,7 +132,7 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
         connectionList.setAdapter(mAdapter);
     }
 
-    public void handleDiscoveryStopped(DiscoveryStopped event) {
+    public void handleDiscoveryStopped(DiscoveryStatus event) {
         if (mProgress != null) {
             mProgress.hide();
         }

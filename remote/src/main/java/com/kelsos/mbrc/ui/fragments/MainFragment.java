@@ -15,7 +15,6 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
@@ -26,6 +25,7 @@ import com.kelsos.mbrc.rest.RemoteApi;
 import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
 import roboguice.util.Ln;
+import rx.Subscription;
 import rx.android.observables.AndroidObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -63,6 +63,8 @@ public class MainFragment extends RoboFragment {
     @Inject
     private RemoteApi api;
 
+    private Subscription ratingChangeSub;
+
     private int previousVol;
     private SeekBar.OnSeekBarChangeListener durationSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -84,7 +86,7 @@ public class MainFragment extends RoboFragment {
     private RatingBar.OnRatingBarChangeListener ratingChangeListener = (ratingBar, v, b) -> {
         if (b) {
 
-            AndroidObservable.bindFragment(this, api.updateRating(v))
+            ratingChangeSub = AndroidObservable.bindFragment(this, api.updateRating(v))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(resp -> Ln.d("Success %b", resp.isSuccess()),
@@ -181,6 +183,12 @@ public class MainFragment extends RoboFragment {
                 .subscribeOn(Schedulers.io())
                 .doOnError(err -> Ln.d("Error %s", err.getMessage()))
                 .subscribe(update -> handlePositionUpdate(update.getPosition(), update.getDuration()));
+
+        AndroidObservable.bindFragment(this, Events.TrackInfoChangeNotification)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(this::handleTrackInfoChange,
+                        ex -> Ln.d("Exception::%s", ex.getMessage()));
 
 
     }
@@ -333,13 +341,13 @@ public class MainFragment extends RoboFragment {
     public void handleTrackInfoChange(final TrackInfoChange change) {
         ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
         actionBar.setTitle(change.getTitle());
-        actionBar.setSubtitle(change.getAlbum());
+        actionBar.setSubtitle(change.getArtist());
         actionBar.setDisplayShowTitleEnabled(true);
     }
 
 
     public void handleConnectionStatusChange(final ConnectionStatusChange change) {
-        if (change.getStatus() == ConnectionStatus.CONNECTION_OFF) {
+        if (change.getStatus() == ConnectionStatusChange.Status.CONNECTION_OFF) {
             stopTrackProgressAnimation();
             activateStoppedState();
         }
@@ -393,5 +401,11 @@ public class MainFragment extends RoboFragment {
         result = orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270;
 
         return result;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ratingChangeSub.unsubscribe();
     }
 }

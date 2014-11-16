@@ -7,8 +7,8 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.ConnectionSettings;
-import com.kelsos.mbrc.enums.DiscoveryStop;
-import com.kelsos.mbrc.events.ui.DiscoveryStopped;
+import com.kelsos.mbrc.events.Events;
+import com.kelsos.mbrc.events.ui.DiscoveryStatus;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -35,7 +35,7 @@ public class ServiceDiscovery {
 
     public void startDiscovery() {
         if (!isWifiConnected()) {
-            new DiscoveryStopped(DiscoveryStop.NO_WIFI);
+            notifyDiscoveryStatus(DiscoveryStatus.Status.NO_WIFI);
             return;
         }
         mLock = manager.createMulticastLock("locked");
@@ -102,21 +102,29 @@ public class ServiceDiscovery {
                     JsonNode node = mapper.readValue(incoming, JsonNode.class);
                     if (node.path("context").asText().equals("notify")) {
                         ConnectionSettings settings = new ConnectionSettings(node);
+                        Events.ConnectionSettingsNotification.onNext(settings);
                         break;
                     }
                 }
 
-                new DiscoveryStopped(DiscoveryStop.COMPLETE);
+                notifyDiscoveryStatus(DiscoveryStatus.Status.COMPLETE);
                 mSocket.leaveGroup(group);
                 mSocket.close();
                 stopDiscovery();
 
             } catch (InterruptedIOException e) {
-                new DiscoveryStopped(DiscoveryStop.NOT_FOUND);
+                notifyDiscoveryStatus(DiscoveryStatus.Status.NOT_FOUND);
                 stopDiscovery();
             } catch (IOException e) {
-                new DiscoveryStopped(DiscoveryStop.NOT_FOUND);
+                notifyDiscoveryStatus(DiscoveryStatus.Status.NOT_FOUND);
             }
         }
+
+
+    }
+
+    private void notifyDiscoveryStatus(DiscoveryStatus.Status status) {
+        final DiscoveryStatus discoveryStatus = new DiscoveryStatus(status);
+        Events.DiscoveryStatusNotification.onNext(discoveryStatus);
     }
 }
