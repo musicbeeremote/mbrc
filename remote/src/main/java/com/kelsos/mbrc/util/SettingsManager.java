@@ -50,15 +50,10 @@ public class SettingsManager {
         if (!isNullOrEmpty(sVal)) {
             ArrayNode node;
             try {
-                node = mMapper.readValue(sVal, ArrayNode.class);
-                for (int i = 0; i < node.size(); i++) {
-                    JsonNode jNode = node.get(i);
-                    ConnectionSettings settings = new ConnectionSettings(jNode);
-                    mSettings.add(settings);
-                }
+                readConnectionSettings(sVal);
             } catch (IOException e) {
                 if (BuildConfig.DEBUG) {
-                    Ln.e(e, "connection-settings");
+                    Ln.d(e);
                 }
             }
         }
@@ -68,6 +63,16 @@ public class SettingsManager {
                 .subscribeOn(Schedulers.io())
                 .subscribe(this::handleConnectionSettings,
                         error -> Ln.d("Error::%s", error.getMessage()));
+    }
+
+    private void readConnectionSettings(String sVal) throws IOException {
+        ArrayNode node;
+        node = mMapper.readValue(sVal, ArrayNode.class);
+        for (int i = 0; i < node.size(); i++) {
+            JsonNode jNode = node.get(i);
+            ConnectionSettings settings = new ConnectionSettings(jNode);
+            mSettings.add(settings);
+        }
     }
 
     public SocketAddress getSocketAddress() {
@@ -81,7 +86,7 @@ public class SettingsManager {
         }
 
         /**
-         * Debug Hardcoded settings
+         * Getting Debug Configuration.
          */
         if (BuildConfig.DEBUG) {
             serverAddress = BuildConfig.DEVHOST;

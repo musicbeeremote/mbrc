@@ -5,7 +5,7 @@ import android.os.IBinder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.data.Model;
+import com.kelsos.mbrc.data.model.Model;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.net.ServiceDiscovery;
@@ -31,6 +31,9 @@ public class Controller extends RoboService {
     private ServiceDiscovery discovery;
     @Inject
     private SettingsManager settingsManager;
+    @Inject
+    private ActionController actionController;
+
 
     public Controller() {
         Ln.d("Application Controller Initialized");

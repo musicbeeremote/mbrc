@@ -7,17 +7,22 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.data.model.PlayerState;
 import com.kelsos.mbrc.enums.PlayState;
-import com.kelsos.mbrc.events.actions.RepeatChangeEvent;
-import com.kelsos.mbrc.events.actions.ShufflePressedEvent;
+import com.kelsos.mbrc.events.Events;
+import com.kelsos.mbrc.events.actions.ButtonPressedEvent;
 import com.kelsos.mbrc.events.ui.RepeatChange;
 import com.kelsos.mbrc.events.ui.ShuffleChange;
 import com.kelsos.mbrc.rest.RemoteApi;
+import com.kelsos.mbrc.util.Logger;
 import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
-import roboguice.util.Ln;
+import rx.Subscription;
+import rx.android.observables.AndroidObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+
+import static com.kelsos.mbrc.events.actions.ButtonPressedEvent.Button;
 
 public class ButtonFragment extends RoboFragment {
 
@@ -39,20 +44,8 @@ public class ButtonFragment extends RoboFragment {
     @Inject
     private RemoteApi api;
 
-    private View.OnClickListener playButtonListener = v ->
-            api.playbackStart()
-                    .doOnError(error -> Ln.e(error, "Request Failed"))
-                    .flatMap(resp -> api.getPlaystate())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(resp -> UpdatePlaystate(PlayState.valueOf(resp.getValue().toUpperCase())));
-
-
-    private View.OnLongClickListener stopListener = v -> {
-        return true;
-    };
-    private ImageButton.OnClickListener shuffleListener = v -> new ShufflePressedEvent();
-    private ImageButton.OnClickListener repeatListener = v -> new RepeatChangeEvent();
+    @Inject
+    private PlayerState playerStateModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,23 +55,30 @@ public class ButtonFragment extends RoboFragment {
     @Override
     public void onStart() {
         super.onStart();
-        playButton.setOnClickListener(playButtonListener);
-        playButton.setOnLongClickListener(stopListener);
+        playButton.setOnClickListener(v ->
+                Events.ButtonPressedNotification.onNext(new ButtonPressedEvent(Button.PLAYPAUSE)));
+
+        playButton.setOnLongClickListener(v -> {
+            Events.ButtonPressedNotification.onNext(new ButtonPressedEvent(Button.STOP));
+            return true;
+        });
 
         previousButton.setOnClickListener(v ->
-                api.playPrevious()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(resp -> Ln.d(resp.isSuccess())));
+                Events.ButtonPressedNotification.onNext(new ButtonPressedEvent(Button.PREVIOUS)));
 
         nextButton.setOnClickListener(v ->
-                api.playNext()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(resp -> Ln.d(resp.isSuccess())));
+                Events.ButtonPressedNotification.onNext(new ButtonPressedEvent(Button.NEXT)));
 
-        shuffleButton.setOnClickListener(shuffleListener);
-        repeatButton.setOnClickListener(repeatListener);
+        shuffleButton.setOnClickListener(v ->
+                Events.ButtonPressedNotification.onNext(new ButtonPressedEvent(Button.SHUFFLE)));
+
+        repeatButton.setOnClickListener(v ->
+                Events.ButtonPressedNotification.onNext(new ButtonPressedEvent(Button.REPEAT)));
+
+        Subscription sub = AndroidObservable.bindFragment(this, playerStateModel.playState())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(this::UpdatePlaystate, Logger::ProcessThrowable);
     }
 
 
@@ -86,11 +86,9 @@ public class ButtonFragment extends RoboFragment {
         shuffleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_shuffle : R.drawable.ic_media_shuffle_off);
     }
 
-
     public void updateRepeatButtonState(RepeatChange change) {
         repeatButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_repeat : R.drawable.ic_media_repeat_off);
     }
-
 
     public void UpdatePlaystate(final PlayState state) {
         int resId = R.drawable.ic_media_play;

@@ -15,13 +15,15 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.data.model.PlayerState;
+import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
 import com.kelsos.mbrc.events.ui.RatingChanged;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
-import com.kelsos.mbrc.net.Notification;
 import com.kelsos.mbrc.rest.RemoteApi;
+import com.kelsos.mbrc.util.Logger;
 import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
 import roboguice.util.Ln;
@@ -62,6 +64,8 @@ public class MainFragment extends RoboFragment {
     private RatingBar trackRating;
     @Inject
     private RemoteApi api;
+    @Inject
+    private PlayerState playerStateModel;
 
     private Subscription ratingChangeSub;
 
@@ -170,14 +174,6 @@ public class MainFragment extends RoboFragment {
                 .subscribe(notification -> updateAlbumCover(notification.getCover()),
                         error -> Ln.d("Error :: %s", error.getMessage()));
 
-        AndroidObservable.bindFragment(this, Events.Messages)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(err -> Ln.d("Error %s", err.getMessage()))
-                .filter(msg -> msg.getType().equals(Notification.PLAY_STATUS_CHANGED))
-                .flatMap(resp -> api.getPlaystate())
-                .subscribe(resp -> handlePlayStateChange(resp.getValue()));
-
         AndroidObservable.bindFragment(this, api.getCurrentPosition())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -189,6 +185,11 @@ public class MainFragment extends RoboFragment {
                 .subscribeOn(Schedulers.io())
                 .subscribe(this::handleTrackInfoChange,
                         ex -> Ln.d("Exception::%s", ex.getMessage()));
+
+        Subscription sub = AndroidObservable.bindFragment(this, playerStateModel.playState())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(this::handlePlayStateChange, Logger::ProcessThrowable);
 
 
     }
@@ -263,20 +264,18 @@ public class MainFragment extends RoboFragment {
         }
     }
 
-    public void handlePlayStateChange(final String change) {
-        switch (change.toUpperCase()) {
-            case "PLAYING":
+    private void handlePlayStateChange(PlayState state) {
+        switch (state) {
+            case PLAYING:
                 trackProgressAnimation();
                 break;
-            case "PAUSED":
+            case PAUSED:
                 stopTrackProgressAnimation();
-                break;
-            case "STOPPED":
-                stopTrackProgressAnimation();
-                activateStoppedState();
                 break;
             default:
                 stopTrackProgressAnimation();
+                activateStoppedState();
+                break;
         }
     }
 

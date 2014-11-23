@@ -12,21 +12,16 @@ import java.util.concurrent.Executors;
 public class RemoteApiProvider implements Provider<RemoteApi> {
 
     @Inject
-    RestAdapter.Builder builder;
+    private RestAdapter.Builder builder;
 
     @Override
     public RemoteApi get() {
 
-        RequestInterceptor interceptor = new RequestInterceptor() {
-            @Override
-            public void intercept(RequestFacade request) {
-                request.addHeader("Accept", "application/json");
-            }
-        };
+        RequestInterceptor interceptor = request -> request.addHeader("Accept", "application/json");
 
         Executor executor = Executors.newSingleThreadExecutor();
 
-        RestAdapter restAdapter = new RestAdapter.Builder()
+        RestAdapter restAdapter = builder
                 .setEndpoint(RemoteApi.API_URL)
                 .setConverter(RemoteApi.DATA_CONVERTER)
                 .setExecutors(executor, executor)

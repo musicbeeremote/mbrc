@@ -81,7 +81,6 @@
 }
 
 -keep public class com.squareup.**
--keep public class * implements com.kelsos.mbrc.interfaces.ICommand
 
 -keepclassmembers class * {
  public <init>(android.content.Context);

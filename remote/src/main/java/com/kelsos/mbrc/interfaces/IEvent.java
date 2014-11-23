@@ -15,10 +15,4 @@ public interface IEvent {
      * @return Object with the data
      */
     Object getData();
-
-    /**
-     * Returns the string representations of the data.
-     * @return String representation of the data
-     */
-    String getDataString();
 }

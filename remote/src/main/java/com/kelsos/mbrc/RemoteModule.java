@@ -24,6 +24,5 @@ public class RemoteModule extends AbstractModule {
         bind(RemoteApi.class)
                 .toProvider(RemoteApiProvider.class)
                 .asEagerSingleton();
-
     }
 }
