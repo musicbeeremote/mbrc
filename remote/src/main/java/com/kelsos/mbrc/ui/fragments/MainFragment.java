@@ -172,19 +172,19 @@ public class MainFragment extends RoboFragment {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(notification -> updateAlbumCover(notification.getCover()),
-                        error -> Ln.d("Error :: %s", error.getMessage()));
+                        Logger::ProcessThrowable);
 
         AndroidObservable.bindFragment(this, api.getCurrentPosition())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .doOnError(err -> Ln.d("Error %s", err.getMessage()))
-                .subscribe(update -> handlePositionUpdate(update.getPosition(), update.getDuration()));
+                .subscribe(update -> handlePositionUpdate(update.getPosition(), update.getDuration()),
+                        Logger::ProcessThrowable);
 
         AndroidObservable.bindFragment(this, Events.TrackInfoChangeNotification)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(this::handleTrackInfoChange,
-                        ex -> Ln.d("Exception::%s", ex.getMessage()));
+                        Logger::ProcessThrowable);
 
         Subscription sub = AndroidObservable.bindFragment(this, playerStateModel.playState())
                 .observeOn(AndroidSchedulers.mainThread())

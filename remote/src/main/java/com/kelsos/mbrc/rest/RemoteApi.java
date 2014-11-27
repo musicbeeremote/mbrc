@@ -152,4 +152,7 @@ public interface RemoteApi {
 
     @PUT("/playlists/{id}/tracks")
     Observable<SuccessResponse> addTracksToPlaylist(@Path("id") int id, List<String> list);
+
+    @PUT("/player/playpause")
+    Observable<SuccessResponse> playPause();
 }

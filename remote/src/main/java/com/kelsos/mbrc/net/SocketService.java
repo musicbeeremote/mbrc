@@ -211,9 +211,7 @@ public class SocketService {
             } catch (SocketException e) {
                 Ln.d(e.toString().substring(SUB_START));
             } catch (IOException e) {
-                if (BuildConfig.DEBUG) {
-                    Ln.e(e, "socket io/null pointer");
-                }
+                Ln.d(e);
             } finally {
                 if (output != null) {
                     output.flush();
