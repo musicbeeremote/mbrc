@@ -3,14 +3,25 @@ package com.kelsos.mbrc.ui.fragments.browse;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.*;
+import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.BrowsePagerAdapter;
+import com.kelsos.mbrc.data.Sync;
 import roboguice.fragment.provided.RoboFragment;
 
 public class BrowseFragment extends RoboFragment {
     public static final int LIBRARY_SYNC = 1;
     public static final int GROUP_ID = 15;
     private BrowsePagerAdapter mAdapter;
+    @Inject
+
+    Sync sync;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        sync.startSyncing();
+    }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ui_fragment_search, container, false);

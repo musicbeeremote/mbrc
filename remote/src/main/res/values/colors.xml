@@ -4,7 +4,7 @@
     <color name="remote_primary">#ffc107</color>
     <color name="remote_primary_dark">#ff6f00</color>
     <color name="remote_accent">#ffe57f</color>
-    <color name="mbrc_background">#bdbdbd</color>
+    <color name="mbrc_background">#424242</color>
     <color name="remote_text">#57000000</color>
     <color name="remote_divider">#0C000000</color>
     <color name="remote_secondary_text">#36000000</color>

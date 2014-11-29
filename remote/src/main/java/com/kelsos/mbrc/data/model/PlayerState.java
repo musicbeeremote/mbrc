@@ -4,12 +4,14 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.Events;
-import com.kelsos.mbrc.events.ui.RepeatChange;
+import com.kelsos.mbrc.events.actions.ButtonPressedEvent;
 import com.kelsos.mbrc.events.ui.ScrobbleChange;
 import com.kelsos.mbrc.events.ui.ShuffleChange;
 import com.kelsos.mbrc.net.Notification;
 import com.kelsos.mbrc.rest.RemoteApi;
+import com.kelsos.mbrc.rest.responses.SuccessResponse;
 import com.kelsos.mbrc.util.Logger;
+import roboguice.util.Ln;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
@@ -27,15 +29,15 @@ public class PlayerState {
     public static final String PLAYING = "playing";
     public static final String PAUSED = "paused";
     public static final String STOPPED = "stopped";
-    private int volume;
+    private final RemoteApi api;
+    private final BehaviorSubject<PlayState> playerStateBehaviorSubject;
+    private final BehaviorSubject<Integer> volumeBehaviourSubject;
     boolean repeatActive;
     boolean shuffleActive;
     boolean isScrobblingActive;
     boolean isMuteActive;
+    private int volume;
     private PlayState playState;
-    private final RemoteApi api;
-    private final BehaviorSubject<PlayState> playerStateBehaviorSubject;
-    private final BehaviorSubject<Integer> volumeBehaviourSubject;
 
 
     @Inject
@@ -60,18 +62,38 @@ public class PlayerState {
                 .filter(msg -> msg.getType().equals(Notification.PLAY_STATUS_CHANGED))
                 .flatMap(resp -> api.getPlaystate())
                 .subscribe(resp -> setPlayState(resp.getValue()), Logger::ProcessThrowable);
+
+        SubscribeToButtonEvent(ButtonPressedEvent.Button.PREVIOUS, api.playPrevious());
+        SubscribeToButtonEvent(ButtonPressedEvent.Button.NEXT, api.playNext());
+        SubscribeToButtonEvent(ButtonPressedEvent.Button.STOP, api.playbackStop());
+        SubscribeToButtonEvent(ButtonPressedEvent.Button.PLAYPAUSE, api.playPause());
+
+        Events.ButtonPressedNotification.subscribeOn(Schedulers.io())
+                .filter(event -> event.getType().equals(ButtonPressedEvent.Button.SHUFFLE))
+                .flatMap(event -> api.toggleShuffleState())
+                .subscribe(resp -> setShuffleState(resp.isEnabled()),
+                        Logger::ProcessThrowable);
+
+        Events.ButtonPressedNotification.subscribeOn(Schedulers.io())
+                .filter(event -> event.getType().equals(ButtonPressedEvent.Button.REPEAT))
+                .flatMap(event -> api.changeRepeatMode())
+                .subscribe(resp -> setRepeatState(resp.getValue()),
+                        Logger::ProcessThrowable);
+
+
     }
 
-    public void setVolume(int volume) {
-        if (volume != this.volume) {
-            this.volume = volume;
-            onVolumeChange(volume);
-        }
+
+    private void SubscribeToButtonEvent(ButtonPressedEvent.Button button, Observable<SuccessResponse> apiRequest) {
+        Events.ButtonPressedNotification.subscribeOn(Schedulers.io())
+                .filter(event -> event.getType().equals(button))
+                .flatMap(event -> apiRequest)
+                .subscribe(r -> Ln.d(r.isSuccess()), Logger::ProcessThrowable);
     }
 
     public void setRepeatState(String repeatButtonActive) {
         repeatActive = (repeatButtonActive.equals(ALL));
-        new RepeatChange(isRepeatActive());
+        Ln.d("Repeat value %s", repeatButtonActive);
     }
 
     public void setShuffleState(boolean shuffleButtonActive) {
@@ -109,7 +131,7 @@ public class PlayerState {
         return shuffleActive;
     }
 
-    private void reduceVolume(){
+    private void reduceVolume() {
         if (volume >= LOWEST_NOT_ZERO) {
             int mod = volume % MOD;
             int newVolume;
@@ -143,7 +165,7 @@ public class PlayerState {
         }
     }
 
-    private void onPlayStateChange(PlayState playState){
+    private void onPlayStateChange(PlayState playState) {
         playerStateBehaviorSubject.onNext(playState);
     }
 
@@ -151,11 +173,18 @@ public class PlayerState {
         return playerStateBehaviorSubject.asObservable();
     }
 
-    private void onVolumeChange(int volume){
+    private void onVolumeChange(int volume) {
         volumeBehaviourSubject.onNext(volume);
     }
 
     public Observable<Integer> getVolume() {
         return volumeBehaviourSubject.asObservable();
+    }
+
+    public void setVolume(int volume) {
+        if (volume != this.volume) {
+            this.volume = volume;
+            onVolumeChange(volume);
+        }
     }
 }

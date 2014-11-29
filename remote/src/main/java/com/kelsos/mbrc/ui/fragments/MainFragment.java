@@ -405,6 +405,5 @@ public class MainFragment extends RoboFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ratingChangeSub.unsubscribe();
     }
 }

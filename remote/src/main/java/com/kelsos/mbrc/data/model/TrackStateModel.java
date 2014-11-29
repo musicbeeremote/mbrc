@@ -6,7 +6,10 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.*;
+import com.kelsos.mbrc.events.ui.CoverAvailable;
+import com.kelsos.mbrc.events.ui.LfmRatingChanged;
+import com.kelsos.mbrc.events.ui.RatingChanged;
+import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.net.Notification;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.rest.responses.TrackResponse;
@@ -16,27 +19,30 @@ import retrofit.client.Response;
 import roboguice.util.Ln;
 import rx.Observable;
 import rx.schedulers.Schedulers;
+import rx.subjects.BehaviorSubject;
 
 import java.io.InputStream;
 
 public class TrackStateModel {
     private RemoteApi api;
 
+    private BehaviorSubject<String> lyricsSubject;
     public static final String LOVE = "Love";
     public static final String BAN = "Ban";
     private float rating;
-    String title;
-    String artist;
-    String album;
-    String year;
-    String lyrics;
-    LfmStatus lfmRating;
-    Bitmap albumCover;
+    private String title;
+    private String artist;
+    private String album;
+    private String year;
+    private String lyrics;
+    private LfmStatus lfmRating;
+    private Bitmap albumCover;
 
     @Inject
     public TrackStateModel(RemoteApi api) {
         this.api = api;
-
+        lyrics = "";
+        lyricsSubject = BehaviorSubject.create(lyrics);
         Observable<MessageEvent> trackChangeObservable = Events.Messages.subscribeOn(Schedulers.io())
                 .filter(msg -> msg.getType().equals(Notification.TRACK_CHANGED));
 
@@ -46,6 +52,11 @@ public class TrackStateModel {
         trackChangeObservable.subscribe(msg -> requestCover());
 
         trackChangeObservable.subscribe(msg -> requestLyrics());
+
+        Events.Messages.subscribeOn(Schedulers.io())
+                .filter(msg -> msg.getType().equals(Notification.LYRICS_CHANGED))
+                .subscribe(msg -> requestLyrics());
+
     }
 
     void createBitmap(Response response) {
@@ -94,14 +105,6 @@ public class TrackStateModel {
         Events.TrackInfoChangeNotification.onNext(new TrackInfoChange(artist, title, album, year));
     }
 
-    public String getArtist() {
-        return this.artist;
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
     public void setLyrics(String lyrics) {
         if (lyrics == null || lyrics.equals(this.lyrics)) {
             return;
@@ -116,7 +119,12 @@ public class TrackStateModel {
                 .replace("<p>", "\r\n")
                 .replace("<br>", "\n")
                 .trim();
-        new LyricsUpdated(this.lyrics);
+
+        lyricsSubject.onNext(this.lyrics);
+    }
+
+    public Observable<String> getLyricsObservable(){
+        return lyricsSubject.asObservable();
     }
 
     public void setRating(double rating) {

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- Generated with http://android-holo-colors.com -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
 
   <style name="Theme.RemoteLight" parent="Theme.AppCompat.Light">
     <item name="colorPrimary">@color/remote_primary</item>
     <item name="colorPrimaryDark">@color/remote_primary_dark</item>
     <item name="colorAccent">@color/remote_accent</item>
+    <item name="background">@color/mbrc_background</item>
   </style>
 
 

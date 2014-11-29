@@ -11,7 +11,7 @@ public class LibraryGenre {
     @DatabaseField(generatedId = true)
     private long id;
 
-    @DatabaseField(unique = true)
+    @DatabaseField
     private String name;
 
     public LibraryGenre() {

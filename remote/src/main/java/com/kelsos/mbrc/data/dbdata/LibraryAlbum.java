@@ -2,8 +2,10 @@ package com.kelsos.mbrc.data.dbdata;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @DatabaseTable(tableName = LibraryAlbum.TABLE_NAME)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LibraryAlbum {
     public static final String TABLE_NAME = "albums";
 

@@ -24,6 +24,7 @@
     </ListView>
 
     <fragment
+            android:id="@+id/lyrics_mini_control"
             android:layout_width="match_parent"
             android:layout_height="@dimen/mini_control_height"
             android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"

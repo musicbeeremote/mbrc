@@ -97,11 +97,17 @@ public interface RemoteApi {
     @GET("/player/shuffle")
     Observable<StateResponse> getShuffleState();
 
+    @PUT("/player/shuffle/toggle")
+    Observable<SuccessStateResponse> toggleShuffleState();
+
     @GET("/player/scrobble")
     Observable<StateResponse> getScrobbleState();
 
     @GET("/player/repeat")
     Observable<TextValueResponse> getRepeatMode();
+
+    @PUT("/player/changerepeat")
+    Observable<TextValueResponse> changeRepeatMode();
 
     @GET("/player/playstate")
     Observable<TextValueResponse> getPlaystate();

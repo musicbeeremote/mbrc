@@ -2,8 +2,10 @@ package com.kelsos.mbrc.data.dbdata;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @DatabaseTable(tableName = LibraryTrack.TABLE_NAME)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LibraryTrack {
 
     public static final String TABLE_NAME = "tracks";
@@ -22,6 +24,9 @@ public class LibraryTrack {
 
     @DatabaseField(foreign = true)
     private LibraryArtist artist;
+
+    @DatabaseField(foreign = true)
+    private LibraryArtist albumArtist;
 
     @DatabaseField(foreign = true)
     private LibraryAlbum album;
@@ -98,5 +103,13 @@ public class LibraryTrack {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public LibraryArtist getAlbumArtist() {
+        return albumArtist;
+    }
+
+    public void setAlbumArtist(LibraryArtist albumArtist) {
+        this.albumArtist = albumArtist;
     }
 }

@@ -31,9 +31,6 @@ public class Controller extends RoboService {
     private ServiceDiscovery discovery;
     @Inject
     private SettingsManager settingsManager;
-    @Inject
-    private ActionController actionController;
-
 
     public Controller() {
         Ln.d("Application Controller Initialized");
