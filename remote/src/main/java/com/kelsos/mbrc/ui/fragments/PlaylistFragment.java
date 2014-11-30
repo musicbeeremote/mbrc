@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.fragments;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -12,8 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistCursorAdapter;
-import com.kelsos.mbrc.data.dbdata.Playlist;
-import com.kelsos.mbrc.ui.activities.PlaylistActivity;
 import roboguice.fragment.provided.RoboListFragment;
 
 public class PlaylistFragment extends RoboListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -39,14 +36,6 @@ public class PlaylistFragment extends RoboListFragment implements LoaderManager.
 
     @Override public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-    }
-
-    private void openPlaylist(final Playlist list) {
-        Intent intent = new Intent(this.getActivity(), PlaylistActivity.class);
-        intent.putExtra("name", list.getName());
-        intent.putExtra("tracks", list.getTracks());
-        //intent.putExtra("hash", list.getHash());
-        startActivity(intent);
     }
 
     @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {

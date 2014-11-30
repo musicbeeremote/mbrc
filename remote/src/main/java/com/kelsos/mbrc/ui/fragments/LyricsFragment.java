@@ -31,7 +31,7 @@ public class LyricsFragment extends RoboListFragment {
         AndroidObservable.bindFragment(this, model.getLyricsObservable())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(lyrics -> updateLyricsData(lyrics), Logger::ProcessThrowable);
+                .subscribe(lyrics -> updateLyricsData(lyrics), Logger::LogThrowable);
     }
 
     public void updateLyricsData(String lyrics) {

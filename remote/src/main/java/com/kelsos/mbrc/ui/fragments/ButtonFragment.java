@@ -78,7 +78,7 @@ public class ButtonFragment extends RoboFragment {
         Subscription sub = AndroidObservable.bindFragment(this, playerStateModel.playState())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(this::UpdatePlaystate, Logger::ProcessThrowable);
+                .subscribe(this::UpdatePlaystate, Logger::LogThrowable);
     }
 
 

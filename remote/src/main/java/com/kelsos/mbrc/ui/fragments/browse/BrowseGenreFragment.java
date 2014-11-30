@@ -10,7 +10,6 @@ import android.widget.ListView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.GenreCursorAdapter;
-import com.kelsos.mbrc.data.dbdata.LibraryGenre;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
@@ -23,7 +22,6 @@ public class BrowseGenreFragment extends RoboListFragment
     private static final int GROUP_ID = 11;
     private static final int URL_LOADER = 1;
     private GenreCursorAdapter mAdapter;
-    private LibraryGenre genre;
 
     @Inject
     private RemoteApi api;

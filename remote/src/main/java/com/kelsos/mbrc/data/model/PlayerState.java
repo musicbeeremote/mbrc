@@ -49,19 +49,19 @@ public class PlayerState {
         Events.Messages.subscribeOn(Schedulers.io())
                 .filter(msg -> msg.getType().equals(Notification.VOLUME_CHANGED))
                 .flatMap(resp -> api.getVolume())
-                .subscribe(resp -> setVolume(resp.getValue()), Logger::ProcessThrowable);
+                .subscribe(resp -> setVolume(resp.getValue()), Logger::LogThrowable);
 
         api.getPlayerStatus()
                 .subscribe(resp -> {
                     setRepeatState(resp.getRepeat());
                     setVolume(resp.getVolume());
                     setPlayState(resp.getState());
-                }, Logger::ProcessThrowable);
+                }, Logger::LogThrowable);
 
         Events.Messages.subscribeOn(Schedulers.io())
                 .filter(msg -> msg.getType().equals(Notification.PLAY_STATUS_CHANGED))
                 .flatMap(resp -> api.getPlaystate())
-                .subscribe(resp -> setPlayState(resp.getValue()), Logger::ProcessThrowable);
+                .subscribe(resp -> setPlayState(resp.getValue()), Logger::LogThrowable);
 
         SubscribeToButtonEvent(ButtonPressedEvent.Button.PREVIOUS, api.playPrevious());
         SubscribeToButtonEvent(ButtonPressedEvent.Button.NEXT, api.playNext());
@@ -72,13 +72,13 @@ public class PlayerState {
                 .filter(event -> event.getType().equals(ButtonPressedEvent.Button.SHUFFLE))
                 .flatMap(event -> api.toggleShuffleState())
                 .subscribe(resp -> setShuffleState(resp.isEnabled()),
-                        Logger::ProcessThrowable);
+                        Logger::LogThrowable);
 
         Events.ButtonPressedNotification.subscribeOn(Schedulers.io())
                 .filter(event -> event.getType().equals(ButtonPressedEvent.Button.REPEAT))
                 .flatMap(event -> api.changeRepeatMode())
                 .subscribe(resp -> setRepeatState(resp.getValue()),
-                        Logger::ProcessThrowable);
+                        Logger::LogThrowable);
 
 
     }
@@ -88,7 +88,7 @@ public class PlayerState {
         Events.ButtonPressedNotification.subscribeOn(Schedulers.io())
                 .filter(event -> event.getType().equals(button))
                 .flatMap(event -> apiRequest)
-                .subscribe(r -> Ln.d(r.isSuccess()), Logger::ProcessThrowable);
+                .subscribe(r -> Ln.d(r.isSuccess()), Logger::LogThrowable);
     }
 
     public void setRepeatState(String repeatButtonActive) {

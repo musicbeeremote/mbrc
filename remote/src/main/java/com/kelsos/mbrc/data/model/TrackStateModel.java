@@ -47,7 +47,7 @@ public class TrackStateModel {
                 .filter(msg -> msg.getType().equals(Notification.TRACK_CHANGED));
 
         trackChangeObservable.flatMap(msg -> api.getTrackInfo())
-                .subscribe(this::setTrackInfo, Logger::ProcessThrowable);
+                .subscribe(this::setTrackInfo, Logger::LogThrowable);
 
         trackChangeObservable.subscribe(msg -> requestCover());
 
@@ -72,7 +72,7 @@ public class TrackStateModel {
     private void requestCover() {
         api.getTrackCoverData(RemoteUtils.getTimeStamp())
                 .subscribeOn(Schedulers.io())
-                .subscribe(this::createBitmap, Logger::ProcessThrowable);
+                .subscribe(this::createBitmap, Logger::LogThrowable);
     }
 
     private void requestLyrics() {

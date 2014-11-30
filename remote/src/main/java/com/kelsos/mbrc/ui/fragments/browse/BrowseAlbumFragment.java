@@ -11,7 +11,6 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumCursorAdapter;
-import com.kelsos.mbrc.data.dbdata.LibraryAlbum;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import roboguice.fragment.provided.RoboFragment;
@@ -26,7 +25,6 @@ public class BrowseAlbumFragment extends RoboFragment implements LoaderCallbacks
     private static final int URL_LOADER = 2;
     private AlbumCursorAdapter mAdapter;
     private GridView mGrid;
-    private LibraryAlbum album;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

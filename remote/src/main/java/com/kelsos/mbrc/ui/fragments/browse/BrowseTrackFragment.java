@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.TrackCursorAdapter;
-import com.kelsos.mbrc.data.dbdata.LibraryTrack;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import roboguice.fragment.provided.RoboListFragment;
 
@@ -19,7 +18,6 @@ public class BrowseTrackFragment extends RoboListFragment
     private static final int GROUP_ID = 14;
     private static final int URL_LOADER = 0x53;
     private TrackCursorAdapter mAdapter;
-    private LibraryTrack track;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

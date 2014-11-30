@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.dbdata.LibraryTrack;
 
 public class TrackCursorAdapter extends CursorAdapter {
     public TrackCursorAdapter(Context context, Cursor c, int flags) {
@@ -22,14 +21,8 @@ public class TrackCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(final View view, Context context, Cursor cursor) {
-        final LibraryTrack album = new LibraryTrack();
-        ((TextView) view.findViewById(R.id.line_one)).setText(album.getTitle());
-        ((TextView) view.findViewById(R.id.line_two)).setText(album.getArtist().getName());
-        view.findViewById(R.id.ui_item_context_indicator).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                view.showContextMenu();
-            }
-        });
+        ((TextView) view.findViewById(R.id.line_one)).setText("");
+        ((TextView) view.findViewById(R.id.line_two)).setText("");
+        view.findViewById(R.id.ui_item_context_indicator).setOnClickListener(v -> view.showContextMenu());
     }
 }

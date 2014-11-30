@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.fragments.profile;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,8 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistCursorAdapter;
-import com.kelsos.mbrc.data.dbdata.LibraryArtist;
-import com.kelsos.mbrc.ui.activities.Profile;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseMenuItems;
@@ -37,7 +34,6 @@ public class GenreArtistsFragment extends RoboListFragment
     private static final int GROUP_ID = 2983;
     private static final int URL_LOADER = 0x15;
     private ArtistCursorAdapter mAdapter;
-    private LibraryArtist artist;
     private long genreId;
 
     public GenreArtistsFragment() {
@@ -137,13 +133,6 @@ public class GenreArtistsFragment extends RoboListFragment
 
     }
 
-    private void showAlbums(final LibraryArtist artist) {
-        Intent intent = new Intent(getActivity(), Profile.class);
-        intent.putExtra("name", artist.getName());
-        intent.putExtra("id", artist.getId());
-        intent.putExtra("type", "artist");
-        startActivity(intent);
-    }
 
     /**
      * This interface must be implemented by activities that contain this

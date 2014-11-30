@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistCursorAdapter;
-import com.kelsos.mbrc.data.dbdata.LibraryArtist;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import roboguice.fragment.provided.RoboListFragment;
@@ -23,7 +22,6 @@ public class BrowseArtistFragment extends RoboListFragment
     private static final int GROUP_ID = 12;
     private static final int URL_LOADER = 0x12;
     private ArtistCursorAdapter mAdapter;
-    private LibraryArtist artist;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

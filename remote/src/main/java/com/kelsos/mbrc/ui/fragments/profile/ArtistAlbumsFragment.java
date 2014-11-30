@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.fragments.profile;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -13,8 +12,6 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumCursorAdapter;
-import com.kelsos.mbrc.data.dbdata.LibraryAlbum;
-import com.kelsos.mbrc.ui.activities.Profile;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseMenuItems;
@@ -30,7 +27,6 @@ public class ArtistAlbumsFragment extends RoboFragment implements LoaderManager.
     private static final int GROUP_ID = 92;
     private AlbumCursorAdapter mAdapter;
     private GridView mGrid;
-    private LibraryAlbum album;
     private long artistId;
 
     public ArtistAlbumsFragment() {
@@ -51,10 +47,10 @@ public class ArtistAlbumsFragment extends RoboFragment implements LoaderManager.
         if (item.getGroupId() == GROUP_ID) {
             AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             int position = mi != null ? mi.position : 0;
-            album = new LibraryAlbum();
+
             switch (item.getItemId()) {
                 case BrowseMenuItems.GET_SUB:
-                    showTracks(album);
+
                     break;
                 case BrowseMenuItems.PLAYLIST:
                     final PlaylistDialogFragment dlFragment = new PlaylistDialogFragment();
@@ -131,8 +127,7 @@ public class ArtistAlbumsFragment extends RoboFragment implements LoaderManager.
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        album = new LibraryAlbum();
-        showTracks(album);
+
     }
 
     @Override
@@ -150,11 +145,4 @@ public class ArtistAlbumsFragment extends RoboFragment implements LoaderManager.
 
     }
 
-    private void showTracks(final LibraryAlbum album) {
-        Intent intent = new Intent(getActivity(), Profile.class);
-        intent.putExtra("name", album.getName());
-        intent.putExtra("id", album.getId());
-        intent.putExtra("type", "album");
-        startActivity(intent);
-    }
 }

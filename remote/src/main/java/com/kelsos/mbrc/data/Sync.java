@@ -1,65 +1,74 @@
 package com.kelsos.mbrc.data;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import com.google.inject.Inject;
-import com.j256.ormlite.dao.Dao;
-import com.kelsos.mbrc.data.db.CacheHelper;
-import com.kelsos.mbrc.data.dbdata.LibraryAlbum;
-import com.kelsos.mbrc.data.dbdata.LibraryArtist;
-import com.kelsos.mbrc.data.dbdata.LibraryGenre;
-import com.kelsos.mbrc.data.dbdata.LibraryTrack;
+import com.kelsos.mbrc.dao.*;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.rest.responses.PaginatedDataResponse;
+import com.kelsos.mbrc.util.Logger;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import roboguice.util.Ln;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+import java.io.IOException;
+
 public class Sync {
+    private final DaoMaster daoMaster;
+    private final DaoSession daoSession;
     private RemoteApi api;
     private ObjectMapper mapper;
     private static final int STARTING_OFFSET = 0;
-    private static final int LIMIT = 400;
+    private static final int LIMIT = 800;
+    private SQLiteDatabase db;
+    private long startMillis;
+    private long endMillis;
 
     @Inject
-    private CacheHelper mHelper;
-
-    @Inject
-    public Sync(RemoteApi api, ObjectMapper mapper) {
+    public Sync(RemoteApi api, ObjectMapper mapper, Context mContext) {
         this.api = api;
         this.mapper = mapper;
+
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(mContext, "lib-db", null);
+        db = helper.getWritableDatabase();
+        daoMaster = new DaoMaster(db);
+        daoSession = daoMaster.newSession();
+
     }
 
     public void startSyncing() {
-        getGenres(STARTING_OFFSET, LIMIT).subscribe(this::processGenres);
-        getArtists(STARTING_OFFSET, LIMIT).subscribe(this::processArtists);
-        getAlbums(STARTING_OFFSET, LIMIT).subscribe(this::processAlbums);
-        getTracks(STARTING_OFFSET, LIMIT).subscribe(this::processTracks);
+        startMillis = System.currentTimeMillis();
+        getGenres(STARTING_OFFSET, LIMIT).subscribe(this::processGenres, Logger::LogThrowable);
+        getArtists(STARTING_OFFSET, LIMIT).subscribe(this::processArtists, Logger::LogThrowable);
+        getAlbums(STARTING_OFFSET, LIMIT).subscribe(this::processAlbums, Logger::LogThrowable);
+        getTracks(STARTING_OFFSET, LIMIT).subscribe(this::processTracks, Logger::LogThrowable);
     }
 
-    private void processGenres(PaginatedDataResponse paginatedData){
+    private void processGenres(PaginatedDataResponse paginatedData) {
 
-        try {
-            final Dao<LibraryGenre, Integer> genreDao = mHelper.getGenreDao();
-            genreDao.callBatchTasks(() -> {
 
+        GenreDao genreDao = daoSession.getGenreDao();
+        daoSession.runInTx(() -> {
+            try {
                 for (JsonNode node : paginatedData.getData()) {
-                    final LibraryGenre genre = mapper.readValue(node, LibraryGenre.class);
-                    genreDao.createOrUpdate(genre);
+                    final Genre genre = mapper.readValue(node, Genre.class);
+                    genreDao.insert(genre);
                 }
+            } catch (IOException e) {
+                Ln.d(e);
+            }
+        });
 
-                return null;
-            });
-        } catch (Exception e) {
-            Ln.d(e);
-        }
 
         int total = paginatedData.getTotal();
         int offset = paginatedData.getOffset();
         int limit = paginatedData.getLimit();
 
         if (offset + limit < total) {
-            getGenres(offset + limit, limit).subscribe(this::processGenres);
+            getGenres(offset + limit, limit).subscribe(this::processGenres, Logger::LogThrowable);
         } else {
             Ln.d("no more data");
         }
@@ -67,27 +76,26 @@ public class Sync {
 
     private void processArtists(PaginatedDataResponse paginatedData) {
 
-        try {
-            final Dao<LibraryArtist, Integer> artistDao = mHelper.getArtistDao();
-            artistDao.callBatchTasks(() -> {
 
+        ArtistDao artistDao = daoSession.getArtistDao();
+        daoSession.runInTx(() -> {
+            try {
                 for (JsonNode node : paginatedData.getData()) {
-                    final LibraryArtist artist = mapper.readValue(node, LibraryArtist.class);
-                    artistDao.createOrUpdate(artist);
+                    final Artist artist = mapper.readValue(node, Artist.class);
+                    artistDao.insert(artist);
                 }
+            } catch (IOException e) {
+                Ln.d(e);
+            }
+        });
 
-                return null;
-            });
-        } catch (Exception e) {
-            Ln.d(e);
-        }
 
         int total = paginatedData.getTotal();
         int offset = paginatedData.getOffset();
         int limit = paginatedData.getLimit();
 
         if (offset + limit < total) {
-            getArtists(offset + limit, limit).subscribe(this::processArtists);
+            getArtists(offset + limit, limit).subscribe(this::processArtists, Logger::LogThrowable);
         } else {
             Ln.d("no more data");
         }
@@ -95,30 +103,26 @@ public class Sync {
 
     private void processAlbums(PaginatedDataResponse paginatedData) {
 
-        try {
-            final Dao<LibraryAlbum, Integer> albumDao = mHelper.getAlbumDao();
-            final Dao<LibraryArtist, Integer> artistDao = mHelper.getArtistDao();
-            albumDao.callBatchTasks(() -> {
 
+        AlbumDao albumDao = daoSession.getAlbumDao();
+        daoSession.runInTx(() -> {
+            try {
                 for (JsonNode node : paginatedData.getData()) {
-                    final LibraryAlbum album = mapper.readValue(node, LibraryAlbum.class);
-                    int artistId = node.path("artistId").asInt();
-                    final LibraryArtist artist = artistDao.queryForId(artistId);
-                    album.setArtist(artist);
-                    albumDao.createOrUpdate(album);
+                    final Album album = mapper.readValue(node, Album.class);
+                    albumDao.insert(album);
                 }
-                return null;
-            });
-        } catch (Exception e) {
-            Ln.d(e);
-        }
+            } catch (IOException e) {
+                Ln.d(e);
+            }
+        });
+
 
         int total = paginatedData.getTotal();
         int offset = paginatedData.getOffset();
         int limit = paginatedData.getLimit();
 
         if (offset + limit < total) {
-            getAlbums(offset + limit, limit).subscribe(this::processAlbums);
+            getAlbums(offset + limit, limit).subscribe(this::processAlbums, Logger::LogThrowable);
         } else {
             Ln.d("no more data");
         }
@@ -126,62 +130,55 @@ public class Sync {
 
     private void processTracks(PaginatedDataResponse paginatedData) {
 
-        try {
-            final Dao<LibraryTrack, Integer> trackDao = mHelper.getTrackDao();
-            final Dao<LibraryArtist, Integer> artistDao = mHelper.getArtistDao();
-            final Dao<LibraryGenre, Integer> genreDao = mHelper.getGenreDao();
-            final Dao<LibraryAlbum, Integer> albumDao = mHelper.getAlbumDao();
+        TrackDao trackDao = daoSession.getTrackDao();
+        daoSession.runInTx(() -> {
+            try {
 
-            trackDao.callBatchTasks(() -> {
                 for (JsonNode node : paginatedData.getData()) {
-                    final LibraryTrack track = mapper.readValue(node, LibraryTrack.class);
-                    int genreId = node.path("genreId").asInt();
-                    int artistId = node.path("artistId").asInt();
-                    int albumArtistId = node.path("albumArtistId").asInt();
-                    int albumId = node.path("albumId").asInt();
-
-                    track.setGenre(genreDao.queryForId(genreId));
-                    track.setArtist(artistDao.queryForId(artistId));
-                    track.setAlbumArtist(artistDao.queryForId(albumArtistId));
-                    track.setAlbum(albumDao.queryForId(albumId));
-
-                    trackDao.createOrUpdate(track);
+                    final Track track = mapper.readValue(node, Track.class);
+                    trackDao.insert(track);
                 }
+            } catch (IOException e) {
+                Ln.d(e);
+            }
 
-                return null;
-            });
-        } catch (Exception e) {
-            Ln.d(e);
-        }
+        });
+
 
         int total = paginatedData.getTotal();
         int offset = paginatedData.getOffset();
         int limit = paginatedData.getLimit();
 
         if (offset + limit < total) {
-            getTracks(offset + limit, limit).subscribe(this::processTracks);
+            getTracks(offset + limit, limit).subscribe(this::processTracks, Logger::LogThrowable);
         } else {
             Ln.d("no more data");
+            endMillis = System.currentTimeMillis();
+            Ln.d("Time Elapsed %d ms", endMillis - startMillis);
         }
     }
 
     private Observable<PaginatedDataResponse> getGenres(int offset, int limit) {
         return api.getLibraryGenres(offset, limit)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io());
     }
 
     private Observable<PaginatedDataResponse> getArtists(int offset, int limit) {
         return api.getLibraryArtists(offset, limit)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io());
     }
 
     private Observable<PaginatedDataResponse> getAlbums(int offset, int limit) {
         return api.getLibraryAlbums(offset, limit)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io());
     }
 
     private Observable<PaginatedDataResponse> getTracks(int offset, int limit) {
         return api.getLibraryTracks(offset, limit)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io());
     }
 }
