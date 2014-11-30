@@ -19,7 +19,7 @@ public class Sync {
     private RemoteApi api;
     private ObjectMapper mapper;
     private static final int STARTING_OFFSET = 0;
-    private static final int LIMIT = 50;
+    private static final int LIMIT = 400;
 
     @Inject
     private CacheHelper mHelper;
@@ -102,7 +102,7 @@ public class Sync {
 
                 for (JsonNode node : paginatedData.getData()) {
                     final LibraryAlbum album = mapper.readValue(node, LibraryAlbum.class);
-                    int artistId = node.path("artistId").asInt(1);
+                    int artistId = node.path("artistId").asInt();
                     final LibraryArtist artist = artistDao.queryForId(artistId);
                     album.setArtist(artist);
                     albumDao.createOrUpdate(album);
@@ -133,7 +133,6 @@ public class Sync {
             final Dao<LibraryAlbum, Integer> albumDao = mHelper.getAlbumDao();
 
             trackDao.callBatchTasks(() -> {
-
                 for (JsonNode node : paginatedData.getData()) {
                     final LibraryTrack track = mapper.readValue(node, LibraryTrack.class);
                     int genreId = node.path("genreId").asInt();
@@ -148,6 +147,7 @@ public class Sync {
 
                     trackDao.createOrUpdate(track);
                 }
+
                 return null;
             });
         } catch (Exception e) {

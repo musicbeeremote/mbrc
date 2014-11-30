@@ -15,7 +15,7 @@ public class LibraryAlbum {
     @DatabaseField
     private String name;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(foreign = true)
     private LibraryArtist artist;
 
     @DatabaseField(foreign = true)
