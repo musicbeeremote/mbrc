@@ -92,8 +92,10 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.1.0'
     compile 'com.github.mrengineer13:snackbar:0.4.0'
     compile 'com.j256.ormlite:ormlite-android:4.48'
-    compile 'io.reactivex:rxjava:1.0.0'
+    compile 'io.reactivex:rxjava:1.0.1'
     compile 'io.reactivex:rxandroid:0.23.0'
+
+    compile 'com.intellij:annotations:12.0'
 
     provided 'org.roboguice:roboblender:3.0'
 
