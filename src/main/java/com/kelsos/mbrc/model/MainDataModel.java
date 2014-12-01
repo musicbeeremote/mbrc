@@ -200,6 +200,8 @@ public class MainDataModel {
     public void setCover(String base64format) {
         if (base64format == null || base64format.equals("")) {
             cover = null;
+            bus.post(new CoverAvailable());
+            updateNotification();
         } else {
             try {
                 new ImageDecoder(context, base64format).execute();
