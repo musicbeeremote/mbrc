@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          android:installLocation="auto"
+          package="com.kelsos.mbrc">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
+
+    <application
+            android:allowBackup="true"
+            android:description="@string/application_description"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/application_name"
+            android:logo="@drawable/ic_launcher"
+            android:name=".RemoteApplication"
+            android:theme="@style/AppTheme">
+        <activity
+                android:launchMode="singleTop"
+                android:name=".ui.activities.MainFragmentActivity"
+                android:windowSoftInputMode="adjustNothing">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
+                android:name=".ui.activities.AppPreferenceView"
+                android:parentActivityName="ui.activities.MainFragmentActivity">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="ui.activities.MainFragmentActivity"/>
+        </activity>
+        <activity
+                android:name=".ui.activities.ConnectionManagerActivity"
+                android:windowSoftInputMode="adjustNothing"
+                android:parentActivityName=".ui.activities.AppPreferenceView">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="ui.activities.AppPreferenceView"/>
+
+        </activity>
+
+        <service
+                android:description="@string/info_service_description"
+                android:name=".controller.Controller"
+                android:permission="android.permission.READ_PHONE_STATE">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE"/>
+                <action android:name="android.net.wifi.STATE_CHANGE"/>
+                <action android:name="com.kelsos.mbrc.notification.play"/>
+                <action android:name="com.kelsos.mbrc.notification.next"/>
+                <action android:name="com.kelsos.mbrc.notification.close"/>
+                <action android:name="com.kelsos.mbrc.notification.previous"/>
+            </intent-filter>
+        </service>
+
+        <meta-data
+                android:name="roboguice.modules"
+                android:value="com.kelsos.mbrc.RemoteModule"/>
+        <meta-data
+                android:name="roboguice.annotations.packages"
+                android:value="roboguice,mbrc"/>
+
+    </application>
+</manifest>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:mbrc="http://schemas.android.com/apk/res-auto">
+    <item
+            android:icon="@drawable/abc_ic_search_api_mtrl_alpha"
+            android:id="@+id/now_playing_search_item"
+            mbrc:showAsAction="collapseActionView|ifRoom"
+            android:title="@string/now_playing_search"
+            mbrc:actionViewClass="android.support.v7.widget.SearchView"
+            />
+</menu>

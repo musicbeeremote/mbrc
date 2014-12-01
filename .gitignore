@@ -14,6 +14,7 @@ gen/
 
 # Local configuration file (sdk path, etc)
 local.properties
+signing.properties
 
 # Eclipse project files
 .classpath
@@ -27,6 +28,8 @@ proguard/
 *.ipr
 *.iws
 .idea/
+.gradle
+build
 
 # Maven created directories
 target/
