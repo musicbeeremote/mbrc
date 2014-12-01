@@ -170,5 +170,6 @@
     <string name="app_name">MusicBee Remote</string>
     <string name="nav_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="drawer_exit">Exit</string>
 
 </resources>

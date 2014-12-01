@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.app.Activity;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -13,12 +15,14 @@ import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.DrawerAdapter;
 import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.controller.Controller;
 import com.kelsos.mbrc.data.NavigationEntry;
 import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
 import com.kelsos.mbrc.events.ui.DrawerSelection;
+import org.jetbrains.annotations.NotNull;
 import roboguice.fragment.provided.RoboListFragment;
 import roboguice.inject.InjectView;
 import rx.Observable;
@@ -32,18 +36,14 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
     private TextView menuConnector;
     @InjectView(R.id.drawer_version_indicator)
     private TextView versionIndicator;
+    @InjectView(R.id.menu_exit)
+    private TextView exitButton;
 
     private Typeface robotoLight;
     private DrawerLayout mDrawerLayout;
     private int mSelection;
     private boolean mBackstackChanging;
     private Observable<DrawerSelection> drawerSelectionObservable;
-    private TextView.OnLongClickListener connectButtonLongClick = view -> {
-        new MessageEvent(UserInputEventType.RESET_CONNECTION);
-        return false;
-    };
-    private TextView.OnClickListener connectButtonClick = v ->
-            Events.Messages.onNext(new MessageEvent(UserInputEventType.START_CONNECTION));
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,15 +60,26 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ui_fragment_drawer, container, false);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        menuConnector.setOnClickListener(connectButtonClick);
-        menuConnector.setOnLongClickListener(connectButtonLongClick);
+        menuConnector.setOnClickListener(v ->
+                Events.Messages.onNext(new MessageEvent(UserInputEventType.START_CONNECTION)));
+
+        menuConnector.setOnLongClickListener(view -> {
+            new MessageEvent(UserInputEventType.RESET_CONNECTION);
+            return false;
+        });
+
+        exitButton.setOnClickListener(v -> {
+            final Activity activity = getActivity();
+            activity.stopService(new Intent(activity, Controller.class));
+            activity.finish();
+        });
         menuConnector.setTypeface(robotoLight);
 
         ArrayList<NavigationEntry> nav = new ArrayList<>();
@@ -88,8 +99,6 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
         }
 
         versionIndicator.setText(String.format(getString(R.string.ui_drawer_menu_version), BuildConfig.VERSION_NAME));
-
-
     }
 
     private void createObservable() {

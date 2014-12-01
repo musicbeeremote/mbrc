@@ -49,5 +49,6 @@ public class Controller extends RoboService {
 
     @Override public void onDestroy() {
         super.onDestroy();
+        this.unregisterReceiver(receiver);
     }
 }
