@@ -130,13 +130,17 @@ public interface RemoteApi {
     Observable<PaginatedDataResponse> getLibraryTracks(@Query("offset") int offset, @Query("limit") int limit);
 
     @GET("/library/covers")
-    Observable<PaginatedDataResponse> getLibraryCoverss(@Query("offset") int offset, @Query("limit") int limit);
+    Observable<PaginatedDataResponse> getLibraryCovers(@Query("offset") int offset, @Query("limit") int limit);
 
     @GET("/library/artists")
     Observable<PaginatedDataResponse> getLibraryArtists(@Query("offset") int offset, @Query("limit") int limit);
 
     @GET("/library/albums")
     Observable<PaginatedDataResponse> getLibraryAlbums(@Query("offset") int offset, @Query("limit") int limit);
+
+    @Streaming
+    @GET("/library/covers/{id}/raw")
+    Observable<Response> getCoverById(@Path("id") long id);
 
     @GET("/library/autodj")
     Observable<StateResponse> getAutodjState();
