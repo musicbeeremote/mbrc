@@ -13,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.*;
+import com.github.mrengineer13.snackbar.SnackBar;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
@@ -29,8 +30,6 @@ import com.kelsos.mbrc.ui.fragments.NowPlayingFragment;
 import com.kelsos.mbrc.ui.fragments.SearchFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import roboguice.activity.RoboActionBarActivity;
 
 public class MainFragmentActivity extends RoboActionBarActivity {
@@ -41,6 +40,7 @@ public class MainFragmentActivity extends RoboActionBarActivity {
     private DisplayFragment mDisplay;
     private boolean navChanged;
     private DialogFragment mDialog;
+    private SnackBar mSnackBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +49,8 @@ public class MainFragmentActivity extends RoboActionBarActivity {
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+
+        mSnackBar = new SnackBar(this);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerMenu = findViewById(R.id.drawer_menu);
@@ -108,7 +110,7 @@ public class MainFragmentActivity extends RoboActionBarActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Crouton.cancelAllCroutons();
+
     }
 
     @Override public void onStart() {
@@ -216,11 +218,11 @@ public class MainFragmentActivity extends RoboActionBarActivity {
     }
 
     @Subscribe public void handleUserNotification(NotifyUser event) {
-        if (event.isFromResource()) {
-            Crouton.makeText(this, event.getResId(), Style.INFO).show();
-        } else {
-            Crouton.makeText(this, event.getMessage(), Style.INFO).show();
-        }
+        final String message = event.isFromResource()
+                ? getString(event.getResId())
+                : event.getMessage();
+
+        mSnackBar.show(message);
     }
 
     @Override public boolean onKeyDown(int keyCode, KeyEvent event) {

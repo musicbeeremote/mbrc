@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import com.github.mrengineer13.snackbar.SnackBar;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ConnectionSettingsAdapter;
@@ -25,8 +26,6 @@ import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
@@ -43,12 +42,13 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
 
     private ProgressDialog mProgress;
     private Context mContext;
-    private Toolbar mToolbar;
+    private SnackBar mSnackBar;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ui_activity_connection_manager);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mSnackBar = new SnackBar(this);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -143,33 +143,32 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
 
     @Subscribe public void handleDiscoveryStopped(DiscoveryStopped event) {
         if (mProgress != null) {
-            mProgress.hide();
+            mProgress.dismiss();
         }
         String message = "";
-        de.keyboardsurfer.android.widget.crouton.Style style = Style.INFO;
         switch (event.getReason()) {
 
             case NO_WIFI:
                 message = getString(R.string.con_man_no_wifi);
                 break;
             case NOT_FOUND:
-                style = Style.ALERT;
                 message = getString(R.string.con_man_not_found);
                 break;
             case COMPLETE:
-                style = Style.CONFIRM;
                 message = getString(R.string.con_man_success);
                 break;
         }
 
-        Crouton.makeText(this, message, style).show();
+        mSnackBar.show(message);
     }
 
     @Subscribe public void handleUserNotification(NotifyUser event) {
-        if (event.isFromResource()) {
-            Crouton.makeText(this, event.getResId(), Style.INFO).show();
-        } else {
-            Crouton.makeText(this, event.getMessage(), Style.INFO).show();
-        }
+        final String message = event.isFromResource()
+                ? getString(event.getResId())
+                : event.getMessage();
+
+        mSnackBar.show(message);
     }
+
+
 }
