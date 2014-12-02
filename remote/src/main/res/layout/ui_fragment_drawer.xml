@@ -20,8 +20,8 @@
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="45dp"
-            android:layout_above="@+id/drawer_version_indicator"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/exit_layout"
             android:id="@+id/linearLayout">
 
         <View
@@ -34,8 +34,28 @@
                 android:layout_height="wrap_content"
                 android:text="@string/drawer_connection_status_off"
                 android:id="@+id/menuConnector"
-                android:layout_gravity="left|center_vertical"
-                android:drawableLeft="@drawable/ic_connectivy_off"
+                android:layout_gravity="start|center_vertical"
+                style="@style/Menu.Title"
+                android:background="@drawable/ui_drawer_clickable_background"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/exit_layout"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:orientation="vertical"
+            android:layout_above="@+id/drawer_version_indicator">
+        <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@color/mbrc_drawer_seperator"/>
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/menus_exit"
+                android:id="@+id/menu_exit"
+                android:layout_gravity="start|center_vertical"
                 style="@style/Menu.Title"
                 android:background="@drawable/ui_drawer_clickable_background"/>
 
@@ -46,7 +66,7 @@
             android:layout_height="wrap_content"
             android:text="@string/ui_drawer_menu_version"
             android:id="@+id/drawer_version_indicator"
-            android:layout_gravity="left|center_vertical"
+            android:layout_gravity="start|center_vertical"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"

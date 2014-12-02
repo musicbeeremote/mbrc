@@ -5,7 +5,7 @@
         <item name="android:background">@drawable/selectable_menu_item</item>
         <item name="android:textAppearance">?android:attr/textAppearance</item>
         <item name="android:textColor">#ffffff</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingRight">32dp</item>
         <item name="android:paddingTop">8dp</item>

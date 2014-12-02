@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.DrawerAdapter;
 import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.controller.Controller;
 import com.kelsos.mbrc.data.NavigationEntry;
 import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.MessageEvent;
@@ -36,6 +39,7 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
     @Inject RemoteUtils rmUtils;
     @InjectView(R.id.menuConnector) TextView menuConnector;
     @InjectView(R.id.drawer_version_indicator) TextView versionIndicator;
+    @InjectView(R.id.menu_exit) TextView menuExit;
 
     private Typeface robotoLight;
     private DrawerLayout mDrawerLayout;
@@ -80,12 +84,20 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
         menuConnector.setOnLongClickListener(connectButtonLongClick);
         menuConnector.setTypeface(robotoLight);
 
-        ArrayList<NavigationEntry> nav = new ArrayList<NavigationEntry>();
-        int bound = getResources().getInteger(R.integer.mbrc_drawer_drawable_bounds);
-        nav.add(new NavigationEntry("Home", getResources().getDrawable(R.drawable.ic_action_play), bound, bound));
-        nav.add(new NavigationEntry("Search", getResources().getDrawable(R.drawable.ic_action_search), bound, bound));
-        nav.add(new NavigationEntry("Now playing list", getResources().getDrawable(R.drawable.ic_action_playlist), bound, bound));
-        nav.add(new NavigationEntry("Lyrics", getResources().getDrawable(R.drawable.ic_action_lyrics), bound, bound));
+        menuExit.setTypeface(robotoLight);
+        menuExit.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                final Activity activity = getActivity();
+                activity.stopService(new Intent(activity, Controller.class));
+                activity.finish();
+            }
+        });
+
+        ArrayList<NavigationEntry> nav = new ArrayList<>();
+        nav.add(new NavigationEntry("Home"));
+        nav.add(new NavigationEntry("Search"));
+        nav.add(new NavigationEntry("Now playing list"));
+        nav.add(new NavigationEntry("Lyrics"));
 
         setListAdapter(new DrawerAdapter(getActivity(), R.layout.ui_drawer_item, nav));
         getListView().setOnItemClickListener(new DrawerOnClickListener());
@@ -113,19 +125,15 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
         if (menuConnector == null) return;
         switch (change.getStatus()) {
             case CONNECTION_OFF:
-                menuConnector.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_connectivy_off, 0, 0, 0);
                 menuConnector.setText(R.string.drawer_connection_status_off);
                 break;
             case CONNECTION_ON:
-                menuConnector.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_connectivity_connected, 0, 0, 0);
                 menuConnector.setText(R.string.drawer_connection_status_on);
                 break;
             case CONNECTION_ACTIVE:
-                menuConnector.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_connectivity_active, 0, 0, 0);
                 menuConnector.setText(R.string.drawer_connection_status_active);
                 break;
         }
-
     }
 
     @Override public void onBackStackChanged() {
