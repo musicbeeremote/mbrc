@@ -184,7 +184,7 @@
                 android:progress="0"
                 android:progressDrawable="@drawable/ic_volume_bar_progress"
                 android:secondaryProgress="0"
-                android:thumb="@drawable/ic_seeker_volume_thumb"
+                android:thumb="@drawable/volume_thumb"
                 android:thumbOffset="16dp"/>
 
     </RelativeLayout>

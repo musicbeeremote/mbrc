@@ -270,15 +270,15 @@
                 android:layout_toRightOf="@+id/main_mute_button"
                 android:paddingRight="8dp"
                 android:paddingLeft="8dp"
-                android:thumbOffset="16dp"
+                android:thumbOffset="8dp"
                 android:gravity="center"
                 android:max="100"
-                android:maxHeight="7dp"
-                android:minHeight="7dp"
+                android:maxHeight="6dp"
+                android:minHeight="6dp"
                 android:progress="0"
                 android:progressDrawable="@drawable/ic_volume_bar_progress"
                 android:secondaryProgress="0"
-                android:thumb="@drawable/ic_seeker_volume_thumb"
+                android:thumb="@drawable/volume_thumb"
                 android:layout_centerVertical="true"/>
 
     </RelativeLayout>

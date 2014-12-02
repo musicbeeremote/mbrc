@@ -19,4 +19,18 @@
         <item name="android:maxHeight">24dip</item>
         <item name="android:minHeight">24dip</item>
     </style>
+
+    <style name="ActioBarStyle" parent="Base.Theme.AppCompat.Light">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:windowActionBarOverlay">true</item>
+
+        <!-- Support library compatibility -->
+        <item name="background">@color/colorPrimary</item>
+        <item name="windowActionBarOverlay">true</item>
+    </style>
+
+    <style name="PopupStyle" parent="@style/ThemeOverlay.AppCompat.Dark">
+        <item name="android:background">@color/mbrc_background</item>
+        <item name="background">@color/mbrc_background</item>
+    </style>
 </resources>
