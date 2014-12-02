@@ -19,42 +19,31 @@
     <string name="main_image_view_cover_description">It displays the album cover for the current track.
 </string>
     <string name="main_menu_settings">Settings</string>
-    <string name="settings_connection_hostname">Hostname or IP</string>
     <string name="settings_connection">Connection Settings</string>
     <string name="settings_key_hostname">server_hostname</string>
     <string name="settings_key_port">server_port</string>
-    <string name="settings_connection_port">Port:</string>
     <string name="settings_miscellaneous">Miscellaneous</string>
     <string name="settings_key_reduce_volume">reduce_volume_on_ring</string>
     <string name="settings_miscellaneous_reduce_volume">Reduce on Incoming</string>
     <string name="settings_miscellaneous_reduce_volume_description">Reduce the player volume on incoming call</string>
-    <string name="notification_check_network_settings">Check hostname or Port</string>
-    <string name="main_menu_title_playlist">Now Playing</string>
-    <string name="notification_no_lyrics">No Lyrics Found</string>
     <string name="main_label_track_title">MusicBee Remote Control</string>
     <string name="main_label_artist">Konstantinos Paparas</string>
     <string name="main_label_duration_current">01:03</string>
     <string name="main_label_duration_total">04:11</string>
     <string name="main_label_date">© 2012</string>
     <string name="main_label_album">Copyright</string>
-    <string name="main_button_connection_description">Displays the connection status. Also if the
-		connection is not active it initiates it when pressed.</string>
     <string name="info_service_description">This service is responsible for the communication
 		of the application
 		with the plugin.
 </string>
     <string name="application_description">Remote Control Application for MusicBee</string>
-    <string name="main_menu_title_lyrics">Lyrics</string>
     <string name="main_menu_title_share">Share</string>
     <string name="main_menu_title_settings">Settings</string>
-    <string name="string_value_lyrics">Lyrics</string>
-    <string name="string_value_now_playing">Now Playing</string>
     <string name="preferences_category_about">About MusicBee Remote</string>
 	<string name="preferences_about_version">MusicBee Remote Version</string>
 	<string name="alert_invalid_port_number">The valid port range is from 1 to 65535</string>
 	<string name="alert_invalid_range">"Invalid Range"</string>
 	<string name="notification_connection_timeout">Connection timed out</string>
-	<string name="aboutview_musicbee_remote">About MusicBee Remote</string>
 	<string name="notification_not_allowed">Client is not allowed</string>
 	<string name="now_playing_search">Search</string>
 	<string name="now_playing_search_hint">Search for a track</string>
@@ -71,15 +60,9 @@
     <string name="settings_dialog_hint_name">Computer name</string>
     <string name="settings_dialog_hint_host">Hostname / IP</string>
     <string name="settings_dialog_hint_port">Port number</string>
-    <string name="main_lfm_content">The last fm love button</string>
     <string name="main_button_lfm_love_description">Used to change the love state of the playing track</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-    <string name="ui_drawer_menu_home">Home</string>
-    <string name="ui_drawer_menu_search">Search</string>
-    <string name="ui_drawer_menu_np">Now Playing List</string>
-    <string name="ui_drawer_menu_lyrics">Lyrics</string>
-    <string name="ui_drawer_menu_settings">Settings</string>
     <string name="ui_drawer_menu_version">MusicBee Remote %1$s</string>
     <string name="artist_placeholder">Artistname</string>
     <string name="title_placeholder">Titleplaceholder</string>
@@ -101,7 +84,7 @@
     <string name="settings_oss_license">Open source licenses</string>
     <string name="settings_version">settings_version</string>
     <string name="preferences_key_connection_manager">manage_connections</string>
-    <string name="progress_scanning">Scanning...</string>
+    <string name="progress_scanning">Scanning…</string>
     <string name="progress_scanning_message">Wait while scanning for a remote host</string>
     <string name="search_msg_album_not_found">No albums found for the current search</string>
     <string name="search_msg_artist_not_found">No artist found for the current search</string>
@@ -133,7 +116,7 @@
     <string name="settings_key_license">mbrc_license</string>
     <string name="main_menu_help">Help</string>
     <string name="settings_key_last_version_run">last_version_run</string>
-    <string name="dialog_upgrade_negative">Ok</string>
+    <string name="dialog_upgrade_negative">OK</string>
     <string name="dialog_upgrade_title">Welcome</string>
 
 </resources>
