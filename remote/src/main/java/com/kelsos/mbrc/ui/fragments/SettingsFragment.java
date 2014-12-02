@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.activities;
+package com.kelsos.mbrc.ui.fragments;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -7,35 +7,32 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.LinearLayout;
-import com.google.inject.Inject;
+import com.github.machinarius.preferencefragment.PreferenceFragment;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity;
 import com.kelsos.mbrc.utilities.RemoteUtils;
 import com.squareup.otto.Bus;
-import roboguice.activity.RoboPreferenceActivity;
 
-public class AppPreferenceView extends RoboPreferenceActivity {
-    @Inject Bus bus;
-    @Inject RemoteUtils rmUtils;
+public class SettingsFragment extends PreferenceFragment {
 
-    private Toolbar mActionBar;
+    private Bus bus;
+    private Context mContext;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mActionBar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        mActionBar.setTitle(R.string.main_menu_title_settings);
+    public static SettingsFragment newInstance(Bus bus) {
+        final SettingsFragment fragment = new SettingsFragment();
+        fragment.setBus(bus);
+        return fragment;
+    }
+
+    @Override public void onCreate(Bundle paramBundle) {
+        super.onCreate(paramBundle);
         addPreferencesFromResource(R.xml.application_settings);
-        final Context mContext = this;
+        mContext = getActivity();
 
         final Preference mOpenSource = findPreference(getResources().getString(R.string.preferences_open_source));
         final Preference mManager = findPreference(getResources().getString(R.string.preferences_key_connection_manager));
@@ -60,7 +57,7 @@ public class AppPreferenceView extends RoboPreferenceActivity {
 
         if (mVersion != null) {
             try {
-                mVersion.setSummary(String.format(getResources().getString(R.string.settings_version_number), RemoteUtils.getVersion(this)));
+                mVersion.setSummary(String.format(getResources().getString(R.string.settings_version_number), RemoteUtils.getVersion(mContext)));
             } catch (PackageManager.NameNotFoundException e) {
                 if (BuildConfig.DEBUG) {
                     e.printStackTrace();
@@ -95,30 +92,10 @@ public class AppPreferenceView extends RoboPreferenceActivity {
             });
         }
     }
-
-    @Override public void setContentView(int layoutResID) {
-        ViewGroup contentView = (ViewGroup) LayoutInflater.from(this).inflate(
-                R.layout.settings_activity, new LinearLayout(this), false);
-
-
-        mActionBar = (Toolbar) contentView.findViewById(R.id.toolbar);
-        mActionBar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        ViewGroup contentWrapper = (ViewGroup) contentView.findViewById(R.id.content_wrapper);
-        LayoutInflater.from(this).inflate(layoutResID, contentWrapper, true);
-
-        getWindow().setContentView(contentView);
-    }
-
     private void showLicenseDialog() {
-        final WebView webView = new WebView(this);
+        final WebView webView = new WebView(mContext);
         webView.loadUrl("file:///android_asset/license.html");
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(mContext)
                 .setView(webView)
                 .setPositiveButton(android.R.string.ok, null)
                 .setTitle("MusicBee Remote license")
@@ -127,9 +104,9 @@ public class AppPreferenceView extends RoboPreferenceActivity {
     }
 
     private void showOpenSourceLicenseDialog() {
-        final WebView webView = new WebView(this);
+        final WebView webView = new WebView(mContext);
         webView.loadUrl("file:///android_asset/licenses.html");
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(mContext)
                 .setView(webView)
                 .setPositiveButton(android.R.string.ok, null)
                 .setTitle("Open source licenses")
@@ -141,10 +118,14 @@ public class AppPreferenceView extends RoboPreferenceActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                getActivity().finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void setBus(Bus bus) {
+        this.bus = bus;
     }
 }

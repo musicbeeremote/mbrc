@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -40,14 +41,13 @@ public class MainFragmentActivity extends RoboActionBarActivity {
     private DisplayFragment mDisplay;
     private boolean navChanged;
     private DialogFragment mDialog;
-    private Toolbar mToolbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ui_main_container);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -132,7 +132,7 @@ public class MainFragmentActivity extends RoboActionBarActivity {
 
                 return true;
             case R.id.actionbar_settings:
-                startActivity(new Intent(this, AppPreferenceView.class));
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.actionbar_help:
                 Intent openHelp = new Intent(Intent.ACTION_VIEW);
@@ -237,7 +237,7 @@ public class MainFragmentActivity extends RoboActionBarActivity {
     }
 
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
+    public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 return true;

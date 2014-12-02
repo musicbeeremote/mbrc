@@ -27,21 +27,21 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".ui.activities.AppPreferenceView"
-                android:parentActivityName="ui.activities.MainFragmentActivity">
+                android:name=".ui.activities.SettingsActivity"
+                android:parentActivityName=".ui.activities.MainFragmentActivity">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="ui.activities.MainFragmentActivity"/>
+                    android:value=".ui.activities.MainFragmentActivity"/>
         </activity>
         <activity
                 android:name=".ui.activities.ConnectionManagerActivity"
                 android:windowSoftInputMode="adjustNothing"
-                android:parentActivityName=".ui.activities.AppPreferenceView">
+                android:parentActivityName=".ui.activities.SettingsActivity">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="ui.activities.AppPreferenceView"/>
+                    android:value=".ui.activities.SettingsActivity"/>
 
         </activity>
 
