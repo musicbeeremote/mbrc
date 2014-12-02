@@ -298,23 +298,15 @@ public class MainFragment extends RoboFragment {
         inflater.inflate(R.menu.share, menu);
         MenuItem shareItem = menu.findItem(R.id.actionbar_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+        mShareActionProvider.setShareIntent(getShareIntent());
     }
 
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.actionbar_share:
-                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                shareIntent.setType("text/plain");
-                shareIntent.putExtra(Intent.EXTRA_TEXT, "Now Playing: " + artistLabel.getText() + " - " + titleLabel.getText());
-                setShareIntent(shareIntent);
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    private void setShareIntent(Intent shareIntent) {
-        if (mShareActionProvider != null) mShareActionProvider.setShareIntent(shareIntent);
+    private Intent getShareIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        final String payload = String.format("Now Playing: %s - %s", artistLabel.getText(), titleLabel.getText());
+        shareIntent.putExtra(Intent.EXTRA_TEXT, payload);
+        return shareIntent;
     }
 
     @Subscribe public void handleRatingChange(RatingChanged event) {
@@ -451,6 +443,8 @@ public class MainFragment extends RoboFragment {
         albumLabel.setText(change.getAlbum());
         yearLabel.setText(change.getYear());
 
+        if (mShareActionProvider != null)
+            mShareActionProvider.setShareIntent(getShareIntent());
     }
 
     @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChange change) {

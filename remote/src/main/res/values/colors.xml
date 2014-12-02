@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <color name="pressed_mbrc_default">#88ffffff</color>
+    <color name="mbrc_background">#ff424242</color>
+    <color name="mbrc_drawer_seperator">#0e0e0e</color>
+    <color name="mbrc_text">#ffffffff</color>
+    <color name="mbrc_secondary_text">#b3ffffff</color>
+    <color name="mbrc_divider">#1e000000</color>
+    <color name="mbrc_hint">#4dffffff</color>
+    <color name="mbrc_transparent">#00000000</color>
+    <color name="mbrc_transparent_dark">#99000000</color>
+    <color name="colorPrimary">#ffc107</color>
+    <color name="colorPrimaryDark">#ffa000</color>
+    <color name="colorAccent">#ffab40</color>
+</resources>
