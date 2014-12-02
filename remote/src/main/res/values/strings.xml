@@ -119,5 +119,7 @@
     <string name="dialog_upgrade_negative">OK</string>
     <string name="dialog_upgrade_title">Welcome</string>
     <string name="menus_exit">Exit</string>
+    <string name="pref_key_build_time">build_time_key</string>
+    <string name="pref_key_revision">revision_key</string>
 
 </resources>

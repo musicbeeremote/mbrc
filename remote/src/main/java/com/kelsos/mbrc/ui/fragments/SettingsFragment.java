@@ -37,6 +37,8 @@ public class SettingsFragment extends PreferenceFragment {
         final Preference mOpenSource = findPreference(getResources().getString(R.string.preferences_open_source));
         final Preference mManager = findPreference(getResources().getString(R.string.preferences_key_connection_manager));
         final Preference mVersion = findPreference(getResources().getString(R.string.settings_version));
+        final Preference mBuild = findPreference(getResources().getString(R.string.pref_key_build_time));
+        final Preference mRevision = findPreference(getResources().getString(R.string.pref_key_revision));
         if (mOpenSource != null) {
             mOpenSource.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override public boolean onPreferenceClick(Preference preference) {
@@ -90,6 +92,13 @@ public class SettingsFragment extends PreferenceFragment {
                     return false;
                 }
             });
+        }
+
+        if (mBuild != null) {
+            mBuild.setSummary(BuildConfig.BUILD_TIME);
+        }
+        if (mRevision != null) {
+            mRevision.setSummary(BuildConfig.GIT_SHA);
         }
     }
     private void showLicenseDialog() {

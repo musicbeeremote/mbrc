@@ -33,6 +33,13 @@
                 android:summary="@string/settings_version_number"
                 android:key="@string/settings_version"
                 android:title="@string/preferences_about_version"/>
+        <Preference
+                android:title="Build Time"
+                android:key="@string/pref_key_build_time"/>
+        <Preference
+                android:title="Revision"
+                android:key="@string/pref_key_revision"/>
+
     </PreferenceCategory>
 
 </PreferenceScreen>
