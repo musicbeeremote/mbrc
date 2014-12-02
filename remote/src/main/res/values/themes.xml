@@ -10,6 +10,8 @@
         <item name="windowActionBar">false</item>
     </style>
 
+
+
     <style name="Theme.Settings" parent="@style/AppTheme">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>

@@ -10,6 +10,8 @@
               android:showDividers="middle"
               android:baselineAligned="false">
 
+    <include layout="@layout/toolbar"/>
+
     <ListView
             android:id="@+id/connection_list"
             android:layout_width="match_parent"

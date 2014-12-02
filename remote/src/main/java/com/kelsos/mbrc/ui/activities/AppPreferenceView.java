@@ -32,7 +32,7 @@ public class AppPreferenceView extends RoboPreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //mActionBar.setDisplayHomeAsUpEnabled(true);
+        mActionBar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         mActionBar.setTitle(R.string.main_menu_title_settings);
         addPreferencesFromResource(R.xml.application_settings);
         final Context mContext = this;

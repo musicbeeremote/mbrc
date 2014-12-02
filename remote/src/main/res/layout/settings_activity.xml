@@ -4,12 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:minHeight="?attr/actionBarSize"
-            android:background="?attr/colorPrimary" />
+    <include layout="@layout/toolbar"/>
 
     <FrameLayout
             android:id="@+id/content_wrapper"
