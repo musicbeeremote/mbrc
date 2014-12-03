@@ -2,19 +2,17 @@ package com.kelsos.mbrc.ui.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
+import eu.inmite.android.lib.dialogs.SimpleDialogFragment;
 
-public class SettingsDialogFragment extends DialogFragment {
+public class SettingsDialogFragment extends SimpleDialogFragment {
     private EditText host;
     private EditText name;
     private EditText port;
@@ -40,61 +38,51 @@ public class SettingsDialogFragment extends DialogFragment {
         }
     }
 
-    @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        builder.setView(inflater.inflate(R.layout.ui_dialog_settings, null))
-                .setTitle(R.string.dialog_application_setup_title)
-                .setPositiveButton(R.string.settings_dialog_add,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+    @Override protected Builder build(Builder builder) {
+        builder.setView(LayoutInflater.from(getActivity()).inflate(R.layout.ui_dialog_settings, null));
+        builder.setTitle(R.string.dialog_application_setup_title);
+        builder.setPositiveButton(R.string.settings_dialog_add, new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                SaveEntry();
+            }
+        });
+        builder.setNegativeButton(R.string.dialog_application_setup_negative, new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                SettingsDialogFragment.this.getDialog().cancel();
+            }
+        });
 
-                            }
-                        })
-                .setNegativeButton(R.string.dialog_application_setup_negative, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        SettingsDialogFragment.this.getDialog().cancel();
-                    }
-                });
-        return builder.create();
+        return builder;
     }
 
-    @Override public void onStart() {
-        super.onStart();
+    private void SaveEntry() {
+        boolean shouldIClose = true;
+        String hostname = host.getText().toString();
+        String computerName = name.getText().toString();
 
-        AlertDialog dialog = (AlertDialog) getDialog();
-        if (dialog != null) {
-            Button confirm = dialog.getButton(Dialog.BUTTON_POSITIVE);
-            confirm.setOnClickListener(new Button.OnClickListener() {
-                @Override public void onClick(View view) {
-                    boolean shouldIClose = true;
-                    String hostname = host.getText().toString();
-                    String computerName = name.getText().toString();
-
-                    if (hostname.length() == 0 || computerName.length() == 0) {
-                        shouldIClose = false;
-                    }
-
-                    String portText = port.getText().toString();
-
-                    int portNum = portText.equals("") ? 0 : Integer.parseInt(portText);
-
-                    if (validatePortNumber(portNum) && shouldIClose) {
-                        ConnectionSettings settings = new ConnectionSettings(hostname, computerName, portNum, cindex);
-                        mListener.onDialogPositiveClick(SettingsDialogFragment.this, settings);
-                        dismiss();
-                    }
-                }
-            });
+        if (hostname.length() == 0 || computerName.length() == 0) {
+            shouldIClose = false;
         }
-        name = (EditText) dialog.findViewById(R.id.settings_dialog_name);
-        host = (EditText) dialog.findViewById(R.id.settings_dialog_host);
-        port = (EditText) dialog.findViewById(R.id.settings_dialog_port);
 
-        if (name != null || !name.getText().toString().equals("")) {
+        String portText = port.getText().toString();
+
+        int portNum = portText.equals("") ? 0 : Integer.parseInt(portText);
+
+        if (validatePortNumber(portNum) && shouldIClose) {
+            ConnectionSettings settings = new ConnectionSettings(hostname, computerName, portNum, cindex);
+            mListener.onDialogPositiveClick(this, settings);
+            dismiss();
+        }
+    }
+
+    @Override public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        name = (EditText) view.findViewById(R.id.settings_dialog_name);
+        host = (EditText) view.findViewById(R.id.settings_dialog_host);
+        port = (EditText) view.findViewById(R.id.settings_dialog_port);
+
+        if (name != null && name.getText().toString().equals("")) {
             name.setText(cname);
             host.setText(caddress);
             if (cport > 0) {

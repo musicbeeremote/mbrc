@@ -22,7 +22,6 @@
 
     <style name="ActioBarStyle" parent="Base.Theme.AppCompat.Light">
         <item name="android:background">@color/colorPrimary</item>
-        <item name="android:windowActionBarOverlay">true</item>
 
         <!-- Support library compatibility -->
         <item name="background">@color/colorPrimary</item>
@@ -33,4 +32,17 @@
         <item name="android:background">@color/mbrc_background</item>
         <item name="background">@color/mbrc_background</item>
     </style>
+
+    <style name="DialogStyleDark"/>
+
+    <style name="DialogStyleDark.Custom">
+        <!-- anything can be left out: -->
+        <item name="titleTextColor">@color/mbrc_text</item>
+        <item name="titleSeparatorColor">@color/colorPrimary</item>
+        <item name="messageTextColor">@color/mbrc_text</item>
+        <item name="buttonTextColor">@color/mbrc_text</item>
+        <item name="buttonBackgroundColorPressed">@color/mbrc_pressed_default</item>
+    </style>
+
+
 </resources>

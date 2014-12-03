@@ -1,35 +1,26 @@
 package com.kelsos.mbrc.ui.dialogs;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import android.view.View;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.activities.SettingsActivity;
+import eu.inmite.android.lib.dialogs.BaseDialogFragment;
 
-public class SetupDialogFragment extends DialogFragment {
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.dialog_application_setup)
-                .setTitle(R.string.dialog_application_setup_title)
-                .setPositiveButton(R.string.dialog_application_setup_positive,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                            }
-                        })
-                .setNegativeButton(R.string.dialog_application_setup_negative, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        SetupDialogFragment.this.getDialog().cancel();
-                    }
-                });
-        return builder.create();
+public class SetupDialogFragment extends BaseDialogFragment {
+
+    @Override protected Builder build(Builder builder) {
+        builder.setMessage(R.string.dialog_application_setup);
+        builder.setTitle(R.string.dialog_application_setup_title);
+        builder.setPositiveButton(R.string.dialog_application_setup_positive, new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                startActivity(new Intent(getActivity(), SettingsActivity.class));
+            }
+        });
+        builder.setNegativeButton(R.string.dialog_application_setup_negative, new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                SetupDialogFragment.this.getDialog().cancel();
+            }
+        });
+        return builder;
     }
 }

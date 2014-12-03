@@ -88,6 +88,7 @@ dependencies {
     compile 'com.viewpagerindicator:library:2.4.1@aar'
     compile 'com.mobeta.android.dslv:drag-sort-listview:0.6.1@aar'
     compile 'com.github.machinarius:preferencefragment:0.1.1'
+    compile 'eu.inmite.android.lib:android-styled-dialogs:1.2.0'
     provided 'org.roboguice:roboblender:3.0.1'
 }
 
