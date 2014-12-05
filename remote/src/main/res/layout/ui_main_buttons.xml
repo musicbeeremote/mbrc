@@ -11,6 +11,7 @@
             android:layout_height="30dp"
             android:id="@+id/main_repeat_button"
             android:background="@drawable/selectable_background_mbrc_dark"
+            android:contentDescription="@string/main_button_repeat_description"
             android:layout_gravity="center_vertical"
             android:src="@drawable/ic_media_repeat"/>
 
@@ -19,6 +20,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:background="@drawable/selectable_background_mbrc_dark"
             android:contentDescription="@string/main_button_previous_description"
             android:scaleType="fitCenter"
@@ -43,6 +45,7 @@
             android:background="@drawable/selectable_background_mbrc_dark"
             android:contentDescription="@string/main_button_next_description"
             android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_next"/>
 
@@ -52,6 +55,7 @@
             android:background="@drawable/selectable_background_mbrc_dark"
             android:id="@+id/main_shuffle_button"
             android:src="@drawable/ic_media_shuffle"
-            android:layout_gravity="center_vertical"/>
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/main_button_shuffle_description"/>
 
 </LinearLayout>
