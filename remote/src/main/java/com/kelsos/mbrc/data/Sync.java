@@ -1,7 +1,5 @@
 package com.kelsos.mbrc.data;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
@@ -21,35 +19,63 @@ import java.io.*;
 import java.util.List;
 
 public class Sync {
-    private final DaoMaster daoMaster;
+
     private final DaoSession daoSession;
     private RemoteApi api;
     private ObjectMapper mapper;
     private static final int STARTING_OFFSET = 0;
     private static final int LIMIT = 800;
-    private SQLiteDatabase db;
     private long startMillis;
     private long endMillis;
 
     @Inject
-    public Sync(RemoteApi api, ObjectMapper mapper, Context mContext) {
+    public Sync(RemoteApi api, ObjectMapper mapper, DaoSession daoSession) {
         this.api = api;
         this.mapper = mapper;
-
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(mContext, "lib-db", null);
-        db = helper.getWritableDatabase();
-        daoMaster = new DaoMaster(db);
-        daoSession = daoMaster.newSession();
-
+        this.daoSession = daoSession;
     }
 
-    public void startSyncing() {
+    public void startLibrarySyncing() {
         startMillis = System.currentTimeMillis();
         getGenres(STARTING_OFFSET, LIMIT).subscribe(this::processGenres, Logger::LogThrowable);
         getArtists(STARTING_OFFSET, LIMIT).subscribe(this::processArtists, Logger::LogThrowable);
         getAlbums(STARTING_OFFSET, LIMIT).subscribe(this::processAlbums, Logger::LogThrowable);
         getTracks(STARTING_OFFSET, LIMIT).subscribe(this::processTracks, Logger::LogThrowable);
         getCovers(STARTING_OFFSET, LIMIT).subscribe(this::processCovers, Logger::LogThrowable);
+    }
+
+    public void startCurrentQueueSyncing() {
+        api.getNowPlayingList(STARTING_OFFSET, LIMIT)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::processCurrentQueue, Logger::LogThrowable);
+    }
+
+    private void processCurrentQueue(PaginatedDataResponse paginatedData) {
+        QueueTrackDao queueTrackDao = daoSession.getQueueTrackDao();
+        daoSession.runInTx(() -> {
+            try {
+                for (JsonNode node : paginatedData.getData()) {
+                    final QueueTrack track = mapper.readValue(node, QueueTrack.class);
+                    queueTrackDao.insert(track);
+                }
+            } catch (IOException e) {
+                Ln.d(e);
+            }
+        });
+
+        int total = paginatedData.getTotal();
+        int offset = paginatedData.getOffset();
+        int limit = paginatedData.getLimit();
+
+        if (offset + limit < total) {
+            api.getNowPlayingList(offset + limit, limit)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::processCurrentQueue, Logger::LogThrowable);
+        } else {
+            Ln.d("no more data");
+        }
     }
 
     private void processCovers(PaginatedDataResponse paginatedData) {

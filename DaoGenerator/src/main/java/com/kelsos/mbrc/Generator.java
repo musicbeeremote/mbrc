@@ -54,6 +54,12 @@ public class Generator {
         track.addStringProperty("year");
         track.addStringProperty("path");
 
+        Entity queueTrack = schema.addEntity("QueueTrack");
+        queueTrack.addIdProperty();
+        queueTrack.addStringProperty("artist");
+        queueTrack.addStringProperty("title");
+        queueTrack.addStringProperty("path");
+        queueTrack.addIntProperty("index");
 
         new DaoGenerator().generateAll(schema, "../remote/src-gen/");
     }

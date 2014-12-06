@@ -8,11 +8,11 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.dao.QueueTrackDao;
 
-public class NowPlayingAdapter extends CursorAdapter {
+public class CurrentQueueAdapter extends CursorAdapter {
 
-
-    public NowPlayingAdapter(Context context, Cursor c, int flags) {
+    public CurrentQueueAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
 
@@ -23,9 +23,10 @@ public class NowPlayingAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-
-        ((TextView) view.findViewById(R.id.trackTitle)).setText('d');
-        ((TextView) view.findViewById(R.id.trackArtist)).setText('d');
+        final String title = cursor.getString(cursor.getColumnIndex(QueueTrackDao.Properties.Title.columnName));
+        final String artist = cursor.getString(cursor.getColumnIndex(QueueTrackDao.Properties.Artist.columnName));
+        ((TextView) view.findViewById(R.id.trackTitle)).setText(title);
+        ((TextView) view.findViewById(R.id.trackArtist)).setText(artist);
         //(ImageView) view.findViewById(R.id.listview_item_image);
     }
 }

@@ -1,6 +1,8 @@
 package com.kelsos.mbrc;
 
 import com.google.inject.AbstractModule;
+import com.kelsos.mbrc.dao.DaoSession;
+import com.kelsos.mbrc.providers.DaoSessionProvider;
 import com.kelsos.mbrc.providers.ObjectMapperProvider;
 import com.kelsos.mbrc.providers.RemoteApiProvider;
 import com.kelsos.mbrc.providers.RestAdapterBuilderProvider;
@@ -23,6 +25,10 @@ public class RemoteModule extends AbstractModule {
 
         bind(RemoteApi.class)
                 .toProvider(RemoteApiProvider.class)
+                .asEagerSingleton();
+
+        bind(DaoSession.class)
+                .toProvider(DaoSessionProvider.class)
                 .asEagerSingleton();
     }
 }

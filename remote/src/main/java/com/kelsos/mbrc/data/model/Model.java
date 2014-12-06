@@ -19,6 +19,9 @@ public class Model {
     private PlayerState playerState;
 
     @Inject
+    private RemoteApi api;
+
+    @Inject
     public Model(Context context, RemoteApi api) {
         pluginVersion = EMPTY;
         Ln.d("Model instantiated");

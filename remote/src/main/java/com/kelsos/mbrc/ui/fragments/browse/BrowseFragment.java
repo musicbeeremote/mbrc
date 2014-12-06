@@ -20,7 +20,7 @@ public class BrowseFragment extends RoboFragment {
     @Override
     public void onStart() {
         super.onStart();
-        sync.startSyncing();
+        sync.startLibrarySyncing();
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
