@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ListView;
 import com.kelsos.mbrc.R;
@@ -23,6 +24,8 @@ public class PlaylistActivity extends RoboActionBarActivity implements LoaderMan
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ui_fragment_nowplaying);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
         Intent intent = getIntent();
         mTitle = intent.getStringExtra("name");
         mHash = intent.getStringExtra("hash");

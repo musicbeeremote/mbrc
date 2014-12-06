@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_track_progress_group"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/side_margin_half"
+    tools:showIn="@layout/ui_fragment_main">
+
+    <TextView
+        android:id="@+id/main_track_progress_current"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/main_label_duration_current"
+        android:textColor="@color/remote_text"
+        android:textSize="@dimen/mbrc_duration_text_size"/>
+
+    <SeekBar
+        android:id="@+id/main_track_progress_seeker"
+        android:layout_width="0dip"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:maxHeight="6dp"
+        android:minHeight="6dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:progress="0"
+        android:progressDrawable="@drawable/ic_duration_bar_progress"
+        android:secondaryProgress="0"
+        android:thumb="@null"
+        android:thumbOffset="6dp"/>
+
+    <TextView
+        android:id="@+id/main_track_duration_total"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:text="@string/main_label_duration_total"
+        android:textColor="@color/remote_text"
+        android:textSize="@dimen/mbrc_duration_text_size"/>
+</LinearLayout>

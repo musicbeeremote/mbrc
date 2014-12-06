@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="48dp"
@@ -8,55 +9,54 @@
               android:gravity="center_vertical">
 
     <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="0dip"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:layout_height="fill_parent"
-            android:layout_marginLeft="@dimen/side_margin_half"
-            android:layout_marginRight="@dimen/side_margin_half">
+        android:orientation="vertical"
+        android:layout_width="0dip"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="@dimen/side_margin_half"
+        android:layout_marginRight="@dimen/side_margin_half">
 
         <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:textColor="#FFFFFF"
-                android:text="@string/placeholer_computer_name"
-                android:id="@+id/cs_list_name"
-                android:lines="1"
-                android:linksClickable="false"
-                android:textSize="18sp"/>
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:id="@+id/cs_list_name"
+            android:lines="1"
+            android:linksClickable="false"
+            android:textSize="18sp"
+            tools:text="Computer Name"/>
 
         <LinearLayout
-                android:layout_width="fill_parent"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dip"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:id="@+id/cs_list_host"
+                android:textSize="14sp"
+                android:layout_weight="1"
+                tools:text="192.168.100.10"/>
 
             <TextView
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:text="@string/place_holder_ip"
-                    android:id="@+id/cs_list_host"
-                    android:textSize="14sp"
-                    android:layout_weight="1"/>
-
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/placeholder_port"
-                    android:textSize="14sp"
-                    android:id="@+id/cs_list_port"
-                    />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/cs_list_port"
+                android:textSize="14sp"
+                tools:text="3132"/>
         </LinearLayout>
     </LinearLayout>
 
     <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/cs_list_default"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_alignParentEnd="true"
-            android:contentDescription="@string/connection_default_description"/>
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/cs_list_default"
+        android:layout_marginRight="@dimen/side_margin_half"
+        android:layout_marginEnd="@dimen/side_margin_half"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:contentDescription="@string/connection_default_description"/>
 
 </LinearLayout>

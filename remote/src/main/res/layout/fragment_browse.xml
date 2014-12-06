@@ -1,38 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
-
 
     <android.support.v4.view.ViewPager
         android:id="@+id/search_pager"
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="1"
-        >
+        android:layout_weight="1">
+
         <android.support.v4.view.PagerTabStrip
             android:id="@+id/pager_tab_strip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             android:background="@color/remote_primary"
+            android:textColor="@color/secondary_text_default_material_light"
             android:paddingTop="@dimen/side_margin_half"
             android:paddingBottom="@dimen/side_margin_half"/>
 
-        </android.support.v4.view.ViewPager>
-
+    </android.support.v4.view.ViewPager>
 
 
     <!--<fragment-->
-        <!--android:id="@+id/control_fragment"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="@dimen/mini_control_height"-->
-        <!--android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"-->
-        <!--android:layout="@layout/ui_fragment_mini_control"-->
-        <!--tools:layout="@layout/ui_fragment_mini_control"-->
-        <!--/>-->
+    <!--android:id="@+id/control_fragment"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="@dimen/mini_control_height"-->
+    <!--android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"-->
+    <!--android:layout="@layout/ui_fragment_mini_control"-->
+    <!--tools:layout="@layout/ui_fragment_mini_control"-->
+    <!--/>-->
 
 </LinearLayout>

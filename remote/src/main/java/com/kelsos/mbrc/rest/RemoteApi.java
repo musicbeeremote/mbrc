@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.rest;
 
+import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.converter.JacksonConverter;
 import com.kelsos.mbrc.rest.responses.*;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public interface RemoteApi {
     Converter DATA_CONVERTER = new JacksonConverter(new ObjectMapper());
-    String API_URL = "http://development.lan:8188";
+    String API_URL = String.format("http://%s:8188", BuildConfig.DEVHOST);
     String COVER_URL = RemoteApi.API_URL + "/track/cover/raw";
 
     @GET("/player/volume")

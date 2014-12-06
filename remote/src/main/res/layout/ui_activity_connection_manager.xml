@@ -9,6 +9,8 @@
               android:showDividers="middle"
               android:baselineAligned="false">
 
+    <include layout="@layout/toolbar"/>
+
     <ListView
             android:id="@+id/connection_list"
             android:layout_width="match_parent"
@@ -32,7 +34,8 @@
             android:divider="@color/remote_transparent"
             android:orientation="horizontal"
             android:baselineAligned="false"
-            android:dividerPadding="8dp">
+            android:dividerPadding="8dp"
+            style="?android:attr/buttonBarButtonStyle">
 
         <Button
                 android:layout_width="0dp"
@@ -40,14 +43,15 @@
                 android:layout_height="wrap_content"
                 android:text="@string/connection_manager_scan"
                 android:id="@+id/connection_scan"
-                android:layout_gravity="left|center_vertical"/>
+                style="?android:attr/buttonBarButtonStyle"/>
 
         <Button
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/connection_manager_add"
-                android:id="@+id/connection_add"/>
+                android:id="@+id/connection_add"
+                style="?android:attr/buttonBarButtonStyle"/>
 
     </LinearLayout>
 

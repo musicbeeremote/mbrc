@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.view.*;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.kelsos.mbrc.R;
@@ -18,6 +19,7 @@ import com.kelsos.mbrc.events.ui.LfmRatingChanged;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.fragments.*;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseFragment;
+import org.jetbrains.annotations.NotNull;
 import roboguice.activity.RoboActionBarActivity;
 import rx.Subscription;
 import rx.android.observables.AndroidObservable;
@@ -36,8 +38,11 @@ public class HomeActivity extends RoboActionBarActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
         setContentView(R.layout.ui_main_container);
+
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerMenu = findViewById(R.id.drawer_menu);
@@ -217,7 +222,7 @@ public class HomeActivity extends RoboActionBarActivity {
     }
 
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
+    public boolean onKeyUp(int keyCode, @NotNull KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 return true;

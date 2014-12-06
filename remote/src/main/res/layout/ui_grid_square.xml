@@ -1,36 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:background="@drawable/ui_list_item_background"
-                android:orientation="vertical"
-                android:layout_width="@dimen/mbrc_grid_item_width"
-                android:layout_height="@dimen/mbrc_grid_item_height">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:background="@drawable/ui_list_item_background"
+              android:orientation="vertical"
+              android:layout_width="@dimen/mbrc_grid_item_width"
+              android:layout_height="@dimen/mbrc_grid_item_height">
 
     <ImageView
-            android:id="@+id/ui_grid_image"
-            android:src="@drawable/ic_image_no_cover"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/mbrc_grid_item_width"/>
+        android:id="@+id/ui_grid_image"
+        android:src="@drawable/ic_image_no_cover"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mbrc_grid_item_width"
+        android:contentDescription="@string/grid_album_cover"/>
 
     <RelativeLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:paddingLeft="@dimen/side_margin_half"
-            android:paddingRight="@dimen/side_margin_half"
-            android:layout_height="0dip"
-            android:layout_weight="1"
-            android:id="@+id/linearLayout"
-            >
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:paddingStart="@dimen/side_margin_half"
+        android:paddingLeft="@dimen/side_margin_half"
+        android:paddingEnd="1dp"
+        android:paddingRight="1dp"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:id="@+id/linearLayout">
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingLeft="@dimen/side_margin_half"
+            android:paddingRight="@dimen/side_margin_half"
             android:gravity="center_vertical"
             android:layout_toLeftOf="@+id/ui_item_context_indicator"
+            android:layout_toStartOf="@+id/ui_item_context_indicator"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true">
+
             <TextView
                 tools:text="Title"
                 android:id="@+id/line_one"
@@ -38,7 +44,6 @@
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:layout_width="match_parent"
-                android:fontFamily="sans-serif-light"
                 android:textStyle="normal"
                 android:textSize="@dimen/mbrc_grid_line_one_size"
                 android:layout_height="wrap_content"/>
@@ -46,30 +51,29 @@
             <TextView
                 tools:text="artist"
                 android:ellipsize="end"
-                android:fontFamily="sans-serif"
                 android:textColor="@color/remote_secondary_text"
                 android:id="@+id/line_two"
                 android:singleLine="true"
                 android:textStyle="normal"
                 android:textSize="@dimen/mbrc_grid_line_two_size"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-            />
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ui_item_context_indicator"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:paddingLeft="@dimen/side_margin_half"
             android:background="@drawable/selectable_background_mbrc_dark"
             android:gravity="center_vertical"
-            android:layout_alignParentEnd="true">
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true">
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/mbrc_list_context_indicator_height"
-                android:src="@drawable/ic_context_indicator"/>
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_core_overflow"
+                android:contentDescription="@string/abc_action_menu_overflow_description"/>
         </LinearLayout>
 
 

@@ -22,6 +22,7 @@
         android:layout_height="fill_parent"
         android:gravity="center_vertical"
         android:orientation="vertical"
+        android:paddingRight="@dimen/side_margin_half"
         android:paddingLeft="@dimen/side_margin_half">
 
         <TextView
@@ -33,7 +34,6 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/remote_text"
-            android:fontFamily="sans-serif-light"
             tools:text="Album Name"/>
 
         <TextView

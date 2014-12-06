@@ -2,11 +2,11 @@
 
 
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@android:id/text1"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:paddingLeft="@dimen/side_margin_half"
-    android:paddingRight="@dimen/side_margin_half"
-    android:textColor="#BBBBBB"
-    android:textSize="@dimen/lyrics_text_size" />
+          android:id="@android:id/text1"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:gravity="center_vertical"
+          android:paddingLeft="@dimen/side_margin_half"
+          android:paddingRight="@dimen/side_margin_half"
+          android:textColor="#BBBBBB"
+          android:textSize="@dimen/lyrics_text_size"/>

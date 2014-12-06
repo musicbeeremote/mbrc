@@ -14,7 +14,7 @@
     <item android:id="@android:id/progress">
         <clip>
             <shape>
-                <solid android:color="#CCFFDC14"/>
+                <solid android:color="@color/remote_primary"/>
                 <corners android:bottomRightRadius="2dp"
                          android:bottomLeftRadius="2dp"
                          android:topLeftRadius="2dp"

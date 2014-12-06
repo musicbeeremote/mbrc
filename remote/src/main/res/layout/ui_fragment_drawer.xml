@@ -4,82 +4,80 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:orientation="vertical"
-                android:background="@color/mbrc_background"
+                android:background="@color/background_material_dark"
                 tools:ignore="true">
 
     <ListView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:orientation="vertical"
-            android:id="@android:id/list"
-            android:layout_above="@+id/linearLayout"
-            tools:listitem="@layout/ui_drawer_item"
-            android:divider="@color/remote_divider"
-            android:dividerHeight="1dp">
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:id="@android:id/list"
+        android:layout_above="@+id/linearLayout"
+        tools:listitem="@layout/ui_drawer_item"
+        android:divider="@color/remote_divider"
+        android:dividerHeight="1dp">
     </ListView>
 
     <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="45dp"
-            android:layout_above="@+id/exit_layout"
-            android:id="@+id/linearLayout">
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/exit_layout"
+        android:id="@+id/linearLayout">
 
         <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                />
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            />
 
         <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/drawer_connection_status_off"
-                android:id="@+id/menuConnector"
-                android:layout_gravity="start|center_vertical"
-                android:drawableStart="@drawable/ic_connectivy_off"
-                android:drawableLeft="@drawable/ic_connectivy_off"
-                style="@style/Menu.Title"
-                android:background="@drawable/ui_drawer_clickable_background"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/drawer_connection_status_off"
+            android:id="@+id/menuConnector"
+            android:layout_gravity="start|center_vertical"
+            android:background="@drawable/ui_drawer_clickable_background"
+            style="@style/Menu.Title"/>
 
     </LinearLayout>
 
     <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="45dp"
-            android:layout_above="@+id/drawer_version_indicator"
-            android:id="@+id/exit_layout">
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:layout_above="@+id/drawer_version_indicator"
+        android:id="@+id/exit_layout">
 
         <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                />
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            />
 
         <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/drawer_exit"
-                android:id="@+id/menu_exit"
-                android:layout_gravity="start|center_vertical"
-                style="@style/Menu.Title"
-                android:background="@drawable/ui_drawer_clickable_background"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/drawer_exit"
+            android:id="@+id/menu_exit"
+            android:layout_gravity="start|center_vertical"
+            style="@style/Menu.Title"
+            android:background="@drawable/ui_drawer_clickable_background"/>
 
     </LinearLayout>
 
     <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ui_drawer_menu_version"
-            android:id="@+id/drawer_version_indicator"
-            android:layout_gravity="start|center_vertical"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
-            android:textSize="12sp"
-            android:layout_marginBottom="3dp"
-            android:textStyle="normal"
-            android:textIsSelectable="false"
-            android:singleLine="true"
-            android:layout_centerHorizontal="true"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ui_drawer_menu_version"
+        android:id="@+id/drawer_version_indicator"
+        android:layout_gravity="start|center_vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:textSize="12sp"
+        android:layout_marginBottom="3dp"
+        android:textStyle="normal"
+        android:textIsSelectable="false"
+        android:singleLine="true"
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>
 

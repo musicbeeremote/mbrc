@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.activities;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.*;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.fragments.profile.AlbumTracksFragment;
@@ -21,6 +22,8 @@ public class Profile extends RoboActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
         final Intent intent = getIntent();
 
         if (savedInstanceState == null) {

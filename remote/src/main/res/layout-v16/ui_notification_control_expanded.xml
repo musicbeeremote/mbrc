@@ -1,117 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="128.0dip">
 
     <ImageView
-            android:layout_width="@dimen/mbrc_notification_expanded_height"
-            android:layout_height="@dimen/mbrc_notification_expanded_height"
-            android:id="@+id/expanded_notification_cover"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true"
-            android:src="@drawable/ic_image_no_cover"
-            android:scaleType="fitXY"/>
+        android:layout_width="@dimen/mbrc_notification_expanded_height"
+        android:layout_height="@dimen/mbrc_notification_expanded_height"
+        android:id="@+id/expanded_notification_cover"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/ic_image_no_cover"
+        android:scaleType="fitXY"
+        android:contentDescription="@string/main_image_view_cover_description"/>
 
     <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/expanded_notification_text"
+        android:layout_marginTop="@dimen/side_margin_half"
+        android:layout_marginLeft="@dimen/side_margin_half"
+        android:layout_marginStart="@dimen/side_margin_half"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/expanded_notification_remove"
+        android:layout_toStartOf="@+id/expanded_notification_remove"
+        android:layout_toRightOf="@+id/expanded_notification_cover"
+        android:layout_toEndOf="@+id/expanded_notification_cover">
+
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/expanded_notification_text"
-            android:layout_marginTop="@dimen/side_margin_half"
-            android:layout_marginLeft="@dimen/side_margin_half"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/expanded_notification_remove"
-            android:layout_toRightOf="@+id/expanded_notification_cover">
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:id="@+id/expanded_notification_line_one"
+            android:fontFamily="sans-serif-light"
+            android:textSize="@dimen/mbrc_notification_expanded_text_big"
+            android:textColor="@color/remote_text"
+            tools:text="Track Title"/>
 
         <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:ellipsize="end"
-                android:text="@string/title_placeholder"
-                android:id="@+id/expanded_notification_line_one"
-                android:fontFamily="sans-serif-light"
-                android:textSize="@dimen/mbrc_notification_expanded_text_big"
-                android:textColor="@color/remote_text"
-                />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:id="@+id/expanded_notification_line_two"
+            android:textColor="@color/remote_secondary_text"
+            tools:text="Artist Name"/>
 
         <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/artist_placeholder"
-                android:singleLine="true"
-                android:ellipsize="end"
-                android:id="@+id/expanded_notification_line_two"
-                android:textColor="@color/remote_secondary_text"
-                />
-
-        <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/album_placeholder"
-                android:singleLine="true"
-                android:ellipsize="end"
-                android:textColor="@color/remote_secondary_text"
-                android:id="@+id/expanded_notification_line_three"
-                />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textColor="@color/remote_secondary_text"
+            android:id="@+id/expanded_notification_line_three"
+            tools:text="Album"/>
     </LinearLayout>
 
-    <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:id="@+id/expanded_notification_divider"
-            android:background="@color/remote_transparent"
-            android:layout_above="@+id/expanded_notification_button_bar"
-            android:layout_toRightOf="@+id/expanded_notification_cover"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/expanded_notification_divider"
+        android:background="@color/remote_divider"
+        android:layout_above="@+id/expanded_notification_button_bar"
+        android:layout_toRightOf="@+id/expanded_notification_cover"
+        android:layout_toEndOf="@+id/expanded_notification_cover"/>
 
     <LinearLayout
-            android:divider="?android:listDivider"
-            android:gravity="center_vertical"
-            android:showDividers="middle"
-            android:dividerPadding="@dimen/side_margin_half"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@+id/expanded_notification_cover"
-            android:id="@+id/expanded_notification_button_bar">
+        android:divider="?android:listDivider"
+        android:gravity="center_vertical"
+        android:showDividers="middle"
+        android:dividerPadding="@dimen/side_margin_half"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/expanded_notification_cover"
+        android:layout_toEndOf="@+id/expanded_notification_cover"
+        android:id="@+id/expanded_notification_button_bar">
 
         <ImageButton
-                android:layout_width="0dip"
-                android:layout_weight="1"
-                android:layout_height="@dimen/mbrc_notification_expanded_button_height"
-                android:id="@+id/expanded_notification_previous"
-                android:background="@drawable/selectable_background_mbrc_dark"
-                android:src="@drawable/ic_action_previous"/>
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="@dimen/mbrc_notification_expanded_button_height"
+            android:id="@+id/expanded_notification_previous"
+            android:background="@drawable/selectable_background_mbrc_dark"
+            android:src="@drawable/ic_action_previous"
+            android:contentDescription="@string/main_button_previous_description"/>
 
         <ImageButton
-                android:layout_width="0dip"
-                android:layout_weight="1"
-                android:layout_height="@dimen/mbrc_notification_expanded_button_height"
-                android:id="@+id/expanded_notification_playpause"
-                android:background="@drawable/selectable_background_mbrc_dark"
-                android:src="@drawable/ic_action_play"/>
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="@dimen/mbrc_notification_expanded_button_height"
+            android:id="@+id/expanded_notification_playpause"
+            android:background="@drawable/selectable_background_mbrc_dark"
+            android:src="@drawable/ic_action_play"
+            android:contentDescription="@string/main_button_play_pause_description"/>
 
         <ImageButton
-                android:layout_width="0dip"
-                android:layout_weight="1"
-                android:layout_height="@dimen/mbrc_notification_expanded_button_height"
-                android:id="@+id/expanded_notification_next"
-                android:focusable="false"
-                android:src="@drawable/ic_action_next"
-                android:background="@drawable/selectable_background_mbrc_dark"/>
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="@dimen/mbrc_notification_expanded_button_height"
+            android:id="@+id/expanded_notification_next"
+            android:focusable="false"
+            android:src="@drawable/ic_action_next"
+            android:background="@drawable/selectable_background_mbrc_dark"
+            android:contentDescription="@string/main_button_next_description"/>
     </LinearLayout>
 
     <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/side_margin_half"
-            android:id="@+id/expanded_notification_remove"
-            android:background="@drawable/selectable_background_mbrc_dark"
-            android:src="@drawable/ic_action_collapse"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/side_margin_half"
+        android:id="@+id/expanded_notification_remove"
+        android:background="@drawable/selectable_background_mbrc_dark"
+        android:src="@drawable/ic_action_collapse"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:contentDescription="@string/notification_close_description"/>
 
 </RelativeLayout>

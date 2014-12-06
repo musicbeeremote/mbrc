@@ -9,34 +9,36 @@
               android:gravity="center_vertical">
 
     <TextView
-            android:id="@+id/line_one"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/side_margin_half"
-            android:layout_marginRight="@dimen/side_margin_half"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:text="@string/artist_placeholder"
-            android:textColor="@color/remote_text"
-            android:textSize="@dimen/list_item_one"
-            android:fontFamily="sans-serif-light"
-            android:textStyle="normal"
-            android:focusableInTouchMode="false"/>
+        android:id="@+id/line_one"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/side_margin_half"
+        android:layout_marginRight="@dimen/side_margin_half"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="@string/artist_placeholder"
+        android:textColor="@color/remote_text"
+        android:textSize="@dimen/list_item_one"
+        android:textStyle="normal"
+        android:focusableInTouchMode="false"/>
 
     <LinearLayout
-            android:id="@+id/ui_item_context_indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingLeft="@dimen/side_margin_half"
-            android:background="@drawable/selectable_background_mbrc_dark"
-            android:layout_weight="0"
-            android:gravity="center_vertical">
+        android:id="@+id/ui_item_context_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/side_margin_half"
+        android:paddingStart="@dimen/side_margin_half"
+        android:paddingRight="1dp"
+        android:paddingEnd="1dp"
+        android:background="@drawable/selectable_background_mbrc_dark"
+        android:layout_weight="0"
+        android:gravity="center_vertical">
 
         <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/mbrc_list_context_indicator_height"
-                android:src="@drawable/ic_context_indicator"
-                android:contentDescription="@string/context_indicator_description"/>
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_core_overflow"
+            android:contentDescription="@string/abc_action_menu_overflow_description"/>
     </LinearLayout>
 </LinearLayout>

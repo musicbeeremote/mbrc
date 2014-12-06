@@ -14,11 +14,9 @@
         android:gravity="center_vertical"
         android:singleLine="true"
         android:ellipsize="end"
-        android:fontFamily="sans-serif-light"
         android:textSize="@dimen/playlist_entry_text_size"
         android:layout_width="match_parent"
         android:layout_height="@dimen/playlist_entry_height"
-        android:textAlignment="viewStart"
         tools:text="Playlist Name"/>
 
     <View android:id="@+id/divider"

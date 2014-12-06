@@ -1,108 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
                 android:id="@+id/mainRelativeLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:orientation="horizontal">
 
     <FrameLayout
-            android:id="@+id/album_cover_area"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/mbrc_cover"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentBottom="true">
+        android:id="@+id/album_cover_area"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/mbrc_cover"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true">
 
         <ImageView
-                android:id="@+id/main_album_cover_image_view"
-                android:layout_width="@dimen/mbrc_cover"
-                android:layout_height="@dimen/mbrc_cover"
-                android:adjustViewBounds="false"
-                android:contentDescription="@string/main_image_view_cover_description"
-                android:src="@drawable/ic_image_no_cover"
-                android:baselineAlignBottom="false"
-                android:cropToPadding="false"/>
+            android:id="@+id/main_album_cover_image_view"
+            android:layout_width="@dimen/mbrc_cover"
+            android:layout_height="@dimen/mbrc_cover"
+            android:adjustViewBounds="false"
+            android:contentDescription="@string/main_image_view_cover_description"
+            android:src="@drawable/ic_image_no_cover"
+            android:baselineAlignBottom="false"
+            android:cropToPadding="false"/>
 
         <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/remote_transparent"
-                android:layout_gravity="center_horizontal|bottom"
-                android:id="@+id/ratingWrapper"
-                android:layout_marginLeft="1dp"
-                android:layout_marginRight="1dp"
-                android:baselineAligned="false"
-                android:gravity="center_vertical|center_horizontal"
-                android:layout_marginBottom="1dp">
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/remote_transparent"
+            android:layout_gravity="center_horizontal|bottom"
+            android:id="@+id/ratingWrapper"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:baselineAligned="false"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_marginBottom="1dp">
 
         </LinearLayout>
 
         <RatingBar
-                android:id="@+id/track_rating_bar"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:numStars="5"
-                android:stepSize="0.5"
-                android:layout_gravity="center"/>
+            android:id="@+id/track_rating_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:numStars="5"
+            android:stepSize="0.5"
+            android:layout_gravity="center"/>
     </FrameLayout>
 
-    <fragment
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:name="com.kelsos.mbrc.ui.fragments.LandscapeControls"
-        android:id="@+id/fragment"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/album_cover_area"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        tools:layout="@layout/fragment_landscape_controls"
-        android:layout_above="@+id/linearLayout"/>
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/remote_transparent"
-        android:padding="@dimen/side_margin_half"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true">
-
-        <TextView
-            android:id="@+id/main_track_progress_current"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/main_label_duration_current"
-            android:textColor="@color/remote_text"
-            android:textSize="@dimen/mbrc_duration_text_size"/>
-
-        <SeekBar
-            android:id="@+id/main_track_progress_seeker"
-            android:layout_width="0dip"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:maxHeight="6dp"
-            android:minHeight="6dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:progress="0"
-            android:progressDrawable="@drawable/ic_duration_bar_progress"
-            android:secondaryProgress="0"
-            android:thumb="@null"
-            android:thumbOffset="6dp"/>
-
-        <TextView
-            android:id="@+id/main_track_duration_total"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="@string/main_label_duration_total"
-            android:textColor="@color/remote_text"
-            android:textSize="@dimen/mbrc_duration_text_size"/>
-    </LinearLayout>
+    <include layout="@layout/track_progress_layout"/>
 
 </RelativeLayout>

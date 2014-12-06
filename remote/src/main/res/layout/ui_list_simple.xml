@@ -7,15 +7,15 @@
               android:background="@color/mbrc_background">
 
     <ListView
-            android:id="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:drawSelectorOnTop="false"
-            android:fastScrollAlwaysVisible="false"
-            android:dividerHeight="0dp"
-            android:divider="@null"
-            android:fastScrollEnabled="true"
-            android:listSelector="@drawable/mbrc_dark_compo_list_selector_holo_dark" />
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:drawSelectorOnTop="false"
+        android:fastScrollAlwaysVisible="false"
+        android:dividerHeight="0dp"
+        android:divider="@null"
+        android:fastScrollEnabled="true"
+        android:listSelector="@drawable/mbrc_dark_compo_list_selector_holo_dark"/>
 
 </LinearLayout>

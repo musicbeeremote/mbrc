@@ -2,11 +2,13 @@
 
 <resources>
 
-  <style name="Theme.RemoteLight" parent="Theme.AppCompat">
-    <item name="colorPrimary">@color/remote_primary</item>
-    <item name="colorPrimaryDark">@color/remote_primary_dark</item>
-    <item name="colorAccent">@color/remote_accent</item>
-    <item name="background">@color/mbrc_background</item>
-  </style>
+    <style name="Theme.Remote" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/remote_primary</item>
+        <item name="colorPrimaryDark">@color/remote_primary_dark</item>
+        <item name="colorAccent">@color/remote_accent</item>
+        <item name="background">@color/mbrc_background</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
 
 </resources>

@@ -8,4 +8,11 @@
           mbrc:showAsAction="always"/>
     <item android:id="@+id/actionbar_help"
           android:title="@string/main_menu_help"/>
+
+    <group android:checkableBehavior="all">
+        <item  android:id="@+id/popup_scrobble"
+               android:title="@string/popup_scrobble"/>
+        <item  android:id="@+id/popup_auto_dj"
+               android:title="@string/popup_auto_dj"/>
+    </group>
 </menu>

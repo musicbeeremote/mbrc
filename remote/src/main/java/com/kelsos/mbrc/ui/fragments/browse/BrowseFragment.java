@@ -24,7 +24,7 @@ public class BrowseFragment extends RoboFragment {
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.ui_fragment_search, container, false);
+        View view = inflater.inflate(R.layout.fragment_browse, container, false);
         ViewPager mPager;
         if (view != null) {
             mPager = (ViewPager) view.findViewById(R.id.search_pager);

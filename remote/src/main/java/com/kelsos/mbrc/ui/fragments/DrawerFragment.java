@@ -81,6 +81,7 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
             activity.finish();
         });
         menuConnector.setTypeface(robotoLight);
+        exitButton.setTypeface(robotoLight);
 
         ArrayList<NavigationEntry> nav = new ArrayList<>();
         nav.add(new NavigationEntry(getString(R.string.nav_home)));
