@@ -59,7 +59,7 @@ public class Generator {
         queueTrack.addStringProperty("artist");
         queueTrack.addStringProperty("title");
         queueTrack.addStringProperty("path");
-        queueTrack.addIntProperty("index");
+        queueTrack.addIntProperty("position");
 
         new DaoGenerator().generateAll(schema, "../remote/src-gen/");
     }

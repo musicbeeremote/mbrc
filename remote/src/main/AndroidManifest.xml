@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="com.kelsos.mbrc"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.kelsos.mbrc"
     android:installLocation="auto" >
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -62,11 +62,21 @@
         <meta-data
             android:name="roboguice.annotations.packages"
             android:value="roboguice,mbrc" />
+
         <activity
             android:name="com.kelsos.mbrc.ui.activities.Settings"
             android:label="@string/title_activity_settings"
             android:parentActivityName="com.kelsos.mbrc.ui.activities.HomeActivity"
             tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.kelsos.mbrc.ui.activities.HomeActivity" />
+        </activity>
+        <activity
+            android:name="com.kelsos.mbrc.ui.activities.QueueResultActivity"
+            android:label="@string/title_activity_queue_result"
+            android:parentActivityName="com.kelsos.mbrc.ui.activities.HomeActivity"
+            tools:ignore="UnusedAttribute" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.kelsos.mbrc.ui.activities.HomeActivity" />

@@ -5,6 +5,7 @@ import android.os.IBinder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.data.SyncManager;
 import com.kelsos.mbrc.data.model.Model;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.MessageEvent;
@@ -31,24 +32,35 @@ public class Controller extends RoboService {
     private ServiceDiscovery discovery;
     @Inject
     private SettingsManager settingsManager;
+    @Inject
+    private SyncManager syncManager;
 
     public Controller() {
         Ln.d("Application Controller Initialized");
     }
 
-    @Override public IBinder onBind(Intent intent) {
+    @Override
+    public IBinder onBind(Intent intent) {
         return null;
     }
 
 
-    @Override public int onStartCommand(Intent intent, int flags, int startId) {
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
         Events.Messages.onNext(new MessageEvent(UserInputEventType.START_CONNECTION));
         discovery.startDiscovery();
+        init();
         return super.onStartCommand(intent, flags, startId);
     }
 
-    @Override public void onDestroy() {
+    @Override
+    public void onDestroy() {
         super.onDestroy();
         this.unregisterReceiver(receiver);
+    }
+
+    public void init() {
+        syncManager.clearCurrentQueue();
+        syncManager.startCurrentQueueSyncing();
     }
 }

@@ -10,18 +10,26 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.*;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.ui.DrawerSelection;
 import com.kelsos.mbrc.events.ui.LfmRatingChanged;
 import com.kelsos.mbrc.events.ui.NotifyUser;
-import com.kelsos.mbrc.ui.fragments.*;
+import com.kelsos.mbrc.ui.fragments.DrawerFragment;
+import com.kelsos.mbrc.ui.fragments.LyricsFragment;
+import com.kelsos.mbrc.ui.fragments.MainFragment;
+import com.kelsos.mbrc.ui.fragments.PlaylistFragment;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseFragment;
+import com.kelsos.mbrc.ui.fragments.queue.CurrentQueueFragment;
+import com.kelsos.mbrc.util.Logger;
 import org.jetbrains.annotations.NotNull;
 import roboguice.activity.RoboActionBarActivity;
-import rx.Subscription;
 import rx.android.observables.AndroidObservable;
 
 public class HomeActivity extends RoboActionBarActivity {
@@ -33,8 +41,8 @@ public class HomeActivity extends RoboActionBarActivity {
     private MenuItem favoriteItem;
     private SnackBar mSnackBar;
     private DrawerFragment mDrawerFragment;
-    private Subscription mDrawerEventSub;
 
+    @SuppressWarnings("Annotator")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,9 +91,8 @@ public class HomeActivity extends RoboActionBarActivity {
         fragmentTransaction.commit();
         mSnackBar = new SnackBar(this);
 
-        mDrawerEventSub = AndroidObservable.bindActivity(this,
-                mDrawerFragment.getDrawerSelectionObservable())
-                .subscribe(this::handleDrawerEvent);
+        AndroidObservable.bindActivity(this, mDrawerFragment.getDrawerSelectionObservable())
+                .subscribe(this::handleDrawerEvent, Logger::LogThrowable);
 
     }
 
@@ -193,12 +200,14 @@ public class HomeActivity extends RoboActionBarActivity {
             case SETTINGS:
                 Intent openSettingsIntent = new Intent(this, Settings.class);
                 startActivity(openSettingsIntent);
+                break;
             default:
                 break;
         }
         navChanged = false;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public void handleUserNotification(NotifyUser event) {
         String message = event.isFromResource()
                 ? getString(event.getResId())
@@ -233,6 +242,7 @@ public class HomeActivity extends RoboActionBarActivity {
         }
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public void handleLfmStatusChange(final LfmRatingChanged event) {
         if (favoriteItem == null) {
             return;
@@ -251,10 +261,5 @@ public class HomeActivity extends RoboActionBarActivity {
                 favoriteItem.setIcon(R.drawable.ic_action_rating_favorite_disabled);
                 break;
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 }

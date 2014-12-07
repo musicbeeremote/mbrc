@@ -1,24 +1,37 @@
-package com.kelsos.mbrc.ui.fragments;
+package com.kelsos.mbrc.ui.fragments.queue;
 
 import android.app.LoaderManager;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.CurrentQueueAdapter;
-import com.kelsos.mbrc.dao.QueueTrackDao;
-import com.kelsos.mbrc.data.Sync;
+import com.kelsos.mbrc.dao.QueueTrack;
+import com.kelsos.mbrc.data.SyncManager;
 import com.kelsos.mbrc.data.db.LibraryProvider;
+import com.kelsos.mbrc.data.helpers.QueueTrackHelper;
+import com.kelsos.mbrc.rest.RemoteApi;
+import com.kelsos.mbrc.ui.activities.QueueResultActivity;
+import com.kelsos.mbrc.util.Logger;
 import org.jetbrains.annotations.NotNull;
 import roboguice.fragment.provided.RoboListFragment;
+import roboguice.util.Ln;
+import rx.android.observables.AndroidObservable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class CurrentQueueFragment extends RoboListFragment
@@ -28,35 +41,27 @@ public class CurrentQueueFragment extends RoboListFragment
     private static final int URL_LOADER = 0;
     private CurrentQueueAdapter mQueueAdapter;
     private SearchView mSearchView;
-    private String mCurFilter;
 
     @Inject
-    private Sync sync;
-    private MenuItem mSearchItem;
+    private SyncManager syncManager;
+
+    @Inject
+    private RemoteApi api;
 
     @Override
     public void onStart() {
         super.onStart();
-        sync.startCurrentQueueSyncing();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_now_playing, menu);
-        mSearchItem = menu.findItem(R.id.action_search);
+        MenuItem mSearchItem = menu.findItem(R.id.action_search);
         mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
         mSearchView.setOnQueryTextListener(this);
-        mSearchView.setIconifiedByDefault(true);
+
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_search) {
-            mSearchView.setIconified(false);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,8 +86,16 @@ public class CurrentQueueFragment extends RoboListFragment
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
+        final Cursor cursor = (Cursor) mQueueAdapter.getItem(position);
+        final QueueTrack track = QueueTrackHelper.fromCursor(cursor);
+
+        AndroidObservable.bindFragment(this, api.nowPlayingPlayTrack(track.getPath()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(Ln::d, Logger::LogThrowable);
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     private int calculateNewIndex(int from, int to, int index) {
         int dist = Math.abs(from - to);
         int rIndex = index;
@@ -104,21 +117,8 @@ public class CurrentQueueFragment extends RoboListFragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String[] projection = {
-                QueueTrackDao.Properties.Id.columnName,
-                QueueTrackDao.Properties.Artist.columnName,
-                QueueTrackDao.Properties.Title.columnName
-        };
-
-        Uri baseUri;
-
-        if (mCurFilter != null) {
-            baseUri = Uri.withAppendedPath(LibraryProvider.CONTENT_FILTER_URI, Uri.encode(mCurFilter));
-        } else {
-            baseUri = LibraryProvider.CONTENT_URI;
-        }
-
-        return new CursorLoader(getActivity(), baseUri, projection, null, null, null);
+        return new CursorLoader(getActivity(), LibraryProvider.CONTENT_URI,
+                QueueTrackHelper.PROJECTION, null, null, null);
     }
 
     @Override
@@ -133,9 +133,15 @@ public class CurrentQueueFragment extends RoboListFragment
 
     @Override
     public boolean onQueryTextSubmit(String s) {
-        mCurFilter = !TextUtils.isEmpty(s) ? s.trim() : null;
-        getLoaderManager().restartLoader(0, null, this);
-        MenuItemCompat.collapseActionView(mSearchItem);
+
+
+        if (!TextUtils.isEmpty(s)) {
+            Intent intent = new Intent(getActivity(), QueueResultActivity.class);
+            intent.putExtra(QueueResultActivity.QUEUE_FILTER, s.trim());
+            getActivity().startActivity(intent);
+        }
+
+        mSearchView.onActionViewCollapsed();
         return false;
     }
 

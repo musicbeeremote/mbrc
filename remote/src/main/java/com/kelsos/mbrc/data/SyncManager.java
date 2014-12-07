@@ -15,28 +15,30 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
-public class Sync {
+public class SyncManager {
 
+    public static final int BUFFER_SIZE = 1024;
     private final DaoSession daoSession;
     private RemoteApi api;
     private ObjectMapper mapper;
     private static final int STARTING_OFFSET = 0;
     private static final int LIMIT = 800;
-    private long startMillis;
-    private long endMillis;
 
     @Inject
-    public Sync(RemoteApi api, ObjectMapper mapper, DaoSession daoSession) {
+    public SyncManager(RemoteApi api, ObjectMapper mapper, DaoSession daoSession) {
         this.api = api;
         this.mapper = mapper;
         this.daoSession = daoSession;
     }
 
     public void startLibrarySyncing() {
-        startMillis = System.currentTimeMillis();
         getGenres(STARTING_OFFSET, LIMIT).subscribe(this::processGenres, Logger::LogThrowable);
         getArtists(STARTING_OFFSET, LIMIT).subscribe(this::processArtists, Logger::LogThrowable);
         getAlbums(STARTING_OFFSET, LIMIT).subscribe(this::processAlbums, Logger::LogThrowable);
@@ -49,6 +51,11 @@ public class Sync {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::processCurrentQueue, Logger::LogThrowable);
+    }
+
+    public void clearCurrentQueue() {
+        QueueTrackDao queueTrackDao = daoSession.getQueueTrackDao();
+        queueTrackDao.deleteAll();
     }
 
     private void processCurrentQueue(PaginatedDataResponse paginatedData) {
@@ -208,8 +215,6 @@ public class Sync {
             getTracks(offset + limit, limit).subscribe(this::processTracks, Logger::LogThrowable);
         } else {
             Ln.d("no more data");
-            endMillis = System.currentTimeMillis();
-            Ln.d("Time Elapsed %d ms", endMillis - startMillis);
         }
     }
 
@@ -226,12 +231,12 @@ public class Sync {
 
     private void storeCover(Response response, String hash) {
         File sdCard = Environment.getExternalStorageDirectory();
-        File dir = new File (String.format("%s/Android/data/%s/cache", sdCard.getAbsolutePath(), BuildConfig.APPLICATION_ID));
+        File dir = new File(String.format("%s/Android/data/%s/cache", sdCard.getAbsolutePath(), BuildConfig.APPLICATION_ID));
         final boolean mkdirs = dir.mkdirs();
         File file = new File(dir, hash);
         try {
             final OutputStream output = new FileOutputStream(file);
-            final byte[] buffer = new byte[1024];
+            final byte[] buffer = new byte[BUFFER_SIZE];
             final InputStream input = response.getBody().in();
             int read;
             while ((read = input.read(buffer)) != -1) {
