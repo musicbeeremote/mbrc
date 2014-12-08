@@ -1,16 +1,30 @@
 package com.kelsos.mbrc.ui.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
-import android.view.*;
-import android.view.animation.*;
-import android.widget.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
@@ -27,7 +41,6 @@ import com.kelsos.mbrc.util.Logger;
 import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
 import roboguice.util.Ln;
-import rx.Subscription;
 import rx.android.observables.AndroidObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -50,6 +63,9 @@ public class MainFragment extends RoboFragment {
     public static final int SECONDS = 60;
     public static final int TIME_PERIOD = 1;
     private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
+    private ShareActionProvider mShareActionProvider;
+    private Intent mShareIntent;
+
     @InjectView(R.id.main_track_progress_current)
     private TextView trackProgressCurrent;
     @InjectView(R.id.main_track_duration_total)
@@ -66,8 +82,6 @@ public class MainFragment extends RoboFragment {
     private RemoteApi api;
     @Inject
     private PlayerState playerStateModel;
-
-    private Subscription ratingChangeSub;
 
     private int previousVol;
     private SeekBar.OnSeekBarChangeListener durationSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
@@ -86,15 +100,14 @@ public class MainFragment extends RoboFragment {
     };
     private ScheduledFuture mProgressUpdateHandler;
 
-    private boolean isTablet;
-    private RatingBar.OnRatingBarChangeListener ratingChangeListener = (ratingBar, v, b) -> {
+	private RatingBar.OnRatingBarChangeListener ratingChangeListener = (ratingBar, v, b) -> {
         if (b) {
 
-            ratingChangeSub = AndroidObservable.bindFragment(this, api.updateRating(v))
+            AndroidObservable.bindFragment(this, api.updateRating(v))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(resp -> Ln.d("Success %b", resp.isSuccess()),
-                            error -> Ln.d("error %s", error.getMessage()));
+							error -> Ln.d("error %s", error.getMessage()));
 
         }
     };
@@ -154,8 +167,7 @@ public class MainFragment extends RoboFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        isTablet = getResources().getBoolean(R.bool.isTablet);
-    }
+	}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -172,21 +184,21 @@ public class MainFragment extends RoboFragment {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(notification -> updateAlbumCover(notification.getCover()),
-                        Logger::LogThrowable);
+						Logger::LogThrowable);
 
         AndroidObservable.bindFragment(this, api.getCurrentPosition())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(update -> handlePositionUpdate(update.getPosition(), update.getDuration()),
-                        Logger::LogThrowable);
+						Logger::LogThrowable);
 
         AndroidObservable.bindFragment(this, Events.TrackInfoChangeNotification)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(this::handleTrackInfoChange,
-                        Logger::LogThrowable);
+						Logger::LogThrowable);
 
-        Subscription sub = AndroidObservable.bindFragment(this, playerStateModel.playState())
+        AndroidObservable.bindFragment(this, playerStateModel.playState())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(this::handlePlayStateChange, Logger::LogThrowable);
@@ -238,27 +250,32 @@ public class MainFragment extends RoboFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.share, menu);
+        MenuItem shareItem = menu.findItem(R.id.actionbar_share);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+        updateShareIntent("", "");
+        mShareActionProvider.setShareIntent(mShareIntent);
+    }
+
+    private void updateShareIntent(String artist, String title) {
+        mShareIntent = new Intent(Intent.ACTION_SEND);
+        mShareIntent.setType("text/plain");
+        final String payload = String.format("Now Playing: %s - %s", artist, title);
+        mShareIntent.putExtra(Intent.EXTRA_TEXT, payload);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.actionbar_share:
-                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                shareIntent.setType("text/plain");
-                //shareIntent.putExtra(Intent.EXTRA_TEXT, "Now Playing: " + artistLabel.getText() + " - " + titleLabel.getText());
-                setShareIntent(shareIntent);
+                mShareActionProvider.setShareIntent(mShareIntent);
                 return true;
             default:
                 return false;
         }
     }
 
-    private void setShareIntent(Intent shareIntent) {
-
-    }
-
-    public void handleRatingChange(final RatingChanged event) {
+    @SuppressWarnings("UnusedDeclaration")
+	public void handleRatingChange(final RatingChanged event) {
         if (trackRating != null) {
             trackRating.setRating(event.getRating());
         }
@@ -342,10 +359,13 @@ public class MainFragment extends RoboFragment {
         actionBar.setTitle(change.getTitle());
         actionBar.setSubtitle(change.getArtist());
         actionBar.setDisplayShowTitleEnabled(true);
+
+        updateShareIntent(change.getArtist(), change.getTitle());
     }
 
 
-    public void handleConnectionStatusChange(final ConnectionStatusChange change) {
+    @SuppressWarnings("UnusedDeclaration")
+	public void handleConnectionStatusChange(final ConnectionStatusChange change) {
         if (change.getStatus() == ConnectionStatusChange.Status.CONNECTION_OFF) {
             stopTrackProgressAnimation();
             activateStoppedState();
@@ -383,27 +403,5 @@ public class MainFragment extends RoboFragment {
         trackProgressSlider.setProgress(current);
 
         trackProgressAnimation();
-    }
-
-    /**
-     * Returns true if the orientation is landscape and false if it is horizontal.
-     *
-     * @return true or false
-     */
-    public boolean isLandscape() {
-        boolean result;
-        final Display display = ((WindowManager) getActivity()
-                .getSystemService(Context.WINDOW_SERVICE))
-                .getDefaultDisplay();
-
-        int orientation = display.getRotation();
-        result = orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270;
-
-        return result;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 }
