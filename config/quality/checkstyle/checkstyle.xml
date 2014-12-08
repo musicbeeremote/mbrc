@@ -176,10 +176,11 @@
         <!-- <module name="FinalParameters"/> -->
         <!-- <module name="TodoComment"/> -->
         <module name="UpperEll" />
-        <module name="Indentation">
+        <!--disabled temporarily due to https://github.com/checkstyle/checkstyle/issues/281 -->
+        <!--<module name="Indentation">
             <property name="tabWidth" value="4" />
             <property name="basicOffset" value="4" />
-        </module>
+        </module>-->
     </module>
 
 </module>
