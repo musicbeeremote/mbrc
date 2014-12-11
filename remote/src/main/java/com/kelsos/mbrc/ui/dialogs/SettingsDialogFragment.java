@@ -1,34 +1,44 @@
 package com.kelsos.mbrc.ui.dialogs;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
+import roboguice.fragment.provided.RoboDialogFragment;
+import roboguice.inject.InjectView;
 
-public class SettingsDialogFragment extends DialogFragment {
+import static com.kelsos.mbrc.util.RemoteUtils.isNullOrEmpty;
+
+public class SettingsDialogFragment extends RoboDialogFragment {
     public static final int MAX_PORT = 65535;
     public static final int MIN_PORT = 1;
-    private EditText host;
-    private EditText name;
-    private EditText port;
 
-    private String cname;
-    private String caddress;
-    private int cport;
-    private int cindex;
+	@InjectView(R.id.settings_dialog_host)
+    private EditText hostEdit;
+
+	@InjectView(R.id.settings_dialog_name)
+    private EditText nameEdit;
+
+	@InjectView(R.id.settings_dialog_port)
+    private EditText portEdit;
+
+	@InjectView(R.id.settings_dialog_http)
+	private EditText httpEdit;
+
+    private String currentName;
+    private String currentAddress;
+    private int currentPort;
+    private int currentIndex;
+	private int currentHttpPort;
 
     private SettingsDialogListener mListener;
 
-    @Override public void onAttach(Activity activity) {
+
+	@Override public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         try {
@@ -39,82 +49,63 @@ public class SettingsDialogFragment extends DialogFragment {
     }
 
     @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+		MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
+        builder.customView(R.layout.ui_dialog_settings);
+		builder.title(R.string.settings_dialog_add);
+		builder.positiveText(R.string.settings_dialog_add);
+		builder.negativeText(android.R.string.cancel);
+		builder.callback(new MaterialDialog.Callback() {
+			@Override
+			public void onPositive(MaterialDialog materialDialog) {
+				boolean shouldIClose = true;
+				String hostname = hostEdit.getText().toString();
+				String computerName = nameEdit.getText().toString();
 
-        final View view = inflater.inflate(R.layout.ui_dialog_settings, null);
-        if (view != null) {
-            ((TextView) view.findViewById(R.id.dialog_title)).setText(getString(R.string.settings_dialog_add));
-        }
-        builder.setView(view)
-                .setTitle(null)
-                .setPositiveButton(R.string.settings_dialog_add,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+				if (hostname.length() == 0 || computerName.length() == 0) {
+					shouldIClose = false;
+				}
 
-                            }
-                        })
-                .setNegativeButton(R.string.dialog_application_setup_negative, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        SettingsDialogFragment.this.getDialog().cancel();
-                    }
-                });
-        return builder.create();
+				String portText = portEdit.getText().toString();
+				String httpText = httpEdit.getText().toString();
+
+				int portNum = isNullOrEmpty(portText) ? 0 : Integer.parseInt(portText);
+				int httpNum = isNullOrEmpty(httpText) ? 0 : Integer.parseInt(httpText);
+
+				if (isValid(portNum) && isValid(httpNum) && shouldIClose) {
+					ConnectionSettings settings = new ConnectionSettings(hostname, computerName, portNum, currentIndex, httpNum);
+					mListener.onDialogPositiveClick(SettingsDialogFragment.this, settings);
+					materialDialog.dismiss();
+				}
+			}
+
+			@Override
+			public void onNegative(MaterialDialog materialDialog) {
+				materialDialog.cancel();
+			}
+		});
+
+        return builder.build();
     }
 
     @Override public void onStart() {
         super.onStart();
 
-        AlertDialog dialog = (AlertDialog) getDialog();
-        if (dialog != null) {
-            name = (EditText) dialog.findViewById(R.id.settings_dialog_name);
-            host = (EditText) dialog.findViewById(R.id.settings_dialog_host);
-            port = (EditText) dialog.findViewById(R.id.settings_dialog_port);
-        }
-        if (dialog != null) {
-            Button confirm = dialog.getButton(Dialog.BUTTON_POSITIVE);
-            if (confirm != null) {
-                confirm.setOnClickListener(new Button.OnClickListener() {
-                    @Override public void onClick(View view) {
-                        boolean shouldIClose = true;
-                        String hostname = host.getText().toString();
-                        String computerName = name.getText().toString();
-
-                        if (hostname.length() == 0 || computerName.length() == 0) {
-                            shouldIClose = false;
-                        }
-
-                        String portText = port.getText().toString();
-
-                        int portNum = portText.equals("") ? 0 : Integer.parseInt(portText);
-
-                        if (validatePortNumber(portNum) && shouldIClose) {
-                            ConnectionSettings settings = new ConnectionSettings(hostname, computerName, portNum, cindex);
-                            mListener.onDialogPositiveClick(SettingsDialogFragment.this, settings);
-                            dismiss();
-                        }
-                    }
-                });
-            }
-        }
-
-        if (name != null && !name.getText().toString().equals("")) {
-            name.setText(cname);
-            host.setText(caddress);
-            if (cport > 0) {
-                port.setText(Integer.toString(cport));
+        if (nameEdit != null && !nameEdit.getText().toString().equals("")) {
+            nameEdit.setText(currentName);
+            hostEdit.setText(currentAddress);
+			httpEdit.setText(currentHttpPort);
+            if (currentPort > 0) {
+                portEdit.setText(Integer.toString(currentPort));
             }
         }
     }
 
-    private boolean validatePortNumber(int port) {
+    private boolean isValid(int port) {
         if (port < MIN_PORT || port > MAX_PORT) {
-            final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-            alert.setTitle(R.string.alert_invalid_range);
-            alert.setMessage(R.string.alert_invalid_port_number);
-            alert.setPositiveButton(android.R.string.ok, null);
+            final MaterialDialog.Builder alert = new MaterialDialog.Builder(getActivity());
+            alert.title(R.string.alert_invalid_range);
+            alert.content(R.string.alert_invalid_port_number);
+            alert.positiveText(android.R.string.ok);
             alert.show();
             return false;
         } else {
@@ -126,10 +117,11 @@ public class SettingsDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            cindex = args.getInt("index");
-            cport = args.getInt("port");
-            caddress = args.getString("address");
-            cname = args.getString("name");
+            currentIndex = args.getInt("index");
+            currentPort = args.getInt("port");
+            currentAddress = args.getString("address");
+            currentName = args.getString("name");
+			currentHttpPort = args.getInt("http");
         }
     }
 

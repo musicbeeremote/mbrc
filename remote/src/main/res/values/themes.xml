@@ -9,6 +9,7 @@
         <item name="background">@color/mbrc_background</item>
         <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+        <item name="md_dark_theme">true</item>
     </style>
 
 </resources>

@@ -13,12 +13,13 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistCursorAdapter;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+import org.jetbrains.annotations.NotNull;
 import roboguice.fragment.provided.RoboListFragment;
 
 public class BrowseArtistFragment extends RoboListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>,
-        PlaylistDialogFragment.onPlaylistSelectedListener,
-        CreateNewPlaylistDialog.onPlaylistNameSelectedListener {
+		PlaylistDialogFragment.OnPlaylistSelectedListener,
+		CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
     private static final int GROUP_ID = 12;
     private static final int URL_LOADER = 0x12;
     private ArtistCursorAdapter mAdapter;
@@ -30,8 +31,7 @@ public class BrowseArtistFragment extends RoboListFragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_library, container, false);
     }
 

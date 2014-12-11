@@ -5,7 +5,12 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.view.*;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
@@ -13,12 +18,13 @@ import com.kelsos.mbrc.adapters.GenreCursorAdapter;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+import org.jetbrains.annotations.NotNull;
 import roboguice.fragment.provided.RoboListFragment;
 
 public class BrowseGenreFragment extends RoboListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>,
-        PlaylistDialogFragment.onPlaylistSelectedListener,
-        CreateNewPlaylistDialog.onPlaylistNameSelectedListener {
+		PlaylistDialogFragment.OnPlaylistSelectedListener,
+		CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
     private static final int GROUP_ID = 11;
     private static final int URL_LOADER = 1;
     private GenreCursorAdapter mAdapter;
@@ -39,8 +45,7 @@ public class BrowseGenreFragment extends RoboListFragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_library, container, false);
     }
 

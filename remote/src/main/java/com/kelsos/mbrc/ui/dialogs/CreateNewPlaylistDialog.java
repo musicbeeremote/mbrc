@@ -1,58 +1,45 @@
 package com.kelsos.mbrc.ui.dialogs;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.os.Bundle;
 import android.app.DialogFragment;
-import android.app.Activity;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.os.Bundle;
 import android.widget.EditText;
-import android.widget.TextView;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.R;
 
 public class CreateNewPlaylistDialog extends DialogFragment {
 
-    private EditText mPlaylistNameText;
-
-    private onPlaylistNameSelectedListener mListener;
-    final DialogInterface.OnClickListener onNegativeClick = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-        }
-    };
-
-    final DialogInterface.OnClickListener onPositiveClick = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            final String name = mPlaylistNameText.getText().toString();
-            if (mListener != null) {
-                mListener.onPlaylistNameSelected(name);
-            }
-            dialog.dismiss();
-        }
-    };
+	private OnPlaylistNameSelectedListener mListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final Activity activity = getActivity();
-        final LayoutInflater inflater = activity.getLayoutInflater();
-        final View view = inflater.inflate(R.layout.playlist_create, null);
-        ((TextView)view.findViewById(R.id.dialog_title)).setText(getString(R.string.playlist_dialog_new_title));
-        mPlaylistNameText = ((EditText)view.findViewById(R.id.playlist_name_text));
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(activity);
-        mBuilder.setView(view);
-        mBuilder.setTitle(null);
 
-        mBuilder.setNegativeButton(android.R.string.cancel, onNegativeClick);
+        MaterialDialog.Builder mBuilder = new MaterialDialog.Builder(getActivity());
+		mBuilder.title(R.string.playlist_dialog_new_title);
+		mBuilder.customView(R.layout.playlist_create);
+		mBuilder.positiveText(android.R.string.ok);
+		mBuilder.negativeText(android.R.string.cancel);
+		mBuilder.callback(new MaterialDialog.Callback() {
+			@Override
+			public void onPositive(MaterialDialog materialDialog) {
+				EditText mPlaylistNameText = ((EditText) materialDialog.getCustomView()
+						.findViewById(R.id.playlist_name_text));
+				final String name = mPlaylistNameText.getText().toString();
+				if (mListener != null) {
+					mListener.onPlaylistNameSelected(name);
+				}
+				materialDialog.dismiss();
+			}
 
-        mBuilder.setPositiveButton(android.R.string.ok, onPositiveClick);
-        return mBuilder.create();
+			@Override
+			public void onNegative(MaterialDialog materialDialog) {
+				materialDialog.dismiss();
+			}
+		});
+        return mBuilder.build();
     }
 
-    public void setOnPlaylistNameSelectedListener(onPlaylistNameSelectedListener mListener) {
+    public void setOnPlaylistNameSelectedListener(OnPlaylistNameSelectedListener mListener) {
         this.mListener = mListener;
     }
 
@@ -60,7 +47,7 @@ public class CreateNewPlaylistDialog extends DialogFragment {
      * Interface that must be implemented by the fragment or activity
      * hosting the dialog
      */
-    public interface onPlaylistNameSelectedListener {
+    public interface OnPlaylistNameSelectedListener {
         /**
          * Called when the user presses the ok button of the dialog.
          * @param name The name of the playlist

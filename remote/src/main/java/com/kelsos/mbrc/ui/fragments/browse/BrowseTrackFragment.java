@@ -11,10 +11,11 @@ import android.view.ViewGroup;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.TrackCursorAdapter;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+import org.jetbrains.annotations.NotNull;
 import roboguice.fragment.provided.RoboListFragment;
 
 public class BrowseTrackFragment extends RoboListFragment
-        implements LoaderManager.LoaderCallbacks<Cursor>, PlaylistDialogFragment.onPlaylistSelectedListener {
+        implements LoaderManager.LoaderCallbacks<Cursor>, PlaylistDialogFragment.OnPlaylistSelectedListener {
     private static final int GROUP_ID = 14;
     private static final int URL_LOADER = 0x53;
     private TrackCursorAdapter mAdapter;
@@ -26,8 +27,7 @@ public class BrowseTrackFragment extends RoboListFragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_library, container, false);
     }
 

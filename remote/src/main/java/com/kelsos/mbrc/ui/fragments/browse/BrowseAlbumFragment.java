@@ -19,8 +19,8 @@ import static android.support.v4.app.LoaderManager.LoaderCallbacks;
 
 public class BrowseAlbumFragment extends RoboFragment implements LoaderCallbacks<Cursor>,
         GridView.OnItemClickListener,
-        PlaylistDialogFragment.onPlaylistSelectedListener,
-        CreateNewPlaylistDialog.onPlaylistNameSelectedListener {
+		PlaylistDialogFragment.OnPlaylistSelectedListener,
+		CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
     private static final int GROUP_ID = 13;
     private static final int URL_LOADER = 2;
     private AlbumCursorAdapter mAdapter;
@@ -80,7 +80,7 @@ public class BrowseAlbumFragment extends RoboFragment implements LoaderCallbacks
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        
+
     }
 
     @Override

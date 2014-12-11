@@ -19,11 +19,12 @@ public class ConnectionSettings {
         this.index = -1;
     }
 
-    public ConnectionSettings(String address, String name, int port, int index) {
+    public ConnectionSettings(String address, String name, int port, int index, int http) {
         this.address = address;
         this.name = name;
         this.port = port;
         this.index = index;
+		this.httpPort = http;
     }
 
     public ConnectionSettings() {
@@ -44,6 +45,10 @@ public class ConnectionSettings {
     public int getPort() {
         return this.port;
     }
+
+	public int getHttpPort() {
+		return this.httpPort;
+	}
 
     @Override public boolean equals(Object o) {
         boolean equality = false;

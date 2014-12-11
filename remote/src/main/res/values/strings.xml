@@ -174,5 +174,6 @@
     <string name="remove_indicator">Used as an anchor point to remote tracks from the list</string>
     <string name="notification_close_description">Used to close / dismiss the notification</string>
     <string name="title_activity_queue_result">Search Results</string>
+    <string name="settings_dialog_hint_http">Http port number</string>
 
 </resources>

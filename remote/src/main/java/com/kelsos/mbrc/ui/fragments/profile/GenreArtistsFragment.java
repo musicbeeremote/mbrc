@@ -28,8 +28,8 @@ import roboguice.fragment.provided.RoboListFragment;
  */
 public class GenreArtistsFragment extends RoboListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>,
-        PlaylistDialogFragment.onPlaylistSelectedListener,
-        CreateNewPlaylistDialog.onPlaylistNameSelectedListener {
+		PlaylistDialogFragment.OnPlaylistSelectedListener,
+		CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
     private static final String GENRE_ID = "genreId";
     private static final int GROUP_ID = 2983;
     private static final int URL_LOADER = 0x15;

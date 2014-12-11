@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.ui.fragments;
 
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,6 +8,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.view.MenuItem;
 import android.webkit.WebView;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
@@ -98,22 +98,22 @@ public class SettingsFragment extends PreferenceFragment {
     private void showLicenseDialog() {
         final WebView webView = new WebView(getActivity());
         webView.loadUrl("file:///android_asset/license.html");
-        new AlertDialog.Builder(getActivity())
-                .setView(webView)
-                .setPositiveButton(android.R.string.ok, null)
-                .setTitle("MusicBee Remote license")
-                .create()
+        new MaterialDialog.Builder(getActivity())
+                .customView(webView)
+                .positiveText(android.R.string.ok)
+                .title("MusicBee Remote license")
+                .build()
                 .show();
     }
 
     private void showOpenSourceLicenseDialog() {
         final WebView webView = new WebView(getActivity());
         webView.loadUrl("file:///android_asset/licenses.html");
-        new AlertDialog.Builder(getActivity())
-                .setView(webView)
-                .setPositiveButton(android.R.string.ok, null)
-                .setTitle("Open source licenses")
-                .create()
+        new MaterialDialog.Builder(getActivity())
+                .customView(webView)
+                .positiveText(android.R.string.ok)
+                .title("Open source licenses")
+                .build()
                 .show();
     }
 

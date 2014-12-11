@@ -19,8 +19,8 @@ import roboguice.fragment.provided.RoboFragment;
 
 public class ArtistAlbumsFragment extends RoboFragment implements LoaderManager.LoaderCallbacks<Cursor>,
         GridView.OnItemClickListener,
-        PlaylistDialogFragment.onPlaylistSelectedListener,
-        CreateNewPlaylistDialog.onPlaylistNameSelectedListener {
+		PlaylistDialogFragment.OnPlaylistSelectedListener,
+		CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
 
     private static final String ARTIST_ID = "artistId";
     private static final int URL_LOADER = 0x832d;
