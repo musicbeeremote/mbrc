@@ -15,7 +15,7 @@ public class ConnectionSettings {
         this.address = node.path("address").asText();
         this.name = node.path("name").asText();
         this.port = node.path("port").asInt();
-        this.httpPort = node.path("httpPort").asInt();
+        this.httpPort = node.path("http").asInt();
         this.index = -1;
     }
 

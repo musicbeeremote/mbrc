@@ -58,7 +58,7 @@ android {
     }
 
     compileSdkVersion 21
-    buildToolsVersion "21.1.1"
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
         minSdkVersion 15
@@ -118,6 +118,7 @@ dependencies {
     compile 'com.android.support:support-v13:21.0.0'
     compile 'com.android.support:appcompat-v7:21.0.0'
     compile 'com.android.support:cardview-v7:21.0.0'
+    compile 'com.android.support:recyclerview-v7:21.0.0'
     compile 'org.roboguice:roboguice:3.0.1'
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
     compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'

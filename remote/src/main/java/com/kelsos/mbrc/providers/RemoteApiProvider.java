@@ -3,6 +3,7 @@ package com.kelsos.mbrc.providers;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.kelsos.mbrc.rest.RemoteApi;
+import com.kelsos.mbrc.rest.RemoteEndPoint;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 
@@ -14,6 +15,9 @@ public class RemoteApiProvider implements Provider<RemoteApi> {
     @Inject
     private RestAdapter.Builder builder;
 
+	@Inject
+	private RemoteEndPoint endPoint;
+
     @Override
     public RemoteApi get() {
 
@@ -22,7 +26,7 @@ public class RemoteApiProvider implements Provider<RemoteApi> {
         Executor executor = Executors.newSingleThreadExecutor();
 
         RestAdapter restAdapter = builder
-                .setEndpoint(RemoteApi.API_URL)
+                .setEndpoint(endPoint)
                 .setConverter(RemoteApi.DATA_CONVERTER)
                 .setExecutors(executor, executor)
                 .setRequestInterceptor(interceptor)

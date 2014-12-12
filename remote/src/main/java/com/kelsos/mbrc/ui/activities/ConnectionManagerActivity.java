@@ -4,13 +4,14 @@ import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ConnectionSettingsAdapter;
@@ -41,7 +42,10 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
 	private Button addButton;
 
     @InjectView(R.id.connection_list)
-	private ListView connectionList;
+	private RecyclerView mRecyclerView;
+
+	private RecyclerView.Adapter mAdapter;
+	private RecyclerView.LayoutManager mLayoutManager;
 
     private static final int GROUP_ID = 56;
     private static final int DEFAULT = 11;
@@ -58,6 +62,9 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mSnackBar = new SnackBar(this);
+		mRecyclerView.setHasFixedSize(true);
+		mLayoutManager = new LinearLayoutManager(this);
+		mRecyclerView.setLayoutManager(mLayoutManager);
     }
 
     @Override protected void onStart() {
@@ -77,9 +84,8 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
 			settingsDialog.show(getFragmentManager(), "settings_dialog");
 		});
 
-        registerForContextMenu(connectionList);
-        connectionList.setOnItemClickListener((parent, view, position, id)
-                -> new ChangeSettings(position, SettingsAction.DEFAULT));
+        registerForContextMenu(mRecyclerView);
+
 
 		AndroidObservable.bindActivity(this, Events.DiscoveryStatusNotification)
 				.subscribeOn(Schedulers.io())
@@ -125,10 +131,9 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
                 new ChangeSettings(position, SettingsAction.DEFAULT);
                 break;
             case EDIT:
-                ConnectionSettingsAdapter mAdapter = (ConnectionSettingsAdapter) connectionList.getAdapter();
-				ConnectionSettings settings = mAdapter.getItem(position);
-				SettingsDialogFragment settingsDialog = SettingsDialogFragment.newInstance(settings);
-                settingsDialog.show(getFragmentManager(), "settings_dialog");
+//				ConnectionSettings settings = mAdapter.getItem(position);
+//				SettingsDialogFragment settingsDialog = SettingsDialogFragment.newInstance(settings);
+//                settingsDialog.show(getFragmentManager(), "settings_dialog");
                 break;
             case DELETE:
                 new ChangeSettings(position, SettingsAction.DELETE);
@@ -145,10 +150,9 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
     }
 
     public void handleConnectionSettingsChange(ConnectionSettingsChanged event) {
-        ConnectionSettingsAdapter mAdapter = new ConnectionSettingsAdapter(this,
-                R.layout.ui_list_connection_settings, event.getmSettings());
-        mAdapter.setDefaultIndex(event.getDefaultIndex());
-        connectionList.setAdapter(mAdapter);
+        mAdapter = new ConnectionSettingsAdapter(event.getmSettings());
+		((ConnectionSettingsAdapter) mAdapter).setDefaultIndex(event.getDefaultIndex());
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     public void handleDiscoveryStatusChange(DiscoveryStatus event) {

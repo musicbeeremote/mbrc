@@ -11,21 +11,22 @@
 
     <include layout="@layout/toolbar"/>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
             android:id="@+id/connection_list"
             android:layout_width="match_parent"
             android:layout_height="0dip"
             android:layout_weight="1"
             android:divider="@null"
-            android:layout_marginLeft="@dimen/side_margin"
-            android:layout_marginRight="@dimen/side_margin"
             android:dividerHeight="@dimen/side_margin_half"
             android:layout_marginTop="@dimen/side_margin_half"
-            android:layout_marginBottom="@dimen/side_margin_half"
+            android:layout_marginLeft="@dimen/side_margin_half"
+            android:layout_marginStart="@dimen/side_margin_half"
+            android:layout_marginRight="@dimen/side_margin_half"
+            android:layout_marginEnd="@dimen/side_margin_half"
             android:fastScrollEnabled="true"
             android:listSelector="@android:color/transparent"
             tools:listitem="@layout/ui_list_connection_settings">
-    </ListView>
+    </android.support.v7.widget.RecyclerView>
 
     <LinearLayout
             android:layout_width="match_parent"

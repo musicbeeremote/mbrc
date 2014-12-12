@@ -13,6 +13,7 @@ import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.NotifyUser;
+import com.kelsos.mbrc.rest.RemoteEndPoint;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
@@ -30,6 +31,8 @@ import static com.kelsos.mbrc.util.RemoteUtils.isNullOrEmpty;
 
 @Singleton
 public class SettingsManager {
+
+	private RemoteEndPoint endPoint;
     private SharedPreferences mPreferences;
     private Context mContext;
     private List<ConnectionSettings> mSettings;
@@ -37,7 +40,7 @@ public class SettingsManager {
     private int defaultIndex;
 
 	@Inject
-    public SettingsManager(Context context, SharedPreferences preferences, ObjectMapper mapper) {
+    public SettingsManager(Context context, SharedPreferences preferences, ObjectMapper mapper, RemoteEndPoint endPoint) {
         this.mPreferences = preferences;
         this.mContext = context;
         this.mMapper = mapper;
@@ -53,10 +56,18 @@ public class SettingsManager {
             }
         }
         defaultIndex = mPreferences.getInt(mContext.getString(R.string.settings_key_default_index), 0);
+		Events.ConnectionSettingsChangedNotification
+				.onNext(new ConnectionSettingsChanged(mSettings, defaultIndex));
         checkForFirstRunAfterUpdate();
         Events.ConnectionSettingsNotification
                 .subscribeOn(Schedulers.io())
                 .subscribe(this::handleConnectionSettings, Logger::LogThrowable);
+
+		final String host = mPreferences.getString(mContext.getString(R.string.settings_key_hostname), null);
+		final int httpPort = Integer.parseInt(mPreferences.getString(mContext.getString(R.string.settings_key_http), "0"));
+
+		this.endPoint = endPoint;
+		this.endPoint.setConnectionSettings(host, httpPort);
     }
 
     private void readConnectionSettings(String sVal) throws IOException {
@@ -95,20 +106,7 @@ public class SettingsManager {
         return new InetSocketAddress(serverAddress, serverPort);
     }
 
-    private boolean checkIfRemoteSettingsExist() {
-        String serverAddress = mPreferences.getString(mContext.getString(R.string.settings_key_hostname), null);
-        int serverPort;
-
-        try {
-            serverPort = mPreferences.getInt(mContext.getString(R.string.settings_key_port), 0);
-        } catch (ClassCastException castException) {
-            serverPort = Integer.parseInt(mPreferences.getString(mContext.getString(R.string.settings_key_port), "0"));
-        }
-
-        return !(nullOrEmpty(serverAddress) || serverPort == 0);
-    }
-
-    public boolean isVolumeReducedOnRinging() {
+	public boolean isVolumeReducedOnRinging() {
         return mPreferences.getBoolean(mContext.getString(R.string.settings_key_reduce_volume), false);
     }
 
@@ -159,8 +157,10 @@ public class SettingsManager {
         editor.putString(mContext.getString(R.string.settings_key_hostname), settings.getAddress());
         editor.putInt(mContext.getString(R.string.settings_key_port), settings.getPort());
         editor.putInt(mContext.getString(R.string.settings_key_default_index), index);
+		editor.putInt(mContext.getString(R.string.settings_key_http), settings.getHttpPort());
         editor.apply();
         defaultIndex = index;
+		endPoint.setConnectionSettings(settings.getAddress(), settings.getHttpPort());
     }
 
     public void setLastUpdated(Date lastChecked) {
