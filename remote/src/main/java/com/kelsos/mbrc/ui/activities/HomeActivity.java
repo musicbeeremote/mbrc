@@ -18,6 +18,7 @@ import android.view.View;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.DisplayFragment;
+import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.ui.DrawerSelection;
 import com.kelsos.mbrc.events.ui.LfmRatingChanged;
 import com.kelsos.mbrc.events.ui.NotifyUser;
@@ -31,6 +32,8 @@ import com.kelsos.mbrc.util.Logger;
 import org.jetbrains.annotations.NotNull;
 import roboguice.activity.RoboActionBarActivity;
 import rx.android.observables.AndroidObservable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class HomeActivity extends RoboActionBarActivity {
     private ActionBarDrawerToggle mDrawerToggle;
@@ -93,6 +96,10 @@ public class HomeActivity extends RoboActionBarActivity {
 
         AndroidObservable.bindActivity(this, mDrawerFragment.getDrawerSelectionObservable())
                 .subscribe(this::handleDrawerEvent, Logger::LogThrowable);
+		AndroidObservable.bindActivity(this, Events.UserNotification)
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(this::handleUserNotification, Logger::LogThrowable);
 
     }
 
@@ -207,7 +214,6 @@ public class HomeActivity extends RoboActionBarActivity {
         navChanged = false;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     public void handleUserNotification(NotifyUser event) {
         String message = event.isFromResource()
                 ? getString(event.getResId())

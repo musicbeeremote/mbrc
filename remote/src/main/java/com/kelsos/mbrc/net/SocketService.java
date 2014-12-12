@@ -9,7 +9,7 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.events.Events;
-import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.util.DelayTimer;
 import com.kelsos.mbrc.util.SettingsManager;
 import org.codehaus.jackson.JsonNode;
@@ -17,7 +17,12 @@ import org.codehaus.jackson.map.ObjectMapper;
 import roboguice.util.Ln;
 import rx.schedulers.Schedulers;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
@@ -173,11 +178,10 @@ public class SocketService {
             String context = node.path("message").getTextValue();
 
             if (context.contains(Notification.CLIENT_NOT_ALLOWED)) {
-
                 return;
             }
 
-            Events.Messages.onNext(new MessageEvent(context));
+            Events.Messages.onNext(new Message(context));
         }
     }
 
@@ -201,7 +205,7 @@ public class SocketService {
 
                 String socketStatus = String.valueOf(clSocket.isConnected());
 
-                Events.Messages.onNext(new MessageEvent(SocketEventType.STATUS_CHANGED, socketStatus));
+                Events.Messages.onNext(new Message(SocketEventType.STATUS_CHANGED, socketStatus));
 
                 while (clSocket.isConnected()) {
                     readFromSocket(input);
@@ -219,7 +223,7 @@ public class SocketService {
                 }
                 clSocket = null;
 
-                Events.Messages.onNext(new MessageEvent(SocketEventType.STATUS_CHANGED, false));
+                Events.Messages.onNext(new Message(SocketEventType.STATUS_CHANGED));
                 if (numOfRetries < MAX_RETRIES) {
                     socketManager(SocketAction.RETRY);
                 }

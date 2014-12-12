@@ -9,10 +9,9 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.events.Events;
-import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
-import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -36,9 +35,8 @@ public class SettingsManager {
     private List<ConnectionSettings> mSettings;
     private ObjectMapper mMapper;
     private int defaultIndex;
-    private boolean isFirstRun;
 
-    @Inject
+	@Inject
     public SettingsManager(Context context, SharedPreferences preferences, ObjectMapper mapper) {
         this.mPreferences = preferences;
         this.mContext = context;
@@ -48,21 +46,17 @@ public class SettingsManager {
         mSettings = new ArrayList<>();
 
         if (!isNullOrEmpty(sVal)) {
-            ArrayNode node;
-            try {
+			try {
                 readConnectionSettings(sVal);
             } catch (IOException e) {
-                if (BuildConfig.DEBUG) {
-                    Ln.d(e);
-                }
+				Ln.d(e);
             }
         }
         defaultIndex = mPreferences.getInt(mContext.getString(R.string.settings_key_default_index), 0);
         checkForFirstRunAfterUpdate();
         Events.ConnectionSettingsNotification
                 .subscribeOn(Schedulers.io())
-                .subscribe(this::handleConnectionSettings,
-                        error -> Ln.d("Error::%s", error.getMessage()));
+                .subscribe(this::handleConnectionSettings, Logger::LogThrowable);
     }
 
     private void readConnectionSettings(String sVal) throws IOException {
@@ -94,7 +88,7 @@ public class SettingsManager {
         }
 
         if (nullOrEmpty(serverAddress) || serverPort == 0) {
-            new DisplayDialog(DisplayDialog.SETUP);
+			//TODO: show dialog for setup
             return null;
         }
 
@@ -131,7 +125,7 @@ public class SettingsManager {
         try {
             editor.putString(mContext.getString(R.string.settings_key_array), mMapper.writeValueAsString(mSettings));
             editor.apply();
-            new ConnectionSettingsChanged(mSettings, 0);
+			Events.ConnectionSettingsChangedNotification.onNext(new ConnectionSettingsChanged(mSettings, 0));
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
                 Ln.e(e, "Settings store");
@@ -144,17 +138,17 @@ public class SettingsManager {
             if (!mSettings.contains(settings)) {
                 if (mSettings.size() == 0) {
                     updateDefault(0, settings);
-                    new MessageEvent(UserInputEventType.SETTINGS_CHANGED);
+                    Events.Messages.onNext(new Message(UserInputEventType.SETTINGS_CHANGED));
                 }
                 mSettings.add(settings);
                 storeSettings();
             } else {
-                new NotifyUser(R.string.notification_settings_stored);
+				Events.UserNotification.onNext(new NotifyUser(R.string.notification_settings_stored));
             }
         } else {
             mSettings.set(settings.getIndex(), settings);
             if (settings.getIndex() == defaultIndex) {
-                new MessageEvent(UserInputEventType.SETTINGS_CHANGED);
+				Events.Messages.onNext(new Message(UserInputEventType.SETTINGS_CHANGED));
             }
             storeSettings();
         }
@@ -185,7 +179,7 @@ public class SettingsManager {
                 mSettings.remove(event.getIndex());
                 if (event.getIndex() == defaultIndex && mSettings.size() > 0) {
                     updateDefault(0, mSettings.get(0));
-                    new MessageEvent(UserInputEventType.SETTINGS_CHANGED);
+                    new Message(UserInputEventType.SETTINGS_CHANGED);
                 } else {
                     updateDefault(0, new ConnectionSettings());
                 }
@@ -196,9 +190,12 @@ public class SettingsManager {
             case DEFAULT:
                 ConnectionSettings settings = mSettings.get(event.getIndex());
                 updateDefault(event.getIndex(), settings);
-                new ConnectionSettingsChanged(mSettings, event.getIndex());
-                new MessageEvent(UserInputEventType.SETTINGS_CHANGED);
+                Events.ConnectionSettingsChangedNotification
+						.onNext(new ConnectionSettingsChanged(mSettings, event.getIndex()));
+                Events.Messages.onNext(new Message(UserInputEventType.SETTINGS_CHANGED));
                 break;
+			default:
+				break;
         }
     }
 
@@ -208,7 +205,7 @@ public class SettingsManager {
         long currentVersion = BuildConfig.VERSION_CODE;
 
         if (lastVersionCode < currentVersion) {
-            isFirstRun = true;
+			boolean isFirstRun = true;
 
             SharedPreferences.Editor editor = mPreferences.edit();
             editor.putLong(mContext.getString(R.string.settings_key_last_version_run), currentVersion);

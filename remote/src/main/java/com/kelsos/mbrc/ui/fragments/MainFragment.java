@@ -32,7 +32,7 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.model.PlayerState;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.Events;
-import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
 import com.kelsos.mbrc.events.ui.RatingChanged;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
@@ -382,7 +382,7 @@ public class MainFragment extends RoboFragment {
             return;
         }
         if (total == 0) {
-            new MessageEvent(UserInputEventType.REQUEST_POSITION);
+            new Message(UserInputEventType.REQUEST_POSITION);
             return;
         }
         int currentSeconds = current / MILLISECONDS;

@@ -8,14 +8,16 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.SyncManager;
 import com.kelsos.mbrc.data.model.Model;
 import com.kelsos.mbrc.events.Events;
-import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.net.ServiceDiscovery;
 import com.kelsos.mbrc.net.SocketService;
+import com.kelsos.mbrc.util.Logger;
 import com.kelsos.mbrc.util.NotificationService;
 import com.kelsos.mbrc.util.RemoteBroadcastReceiver;
 import com.kelsos.mbrc.util.SettingsManager;
 import roboguice.service.RoboService;
 import roboguice.util.Ln;
+import rx.schedulers.Schedulers;
 
 @Singleton
 public class Controller extends RoboService {
@@ -47,9 +49,13 @@ public class Controller extends RoboService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Events.Messages.onNext(new MessageEvent(UserInputEventType.START_CONNECTION));
+        Events.Messages.onNext(new Message(UserInputEventType.START_CONNECTION));
         discovery.startDiscovery();
         init();
+
+		Events.Messages.subscribeOn(Schedulers.io())
+				.filter(msg -> msg.getType().equals(UserInputEventType.START_DISCOVERY))
+				.subscribe(msg -> discovery.startDiscovery(), Logger::LogThrowable);
         return super.onStartCommand(intent, flags, startId);
     }
 

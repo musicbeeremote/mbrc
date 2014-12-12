@@ -19,7 +19,7 @@ import com.kelsos.mbrc.controller.Controller;
 import com.kelsos.mbrc.data.NavigationEntry;
 import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.Events;
-import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
 import com.kelsos.mbrc.events.ui.DrawerSelection;
 import org.jetbrains.annotations.NotNull;
@@ -68,10 +68,10 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
     public void onStart() {
         super.onStart();
         menuConnector.setOnClickListener(v ->
-                Events.Messages.onNext(new MessageEvent(UserInputEventType.START_CONNECTION)));
+                Events.Messages.onNext(new Message(UserInputEventType.START_CONNECTION)));
 
         menuConnector.setOnLongClickListener(view -> {
-            new MessageEvent(UserInputEventType.RESET_CONNECTION);
+            new Message(UserInputEventType.RESET_CONNECTION);
             return false;
         });
 

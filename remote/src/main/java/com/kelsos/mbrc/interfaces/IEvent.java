@@ -11,8 +11,8 @@ public interface IEvent {
     String getType();
 
     /**
-     * Returns the object containing the data of the event.
+     * Returns a string contained in the message
      * @return Object with the data
      */
-    Object getData();
+    String getMessage();
 }

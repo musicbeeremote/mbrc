@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.Message;
 import roboguice.receiver.RoboBroadcastReceiver;
 
 public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
@@ -46,7 +46,7 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
                 if (networkInfo != null) {
                     niState = networkInfo.getState();
                     if (niState.equals(NetworkInfo.State.CONNECTED)) {
-                        new MessageEvent(UserInputEventType.START_CONNECTION);
+                        new Message(UserInputEventType.START_CONNECTION);
                     }
                 }
                 break;
@@ -59,7 +59,7 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
 //                        new UserAction(Notification.PLAYER_NEXT, true)));
                 break;
             case NotificationService.NOTIFICATION_CLOSE_PRESSED:
-                new MessageEvent(UserInputEventType.CANCEL_NOTIFICATION);
+                new Message(UserInputEventType.CANCEL_NOTIFICATION);
                 break;
             case NotificationService.NOTIFICATION_PREVIOUS_PRESSED:
 //                bus.post(new MessageEvent(ProtocolEventType.USER_ACTION,

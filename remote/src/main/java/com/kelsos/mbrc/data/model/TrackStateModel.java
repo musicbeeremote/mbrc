@@ -5,7 +5,7 @@ import android.graphics.BitmapFactory;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.events.Events;
-import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.events.ui.CoverAvailable;
 import com.kelsos.mbrc.events.ui.LfmRatingChanged;
 import com.kelsos.mbrc.events.ui.RatingChanged;
@@ -43,7 +43,7 @@ public class TrackStateModel {
         this.api = api;
         lyrics = "";
         lyricsSubject = BehaviorSubject.create(lyrics);
-        Observable<MessageEvent> trackChangeObservable = Events.Messages.subscribeOn(Schedulers.io())
+        Observable<Message> trackChangeObservable = Events.Messages.subscribeOn(Schedulers.io())
                 .filter(msg -> msg.getType().equals(Notification.TRACK_CHANGED));
 
         trackChangeObservable.flatMap(msg -> api.getTrackInfo())

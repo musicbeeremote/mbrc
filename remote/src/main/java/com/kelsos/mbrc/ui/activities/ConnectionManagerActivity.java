@@ -17,19 +17,31 @@ import com.kelsos.mbrc.adapters.ConnectionSettingsAdapter;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.enums.SettingsAction;
-import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.Events;
+import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStatus;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
+import com.kelsos.mbrc.util.Logger;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
+import rx.android.observables.AndroidObservable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
-public class ConnectionManagerActivity extends RoboActionBarActivity implements SettingsDialogFragment.SettingsDialogListener {
-    @InjectView(R.id.connection_scan) private Button scanButton;
-    @InjectView(R.id.connection_add) private Button addButton;
-    @InjectView(R.id.connection_list) private ListView connectionList;
+public class ConnectionManagerActivity extends RoboActionBarActivity
+		implements SettingsDialogFragment.SettingsDialogListener {
+
+    @InjectView(R.id.connection_scan)
+	private Button scanButton;
+
+    @InjectView(R.id.connection_add)
+	private Button addButton;
+
+    @InjectView(R.id.connection_list)
+	private ListView connectionList;
 
     private static final int GROUP_ID = 56;
     private static final int DEFAULT = 11;
@@ -54,12 +66,37 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
         mContext = this;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.connection_manager_title);
-        scanButton.setOnClickListener(scanListener);
-        addButton.setOnClickListener(addListener);
+        scanButton.setOnClickListener(v -> {
+			mProgress = ProgressDialog.show(mContext, getString(R.string.progress_scanning),
+					getString(R.string.progress_scanning_message), true, false);
+			Events.Messages.onNext(new Message(UserInputEventType.START_DISCOVERY));
+        });
+
+        addButton.setOnClickListener(view -> {
+			SettingsDialogFragment settingsDialog = SettingsDialogFragment.newInstance(-1);
+			settingsDialog.show(getFragmentManager(), "settings_dialog");
+		});
+
         registerForContextMenu(connectionList);
         connectionList.setOnItemClickListener((parent, view, position, id)
                 -> new ChangeSettings(position, SettingsAction.DEFAULT));
-    }
+
+		AndroidObservable.bindActivity(this, Events.DiscoveryStatusNotification)
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(this::handleDiscoveryStatusChange, Logger::LogThrowable);
+
+		AndroidObservable.bindActivity(this, Events.ConnectionSettingsChangedNotification)
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(this::handleConnectionSettingsChange, Logger::LogThrowable);
+
+		AndroidObservable.bindActivity(this, Events.UserNotification)
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(this::handleUserNotification, Logger::LogThrowable);
+
+	}
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -88,15 +125,9 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
                 new ChangeSettings(position, SettingsAction.DEFAULT);
                 break;
             case EDIT:
-                SettingsDialogFragment settingsDialog = new SettingsDialogFragment();
                 ConnectionSettingsAdapter mAdapter = (ConnectionSettingsAdapter) connectionList.getAdapter();
-                Bundle args = new Bundle();
-                ConnectionSettings mSettings = mAdapter.getItem(position);
-                args.putString("address", mSettings.getAddress());
-                args.putString("name", mSettings.getName());
-                args.putInt("port", mSettings.getPort());
-                args.putInt("index", position);
-                settingsDialog.setArguments(args);
+				ConnectionSettings settings = mAdapter.getItem(position);
+				SettingsDialogFragment settingsDialog = SettingsDialogFragment.newInstance(settings);
                 settingsDialog.show(getFragmentManager(), "settings_dialog");
                 break;
             case DELETE:
@@ -107,21 +138,6 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
         }
         return true;
     }
-
-    private Button.OnClickListener scanListener = new Button.OnClickListener() {
-        @Override public void onClick(View view) {
-            mProgress = ProgressDialog.show(mContext, getString(R.string.progress_scanning), getString(R.string.progress_scanning_message), true, false);
-            new MessageEvent(UserInputEventType.START_DISCOVERY);
-        }
-    };
-
-    private Button.OnClickListener addListener = view -> {
-        SettingsDialogFragment settingsDialog = new SettingsDialogFragment();
-        Bundle args = new Bundle();
-        args.putInt("index", -1);
-        settingsDialog.setArguments(args);
-        settingsDialog.show(getFragmentManager(), "settings_dialog");
-    };
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, ConnectionSettings settings) {
@@ -135,7 +151,7 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
         connectionList.setAdapter(mAdapter);
     }
 
-    public void handleDiscoveryStopped(DiscoveryStatus event) {
+    public void handleDiscoveryStatusChange(DiscoveryStatus event) {
         if (mProgress != null) {
             mProgress.hide();
         }
@@ -158,9 +174,9 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
     }
 
     public void handleUserNotification(NotifyUser event) {
-        String message = event.isFromResource() ?
-                getString(event.getResId()) :
-                event.getMessage();
+        String message = event.isFromResource()
+				? getString(event.getResId())
+				: event.getMessage();
 
         mSnackBar.show(message);
     }

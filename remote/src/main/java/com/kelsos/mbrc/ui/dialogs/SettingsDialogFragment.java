@@ -14,8 +14,15 @@ import roboguice.inject.InjectView;
 import static com.kelsos.mbrc.util.RemoteUtils.isNullOrEmpty;
 
 public class SettingsDialogFragment extends RoboDialogFragment {
+
     public static final int MAX_PORT = 65535;
     public static final int MIN_PORT = 1;
+
+	public static final String INDEX = "index";
+	public static final String PORT = "port";
+	public static final String ADDRESS = "address";
+	public static final String NAME = "name";
+	public static final String HTTP = "http";
 
 	@InjectView(R.id.settings_dialog_host)
     private EditText hostEdit;
@@ -37,7 +44,6 @@ public class SettingsDialogFragment extends RoboDialogFragment {
 
     private SettingsDialogListener mListener;
 
-
 	@Override public void onAttach(Activity activity) {
         super.onAttach(activity);
 
@@ -47,6 +53,26 @@ public class SettingsDialogFragment extends RoboDialogFragment {
             throw new ClassCastException(activity.toString() + " must implement SettingsDialogListener");
         }
     }
+
+	public static SettingsDialogFragment newInstance(int index) {
+		SettingsDialogFragment fragment = new SettingsDialogFragment();
+		Bundle args = new Bundle();
+		args.putInt(INDEX, index);
+		fragment.setArguments(args);
+		return fragment;
+	}
+
+	public static SettingsDialogFragment newInstance(ConnectionSettings settings) {
+		SettingsDialogFragment fragment = new SettingsDialogFragment();
+		Bundle args = new Bundle();
+		args.putInt(INDEX, settings.getIndex());
+		args.putString(NAME, settings.getName());
+		args.putString(ADDRESS, settings.getAddress());
+		args.putInt(PORT, settings.getPort());
+		args.putInt(HTTP, settings.getHttpPort());
+		fragment.setArguments(args);
+		return fragment;
+	}
 
     @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
 		MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
@@ -117,15 +143,16 @@ public class SettingsDialogFragment extends RoboDialogFragment {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            currentIndex = args.getInt("index");
-            currentPort = args.getInt("port");
-            currentAddress = args.getString("address");
-            currentName = args.getString("name");
-			currentHttpPort = args.getInt("http");
+            currentIndex = args.getInt(INDEX);
+            currentPort = args.getInt(PORT);
+            currentAddress = args.getString(ADDRESS);
+			currentName = args.getString(NAME);
+			currentHttpPort = args.getInt(HTTP);
         }
     }
 
-    public interface SettingsDialogListener {
+
+	public interface SettingsDialogListener {
         void onDialogPositiveClick(DialogFragment dialog, ConnectionSettings settings);
     }
 }

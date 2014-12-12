@@ -10,7 +10,7 @@ public class NotifyUser {
         this.isFromResource = false;
     }
 
-    public NotifyUser (int resId) {
+    public NotifyUser(int resId) {
         this.resId = resId;
         this.isFromResource = true;
     }

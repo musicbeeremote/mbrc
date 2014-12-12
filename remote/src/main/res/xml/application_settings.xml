@@ -22,6 +22,14 @@
                     android:entryValues="@array/search_click_options_values"
                     android:defaultValue="@string/search_click_default_value"/>
 
+    <EditTextPreference
+        android:key="settings_key_pagination"
+        android:title="Results per page"
+        android:summary="Represents the number of results"
+        android:inputType="numberDecimal"
+        android:defaultValue="800"
+        />
+
     <PreferenceCategory android:title="@string/preferences_category_about">
         <Preference
                 android:title="@string/settings_oss_license"

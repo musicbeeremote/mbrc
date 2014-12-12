@@ -2,7 +2,6 @@ package com.kelsos.mbrc.ui.fragments;
 
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -12,7 +11,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.Events;
+import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity;
 
 /**
@@ -72,19 +72,19 @@ public class SettingsFragment extends PreferenceFragment {
             mRevision.setSummary(BuildConfig.GIT_SHA);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            final Preference mShowNotification = findPreference(getResources().
-                    getString(R.string.settings_key_notification_control));
-            if (mShowNotification != null) {
-                mShowNotification.setOnPreferenceChangeListener((preference, newValue) -> {
-                    boolean value = (Boolean) newValue;
-                    if (!value) {
-                        new MessageEvent(UserInputEventType.CANCEL_NOTIFICATION);
-                    }
-                    return true;
-                });
-            }
-        }
+
+		final Preference mShowNotification = findPreference(getResources().
+				getString(R.string.settings_key_notification_control));
+		if (mShowNotification != null) {
+			mShowNotification.setOnPreferenceChangeListener((preference, newValue) -> {
+				boolean value = (Boolean) newValue;
+				if (!value) {
+					Events.Messages.onNext(new Message(UserInputEventType.CANCEL_NOTIFICATION));
+				}
+				return true;
+			});
+		}
+
 
         final Preference mLicense = findPreference(getResources().getString(R.string.settings_key_license));
         if (mLicense != null) {
