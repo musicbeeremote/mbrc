@@ -61,6 +61,7 @@ public class SettingsManager {
         checkForFirstRunAfterUpdate();
         Events.SettingsChangeNotification
                 .subscribeOn(Schedulers.io())
+				.observeOn(Schedulers.io())
                 .subscribe(this::handleSettingsChange, Logger::LogThrowable);
 
 		final String host = mPreferences.getString(mContext.getString(R.string.settings_key_hostname), null);
@@ -168,33 +169,32 @@ public class SettingsManager {
     }
 
     public void handleSettingsChange(SettingsChange event) {
-        switch (event.getAction()) {
+		final ConnectionSettings settings = event.getSettings();
+		final int settingsIndex = settings.getIndex();
+		switch (event.getAction()) {
             case DELETE:
-                mSettings.remove(event.getIndex());
-                if (event.getIndex() == defaultIndex && mSettings.size() > 0) {
+                mSettings.remove(settingsIndex);
+                if (settingsIndex == defaultIndex && mSettings.size() > 0) {
                     updateDefault(0, mSettings.get(0));
-                    new Message(UserInputEventType.SETTINGS_CHANGED);
                 } else {
                     updateDefault(0, new ConnectionSettings());
                 }
                 storeSettings();
                 break;
             case EDIT:
-				mSettings.set(event.getIndex(), event.getSettings());
+				mSettings.set(settingsIndex, settings);
                 break;
             case DEFAULT:
-                ConnectionSettings settings = mSettings.get(event.getIndex());
-                updateDefault(event.getIndex(), settings);
-                Events.ConnectionSettingsChangedNotification
-						.onNext(new ConnectionSettingsChanged(mSettings, event.getIndex()));
-                Events.Messages.onNext(new Message(UserInputEventType.SETTINGS_CHANGED));
+                updateDefault(settingsIndex, settings);
                 break;
 			case NEW:
-				addNewSettings(event.getSettings());
+				addNewSettings(settings);
 				break;
 			default:
 				break;
         }
+		Events.ConnectionSettingsChangedNotification
+				.onNext(new ConnectionSettingsChanged(mSettings, settingsIndex));
     }
 
     private void checkForFirstRunAfterUpdate() {
@@ -203,9 +203,8 @@ public class SettingsManager {
         long currentVersion = BuildConfig.VERSION_CODE;
 
         if (lastVersionCode < currentVersion) {
-			boolean isFirstRun = true;
 
-            SharedPreferences.Editor editor = mPreferences.edit();
+			SharedPreferences.Editor editor = mPreferences.edit();
             editor.putLong(mContext.getString(R.string.settings_key_last_version_run), currentVersion);
             editor.apply();
 

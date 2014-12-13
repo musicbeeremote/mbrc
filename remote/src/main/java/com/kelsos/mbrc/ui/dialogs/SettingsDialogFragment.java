@@ -116,7 +116,9 @@ public class SettingsDialogFragment extends RoboDialogFragment {
         super.onStart();
             nameEdit.setText(currentName);
             hostEdit.setText(currentAddress);
-			httpEdit.setText(String.format("%d", currentHttpPort));
+			if (currentHttpPort > 0) {
+				httpEdit.setText(String.format("%d", currentHttpPort));
+			}
             if (currentPort > 0) {
                 portEdit.setText(String.format("%d", currentPort));
 

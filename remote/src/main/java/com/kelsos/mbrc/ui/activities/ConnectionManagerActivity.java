@@ -42,14 +42,9 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
 
     @InjectView(R.id.connection_list)
 	private RecyclerView mRecyclerView;
-
 	private RecyclerView.Adapter mAdapter;
 	private RecyclerView.LayoutManager mLayoutManager;
 
-    private static final int GROUP_ID = 56;
-    private static final int DEFAULT = 11;
-    private static final int EDIT = 12;
-    private static final int DELETE = 13;
     private SnackBar mSnackBar;
 
     private ProgressDialog mProgress;
@@ -121,8 +116,6 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
 				: SettingsAction.EDIT, settings);
 
 		Events.SettingsChangeNotification.onNext(change);
-
-		dialog.dismiss();
 	}
 
     public void handleConnectionSettingsChange(ConnectionSettingsChanged event) {

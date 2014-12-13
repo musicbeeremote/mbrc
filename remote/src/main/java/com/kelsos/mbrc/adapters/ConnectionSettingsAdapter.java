@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.adapters;
 
 import android.app.FragmentManager;
-import android.graphics.Typeface;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,7 +21,6 @@ import java.util.List;
 public class ConnectionSettingsAdapter extends RecyclerView.Adapter<ConnectionSettingsAdapter.ConnectionViewHolder> {
 
     private List<ConnectionSettings> mData;
-    private Typeface robotoLight;
     private int defaultIndex;
 
     public ConnectionSettingsAdapter(List<ConnectionSettings> objects) {
@@ -60,7 +58,7 @@ public class ConnectionSettingsAdapter extends RecyclerView.Adapter<ConnectionSe
 				switch (menuItem.getItemId()) {
 					case R.id.connection_default:
 						Events.SettingsChangeNotification
-								.onNext(new SettingsChange(position, SettingsAction.DEFAULT));
+								.onNext(new SettingsChange(SettingsAction.DEFAULT, settings));
 						break;
 					case R.id.connection_edit:
 						SettingsDialogFragment settingsDialog = SettingsDialogFragment.newInstance(settings);
@@ -69,7 +67,7 @@ public class ConnectionSettingsAdapter extends RecyclerView.Adapter<ConnectionSe
 						break;
 					case R.id.connection_delete:
 						Events.SettingsChangeNotification
-								.onNext(new SettingsChange(position, SettingsAction.DELETE));
+								.onNext(new SettingsChange(SettingsAction.DELETE, settings));
 						break;
 					default:
 						break;
@@ -85,8 +83,8 @@ public class ConnectionSettingsAdapter extends RecyclerView.Adapter<ConnectionSe
 		return mData.size();
 	}
 
+	public class ConnectionViewHolder extends RecyclerView.ViewHolder {
 
-	public static final class ConnectionViewHolder extends RecyclerView.ViewHolder {
         TextView hostname;
         TextView portNum;
         TextView computerName;
@@ -100,6 +98,10 @@ public class ConnectionSettingsAdapter extends RecyclerView.Adapter<ConnectionSe
 			computerName = (TextView) itemView.findViewById(R.id.cs_list_name);
 			defaultSettings = (ImageView) itemView.findViewById(R.id.cs_list_default);
 			overflow = (ImageView) itemView.findViewById(R.id.cs_list_overflow);
+			itemView.setOnClickListener(v -> Events.SettingsChangeNotification
+					.onNext(new SettingsChange(SettingsAction.DEFAULT, mData.get(getPosition()))));
 		}
+
 	}
+
 }

@@ -66,7 +66,7 @@ public class Controller extends RoboService {
     }
 
     public void init() {
-        syncManager.clearCurrentQueue();
-        syncManager.startCurrentQueueSyncing();
+        //syncManager.clearCurrentQueue();
+        //syncManager.startCurrentQueueSyncing();
     }
 }
