@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.DrawerAdapter;
-import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.constants.EventType;
 import com.kelsos.mbrc.controller.Controller;
 import com.kelsos.mbrc.data.NavigationEntry;
 import com.kelsos.mbrc.enums.DisplayFragment;
@@ -68,10 +68,10 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
     public void onStart() {
         super.onStart();
         menuConnector.setOnClickListener(v ->
-                Events.Messages.onNext(new Message(UserInputEventType.START_CONNECTION)));
+                Events.Messages.onNext(new Message(EventType.START_CONNECTION)));
 
         menuConnector.setOnLongClickListener(view -> {
-            new Message(UserInputEventType.RESET_CONNECTION);
+            new Message(EventType.RESET_CONNECTION);
             return false;
         });
 

@@ -3,10 +3,7 @@ package com.kelsos.mbrc.net;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
-import com.kelsos.mbrc.constants.Const;
-import com.kelsos.mbrc.constants.SocketEventType;
-import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.data.SocketMessage;
+import com.kelsos.mbrc.constants.EventType;
 import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.Message;
@@ -55,26 +52,26 @@ public class SocketService {
         numOfRetries = 0;
         shouldStop = false;
         socketManager(SocketAction.START);
-        SubscribeToEvents();
+        subscribeToEvents();
     }
 
 
-    private void SubscribeToEvents(){
+    private void subscribeToEvents() {
         Events.Messages.subscribeOn(Schedulers.io())
-                .filter(msg -> msg.getType().equals(UserInputEventType.START_CONNECTION))
+                .filter(msg -> msg.getType().equals(EventType.START_CONNECTION))
                 .subscribe(event -> socketManager(SocketAction.START));
     }
 
     public void socketManager(SocketAction action) {
         switch (action) {
             case RESET:
-                SocketReset();
+                reset();
                 break;
             case START:
-                SocketStart();
+                start();
                 break;
             case RETRY:
-                SocketRetry();
+                retry();
                 break;
             case STOP:
                 shouldStop = true;
@@ -85,13 +82,13 @@ public class SocketService {
     }
 
     private void stopThread() {
-        if (mThread != null && mThread.isAlive()){
+        if (mThread != null && mThread.isAlive()) {
             mThread.interrupt();
             mThread = null;
         }
     }
 
-    private void SocketRetry() {
+    private void retry() {
         cleanupSocket();
         stopThread();
         if (shouldStop) {
@@ -102,7 +99,7 @@ public class SocketService {
         cTimer.start();
     }
 
-    private void SocketReset() {
+    private void reset() {
         cleanupSocket();
         stopThread();
         shouldStop = false;
@@ -110,8 +107,8 @@ public class SocketService {
         cTimer.start();
     }
 
-    private void SocketStart() {
-        if(!sIsConnected()){
+    private void start() {
+        if (!sIsConnected()) {
             cTimer.start();
         }
     }
@@ -144,22 +141,7 @@ public class SocketService {
         }
     }
 
-    public void sendData(SocketMessage message) {
-        try {
-            if (sIsConnected()) {
-                output.print(mapper.writeValueAsString(message) + Const.NEWLINE);
-                if (output.checkError()) {
-                    throw new Exception("Check error");
-                }
-            }
-        } catch (Exception ignored) {
-            if (BuildConfig.DEBUG) {
-                Ln.e(ignored, "socket send data exception");
-            }
-        }
-    }
-
-    public void tryProcessIncoming(final String incoming) {
+	public void tryProcessIncoming(final String incoming) {
         try {
             processIncoming(incoming);
         } catch (IOException e) {
@@ -205,7 +187,7 @@ public class SocketService {
 
                 String socketStatus = String.valueOf(clSocket.isConnected());
 
-                Events.Messages.onNext(new Message(SocketEventType.STATUS_CHANGED, socketStatus));
+                Events.Messages.onNext(new Message(EventType.STATUS_CHANGED, socketStatus));
 
                 while (clSocket.isConnected()) {
                     readFromSocket(input);
@@ -223,7 +205,7 @@ public class SocketService {
                 }
                 clSocket = null;
 
-                Events.Messages.onNext(new Message(SocketEventType.STATUS_CHANGED));
+                Events.Messages.onNext(new Message(EventType.STATUS_CHANGED));
                 if (numOfRetries < MAX_RETRIES) {
                     socketManager(SocketAction.RETRY);
                 }

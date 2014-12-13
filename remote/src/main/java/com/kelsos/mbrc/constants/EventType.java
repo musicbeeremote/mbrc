@@ -1,8 +1,10 @@
 package com.kelsos.mbrc.constants;
 
-public final class UserInputEventType {
+public final class EventType {
 
-    private UserInputEventType() { }
+
+
+	private EventType() { }
 
     public static final String REQUEST_POSITION = "RequestPosition";
     public static final String START_CONNECTION = "StartConnection";
@@ -10,6 +12,7 @@ public final class UserInputEventType {
     public static final String RESET_CONNECTION = "ResetConnection";
     public static final String CANCEL_NOTIFICATION = "CancelNotification";
     public static final String START_DISCOVERY = "StartDiscovery";
+	public static final String STATUS_CHANGED = "SocketStatusChanged";
     public static final String KEY_VOLUME_UP = "KeyVolumeUp";
     public static final String KEY_VOLUME_DOWN = "KeyVolumeDown";
 }

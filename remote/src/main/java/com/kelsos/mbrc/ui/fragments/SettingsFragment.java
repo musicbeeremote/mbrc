@@ -10,7 +10,7 @@ import android.webkit.WebView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.constants.EventType;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity;
@@ -79,7 +79,7 @@ public class SettingsFragment extends PreferenceFragment {
 			mShowNotification.setOnPreferenceChangeListener((preference, newValue) -> {
 				boolean value = (Boolean) newValue;
 				if (!value) {
-					Events.Messages.onNext(new Message(UserInputEventType.CANCEL_NOTIFICATION));
+					Events.Messages.onNext(new Message(EventType.CANCEL_NOTIFICATION));
 				}
 				return true;
 			});

@@ -28,7 +28,7 @@ import android.widget.TextView;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.constants.EventType;
 import com.kelsos.mbrc.data.model.PlayerState;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.Events;
@@ -382,7 +382,7 @@ public class MainFragment extends RoboFragment {
             return;
         }
         if (total == 0) {
-            new Message(UserInputEventType.REQUEST_POSITION);
+            new Message(EventType.REQUEST_POSITION);
             return;
         }
         int currentSeconds = current / MILLISECONDS;

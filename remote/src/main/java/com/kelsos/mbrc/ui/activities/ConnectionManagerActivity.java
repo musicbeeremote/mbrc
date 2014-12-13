@@ -12,7 +12,7 @@ import android.widget.Button;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ConnectionSettingsAdapter;
-import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.constants.EventType;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.enums.SettingsAction;
 import com.kelsos.mbrc.events.Events;
@@ -70,7 +70,7 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
         scanButton.setOnClickListener(v -> {
 			mProgress = ProgressDialog.show(mContext, getString(R.string.progress_scanning),
 					getString(R.string.progress_scanning_message), true, false);
-			Events.Messages.onNext(new Message(UserInputEventType.START_DISCOVERY));
+			Events.Messages.onNext(new Message(EventType.START_DISCOVERY));
         });
 
         addButton.setOnClickListener(view -> {

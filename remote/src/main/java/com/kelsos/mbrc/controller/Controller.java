@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.constants.EventType;
 import com.kelsos.mbrc.data.SyncManager;
 import com.kelsos.mbrc.data.model.Model;
 import com.kelsos.mbrc.events.Events;
@@ -49,12 +49,12 @@ public class Controller extends RoboService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Events.Messages.onNext(new Message(UserInputEventType.START_CONNECTION));
+        Events.Messages.onNext(new Message(EventType.START_CONNECTION));
         discovery.startDiscovery();
         init();
 
 		Events.Messages.subscribeOn(Schedulers.io())
-				.filter(msg -> msg.getType().equals(UserInputEventType.START_DISCOVERY))
+				.filter(msg -> msg.getType().equals(EventType.START_DISCOVERY))
 				.subscribe(msg -> discovery.startDiscovery(), Logger::LogThrowable);
         return super.onStartCommand(intent, flags, startId);
     }

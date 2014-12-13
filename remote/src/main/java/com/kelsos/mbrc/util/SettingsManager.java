@@ -6,7 +6,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.constants.EventType;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.Message;
@@ -131,7 +131,7 @@ public class SettingsManager {
             if (!mSettings.contains(settings)) {
                 if (mSettings.size() == 0) {
                     updateDefault(0, settings);
-                    Events.Messages.onNext(new Message(UserInputEventType.SETTINGS_CHANGED));
+                    Events.Messages.onNext(new Message(EventType.SETTINGS_CHANGED));
                 }
                 mSettings.add(settings);
                 storeSettings();
@@ -141,7 +141,7 @@ public class SettingsManager {
         } else {
             mSettings.set(settings.getIndex(), settings);
             if (settings.getIndex() == defaultIndex) {
-				Events.Messages.onNext(new Message(UserInputEventType.SETTINGS_CHANGED));
+				Events.Messages.onNext(new Message(EventType.SETTINGS_CHANGED));
             }
             storeSettings();
         }
