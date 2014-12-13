@@ -26,6 +26,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:orientation="vertical">
 
                 <TextView
@@ -61,7 +62,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/cs_list_port"
                         android:textSize="14sp"
-                        tools:text="3132"/>
+                        tools:text="3132 / 8188"/>
                 </LinearLayout>
 
             </LinearLayout>
@@ -75,13 +76,19 @@
                 android:layout_marginEnd="@dimen/side_margin_half"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="4dp"
+                android:layout_gravity="center_vertical"
                 android:contentDescription="@string/connection_default_description"/>
 
             <ImageView
-                android:layout_width="32dp"
+                android:padding="5dp"
+                android:id="@+id/cs_list_overflow"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
                 android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
                 android:tint="@android:color/white"
-                android:layout_height="32dp"/>
+                android:layout_height="wrap_content"
+                android:background="@drawable/selectable_background_mbrc_dark"
+                android:contentDescription="@string/abc_action_menu_overflow_description"/>
 
         </LinearLayout>
 

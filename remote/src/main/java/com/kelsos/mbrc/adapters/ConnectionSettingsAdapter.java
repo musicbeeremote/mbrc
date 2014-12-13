@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.adapters;
 
+import android.app.FragmentManager;
 import android.graphics.Typeface;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
+import com.kelsos.mbrc.enums.SettingsAction;
+import com.kelsos.mbrc.events.Events;
+import com.kelsos.mbrc.events.ui.SettingsChange;
+import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
+import roboguice.activity.RoboActionBarActivity;
 
 import java.util.List;
 
@@ -39,10 +46,38 @@ public class ConnectionSettingsAdapter extends RecyclerView.Adapter<ConnectionSe
 		final ConnectionSettings settings = mData.get(position);
 		connectionViewHolder.computerName.setText(settings.getName());
 		connectionViewHolder.hostname.setText(settings.getAddress());
-		connectionViewHolder.portNum.setText(String.format("%d / %d", settings.getPort(), settings.getHttpPort()));
+		connectionViewHolder.portNum.setText(String.format("%d / %d", settings.getPort(), settings.getHttp()));
+
 		if (settings.getIndex() == defaultIndex) {
 			connectionViewHolder.defaultSettings.setImageResource(R.drawable.ic_selection_default);
 		}
+
+		connectionViewHolder.overflow.setOnClickListener(v -> {
+			final PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
+			popupMenu.getMenuInflater().inflate(R.menu.connection_popup, popupMenu.getMenu());
+			popupMenu.setOnMenuItemClickListener(menuItem -> {
+
+				switch (menuItem.getItemId()) {
+					case R.id.connection_default:
+						Events.SettingsChangeNotification
+								.onNext(new SettingsChange(position, SettingsAction.DEFAULT));
+						break;
+					case R.id.connection_edit:
+						SettingsDialogFragment settingsDialog = SettingsDialogFragment.newInstance(settings);
+						FragmentManager fragmentManager = ((RoboActionBarActivity) v.getContext()).getFragmentManager();
+						settingsDialog.show(fragmentManager, "settings_dialog");
+						break;
+					case R.id.connection_delete:
+						Events.SettingsChangeNotification
+								.onNext(new SettingsChange(position, SettingsAction.DELETE));
+						break;
+					default:
+						break;
+				}
+				return false;
+			});
+			popupMenu.show();
+		});
 	}
 
 	@Override
@@ -56,6 +91,7 @@ public class ConnectionSettingsAdapter extends RecyclerView.Adapter<ConnectionSe
         TextView portNum;
         TextView computerName;
         ImageView defaultSettings;
+		ImageView overflow;
 
 		public ConnectionViewHolder(View itemView) {
 			super(itemView);
@@ -63,9 +99,7 @@ public class ConnectionSettingsAdapter extends RecyclerView.Adapter<ConnectionSe
 			portNum = (TextView) itemView.findViewById(R.id.cs_list_port);
 			computerName = (TextView) itemView.findViewById(R.id.cs_list_name);
 			defaultSettings = (ImageView) itemView.findViewById(R.id.cs_list_default);
-			itemView.setOnClickListener(v -> {
-
-            });
+			overflow = (ImageView) itemView.findViewById(R.id.cs_list_overflow);
 		}
 	}
 }

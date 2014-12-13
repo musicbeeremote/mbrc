@@ -8,14 +8,18 @@ public class ConnectionSettings {
     private String address;
     private String name;
     private int port;
-    private int httpPort;
+    private int http;
     private int index;
 
+	private void initFromJson(JsonNode node) {
+		this.address = node.path("address").asText();
+		this.name = node.path("name").asText();
+		this.port = node.path("port").asInt();
+		this.http = node.path("http").asInt();
+	}
+
     public ConnectionSettings(JsonNode node) {
-        this.address = node.path("address").asText();
-        this.name = node.path("name").asText();
-        this.port = node.path("port").asInt();
-        this.httpPort = node.path("http").asInt();
+        initFromJson(node);
         this.index = -1;
     }
 
@@ -24,7 +28,7 @@ public class ConnectionSettings {
         this.name = name;
         this.port = port;
         this.index = index;
-		this.httpPort = http;
+		this.http = http;
     }
 
     public ConnectionSettings() {
@@ -34,7 +38,12 @@ public class ConnectionSettings {
         this.name = "";
     }
 
-    public String getAddress() {
+	public ConnectionSettings(JsonNode node, int i) {
+		initFromJson(node);
+		this.index = i;
+	}
+
+	public String getAddress() {
         return this.address;
     }
 
@@ -46,8 +55,8 @@ public class ConnectionSettings {
         return this.port;
     }
 
-	public int getHttpPort() {
-		return this.httpPort;
+	public int getHttp() {
+		return this.http;
 	}
 
     @Override public boolean equals(Object o) {

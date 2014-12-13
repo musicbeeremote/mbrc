@@ -7,8 +7,10 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.ConnectionSettings;
+import com.kelsos.mbrc.enums.SettingsAction;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.ui.DiscoveryStatus;
+import com.kelsos.mbrc.events.ui.SettingsChange;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -101,8 +103,9 @@ public class ServiceDiscovery {
 
                     JsonNode node = mapper.readValue(incoming, JsonNode.class);
                     if (node.path("context").asText().equals("notify")) {
-                        ConnectionSettings settings = new ConnectionSettings(node);
-                        Events.ConnectionSettingsNotification.onNext(settings);
+                        final ConnectionSettings settings = new ConnectionSettings(node);
+						final SettingsChange event = new SettingsChange(SettingsAction.NEW, settings);
+                        Events.SettingsChangeNotification.onNext(event);
                         break;
                     }
                 }

@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
@@ -15,9 +16,7 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
-import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.ui.activities.HomeActivity;
-import com.squareup.picasso.Picasso;
 
 @Singleton
 public class NotificationService {
@@ -42,43 +41,34 @@ public class NotificationService {
     private Context mContext;
     private SettingsManager mSettings;
 
-    @Inject public NotificationService(Context context, SettingsManager mSettings) {
+    @Inject public NotificationService(Context context, SettingsManager mSettings, NotificationManager mNotificationManager) {
         this.mContext = context;
         this.mSettings = mSettings;
-        mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        this.mNotificationManager = mNotificationManager;
     }
 
     public void handleNotificationData(final NotificationDataAvailable event) {
         if (!mSettings.isNotificationControlEnabled()) {
             return;
         }
-        notificationBuilder(event.getTitle(), event.getArtist(), event.getAlbum(), event.getState());
+        notificationBuilder(event.getTitle(), event.getArtist(), event.getAlbum(), event.getState(), event.getCover());
     }
 
     private boolean atLeastJellyBean() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     }
 
-    private void updateNormalNotification(final String artist, final String title, Notification notification) {
+    private void updateNormalNotification(final String artist, final String title, Bitmap cover) {
         mNormalView.setTextViewText(R.id.notification_artist, artist);
         mNormalView.setTextViewText(R.id.notification_title, title);
-        final String requestUrl = String.format("%s?t=%s", RemoteApi.COVER_URL, RemoteUtils.getTimeStamp());
-        Picasso.with(mContext)
-                .load(requestUrl)
-                .placeholder(R.drawable.ic_image_no_cover)
-                .into(mNormalView, R.id.notification_album_art, NOW_PLAYING_PLACEHOLDER, notification);
+		mNormalView.setImageViewBitmap(R.id.notification_album_art, cover);
     }
 
-    private void updateExpandedNotification(final String artist, final String title, final String album, Notification notification) {
+    private void updateExpandedNotification(final String artist, final String title, final String album, Bitmap cover) {
         mExpandedView.setTextViewText(R.id.expanded_notification_line_one, title);
         mExpandedView.setTextViewText(R.id.expanded_notification_line_two, artist);
         mExpandedView.setTextViewText(R.id.expanded_notification_line_three, album);
-
-        final String requestUrl = String.format("%s?t=%s", RemoteApi.COVER_URL, RemoteUtils.getTimeStamp());
-        Picasso.with(mContext)
-                .load(requestUrl)
-                .placeholder(R.drawable.ic_image_no_cover)
-                .into(mExpandedView, R.id.expanded_notification_cover, NOW_PLAYING_PLACEHOLDER, notification);
+		mExpandedView.setImageViewBitmap(R.id.expanded_notification_cover, cover);
     }
 
     /**
@@ -90,7 +80,7 @@ public class NotificationService {
      */
     @SuppressLint("NewApi")
     private void notificationBuilder(final String title, final String artist, final String album,
-                                     final PlayState state) {
+                                     final PlayState state, Bitmap cover) {
 
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
@@ -103,10 +93,10 @@ public class NotificationService {
         mNormalView.setOnClickPendingIntent(R.id.notification_close, getPendingIntent(CLOSE));
 
         mNotification = mBuilder.build();
-        updateNormalNotification(artist, title, mNotification);
+        updateNormalNotification(artist, title, cover);
         if (atLeastJellyBean()) {
             mExpandedView = new RemoteViews(mContext.getPackageName(), R.layout.ui_notification_control_expanded);
-            updateExpandedNotification(artist, title, album, mNotification);
+            updateExpandedNotification(artist, title, album, cover);
             mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_playpause, getPendingIntent(PLAY));
             mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_next, getPendingIntent(NEXT));
             mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_previous, getPendingIntent(PREVIOUS));

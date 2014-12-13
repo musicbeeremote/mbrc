@@ -10,9 +10,9 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.Message;
-import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.NotifyUser;
+import com.kelsos.mbrc.events.ui.SettingsChange;
 import com.kelsos.mbrc.rest.RemoteEndPoint;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -59,12 +59,12 @@ public class SettingsManager {
 		Events.ConnectionSettingsChangedNotification
 				.onNext(new ConnectionSettingsChanged(mSettings, defaultIndex));
         checkForFirstRunAfterUpdate();
-        Events.ConnectionSettingsNotification
+        Events.SettingsChangeNotification
                 .subscribeOn(Schedulers.io())
-                .subscribe(this::handleConnectionSettings, Logger::LogThrowable);
+                .subscribe(this::handleSettingsChange, Logger::LogThrowable);
 
 		final String host = mPreferences.getString(mContext.getString(R.string.settings_key_hostname), null);
-		final int httpPort = Integer.parseInt(mPreferences.getString(mContext.getString(R.string.settings_key_http), "0"));
+		final int httpPort = mPreferences.getInt(mContext.getString(R.string.settings_key_http), 0);
 
 		this.endPoint = endPoint;
 		this.endPoint.setConnectionSettings(host, httpPort);
@@ -75,20 +75,14 @@ public class SettingsManager {
         node = mMapper.readValue(sVal, ArrayNode.class);
         for (int i = 0; i < node.size(); i++) {
             JsonNode jNode = node.get(i);
-            ConnectionSettings settings = new ConnectionSettings(jNode);
+            ConnectionSettings settings = new ConnectionSettings(jNode, i);
             mSettings.add(settings);
         }
     }
 
     public SocketAddress getSocketAddress() {
         String serverAddress = mPreferences.getString(mContext.getString(R.string.settings_key_hostname), null);
-        int serverPort;
-
-        try {
-            serverPort = mPreferences.getInt(mContext.getString(R.string.settings_key_port), 0);
-        } catch (ClassCastException castException) {
-            serverPort = Integer.parseInt(mPreferences.getString(mContext.getString(R.string.settings_key_port), "0"));
-        }
+        int serverPort = mPreferences.getInt(mContext.getString(R.string.settings_key_port), 0);
 
         /**
          * Getting Debug Configuration.
@@ -131,7 +125,7 @@ public class SettingsManager {
         }
     }
 
-    public void handleConnectionSettings(ConnectionSettings settings) {
+    private void addNewSettings(ConnectionSettings settings) {
         if (settings.getIndex() < 0) {
             if (!mSettings.contains(settings)) {
                 if (mSettings.size() == 0) {
@@ -157,10 +151,10 @@ public class SettingsManager {
         editor.putString(mContext.getString(R.string.settings_key_hostname), settings.getAddress());
         editor.putInt(mContext.getString(R.string.settings_key_port), settings.getPort());
         editor.putInt(mContext.getString(R.string.settings_key_default_index), index);
-		editor.putInt(mContext.getString(R.string.settings_key_http), settings.getHttpPort());
+		editor.putInt(mContext.getString(R.string.settings_key_http), settings.getHttp());
         editor.apply();
         defaultIndex = index;
-		endPoint.setConnectionSettings(settings.getAddress(), settings.getHttpPort());
+		endPoint.setConnectionSettings(settings.getAddress(), settings.getHttp());
     }
 
     public void setLastUpdated(Date lastChecked) {
@@ -173,7 +167,7 @@ public class SettingsManager {
         return new Date(mPreferences.getLong(mContext.getString(R.string.settings_key_last_update_check), 0));
     }
 
-    public void handleSettingsChange(ChangeSettings event) {
+    public void handleSettingsChange(SettingsChange event) {
         switch (event.getAction()) {
             case DELETE:
                 mSettings.remove(event.getIndex());
@@ -186,6 +180,7 @@ public class SettingsManager {
                 storeSettings();
                 break;
             case EDIT:
+				mSettings.set(event.getIndex(), event.getSettings());
                 break;
             case DEFAULT:
                 ConnectionSettings settings = mSettings.get(event.getIndex());
@@ -194,6 +189,9 @@ public class SettingsManager {
 						.onNext(new ConnectionSettingsChanged(mSettings, event.getIndex()));
                 Events.Messages.onNext(new Message(UserInputEventType.SETTINGS_CHANGED));
                 break;
+			case NEW:
+				addNewSettings(event.getSettings());
+				break;
 			default:
 				break;
         }

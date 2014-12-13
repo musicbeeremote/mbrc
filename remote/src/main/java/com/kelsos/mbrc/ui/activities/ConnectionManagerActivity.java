@@ -7,10 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.ContextMenu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.kelsos.mbrc.R;
@@ -20,10 +17,10 @@ import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.enums.SettingsAction;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.Message;
-import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStatus;
 import com.kelsos.mbrc.events.ui.NotifyUser;
+import com.kelsos.mbrc.events.ui.SettingsChange;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
 import com.kelsos.mbrc.util.Logger;
 import roboguice.activity.RoboActionBarActivity;
@@ -31,6 +28,8 @@ import roboguice.inject.InjectView;
 import rx.android.observables.AndroidObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+
+import java.util.ArrayList;
 
 public class ConnectionManagerActivity extends RoboActionBarActivity
 		implements SettingsDialogFragment.SettingsDialogListener {
@@ -84,9 +83,6 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
 			settingsDialog.show(getFragmentManager(), "settings_dialog");
 		});
 
-        registerForContextMenu(mRecyclerView);
-
-
 		AndroidObservable.bindActivity(this, Events.DiscoveryStatusNotification)
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
@@ -102,6 +98,9 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(this::handleUserNotification, Logger::LogThrowable);
 
+		mAdapter = new ConnectionSettingsAdapter(new ArrayList<>());
+		mRecyclerView.setAdapter(mAdapter);
+
 	}
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {
@@ -115,39 +114,16 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
         return true;
     }
 
-    @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(GROUP_ID, DEFAULT, 0, getString(R.string.connectivity_manager_default));
-        menu.add(GROUP_ID, EDIT, 0, getString(R.string.connectivity_manager_edit));
-        menu.add(GROUP_ID, DELETE, 0, getString(R.string.connectivity_manager_delete));
-        menu.setHeaderTitle(getString(R.string.connectivity_manager_header));
-        super.onCreateContextMenu(menu, v, menuInfo);
-    }
-
-    @Override public boolean onContextItemSelected(android.view.MenuItem item) {
-        AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        final int position = mi.position;
-        switch (item.getItemId()) {
-            case DEFAULT:
-                new ChangeSettings(position, SettingsAction.DEFAULT);
-                break;
-            case EDIT:
-//				ConnectionSettings settings = mAdapter.getItem(position);
-//				SettingsDialogFragment settingsDialog = SettingsDialogFragment.newInstance(settings);
-//                settingsDialog.show(getFragmentManager(), "settings_dialog");
-                break;
-            case DELETE:
-                new ChangeSettings(position, SettingsAction.DELETE);
-                break;
-            default:
-                return false;
-        }
-        return true;
-    }
-
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, ConnectionSettings settings) {
+		final SettingsChange change = new SettingsChange(settings.getIndex() < 0
+				? SettingsAction.NEW
+				: SettingsAction.EDIT, settings);
 
-    }
+		Events.SettingsChangeNotification.onNext(change);
+
+		dialog.dismiss();
+	}
 
     public void handleConnectionSettingsChange(ConnectionSettingsChanged event) {
         mAdapter = new ConnectionSettingsAdapter(event.getmSettings());

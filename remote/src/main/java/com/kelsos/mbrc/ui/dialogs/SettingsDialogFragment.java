@@ -4,12 +4,12 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import roboguice.fragment.provided.RoboDialogFragment;
-import roboguice.inject.InjectView;
 
 import static com.kelsos.mbrc.util.RemoteUtils.isNullOrEmpty;
 
@@ -24,16 +24,9 @@ public class SettingsDialogFragment extends RoboDialogFragment {
 	public static final String NAME = "name";
 	public static final String HTTP = "http";
 
-	@InjectView(R.id.settings_dialog_host)
     private EditText hostEdit;
-
-	@InjectView(R.id.settings_dialog_name)
     private EditText nameEdit;
-
-	@InjectView(R.id.settings_dialog_port)
     private EditText portEdit;
-
-	@InjectView(R.id.settings_dialog_http)
 	private EditText httpEdit;
 
     private String currentName;
@@ -69,7 +62,7 @@ public class SettingsDialogFragment extends RoboDialogFragment {
 		args.putString(NAME, settings.getName());
 		args.putString(ADDRESS, settings.getAddress());
 		args.putInt(PORT, settings.getPort());
-		args.putInt(HTTP, settings.getHttpPort());
+		args.putInt(HTTP, settings.getHttp());
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -110,23 +103,28 @@ public class SettingsDialogFragment extends RoboDialogFragment {
 			}
 		});
 
-        return builder.build();
+		final MaterialDialog materialDialog = builder.build();
+		final View view = materialDialog.getCustomView();
+		hostEdit = (EditText) view.findViewById(R.id.settings_dialog_host);
+		nameEdit = (EditText) view.findViewById(R.id.settings_dialog_name);
+		portEdit = (EditText) view.findViewById(R.id.settings_dialog_port);
+		httpEdit = (EditText) view.findViewById(R.id.settings_dialog_http);
+		return materialDialog;
     }
 
     @Override public void onStart() {
         super.onStart();
-
-        if (nameEdit != null && !nameEdit.getText().toString().equals("")) {
             nameEdit.setText(currentName);
             hostEdit.setText(currentAddress);
-			httpEdit.setText(currentHttpPort);
+			httpEdit.setText(String.format("%d", currentHttpPort));
             if (currentPort > 0) {
-                portEdit.setText(Integer.toString(currentPort));
-            }
+                portEdit.setText(String.format("%d", currentPort));
+
         }
     }
 
-    private boolean isValid(int port) {
+
+	private boolean isValid(int port) {
         if (port < MIN_PORT || port > MAX_PORT) {
             final MaterialDialog.Builder alert = new MaterialDialog.Builder(getActivity());
             alert.title(R.string.alert_invalid_range);
@@ -150,7 +148,6 @@ public class SettingsDialogFragment extends RoboDialogFragment {
 			currentHttpPort = args.getInt(HTTP);
         }
     }
-
 
 	public interface SettingsDialogListener {
         void onDialogPositiveClick(DialogFragment dialog, ConnectionSettings settings);
