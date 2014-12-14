@@ -3,12 +3,12 @@ package com.kelsos.mbrc.data.model;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import com.google.inject.Inject;
+import com.kelsos.mbrc.constants.EventType;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.events.ui.CoverAvailable;
 import com.kelsos.mbrc.events.ui.LfmRatingChanged;
-import com.kelsos.mbrc.events.ui.RatingChanged;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.net.Notification;
 import com.kelsos.mbrc.rest.RemoteApi;
@@ -27,8 +27,10 @@ public class TrackStateModel {
     private RemoteApi api;
 
     private BehaviorSubject<String> lyricsSubject;
+
     public static final String LOVE = "Love";
     public static final String BAN = "Ban";
+	public static final String NORMAL = "Normal";
     private float rating;
     private String title;
     private String artist;
@@ -42,24 +44,43 @@ public class TrackStateModel {
     public TrackStateModel(RemoteApi api) {
         this.api = api;
         lyrics = "";
-        lyricsSubject = BehaviorSubject.create(lyrics);
+		lyricsSubject = BehaviorSubject.create();
         Observable<Message> trackChangeObservable = Events.Messages.subscribeOn(Schedulers.io())
+				.observeOn(Schedulers.io())
                 .filter(msg -> msg.getType().equals(Notification.TRACK_CHANGED));
 
-        trackChangeObservable.flatMap(msg -> api.getTrackInfo())
-                .subscribe(this::setTrackInfo, Logger::LogThrowable);
+		Observable<Message> socketConnectedObservable = Events.Messages.subscribeOn(Schedulers.io())
+				.observeOn(Schedulers.io())
+				.filter(msg -> msg.getType().equals(EventType.SOCKET_CONNECTED));
 
-        trackChangeObservable.subscribe(msg -> requestCover());
+		Observable<Message> mergeObservable = Observable.merge(trackChangeObservable, socketConnectedObservable);
 
-        trackChangeObservable.subscribe(msg -> requestLyrics());
+        mergeObservable.subscribe(msg -> requestTrackInfo());
+        mergeObservable.subscribe(msg -> requestCover());
+        mergeObservable.subscribe(msg -> requestLyrics());
 
         Events.Messages.subscribeOn(Schedulers.io())
+				.observeOn(Schedulers.io())
                 .filter(msg -> msg.getType().equals(Notification.LYRICS_CHANGED))
-                .subscribe(msg -> requestLyrics());
+                .subscribe(msg -> requestLyrics(), Logger::LogThrowable);
 
+		init();
     }
 
-    void createBitmap(Response response) {
+	private void init() {
+		requestCover();
+		requestLyrics();
+		requestTrackInfo();
+	}
+
+	private void requestTrackInfo() {
+		api.getTrackInfo()
+				.subscribeOn(Schedulers.io())
+				.observeOn(Schedulers.io())
+				.subscribe(this::setTrackInfo, Logger::LogThrowable);
+	}
+
+	void createBitmap(Response response) {
         try {
             final InputStream stream = response.getBody().in();
             albumCover = BitmapFactory.decodeStream(stream);
@@ -123,13 +144,15 @@ public class TrackStateModel {
         lyricsSubject.onNext(this.lyrics);
     }
 
-    public Observable<String> getLyricsObservable(){
+    public Observable<String> getLyricsObservable() {
         return lyricsSubject.asObservable();
     }
 
     public void setRating(double rating) {
         this.rating = (float) rating;
-        new RatingChanged(this.rating);
+
     }
+
+
 
 }

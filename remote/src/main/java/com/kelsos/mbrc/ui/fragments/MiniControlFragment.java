@@ -84,7 +84,7 @@ public class MiniControlFragment extends RoboFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::handleTrackInfoChange, Logger::LogThrowable);
 
-        AndroidObservable.bindFragment(this, playerState.playState())
+        AndroidObservable.bindFragment(this, playerState.observePlaystate())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::handlePlayStateChange, Logger::LogThrowable);

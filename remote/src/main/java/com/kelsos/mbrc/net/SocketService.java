@@ -8,6 +8,7 @@ import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.util.DelayTimer;
+import com.kelsos.mbrc.util.RemoteUtils;
 import com.kelsos.mbrc.util.SettingsManager;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -164,6 +165,7 @@ public class SocketService {
             }
 
             Events.Messages.onNext(new Message(context));
+			Ln.d("Got :: %s :: on %s", context, RemoteUtils.getTimeStamp());
         }
     }
 
@@ -185,9 +187,11 @@ public class SocketService {
                 final InputStreamReader in = new InputStreamReader(clSocket.getInputStream());
                 input = new BufferedReader(in, BUFFER_SIZE);
 
-                String socketStatus = String.valueOf(clSocket.isConnected());
 
-                Events.Messages.onNext(new Message(EventType.STATUS_CHANGED, socketStatus));
+
+                Events.Messages.onNext(new Message(clSocket.isConnected()
+						? EventType.SOCKET_CONNECTED
+						: EventType.SOCKET_DISCONNECTED));
 
                 while (clSocket.isConnected()) {
                     readFromSocket(input);
@@ -205,7 +209,7 @@ public class SocketService {
                 }
                 clSocket = null;
 
-                Events.Messages.onNext(new Message(EventType.STATUS_CHANGED));
+                Events.Messages.onNext(new Message(EventType.SOCKET_DISCONNECTED));
                 if (numOfRetries < MAX_RETRIES) {
                     socketManager(SocketAction.RETRY);
                 }

@@ -41,6 +41,7 @@ import com.kelsos.mbrc.util.Logger;
 import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
 import roboguice.util.Ln;
+import rx.Observable;
 import rx.android.observables.AndroidObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -62,7 +63,8 @@ public class MainFragment extends RoboFragment {
      */
     public static final int SECONDS = 60;
     public static final int TIME_PERIOD = 1;
-    private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
+	public static final int DELAY = 20;
+	private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
     private ShareActionProvider mShareActionProvider;
     private Intent mShareIntent;
 
@@ -187,9 +189,10 @@ public class MainFragment extends RoboFragment {
 						Logger::LogThrowable);
 
         AndroidObservable.bindFragment(this, api.getCurrentPosition())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(update -> handlePositionUpdate(update.getPosition(), update.getDuration()),
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.repeatWhen(a -> a.flatMap(n -> Observable.timer(DELAY, TimeUnit.SECONDS)))
+				.subscribe(update -> handlePositionUpdate(update.getPosition(), update.getDuration()),
 						Logger::LogThrowable);
 
         AndroidObservable.bindFragment(this, Events.TrackInfoChangeNotification)
@@ -198,10 +201,10 @@ public class MainFragment extends RoboFragment {
                 .subscribe(this::handleTrackInfoChange,
 						Logger::LogThrowable);
 
-        AndroidObservable.bindFragment(this, playerStateModel.playState())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(this::handlePlayStateChange, Logger::LogThrowable);
+        AndroidObservable.bindFragment(this, playerStateModel.observePlaystate())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribeOn(Schedulers.io())
+				.subscribe(this::handlePlayStateChange, Logger::LogThrowable);
 
 
     }

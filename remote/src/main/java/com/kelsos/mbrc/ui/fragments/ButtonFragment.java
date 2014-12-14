@@ -11,13 +11,10 @@ import com.kelsos.mbrc.data.model.PlayerState;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.actions.ButtonPressedEvent;
-import com.kelsos.mbrc.events.ui.RepeatChange;
-import com.kelsos.mbrc.events.ui.ShuffleChange;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.util.Logger;
 import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
-import rx.Subscription;
 import rx.android.observables.AndroidObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -75,22 +72,36 @@ public class ButtonFragment extends RoboFragment {
         repeatButton.setOnClickListener(v ->
                 Events.ButtonPressedNotification.onNext(new ButtonPressedEvent(Button.REPEAT)));
 
-        Subscription sub = AndroidObservable.bindFragment(this, playerStateModel.playState())
+        AndroidObservable.bindFragment(this, playerStateModel.observePlaystate())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(this::UpdatePlaystate, Logger::LogThrowable);
+                .subscribe(this::updatePlaystate, Logger::LogThrowable);
+
+		AndroidObservable.bindFragment(this, playerStateModel.observeShuffleState())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribeOn(Schedulers.io())
+				.subscribe(this::handleShuffleChange, Logger::LogThrowable);
+
+		AndroidObservable.bindFragment(this, playerStateModel.observeRepeatState())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribeOn(Schedulers.io())
+				.subscribe(this::handleRepeatChange, Logger::LogThrowable);
     }
 
 
-    public void handleShuffleChange(ShuffleChange change) {
-        shuffleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_shuffle : R.drawable.ic_media_shuffle_off);
+    public void handleShuffleChange(boolean enabled) {
+        shuffleButton.setImageResource(enabled
+				? R.drawable.ic_media_shuffle
+				: R.drawable.ic_media_shuffle_off);
     }
 
-    public void updateRepeatButtonState(RepeatChange change) {
-        repeatButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_repeat : R.drawable.ic_media_repeat_off);
+    public void handleRepeatChange(boolean enabled) {
+        repeatButton.setImageResource(enabled
+				? R.drawable.ic_media_repeat
+				: R.drawable.ic_media_repeat_off);
     }
 
-    public void UpdatePlaystate(final PlayState state) {
+    public void updatePlaystate(final PlayState state) {
         int resId = R.drawable.ic_media_play;
         switch (state) {
             case PLAYING:

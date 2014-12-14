@@ -11,6 +11,7 @@ import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.net.ServiceDiscovery;
 import com.kelsos.mbrc.net.SocketService;
+import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.util.Logger;
 import com.kelsos.mbrc.util.NotificationService;
 import com.kelsos.mbrc.util.RemoteBroadcastReceiver;
@@ -37,6 +38,9 @@ public class Controller extends RoboService {
     @Inject
     private SyncManager syncManager;
 
+	@Inject
+	RemoteApi api;
+
     public Controller() {
         Ln.d("Application Controller Initialized");
     }
@@ -56,6 +60,7 @@ public class Controller extends RoboService {
 		Events.Messages.subscribeOn(Schedulers.io())
 				.filter(msg -> msg.getType().equals(EventType.START_DISCOVERY))
 				.subscribe(msg -> discovery.startDiscovery(), Logger::LogThrowable);
+
         return super.onStartCommand(intent, flags, startId);
     }
 

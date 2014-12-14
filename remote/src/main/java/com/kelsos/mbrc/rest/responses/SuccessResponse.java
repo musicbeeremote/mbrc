@@ -7,7 +7,7 @@ public class SuccessResponse {
         this.success = success;
     }
 
-    public SuccessResponse(){}
+    public SuccessResponse() { }
 
     public boolean isSuccess() {
         return success;
