@@ -187,12 +187,8 @@ public class HomeActivity extends RoboActionBarActivity {
     private void navigateToView() {
         switch (mDisplay) {
             case HOME:
-                if (getFragmentManager().getBackStackEntryCount() > 0) {
-                    onBackPressed();
-                } else {
-                    MainFragment mainFragment = new MainFragment();
-                    replaceFragment(mainFragment, "main_fragment");
-                }
+				MainFragment mainFragment = new MainFragment();
+				replaceFragment(mainFragment, "main_fragment");
                 break;
             case SEARCH:
                 BrowseFragment slsFragment = new BrowseFragment();

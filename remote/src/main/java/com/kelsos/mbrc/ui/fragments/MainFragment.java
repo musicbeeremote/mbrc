@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
@@ -176,7 +177,13 @@ public class MainFragment extends RoboFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.ui_fragment_main, container, false);
+		final View view = inflater.inflate(R.layout.ui_fragment_main, container, false);
+		FragmentManager fragmentManager = getFragmentManager();
+		final ButtonFragment fragment = ButtonFragment.newInstance();
+		fragmentManager.beginTransaction()
+				.replace(R.id.mbrc_controls, fragment)
+				.commit();
+		return view;
     }
 
     @Override
