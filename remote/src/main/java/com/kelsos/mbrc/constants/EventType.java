@@ -2,9 +2,6 @@ package com.kelsos.mbrc.constants;
 
 public final class EventType {
 
-
-
-
 	private EventType() { }
 
     public static final String REQUEST_POSITION = "RequestPosition";
@@ -17,4 +14,5 @@ public final class EventType {
 	public static final String SOCKET_DISCONNECTED = "SocketDisconnected";
     public static final String KEY_VOLUME_UP = "KeyVolumeUp";
     public static final String KEY_VOLUME_DOWN = "KeyVolumeDown";
+
 }

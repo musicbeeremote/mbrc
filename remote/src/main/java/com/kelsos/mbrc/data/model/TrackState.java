@@ -8,7 +8,6 @@ import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.events.ui.CoverAvailable;
-import com.kelsos.mbrc.events.ui.LfmRatingChanged;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.net.Notification;
 import com.kelsos.mbrc.rest.RemoteApi;
@@ -23,10 +22,12 @@ import rx.subjects.BehaviorSubject;
 
 import java.io.InputStream;
 
-public class TrackStateModel {
+public class TrackState {
     private RemoteApi api;
 
     private BehaviorSubject<String> lyricsSubject;
+	private BehaviorSubject<Float> ratingSubject;
+	private BehaviorSubject<LfmStatus> lfmRatingSubject;
 
     public static final String LOVE = "Love";
     public static final String BAN = "Ban";
@@ -41,10 +42,17 @@ public class TrackStateModel {
     private Bitmap albumCover;
 
     @Inject
-    public TrackStateModel(RemoteApi api) {
+    public TrackState(RemoteApi api) {
         this.api = api;
+
         lyrics = "";
-		lyricsSubject = BehaviorSubject.create();
+		rating = 0;
+		lfmRating = LfmStatus.NORMAL;
+
+		lyricsSubject = BehaviorSubject.create(lyrics);
+		ratingSubject = BehaviorSubject.create(rating);
+		lfmRatingSubject = BehaviorSubject.create(lfmRating);
+
         Observable<Message> trackChangeObservable = Events.Messages.subscribeOn(Schedulers.io())
 				.observeOn(Schedulers.io())
                 .filter(msg -> msg.getType().equals(Notification.TRACK_CHANGED));
@@ -64,6 +72,13 @@ public class TrackStateModel {
                 .filter(msg -> msg.getType().equals(Notification.LYRICS_CHANGED))
                 .subscribe(msg -> requestLyrics(), Logger::LogThrowable);
 
+		Events.Messages.subscribeOn(Schedulers.io())
+				.observeOn(Schedulers.immediate())
+				.filter(msg -> msg.getType().equals(Notification.RATING_CHANGED))
+				.flatMap(msg -> api.getTrackRating())
+				.subscribe(resp -> setRating(resp.getRating()),
+						Logger::LogThrowable);
+
 		init();
     }
 
@@ -73,10 +88,11 @@ public class TrackStateModel {
 		requestTrackInfo();
 	}
 
+
 	private void requestTrackInfo() {
 		api.getTrackInfo()
 				.subscribeOn(Schedulers.io())
-				.observeOn(Schedulers.io())
+				.observeOn(Schedulers.immediate())
 				.subscribe(this::setTrackInfo, Logger::LogThrowable);
 	}
 
@@ -114,11 +130,14 @@ public class TrackStateModel {
                 lfmRating = LfmStatus.NORMAL;
                 break;
         }
-
-        new LfmRatingChanged(lfmRating);
+        onLfmRatingChanged(lfmRating);
     }
 
-    public void setTrackInfo(TrackResponse response) {
+	private void onLfmRatingChanged(LfmStatus lfmRating) {
+		lfmRatingSubject.onNext(lfmRating);
+	}
+
+	public void setTrackInfo(TrackResponse response) {
         this.artist = response.getArtist();
         this.album = response.getAlbum();
         this.year = response.getYear();
@@ -148,9 +167,13 @@ public class TrackStateModel {
         return lyricsSubject.asObservable();
     }
 
-    public void setRating(double rating) {
-        this.rating = (float) rating;
+	public Observable<Float> observeRating() {
+		return ratingSubject.asObservable();
+	}
 
+    public void setRating(float rating) {
+        this.rating = rating;
+		ratingSubject.onNext(rating);
     }
 
 

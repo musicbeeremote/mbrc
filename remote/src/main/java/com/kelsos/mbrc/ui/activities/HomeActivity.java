@@ -17,10 +17,12 @@ import android.view.MenuItem;
 import android.view.View;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.constants.EventType;
 import com.kelsos.mbrc.enums.DisplayFragment;
+import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.events.Events;
+import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.events.ui.DrawerSelection;
-import com.kelsos.mbrc.events.ui.LfmRatingChanged;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.fragments.DrawerFragment;
 import com.kelsos.mbrc.ui.fragments.LyricsFragment;
@@ -140,6 +142,10 @@ public class HomeActivity extends RoboActionBarActivity {
                 return true;
             case R.id.action_bar_favorite:
                 return true;
+			case R.id.popup_auto_dj:
+				return true;
+			case R.id.popup_scrobble:
+				return true;
             default:
                 return false;
         }
@@ -226,10 +232,10 @@ public class HomeActivity extends RoboActionBarActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
-
+				 Events.Messages.onNext(new Message(EventType.KEY_VOLUME_UP));
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-
+				Events.Messages.onNext(new Message(EventType.KEY_VOLUME_DOWN));
                 return true;
             default:
                 return super.onKeyDown(keyCode, event);
@@ -240,8 +246,10 @@ public class HomeActivity extends RoboActionBarActivity {
     public boolean onKeyUp(int keyCode, @NotNull KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
+				Events.Messages.onNext(new Message(EventType.KEY_VOLUME_UP));
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
+				Events.Messages.onNext(new Message(EventType.KEY_VOLUME_DOWN));
                 return true;
             default:
                 return super.onKeyUp(keyCode, event);
@@ -249,11 +257,11 @@ public class HomeActivity extends RoboActionBarActivity {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public void handleLfmStatusChange(final LfmRatingChanged event) {
+    public void handleLfmStatusChange(LfmStatus status) {
         if (favoriteItem == null) {
             return;
         }
-        switch (event.getStatus()) {
+        switch (status) {
             case LOVED:
                 favoriteItem.setIcon(R.drawable.ic_action_rating_favorite);
                 break;

@@ -2,9 +2,7 @@ package com.kelsos.mbrc.net;
 
 public final class Notification {
 
-
-
-    private Notification() { }
+	private Notification() { }
 
     public static final String NOWPLAYING_LIST_CHANGED = "nowplaying-list-changed";
     public static final String AUTODJ_STOPPED = "autodj-stopped";
@@ -19,6 +17,7 @@ public final class Notification {
     public static final String SHUFFLE_STATUS_CHANGED = "shuffle-status-changed";
     public static final String COVER_CHANGED = "cover-changed";
     public static final String LYRICS_CHANGED = "lyrics-changed";
+	public static final String RATING_CHANGED = "rating-changed";
 
     public static final String CLIENT_NOT_ALLOWED = "notallowed";
 }

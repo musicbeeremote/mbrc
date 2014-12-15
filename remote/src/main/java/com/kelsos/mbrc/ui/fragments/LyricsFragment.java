@@ -7,8 +7,9 @@ import android.view.ViewGroup;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.LyricsAdapter;
-import com.kelsos.mbrc.data.model.TrackStateModel;
+import com.kelsos.mbrc.data.model.TrackState;
 import com.kelsos.mbrc.util.Logger;
+import org.jetbrains.annotations.NotNull;
 import roboguice.fragment.provided.RoboListFragment;
 import rx.android.observables.AndroidObservable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -19,9 +20,9 @@ import java.util.Arrays;
 
 public class LyricsFragment extends RoboListFragment {
     @Inject
-    private TrackStateModel model;
+    private TrackState model;
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ui_fragment_lyrics, container, false);
     }
 
@@ -31,7 +32,7 @@ public class LyricsFragment extends RoboListFragment {
         AndroidObservable.bindFragment(this, model.getLyricsObservable())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(lyrics -> updateLyricsData(lyrics), Logger::LogThrowable);
+                .subscribe(this::updateLyricsData, Logger::LogThrowable);
     }
 
     public void updateLyricsData(String lyrics) {

@@ -6,7 +6,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.constants.EventType;
 import com.kelsos.mbrc.data.SyncManager;
-import com.kelsos.mbrc.data.model.Model;
+import com.kelsos.mbrc.data.model.PlayerState;
+import com.kelsos.mbrc.data.model.TrackState;
+import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.net.ServiceDiscovery;
@@ -24,8 +26,6 @@ import rx.schedulers.Schedulers;
 public class Controller extends RoboService {
 
     @Inject
-    private Model model;
-    @Inject
     private SocketService socket;
     @Inject
     private RemoteBroadcastReceiver receiver;
@@ -37,9 +37,12 @@ public class Controller extends RoboService {
     private SettingsManager settingsManager;
     @Inject
     private SyncManager syncManager;
-
 	@Inject
-	RemoteApi api;
+	private TrackState trackState;
+	@Inject
+	private PlayerState playerState;
+	@Inject
+	private RemoteApi api;
 
     public Controller() {
         Ln.d("Application Controller Initialized");
@@ -67,6 +70,8 @@ public class Controller extends RoboService {
     @Override
     public void onDestroy() {
         super.onDestroy();
+		socket.socketManager(SocketAction.STOP);
+		notificationService.cancelNotification(NotificationService.NOW_PLAYING_PLACEHOLDER);
         this.unregisterReceiver(receiver);
     }
 

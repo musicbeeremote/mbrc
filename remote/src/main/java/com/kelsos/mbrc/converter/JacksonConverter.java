@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.converter;
 
+import com.google.inject.Inject;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.JavaType;
 import retrofit.converter.ConversionException;
@@ -14,6 +15,7 @@ import java.lang.reflect.Type;
 public class JacksonConverter implements Converter {
     private ObjectMapper objectMapper;
 
+	@Inject
     public JacksonConverter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
@@ -29,7 +31,7 @@ public class JacksonConverter implements Converter {
     }
 
     @Override
-    public TypedOutput toBody(Object object) {
+    public final TypedOutput toBody(Object object) {
         try {
             String charset = "UTF-8";
             return new JsonTypedOutput(objectMapper.writeValueAsString(object).getBytes(charset), charset);

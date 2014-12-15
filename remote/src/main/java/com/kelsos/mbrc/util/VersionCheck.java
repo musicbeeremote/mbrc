@@ -2,7 +2,6 @@ package com.kelsos.mbrc.util;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
-import com.kelsos.mbrc.data.model.Model;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import roboguice.util.Ln;
@@ -13,17 +12,19 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class VersionCheck {
-    private Model model;
     private ObjectMapper mapper;
     private SettingsManager manager;
+	private String pluginVersion;
 
     @Inject
-    public VersionCheck(Model model, ObjectMapper mapper, SettingsManager manager) {
-        this.model = model;
+    public VersionCheck(ObjectMapper mapper, SettingsManager manager) {
         this.mapper = mapper;
         this.manager = manager;
     }
 
+	public void setPluginVersion(String pluginVersion) {
+		this.pluginVersion = pluginVersion.substring(0, pluginVersion.lastIndexOf('.'));
+	}
 
     public void start() {
         new Thread(new VersionChecker()).start();
@@ -51,9 +52,9 @@ public class VersionCheck {
 
         String suggestedVersion = vNode.path("plugin").asText();
 
-        if (!suggestedVersion.equals(model.getPluginVersion())) {
+        if (!suggestedVersion.equals(pluginVersion)) {
 
-            String[] currentVersion = model.getPluginVersion().split("\\.");
+            String[] currentVersion = pluginVersion.split("\\.");
             String[] latestVersion = suggestedVersion.split("\\.");
 
             int i = 0;
@@ -74,7 +75,7 @@ public class VersionCheck {
         manager.setLastUpdated(now);
         if (BuildConfig.DEBUG) {
             Ln.d("last check on: %s", Long.toString(now.getTime()));
-            Ln.d("plugin reported version: %s", model.getPluginVersion());
+            Ln.d("plugin reported version: %s", pluginVersion);
             Ln.d("plugin suggested version: %s", suggestedVersion);
         }
 
@@ -85,7 +86,9 @@ public class VersionCheck {
         @Override
         public void run() {
             try {
-                if (isOutOfDate()) return;
+                if (isOutOfDate()) {
+
+				}
 
             } catch (IOException | NumberFormatException e) {
                 if (BuildConfig.DEBUG) {

@@ -34,7 +34,6 @@ import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
-import com.kelsos.mbrc.events.ui.RatingChanged;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.util.Logger;
@@ -85,11 +84,15 @@ public class MainFragment extends RoboFragment {
     @Inject
     private PlayerState playerStateModel;
 
-    private int previousVol;
     private SeekBar.OnSeekBarChangeListener durationSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            if (fromUser && progress != previousVol) {
-                previousVol = progress;
+            if (fromUser) {
+                api.updatePosition(progress)
+						.subscribeOn(Schedulers.io())
+						.observeOn(AndroidSchedulers.mainThread())
+						.subscribe(resp -> handlePositionUpdate(resp.getPosition(), resp.getDuration()),
+								Logger::LogThrowable);
+
             }
         }
 
@@ -222,17 +225,10 @@ public class MainFragment extends RoboFragment {
      * Registers the listeners for the interface elements used for interaction.
      */
     private void registerListeners() {
-        try {
-            ratingWrapper.setVisibility(View.INVISIBLE);
-            trackRating.setOnRatingBarChangeListener(ratingChangeListener);
-            trackProgressSlider.setOnSeekBarChangeListener(durationSeekBarChangeListener);
-            albumCover.setOnClickListener(coverOnClick);
-        } catch (Exception e) {
-            if (BuildConfig.DEBUG) {
-                Ln.e(e, "listener registration");
-            }
-        }
-
+		ratingWrapper.setVisibility(View.INVISIBLE);
+		trackRating.setOnRatingBarChangeListener(ratingChangeListener);
+		trackProgressSlider.setOnSeekBarChangeListener(durationSeekBarChangeListener);
+		albumCover.setOnClickListener(coverOnClick);
     }
 
     /**
@@ -278,9 +274,9 @@ public class MainFragment extends RoboFragment {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-	public void handleRatingChange(final RatingChanged event) {
+	public void handleRatingChange(float rating) {
         if (trackRating != null) {
-            trackRating.setRating(event.getRating());
+            trackRating.setRating(rating);
         }
     }
 

@@ -5,16 +5,16 @@ import com.kelsos.mbrc.data.ConnectionSettings;
 import java.util.List;
 
 public class ConnectionSettingsChanged {
-    private List<ConnectionSettings> mSettings;
+    private List<ConnectionSettings> settings;
     private int defaultIndex;
 
-    public ConnectionSettingsChanged(List<ConnectionSettings> mSettings, int defaultIndex) {
-        this.mSettings = mSettings;
+    public ConnectionSettingsChanged(List<ConnectionSettings> settings, int defaultIndex) {
+        this.settings = settings;
         this.defaultIndex = defaultIndex;
     }
 
-    public List<ConnectionSettings> getmSettings() {
-        return mSettings;
+    public List<ConnectionSettings> getSettings() {
+        return settings;
     }
 
     public int getDefaultIndex() {

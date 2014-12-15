@@ -1,27 +1,24 @@
 package com.kelsos.mbrc.rest;
 
-import com.kelsos.mbrc.BuildConfig;
-import com.kelsos.mbrc.converter.JacksonConverter;
 import com.kelsos.mbrc.rest.responses.*;
-import org.codehaus.jackson.map.ObjectMapper;
 import retrofit.client.Response;
-import retrofit.converter.Converter;
-import retrofit.http.*;
+import retrofit.http.DELETE;
+import retrofit.http.GET;
+import retrofit.http.PUT;
+import retrofit.http.Path;
+import retrofit.http.Query;
+import retrofit.http.Streaming;
 import rx.Observable;
 
 import java.util.List;
 
 
 public interface RemoteApi {
-    Converter DATA_CONVERTER = new JacksonConverter(new ObjectMapper());
-    String API_URL = String.format("http://%s:8188", BuildConfig.DEVHOST);
-    String COVER_URL = RemoteApi.API_URL + "/track/cover/raw";
-
-    @GET("/player/volume")
+	@GET("/player/volume")
     Observable<ValueResponse> getVolume();
 
     @PUT("/player/volume")
-    Observable<SuccessResponse> updateVolume(@Query("value") int volume);
+    Observable<SuccessVolumeResponse> updateVolume(@Query("value") int volume);
 
     @PUT("/track/rating")
     Observable<SuccessResponse> updateRating(@Query("rating") float rating);

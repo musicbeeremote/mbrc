@@ -2,10 +2,11 @@ package com.kelsos.mbrc.data.model;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.constants.EventType;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.Events;
+import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.events.actions.ButtonPressedEvent.Button;
-import com.kelsos.mbrc.events.ui.ScrobbleChange;
 import com.kelsos.mbrc.net.Notification;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.rest.responses.SuccessResponse;
@@ -33,13 +34,13 @@ public class PlayerState {
 	private final BehaviorSubject<Integer> volumeBehaviourSubject;
 	private final BehaviorSubject<Boolean> shuffleStateBehaviourSubject;
 	private final BehaviorSubject<Boolean> repeatStateBehaviourSubject;
+	private final BehaviorSubject<Boolean> scrobblingStateBehaviourSubject;
 	boolean repeatActive;
 	boolean shuffleActive;
 	boolean isScrobblingActive;
 	boolean isMuteActive;
 	private int volume;
 	private PlayState playState;
-
 
 	@Inject
 	public PlayerState(RemoteApi api) {
@@ -48,16 +49,22 @@ public class PlayerState {
 		volumeBehaviourSubject = BehaviorSubject.create(BASE);
 		shuffleStateBehaviourSubject = BehaviorSubject.create(false);
 		repeatStateBehaviourSubject = BehaviorSubject.create(false);
+		scrobblingStateBehaviourSubject = BehaviorSubject.create(false);
 
-		Events.Messages.subscribeOn(Schedulers.io())
-				.filter(msg -> msg.getType().equals(Notification.VOLUME_CHANGED))
+		getMessageObservable(Notification.VOLUME_CHANGED)
 				.flatMap(resp -> api.getVolume())
 				.subscribe(resp -> setVolume(resp.getValue()), Logger::LogThrowable);
 
-		Events.Messages.subscribeOn(Schedulers.io())
-				.filter(msg -> msg.getType().equals(Notification.PLAY_STATUS_CHANGED))
+		getMessageObservable(Notification.PLAY_STATUS_CHANGED)
 				.flatMap(resp -> api.getPlaystate())
 				.subscribe(resp -> setPlayState(resp.getValue()), Logger::LogThrowable);
+
+		getMessageObservable(EventType.KEY_VOLUME_UP)
+				.subscribe(msg -> increaseVolume(), Logger::LogThrowable);
+
+		getMessageObservable(EventType.KEY_VOLUME_DOWN)
+				.subscribe(msg -> reduceVolume(), Logger::LogThrowable);
+
 
 		subscribeToButtonEvent(Button.PREVIOUS, api.playPrevious());
 		subscribeToButtonEvent(Button.NEXT, api.playNext());
@@ -68,6 +75,20 @@ public class PlayerState {
 		subscribeToShuffleChanges();
 		subscribeToRepeatButtonPress();
 		subscribeToShuffleButttonPress();
+		subscribeToVolumeChangeEvent();
+	}
+
+	private Observable<Message> getMessageObservable(String type) {
+		return Events.Messages
+				.subscribeOn(Schedulers.io())
+				.observeOn(Schedulers.immediate())
+				.filter(msg -> msg.getType().equals(type));
+	}
+
+	private void subscribeToVolumeChangeEvent() {
+		getMessageObservable(Notification.VOLUME_CHANGED)
+				.flatMap(msg -> api.getVolume())
+				.subscribe(resp -> setVolume(resp.getValue()), Logger::LogThrowable);
 	}
 
 	private void subscribeToShuffleButttonPress() {
@@ -87,18 +108,14 @@ public class PlayerState {
 	}
 
 	private void subscribeToRepeatChanges() {
-		Events.Messages.subscribeOn(Schedulers.io())
-				.observeOn(Schedulers.immediate())
-				.filter(msg -> msg.getType().equals(Notification.REPEAT_STATUS_CHANGED))
+		getMessageObservable(Notification.REPEAT_STATUS_CHANGED)
 				.flatMap(message -> api.getRepeatMode())
 				.subscribe(response -> setRepeatState(response.getValue()),
 						Logger::LogThrowable);
 	}
 
 	private void subscribeToShuffleChanges() {
-		Events.Messages.subscribeOn(Schedulers.io())
-				.observeOn(Schedulers.immediate())
-				.filter(msg -> msg.getType().equals(Notification.SHUFFLE_STATUS_CHANGED))
+		getMessageObservable(Notification.SHUFFLE_STATUS_CHANGED)
 				.flatMap(message -> api.getShuffleState())
 				.subscribe(response -> setShuffleState(response.isEnabled()),
 						Logger::LogThrowable);
@@ -128,10 +145,10 @@ public class PlayerState {
 
 	public void setRepeatState(String repeatButtonActive) {
 		repeatActive = (repeatButtonActive.equalsIgnoreCase(ALL));
-		onRepeateStateChange(repeatActive);
+		onRepeatStateChange(repeatActive);
 	}
 
-	private void onRepeateStateChange(boolean repeatActive) {
+	private void onRepeatStateChange(boolean repeatActive) {
 		repeatStateBehaviourSubject.onNext(repeatActive);
 	}
 
@@ -142,7 +159,11 @@ public class PlayerState {
 
 	public void setScrobbleState(boolean scrobbleButtonActive) {
 		isScrobblingActive = scrobbleButtonActive;
-		new ScrobbleChange(isScrobblingActive);
+		onScrobbleStateChange(isScrobblingActive);
+	}
+
+	private void onScrobbleStateChange(boolean isScrobblingActive) {
+		scrobblingStateBehaviourSubject.onNext(isScrobblingActive);
 	}
 
 	public void setMuteState(boolean isMuteActive) {
@@ -175,8 +196,15 @@ public class PlayerState {
 				newVolume = volume - mod;
 			}
 
-			api.updateVolume(newVolume);
+			updateVolume(newVolume);
 		}
+	}
+
+	private void updateVolume(int newVolume) {
+		api.updateVolume(newVolume)
+				.subscribeOn(Schedulers.io())
+				.observeOn(Schedulers.immediate())
+				.subscribe(resp -> setVolume(resp.getValue()));
 	}
 
 	private void increaseVolume() {
@@ -192,7 +220,7 @@ public class PlayerState {
 				newVolume = volume + ((2 * STEP) - mod);
 			}
 
-			api.updateVolume(newVolume);
+			updateVolume(newVolume);
 		}
 	}
 
@@ -207,6 +235,11 @@ public class PlayerState {
 
 	public Observable<Boolean> observeShuffleState() {
 		return shuffleStateBehaviourSubject.asObservable()
+				.distinctUntilChanged();
+	}
+
+	public Observable<Boolean> observeScrobbleState() {
+		return scrobblingStateBehaviourSubject.asObservable()
 				.distinctUntilChanged();
 	}
 

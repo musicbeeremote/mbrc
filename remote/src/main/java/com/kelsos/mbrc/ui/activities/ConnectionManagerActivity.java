@@ -119,7 +119,7 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
 	}
 
     public void handleConnectionSettingsChange(ConnectionSettingsChanged event) {
-        mAdapter = new ConnectionSettingsAdapter(event.getmSettings());
+        mAdapter = new ConnectionSettingsAdapter(event.getSettings());
 		((ConnectionSettingsAdapter) mAdapter).setDefaultIndex(event.getDefaultIndex());
         mRecyclerView.setAdapter(mAdapter);
     }
