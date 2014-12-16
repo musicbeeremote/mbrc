@@ -80,7 +80,7 @@ public class CurrentQueueFragment extends RoboListFragment
 
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.ui_fragment_nowplaying, container, false);
+        return inflater.inflate(R.layout.fragment_current_queue, container, false);
     }
 
     @Override

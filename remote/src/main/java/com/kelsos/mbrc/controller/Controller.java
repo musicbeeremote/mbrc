@@ -5,6 +5,7 @@ import android.os.IBinder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.constants.EventType;
+import com.kelsos.mbrc.dao.DaoSession;
 import com.kelsos.mbrc.data.SyncManager;
 import com.kelsos.mbrc.data.model.PlayerState;
 import com.kelsos.mbrc.data.model.TrackState;
@@ -17,6 +18,7 @@ import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.util.Logger;
 import com.kelsos.mbrc.util.NotificationService;
 import com.kelsos.mbrc.util.RemoteBroadcastReceiver;
+import com.kelsos.mbrc.util.RemoteUtils;
 import com.kelsos.mbrc.util.SettingsManager;
 import roboguice.service.RoboService;
 import roboguice.util.Ln;
@@ -43,6 +45,8 @@ public class Controller extends RoboService {
 	private PlayerState playerState;
 	@Inject
 	private RemoteApi api;
+	@Inject
+	private DaoSession daoSession;
 
     public Controller() {
         Ln.d("Application Controller Initialized");
@@ -63,6 +67,8 @@ public class Controller extends RoboService {
 		Events.Messages.subscribeOn(Schedulers.io())
 				.filter(msg -> msg.getType().equals(EventType.START_DISCOVERY))
 				.subscribe(msg -> discovery.startDiscovery(), Logger::LogThrowable);
+
+		RemoteUtils.createDatabaseTrigger(daoSession.getDatabase());
 
         return super.onStartCommand(intent, flags, startId);
     }

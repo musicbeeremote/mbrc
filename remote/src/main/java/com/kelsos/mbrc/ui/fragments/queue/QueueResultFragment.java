@@ -46,7 +46,7 @@ public class QueueResultFragment extends RoboListFragment
                 R.id.trackArtist
         };
 
-        mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.ui_list_track_item,
+        mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.listitem_track,
                 null, QueueTrackHelper.PROJECTION, to, 0);
         setListAdapter(mAdapter);
         getLoaderManager().initLoader(URL_LOADER, null, this);

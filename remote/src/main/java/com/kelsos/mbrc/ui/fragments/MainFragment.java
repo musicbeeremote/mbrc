@@ -177,16 +177,20 @@ public class MainFragment extends RoboFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		final View view = inflater.inflate(R.layout.ui_fragment_main, container, false);
+		return inflater.inflate(R.layout.ui_fragment_main, container, false);
+    }
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
 		FragmentManager fragmentManager = getFragmentManager();
 		final ButtonFragment fragment = ButtonFragment.newInstance();
 		fragmentManager.beginTransaction()
 				.replace(R.id.mbrc_controls, fragment)
 				.commit();
-		return view;
-    }
+	}
 
-    @Override
+	@Override
     public void onStart() {
         super.onStart();
         setTextViewTypeface();

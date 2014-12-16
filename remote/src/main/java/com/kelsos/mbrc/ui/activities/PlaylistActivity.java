@@ -23,7 +23,7 @@ public class PlaylistActivity extends RoboActionBarActivity implements LoaderMan
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ui_fragment_nowplaying);
+        setContentView(R.layout.fragment_current_queue);
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         Intent intent = getIntent();
@@ -57,7 +57,7 @@ public class PlaylistActivity extends RoboActionBarActivity implements LoaderMan
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        mAdapter = new PlaylistTrackCursorAdapter(this,cursor,0);
+        mAdapter = new PlaylistTrackCursorAdapter(this, cursor, 0);
         mList.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }

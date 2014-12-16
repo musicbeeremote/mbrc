@@ -18,7 +18,7 @@ public class CurrentQueueAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        return LayoutInflater.from(context).inflate(R.layout.ui_list_track_item, parent, false);
+        return LayoutInflater.from(context).inflate(R.layout.listitem_track, parent, false);
     }
 
     @Override
