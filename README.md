@@ -2,7 +2,9 @@ MusicBee Remote - for Android
 =============================
 About
 -------
-MusicBee is a remote control application that is used to control [MusicBee](http://getmusicbee.com/) player using a network connected Android device. The application is freely available through [Google Play](https://play.google.com/store/apps/details?id=com.kelsos.mbrc) and also requires the associated [plugin](https://github.com/kelsos/mbrc-plugin) (dll) for MusicBee to function. The Application acts as a client over a TCP socket connection. The application protocol used for communication is based on JSON formatted messages passed as text over the socket. 
+MusicBee is a remote control application that is used to control [MusicBee](http://getmusicbee.com/) player using a network connected Android device. The application is freely available through [Google Play](https://play.google.com/store/apps/details?id=com.kelsos.mbrc) and also requires the associated [plugin](https://github.com/kelsos/mbrc-plugin) (dll) for MusicBee to function.
+
+The application consumes an RESTlike HTTP API provided by the plugin. There is also a socket connection used to pass messages to the client for changes. The plan is for the socket to be replaced with a web socket implementation in the future.
 
 MusicBee Remote was presented as part of my thesis on "*Android and application development for mobile devices*".
 
@@ -12,66 +14,70 @@ You can also find information about the plugin and the remote to the dedicated t
 
 Building
 -------
-### Older version
-To build the application the usage of [Maven Android SDK Deployer](https://github.com/mosabua/maven-android-sdk-deployer) is required. After cloning the SDK Deployer repository in a directory you need to run:
-``mvn install -P 4.3`` to install the necessary libraries to build the application with Maven and the Android Maven Plugin. The application also depends on **DragSortListView**. You should use the [fork](https://github.com/kelsos/drag-sort-listview) since the library is no longer maintained and the original will require some modifications to build.
-### Latest development
-The latest development version have moved to the new Gradle based Android build system.
+Clone the repository and import on IntelliJ IDEA or Android Studio
 
 Credits
 -----------
 ### Artwork
 
-Many of the icons used are created by [Tasos Papazoglou Chalikias](https://github.com/sushiperv) and are licenced under the [Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License.](https://creativecommons.org/licenses/by-nc-nd/3.0/deed.en_US) some of them where taken by other projects and some awful icons during the earlier development where created by me. The original logo idea belongs to Jordan Georgiades. Any other icons introduced in version 0.9.7 and later was probably my work. The newest design after version 0.9.8 is based on [mockups](https://groups.google.com/forum/#!topic/musicbee-remote/wgm029yfJnU) by Carlos Parga
+Many of the icons used are created by [Tasos Papazoglou Chalikias](https://github.com/sushiperv) and are licenced under the [Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License.](https://creativecommons.org/licenses/by-nc-nd/3.0/deed.en_US) some of them where taken by other projects and some awful icons during the earlier development where created by me. The original logo idea belongs to Jordan Georgiades. Any other icons introduced in version 0.9.7 and later was probably my work. Some design ideas are based on [mockups](https://groups.google.com/forum/#!topic/musicbee-remote/wgm029yfJnU) by Carlos Parga
 
 ### Inspiration
 A great source of inspiration for this project was the [Cyanogen Apollo player](https://github.com/CyanogenMod/android_packages_apps_Apollo)
 along with [Google Play Music for Android](https://play.google.com/store/apps/details?id=com.google.android.music).
 
-### Runtime dependencies
+### Dependencies
 
-*   [Guice](http://code.google.com/p/google-guice/)
-
-    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-
-*   [RoboGuice](http://code.google.com/p/roboguice/)
+*   [Guice](https://github.com/google/guice)
 
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
-*   [Otto](http://square.github.io/otto/)
- 
+*   [RoboGuice](https://github.com/roboguice/roboguice)
+
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 *   [Jackson](http://jackson.codehaus.org/)
 
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
-*   [DragSortListView](https://github.com/bauerca/drag-sort-listview)
-
-    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-    
-*   [Crouton](https://github.com/keyboardsurfer/Crouton)
+*   [DragSortListView](https://github.com/kelsos/drag-sort-listview)
+    (A fork of the library is used int th project)
 
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
-    
-### Build dependencies
-
-*   [Maven Android Plugin](http://code.google.com/p/maven-android-plugin/)
+*   [RxJava](https://github.com/ReactiveX/RxJava)
 
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
-### Dependencies of older versions
-
-    
-*   [roboguice-sherlock](https://github.com/rtyley/roboguice-sherlock)
- 
-    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-
-*   [ActionBarSherlock](https://github.com/JakeWharton/ActionBarSherlock)
+*   [RxAndroid](https://github.com/ReactiveX/RxAndroid)
 
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
+*   [Retrofit](https://github.com/square/retrofit)
+
+    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+*   [Picasso](https://github.com/square/picasso)
+
+    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+*   [OKHttp](https://github.com/square/okhttp)
+
+    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+*   [GreenDao](https://github.com/greenrobot/greenDAO)
+
+    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+*   [Snackbar](https://github.com/MrEngineer13/SnackBar)
+
+    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+*   [Material Dialogs](https://github.com/afollestad/material-dialogs/)
+
+    License: [MIT](https://github.com/afollestad/material-dialogs/blob/master/LICENSE.txt)
+
+The project also uses [Retrolamda](https://github.com/evant/gradle-retrolambda)/
 
 License
 ----------
@@ -92,5 +98,3 @@ The source code of the application is licensed under the [GPLv3](https://www.gnu
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
