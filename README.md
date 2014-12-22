@@ -14,7 +14,9 @@ You can also find information about the plugin and the remote to the dedicated t
 
 Building
 -------
-Clone the repository and import on IntelliJ IDEA or Android Studio
+Clone the repository and import on IntelliJ IDEA or Android Studio.
+
+Before building the project you have to execute the `run` task for the DaoGenerator module in order to generate the Dao classes along with the Helper classes and the `ContentProvider`.
 
 Credits
 -----------
