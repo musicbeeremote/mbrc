@@ -1,10 +1,12 @@
 package com.kelsos.mbrc.ui.fragments.queue;
 
 import android.app.LoaderManager;
+import android.content.ContentResolver;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
@@ -15,26 +17,26 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.CurrentQueueAdapter;
-import com.kelsos.mbrc.dao.QueueTrack;
+import com.kelsos.mbrc.dao.DaoSession;
+import com.kelsos.mbrc.dao.QueueTrackHelper;
 import com.kelsos.mbrc.data.SyncManager;
-import com.kelsos.mbrc.data.db.LibraryProvider;
-import com.kelsos.mbrc.data.helpers.QueueTrackHelper;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.ui.activities.QueueResultActivity;
 import com.kelsos.mbrc.util.Logger;
+import com.mobeta.android.dslv.DragSortController;
+import com.mobeta.android.dslv.DragSortListView;
 import org.jetbrains.annotations.NotNull;
-import roboguice.fragment.provided.RoboListFragment;
+import roboguice.fragment.provided.RoboFragment;
+import roboguice.inject.InjectView;
 import roboguice.util.Ln;
-import rx.android.observables.AndroidObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 
-public class CurrentQueueFragment extends RoboListFragment
+public class CurrentQueueFragment extends RoboFragment
         implements LoaderManager.LoaderCallbacks<Cursor>,
         SearchView.OnQueryTextListener {
 
@@ -48,7 +50,35 @@ public class CurrentQueueFragment extends RoboListFragment
     @Inject
     private RemoteApi api;
 
-    @Override
+	@Inject
+	private DaoSession daoSession;
+
+	@InjectView(R.id.dlv_current_queue)
+	private DragSortListView mDslView;
+	private DragSortController mController;
+
+	private int dragInitMode = DragSortController.ON_DRAG;
+	private boolean removeEnabled = true;
+	private int removeMode = DragSortController.FLING_REMOVE;
+	private boolean sortEnabled = true;
+	private boolean dragEnabled = true;
+
+	public DragSortController getController() {
+		return mController;
+	}
+
+	public DragSortController buildController(DragSortListView dslv) {
+		DragSortController controller = new DragSortController(dslv);
+		controller.setDragHandleId(R.id.drag_handle);
+		controller.setRemoveEnabled(removeEnabled);
+		controller.setSortEnabled(sortEnabled);
+		controller.setDragInitMode(dragInitMode);
+		controller.setRemoveMode(removeMode);
+		return controller;
+
+	}
+
+	@Override
     public void onStart() {
         super.onStart();
     }
@@ -69,13 +99,11 @@ public class CurrentQueueFragment extends RoboListFragment
         setHasOptionsMenu(true);
         getLoaderManager().initLoader(URL_LOADER, null, this);
         mQueueAdapter = new CurrentQueueAdapter(getActivity(), null, 0);
-        setListAdapter(mQueueAdapter);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        registerForContextMenu(getListView());
     }
 
     @Override
@@ -83,19 +111,36 @@ public class CurrentQueueFragment extends RoboListFragment
         return inflater.inflate(R.layout.fragment_current_queue, container, false);
     }
 
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-        final Cursor cursor = (Cursor) mQueueAdapter.getItem(position);
-        final QueueTrack track = QueueTrackHelper.fromCursor(cursor);
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		mController = this.buildController(mDslView);
+		mDslView.setAdapter(mQueueAdapter);
+		mDslView.setFloatViewManager(mController);
+		mDslView.setOnTouchListener(mController);
+		mDslView.setDragEnabled(dragEnabled);
 
-        AndroidObservable.bindFragment(this, api.nowPlayingPlayTrack(track.getPath()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(Ln::d, Logger::LogThrowable);
-    }
+		mDslView.setDropListener((fromIndex, toIndex) -> {
+			Ln.d("from: %d to: %d", fromIndex, toIndex);
+        });
 
-    @SuppressWarnings("UnusedDeclaration")
+		mDslView.setRemoveListener(position -> {
+			final ContentResolver contentResolver = getActivity().getContentResolver();
+			api.nowPlayingRemoveTrack(position)
+					.subscribeOn(Schedulers.io())
+					.observeOn(AndroidSchedulers.mainThread())
+					.subscribe(resp -> {
+						if (resp.isSuccess()) {
+							final long id = mQueueAdapter.getItemId(position);
+							final Uri uri = Uri.withAppendedPath(QueueTrackHelper.CONTENT_URI,
+									Uri.encode(String.valueOf(id)));
+							contentResolver.delete(uri, null, null);
+						}
+					}, Logger::LogThrowable);
+        });
+	}
+
+	@SuppressWarnings("UnusedDeclaration")
     private int calculateNewIndex(int from, int to, int index) {
         int dist = Math.abs(from - to);
         int rIndex = index;
@@ -117,7 +162,7 @@ public class CurrentQueueFragment extends RoboListFragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), LibraryProvider.CONTENT_URI,
+        return new CursorLoader(getActivity(), QueueTrackHelper.CONTENT_URI,
                 QueueTrackHelper.PROJECTION, null, null, null);
     }
 
@@ -128,7 +173,7 @@ public class CurrentQueueFragment extends RoboListFragment
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mQueueAdapter.swapCursor(null);
+		mQueueAdapter.swapCursor(null);
     }
 
     @Override

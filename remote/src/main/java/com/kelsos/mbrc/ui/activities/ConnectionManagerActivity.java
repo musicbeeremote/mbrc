@@ -143,7 +143,7 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
             default:
                 return;
         }
-        mSnackBar.show(message);
+        //mSnackBar.show(message);
     }
 
     public void handleUserNotification(NotifyUser event) {
@@ -151,6 +151,6 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
 				? getString(event.getResId())
 				: event.getMessage();
 
-        mSnackBar.show(message);
+        //mSnackBar.show(message);
     }
 }

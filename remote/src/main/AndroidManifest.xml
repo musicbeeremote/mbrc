@@ -50,11 +50,10 @@
         </service>
 
         <provider
-            android:name="com.kelsos.mbrc.data.db.LibraryProvider"
-            android:authorities="com.kelsos.mbrc.provider"
+            android:name="com.kelsos.mbrc.dao.LibraryProvider"
+            android:authorities="com.kelsos.mbrc.dao.provider"
             android:enabled="true"
-            android:exported="false" >
-        </provider>
+            android:exported="false" />
 
         <meta-data
             android:name="roboguice.modules"

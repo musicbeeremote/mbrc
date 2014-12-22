@@ -5,8 +5,8 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/rv_current_queue"
+    <com.mobeta.android.dslv.DragSortListView
+        android:id="@+id/dlv_current_queue"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/side_margin_half"
@@ -16,7 +16,7 @@
         android:divider="@null"
         android:dividerHeight="@dimen/side_margin_half"
         android:fitsSystemWindows="true"
-        tools:listitem="@layout/listitem_track"/>
+        tools:listitem="@layout/listitem_track" />
 
     <fragment
         android:id="@+id/np_mini_control"

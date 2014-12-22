@@ -61,6 +61,8 @@ public class Generator {
         queueTrack.addStringProperty("path");
         queueTrack.addIntProperty("position");
 
-        new DaoGenerator().generateAll(schema, "../remote/src-gen/");
+		final String outDir = "../remote/src-gen/";
+		new DaoGenerator().generateAll(schema, outDir);
+		new HelperGenerator().generateAll(schema, outDir);
     }
 }

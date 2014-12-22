@@ -221,7 +221,7 @@ public class HomeActivity extends RoboActionBarActivity {
                 ? getString(event.getResId())
                 : event.getMessage();
 
-        mSnackBar.show(message);
+       // mSnackBar.show(message);
     }
 
     @Override

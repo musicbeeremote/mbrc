@@ -4,15 +4,12 @@ import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.dao.QueueTrackDao;
-import com.kelsos.mbrc.data.db.LibraryProvider;
-import com.kelsos.mbrc.data.helpers.QueueTrackHelper;
+import com.kelsos.mbrc.dao.QueueTrackHelper;
 import roboguice.fragment.provided.RoboListFragment;
 
 public class QueueResultFragment extends RoboListFragment
@@ -41,13 +38,17 @@ public class QueueResultFragment extends RoboListFragment
             mCurFilter = getArguments().getString(QUEUE_FILTER);
         }
 
-        int[] to = new int[]{
-                R.id.trackTitle,
-                R.id.trackArtist
+        int[] to = new int[] {
+			R.id.trackTitle,
+			R.id.trackArtist
         };
 
-        mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.listitem_track,
-                null, QueueTrackHelper.PROJECTION, to, 0);
+		final String[] from = {
+			QueueTrackHelper.TITLE,
+			QueueTrackHelper.ARTIST
+		};
+
+        mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.listitem_track, null, from, to, 0);
         setListAdapter(mAdapter);
         getLoaderManager().initLoader(URL_LOADER, null, this);
     }
@@ -60,14 +61,17 @@ public class QueueResultFragment extends RoboListFragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        String[] projection = {
-                QueueTrackDao.Properties.Id.columnName,
-                QueueTrackDao.Properties.Artist.columnName,
-                QueueTrackDao.Properties.Title.columnName
-        };
+		final String selection = String.format("%s LIKE ? OR %s LIKE ?",
+				QueueTrackHelper.ARTIST,
+				QueueTrackHelper.TITLE);
+		final String like = String.format("%%%s%%", mCurFilter);
+		final String[] selectionArgs = {
+			like,
+			like
+		};
 
-        final Uri baseUri = Uri.withAppendedPath(LibraryProvider.CONTENT_FILTER_URI, Uri.encode(mCurFilter));
-        return new CursorLoader(getActivity(), baseUri, projection, null, null, null);
+        return new CursorLoader(getActivity(), QueueTrackHelper.CONTENT_URI,
+				QueueTrackHelper.PROJECTION, selection, selectionArgs, null);
 
     }
 
