@@ -98,7 +98,7 @@ public class SyncManager {
                     final Cover cover = mapper.readValue(node, Cover.class);
                     coverDao.insert(cover);
                 }
-            }   catch (IOException e){
+            }   catch (IOException e) {
                 Ln.d(e);
             }
         });
@@ -137,7 +137,8 @@ public class SyncManager {
         if (offset + limit < total) {
             getGenres(offset + limit, limit).subscribe(this::processGenres, Logger::LogThrowable);
         } else {
-            Ln.d("no more data");
+			mContext.getContentResolver().notifyChange(GenreHelper.CONTENT_URI, null);
+			Ln.d("no more data");
         }
     }
 
@@ -164,7 +165,8 @@ public class SyncManager {
         if (offset + limit < total) {
             getArtists(offset + limit, limit).subscribe(this::processArtists, Logger::LogThrowable);
         } else {
-            Ln.d("no more data");
+			mContext.getContentResolver().notifyChange(ArtistHelper.CONTENT_URI, null);
+			Ln.d("no more data");
         }
     }
 
@@ -191,7 +193,8 @@ public class SyncManager {
         if (offset + limit < total) {
             getAlbums(offset + limit, limit).subscribe(this::processAlbums, Logger::LogThrowable);
         } else {
-            Ln.d("no more data");
+			mContext.getContentResolver().notifyChange(AlbumHelper.CONTENT_URI, null);
+			Ln.d("no more data");
         }
     }
 
@@ -219,6 +222,7 @@ public class SyncManager {
         if (offset + limit < total) {
             getTracks(offset + limit, limit).subscribe(this::processTracks, Logger::LogThrowable);
         } else {
+			mContext.getContentResolver().notifyChange(TrackHelper.CONTENT_URI, null);
             Ln.d("no more data");
         }
     }
@@ -237,7 +241,8 @@ public class SyncManager {
     private void storeCover(Response response, String hash) {
         File sdCard = Environment.getExternalStorageDirectory();
         File dir = new File(String.format("%s/Android/data/%s/cache", sdCard.getAbsolutePath(), BuildConfig.APPLICATION_ID));
-        final boolean mkdirs = dir.mkdirs();
+		//noinspection ResultOfMethodCallIgnored
+		dir.mkdirs();
         File file = new File(dir, hash);
         try {
             final OutputStream output = new FileOutputStream(file);
@@ -257,31 +262,31 @@ public class SyncManager {
 
     private Observable<PaginatedDataResponse> getGenres(int offset, int limit) {
         return api.getLibraryGenres(offset, limit)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io());
     }
 
     private Observable<PaginatedDataResponse> getArtists(int offset, int limit) {
         return api.getLibraryArtists(offset, limit)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io());
     }
 
     private Observable<PaginatedDataResponse> getAlbums(int offset, int limit) {
         return api.getLibraryAlbums(offset, limit)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io());
     }
 
     private Observable<PaginatedDataResponse> getTracks(int offset, int limit) {
         return api.getLibraryTracks(offset, limit)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io());
     }
 
     private Observable<PaginatedDataResponse> getCovers(int offset, int limit) {
         return api.getLibraryCovers(offset, limit)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io());
     }
 }
