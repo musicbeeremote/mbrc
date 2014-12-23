@@ -62,7 +62,6 @@ public class Controller extends RoboService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Events.Messages.onNext(new Message(EventType.START_CONNECTION));
         discovery.startDiscovery();
-        init();
 
 		Events.Messages.subscribeOn(Schedulers.io())
 				.filter(msg -> msg.getType().equals(EventType.START_DISCOVERY))
@@ -79,10 +78,5 @@ public class Controller extends RoboService {
 		socket.socketManager(SocketAction.STOP);
 		notificationService.cancelNotification(NotificationService.NOW_PLAYING_PLACEHOLDER);
         this.unregisterReceiver(receiver);
-    }
-
-    public void init() {
-        //syncManager.clearCurrentQueue();
-        //syncManager.startCurrentQueueSyncing();
     }
 }

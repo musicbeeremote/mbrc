@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.data;
 
+import android.content.Context;
 import android.os.Environment;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
@@ -30,6 +31,9 @@ public class SyncManager {
     private ObjectMapper mapper;
     private static final int STARTING_OFFSET = 0;
     private static final int LIMIT = 800;
+
+	@Inject
+	private Context mContext;
 
     @Inject
     public SyncManager(RemoteApi api, ObjectMapper mapper, DaoSession daoSession) {
@@ -82,6 +86,7 @@ public class SyncManager {
                     .subscribe(this::processCurrentQueue, Logger::LogThrowable);
         } else {
             Ln.d("no more data");
+			mContext.getContentResolver().notifyChange(QueueTrackHelper.CONTENT_URI, null);
         }
     }
 

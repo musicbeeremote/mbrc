@@ -176,5 +176,6 @@
     <string name="title_activity_queue_result">Search Results</string>
     <string name="settings_dialog_hint_http">Http port number</string>
     <string name="settings_key_http">server_http</string>
+    <string name="text_sync">Sync</string>
 
 </resources>

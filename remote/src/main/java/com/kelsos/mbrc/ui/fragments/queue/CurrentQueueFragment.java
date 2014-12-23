@@ -2,6 +2,7 @@ package com.kelsos.mbrc.ui.fragments.queue;
 
 import android.app.LoaderManager;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -21,6 +22,7 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.CurrentQueueAdapter;
 import com.kelsos.mbrc.dao.DaoSession;
+import com.kelsos.mbrc.dao.QueueTrack;
 import com.kelsos.mbrc.dao.QueueTrackHelper;
 import com.kelsos.mbrc.data.SyncManager;
 import com.kelsos.mbrc.rest.RemoteApi;
@@ -89,11 +91,18 @@ public class CurrentQueueFragment extends RoboFragment
         MenuItem mSearchItem = menu.findItem(R.id.action_search);
         mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
         mSearchView.setOnQueryTextListener(this);
-
     }
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.current_queue_sync) {
+			syncManager.clearCurrentQueue();
+			syncManager.startCurrentQueueSyncing();
+		}
+		return super.onOptionsItemSelected(item);
+	}
 
-    @Override
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -121,6 +130,32 @@ public class CurrentQueueFragment extends RoboFragment
 		mDslView.setDragEnabled(dragEnabled);
 
 		mDslView.setDropListener((fromIndex, toIndex) -> {
+			final Cursor originCursor = (Cursor) mQueueAdapter.getItem(fromIndex);
+			final QueueTrack originTrack = QueueTrackHelper.fromCursor(originCursor);
+			final Cursor destinationCursor = (Cursor) mQueueAdapter.getItem(toIndex);
+			final QueueTrack destinationTrack = QueueTrackHelper.fromCursor(destinationCursor);
+
+			final Integer originalPosition = originTrack.getPosition();
+			final Integer destinationPosition = destinationTrack.getPosition();
+			final ContentResolver contentResolver = getActivity().getContentResolver();
+			api.nowPlayingMoveTrack(originalPosition, destinationPosition)
+					.subscribeOn(Schedulers.io())
+					.observeOn(AndroidSchedulers.mainThread())
+					.subscribe(resp -> {
+						if (resp.isSuccess()) {
+							Uri uri = Uri.withAppendedPath(QueueTrackHelper
+									.CONTENT_URI, Uri.encode(String.valueOf(originTrack.getId())));
+							final ContentValues values = new ContentValues();
+							values.put(QueueTrackHelper.POSITION, destinationPosition);
+							contentResolver.update(uri, values, null, null);
+							Uri.withAppendedPath(QueueTrackHelper
+									.CONTENT_URI, Uri.encode(String.valueOf(destinationTrack.getId())));
+							values.clear();
+							values.put(QueueTrackHelper.POSITION, originalPosition);
+							contentResolver.update(uri, values, null, null);
+						}
+					}, Logger::LogThrowable);
+
 			Ln.d("from: %d to: %d", fromIndex, toIndex);
         });
 
