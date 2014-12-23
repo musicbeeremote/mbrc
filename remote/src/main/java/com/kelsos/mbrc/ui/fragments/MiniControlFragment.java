@@ -27,95 +27,99 @@ import rx.schedulers.Schedulers;
 
 public class MiniControlFragment extends RoboFragment {
 
-    @InjectView (R.id.mc_track_cover)
-    private ImageView trackCover;
+	@InjectView(R.id.mc_track_cover)
+	private ImageView trackCover;
 
-    @InjectView (R.id.mc_track_artist)
-    private TextView trackArtist;
+	@InjectView(R.id.mc_track_artist)
+	private TextView trackArtist;
 
-    @InjectView (R.id.mc_track_title)
-    private TextView trackTitle;
+	@InjectView(R.id.mc_track_title)
+	private TextView trackTitle;
 
-    @InjectView (R.id.mc_next_track)
-    private ImageButton playNext;
+	@InjectView(R.id.mc_next_track)
+	private ImageButton playNext;
 
-    @InjectView (R.id.mc_play_pause)
-    private ImageButton playPause;
+	@InjectView(R.id.mc_play_pause)
+	private ImageButton playPause;
 
-    @InjectView (R.id.mc_prev_track)
-    private ImageButton playPrevious;
+	@InjectView(R.id.mc_prev_track)
+	private ImageButton playPrevious;
 
-    @Inject
-    private PlayerState playerState;
+	@Inject
+	private PlayerState playerState;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.ui_fragment_mini_control, container, false);
-    }
+	public static MiniControlFragment newInstance() {
+		return new MiniControlFragment();
+	}
 
-    @Override
-    public void onStart() {
-        super.onStart();
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.ui_fragment_mini_control, container, false);
+	}
 
-        playNext.setOnClickListener(view -> Events.ButtonPressedNotification
-                .onNext(new ButtonPressedEvent(Button.NEXT)));
+	@Override
+	public void onStart() {
+		super.onStart();
 
-        playPause.setOnClickListener(view -> Events.ButtonPressedNotification
-                .onNext(new ButtonPressedEvent(Button.PLAYPAUSE)));
+		playNext.setOnClickListener(view -> Events.ButtonPressedNotification
+				.onNext(new ButtonPressedEvent(Button.NEXT)));
 
-        playPrevious.setOnClickListener(view -> Events.ButtonPressedNotification
-                .onNext(new ButtonPressedEvent(Button.PREVIOUS)));
+		playPause.setOnClickListener(view -> Events.ButtonPressedNotification
+				.onNext(new ButtonPressedEvent(Button.PLAYPAUSE)));
 
-        Typeface robotoLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
-        trackTitle.setTypeface(robotoLight);
-    }
+		playPrevious.setOnClickListener(view -> Events.ButtonPressedNotification
+				.onNext(new ButtonPressedEvent(Button.PREVIOUS)));
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+		Typeface robotoLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
+		trackTitle.setTypeface(robotoLight);
+	}
 
-        AndroidObservable.bindFragment(this, Events.CoverAvailableNotification)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::updateAlbumCover, Logger::LogThrowable);
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        AndroidObservable.bindFragment(this, Events.TrackInfoChangeNotification)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::handleTrackInfoChange, Logger::LogThrowable);
+		AndroidObservable.bindFragment(this, Events.CoverAvailableNotification)
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(this::updateAlbumCover, Logger::LogThrowable);
 
-        AndroidObservable.bindFragment(this, playerState.observePlaystate())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::handlePlayStateChange, Logger::LogThrowable);
-    }
+		AndroidObservable.bindFragment(this, Events.TrackInfoChangeNotification)
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(this::handleTrackInfoChange, Logger::LogThrowable);
 
-    private void updateAlbumCover(final CoverAvailable coverAvailable) {
-        trackCover.setImageBitmap(coverAvailable.getCover());
-    }
+		AndroidObservable.bindFragment(this, playerState.observePlaystate())
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(this::handlePlayStateChange, Logger::LogThrowable);
+	}
 
-    public void handleTrackInfoChange(TrackInfoChange event) {
-        trackArtist.setText(event.getArtist());
-        trackTitle.setText(event.getTitle());
-    }
+	private void updateAlbumCover(final CoverAvailable coverAvailable) {
+		trackCover.setImageBitmap(coverAvailable.getCover());
+	}
 
-    public void handlePlayStateChange(PlayState playState) {
-        switch (playState) {
-            case PLAYING:
-                playPause.setImageResource(R.drawable.ic_action_pause);
-                break;
-            case PAUSED:
-                playPause.setImageResource(R.drawable.ic_action_play);
-                break;
-            case STOPPED:
-                playPause.setImageResource(R.drawable.ic_action_play);
-                break;
-            case UNDEFINED:
-                break;
-            default:
-                playPause.setImageResource(R.drawable.ic_media_stop);
-                break;
-        }
-    }
+	public void handleTrackInfoChange(TrackInfoChange event) {
+		trackArtist.setText(event.getArtist());
+		trackTitle.setText(event.getTitle());
+	}
+
+	public void handlePlayStateChange(PlayState playState) {
+		switch (playState) {
+			case PLAYING:
+				playPause.setImageResource(R.drawable.ic_action_pause);
+				break;
+			case PAUSED:
+				playPause.setImageResource(R.drawable.ic_action_play);
+				break;
+			case STOPPED:
+				playPause.setImageResource(R.drawable.ic_action_play);
+				break;
+			case UNDEFINED:
+				break;
+			default:
+				playPause.setImageResource(R.drawable.ic_media_stop);
+				break;
+		}
+	}
 
 }

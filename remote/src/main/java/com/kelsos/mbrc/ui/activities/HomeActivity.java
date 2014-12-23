@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
@@ -24,6 +25,7 @@ import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.events.ui.DrawerSelection;
 import com.kelsos.mbrc.events.ui.NotifyUser;
+import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.ui.fragments.DrawerFragment;
 import com.kelsos.mbrc.ui.fragments.LyricsFragment;
 import com.kelsos.mbrc.ui.fragments.MainFragment;
@@ -44,7 +46,6 @@ public class HomeActivity extends RoboActionBarActivity {
     private DisplayFragment mDisplay;
     private boolean navChanged;
     private MenuItem favoriteItem;
-    private SnackBar mSnackBar;
     private DrawerFragment mDrawerFragment;
 
     @SuppressWarnings("Annotator")
@@ -94,7 +95,6 @@ public class HomeActivity extends RoboActionBarActivity {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, mFragment, "main_fragment");
         fragmentTransaction.commit();
-        mSnackBar = new SnackBar(this);
 
         AndroidObservable.bindActivity(this, mDrawerFragment.getDrawerSelectionObservable())
                 .subscribe(this::handleDrawerEvent, Logger::LogThrowable);
@@ -103,9 +103,22 @@ public class HomeActivity extends RoboActionBarActivity {
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(this::handleUserNotification, Logger::LogThrowable);
 
+		AndroidObservable.bindActivity(this, Events.TrackInfoChangeNotification)
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribeOn(Schedulers.io())
+				.subscribe(this::handleTrackInfoChange,
+						Logger::LogThrowable);
+
     }
 
-    private void closeDrawer() {
+	public void handleTrackInfoChange(final TrackInfoChange change) {
+		ActionBar actionBar = getSupportActionBar();
+		actionBar.setTitle(change.getTitle());
+		actionBar.setSubtitle(change.getArtist());
+		actionBar.setDisplayShowTitleEnabled(true);
+	}
+
+	private void closeDrawer() {
         if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
             mDrawerLayout.closeDrawer(mDrawerMenu);
         }
@@ -170,13 +183,6 @@ public class HomeActivity extends RoboActionBarActivity {
     private void replaceFragment(Fragment fragment, String tag) {
 
         FragmentManager fragmentManager = getFragmentManager();
-        int bsCount = fragmentManager.getBackStackEntryCount();
-
-        for (int i = 0; i < bsCount; i++) {
-            int bsId = fragmentManager.getBackStackEntryAt(i).getId();
-            fragmentManager.popBackStack(bsId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }
-
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -221,7 +227,11 @@ public class HomeActivity extends RoboActionBarActivity {
                 ? getString(event.getResId())
                 : event.getMessage();
 
-       // mSnackBar.show(message);
+       	new SnackBar.Builder(this)
+				.withMessage(message)
+				.withStyle(SnackBar.Style.INFO)
+				.withDuration(SnackBar.SHORT_SNACK)
+				.show();
     }
 
     @Override

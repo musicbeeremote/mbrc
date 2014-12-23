@@ -2,7 +2,6 @@ package com.kelsos.mbrc.ui.fragments.queue;
 
 import android.app.LoaderManager;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -23,10 +22,13 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.CurrentQueueAdapter;
 import com.kelsos.mbrc.dao.DaoSession;
 import com.kelsos.mbrc.dao.QueueTrack;
+import com.kelsos.mbrc.dao.QueueTrackDao;
 import com.kelsos.mbrc.dao.QueueTrackHelper;
+import com.kelsos.mbrc.data.DatabaseUtils;
 import com.kelsos.mbrc.data.SyncManager;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.ui.activities.QueueResultActivity;
+import com.kelsos.mbrc.ui.fragments.MiniControlFragment;
 import com.kelsos.mbrc.util.Logger;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
@@ -60,14 +62,10 @@ public class CurrentQueueFragment extends RoboFragment
 	private DragSortController mController;
 
 	private int dragInitMode = DragSortController.ON_DRAG;
-	private boolean removeEnabled = true;
+	private boolean removeEnabled = false;
 	private int removeMode = DragSortController.FLING_REMOVE;
 	private boolean sortEnabled = true;
 	private boolean dragEnabled = true;
-
-	public DragSortController getController() {
-		return mController;
-	}
 
 	public DragSortController buildController(DragSortListView dslv) {
 		DragSortController controller = new DragSortController(dslv);
@@ -138,21 +136,22 @@ public class CurrentQueueFragment extends RoboFragment
 			final Integer originalPosition = originTrack.getPosition();
 			final Integer destinationPosition = destinationTrack.getPosition();
 			final ContentResolver contentResolver = getActivity().getContentResolver();
-			api.nowPlayingMoveTrack(originalPosition, destinationPosition)
+
+			api.nowPlayingMoveTrack(fromIndex, toIndex)
 					.subscribeOn(Schedulers.io())
 					.observeOn(AndroidSchedulers.mainThread())
 					.subscribe(resp -> {
+
 						if (resp.isSuccess()) {
-							Uri uri = Uri.withAppendedPath(QueueTrackHelper
-									.CONTENT_URI, Uri.encode(String.valueOf(originTrack.getId())));
-							final ContentValues values = new ContentValues();
-							values.put(QueueTrackHelper.POSITION, destinationPosition);
-							contentResolver.update(uri, values, null, null);
-							Uri.withAppendedPath(QueueTrackHelper
-									.CONTENT_URI, Uri.encode(String.valueOf(destinationTrack.getId())));
-							values.clear();
-							values.put(QueueTrackHelper.POSITION, originalPosition);
-							contentResolver.update(uri, values, null, null);
+							final QueueTrackDao queueTrackDao = daoSession.getQueueTrackDao();
+
+							originTrack.setPosition(destinationPosition);
+							DatabaseUtils.updatePosition(queueTrackDao.getDatabase(), originalPosition, destinationPosition);
+							queueTrackDao.update(originTrack);
+
+
+
+							contentResolver.notifyChange(QueueTrackHelper.CONTENT_URI, null);
 						}
 					}, Logger::LogThrowable);
 
@@ -160,45 +159,33 @@ public class CurrentQueueFragment extends RoboFragment
         });
 
 		mDslView.setRemoveListener(position -> {
+
 			final ContentResolver contentResolver = getActivity().getContentResolver();
-			api.nowPlayingRemoveTrack(position)
+			final Cursor cursor = (Cursor) mQueueAdapter.getItem(position);
+			final QueueTrack track = QueueTrackHelper.fromCursor(cursor);
+
+			api.nowPlayingRemoveTrack(track.getPosition())
 					.subscribeOn(Schedulers.io())
 					.observeOn(AndroidSchedulers.mainThread())
 					.subscribe(resp -> {
 						if (resp.isSuccess()) {
-							final long id = mQueueAdapter.getItemId(position);
 							final Uri uri = Uri.withAppendedPath(QueueTrackHelper.CONTENT_URI,
-									Uri.encode(String.valueOf(id)));
+									Uri.encode(String.valueOf(track.getId())));
 							contentResolver.delete(uri, null, null);
 						}
 					}, Logger::LogThrowable);
         });
-	}
 
-	@SuppressWarnings("UnusedDeclaration")
-    private int calculateNewIndex(int from, int to, int index) {
-        int dist = Math.abs(from - to);
-        int rIndex = index;
-        if (dist == 1 && index == from
-                || dist > 1 && from > to && index == from
-                || dist > 1 && from < to && index == from) {
-            rIndex = to;
-        } else if (dist == 1 && index == to) {
-            rIndex = from;
-        } else if (dist > 1 && from > to && index == to
-                || from > index && to < index) {
-            rIndex += 1;
-        } else if (dist > 1 && from < to && index == to
-                || from < index && to > index) {
-            rIndex -= 1;
-        }
-        return rIndex;
-    }
+		getFragmentManager().beginTransaction()
+				.replace(R.id.np_mini_control, MiniControlFragment.newInstance())
+				.commit();
+	}
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		final String sortOrder = String.format("%s ASC", QueueTrackHelper.POSITION);
         return new CursorLoader(getActivity(), QueueTrackHelper.CONTENT_URI,
-                QueueTrackHelper.PROJECTION, null, null, null);
+                QueueTrackHelper.PROJECTION, null, null, sortOrder);
     }
 
     @Override

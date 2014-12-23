@@ -6,8 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -365,11 +363,6 @@ public class MainFragment extends RoboFragment {
     }
 
     public void handleTrackInfoChange(final TrackInfoChange change) {
-        ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
-        actionBar.setTitle(change.getTitle());
-        actionBar.setSubtitle(change.getArtist());
-        actionBar.setDisplayShowTitleEnabled(true);
-
         updateShareIntent(change.getArtist(), change.getTitle());
     }
 

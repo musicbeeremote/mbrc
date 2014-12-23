@@ -8,7 +8,7 @@
     <com.mobeta.android.dslv.DragSortListView
         android:id="@+id/dlv_current_queue"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_marginTop="@dimen/side_margin_half"
         android:layout_marginStart="@dimen/side_margin_half"
         android:layout_marginEnd="@dimen/side_margin_half"
@@ -16,13 +16,14 @@
         android:divider="@null"
         android:dividerHeight="@dimen/side_margin_half"
         android:fitsSystemWindows="true"
-        tools:listitem="@layout/listitem_track" />
+        tools:listitem="@layout/listitem_track"
+        android:layout_weight="1"/>
 
-    <fragment
+    <FrameLayout
         android:id="@+id/np_mini_control"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/mini_control_height"
-        android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
+        tools:context="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
         tools:layout="@layout/ui_fragment_mini_control"/>
 
 </LinearLayout>

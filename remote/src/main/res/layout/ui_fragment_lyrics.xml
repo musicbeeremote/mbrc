@@ -8,28 +8,26 @@
               android:orientation="vertical">
 
     <ListView
-            android:id="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1"
-            android:layout_marginLeft="@dimen/side_margin_half"
-            android:layout_marginRight="@dimen/side_margin_half"
-            android:layout_marginTop="@dimen/side_margin_half"
-            android:layout_marginBottom="@dimen/side_margin_half"
-            android:divider="@null"
-            android:dividerHeight="0dip"
-            android:fastScrollEnabled="true"
-            android:listSelector="@android:color/transparent"
-            tools:listitem="@layout/ui_list_lyrics_item">
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:layout_marginLeft="@dimen/side_margin_half"
+        android:layout_marginRight="@dimen/side_margin_half"
+        android:layout_marginTop="@dimen/side_margin_half"
+        android:layout_marginBottom="@dimen/side_margin_half"
+        android:divider="@null"
+        android:dividerHeight="0dip"
+        android:fastScrollEnabled="true"
+        android:listSelector="@android:color/transparent"
+        tools:listitem="@layout/ui_list_lyrics_item">
     </ListView>
 
-    <fragment
-            android:id="@+id/lyrics_mini_control"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/mini_control_height"
-            android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
-            android:layout="@layout/ui_fragment_mini_control"
-            tools:layout="@layout/ui_fragment_mini_control"
-            />
+    <FrameLayout
+        android:id="@+id/lyrics_mini_control"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mini_control_height"
+        tools:context="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
+        tools:layout="@layout/ui_fragment_mini_control"/>
 
 </LinearLayout>

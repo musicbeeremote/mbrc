@@ -22,12 +22,12 @@
         android:listSelector="@drawable/mbrc_dark_compo_list_selector_holo_dark"
         tools:listitem="@layout/ui_list_dual"/>
 
-    <fragment
+    <FrameLayout
         android:id="@+id/playlist_mini_control"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mini_control_height"
-        android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
         android:layout="@layout/ui_fragment_mini_control"
+        tools:context="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
         tools:layout="@layout/ui_fragment_mini_control"
         />
 

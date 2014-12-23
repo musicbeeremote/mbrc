@@ -19,25 +19,34 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class LyricsFragment extends RoboListFragment {
-    @Inject
-    private TrackState model;
+	@Inject
+	private TrackState model;
 
-    @Override public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.ui_fragment_lyrics, container, false);
-    }
+	@Override
+	public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.ui_fragment_lyrics, container, false);
+	}
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        AndroidObservable.bindFragment(this, model.getLyricsObservable())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::updateLyricsData, Logger::LogThrowable);
-    }
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		AndroidObservable.bindFragment(this, model.getLyricsObservable())
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(this::updateLyricsData, Logger::LogThrowable);
+	}
 
-    public void updateLyricsData(String lyrics) {
-        final ArrayList<String> lyricsList = new ArrayList<>(Arrays.asList(lyrics.split("\r\n")));
-        final LyricsAdapter lyricsAdapter = new LyricsAdapter(getActivity(), R.layout.ui_list_lyrics_item, lyricsList);
-        setListAdapter(lyricsAdapter);
-    }
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		getFragmentManager().beginTransaction()
+				.replace(R.id.lyrics_mini_control, MiniControlFragment.newInstance())
+				.commit();
+	}
+
+	public void updateLyricsData(String lyrics) {
+		final ArrayList<String> lyricsList = new ArrayList<>(Arrays.asList(lyrics.split("\r\n")));
+		final LyricsAdapter lyricsAdapter = new LyricsAdapter(getActivity(), R.layout.ui_list_lyrics_item, lyricsList);
+		setListAdapter(lyricsAdapter);
+	}
 }
