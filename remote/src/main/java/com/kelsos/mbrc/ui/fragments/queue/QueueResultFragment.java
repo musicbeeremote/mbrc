@@ -5,11 +5,14 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.dao.QueueTrackHelper;
+import org.jetbrains.annotations.NotNull;
 import roboguice.fragment.provided.RoboListFragment;
 
 public class QueueResultFragment extends RoboListFragment
@@ -31,7 +34,12 @@ public class QueueResultFragment extends RoboListFragment
         return fragment;
     }
 
-    @Override
+	@Override
+	public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.fragment_queue_result, container, false);
+	}
+
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {

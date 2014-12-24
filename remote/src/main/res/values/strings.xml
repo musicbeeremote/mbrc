@@ -177,5 +177,8 @@
     <string name="settings_dialog_hint_http">Http port number</string>
     <string name="settings_key_http">server_http</string>
     <string name="text_sync">Sync</string>
+    <string name="queue_track_delete">Delete</string>
+    <string name="queue_track_play">Play</string>
+    <string name="peak_meter">Peak meter</string>
 
 </resources>

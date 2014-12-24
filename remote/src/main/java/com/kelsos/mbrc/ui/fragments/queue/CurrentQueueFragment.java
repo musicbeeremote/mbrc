@@ -149,8 +149,6 @@ public class CurrentQueueFragment extends RoboFragment
 							DatabaseUtils.updatePosition(queueTrackDao.getDatabase(), originalPosition, destinationPosition);
 							queueTrackDao.update(originTrack);
 
-
-
 							contentResolver.notifyChange(QueueTrackHelper.CONTENT_URI, null);
 						}
 					}, Logger::LogThrowable);
@@ -179,6 +177,15 @@ public class CurrentQueueFragment extends RoboFragment
 		getFragmentManager().beginTransaction()
 				.replace(R.id.np_mini_control, MiniControlFragment.newInstance())
 				.commit();
+
+		mDslView.setOnItemClickListener((parent, view1, position, id) -> {
+			final Cursor cursor = (Cursor) mQueueAdapter.getItem(position);
+			final QueueTrack track = QueueTrackHelper.fromCursor(cursor);
+			api.nowPlayingPlayTrack(track.getPath())
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(resp -> { }, Logger::LogThrowable);
+        });
 	}
 
     @Override
@@ -200,7 +207,6 @@ public class CurrentQueueFragment extends RoboFragment
 
     @Override
     public boolean onQueryTextSubmit(String s) {
-
 
         if (!TextUtils.isEmpty(s)) {
             Intent intent = new Intent(getActivity(), QueueResultActivity.class);
