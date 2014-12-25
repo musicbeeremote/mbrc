@@ -40,8 +40,9 @@ public class TrackState {
     private String lyrics;
     private LfmStatus lfmRating;
     private Bitmap albumCover;
+	private String path;
 
-    @Inject
+	@Inject
     public TrackState(RemoteApi api) {
         this.api = api;
 
@@ -142,7 +143,8 @@ public class TrackState {
         this.album = response.getAlbum();
         this.year = response.getYear();
         this.title = response.getTitle();
-        Events.TrackInfoChangeNotification.onNext(new TrackInfoChange(artist, title, album, year));
+		this.path = response.getPath();
+        Events.TrackInfoChangeNotification.onNext(new TrackInfoChange(artist, title, album, year, path));
     }
 
     public void setLyrics(String lyrics) {

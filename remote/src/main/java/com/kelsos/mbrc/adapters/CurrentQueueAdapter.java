@@ -3,6 +3,7 @@ package com.kelsos.mbrc.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.AnimationDrawable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,10 @@ import com.kelsos.mbrc.dao.QueueTrackHelper;
 import com.mobeta.android.dslv.DragSortCursorAdapter;
 
 public class CurrentQueueAdapter extends DragSortCursorAdapter {
+	private String nowPlayingPath;
+	private AnimationDrawable peakOneAnimation;
+	private AnimationDrawable peakTwoAnimation;
+	private AnimationDrawable peakThreeAnimation;
 
 	@SuppressWarnings("UnusedDeclaration")
 	public CurrentQueueAdapter(Context context, Cursor c) {
@@ -51,7 +56,16 @@ public class CurrentQueueAdapter extends DragSortCursorAdapter {
 		trackArtist.setText(artist);
 		trackTitle.setText(title);
 
-		startPeakAnimation(context, view);
+		if (!TextUtils.isEmpty(nowPlayingPath)
+				&& nowPlayingPath.equals(track.getPath())) {
+			addPeakIfNotExists(context, view);
+		} else {
+			final View peakView = view.findViewById(R.id.peak_wrapper);
+			if (peakView != null) {
+				((ViewGroup) peakView.getParent()).removeView(peakView);
+			}
+		}
+
 
 		overflow.setOnClickListener(v -> {
 			PopupMenu menu = new PopupMenu(v.getContext(), v);
@@ -61,33 +75,63 @@ public class CurrentQueueAdapter extends DragSortCursorAdapter {
 
 	}
 
-	private void startPeakAnimation(Context context, View view) {
+	private void addPeakIfNotExists(Context context, View view) {
 		final View peakView = view.findViewById(R.id.peak_wrapper);
 		if (peakView != null) {
 			return;
 		}
 
 		final View inView = view.findViewById(R.id.track_indicator_view);
+
+		attachView(inView, inflatePeakMeter(context));
+
+		startAnimation();
+	}
+
+	private void startAnimation() {
+		if (peakOneAnimation == null) {
+			return;
+		}
+		peakOneAnimation.start();
+		peakTwoAnimation.start();
+		peakThreeAnimation.start();
+	}
+
+	private void stopAnimation() {
+		if (peakOneAnimation == null) {
+			return;
+		}
+		peakOneAnimation.stop();
+		peakTwoAnimation.stop();
+		peakThreeAnimation.stop();
+	}
+
+
+	private View inflatePeakMeter(Context context) {
 		final View inflate = LayoutInflater.from(context).inflate(R.layout.peak_meter, null, false);
 
 		ImageView peakOne = (ImageView) inflate.findViewById(R.id.peak_one);
 		ImageView peakTwo = (ImageView) inflate.findViewById(R.id.peak_two);
 		ImageView peakThree = (ImageView) inflate.findViewById(R.id.peak_three);
 
-		AnimationDrawable peakOneAnimation = (AnimationDrawable) peakOne.getDrawable();
-		AnimationDrawable peakTwoAnimation = (AnimationDrawable) peakTwo.getDrawable();
-		AnimationDrawable peakThreeAnimation = (AnimationDrawable) peakThree.getDrawable();
+		peakOneAnimation = (AnimationDrawable) peakOne.getDrawable();
+		peakTwoAnimation = (AnimationDrawable) peakTwo.getDrawable();
+		peakThreeAnimation = (AnimationDrawable) peakThree.getDrawable();
+		return inflate;
+	}
 
-		ViewGroup parent = (ViewGroup) inView.getParent();
+	private void attachView(View anchorView, View newView) {
+		ViewGroup parent = (ViewGroup) anchorView.getParent();
 
 		final LinearLayout.LayoutParams params = new LinearLayout
 				.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 				ViewGroup.LayoutParams.MATCH_PARENT);
 
-		parent.addView(inflate, parent.indexOfChild(inView) + 1, params);
+		parent.addView(newView, parent.indexOfChild(anchorView) + 1, params);
+	}
 
-		peakOneAnimation.start();
-		peakTwoAnimation.start();
-		peakThreeAnimation.start();
+
+	public void setNowPlayingPath(String nowPlayingPath) {
+		this.nowPlayingPath = nowPlayingPath;
 	}
 }

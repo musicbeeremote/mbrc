@@ -26,6 +26,7 @@ import com.kelsos.mbrc.dao.QueueTrackDao;
 import com.kelsos.mbrc.dao.QueueTrackHelper;
 import com.kelsos.mbrc.data.DatabaseUtils;
 import com.kelsos.mbrc.data.SyncManager;
+import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.ui.activities.QueueResultActivity;
 import com.kelsos.mbrc.ui.fragments.MiniControlFragment;
@@ -36,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
 import roboguice.util.Ln;
+import rx.android.observables.AndroidObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -106,6 +108,12 @@ public class CurrentQueueFragment extends RoboFragment
         setHasOptionsMenu(true);
         getLoaderManager().initLoader(URL_LOADER, null, this);
         mQueueAdapter = new CurrentQueueAdapter(getActivity(), null, 0);
+
+		AndroidObservable.bindFragment(this, Events.TrackInfoChangeNotification)
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(info -> mQueueAdapter.setNowPlayingPath(info.getPath()),
+						Logger::LogThrowable);
     }
 
     @Override
@@ -154,7 +162,7 @@ public class CurrentQueueFragment extends RoboFragment
 					}, Logger::LogThrowable);
 
 			Ln.d("from: %d to: %d", fromIndex, toIndex);
-        });
+		});
 
 		mDslView.setRemoveListener(position -> {
 
@@ -172,7 +180,7 @@ public class CurrentQueueFragment extends RoboFragment
 							contentResolver.delete(uri, null, null);
 						}
 					}, Logger::LogThrowable);
-        });
+		});
 
 		getFragmentManager().beginTransaction()
 				.replace(R.id.np_mini_control, MiniControlFragment.newInstance())
@@ -182,10 +190,11 @@ public class CurrentQueueFragment extends RoboFragment
 			final Cursor cursor = (Cursor) mQueueAdapter.getItem(position);
 			final QueueTrack track = QueueTrackHelper.fromCursor(cursor);
 			api.nowPlayingPlayTrack(track.getPath())
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(resp -> { }, Logger::LogThrowable);
-        });
+					.subscribeOn(Schedulers.io())
+					.observeOn(AndroidSchedulers.mainThread())
+					.subscribe(resp -> {
+					}, Logger::LogThrowable);
+		});
 	}
 
     @Override
