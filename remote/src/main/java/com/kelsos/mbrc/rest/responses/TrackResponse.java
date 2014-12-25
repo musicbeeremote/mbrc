@@ -5,15 +5,19 @@ public class TrackResponse {
     private String title;
     private String album;
     private String year;
+	private String path;
 
-    public TrackResponse(String artist, String title, String album, String year) {
+    @SuppressWarnings("UnusedDeclaration")
+	public TrackResponse(String artist, String title, String album, String year, String path) {
         this.artist = artist;
         this.title = title;
         this.album = album;
         this.year = year;
+		this.path = path;
     }
 
-    public TrackResponse() {}
+    @SuppressWarnings("UnusedDeclaration")
+	public TrackResponse() { }
 
     public String getArtist() {
         return artist;
@@ -30,4 +34,8 @@ public class TrackResponse {
     public String getYear() {
         return year;
     }
+
+	public String getPath() {
+		return path;
+	}
 }

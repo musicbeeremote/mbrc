@@ -13,7 +13,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import retrofit.client.Response;
 import roboguice.util.Ln;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 import java.io.File;
@@ -50,16 +49,28 @@ public class SyncManager {
         getCovers(STARTING_OFFSET, LIMIT).subscribe(this::processCovers, Logger::LogThrowable);
     }
 
+
+	public void reloadQueue() {
+		Observable.create(subscriber -> {
+			clearCurrentQueue();
+			subscriber.onNext(true);
+			subscriber.onCompleted();
+		}).subscribeOn(Schedulers.io())
+				.observeOn(Schedulers.io())
+				.subscribe(r->startCurrentQueueSyncing());
+
+	}
+
     public void startCurrentQueueSyncing() {
         api.getNowPlayingList(STARTING_OFFSET, LIMIT)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .subscribe(this::processCurrentQueue, Logger::LogThrowable);
     }
 
-    public void clearCurrentQueue() {
+    private void clearCurrentQueue() {
         QueueTrackDao queueTrackDao = daoSession.getQueueTrackDao();
-        queueTrackDao.deleteAll();
+		daoSession.runInTx(queueTrackDao::deleteAll);
     }
 
     private void processCurrentQueue(PaginatedDataResponse paginatedData) {
@@ -82,7 +93,7 @@ public class SyncManager {
         if (offset + limit < total) {
             api.getNowPlayingList(offset + limit, limit)
                     .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .observeOn(Schedulers.io())
                     .subscribe(this::processCurrentQueue, Logger::LogThrowable);
         } else {
             Ln.d("no more data");

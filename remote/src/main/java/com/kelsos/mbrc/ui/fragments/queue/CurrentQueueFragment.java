@@ -62,7 +62,7 @@ public class CurrentQueueFragment extends RoboFragment
 	private DragSortController mController;
 
 	private int dragInitMode = DragSortController.ON_DRAG;
-	private boolean removeEnabled = false;
+	private boolean removeEnabled = true;
 	private int removeMode = DragSortController.FLING_REMOVE;
 	private boolean sortEnabled = true;
 	private boolean dragEnabled = true;
@@ -94,8 +94,8 @@ public class CurrentQueueFragment extends RoboFragment
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.current_queue_sync) {
-			syncManager.clearCurrentQueue();
-			syncManager.startCurrentQueueSyncing();
+			syncManager.reloadQueue();
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
