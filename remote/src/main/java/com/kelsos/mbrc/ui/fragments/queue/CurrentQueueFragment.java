@@ -89,7 +89,7 @@ public class CurrentQueueFragment extends RoboFragment
 		AndroidObservable.bindFragment(this, state.observePlaystate())
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(mQueueAdapter::handlePlayStateChange,
+				.subscribe(mQueueAdapter::setPlayState,
 						Logger::LogThrowable);
 
 		AndroidObservable.bindFragment(this, Events.TrackInfoChangeNotification)

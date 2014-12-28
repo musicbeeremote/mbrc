@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckedTextView;
+import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.NavigationEntry;
 
@@ -17,14 +17,14 @@ public class DrawerAdapter extends ArrayAdapter<NavigationEntry> {
     private Context mContext;
     private int mResource;
     private List<NavigationEntry> mData;
-    private Typeface robotoLight;
+    private Typeface robotoMedium;
 
     public DrawerAdapter(Context context, int resource, List<NavigationEntry> objects) {
         super(context, resource, objects);
         this.mResource = resource;
         this.mContext = context;
         this.mData = objects;
-        robotoLight = Typeface.createFromAsset(mContext.getAssets(), "fonts/roboto_light.ttf");
+		robotoMedium = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_medium.ttf");
     }
 
     @Override public View getView(int position, View convertView, ViewGroup parent) {
@@ -37,8 +37,8 @@ public class DrawerAdapter extends ArrayAdapter<NavigationEntry> {
             row = layoutInflater.inflate(mResource, parent, false);
 
             holder = new Holder();
-            holder.itemName = (CheckedTextView) row.findViewById(R.id.dr_option_text);
-            holder.itemName.setTypeface(robotoLight);
+            holder.itemName = (TextView) row.findViewById(R.id.dr_option_text);
+            holder.itemName.setTypeface(robotoMedium);
             row.setTag(holder);
         } else {
             holder = (Holder) row.getTag();
@@ -49,6 +49,6 @@ public class DrawerAdapter extends ArrayAdapter<NavigationEntry> {
     }
 
     static class Holder {
-        CheckedTextView itemName;
+        TextView itemName;
     }
 }

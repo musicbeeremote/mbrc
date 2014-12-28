@@ -4,7 +4,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:orientation="vertical"
-                android:background="@color/background_material_dark"
+                android:background="@color/mbrc_background"
                 tools:ignore="true">
 
     <ListView
@@ -12,31 +12,35 @@
         android:layout_height="fill_parent"
         android:orientation="vertical"
         android:id="@android:id/list"
-        android:layout_above="@+id/linearLayout"
-        tools:listitem="@layout/ui_drawer_item"
-        android:divider="@color/remote_divider"
-        android:dividerHeight="1dp">
+        android:divider="@null"
+        android:layout_above="@+id/drawer_list_divider"
+        tools:listitem="@layout/ui_drawer_item">
     </ListView>
+
+    <View
+        android:layout_above="@+id/linearLayout"
+        android:id="@+id/drawer_list_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:paddingTop="@dimen/side_margin_half"
+        android:paddingBottom="@dimen/side_margin_half"
+        android:background="@color/remote_divider"/>
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/mbrc_drawer_item_height"
+        android:background="@drawable/ui_drawer_clickable_background"
         android:layout_above="@+id/exit_layout"
         android:id="@+id/linearLayout">
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            />
-
-        <TextView
+        <Button
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:text="@string/drawer_connection_status_off"
+            android:textSize="@dimen/drawer_listitem_text"
             android:id="@+id/menuConnector"
             android:layout_gravity="start|center_vertical"
-            android:background="@drawable/ui_drawer_clickable_background"
             style="@style/Menu.Title"/>
 
     </LinearLayout>
@@ -44,23 +48,19 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="45dp"
+        android:layout_height="@dimen/mbrc_drawer_item_height"
         android:layout_above="@+id/drawer_version_indicator"
+        android:background="@drawable/ui_drawer_clickable_background"
         android:id="@+id/exit_layout">
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            />
-
-        <TextView
+        <Button
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:text="@string/drawer_exit"
+            android:textSize="@dimen/drawer_listitem_text"
             android:id="@+id/menu_exit"
             android:layout_gravity="start|center_vertical"
-            style="@style/Menu.Title"
-            android:background="@drawable/ui_drawer_clickable_background"/>
+            style="@style/Menu.Title"/>
 
     </LinearLayout>
 

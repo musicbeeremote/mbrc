@@ -11,5 +11,4 @@
           android:drawable="@drawable/list_focused_mbrc_dark"/>
     <item android:state_pressed="true"
           android:drawable="@drawable/pressed_background_mbrc_dark"/>
-    <item android:drawable="@drawable/ui_drawer_line_gradient"/>
 </selector>

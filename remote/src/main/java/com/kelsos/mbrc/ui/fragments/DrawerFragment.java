@@ -29,7 +29,6 @@ import rx.Observable;
 
 import java.util.ArrayList;
 
-
 public class DrawerFragment extends RoboListFragment implements FragmentManager.OnBackStackChangedListener {
 
     @InjectView(R.id.menuConnector)
@@ -39,7 +38,7 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
     @InjectView(R.id.menu_exit)
     private TextView exitButton;
 
-    private Typeface robotoLight;
+    private Typeface robotoMedium;
     private DrawerLayout mDrawerLayout;
     private int mSelection;
     private boolean mBackstackChanging;
@@ -48,7 +47,7 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        robotoLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
+        robotoMedium = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_medium.ttf");
         mSelection = 0;
         mBackstackChanging = false;
 
@@ -80,8 +79,8 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
             activity.stopService(new Intent(activity, Controller.class));
             activity.finish();
         });
-        menuConnector.setTypeface(robotoLight);
-        exitButton.setTypeface(robotoLight);
+        menuConnector.setTypeface(robotoMedium);
+        exitButton.setTypeface(robotoMedium);
 
         ArrayList<NavigationEntry> nav = new ArrayList<>();
         nav.add(new NavigationEntry(getString(R.string.nav_home)));

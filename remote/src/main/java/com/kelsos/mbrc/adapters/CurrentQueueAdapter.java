@@ -3,7 +3,6 @@ package com.kelsos.mbrc.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.AnimationDrawable;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +18,7 @@ import com.mobeta.android.dslv.DragSortCursorAdapter;
 
 public class CurrentQueueAdapter extends DragSortCursorAdapter {
 	private String nowPlayingPath;
+	private PlayState state;
 	private AnimationDrawable peakOneAnimation;
 	private AnimationDrawable peakTwoAnimation;
 	private AnimationDrawable peakThreeAnimation;
@@ -44,6 +44,8 @@ public class CurrentQueueAdapter extends DragSortCursorAdapter {
 
 	private void init(Context context) {
 		mPeakView = inflatePeakMeter(context);
+		state = PlayState.STOPPED;
+		nowPlayingPath = "";
 	}
 
 	@Override
@@ -66,7 +68,7 @@ public class CurrentQueueAdapter extends DragSortCursorAdapter {
 		trackArtist.setText(artist);
 		trackTitle.setText(title);
 
-		if (!TextUtils.isEmpty(nowPlayingPath) && nowPlayingPath.equals(track.getPath())) {
+		if (nowPlayingPath.equals(track.getPath())) {
 			addPeakIfNotExists(view);
 		} else {
 			detachView(view);
@@ -96,8 +98,7 @@ public class CurrentQueueAdapter extends DragSortCursorAdapter {
 		final View inView = view.findViewById(R.id.track_indicator_view);
 
 		attachView(inView, mPeakView);
-
-		startAnimation();
+		changeAnimationState();
 	}
 
 	private void startAnimation() {
@@ -118,7 +119,13 @@ public class CurrentQueueAdapter extends DragSortCursorAdapter {
 		peakThreeAnimation.stop();
 	}
 
-	public void handlePlayStateChange(PlayState state) {
+	public void setPlayState(PlayState state) {
+		this.state = state;
+		changeAnimationState();
+	}
+
+
+	private void changeAnimationState() {
 		switch (state) {
 			case PLAYING:
 				startAnimation();
@@ -130,7 +137,6 @@ public class CurrentQueueAdapter extends DragSortCursorAdapter {
 				break;
 		}
 	}
-
 
 	private View inflatePeakMeter(Context context) {
 		@SuppressWarnings("Annotator")
@@ -155,9 +161,6 @@ public class CurrentQueueAdapter extends DragSortCursorAdapter {
 
 		parent.addView(newView, parent.indexOfChild(anchorView) + 1, params);
 	}
-
-
-
 
 	public void setNowPlayingTrack(QueueTrack track) {
 		nowPlayingPath = track.getPath();
