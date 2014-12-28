@@ -33,7 +33,7 @@ public final class ${entity.className}Helper {
 
     public static final String[] PROJECTION = {
     <#list entity.properties as property>
-        ${property.propertyName?upper_case}<#if property_has_next>, </#if>
+        ${property.propertyName?upper_case}<#if property_has_next>,</#if>
     </#list>
     };
 
