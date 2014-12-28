@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.dao.QueueTrack;
 import com.kelsos.mbrc.dao.QueueTrackHelper;
+import com.kelsos.mbrc.enums.PlayState;
 import com.mobeta.android.dslv.DragSortCursorAdapter;
 
 public class CurrentQueueAdapter extends DragSortCursorAdapter {
@@ -21,19 +22,28 @@ public class CurrentQueueAdapter extends DragSortCursorAdapter {
 	private AnimationDrawable peakOneAnimation;
 	private AnimationDrawable peakTwoAnimation;
 	private AnimationDrawable peakThreeAnimation;
+	private View mPeakView;
 
 	@SuppressWarnings("UnusedDeclaration")
 	public CurrentQueueAdapter(Context context, Cursor c) {
 		super(context, c);
+		init(context);
 	}
 
 	@SuppressWarnings("UnusedDeclaration")
 	public CurrentQueueAdapter(Context context, Cursor c, boolean autoRequery) {
 		super(context, c, autoRequery);
+		init(context);
 	}
 
 	public CurrentQueueAdapter(Context context, Cursor c, int flags) {
 		super(context, c, flags);
+		init(context);
+	}
+
+
+	private void init(Context context) {
+		mPeakView = inflatePeakMeter(context);
 	}
 
 	@Override
@@ -56,16 +66,11 @@ public class CurrentQueueAdapter extends DragSortCursorAdapter {
 		trackArtist.setText(artist);
 		trackTitle.setText(title);
 
-		if (!TextUtils.isEmpty(nowPlayingPath)
-				&& nowPlayingPath.equals(track.getPath())) {
-			addPeakIfNotExists(context, view);
+		if (!TextUtils.isEmpty(nowPlayingPath) && nowPlayingPath.equals(track.getPath())) {
+			addPeakIfNotExists(view);
 		} else {
-			final View peakView = view.findViewById(R.id.peak_wrapper);
-			if (peakView != null) {
-				((ViewGroup) peakView.getParent()).removeView(peakView);
-			}
+			detachView(view);
 		}
-
 
 		overflow.setOnClickListener(v -> {
 			PopupMenu menu = new PopupMenu(v.getContext(), v);
@@ -75,7 +80,14 @@ public class CurrentQueueAdapter extends DragSortCursorAdapter {
 
 	}
 
-	private void addPeakIfNotExists(Context context, View view) {
+	public void detachView(View view) {
+		final View peakView = view.findViewById(R.id.peak_wrapper);
+		if (peakView != null) {
+            ((ViewGroup) peakView.getParent()).removeView(peakView);
+        }
+	}
+
+	public void addPeakIfNotExists(View view) {
 		final View peakView = view.findViewById(R.id.peak_wrapper);
 		if (peakView != null) {
 			return;
@@ -83,7 +95,7 @@ public class CurrentQueueAdapter extends DragSortCursorAdapter {
 
 		final View inView = view.findViewById(R.id.track_indicator_view);
 
-		attachView(inView, inflatePeakMeter(context));
+		attachView(inView, mPeakView);
 
 		startAnimation();
 	}
@@ -106,8 +118,22 @@ public class CurrentQueueAdapter extends DragSortCursorAdapter {
 		peakThreeAnimation.stop();
 	}
 
+	public void handlePlayStateChange(PlayState state) {
+		switch (state) {
+			case PLAYING:
+				startAnimation();
+				break;
+			case PAUSED:
+				stopAnimation();
+				break;
+			default:
+				break;
+		}
+	}
+
 
 	private View inflatePeakMeter(Context context) {
+		@SuppressWarnings("Annotator")
 		final View inflate = LayoutInflater.from(context).inflate(R.layout.peak_meter, null, false);
 
 		ImageView peakOne = (ImageView) inflate.findViewById(R.id.peak_one);
@@ -131,7 +157,18 @@ public class CurrentQueueAdapter extends DragSortCursorAdapter {
 	}
 
 
-	public void setNowPlayingPath(String nowPlayingPath) {
-		this.nowPlayingPath = nowPlayingPath;
+
+
+	public void setNowPlayingTrack(QueueTrack track) {
+		nowPlayingPath = track.getPath();
+	}
+
+	public int getPositionById(Long id) {
+		for (int i = 0; i < getCount(); i++) {
+			if (getItemId(i) == id) {
+				return i;
+			}
+		}
+		return -1;
 	}
 }

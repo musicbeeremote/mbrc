@@ -8,7 +8,6 @@ import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.util.DelayTimer;
-import com.kelsos.mbrc.util.RemoteUtils;
 import com.kelsos.mbrc.util.SettingsManager;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -165,7 +164,6 @@ public class SocketService {
             }
 
             Events.Messages.onNext(new Message(context));
-			Ln.d("Got :: %s :: on %s", context, RemoteUtils.getTimeStamp());
         }
     }
 

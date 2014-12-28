@@ -26,6 +26,7 @@ import com.kelsos.mbrc.dao.QueueTrackDao;
 import com.kelsos.mbrc.dao.QueueTrackHelper;
 import com.kelsos.mbrc.data.DatabaseUtils;
 import com.kelsos.mbrc.data.SyncManager;
+import com.kelsos.mbrc.data.model.PlayerState;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.ui.activities.QueueResultActivity;
@@ -33,6 +34,7 @@ import com.kelsos.mbrc.ui.fragments.MiniControlFragment;
 import com.kelsos.mbrc.util.Logger;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
+import de.greenrobot.dao.query.QueryBuilder;
 import org.jetbrains.annotations.NotNull;
 import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
@@ -43,97 +45,78 @@ import rx.schedulers.Schedulers;
 
 
 public class CurrentQueueFragment extends RoboFragment
-        implements LoaderManager.LoaderCallbacks<Cursor>,
-        SearchView.OnQueryTextListener {
+		implements LoaderManager.LoaderCallbacks<Cursor>,
+		SearchView.OnQueryTextListener {
 
-    private static final int URL_LOADER = 0;
-    private CurrentQueueAdapter mQueueAdapter;
-    private SearchView mSearchView;
+	private static final int URL_LOADER = 0;
+	private CurrentQueueAdapter mQueueAdapter;
+	private SearchView mSearchView;
 
-    @Inject
-    private SyncManager syncManager;
+	private QueueTrack nowPlayingTrack;
 
-    @Inject
-    private RemoteApi api;
+	@Inject
+	private SyncManager syncManager;
+
+	@Inject
+	private RemoteApi api;
 
 	@Inject
 	private DaoSession daoSession;
 
 	@InjectView(R.id.dlv_current_queue)
 	private DragSortListView mDslView;
-	private DragSortController mController;
 
-	private int dragInitMode = DragSortController.ON_DRAG;
-	private boolean removeEnabled = true;
-	private int removeMode = DragSortController.FLING_REMOVE;
-	private boolean sortEnabled = true;
-	private boolean dragEnabled = true;
+	@Inject
+	private PlayerState state;
 
 	public DragSortController buildController(DragSortListView dslv) {
 		DragSortController controller = new DragSortController(dslv);
 		controller.setDragHandleId(R.id.drag_handle);
-		controller.setRemoveEnabled(removeEnabled);
-		controller.setSortEnabled(sortEnabled);
-		controller.setDragInitMode(dragInitMode);
-		controller.setRemoveMode(removeMode);
+		controller.setRemoveEnabled(true);
+		controller.setSortEnabled(true);
+		controller.setDragInitMode(DragSortController.ON_DRAG);
+		controller.setRemoveMode(DragSortController.FLING_REMOVE);
 		return controller;
-
 	}
 
 	@Override
-    public void onStart() {
-        super.onStart();
-    }
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
+		getLoaderManager().initLoader(URL_LOADER, null, this);
+		mQueueAdapter = new CurrentQueueAdapter(getActivity(), null, 0);
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_now_playing, menu);
-        MenuItem mSearchItem = menu.findItem(R.id.action_search);
-        mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
-        mSearchView.setOnQueryTextListener(this);
-    }
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.current_queue_sync) {
-			syncManager.reloadQueue();
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-        getLoaderManager().initLoader(URL_LOADER, null, this);
-        mQueueAdapter = new CurrentQueueAdapter(getActivity(), null, 0);
+		AndroidObservable.bindFragment(this, state.observePlaystate())
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(mQueueAdapter::handlePlayStateChange,
+						Logger::LogThrowable);
 
 		AndroidObservable.bindFragment(this, Events.TrackInfoChangeNotification)
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(info -> mQueueAdapter.setNowPlayingPath(info.getPath()),
+				.subscribe(msg -> {
+							QueryBuilder qb = daoSession.getQueueTrackDao().queryBuilder();
+							qb.where(QueueTrackDao.Properties.Path.eq(msg.getPath()));
+							QueueTrack track = (QueueTrack) qb.unique();
+							mQueueAdapter.setNowPlayingTrack(track);
+							nowPlayingTrack = track;
+							mQueueAdapter.detachView(mDslView);
+							attachIndicatorOnVisible();
+
+						},
 						Logger::LogThrowable);
-    }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_current_queue, container, false);
-    }
+	}
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		mController = this.buildController(mDslView);
+		DragSortController mController = this.buildController(mDslView);
 		mDslView.setAdapter(mQueueAdapter);
 		mDslView.setFloatViewManager(mController);
 		mDslView.setOnTouchListener(mController);
-		mDslView.setDragEnabled(dragEnabled);
+		mDslView.setDragEnabled(true);
 
 		mDslView.setDropListener((fromIndex, toIndex) -> {
 			final Cursor originCursor = (Cursor) mQueueAdapter.getItem(fromIndex);
@@ -197,38 +180,81 @@ public class CurrentQueueFragment extends RoboFragment
 		});
 	}
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+	@Override
+	public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.fragment_current_queue, container, false);
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_now_playing, menu);
+		MenuItem mSearchItem = menu.findItem(R.id.action_search);
+		mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
+		mSearchView.setOnQueryTextListener(this);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.current_queue_sync) {
+			syncManager.reloadQueue();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		final String sortOrder = String.format("%s ASC", QueueTrackHelper.POSITION);
-        return new CursorLoader(getActivity(), QueueTrackHelper.CONTENT_URI,
-                QueueTrackHelper.PROJECTION, null, null, sortOrder);
-    }
+		return new CursorLoader(getActivity(), QueueTrackHelper.CONTENT_URI,
+				QueueTrackHelper.PROJECTION, null, null, sortOrder);
+	}
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mQueueAdapter.swapCursor(data);
-    }
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		mQueueAdapter.swapCursor(data);
+	}
 
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
 		mQueueAdapter.swapCursor(null);
-    }
+	}
 
-    @Override
-    public boolean onQueryTextSubmit(String s) {
+	@Override
+	public boolean onQueryTextSubmit(String s) {
 
-        if (!TextUtils.isEmpty(s)) {
-            Intent intent = new Intent(getActivity(), QueueResultActivity.class);
-            intent.putExtra(QueueResultActivity.QUEUE_FILTER, s.trim());
-            getActivity().startActivity(intent);
-        }
+		if (!TextUtils.isEmpty(s)) {
+			Intent intent = new Intent(getActivity(), QueueResultActivity.class);
+			intent.putExtra(QueueResultActivity.QUEUE_FILTER, s.trim());
+			getActivity().startActivity(intent);
+		}
 
-        mSearchView.onActionViewCollapsed();
-        return false;
-    }
+		mSearchView.onActionViewCollapsed();
+		return false;
+	}
 
-    @Override
-    public boolean onQueryTextChange(String s) {
-        return false;
-    }
+	@Override
+	public boolean onQueryTextChange(String s) {
+		return false;
+	}
+
+	private void attachIndicatorOnVisible() {
+		int position = mQueueAdapter.getPositionById(nowPlayingTrack.getId());
+		int firstVisible = mDslView.getFirstVisiblePosition() - mDslView.getHeaderViewsCount();
+		int wantedChild = position - firstVisible;
+
+		if (wantedChild >= 0 && wantedChild < mDslView.getChildCount()) {
+			View wanted = mDslView.getChildAt(wantedChild);
+			mQueueAdapter.addPeakIfNotExists(wanted);
+		}
+	}
 }

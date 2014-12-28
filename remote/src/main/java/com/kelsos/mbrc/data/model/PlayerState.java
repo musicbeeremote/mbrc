@@ -11,7 +11,6 @@ import com.kelsos.mbrc.net.Notification;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.rest.responses.SuccessResponse;
 import com.kelsos.mbrc.util.Logger;
-import roboguice.util.Ln;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
@@ -140,7 +139,7 @@ public class PlayerState {
 		Events.ButtonPressedNotification.subscribeOn(Schedulers.io())
 				.filter(event -> event.getType().equals(button))
 				.flatMap(event -> apiRequest)
-				.subscribe(r -> Ln.d(r.isSuccess()), Logger::LogThrowable);
+				.subscribe(r -> { }, Logger::LogThrowable);
 	}
 
 	public void setRepeatState(String repeatButtonActive) {

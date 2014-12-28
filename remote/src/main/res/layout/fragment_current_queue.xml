@@ -13,8 +13,7 @@
         android:layout_marginStart="@dimen/side_margin_half"
         android:layout_marginEnd="@dimen/side_margin_half"
         android:clipToPadding="false"
-        android:divider="@color/remote_divider"
-        android:dividerHeight="1dp"
+        android:divider="@null"
         android:fitsSystemWindows="true"
         tools:listitem="@layout/listitem_track"
         android:layout_weight="1"/>
