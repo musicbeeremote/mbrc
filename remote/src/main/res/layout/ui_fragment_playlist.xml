@@ -11,16 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1"
-        android:layout_marginTop="@dimen/side_margin_half"
-        android:layout_marginBottom="@dimen/side_margin_half"
-        android:layout_marginLeft="@dimen/side_margin"
-        android:layout_marginRight="@dimen/side_margin"
+        android:paddingTop="@dimen/side_margin_half"
+        android:paddingBottom="@dimen/side_margin_half"
         android:drawSelectorOnTop="true"
-        android:dividerHeight="@dimen/side_margin_half"
         android:divider="@null"
         android:fastScrollEnabled="true"
         android:listSelector="@drawable/mbrc_dark_compo_list_selector_holo_dark"
-        tools:listitem="@layout/ui_list_dual"/>
+        tools:listitem="@layout/listitem_single"/>
 
     <FrameLayout
         android:id="@+id/playlist_mini_control"

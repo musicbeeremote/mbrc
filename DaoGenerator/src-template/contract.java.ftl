@@ -40,7 +40,11 @@ public final class ${entity.className}Helper {
     public static ${entity.className} fromCursor(Cursor data) {
         final ${entity.className} entity = new ${entity.className}();
         <#list entity.properties as property>
+        <#if property.propertyType?lower_case == "boolean">
+        entity.set${property.propertyName?cap_first}(data.getInt(data.getColumnIndex(${property.propertyName?upper_case})) > 0);
+        <#else>
         entity.set${property.propertyName?cap_first}(data.get${property.propertyType?cap_first}(data.getColumnIndex(${property.propertyName?upper_case})));
+        </#if>
         </#list>
         return entity;
     }

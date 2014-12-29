@@ -49,6 +49,44 @@ public class SyncManager {
         getCovers(STARTING_OFFSET, LIMIT).subscribe(this::processCovers, Logger::LogThrowable);
     }
 
+	public void startPlaylistSync() {
+		getPlaylists(STARTING_OFFSET, LIMIT).subscribe(this::processPlaylists, Logger::LogThrowable);
+	}
+
+	private void processPlaylists(PaginatedDataResponse data) {
+		PlaylistDao playlistDao = daoSession.getPlaylistDao();
+		daoSession.runInTx(() -> {
+			try {
+				for (JsonNode node : data.getData()) {
+					final Playlist playlist = mapper.readValue(node, Playlist.class);
+					playlistDao.insert(playlist);
+				}
+			} catch (IOException e) {
+				Ln.d(e);
+			}
+		});
+
+		int total = data.getTotal();
+		int offset = data.getOffset();
+		int limit = data.getLimit();
+
+		if (offset + limit < total) {
+			getPlaylists(offset + limit, limit)
+					.subscribeOn(Schedulers.io())
+					.observeOn(Schedulers.io())
+					.subscribe(this::processPlaylists, Logger::LogThrowable);
+		} else {
+			mContext.getContentResolver().notifyChange(PlaylistHelper.CONTENT_URI, null);
+			Ln.d("Playlist sync complete.");
+		}
+	}
+
+
+	private Observable<PaginatedDataResponse> getPlaylists(int offset, int limit) {
+		return api.getPlaylists(offset, limit)
+				.observeOn(Schedulers.io())
+				.subscribeOn(Schedulers.io());
+	}
 
 	public void reloadQueue() {
 		Observable.create(subscriber -> {

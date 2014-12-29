@@ -1,69 +1,70 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistCursorAdapter;
+import com.kelsos.mbrc.dao.PlaylistHelper;
+import com.kelsos.mbrc.data.SyncManager;
+import org.jetbrains.annotations.NotNull;
 import roboguice.fragment.provided.RoboListFragment;
+import roboguice.inject.InjectView;
 
-public class PlaylistFragment extends RoboListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final int GROUP_ID = 1;
-    private static final int PLAY_NOW = 1;
-    private static final int GET_PLAYLIST = 2;
-    private static final int URL_LOADER = 0x873ef32;
-    private PlaylistCursorAdapter adapter;
+public class PlaylistFragment extends RoboListFragment
+		implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-       // getLoaderManager().initLoader(URL_LOADER, null, this);
-        return inflater.inflate(R.layout.ui_fragment_playlist, container, false);
-    }
+	private static final int URL_LOADER = 1921;
+	@Inject
+	private SyncManager syncManager;
+	@InjectView(android.R.id.list)
+	private ListView mListView;
+	private PlaylistCursorAdapter mAdapter;
 
-    @Override public void onStart() {
-        super.onStart();
-    }
+	@Override
+	public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.ui_fragment_playlist, container, false);
+	}
 
-    @Override public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        registerForContextMenu(getListView());
-    }
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mAdapter = new PlaylistCursorAdapter(getActivity(), null, 0);
+		getLoaderManager().initLoader(URL_LOADER, null, this);
+	}
 
-    @Override public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-    }
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		mListView.setAdapter(mAdapter);
+	}
 
-    @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.setHeaderTitle(R.string.search_context_header);
-        menu.add(GROUP_ID, GET_PLAYLIST, 0, R.string.playlist_list_get);
-        menu.add(GROUP_ID, PLAY_NOW, 0, R.string.playlist_list_play_now);
-    }
+	@Override
+	public void onStart() {
+		super.onStart();
+		syncManager.startPlaylistSync();
+	}
 
-    @Override public boolean onContextItemSelected(android.view.MenuItem item) {
-        if (item.getGroupId() == GROUP_ID) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+	@Override
+	public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+		return new CursorLoader(getActivity(), PlaylistHelper.CONTENT_URI,
+				PlaylistHelper.PROJECTION, null, null, null);
+	}
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return null;
-    }
+	@Override
+	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+		mAdapter.swapCursor(cursor);
+	}
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        adapter.swapCursor(null);
-    }
+	@Override
+	public void onLoaderReset(Loader<Cursor> cursorLoader) {
+		mAdapter.swapCursor(null);
+	}
 }

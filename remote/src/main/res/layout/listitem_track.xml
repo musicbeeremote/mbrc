@@ -20,8 +20,8 @@
                 android:id="@+id/drag_handle"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:paddingRight="@dimen/side_margin_half"
-                android:paddingLeft="@dimen/side_margin_half"
+                android:paddingRight="@dimen/side_margin"
+                android:paddingLeft="@dimen/side_margin"
                 android:layout_weight="0"
                 android:gravity="center_vertical">
 
@@ -79,8 +79,8 @@
                 android:id="@+id/list_overflow"
                 android:gravity="center_vertical"
                 android:background="@drawable/selectable_background_mbrc_dark"
-                android:paddingRight="@dimen/side_margin_half"
-                android:paddingLeft="@dimen/side_margin_half"
+                android:paddingRight="@dimen/side_margin"
+                android:paddingLeft="@dimen/side_margin"
                 android:layout_height="match_parent">
 
                 <ImageView

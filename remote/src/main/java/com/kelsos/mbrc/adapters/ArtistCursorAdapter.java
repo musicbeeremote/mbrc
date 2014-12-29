@@ -16,7 +16,7 @@ public class ArtistCursorAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-        return LayoutInflater.from(context).inflate(R.layout.ui_list_single, viewGroup, false);
+        return LayoutInflater.from(context).inflate(R.layout.listitem_single, viewGroup, false);
     }
 
     @Override

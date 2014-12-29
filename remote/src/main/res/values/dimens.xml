@@ -7,6 +7,7 @@
     <dimen name="mbrc_drawer_item_height">48dp</dimen>
     <dimen name="lyrics_text_size">15sp</dimen>
     <dimen name="list_item_height">72dp</dimen>
+    <dimen name="list_item_single_height">56dp</dimen>
     <dimen name="list_item_one">16sp</dimen>
     <dimen name="list_item_two">14sp</dimen>
     <dimen name="mini_control_height">45dp</dimen>

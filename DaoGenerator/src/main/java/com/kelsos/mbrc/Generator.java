@@ -68,13 +68,14 @@ public final class Generator {
 		playlist.addStringProperty("name");
 		playlist.addBooleanProperty("readOnly");
 		playlist.addStringProperty("path");
+		playlist.addIntProperty("tracks");
 
 		Entity playlistTrack = schema.addEntity("PlaylistTrack");
 		playlistTrack.addIdProperty();
 		playlistTrack.addIntProperty("position");
 		playlistTrack.addStringProperty("path");
-		playlistTrack.addStringProperty("Artist");
-		playlistTrack.addStringProperty("Title");
+		playlistTrack.addStringProperty("artist");
+		playlistTrack.addStringProperty("title");
 		Property playlistTrackId = playlistTrack.addLongProperty("playlistId").getProperty();
 		playlistTrack.addToOne(playlist, playlistTrackId);
 
