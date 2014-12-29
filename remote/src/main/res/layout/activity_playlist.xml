@@ -5,6 +5,8 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
+    <include layout="@layout/toolbar"/>
+
     <com.mobeta.android.dslv.DragSortListView
         android:id="@+id/dlv_current_queue"
         android:layout_width="match_parent"
@@ -17,7 +19,7 @@
         android:layout_weight="1"/>
 
     <FrameLayout
-        android:id="@+id/np_mini_control"
+        android:id="@+id/playlist_mini_control"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mini_control_height"
         tools:context="com.kelsos.mbrc.ui.fragments.MiniControlFragment"

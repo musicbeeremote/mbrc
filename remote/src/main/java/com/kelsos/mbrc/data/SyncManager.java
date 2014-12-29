@@ -25,7 +25,7 @@ import java.util.List;
 public class SyncManager {
 
     public static final int BUFFER_SIZE = 1024;
-    private final DaoSession daoSession;
+	private final DaoSession daoSession;
     private RemoteApi api;
     private ObjectMapper mapper;
     private static final int STARTING_OFFSET = 0;
@@ -53,6 +53,8 @@ public class SyncManager {
 		getPlaylists(STARTING_OFFSET, LIMIT).subscribe(this::processPlaylists, Logger::LogThrowable);
 	}
 
+
+
 	private void processPlaylists(PaginatedDataResponse data) {
 		PlaylistDao playlistDao = daoSession.getPlaylistDao();
 		daoSession.runInTx(() -> {
@@ -78,6 +80,7 @@ public class SyncManager {
 		} else {
 			mContext.getContentResolver().notifyChange(PlaylistHelper.CONTENT_URI, null);
 			Ln.d("Playlist sync complete.");
+			startPlaylistTrackSyncing();
 		}
 	}
 
@@ -134,7 +137,7 @@ public class SyncManager {
                     .observeOn(Schedulers.io())
                     .subscribe(this::processCurrentQueue, Logger::LogThrowable);
         } else {
-            Ln.d("no more data");
+            Ln.d("Queue track sync complete.");
 			mContext.getContentResolver().notifyChange(QueueTrackHelper.CONTENT_URI, null);
         }
     }
@@ -159,7 +162,7 @@ public class SyncManager {
         if (offset + limit < total) {
             getCovers(offset + limit, limit).subscribe(this::processCovers, Logger::LogThrowable);
         } else {
-            Ln.d("no more data");
+            Ln.d("Cover sync complete.");
             fetchCovers();
         }
     }
@@ -178,7 +181,6 @@ public class SyncManager {
             }
         });
 
-
         int total = paginatedData.getTotal();
         int offset = paginatedData.getOffset();
         int limit = paginatedData.getLimit();
@@ -187,13 +189,11 @@ public class SyncManager {
             getGenres(offset + limit, limit).subscribe(this::processGenres, Logger::LogThrowable);
         } else {
 			mContext.getContentResolver().notifyChange(GenreHelper.CONTENT_URI, null);
-			Ln.d("no more data");
+			Ln.d("Genre sync complete.");
         }
     }
 
     private void processArtists(PaginatedDataResponse paginatedData) {
-
-
         ArtistDao artistDao = daoSession.getArtistDao();
         daoSession.runInTx(() -> {
             try {
@@ -215,12 +215,61 @@ public class SyncManager {
             getArtists(offset + limit, limit).subscribe(this::processArtists, Logger::LogThrowable);
         } else {
 			mContext.getContentResolver().notifyChange(ArtistHelper.CONTENT_URI, null);
-			Ln.d("no more data");
+			Ln.d("Artist sync complete.");
         }
     }
 
-    private void processAlbums(PaginatedDataResponse paginatedData) {
 
+	private void startPlaylistTrackSyncing() {
+		Observable.create(subscriber -> {
+			PlaylistDao playlistDao = daoSession.getPlaylistDao();
+			final List<Playlist> playlists = playlistDao.loadAll();
+			subscriber.onNext(playlists);
+			subscriber.onCompleted();
+		}).subscribeOn(Schedulers.io())
+		.observeOn(Schedulers.io())
+				.subscribe(this::startGettingTracksForPlaylists, Logger::LogThrowable);
+
+	}
+
+	private void startGettingTracksForPlaylists(Object o) {
+		final List<Playlist> list = ((List<Playlist>) o);
+
+		Observable.from(list)
+				.subscribeOn(Schedulers.io())
+				.observeOn(Schedulers.io())
+				.subscribe(i ->
+						getPlaylistTracks(i.getId(), STARTING_OFFSET, LIMIT)
+								.subscribe(this::processPlaylistTracks, Logger::LogThrowable)
+						, Logger::LogThrowable);
+	}
+
+	private void processPlaylistTracks(PaginatedDataResponse data) {
+		PlaylistTrackDao dao = daoSession.getPlaylistTrackDao();
+		daoSession.runInTx(() ->  {
+			try {
+				for (JsonNode node : data.getData()) {
+					final PlaylistTrack album = mapper.readValue(node, PlaylistTrack.class);
+					dao.insert(album);
+				}
+			} catch (IOException e) {
+				Ln.d(e);
+			}
+		});
+
+		int total = data.getTotal();
+		int offset = data.getOffset();
+		int limit = data.getLimit();
+
+		if (offset + limit < total) {
+			//getAlbums(offset + limit, limit).subscribe(this::processAlbums, Logger::LogThrowable);
+		} else {
+			mContext.getContentResolver().notifyChange(PlaylistTrackHelper.CONTENT_URI, null);
+			Ln.d("Playlist sync complete.");
+		}
+	}
+
+	private void processAlbums(PaginatedDataResponse paginatedData) {
 
         AlbumDao albumDao = daoSession.getAlbumDao();
         daoSession.runInTx(() -> {
@@ -234,7 +283,6 @@ public class SyncManager {
             }
         });
 
-
         int total = paginatedData.getTotal();
         int offset = paginatedData.getOffset();
         int limit = paginatedData.getLimit();
@@ -243,7 +291,7 @@ public class SyncManager {
             getAlbums(offset + limit, limit).subscribe(this::processAlbums, Logger::LogThrowable);
         } else {
 			mContext.getContentResolver().notifyChange(AlbumHelper.CONTENT_URI, null);
-			Ln.d("no more data");
+			Ln.d("Album sync complete.");
         }
     }
 
@@ -272,7 +320,7 @@ public class SyncManager {
             getTracks(offset + limit, limit).subscribe(this::processTracks, Logger::LogThrowable);
         } else {
 			mContext.getContentResolver().notifyChange(TrackHelper.CONTENT_URI, null);
-            Ln.d("no more data");
+            Ln.d("Track sync complete.");
         }
     }
 
@@ -338,4 +386,10 @@ public class SyncManager {
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io());
     }
+
+	private Observable<PaginatedDataResponse> getPlaylistTracks(Long playlistId, int offset, int limit) {
+		return api.getPlaylistTracks(playlistId, offset, limit)
+				.observeOn(Schedulers.io())
+				.subscribeOn(Schedulers.io());
+	}
 }

@@ -111,7 +111,7 @@ public interface RemoteApi {
     Observable<TextValueResponse> getPlaystate();
 
     @GET("/playlists/{id}/tracks")
-    Observable<PaginatedDataResponse> getPlaylistTracks(@Path("id") int id,
+    Observable<PaginatedDataResponse> getPlaylistTracks(@Path("id") Long id,
                            @Query("offset") int offset,
                            @Query("limit") int limit);
 

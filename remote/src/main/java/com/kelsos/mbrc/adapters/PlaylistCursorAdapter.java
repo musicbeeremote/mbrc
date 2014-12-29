@@ -1,8 +1,10 @@
 package com.kelsos.mbrc.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.dao.Playlist;
 import com.kelsos.mbrc.dao.PlaylistHelper;
+import com.kelsos.mbrc.ui.activities.PlaylistActivity;
 
 public class PlaylistCursorAdapter extends CursorAdapter {
 	private Typeface robotoRegular;
@@ -38,6 +41,19 @@ public class PlaylistCursorAdapter extends CursorAdapter {
 			PopupMenu menu = new PopupMenu(v.getContext(), v);
 			menu.inflate(R.menu.popup_playlist);
 			menu.show();
+
+			menu.setOnMenuItemClickListener(item -> {
+				if (item.getItemId() == R.id.playlist_tracks) {
+					Bundle bundle = new Bundle();
+					bundle.putString(PlaylistActivity.NAME, playlist.getName());
+					bundle.putString(PlaylistActivity.PATH, playlist.getPath());
+					Intent intent = new Intent(context, PlaylistActivity.class);
+					intent.putExtras(bundle);
+					context.startActivity(intent);
+					return true;
+				}
+				return false;
+			});
         });
     }
 }

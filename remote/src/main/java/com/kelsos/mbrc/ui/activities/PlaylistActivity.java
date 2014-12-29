@@ -7,33 +7,34 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.ListView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistTrackCursorAdapter;
 import com.kelsos.mbrc.ui.fragments.MiniControlFragment;
+import com.mobeta.android.dslv.DragSortListView;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
 public class PlaylistActivity extends RoboActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 	private static final int URL_LOADER = 0x721ae;
+	public static final String NAME = "name";
+	public static final String PATH = "path";
 
-	@InjectView(android.R.id.list)
-	private ListView mList;
+	@InjectView(R.id.dlv_current_queue)
+	private DragSortListView mDslView;
 	private PlaylistTrackCursorAdapter mAdapter;
 	private String mTitle;
-	private String mHash;
+	private String path;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fragment_current_queue);
+		setContentView(R.layout.activity_playlist);
 		Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(mToolbar);
 		Intent intent = getIntent();
-		mTitle = intent.getStringExtra("name");
-		mHash = intent.getStringExtra("hash");
+		mTitle = intent.getStringExtra(NAME);
+		path = intent.getStringExtra(PATH);
 
-		registerForContextMenu(mList);
 		getFragmentManager().beginTransaction()
 				.replace(R.id.playlist_mini_control, MiniControlFragment.newInstance())
 				.commit();
@@ -42,7 +43,6 @@ public class PlaylistActivity extends RoboActionBarActivity implements LoaderMan
 	@Override
 	public void onStart() {
 		super.onStart();
-
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(mTitle);
 	}
@@ -66,7 +66,7 @@ public class PlaylistActivity extends RoboActionBarActivity implements LoaderMan
 	@Override
 	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 		mAdapter = new PlaylistTrackCursorAdapter(this, cursor, 0);
-		mList.setAdapter(mAdapter);
+		mDslView.setAdapter(mAdapter);
 		mAdapter.notifyDataSetChanged();
 	}
 
