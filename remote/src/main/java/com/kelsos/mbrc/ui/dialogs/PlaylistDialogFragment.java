@@ -24,11 +24,17 @@ public class PlaylistDialogFragment extends DialogFragment
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		getLoaderManager().initLoader(URL_LOADER, null, this);
 		MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
-		builder.customView(R.layout.playlist_add);
+		builder.customView(R.layout.playlist_add, true);
 
 		builder.title(R.string.playlist_dialog_title);
 		builder.positiveText(android.R.string.cancel);
-		builder.callback(Dialog::dismiss);
+		builder.callback(new MaterialDialog.ButtonCallback() {
+			@Override
+			public void onPositive(MaterialDialog dialog) {
+				super.onPositive(dialog);
+
+			}
+		});
 
 		mDialog = builder.build();
 

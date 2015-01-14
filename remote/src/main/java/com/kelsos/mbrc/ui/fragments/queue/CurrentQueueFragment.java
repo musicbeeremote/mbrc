@@ -39,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
 import roboguice.util.Ln;
-import rx.android.observables.AndroidObservable;
+import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -86,13 +86,13 @@ public class CurrentQueueFragment extends RoboFragment
 		getLoaderManager().initLoader(URL_LOADER, null, this);
 		mQueueAdapter = new CurrentQueueAdapter(getActivity(), null, 0);
 
-		AndroidObservable.bindFragment(this, state.observePlaystate())
+		AppObservable.bindFragment(this, state.observePlaystate())
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(mQueueAdapter::setPlayState,
 						Logger::LogThrowable);
 
-		AndroidObservable.bindFragment(this, Events.TrackInfoChangeNotification)
+		AppObservable.bindFragment(this, Events.TrackInfoChangeNotification)
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(msg -> {

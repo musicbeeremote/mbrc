@@ -12,15 +12,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/side_margin_half"
-        android:layout_marginLeft="@dimen/side_margin"
-        android:layout_marginRight="@dimen/side_margin"
         android:layout_marginTop="@dimen/side_margin_half"
         android:divider="@null"
-        android:dividerHeight="@dimen/side_margin_half"
         android:drawSelectorOnTop="true"
         android:fastScrollEnabled="false"
         android:listSelector="@drawable/mbrc_dark_compo_list_selector_holo_dark"
-        tools:listitem="@layout/ui_list_single"/>
+        tools:listitem="@layout/listitem_single"/>
 
     <View
         android:layout_gravity="top"

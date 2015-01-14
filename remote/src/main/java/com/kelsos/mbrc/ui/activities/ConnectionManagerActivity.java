@@ -25,7 +25,7 @@ import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
 import com.kelsos.mbrc.util.Logger;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
-import rx.android.observables.AndroidObservable;
+import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -78,17 +78,17 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
 			settingsDialog.show(getFragmentManager(), "settings_dialog");
 		});
 
-		AndroidObservable.bindActivity(this, Events.DiscoveryStatusNotification)
+		AppObservable.bindActivity(this, Events.DiscoveryStatusNotification)
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(this::handleDiscoveryStatusChange, Logger::LogThrowable);
 
-		AndroidObservable.bindActivity(this, Events.ConnectionSettingsChangedNotification)
+		AppObservable.bindActivity(this, Events.ConnectionSettingsChangedNotification)
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(this::handleConnectionSettingsChange, Logger::LogThrowable);
 
-		AndroidObservable.bindActivity(this, Events.UserNotification)
+		AppObservable.bindActivity(this, Events.UserNotification)
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(this::handleUserNotification, Logger::LogThrowable);

@@ -42,7 +42,7 @@ public final class Generator {
         Entity track = schema.addEntity("Track");
         track.addIdProperty();
         track.addStringProperty("title");
-        track.addIntProperty("index");
+        track.addIntProperty("position");
 
         Property genreId = track.addLongProperty("genreId").getProperty();
         track.addToOne(genre, genreId);

@@ -35,7 +35,7 @@ import com.kelsos.mbrc.ui.fragments.queue.CurrentQueueFragment;
 import com.kelsos.mbrc.util.Logger;
 import org.jetbrains.annotations.NotNull;
 import roboguice.activity.RoboActionBarActivity;
-import rx.android.observables.AndroidObservable;
+import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -96,14 +96,14 @@ public class HomeActivity extends RoboActionBarActivity {
         fragmentTransaction.replace(R.id.fragment_container, mFragment, "main_fragment");
         fragmentTransaction.commit();
 
-        AndroidObservable.bindActivity(this, mDrawerFragment.getDrawerSelectionObservable())
+        AppObservable.bindActivity(this, mDrawerFragment.getDrawerSelectionObservable())
                 .subscribe(this::handleDrawerEvent, Logger::LogThrowable);
-		AndroidObservable.bindActivity(this, Events.UserNotification)
+		AppObservable.bindActivity(this, Events.UserNotification)
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(this::handleUserNotification, Logger::LogThrowable);
 
-		AndroidObservable.bindActivity(this, Events.TrackInfoChangeNotification)
+		AppObservable.bindActivity(this, Events.TrackInfoChangeNotification)
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribeOn(Schedulers.io())
 				.subscribe(this::handleTrackInfoChange,

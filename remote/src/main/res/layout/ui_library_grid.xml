@@ -5,10 +5,9 @@
           android:id="@+id/mbrc_grid_view"
           android:layout_width="fill_parent"
           android:layout_height="fill_parent"
-          android:columnWidth="150dp"
           android:numColumns="auto_fit"
-          android:verticalSpacing="10dp"
-          android:horizontalSpacing="10dp"
+          android:verticalSpacing="4dp"
+          android:horizontalSpacing="4dp"
           android:stretchMode="columnWidth"
           android:gravity="center"
-          tools:listitem="@layout/ui_grid_square"/>
+          tools:listitem="@layout/griditem_album"/>

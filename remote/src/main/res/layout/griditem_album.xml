@@ -4,33 +4,29 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:background="@drawable/ui_list_item_background"
               android:orientation="vertical"
-              android:layout_width="@dimen/mbrc_grid_item_width"
-              android:layout_height="@dimen/mbrc_grid_item_height">
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/ui_grid_image"
         android:src="@drawable/ic_image_no_cover"
         android:layout_width="match_parent"
+        android:scaleType="centerCrop"
         android:layout_height="@dimen/mbrc_grid_item_width"
         android:contentDescription="@string/grid_album_cover"/>
 
     <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:paddingStart="@dimen/side_margin_half"
-        android:paddingLeft="@dimen/side_margin_half"
-        android:paddingEnd="1dp"
-        android:paddingRight="1dp"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:id="@+id/linearLayout">
+        android:layout_height="68dp"
+        android:id="@+id/grid_info_layout">
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingLeft="@dimen/side_margin_half"
-            android:paddingRight="@dimen/side_margin_half"
+            android:paddingStart="@dimen/side_margin"
+            android:paddingLeft="@dimen/side_margin"
             android:gravity="center_vertical"
             android:layout_toLeftOf="@+id/ui_item_context_indicator"
             android:layout_toStartOf="@+id/ui_item_context_indicator"
@@ -49,7 +45,7 @@
                 android:layout_height="wrap_content"/>
 
             <TextView
-                tools:text="artist"
+                tools:text="Artist"
                 android:ellipsize="end"
                 android:textColor="@color/remote_secondary_text"
                 android:id="@+id/line_two"
@@ -64,15 +60,19 @@
             android:id="@+id/ui_item_context_indicator"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:padding="@dimen/side_margin"
             android:background="@drawable/selectable_background_mbrc_dark"
             android:gravity="center_vertical"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true">
 
             <ImageView
+                android:id="@+id/grid_track_overflow"
+                android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_core_overflow"
+                android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+                android:tint="@android:color/white"
+                android:layout_height="wrap_content"
                 android:contentDescription="@string/abc_action_menu_overflow_description"/>
         </LinearLayout>
 

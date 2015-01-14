@@ -19,7 +19,7 @@
     <dimen name="mbrc_list_context_indicator_height">20dp</dimen>
     <dimen name="mbrc_list_drag_icon">14dp</dimen>
     <dimen name="mbrc_grid_line_one_size">16sp</dimen>
-    <dimen name="mbrc_grid_line_two_size">14sp</dimen>
+    <dimen name="mbrc_grid_line_two_size">12sp</dimen>
     <dimen name="mbrc_grid_item_width">150dp</dimen>
     <dimen name="mbrc_grid_item_height">200dp</dimen>
     <dimen name="mbrc_indicator_line_width">160dp</dimen>

@@ -1,36 +1,32 @@
 package com.kelsos.mbrc.ui.fragments.browse;
 
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumCursorAdapter;
+import com.kelsos.mbrc.dao.AlbumHelper;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import roboguice.fragment.provided.RoboFragment;
 
-import static android.support.v4.app.LoaderManager.LoaderCallbacks;
-
-public class BrowseAlbumFragment extends RoboFragment implements LoaderCallbacks<Cursor>,
+public class BrowseAlbumFragment extends RoboFragment implements LoaderManager.LoaderCallbacks<Cursor>,
         GridView.OnItemClickListener,
 		PlaylistDialogFragment.OnPlaylistSelectedListener,
 		CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
-    private static final int GROUP_ID = 13;
-    private static final int URL_LOADER = 2;
+
+	private static final int URL_LOADER = 2;
+	@Inject
     private AlbumCursorAdapter mAdapter;
     private GridView mGrid;
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        registerForContextMenu(mGrid);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,40 +39,12 @@ public class BrowseAlbumFragment extends RoboFragment implements LoaderCallbacks
         return view;
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.setHeaderTitle(R.string.search_context_header);
-        menu.add(GROUP_ID, BrowseMenuItems.QUEUE_NEXT, 0, R.string.search_context_queue_next);
-        menu.add(GROUP_ID, BrowseMenuItems.QUEUE_LAST, 0, R.string.search_context_queue_last);
-        menu.add(GROUP_ID, BrowseMenuItems.PLAY_NOW, 0, R.string.search_context_play_now);
-        menu.add(GROUP_ID, BrowseMenuItems.GET_SUB, 0, R.string.search_context_get_tracks);
-        menu.add(GROUP_ID, BrowseMenuItems.PLAYLIST, 0, getString(R.string.search_context_playlist));
-    }
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		mGrid.setAdapter(mAdapter);
+	}
 
-    @Override
-    public boolean onContextItemSelected(android.view.MenuItem item) {
-        if (item.getGroupId() == GROUP_ID) {
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mAdapter = new AlbumCursorAdapter(getActivity(), data, 0);
-        mGrid.setAdapter(mAdapter);
-        mAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -100,4 +68,26 @@ public class BrowseAlbumFragment extends RoboFragment implements LoaderCallbacks
     public void onPlaylistNameSelected(String name) {
 
     }
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		getLoaderManager().initLoader(URL_LOADER, null, this);
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		return new CursorLoader(getActivity(), AlbumHelper.CONTENT_URI,
+				AlbumHelper.PROJECTION, null, null, null);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		mAdapter.swapCursor(data);
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		mAdapter.swapCursor(null);
+	}
 }

@@ -163,4 +163,9 @@ public interface RemoteApi {
 
     @PUT("/player/playpause")
     Observable<SuccessResponse> playPause();
+
+	@PUT("/nowplaying/queue/")
+	Observable<SuccessResponse> nowplayingQueue(@Query("type") String type,
+												@Query("action") String action,
+												@Query("id") long id);
 }

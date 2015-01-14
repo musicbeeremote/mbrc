@@ -11,7 +11,7 @@ import com.kelsos.mbrc.data.model.TrackState;
 import com.kelsos.mbrc.util.Logger;
 import org.jetbrains.annotations.NotNull;
 import roboguice.fragment.provided.RoboListFragment;
-import rx.android.observables.AndroidObservable;
+import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -30,7 +30,7 @@ public class LyricsFragment extends RoboListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		AndroidObservable.bindFragment(this, model.getLyricsObservable())
+		AppObservable.bindFragment(this, model.getLyricsObservable())
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(this::updateLyricsData, Logger::LogThrowable);

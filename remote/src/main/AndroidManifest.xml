@@ -29,7 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.kelsos.mbrc.ui.activities.Profile" />
+        <activity android:name=".ui.activities.ProfileActivity" />
         <activity android:name="com.kelsos.mbrc.ui.activities.PlaylistActivity" />
         <activity
             android:name="com.kelsos.mbrc.ui.activities.ConnectionManagerActivity"

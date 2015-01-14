@@ -5,7 +5,6 @@
               android:orientation="horizontal"
               android:layout_gravity="center_vertical"
               android:clickable="false"
-              android:background="@drawable/ui_list_item_background"
               android:gravity="center_vertical"
               android:baselineAligned="false">
 
@@ -13,9 +12,10 @@
             android:layout_width="0dip"
             android:orientation="vertical"
             android:gravity="center_vertical"
+            android:paddingLeft="@dimen/side_margin"
+            android:paddingStart="@dimen/side_margin"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            >
+            android:layout_weight="1">
         <TextView
                 android:id="@+id/line_one"
                 android:layout_width="match_parent"
@@ -48,18 +48,18 @@
             android:background="@drawable/selectable_background_mbrc_dark"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:paddingLeft="@dimen/side_margin_half"
-            android:paddingStart="@dimen/side_margin_half"
-            android:paddingEnd="1dp"
-            android:paddingRight="1dp"
+            android:padding="@dimen/side_margin"
             android:layout_weight="0"
             android:gravity="center_vertical">
 
         <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_core_overflow"
-                android:contentDescription="@string/abc_action_menu_overflow_description"/>
+            android:id="@+id/list_item_track_overflow"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+            android:tint="@android:color/white"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/abc_action_menu_overflow_description"/>
     </LinearLayout>
 
 </LinearLayout>

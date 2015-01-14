@@ -40,7 +40,7 @@ import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
 import roboguice.util.Ln;
 import rx.Observable;
-import rx.android.observables.AndroidObservable;
+import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -107,7 +107,7 @@ public class MainFragment extends RoboFragment {
 	private RatingBar.OnRatingBarChangeListener ratingChangeListener = (ratingBar, v, b) -> {
         if (b) {
 
-            AndroidObservable.bindFragment(this, api.updateRating(v))
+            AppObservable.bindFragment(this, api.updateRating(v))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(resp -> Ln.d("Success %b", resp.isSuccess()),
@@ -194,26 +194,26 @@ public class MainFragment extends RoboFragment {
         setTextViewTypeface();
         registerListeners();
 
-        AndroidObservable.bindFragment(this, Events.CoverAvailableNotification)
+        AppObservable.bindFragment(this, Events.CoverAvailableNotification)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(notification -> updateAlbumCover(notification.getCover()),
 						Logger::LogThrowable);
 
-        AndroidObservable.bindFragment(this, api.getCurrentPosition())
+        AppObservable.bindFragment(this, api.getCurrentPosition())
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.repeatWhen(a -> a.flatMap(n -> Observable.timer(DELAY, TimeUnit.SECONDS)))
 				.subscribe(update -> handlePositionUpdate(update.getPosition(), update.getDuration()),
 						Logger::LogThrowable);
 
-        AndroidObservable.bindFragment(this, Events.TrackInfoChangeNotification)
+        AppObservable.bindFragment(this, Events.TrackInfoChangeNotification)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(this::handleTrackInfoChange,
 						Logger::LogThrowable);
 
-        AndroidObservable.bindFragment(this, playerStateModel.observePlaystate())
+        AppObservable.bindFragment(this, playerStateModel.observePlaystate())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribeOn(Schedulers.io())
 				.subscribe(this::handlePlayStateChange, Logger::LogThrowable);
