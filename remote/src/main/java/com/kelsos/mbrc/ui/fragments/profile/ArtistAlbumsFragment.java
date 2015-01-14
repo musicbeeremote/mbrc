@@ -82,7 +82,7 @@ public class ArtistAlbumsFragment extends RoboFragment implements LoaderManager.
 	@Override
 	public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
 		final String sortOrder = String.format("%s ASC", AlbumHelper.NAME);
-		final String selection = String.format("%s = ?", AlbumHelper.ID);
+		final String selection = String.format("%s = ?", AlbumHelper.ARTISTID);
 		final String[] selectionArgs = {
 				String.valueOf(artistId)
 		};

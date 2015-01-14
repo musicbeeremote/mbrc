@@ -180,5 +180,12 @@
     <string name="queue_track_delete">Delete</string>
     <string name="queue_track_play">Play</string>
     <string name="peak_meter">Peak meter</string>
+    <string name="menu_album_tracks">View Tracks</string>
+    <string name="menu_play">Play</string>
+    <string name="menu_queue_next">Queue Next</string>
+    <string name="menu_queue_last">Queue Last</string>
+    <string name="menu_add_to_playlist">Add to playlist</string>
+    <string name="menu_artist_albums">View Albums</string>
+    <string name="menu_genre_artists">View Artists</string>
 
 </resources>

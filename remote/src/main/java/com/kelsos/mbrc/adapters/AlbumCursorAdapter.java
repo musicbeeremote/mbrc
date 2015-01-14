@@ -3,11 +3,14 @@ package com.kelsos.mbrc.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Environment;
+import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
@@ -18,6 +21,8 @@ import com.kelsos.mbrc.dao.Artist;
 import com.kelsos.mbrc.dao.Cover;
 import com.kelsos.mbrc.dao.DaoSession;
 import com.squareup.picasso.Picasso;
+import rx.Observable;
+import rx.subjects.PublishSubject;
 
 import java.io.File;
 
@@ -27,12 +32,14 @@ public class AlbumCursorAdapter extends CursorAdapter {
 	private final File dir = new File(String.format("%s/Android/data/%s/cache",
 			sdCard.getAbsolutePath(), BuildConfig.APPLICATION_ID));
 	private final LayoutInflater inflater;
+	private PublishSubject<Pair<MenuItem, Album>> menuClickPublisher;
 
 	@Inject
 	public AlbumCursorAdapter(Context context, DaoSession daoSession) {
 		super(context, null, 0);
 		this.daoSession = daoSession;
 		inflater = LayoutInflater.from(context);
+		menuClickPublisher = PublishSubject.create();
 	}
 
 	@Override
@@ -42,6 +49,7 @@ public class AlbumCursorAdapter extends CursorAdapter {
 		holder.lineOne = (TextView) view.findViewById(R.id.line_one);
 		holder.lineTwo = (TextView) view.findViewById(R.id.line_two);
 		holder.image = (ImageView) view.findViewById(R.id.ui_grid_image);
+		holder.overflow = view.findViewById(R.id.ui_item_context_indicator);
 		view.setTag(holder);
 		return view;
 	}
@@ -56,6 +64,7 @@ public class AlbumCursorAdapter extends CursorAdapter {
 		ViewHolder holder = (ViewHolder) view.getTag();
 		holder.lineOne.setText(album.getName());
 		holder.lineTwo.setText(artist != null ? artist.getName() : "");
+		holder.overflow.setOnClickListener(v -> showPopup(v, album));
 		if (cover != null) {
 			final File image = new File(dir, cover.getHash());
 
@@ -69,9 +78,24 @@ public class AlbumCursorAdapter extends CursorAdapter {
 		}
 	}
 
+	private void showPopup(View view, Album album) {
+		PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+		popupMenu.inflate(R.menu.popup_album);
+		popupMenu.setOnMenuItemClickListener(menuItem -> {
+			menuClickPublisher.onNext(new Pair<>(menuItem, album));
+			return true;
+		});
+		popupMenu.show();
+	}
+
+	public Observable<Pair<MenuItem, Album>> getPopupObservable() {
+		return menuClickPublisher.asObservable();
+	}
+
 	private static class ViewHolder {
 		TextView lineOne;
 		TextView lineTwo;
 		ImageView image;
+		View overflow;
 	}
 }
