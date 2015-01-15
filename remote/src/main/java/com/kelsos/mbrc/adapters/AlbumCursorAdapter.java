@@ -2,7 +2,6 @@ package com.kelsos.mbrc.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Environment;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -13,13 +12,13 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.dao.Album;
 import com.kelsos.mbrc.dao.AlbumHelper;
 import com.kelsos.mbrc.dao.Artist;
 import com.kelsos.mbrc.dao.Cover;
 import com.kelsos.mbrc.dao.DaoSession;
+import com.kelsos.mbrc.util.RemoteUtils;
 import com.squareup.picasso.Picasso;
 import rx.Observable;
 import rx.subjects.PublishSubject;
@@ -28,9 +27,6 @@ import java.io.File;
 
 public class AlbumCursorAdapter extends CursorAdapter {
 	private final DaoSession daoSession;
-	private final File sdCard = Environment.getExternalStorageDirectory();
-	private final File dir = new File(String.format("%s/Android/data/%s/cache",
-			sdCard.getAbsolutePath(), BuildConfig.APPLICATION_ID));
 	private final LayoutInflater inflater;
 	private PublishSubject<Pair<MenuItem, Album>> menuClickPublisher;
 
@@ -66,7 +62,7 @@ public class AlbumCursorAdapter extends CursorAdapter {
 		holder.lineTwo.setText(artist != null ? artist.getName() : "");
 		holder.overflow.setOnClickListener(v -> showPopup(v, album));
 		if (cover != null) {
-			final File image = new File(dir, cover.getHash());
+			final File image = new File(RemoteUtils.getStorage(), cover.getHash());
 
 			Picasso.with(context)
 					.load(image)

@@ -2,6 +2,7 @@ package com.kelsos.mbrc.ui.fragments.profile;
 
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -14,32 +15,36 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumProfileCursorAdapter;
+import com.kelsos.mbrc.dao.Album;
+import com.kelsos.mbrc.dao.Artist;
+import com.kelsos.mbrc.dao.Cover;
+import com.kelsos.mbrc.dao.DaoSession;
+import com.kelsos.mbrc.dao.TrackHelper;
+import com.kelsos.mbrc.util.RemoteUtils;
+import com.squareup.picasso.Picasso;
+import org.jetbrains.annotations.NotNull;
 import roboguice.fragment.provided.RoboListFragment;
 import roboguice.inject.InjectView;
 
+import java.io.File;
+
 import static android.widget.AbsListView.OnScrollListener;
 
-/**
- * A fragment representing a list of Items.
- * <p>
- * <p>
- * interface.
- */
 public class AlbumTracksFragment extends RoboListFragment
 		implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	public static final int URL_LOADER = 0x928a;
 	private static final String ALBUM_ID = "albumId";
-	private static final int GROUP_ID = 0x83721e;
 	private long albumId;
+	@Inject
 	private AlbumProfileCursorAdapter mAdapter;
 	private Context mContext;
 	private int mOldHeaderHeight = -1;
 	private int mLastDampedScroll;
 	private FrameLayout mMarginView;
-	private ListView mListView;
 	private View mListViewBackgroundView;
 	private View mHeader;
 	private View mContentView;
@@ -53,6 +58,10 @@ public class AlbumTracksFragment extends RoboListFragment
 	private TextView mArtist;
 	@InjectView(R.id.header_artwork)
 	private ImageView mArtwork;
+
+	@Inject
+	private DaoSession daoSession;
+
 	private OnScrollListener mOnScrollListener = new OnScrollListener() {
 		@Override
 		public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -94,6 +103,8 @@ public class AlbumTracksFragment extends RoboListFragment
 			albumId = getArguments().getLong(ALBUM_ID);
 		}
 		mContext = getActivity();
+		this.setListAdapter(mAdapter);
+		getLoaderManager().initLoader(URL_LOADER, null, this);
 	}
 
 	@Override
@@ -102,21 +113,20 @@ public class AlbumTracksFragment extends RoboListFragment
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		getLoaderManager().initLoader(URL_LOADER, null, this);
 		// Inflate the layout for this fragment
 		mContentView = inflater.inflate(R.layout.fragment_album_tracks, container, false);
 		if (mContentView != null) {
-			View header = inflater.inflate(R.layout.album_profile_header, null, false);
+			View header = inflater.inflate(R.layout.album_profile_header, container, false);
 			mHeader = header.findViewById(R.id.album_header);
-			mListView = (ListView) mContentView.findViewById(android.R.id.list);
-			mMarginView = new FrameLayout(mListView.getContext());
+			ListView listView = (ListView) mContentView.findViewById(android.R.id.list);
+			mMarginView = new FrameLayout(listView.getContext());
 			mMarginView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
 			mMarginView.addView(header);
-			mListView.addHeaderView(mMarginView);
+			listView.addHeaderView(mMarginView);
 			mListViewBackgroundView = mContentView.findViewById(R.id.listview_background);
-			mListView.setOnScrollListener(mOnScrollListener);
+			listView.setOnScrollListener(mOnScrollListener);
 			int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(LinearLayout.LayoutParams.MATCH_PARENT, View.MeasureSpec.EXACTLY);
 			int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(LinearLayout.LayoutParams.WRAP_CONTENT, View.MeasureSpec.EXACTLY);
 			mMarginView.setOnLongClickListener(null);
@@ -139,25 +149,47 @@ public class AlbumTracksFragment extends RoboListFragment
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-
 	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-		return null;
+		final String sortOrder = String.format("%s ASC", TrackHelper.POSITION);
+		final String selection = String.format("%s = ?", TrackHelper.ALBUMID);
+		final String[] selectionArgs = {
+				String.valueOf(albumId)
+		};
+		return new CursorLoader(getActivity(), TrackHelper.CONTENT_URI,
+				TrackHelper.PROJECTION, selection, selectionArgs, sortOrder);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-		mAdapter = new AlbumProfileCursorAdapter(mContext, cursor, 0);
-		this.setListAdapter(mAdapter);
+		final Album album = daoSession.getAlbumDao().loadByRowId(albumId);
+		final Cover cover = album.getCover();
+		final Artist artist = album.getArtist();
+		mAdapter.swapCursor(cursor);
 		mTracks.setText(getString(R.string.track_count, mAdapter.getCount()));
-		mAdapter.notifyDataSetChanged();
+		mAlbum.setText(album.getName());
+
+		if (artist != null) {
+			mArtist.setText(artist.getName());
+		}
+
+		if (cover != null) {
+			final File image = new File(RemoteUtils.getStorage(), cover.getHash());
+
+			Picasso.with(getActivity())
+					.load(image)
+					.placeholder(R.drawable.ic_image_no_cover)
+					.fit()
+					.centerCrop()
+					.into(mArtwork);
+		}
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
+		mAdapter.swapCursor(null);
 	}
 
 	private void scrollToPosition(int position) {
