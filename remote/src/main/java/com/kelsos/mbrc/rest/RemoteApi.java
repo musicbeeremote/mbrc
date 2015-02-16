@@ -83,11 +83,8 @@ public interface RemoteApi {
     Observable<LyricsResponse> getTrackLyrics();
 
     @GET("/track/cover")
-    Observable<CoverResponse> getTrackCover();
-
-    @GET("/track/cover/raw")
     @Streaming
-    Observable<Response> getTrackCoverData(@Query("t") String timestamp);
+    Observable<Response> getTrackCover(@Query("t") String timestamp);
 
     @GET("/track")
     Observable<TrackResponse> getTrackInfo();
@@ -95,7 +92,7 @@ public interface RemoteApi {
     @GET("/player/shuffle")
     Observable<StateResponse> getShuffleState();
 
-    @PUT("/player/shuffle/toggle")
+    @PUT("/player/shuffle")
     Observable<SuccessStateResponse> toggleShuffleState();
 
     @GET("/player/scrobble")
@@ -104,7 +101,7 @@ public interface RemoteApi {
     @GET("/player/repeat")
     Observable<TextValueResponse> getRepeatMode();
 
-    @PUT("/player/changerepeat")
+    @PUT("/player/repeat")
     Observable<TextValueResponse> changeRepeatMode();
 
     @GET("/player/playstate")

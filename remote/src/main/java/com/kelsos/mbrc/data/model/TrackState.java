@@ -108,7 +108,7 @@ public class TrackState {
     }
 
     private void requestCover() {
-        api.getTrackCoverData(RemoteUtils.getTimeStamp())
+        api.getTrackCover(RemoteUtils.getTimeStamp())
                 .subscribeOn(Schedulers.io())
                 .subscribe(this::createBitmap, Logger::LogThrowable);
     }

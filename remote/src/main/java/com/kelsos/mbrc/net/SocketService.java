@@ -9,21 +9,15 @@ import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.Message;
 import com.kelsos.mbrc.util.DelayTimer;
 import com.kelsos.mbrc.util.SettingsManager;
+import com.koushikdutta.async.http.AsyncHttpClient;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import roboguice.util.Ln;
 import rx.schedulers.Schedulers;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
 
 @Singleton
 public class SocketService {
@@ -45,9 +39,7 @@ public class SocketService {
         this.mapper = mapper;
 
         cTimer = new DelayTimer(DELAY, () -> {
-            mThread = new Thread(new SocketConnection());
-            mThread.start();
-            numOfRetries++;
+
         });
         numOfRetries = 0;
         shouldStop = false;
@@ -111,6 +103,7 @@ public class SocketService {
         if (!sIsConnected()) {
             cTimer.start();
         }
+		startWebSocket();
     }
 
     /**
@@ -152,6 +145,18 @@ public class SocketService {
 
     }
 
+	private void startWebSocket() {
+		AsyncHttpClient.getDefaultInstance()
+				.websocket("ws://development.lan:3000", "mbrc-pro", (ex, webSocket) -> {
+			if (ex != null) {
+				Ln.d(ex);
+				return;
+			}
+
+			webSocket.setStringCallback(this::tryProcessIncoming);
+		});
+	}
+
     private void processIncoming(String incoming) throws IOException {
         final String[] replies = incoming.split("\r\n");
         for (String reply : replies) {
@@ -164,72 +169,6 @@ public class SocketService {
             }
 
             Events.Messages.onNext(new Message(context));
-        }
-    }
-
-    private class SocketConnection implements Runnable {
-        public void run() {
-            Ln.d("Socket Running");
-            SocketAddress socketAddress = settingsManager.getSocketAddress();
-
-            if (null == socketAddress) {
-                return;
-            }
-            BufferedReader input;
-            try {
-                clSocket = new Socket();
-                clSocket.connect(socketAddress);
-                final OutputStreamWriter out = new OutputStreamWriter(clSocket.getOutputStream());
-                final BufferedWriter wr = new BufferedWriter(out, BUFFER_SIZE);
-                output = new PrintWriter(wr, true);
-                final InputStreamReader in = new InputStreamReader(clSocket.getInputStream());
-                input = new BufferedReader(in, BUFFER_SIZE);
-
-
-
-                Events.Messages.onNext(new Message(clSocket.isConnected()
-						? EventType.SOCKET_CONNECTED
-						: EventType.SOCKET_DISCONNECTED));
-
-                while (clSocket.isConnected()) {
-                    readFromSocket(input);
-                }
-            } catch (SocketTimeoutException e) {
-                Ln.e(e, "Connection Timeout");
-            } catch (SocketException e) {
-                Ln.d(e.toString().substring(SUB_START));
-            } catch (IOException e) {
-                Ln.d(e);
-            } finally {
-                if (output != null) {
-                    output.flush();
-                    output.close();
-                }
-                clSocket = null;
-
-                Events.Messages.onNext(new Message(EventType.SOCKET_DISCONNECTED));
-                if (numOfRetries < MAX_RETRIES) {
-                    socketManager(SocketAction.RETRY);
-                }
-                if (BuildConfig.DEBUG) {
-                    Ln.d("socket closed");
-                }
-            }
-        }
-
-        private void readFromSocket(BufferedReader input) throws IOException {
-            try {
-                final String incoming = input.readLine();
-                if (incoming != null && incoming.length() > 0) {
-                    tryProcessIncoming(incoming);
-                }
-            } catch (IOException e) {
-                input.close();
-                if (clSocket != null) {
-                    clSocket.close();
-                }
-                throw e;
-            }
         }
     }
 }
