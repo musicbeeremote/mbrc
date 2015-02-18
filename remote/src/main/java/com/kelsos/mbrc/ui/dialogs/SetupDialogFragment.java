@@ -2,9 +2,9 @@ package com.kelsos.mbrc.ui.dialogs;
 
 import android.content.Intent;
 import android.view.View;
+import com.avast.android.dialogs.core.BaseDialogFragment;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.activities.SettingsActivity;
-import eu.inmite.android.lib.dialogs.BaseDialogFragment;
 
 public class SetupDialogFragment extends BaseDialogFragment {
 

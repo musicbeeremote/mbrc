@@ -5,16 +5,16 @@
               android:orientation="horizontal"
               android:layout_gravity="center_vertical"
               android:clickable="false"
-              android:background="@drawable/ui_list_item_background"
-              android:gravity="center_vertical">
-
+              android:gravity="center_vertical"
+              android:baselineAligned="false">
     <LinearLayout
             android:layout_width="0dip"
             android:orientation="vertical"
             android:gravity="center_vertical"
+            android:paddingLeft="@dimen/side_margin"
+            android:paddingStart="@dimen/side_margin"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            >
+            android:layout_weight="1">
         <TextView
                 android:id="@+id/line_one"
                 android:layout_width="match_parent"
@@ -26,8 +26,7 @@
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textSize="@dimen/list_item_one"
-                android:layout_alignParentEnd="false"/>
-
+                android:textColor="@color/remoteText"/>
         <TextView
                 android:id="@+id/line_two"
                 android:layout_width="match_parent"
@@ -39,21 +38,23 @@
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textSize="@dimen/list_item_two"
-                android:textColor="@color/mbrc_secondary_text"/>
+                android:textColor="@color/remoteSecondaryText"/>
     </LinearLayout>
-
     <LinearLayout
             android:id="@+id/ui_item_context_indicator"
+            android:background="@drawable/selectable_background_mbrc_default"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:paddingLeft="@dimen/side_margin_half"
+            android:padding="@dimen/side_margin"
             android:layout_weight="0"
             android:gravity="center_vertical">
-
         <ImageView
+                android:id="@+id/list_item_track_overflow"
+                android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/mbrc_list_context_indicator_height"
-                android:src="@drawable/ic_context_indicator"/>
+                android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+                android:tint="@android:color/white"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/abc_action_menu_overflow_description"/>
     </LinearLayout>
-
 </LinearLayout>

@@ -41,7 +41,7 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
     @InjectView(R.id.drawer_version_indicator) TextView versionIndicator;
     @InjectView(R.id.menu_exit) TextView menuExit;
 
-    private Typeface robotoLight;
+    private Typeface robotoMedium;
     private DrawerLayout mDrawerLayout;
     private int mSelection;
     private boolean mBackstackChanging;
@@ -63,7 +63,7 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        robotoLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
+        robotoMedium = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_medium.ttf");
         mSelection = 0;
         mBackstackChanging = false;
 
@@ -82,9 +82,9 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
         bus.register(this);
         menuConnector.setOnClickListener(connectButtonClick);
         menuConnector.setOnLongClickListener(connectButtonLongClick);
-        menuConnector.setTypeface(robotoLight);
+        menuConnector.setTypeface(robotoMedium);
 
-        menuExit.setTypeface(robotoLight);
+        menuExit.setTypeface(robotoMedium);
         menuExit.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 final Activity activity = getActivity();
@@ -94,10 +94,10 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
         });
 
         ArrayList<NavigationEntry> nav = new ArrayList<>();
-        nav.add(new NavigationEntry("Home"));
-        nav.add(new NavigationEntry("Search"));
-        nav.add(new NavigationEntry("Now playing list"));
-        nav.add(new NavigationEntry("Lyrics"));
+        nav.add(new NavigationEntry("Home", R.drawable.ic_home));
+        nav.add(new NavigationEntry("Search", R.drawable.ic_search));
+        nav.add(new NavigationEntry("Now playing list", R.drawable.ic_view_list));
+        nav.add(new NavigationEntry("Lyrics", R.drawable.ic_view_headline));
 
         setListAdapter(new DrawerAdapter(getActivity(), R.layout.ui_drawer_item, nav));
         getListView().setOnItemClickListener(new DrawerOnClickListener());

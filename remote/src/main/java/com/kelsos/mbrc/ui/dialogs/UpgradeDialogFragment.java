@@ -3,9 +3,9 @@ package com.kelsos.mbrc.ui.dialogs;
 import android.content.Intent;
 import android.view.View;
 import android.webkit.WebView;
+import com.avast.android.dialogs.fragment.SimpleDialogFragment;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.activities.SettingsActivity;
-import eu.inmite.android.lib.dialogs.SimpleDialogFragment;
 
 public class UpgradeDialogFragment extends SimpleDialogFragment {
     private boolean isNewInstall;

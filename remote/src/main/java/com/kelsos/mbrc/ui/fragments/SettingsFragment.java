@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.fragments;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,13 +7,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.view.MenuItem;
-import android.webkit.WebView;
 import com.github.machinarius.preferencefragment.PreferenceFragment;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity;
+import com.kelsos.mbrc.ui.dialogs.WebViewDialog;
 import com.kelsos.mbrc.utilities.RemoteUtils;
 import com.squareup.otto.Bus;
 
@@ -102,25 +101,17 @@ public class SettingsFragment extends PreferenceFragment {
         }
     }
     private void showLicenseDialog() {
-        final WebView webView = new WebView(mContext);
-        webView.loadUrl("file:///android_asset/license.html");
-        new AlertDialog.Builder(mContext)
-                .setView(webView)
-                .setPositiveButton(android.R.string.ok, null)
-                .setTitle("MusicBee Remote license")
-                .create()
-                .show();
+        WebViewDialog.WebDialogBuilder builder = WebViewDialog.createBuilder(mContext, getFragmentManager());
+        builder.setTitle(R.string.musicbee_remote_license_title);
+        builder.setUrl("file:///android_asset/license.html");
+        builder.show();
     }
 
     private void showOpenSourceLicenseDialog() {
-        final WebView webView = new WebView(mContext);
-        webView.loadUrl("file:///android_asset/licenses.html");
-        new AlertDialog.Builder(mContext)
-                .setView(webView)
-                .setPositiveButton(android.R.string.ok, null)
-                .setTitle("Open source licenses")
-                .create()
-                .show();
+        WebViewDialog.WebDialogBuilder builder = WebViewDialog.createBuilder(mContext, getFragmentManager());
+        builder.setTitle(R.string.open_source_licenses_title);
+        builder.setUrl("file:///android_asset/licenses.html");
+        builder.show();
     }
 
     @Override

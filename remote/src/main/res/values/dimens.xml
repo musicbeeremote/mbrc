@@ -17,4 +17,5 @@
     <dimen name="mbrc_notification_button_height">48dp</dimen>
     <dimen name="mbrc_list_context_indicator_height">20dp</dimen>
     <dimen name="mbrc_list_drag_icon">14dp</dimen>
+    <dimen name="list_item_single_height">56dp</dimen>
 </resources>

@@ -121,5 +121,9 @@
     <string name="menus_exit">Exit</string>
     <string name="pref_key_build_time">build_time_key</string>
     <string name="pref_key_revision">revision_key</string>
+    <string name="open_source_licenses_title">Open source licenses</string>
+    <string name="musicbee_remote_license_title">MusicBee Remote license</string>
+    <string name="drag_n_drop_description">Used as an anchor for drag and drop</string>
+    <string name="now_playing_indicator">Should be shown if the track is currently playing</string>
 
 </resources>

@@ -51,7 +51,6 @@ public class NowPlayingFragment extends RoboListFragment implements SearchView.O
         // removeMode = flingRight
         DragSortController controller = new DragSortController(dslv);
         controller.setDragHandleId(R.id.drag_handle);
-        controller.setFlingHandleId(R.id.click_remove);
         controller.setRemoveEnabled(removeEnabled);
         controller.setSortEnabled(sortEnabled);
         controller.setDragInitMode(dragStartMode);

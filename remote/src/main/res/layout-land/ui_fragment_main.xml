@@ -139,7 +139,7 @@
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:text="@string/main_label_track_title"
-                android:textColor="@color/mbrc_text"
+                android:textColor="@color/remoteText"
                 android:textSize="@dimen/mbrc_title_text_size"
                 android:textStyle="normal"
                 android:typeface="sans"/>
@@ -160,7 +160,7 @@
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:text="@string/main_label_artist"
-                android:textColor="@color/mbrc_text"
+                android:textColor="@color/remoteText"
                 android:textSize="@dimen/mbrc_artist_text_size"/>
 
         <TextView
@@ -179,7 +179,7 @@
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:text="@string/main_label_album"
-                android:textColor="@color/mbrc_text"
+                android:textColor="@color/remoteText"
                 android:textSize="@dimen/mbrc_album_text_size"
                 android:typeface="sans"/>
 
@@ -199,7 +199,7 @@
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:text="@string/main_label_date"
-                android:textColor="@color/mbrc_text"
+                android:textColor="@color/remoteText"
                 android:textSize="@dimen/mbrc_year_text_size"/>
 
         <RelativeLayout
@@ -234,7 +234,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/main_track_progress_seeker"
                     android:text="@string/main_label_duration_current"
-                    android:textColor="@color/mbrc_text"
+                    android:textColor="@color/remoteText"
                     android:textSize="@dimen/mbrc_duration_text_size"
                     android:layout_marginLeft="3dp"
                     />
@@ -249,7 +249,7 @@
                     android:layout_toRightOf="@+id/main_track_progress_current"
                     android:gravity="right"
                     android:text="@string/main_label_duration_total"
-                    android:textColor="@color/mbrc_text"
+                    android:textColor="@color/remoteText"
                     android:textSize="@dimen/mbrc_duration_text_size"
                     android:layout_marginRight="3dp"/>
 

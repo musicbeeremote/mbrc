@@ -15,7 +15,6 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.*;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import com.viewpagerindicator.TitlePageIndicator;
 import roboguice.fragment.RoboFragment;
 
 public class SearchFragment extends RoboFragment implements SearchView.OnQueryTextListener {
@@ -61,8 +60,7 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
         View view = inflater.inflate(R.layout.ui_fragment_search, container, false);
         mPager = (ViewPager) view.findViewById(R.id.search_pager);
         mPager.setAdapter(mAdapter);
-        TitlePageIndicator titleIndicator = (TitlePageIndicator) view.findViewById(R.id.search_categories);
-        titleIndicator.setViewPager(mPager);
+
         return view;
     }
 

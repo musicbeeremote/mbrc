@@ -8,9 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import com.avast.android.dialogs.fragment.SimpleDialogFragment;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
-import eu.inmite.android.lib.dialogs.SimpleDialogFragment;
 
 public class SettingsDialogFragment extends SimpleDialogFragment {
     private EditText host;
@@ -23,7 +23,7 @@ public class SettingsDialogFragment extends SimpleDialogFragment {
     private int cindex;
 
     public interface SettingsDialogListener {
-        public void onDialogPositiveClick(DialogFragment dialog, ConnectionSettings settings);
+        void onDialogPositiveClick(DialogFragment dialog, ConnectionSettings settings);
     }
 
     SettingsDialogListener mListener;

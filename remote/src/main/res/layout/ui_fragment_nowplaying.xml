@@ -1,26 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:gravity="center_vertical"
-              android:orientation="vertical"
-              android:background="@color/mbrc_background">
+              android:orientation="vertical">
 
     <com.mobeta.android.dslv.DragSortListView
-            android:id="@android:id/list"
+            android:id="@+id/android:list"
             android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_marginTop="@dimen/side_margin_half"
-            android:layout_marginBottom="@dimen/side_margin_half"
-            android:layout_marginRight="@dimen/side_margin"
-            android:layout_marginLeft="@dimen/side_margin"
-            android:layout_height="0dip"
-            android:layout_weight="1"
-            android:drawSelectorOnTop="true"
-            android:dividerHeight="@dimen/side_margin_half"
+            android:layout_marginStart="@dimen/side_margin_half"
+            android:layout_marginEnd="@dimen/side_margin_half"
+            android:clipToPadding="false"
             android:divider="@null"
-            android:fastScrollEnabled="true"
-            android:listSelector="@drawable/abc_list_selector_holo_dark"/>
+            android:fitsSystemWindows="true"
+            tools:listitem="@layout/ui_list_track_item"
+            android:layout_weight="1"/>
 
     <fragment
             android:layout_width="wrap_content"

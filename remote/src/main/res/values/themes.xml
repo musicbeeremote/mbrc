@@ -6,11 +6,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorControlNormal">@color/colorAccent</item>
-        <item name="background">@color/mbrc_background</item>
+        <item name="background">@color/background_material_dark</item>
         <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="sdlDialogStyle">@style/DialogStyleDark.Custom</item>
     </style>
 
     <style name="Theme.Settings" parent="@style/AppTheme">

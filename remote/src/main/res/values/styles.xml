@@ -2,12 +2,11 @@
 <resources>
     <style name="Menu"/>
     <style name="Menu.Title">
-        <item name="android:background">@drawable/selectable_menu_item</item>
         <item name="android:textAppearance">?android:attr/textAppearance</item>
-        <item name="android:textColor">#ffffff</item>
+        <item name="android:textColor">@color/remoteText</item>
         <item name="android:textSize">14sp</item>
         <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">32dp</item>
+        <item name="android:paddingRight">16dp</item>
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>
         <item name="android:drawablePadding">16dp</item>
@@ -33,16 +32,6 @@
         <item name="background">@color/mbrc_background</item>
     </style>
 
-    <style name="DialogStyleDark"/>
-
-    <style name="DialogStyleDark.Custom">
-        <!-- anything can be left out: -->
-        <item name="titleTextColor">@color/mbrc_text</item>
-        <item name="titleSeparatorColor">@color/colorPrimary</item>
-        <item name="messageTextColor">@color/mbrc_text</item>
-        <item name="buttonTextColor">@color/mbrc_text</item>
-        <item name="buttonBackgroundColorPressed">@color/mbrc_pressed_default</item>
-    </style>
 
 
 </resources>

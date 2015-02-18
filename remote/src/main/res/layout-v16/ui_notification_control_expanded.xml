@@ -34,7 +34,7 @@
                 android:id="@+id/expanded_notification_line_one"
                 android:fontFamily="sans-serif-light"
                 android:textSize="@dimen/mbrc_notification_expanded_text_big"
-                android:textColor="@color/mbrc_text"
+                android:textColor="@color/remoteText"
                 />
 
         <TextView
@@ -44,7 +44,7 @@
                 android:singleLine="true"
                 android:ellipsize="end"
                 android:id="@+id/expanded_notification_line_two"
-                android:textColor="@color/mbrc_secondary_text"
+                android:textColor="@color/remoteSecondaryText"
                 />
 
         <TextView
@@ -53,7 +53,7 @@
                 android:text="@string/album_placeholder"
                 android:singleLine="true"
                 android:ellipsize="end"
-                android:textColor="@color/mbrc_secondary_text"
+                android:textColor="@color/remoteSecondaryText"
                 android:id="@+id/expanded_notification_line_three"
                 />
     </LinearLayout>

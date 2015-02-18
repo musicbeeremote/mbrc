@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.activities;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -11,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import com.avast.android.dialogs.fragment.ProgressDialogFragment;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
@@ -40,7 +40,7 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
     private static final int EDIT = 12;
     private static final int DELETE = 13;
 
-    private ProgressDialog mProgress;
+    private DialogFragment mProgress;
     private Context mContext;
     private SnackBar mSnackBar;
 
@@ -115,7 +115,11 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
 
     Button.OnClickListener scanListener = new Button.OnClickListener() {
         @Override public void onClick(View view) {
-            mProgress = ProgressDialog.show(mContext, getString(R.string.progress_scanning), getString(R.string.progress_scanning_message), true, false);
+            ProgressDialogFragment.ProgressDialogBuilder mBuilder = ProgressDialogFragment.createBuilder(mContext,
+                    getSupportFragmentManager());
+            mBuilder.setMessage(R.string.progress_scanning_message);
+            mBuilder.setTitle(R.string.progress_scanning);
+            mProgress = mBuilder.show();
             bus.post(new MessageEvent(UserInputEventType.StartDiscovery));
         }
     };
@@ -142,9 +146,11 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
     }
 
     @Subscribe public void handleDiscoveryStopped(DiscoveryStopped event) {
+
         if (mProgress != null) {
             mProgress.dismiss();
         }
+
         String message = "";
         switch (event.getReason()) {
 

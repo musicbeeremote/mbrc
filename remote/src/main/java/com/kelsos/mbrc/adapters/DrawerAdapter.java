@@ -7,7 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckedTextView;
+import android.widget.ImageView;
+import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.NavigationEntry;
 
@@ -17,14 +18,14 @@ public class DrawerAdapter extends ArrayAdapter<NavigationEntry> {
     private Context mContext;
     private int mResource;
     private ArrayList<NavigationEntry> mData;
-    private Typeface robotoLight;
+    private Typeface robotoMedium;
 
     public DrawerAdapter(Context context, int resource, ArrayList<NavigationEntry> objects) {
         super(context, resource, objects);
         this.mResource = resource;
         this.mContext = context;
         this.mData = objects;
-        robotoLight = Typeface.createFromAsset(mContext.getAssets(), "fonts/roboto_light.ttf");
+        robotoMedium = Typeface.createFromAsset(mContext.getAssets(), "fonts/roboto_medium.ttf");
     }
 
     @Override public View getView(int position, View convertView, ViewGroup parent) {
@@ -37,20 +38,22 @@ public class DrawerAdapter extends ArrayAdapter<NavigationEntry> {
             row = layoutInflater.inflate(mResource, parent, false);
 
             holder = new Holder();
-            holder.itemName = (CheckedTextView) row.findViewById(R.id.dr_option_text);
-            holder.itemName.setTypeface(robotoLight);
+            holder.rowText = (TextView) row.findViewById(R.id.rowText);
+            holder.rowText.setTypeface(robotoMedium);
+            holder.rowIcon = (ImageView) row.findViewById(R.id.rowIcon);
             row.setTag(holder);
         } else {
             holder = (Holder) row.getTag();
         }
 
-        holder.itemName.setText(current.getLabel());
-
+        holder.rowText.setText(current.getLabel());
+        holder.rowIcon.setImageResource(current.getDrawableId());
 
         return row;
     }
 
     static class Holder {
-        CheckedTextView itemName;
+        TextView rowText;
+        ImageView rowIcon;
     }
 }

@@ -40,7 +40,7 @@ public class PlaylistArrayAdapter extends ArrayAdapter<MusicTrack> {
             holder = new TrackHolder();
             holder.title = (TextView) row.findViewById(R.id.trackTitle);
             holder.artist = (TextView) row.findViewById(R.id.trackArtist);
-            holder.trackPlaying = (ImageView) row.findViewById(R.id.listview_item_image);
+            holder.trackPlaying = (ImageView) row.findViewById(R.id.track_indicator_view);
             holder.title.setTypeface(robotoLight);
             holder.artist.setTypeface(robotoLight);
 
