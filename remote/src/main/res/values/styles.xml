@@ -19,19 +19,11 @@
         <item name="android:minHeight">24dip</item>
     </style>
 
-    <style name="ActioBarStyle" parent="Base.Theme.AppCompat.Light">
-        <item name="android:background">@color/colorPrimary</item>
-
-        <!-- Support library compatibility -->
-        <item name="background">@color/colorPrimary</item>
-        <item name="windowActionBarOverlay">true</item>
+    <style name="ActionBarStyle" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColorPrimary">@color/abc_primary_text_material_light</item>
+        <item name="android:textColor">@color/abc_primary_text_material_dark</item>
+        <item name="actionMenuTextColor">@color/abc_primary_text_material_light</item>
+        <item name="android:textColorSecondary">@color/abc_secondary_text_material_light</item>
     </style>
-
-    <style name="PopupStyle" parent="@style/ThemeOverlay.AppCompat.Dark">
-        <item name="android:background">@color/mbrc_background</item>
-        <item name="background">@color/mbrc_background</item>
-    </style>
-
-
 
 </resources>
