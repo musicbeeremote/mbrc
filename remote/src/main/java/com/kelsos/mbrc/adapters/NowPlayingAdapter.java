@@ -14,19 +14,19 @@ import com.kelsos.mbrc.data.MusicTrack;
 
 import java.util.ArrayList;
 
-public class PlaylistArrayAdapter extends ArrayAdapter<MusicTrack> {
+public class NowPlayingAdapter extends ArrayAdapter<MusicTrack> {
     private Context mContext;
     private int mResource;
     private ArrayList<MusicTrack> nowPlayingList;
     private int playingTrackIndex;
-    private Typeface robotoLight;
+    private Typeface robotoRegular;
 
-    public PlaylistArrayAdapter(Context context, int resource, ArrayList<MusicTrack> objects) {
+    public NowPlayingAdapter(Context context, int resource, ArrayList<MusicTrack> objects) {
         super(context, resource, objects);
         this.mResource = resource;
         this.mContext = context;
         this.nowPlayingList = objects;
-        robotoLight = Typeface.createFromAsset(mContext.getAssets(), "fonts/roboto_light.ttf");
+        robotoRegular = Typeface.createFromAsset(mContext.getAssets(), "fonts/roboto_regular.ttf");
     }
 
     @Override public View getView(int position, View convertView, ViewGroup parent) {
@@ -41,8 +41,8 @@ public class PlaylistArrayAdapter extends ArrayAdapter<MusicTrack> {
             holder.title = (TextView) row.findViewById(R.id.trackTitle);
             holder.artist = (TextView) row.findViewById(R.id.trackArtist);
             holder.trackPlaying = (ImageView) row.findViewById(R.id.track_indicator_view);
-            holder.title.setTypeface(robotoLight);
-            holder.artist.setTypeface(robotoLight);
+            holder.title.setTypeface(robotoRegular);
+            holder.artist.setTypeface(robotoRegular);
 
             row.setTag(holder);
         } else {
@@ -57,17 +57,9 @@ public class PlaylistArrayAdapter extends ArrayAdapter<MusicTrack> {
         } else {
             holder.trackPlaying.setImageResource(android.R.color.transparent);
         }
-        holder.trackPlaying.setOnClickListener(showContextMenu);
 
         return row;
     }
-
-    private final View.OnClickListener showContextMenu = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            view.showContextMenu();
-        }
-    };
 
     public void setPlayingTrackIndex(int index) {
         this.playingTrackIndex = index;
@@ -81,7 +73,6 @@ public class PlaylistArrayAdapter extends ArrayAdapter<MusicTrack> {
         TextView title;
         TextView artist;
         ImageView trackPlaying;
-
     }
 
 }

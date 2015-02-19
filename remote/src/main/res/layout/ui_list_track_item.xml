@@ -86,8 +86,7 @@
                         android:id="@+id/list_item_track_overflow"
                         android:layout_gravity="center_vertical"
                         android:layout_width="wrap_content"
-                        android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
-                        android:tint="@android:color/white"
+                        android:tint="@android:color/transparent"
                         android:layout_height="wrap_content"
                         android:contentDescription="@string/abc_action_menu_overflow_description"/>
 
