@@ -11,13 +11,10 @@
             android:layout_width="match_parent"
             android:layout_height="0dip"
             android:layout_weight="1"
-            android:layout_marginTop="@dimen/side_margin_half"
-            android:layout_marginLeft="@dimen/side_margin_half"
-            android:layout_marginRight="@dimen/side_margin_half"
+            android:paddingTop="@dimen/side_margin_half"
             android:drawSelectorOnTop="true"
             android:divider="@null"
             android:fastScrollEnabled="true"
-            android:listSelector="@drawable/abc_list_selector_holo_dark"
             tools:listitem="@layout/ui_list_single"/>
 
 </LinearLayout>

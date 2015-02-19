@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.ui.fragments;
 
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,11 +21,7 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.fragment.RoboListFragment;
 
-public class SearchTrackFragment extends RoboListFragment {
-    private static final int QUEUE_NEXT = 1;
-    private static final int QUEUE_LAST = 2;
-    private static final int PLAY_NOW = 3;
-    private static final int GROUP_ID = 14;
+public class SearchTrackFragment extends RoboListFragment implements TrackEntryAdapter.MenuItemSelectedListener {
     private String mDefault;
 
     private TrackEntryAdapter adapter;
@@ -55,52 +51,34 @@ public class SearchTrackFragment extends RoboListFragment {
         mDefault = action.getAction();
     }
 
-    @Override public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        registerForContextMenu(getListView());
-    }
-
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ui_fragment_library_simpl, container, false);
     }
 
-    @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.setHeaderTitle(R.string.search_context_header);
-        menu.add(GROUP_ID, QUEUE_NEXT, 0, R.string.search_context_queue_next);
-        menu.add(GROUP_ID, QUEUE_LAST, 0, R.string.search_context_queue_last);
-        menu.add(GROUP_ID, PLAY_NOW, 0, R.string.search_context_play_now);
-    }
-
-    @Override public boolean onContextItemSelected(android.view.MenuItem item) {
-        if (item.getGroupId() == GROUP_ID) {
-            AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            Object line = adapter.getItem(mi.position);
-            final String qContext = Protocol.LibraryQueueTrack;
-            final String query = ((TrackEntry) line).getSrc();
-
-            UserAction ua = null;
-            switch (item.getItemId()) {
-                case QUEUE_NEXT:
-                    ua = new UserAction(qContext, new Queue("next", query));
-                    break;
-                case QUEUE_LAST:
-                    ua = new UserAction(qContext, new Queue("last", query));
-                    break;
-                case PLAY_NOW:
-                    ua = new UserAction(qContext, new Queue("now", query));
-                    break;
-            }
-
-            if (ua != null) bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     @Subscribe public void handleTrackResults(TrackSearchResults results) {
         adapter = new TrackEntryAdapter(getActivity(), R.layout.ui_list_dual, results.getList());
+        adapter.setMenuItemSelectedListener(this);
         setListAdapter(adapter);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override public void OnMenuItemSelected(MenuItem menuItem, TrackEntry entry) {
+        final String qContext = Protocol.LibraryQueueTrack;
+        final String query = entry.getSrc();
+
+        UserAction ua = null;
+        switch (menuItem.getItemId()) {
+            case R.id.popup_track_queue_next:
+                ua = new UserAction(qContext, new Queue("next", query));
+                break;
+            case R.id.popup_track_queue_last:
+                ua = new UserAction(qContext, new Queue("last", query));
+                break;
+            case R.id.popup_track_play:
+                ua = new UserAction(qContext, new Queue("now", query));
+                break;
+        }
+
+        if (ua != null) bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
     }
 }

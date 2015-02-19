@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item  android:id="@+id/popup_album_play"
+           android:title="@string/menu_play"/>
+    <item android:id="@+id/popup_album_tracks"
+          android:title="@string/menu_album_tracks"/>
+    <item android:id="@+id/popup_album_queue_next"
+          android:title="@string/menu_queue_next"/>
+    <item android:id="@+id/popup_album_queue_last"
+          android:title="@string/menu_queue_last"/>
+</menu>

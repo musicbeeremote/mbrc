@@ -129,5 +129,11 @@
     <string name="menu_search">Search</string>
     <string name="menu_now_playing">Now playing List</string>
     <string name="menu_lyrics">Lyrics</string>
+    <string name="menu_queue_last">Queue Last</string>
+    <string name="menu_queue_next">Queue Next</string>
+    <string name="menu_album_tracks">Get Album Tracks</string>
+    <string name="menu_play">Play Now</string>
+    <string name="menu_artist_albums">Get Albums</string>
+    <string name="menu_genre_artists">Get Artists</string>
 
 </resources>
