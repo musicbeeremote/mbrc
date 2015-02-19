@@ -2,8 +2,8 @@ package com.kelsos.mbrc.ui.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -15,7 +15,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.DrawerAdapter;
 import com.kelsos.mbrc.constants.UserInputEventType;
@@ -25,7 +24,7 @@ import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
-import com.kelsos.mbrc.utilities.RemoteUtils;
+import com.kelsos.mbrc.ui.activities.SettingsActivity;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.fragment.RoboListFragment;
@@ -34,17 +33,24 @@ import roboguice.inject.InjectView;
 import java.util.ArrayList;
 
 
-public class DrawerFragment extends RoboListFragment implements FragmentManager.OnBackStackChangedListener {
+public class DrawerFragment extends RoboListFragment
+        implements FragmentManager.OnBackStackChangedListener {
+
     @Inject Bus bus;
-    @Inject RemoteUtils rmUtils;
-    @InjectView(R.id.menuConnector) TextView menuConnector;
-    @InjectView(R.id.drawer_version_indicator) TextView versionIndicator;
-    @InjectView(R.id.menu_exit) TextView menuExit;
+    @InjectView(R.id.connect_layout) View connectButton;
+    @InjectView(R.id.menu_connect) TextView connectText;
+    @InjectView(R.id.exit_layout) View exitButton;
+    @InjectView(R.id.menu_exit) TextView exitText;
+    @InjectView(R.id.help_layout) View helpButton;
+    @InjectView(R.id.menu_help) TextView helpText;
+    @InjectView(R.id.settings_layout) View settingsButton;
+    @InjectView(R.id.menu_settings) TextView settingsText;
 
     private Typeface robotoMedium;
     private DrawerLayout mDrawerLayout;
     private int mSelection;
     private boolean mBackstackChanging;
+    private final ArrayList<NavigationEntry> mNavigation;
 
     private TextView.OnLongClickListener connectButtonLongClick = new TextView.OnLongClickListener() {
         @Override
@@ -61,6 +67,21 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
         }
     };
 
+    private View.OnClickListener settingsButtonClick = new View.OnClickListener() {
+        @Override public void onClick(View v) {
+            bus.post(new DrawerEvent());
+            startActivity(new Intent(getActivity(), SettingsActivity.class));
+        }
+    };
+
+    public DrawerFragment() {
+        mNavigation = new ArrayList<>();
+        mNavigation.add(new NavigationEntry(R.string.menu_home, R.drawable.ic_home));
+        mNavigation.add(new NavigationEntry(R.string.menu_search, R.drawable.ic_search));
+        mNavigation.add(new NavigationEntry(R.string.menu_now_playing, R.drawable.ic_view_list));
+        mNavigation.add(new NavigationEntry(R.string.menu_lyrics, R.drawable.ic_view_headline));
+    }
+
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         robotoMedium = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_medium.ttf");
@@ -74,18 +95,34 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.ui_fragment_drawer, container, false);
+        final View view = inflater.inflate(R.layout.ui_fragment_drawer, container, false);
+        final ListView list = (ListView) view.findViewById(android.R.id.list);
+        final View footer = inflater.inflate(R.layout.ui_drawer_footer, list, false);
+        list.addFooterView(footer, null, false);
+        return view;
     }
 
     @Override public void onStart() {
         super.onStart();
         bus.register(this);
-        menuConnector.setOnClickListener(connectButtonClick);
-        menuConnector.setOnLongClickListener(connectButtonLongClick);
-        menuConnector.setTypeface(robotoMedium);
+        connectButton.setOnClickListener(connectButtonClick);
+        connectButton.setOnLongClickListener(connectButtonLongClick);
+        settingsButton.setOnClickListener(settingsButtonClick);
+        helpButton.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                bus.post(new DrawerEvent());
+                Intent openHelp = new Intent(Intent.ACTION_VIEW);
+                openHelp.setData(Uri.parse("http://kelsos.net/musicbeeremote/help/"));
+                startActivity(openHelp);
+            }
+        });
 
-        menuExit.setTypeface(robotoMedium);
-        menuExit.setOnClickListener(new View.OnClickListener() {
+        connectText.setTypeface(robotoMedium);
+        helpText.setTypeface(robotoMedium);
+        exitText.setTypeface(robotoMedium);
+        settingsText.setTypeface(robotoMedium);
+
+        exitButton.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 final Activity activity = getActivity();
                 activity.stopService(new Intent(activity, Controller.class));
@@ -93,26 +130,14 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
             }
         });
 
-        ArrayList<NavigationEntry> nav = new ArrayList<>();
-        nav.add(new NavigationEntry("Home", R.drawable.ic_home));
-        nav.add(new NavigationEntry("Search", R.drawable.ic_search));
-        nav.add(new NavigationEntry("Now playing list", R.drawable.ic_view_list));
-        nav.add(new NavigationEntry("Lyrics", R.drawable.ic_view_headline));
-
-        setListAdapter(new DrawerAdapter(getActivity(), R.layout.ui_drawer_item, nav));
+        setListAdapter(new DrawerAdapter(getActivity(), R.layout.ui_drawer_item, mNavigation));
         getListView().setOnItemClickListener(new DrawerOnClickListener());
         getListView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         getListView().setItemChecked(mSelection, true);
+        getActivity().setTitle(mNavigation.get(mSelection).getTitleId());
 
         if (mDrawerLayout == null) {
             mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-        }
-        try {
-            versionIndicator.setText(String.format(getString(R.string.ui_drawer_menu_version), RemoteUtils.getVersion(getActivity())));
-        } catch (PackageManager.NameNotFoundException e) {
-            if (BuildConfig.DEBUG) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -122,16 +147,16 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
     }
 
     @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChange change) {
-        if (menuConnector == null) return;
+        if (connectText == null) return;
         switch (change.getStatus()) {
             case CONNECTION_OFF:
-                menuConnector.setText(R.string.drawer_connection_status_off);
+                connectText.setText(R.string.drawer_connection_status_off);
                 break;
             case CONNECTION_ON:
-                menuConnector.setText(R.string.drawer_connection_status_on);
+                connectText.setText(R.string.drawer_connection_status_on);
                 break;
             case CONNECTION_ACTIVE:
-                menuConnector.setText(R.string.drawer_connection_status_active);
+                connectText.setText(R.string.drawer_connection_status_active);
                 break;
         }
     }
@@ -143,7 +168,6 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
                 getListView().setItemChecked(mSelection, true);
             }
         mBackstackChanging = false;
-
     }
 
     private class DrawerOnClickListener implements ListView.OnItemClickListener {
@@ -154,6 +178,7 @@ public class DrawerFragment extends RoboListFragment implements FragmentManager.
             if (mSelection != i) {
 
                 getListView().setItemChecked(i, true);
+                getActivity().setTitle(mNavigation.get(i).getTitleId());
                 mSelection = i;
 
                 DisplayFragment dfrag = DisplayFragment.values()[i];

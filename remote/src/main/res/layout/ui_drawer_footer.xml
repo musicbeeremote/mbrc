@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <View
+            android:id="@+id/list_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="@dimen/side_margin_half"
+            android:layout_marginTop="@dimen/side_margin_half"
+            android:background="@color/color_divider"/>
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mbrc_drawer_item_height"
+            android:id="@+id/settings_layout"
+            android:background="@drawable/ui_drawer_clickable_background"
+            android:clickable="true">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/main_menu_settings"
+                android:id="@+id/menu_settings"
+                android:layout_gravity="start|center_vertical"
+                style="@style/Menu.Title"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mbrc_drawer_item_height"
+            android:id="@+id/help_layout"
+            android:background="@drawable/ui_drawer_clickable_background"
+            android:clickable="true">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/main_menu_help"
+                android:id="@+id/menu_help"
+                android:layout_gravity="start|center_vertical"
+                style="@style/Menu.Title"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mbrc_drawer_item_height"
+            android:id="@+id/connect_layout"
+            android:background="@drawable/ui_drawer_clickable_background"
+            android:clickable="true">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/drawer_connection_status_off"
+                android:id="@+id/menu_connect"
+                android:layout_gravity="start|center_vertical"
+                style="@style/Menu.Title"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/exit_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mbrc_drawer_item_height"
+            android:orientation="vertical"
+            android:background="@drawable/ui_drawer_clickable_background"
+            android:clickable="true">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/menus_exit"
+                android:id="@+id/menu_exit"
+                android:layout_gravity="start|center_vertical"
+                style="@style/Menu.Title"/>
+
+    </LinearLayout>
+
+</LinearLayout>

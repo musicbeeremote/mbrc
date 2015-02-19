@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<com.kelsos.mbrc.ui.Layout.CheckableLinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_height="@dimen/mbrc_drawer_item_height"
         android:layout_width="match_parent"
+        android:background="@drawable/selectable_background_mbrc_default"
         android:orientation="horizontal">
 
         <ImageView
@@ -13,13 +14,13 @@
                 android:layout_gravity="center_vertical"
                 android:layout_height="wrap_content"/>
 
-    <TextView
+    <CheckedTextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="@string/drawer_connection_status_off"
             android:id="@+id/rowText"
             android:layout_gravity="start|center_vertical"
             style="@style/Menu.Title"/>
-</LinearLayout>
+</com.kelsos.mbrc.ui.Layout.CheckableLinearLayout>
 
 

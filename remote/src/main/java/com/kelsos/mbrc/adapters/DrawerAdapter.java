@@ -46,7 +46,7 @@ public class DrawerAdapter extends ArrayAdapter<NavigationEntry> {
             holder = (Holder) row.getTag();
         }
 
-        holder.rowText.setText(current.getLabel());
+        holder.rowText.setText(current.getTitleId());
         holder.rowIcon.setImageResource(current.getDrawableId());
 
         return row;

@@ -125,5 +125,9 @@
     <string name="musicbee_remote_license_title">MusicBee Remote license</string>
     <string name="drag_n_drop_description">Used as an anchor for drag and drop</string>
     <string name="now_playing_indicator">Should be shown if the track is currently playing</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_now_playing">Now playing List</string>
+    <string name="menu_lyrics">Lyrics</string>
 
 </resources>
