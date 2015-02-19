@@ -48,14 +48,14 @@ android {
             versionNameSuffix "-dev"
         }
 
-        alpha {
+        preview {
             signingConfig signingConfigs.release
             debuggable false
             zipAlignEnabled true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            applicationIdSuffix ".alpha"
-            versionNameSuffix "-alpha"
+            applicationIdSuffix ".preview"
+            versionNameSuffix "-preview"
         }
     }
 
@@ -74,6 +74,16 @@ android {
         abortOnError false
         xmlReport true
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def file = output.outputFile
+            def versionInfo = "-v" + variant.mergedFlavor.versionCode + "-" + variant.mergedFlavor.versionName + "-" + gitSha()
+            def filename = file.name.replace(".apk", versionInfo + ".apk").replace(project.name, defaultConfig.applicationId);
+            output.outputFile = new File(file.parent, filename)
+        }
+    }
+
 }
 
 task wrapper(type: Wrapper) {
