@@ -13,6 +13,7 @@ public class SetupDialogFragment extends BaseDialogFragment {
         builder.setTitle(R.string.dialog_application_setup_title);
         builder.setPositiveButton(R.string.dialog_application_setup_positive, new View.OnClickListener() {
             @Override public void onClick(View v) {
+                SetupDialogFragment.this.dismiss();
                 startActivity(new Intent(getActivity(), SettingsActivity.class));
             }
         });

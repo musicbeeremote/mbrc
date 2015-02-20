@@ -165,6 +165,7 @@ public class DrawerFragment extends RoboListFragment
         if (!mBackstackChanging)
             if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 0) {
                 mSelection = 0;
+                getActivity().setTitle(mNavigation.get(mSelection).getTitleId());
                 getListView().setItemChecked(mSelection, true);
             }
         mBackstackChanging = false;
