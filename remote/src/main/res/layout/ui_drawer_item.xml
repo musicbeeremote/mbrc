@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.kelsos.mbrc.ui.Layout.CheckableLinearLayout
+<com.kelsos.mbrc.ui.layout.CheckableLinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/mbrc_drawer_item_height"
@@ -23,6 +23,6 @@
         android:layout_gravity="start|center_vertical"
         android:text="@string/drawer_connection_status_off" />
 
-</com.kelsos.mbrc.ui.Layout.CheckableLinearLayout>
+</com.kelsos.mbrc.ui.layout.CheckableLinearLayout>
 
 

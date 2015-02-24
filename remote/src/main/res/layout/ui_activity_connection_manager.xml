@@ -14,12 +14,7 @@
         android:id="@+id/connection_list"
         android:layout_width="match_parent"
         android:layout_height="0dip"
-
         android:layout_weight="1"
-        android:divider="@null"
-        android:dividerHeight="@dimen/small_margin"
-        android:fastScrollEnabled="true"
-        android:listSelector="@android:color/transparent"
         tools:listitem="@layout/ui_list_connection_settings"/>
 
     <LinearLayout

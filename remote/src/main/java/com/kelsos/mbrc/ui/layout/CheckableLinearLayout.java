@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.Layout;
+package com.kelsos.mbrc.ui.layout;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -22,7 +22,7 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
         for (int i = 0; i < childCount; i++) {
             View view = getChildAt(i);
             if (view instanceof CheckedTextView) {
-                mCheckedTextView = (CheckedTextView)view;
+                mCheckedTextView = (CheckedTextView) view;
             }
         }
     }
@@ -56,6 +56,7 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
         }
 
     }
+
     private void changeColor(boolean isChecked) {
         if (isChecked) {
             setBackgroundColor(getResources().getColor(R.color.mbrc_selected_item));

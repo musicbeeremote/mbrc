@@ -1,4 +1,3 @@
-
 package com.kelsos.mbrc.adapters;
 
 import android.support.v4.app.FragmentManager;
@@ -38,11 +37,11 @@ public class ConnectionSettingsAdapter extends RecyclerView.Adapter<ConnectionSe
     public ConnectionViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
         View viewItem = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.ui_list_connection_settings, viewGroup, false);
-        return new ConnectionViewHolder(viewItem, bus);
+        return new ConnectionViewHolder(viewItem);
     }
 
     @Override
-    public void onBindViewHolder(ConnectionViewHolder connectionViewHolder, int position) {
+    public void onBindViewHolder(ConnectionViewHolder connectionViewHolder, final int position) {
         final ConnectionSettings settings = mData.get(position);
         connectionViewHolder.computerName.setText(settings.getName());
         connectionViewHolder.hostname.setText(settings.getAddress());
@@ -78,8 +77,14 @@ public class ConnectionSettingsAdapter extends RecyclerView.Adapter<ConnectionSe
                 });
                 popupMenu.show();
             }
-            });
-        }
+        });
+
+        connectionViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                bus.post(new ChangeSettings(SettingsAction.DEFAULT, mData.get(position)));
+            }
+        });
+    }
 
     @Override
     public int getItemCount() {
@@ -93,18 +98,13 @@ public class ConnectionSettingsAdapter extends RecyclerView.Adapter<ConnectionSe
         ImageView defaultSettings;
         View overflow;
 
-        public ConnectionViewHolder(View itemView, final Bus bus) {
+        public ConnectionViewHolder(View itemView) {
             super(itemView);
             hostname = (TextView) itemView.findViewById(R.id.cs_list_host);
             portNum = (TextView) itemView.findViewById(R.id.cs_list_port);
             computerName = (TextView) itemView.findViewById(R.id.cs_list_name);
             defaultSettings = (ImageView) itemView.findViewById(R.id.cs_list_default);
             overflow = itemView.findViewById(R.id.cs_list_overflow);
-            itemView.setOnClickListener(new View.OnClickListener() {
-               @Override public void onClick(View v) {
-                   bus.post(new ChangeSettings(SettingsAction.DEFAULT, mData.get(getPosition())));
-               }
-            });
         }
     }
 }

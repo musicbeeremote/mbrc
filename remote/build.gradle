@@ -7,9 +7,14 @@ def buildTime() {
     df.setTimeZone(TimeZone.getTimeZone("UTC"))
     return df.format(new Date())
 }
-def gitSha() {
+def gitHash() {
     return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
+
+def hasModifiedDeletedOrOtherFiles = !"git ls-files -mdo --exclude-standard".execute().text.trim().isEmpty()
+def hasStagedFiles = !"git diff-index --no-ext-diff --name-only --cached HEAD".execute().text.trim().isEmpty()
+def dirtyWorkingCopy = hasModifiedDeletedOrOtherFiles || hasStagedFiles
+def gitDescription = dirtyWorkingCopy ? "${gitHash()}-dirty" : gitHash()
 
 android {
     compileSdkVersion 21
@@ -19,9 +24,9 @@ android {
         applicationId "com.kelsos.mbrc"
         minSdkVersion 8
         targetSdkVersion 21
-        versionCode 95
-        versionName "0.10.0.3"
-        buildConfigField "String", "GIT_SHA", "\"${gitSha()}\""
+        versionCode 96
+        versionName "0.10.0.4"
+        buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
         buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
     }
 
@@ -79,9 +84,13 @@ android {
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
             def originalFilename = output.outputFile
-            def versionInfo = "-v" + variant.mergedFlavor.versionCode + "-" + variant.mergedFlavor.versionName + "-" + gitSha()
-            def filename = originalFilename.name.replace(".apk", versionInfo + ".apk").replace(project.name, defaultConfig.applicationId);
+            def versionInfo = "-v${variant.mergedFlavor.versionCode}-${variant.mergedFlavor.versionName}-${gitDescription}"
+            def filename = originalFilename.name
+                    .replace(".apk", versionInfo + ".apk")
+                    .replace(project.name, defaultConfig.applicationId);
+            filename = "${originalFilename.parent}/${filename}"
             output.outputFile = file(filename)
+            println(filename)
         }
     }
 }
