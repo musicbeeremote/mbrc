@@ -17,7 +17,6 @@
             android:layout_height="@dimen/cover_height"
             android:layout_alignParentTop="true"
             android:adjustViewBounds="false"
-            android:background="@drawable/ic_cover_background"
             android:contentDescription="@string/description_album_cover"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_image_no_cover" />

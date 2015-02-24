@@ -15,7 +15,6 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/cover_height"
             android:adjustViewBounds="false"
-            android:background="@drawable/ic_cover_background"
             android:contentDescription="@string/description_album_cover"
             android:longClickable="true"
             android:scaleType="centerCrop"

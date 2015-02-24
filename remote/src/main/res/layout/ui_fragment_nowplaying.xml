@@ -15,7 +15,13 @@
         android:fitsSystemWindows="true"
         tools:listitem="@layout/ui_list_track_item" />
 
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="4dip"
+        android:background="@drawable/drop_shadow" />
+
     <fragment
+        android:id="@+id/now_playing_mini_control"
         android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/mini_control_height"

@@ -23,26 +23,39 @@ import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
 
-
 public class MiniControlFragment extends RoboFragment {
 
     @Inject Bus bus;
-    @InjectView (R.id.mc_track_cover) ImageView trackCover;
-    @InjectView (R.id.mc_track_artist) TextView trackArtist;
-    @InjectView (R.id.mc_track_title) TextView trackTitle;
-    @InjectView (R.id.mc_next_track) ImageButton playNext;
-    @InjectView (R.id.mc_play_pause) ImageButton playPause;
-    @InjectView (R.id.mc_prev_track) ImageButton playPrevious;
+    @InjectView(R.id.mc_track_cover) ImageView trackCover;
+    @InjectView(R.id.mc_track_artist) TextView trackArtist;
+    @InjectView(R.id.mc_track_title) TextView trackTitle;
+    @InjectView(R.id.mc_next_track) ImageButton playNext;
+    @InjectView(R.id.mc_play_pause) ImageButton playPause;
+    @InjectView(R.id.mc_prev_track) ImageButton playPrevious;
 
-    private Typeface robotoLight;
+    ImageButton.OnClickListener playNextListener = new ImageButton.OnClickListener() {
+
+        @Override public void onClick(View view) {
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerNext, true)));
+        }
+    };
+    ImageButton.OnClickListener playPauseListener = new ImageButton.OnClickListener() {
+        @Override public void onClick(View view) {
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerPlayPause, true)));
+        }
+    };
+    ImageButton.OnClickListener playPreviousListener = new ImageButton.OnClickListener() {
+        @Override public void onClick(View view) {
+            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerPrevious, true)));
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
+    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ui_fragment_mini_control, container, false);
     }
 
@@ -52,8 +65,11 @@ public class MiniControlFragment extends RoboFragment {
         playNext.setOnClickListener(playNextListener);
         playPause.setOnClickListener(playPauseListener);
         playPrevious.setOnClickListener(playPreviousListener);
-        robotoLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
-        trackTitle.setTypeface(robotoLight);
+        Typeface robotoRegular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
+        Typeface robotoMedium = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_medium.ttf");
+        trackTitle.setTypeface(robotoMedium);
+        trackArtist.setTypeface(robotoRegular);
+
     }
 
     @Override public void onStop() {
@@ -74,25 +90,6 @@ public class MiniControlFragment extends RoboFragment {
         trackArtist.setText(event.getArtist());
         trackTitle.setText(event.getTitle());
     }
-
-    ImageButton.OnClickListener playNextListener = new ImageButton.OnClickListener(){
-
-        @Override public void onClick(View view) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerNext, true)));
-        }
-    };
-
-    ImageButton.OnClickListener playPauseListener = new ImageButton.OnClickListener() {
-        @Override public void onClick(View view) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerPlayPause, true)));
-        }
-    };
-
-    ImageButton.OnClickListener playPreviousListener = new ImageButton.OnClickListener() {
-        @Override public void onClick(View view) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerPrevious, true)));
-        }
-    };
 
     @Subscribe public void handlePlayStateChange(PlayStateChange event) {
         switch (event.getState()) {
