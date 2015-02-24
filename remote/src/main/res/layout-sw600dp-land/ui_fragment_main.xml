@@ -123,7 +123,7 @@
                 android:layout_width="@dimen/small_button_size"
                 android:layout_height="@dimen/small_button_size"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/selectable_background_mbrc_default"
+                android:background="@drawable/selectable_background"
                 android:contentDescription="@string/main_button_repeat_description"
                 android:src="@drawable/ic_media_repeat" />
 
@@ -133,7 +133,7 @@
                 android:layout_height="@dimen/medium_button_size"
                 android:layout_marginLeft="@dimen/second_tier_button_margin"
                 android:layout_marginStart="@dimen/second_tier_button_margin"
-                android:background="@drawable/selectable_background_mbrc_default"
+                android:background="@drawable/selectable_background"
                 android:contentDescription="@string/main_button_previous_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_previous" />
@@ -144,7 +144,7 @@
                 android:layout_height="@dimen/large_button_size"
                 android:layout_marginLeft="@dimen/center_button_margin"
                 android:layout_marginRight="@dimen/center_button_margin"
-                android:background="@drawable/selectable_background_mbrc_default"
+                android:background="@drawable/selectable_background"
                 android:clickable="true"
                 android:contentDescription="@string/main_button_play_pause_description"
                 android:scaleType="fitCenter"
@@ -156,7 +156,7 @@
                 android:layout_height="@dimen/medium_button_size"
                 android:layout_marginEnd="@dimen/second_tier_button_margin"
                 android:layout_marginRight="@dimen/second_tier_button_margin"
-                android:background="@drawable/selectable_background_mbrc_default"
+                android:background="@drawable/selectable_background"
                 android:contentDescription="@string/main_button_next_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_media_next" />
@@ -166,7 +166,7 @@
                 android:layout_width="@dimen/small_button_size"
                 android:layout_height="@dimen/small_button_size"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/selectable_background_mbrc_default"
+                android:background="@drawable/selectable_background"
                 android:contentDescription="@string/main_button_shuffle_description"
                 android:src="@drawable/ic_media_shuffle" />
         </LinearLayout>
@@ -185,7 +185,7 @@
                 android:layout_width="@dimen/medium_button_size"
                 android:layout_height="@dimen/medium_button_size"
                 android:layout_gravity="center"
-                android:background="@drawable/selectable_background_mbrc_default"
+                android:background="@drawable/selectable_background"
                 android:contentDescription="@string/main_button_mute_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_volume_mute"

@@ -5,21 +5,12 @@
           android:exitFadeDuration="@android:integer/config_mediumAnimTime"
           tools:ignore="UnusedAttribute">
 
-    <item android:drawable="@drawable/ui_drawer_drawable"
-          android:state_activated="true" />
-
-    <item android:drawable="@drawable/ui_drawer_drawable"
-          android:state_checked="true" />
-
     <item android:drawable="@drawable/list_focused_mbrc_default"
           android:state_focused="true"
           android:state_pressed="false" />
 
-    <item android:drawable="@drawable/pressed_background_mbrc_default"
+    <item android:drawable="@drawable/pressed_background"
           android:state_pressed="true" />
 
-    <item android:drawable="@drawable/ui_drawer_drawable" />
-
+    <item android:drawable="@android:color/transparent" />
 </selector>
-
-

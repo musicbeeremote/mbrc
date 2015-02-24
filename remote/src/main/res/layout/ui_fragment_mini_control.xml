@@ -69,7 +69,7 @@
                 android:id="@+id/mc_prev_track"
                 android:layout_width="@dimen/mini_control_height"
                 android:layout_height="@dimen/mini_control_height"
-                android:background="@drawable/selectable_background_mbrc_default"
+                android:background="@drawable/selectable_background"
                 android:baselineAlignBottom="false"
                 android:contentDescription="@string/main_button_previous_description"
                 android:src="@drawable/ic_action_previous" />
@@ -78,7 +78,7 @@
                 android:id="@+id/mc_play_pause"
                 android:layout_width="@dimen/mini_control_height"
                 android:layout_height="@dimen/mini_control_height"
-                android:background="@drawable/selectable_background_mbrc_default"
+                android:background="@drawable/selectable_background"
                 android:baselineAlignBottom="false"
                 android:contentDescription="@string/main_button_play_pause_description"
                 android:src="@drawable/ic_action_play" />
@@ -87,7 +87,7 @@
                 android:id="@+id/mc_next_track"
                 android:layout_width="@dimen/mini_control_height"
                 android:layout_height="@dimen/mini_control_height"
-                android:background="@drawable/selectable_background_mbrc_default"
+                android:background="@drawable/selectable_background"
                 android:baselineAlignBottom="false"
                 android:contentDescription="@string/main_button_next_description"
                 android:src="@drawable/ic_action_next" />

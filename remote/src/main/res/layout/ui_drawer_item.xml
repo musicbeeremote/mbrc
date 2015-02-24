@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/mbrc_drawer_item_height"
-    android:background="@drawable/selectable_background_mbrc_default"
+    android:background="@drawable/selectable_background"
     android:orientation="horizontal">
 
     <ImageView

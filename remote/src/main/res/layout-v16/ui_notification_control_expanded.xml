@@ -93,7 +93,7 @@
             android:layout_width="0dip"
             android:layout_height="@dimen/mbrc_notification_expanded_button_height"
             android:layout_weight="1"
-            android:background="@drawable/selectable_background_mbrc_default"
+            android:background="@drawable/selectable_background"
             android:contentDescription="@string/main_button_previous_description"
             android:src="@drawable/ic_action_previous" />
 
@@ -102,7 +102,7 @@
             android:layout_width="0dip"
             android:layout_height="@dimen/mbrc_notification_expanded_button_height"
             android:layout_weight="1"
-            android:background="@drawable/selectable_background_mbrc_default"
+            android:background="@drawable/selectable_background"
             android:contentDescription="@string/main_button_play_pause_description"
             android:src="@drawable/ic_action_play" />
 
@@ -111,7 +111,7 @@
             android:layout_width="0dip"
             android:layout_height="@dimen/mbrc_notification_expanded_button_height"
             android:layout_weight="1"
-            android:background="@drawable/selectable_background_mbrc_default"
+            android:background="@drawable/selectable_background"
             android:contentDescription="@string/main_button_next_description"
             android:focusable="false"
             android:src="@drawable/ic_action_next" />
@@ -124,7 +124,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:background="@drawable/selectable_background_mbrc_default"
+        android:background="@drawable/selectable_background"
         android:contentDescription="@string/description_button_notification_close"
         android:padding="@dimen/small_margin"
         android:src="@drawable/ic_action_collapse" />

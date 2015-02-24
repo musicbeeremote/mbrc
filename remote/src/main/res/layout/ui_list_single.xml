@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="0"
-        android:background="@drawable/selectable_background_mbrc_default"
+        android:background="@drawable/selectable_background"
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/normal_margin"
         android:paddingRight="@dimen/normal_margin">

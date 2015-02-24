@@ -16,7 +16,7 @@
         android:id="@+id/settings_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mbrc_drawer_item_height"
-        android:background="@drawable/ui_drawer_clickable_background"
+        android:background="@drawable/selectable_background"
         android:clickable="true"
         android:orientation="vertical">
 
@@ -33,7 +33,7 @@
         android:id="@+id/help_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mbrc_drawer_item_height"
-        android:background="@drawable/ui_drawer_clickable_background"
+        android:background="@drawable/selectable_background"
         android:clickable="true"
         android:orientation="vertical">
 
@@ -50,7 +50,7 @@
         android:id="@+id/connect_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mbrc_drawer_item_height"
-        android:background="@drawable/ui_drawer_clickable_background"
+        android:background="@drawable/selectable_background"
         android:clickable="true"
         android:orientation="vertical">
 
@@ -67,7 +67,7 @@
         android:id="@+id/exit_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mbrc_drawer_item_height"
-        android:background="@drawable/ui_drawer_clickable_background"
+        android:background="@drawable/selectable_background"
         android:clickable="true"
         android:orientation="vertical">
 

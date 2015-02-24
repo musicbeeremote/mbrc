@@ -78,10 +78,10 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
-            def file = output.outputFile
+            def originalFilename = output.outputFile
             def versionInfo = "-v" + variant.mergedFlavor.versionCode + "-" + variant.mergedFlavor.versionName + "-" + gitSha()
-            def filename = file.name.replace(".apk", versionInfo + ".apk").replace(project.name, defaultConfig.applicationId);
-            output.outputFile = new File(file.parent, filename)
+            def filename = originalFilename.name.replace(".apk", versionInfo + ".apk").replace(project.name, defaultConfig.applicationId);
+            output.outputFile = file(filename)
         }
     }
 }

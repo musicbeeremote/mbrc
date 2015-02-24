@@ -169,7 +169,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
-            android:background="@drawable/selectable_background_mbrc_default"
+            android:background="@drawable/selectable_background"
             android:contentDescription="@string/main_button_mute_description"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_volume_mute"
@@ -214,7 +214,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/selectable_background_mbrc_default"
+            android:background="@drawable/selectable_background"
             android:contentDescription="@string/main_button_repeat_description"
             android:src="@drawable/ic_media_repeat" />
 
@@ -224,7 +224,7 @@
             android:layout_height="48dp"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
-            android:background="@drawable/selectable_background_mbrc_default"
+            android:background="@drawable/selectable_background"
             android:contentDescription="@string/main_button_previous_description"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_previous" />
@@ -235,7 +235,7 @@
             android:layout_height="68dp"
             android:layout_marginLeft="13dp"
             android:layout_marginRight="13dp"
-            android:background="@drawable/selectable_background_mbrc_default"
+            android:background="@drawable/selectable_background"
             android:clickable="true"
             android:contentDescription="@string/main_button_play_pause_description"
             android:scaleType="fitCenter"
@@ -247,7 +247,7 @@
             android:layout_height="48dp"
             android:layout_marginEnd="20dp"
             android:layout_marginRight="20dp"
-            android:background="@drawable/selectable_background_mbrc_default"
+            android:background="@drawable/selectable_background"
             android:contentDescription="@string/main_button_next_description"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_media_next" />
@@ -257,7 +257,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/selectable_background_mbrc_default"
+            android:background="@drawable/selectable_background"
             android:contentDescription="@string/main_button_shuffle_description"
             android:src="@drawable/ic_media_shuffle" />
     </LinearLayout>
