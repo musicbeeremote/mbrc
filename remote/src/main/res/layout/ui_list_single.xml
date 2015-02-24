@@ -9,37 +9,37 @@
               android:gravity="center_vertical">
 
     <TextView
-            android:id="@+id/line_one"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/side_margin"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:text="@string/artist_placeholder"
-            android:textColor="@color/remoteText"
-            android:textSize="@dimen/list_item_one"
-            android:textStyle="normal"
-            android:focusableInTouchMode="false"
-            tools:ignore="RtlHardcoded,RtlSymmetry"/>
+        android:id="@+id/line_one"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:focusableInTouchMode="false"
+        android:paddingLeft="@dimen/normal_margin"
+        android:singleLine="true"
+        android:text="@string/artist_placeholder"
+        android:textColor="@color/remoteText"
+        android:textSize="@dimen/list_item_one"
+        android:textStyle="normal"
+        tools:ignore="RtlHardcoded,RtlSymmetry" />
 
     <LinearLayout
-            android:id="@+id/ui_item_context_indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/selectable_background_mbrc_default"
-            android:layout_weight="0"
-            android:paddingRight="@dimen/side_margin"
-            android:paddingLeft="@dimen/side_margin"
-            android:gravity="center_vertical">
+        android:id="@+id/ui_item_context_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:background="@drawable/selectable_background_mbrc_default"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/normal_margin"
+        android:paddingRight="@dimen/normal_margin">
 
         <ImageView
-                android:id="@+id/list_item_track_overflow"
-                android:layout_gravity="center_vertical"
-                android:layout_width="wrap_content"
-                android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
-                android:tint="@android:color/white"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/abc_action_menu_overflow_description"/>
+            android:id="@+id/list_item_track_overflow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/abc_action_menu_overflow_description"
+            android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+            android:tint="@android:color/white" />
     </LinearLayout>
 </LinearLayout>

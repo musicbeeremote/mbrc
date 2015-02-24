@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/lastfm_scrobble"
+        android:checkable="true"
+        android:title="@string/lastfm_scrobble" />
 
+    <item
+        android:id="@+id/autodj_option"
+        android:checkable="true"
+        android:title="@string/menu_autodj"/>
+    <item
+        android:id="@+id/lastfm_love"
+        android:icon="@drawable/ic_media_lfm_loved"
+        android:title="@string/lastfm_love"
+        app:showAsAction="always" />
 </menu>

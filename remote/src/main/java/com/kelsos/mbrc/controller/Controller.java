@@ -26,7 +26,7 @@ public class Controller extends RoboService {
     private final IBinder mBinder = new ControllerBinder();
     @Inject private Injector injector;
     @Inject private Bus bus;
-    private Map<String, Class<?>> commandMap;
+    private Map<String, Class<? extends ICommand>> commandMap;
 
     public Controller() {
     }
@@ -35,16 +35,16 @@ public class Controller extends RoboService {
         return mBinder;
     }
 
-    public void register(String type, Class<?> command) {
+    public void register(String type, Class<? extends ICommand> command) {
         if (commandMap == null) {
-            commandMap = new HashMap<String, Class<?>>();
+            commandMap = new HashMap<>();
         }
         if (!commandMap.containsKey(type)) {
             commandMap.put(type, command);
         }
     }
 
-    public void unregister(String type, Class<?> command) {
+    public void unregister(String type, Class<? extends ICommand> command) {
         if (commandMap.containsKey(type) && commandMap.get(type).equals(command)) {
             commandMap.remove(type);
         }
@@ -60,7 +60,7 @@ public class Controller extends RoboService {
     }
 
     public void executeCommand(IEvent event) {
-        Class<ICommand> commandClass = (Class<ICommand>) this.commandMap.get(event.getType());
+        final Class<? extends ICommand> commandClass = commandMap.get(event.getType());
         if (commandClass == null) return;
         ICommand commandInstance;
         try {
@@ -77,6 +77,7 @@ public class Controller extends RoboService {
     }
 
     public class ControllerBinder extends Binder {
+        @SuppressWarnings("unused")
         ControllerBinder getService() {
             return ControllerBinder.this;
         }
@@ -86,10 +87,6 @@ public class Controller extends RoboService {
         bus.register(this);
         CommandRegistration.register(this);
         return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override public void onStart(Intent intent, int startId) {
-        super.onStart(intent, startId);
     }
 
     @Override public void onDestroy() {

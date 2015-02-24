@@ -38,6 +38,7 @@ public class MainDataModel {
     private boolean iShuffleActive;
     private boolean isScrobblingActive;
     private boolean isMuteActive;
+    private boolean isAutoDjActive;
     private PlayState playState;
     private ArrayList<TrackEntry> searchTracks;
     private ArrayList<AlbumEntry> searchAlbums;
@@ -62,31 +63,45 @@ public class MainDataModel {
         iShuffleActive = false;
         isScrobblingActive = false;
         isMuteActive = false;
+        isAutoDjActive = false;
         playState = PlayState.Stopped;
         cover = null;
         rating = 0;
         lyrics = "";
 
-        searchArtists = new ArrayList<ArtistEntry>();
-        searchAlbums = new ArrayList<AlbumEntry>();
-        searchGenres = new ArrayList<GenreEntry>();
-        searchTracks = new ArrayList<TrackEntry>();
-        nowPlayingList = new ArrayList<MusicTrack>();
+        searchArtists = new ArrayList<>();
+        searchAlbums = new ArrayList<>();
+        searchGenres = new ArrayList<>();
+        searchTracks = new ArrayList<>();
+        nowPlayingList = new ArrayList<>();
         lfmRating = LfmStatus.NORMAL;
         pluginVersion = "";
 
     }
 
     public void setLfmRating(String rating) {
-        if (rating.equals("Love")) {
-            lfmRating = LfmStatus.LOVED;
-        } else if (rating.equals("Ban")) {
-            lfmRating = LfmStatus.BANNED;
-        } else {
-            lfmRating = LfmStatus.NORMAL;
+        switch (rating) {
+            case "Love":
+                lfmRating = LfmStatus.LOVED;
+                break;
+            case "Ban":
+                lfmRating = LfmStatus.BANNED;
+                break;
+            default:
+                lfmRating = LfmStatus.NORMAL;
+                break;
         }
 
         bus.post(new LfmRatingChanged(lfmRating));
+    }
+
+    public void setAutoDjActive(boolean isActive) {
+        isAutoDjActive = isActive;
+        bus.post(new AutoDjChange(isAutoDjActive));
+    }
+
+    @Produce public AutoDjChange produceAutoDjState() {
+        return new AutoDjChange(isAutoDjActive);
     }
 
     public void setPluginVersion(String pluginVersion) {

@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android"
-          android:exitFadeDuration="@android:integer/config_mediumAnimTime">
-    <item android:state_activated="true"
-          android:drawable="@drawable/ui_drawer_drawable"/>
-    <item android:state_checked="true"
-          android:drawable="@drawable/ui_drawer_drawable"/>
-    <item android:state_pressed="false"
+          xmlns:tools="http://schemas.android.com/tools"
+          android:exitFadeDuration="@android:integer/config_mediumAnimTime"
+          tools:ignore="UnusedAttribute">
+
+    <item android:drawable="@drawable/ui_drawer_drawable"
+          android:state_activated="true" />
+
+    <item android:drawable="@drawable/ui_drawer_drawable"
+          android:state_checked="true" />
+
+    <item android:drawable="@drawable/list_focused_mbrc_default"
           android:state_focused="true"
-          android:drawable="@drawable/list_focused_mbrc_default"/>
-    <item android:state_pressed="true"
-          android:drawable="@drawable/pressed_background_mbrc_default"/>
-    <item android:drawable="@drawable/ui_drawer_drawable"/>
+          android:state_pressed="false" />
+
+    <item android:drawable="@drawable/pressed_background_mbrc_default"
+          android:state_pressed="true" />
+
+    <item android:drawable="@drawable/ui_drawer_drawable" />
+
 </selector>
 
 

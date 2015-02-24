@@ -2,24 +2,20 @@ package com.kelsos.mbrc.ui.activities;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
-import com.avast.android.dialogs.fragment.ProgressDialogFragment;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ConnectionSettingsAdapter;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.ConnectionSettings;
-import com.kelsos.mbrc.enums.SettingsAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.events.ui.NotifyUser;
@@ -33,25 +29,24 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
     @Inject Bus bus;
     @InjectView(R.id.connection_scan) Button scanButton;
     @InjectView(R.id.connection_add) Button addButton;
-    @InjectView(R.id.connection_list) ListView connectionList;
 
-    private static final int GROUP_ID = 56;
-    private static final int DEFAULT = 11;
-    private static final int EDIT = 12;
-    private static final int DELETE = 13;
-
-    private DialogFragment mProgress;
+    private MaterialDialog mProgress;
     private Context mContext;
     private SnackBar mSnackBar;
+    @InjectView(R.id.connection_list)
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ui_activity_connection_manager);
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mSnackBar = new SnackBar(this);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mSnackBar = new SnackBar(this);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
     }
 
     @Override protected void onStart() {
@@ -62,13 +57,6 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
         getSupportActionBar().setTitle(R.string.connection_manager_title);
         scanButton.setOnClickListener(scanListener);
         addButton.setOnClickListener(addListener);
-        registerForContextMenu(connectionList);
-        connectionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                bus.post(new ChangeSettings(position, SettingsAction.DEFAULT));
-            }
-        });
     }
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {
@@ -76,49 +64,18 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
             case android.R.id.home:
                 onBackPressed();
                 break;
-        }
-        return true;
-    }
-
-    @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(GROUP_ID, DEFAULT, 0, getString(R.string.connectivity_manager_default));
-        menu.add(GROUP_ID, EDIT, 0, getString(R.string.connectivity_manager_edit));
-        menu.add(GROUP_ID, DELETE, 0, getString(R.string.connectivity_manager_delete));
-        menu.setHeaderTitle(getString(R.string.connectivity_manager_header));
-        super.onCreateContextMenu(menu, v, menuInfo);
-    }
-
-    @Override public boolean onContextItemSelected(android.view.MenuItem item) {
-        AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        switch (item.getItemId()) {
-            case DEFAULT:
-                bus.post(new ChangeSettings(mi.position, SettingsAction.DEFAULT));
-                break;
-            case EDIT:
-                SettingsDialogFragment settingsDialog = new SettingsDialogFragment();
-                ConnectionSettingsAdapter mAdapter = (ConnectionSettingsAdapter) connectionList.getAdapter();
-                Bundle args = new Bundle();
-                ConnectionSettings mSettings = mAdapter.getItem(mi.position);
-                args.putString("address", mSettings.getAddress());
-                args.putString("name", mSettings.getName());
-                args.putInt("port", mSettings.getPort());
-                args.putInt("index", mi.position);
-                settingsDialog.setArguments(args);
-                settingsDialog.show(getSupportFragmentManager(), "settings_dialog");
-                break;
-            case DELETE:
-                bus.post(new ChangeSettings(mi.position, SettingsAction.DELETE));
-                break;
+            default:
+                return false;
         }
         return true;
     }
 
     Button.OnClickListener scanListener = new Button.OnClickListener() {
         @Override public void onClick(View view) {
-            ProgressDialogFragment.ProgressDialogBuilder mBuilder = ProgressDialogFragment.createBuilder(mContext,
-                    getSupportFragmentManager());
-            mBuilder.setMessage(R.string.progress_scanning_message);
-            mBuilder.setTitle(R.string.progress_scanning);
+            MaterialDialog.Builder mBuilder = new MaterialDialog.Builder(mContext);
+            mBuilder.title(R.string.progress_scanning);
+            mBuilder.content(R.string.progress_scanning_message);
+            mBuilder.progress(true, 0);
             mProgress = mBuilder.show();
             bus.post(new MessageEvent(UserInputEventType.StartDiscovery));
         }
@@ -134,15 +91,14 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
         }
     };
 
-    @Override public void onDialogPositiveClick(DialogFragment dialog, ConnectionSettings settings) {
+    @Override public void onDialogPositiveClick(SettingsDialogFragment dialog, ConnectionSettings settings) {
         bus.post(settings);
     }
 
     @Subscribe public void handleConnectionSettingsChange(ConnectionSettingsChanged event) {
-        ConnectionSettingsAdapter mAdapter = new ConnectionSettingsAdapter(this,
-                R.layout.ui_list_connection_settings, event.getmSettings());
+        ConnectionSettingsAdapter mAdapter = new ConnectionSettingsAdapter(event.getmSettings(), bus);
         mAdapter.setDefaultIndex(event.getDefaultIndex());
-        connectionList.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Subscribe public void handleDiscoveryStopped(DiscoveryStopped event) {

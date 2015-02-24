@@ -1,103 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/mini_control_height"
-        android:layout_marginTop="1dp"
-        android:background="@color/background_material_dark">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/mini_control_height"
+                android:layout_marginTop="1dp"
+                android:background="@color/background_material_dark">
 
     <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="#ffffff"/>
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="#ffffff" />
 
     <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:paddingTop="1dp">
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingTop="1dp">
 
         <ImageView
-                android:layout_width="@dimen/mini_control_height"
-                android:layout_height="@dimen/mini_control_height"
-                android:id="@+id/mc_track_cover"
-                android:src="@drawable/ic_image_no_cover"
-                android:contentDescription="@string/main_image_view_cover_description"
-                android:scaleType="fitCenter"
-                android:padding="1dp"/>
+            android:id="@+id/mc_track_cover"
+            android:layout_width="@dimen/mini_control_height"
+            android:layout_height="@dimen/mini_control_height"
+            android:contentDescription="@string/description_album_cover"
+            android:padding="1dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_image_no_cover" />
 
         <LinearLayout
-                android:layout_width="0dip"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:id="@+id/relativeLayout"
-                android:layout_marginLeft="@dimen/side_margin_half"
-                android:layout_gravity="left"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
+            android:id="@+id/relativeLayout"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:layout_marginLeft="@dimen/small_margin"
+            android:layout_marginStart="@dimen/small_margin"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
             <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#FFFFFF"
-                    android:singleLine="true"
-                    android:ellipsize="end"
-                    android:text="@string/title_placeholder"
-                    android:textSize="18sp"
-                    android:id="@+id/mc_track_title"
-                    android:layout_gravity="left|center_vertical"/>
+                android:id="@+id/mc_track_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/abc_text_size_title_material"
+                tools:text="All night" />
 
             <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="@string/artist_placeholder"
-                    android:textSize="14sp"
-                    android:id="@+id/mc_track_artist"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_alignParentLeft="false"
-                    android:layout_alignParentStart="false"
-                    />
+                android:id="@+id/mc_track_artist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textSize="@dimen/abc_text_size_subtitle_material_toolbar"
+                tools:text="Parov Stelar" />
 
         </LinearLayout>
 
         <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:baselineAligned="false"
-                >
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false">
 
             <ImageButton
-                    android:layout_width="@dimen/mini_control_height"
-                    android:layout_height="@dimen/mini_control_height"
-                    android:id="@+id/mc_prev_track"
-                    android:background="@drawable/selectable_background_mbrc_default"
-                    android:src="@drawable/ic_action_previous"
-                    android:baselineAlignBottom="false"
-                    android:contentDescription="@string/main_button_previous_description"/>
+                android:id="@+id/mc_prev_track"
+                android:layout_width="@dimen/mini_control_height"
+                android:layout_height="@dimen/mini_control_height"
+                android:background="@drawable/selectable_background_mbrc_default"
+                android:baselineAlignBottom="false"
+                android:contentDescription="@string/main_button_previous_description"
+                android:src="@drawable/ic_action_previous" />
 
             <ImageButton
-                    android:layout_width="@dimen/mini_control_height"
-                    android:layout_height="@dimen/mini_control_height"
-                    android:id="@+id/mc_play_pause"
-                    android:background="@drawable/selectable_background_mbrc_default"
-                    android:src="@drawable/ic_action_play"
-                    android:baselineAlignBottom="false"
-                    android:contentDescription="@string/main_button_play_pause_description"/>
+                android:id="@+id/mc_play_pause"
+                android:layout_width="@dimen/mini_control_height"
+                android:layout_height="@dimen/mini_control_height"
+                android:background="@drawable/selectable_background_mbrc_default"
+                android:baselineAlignBottom="false"
+                android:contentDescription="@string/main_button_play_pause_description"
+                android:src="@drawable/ic_action_play" />
 
             <ImageButton
-                    android:layout_width="@dimen/mini_control_height"
-                    android:layout_height="@dimen/mini_control_height"
-                    android:id="@+id/mc_next_track"
-                    android:background="@drawable/selectable_background_mbrc_default"
-                    android:src="@drawable/ic_action_next"
-                    android:baselineAlignBottom="false"
-                    android:contentDescription="@string/main_button_next_description"/>
+                android:id="@+id/mc_next_track"
+                android:layout_width="@dimen/mini_control_height"
+                android:layout_height="@dimen/mini_control_height"
+                android:background="@drawable/selectable_background_mbrc_default"
+                android:baselineAlignBottom="false"
+                android:contentDescription="@string/main_button_next_description"
+                android:src="@drawable/ic_action_next" />
 
         </LinearLayout>
 
     </LinearLayout>
-
 
 </RelativeLayout>

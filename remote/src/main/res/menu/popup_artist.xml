@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item  android:id="@+id/popup_artist_play"
-           android:title="@string/menu_play"/>
-    <item android:id="@+id/popup_artist_album"
-          android:title="@string/menu_artist_albums"/>
-    <item android:id="@+id/popup_artist_queue_next"
-        android:title="@string/menu_queue_next"/>
-    <item android:id="@+id/popup_artist_queue_last"
-          android:title="@string/menu_queue_last"/>
+    <item
+        android:id="@+id/popup_artist_play"
+        android:title="@string/menu_play" />
+    <item
+        android:id="@+id/popup_artist_album"
+        android:title="@string/menu_artist_albums" />
+    <item
+        android:id="@+id/popup_artist_queue_next"
+        android:title="@string/menu_queue_next" />
+    <item
+        android:id="@+id/popup_artist_queue_last"
+        android:title="@string/menu_queue_last" />
 </menu>

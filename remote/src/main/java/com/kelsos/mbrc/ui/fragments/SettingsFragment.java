@@ -101,17 +101,21 @@ public class SettingsFragment extends PreferenceFragment {
         }
     }
     private void showLicenseDialog() {
-        WebViewDialog.WebDialogBuilder builder = WebViewDialog.createBuilder(mContext, getFragmentManager());
-        builder.setTitle(R.string.musicbee_remote_license_title);
-        builder.setUrl("file:///android_asset/license.html");
-        builder.show();
+        Bundle args = new Bundle();
+        args.putString(WebViewDialog.ARG_URL, "file:///android_asset/license.html");
+        args.putInt(WebViewDialog.ARG_TITLE, R.string.musicbee_remote_license_title);
+        WebViewDialog dialog = new WebViewDialog();
+        dialog.setArguments(args);
+        dialog.show(getActivity().getSupportFragmentManager(),"license_dialog");
     }
 
     private void showOpenSourceLicenseDialog() {
-        WebViewDialog.WebDialogBuilder builder = WebViewDialog.createBuilder(mContext, getFragmentManager());
-        builder.setTitle(R.string.open_source_licenses_title);
-        builder.setUrl("file:///android_asset/licenses.html");
-        builder.show();
+        Bundle args = new Bundle();
+        args.putString(WebViewDialog.ARG_URL, "file:///android_asset/licenses.html");
+        args.putInt(WebViewDialog.ARG_TITLE, R.string.open_source_licenses_title);
+        WebViewDialog dialog = new WebViewDialog();
+        dialog.setArguments(args);
+        dialog.show(getActivity().getSupportFragmentManager(), "licenses_dialogs");
     }
 
     @Override

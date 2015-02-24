@@ -1,8 +1,10 @@
 package com.kelsos.mbrc.utilities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -26,6 +28,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 @Singleton
@@ -112,11 +115,18 @@ public class SettingsManager {
         return mPreferences.getBoolean(mContext.getString(R.string.settings_key_notification_control), true);
     }
 
+    @SuppressLint("NewApi")
     private void storeSettings() {
         SharedPreferences.Editor editor = mPreferences.edit();
         try {
             editor.putString(mContext.getString(R.string.settings_key_array), mMapper.writeValueAsString(mSettings));
-            editor.apply();
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+                editor.apply();
+            } else {
+                editor.commit();
+            }
+
             bus.post(new ConnectionSettingsChanged(mSettings, 0));
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
@@ -132,12 +142,20 @@ public class SettingsManager {
                     updateDefault(0, settings);
                     bus.post(new MessageEvent(UserInputEventType.SettingsChanged));
                 }
+                Collections.sort(mSettings);
+                int maxElementIndex = mSettings.size() - 1;
+                int settingsIndex = 0;
+                if (maxElementIndex >= 0) {
+                    settingsIndex = mSettings.get(maxElementIndex).getIndex() + 1;
+                }
+                settings.updateIndex(settingsIndex);
                 mSettings.add(settings);
                 storeSettings();
             } else {
                 bus.post(new NotifyUser(R.string.notification_settings_stored));
             }
         } else {
+            Collections.sort(mSettings);
             mSettings.set(settings.getIndex(), settings);
             if (settings.getIndex() == defaultIndex) {
                 bus.post(new MessageEvent(UserInputEventType.SettingsChanged));
@@ -146,19 +164,29 @@ public class SettingsManager {
         }
     }
 
+    @SuppressLint("NewApi")
     private void updateDefault(int index, ConnectionSettings settings) {
         SharedPreferences.Editor editor = mPreferences.edit();
         editor.putString(mContext.getString(R.string.settings_key_hostname), settings.getAddress());
         editor.putInt(mContext.getString(R.string.settings_key_port), settings.getPort());
         editor.putInt(mContext.getString(R.string.settings_key_default_index), index);
-        editor.apply();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            editor.apply();
+        } else {
+            editor.commit();
+        }
         defaultIndex = index;
     }
 
+    @SuppressLint("NewApi")
     public void setLastUpdated(Date lastChecked) {
         SharedPreferences.Editor editor = mPreferences.edit();
         editor.putLong(mContext.getString(R.string.settings_key_last_update_check), lastChecked.getTime());
-        editor.apply();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            editor.apply();
+        } else {
+            editor.commit();
+        }
     }
 
     public Date getLastUpdated() {
@@ -172,8 +200,8 @@ public class SettingsManager {
     @Subscribe public void handleSettingsChange(ChangeSettings event) {
         switch (event.getAction()) {
             case DELETE:
-                mSettings.remove(event.getIndex());
-                if (event.getIndex() == defaultIndex && mSettings.size() > 0) {
+                mSettings.remove(event.getSettings());
+                if (event.getSettings().getIndex() == defaultIndex && mSettings.size() > 0) {
                     updateDefault(0, mSettings.get(0));
                     bus.post(new MessageEvent(UserInputEventType.SettingsChanged));
                 } else {
@@ -181,12 +209,10 @@ public class SettingsManager {
                 }
                 storeSettings();
                 break;
-            case EDIT:
-                break;
             case DEFAULT:
-                ConnectionSettings settings = mSettings.get(event.getIndex());
-                updateDefault(event.getIndex(), settings);
-                bus.post(new ConnectionSettingsChanged(mSettings, event.getIndex()));
+                ConnectionSettings settings = mSettings.get(event.getSettings().getIndex());
+                updateDefault(event.getSettings().getIndex(), settings);
+                bus.post(new ConnectionSettingsChanged(mSettings, event.getSettings().getIndex()));
                 bus.post(new MessageEvent(UserInputEventType.SettingsChanged));
                 break;
         }
@@ -208,7 +234,8 @@ public class SettingsManager {
         isFirstRun = false;
         return new DisplayDialog(run);
     }
-    
+
+    @SuppressLint("NewApi")
     private void checkForFirstRunAfterUpdate() {
         try {
             long lastVersionCode = mPreferences.getLong(mContext.
@@ -220,7 +247,12 @@ public class SettingsManager {
 
                 SharedPreferences.Editor editor = mPreferences.edit();
                 editor.putLong(mContext.getString(R.string.settings_key_last_version_run), currentVersion);
-                editor.apply();
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+                    editor.apply();
+                } else {
+                    editor.commit();
+                }
 
                 if (BuildConfig.DEBUG) {
                     Log.d("mbrc-log", "update or fresh install");

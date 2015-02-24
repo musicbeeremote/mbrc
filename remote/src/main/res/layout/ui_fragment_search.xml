@@ -6,31 +6,29 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-
     <android.support.v4.view.ViewPager
-            android:id="@+id/search_pager"
-            android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1">
+        android:id="@+id/search_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1">
 
         <android.support.v4.view.PagerTabStrip
-                android:layout_gravity="top"
-                android:textColor="@color/primary_text_default_material_light"
-                android:id="@+id/pager_tab_strip"
-                android:background="@color/colorPrimary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            android:id="@+id/pager_tab_strip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/primary_text_default_material_light">
 
         </android.support.v4.view.PagerTabStrip>
 
     </android.support.v4.view.ViewPager>
 
     <fragment
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/mini_control_height"
-            android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
-            android:layout="@layout/ui_fragment_mini_control"
-            tools:layout="@layout/ui_fragment_mini_control"
-            />
+        android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mini_control_height"
+        android:layout="@layout/ui_fragment_mini_control"
+        tools:layout="@layout/ui_fragment_mini_control" />
 
 </LinearLayout>

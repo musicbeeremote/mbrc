@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
+import android.text.TextUtils;
 import android.util.Log;
 
 import android.view.*;
@@ -40,7 +41,6 @@ public class MainFragment extends RoboFragment {
     @InjectView(R.id.main_artist_label) TextView artistLabel;
     @InjectView(R.id.main_title_label) TextView titleLabel;
     @InjectView(R.id.main_label_album) TextView albumLabel;
-    @InjectView(R.id.main_label_year) TextView yearLabel;
     @InjectView(R.id.main_track_progress_current) TextView trackProgressCurrent;
     @InjectView(R.id.main_track_duration_total) TextView trackDuration;
     @InjectView(R.id.main_button_play_pause) ImageButton playPauseButton;
@@ -48,15 +48,12 @@ public class MainFragment extends RoboFragment {
     @InjectView(R.id.main_button_next) ImageButton nextButton;
     @InjectView(R.id.main_volume_seeker) SeekBar volumeSlider;
     @InjectView(R.id.main_track_progress_seeker) SeekBar trackProgressSlider;
-    @InjectView(R.id.main_button_stop) ImageButton stopButton;
     @InjectView(R.id.main_mute_button) ImageButton muteButton;
-    @InjectView(R.id.main_last_fm_button) ImageButton scrobbleButton;
     @InjectView(R.id.main_shuffle_button) ImageButton shuffleButton;
     @InjectView(R.id.main_repeat_button) ImageButton repeatButton;
     @InjectView(R.id.main_album_cover_image_view) ImageView albumCover;
     @InjectView(R.id.ratingWrapper) LinearLayout ratingWrapper;
     @InjectView(R.id.track_rating_bar) RatingBar trackRating;
-    @InjectView(R.id.main_lfm_love_button) ImageButton lfmLoveButton;
 
     private ShareActionProvider mShareActionProvider;
     private boolean userChangingVolume;
@@ -90,22 +87,23 @@ public class MainFragment extends RoboFragment {
             bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerNext, true)));
         }
     };
-    private View.OnClickListener stopButtonListener = new View.OnClickListener() {
+    private View.OnLongClickListener stopButtonListener = new View.OnLongClickListener() {
 
-        public void onClick(View v) {
+        /**
+         * Called when a view has been clicked and held.
+         *
+         * @param v The view that was clicked and held.
+         * @return true if the callback consumed the long click, false otherwise.
+         */
+        @Override public boolean onLongClick(View v) {
             bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerStop, true)));
+            return true;
         }
     };
     private View.OnClickListener muteButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
             bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerMute, Const.TOGGLE)));
-        }
-    };
-    private View.OnClickListener scrobbleButtonListener = new View.OnClickListener() {
-
-        public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerScrobble, Const.TOGGLE)));
         }
     };
     private View.OnClickListener shuffleButtonListener = new View.OnClickListener() {
@@ -118,13 +116,6 @@ public class MainFragment extends RoboFragment {
 
         public void onClick(View v) {
             bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerRepeat, Const.TOGGLE)));
-        }
-    };
-
-    private View.OnLongClickListener lfmLongClickListener = new View.OnLongClickListener() {
-        @Override public boolean onLongClick(View view) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingLfmRating, "Ban")));
-            return true;
         }
     };
 
@@ -208,13 +199,6 @@ public class MainFragment extends RoboFragment {
             }
         }
     };
-    private ImageButton.OnClickListener lfmLoveClicked = new ImageButton.OnClickListener() {
-
-        @Override
-        public void onClick(View view) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingLfmRating, Const.TOGGLE)));
-        }
-    };
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -245,18 +229,13 @@ public class MainFragment extends RoboFragment {
         try {
             ratingWrapper.setVisibility(View.INVISIBLE);
             trackRating.setOnRatingBarChangeListener(ratingChangeListener);
-            lfmLoveButton.setOnClickListener(lfmLoveClicked);
-            lfmLoveButton.setOnLongClickListener(lfmLongClickListener);
-
             playPauseButton.setOnClickListener(playButtonListener);
             previousButton.setOnClickListener(previousButtonListener);
             nextButton.setOnClickListener(nextButtonListener);
             volumeSlider.setOnSeekBarChangeListener(volumeChangeListener);
             trackProgressSlider.setOnSeekBarChangeListener(durationSeekBarChangeListener);
-            stopButton.setOnClickListener(stopButtonListener);
-            stopButton.setEnabled(false);
+            playPauseButton.setOnLongClickListener(stopButtonListener);
             muteButton.setOnClickListener(muteButtonListener);
-            scrobbleButton.setOnClickListener(scrobbleButtonListener);
             shuffleButton.setOnClickListener(shuffleButtonListener);
             repeatButton.setOnClickListener(repeatButtonListener);
             albumCover.setOnClickListener(coverOnClick);
@@ -274,16 +253,15 @@ public class MainFragment extends RoboFragment {
             artistLabel.setSelected(true);
             titleLabel.setSelected(true);
             albumLabel.setSelected(true);
-            yearLabel.setSelected(true);
 
             Typeface robotoLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
             Typeface robotoRegular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
-            artistLabel.setTypeface(robotoLight);
-            titleLabel.setTypeface(robotoLight);
-            albumLabel.setTypeface(robotoLight);
-            yearLabel.setTypeface(robotoLight);
-            trackProgressCurrent.setTypeface(robotoRegular);
-            trackDuration.setTypeface(robotoRegular);
+            Typeface robotoMedium = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_medium.ttf");
+            artistLabel.setTypeface(robotoRegular);
+            titleLabel.setTypeface(robotoMedium);
+            albumLabel.setTypeface(robotoMedium);
+            trackProgressCurrent.setTypeface(robotoMedium);
+            trackDuration.setTypeface(robotoMedium);
         } catch (Exception ignore) {
 
         }
@@ -315,11 +293,6 @@ public class MainFragment extends RoboFragment {
         }
     }
 
-    @Subscribe public void handleScrobbleChange(ScrobbleChange change) {
-        if (scrobbleButton == null) return;
-        scrobbleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_scrobble_red : R.drawable.ic_media_scrobble_off);
-    }
-
     @Subscribe public void handleCoverEvent(final CoverAvailable cevent) {
         if (albumCover == null) return;
         if (cevent.getIsAvailable()) {
@@ -344,39 +317,37 @@ public class MainFragment extends RoboFragment {
         if (!userChangingVolume)
             volumeSlider.setProgress(change.getVolume());
         if (muteButton == null) return;
-        muteButton.setImageResource(change.getIsMute() ? R.drawable.ic_media_mute_active : R.drawable.ic_media_mute_full);
+        muteButton.setImageResource(change.getIsMute() ? R.drawable.ic_volume_mute : R.drawable.ic_volume_full);
     }
 
     @Subscribe public void handlePlayStateChange(final PlayStateChange change) {
-        if (playPauseButton == null || stopButton == null) return;
+        if (playPauseButton == null) return;
         switch (change.getState()) {
             case Playing:
                 playPauseButton.setImageResource(R.drawable.ic_media_pause);
                 playPauseButton.setTag("Playing");
-                stopButton.setImageResource(R.drawable.ic_media_stop);
-                stopButton.setEnabled(true);				/* Start the animation if the track is playing*/
+
+                /* Start the animation if the track is playing*/
                 bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingPosition, true)));
                 trackProgressAnimation();
                 break;
             case Paused:
                 playPauseButton.setImageResource(R.drawable.ic_media_play);
                 playPauseButton.setTag("Paused");
-                stopButton.setEnabled(true);
         /* Stop the animation if the track is paused*/
                 stopTrackProgressAnimation();
                 break;
             case Stopped:
+                playPauseButton.setImageResource(R.drawable.ic_media_stop);
+                playPauseButton.setTag("Stopped");
         /* Stop the animation if the track is paused*/
                 stopTrackProgressAnimation();
                 activateStoppedState();
+                break;
             case Undefined:
                 playPauseButton.setImageResource(R.drawable.ic_media_play);
-                stopButton.setImageResource(R.drawable.ic_media_stop_disabled);
-                stopButton.setEnabled(false);
                 break;
         }
-
-
     }
 
     /**
@@ -396,7 +367,7 @@ public class MainFragment extends RoboFragment {
         /* If the scheduled tasks is not null then cancel it and clear it along with the timer to create them anew */
         final int TIME_PERIOD = 1;
         stopTrackProgressAnimation();
-        if (!stopButton.isEnabled() || playPauseButton.getTag() == "Paused") return;
+        if (playPauseButton.getTag().equals("Stopped") || playPauseButton.getTag().equals("Paused")) return;
 
         final Runnable updateProgress = new Runnable() {
             @Override public void run() {
@@ -430,18 +401,18 @@ public class MainFragment extends RoboFragment {
     }
 
     private void activateStoppedState() {
-        if (trackProgressCurrent == null || trackProgressSlider == null || stopButton == null) return;
+        if (trackProgressCurrent == null || trackProgressSlider == null) return;
         trackProgressSlider.setProgress(0);
         trackProgressCurrent.setText("00:00");
-        stopButton.setEnabled(false);
     }
 
     @Subscribe public void handleTrackInfoChange(final TrackInfoChange change) {
         if (artistLabel == null) return;
         artistLabel.setText(change.getArtist());
         titleLabel.setText(change.getTitle());
-        albumLabel.setText(change.getAlbum());
-        yearLabel.setText(change.getYear());
+        albumLabel.setText(TextUtils.isEmpty(change.getYear())
+                ? change.getAlbum()
+                : String.format("%s [%s]", change.getAlbum(), change.getYear()));
 
         if (mShareActionProvider != null)
             mShareActionProvider.setShareIntent(getShareIntent());
@@ -451,20 +422,6 @@ public class MainFragment extends RoboFragment {
         if (change.getStatus() == ConnectionStatus.CONNECTION_OFF) {
             stopTrackProgressAnimation();
             activateStoppedState();
-        }
-    }
-
-    @Subscribe public void handleLfmStatusChange(final LfmRatingChanged event) {
-        switch (event.getStatus()) {
-            case LOVED:
-                lfmLoveButton.setImageResource(R.drawable.ic_media_lfm_loved);
-                break;
-            case BANNED:
-                lfmLoveButton.setImageResource(R.drawable.ic_media_lfm_banned);
-                break;
-            case NORMAL:
-                lfmLoveButton.setImageResource(R.drawable.ic_media_lfm_unloved);
-                break;
         }
     }
 

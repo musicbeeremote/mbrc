@@ -5,20 +5,20 @@
               android:orientation="vertical">
 
     <com.mobeta.android.dslv.DragSortListView
-            android:id="@+id/android:list"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="@dimen/side_margin_half"
-            android:clipToPadding="false"
-            android:divider="@null"
-            android:fitsSystemWindows="true"
-            tools:listitem="@layout/ui_list_track_item"
-            android:layout_weight="1"/>
+        android:id="@+id/android:list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/small_margin"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:divider="@null"
+        android:fitsSystemWindows="true"
+        tools:listitem="@layout/ui_list_track_item" />
 
     <fragment
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/mini_control_height"
-            android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
-            tools:layout="@layout/ui_fragment_mini_control"/>
+        android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/mini_control_height"
+        tools:layout="@layout/ui_fragment_mini_control" />
 
 </LinearLayout>

@@ -1,32 +1,37 @@
 package com.kelsos.mbrc.ui.dialogs;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.view.LayoutInflater;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
-import com.avast.android.dialogs.fragment.SimpleDialogFragment;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
+import roboguice.fragment.RoboDialogFragment;
 
-public class SettingsDialogFragment extends SimpleDialogFragment {
-    private EditText host;
-    private EditText name;
-    private EditText port;
+public class SettingsDialogFragment extends RoboDialogFragment {
 
-    private String cname;
-    private String caddress;
-    private int cport;
-    private int cindex;
+    public static final int MAX_PORT = 65535;
+    public static final int MIN_PORT = 1;
 
-    public interface SettingsDialogListener {
-        void onDialogPositiveClick(DialogFragment dialog, ConnectionSettings settings);
-    }
+    public static final String INDEX = "index";
+    public static final String PORT = "port";
+    public static final String ADDRESS = "address";
+    public static final String NAME = "name";
 
-    SettingsDialogListener mListener;
+    private EditText hostEdit;
+    private EditText nameEdit;
+    private EditText portEdit;
+
+    private String currentName;
+    private String currentAddress;
+    private int currentPort;
+    private int currentIndex;
+
+    private SettingsDialogListener mListener;
 
     @Override public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -38,65 +43,89 @@ public class SettingsDialogFragment extends SimpleDialogFragment {
         }
     }
 
+    public static SettingsDialogFragment newInstance(int index) {
+        SettingsDialogFragment fragment = new SettingsDialogFragment();
+        Bundle args = new Bundle();
+        args.putInt(INDEX, index);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
-    @Override protected Builder build(Builder builder) {
-        builder.setView(LayoutInflater.from(getActivity()).inflate(R.layout.ui_dialog_settings, null));
-        builder.setTitle(R.string.dialog_application_setup_title);
-        builder.setPositiveButton(R.string.settings_dialog_add, new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                SaveEntry();
+    public static SettingsDialogFragment newInstance(ConnectionSettings settings) {
+        SettingsDialogFragment fragment = new SettingsDialogFragment();
+        Bundle args = new Bundle();
+        args.putInt(INDEX, settings.getIndex());
+        args.putString(NAME, settings.getName());
+        args.putString(ADDRESS, settings.getAddress());
+        args.putInt(PORT, settings.getPort());
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
+        builder.customView(R.layout.ui_dialog_settings, false);
+        builder.title(R.string.settings_dialog_add);
+        builder.positiveText(R.string.settings_dialog_add);
+        builder.negativeText(android.R.string.cancel);
+        builder.callback(new MaterialDialog.ButtonCallback() {
+            @Override public void onPositive(MaterialDialog dialog) {
+
+                boolean shouldIClose = true;
+                String hostname = hostEdit.getText().toString();
+                String computerName = nameEdit.getText().toString();
+
+                if (hostname.length() == 0 || computerName.length() == 0) {
+                    shouldIClose = false;
+                }
+
+                String portText = portEdit.getText().toString();
+
+                int portNum = isNullOrEmpty(portText) ? 0 : Integer.parseInt(portText);
+                if (isValid(portNum) && shouldIClose) {
+                    ConnectionSettings settings = new ConnectionSettings(hostname, computerName, portNum, currentIndex);
+                    mListener.onDialogPositiveClick(SettingsDialogFragment.this, settings);
+                    dialog.dismiss();
+                }
+            }
+
+            @Override public void onNegative(MaterialDialog dialog) {
+                dialog.cancel();
             }
         });
-        builder.setNegativeButton(R.string.dialog_application_setup_negative, new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                SettingsDialogFragment.this.getDialog().cancel();
-            }
-        });
 
-        return builder;
+
+        final MaterialDialog materialDialog = builder.build();
+        final View view = materialDialog.getCustomView();
+        hostEdit = (EditText) view.findViewById(R.id.settings_dialog_host);
+        nameEdit = (EditText) view.findViewById(R.id.settings_dialog_name);
+        portEdit = (EditText) view.findViewById(R.id.settings_dialog_port);
+
+        return materialDialog;
     }
 
-    private void SaveEntry() {
-        boolean shouldIClose = true;
-        String hostname = host.getText().toString();
-        String computerName = name.getText().toString();
+    private boolean isNullOrEmpty(String portText) {
+        return portText == null || TextUtils.isEmpty(portText);
+    }
 
-        if (hostname.length() == 0 || computerName.length() == 0) {
-            shouldIClose = false;
-        }
+    @Override public void onStart() {
+        super.onStart();
+        nameEdit.setText(currentName);
+        hostEdit.setText(currentAddress);
 
-        String portText = port.getText().toString();
+        if (currentPort > 0) {
+            portEdit.setText(String.format("%d", currentPort));
 
-        int portNum = portText.equals("") ? 0 : Integer.parseInt(portText);
-
-        if (validatePortNumber(portNum) && shouldIClose) {
-            ConnectionSettings settings = new ConnectionSettings(hostname, computerName, portNum, cindex);
-            mListener.onDialogPositiveClick(this, settings);
-            dismiss();
         }
     }
 
-    @Override public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        name = (EditText) view.findViewById(R.id.settings_dialog_name);
-        host = (EditText) view.findViewById(R.id.settings_dialog_host);
-        port = (EditText) view.findViewById(R.id.settings_dialog_port);
 
-        if (name != null && name.getText().toString().equals("")) {
-            name.setText(cname);
-            host.setText(caddress);
-            if (cport > 0) {
-                port.setText(Integer.toString(cport));
-            }
-        }
-    }
-
-    private boolean validatePortNumber(int port) {
-        if (port < 1 || port > 65535) {
-            final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-            alert.setTitle(R.string.alert_invalid_range);
-            alert.setMessage(R.string.alert_invalid_port_number);
-            alert.setPositiveButton(android.R.string.ok, null);
+    private boolean isValid(int port) {
+        if (port < MIN_PORT || port > MAX_PORT) {
+            final MaterialDialog.Builder alert = new MaterialDialog.Builder(getActivity());
+            alert.title(R.string.alert_invalid_range);
+            alert.content(R.string.alert_invalid_port_number);
+            alert.positiveText(android.R.string.ok);
             alert.show();
             return false;
         } else {
@@ -104,18 +133,18 @@ public class SettingsDialogFragment extends SimpleDialogFragment {
         }
     }
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            cindex = args.getInt("index");
-            cport = args.getInt("port");
-            caddress = args.getString("address");
-            cname = args.getString("name");
+            currentIndex = args.getInt(INDEX);
+            currentPort = args.getInt(PORT);
+            currentAddress = args.getString(ADDRESS);
+            currentName = args.getString(NAME);
         }
+    }
+
+    public interface SettingsDialogListener {
+        void onDialogPositiveClick(SettingsDialogFragment dialog, ConnectionSettings settings);
     }
 }

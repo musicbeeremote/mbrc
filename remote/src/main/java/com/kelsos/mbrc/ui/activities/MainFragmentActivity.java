@@ -14,12 +14,14 @@ import android.view.*;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.constants.Const;
+import com.kelsos.mbrc.constants.Protocol;
+import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.DisplayDialog;
-import com.kelsos.mbrc.events.ui.DrawerEvent;
-import com.kelsos.mbrc.events.ui.NotifyUser;
+import com.kelsos.mbrc.events.ui.*;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.kelsos.mbrc.ui.fragments.LyricsFragment;
@@ -39,6 +41,7 @@ public class MainFragmentActivity extends RoboActionBarActivity {
     private boolean navChanged;
     private DialogFragment mDialog;
     private SnackBar mSnackBar;
+    private Menu menu;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -102,6 +105,7 @@ public class MainFragmentActivity extends RoboActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+        this.menu = menu;
         return true;
     }
 
@@ -129,6 +133,12 @@ public class MainFragmentActivity extends RoboActionBarActivity {
                 } else {
                     mDrawerLayout.openDrawer(mDrawerMenu);
                 }
+                return true;
+            case R.id.lastfm_scrobble:
+                bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerScrobble, Const.TOGGLE)));
+                return true;
+            case R.id.autodj_option:
+                bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerAutoDj, Const.TOGGLE)));
             default:
                 return false;
         }
@@ -236,5 +246,17 @@ public class MainFragmentActivity extends RoboActionBarActivity {
             default:
                 return super.onKeyUp(keyCode, event);
         }
+    }
+
+    @Subscribe public void handleScrobbleChange(ScrobbleChange event) {
+        if (menu == null) return;
+        MenuItem scrobbleMenuItem = menu.findItem(R.id.lastfm_scrobble);
+        scrobbleMenuItem.setChecked(event.getIsActive());
+    }
+
+    @Subscribe public void handleAutoDjChange(AutoDjChange event) {
+        if (menu == null) return;
+        MenuItem autoDjMenuItem = menu.findItem(R.id.autodj_option);
+        autoDjMenuItem.setChecked(event.getIsActive());
     }
 }

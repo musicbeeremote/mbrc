@@ -14,9 +14,8 @@
 		pauses it if it
 		is already playing.
 </string>
-    <string name="main_button_stop_description">When pressed it stops the playback.</string>
     <string name="main_button_next_description">When pressed it plays the next track.</string>
-    <string name="main_image_view_cover_description">It displays the album cover for the current track.
+    <string name="description_album_cover">It displays the album cover for the current track.
 </string>
     <string name="main_menu_settings">Settings</string>
     <string name="settings_connection">Connection Settings</string>
@@ -30,7 +29,6 @@
     <string name="main_label_artist">Konstantinos Paparas</string>
     <string name="main_label_duration_current">01:03</string>
     <string name="main_label_duration_total">04:11</string>
-    <string name="main_label_date">© 2012</string>
     <string name="main_label_album">Copyright</string>
     <string name="info_service_description">This service is responsible for the communication
 		of the application
@@ -38,16 +36,15 @@
 </string>
     <string name="application_description">Remote Control Application for MusicBee</string>
     <string name="main_menu_title_share">Share</string>
-    <string name="main_menu_title_settings">Settings</string>
     <string name="preferences_category_about">About MusicBee Remote</string>
-	<string name="preferences_about_version">MusicBee Remote Version</string>
-	<string name="alert_invalid_port_number">The valid port range is from 1 to 65535</string>
-	<string name="alert_invalid_range">"Invalid Range"</string>
-	<string name="notification_connection_timeout">Connection timed out</string>
-	<string name="notification_not_allowed">Client is not allowed</string>
-	<string name="now_playing_search">Search</string>
-	<string name="now_playing_search_hint">Search for a track</string>
-	<string name="notification_plugin_out_of_date">Your plugin is out of date, please update.</string>
+    <string name="preferences_about_version">MusicBee Remote Version</string>
+    <string name="alert_invalid_port_number">The valid port range is from 1 to 65535</string>
+    <string name="alert_invalid_range">"Invalid Range"</string>
+    <string name="notification_connection_timeout">Connection timed out</string>
+    <string name="notification_not_allowed">Client is not allowed</string>
+    <string name="now_playing_search">Search</string>
+    <string name="now_playing_search_hint">Search for a track</string>
+    <string name="notification_plugin_out_of_date">Your plugin is out of date, please update.</string>
     <string name="dialog_application_setup">The connection settings appear empty. Would you like to setup up
         the application now? </string>
     <string name="dialog_application_setup_title">Setup</string>
@@ -63,7 +60,6 @@
     <string name="main_button_lfm_love_description">Used to change the love state of the playing track</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-    <string name="ui_drawer_menu_version">MusicBee Remote %1$s</string>
     <string name="artist_placeholder">Artistname</string>
     <string name="title_placeholder">Titleplaceholder</string>
     <string name="connection_manager_scan">Scan</string>
@@ -71,15 +67,11 @@
     <string name="settings_dialog_add">Add</string>
     <string name="connection_manager_title">Connection Manager</string>
     <string name="settings_key_array">settings_array</string>
-    <string name="placeholer_computer_name">Computer Name</string>
-    <string name="place_holder_ip">192.168.100.10</string>
-    <string name="placeholder_port">3565</string>
     <string name="connection_default_description">Represents if this connection is the default selected connection
     </string>
     <string name="connectivity_manager_default">Set default</string>
     <string name="connectivity_manager_edit">Edit</string>
     <string name="connectivity_manager_delete">Delete</string>
-    <string name="connectivity_manager_header">Manage Connection</string>
     <string name="settings_version_number">v%1$s</string>
     <string name="settings_oss_license">Open source licenses</string>
     <string name="settings_version">settings_version</string>
@@ -90,19 +82,11 @@
     <string name="search_msg_artist_not_found">No artist found for the current search</string>
     <string name="search_msg_genre_not_found">No genres found for the current search</string>
     <string name="search_msg_track_not_found">No track found for the current search</string>
-    <string name="search_context_header">Actions</string>
-    <string name="search_context_queue_next">Queue Next</string>
-    <string name="search_context_queue_last">Queue Last</string>
-    <string name="search_context_play_now">Play Now</string>
-    <string name="search_context_get_artists">Get Artists</string>
-    <string name="search_context_get_albums">Get albums</string>
-    <string name="search_context_get_tracks">Get Tracks</string>
     <string name="con_man_no_wifi">This service is available only on a wifi connection</string>
     <string name="con_man_not_found">A remote service could not be found</string>
     <string name="con_man_success">Service successfully found</string>
     <string name="settings_key_default_index">mbrc_default_settings</string>
     <string name="notification_settings_stored">The specified settings already exist.</string>
-    <string name="album_placeholder">album title</string>
     <string name="settings_search_default_key">search_click_default</string>
     <string name="settings_manage_connections">Manage Connections</string>
     <string name="settings_search_default_title">Search list default action</string>
@@ -135,5 +119,11 @@
     <string name="menu_play">Play Now</string>
     <string name="menu_artist_albums">Get Albums</string>
     <string name="menu_genre_artists">Get Artists</string>
+    <string name="lastfm_scrobble">Last.fm Scrobbling</string>
+    <string name="lastfm_love">Love</string>
+    <string name="description_button_notification_close">Closes the notification.</string>
+    <string name="description_divider">A divider between elements</string>
+    <string name="description_checkable_linearlayout_icon">Icon of the layout.</string>
+    <string name="menu_autodj">AutoDJ</string>
 
 </resources>

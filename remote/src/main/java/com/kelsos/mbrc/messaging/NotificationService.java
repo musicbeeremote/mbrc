@@ -41,12 +41,10 @@ public class NotificationService {
     private Notification mNotification;
     private NotificationManager mNotificationManager;
     private Context mContext;
-    private MainThreadBusWrapper bus;
     private SettingsManager mSettings;
 
     @Inject public NotificationService(Context context, MainThreadBusWrapper bus, SettingsManager mSettings) {
         this.mContext = context;
-        this.bus = bus;
         this.mSettings = mSettings;
         mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         bus.register(this);
@@ -178,6 +176,7 @@ public class NotificationService {
         mNotificationManager.cancel(notificationId);
     }
 
+    @SuppressLint("NewApi")
     public void updateAvailableNotificationBuilder() {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
                 .setSmallIcon(R.drawable.ic_mbrc_status)
@@ -185,7 +184,12 @@ public class NotificationService {
                 .setContentText(mContext.getString(R.string.notification_plugin_out_of_date));
 
         Intent resultIntent = new Intent(Intent.ACTION_VIEW);
-        resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        } else {
+            resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+
         resultIntent.setData(Uri.parse("http://kelsos.net/musicbeeremote/download/"));
 
         PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext, 0, resultIntent,

@@ -3,33 +3,30 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
+              android:background="@color/mbrc_background"
               android:baselineAligned="true"
               android:gravity="top"
-              android:orientation="vertical"
-              android:background="@color/mbrc_background">
+              android:orientation="vertical">
 
     <ListView
-            android:id="@+id/lyrics_list_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1"
-            android:layout_marginLeft="@dimen/side_margin_half"
-            android:layout_marginRight="@dimen/side_margin_half"
-            android:layout_marginTop="@dimen/side_margin_half"
-            android:layout_marginBottom="@dimen/side_margin_half"
-            android:divider="@null"
-            android:dividerHeight="0dip"
-            android:fastScrollEnabled="true"
-            android:listSelector="@android:color/transparent"
-            tools:listitem="@layout/ui_list_lyrics_item">
-    </ListView>
+        android:id="@+id/lyrics_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:divider="@null"
+        android:dividerHeight="0dip"
+        android:fastScrollEnabled="true"
+        android:listSelector="@android:color/transparent"
+        android:paddingLeft="@dimen/normal_margin"
+        android:paddingRight="@dimen/normal_margin"
+        android:paddingTop="@dimen/small_margin"
+        tools:listitem="@layout/ui_list_lyrics_item"/>
 
     <fragment
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/mini_control_height"
-            android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
-            android:layout="@layout/ui_fragment_mini_control"
-            tools:layout="@layout/ui_fragment_mini_control"
-            />
+        android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mini_control_height"
+        android:layout="@layout/ui_fragment_mini_control"
+        tools:layout="@layout/ui_fragment_mini_control" />
 
 </LinearLayout>

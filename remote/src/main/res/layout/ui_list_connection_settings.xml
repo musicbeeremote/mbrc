@@ -1,62 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
-              android:layout_height="48dp"
-              android:background="@drawable/ui_list_item_background"
-              android:gravity="center_vertical">
+              android:layout_height="@dimen/list_dual_item_height"
+              android:orientation="horizontal">
 
     <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="0dip"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:layout_height="fill_parent"
-            android:layout_marginLeft="@dimen/side_margin_half"
-            android:layout_marginRight="@dimen/side_margin_half">
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/normal_margin"
+        android:paddingLeft="@dimen/normal_margin"
+        android:paddingRight="@dimen/normal_margin"
+        android:paddingStart="@dimen/normal_margin">
 
         <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:textColor="#FFFFFF"
-                android:text="@string/placeholer_computer_name"
-                android:id="@+id/cs_list_name"
-                android:lines="1"
-                android:linksClickable="false"
-                android:textSize="18sp"/>
+            android:id="@+id/cs_list_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:linksClickable="false"
+            android:textColor="@color/remoteText"
+            android:textSize="@dimen/text_subhead_size"
+            tools:text="Computer Name" />
 
         <LinearLayout
-                android:layout_width="fill_parent"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/cs_list_host"
+                android:layout_width="0dip"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_weight="1"
+                android:textColor="@color/remoteSecondaryText"
+                android:textSize="@dimen/text_body_size"
+                tools:text="192.168.100.10" />
 
             <TextView
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:text="@string/place_holder_ip"
-                    android:id="@+id/cs_list_host"
-                    android:textSize="14sp"
-                    android:layout_weight="1"/>
-
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/placeholder_port"
-                    android:textSize="14sp"
-                    android:id="@+id/cs_list_port"
-                    />
+                android:id="@+id/cs_list_port"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/remoteSecondaryText"
+                android:textSize="@dimen/text_body_size"
+                tools:text="3132" />
         </LinearLayout>
+
     </LinearLayout>
 
     <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/cs_list_default"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_alignParentEnd="true"
-            android:contentDescription="@string/connection_default_description"/>
+        android:id="@+id/cs_list_default"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginBottom="4dp"
+        android:layout_marginEnd="@dimen/small_margin"
+        android:layout_marginRight="@dimen/small_margin"
+        android:layout_marginTop="4dp"
+        android:contentDescription="@string/connection_default_description"
+        android:enabled="false" />
+
+    <LinearLayout
+        android:id="@+id/cs_list_overflow"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:background="@drawable/selectable_background_mbrc_default"
+        android:gravity="center_vertical"
+        android:padding="@dimen/normal_margin">
+
+        <ImageView
+            android:id="@+id/list_item_track_overflow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/abc_action_menu_overflow_description"
+            android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+            android:tint="@android:color/white" />
+    </LinearLayout>
 
 </LinearLayout>

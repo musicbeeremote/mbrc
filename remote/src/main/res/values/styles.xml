@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Menu"/>
+
+    <style name="Menu" />
+
     <style name="Menu.Title">
         <item name="android:textAppearance">?android:attr/textAppearance</item>
         <item name="android:textColor">@color/remoteText</item>

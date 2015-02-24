@@ -4,7 +4,6 @@
     <color name="mbrc_pressed_default">#44ffffff</color>
     <color name="mbrc_selected_item">#11ffffff</color>
     <color name="mbrc_background">#ff424242</color>
-    <color name="mbrc_drawer_seperator">#0e0e0e</color>
     <color name="remoteText">#ffffffff</color>
     <color name="remoteSecondaryText">#b3ffffff</color>
     <color name="mbrc_transparent_dark">#99000000</color>

@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="mbrc_cover">400dp</dimen>
-    <dimen name="mbrc_artist_text_size">18sp</dimen>
-    <dimen name="mbrc_title_text_size">20sp</dimen>
-    <dimen name="mbrc_album_text_size">16sp</dimen>
-    <dimen name="mbrc_year_text_size">14sp</dimen>
+    <dimen name="cover_height">350dp</dimen>
     <dimen name="mbrc_duration_text_size">12sp</dimen>
-    <dimen name="mbrc_top_text">50dp</dimen>
-    <dimen name="mbrc_control_button">55dp</dimen>
-    <dimen name="mbrc_secondary_control_button">40dp</dimen>
+    <dimen name="medium_button_size">48dp</dimen>
+    <dimen name="large_button_size">68dp</dimen>
+    <dimen name="small_button_size">30dp</dimen>
+    <dimen name="center_button_margin">25dp</dimen>
+    <dimen name="second_tier_button_margin">40dp</dimen>
 </resources>

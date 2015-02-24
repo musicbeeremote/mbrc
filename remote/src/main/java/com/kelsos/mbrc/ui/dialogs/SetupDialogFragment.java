@@ -1,27 +1,32 @@
 package com.kelsos.mbrc.ui.dialogs;
 
+import android.app.Dialog;
 import android.content.Intent;
-import android.view.View;
-import com.avast.android.dialogs.core.BaseDialogFragment;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.activities.SettingsActivity;
+import roboguice.fragment.RoboDialogFragment;
 
-public class SetupDialogFragment extends BaseDialogFragment {
+public class SetupDialogFragment extends RoboDialogFragment {
 
-    @Override protected Builder build(Builder builder) {
-        builder.setMessage(R.string.dialog_application_setup);
-        builder.setTitle(R.string.dialog_application_setup_title);
-        builder.setPositiveButton(R.string.dialog_application_setup_positive, new View.OnClickListener() {
-            @Override public void onClick(View v) {
+    @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
+        builder.content(R.string.dialog_application_setup);
+        builder.title(R.string.dialog_application_setup_title);
+        builder.positiveText(R.string.dialog_application_setup_positive);
+        builder.negativeText(R.string.dialog_application_setup_negative);
+        builder.callback(new MaterialDialog.ButtonCallback() {
+            @Override public void onPositive(MaterialDialog dialog) {
                 SetupDialogFragment.this.dismiss();
                 startActivity(new Intent(getActivity(), SettingsActivity.class));
             }
-        });
-        builder.setNegativeButton(R.string.dialog_application_setup_negative, new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                SetupDialogFragment.this.getDialog().cancel();
+
+            @Override public void onNegative(MaterialDialog dialog) {
+                SetupDialogFragment.this.dismiss();
             }
         });
-        return builder;
+        return builder.build();
     }
 }
