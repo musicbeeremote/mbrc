@@ -7,8 +7,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 import com.google.inject.Inject;
@@ -21,10 +23,14 @@ import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.squareup.otto.Subscribe;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 @Singleton
 public class NotificationService {
     public static final int PLUGIN_OUT_OF_DATE = 15612;
     public static final int NOW_PLAYING_PLACEHOLDER = 15613;
+
     public static final String NOTIFICATION_PLAY_PRESSED = "com.kelsos.mbrc.notification.play";
     public static final String NOTIFICATION_NEXT_PRESSED = "com.kelsos.mbrc.notification.next";
     public static final String NOTIFICATION_CLOSE_PRESSED = "com.kelsos.mbrc.notification.close";
@@ -52,34 +58,12 @@ public class NotificationService {
 
     @Subscribe public void handleNotificationData(final NotificationDataAvailable event) {
         if (!mSettings.isNotificationControlEnabled()) return;
-        notificationBuilder(event.getTitle(), event.getArtist(), event.getAlbum(), event.getCover(), event.getState());
-    }
-
-    private boolean isJellyBean() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
-    }
-
-    private void updateNormalNotification(final String artist, final String title, final Bitmap cover) {
-        mNormalView.setTextViewText(R.id.notification_artist, artist);
-        mNormalView.setTextViewText(R.id.notification_title, title);
-        if (cover != null) {
-            mNormalView.setImageViewBitmap(R.id.notification_album_art, cover);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            notificationBuilder(event.getTitle(), event.getArtist(), event.getAlbum(), event.getCover(), event.getState());
         } else {
-            mNormalView.setImageViewResource(R.id.notification_album_art, R.drawable.ic_image_no_cover);
+            buildLollipopNotification(event);
         }
-    }
 
-    private void updateExpandedNotification(final String artist, final String title, final String album,
-                                            final Bitmap cover) {
-        mExpandedView.setTextViewText(R.id.expanded_notification_line_one, title);
-        mExpandedView.setTextViewText(R.id.expanded_notification_line_two, artist);
-        mExpandedView.setTextViewText(R.id.expanded_notification_line_three, album);
-
-        if (cover != null) {
-            mExpandedView.setImageViewBitmap(R.id.expanded_notification_cover, cover);
-        } else {
-            mExpandedView.setImageViewResource(R.id.expanded_notification_cover, R.drawable.ic_image_no_cover);
-        }
     }
 
     /**
@@ -128,24 +112,53 @@ public class NotificationService {
         mNotificationManager.notify(NOW_PLAYING_PLACEHOLDER, mNotification);
     }
 
-    private void updatePlayState(final PlayState state) {
-        if (mNormalView == null || mNotification == null) {
-            return;
+    /**
+     * Builds a {@link Notification.MediaStyle} style Notification to display.
+     * Used only on {@link android.os.Build.VERSION_CODES#LOLLIPOP}.
+     *
+     * @param event A notification event that the notification service received
+     */
+    @SuppressLint("NewApi")
+    private void buildLollipopNotification(NotificationDataAvailable event) {
+        int playStateIcon = event.getState() == PlayState.Playing
+                ? R.drawable.ic_action_pause
+                : R.drawable.ic_action_play;
+
+        Notification.Builder builder = new Notification.Builder(mContext)
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setSmallIcon(R.drawable.ic_mbrc_status)
+                .addAction(R.drawable.ic_action_previous, "Previous", getPendingIntent(PREVIOUS))
+                .addAction(playStateIcon, "Play/Pause", getPendingIntent(PLAY))
+                .addAction(R.drawable.ic_action_next, "Next", getPendingIntent(NEXT))
+                .setStyle(new Notification.MediaStyle()
+                        .setShowActionsInCompactView(1, 2))
+                .setContentTitle(event.getTitle())
+                .setContentText(event.getArtist())
+                .setSubText(event.getAlbum());
+
+        if (event.getCover() != null) {
+            builder.setLargeIcon(event.getCover());
+        } else {
+            Bitmap icon = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_image_no_cover);
+            builder.setLargeIcon(icon);
         }
 
-        mNormalView.setImageViewResource(R.id.notification_play, state == PlayState.Playing ?
-                R.drawable.ic_action_pause :
-                R.drawable.ic_action_play);
+        mNotification = builder.build();
 
-        if (isJellyBean() && mExpandedView != null) {
+        mNotificationManager.notify(NOW_PLAYING_PLACEHOLDER, mNotification);
+    }
 
-            mExpandedView.setImageViewResource(R.id.expanded_notification_playpause, state == PlayState.Playing ?
-                    R.drawable.ic_action_pause :
-                    R.drawable.ic_action_play);
+    private void updateNormalNotification(final String artist, final String title, final Bitmap cover) {
+        mNormalView.setTextViewText(R.id.notification_artist, artist);
+        mNormalView.setTextViewText(R.id.notification_title, title);
+        if (cover != null) {
+            mNormalView.setImageViewBitmap(R.id.notification_album_art, cover);
+        } else {
+            mNormalView.setImageViewResource(R.id.notification_album_art, R.drawable.ic_image_no_cover);
         }
     }
 
-    private PendingIntent getPendingIntent(int id) {
+    private PendingIntent getPendingIntent(@ButtonAction int id) {
         switch (id) {
             case OPEN:
                 Intent notificationIntent = new Intent(mContext, MainFragmentActivity.class);
@@ -169,6 +182,40 @@ public class NotificationService {
                         PendingIntent.FLAG_UPDATE_CURRENT);
             default:
                 throw new IndexOutOfBoundsException();
+        }
+    }
+
+    private boolean isJellyBean() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+    }
+
+    private void updateExpandedNotification(final String artist, final String title, final String album,
+                                            final Bitmap cover) {
+        mExpandedView.setTextViewText(R.id.expanded_notification_line_one, title);
+        mExpandedView.setTextViewText(R.id.expanded_notification_line_two, artist);
+        mExpandedView.setTextViewText(R.id.expanded_notification_line_three, album);
+
+        if (cover != null) {
+            mExpandedView.setImageViewBitmap(R.id.expanded_notification_cover, cover);
+        } else {
+            mExpandedView.setImageViewResource(R.id.expanded_notification_cover, R.drawable.ic_image_no_cover);
+        }
+    }
+
+    private void updatePlayState(final PlayState state) {
+        if (mNormalView == null || mNotification == null) {
+            return;
+        }
+
+        mNormalView.setImageViewResource(R.id.notification_play, state == PlayState.Playing ?
+                R.drawable.ic_action_pause :
+                R.drawable.ic_action_play);
+
+        if (isJellyBean() && mExpandedView != null) {
+
+            mExpandedView.setImageViewResource(R.id.expanded_notification_playpause, state == PlayState.Playing ?
+                    R.drawable.ic_action_pause :
+                    R.drawable.ic_action_play);
         }
     }
 
@@ -199,4 +246,8 @@ public class NotificationService {
         notification.flags = Notification.FLAG_AUTO_CANCEL;
         mNotificationManager.notify(PLUGIN_OUT_OF_DATE, notification);
     }
+
+    @IntDef({OPEN, PLAY, CLOSE, PREVIOUS, NEXT})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ButtonAction { }
 }

@@ -19,7 +19,7 @@ android {
         applicationId "com.kelsos.mbrc"
         minSdkVersion 8
         targetSdkVersion 21
-        versionCode 94
+        versionCode 95
         versionName "0.10.0.3"
         buildConfigField "String", "GIT_SHA", "\"${gitSha()}\""
         buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""

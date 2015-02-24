@@ -3,7 +3,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/mbrc_notification_expanded_height">
+                android:layout_height="128dip">
+
+    <!-- Please keep the height above hardcoded removing it will cause an android.app.RemoteServiceException -->
 
     <ImageView
         android:id="@+id/expanded_notification_cover"
