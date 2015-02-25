@@ -40,7 +40,6 @@ public class MainFragmentActivity extends RoboActionBarActivity {
     private DisplayFragment mDisplay;
     private boolean navChanged;
     private DialogFragment mDialog;
-    private SnackBar mSnackBar;
     private Menu menu;
 
     @Override
@@ -51,22 +50,20 @@ public class MainFragmentActivity extends RoboActionBarActivity {
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-        mSnackBar = new SnackBar(this);
-
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerMenu = findViewById(R.id.drawer_menu);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.drawer_open, R.string.drawer_close) {
+            public void onDrawerOpened(View view) {
+                invalidateOptionsMenu();
+            }
+
             public void onDrawerClosed(View view) {
                 invalidateOptionsMenu();
                 if (navChanged) {
                     navigateToView();
                 }
-            }
-
-            public void onDrawerOpened(View view) {
-                invalidateOptionsMenu();
             }
         };
 
@@ -91,30 +88,6 @@ public class MainFragmentActivity extends RoboActionBarActivity {
         fragmentTransaction.commit();
     }
 
-    private void closeDrawer() {
-        if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
-            mDrawerLayout.closeDrawer(mDrawerMenu);
-        }
-    }
-
-    @Override public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        this.menu = menu;
-        return true;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-    }
-
     @Override public void onStart() {
         super.onStart();
         bus.register(this);
@@ -125,71 +98,15 @@ public class MainFragmentActivity extends RoboActionBarActivity {
         bus.unregister(this);
     }
 
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
-                    mDrawerLayout.closeDrawer(mDrawerMenu);
-                } else {
-                    mDrawerLayout.openDrawer(mDrawerMenu);
-                }
-                return true;
-            case R.id.lastfm_scrobble:
-                bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerScrobble, Const.TOGGLE)));
-                return true;
-            case R.id.autodj_option:
-                bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerAutoDj, Const.TOGGLE)));
-            default:
-                return false;
-        }
-    }
-
-    @Override protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
-    }
-
-    @Subscribe public void ShowSetupDialog(DisplayDialog event) {
-        if (mDialog != null) return;
-        if (event.getDialogType() == DisplayDialog.SETUP) {
-            mDialog = new SetupDialogFragment();
-            mDialog.show(getSupportFragmentManager(), "SetupDialogFragment");
-        } else if (event.getDialogType() == DisplayDialog.UPGRADE) {
-            mDialog = new UpgradeDialogFragment();
-            mDialog.show(getSupportFragmentManager(), "UpgradeDialogFragment");
-        } else if (event.getDialogType() == DisplayDialog.INSTALL) {
-            mDialog = new UpgradeDialogFragment();
-            ((UpgradeDialogFragment)mDialog).setNewInstall(true);
-            mDialog.show(getSupportFragmentManager(), "UpgradeDialogFragment");
-        }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
 
     }
 
-    @Subscribe public void handleDrawerEvent(DrawerEvent event) {
-        if (event.isCloseDrawer()) {
-            closeDrawer();
-        } else {
-            navChanged = true;
-            mDisplay = event.getNavigate();
-            closeDrawer();
-        }
-    }
-
-    private void replaceFragment(Fragment fragment, String tag) {
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        int bsCount = fragmentManager.getBackStackEntryCount();
-
-        for (int i = 0; i < bsCount; i++) {
-            int bsId = fragmentManager.getBackStackEntryAt(i).getId();
-            fragmentManager.popBackStack(bsId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }
-
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, fragment);
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        fragmentTransaction.addToBackStack(tag);
-        fragmentTransaction.commit();
+    @Override public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     private void navigateToView() {
@@ -215,12 +132,107 @@ public class MainFragmentActivity extends RoboActionBarActivity {
         navChanged = false;
     }
 
+    private void replaceFragment(Fragment fragment, String tag) {
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        int bsCount = fragmentManager.getBackStackEntryCount();
+
+        for (int i = 0; i < bsCount; i++) {
+            int bsId = fragmentManager.getBackStackEntryAt(i).getId();
+            fragmentManager.popBackStack(bsId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        fragmentTransaction.addToBackStack(tag);
+        fragmentTransaction.commit();
+    }
+
+    @Override protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                return true;
+            default:
+                return super.onKeyUp(keyCode, event);
+        }
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        this.menu = menu;
+        return true;
+    }
+
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
+                    mDrawerLayout.closeDrawer(mDrawerMenu);
+                } else {
+                    mDrawerLayout.openDrawer(mDrawerMenu);
+                }
+                return true;
+            case R.id.lastfm_scrobble:
+                bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerScrobble, Const.TOGGLE)));
+                return true;
+            case R.id.autodj_option:
+                bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerAutoDj, Const.TOGGLE)));
+            default:
+                return false;
+        }
+    }
+
+    @Subscribe public void ShowSetupDialog(DisplayDialog event) {
+        if (mDialog != null) return;
+        if (event.getDialogType() == DisplayDialog.SETUP) {
+            mDialog = new SetupDialogFragment();
+            mDialog.show(getSupportFragmentManager(), "SetupDialogFragment");
+        } else if (event.getDialogType() == DisplayDialog.UPGRADE) {
+            mDialog = new UpgradeDialogFragment();
+            mDialog.show(getSupportFragmentManager(), "UpgradeDialogFragment");
+        } else if (event.getDialogType() == DisplayDialog.INSTALL) {
+            mDialog = new UpgradeDialogFragment();
+            ((UpgradeDialogFragment) mDialog).setNewInstall(true);
+            mDialog.show(getSupportFragmentManager(), "UpgradeDialogFragment");
+        }
+
+    }
+
+    @Subscribe public void handleDrawerEvent(DrawerEvent event) {
+        if (event.isCloseDrawer()) {
+            closeDrawer();
+        } else {
+            navChanged = true;
+            mDisplay = event.getNavigate();
+            closeDrawer();
+        }
+    }
+
+    private void closeDrawer() {
+        if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
+            mDrawerLayout.closeDrawer(mDrawerMenu);
+        }
+    }
+
     @Subscribe public void handleUserNotification(NotifyUser event) {
         final String message = event.isFromResource()
                 ? getString(event.getResId())
                 : event.getMessage();
 
-        mSnackBar.show(message);
+        new SnackBar.Builder(this)
+                .withMessage(message)
+                .withStyle(SnackBar.Style.INFO)
+                .show();
     }
 
     @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -233,18 +245,6 @@ public class MainFragmentActivity extends RoboActionBarActivity {
                 return true;
             default:
                 return super.onKeyDown(keyCode, event);
-        }
-    }
-
-    @Override
-    public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_VOLUME_UP:
-                return true;
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                return true;
-            default:
-                return super.onKeyUp(keyCode, event);
         }
     }
 

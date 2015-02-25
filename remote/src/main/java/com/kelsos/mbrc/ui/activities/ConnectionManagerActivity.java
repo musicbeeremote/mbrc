@@ -25,27 +25,42 @@ import com.squareup.otto.Subscribe;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
-public class ConnectionManagerActivity extends RoboActionBarActivity implements SettingsDialogFragment.SettingsDialogListener {
+public class ConnectionManagerActivity extends RoboActionBarActivity
+        implements SettingsDialogFragment.SettingsDialogListener {
     @Inject Bus bus;
     @InjectView(R.id.connection_scan) Button scanButton;
     @InjectView(R.id.connection_add) Button addButton;
-
+    Button.OnClickListener addListener = new Button.OnClickListener() {
+        @Override public void onClick(View view) {
+            SettingsDialogFragment settingsDialog = new SettingsDialogFragment();
+            Bundle args = new Bundle();
+            args.putInt("index", -1);
+            settingsDialog.setArguments(args);
+            settingsDialog.show(getSupportFragmentManager(), "settings_dialog");
+        }
+    };
     private MaterialDialog mProgress;
     private Context mContext;
-    private SnackBar mSnackBar;
+    Button.OnClickListener scanListener = new Button.OnClickListener() {
+        @Override public void onClick(View view) {
+            MaterialDialog.Builder mBuilder = new MaterialDialog.Builder(mContext);
+            mBuilder.title(R.string.progress_scanning);
+            mBuilder.content(R.string.progress_scanning_message);
+            mBuilder.progress(true, 0);
+            mProgress = mBuilder.show();
+            bus.post(new MessageEvent(UserInputEventType.StartDiscovery));
+        }
+    };
     @InjectView(R.id.connection_list)
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ui_activity_connection_manager);
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        mSnackBar = new SnackBar(this);
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
     }
 
@@ -69,27 +84,6 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
         }
         return true;
     }
-
-    Button.OnClickListener scanListener = new Button.OnClickListener() {
-        @Override public void onClick(View view) {
-            MaterialDialog.Builder mBuilder = new MaterialDialog.Builder(mContext);
-            mBuilder.title(R.string.progress_scanning);
-            mBuilder.content(R.string.progress_scanning_message);
-            mBuilder.progress(true, 0);
-            mProgress = mBuilder.show();
-            bus.post(new MessageEvent(UserInputEventType.StartDiscovery));
-        }
-    };
-
-    Button.OnClickListener addListener = new Button.OnClickListener() {
-        @Override public void onClick(View view) {
-            SettingsDialogFragment settingsDialog = new SettingsDialogFragment();
-            Bundle args = new Bundle();
-            args.putInt("index", -1);
-            settingsDialog.setArguments(args);
-            settingsDialog.show(getSupportFragmentManager(), "settings_dialog");
-        }
-    };
 
     @Override public void onDialogPositiveClick(SettingsDialogFragment dialog, ConnectionSettings settings) {
         bus.post(settings);
@@ -121,7 +115,10 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
                 break;
         }
 
-        mSnackBar.show(message);
+        new SnackBar.Builder(this)
+                .withMessage(message)
+                .withStyle(SnackBar.Style.INFO)
+                .show();
     }
 
     @Subscribe public void handleUserNotification(NotifyUser event) {
@@ -129,7 +126,10 @@ public class ConnectionManagerActivity extends RoboActionBarActivity implements 
                 ? getString(event.getResId())
                 : event.getMessage();
 
-        mSnackBar.show(message);
+        new SnackBar.Builder(this)
+                .withMessage(message)
+                .withStyle(SnackBar.Style.INFO)
+                .show();
     }
 
 
