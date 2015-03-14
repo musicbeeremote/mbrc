@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/mainLinearLayout"
+<RelativeLayout android:id="@+id/mainLinearLayout"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
                 android:orientation="vertical">
@@ -17,28 +18,49 @@
             android:adjustViewBounds="false"
             android:contentDescription="@string/description_album_cover"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_image_no_cover" />
+            android:src="@drawable/ic_image_no_cover"/>
 
-        <LinearLayout
-            android:id="@+id/ratingWrapper"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginBottom="1dp"
-            android:layout_marginLeft="1dp"
-            android:layout_marginRight="1dp"
-            android:background="@color/mbrc_transparent_dark"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom">
 
-            <RatingBar
-                android:id="@+id/track_rating_bar"
-                style="@style/RatingBar"
+            <TextView
+                android:id="@+id/main_track_progress_current"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:numStars="5"
-                android:stepSize="0.5" />
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:paddingEnd="@dimen/small_margin"
+                android:paddingLeft="@dimen/small_margin"
+                android:paddingRight="@dimen/small_margin"
+                android:shadowColor="@android:color/black"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1.5"
+                android:text="@string/main_label_duration_current"
+                android:textColor="@color/remoteText"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/main_track_duration_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:paddingEnd="@dimen/small_margin"
+                android:paddingLeft="@dimen/small_margin"
+                android:paddingRight="@dimen/small_margin"
+                android:shadowColor="@android:color/black"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1.5"
+                android:text="@string/main_label_duration_total"
+                android:textColor="@color/remoteText"
+                android:textSize="12sp"
+                tools:ignore="RelativeOverlap"/>
+        </RelativeLayout>
+
     </FrameLayout>
 
     <RelativeLayout
@@ -49,7 +71,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/album_cover_area"
+        android:layout_below="@+id/main_track_progress_seeker"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/normal_margin"
         android:paddingRight="@dimen/normal_margin">
@@ -65,9 +87,9 @@
             android:marqueeRepeatLimit="marquee_forever"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:text="@string/main_label_track_title"
             android:textColor="@color/remoteText"
-            android:textSize="@dimen/text_title_size" />
+            android:textSize="@dimen/text_title_size"
+            tools:text="Rock it for me"/>
 
         <TextView
             android:id="@+id/main_artist_label"
@@ -81,9 +103,9 @@
             android:marqueeRepeatLimit="marquee_forever"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:text="@string/main_label_artist"
             android:textColor="@color/remoteText"
-            android:textSize="@dimen/text_subhead_size" />
+            android:textSize="@dimen/text_subhead_size"
+            tools:text="Caravan Palace"/>
 
         <TextView
             android:id="@+id/main_label_album"
@@ -97,9 +119,9 @@
             android:marqueeRepeatLimit="marquee_forever"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:text="@string/main_label_album"
             android:textColor="@color/remoteText"
-            android:textSize="@dimen/text_body_size" />
+            android:textSize="@dimen/text_body_size"
+            tools:text="Panic [2012]"/>
 
     </RelativeLayout>
 
@@ -107,9 +129,10 @@
         android:id="@+id/main_media_button_group"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mbrc_info_tab_height"
-        android:layout_above="@+id/main_track_progress_group"
+        android:layout_alignParentBottom="true"
         android:gravity="center_vertical|center_horizontal"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/small_margin">
 
         <ImageButton
             android:id="@+id/main_repeat_button"
@@ -118,18 +141,18 @@
             android:layout_gravity="center_vertical"
             android:background="@drawable/selectable_background"
             android:contentDescription="@string/main_button_repeat_description"
-            android:src="@drawable/ic_media_repeat" />
+            android:src="@drawable/ic_media_repeat"/>
 
         <ImageButton
             android:id="@+id/main_button_previous"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
             android:background="@drawable/selectable_background"
             android:contentDescription="@string/main_button_previous_description"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_media_previous" />
+            android:src="@drawable/ic_action_previous"/>
 
         <ImageButton
             android:id="@+id/main_button_play_pause"
@@ -141,7 +164,7 @@
             android:clickable="true"
             android:contentDescription="@string/main_button_play_pause_description"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_media_play" />
+            android:src="@drawable/ic_media_play"/>
 
         <ImageButton
             android:id="@+id/main_button_next"
@@ -152,7 +175,7 @@
             android:background="@drawable/selectable_background"
             android:contentDescription="@string/main_button_next_description"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_media_next" />
+            android:src="@drawable/ic_media_next"/>
 
         <ImageButton
             android:id="@+id/main_shuffle_button"
@@ -161,7 +184,7 @@
             android:layout_gravity="center_vertical"
             android:background="@drawable/selectable_background"
             android:contentDescription="@string/main_button_shuffle_description"
-            android:src="@drawable/ic_media_shuffle" />
+            android:src="@drawable/ic_media_shuffle"/>
     </LinearLayout>
 
     <RelativeLayout
@@ -179,7 +202,7 @@
             android:contentDescription="@string/main_button_mute_description"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_volume_mute"
-            android:tint="@color/button_material_dark" />
+            android:tint="@color/button_material_dark"/>
 
         <SeekBar
             android:id="@+id/main_volume_seeker"
@@ -203,55 +226,26 @@
             android:progressDrawable="@drawable/ic_volume_bar_progress"
             android:secondaryProgress="0"
             android:thumb="@drawable/volume_thumb"
-            android:thumbOffset="6dp" />
+            android:thumbOffset="6dp"/>
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/main_track_progress_group"
+
+    <SeekBar
+        android:id="@+id/main_track_progress_seeker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:orientation="horizontal">
+        android:layout_below="@id/album_cover_area"
+        android:layout_gravity="top"
+        android:gravity="center"
+        android:maxHeight="4dp"
+        android:minHeight="4dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:progress="0"
+        android:progressDrawable="@drawable/ic_duration_bar_progress"
+        android:secondaryProgress="0"
+        android:thumb="@drawable/ic_duration_thumb"
+        android:thumbOffset="4dp"/>
 
-        <TextView
-            android:id="@+id/main_track_progress_current"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingEnd="@dimen/small_margin"
-            android:paddingLeft="@dimen/small_margin"
-            android:paddingRight="@dimen/small_margin"
-            android:text="@string/main_label_duration_current"
-            android:textColor="@color/remoteText"
-            android:textSize="12sp" />
-
-        <SeekBar
-            android:id="@+id/main_track_progress_seeker"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:maxHeight="6dp"
-            android:minHeight="6dp"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:progress="0"
-            android:progressDrawable="@drawable/ic_duration_bar_progress"
-            android:secondaryProgress="0"
-            android:thumb="@drawable/ic_duration_thumb"
-            android:thumbOffset="6dp" />
-
-        <TextView
-            android:id="@+id/main_track_duration_total"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingEnd="@dimen/small_margin"
-            android:paddingLeft="@dimen/small_margin"
-            android:paddingRight="@dimen/small_margin"
-            android:text="@string/main_label_duration_total"
-            android:textColor="@color/remoteText"
-            android:textSize="12sp" />
-    </LinearLayout>
 
 </RelativeLayout>

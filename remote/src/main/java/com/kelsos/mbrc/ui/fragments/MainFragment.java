@@ -4,13 +4,20 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
-import android.view.*;
-import android.view.animation.*;
-import android.widget.*;
-import android.support.v7.widget.ShareActionProvider;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
@@ -22,38 +29,60 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.*;
+import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
+import com.kelsos.mbrc.events.ui.CoverAvailable;
+import com.kelsos.mbrc.events.ui.PlayStateChange;
+import com.kelsos.mbrc.events.ui.RepeatChange;
+import com.kelsos.mbrc.events.ui.ShuffleChange;
+import com.kelsos.mbrc.events.ui.TrackInfoChange;
+import com.kelsos.mbrc.events.ui.UpdatePosition;
+import com.kelsos.mbrc.events.ui.VolumeChange;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import roboguice.fragment.RoboFragment;
-import roboguice.inject.InjectView;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import roboguice.fragment.RoboFragment;
+import roboguice.inject.InjectView;
+import roboguice.util.Ln;
+
 @Singleton
 public class MainFragment extends RoboFragment {
     // Injects
-    @Inject protected Bus bus;
+    @Inject
+    protected Bus bus;
     // Inject elements of the view
-    @InjectView(R.id.main_artist_label) TextView artistLabel;
-    @InjectView(R.id.main_title_label) TextView titleLabel;
-    @InjectView(R.id.main_label_album) TextView albumLabel;
-    @InjectView(R.id.main_track_progress_current) TextView trackProgressCurrent;
-    @InjectView(R.id.main_track_duration_total) TextView trackDuration;
-    @InjectView(R.id.main_button_play_pause) ImageButton playPauseButton;
-    @InjectView(R.id.main_button_previous) ImageButton previousButton;
-    @InjectView(R.id.main_button_next) ImageButton nextButton;
-    @InjectView(R.id.main_volume_seeker) SeekBar volumeSlider;
-    @InjectView(R.id.main_track_progress_seeker) SeekBar trackProgressSlider;
-    @InjectView(R.id.main_mute_button) ImageButton muteButton;
-    @InjectView(R.id.main_shuffle_button) ImageButton shuffleButton;
-    @InjectView(R.id.main_repeat_button) ImageButton repeatButton;
-    @InjectView(R.id.main_album_cover_image_view) ImageView albumCover;
-    @InjectView(R.id.ratingWrapper) LinearLayout ratingWrapper;
-    @InjectView(R.id.track_rating_bar) RatingBar trackRating;
+    @InjectView(R.id.main_artist_label)
+    TextView artistLabel;
+    @InjectView(R.id.main_title_label)
+    TextView titleLabel;
+    @InjectView(R.id.main_label_album)
+    TextView albumLabel;
+    @InjectView(R.id.main_track_progress_current)
+    TextView trackProgressCurrent;
+    @InjectView(R.id.main_track_duration_total)
+    TextView trackDuration;
+    @InjectView(R.id.main_button_play_pause)
+    ImageButton playPauseButton;
+    @InjectView(R.id.main_button_previous)
+    ImageButton previousButton;
+    @InjectView(R.id.main_button_next)
+    ImageButton nextButton;
+    @InjectView(R.id.main_volume_seeker)
+    SeekBar volumeSlider;
+    @InjectView(R.id.main_track_progress_seeker)
+    SeekBar trackProgressSlider;
+    @InjectView(R.id.main_mute_button)
+    ImageButton muteButton;
+    @InjectView(R.id.main_shuffle_button)
+    ImageButton shuffleButton;
+    @InjectView(R.id.main_repeat_button)
+    ImageButton repeatButton;
+    @InjectView(R.id.main_album_cover_image_view)
+    ImageView albumCover;
 
     private ShareActionProvider mShareActionProvider;
     private boolean userChangingVolume;
@@ -61,14 +90,6 @@ public class MainFragment extends RoboFragment {
     private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture mProgressUpdateHandler;
 
-    private RatingBar.OnRatingBarChangeListener ratingChangeListener = new RatingBar.OnRatingBarChangeListener() {
-        @Override
-        public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-            if (b) {
-                bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingRating, v)));
-            }
-        }
-    };
     private View.OnClickListener playButtonListener = new View.OnClickListener() {
 
         public void onClick(View v) {
@@ -95,7 +116,8 @@ public class MainFragment extends RoboFragment {
          * @param v The view that was clicked and held.
          * @return true if the callback consumed the long click, false otherwise.
          */
-        @Override public boolean onLongClick(View v) {
+        @Override
+        public boolean onLongClick(View v) {
             bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerStop, true)));
             return true;
         }
@@ -155,69 +177,29 @@ public class MainFragment extends RoboFragment {
         public void onStopTrackingTouch(SeekBar seekBar) {
         }
     };
-    private ImageView.OnClickListener coverOnClick = new ImageView.OnClickListener() {
 
-        boolean isActive = false;
-
-        @Override
-        public void onClick(View view) {
-
-            if (!isActive) {
-                final int fadeInDuration = 300;
-                final int timeBetween = 3000;
-                final int fadeOutDuration = 800;
-
-                Animation fadeIn = new AlphaAnimation(0, 1);
-                fadeIn.setInterpolator(new DecelerateInterpolator());
-                fadeIn.setDuration(fadeInDuration);
-
-                Animation fadeOut = new AlphaAnimation(1, 0);
-                fadeOut.setInterpolator(new AccelerateInterpolator());
-                fadeOut.setStartOffset(fadeInDuration + timeBetween);
-                fadeOut.setDuration(fadeOutDuration);
-
-                AnimationSet animation = new AnimationSet(false);
-                animation.addAnimation(fadeIn);
-                animation.addAnimation(fadeOut);
-                animation.setRepeatCount(1);
-
-                animation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override public void onAnimationStart(Animation animation) {
-                        isActive = true;
-                    }
-
-                    @Override public void onAnimationEnd(Animation animation) {
-                        isActive = false;
-                        ratingWrapper.setVisibility(View.INVISIBLE);
-                    }
-
-                    @Override public void onAnimationRepeat(Animation animation) {
-                    }
-                });
-                ratingWrapper.setVisibility(View.VISIBLE);
-                ratingWrapper.startAnimation(animation);
-            }
-        }
-    };
-
-    @Override public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         userChangingVolume = false;
     }
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ui_fragment_main, container, false);
     }
 
-    @Override public void onStart() {
+    @Override
+    public void onStart() {
         super.onStart();
         SetTextViewTypeface();
         RegisterListeners();
         bus.register(this);
     }
 
-    @Override public void onResume() {
+    @Override
+    public void onResume() {
         super.onResume();
         bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingPosition, true)));
     }
@@ -227,8 +209,6 @@ public class MainFragment extends RoboFragment {
      */
     private void RegisterListeners() {
         try {
-            ratingWrapper.setVisibility(View.INVISIBLE);
-            trackRating.setOnRatingBarChangeListener(ratingChangeListener);
             playPauseButton.setOnClickListener(playButtonListener);
             previousButton.setOnClickListener(previousButtonListener);
             nextButton.setOnClickListener(nextButtonListener);
@@ -238,11 +218,9 @@ public class MainFragment extends RoboFragment {
             muteButton.setOnClickListener(muteButtonListener);
             shuffleButton.setOnClickListener(shuffleButtonListener);
             repeatButton.setOnClickListener(repeatButtonListener);
-            albumCover.setOnClickListener(coverOnClick);
         } catch (Exception ignore) {
-
+            Ln.d(ignore);
         }
-
     }
 
     /**
@@ -254,7 +232,6 @@ public class MainFragment extends RoboFragment {
             titleLabel.setSelected(true);
             albumLabel.setSelected(true);
 
-            Typeface robotoLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
             Typeface robotoRegular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
             Typeface robotoMedium = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_medium.ttf");
             artistLabel.setTypeface(robotoRegular);
@@ -263,16 +240,18 @@ public class MainFragment extends RoboFragment {
             trackProgressCurrent.setTypeface(robotoMedium);
             trackDuration.setTypeface(robotoMedium);
         } catch (Exception ignore) {
-
+            Ln.d(ignore);
         }
     }
 
-    @Override public void onStop() {
+    @Override
+    public void onStop() {
         super.onStop();
         bus.unregister(this);
     }
 
-    @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.share, menu);
         MenuItem shareItem = menu.findItem(R.id.actionbar_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
@@ -287,13 +266,8 @@ public class MainFragment extends RoboFragment {
         return shareIntent;
     }
 
-    @Subscribe public void handleRatingChange(RatingChanged event) {
-        if (trackRating != null) {
-            trackRating.setRating(event.getRating());
-        }
-    }
-
-    @Subscribe public void handleCoverEvent(final CoverAvailable cevent) {
+    @Subscribe
+    public void handleCoverEvent(final CoverAvailable cevent) {
         if (albumCover == null) return;
         if (cevent.getIsAvailable()) {
             albumCover.setImageBitmap(cevent.getCover());
@@ -302,17 +276,20 @@ public class MainFragment extends RoboFragment {
         }
     }
 
-    @Subscribe public void handleShuffleChange(ShuffleChange change) {
+    @Subscribe
+    public void handleShuffleChange(ShuffleChange change) {
         if (shuffleButton == null) return;
         shuffleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_shuffle : R.drawable.ic_media_shuffle_off);
     }
 
-    @Subscribe public void updateRepeatButtonState(RepeatChange change) {
+    @Subscribe
+    public void updateRepeatButtonState(RepeatChange change) {
         if (repeatButton == null) return;
         repeatButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_repeat : R.drawable.ic_media_repeat_off);
     }
 
-    @Subscribe public void updateVolumeData(VolumeChange change) {
+    @Subscribe
+    public void updateVolumeData(VolumeChange change) {
         if (volumeSlider == null) return;
         if (!userChangingVolume)
             volumeSlider.setProgress(change.getVolume());
@@ -320,7 +297,8 @@ public class MainFragment extends RoboFragment {
         muteButton.setImageResource(change.getIsMute() ? R.drawable.ic_volume_mute : R.drawable.ic_volume_full);
     }
 
-    @Subscribe public void handlePlayStateChange(final PlayStateChange change) {
+    @Subscribe
+    public void handlePlayStateChange(final PlayStateChange change) {
         if (playPauseButton == null) return;
         switch (change.getState()) {
             case Playing:
@@ -367,32 +345,28 @@ public class MainFragment extends RoboFragment {
         /* If the scheduled tasks is not null then cancel it and clear it along with the timer to create them anew */
         final int TIME_PERIOD = 1;
         stopTrackProgressAnimation();
-        if (playPauseButton.getTag().equals("Stopped") || playPauseButton.getTag().equals("Paused")) return;
+        if (playPauseButton.getTag().equals("Stopped") || playPauseButton.getTag().equals("Paused"))
+            return;
 
-        final Runnable updateProgress = new Runnable() {
-            @Override public void run() {
+        final Runnable updateProgress = () -> {
 
-                int currentProgress = trackProgressSlider.getProgress() / 1000;
-                final int currentMinutes = currentProgress / 60;
-                final int currentSeconds = currentProgress % 60;
+            int currentProgress = trackProgressSlider.getProgress() / 1000;
+            final int currentMinutes = currentProgress / 60;
+            final int currentSeconds = currentProgress % 60;
 
-                if (getActivity() == null) return;
+            if (getActivity() == null) return;
 
-                getActivity().runOnUiThread(new Runnable() {
-
-                    @Override public void run() {
-                        try {
-                            if (trackProgressSlider == null) return;
-                            trackProgressSlider.setProgress(trackProgressSlider.getProgress() + 1000);
-                            trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
-                        } catch (Exception ex) {
-                            if (BuildConfig.DEBUG) {
-                                Log.d("mbrc-log:","animation timer", ex);
-                            }
-                        }
+            getActivity().runOnUiThread(() -> {
+                try {
+                    if (trackProgressSlider == null) return;
+                    trackProgressSlider.setProgress(trackProgressSlider.getProgress() + 1000);
+                    trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
+                } catch (Exception ex) {
+                    if (BuildConfig.DEBUG) {
+                        Log.d("mbrc-log:", "animation timer", ex);
                     }
-                });
-            }
+                }
+            });
         };
 
         mProgressUpdateHandler = progressScheduler.scheduleAtFixedRate(updateProgress, 0,
@@ -406,7 +380,8 @@ public class MainFragment extends RoboFragment {
         trackProgressCurrent.setText("00:00");
     }
 
-    @Subscribe public void handleTrackInfoChange(final TrackInfoChange change) {
+    @Subscribe
+    public void handleTrackInfoChange(final TrackInfoChange change) {
         if (artistLabel == null) return;
         artistLabel.setText(change.getArtist());
         titleLabel.setText(change.getTitle());
@@ -418,7 +393,8 @@ public class MainFragment extends RoboFragment {
             mShareActionProvider.setShareIntent(getShareIntent());
     }
 
-    @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChange change) {
+    @Subscribe
+    public void handleConnectionStatusChange(final ConnectionStatusChange change) {
         if (change.getStatus() == ConnectionStatus.CONNECTION_OFF) {
             stopTrackProgressAnimation();
             activateStoppedState();
@@ -429,10 +405,12 @@ public class MainFragment extends RoboFragment {
      * Responsible for updating the displays and seekbar responsible for the display of the track duration and the
      * current progress of playback
      */
-    @Subscribe public void handlePositionUpdate(UpdatePosition position) {
+    @Subscribe
+    public void handlePositionUpdate(UpdatePosition position) {
         final int total = position.getTotal();
         final int current = position.getCurrent();
-        if (trackProgressCurrent == null || trackProgressSlider == null || trackDuration == null) return;
+        if (trackProgressCurrent == null || trackProgressSlider == null || trackDuration == null)
+            return;
         if (total == 0) {
             bus.post(new MessageEvent(UserInputEventType.RequestPosition));
             return;

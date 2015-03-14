@@ -17,7 +17,7 @@
     <dimen name="text_title_size">20sp</dimen>
     <dimen name="text_subhead_size">16sp</dimen>
     <dimen name="text_body_size">14sp</dimen>
-    <dimen name="mbrc_info_tab_height">70dp</dimen>
+    <dimen name="mbrc_info_tab_height">72dp</dimen>
     <dimen name="list_dual_item_height">72dp</dimen>
     <dimen name="medium_button_size">48dp</dimen>
     <dimen name="large_button_size">68dp</dimen>

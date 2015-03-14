@@ -20,26 +20,6 @@
             android:scaleType="centerCrop"
             android:src="@drawable/ic_image_no_cover" />
 
-        <LinearLayout
-            android:id="@+id/ratingWrapper"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginBottom="1dp"
-            android:layout_marginLeft="1dp"
-            android:layout_marginRight="1dp"
-            android:background="@color/mbrc_transparent_dark"
-            android:orientation="vertical">
-
-            <RatingBar
-                android:id="@+id/track_rating_bar"
-                style="@style/RatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:numStars="5"
-                android:stepSize="0.5" />
-        </LinearLayout>
     </FrameLayout>
 
     <LinearLayout
@@ -147,10 +127,10 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:id="@id/main_media_button_group"
+        android:id="@+id/main_media_button_group"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mbrc_info_tab_height"
-        android:layout_above="@id/main_track_progress_group"
+        android:layout_above="@+id/main_track_progress_group"
         android:gravity="center_vertical|center_horizontal"
         android:orientation="horizontal">
 

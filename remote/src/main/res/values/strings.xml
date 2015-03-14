@@ -62,8 +62,8 @@
     <string name="drawer_close">Close navigation drawer</string>
     <string name="artist_placeholder">Artistname</string>
     <string name="title_placeholder">Titleplaceholder</string>
-    <string name="connection_manager_scan">Scan</string>
-    <string name="connection_manager_add">Add</string>
+    <string name="connection_manager_scan">SCAN</string>
+    <string name="connection_manager_add">ADD</string>
     <string name="settings_dialog_add">Add</string>
     <string name="connection_manager_title">Connection Manager</string>
     <string name="settings_key_array">settings_array</string>
