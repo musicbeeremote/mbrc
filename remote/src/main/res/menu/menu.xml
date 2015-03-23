@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/lastfm_scrobble"
-        android:checkable="true"
-        android:title="@string/lastfm_scrobble" />
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools">
 
     <item
-        android:id="@+id/autodj_option"
+        android:id="@+id/menu_lastfm_scrobble"
         android:checkable="true"
-        android:title="@string/menu_autodj"/>
+        android:title="@string/lastfm_scrobble"/>
+
     <item
-        android:id="@+id/lastfm_love"
-        android:icon="@drawable/ic_media_lfm_loved"
+        android:id="@+id/menu_rating_dialog"
+        android:icon="@drawable/ic_action_star_rate"
+        android:title="@string/rate_the_playing_track"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/menu_lastfm_love"
+        android:icon="@drawable/ic_action_favorite_outline"
         android:title="@string/lastfm_love"
-        app:showAsAction="always" />
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction"/>
+
 </menu>

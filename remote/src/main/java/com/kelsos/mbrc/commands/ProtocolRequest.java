@@ -15,6 +15,6 @@ public class ProtocolRequest implements ICommand {
     }
 
     public void execute(IEvent e) {
-        socket.sendData(new SocketMessage(Protocol.Protocol, Protocol.Request, 2));
+        socket.sendData(new SocketMessage(Protocol.Protocol, Protocol.Request, Protocol.ProtocolVersion));
     }
 }

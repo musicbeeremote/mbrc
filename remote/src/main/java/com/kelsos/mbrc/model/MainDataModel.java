@@ -19,6 +19,8 @@ import com.squareup.otto.Produce;
 
 import java.util.ArrayList;
 
+import static com.kelsos.mbrc.events.ui.ShuffleChange.*;
+
 @Singleton
 public class MainDataModel {
 
@@ -35,7 +37,7 @@ public class MainDataModel {
     private boolean isConnectionOn;
     private boolean isHandShakeDone;
     private boolean isRepeatActive;
-    private boolean iShuffleActive;
+    private String mShuffleState;
     private boolean isScrobblingActive;
     private boolean isMuteActive;
     private boolean isAutoDjActive;
@@ -60,7 +62,7 @@ public class MainDataModel {
         isConnectionOn = false;
         isHandShakeDone = false;
         isRepeatActive = false;
-        iShuffleActive = false;
+        mShuffleState = OFF;
         isScrobblingActive = false;
         isMuteActive = false;
         isAutoDjActive = false;
@@ -278,13 +280,13 @@ public class MainDataModel {
         return new RepeatChange(this.isRepeatActive);
     }
 
-    public void setShuffleState(boolean shuffleButtonActive) {
-        iShuffleActive = shuffleButtonActive;
-        bus.post(new ShuffleChange(iShuffleActive));
+    public void setShuffleState(@ShuffleState String shuffleState) {
+        mShuffleState = shuffleState;
+        bus.post(new ShuffleChange(mShuffleState));
     }
 
     @Produce public ShuffleChange produceShuffleChange() {
-        return new ShuffleChange(this.iShuffleActive);
+        return new ShuffleChange(this.mShuffleState);
     }
 
     public void setScrobbleState(boolean scrobbleButtonActive) {

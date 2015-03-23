@@ -90,62 +90,58 @@ public class MainFragment extends RoboFragment {
     private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture mProgressUpdateHandler;
 
-    private View.OnClickListener playButtonListener = new View.OnClickListener() {
-
-        public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerPlayPause, true)));
-        }
+    private View.OnClickListener playButtonListener = v -> {
+        final UserAction action = new UserAction(Protocol.PlayerPlayPause, true);
+        postAction(action);
     };
-    private View.OnClickListener previousButtonListener = new View.OnClickListener() {
 
-        public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerPrevious, true)));
-        }
+    private View.OnClickListener previousButtonListener = v -> {
+        final UserAction action = new UserAction(Protocol.PlayerPrevious, true);
+        postAction(action);
     };
-    private View.OnClickListener nextButtonListener = new View.OnClickListener() {
 
-        public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerNext, true)));
-        }
+    private View.OnClickListener nextButtonListener = v -> {
+        final UserAction action = new UserAction(Protocol.PlayerNext, true);
+        postAction(action);
     };
-    private View.OnLongClickListener stopButtonListener = new View.OnLongClickListener() {
 
-        /**
-         * Called when a view has been clicked and held.
-         *
-         * @param v The view that was clicked and held.
-         * @return true if the callback consumed the long click, false otherwise.
-         */
-        @Override
-        public boolean onLongClick(View v) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerStop, true)));
-            return true;
-        }
+    private View.OnLongClickListener stopButtonListener = v -> {
+        final UserAction action = new UserAction(Protocol.PlayerStop, true);
+        postAction(action);
+        return true;
     };
-    private View.OnClickListener muteButtonListener = new View.OnClickListener() {
 
-        public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerMute, Const.TOGGLE)));
-        }
+    private View.OnClickListener muteButtonListener = v -> {
+        final UserAction action = new UserAction(Protocol.PlayerMute, Const.TOGGLE);
+        postAction(action);
     };
-    private View.OnClickListener shuffleButtonListener = new View.OnClickListener() {
 
-        public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerShuffle, Const.TOGGLE)));
-        }
+    private View.OnClickListener shuffleButtonListener = v -> {
+        final UserAction action = new UserAction(Protocol.PlayerShuffle, Const.TOGGLE);
+        postAction(action);
     };
-    private View.OnClickListener repeatButtonListener = new View.OnClickListener() {
 
-        public void onClick(View v) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerRepeat, Const.TOGGLE)));
-        }
+    private View.OnClickListener repeatButtonListener = v -> {
+        final UserAction action = new UserAction(Protocol.PlayerRepeat, Const.TOGGLE);
+        postAction(action);
     };
+
+    /**
+     * Posts a user action wrapped in a MessageEvent. The bus will
+     * pass the MessageEvent through the Socket to the plugin.
+     *
+     * @param action Any kind of UserAction available in the Protocol
+     */
+    private void postAction(UserAction action) {
+        bus.post(new MessageEvent(ProtocolEventType.UserAction, action));
+    }
 
     private SeekBar.OnSeekBarChangeListener volumeChangeListener = new SeekBar.OnSeekBarChangeListener() {
 
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser) {
-                bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerVolume, String.valueOf(seekBar.getProgress()))));
+                final UserAction action = new UserAction(Protocol.PlayerVolume, String.valueOf(seekBar.getProgress()));
+                postAction(action);
             }
         }
 
@@ -164,7 +160,8 @@ public class MainFragment extends RoboFragment {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser) {
                 if (progress != previousVol) {
-                    bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingPosition, String.valueOf(progress))));
+                    final UserAction action = new UserAction(Protocol.NowPlayingPosition, String.valueOf(progress));
+                    postAction(action);
                     previousVol = progress;
                 }
 
@@ -201,7 +198,8 @@ public class MainFragment extends RoboFragment {
     @Override
     public void onResume() {
         super.onResume();
-        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingPosition, true)));
+        final UserAction action = new UserAction(Protocol.NowPlayingPosition, true);
+        bus.post(new MessageEvent(ProtocolEventType.UserAction, action));
     }
 
     /**
@@ -279,13 +277,22 @@ public class MainFragment extends RoboFragment {
     @Subscribe
     public void handleShuffleChange(ShuffleChange change) {
         if (shuffleButton == null) return;
-        shuffleButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_shuffle : R.drawable.ic_media_shuffle_off);
+
+        int color = getResources().getColor(!change.getShuffleState().equals(ShuffleChange.OFF)
+                ? R.color.colorAccent
+                : R.color.button_material_dark);
+        shuffleButton.setColorFilter(color);
+
+        shuffleButton.setImageResource(change.getShuffleState().equals(ShuffleChange.AUTODJ)
+                ? R.drawable.ic_headset_grey600_24dp
+                : R.drawable.ic_shuffle_grey600_24dp);
     }
 
     @Subscribe
     public void updateRepeatButtonState(RepeatChange change) {
         if (repeatButton == null) return;
-        repeatButton.setImageResource(change.getIsActive() ? R.drawable.ic_media_repeat : R.drawable.ic_media_repeat_off);
+        int color = getResources().getColor(change.getIsActive() ? R.color.colorAccent : R.color.button_material_dark);
+        repeatButton.setColorFilter(color);
     }
 
     @Subscribe
@@ -294,7 +301,7 @@ public class MainFragment extends RoboFragment {
         if (!userChangingVolume)
             volumeSlider.setProgress(change.getVolume());
         if (muteButton == null) return;
-        muteButton.setImageResource(change.getIsMute() ? R.drawable.ic_volume_mute : R.drawable.ic_volume_full);
+        muteButton.setImageResource(change.getIsMute() ? R.drawable.ic_volume_off_grey600_24dp : R.drawable.ic_volume_up_grey600_24dp);
     }
 
     @Subscribe
@@ -302,7 +309,7 @@ public class MainFragment extends RoboFragment {
         if (playPauseButton == null) return;
         switch (change.getState()) {
             case Playing:
-                playPauseButton.setImageResource(R.drawable.ic_media_pause);
+                playPauseButton.setImageResource(R.drawable.ic_pause_circle_fill);
                 playPauseButton.setTag("Playing");
 
                 /* Start the animation if the track is playing*/
@@ -310,20 +317,20 @@ public class MainFragment extends RoboFragment {
                 trackProgressAnimation();
                 break;
             case Paused:
-                playPauseButton.setImageResource(R.drawable.ic_media_play);
+                playPauseButton.setImageResource(R.drawable.ic_play_circle_fill);
                 playPauseButton.setTag("Paused");
         /* Stop the animation if the track is paused*/
                 stopTrackProgressAnimation();
                 break;
             case Stopped:
-                playPauseButton.setImageResource(R.drawable.ic_media_stop);
+                playPauseButton.setImageResource(R.drawable.ic_play_circle_fill);
                 playPauseButton.setTag("Stopped");
         /* Stop the animation if the track is paused*/
                 stopTrackProgressAnimation();
                 activateStoppedState();
                 break;
             case Undefined:
-                playPauseButton.setImageResource(R.drawable.ic_media_play);
+                playPauseButton.setImageResource(R.drawable.ic_play_circle_fill);
                 break;
         }
     }

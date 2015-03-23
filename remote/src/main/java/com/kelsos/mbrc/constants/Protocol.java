@@ -6,7 +6,7 @@ public class Protocol {
     public static final String Player = "player";
     public static final String Protocol = "protocol";
     public static final String PlayerName = "MusicBee";
-    public static final String ProtocolVersion = "2";
+    public static final String ProtocolVersion = "2.1";
     public static final String PluginVersion = "pluginversion";
     public static final String ClientNotAllowed = "notallowed";
 

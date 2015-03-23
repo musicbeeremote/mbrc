@@ -4,14 +4,14 @@
 
     <item
         android:id="@android:id/background"
-        android:drawable="@drawable/ui_rating_bar_empty" />
+        android:drawable="@drawable/ic_star" />
 
     <item
         android:id="@android:id/secondaryProgress"
-        android:drawable="@drawable/ui_rating_bar_empty" />
+        android:drawable="@drawable/ic_star" />
 
     <item
         android:id="@android:id/progress"
-        android:drawable="@drawable/ui_rating_bar_filled" />
+        android:drawable="@drawable/ic_star_full" />
 
 </layer-list>

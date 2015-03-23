@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.interfaces;
 
 public interface IEvent {
-    public String getType();
+    String getType();
 
-    public Object getData();
+    Object getData();
 
-    public String getDataString();
+    String getDataString();
 }

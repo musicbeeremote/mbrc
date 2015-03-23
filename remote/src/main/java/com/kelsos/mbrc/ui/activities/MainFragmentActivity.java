@@ -10,7 +10,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.*;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
@@ -21,7 +26,12 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.*;
+import com.kelsos.mbrc.events.ui.DisplayDialog;
+import com.kelsos.mbrc.events.ui.DrawerEvent;
+import com.kelsos.mbrc.events.ui.LfmRatingChanged;
+import com.kelsos.mbrc.events.ui.NotifyUser;
+import com.kelsos.mbrc.events.ui.ScrobbleChange;
+import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.kelsos.mbrc.ui.fragments.LyricsFragment;
@@ -30,10 +40,12 @@ import com.kelsos.mbrc.ui.fragments.NowPlayingFragment;
 import com.kelsos.mbrc.ui.fragments.SearchFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+
 import roboguice.activity.RoboActionBarActivity;
 
 public class MainFragmentActivity extends RoboActionBarActivity {
-    @Inject Bus bus;
+    @Inject
+    Bus bus;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private View mDrawerMenu;
@@ -88,23 +100,20 @@ public class MainFragmentActivity extends RoboActionBarActivity {
         fragmentTransaction.commit();
     }
 
-    @Override public void onStart() {
+    @Override
+    public void onStart() {
         super.onStart();
         bus.register(this);
     }
 
-    @Override public void onStop() {
+    @Override
+    public void onStop() {
         super.onStop();
         bus.unregister(this);
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-    }
-
-    @Override public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
@@ -149,7 +158,8 @@ public class MainFragmentActivity extends RoboActionBarActivity {
         fragmentTransaction.commit();
     }
 
-    @Override protected void onPostCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
     }
@@ -173,7 +183,8 @@ public class MainFragmentActivity extends RoboActionBarActivity {
         return true;
     }
 
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
@@ -182,17 +193,24 @@ public class MainFragmentActivity extends RoboActionBarActivity {
                     mDrawerLayout.openDrawer(mDrawerMenu);
                 }
                 return true;
-            case R.id.lastfm_scrobble:
+            case R.id.menu_lastfm_scrobble:
                 bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerScrobble, Const.TOGGLE)));
                 return true;
-            case R.id.autodj_option:
-                bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerAutoDj, Const.TOGGLE)));
+            case R.id.menu_rating_dialog:
+                final RatingDialogFragment ratingDialog = new RatingDialogFragment();
+                ratingDialog.show(getSupportFragmentManager(), "RatingDialog");
+                return true;
+            case R.id.menu_lastfm_love:
+                bus.post(new MessageEvent(ProtocolEventType.UserAction,
+                        new UserAction(Protocol.NowPlayingLfmRating, Const.TOGGLE)));
+                return true;
             default:
                 return false;
         }
     }
 
-    @Subscribe public void ShowSetupDialog(DisplayDialog event) {
+    @Subscribe
+    public void ShowSetupDialog(DisplayDialog event) {
         if (mDialog != null) return;
         if (event.getDialogType() == DisplayDialog.SETUP) {
             mDialog = new SetupDialogFragment();
@@ -208,7 +226,8 @@ public class MainFragmentActivity extends RoboActionBarActivity {
 
     }
 
-    @Subscribe public void handleDrawerEvent(DrawerEvent event) {
+    @Subscribe
+    public void handleDrawerEvent(DrawerEvent event) {
         if (event.isCloseDrawer()) {
             closeDrawer();
         } else {
@@ -224,7 +243,8 @@ public class MainFragmentActivity extends RoboActionBarActivity {
         }
     }
 
-    @Subscribe public void handleUserNotification(NotifyUser event) {
+    @Subscribe
+    public void handleUserNotification(NotifyUser event) {
         final String message = event.isFromResource()
                 ? getString(event.getResId())
                 : event.getMessage();
@@ -235,7 +255,8 @@ public class MainFragmentActivity extends RoboActionBarActivity {
                 .show();
     }
 
-    @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 bus.post(new MessageEvent(UserInputEventType.KeyVolumeUp));
@@ -248,15 +269,27 @@ public class MainFragmentActivity extends RoboActionBarActivity {
         }
     }
 
-    @Subscribe public void handleScrobbleChange(ScrobbleChange event) {
+    @Subscribe
+    public void handleScrobbleChange(ScrobbleChange event) {
         if (menu == null) return;
-        MenuItem scrobbleMenuItem = menu.findItem(R.id.lastfm_scrobble);
+        MenuItem scrobbleMenuItem = menu.findItem(R.id.menu_lastfm_scrobble);
         scrobbleMenuItem.setChecked(event.getIsActive());
     }
 
-    @Subscribe public void handleAutoDjChange(AutoDjChange event) {
+    @Subscribe
+    public void handleLfmLoveChange(LfmRatingChanged event) {
         if (menu == null) return;
-        MenuItem autoDjMenuItem = menu.findItem(R.id.autodj_option);
-        autoDjMenuItem.setChecked(event.getIsActive());
+        MenuItem favoriteMenuItem = menu.findItem(R.id.menu_lastfm_love);
+        switch (event.getStatus()) {
+            case LOVED:
+                favoriteMenuItem.setIcon(R.drawable.ic_action_favorite);
+                break;
+            case BANNED:
+                break;
+            case NORMAL:
+                favoriteMenuItem.setIcon(R.drawable.ic_action_favorite_outline);
+                break;
+        }
+
     }
 }

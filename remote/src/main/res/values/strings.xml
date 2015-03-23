@@ -125,5 +125,6 @@
     <string name="description_divider">A divider between elements</string>
     <string name="description_checkable_linearlayout_icon">Icon of the layout.</string>
     <string name="menu_autodj">AutoDJ</string>
+    <string name="rate_the_playing_track">Rate the playing track</string>
 
 </resources>

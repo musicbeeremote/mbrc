@@ -1,13 +1,29 @@
 package com.kelsos.mbrc.events.ui;
 
-public class ShuffleChange {
-    private boolean isActive;
+import android.support.annotation.StringDef;
 
-    public ShuffleChange(boolean isActive) {
-        this.isActive = isActive;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+public class ShuffleChange {
+
+    @StringDef({OFF, AUTODJ, SHUFFLE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ShuffleState {
     }
 
-    public boolean getIsActive() {
-        return this.isActive;
+    public static final String OFF = "off";
+    public static final String AUTODJ = "autodj";
+    public static final String SHUFFLE = "shuffle";
+
+    private String shuffleState;
+
+    public ShuffleChange(@ShuffleState String shuffleState) {
+        this.shuffleState = shuffleState;
+    }
+
+    @ShuffleState
+    public String getShuffleState() {
+        return this.shuffleState;
     }
 }

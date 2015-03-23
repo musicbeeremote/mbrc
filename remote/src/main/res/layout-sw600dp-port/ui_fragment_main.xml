@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/mainRelativeLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:orientation="horizontal">
+<RelativeLayout
+    android:id="@+id/mainRelativeLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal">
 
     <FrameLayout
         android:id="@+id/album_cover_area"
@@ -17,7 +18,7 @@
             android:adjustViewBounds="false"
             android:contentDescription="@string/description_album_cover"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_image_no_cover" />
+            android:src="@drawable/ic_image_no_cover"/>
 
         <LinearLayout
             android:id="@+id/ratingWrapper"
@@ -37,7 +38,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:numStars="5"
-                android:stepSize="0.5" />
+                android:stepSize="0.5"/>
         </LinearLayout>
     </FrameLayout>
 
@@ -67,7 +68,7 @@
             android:singleLine="true"
             android:text="@string/main_label_track_title"
             android:textColor="@color/remoteText"
-            android:textSize="@dimen/text_title_size" />
+            android:textSize="@dimen/text_title_size"/>
 
         <TextView
             android:id="@+id/main_artist_label"
@@ -83,7 +84,7 @@
             android:singleLine="true"
             android:text="@string/main_label_artist"
             android:textColor="@color/remoteText"
-            android:textSize="@dimen/text_subhead_size" />
+            android:textSize="@dimen/text_subhead_size"/>
 
         <TextView
             android:id="@+id/main_label_album"
@@ -99,7 +100,7 @@
             android:singleLine="true"
             android:text="@string/main_label_album"
             android:textColor="@color/remoteText"
-            android:textSize="@dimen/text_body_size" />
+            android:textSize="@dimen/text_body_size"/>
 
     </RelativeLayout>
 
@@ -107,7 +108,7 @@
         android:id="@id/main_media_button_group"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mbrc_info_tab_height"
-        android:layout_above="@id/main_track_progress_group"
+        android:layout_above="@+id/main_track_progress_group"
         android:gravity="center_vertical|center_horizontal"
         android:orientation="horizontal">
 
@@ -118,7 +119,8 @@
             android:layout_gravity="center_vertical"
             android:background="@drawable/selectable_background"
             android:contentDescription="@string/main_button_repeat_description"
-            android:src="@drawable/ic_media_repeat" />
+            android:src="@drawable/ic_repeat_grey600_24dp"
+            android:tint="@color/button_material_dark"/>
 
         <ImageButton
             android:id="@+id/main_button_previous"
@@ -129,7 +131,8 @@
             android:background="@drawable/selectable_background"
             android:contentDescription="@string/main_button_previous_description"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_media_previous" />
+            android:src="@drawable/ic_skip_previous_black_36dp"
+            android:tint="@color/button_material_dark"/>
 
         <ImageButton
             android:id="@+id/main_button_play_pause"
@@ -141,7 +144,7 @@
             android:clickable="true"
             android:contentDescription="@string/main_button_play_pause_description"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_media_play" />
+            android:src="@drawable/ic_play_circle_fill"/>
 
         <ImageButton
             android:id="@+id/main_button_next"
@@ -152,7 +155,8 @@
             android:background="@drawable/selectable_background"
             android:contentDescription="@string/main_button_next_description"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_media_next" />
+            android:src="@drawable/ic_skip_next_black_36dp"
+            android:tint="@color/button_material_dark"/>
 
         <ImageButton
             android:id="@+id/main_shuffle_button"
@@ -161,7 +165,8 @@
             android:layout_gravity="center_vertical"
             android:background="@drawable/selectable_background"
             android:contentDescription="@string/main_button_shuffle_description"
-            android:src="@drawable/ic_media_shuffle" />
+            android:src="@drawable/ic_shuffle_grey600_24dp"
+            android:tint="@color/button_material_dark"/>
     </LinearLayout>
 
     <RelativeLayout
@@ -178,8 +183,8 @@
             android:background="@drawable/selectable_background"
             android:contentDescription="@string/main_button_mute_description"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_volume_mute"
-            android:tint="@color/button_material_dark" />
+            android:src="@drawable/ic_volume_off_grey600_24dp"
+            android:tint="@color/button_material_dark"/>
 
         <SeekBar
             android:id="@+id/main_volume_seeker"
@@ -203,7 +208,7 @@
             android:progressDrawable="@drawable/ic_volume_bar_progress"
             android:secondaryProgress="0"
             android:thumb="@drawable/volume_thumb"
-            android:thumbOffset="@dimen/mbrc_volume_seekbar_thumb_offset" />
+            android:thumbOffset="@dimen/mbrc_volume_seekbar_thumb_offset"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -223,7 +228,7 @@
             android:paddingRight="@dimen/small_margin"
             android:text="@string/main_label_duration_current"
             android:textColor="@color/remoteText"
-            android:textSize="12sp" />
+            android:textSize="12sp"/>
 
         <SeekBar
             android:id="@+id/main_track_progress_seeker"
@@ -240,7 +245,7 @@
             android:progressDrawable="@drawable/ic_duration_bar_progress"
             android:secondaryProgress="0"
             android:thumb="@drawable/ic_duration_thumb"
-            android:thumbOffset="@dimen/mbrc_progress_seekbar_thumb_offset" />
+            android:thumbOffset="@dimen/mbrc_progress_seekbar_thumb_offset"/>
 
         <TextView
             android:id="@+id/main_track_duration_total"
@@ -251,7 +256,7 @@
             android:paddingRight="@dimen/small_margin"
             android:text="@string/main_label_duration_total"
             android:textColor="@color/remoteText"
-            android:textSize="12sp" />
+            android:textSize="12sp"/>
     </LinearLayout>
 
 </RelativeLayout>
