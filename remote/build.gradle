@@ -1,6 +1,21 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.18.0'
+    }
+}
 import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
 apply plugin: 'me.tatarka.retrolambda'
 
 def buildTime() {
@@ -10,6 +25,17 @@ def buildTime() {
 }
 def gitHash() {
     return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
+}
+
+// Load the fabric api key.
+def fabricApiKey = ""
+def crashProperties = file('fabric.properties')
+
+if (crashProperties.exists()) {
+    def properties = new Properties()
+    properties.load(new FileInputStream(crashProperties))
+    fabricApiKey = properties.getAt('apiKey')
+    print (fabricApiKey)
 }
 
 def hasModifiedDeletedOrOtherFiles = !"git ls-files -mdo --exclude-standard".execute().text.trim().isEmpty()
@@ -29,6 +55,7 @@ android {
         versionName "0.10.0.4"
         buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
         buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
+        manifestPlaceholders = [ fabricApiKey: fabricApiKey ]
     }
 
     signingConfigs {
@@ -114,25 +141,30 @@ dependencies {
     compile 'com.afollestad:material-dialogs:0.6.3.1'
     compile 'net.i2p.android.ext:floatingactionbutton:1.8.0'
     provided 'org.roboguice:roboblender:3.0.1'
+    compile('com.crashlytics.sdk.android:crashlytics:2.2.2@aar') {
+        transitive = true;
+    }
 }
 
 allprojects {
     afterEvaluate { project ->
-        def propsFile = rootProject.file('signing.properties')
+
+        def signProperties = rootProject.file('signing.properties')
         def configName = 'release'
-        if (propsFile.exists()) {
+        if (signProperties.exists()) {
             def prop = new Properties()
-            prop.load(new FileInputStream(propsFile))
+            prop.load(new FileInputStream(signProperties))
             def filepath = prop['keys']
             def keyPropFile = file(filepath)
             if (keyPropFile.exists() && android.signingConfigs.hasProperty(configName)) {
                 def props = new Properties()
                 props.load(new FileInputStream(keyPropFile))
                 def keystorePath = props['keystore']
-                android.signingConfigs[configName].storeFile = file(keystorePath)
-                android.signingConfigs[configName].storePassword = props['storePass']
-                android.signingConfigs[configName].keyAlias = props['keyAlias']
-                android.signingConfigs[configName].keyPassword = props['keyPass']
+                def releaseConfig = android.signingConfigs[configName]
+                releaseConfig.storeFile = file(keystorePath)
+                releaseConfig.storePassword = props['storePass']
+                releaseConfig.keyAlias = props['keyAlias']
+                releaseConfig.keyPassword = props['keyPass']
             }
         }
     }

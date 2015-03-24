@@ -69,5 +69,8 @@
             android:name="roboguice.annotations.packages"
             android:value="roboguice,mbrc" />
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="${fabricApiKey}" />
     </application>
 </manifest>

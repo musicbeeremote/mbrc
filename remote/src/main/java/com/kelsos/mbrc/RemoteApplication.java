@@ -4,12 +4,14 @@ import android.app.Application;
 import android.content.Intent;
 import android.util.Log;
 import android.view.ViewConfiguration;
+import com.crashlytics.android.Crashlytics;
 import com.kelsos.mbrc.controller.Controller;
 import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.model.MainDataModel;
 import com.kelsos.mbrc.services.ProtocolHandler;
 import com.kelsos.mbrc.services.SocketService;
 import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver;
+import io.fabric.sdk.android.Fabric;
 import roboguice.RoboGuice;
 import roboguice.inject.RoboInjector;
 
@@ -19,6 +21,7 @@ public class RemoteApplication extends Application {
 
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         final RoboInjector injector = RoboGuice.getInjector(this);
 
         startService(new Intent(this, Controller.class));
