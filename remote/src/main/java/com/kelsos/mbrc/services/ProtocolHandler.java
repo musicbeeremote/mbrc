@@ -1,15 +1,15 @@
 package com.kelsos.mbrc.services;
 
-import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
+import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.constants.Protocol;
 import com.squareup.otto.Bus;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import roboguice.util.Ln;
 
 import java.io.IOException;
 
@@ -59,8 +59,8 @@ public class ProtocolHandler {
 
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
-                Log.d("mbrc-log", "Incoming message pre-processor", e);
-
+                Ln.d("Incoming preprocessor", e);
+                Ln.d("While processing: %s", incoming);
             }
         }
 

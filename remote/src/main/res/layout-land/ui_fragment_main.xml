@@ -149,7 +149,7 @@
         android:id="@+id/main_volume_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/main_media_button_group">
+        android:layout_below="@+id/main_track_info_one">
 
         <ImageButton
             android:id="@+id/main_mute_button"

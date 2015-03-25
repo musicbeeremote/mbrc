@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="mbrc_duration_text_size">12sp</dimen>
     <dimen name="cover_height">250dp</dimen>
 </resources>

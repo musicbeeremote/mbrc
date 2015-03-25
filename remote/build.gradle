@@ -1,22 +1,9 @@
-buildscript {
-    repositories {
-        maven { url 'https://maven.fabric.io/public' }
-    }
-
-    dependencies {
-        classpath 'io.fabric.tools:gradle:1.18.0'
-    }
-}
 import java.text.SimpleDateFormat
 
+apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
-}
-
-apply plugin: 'me.tatarka.retrolambda'
 
 def buildTime() {
     def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
@@ -38,10 +25,20 @@ if (crashProperties.exists()) {
     print (fabricApiKey)
 }
 
-def hasModifiedDeletedOrOtherFiles = !"git ls-files -mdo --exclude-standard".execute().text.trim().isEmpty()
-def hasStagedFiles = !"git diff-index --no-ext-diff --name-only --cached HEAD".execute().text.trim().isEmpty()
-def dirtyWorkingCopy = hasModifiedDeletedOrOtherFiles || hasStagedFiles
-def gitDescription = dirtyWorkingCopy ? "${gitHash()}-dirty" : gitHash()
+def hasModifiedDeletedOrOtherFiles() {
+    return !"git ls-files -mdo --exclude-standard".execute().text.trim().isEmpty()
+}
+def hasStagedFiles() {
+    return !"git diff-index --no-ext-diff --name-only --cached HEAD".execute().text.trim().isEmpty()
+}
+
+def dirtyWorkingCopy(){
+    return hasModifiedDeletedOrOtherFiles() || hasStagedFiles()
+}
+
+def gitDescription() {
+    return dirtyWorkingCopy() ? "${gitHash()}-dirty" : gitHash()
+}
 
 android {
     compileSdkVersion 22
@@ -101,6 +98,7 @@ android {
         exclude 'META-INF/ASL2.0'
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
     }
 
     lintOptions {
@@ -112,7 +110,7 @@ android {
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
             def originalFilename = output.outputFile
-            def versionInfo = "-v${variant.mergedFlavor.versionCode}-${variant.mergedFlavor.versionName}-${gitDescription}"
+            def versionInfo = "-v${variant.mergedFlavor.versionCode}-${variant.mergedFlavor.versionName}-${gitDescription()}"
             def filename = originalFilename.name
                     .replace(".apk", versionInfo + ".apk")
                     .replace(project.name, defaultConfig.applicationId);
@@ -140,6 +138,7 @@ dependencies {
     compile 'com.github.machinarius:preferencefragment:0.1.2'
     compile 'com.afollestad:material-dialogs:0.6.3.1'
     compile 'net.i2p.android.ext:floatingactionbutton:1.8.0'
+    compile 'com.jakewharton:butterknife:6.1.0'
     provided 'org.roboguice:roboblender:3.0.1'
     compile('com.crashlytics.sdk.android:crashlytics:2.2.2@aar') {
         transitive = true;
@@ -150,21 +149,20 @@ allprojects {
     afterEvaluate { project ->
 
         def signProperties = rootProject.file('signing.properties')
-        def configName = 'release'
         if (signProperties.exists()) {
             def prop = new Properties()
             prop.load(new FileInputStream(signProperties))
-            def filepath = prop['keys']
-            def keyPropFile = file(filepath)
-            if (keyPropFile.exists() && android.signingConfigs.hasProperty(configName)) {
+            def filepath = prop.getAt("keys")
+            def keyProperties = file(filepath)
+            if (keyProperties.exists()) {
                 def props = new Properties()
-                props.load(new FileInputStream(keyPropFile))
-                def keystorePath = props['keystore']
-                def releaseConfig = android.signingConfigs[configName]
+                props.load(new FileInputStream(keyProperties))
+                def keystorePath = props.getAt('keystore')
+                def releaseConfig = android.signingConfigs.getAt('release')
                 releaseConfig.storeFile = file(keystorePath)
-                releaseConfig.storePassword = props['storePass']
-                releaseConfig.keyAlias = props['keyAlias']
-                releaseConfig.keyPassword = props['keyPass']
+                releaseConfig.storePassword = props.getAt('storePass')
+                releaseConfig.keyAlias = props.getAt('keyAlias')
+                releaseConfig.keyPassword = props.getAt('keyPass')
             }
         }
     }
