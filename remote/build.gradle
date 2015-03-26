@@ -26,10 +26,10 @@ if (crashProperties.exists()) {
 }
 
 def hasModifiedDeletedOrOtherFiles() {
-    return !"git ls-files -mdo --exclude-standard".execute().text.trim().isEmpty()
+    return !"git -C ${rootDir} ls-files -mdo --exclude-standard".execute().text.trim().isEmpty()
 }
 def hasStagedFiles() {
-    return !"git diff-index --no-ext-diff --name-only --cached HEAD".execute().text.trim().isEmpty()
+    return !"git -C ${rootDir} diff-index --no-ext-diff --name-only --cached HEAD".execute().text.trim().isEmpty()
 }
 
 def dirtyWorkingCopy(){
