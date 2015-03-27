@@ -7,15 +7,17 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
-import butterknife.OnLongClick;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
@@ -27,17 +29,31 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.*;
+import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
+import com.kelsos.mbrc.events.ui.CoverAvailable;
+import com.kelsos.mbrc.events.ui.LfmRatingChanged;
+import com.kelsos.mbrc.events.ui.PlayStateChange;
+import com.kelsos.mbrc.events.ui.RepeatChange;
+import com.kelsos.mbrc.events.ui.ScrobbleChange;
+import com.kelsos.mbrc.events.ui.ShuffleChange;
+import com.kelsos.mbrc.events.ui.TrackInfoChange;
+import com.kelsos.mbrc.events.ui.UpdatePosition;
+import com.kelsos.mbrc.events.ui.VolumeChange;
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import roboguice.fragment.RoboFragment;
-import roboguice.util.Ln;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+import butterknife.OnLongClick;
+import roboguice.fragment.RoboFragment;
+import roboguice.util.Ln;
 
 @Singleton
 public class MainFragment extends RoboFragment {
@@ -217,14 +233,6 @@ public class MainFragment extends RoboFragment {
         }
     }
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        final MenuInflater inflater = getActivity().getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        this.menu = menu;
-        super.onPrepareOptionsMenu(menu);
-    }
-
     /**
      * Sets the typeface of the text views in the main activity to roboto.
      */
@@ -254,7 +262,8 @@ public class MainFragment extends RoboFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.share, menu);
+        inflater.inflate(R.menu.menu, menu);
+        this.menu = menu;
         MenuItem shareItem = menu.findItem(R.id.actionbar_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
         mShareActionProvider.setShareIntent(getShareIntent());
