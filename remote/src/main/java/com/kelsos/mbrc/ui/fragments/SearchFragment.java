@@ -4,7 +4,13 @@ import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.SearchPagerAdapter;
@@ -12,20 +18,33 @@ import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.*;
+import com.kelsos.mbrc.events.ui.AlbumSearchResults;
+import com.kelsos.mbrc.events.ui.ArtistSearchResults;
+import com.kelsos.mbrc.events.ui.GenreSearchResults;
+import com.kelsos.mbrc.events.ui.NotifyUser;
+import com.kelsos.mbrc.events.ui.TrackSearchResults;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+
+import java.util.ArrayList;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import roboguice.fragment.RoboFragment;
 
 public class SearchFragment extends RoboFragment implements SearchView.OnQueryTextListener {
 
-    @Inject Bus bus;
+    @Inject
+    Bus bus;
     private SearchView mSearchView;
     private MenuItem mSearchItem;
-    private ViewPager mPager;
+    @InjectView(R.id.search_pager)
+    ViewPager mPager;
     private SearchPagerAdapter mAdapter;
 
-    @Override public boolean onQueryTextSubmit(String query) {
+    @Override
+    public boolean onQueryTextSubmit(String query) {
         String pContext = "";
         int current = mPager.getCurrentItem();
 
@@ -51,20 +70,42 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
         return false;
     }
 
-    @Override public boolean onQueryTextChange(String newText) {
+    @OnClick(R.id.search_clear_fab)
+    public void onFabClick(View view) {
+        int current = mPager.getCurrentItem();
+        // Not the most elegant but the fastest way to do it at this point
+        switch (current) {
+            case 0:
+                bus.post(new GenreSearchResults(new ArrayList<>(), true));
+                break;
+            case 1:
+                bus.post(new ArtistSearchResults(new ArrayList<>(), true));
+                break;
+            case 2:
+                bus.post(new AlbumSearchResults(new ArrayList<>(), true));
+                break;
+            case 3:
+                bus.post(new TrackSearchResults(new ArrayList<>(), true));
+                break;
+        }
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
         return false;
     }
 
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.ui_fragment_search, container, false);
-        mPager = (ViewPager) view.findViewById(R.id.search_pager);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final View view = inflater.inflate(R.layout.ui_fragment_search, container, false);
+        ButterKnife.inject(this, view);
         mPager.setAdapter(mAdapter);
-
         return view;
     }
 
-    @Override public void onStart() {
+    @Override
+    public void onStart() {
         super.onStart();
         bus.register(this);
     }
@@ -75,13 +116,15 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
         bus.unregister(this);
     }
 
-    @Override public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mAdapter = new SearchPagerAdapter(getActivity());
     }
 
-    @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_now_playing, menu);
         mSearchItem = menu.findItem(R.id.now_playing_search_item);
         mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
@@ -90,7 +133,8 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
         mSearchView.setOnQueryTextListener(this);
     }
 
-    @Subscribe public void handleGenreSearchResults(GenreSearchResults results) {
+    @Subscribe
+    public void handleGenreSearchResults(GenreSearchResults results) {
         if (!results.isStored()) {
             mPager.setCurrentItem(0);
             if (results.getList().size() == 0) {
@@ -99,7 +143,8 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
         }
     }
 
-    @Subscribe public void handleArtistSearchResults(ArtistSearchResults results) {
+    @Subscribe
+    public void handleArtistSearchResults(ArtistSearchResults results) {
         if (!results.isStored()) {
             mPager.setCurrentItem(1);
             if (results.getList().size() == 0) {
@@ -108,7 +153,8 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
         }
     }
 
-    @Subscribe public void handleAlbumResults(AlbumSearchResults results) {
+    @Subscribe
+    public void handleAlbumResults(AlbumSearchResults results) {
         if (!results.isStored()) {
             mPager.setCurrentItem(2);
             if (results.getList().size() == 0) {
@@ -117,7 +163,8 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
         }
     }
 
-    @Subscribe public void handleTrackResults(TrackSearchResults results) {
+    @Subscribe
+    public void handleTrackResults(TrackSearchResults results) {
         if (!results.isStored()) {
             mPager.setCurrentItem(3);
             if (results.getList().size() == 0) {
@@ -126,7 +173,8 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
         }
     }
 
-    @Override public void onDestroy() {
+    @Override
+    public void onDestroy() {
         super.onDestroy();
         mAdapter = null;
     }

@@ -126,5 +126,6 @@
     <string name="description_checkable_linearlayout_icon">Icon of the layout.</string>
     <string name="menu_autodj">AutoDJ</string>
     <string name="rate_the_playing_track">Rate the playing track</string>
+    <string name="fab_title_clear_search">Clear Search</string>
 
 </resources>

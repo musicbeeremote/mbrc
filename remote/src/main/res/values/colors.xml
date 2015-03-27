@@ -12,4 +12,5 @@
     <color name="color_divider">#1fffffff</color>
     <color name="drop_shadow_end">#66000000</color>
     <color name="drop_shadow_start">#00000000</color>
+    <color name="colorAccentPressed">#f53900</color>
 </resources>

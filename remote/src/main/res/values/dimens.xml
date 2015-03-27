@@ -22,4 +22,5 @@
     <dimen name="medium_button_size">48dp</dimen>
     <dimen name="large_button_size">68dp</dimen>
     <dimen name="small_button_size">30dp</dimen>
+    <dimen name="extra_small_margin">4dp</dimen>
 </resources>
