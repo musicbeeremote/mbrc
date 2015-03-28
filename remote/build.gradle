@@ -48,8 +48,8 @@ android {
         applicationId "com.kelsos.mbrc"
         minSdkVersion 8
         targetSdkVersion 22
-        versionCode 96
-        versionName "0.10.0.4"
+        versionCode 97
+        versionName "0.10.0.5"
         buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
         buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
         manifestPlaceholders = [ fabricApiKey: fabricApiKey ]
@@ -139,6 +139,7 @@ dependencies {
     compile 'com.afollestad:material-dialogs:0.6.3.1'
     compile 'net.i2p.android.ext:floatingactionbutton:1.8.0'
     compile 'com.jakewharton:butterknife:6.1.0'
+    compile 'io.reactivex:rxandroid:0.24.0'
     provided 'org.roboguice:roboblender:3.0.1'
     compile('com.crashlytics.sdk.android:crashlytics:2.2.2@aar') {
         transitive = true;

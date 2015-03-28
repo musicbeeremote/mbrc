@@ -2,6 +2,8 @@ package com.kelsos.mbrc.model;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.constants.Const;
@@ -33,10 +35,12 @@ import com.kelsos.mbrc.events.ui.ShuffleChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.events.ui.TrackSearchResults;
 import com.kelsos.mbrc.events.ui.VolumeChange;
-import com.kelsos.mbrc.utilities.ImageDecoder;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.squareup.otto.Produce;
 import java.util.ArrayList;
+import rx.Observable;
+import rx.Subscriber;
+import rx.schedulers.Schedulers;
 
 import static com.kelsos.mbrc.events.ui.ShuffleChange.OFF;
 import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
@@ -221,17 +225,21 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
     }
   }
 
-  public void setCover(String base64format) {
+  public void setCover(final String base64format) {
     if (base64format == null || base64format.equals("")) {
       cover = null;
       bus.post(new CoverAvailable());
       updateNotification();
     } else {
-      try {
-        new ImageDecoder(context, base64format).execute();
-      } catch (Exception ignore) {
-
-      }
+      Observable.create((Subscriber<? super Bitmap> subscriber) -> {
+        byte[] decodedImage = Base64.decode(base64format, Base64.DEFAULT);
+        subscriber.onNext(BitmapFactory.decodeByteArray(decodedImage, 0, decodedImage.length));
+        subscriber.onCompleted();
+      }).subscribeOn(Schedulers.io())
+      .subscribe(this::setAlbumCover, throwable -> {
+        cover = null;
+        bus.post(new CoverAvailable());
+      });
     }
   }
 

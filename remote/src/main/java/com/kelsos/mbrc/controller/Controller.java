@@ -18,6 +18,9 @@ import com.squareup.otto.Subscribe;
 import java.util.HashMap;
 import java.util.Map;
 import roboguice.service.RoboService;
+import roboguice.util.Ln;
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 @Singleton public class Controller extends RoboService {
 
@@ -54,10 +57,15 @@ import roboguice.service.RoboService;
    * @param event The message received.
    */
   @Subscribe public void handleUserActionEvents(MessageEvent event) {
-    executeCommand(event);
+    Observable.create(subscriber -> {
+      executeCommand(event);
+      subscriber.onCompleted();
+    }).subscribeOn(Schedulers.io())
+        .subscribe(o -> {});
   }
 
   public void executeCommand(IEvent event) {
+    Ln.d("Command pre-exec: %s", event.getType());
     final Class<? extends ICommand> commandClass = commandMap.get(event.getType());
     if (commandClass == null) return;
     ICommand commandInstance;
@@ -65,6 +73,7 @@ import roboguice.service.RoboService;
       commandInstance = injector.getInstance(commandClass);
       if (commandInstance == null) return;
       commandInstance.execute(event);
+      Ln.d("Command post-exec: %s", event.getType());
     } catch (Exception ex) {
       if (BuildConfig.DEBUG) {
         Log.d("mbrc-log", "executing command for type: \t" + event.getType(), ex);
