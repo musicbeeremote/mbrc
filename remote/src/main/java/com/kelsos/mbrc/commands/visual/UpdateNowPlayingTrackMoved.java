@@ -8,13 +8,13 @@ import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 public class UpdateNowPlayingTrackMoved implements ICommand {
-    private MainThreadBusWrapper bus;
+  private MainThreadBusWrapper bus;
 
-    @Inject public UpdateNowPlayingTrackMoved(MainThreadBusWrapper bus) {
-        this.bus = bus;
-    }
+  @Inject public UpdateNowPlayingTrackMoved(MainThreadBusWrapper bus) {
+    this.bus = bus;
+  }
 
-    @Override public void execute(IEvent e) {
-        bus.post(new TrackMoved((ObjectNode) e.getData()));
-    }
+  @Override public void execute(IEvent e) {
+    bus.post(new TrackMoved((ObjectNode) e.getData()));
+  }
 }

@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/settings_dialog_name"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="@dimen/small_margin"
-        android:layout_marginRight="@dimen/small_margin"
-        android:layout_marginTop="@dimen/small_margin"
-        android:hint="@string/settings_dialog_hint_name" />
+  <EditText
+    android:id="@+id/settings_dialog_name"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginLeft="@dimen/small_margin"
+    android:layout_marginRight="@dimen/small_margin"
+    android:layout_marginTop="@dimen/small_margin"
+    android:hint="@string/settings_dialog_hint_name" />
 
-    <EditText
-        android:id="@+id/settings_dialog_host"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="@dimen/small_margin"
-        android:layout_marginRight="@dimen/small_margin"
-        android:layout_marginTop="@dimen/small_margin"
-        android:hint="@string/settings_dialog_hint_host" />
+  <EditText
+    android:id="@+id/settings_dialog_host"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginLeft="@dimen/small_margin"
+    android:layout_marginRight="@dimen/small_margin"
+    android:layout_marginTop="@dimen/small_margin"
+    android:hint="@string/settings_dialog_hint_host" />
 
-    <EditText
-        android:id="@+id/settings_dialog_port"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="@dimen/small_margin"
-        android:layout_marginRight="@dimen/small_margin"
-        android:layout_marginTop="@dimen/small_margin"
-        android:hint="@string/settings_dialog_hint_port"
-        android:inputType="number"
-        android:maxLength="5"/>
+  <EditText
+    android:id="@+id/settings_dialog_port"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginLeft="@dimen/small_margin"
+    android:layout_marginRight="@dimen/small_margin"
+    android:layout_marginTop="@dimen/small_margin"
+    android:hint="@string/settings_dialog_hint_port"
+    android:inputType="number"
+    android:maxLength="5" />
 
 </LinearLayout>

@@ -6,13 +6,13 @@ import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
 
 public class UpdateLyrics implements ICommand {
-    private MainDataModel model;
+  private MainDataModel model;
 
-    @Inject public UpdateLyrics(MainDataModel model) {
-        this.model = model;
-    }
+  @Inject public UpdateLyrics(MainDataModel model) {
+    this.model = model;
+  }
 
-    @Override public void execute(IEvent e) {
-        model.setLyrics(e.getDataString());
-    }
+  @Override public void execute(IEvent e) {
+    model.setLyrics(e.getDataString());
+  }
 }

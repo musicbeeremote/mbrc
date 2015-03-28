@@ -12,23 +12,23 @@ import com.kelsos.mbrc.services.SocketService;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 
 public class NotifyNotAllowedCommand implements ICommand {
-    private SocketService socketService;
-    private MainDataModel model;
-    private ProtocolHandler handler;
-    private MainThreadBusWrapper bus;
+  private SocketService socketService;
+  private MainDataModel model;
+  private ProtocolHandler handler;
+  private MainThreadBusWrapper bus;
 
-    @Inject public NotifyNotAllowedCommand(SocketService socketService, MainDataModel model,
-                                           ProtocolHandler handler, MainThreadBusWrapper bus) {
-        this.socketService = socketService;
-        this.model = model;
-        this.handler = handler;
-        this.bus = bus;
-    }
+  @Inject public NotifyNotAllowedCommand(SocketService socketService, MainDataModel model,
+      ProtocolHandler handler, MainThreadBusWrapper bus) {
+    this.socketService = socketService;
+    this.model = model;
+    this.handler = handler;
+    this.bus = bus;
+  }
 
-    @Override public void execute(IEvent e) {
-        bus.post(new NotifyUser(R.string.notification_not_allowed));
-        socketService.SocketManager(SocketAction.STOP);
-        model.setConnectionState("false");
-        handler.resetHandshake();
-    }
+  @Override public void execute(IEvent e) {
+    bus.post(new NotifyUser(R.string.notification_not_allowed));
+    socketService.SocketManager(SocketAction.STOP);
+    model.setConnectionState("false");
+    handler.resetHandshake();
+  }
 }

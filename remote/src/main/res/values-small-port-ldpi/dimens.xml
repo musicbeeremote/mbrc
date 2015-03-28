@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="cover_height">225dp</dimen>
-    <dimen name="mbrc_drawer_width">260dp</dimen>
-    <dimen name="mbrc_drawer_item_height">40dp</dimen>
+  <dimen name="cover_height">225dp</dimen>
+  <dimen name="mbrc_drawer_width">260dp</dimen>
+  <dimen name="mbrc_drawer_item_height">40dp</dimen>
 </resources>

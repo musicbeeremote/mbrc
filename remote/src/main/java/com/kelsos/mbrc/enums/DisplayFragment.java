@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.enums;
 
 public enum DisplayFragment {
-    HOME,
-    SEARCH,
-    NOW_PLAYING_LIST,
-    LYRICS
+  HOME,
+  SEARCH,
+  NOW_PLAYING_LIST,
+  LYRICS
 }

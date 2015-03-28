@@ -1,34 +1,30 @@
 package com.kelsos.mbrc.data;
 
 import android.support.annotation.StringDef;
-import org.codehaus.jackson.annotate.JsonProperty;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 public class Queue {
-    @JsonProperty private String type;
-    @JsonProperty private String query;
+  public static final String NEXT = "next";
+  public static final String LAST = "last";
+  public static final String NOW = "now";
+  @JsonProperty private String type;
+  @JsonProperty private String query;
 
-    public static final String NEXT = "next";
-    public static final String LAST = "last";
-    public static final String NOW = "now";
+  public Queue(@QueueType String type, String query) {
+    this.type = type;
+    this.query = query;
+  }
 
-    @StringDef({NEXT, LAST, NOW})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface QueueType {}
+  @QueueType public String getType() {
+    return type;
+  }
 
-    public Queue(@QueueType String type, String query) {
-        this.type = type;
-        this.query = query;
-    }
+  @SuppressWarnings("unused") public String getQuery() {
+    return query;
+  }
 
-    @QueueType
-    public String getType() {
-        return type;
-    }
-
-    public String getQuery() {
-        return query;
-    }
+  @StringDef({ NEXT, LAST, NOW })
+  @Retention(RetentionPolicy.SOURCE) public @interface QueueType { }
 }

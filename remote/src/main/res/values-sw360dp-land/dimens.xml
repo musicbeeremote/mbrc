@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="cover_height">195dp</dimen>
+  <dimen name="cover_height">195dp</dimen>
 </resources>

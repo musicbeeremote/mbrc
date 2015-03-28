@@ -11,16 +11,11 @@ public class ArtistEntry {
         this.count = node.path("count").getIntValue();
     }
 
-    public ArtistEntry(String artist, int count) {
-        this.artist = artist;
-        this.count = count;
-    }
-
     public String getArtist() {
         return artist;
     }
 
-    public int getCount() {
+    @SuppressWarnings("unused") public int getCount() {
         return count;
     }
 }

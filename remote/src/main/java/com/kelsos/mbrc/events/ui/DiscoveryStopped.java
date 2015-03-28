@@ -3,13 +3,13 @@ package com.kelsos.mbrc.events.ui;
 import com.kelsos.mbrc.enums.DiscoveryStop;
 
 public class DiscoveryStopped {
-    private DiscoveryStop reason;
+  private DiscoveryStop reason;
 
-    public DiscoveryStopped(DiscoveryStop reason) {
-        this.reason = reason;
-    }
+  public DiscoveryStopped(DiscoveryStop reason) {
+    this.reason = reason;
+  }
 
-    public DiscoveryStop getReason() {
-        return reason;
-    }
+  public DiscoveryStop getReason() {
+    return reason;
+  }
 }

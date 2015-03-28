@@ -19,117 +19,115 @@ import com.squareup.otto.Bus;
 
 public class SettingsFragment extends PreferenceFragment {
 
-    private Bus bus;
-    private Context mContext;
+  private Bus bus;
+  private Context mContext;
 
-    public static SettingsFragment newInstance(Bus bus) {
-        final SettingsFragment fragment = new SettingsFragment();
-        fragment.setBus(bus);
-        return fragment;
+  public static SettingsFragment newInstance(Bus bus) {
+    final SettingsFragment fragment = new SettingsFragment();
+    fragment.setBus(bus);
+    return fragment;
+  }
+
+  @Override public void onCreate(Bundle paramBundle) {
+    super.onCreate(paramBundle);
+    addPreferencesFromResource(R.xml.application_settings);
+    mContext = getActivity();
+
+    final Preference mOpenSource =
+        findPreference(getResources().getString(R.string.preferences_open_source));
+    final Preference mManager =
+        findPreference(getResources().getString(R.string.preferences_key_connection_manager));
+    final Preference mVersion = findPreference(getResources().getString(R.string.settings_version));
+    final Preference mBuild =
+        findPreference(getResources().getString(R.string.pref_key_build_time));
+    final Preference mRevision =
+        findPreference(getResources().getString(R.string.pref_key_revision));
+    if (mOpenSource != null) {
+      mOpenSource.setOnPreferenceClickListener(preference -> {
+        showOpenSourceLicenseDialog();
+        return false;
+      });
     }
 
-    @Override public void onCreate(Bundle paramBundle) {
-        super.onCreate(paramBundle);
-        addPreferencesFromResource(R.xml.application_settings);
-        mContext = getActivity();
-
-        final Preference mOpenSource = findPreference(getResources().getString(R.string.preferences_open_source));
-        final Preference mManager = findPreference(getResources().getString(R.string.preferences_key_connection_manager));
-        final Preference mVersion = findPreference(getResources().getString(R.string.settings_version));
-        final Preference mBuild = findPreference(getResources().getString(R.string.pref_key_build_time));
-        final Preference mRevision = findPreference(getResources().getString(R.string.pref_key_revision));
-        if (mOpenSource != null) {
-            mOpenSource.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override public boolean onPreferenceClick(Preference preference) {
-                    showOpenSourceLicenseDialog();
-                    return false;
-                }
-            });
-        }
-
-        if (mManager != null) {
-            mManager.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override public boolean onPreferenceClick(Preference preference) {
-                    startActivity(new Intent(mContext, ConnectionManagerActivity.class));
-                    return false;
-                }
-            });
-        }
-
-        if (mVersion != null) {
-            try {
-                mVersion.setSummary(String.format(getResources().getString(R.string.settings_version_number), RemoteUtils.getVersion(mContext)));
-            } catch (PackageManager.NameNotFoundException e) {
-                if (BuildConfig.DEBUG) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            final Preference mShowNotification = findPreference(getResources().
-                    getString(R.string.settings_key_notification_control));
-            if (mShowNotification != null) {
-                mShowNotification.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                    @Override
-                    public boolean onPreferenceChange(Preference preference, Object newValue) {
-                        boolean value = (Boolean) newValue;
-                        if (!value) {
-                            bus.post(new MessageEvent(UserInputEventType.CancelNotification));
-                        }
-                        return true;
-                    }
-                });
-            }
-        }
-
-        final Preference mLicense = findPreference(getResources().getString(R.string.settings_key_license));
-        if (mLicense != null) {
-            mLicense.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override public boolean onPreferenceClick(Preference preference) {
-                    showLicenseDialog();
-                    return false;
-                }
-            });
-        }
-
-        if (mBuild != null) {
-            mBuild.setSummary(BuildConfig.BUILD_TIME);
-        }
-        if (mRevision != null) {
-            mRevision.setSummary(BuildConfig.GIT_SHA);
-        }
-    }
-    private void showLicenseDialog() {
-        Bundle args = new Bundle();
-        args.putString(WebViewDialog.ARG_URL, "file:///android_asset/license.html");
-        args.putInt(WebViewDialog.ARG_TITLE, R.string.musicbee_remote_license_title);
-        WebViewDialog dialog = new WebViewDialog();
-        dialog.setArguments(args);
-        dialog.show(getActivity().getSupportFragmentManager(),"license_dialog");
+    if (mManager != null) {
+      mManager.setOnPreferenceClickListener(preference -> {
+        startActivity(new Intent(mContext, ConnectionManagerActivity.class));
+        return false;
+      });
     }
 
-    private void showOpenSourceLicenseDialog() {
-        Bundle args = new Bundle();
-        args.putString(WebViewDialog.ARG_URL, "file:///android_asset/licenses.html");
-        args.putInt(WebViewDialog.ARG_TITLE, R.string.open_source_licenses_title);
-        WebViewDialog dialog = new WebViewDialog();
-        dialog.setArguments(args);
-        dialog.show(getActivity().getSupportFragmentManager(), "licenses_dialogs");
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                getActivity().finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+    if (mVersion != null) {
+      try {
+        mVersion.setSummary(
+            String.format(getResources().getString(R.string.settings_version_number),
+                RemoteUtils.getVersion(mContext)));
+      } catch (PackageManager.NameNotFoundException e) {
+        if (BuildConfig.DEBUG) {
+          e.printStackTrace();
         }
+      }
     }
 
-    public void setBus(Bus bus) {
-        this.bus = bus;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+      final Preference mShowNotification = findPreference(getResources().
+          getString(R.string.settings_key_notification_control));
+      if (mShowNotification != null) {
+        mShowNotification.setOnPreferenceChangeListener((preference, newValue) -> {
+          boolean value = (Boolean) newValue;
+          if (!value) {
+            bus.post(new MessageEvent(UserInputEventType.CancelNotification));
+          }
+          return true;
+        });
+      }
     }
+
+    final Preference mLicense =
+        findPreference(getResources().getString(R.string.settings_key_license));
+    if (mLicense != null) {
+      mLicense.setOnPreferenceClickListener(preference -> {
+        showLicenseDialog();
+        return false;
+      });
+    }
+
+    if (mBuild != null) {
+      mBuild.setSummary(BuildConfig.BUILD_TIME);
+    }
+    if (mRevision != null) {
+      mRevision.setSummary(BuildConfig.GIT_SHA);
+    }
+  }
+
+  private void showLicenseDialog() {
+    Bundle args = new Bundle();
+    args.putString(WebViewDialog.ARG_URL, "file:///android_asset/license.html");
+    args.putInt(WebViewDialog.ARG_TITLE, R.string.musicbee_remote_license_title);
+    WebViewDialog dialog = new WebViewDialog();
+    dialog.setArguments(args);
+    dialog.show(getActivity().getSupportFragmentManager(), "license_dialog");
+  }
+
+  private void showOpenSourceLicenseDialog() {
+    Bundle args = new Bundle();
+    args.putString(WebViewDialog.ARG_URL, "file:///android_asset/licenses.html");
+    args.putInt(WebViewDialog.ARG_TITLE, R.string.open_source_licenses_title);
+    WebViewDialog dialog = new WebViewDialog();
+    dialog.setArguments(args);
+    dialog.show(getActivity().getSupportFragmentManager(), "licenses_dialogs");
+  }
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        getActivity().finish();
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
+    }
+  }
+
+  public void setBus(Bus bus) {
+    this.bus = bus;
+  }
 }

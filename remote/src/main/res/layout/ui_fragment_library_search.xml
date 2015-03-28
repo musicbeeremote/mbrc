@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:gravity="center_vertical"
-              android:orientation="vertical">
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:gravity="center_vertical"
+  android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/search_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:scrollbars="vertical"
-        android:paddingTop="@dimen/small_margin"
-        android:paddingBottom="@dimen/small_margin"
-        android:paddingRight="@dimen/normal_margin"
-        android:paddingLeft="@dimen/normal_margin"
-        tools:listitem="@layout/ui_list_single" />
+  <android.support.v7.widget.RecyclerView
+    android:id="@+id/search_recycler_view"
+    android:layout_width="match_parent"
+    android:layout_height="0dip"
+    android:layout_weight="1"
+    android:paddingBottom="@dimen/small_margin"
+    android:paddingLeft="@dimen/normal_margin"
+    android:paddingRight="@dimen/normal_margin"
+    android:paddingTop="@dimen/small_margin"
+    android:scrollbars="vertical"
+    tools:listitem="@layout/ui_list_single" />
 
 </LinearLayout>

@@ -4,19 +4,19 @@ import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.enums.SettingsAction;
 
 public class ChangeSettings {
-    private SettingsAction action;
-    private ConnectionSettings settings;
+  private SettingsAction action;
+  private ConnectionSettings settings;
 
-    public ChangeSettings(SettingsAction action, ConnectionSettings settings) {
-        this.action = action;
-        this.settings = settings;
-    }
+  public ChangeSettings(SettingsAction action, ConnectionSettings settings) {
+    this.action = action;
+    this.settings = settings;
+  }
 
-    public SettingsAction getAction() {
-        return action;
-    }
+  public SettingsAction getAction() {
+    return action;
+  }
 
-    public ConnectionSettings getSettings() {
-        return settings;
-    }
+  public ConnectionSettings getSettings() {
+    return settings;
+  }
 }

@@ -1,33 +1,31 @@
 package com.kelsos.mbrc.events.ui;
 
 public class TrackInfoChange {
-    public String artist;
-    public String title;
-    public String album;
-    public String year;
+  public String artist;
+  public String title;
+  public String album;
+  public String year;
 
-    public String getArtist() {
-        return artist;
-    }
+  public TrackInfoChange(String artist, String title, String album, String year) {
+    this.artist = artist;
+    this.title = title;
+    this.album = album;
+    this.year = year;
+  }
 
-    public String getTitle() {
-        return title;
-    }
+  public String getArtist() {
+    return artist;
+  }
 
-    public String getAlbum() {
-        return album;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public String getYear() {
-        return year;
-    }
+  public String getAlbum() {
+    return album;
+  }
 
-    public TrackInfoChange(String artist, String title, String album, String year)  {
-        this.artist = artist;
-        this.title = title;
-        this.album = album;
-        this.year = year;
-    }
-
-
+  public String getYear() {
+    return year;
+  }
 }

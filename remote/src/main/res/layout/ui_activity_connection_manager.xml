@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:baselineAligned="false"
+  android:divider="@android:color/transparent"
+  android:orientation="vertical">
+
+  <include layout="@layout/toolbar" />
+
+  <android.support.v7.widget.RecyclerView
+    android:id="@+id/connection_list"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="0dip"
+    android:layout_weight="1"
+    tools:listitem="@layout/ui_list_connection_settings" />
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:baselineAligned="false"
     android:divider="@android:color/transparent"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
-    <include layout="@layout/toolbar" />
+    <Button
+      android:id="@+id/connection_scan"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:background="@drawable/md_btn_selector"
+      android:text="@string/connection_manager_scan"
+      android:textColor="@color/colorAccent" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/connection_list"
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        tools:listitem="@layout/ui_list_connection_settings" />
+    <Button
+      android:id="@+id/connection_add"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:background="@drawable/md_btn_selector"
+      android:text="@string/connection_manager_add"
+      android:textColor="@color/colorAccent" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:baselineAligned="false"
-        android:divider="@android:color/transparent"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/connection_scan"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textColor="@color/colorAccent"
-            android:background="@drawable/md_btn_selector"
-            android:text="@string/connection_manager_scan" />
-
-        <Button
-            android:id="@+id/connection_add"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textColor="@color/colorAccent"
-            android:background="@drawable/md_btn_selector"
-            android:text="@string/connection_manager_add" />
-
-    </LinearLayout>
+  </LinearLayout>
 
 </LinearLayout>

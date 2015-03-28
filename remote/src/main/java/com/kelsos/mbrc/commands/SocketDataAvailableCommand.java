@@ -8,20 +8,19 @@ import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.services.ProtocolHandler;
 
 public class SocketDataAvailableCommand implements ICommand {
-    private ProtocolHandler handler;
+  private ProtocolHandler handler;
 
-    @Inject public SocketDataAvailableCommand(ProtocolHandler handler) {
-        this.handler = handler;
+  @Inject public SocketDataAvailableCommand(ProtocolHandler handler) {
+    this.handler = handler;
+  }
+
+  public void execute(final IEvent e) {
+    try {
+      handler.preProcessIncoming(e.getDataString());
+    } catch (Exception ex) {
+      if (BuildConfig.DEBUG) {
+        Log.d("mbrc-log", "message processing", ex);
+      }
     }
-
-    public void execute(final IEvent e) {
-        try {
-            handler.preProcessIncoming(e.getDataString());
-        } catch (Exception ex) {
-            if (BuildConfig.DEBUG) {
-                Log.d("mbrc-log", "message processing", ex);
-            }
-        }
-
-    }
+  }
 }

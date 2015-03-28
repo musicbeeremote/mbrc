@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="mbrc_drawer_width">300dp</dimen>
-    <dimen name="cover_height">150dp</dimen>
+  <dimen name="mbrc_drawer_width">300dp</dimen>
+  <dimen name="cover_height">150dp</dimen>
 </resources>

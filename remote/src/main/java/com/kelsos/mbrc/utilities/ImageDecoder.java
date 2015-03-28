@@ -15,30 +15,28 @@ import roboguice.inject.InjectResource;
 import roboguice.util.RoboAsyncTask;
 
 public class ImageDecoder extends RoboAsyncTask<Bitmap> {
-    @Inject private MainDataModel model;
-    @InjectResource(R.drawable.ic_image_no_cover) Drawable noCover;
+  @InjectResource(R.drawable.ic_image_no_cover) Drawable noCover;
+  @Inject private MainDataModel model;
+  private String image;
 
-    private String image;
+  public ImageDecoder(Context context, String image) {
+    super(context);
+    this.image = image;
+  }
 
-    public ImageDecoder(Context context, String image) {
-        super(context);
-        this.image = image;
+  public Bitmap call() {
+    try {
+      byte[] decodedImage = Base64.decode(image, Base64.DEFAULT);
+      return BitmapFactory.decodeByteArray(decodedImage, 0, decodedImage.length);
+    } catch (Exception ex) {
+      if (BuildConfig.DEBUG) {
+        Log.d("mbrc-log", "image processing", ex);
+      }
     }
+    return ((BitmapDrawable) noCover).getBitmap();
+  }
 
-    public Bitmap call() {
-        try {
-            byte[] decodedImage = Base64.decode(image, Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(decodedImage, 0, decodedImage.length);
-        } catch (Exception ex) {
-            if (BuildConfig.DEBUG) {
-                Log.d("mbrc-log", "image processing", ex);
-            }
-        }
-        return ((BitmapDrawable) noCover).getBitmap();
-    }
-
-    @Override
-    protected void onSuccess(Bitmap result) {
-        model.setAlbumCover(result);
-    }
+  @Override protected void onSuccess(Bitmap result) {
+    model.setAlbumCover(result);
+  }
 }

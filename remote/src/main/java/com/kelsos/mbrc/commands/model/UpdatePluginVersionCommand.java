@@ -6,13 +6,13 @@ import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
 
 public class UpdatePluginVersionCommand implements ICommand {
-    private MainDataModel model;
+  private MainDataModel model;
 
-    @Inject public UpdatePluginVersionCommand(final MainDataModel model) {
-        this.model = model;
-    }
+  @Inject public UpdatePluginVersionCommand(final MainDataModel model) {
+    this.model = model;
+  }
 
-    @Override public void execute(final IEvent e) {
-        model.setPluginVersion(e.getDataString());
-    }
+  @Override public void execute(final IEvent e) {
+    model.setPluginVersion(e.getDataString());
+  }
 }

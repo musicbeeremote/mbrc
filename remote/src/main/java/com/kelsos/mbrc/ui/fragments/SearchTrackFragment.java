@@ -23,66 +23,66 @@ import com.squareup.otto.Subscribe;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
-public class SearchTrackFragment extends RoboFragment implements TrackEntryAdapter.MenuItemSelectedListener {
-    @Inject Bus bus;
-    private String mDefault;
-    @InjectView(R.id.search_recycler_view)
-    private RecyclerView mRecyclerView;
+public class SearchTrackFragment extends RoboFragment
+    implements TrackEntryAdapter.MenuItemSelectedListener {
+  @Inject Bus bus;
+  private String mDefault;
+  @InjectView(R.id.search_recycler_view) private RecyclerView mRecyclerView;
 
-    @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
-        mDefault = action.getAction();
+  @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
+    mDefault = action.getAction();
+  }
+
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.ui_fragment_library_search, container, false);
+  }
+
+  @Override public void onStart() {
+    super.onStart();
+    bus.register(this);
+  }
+
+  @Override public void onStop() {
+    super.onStop();
+    bus.unregister(this);
+  }
+
+  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+    mRecyclerView.setHasFixedSize(true);
+    mRecyclerView.setLayoutManager(layoutManager);
+  }
+
+  @Subscribe public void handleTrackResults(TrackSearchResults results) {
+    TrackEntryAdapter adapter = new TrackEntryAdapter(getActivity(), results.getList());
+    adapter.setMenuItemSelectedListener(this);
+    mRecyclerView.setAdapter(adapter);
+  }
+
+  @Override public void onMenuItemSelected(MenuItem menuItem, TrackEntry entry) {
+    final String qContext = Protocol.LibraryQueueTrack;
+    final String query = entry.getSrc();
+
+    UserAction ua = null;
+    switch (menuItem.getItemId()) {
+      case R.id.popup_track_queue_next:
+        ua = new UserAction(qContext, new Queue(Queue.NEXT, query));
+        break;
+      case R.id.popup_track_queue_last:
+        ua = new UserAction(qContext, new Queue(Queue.LAST, query));
+        break;
+      case R.id.popup_track_play:
+        ua = new UserAction(qContext, new Queue(Queue.NOW, query));
+        break;
     }
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.ui_fragment_library_search, container, false);
-    }
+    if (ua != null) bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
+  }
 
-    @Override public void onStart() {
-        super.onStart();
-        bus.register(this);
-    }
-
-    @Override public void onStop() {
-        super.onStop();
-        bus.unregister(this);
-    }
-
-    @Override public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(layoutManager);
-    }
-
-    @Subscribe public void handleTrackResults(TrackSearchResults results) {
-        TrackEntryAdapter adapter = new TrackEntryAdapter(getActivity(), results.getList());
-        adapter.setMenuItemSelectedListener(this);
-        mRecyclerView.setAdapter(adapter);
-    }
-
-    @Override public void onMenuItemSelected(MenuItem menuItem, TrackEntry entry) {
-        final String qContext = Protocol.LibraryQueueTrack;
-        final String query = entry.getSrc();
-
-        UserAction ua = null;
-        switch (menuItem.getItemId()) {
-            case R.id.popup_track_queue_next:
-                ua = new UserAction(qContext, new Queue(Queue.NEXT, query));
-                break;
-            case R.id.popup_track_queue_last:
-                ua = new UserAction(qContext, new Queue(Queue.LAST, query));
-                break;
-            case R.id.popup_track_play:
-                ua = new UserAction(qContext, new Queue(Queue.NOW, query));
-                break;
-        }
-
-        if (ua != null) bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
-    }
-
-    @Override public void onItemClicked(TrackEntry track) {
-        bus.post(new MessageEvent(ProtocolEventType.UserAction,
-                new UserAction(Protocol.LibraryQueueTrack,
-                        new Queue(mDefault, track.getSrc()))));
-    }
+  @Override public void onItemClicked(TrackEntry track) {
+    bus.post(new MessageEvent(ProtocolEventType.UserAction,
+        new UserAction(Protocol.LibraryQueueTrack, new Queue(mDefault, track.getSrc()))));
+  }
 }

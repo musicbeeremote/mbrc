@@ -22,89 +22,91 @@ import com.squareup.otto.Subscribe;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
-
 public class MiniControlFragment extends RoboFragment {
 
-    @Inject Bus bus;
-    @InjectView(R.id.mc_track_cover) ImageView trackCover;
-    @InjectView(R.id.mc_track_artist) TextView trackArtist;
-    @InjectView(R.id.mc_track_title) TextView trackTitle;
-    @InjectView(R.id.mc_next_track) ImageButton playNext;
-    @InjectView(R.id.mc_play_pause) ImageButton playPause;
-    @InjectView(R.id.mc_prev_track) ImageButton playPrevious;
+  @Inject Bus bus;
+  @InjectView(R.id.mc_track_cover) ImageView trackCover;
+  @InjectView(R.id.mc_track_artist) TextView trackArtist;
+  @InjectView(R.id.mc_track_title) TextView trackTitle;
+  @InjectView(R.id.mc_next_track) ImageButton playNext;
+  @InjectView(R.id.mc_play_pause) ImageButton playPause;
+  @InjectView(R.id.mc_prev_track) ImageButton playPrevious;
 
-    ImageButton.OnClickListener playNextListener = new ImageButton.OnClickListener() {
+  ImageButton.OnClickListener playNextListener = new ImageButton.OnClickListener() {
 
-        @Override public void onClick(View view) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerNext, true)));
-        }
-    };
-    ImageButton.OnClickListener playPauseListener = new ImageButton.OnClickListener() {
-        @Override public void onClick(View view) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerPlayPause, true)));
-        }
-    };
-    ImageButton.OnClickListener playPreviousListener = new ImageButton.OnClickListener() {
-        @Override public void onClick(View view) {
-            bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerPrevious, true)));
-        }
-    };
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    @Override public void onClick(View view) {
+      bus.post(new MessageEvent(ProtocolEventType.UserAction,
+          new UserAction(Protocol.PlayerNext, true)));
     }
-
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.ui_fragment_mini_control, container, false);
+  };
+  ImageButton.OnClickListener playPauseListener = new ImageButton.OnClickListener() {
+    @Override public void onClick(View view) {
+      bus.post(new MessageEvent(ProtocolEventType.UserAction,
+          new UserAction(Protocol.PlayerPlayPause, true)));
     }
-
-    @Override public void onStart() {
-        super.onStart();
-        bus.register(this);
-        playNext.setOnClickListener(playNextListener);
-        playPause.setOnClickListener(playPauseListener);
-        playPrevious.setOnClickListener(playPreviousListener);
-        Typeface robotoRegular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
-        Typeface robotoMedium = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_medium.ttf");
-        trackTitle.setTypeface(robotoMedium);
-        trackArtist.setTypeface(robotoRegular);
-
+  };
+  ImageButton.OnClickListener playPreviousListener = new ImageButton.OnClickListener() {
+    @Override public void onClick(View view) {
+      bus.post(new MessageEvent(ProtocolEventType.UserAction,
+          new UserAction(Protocol.PlayerPrevious, true)));
     }
+  };
 
-    @Override public void onStop() {
-        super.onStop();
-        bus.unregister(this);
+  @Override public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+  }
+
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.ui_fragment_mini_control, container, false);
+  }
+
+  @Override public void onStart() {
+    super.onStart();
+    bus.register(this);
+    playNext.setOnClickListener(playNextListener);
+    playPause.setOnClickListener(playPauseListener);
+    playPrevious.setOnClickListener(playPreviousListener);
+    Typeface robotoRegular =
+        Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
+    Typeface robotoMedium =
+        Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_medium.ttf");
+    trackTitle.setTypeface(robotoMedium);
+    trackArtist.setTypeface(robotoRegular);
+  }
+
+  @Override public void onStop() {
+    super.onStop();
+    bus.unregister(this);
+  }
+
+  @Subscribe public void handleCoverChange(CoverAvailable event) {
+    if (trackCover == null) return;
+    if (event.getIsAvailable()) {
+      trackCover.setImageBitmap(event.getCover());
+    } else {
+      trackCover.setImageResource(R.drawable.ic_image_no_cover);
     }
+  }
 
-    @Subscribe public void handleCoverChange(CoverAvailable event) {
-        if (trackCover == null) return;
-        if (event.getIsAvailable()) {
-            trackCover.setImageBitmap(event.getCover());
-        } else {
-            trackCover.setImageResource(R.drawable.ic_image_no_cover);
-        }
+  @Subscribe public void handleTrackInfoChange(TrackInfoChange event) {
+    trackArtist.setText(event.getArtist());
+    trackTitle.setText(event.getTitle());
+  }
+
+  @Subscribe public void handlePlayStateChange(PlayStateChange event) {
+    switch (event.getState()) {
+      case Playing:
+        playPause.setImageResource(R.drawable.ic_action_pause);
+        break;
+      case Paused:
+        playPause.setImageResource(R.drawable.ic_action_play);
+        break;
+      case Stopped:
+        playPause.setImageResource(R.drawable.ic_action_play);
+        break;
+      case Undefined:
+        break;
     }
-
-    @Subscribe public void handleTrackInfoChange(TrackInfoChange event) {
-        trackArtist.setText(event.getArtist());
-        trackTitle.setText(event.getTitle());
-    }
-
-    @Subscribe public void handlePlayStateChange(PlayStateChange event) {
-        switch (event.getState()) {
-            case Playing:
-                playPause.setImageResource(R.drawable.ic_action_pause);
-                break;
-            case Paused:
-                playPause.setImageResource(R.drawable.ic_action_play);
-                break;
-            case Stopped:
-                playPause.setImageResource(R.drawable.ic_action_play);
-                break;
-            case Undefined:
-                break;
-        }
-    }
-
+  }
 }

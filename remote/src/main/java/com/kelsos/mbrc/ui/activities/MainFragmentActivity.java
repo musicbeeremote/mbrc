@@ -33,209 +33,192 @@ import com.squareup.otto.Subscribe;
 import roboguice.activity.RoboActionBarActivity;
 
 public class MainFragmentActivity extends RoboActionBarActivity {
-    @Inject
-    Bus bus;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private DrawerLayout mDrawerLayout;
-    private View mDrawerMenu;
-    private DisplayFragment mDisplay;
-    private boolean navChanged;
-    private DialogFragment mDialog;
+  @Inject Bus bus;
+  private ActionBarDrawerToggle mDrawerToggle;
+  private DrawerLayout mDrawerLayout;
+  private View mDrawerMenu;
+  private DisplayFragment mDisplay;
+  private boolean navChanged;
+  private DialogFragment mDialog;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.ui_main_container);
+  @Override public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.ui_main_container);
 
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
+    Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+    setSupportActionBar(mToolbar);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerMenu = findViewById(R.id.drawer_menu);
+    mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+    mDrawerMenu = findViewById(R.id.drawer_menu);
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.string.drawer_open, R.string.drawer_close) {
-            public void onDrawerOpened(View view) {
-                invalidateOptionsMenu();
-            }
+    mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open,
+        R.string.drawer_close) {
+      public void onDrawerOpened(View view) {
+        invalidateOptionsMenu();
+      }
 
-            public void onDrawerClosed(View view) {
-                invalidateOptionsMenu();
-                if (navChanged) {
-                    navigateToView();
-                }
-            }
-        };
-
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, 1);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
-        if (savedInstanceState != null) {
-            return;
+      public void onDrawerClosed(View view) {
+        invalidateOptionsMenu();
+        if (navChanged) {
+          navigateToView();
         }
+      }
+    };
 
-        navChanged = false;
-        mDisplay = DisplayFragment.HOME;
+    mDrawerLayout.setDrawerListener(mDrawerToggle);
+    mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, 1);
 
-        MainFragment mFragment = new MainFragment();
-        mFragment.setArguments(getIntent().getExtras());
+    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    getSupportActionBar().setHomeButtonEnabled(true);
 
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, mFragment, "main_fragment");
-        fragmentTransaction.commit();
+    if (savedInstanceState != null) {
+      return;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        bus.register(this);
-    }
+    navChanged = false;
+    mDisplay = DisplayFragment.HOME;
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        bus.unregister(this);
-    }
+    MainFragment mFragment = new MainFragment();
+    mFragment.setArguments(getIntent().getExtras());
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
-    }
+    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+    fragmentTransaction.replace(R.id.fragment_container, mFragment, "main_fragment");
+    fragmentTransaction.commit();
+  }
 
-    private void navigateToView() {
-        switch (mDisplay) {
-            case HOME:
-                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                    onBackPressed();
-                }
-                break;
-            case SEARCH:
-                SearchFragment slsFragment = new SearchFragment();
-                replaceFragment(slsFragment, "library_search");
-                break;
-            case NOW_PLAYING_LIST:
-                NowPlayingFragment npFragment = new NowPlayingFragment();
-                replaceFragment(npFragment, "now_playing_list");
-                break;
-            case LYRICS:
-                LyricsFragment lFragment = new LyricsFragment();
-                replaceFragment(lFragment, "lyrics");
-                break;
+  @Override public void onStart() {
+    super.onStart();
+    bus.register(this);
+  }
+
+  @Override public void onStop() {
+    super.onStop();
+    bus.unregister(this);
+  }
+
+  @Override public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
+    mDrawerToggle.onConfigurationChanged(newConfig);
+  }
+
+  private void navigateToView() {
+    switch (mDisplay) {
+      case HOME:
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+          onBackPressed();
         }
-        navChanged = false;
+        break;
+      case SEARCH:
+        SearchFragment slsFragment = new SearchFragment();
+        replaceFragment(slsFragment, "library_search");
+        break;
+      case NOW_PLAYING_LIST:
+        NowPlayingFragment npFragment = new NowPlayingFragment();
+        replaceFragment(npFragment, "now_playing_list");
+        break;
+      case LYRICS:
+        LyricsFragment lFragment = new LyricsFragment();
+        replaceFragment(lFragment, "lyrics");
+        break;
+    }
+    navChanged = false;
+  }
+
+  private void replaceFragment(Fragment fragment, String tag) {
+
+    FragmentManager fragmentManager = getSupportFragmentManager();
+    int bsCount = fragmentManager.getBackStackEntryCount();
+
+    for (int i = 0; i < bsCount; i++) {
+      int bsId = fragmentManager.getBackStackEntryAt(i).getId();
+      fragmentManager.popBackStack(bsId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
-    private void replaceFragment(Fragment fragment, String tag) {
+    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+    fragmentTransaction.replace(R.id.fragment_container, fragment);
+    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+    fragmentTransaction.addToBackStack(tag);
+    fragmentTransaction.commit();
+  }
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        int bsCount = fragmentManager.getBackStackEntryCount();
+  @Override protected void onPostCreate(Bundle savedInstanceState) {
+    super.onPostCreate(savedInstanceState);
+    mDrawerToggle.syncState();
+  }
 
-        for (int i = 0; i < bsCount; i++) {
-            int bsId = fragmentManager.getBackStackEntryAt(i).getId();
-            fragmentManager.popBackStack(bsId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }
-
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, fragment);
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        fragmentTransaction.addToBackStack(tag);
-        fragmentTransaction.commit();
+  @Override public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
+    switch (keyCode) {
+      case KeyEvent.KEYCODE_VOLUME_UP:
+        return true;
+      case KeyEvent.KEYCODE_VOLUME_DOWN:
+        return true;
+      default:
+        return super.onKeyUp(keyCode, event);
     }
+  }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
-    }
-
-    @Override
-    public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_VOLUME_UP:
-                return true;
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                return true;
-            default:
-                return super.onKeyUp(keyCode, event);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
-                    mDrawerLayout.closeDrawer(mDrawerMenu);
-                } else {
-                    mDrawerLayout.openDrawer(mDrawerMenu);
-                }
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    @Subscribe
-    public void ShowSetupDialog(DisplayDialog event) {
-        if (mDialog != null) return;
-        if (event.getDialogType() == DisplayDialog.SETUP) {
-            mDialog = new SetupDialogFragment();
-            mDialog.show(getSupportFragmentManager(), "SetupDialogFragment");
-        } else if (event.getDialogType() == DisplayDialog.UPGRADE) {
-            mDialog = new UpgradeDialogFragment();
-            mDialog.show(getSupportFragmentManager(), "UpgradeDialogFragment");
-        } else if (event.getDialogType() == DisplayDialog.INSTALL) {
-            mDialog = new UpgradeDialogFragment();
-            ((UpgradeDialogFragment) mDialog).setNewInstall(true);
-            mDialog.show(getSupportFragmentManager(), "UpgradeDialogFragment");
-        }
-
-    }
-
-    @Subscribe
-    public void handleDrawerEvent(DrawerEvent event) {
-        if (event.isCloseDrawer()) {
-            closeDrawer();
-        } else {
-            navChanged = true;
-            mDisplay = event.getNavigate();
-            closeDrawer();
-        }
-    }
-
-    private void closeDrawer() {
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
         if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
-            mDrawerLayout.closeDrawer(mDrawerMenu);
+          mDrawerLayout.closeDrawer(mDrawerMenu);
+        } else {
+          mDrawerLayout.openDrawer(mDrawerMenu);
         }
+        return true;
+      default:
+        return false;
     }
+  }
 
-    @Subscribe
-    public void handleUserNotification(NotifyUser event) {
-        final String message = event.isFromResource()
-                ? getString(event.getResId())
-                : event.getMessage();
-
-        new SnackBar.Builder(this)
-                .withMessage(message)
-                .withStyle(SnackBar.Style.INFO)
-                .show();
+  @Subscribe public void ShowSetupDialog(DisplayDialog event) {
+    if (mDialog != null) return;
+    if (event.getDialogType() == DisplayDialog.SETUP) {
+      mDialog = new SetupDialogFragment();
+      mDialog.show(getSupportFragmentManager(), "SetupDialogFragment");
+    } else if (event.getDialogType() == DisplayDialog.UPGRADE) {
+      mDialog = new UpgradeDialogFragment();
+      mDialog.show(getSupportFragmentManager(), "UpgradeDialogFragment");
+    } else if (event.getDialogType() == DisplayDialog.INSTALL) {
+      mDialog = new UpgradeDialogFragment();
+      ((UpgradeDialogFragment) mDialog).setNewInstall(true);
+      mDialog.show(getSupportFragmentManager(), "UpgradeDialogFragment");
     }
+  }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_VOLUME_UP:
-                bus.post(new MessageEvent(UserInputEventType.KeyVolumeUp));
-                return true;
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                bus.post(new MessageEvent(UserInputEventType.KeyVolumeDown));
-                return true;
-            default:
-                return super.onKeyDown(keyCode, event);
-        }
+  @Subscribe public void handleDrawerEvent(DrawerEvent event) {
+    if (event.isCloseDrawer()) {
+      closeDrawer();
+    } else {
+      navChanged = true;
+      mDisplay = event.getNavigate();
+      closeDrawer();
     }
+  }
+
+  private void closeDrawer() {
+    if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
+      mDrawerLayout.closeDrawer(mDrawerMenu);
+    }
+  }
+
+  @Subscribe public void handleUserNotification(NotifyUser event) {
+    final String message =
+        event.isFromResource() ? getString(event.getResId()) : event.getMessage();
+
+    new SnackBar.Builder(this).withMessage(message).withStyle(SnackBar.Style.INFO).show();
+  }
+
+  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+    switch (keyCode) {
+      case KeyEvent.KEYCODE_VOLUME_UP:
+        bus.post(new MessageEvent(UserInputEventType.KeyVolumeUp));
+        return true;
+      case KeyEvent.KEYCODE_VOLUME_DOWN:
+        bus.post(new MessageEvent(UserInputEventType.KeyVolumeDown));
+        return true;
+      default:
+        return super.onKeyDown(keyCode, event);
+    }
+  }
 }

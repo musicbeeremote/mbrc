@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.fragments;
 
-
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,70 +24,69 @@ import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
 public class SearchGenreFragment extends RoboFragment
-        implements GenreEntryAdapter.MenuItemSelectedListener {
-    @Inject Bus bus;
-    private String mDefault;
-    @InjectView(R.id.search_recycler_view)
-    private RecyclerView mRecyclerView;
+    implements GenreEntryAdapter.MenuItemSelectedListener {
+  @Inject Bus bus;
+  private String mDefault;
+  @InjectView(R.id.search_recycler_view) private RecyclerView mRecyclerView;
 
-    @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
-        mDefault = action.getAction();
+  @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
+    mDefault = action.getAction();
+  }
+
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.ui_fragment_library_search, container, false);
+  }
+
+  @Override public void onStart() {
+    super.onStart();
+    bus.register(this);
+  }
+
+  @Override public void onStop() {
+    super.onStop();
+    bus.unregister(this);
+  }
+
+  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+    mRecyclerView.setLayoutManager(layoutManager);
+    mRecyclerView.setHasFixedSize(true);
+  }
+
+  @Subscribe public void handleGenreSearchResults(GenreSearchResults results) {
+    GenreEntryAdapter adapter = new GenreEntryAdapter(getActivity(), results.getList());
+    adapter.setMenuItemSelectedListener(this);
+    mRecyclerView.setAdapter(adapter);
+  }
+
+  @Override public void onMenuItemSelected(MenuItem menuItem, GenreEntry entry) {
+    final String qContext = Protocol.LibraryQueueGenre;
+    final String gSub = Protocol.LibraryGenreArtists;
+    String query = entry.getName();
+
+    UserAction ua = null;
+    switch (menuItem.getItemId()) {
+      case R.id.popup_genre_queue_next:
+        ua = new UserAction(qContext, new Queue(Queue.NEXT, query));
+        break;
+      case R.id.popup_genre_queue_last:
+        ua = new UserAction(qContext, new Queue(Queue.LAST, query));
+        break;
+      case R.id.popup_genre_play:
+        ua = new UserAction(qContext, new Queue(Queue.NOW, query));
+        break;
+      case R.id.popup_genre_artists:
+        ua = new UserAction(gSub, query);
+        break;
     }
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.ui_fragment_library_search, container, false);
-    }
+    if (ua != null) bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
+  }
 
-    @Override public void onStart() {
-        super.onStart();
-        bus.register(this);
-    }
-
-    @Override public void onStop() {
-        super.onStop();
-        bus.unregister(this);
-    }
-
-    @Override public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setHasFixedSize(true);
-    }
-
-    @Subscribe public void handleGenreSearchResults(GenreSearchResults results) {
-        GenreEntryAdapter adapter = new GenreEntryAdapter(getActivity(), results.getList());
-        adapter.setMenuItemSelectedListener(this);
-        mRecyclerView.setAdapter(adapter);
-    }
-
-    @Override public void onMenuItemSelected(MenuItem menuItem, GenreEntry entry) {
-        final String qContext = Protocol.LibraryQueueGenre;
-        final String gSub = Protocol.LibraryGenreArtists;
-        String query = entry.getName();
-
-        UserAction ua = null;
-        switch (menuItem.getItemId()) {
-            case R.id.popup_genre_queue_next:
-                ua = new UserAction(qContext, new Queue(Queue.NEXT, query));
-                break;
-            case R.id.popup_genre_queue_last:
-                ua = new UserAction(qContext, new Queue(Queue.LAST, query));
-                break;
-            case R.id.popup_genre_play:
-                ua = new UserAction(qContext, new Queue(Queue.NOW, query));
-                break;
-            case R.id.popup_genre_artists:
-                ua = new UserAction(gSub, query);
-                break;
-        }
-
-        if (ua != null) bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
-    }
-
-    @Override public void onItemClicked(GenreEntry genre) {
-        bus.post(new MessageEvent(ProtocolEventType.UserAction,
-                new UserAction(Protocol.LibraryQueueGenre,
-                        new Queue(mDefault, genre.getName()))));
-    }
+  @Override public void onItemClicked(GenreEntry genre) {
+    bus.post(new MessageEvent(ProtocolEventType.UserAction,
+        new UserAction(Protocol.LibraryQueueGenre, new Queue(mDefault, genre.getName()))));
+  }
 }

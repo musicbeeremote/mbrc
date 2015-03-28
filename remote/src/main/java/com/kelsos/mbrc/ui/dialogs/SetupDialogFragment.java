@@ -11,22 +11,22 @@ import roboguice.fragment.RoboDialogFragment;
 
 public class SetupDialogFragment extends RoboDialogFragment {
 
-    @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
-        builder.content(R.string.dialog_application_setup);
-        builder.title(R.string.dialog_application_setup_title);
-        builder.positiveText(R.string.dialog_application_setup_positive);
-        builder.negativeText(R.string.dialog_application_setup_negative);
-        builder.callback(new MaterialDialog.ButtonCallback() {
-            @Override public void onPositive(MaterialDialog dialog) {
-                SetupDialogFragment.this.dismiss();
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
-            }
+  @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+    MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
+    builder.content(R.string.dialog_application_setup);
+    builder.title(R.string.dialog_application_setup_title);
+    builder.positiveText(R.string.dialog_application_setup_positive);
+    builder.negativeText(R.string.dialog_application_setup_negative);
+    builder.callback(new MaterialDialog.ButtonCallback() {
+      @Override public void onPositive(MaterialDialog dialog) {
+        SetupDialogFragment.this.dismiss();
+        startActivity(new Intent(getActivity(), SettingsActivity.class));
+      }
 
-            @Override public void onNegative(MaterialDialog dialog) {
-                SetupDialogFragment.this.dismiss();
-            }
-        });
-        return builder.build();
-    }
+      @Override public void onNegative(MaterialDialog dialog) {
+        SetupDialogFragment.this.dismiss();
+      }
+    });
+    return builder.build();
+  }
 }

@@ -8,14 +8,14 @@ import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 public class UpdateNowPlayingTrackRemoval implements ICommand {
-    private MainThreadBusWrapper bus;
+  private MainThreadBusWrapper bus;
 
-    @Inject public UpdateNowPlayingTrackRemoval(MainThreadBusWrapper bus) {
-        this.bus = bus;
-    }
+  @Inject public UpdateNowPlayingTrackRemoval(MainThreadBusWrapper bus) {
+    this.bus = bus;
+  }
 
-    @Override public void execute(final IEvent e) {
-        e.getData();
-        bus.post(new TrackRemoval((ObjectNode) e.getData()));
-    }
+  @Override public void execute(final IEvent e) {
+    e.getData();
+    bus.post(new TrackRemoval((ObjectNode) e.getData()));
+  }
 }

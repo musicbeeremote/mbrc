@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="cover_height">685dp</dimen>
-    <dimen name="mbrc_volume_seekbar_height">8dp</dimen>
-    <dimen name="mbrc_volume_seekbar_padding">9dp</dimen>
-    <dimen name="mbrc_volume_seekbar_thumb_offset">16dp</dimen>
-    <dimen name="mbrc_progress_seekbar_height">8dp</dimen>
-    <dimen name="mbrc_progress_seekbar_padding">4dp</dimen>
-    <dimen name="mbrc_progress_seekbar_thumb_offset">6dp</dimen>
+  <dimen name="cover_height">685dp</dimen>
+  <dimen name="mbrc_volume_seekbar_height">8dp</dimen>
+  <dimen name="mbrc_volume_seekbar_padding">9dp</dimen>
+  <dimen name="mbrc_volume_seekbar_thumb_offset">16dp</dimen>
+  <dimen name="mbrc_progress_seekbar_height">8dp</dimen>
+  <dimen name="mbrc_progress_seekbar_padding">4dp</dimen>
+  <dimen name="mbrc_progress_seekbar_thumb_offset">6dp</dimen>
 </resources>
