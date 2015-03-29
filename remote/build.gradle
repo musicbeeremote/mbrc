@@ -4,7 +4,6 @@ apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
-
 def buildTime() {
     def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
     df.setTimeZone(TimeZone.getTimeZone("UTC"))
@@ -22,7 +21,6 @@ if (crashProperties.exists()) {
     def properties = new Properties()
     properties.load(new FileInputStream(crashProperties))
     fabricApiKey = properties.getAt('apiKey')
-    print (fabricApiKey)
 }
 
 def hasModifiedDeletedOrOtherFiles() {
@@ -42,7 +40,7 @@ def gitDescription() {
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "22"
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
         applicationId "com.kelsos.mbrc"
@@ -116,13 +114,12 @@ android {
                     .replace(project.name, defaultConfig.applicationId);
             filename = "${originalFilename.parent}/${filename}"
             output.outputFile = file(filename)
-            println(filename)
         }
     }
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.2.1'
+    gradleVersion = '2.3'
 }
 
 dependencies {
