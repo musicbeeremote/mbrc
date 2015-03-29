@@ -58,6 +58,7 @@ import org.codehaus.jackson.node.ArrayNode;
         for (int i = 0; i < node.size(); i++) {
           JsonNode jNode = node.get(i);
           ConnectionSettings settings = new ConnectionSettings(jNode);
+          settings.updateIndex(i);
           mSettings.add(settings);
         }
       } catch (IOException e) {
