@@ -5,230 +5,254 @@ apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'checkstyle'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
-apply plugin: 'sonar-runner'
 apply plugin: 'idea'
 
-
 def buildTime() {
-    def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'UTC'")
-    df.setTimeZone(TimeZone.getTimeZone("UTC"))
-    return df.format(new Date())
+  def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'UTC'")
+  df.setTimeZone(TimeZone.getTimeZone("UTC"))
+  return df.format(new Date())
 }
 
-def gitSha() {
-    return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
+def gitHash() {
+  return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
 
 def getHost() {
-    def propsFile = rootProject.file('development.properties')
-    def host = ""
+  def propsFile = rootProject.file('development.properties')
+  def host = ""
 
-    if (propsFile.exists()) {
-        def prop = new Properties()
-        prop.load(new FileInputStream(propsFile))
-        host = prop["host"]
-    }
+  if (propsFile.exists()) {
+    def prop = new Properties()
+    prop.load(new FileInputStream(propsFile))
+    host = prop.getAt("host")
+  }
 
-    return host
+  return host
 }
 
 def getPort() {
-    def propsFile = rootProject.file('development.properties')
-    def port = ""
+  def propsFile = rootProject.file('development.properties')
+  def port = ""
 
-    if (propsFile.exists()) {
-        def prop = new Properties()
-        prop.load(new FileInputStream(propsFile))
-        port = prop["port"]
-    }
+  if (propsFile.exists()) {
+    def prop = new Properties()
+    prop.load(new FileInputStream(propsFile))
+    port = prop.getAt("port")
+  }
 
-    return port
+  return port
 }
 
+// Load the fabric api key.
+def fabricApiKey = ""
+def crashProperties = file('fabric.properties')
+if (crashProperties.exists()) {
+  def properties = new Properties()
+  properties.load(new FileInputStream(crashProperties))
+  fabricApiKey = properties.getAt('apiKey')
+}
+
+def hasModifiedDeletedOrOtherFiles() {
+  return !"git -C ${rootDir} ls-files -mdo --exclude-standard".execute().text.trim().isEmpty()
+}
+
+def hasStagedFiles() {
+  return !"git -C ${rootDir} diff-index --no-ext-diff --name-only --cached HEAD".execute().text.
+      trim().
+      isEmpty()
+}
+
+def dirtyWorkingCopy() {
+  return hasModifiedDeletedOrOtherFiles() || hasStagedFiles()
+}
+
+def gitDescription() {
+  return dirtyWorkingCopy() ? "${gitHash()}-dirty" : gitHash()
+}
 
 def versionMajor = 1
 def versionMinor = 0
 def versionPatch = 0
 
 android {
-    packagingOptions {
-        exclude 'META-INF/ASL2.0'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/NOTICE'
-    }
+  packagingOptions {
+    exclude 'META-INF/ASL2.0'
+    exclude 'META-INF/LICENSE'
+    exclude 'META-INF/NOTICE'
+    exclude 'META-INF/services/javax.annotation.processing.Processor'
+  }
 
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+  compileSdkVersion 22
+  buildToolsVersion "22.0.1"
 
-    defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 21
-        buildConfigField "String", "GIT_SHA", "\"${gitSha()}\""
-        buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
-        buildConfigField "String", "DEVHOST", "\"${getHost()}\""
-        buildConfigField "int", "DEVSOCKPORT", "${getPort()}"
-        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
-        versionCode 91
-    }
+  defaultConfig {
+    applicationId 'com.kelsos.mbrc'
+    minSdkVersion 15
+    targetSdkVersion 22
+    buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
+    buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
+    buildConfigField "String", "DEVHOST", "\"${getHost()}\""
+    buildConfigField "int", "DEVSOCKPORT", "${getPort()}"
+    versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+    versionCode 98
+  }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
 
-    signingConfigs {
-        release {
-            storeFile file('placeholder')
-            keyAlias "placeholder"
-            storePassword "placeholder"
-            keyPassword "placeholder"
-        }
+  signingConfigs {
+    release {
+      storeFile file('placeholder')
+      keyAlias "placeholder"
+      storePassword "placeholder"
+      keyPassword "placeholder"
     }
+  }
 
-    buildTypes {
-        release {
-            signingConfig signingConfigs.release
-            debuggable false
-            zipAlignEnabled true
-        }
-        debug {
-            applicationIdSuffix ".debug"
-            versionNameSuffix "-d"
-        }
+  buildTypes {
+    release {
+      signingConfig signingConfigs.release
+      debuggable false
+      zipAlignEnabled true
     }
+    debug {
+      applicationIdSuffix ".debug"
+      versionNameSuffix "-d"
+    }
+  }
 
-    lintOptions {
-        abortOnError false
-        xmlReport true
-        lintConfig file("lint.xml")
-    }
+  lintOptions {
+    abortOnError false
+    xmlReport true
+    lintConfig file("lint.xml")
+  }
 
-    sourceSets {
-        main {
-            java {
-                srcDir 'src/main'
-                srcDir 'src-gen'
-            }
-        }
+  sourceSets {
+    main {
+      java {
+        srcDir 'src/main'
+        srcDir 'src-gen'
+      }
     }
+  }
+
+  applicationVariants.all { variant ->
+    variant.outputs.each { output ->
+      def originalFilename = output.outputFile
+      def versionInfo = "-v${variant.mergedFlavor.versionCode}-${variant.mergedFlavor.versionName}-${gitDescription()}"
+      def filename = originalFilename.name
+          .replace(".apk", versionInfo + ".apk")
+          .replace(project.name, defaultConfig.applicationId);
+      filename = "${originalFilename.parent}/${filename}"
+      output.outputFile = file(filename)
+    }
+  }
 }
 
 dependencies {
 
-    compile 'com.android.support:support-v13:21.0.0'
-    compile 'com.android.support:appcompat-v7:21.0.3'
-    compile 'com.android.support:cardview-v7:21.0.0'
-    compile 'com.android.support:recyclerview-v7:21.0.0'
-    compile 'com.android.support:palette-v7:21.0.0'
-    compile 'com.mobeta.android.dslv:drag-sort-listview:0.6.2@aar'
-    compile 'org.roboguice:roboguice:3.0.1'
-    compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
-    compile 'com.squareup.retrofit:retrofit:1.9.0'
-    compile 'com.squareup.picasso:picasso:2.4.0'
-    compile 'com.squareup.okhttp:okhttp-urlconnection:2.2.0'
-    compile 'com.squareup.okhttp:okhttp:2.2.0'
-    compile 'com.github.mrengineer13:snackbar:1.0.0'
-    compile 'de.greenrobot:greendao:1.3.7'
-    compile 'io.reactivex:rxjava:1.0.4'
-    compile 'io.reactivex:rxandroid:0.24.0'
-    compile 'com.afollestad:material-dialogs:0.6.1.2'
-    compile 'com.koushikdutta.async:androidasync:2.0.5'
+  compile 'com.android.support:support-v13:22.0.0'
+  compile 'com.android.support:appcompat-v7:22.0.0'
+  compile 'com.android.support:cardview-v7:22.0.0'
+  compile 'com.android.support:recyclerview-v7:22.0.0'
+  compile 'com.android.support:palette-v7:22.0.0'
+  compile 'com.android.support:support-annotations:22.0.0'
+  compile 'com.mobeta.android.dslv:drag-sort-listview:0.6.2@aar'
+  compile 'org.roboguice:roboguice:3.0.1'
+  compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
+  compile 'com.squareup.retrofit:retrofit:1.9.0'
+  compile 'com.squareup.picasso:picasso:2.4.0'
+  compile 'com.squareup.okhttp:okhttp-urlconnection:2.2.0'
+  compile 'com.squareup.okhttp:okhttp:2.2.0'
+  compile 'com.github.mrengineer13:snackbar:1.1.0'
+  compile 'de.greenrobot:greendao:1.3.7'
+  compile 'io.reactivex:rxjava:1.0.4'
+  compile 'io.reactivex:rxandroid:0.24.0'
+  compile 'com.afollestad:material-dialogs:0.6.3.1'
+  compile 'net.i2p.android.ext:floatingactionbutton:1.8.0'
+  compile 'com.jakewharton:butterknife:6.1.0'
+  compile 'com.koushikdutta.async:androidasync:2.0.5'
 
-    compile 'com.intellij:annotations:12.0'
+  provided 'org.roboguice:roboblender:3.0.1'
 
-    provided 'org.roboguice:roboblender:3.0'
-
-    androidTestCompile 'junit:junit:4.11'
-    androidTestCompile 'org.robolectric:robolectric:2.4'
+  androidTestCompile 'junit:junit:4.11'
+  androidTestCompile 'org.robolectric:robolectric:2.4'
 }
 
 idea {
-    module {
-        downloadJavadoc = true
-        downloadSources = true
-    }
+  module {
+    downloadJavadoc = true
+    downloadSources = true
+  }
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.1'
+  gradleVersion = '2.3'
 }
 
-project.tasks.withType(JavaCompile) { task ->
-    options.compilerArgs << "-AguiceAnnotationDatabasePackageName=mbrc"
+project.tasks.withType(JavaCompile) {
+  task -> options.compilerArgs << "-AguiceAnnotationDatabasePackageName=com.kelsos.mbrc"
 }
 
 checkstyle {
-    configFile = file("$rootDir/config/quality/checkstyle/checkstyle.xml")
+  configFile = file("$rootDir/config/quality/checkstyle/checkstyle.xml")
 }
 
 task findbugs(type: FindBugs) {
-    ignoreFailures = true
-    excludeFilter file("$rootDir/config/quality/findbugs/findbugs-filter.xml")
-    classes = fileTree('build/classes/free/debug/')
-    source = fileTree('src/main/java/')
-    classpath = files(project.configurations.compile.asPath)
-    effort = 'max'
+  ignoreFailures = true
+  excludeFilter file("$rootDir/config/quality/findbugs/findbugs-filter.xml")
+  classes = fileTree('build/classes/free/debug/')
+  source = fileTree('src/main/java/')
+  classpath = files(project.configurations.compile.asPath)
+  effort = 'max'
 }
 
 task checkstyle(type: Checkstyle) {
-    source 'src/main/java'
-    include '**/*.java'
-    exclude '**/gen/**'
-    classpath = files(project.configurations.compile.asPath)
+  source 'src/main/java'
+  include '**/*.java'
+  exclude '**/gen/**'
+  classpath = files(project.configurations.compile.asPath)
 }
 
 task pmd(type: Pmd) {
-    ruleSetFiles = files("$rootDir/config/quality/pmd/pmd-ruleset.xml")
-    ruleSets = ["basic", "braces", "strings"]
-    source = fileTree(android.sourceSets.main.java.srcDirs)
+  ruleSetFiles = files("$rootDir/config/quality/pmd/pmd-ruleset.xml")
+  ruleSets = ["basic", "braces", "strings"]
+  source = fileTree(android.sourceSets.main.java.srcDirs)
 }
 
 gradle.taskGraph.afterTask { Task task, TaskState state ->
-    if (state.failure) {
-        if (task.name in ['checkstyle']) {
-            ant.xslt(in: "$buildDir/reports/checkstyle/checkstyle.xml",
-                    style: new File(rootDir, 'config/quality/checkstyle/checkstyle-noframes-sorted.xsl'),
-                    out: new File("$buildDir/reports/checkstyle/checkstyle.html"))
-        }
+  if (state.failure) {
+    if (task.name in ['checkstyle']) {
+      ant.xslt(in: "$buildDir/reports/checkstyle/checkstyle.xml",
+          style: new File(rootDir, 'config/quality/checkstyle/checkstyle-noframes-sorted.xsl'),
+          out: new File("$buildDir/reports/checkstyle/checkstyle.html"))
     }
+  }
 }
 
 allprojects {
 
-    afterEvaluate { project ->
-        def propsFile = rootProject.file('signing.properties')
-        def configName = 'release'
+  afterEvaluate { project ->
+    def propsFile = rootProject.file('signing.properties')
+    def configName = 'release'
 
-        if (propsFile.exists()) {
-            def prop = new Properties()
-            prop.load(new FileInputStream(propsFile))
-            def filepath = prop['keys']
-            def keyPropFile = file(filepath)
-            if (keyPropFile.exists() && android.signingConfigs.hasProperty(configName)) {
-                def props = new Properties()
-                props.load(new FileInputStream(keyPropFile))
-                def keystorePath = props['keystore']
-                android.signingConfigs[configName].storeFile = file(keystorePath)
-                android.signingConfigs[configName].storePassword = props['storePass']
-                android.signingConfigs[configName].keyAlias = props['keyAlias']
-                android.signingConfigs[configName].keyPassword = props['keyPass']
-            }
-        }
+    if (propsFile.exists()) {
+      def prop = new Properties()
+      prop.load(new FileInputStream(propsFile))
+      def filepath = prop.getAt('keys')
+      def keyPropFile = file(filepath)
+      if (keyPropFile.exists() && android.signingConfigs.hasProperty(configName)) {
+        def props = new Properties()
+        props.load(new FileInputStream(keyPropFile))
+        def keystorePath = props.getAt('keystore')
+        def var = android.signingConfigs.getAt(configName)
+        var.storeFile = file(keystorePath)
+        var.storePassword = props.getAt('storePass')
+        var.keyAlias = props.getAt('keyAlias')
+        var.keyPassword = props.getAt("keyPass")
+      }
     }
-}
-
-sonarRunner {
-    sonarProperties {
-        property "sonar.host.url", "http://localhost:9000"
-        property "sonar.jdbc.url", "jdbc:h2:tcp://localhost:9092/sonar"
-        property "sonar.jdbc.driverClassName", "org.h2.Driver"
-        property "sonar.jdbc.username", "sonar"
-        property "sonar.jdbc.password", "sonar"
-        property "sonar.branch", "gradle"
-        property "sonar.dynamicAnalysis", "reuseReports"
-        properties["sonar.sources"] = android.sourceSets.main.java.srcDirs
-        properties["sonar.tests"] = android.sourceSets.instrumentTest.java.srcDirs
-        properties["sonar.binaries"] = file("build/classes/free/debug")
-        property "sonar.surefire.reportsPath", "build/instrumentTest-results/connected/"
-    }
+  }
 }

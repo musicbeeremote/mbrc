@@ -16,6 +16,7 @@ gen/
 local.properties
 signing.properties
 development.properties
+fabric.properties
 
 # Eclipse project files
 .classpath
