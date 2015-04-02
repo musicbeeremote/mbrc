@@ -22,100 +22,83 @@ import rx.schedulers.Schedulers;
 import static com.kelsos.mbrc.events.actions.ButtonPressedEvent.Button;
 
 public class ButtonFragment extends RoboFragment {
+  @InjectView(R.id.main_button_play_pause) private ImageButton playButton;
+  @InjectView(R.id.main_button_previous) private ImageButton previousButton;
+  @InjectView(R.id.main_button_next) private ImageButton nextButton;
+  @InjectView(R.id.main_shuffle_button) private ImageButton shuffleButton;
+  @InjectView(R.id.main_repeat_button) private ImageButton repeatButton;
+  @Inject private RemoteApi api;
+  @Inject private PlayerState playerStateModel;
 
-	@InjectView(R.id.main_button_play_pause)
-	private ImageButton playButton;
+  public static ButtonFragment newInstance() {
+    return new ButtonFragment();
+  }
 
-	@InjectView(R.id.main_button_previous)
-	private ImageButton previousButton;
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.ui_main_buttons, container, false);
+  }
 
-	@InjectView(R.id.main_button_next)
-	private ImageButton nextButton;
+  @Override public void onStart() {
+    super.onStart();
+    playButton.setOnClickListener(
+        v -> Events.buttonPressedSub.onNext(new ButtonPressedEvent(Button.PLAYPAUSE)));
 
-	@InjectView(R.id.main_shuffle_button)
-	private ImageButton shuffleButton;
+    playButton.setOnLongClickListener(v -> {
+      Events.buttonPressedSub.onNext(new ButtonPressedEvent(Button.STOP));
+      return true;
+    });
 
-	@InjectView(R.id.main_repeat_button)
-	private ImageButton repeatButton;
+    previousButton.setOnClickListener(
+        v -> Events.buttonPressedSub.onNext(new ButtonPressedEvent(Button.PREVIOUS)));
 
-	@Inject
-	private RemoteApi api;
+    nextButton.setOnClickListener(
+        v -> Events.buttonPressedSub.onNext(new ButtonPressedEvent(Button.NEXT)));
 
-	@Inject
-	private PlayerState playerStateModel;
+    shuffleButton.setOnClickListener(
+        v -> Events.buttonPressedSub.onNext(new ButtonPressedEvent(Button.SHUFFLE)));
 
-	public static ButtonFragment newInstance() {
-		return new ButtonFragment();
-	}
+    repeatButton.setOnClickListener(
+        v -> Events.buttonPressedSub.onNext(new ButtonPressedEvent(Button.REPEAT)));
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.ui_main_buttons, container, false);
-	}
+    AppObservable.bindFragment(this, playerStateModel.observePlaystate())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeOn(Schedulers.io())
+        .subscribe(this::updatePlaystate, Logger::logThrowable);
 
-	@Override
-	public void onStart() {
-		super.onStart();
-		playButton.setOnClickListener(v ->
-				Events.ButtonPressedNotification.onNext(new ButtonPressedEvent(Button.PLAYPAUSE)));
+    AppObservable.bindFragment(this, playerStateModel.observeShuffleState())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeOn(Schedulers.io())
+        .subscribe(this::handleShuffleChange, Logger::logThrowable);
 
-		playButton.setOnLongClickListener(v -> {
-			Events.ButtonPressedNotification.onNext(new ButtonPressedEvent(Button.STOP));
-			return true;
-		});
+    AppObservable.bindFragment(this, playerStateModel.observeRepeatState())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeOn(Schedulers.io())
+        .subscribe(this::handleRepeatChange, Logger::logThrowable);
+  }
 
-		previousButton.setOnClickListener(v ->
-				Events.ButtonPressedNotification.onNext(new ButtonPressedEvent(Button.PREVIOUS)));
+  public void handleShuffleChange(boolean enabled) {
+    shuffleButton.setImageResource(
+        enabled ? R.drawable.ic_media_shuffle : R.drawable.ic_media_shuffle_off);
+  }
 
-		nextButton.setOnClickListener(v ->
-				Events.ButtonPressedNotification.onNext(new ButtonPressedEvent(Button.NEXT)));
+  public void handleRepeatChange(boolean enabled) {
+    repeatButton.setImageResource(
+        enabled ? R.drawable.ic_media_repeat : R.drawable.ic_media_repeat_off);
+  }
 
-		shuffleButton.setOnClickListener(v ->
-				Events.ButtonPressedNotification.onNext(new ButtonPressedEvent(Button.SHUFFLE)));
-
-		repeatButton.setOnClickListener(v ->
-				Events.ButtonPressedNotification.onNext(new ButtonPressedEvent(Button.REPEAT)));
-
-		AppObservable.bindFragment(this, playerStateModel.observePlaystate())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribeOn(Schedulers.io())
-				.subscribe(this::updatePlaystate, Logger::LogThrowable);
-
-		AppObservable.bindFragment(this, playerStateModel.observeShuffleState())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribeOn(Schedulers.io())
-				.subscribe(this::handleShuffleChange, Logger::LogThrowable);
-
-		AppObservable.bindFragment(this, playerStateModel.observeRepeatState())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribeOn(Schedulers.io())
-				.subscribe(this::handleRepeatChange, Logger::LogThrowable);
-	}
-
-	public void handleShuffleChange(boolean enabled) {
-		shuffleButton.setImageResource(enabled
-				? R.drawable.ic_media_shuffle
-				: R.drawable.ic_media_shuffle_off);
-	}
-
-	public void handleRepeatChange(boolean enabled) {
-		repeatButton.setImageResource(enabled
-				? R.drawable.ic_media_repeat
-				: R.drawable.ic_media_repeat_off);
-	}
-
-	public void updatePlaystate(final PlayState state) {
-		int resId = R.drawable.ic_media_play;
-		switch (state) {
-			case PLAYING:
-				resId = R.drawable.ic_media_pause;
-				break;
-			case STOPPED:
-				resId = R.drawable.ic_media_stop;
-				break;
-			default:
-				break;
-		}
-		playButton.setImageResource(resId);
-	}
+  public void updatePlaystate(final PlayState state) {
+    int resId = R.drawable.ic_media_play;
+    switch (state) {
+      case PLAYING:
+        resId = R.drawable.ic_media_pause;
+        break;
+      case STOPPED:
+        resId = R.drawable.ic_media_stop;
+        break;
+      default:
+        break;
+    }
+    playButton.setImageResource(resId);
+  }
 }

@@ -11,9 +11,6 @@ import com.kelsos.mbrc.enums.SettingsAction;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.ui.DiscoveryStatus;
 import com.kelsos.mbrc.events.ui.SettingsChange;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.DatagramPacket;
@@ -22,112 +19,109 @@ import java.net.MulticastSocket;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 
 public class ServiceDiscovery {
-    private WifiManager manager;
-    private WifiManager.MulticastLock mLock;
-    private ObjectMapper mapper;
-    private Context mContext;
+  public static final String NOTIFY = "notify";
+  private WifiManager manager;
+  private WifiManager.MulticastLock mLock;
+  private ObjectMapper mapper;
+  private Context mContext;
 
-    @Inject public ServiceDiscovery(Context context, ObjectMapper mapper) {
-        this.mContext = context;
-        manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        this.mapper = mapper;
+  @Inject public ServiceDiscovery(Context context, ObjectMapper mapper) {
+    this.mContext = context;
+    manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+    this.mapper = mapper;
+  }
+
+  public void startDiscovery() {
+    if (!isWifiConnected()) {
+      notifyDiscoveryStatus(DiscoveryStatus.Status.NO_WIFI);
+      return;
     }
+    mLock = manager.createMulticastLock("locked");
+    mLock.setReferenceCounted(true);
+    mLock.acquire();
 
-    public void startDiscovery() {
-        if (!isWifiConnected()) {
-            notifyDiscoveryStatus(DiscoveryStatus.Status.NO_WIFI);
-            return;
-        }
-        mLock = manager.createMulticastLock("locked");
-        mLock.setReferenceCounted(true);
-        mLock.acquire();
+    Thread mThread = new Thread(new ServiceListener());
+    mThread.start();
+  }
 
-        Thread mThread = new Thread(new ServiceListener());
-        mThread.start();
+  public void stopDiscovery() {
+    if (mLock != null) {
+      mLock.release();
+      mLock = null;
     }
+  }
 
-    public void stopDiscovery() {
-        if (mLock != null) {
-            mLock.release();
-            mLock = null;
-        }
-    }
+  private String getWifiAddress() {
+    WifiInfo mInfo = manager.getConnectionInfo();
+    int address = mInfo.getIpAddress();
+    return String.format(Locale.ENGLISH, "%d.%d.%d.%d", (address & 0xff), (address >> 8 & 0xff),
+        (address >> 16 & 0xff), (address >> 24 & 0xff));
+  }
 
-    private String getWifiAddress() {
-        WifiInfo mInfo = manager.getConnectionInfo();
-        int address = mInfo.getIpAddress();
-        return String.format(Locale.ENGLISH,
-                "%d.%d.%d.%d",
-                (address & 0xff),
-                (address >> 8 & 0xff),
-                (address >> 16 & 0xff),
-                (address >> 24 & 0xff));
-    }
+  private boolean isWifiConnected() {
+    ConnectivityManager cMan =
+        (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+    NetworkInfo current = cMan.getActiveNetworkInfo();
+    return current != null && current.getType() == ConnectivityManager.TYPE_WIFI;
+  }
 
-    private boolean isWifiConnected() {
-        ConnectivityManager cMan = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo current = cMan.getActiveNetworkInfo();
-        return current != null && current.getType() == ConnectivityManager.TYPE_WIFI;
-    }
+  private void notifyDiscoveryStatus(DiscoveryStatus.Status status) {
+    final DiscoveryStatus discoveryStatus = new DiscoveryStatus(status);
+    Events.discoveryStatusSub.onNext(discoveryStatus);
+  }
 
-    private class ServiceListener implements Runnable {
+  private class ServiceListener implements Runnable {
 
-        public static final int BUFFER = 512;
-        public static final int PORT = 45345;
-        public static final int TIMEOUT = 2000;
-        public static final String HOST = "239.1.5.10";
+    public static final int BUFFER = 512;
+    public static final int PORT = 45345;
+    public static final int TIMEOUT = 2000;
+    public static final String HOST = "239.1.5.10";
 
-        @Override public void run() {
-            try {
+    @Override public void run() {
+      try {
 
-                MulticastSocket mSocket = new MulticastSocket(PORT);
-                mSocket.setSoTimeout(TIMEOUT);
-                InetAddress group = InetAddress.getByName(HOST);
-                mSocket.joinGroup(group);
+        MulticastSocket mSocket = new MulticastSocket(PORT);
+        mSocket.setSoTimeout(TIMEOUT);
+        InetAddress group = InetAddress.getByName(HOST);
+        mSocket.joinGroup(group);
 
-                DatagramPacket mPacket;
-                byte[] buffer = new byte[BUFFER];
-                mPacket = new DatagramPacket(buffer, buffer.length);
-                Map<String, String> discoveryMessage = new Hashtable<>();
-                discoveryMessage.put("context", "discovery");
-                discoveryMessage.put("address", getWifiAddress());
-                byte[] discovery = mapper.writeValueAsBytes(discoveryMessage);
-                mSocket.send(new DatagramPacket(discovery, discovery.length, group, PORT));
-                String incoming;
+        DatagramPacket mPacket;
+        byte[] buffer = new byte[BUFFER];
+        mPacket = new DatagramPacket(buffer, buffer.length);
+        Map<String, String> discoveryMessage = new Hashtable<>();
+        discoveryMessage.put("context", "discovery");
+        discoveryMessage.put("address", getWifiAddress());
+        byte[] discovery = mapper.writeValueAsBytes(discoveryMessage);
+        mSocket.send(new DatagramPacket(discovery, discovery.length, group, PORT));
+        String incoming;
 
-                while (true) {
-                    mSocket.receive(mPacket);
-                    incoming = new String(mPacket.getData());
+        while (true) {
+          mSocket.receive(mPacket);
+          incoming = new String(mPacket.getData(), "UTF-8");
 
-                    JsonNode node = mapper.readValue(incoming, JsonNode.class);
-                    if (node.path("context").asText().equals("notify")) {
-                        final ConnectionSettings settings = new ConnectionSettings(node);
-						final SettingsChange event = new SettingsChange(SettingsAction.NEW, settings);
-                        Events.SettingsChangeNotification.onNext(event);
-                        break;
-                    }
-                }
-
-                notifyDiscoveryStatus(DiscoveryStatus.Status.COMPLETE);
-                mSocket.leaveGroup(group);
-                mSocket.close();
-                stopDiscovery();
-
-            } catch (InterruptedIOException e) {
-                notifyDiscoveryStatus(DiscoveryStatus.Status.NOT_FOUND);
-                stopDiscovery();
-            } catch (IOException e) {
-                notifyDiscoveryStatus(DiscoveryStatus.Status.NOT_FOUND);
-            }
+          JsonNode node = mapper.readValue(incoming, JsonNode.class);
+          if (NOTIFY.equals(node.path("context").asText())) {
+            final ConnectionSettings settings = new ConnectionSettings(node);
+            final SettingsChange event = new SettingsChange(SettingsAction.NEW, settings);
+            Events.settingsChangeSub.onNext(event);
+            break;
+          }
         }
 
-
+        notifyDiscoveryStatus(DiscoveryStatus.Status.COMPLETE);
+        mSocket.leaveGroup(group);
+        mSocket.close();
+        stopDiscovery();
+      } catch (InterruptedIOException e) {
+        notifyDiscoveryStatus(DiscoveryStatus.Status.NOT_FOUND);
+        stopDiscovery();
+      } catch (IOException e) {
+        notifyDiscoveryStatus(DiscoveryStatus.Status.NOT_FOUND);
+      }
     }
-
-    private void notifyDiscoveryStatus(DiscoveryStatus.Status status) {
-        final DiscoveryStatus discoveryStatus = new DiscoveryStatus(status);
-        Events.DiscoveryStatusNotification.onNext(discoveryStatus);
-    }
+  }
 }

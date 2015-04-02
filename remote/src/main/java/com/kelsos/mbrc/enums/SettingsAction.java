@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.enums;
 
 public enum SettingsAction {
-    DELETE,
-    EDIT,
-    DEFAULT,
-	NEW
+  DELETE,
+  EDIT,
+  DEFAULT,
+  NEW
 }

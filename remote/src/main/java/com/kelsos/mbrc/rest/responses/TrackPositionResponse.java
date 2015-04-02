@@ -1,22 +1,21 @@
 package com.kelsos.mbrc.rest.responses;
 
 public class TrackPositionResponse {
-    private int position;
-    private int duration;
+  private int position;
+  private int duration;
 
-    public TrackPositionResponse(int position, int duration) {
-        this.position = position;
-        this.duration = duration;
-    }
+  public TrackPositionResponse(int position, int duration) {
+    this.position = position;
+    this.duration = duration;
+  }
 
-    public TrackPositionResponse(){};
+  public TrackPositionResponse() { }
 
-    public int getDuration() {
-        return duration;
-    }
+  public int getDuration() {
+    return duration;
+  }
 
-    public int getPosition() {
-        return position;
-    }
-
+  public int getPosition() {
+    return position;
+  }
 }

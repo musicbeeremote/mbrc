@@ -1,16 +1,15 @@
 package com.kelsos.mbrc.rest.responses;
 
 public class ValueResponse {
-    private int value;
+  private int value;
 
-    public ValueResponse(int value) {
-        this.value = value;
-    }
+  public ValueResponse(int value) {
+    this.value = value;
+  }
 
-    public ValueResponse(){}
+  public ValueResponse() { }
 
-    public int getValue() {
-        return value;
-    }
-
+  public int getValue() {
+    return value;
+  }
 }

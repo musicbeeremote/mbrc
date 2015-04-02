@@ -18,52 +18,50 @@ import rx.subjects.PublishSubject;
 
 public class PlaylistTrackCursorAdapter extends CursorAdapter {
 
-	private LayoutInflater inflater;
-	private PublishSubject<Pair<MenuItem, PlaylistTrack>> menuClickPublisher;
+  private LayoutInflater inflater;
+  private PublishSubject<Pair<MenuItem, PlaylistTrack>> menuClickPublisher;
 
-	public PlaylistTrackCursorAdapter(Context context, Cursor c, int flags) {
-        super(context, c, flags);
-		inflater = LayoutInflater.from(context);
-		menuClickPublisher = PublishSubject.create();
-    }
+  public PlaylistTrackCursorAdapter(Context context, Cursor c, int flags) {
+    super(context, c, flags);
+    inflater = LayoutInflater.from(context);
+    menuClickPublisher = PublishSubject.create();
+  }
 
-    @Override
-    public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-		final View view = inflater.inflate(R.layout.ui_list_dual, viewGroup, false);
-		ViewHolder holder = new ViewHolder();
-		holder.lineOne = ((TextView) view.findViewById(R.id.line_one));
-		holder.lineTwo = ((TextView) view.findViewById(R.id.line_two));
-		holder.overflow = view.findViewById(R.id.ui_item_context_indicator);
-		view.setTag(holder);
-		return view;
-    }
+  @Override public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
+    final View view = inflater.inflate(R.layout.ui_list_dual, viewGroup, false);
+    ViewHolder holder = new ViewHolder();
+    holder.lineOne = ((TextView) view.findViewById(R.id.line_one));
+    holder.lineTwo = ((TextView) view.findViewById(R.id.line_two));
+    holder.overflow = view.findViewById(R.id.ui_item_context_indicator);
+    view.setTag(holder);
+    return view;
+  }
 
-    @Override
-    public void bindView(final View view, Context context, Cursor cursor) {
-		final PlaylistTrack track = PlaylistTrackHelper.fromCursor(cursor);
-		ViewHolder holder = (ViewHolder) view.getTag();
-        holder.lineOne.setText(track.getTitle());
-        holder.lineTwo.setText(track.getArtist());
-        holder.overflow.setOnClickListener(v -> showPopup(v, track));
-    }
+  @Override public void bindView(final View view, Context context, Cursor cursor) {
+    final PlaylistTrack track = PlaylistTrackHelper.fromCursor(cursor);
+    ViewHolder holder = (ViewHolder) view.getTag();
+    holder.lineOne.setText(track.getTitle());
+    holder.lineTwo.setText(track.getArtist());
+    holder.overflow.setOnClickListener(v -> showPopup(v, track));
+  }
 
-	private void showPopup(View view, PlaylistTrack track) {
-		PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
-		//popupMenu.inflate();
-		popupMenu.setOnMenuItemClickListener(menuItem -> {
-			menuClickPublisher.onNext(new Pair<>(menuItem, track));
-			return true;
-		});
-		popupMenu.show();
-	}
+  private void showPopup(View view, PlaylistTrack track) {
+    PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+    //popupMenu.inflate();
+    popupMenu.setOnMenuItemClickListener(menuItem -> {
+      menuClickPublisher.onNext(new Pair<>(menuItem, track));
+      return true;
+    });
+    popupMenu.show();
+  }
 
-	public Observable<Pair<MenuItem, PlaylistTrack>> getPopupObservable() {
-		return menuClickPublisher.asObservable();
-	}
+  public Observable<Pair<MenuItem, PlaylistTrack>> getPopupObservable() {
+    return menuClickPublisher.asObservable();
+  }
 
-	private static final class ViewHolder {
-		TextView lineOne;
-		TextView lineTwo;
-		View overflow;
-	}
+  private static final class ViewHolder {
+    TextView lineOne;
+    TextView lineTwo;
+    View overflow;
+  }
 }

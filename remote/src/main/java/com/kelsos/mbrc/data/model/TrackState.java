@@ -14,170 +14,162 @@ import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.rest.responses.TrackResponse;
 import com.kelsos.mbrc.util.Logger;
 import com.kelsos.mbrc.util.RemoteUtils;
+import java.io.InputStream;
 import retrofit.client.Response;
 import roboguice.util.Ln;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
 
-import java.io.InputStream;
-
 public class TrackState {
-    private RemoteApi api;
+  public static final String LOVE = "Love";
+  public static final String BAN = "Ban";
+  public static final String NORMAL = "Normal";
+  private RemoteApi api;
+  private BehaviorSubject<String> lyricsSubject;
+  private BehaviorSubject<Float> ratingSubject;
+  private BehaviorSubject<LfmStatus> lfmRatingSubject;
+  private float rating;
+  private String title;
+  private String artist;
+  private String album;
+  private String year;
+  private String lyrics;
+  private LfmStatus lfmRating;
+  private Bitmap albumCover;
+  private String path;
 
-    private BehaviorSubject<String> lyricsSubject;
-	private BehaviorSubject<Float> ratingSubject;
-	private BehaviorSubject<LfmStatus> lfmRatingSubject;
+  @Inject public TrackState(RemoteApi api) {
+    this.api = api;
 
-    public static final String LOVE = "Love";
-    public static final String BAN = "Ban";
-	public static final String NORMAL = "Normal";
-    private float rating;
-    private String title;
-    private String artist;
-    private String album;
-    private String year;
-    private String lyrics;
-    private LfmStatus lfmRating;
-    private Bitmap albumCover;
-	private String path;
+    lyrics = "";
+    rating = 0;
+    lfmRating = LfmStatus.NORMAL;
 
-	@Inject
-    public TrackState(RemoteApi api) {
-        this.api = api;
+    lyricsSubject = BehaviorSubject.create(lyrics);
+    ratingSubject = BehaviorSubject.create(rating);
+    lfmRatingSubject = BehaviorSubject.create(lfmRating);
 
-        lyrics = "";
-		rating = 0;
-		lfmRating = LfmStatus.NORMAL;
+    Observable<Message> trackChangeObservable = Events.messages.subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.io())
+        .filter(msg -> Notification.TRACK_CHANGED.equals(msg.getType()));
 
-		lyricsSubject = BehaviorSubject.create(lyrics);
-		ratingSubject = BehaviorSubject.create(rating);
-		lfmRatingSubject = BehaviorSubject.create(lfmRating);
+    Observable<Message> socketConnectedObservable = Events.messages.subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.io())
+        .filter(msg -> EventType.SOCKET_CONNECTED.equals(msg.getType()));
 
-        Observable<Message> trackChangeObservable = Events.Messages.subscribeOn(Schedulers.io())
-				.observeOn(Schedulers.io())
-                .filter(msg -> msg.getType().equals(Notification.TRACK_CHANGED));
+    Observable<Message> mergeObservable =
+        Observable.merge(trackChangeObservable, socketConnectedObservable);
 
-		Observable<Message> socketConnectedObservable = Events.Messages.subscribeOn(Schedulers.io())
-				.observeOn(Schedulers.io())
-				.filter(msg -> msg.getType().equals(EventType.SOCKET_CONNECTED));
+    mergeObservable.subscribe(msg -> requestTrackInfo());
+    mergeObservable.subscribe(msg -> requestCover());
+    mergeObservable.subscribe(msg -> requestLyrics());
 
-		Observable<Message> mergeObservable = Observable.merge(trackChangeObservable, socketConnectedObservable);
+    Events.messages.subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.io())
+        .filter(msg -> Notification.LYRICS_CHANGED.equals(msg.getType()))
+        .subscribe(msg -> requestLyrics(), Logger::logThrowable);
 
-        mergeObservable.subscribe(msg -> requestTrackInfo());
-        mergeObservable.subscribe(msg -> requestCover());
-        mergeObservable.subscribe(msg -> requestLyrics());
+    Events.messages.subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.immediate())
+        .filter(msg -> Notification.RATING_CHANGED.equals(msg.getType()))
+        .flatMap(msg -> api.getTrackRating())
+        .subscribe(resp -> setRating(resp.getRating()), Logger::logThrowable);
 
-        Events.Messages.subscribeOn(Schedulers.io())
-				.observeOn(Schedulers.io())
-                .filter(msg -> msg.getType().equals(Notification.LYRICS_CHANGED))
-                .subscribe(msg -> requestLyrics(), Logger::LogThrowable);
+    init();
+  }
 
-		Events.Messages.subscribeOn(Schedulers.io())
-				.observeOn(Schedulers.immediate())
-				.filter(msg -> msg.getType().equals(Notification.RATING_CHANGED))
-				.flatMap(msg -> api.getTrackRating())
-				.subscribe(resp -> setRating(resp.getRating()),
-						Logger::LogThrowable);
+  private void init() {
+    requestCover();
+    requestLyrics();
+    requestTrackInfo();
+  }
 
-		init();
+  private void requestTrackInfo() {
+    api.getTrackInfo()
+        .subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.immediate())
+        .subscribe(this::setTrackInfo, Logger::logThrowable);
+  }
+
+  void createBitmap(Response response) {
+    try {
+      final InputStream stream = response.getBody().in();
+      albumCover = BitmapFactory.decodeStream(stream);
+      Events.coverAvailableSub.onNext(new CoverAvailable(albumCover));
+    } catch (Exception ex) {
+      Ln.d("Exception while creating bitmap :: %s", ex.getMessage());
     }
+  }
 
-	private void init() {
-		requestCover();
-		requestLyrics();
-		requestTrackInfo();
-	}
+  private void requestCover() {
+    api.getTrackCover(RemoteUtils.getTimeStamp())
+        .subscribeOn(Schedulers.io())
+        .subscribe(this::createBitmap, Logger::logThrowable);
+  }
 
+  private void requestLyrics() {
+    api.getTrackLyrics().
+        subscribeOn(Schedulers.io()).subscribe(resp -> setLyrics(resp.getLyrics()));
+  }
 
-	private void requestTrackInfo() {
-		api.getTrackInfo()
-				.subscribeOn(Schedulers.io())
-				.observeOn(Schedulers.immediate())
-				.subscribe(this::setTrackInfo, Logger::LogThrowable);
-	}
-
-	void createBitmap(Response response) {
-        try {
-            final InputStream stream = response.getBody().in();
-            albumCover = BitmapFactory.decodeStream(stream);
-            Events.CoverAvailableNotification.onNext(new CoverAvailable(albumCover));
-        } catch (Exception ex) {
-            Ln.d("Exception while creating bitmap :: %s", ex.getMessage());
-        }
+  public void setLfmRating(String rating) {
+    switch (rating) {
+      case LOVE:
+        lfmRating = LfmStatus.LOVED;
+        break;
+      case BAN:
+        lfmRating = LfmStatus.BANNED;
+        break;
+      default:
+        lfmRating = LfmStatus.NORMAL;
+        break;
     }
+    onLfmRatingChanged(lfmRating);
+  }
 
-    private void requestCover() {
-        api.getTrackCover(RemoteUtils.getTimeStamp())
-                .subscribeOn(Schedulers.io())
-                .subscribe(this::createBitmap, Logger::LogThrowable);
+  private void onLfmRatingChanged(LfmStatus lfmRating) {
+    lfmRatingSubject.onNext(lfmRating);
+  }
+
+  public void setTrackInfo(TrackResponse response) {
+    this.artist = response.getArtist();
+    this.album = response.getAlbum();
+    this.year = response.getYear();
+    this.title = response.getTitle();
+    this.path = response.getPath();
+    Events.trackInfoSub.onNext(
+        new TrackInfoChange(artist, title, album, year, path));
+  }
+
+  public void setLyrics(String lyrics) {
+    if (lyrics == null || lyrics.equals(this.lyrics)) {
+      return;
     }
+    this.lyrics = lyrics.replace("<p>", "\r\n")
+        .replace("<br>", "\n")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", "\"")
+        .replace("&apos;", "'")
+        .replace("&amp;", "&")
+        .replace("<p>", "\r\n")
+        .replace("<br>", "\n")
+        .trim();
 
-    private void requestLyrics() {
-        api.getTrackLyrics().
-                subscribeOn(Schedulers.io())
-                .subscribe(resp -> setLyrics(resp.getLyrics()));
-    }
+    lyricsSubject.onNext(this.lyrics);
+  }
 
-    public void setLfmRating(String rating) {
-        switch (rating) {
-            case LOVE:
-                lfmRating = LfmStatus.LOVED;
-                break;
-            case BAN:
-                lfmRating = LfmStatus.BANNED;
-                break;
-            default:
-                lfmRating = LfmStatus.NORMAL;
-                break;
-        }
-        onLfmRatingChanged(lfmRating);
-    }
+  public Observable<String> getLyricsObservable() {
+    return lyricsSubject.asObservable();
+  }
 
-	private void onLfmRatingChanged(LfmStatus lfmRating) {
-		lfmRatingSubject.onNext(lfmRating);
-	}
+  public Observable<Float> observeRating() {
+    return ratingSubject.asObservable();
+  }
 
-	public void setTrackInfo(TrackResponse response) {
-        this.artist = response.getArtist();
-        this.album = response.getAlbum();
-        this.year = response.getYear();
-        this.title = response.getTitle();
-		this.path = response.getPath();
-        Events.TrackInfoChangeNotification.onNext(new TrackInfoChange(artist, title, album, year, path));
-    }
-
-    public void setLyrics(String lyrics) {
-        if (lyrics == null || lyrics.equals(this.lyrics)) {
-            return;
-        }
-        this.lyrics = lyrics.replace("<p>", "\r\n")
-                .replace("<br>", "\n")
-                .replace("&lt;", "<")
-                .replace("&gt;", ">")
-                .replace("&quot;", "\"")
-                .replace("&apos;", "'")
-                .replace("&amp;", "&")
-                .replace("<p>", "\r\n")
-                .replace("<br>", "\n")
-                .trim();
-
-        lyricsSubject.onNext(this.lyrics);
-    }
-
-    public Observable<String> getLyricsObservable() {
-        return lyricsSubject.asObservable();
-    }
-
-	public Observable<Float> observeRating() {
-		return ratingSubject.asObservable();
-	}
-
-    public void setRating(float rating) {
-        this.rating = rating;
-		ratingSubject.onNext(rating);
-    }
-
-
-
+  public void setRating(float rating) {
+    this.rating = rating;
+    ratingSubject.onNext(rating);
+  }
 }

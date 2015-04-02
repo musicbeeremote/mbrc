@@ -29,109 +29,96 @@ import roboguice.inject.InjectView;
 import rx.android.app.AppObservable;
 import rx.schedulers.Schedulers;
 
-public class BrowseAlbumFragment extends RoboFragment implements LoaderManager.LoaderCallbacks<Cursor>,
-		GridView.OnItemClickListener,
-		PlaylistDialogFragment.OnPlaylistSelectedListener,
-		CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
+public class BrowseAlbumFragment extends RoboFragment
+    implements LoaderManager.LoaderCallbacks<Cursor>, GridView.OnItemClickListener,
+    PlaylistDialogFragment.OnPlaylistSelectedListener,
+    CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
 
-	private static final int URL_LOADER = 0x12;
-	@Inject
-	private AlbumCursorAdapter mAdapter;
-	@Inject
-	private RemoteApi api;
-	@InjectView(R.id.mbrc_grid_view)
-	private GridView mGrid;
+  private static final int URL_LOADER = 0x12;
+  @Inject private AlbumCursorAdapter mAdapter;
+  @Inject private RemoteApi api;
+  @InjectView(R.id.mbrc_grid_view) private GridView mGrid;
 
-	@Nullable
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.ui_library_grid, container, false);
-	}
+  @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.ui_library_grid, container, false);
+  }
 
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+  @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-	}
+  }
 
-	@Override
-	public void onPlaylistSelected(String hash) {
+  @Override public void onPlaylistSelected(String hash) {
 
-	}
+  }
 
-	@Override
-	public void onNewPlaylistSelected() {
-		final CreateNewPlaylistDialog npDialog = new CreateNewPlaylistDialog();
-		npDialog.setOnPlaylistNameSelectedListener(this);
-		npDialog.show(getFragmentManager(), "npDialog");
-	}
+  @Override public void onNewPlaylistSelected() {
+    final CreateNewPlaylistDialog npDialog = new CreateNewPlaylistDialog();
+    npDialog.setOnPlaylistNameSelectedListener(this);
+    npDialog.show(getFragmentManager(), "npDialog");
+  }
 
-	@Override
-	public void onPlaylistNameSelected(String name) {
+  @Override public void onPlaylistNameSelected(String name) {
 
-	}
+  }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		getLoaderManager().initLoader(URL_LOADER, null, this);
-		AppObservable.bindFragment(this, mAdapter.getPopupObservable())
-				.subscribe(this::handlePopup, Logger::LogThrowable);
-	}
+  @Override public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    getLoaderManager().initLoader(URL_LOADER, null, this);
+    AppObservable.bindFragment(this, mAdapter.getPopupObservable())
+        .subscribe(this::handlePopup, Logger::logThrowable);
+  }
 
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		mGrid.setAdapter(mAdapter);
-		mGrid.setOnItemClickListener(this);
-	}
+  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    mGrid.setAdapter(mAdapter);
+    mGrid.setOnItemClickListener(this);
+  }
 
-	private void handlePopup(Pair<MenuItem, Album> pair) {
-		final MenuItem item = pair.first;
-		final Album album = pair.second;
+  private void handlePopup(Pair<MenuItem, Album> pair) {
+    final MenuItem item = pair.first;
+    final Album album = pair.second;
 
-		switch (item.getItemId()) {
-			case R.id.popup_album_tracks:
-				Intent intent = new Intent(getActivity(), ProfileActivity.class);
-				intent.putExtra(ProfileActivity.TYPE, ProfileActivity.ALBUM);
-				intent.putExtra(ProfileActivity.ID, album.getId());
-				startActivity(intent);
-				break;
-			case R.id.popup_album_play:
-				queueTracks(album, "now");
-				break;
-			case R.id.popup_album_queue_last:
-				queueTracks(album, "last");
-				break;
-			case R.id.popup_album_queue_next:
-				queueTracks(album, "next");
-				break;
-			case R.id.popup_album_playlist:
-				break;
-			default:
-				break;
-		}
-	}
+    switch (item.getItemId()) {
+      case R.id.popup_album_tracks:
+        Intent intent = new Intent(getActivity(), ProfileActivity.class);
+        intent.putExtra(ProfileActivity.TYPE, ProfileActivity.ALBUM);
+        intent.putExtra(ProfileActivity.ID, album.getId());
+        startActivity(intent);
+        break;
+      case R.id.popup_album_play:
+        queueTracks(album, "now");
+        break;
+      case R.id.popup_album_queue_last:
+        queueTracks(album, "last");
+        break;
+      case R.id.popup_album_queue_next:
+        queueTracks(album, "next");
+        break;
+      case R.id.popup_album_playlist:
+        break;
+      default:
+        break;
+    }
+  }
 
-	private void queueTracks(Album album, String action) {
-		api.nowplayingQueue("album", action, album.getId())
-				.observeOn(Schedulers.io())
-				.subscribe((r) -> {
-				}, Logger::LogThrowable);
-	}
+  private void queueTracks(Album album, String action) {
+    api.nowplayingQueue("album", action, album.getId())
+        .observeOn(Schedulers.io())
+        .subscribe((r) -> {
+        }, Logger::logThrowable);
+  }
 
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		return new CursorLoader(getActivity(), AlbumHelper.CONTENT_URI,
-				AlbumHelper.PROJECTION, null, null, null);
-	}
+  @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+    return new CursorLoader(getActivity(), AlbumHelper.CONTENT_URI,
+        AlbumHelper.getProjection(), null, null, null);
+  }
 
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		mAdapter.swapCursor(data);
-	}
+  @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    mAdapter.swapCursor(data);
+  }
 
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		mAdapter.swapCursor(null);
-	}
+  @Override public void onLoaderReset(Loader<Cursor> loader) {
+    mAdapter.swapCursor(null);
+  }
 }

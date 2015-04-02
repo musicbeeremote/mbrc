@@ -125,8 +125,11 @@ android {
 
   lintOptions {
     abortOnError false
-    xmlReport true
     lintConfig file("lint.xml")
+    xmlReport false
+    htmlReport true
+    htmlOutput file("$project.buildDir/reports/lint/lint-result.html")
+    xmlOutput file("$project.buildDir/reports/lint/lint-result.xml")
   }
 
   sourceSets {
@@ -170,7 +173,7 @@ dependencies {
   compile 'de.greenrobot:greendao:1.3.7'
   compile 'io.reactivex:rxjava:1.0.4'
   compile 'io.reactivex:rxandroid:0.24.0'
-  compile 'com.afollestad:material-dialogs:0.6.3.1'
+  compile 'com.afollestad:material-dialogs:0.6.7.0'
   compile 'net.i2p.android.ext:floatingactionbutton:1.8.0'
   compile 'com.jakewharton:butterknife:6.1.0'
   compile 'com.koushikdutta.async:androidasync:2.0.5'
@@ -196,31 +199,64 @@ project.tasks.withType(JavaCompile) {
   task -> options.compilerArgs << "-AguiceAnnotationDatabasePackageName=com.kelsos.mbrc"
 }
 
-checkstyle {
-  configFile = file("$rootDir/config/quality/checkstyle/checkstyle.xml")
+task findbugs(type: FindBugs) {
+  ignoreFailures = false
+  effort = "max"
+  reportLevel = "high"
+  excludeFilter = new File("${project.rootDir}/config/quality/findbugs/findbugs-filter.xml")
+  classes = fileTree("${project.rootDir}/remote/build/intermediates/classes/debug/")
+
+  source fileTree('src/main/java')
+  include '**/*.java'
+  exclude '**/gen/**'
+
+  reports {
+    xml.enabled = false
+    html.enabled = true
+    html {
+      destination "$project.buildDir/reports/findbugs/findbugs.html"
+    }
+  }
+
+  classpath = files(project.configurations.compile.asPath)
 }
 
-task findbugs(type: FindBugs) {
-  ignoreFailures = true
-  excludeFilter file("$rootDir/config/quality/findbugs/findbugs-filter.xml")
-  classes = fileTree('build/classes/free/debug/')
-  source = fileTree('src/main/java/')
-  classpath = files(project.configurations.compile.asPath)
-  effort = 'max'
+checkstyle {
+  toolVersion = "6.5"
 }
 
 task checkstyle(type: Checkstyle) {
-  source 'src/main/java'
+
+  configFile file("${project.rootDir}/config/quality/checkstyle/checkstyle.xml")
+  showViolations true
+  configProperties = [
+      'checkstyle.cache.file': rootProject.file('build/checkstyle.cache'),
+      'checkstyle.config.dir': rootProject.file('config/quality/checkstyle/')
+  ]
+  configProperties.checkstyleSuppressionsPath = file("${project.rootDir}/config/quality/checkstyle/suppressions.xml").absolutePath // Where is my suppressions file for checkstyle is...
+  source 'src'
   include '**/*.java'
   exclude '**/gen/**'
   classpath = files(project.configurations.compile.asPath)
 }
 
 task pmd(type: Pmd) {
-  ruleSetFiles = files("$rootDir/config/quality/pmd/pmd-ruleset.xml")
-  ruleSets = ["basic", "braces", "strings"]
-  source = fileTree(android.sourceSets.main.java.srcDirs)
+  ignoreFailures = false
+  ruleSetFiles = files("${project.rootDir}/config/quality/pmd/pmd-ruleset.xml")
+  ruleSets = []
+  source 'src/main/java'
+  include '**/*.java'
+  exclude '**/gen/**'
+  reports {
+    xml.enabled = false
+    html.enabled = true
+    html {
+      destination "$project.buildDir/reports/pmd/pmd.html"
+    }
+  }
 }
+
+check.dependsOn 'checkstyle', 'findbugs', 'pmd', 'lint'
 
 gradle.taskGraph.afterTask { Task task, TaskState state ->
   if (state.failure) {

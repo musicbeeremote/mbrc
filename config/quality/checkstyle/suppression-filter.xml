@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
-
 <!DOCTYPE suppressions PUBLIC
-"-//Puppy Crawl//DTD Suppressions 1.1//EN"
-"http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
-
+    "-//Puppy Crawl//DTD Suppressions 1.1//EN"
+    "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 <suppressions>
-    <suppress files="[\\/]build[\\/]" checks="[a-zA-Z0-9]*"/>
+  <suppress checks="[a-zA-Z0-9]*" files="R.java" />
+  <suppress checks="[a-zA-Z0-9]*" files="BuildConfig.java" />
+  <suppress checks="[a-zA-Z0-9]*" files="Test" />
+  <suppress checks=".*" files="[/\\]src-gen[/\\]" />
 </suppressions>

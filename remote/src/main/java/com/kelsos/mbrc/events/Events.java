@@ -11,14 +11,15 @@ import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;
 
 public final class Events {
-	private Events() { }
+  public static final PublishSubject<Message> messages = PublishSubject.create();
+  public static final BehaviorSubject<CoverAvailable> coverAvailableSub = BehaviorSubject.create();
+  public static final BehaviorSubject<TrackInfoChange> trackInfoSub = BehaviorSubject.create();
+  public static final PublishSubject<SettingsChange> settingsChangeSub = PublishSubject.create();
+  public static final PublishSubject<DiscoveryStatus> discoveryStatusSub = PublishSubject.create();
+  public static final PublishSubject<ButtonPressedEvent> buttonPressedSub = PublishSubject.create();
+  public static final PublishSubject<NotifyUser> userMessageSub = PublishSubject.create();
+  public static final BehaviorSubject<ConnectionSettingsChanged> connectionSettingsSub =
+      BehaviorSubject.create();
 
-    public static PublishSubject<Message> Messages = PublishSubject.create();
-    public static BehaviorSubject<CoverAvailable> CoverAvailableNotification = BehaviorSubject.create();
-    public static BehaviorSubject<TrackInfoChange> TrackInfoChangeNotification = BehaviorSubject.create();
-    public static PublishSubject<SettingsChange> SettingsChangeNotification = PublishSubject.create();
-    public static PublishSubject<DiscoveryStatus> DiscoveryStatusNotification = PublishSubject.create();
-    public static PublishSubject<ButtonPressedEvent> ButtonPressedNotification = PublishSubject.create();
-	public static BehaviorSubject<ConnectionSettingsChanged> ConnectionSettingsChangedNotification = BehaviorSubject.create();
-	public static PublishSubject<NotifyUser> UserNotification = PublishSubject.create();
+  private Events() { }
 }

@@ -21,58 +21,55 @@ import rx.subjects.PublishSubject;
 
 public class TrackCursorAdapter extends CursorAdapter {
 
-	private PublishSubject<Pair<MenuItem, Track>> menuClickPublisher;
-	private final DaoSession daoSession;
-	private final LayoutInflater inflater;
+  private final DaoSession daoSession;
+  private final LayoutInflater inflater;
+  private PublishSubject<Pair<MenuItem, Track>> menuClickPublisher;
 
-	@Inject
-	public TrackCursorAdapter(Context context, DaoSession daoSession) {
-		super(context, null, 0);
-		this.daoSession = daoSession;
-		inflater = LayoutInflater.from(context);
-		menuClickPublisher = PublishSubject.create();
-	}
+  @Inject public TrackCursorAdapter(Context context, DaoSession daoSession) {
+    super(context, null, 0);
+    this.daoSession = daoSession;
+    inflater = LayoutInflater.from(context);
+    menuClickPublisher = PublishSubject.create();
+  }
 
-	@Override
-	public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-		final View view = inflater.inflate(R.layout.ui_list_dual, viewGroup, false);
-		ViewHolder holder = new ViewHolder();
-		holder.lineOne = (TextView) view.findViewById(R.id.line_one);
-		holder.lineTwo = (TextView) view.findViewById(R.id.line_two);
-		holder.overflow = view.findViewById(R.id.ui_item_context_indicator);
-		view.setTag(holder);
-		return view;
-	}
+  @Override public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
+    final View view = inflater.inflate(R.layout.ui_list_dual, viewGroup, false);
+    ViewHolder holder = new ViewHolder();
+    holder.lineOne = (TextView) view.findViewById(R.id.line_one);
+    holder.lineTwo = (TextView) view.findViewById(R.id.line_two);
+    holder.overflow = view.findViewById(R.id.ui_item_context_indicator);
+    view.setTag(holder);
+    return view;
+  }
 
-	@Override
-	public void bindView(final View view, Context context, Cursor cursor) {
-		final Track track = TrackHelper.fromCursor(cursor);
-		track.__setDaoSession(daoSession);
-		final Artist artist = track.getArtist();
+  @Override public void bindView(final View view, Context context, Cursor cursor) {
+    final Track track = TrackHelper.fromCursor(cursor);
+    track.__setDaoSession(daoSession);
+    final Artist artist = track.getArtist();
 
-		ViewHolder holder = (ViewHolder) view.getTag();
-		holder.lineOne.setText(track.getTitle());
-		holder.lineTwo.setText(artist != null ? artist.getName() : "");
-		holder.overflow.setOnClickListener(v -> showPopup(v, track));
-	}
+    ViewHolder holder = (ViewHolder) view.getTag();
+    holder.lineOne.setText(track.getTitle());
+    holder.lineTwo.setText(artist != null ? artist.getName() : "");
+    holder.overflow.setOnClickListener(v -> showPopup(v, track));
+  }
 
-	private void showPopup(View view , Track track) {
-		final PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
-		popupMenu.inflate(R.menu.popup_track);
-		popupMenu.setOnMenuItemClickListener(menuItem -> {
-			menuClickPublisher.onNext(new Pair<>(menuItem, track));
-			return true;
-		});
-		popupMenu.show();
-	}
+  private void showPopup(View view, Track track) {
+    final PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+    popupMenu.inflate(R.menu.popup_track);
+    popupMenu.setOnMenuItemClickListener(menuItem -> {
+      menuClickPublisher.onNext(new Pair<>(menuItem, track));
+      return true;
+    });
+    popupMenu.show();
+  }
 
-	public Observable<Pair<MenuItem, Track>> getPopupObservable() {
-		return menuClickPublisher.asObservable();
-	}
+  public Observable<Pair<MenuItem, Track>> getPopupObservable() {
+    return menuClickPublisher.asObservable();
+  }
 
-	public static class ViewHolder {
-		TextView lineOne;
-		TextView lineTwo;
-		View overflow;
-	}
+  public static class ViewHolder {
+    TextView lineOne;
+    TextView lineTwo;
+    View overflow;
+  }
 }

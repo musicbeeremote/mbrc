@@ -1,16 +1,15 @@
 package com.kelsos.mbrc.rest.responses;
 
 public class TextValueResponse {
-    private String value;
+  private String value;
 
-    public TextValueResponse(String value) {
-        this.value = value;
-    }
+  public TextValueResponse(String value) {
+    this.value = value;
+  }
 
-    public TextValueResponse() {}
+  public TextValueResponse() { }
 
-
-    public String getValue() {
-        return value;
-    }
+  public String getValue() {
+    return value;
+  }
 }

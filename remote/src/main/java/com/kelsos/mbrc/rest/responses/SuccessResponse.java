@@ -1,15 +1,15 @@
 package com.kelsos.mbrc.rest.responses;
 
 public class SuccessResponse {
-    private boolean success;
+  private boolean success;
 
-    public SuccessResponse(boolean success) {
-        this.success = success;
-    }
+  public SuccessResponse(boolean success) {
+    this.success = success;
+  }
 
-    public SuccessResponse() { }
+  public SuccessResponse() { }
 
-    public boolean isSuccess() {
-        return success;
-    }
+  public boolean isSuccess() {
+    return success;
+  }
 }

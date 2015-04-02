@@ -6,23 +6,23 @@ version = '1.0'
 mainClassName = "com.kelsos.mbrc.Generator"
 
 repositories {
-    mavenCentral()
-    mavenLocal()
+  mavenCentral()
+  mavenLocal()
 }
 
 dependencies {
-    compile 'de.greenrobot:greendao-generator:1.3.1'
-    compile ('org.freemarker:freemarker:2.3.20')
+  compile 'de.greenrobot:greendao-generator:1.3.1'
+  compile('org.freemarker:freemarker:2.3.20')
 }
 
 sourceSets {
-    main {
-        java {
-            srcDir 'src'
-            srcDir 'src-gen'
-        }
-        resources {
-            srcDir 'src-template'
-        }
+  main {
+    java {
+      srcDir 'src'
+      srcDir 'src-gen'
     }
+    resources {
+      srcDir 'src-template'
+    }
+  }
 }

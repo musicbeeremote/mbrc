@@ -6,9 +6,8 @@ import com.kelsos.mbrc.controller.Controller;
 
 public class RemoteApplication extends Application {
 
-    public void onCreate() {
-        super.onCreate();
-        startService(new Intent(this, Controller.class));
-    }
-
+  public void onCreate() {
+    super.onCreate();
+    startService(new Intent(this, Controller.class));
+  }
 }

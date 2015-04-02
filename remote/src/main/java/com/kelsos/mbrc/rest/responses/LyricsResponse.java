@@ -1,15 +1,15 @@
 package com.kelsos.mbrc.rest.responses;
 
 public class LyricsResponse {
-    private String lyrics;
+  private String lyrics;
 
-    public LyricsResponse(String lyrics) {
-        this.lyrics = lyrics;
-    }
+  public LyricsResponse(String lyrics) {
+    this.lyrics = lyrics;
+  }
 
-    public LyricsResponse() {}
+  public LyricsResponse() { }
 
-    public String getLyrics() {
-        return lyrics;
-    }
+  public String getLyrics() {
+    return lyrics;
+  }
 }

@@ -31,11 +31,15 @@ public final class ${entity.className}Helper {
         sURIMatcher.addURI(${contentProvider.className}.AUTHORITY, BASE_PATH + "/#", ${entity.className?upper_case}_ID);
     }
 
-    public static final String[] PROJECTION = {
+    private static final String[] PROJECTION = {
     <#list entity.properties as property>
         ${property.propertyName?upper_case}<#if property_has_next>,</#if>
     </#list>
     };
+
+    public static String[] getProjection() {
+        return PROJECTION;
+    }
 
     public static ${entity.className} fromCursor(Cursor data) {
         final ${entity.className} entity = new ${entity.className}();

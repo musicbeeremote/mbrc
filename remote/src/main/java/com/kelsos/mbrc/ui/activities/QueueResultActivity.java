@@ -10,29 +10,28 @@ import roboguice.activity.RoboActionBarActivity;
 
 public class QueueResultActivity extends RoboActionBarActivity {
 
-    public static final String QUEUE_FILTER = "QueueFilter";
+  public static final String QUEUE_FILTER = "QueueFilter";
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_queue_result);
+  @Override protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_queue_result);
 
-        String filter = null;
-        Intent intent = getIntent();
-        if (intent != null) {
-            filter = intent.getStringExtra(QUEUE_FILTER);
-        }
-
-        QueueResultFragment fragment = QueueResultFragment.newInstance(filter);
-
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, fragment, "main_fragment");
-        fragmentTransaction.commit();
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+    String filter = null;
+    Intent intent = getIntent();
+    if (intent != null) {
+      filter = intent.getStringExtra(QUEUE_FILTER);
     }
+
+    QueueResultFragment fragment = QueueResultFragment.newInstance(filter);
+
+    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+    fragmentTransaction.replace(R.id.fragment_container, fragment, "main_fragment");
+    fragmentTransaction.commit();
+
+    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+    setSupportActionBar(toolbar);
+    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    getSupportActionBar().setHomeButtonEnabled(true);
+  }
 }

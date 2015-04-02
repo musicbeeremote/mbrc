@@ -15,54 +15,53 @@ import com.kelsos.mbrc.data.SyncManager;
 import roboguice.fragment.provided.RoboFragment;
 
 public class BrowseFragment extends RoboFragment {
-    public static final int LIBRARY_SYNC = 1;
-    public static final int GROUP_ID = 15;
-    private BrowsePagerAdapter mAdapter;
+  public static final int LIBRARY_SYNC = 1;
+  public static final int GROUP_ID = 15;
+  private BrowsePagerAdapter mAdapter;
 
-    @Inject
-    private SyncManager syncManager;
+  @Inject private SyncManager syncManager;
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        syncManager.startLibrarySyncing();
+  @Override public void onStart() {
+    super.onStart();
+    syncManager.startLibrarySyncing();
+  }
+
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
+    View view = inflater.inflate(R.layout.fragment_browse, container, false);
+    ViewPager mPager;
+    if (view != null) {
+      mPager = (ViewPager) view.findViewById(R.id.search_pager);
+      mPager.setAdapter(mAdapter);
     }
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_browse, container, false);
-        ViewPager mPager;
-        if (view != null) {
-            mPager = (ViewPager) view.findViewById(R.id.search_pager);
-            mPager.setAdapter(mAdapter);
-        }
+    return view;
+  }
 
-        return view;
-    }
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case LIBRARY_SYNC:
 
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case LIBRARY_SYNC:
-
-                break;
-            default:
-                return false;
-        }
+        break;
+      default:
         return false;
     }
+    return false;
+  }
 
-    @Override public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+  @Override public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
 
-        setHasOptionsMenu(true);
-        mAdapter = new BrowsePagerAdapter(getActivity());
-    }
+    setHasOptionsMenu(true);
+    mAdapter = new BrowsePagerAdapter(getActivity());
+  }
 
-    @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.add(GROUP_ID, LIBRARY_SYNC, 0, "Sync Library");
-    }
+  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    menu.add(GROUP_ID, LIBRARY_SYNC, 0, "Sync Library");
+  }
 
-    @Override public void onDestroy() {
-        super.onDestroy();
-        mAdapter = null;
-    }
+  @Override public void onDestroy() {
+    super.onDestroy();
+    mAdapter = null;
+  }
 }

@@ -9,49 +9,48 @@ import com.kelsos.mbrc.R;
 
 public class CreateNewPlaylistDialog extends DialogFragment {
 
-	private OnPlaylistNameSelectedListener mListener;
+  private OnPlaylistNameSelectedListener mListener;
 
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+  @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        MaterialDialog.Builder mBuilder = new MaterialDialog.Builder(getActivity());
-		mBuilder.title(R.string.playlist_dialog_new_title);
-		mBuilder.customView(R.layout.playlist_create);
-		mBuilder.positiveText(android.R.string.ok);
-		mBuilder.negativeText(android.R.string.cancel);
-		mBuilder.callback(new MaterialDialog.Callback() {
-			@Override
-			public void onPositive(MaterialDialog materialDialog) {
-				EditText mPlaylistNameText = ((EditText) materialDialog.getCustomView()
-						.findViewById(R.id.playlist_name_text));
-				final String name = mPlaylistNameText.getText().toString();
-				if (mListener != null) {
-					mListener.onPlaylistNameSelected(name);
-				}
-				materialDialog.dismiss();
-			}
+    MaterialDialog.Builder mBuilder = new MaterialDialog.Builder(getActivity());
+    mBuilder.title(R.string.playlist_dialog_new_title);
+    mBuilder.customView(R.layout.playlist_create, false);
+    mBuilder.positiveText(android.R.string.ok);
+    mBuilder.negativeText(android.R.string.cancel);
+    mBuilder.callback(new MaterialDialog.ButtonCallback() {
+      @Override public void onPositive(MaterialDialog dialog) {
+        EditText mPlaylistNameText =
+            ((EditText) dialog.getCustomView().findViewById(R.id.playlist_name_text));
+        final String name = mPlaylistNameText.getText().toString();
+        if (mListener != null) {
+          mListener.onPlaylistNameSelected(name);
+        }
+        dialog.dismiss();
+      }
 
-			@Override
-			public void onNegative(MaterialDialog materialDialog) {
-				materialDialog.dismiss();
-			}
-		});
-        return mBuilder.build();
-    }
+      @Override public void onNegative(MaterialDialog dialog) {
+        dialog.dismiss();
+      }
+    });
 
-    public void setOnPlaylistNameSelectedListener(OnPlaylistNameSelectedListener mListener) {
-        this.mListener = mListener;
-    }
+    return mBuilder.build();
+  }
 
+  public void setOnPlaylistNameSelectedListener(OnPlaylistNameSelectedListener mListener) {
+    this.mListener = mListener;
+  }
+
+  /**
+   * Interface that must be implemented by the fragment or activity
+   * hosting the dialog
+   */
+  public interface OnPlaylistNameSelectedListener {
     /**
-     * Interface that must be implemented by the fragment or activity
-     * hosting the dialog
+     * Called when the user presses the ok button of the dialog.
+     *
+     * @param name The name of the playlist
      */
-    public interface OnPlaylistNameSelectedListener {
-        /**
-         * Called when the user presses the ok button of the dialog.
-         * @param name The name of the playlist
-         */
-        void onPlaylistNameSelected(String name);
-    }
+    void onPlaylistNameSelected(String name);
+  }
 }

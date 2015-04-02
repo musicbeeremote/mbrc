@@ -14,64 +14,57 @@ import com.mobeta.android.dslv.DragSortListView;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
-public class PlaylistActivity extends RoboActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-	private static final int URL_LOADER = 0x721ae;
-	public static final String NAME = "name";
-	public static final String PATH = "path";
+public class PlaylistActivity extends RoboActionBarActivity
+    implements LoaderManager.LoaderCallbacks<Cursor> {
+  public static final String NAME = "name";
+  public static final String PATH = "path";
+  private static final int URL_LOADER = 0x721ae;
+  @InjectView(R.id.dlv_current_queue) private DragSortListView mDslView;
+  private PlaylistTrackCursorAdapter mAdapter;
+  private String mTitle;
+  private String path;
 
-	@InjectView(R.id.dlv_current_queue)
-	private DragSortListView mDslView;
-	private PlaylistTrackCursorAdapter mAdapter;
-	private String mTitle;
-	private String path;
+  @Override protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_playlist);
+    Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+    setSupportActionBar(mToolbar);
+    Intent intent = getIntent();
+    mTitle = intent.getStringExtra(NAME);
+    path = intent.getStringExtra(PATH);
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_playlist);
-		Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
-		setSupportActionBar(mToolbar);
-		Intent intent = getIntent();
-		mTitle = intent.getStringExtra(NAME);
-		path = intent.getStringExtra(PATH);
+    getFragmentManager().beginTransaction()
+        .replace(R.id.playlist_mini_control, MiniControlFragment.newInstance())
+        .commit();
+  }
 
-		getFragmentManager().beginTransaction()
-				.replace(R.id.playlist_mini_control, MiniControlFragment.newInstance())
-				.commit();
-	}
+  @Override public void onStart() {
+    super.onStart();
+    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    getSupportActionBar().setTitle(mTitle);
+  }
 
-	@Override
-	public void onStart() {
-		super.onStart();
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setTitle(mTitle);
-	}
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        onBackPressed();
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
+    }
+  }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				onBackPressed();
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
-		}
-	}
+  @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+    return null;
+  }
 
-	@Override
-	public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-		return null;
-	}
+  @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+    mAdapter = new PlaylistTrackCursorAdapter(this, cursor, 0);
+    mDslView.setAdapter(mAdapter);
+    mAdapter.notifyDataSetChanged();
+  }
 
-	@Override
-	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-		mAdapter = new PlaylistTrackCursorAdapter(this, cursor, 0);
-		mDslView.setAdapter(mAdapter);
-		mAdapter.notifyDataSetChanged();
-	}
+  @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
-	@Override
-	public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-	}
+  }
 }

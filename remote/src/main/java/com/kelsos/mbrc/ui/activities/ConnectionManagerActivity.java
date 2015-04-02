@@ -23,134 +23,124 @@ import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.events.ui.SettingsChange;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
 import com.kelsos.mbrc.util.Logger;
+import java.util.ArrayList;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import java.util.ArrayList;
-
 public class ConnectionManagerActivity extends RoboActionBarActivity
-		implements SettingsDialogFragment.SettingsDialogListener {
+    implements SettingsDialogFragment.SettingsDialogListener {
 
-    @InjectView(R.id.connection_scan)
-	private Button scanButton;
+  @InjectView(R.id.connection_scan) private Button scanButton;
+  @InjectView(R.id.connection_add) private Button addButton;
+  @InjectView(R.id.connection_list) private RecyclerView mRecyclerView;
+  private RecyclerView.Adapter mAdapter;
+  private RecyclerView.LayoutManager mLayoutManager;
 
-    @InjectView(R.id.connection_add)
-	private Button addButton;
+  private SnackBar mSnackBar;
 
-    @InjectView(R.id.connection_list)
-	private RecyclerView mRecyclerView;
-	private RecyclerView.Adapter mAdapter;
-	private RecyclerView.LayoutManager mLayoutManager;
+  private ProgressDialog mProgress;
+  private Context mContext;
 
-    private SnackBar mSnackBar;
+  @Override protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.ui_activity_connection_manager);
+    Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+    setSupportActionBar(mToolbar);
+    mSnackBar = new SnackBar(this);
+    mRecyclerView.setHasFixedSize(true);
+    mLayoutManager = new LinearLayoutManager(this);
+    mRecyclerView.setLayoutManager(mLayoutManager);
+  }
 
-    private ProgressDialog mProgress;
-    private Context mContext;
+  @Override protected void onStart() {
+    super.onStart();
 
-    @Override protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.ui_activity_connection_manager);
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-        mSnackBar = new SnackBar(this);
-		mRecyclerView.setHasFixedSize(true);
-		mLayoutManager = new LinearLayoutManager(this);
-		mRecyclerView.setLayoutManager(mLayoutManager);
+    mContext = this;
+    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    getSupportActionBar().setTitle(R.string.connection_manager_title);
+    scanButton.setOnClickListener(v -> {
+      mProgress = ProgressDialog.show(mContext, getString(R.string.progress_scanning),
+          getString(R.string.progress_scanning_message), true, false);
+      Events.messages.onNext(new Message(EventType.START_DISCOVERY));
+    });
+
+    addButton.setOnClickListener(view -> {
+      SettingsDialogFragment settingsDialog = SettingsDialogFragment.newInstance(-1);
+      settingsDialog.show(getFragmentManager(), "settings_dialog");
+    });
+
+    AppObservable.bindActivity(this, Events.discoveryStatusSub)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(this::handleDiscoveryStatusChange, Logger::logThrowable);
+
+    AppObservable.bindActivity(this, Events.connectionSettingsSub)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(this::handleConnectionSettingsChange, Logger::logThrowable);
+
+    AppObservable.bindActivity(this, Events.userMessageSub)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(this::handleUserNotification, Logger::logThrowable);
+
+    mAdapter = new ConnectionSettingsAdapter(new ArrayList<>());
+    mRecyclerView.setAdapter(mAdapter);
+  }
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        onBackPressed();
+        break;
+      default:
+        return false;
     }
+    return true;
+  }
 
-    @Override protected void onStart() {
-        super.onStart();
+  @Override public void onDialogPositiveClick(DialogFragment dialog, ConnectionSettings settings) {
+    final SettingsChange change =
+        new SettingsChange(settings.getIndex() < 0 ? SettingsAction.NEW : SettingsAction.EDIT,
+            settings);
 
-        mContext = this;
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(R.string.connection_manager_title);
-        scanButton.setOnClickListener(v -> {
-			mProgress = ProgressDialog.show(mContext, getString(R.string.progress_scanning),
-					getString(R.string.progress_scanning_message), true, false);
-			Events.Messages.onNext(new Message(EventType.START_DISCOVERY));
-        });
+    Events.settingsChangeSub.onNext(change);
+  }
 
-        addButton.setOnClickListener(view -> {
-			SettingsDialogFragment settingsDialog = SettingsDialogFragment.newInstance(-1);
-			settingsDialog.show(getFragmentManager(), "settings_dialog");
-		});
+  public void handleConnectionSettingsChange(ConnectionSettingsChanged event) {
+    mAdapter = new ConnectionSettingsAdapter(event.getSettings());
+    ((ConnectionSettingsAdapter) mAdapter).setDefaultIndex(event.getDefaultIndex());
+    mRecyclerView.setAdapter(mAdapter);
+  }
 
-		AppObservable.bindActivity(this, Events.DiscoveryStatusNotification)
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(this::handleDiscoveryStatusChange, Logger::LogThrowable);
-
-		AppObservable.bindActivity(this, Events.ConnectionSettingsChangedNotification)
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(this::handleConnectionSettingsChange, Logger::LogThrowable);
-
-		AppObservable.bindActivity(this, Events.UserNotification)
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(this::handleUserNotification, Logger::LogThrowable);
-
-		mAdapter = new ConnectionSettingsAdapter(new ArrayList<>());
-		mRecyclerView.setAdapter(mAdapter);
-
-	}
-
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                break;
-            default:
-                return false;
-        }
-        return true;
+  public void handleDiscoveryStatusChange(DiscoveryStatus event) {
+    if (mProgress != null) {
+      mProgress.hide();
     }
+    String message;
 
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog, ConnectionSettings settings) {
-		final SettingsChange change = new SettingsChange(settings.getIndex() < 0
-				? SettingsAction.NEW
-				: SettingsAction.EDIT, settings);
-
-		Events.SettingsChangeNotification.onNext(change);
-	}
-
-    public void handleConnectionSettingsChange(ConnectionSettingsChanged event) {
-        mAdapter = new ConnectionSettingsAdapter(event.getSettings());
-		((ConnectionSettingsAdapter) mAdapter).setDefaultIndex(event.getDefaultIndex());
-        mRecyclerView.setAdapter(mAdapter);
+    switch (event.getReason()) {
+      case NO_WIFI:
+        message = getString(R.string.con_man_no_wifi);
+        break;
+      case NOT_FOUND:
+        message = getString(R.string.con_man_not_found);
+        break;
+      case COMPLETE:
+        message = getString(R.string.con_man_success);
+        break;
+      default:
+        return;
     }
+    //mSnackBar.show(message);
+  }
 
-    public void handleDiscoveryStatusChange(DiscoveryStatus event) {
-        if (mProgress != null) {
-            mProgress.hide();
-        }
-        String message;
+  public void handleUserNotification(NotifyUser event) {
+    String message = event.isFromResource() ? getString(event.getResId()) : event.getMessage();
 
-        switch (event.getReason()) {
-            case NO_WIFI:
-                message = getString(R.string.con_man_no_wifi);
-                break;
-            case NOT_FOUND:
-                message = getString(R.string.con_man_not_found);
-                break;
-            case COMPLETE:
-                message = getString(R.string.con_man_success);
-                break;
-            default:
-                return;
-        }
-        //mSnackBar.show(message);
-    }
-
-    public void handleUserNotification(NotifyUser event) {
-        String message = event.isFromResource()
-				? getString(event.getResId())
-				: event.getMessage();
-
-        //mSnackBar.show(message);
-    }
+    //mSnackBar.show(message);
+  }
 }
