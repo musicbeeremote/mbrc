@@ -139,6 +139,8 @@ import java.lang.annotation.RetentionPolicy;
             .setContentText(event.getArtist())
             .setSubText(event.getAlbum());
 
+    builder.setContentIntent(getPendingIntent(OPEN));
+
     if (event.getCover() != null) {
       builder.setLargeIcon(event.getCover());
     } else {
