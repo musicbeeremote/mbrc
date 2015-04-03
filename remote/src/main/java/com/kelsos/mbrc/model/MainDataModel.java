@@ -352,5 +352,9 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
         .trim();
     bus.post(new LyricsUpdated(this.lyrics));
   }
+
+  public boolean isMute() {
+    return isMuteActive;
+  }
 }
 

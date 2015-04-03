@@ -18,6 +18,9 @@ public class ReduceVolumeOnRingCommand implements ICommand {
   }
 
   @Override public void execute(IEvent e) {
+    if (model.isMute() || model.getVolume() == 0) {
+      return;
+    }
     service.sendData(new SocketMessage(Protocol.PlayerVolume, Protocol.Request,
         (int) (model.getVolume() * 0.2)));
   }
