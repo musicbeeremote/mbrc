@@ -3,14 +3,19 @@ import java.text.SimpleDateFormat
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'checkstyle'
+apply plugin: 'findbugs'
+apply plugin: 'pmd'
+apply plugin: 'idea'
 
 def buildTime() {
-    def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
-    df.setTimeZone(TimeZone.getTimeZone("UTC"))
-    return df.format(new Date())
+  def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
+  df.setTimeZone(TimeZone.getTimeZone("UTC"))
+  return df.format(new Date())
 }
+
 def gitHash() {
-    return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
+  return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
 
 // Load the fabric api key.
@@ -18,154 +23,236 @@ def fabricApiKey = ""
 def crashProperties = file('fabric.properties')
 
 if (crashProperties.exists()) {
-    def properties = new Properties()
-    properties.load(new FileInputStream(crashProperties))
-    fabricApiKey = properties.getAt('apiKey')
+  def properties = new Properties()
+  properties.load(new FileInputStream(crashProperties))
+  fabricApiKey = properties.getAt('apiKey')
 }
 
 def hasModifiedDeletedOrOtherFiles() {
-    return !"git -C ${rootDir} ls-files -mdo --exclude-standard".execute().text.trim().isEmpty()
-}
-def hasStagedFiles() {
-    return !"git -C ${rootDir} diff-index --no-ext-diff --name-only --cached HEAD".execute().text.trim().isEmpty()
+  return !"git -C ${rootDir} ls-files -mdo --exclude-standard".execute().text.trim().isEmpty()
 }
 
-def dirtyWorkingCopy(){
-    return hasModifiedDeletedOrOtherFiles() || hasStagedFiles()
+def hasStagedFiles() {
+  return !"git -C ${rootDir} diff-index --no-ext-diff --name-only --cached HEAD".execute().text.
+      trim().
+      isEmpty()
+}
+
+def dirtyWorkingCopy() {
+  return hasModifiedDeletedOrOtherFiles() || hasStagedFiles()
 }
 
 def gitDescription() {
-    return dirtyWorkingCopy() ? "${gitHash()}-dirty" : gitHash()
+  return dirtyWorkingCopy() ? "${gitHash()}-dirty" : gitHash()
 }
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+  compileSdkVersion 22
+  buildToolsVersion "22.0.1"
 
-    defaultConfig {
-        applicationId "com.kelsos.mbrc"
-        minSdkVersion 8
-        targetSdkVersion 22
-        versionCode 97
-        versionName "0.10.0.5"
-        buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
-        buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
-        manifestPlaceholders = [ fabricApiKey: fabricApiKey ]
+  defaultConfig {
+    applicationId "com.kelsos.mbrc"
+    minSdkVersion 8
+    targetSdkVersion 22
+    versionCode 97
+    versionName "0.10.0.5"
+    buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
+    buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
+    manifestPlaceholders = [fabricApiKey: fabricApiKey]
+  }
+
+  signingConfigs {
+    release {
+      storeFile file('placeholder')
+      keyAlias "placeholder"
+      storePassword "placeholder"
+      keyPassword "placeholder"
+    }
+  }
+
+  buildTypes {
+    release {
+      signingConfig signingConfigs.release
+      debuggable false
+      zipAlignEnabled true
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
 
-    signingConfigs {
-        release {
-            storeFile file('placeholder')
-            keyAlias "placeholder"
-            storePassword "placeholder"
-            keyPassword "placeholder"
-        }
+    debug {
+      applicationIdSuffix ".dev"
+      versionNameSuffix "-dev"
     }
 
-    buildTypes {
-        release {
-            signingConfig signingConfigs.release
-            debuggable false
-            zipAlignEnabled true
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-
-        debug {
-            applicationIdSuffix ".dev"
-            versionNameSuffix "-dev"
-        }
-
-        preview {
-            signingConfig signingConfigs.release
-            debuggable false
-            zipAlignEnabled true
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            applicationIdSuffix ".preview"
-            versionNameSuffix "-preview"
-        }
+    preview {
+      signingConfig signingConfigs.release
+      debuggable false
+      zipAlignEnabled true
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+      applicationIdSuffix ".preview"
+      versionNameSuffix "-preview"
     }
+  }
 
-     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
 
-    packagingOptions {
-        exclude 'META-INF/ASL2.0'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/services/javax.annotation.processing.Processor'
-    }
+  packagingOptions {
+    exclude 'META-INF/ASL2.0'
+    exclude 'META-INF/LICENSE'
+    exclude 'META-INF/NOTICE'
+    exclude 'META-INF/services/javax.annotation.processing.Processor'
+  }
 
-    lintOptions {
-        lintConfig file("lint.xml")
-        abortOnError false
-        xmlReport true
-    }
+  lintOptions {
+    abortOnError false
+    lintConfig file("lint.xml")
+    xmlReport false
+    htmlReport true
+    htmlOutput file("$project.buildDir/reports/lint/lint-result.html")
+    xmlOutput file("$project.buildDir/reports/lint/lint-result.xml")
+  }
 
-    applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            def originalFilename = output.outputFile
-            def versionInfo = "-v${variant.mergedFlavor.versionCode}-${variant.mergedFlavor.versionName}-${gitDescription()}"
-            def filename = originalFilename.name
-                    .replace(".apk", versionInfo + ".apk")
-                    .replace(project.name, defaultConfig.applicationId);
-            filename = "${originalFilename.parent}/${filename}"
-            output.outputFile = file(filename)
-        }
+  applicationVariants.all { variant ->
+    variant.outputs.each { output ->
+      def originalFilename = output.outputFile
+      def versionInfo = "-v${variant.mergedFlavor.versionCode}-${variant.mergedFlavor.versionName}-${gitDescription()}"
+      def filename = originalFilename.name
+          .replace(".apk", versionInfo + ".apk")
+          .replace(project.name, defaultConfig.applicationId);
+      filename = "${originalFilename.parent}/${filename}"
+      output.outputFile = file(filename)
     }
+  }
+}
+
+idea {
+  module {
+    downloadJavadoc = true
+    downloadSources = true
+  }
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
+  gradleVersion = '2.3'
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:22.0.0'
-    compile 'com.android.support:support-v4:22.0.0'
-    compile 'com.android.support:support-annotations:20.0.0'
-    compile 'com.android.support:recyclerview-v7:21.0.0'
-    compile 'org.roboguice:roboguice:3.0.1'
-    compile 'com.squareup:otto:1.3.5'
-    compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
-    compile 'com.github.mrengineer13:snackbar:1.1.0'
-    compile 'com.mobeta.android.dslv:drag-sort-listview:0.6.1.1@aar'
-    compile 'com.github.machinarius:preferencefragment:0.1.2'
-    compile 'com.afollestad:material-dialogs:0.6.3.1'
-    compile 'net.i2p.android.ext:floatingactionbutton:1.8.0'
-    compile 'com.jakewharton:butterknife:6.1.0'
-    compile 'io.reactivex:rxandroid:0.24.0'
-    provided 'org.roboguice:roboblender:3.0.1'
-    compile('com.crashlytics.sdk.android:crashlytics:2.2.2@aar') {
-        transitive = true;
-    }
+  compile 'com.android.support:appcompat-v7:22.0.0'
+  compile 'com.android.support:support-v4:22.0.0'
+  compile 'com.android.support:support-annotations:20.0.0'
+  compile 'com.android.support:recyclerview-v7:21.0.0'
+  compile 'org.roboguice:roboguice:3.0.1'
+  compile 'com.squareup:otto:1.3.5'
+  compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
+  compile 'com.github.mrengineer13:snackbar:1.1.0'
+  compile 'com.mobeta.android.dslv:drag-sort-listview:0.6.1.1@aar'
+  compile 'com.github.machinarius:preferencefragment:0.1.2'
+  compile 'com.afollestad:material-dialogs:0.6.3.1'
+  compile 'net.i2p.android.ext:floatingactionbutton:1.8.0'
+  compile 'com.jakewharton:butterknife:6.1.0'
+  compile 'io.reactivex:rxandroid:0.24.0'
+  provided 'org.roboguice:roboblender:3.0.1'
+  compile('com.crashlytics.sdk.android:crashlytics:2.2.2@aar') {
+    transitive = true;
+  }
 }
 
 allprojects {
-    afterEvaluate { project ->
+  afterEvaluate { project ->
 
-        def signProperties = rootProject.file('signing.properties')
-        if (signProperties.exists()) {
-            def prop = new Properties()
-            prop.load(new FileInputStream(signProperties))
-            def filepath = prop.getAt("keys")
-            def keyProperties = file(filepath)
-            if (keyProperties.exists()) {
-                def props = new Properties()
-                props.load(new FileInputStream(keyProperties))
-                def keystorePath = props.getAt('keystore')
-                def releaseConfig = android.signingConfigs.getAt('release')
-                releaseConfig.storeFile = file(keystorePath)
-                releaseConfig.storePassword = props.getAt('storePass')
-                releaseConfig.keyAlias = props.getAt('keyAlias')
-                releaseConfig.keyPassword = props.getAt('keyPass')
-            }
-        }
+    def signProperties = rootProject.file('signing.properties')
+    if (signProperties.exists()) {
+      def prop = new Properties()
+      prop.load(new FileInputStream(signProperties))
+      def filepath = prop.getAt("keys")
+      def keyProperties = file(filepath)
+      if (keyProperties.exists()) {
+        def props = new Properties()
+        props.load(new FileInputStream(keyProperties))
+        def keystorePath = props.getAt('keystore')
+        def releaseConfig = android.signingConfigs.getAt('release')
+        releaseConfig.storeFile = file(keystorePath)
+        releaseConfig.storePassword = props.getAt('storePass')
+        releaseConfig.keyAlias = props.getAt('keyAlias')
+        releaseConfig.keyPassword = props.getAt('keyPass')
+      }
     }
+  }
 }
 
-project.tasks.withType(JavaCompile) { task ->
-    options.compilerArgs << "-AguiceAnnotationDatabasePackageName=mbrc"
+project.tasks.withType(JavaCompile) {
+  task -> options.compilerArgs << "-AguiceAnnotationDatabasePackageName=mbrc"
+}
+
+task findbugs(type: FindBugs) {
+  ignoreFailures = false
+  effort = "max"
+  reportLevel = "high"
+  excludeFilter = new File("${project.rootDir}/config/quality/findbugs/findbugs-filter.xml")
+  classes = fileTree("${project.rootDir}/remote/build/intermediates/classes/debug/")
+
+  source fileTree('src/main/java')
+  include '**/*.java'
+  exclude '**/gen/**'
+
+  reports {
+    xml.enabled = false
+    html.enabled = true
+    html {
+      destination "$project.buildDir/reports/findbugs/findbugs.html"
+    }
+  }
+
+  classpath = files(project.configurations.compile.asPath)
+}
+
+checkstyle {
+  toolVersion = "6.5"
+}
+
+task checkstyle(type: Checkstyle) {
+
+  configFile file("${project.rootDir}/config/quality/checkstyle/checkstyle.xml")
+  showViolations true
+  configProperties = [
+      'checkstyle.cache.file': rootProject.file('build/checkstyle.cache'),
+      'checkstyle.config.dir': rootProject.file('config/quality/checkstyle/')
+  ]
+  configProperties.checkstyleSuppressionsPath = file("${project.rootDir}/config/quality/checkstyle/suppressions.xml").absolutePath // Where is my suppressions file for checkstyle is...
+  source 'src'
+  include '**/*.java'
+  exclude '**/gen/**'
+  classpath = files(project.configurations.compile.asPath)
+}
+
+task pmd(type: Pmd) {
+  ignoreFailures = false
+  ruleSetFiles = files("${project.rootDir}/config/quality/pmd/pmd-ruleset.xml")
+  ruleSets = []
+  source 'src/main/java'
+  include '**/*.java'
+  exclude '**/gen/**'
+  reports {
+    xml.enabled = false
+    html.enabled = true
+    html {
+      destination "$project.buildDir/reports/pmd/pmd.html"
+    }
+  }
+}
+
+check.dependsOn 'checkstyle', 'findbugs', 'pmd', 'lint'
+
+gradle.taskGraph.afterTask { Task task, TaskState state ->
+  if (state.failure) {
+    if (task.name in ['checkstyle']) {
+      ant.xslt(in: "$buildDir/reports/checkstyle/checkstyle.xml",
+          style: new File(rootDir, 'config/quality/checkstyle/checkstyle-noframes-sorted.xsl'),
+          out: new File("$buildDir/reports/checkstyle/checkstyle.html"))
+    }
+  }
 }
