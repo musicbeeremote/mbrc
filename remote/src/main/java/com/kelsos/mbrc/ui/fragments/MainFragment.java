@@ -264,12 +264,14 @@ import roboguice.util.Ln;
     if (shuffleButton == null) return;
 
     int color = getResources().getColor(
-        !change.getShuffleState().equals(ShuffleChange.OFF) ? R.color.colorAccent
+        !ShuffleChange.OFF.equals(change.getShuffleState())
+            ? R.color.colorAccent
             : R.color.button_material_dark);
     shuffleButton.setColorFilter(color);
 
     shuffleButton.setImageResource(
-        change.getShuffleState().equals(ShuffleChange.AUTODJ) ? R.drawable.ic_headset_grey600_24dp
+        ShuffleChange.AUTODJ.equals(change.getShuffleState())
+            ? R.drawable.ic_headset_grey600_24dp
             : R.drawable.ic_shuffle_grey600_24dp);
   }
 

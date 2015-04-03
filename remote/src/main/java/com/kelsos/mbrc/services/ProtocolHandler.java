@@ -14,7 +14,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import roboguice.util.Ln;
 
 @Singleton public class ProtocolHandler {
-  public static double serverProtocolVersion;
   private Bus bus;
   private boolean isHandshakeComplete;
   private ObjectMapper mapper;
@@ -45,7 +44,6 @@ import roboguice.util.Ln;
           if (context.contains(Protocol.Player)) {
             bus.post(new MessageEvent(ProtocolEventType.InitiateProtocolRequest));
           } else if (context.contains(Protocol.Protocol)) {
-            serverProtocolVersion = node.path(Const.DATA).getDoubleValue();
             isHandshakeComplete = true;
             bus.post(new MessageEvent(ProtocolEventType.HandshakeComplete, true));
           } else {

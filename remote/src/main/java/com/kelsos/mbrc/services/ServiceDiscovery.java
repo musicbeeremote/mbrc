@@ -6,6 +6,8 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import com.google.inject.Inject;
+import com.kelsos.mbrc.constants.Const;
+import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.enums.DiscoveryStop;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
@@ -21,6 +23,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class ServiceDiscovery {
+  public static final String NOTIFY = "notify";
   private WifiManager manager;
   private WifiManager.MulticastLock mLock;
   private ObjectMapper mapper;
@@ -82,7 +85,7 @@ public class ServiceDiscovery {
         byte[] buffer = new byte[512];
         mPacket = new DatagramPacket(buffer, buffer.length);
         Hashtable<String, String> discoveryMessage = new Hashtable<>();
-        discoveryMessage.put("context", "discovery");
+        discoveryMessage.put(Protocol.CONTEXT, "discovery");
         discoveryMessage.put("address", getWifiAddress());
         byte[] discovery = mapper.writeValueAsBytes(discoveryMessage);
         mSocket.send(new DatagramPacket(discovery, discovery.length, group, 45345));
@@ -90,10 +93,10 @@ public class ServiceDiscovery {
 
         while (true) {
           mSocket.receive(mPacket);
-          incoming = new String(mPacket.getData());
+          incoming = new String(mPacket.getData(), Const.UTF_8);
 
           JsonNode node = mapper.readValue(incoming, JsonNode.class);
-          if (node.path("context").asText().equals("notify")) {
+          if (NOTIFY.equals(node.path(Protocol.CONTEXT).asText())) {
             ConnectionSettings settings = new ConnectionSettings(node);
             bus.post(settings);
             break;

@@ -10,6 +10,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.events.MessageEvent;
@@ -51,7 +52,7 @@ import org.codehaus.jackson.node.ArrayNode;
     String sVal = preferences.getString(context.getString(R.string.settings_key_array), null);
     mSettings = new ArrayList<>();
 
-    if (sVal != null && !sVal.equals("")) {
+    if (sVal != null && !Const.EMPTY.equals(sVal)) {
       ArrayNode node;
       try {
         node = mMapper.readValue(sVal, ArrayNode.class);
@@ -72,7 +73,7 @@ import org.codehaus.jackson.node.ArrayNode;
   }
 
   private static boolean nullOrEmpty(String string) {
-    return string == null || string.equals("");
+    return string == null || Const.EMPTY.equals(string);
   }
 
   public SocketAddress getSocketAddress() {

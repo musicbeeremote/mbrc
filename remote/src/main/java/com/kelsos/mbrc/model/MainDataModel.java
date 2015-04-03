@@ -7,6 +7,7 @@ import android.util.Base64;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.constants.Const;
+import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.AlbumEntry;
@@ -77,7 +78,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
     this.bus = bus;
     bus.register(this);
 
-    title = artist = album = year = "";
+    title = artist = album = year = Const.EMPTY;
     volume = 100;
 
     isConnectionOn = false;
@@ -89,7 +90,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
     playState = PlayState.Stopped;
     cover = null;
     rating = 0;
-    lyrics = "";
+    lyrics = Const.EMPTY;
 
     searchArtists = new ArrayList<>();
     searchAlbums = new ArrayList<>();
@@ -97,7 +98,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
     searchTracks = new ArrayList<>();
     nowPlayingList = new ArrayList<>();
     lfmRating = LfmStatus.NORMAL;
-    pluginVersion = "";
+    pluginVersion = Const.EMPTY;
   }
 
   public void setLfmRating(String rating) {
@@ -226,7 +227,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
   }
 
   public void setCover(final String base64format) {
-    if (base64format == null || base64format.equals("")) {
+    if (base64format == null || Const.EMPTY.equals(base64format)) {
       cover = null;
       bus.post(new CoverAvailable());
       updateNotification();
@@ -281,7 +282,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
   }
 
   public void setRepeatState(String repeatButtonActive) {
-    isRepeatActive = (repeatButtonActive.equals("All"));
+    isRepeatActive = (Protocol.ALL.equals(repeatButtonActive));
     bus.post(new RepeatChange(this.isRepeatActive));
   }
 
@@ -318,11 +319,11 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
 
   public void setPlayState(String playState) {
     PlayState newState = PlayState.Undefined;
-    if (playState.equalsIgnoreCase(Const.PLAYING)) {
+    if (Const.PLAYING.equalsIgnoreCase(playState)) {
       newState = PlayState.Playing;
-    } else if (playState.equalsIgnoreCase(Const.STOPPED)) {
+    } else if (Const.STOPPED.equalsIgnoreCase(playState)) {
       newState = PlayState.Stopped;
-    } else if (playState.equalsIgnoreCase(Const.PAUSED)) newState = PlayState.Paused;
+    } else if (Const.PAUSED.equalsIgnoreCase(playState)) newState = PlayState.Paused;
     this.playState = newState;
     bus.post(new PlayStateChange(this.playState));
     updateNotification();

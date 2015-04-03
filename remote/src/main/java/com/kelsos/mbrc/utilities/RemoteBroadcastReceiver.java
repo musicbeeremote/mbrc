@@ -31,31 +31,31 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
   }
 
   @Override protected void handleReceive(Context context, Intent intent) {
-    if (intent.getAction().equals(TelephonyManager.ACTION_PHONE_STATE_CHANGED)) {
+    if (TelephonyManager.ACTION_PHONE_STATE_CHANGED.equals(intent.getAction())) {
       Bundle bundle = intent.getExtras();
       if (null == bundle) return;
       String state = bundle.getString(TelephonyManager.EXTRA_STATE);
-      if (state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)) {
+      if (TelephonyManager.EXTRA_STATE_RINGING.equalsIgnoreCase(state)) {
         if (settingsManager.isVolumeReducedOnRinging()) {
           bus.post(new MessageEvent(ProtocolEventType.ReduceVolume));
         }
       }
-    } else if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
+    } else if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction())) {
       NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
       if (networkInfo.getState().equals(NetworkInfo.State.CONNECTED)) {
         bus.post(new MessageEvent(UserInputEventType.StartConnection));
       } else //noinspection StatementWithEmptyBody
-        if (networkInfo.getState().equals(NetworkInfo.State.DISCONNECTING)) {
+        if (NetworkInfo.State.DISCONNECTING.equals(networkInfo.getState())) {
       }
-    } else if (intent.getAction().equals(NotificationService.NOTIFICATION_PLAY_PRESSED)) {
+    } else if (NotificationService.NOTIFICATION_PLAY_PRESSED.equals(intent.getAction())) {
       bus.post(new MessageEvent(ProtocolEventType.UserAction,
           new UserAction(Protocol.PlayerPlayPause, true)));
-    } else if (intent.getAction().equals(NotificationService.NOTIFICATION_NEXT_PRESSED)) {
+    } else if (NotificationService.NOTIFICATION_NEXT_PRESSED.equals(intent.getAction())) {
       bus.post(new MessageEvent(ProtocolEventType.UserAction,
           new UserAction(Protocol.PlayerNext, true)));
-    } else if (intent.getAction().equals(NotificationService.NOTIFICATION_CLOSE_PRESSED)) {
+    } else if (NotificationService.NOTIFICATION_CLOSE_PRESSED.equals(intent.getAction())) {
       bus.post(new MessageEvent(UserInputEventType.CancelNotification));
-    } else if (intent.getAction().equals(NotificationService.NOTIFICATION_PREVIOUS_PRESSED)) {
+    } else if (NotificationService.NOTIFICATION_PREVIOUS_PRESSED.equals(intent.getAction())) {
       bus.post(new MessageEvent(ProtocolEventType.UserAction,
           new UserAction(Protocol.PlayerPrevious, true)));
     }

@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.services;
 
-import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
@@ -29,12 +28,13 @@ import roboguice.util.Ln;
 
 @Singleton public class SocketService {
   public static final int MAX_RETRIES = 3;
-  private static int numOfRetries;
+  public static final int SOCKET_BUFFER = 4096;
+  private int numOfRetries;
   private MainThreadBusWrapper bus;
   private SettingsManager settingsManager;
   private ObjectMapper mapper;
   private boolean shouldStop;
-  private Socket clSocket;
+  private Socket socket;
   private PrintWriter output;
   private Thread cThread;
   private DelayTimer cTimer;
@@ -102,7 +102,7 @@ import roboguice.util.Ln;
    * @return Boolean
    */
   private boolean sIsConnected() {
-    return clSocket != null && clSocket.isConnected();
+    return socket != null && socket.isConnected();
   }
 
   private void cleanupSocket() {
@@ -113,8 +113,8 @@ import roboguice.util.Ln;
         output.close();
         output = null;
       }
-      clSocket.close();
-      clSocket = null;
+      socket.close();
+      socket = null;
     } catch (IOException ignore) {
 
     }
@@ -134,7 +134,7 @@ import roboguice.util.Ln;
       }
     } catch (Exception ignored) {
       if (BuildConfig.DEBUG) {
-        Log.d("mbrc-log", "socket send data exception", ignored);
+        Ln.d(ignored, "Trying to send a message");
       }
     }
   }
@@ -146,16 +146,18 @@ import roboguice.util.Ln;
       if (null == socketAddress) return;
       BufferedReader input;
       try {
-        clSocket = new Socket();
-        clSocket.connect(socketAddress);
-        output = new PrintWriter(
-            new BufferedWriter(new OutputStreamWriter(clSocket.getOutputStream()), 4096), true);
-        input = new BufferedReader(new InputStreamReader(clSocket.getInputStream()), 4096);
+        socket = new Socket();
+        socket.connect(socketAddress);
+        final OutputStreamWriter out =
+            new OutputStreamWriter(socket.getOutputStream(), Const.UTF_8);
+        output = new PrintWriter(new BufferedWriter(out, SOCKET_BUFFER), true);
+        final InputStreamReader in = new InputStreamReader(socket.getInputStream(), Const.UTF_8);
+        input = new BufferedReader(in, SOCKET_BUFFER);
 
-        String socketStatus = String.valueOf(clSocket.isConnected());
+        String socketStatus = String.valueOf(socket.isConnected());
 
         bus.post(new MessageEvent(SocketEventType.SocketStatusChanged, socketStatus));
-        while (clSocket.isConnected()) {
+        while (socket.isConnected()) {
           try {
             final String incoming = input.readLine();
             if (incoming == null) throw new IOException();
@@ -164,7 +166,7 @@ import roboguice.util.Ln;
             }
           } catch (IOException e) {
             input.close();
-            clSocket.close();
+            socket.close();
             throw e;
           }
         }
@@ -180,12 +182,15 @@ import roboguice.util.Ln;
           output.flush();
           output.close();
         }
-        clSocket = null;
+        socket = null;
 
         bus.post(new MessageEvent(SocketEventType.SocketStatusChanged, false));
-        if (numOfRetries < MAX_RETRIES) socketManager(SocketAction.RETRY);
+        if (numOfRetries < MAX_RETRIES) {
+          Ln.d("Trying to reconnect. Try %d of %d", numOfRetries, MAX_RETRIES);
+          socketManager(SocketAction.RETRY);
+        }
         if (BuildConfig.DEBUG) {
-          Log.d("mbrc-log", "socket closed");
+          Ln.d("socket closed");
         }
       }
     }
