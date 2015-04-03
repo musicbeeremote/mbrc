@@ -3,21 +3,21 @@ package com.kelsos.mbrc.events.ui;
 import android.graphics.Bitmap;
 
 public class CoverAvailable {
-  private boolean isAvailable;
+  private boolean available;
   private Bitmap cover;
 
   public CoverAvailable(Bitmap cover) {
-    this.isAvailable = true;
+    this.available = true;
     this.cover = cover;
   }
 
   public CoverAvailable() {
-    this.isAvailable = false;
+    this.available = false;
     this.cover = null;
   }
 
-  public boolean getIsAvailable() {
-    return this.isAvailable;
+  public boolean isAvailable() {
+    return this.available;
   }
 
   public Bitmap getCover() {

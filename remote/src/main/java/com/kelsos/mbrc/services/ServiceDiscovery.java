@@ -73,20 +73,22 @@ public class ServiceDiscovery {
 
   private class ServiceListener implements Runnable {
 
+    public static final String DISCOVERY_ADDRESS = "239.1.5.10"; //NOPMD
+
     @Override public void run() {
       try {
 
         MulticastSocket mSocket = new MulticastSocket(45345);
         mSocket.setSoTimeout(2000);
-        InetAddress group = InetAddress.getByName("239.1.5.10");
+        InetAddress group = InetAddress.getByName(DISCOVERY_ADDRESS);
         mSocket.joinGroup(group);
 
         DatagramPacket mPacket;
         byte[] buffer = new byte[512];
         mPacket = new DatagramPacket(buffer, buffer.length);
         Hashtable<String, String> discoveryMessage = new Hashtable<>();
-        discoveryMessage.put(Protocol.CONTEXT, "discovery");
-        discoveryMessage.put("address", getWifiAddress());
+        discoveryMessage.put(Protocol.CONTEXT, Protocol.DISCOVERY);
+        discoveryMessage.put(Protocol.ADDRESS, getWifiAddress());
         byte[] discovery = mapper.writeValueAsBytes(discoveryMessage);
         mSocket.send(new DatagramPacket(discovery, discovery.length, group, 45345));
         String incoming;

@@ -16,6 +16,7 @@ import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity;
 import com.kelsos.mbrc.ui.dialogs.WebViewDialog;
 import com.kelsos.mbrc.utilities.RemoteUtils;
 import com.squareup.otto.Bus;
+import roboguice.util.Ln;
 
 public class SettingsFragment extends PreferenceFragment {
 
@@ -63,7 +64,7 @@ public class SettingsFragment extends PreferenceFragment {
                 RemoteUtils.getVersion(mContext)));
       } catch (PackageManager.NameNotFoundException e) {
         if (BuildConfig.DEBUG) {
-          e.printStackTrace();
+          Ln.d(e);
         }
       }
     }

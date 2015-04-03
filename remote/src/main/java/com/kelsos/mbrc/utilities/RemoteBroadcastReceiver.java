@@ -33,12 +33,13 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
   @Override protected void handleReceive(Context context, Intent intent) {
     if (TelephonyManager.ACTION_PHONE_STATE_CHANGED.equals(intent.getAction())) {
       Bundle bundle = intent.getExtras();
-      if (null == bundle) return;
+      if (null == bundle) {
+        return;
+      }
       String state = bundle.getString(TelephonyManager.EXTRA_STATE);
-      if (TelephonyManager.EXTRA_STATE_RINGING.equalsIgnoreCase(state)) {
-        if (settingsManager.isVolumeReducedOnRinging()) {
-          bus.post(new MessageEvent(ProtocolEventType.ReduceVolume));
-        }
+      if (TelephonyManager.EXTRA_STATE_RINGING.equalsIgnoreCase(state)
+          && settingsManager.isVolumeReducedOnRinging()) {
+        bus.post(new MessageEvent(ProtocolEventType.ReduceVolume));
       }
     } else if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction())) {
       NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
@@ -46,7 +47,7 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
         bus.post(new MessageEvent(UserInputEventType.StartConnection));
       } else //noinspection StatementWithEmptyBody
         if (NetworkInfo.State.DISCONNECTING.equals(networkInfo.getState())) {
-      }
+        }
     } else if (NotificationService.NOTIFICATION_PLAY_PRESSED.equals(intent.getAction())) {
       bus.post(new MessageEvent(ProtocolEventType.UserAction,
           new UserAction(Protocol.PlayerPlayPause, true)));

@@ -85,7 +85,9 @@ public class SearchArtistFragment extends RoboFragment
 
     }
 
-    if (ua != null) bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
+    if (ua != null) {
+      bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
+    }
   }
 
   @Override public void onItemClicked(ArtistEntry artist) {

@@ -3,7 +3,6 @@ package com.kelsos.mbrc.controller;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -29,8 +28,7 @@ import rx.schedulers.Schedulers;
   @Inject private Bus bus;
   private Map<String, Class<? extends ICommand>> commandMap;
 
-  public Controller() {
-  }
+  public Controller() { }
 
   @Override public IBinder onBind(Intent intent) {
     return mBinder;
@@ -65,19 +63,21 @@ import rx.schedulers.Schedulers;
   }
 
   public void executeCommand(IEvent event) {
-    Ln.d("Command pre-exec: %s", event.getType());
     final Class<? extends ICommand> commandClass = commandMap.get(event.getType());
-    if (commandClass == null) return;
+    if (commandClass == null) {
+      return;
+    }
     ICommand commandInstance;
     try {
       commandInstance = injector.getInstance(commandClass);
-      if (commandInstance == null) return;
+      if (commandInstance == null) {
+        return;
+      }
       commandInstance.execute(event);
-      Ln.d("Command post-exec: %s", event.getType());
     } catch (Exception ex) {
       if (BuildConfig.DEBUG) {
-        Log.d("mbrc-log", "executing command for type: \t" + event.getType(), ex);
-        Log.d("mbrc-log", "command data: \t" + event.getData());
+        Ln.d(ex, String.format("executing command for type: \t%s", event.getType()));
+        Ln.d(String.format("command data: \t%s", event.getData()));
       }
     }
   }

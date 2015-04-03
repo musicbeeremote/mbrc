@@ -2,6 +2,8 @@ package com.kelsos.mbrc.constants;
 
 public class Const {
   public static final String EMPTY = "";
+  public static final String PLUGIN = "plugin";
+  public static final String VERSIONS = "versions";
 
   private Const() { }
   public static final String DATA = "data";

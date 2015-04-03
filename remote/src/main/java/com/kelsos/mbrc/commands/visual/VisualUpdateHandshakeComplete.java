@@ -25,7 +25,9 @@ public class VisualUpdateHandshakeComplete implements ICommand {
     boolean isComplete = (Boolean) e.getData();
     model.setHandShakeDone(isComplete);
 
-    if (!isComplete) return;
+    if (!isComplete) {
+      return;
+    }
     ArrayList<SocketMessage> messages = new ArrayList<>();
     messages.add(new SocketMessage(Protocol.NowPlayingCover, Protocol.Request, EMPTY));
     messages.add(new SocketMessage(Protocol.PlayerStatus, Protocol.Request, EMPTY));

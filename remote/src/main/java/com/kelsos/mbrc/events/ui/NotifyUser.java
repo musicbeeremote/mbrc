@@ -3,16 +3,16 @@ package com.kelsos.mbrc.events.ui;
 public class NotifyUser {
   private String message;
   private int resId;
-  private boolean isFromResource;
+  private boolean fromResource;
 
   public NotifyUser(String message) {
     this.message = message;
-    this.isFromResource = false;
+    this.fromResource = false;
   }
 
   public NotifyUser(int resId) {
     this.resId = resId;
-    this.isFromResource = true;
+    this.fromResource = true;
   }
 
   public String getMessage() {
@@ -24,6 +24,6 @@ public class NotifyUser {
   }
 
   public boolean isFromResource() {
-    return isFromResource;
+    return fromResource;
   }
 }

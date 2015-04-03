@@ -1,13 +1,13 @@
 package com.kelsos.mbrc.events.ui;
 
 public class RepeatChange {
-  private boolean isActive;
+  private boolean active;
 
-  public RepeatChange(boolean isActive) {
-    this.isActive = isActive;
+  public RepeatChange(boolean active) {
+    this.active = active;
   }
 
-  public boolean getIsActive() {
-    return this.isActive;
+  public boolean isActive() {
+    return this.active;
   }
 }

@@ -85,7 +85,9 @@ public class SearchAlbumFragment extends RoboFragment
         break;
     }
 
-    if (ua != null) bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
+    if (ua != null) {
+      bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
+    }
   }
 
   @Override public void onItemClicked(AlbumEntry album) {

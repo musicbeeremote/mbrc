@@ -58,7 +58,9 @@ import java.lang.annotation.RetentionPolicy;
   }
 
   @Subscribe public void handleNotificationData(final NotificationDataAvailable event) {
-    if (!mSettings.isNotificationControlEnabled()) return;
+    if (!mSettings.isNotificationControlEnabled()) {
+      return;
+    }
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
       notificationBuilder(event.getTitle(), event.getArtist(), event.getAlbum(), event.getCover(),
           event.getState());

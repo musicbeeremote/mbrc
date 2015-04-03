@@ -139,7 +139,9 @@ public class DrawerFragment extends RoboListFragment
   }
 
   @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChange change) {
-    if (connectText == null) return;
+    if (connectText == null) {
+      return;
+    }
     switch (change.getStatus()) {
       case CONNECTION_OFF:
         connectText.setText(R.string.drawer_connection_status_off);
@@ -157,12 +159,11 @@ public class DrawerFragment extends RoboListFragment
   }
 
   @Override public void onBackStackChanged() {
-    if (!mBackstackChanging) {
-      if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 0) {
-        mSelection = 0;
-        getActivity().setTitle(mNavigation.get(mSelection).getTitleId());
-        getListView().setItemChecked(mSelection, true);
-      }
+    if (!mBackstackChanging
+        && getActivity().getSupportFragmentManager().getBackStackEntryCount() == 0) {
+      mSelection = 0;
+      getActivity().setTitle(mNavigation.get(mSelection).getTitleId());
+      getListView().setItemChecked(mSelection, true);
     }
     mBackstackChanging = false;
   }

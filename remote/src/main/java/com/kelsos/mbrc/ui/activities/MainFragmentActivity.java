@@ -174,7 +174,9 @@ public class MainFragmentActivity extends RoboActionBarActivity {
   }
 
   @Subscribe public void showSetupDialog(DisplayDialog event) {
-    if (mDialog != null) return;
+    if (mDialog != null) {
+      return;
+    }
     if (event.getDialogType() == DisplayDialog.SETUP) {
       mDialog = new SetupDialogFragment();
       mDialog.show(getSupportFragmentManager(), "SetupDialogFragment");

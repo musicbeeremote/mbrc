@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
@@ -30,6 +29,7 @@ import java.util.Date;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
+import roboguice.util.Ln;
 
 @Singleton public class SettingsManager {
   private SharedPreferences mPreferences;
@@ -64,7 +64,7 @@ import org.codehaus.jackson.node.ArrayNode;
         }
       } catch (IOException e) {
         if (BuildConfig.DEBUG) {
-          e.printStackTrace();
+          Ln.d(e, "Loading settings.");
         }
       }
     }
@@ -120,7 +120,7 @@ import org.codehaus.jackson.node.ArrayNode;
         true);
   }
 
-  @SuppressLint("NewApi") private void storeSettings() {
+  @SuppressLint("NewApi") private void storeSettings() { //NOPMD
     SharedPreferences.Editor editor = mPreferences.edit();
     try {
       editor.putString(mContext.getString(R.string.settings_key_array),
@@ -135,7 +135,7 @@ import org.codehaus.jackson.node.ArrayNode;
       bus.post(new ConnectionSettingsChanged(mSettings, 0));
     } catch (IOException e) {
       if (BuildConfig.DEBUG) {
-        Log.d("mbrc-log", "Settings store", e);
+        Ln.d(e, "Settings store");
       }
     }
   }
@@ -261,12 +261,12 @@ import org.codehaus.jackson.node.ArrayNode;
         }
 
         if (BuildConfig.DEBUG) {
-          Log.d("mbrc-log", "update or fresh install");
+          Ln.d("update or fresh install");
         }
       }
     } catch (PackageManager.NameNotFoundException e) {
       if (BuildConfig.DEBUG) {
-        Log.d("mbrc-log", "check for first run", e);
+        Ln.d(e, "check for first run");
       }
     }
   }

@@ -93,24 +93,21 @@ import roboguice.util.Ln;
           userChangingVolume = true;
         }
       };
+
   private SeekBar.OnSeekBarChangeListener progressBarChangeListener =
       new SeekBar.OnSeekBarChangeListener() {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-          if (fromUser) {
-            if (progress != previousVol) {
-              final UserAction action =
-                  new UserAction(Protocol.NowPlayingPosition, String.valueOf(progress));
-              postAction(action);
-              previousVol = progress;
-            }
+          if (fromUser && progress != previousVol) {
+            final UserAction action =
+                new UserAction(Protocol.NowPlayingPosition, String.valueOf(progress));
+            postAction(action);
+            previousVol = progress;
           }
         }
 
-        public void onStartTrackingTouch(SeekBar seekBar) {
-        }
+        public void onStartTrackingTouch(SeekBar seekBar) { }
 
-        public void onStopTrackingTouch(SeekBar seekBar) {
-        }
+        public void onStopTrackingTouch(SeekBar seekBar) { }
       };
 
   @OnClick(R.id.main_button_play_pause) public void playButtonPressed(View v) {
@@ -153,7 +150,7 @@ import roboguice.util.Ln;
    * Posts a user action wrapped in a MessageEvent. The bus will
    * pass the MessageEvent through the Socket to the plugin.
    *
-   * @param action Any kind of UserAction available in the Protocol
+   * @param action Any kind of UserAction available in the {@link Protocol}
    */
   private void postAction(UserAction action) {
     bus.post(new MessageEvent(ProtocolEventType.UserAction, action));
@@ -252,8 +249,10 @@ import roboguice.util.Ln;
   }
 
   @Subscribe public void handleCoverEvent(final CoverAvailable cevent) {
-    if (albumCover == null) return;
-    if (cevent.getIsAvailable()) {
+    if (albumCover == null) {
+      return;
+    }
+    if (cevent.isAvailable()) {
       albumCover.setImageBitmap(cevent.getCover());
     } else {
       albumCover.setImageResource(R.drawable.ic_image_no_cover);
@@ -261,37 +260,48 @@ import roboguice.util.Ln;
   }
 
   @Subscribe public void handleShuffleChange(ShuffleChange change) {
-    if (shuffleButton == null) return;
+    if (shuffleButton == null) {
+      return;
+    }
 
     int color = getResources().getColor(
-        !ShuffleChange.OFF.equals(change.getShuffleState())
-            ? R.color.colorAccent
+        !ShuffleChange.OFF.equals(change.getShuffleState()) ? R.color.colorAccent
             : R.color.button_material_dark);
     shuffleButton.setColorFilter(color);
 
     shuffleButton.setImageResource(
-        ShuffleChange.AUTODJ.equals(change.getShuffleState())
-            ? R.drawable.ic_headset_grey600_24dp
+        ShuffleChange.AUTODJ.equals(change.getShuffleState()) ? R.drawable.ic_headset_grey600_24dp
             : R.drawable.ic_shuffle_grey600_24dp);
   }
 
   @Subscribe public void updateRepeatButtonState(RepeatChange change) {
-    if (repeatButton == null) return;
+    if (repeatButton == null) {
+      return;
+    }
+
     int color = getResources().getColor(
-        change.getIsActive() ? R.color.colorAccent : R.color.button_material_dark);
+        change.isActive() ? R.color.colorAccent : R.color.button_material_dark);
     repeatButton.setColorFilter(color);
   }
 
   @Subscribe public void updateVolumeData(VolumeChange change) {
-    if (volumeBar == null) return;
-    if (!userChangingVolume) volumeBar.setProgress(change.getVolume());
-    if (muteButton == null) return;
-    muteButton.setImageResource(change.getIsMute() ? R.drawable.ic_volume_off_grey600_24dp
+    if (volumeBar == null) {
+      return;
+    }
+    if (!userChangingVolume) {
+      volumeBar.setProgress(change.getVolume());
+    }
+    if (muteButton == null) {
+      return;
+    }
+    muteButton.setImageResource(change.isMute() ? R.drawable.ic_volume_off_grey600_24dp
         : R.drawable.ic_volume_up_grey600_24dp);
   }
 
   @Subscribe public void handlePlayStateChange(final PlayStateChange change) {
-    if (playPauseButton == null) return;
+    if (playPauseButton == null) {
+      return;
+    }
     switch (change.getState()) {
       case Playing:
         playPauseButton.setImageResource(R.drawable.ic_pause_circle_fill);
@@ -351,11 +361,15 @@ import roboguice.util.Ln;
       final int currentMinutes = currentProgress / 60;
       final int currentSeconds = currentProgress % 60;
 
-      if (getActivity() == null) return;
+      if (getActivity() == null) {
+        return;
+      }
 
       getActivity().runOnUiThread(() -> {
         try {
-          if (progressBar == null) return;
+          if (progressBar == null) {
+            return;
+          }
           progressBar.setProgress(progressBar.getProgress() + 1000);
           trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
         } catch (Exception ex) {
@@ -371,13 +385,17 @@ import roboguice.util.Ln;
   }
 
   private void activateStoppedState() {
-    if (trackProgressCurrent == null || progressBar == null) return;
+    if (trackProgressCurrent == null || progressBar == null) {
+      return;
+    }
     progressBar.setProgress(0);
     trackProgressCurrent.setText("00:00");
   }
 
   @Subscribe public void handleTrackInfoChange(final TrackInfoChange change) {
-    if (artistLabel == null) return;
+    if (artistLabel == null) {
+      return;
+    }
     artistLabel.setText(change.getArtist());
     titleLabel.setText(change.getTitle());
     albumLabel.setText(TextUtils.isEmpty(change.getYear()) ? change.getAlbum()
@@ -431,16 +449,24 @@ import roboguice.util.Ln;
   }
 
   @Subscribe public void handleScrobbleChange(ScrobbleChange event) {
-    if (menu == null) return;
+    if (menu == null) {
+      return;
+    }
     final MenuItem scrobbleMenuItem = menu.findItem(R.id.menu_lastfm_scrobble);
-    if (scrobbleMenuItem == null) return;
-    scrobbleMenuItem.setChecked(event.getIsActive());
+    if (scrobbleMenuItem == null) {
+      return;
+    }
+    scrobbleMenuItem.setChecked(event.isActive());
   }
 
   @Subscribe public void handleLfmLoveChange(LfmRatingChanged event) {
-    if (menu == null) return;
+    if (menu == null) {
+      return;
+    }
     final MenuItem favoriteMenuItem = menu.findItem(R.id.menu_lastfm_love);
-    if (favoriteMenuItem == null) return;
+    if (favoriteMenuItem == null) {
+      return;
+    }
     switch (event.getStatus()) {
       case LOVED:
         favoriteMenuItem.setIcon(R.drawable.ic_action_favorite);

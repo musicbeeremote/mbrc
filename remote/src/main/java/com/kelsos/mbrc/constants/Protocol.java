@@ -4,7 +4,7 @@ public class Protocol {
 
   @SuppressWarnings("unused") public static final String Error = "error";
   public static final String Player = "player";
-  public static final String Protocol = "protocol";
+  public static final String ProtocolTag = "protocol";
   public static final String ProtocolVersion = "2.1";
   public static final String PluginVersion = "pluginversion";
   public static final String ClientNotAllowed = "notallowed";
@@ -53,4 +53,6 @@ public class Protocol {
   public static final String Request = "req";
   public static final String CONTEXT = "context";
   public static final String ALL = "All";
+  public static final String DISCOVERY = "discovery";
+  public static final String ADDRESS = "address";
 }

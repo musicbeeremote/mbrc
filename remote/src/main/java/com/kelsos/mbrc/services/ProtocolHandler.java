@@ -43,7 +43,7 @@ import roboguice.util.Ln;
         if (!isHandshakeComplete) {
           if (context.contains(Protocol.Player)) {
             bus.post(new MessageEvent(ProtocolEventType.InitiateProtocolRequest));
-          } else if (context.contains(Protocol.Protocol)) {
+          } else if (context.contains(Protocol.ProtocolTag)) {
             isHandshakeComplete = true;
             bus.post(new MessageEvent(ProtocolEventType.HandshakeComplete, true));
           } else {

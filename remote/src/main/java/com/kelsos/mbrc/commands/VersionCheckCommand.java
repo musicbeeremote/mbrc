@@ -2,9 +2,9 @@ package com.kelsos.mbrc.commands;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.util.Log;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
+import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
@@ -22,6 +22,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import roboguice.util.Ln;
 
 public class VersionCheckCommand implements ICommand {
   private MainDataModel model;
@@ -44,6 +45,9 @@ public class VersionCheckCommand implements ICommand {
   }
 
   private class VersionChecker implements Runnable {
+
+    public static final String CHECK_URL = "http://kelsos.net/musicbeeremote/versions.json";
+
     @Override public void run() {
       try {
         Calendar calendar = Calendar.getInstance();
@@ -54,18 +58,16 @@ public class VersionCheckCommand implements ICommand {
 
         if (nextCheck.after(now)) {
           if (BuildConfig.DEBUG) {
-            Log.d("mbrc-log", "waiting for next check: " + Long.toString(nextCheck.getTime()));
+            Ln.d(String.format("waiting for next check: %s", Long.toString(nextCheck.getTime())));
           }
           return;
         }
 
-        JsonNode jsonNode =
-            mapper.readValue(new URL("http://kelsos.net/musicbeeremote/versions.json"),
-                JsonNode.class);
+        JsonNode jsonNode = mapper.readValue(new URL(CHECK_URL), JsonNode.class);
         String version = RemoteUtils.getVersion(mContext);
-        JsonNode vNode = jsonNode.path("versions").path(version);
+        JsonNode vNode = jsonNode.path(Const.VERSIONS).path(version);
 
-        String suggestedVersion = vNode.path("plugin").asText();
+        String suggestedVersion = vNode.path(Const.PLUGIN).asText();
 
         if (!suggestedVersion.equals(model.getPluginVersion())) {
           boolean isOutOfDate = false;
@@ -92,33 +94,33 @@ public class VersionCheckCommand implements ICommand {
 
         manager.setLastUpdated(now);
         if (BuildConfig.DEBUG) {
-          Log.d("mbrc-log", "last check on: " + Long.toString(now.getTime()));
-          Log.d("mbrc-log", "plugin reported version: " + model.getPluginVersion());
-          Log.d("mbrc-log", "plugin suggested version: " + suggestedVersion);
+          Ln.d(String.format("last check on: %s", Long.toString(now.getTime())));
+          Ln.d(String.format("plugin reported version: %s", model.getPluginVersion()));
+          Ln.d(String.format("plugin suggested version: %s", suggestedVersion));
         }
       } catch (MalformedURLException e) {
         if (BuildConfig.DEBUG) {
-          Log.d("mbrc-log", "version check MalformedURLException", e);
+          Ln.d(e, "version check MalformedURLException");
         }
       } catch (JsonMappingException e) {
         if (BuildConfig.DEBUG) {
-          Log.d("mbrc-log", "version check JsonMappingException", e);
+          Ln.d(e, "version check JsonMappingException");
         }
       } catch (JsonParseException e) {
         if (BuildConfig.DEBUG) {
-          Log.d("mbrc-log", "version check parse", e);
+          Ln.d(e, "version check parse");
         }
       } catch (IOException e) {
         if (BuildConfig.DEBUG) {
-          Log.d("mbrc-log", "version check IOException", e);
+          Ln.d(e, "version check IOException");
         }
       } catch (PackageManager.NameNotFoundException e) {
         if (BuildConfig.DEBUG) {
-          Log.d("mbrc-log", "version check PackageManager.NameNotFoundException", e);
+          Ln.d(e, "version check PackageManager.NameNotFoundException");
         }
       } catch (NumberFormatException e) {
         if (BuildConfig.DEBUG) {
-          Log.d("mbrc-log", "version check NumberFormatException", e);
+          Ln.d(e, "version check NumberFormatException");
         }
       }
     }

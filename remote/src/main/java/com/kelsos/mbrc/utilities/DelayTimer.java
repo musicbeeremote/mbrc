@@ -1,16 +1,16 @@
 package com.kelsos.mbrc.utilities;
 
-import android.util.Log;
 import com.kelsos.mbrc.BuildConfig;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import roboguice.util.Ln;
 
 public class DelayTimer {
   private final ScheduledExecutorService mScheduler = Executors.newScheduledThreadPool(1);
   private int delay;
-  private boolean isRunning;
+  private boolean running;
   private ScheduledFuture mFuture;
   private TimerFinishEvent mTimerFinishListener;
 
@@ -42,7 +42,7 @@ public class DelayTimer {
     stop();
     final DelayTimerTask task = new DelayTimerTask();
     mFuture = mScheduler.schedule(task, delay, TimeUnit.SECONDS);
-    isRunning = true;
+    running = true;
   }
 
   /**
@@ -52,10 +52,10 @@ public class DelayTimer {
     if (mFuture != null) {
       mFuture.cancel(true);
       if (BuildConfig.DEBUG) {
-        Log.d("mbrc-log", "stopping delay timer");
+        Ln.d("stopping delay timer");
       }
     }
-    isRunning = false;
+    running = false;
   }
 
   /**
@@ -64,7 +64,7 @@ public class DelayTimer {
    * @return true if the timer is running and false if not.
    */
   @SuppressWarnings("unused") public boolean isRunning() {
-    return isRunning;
+    return running;
   }
 
   /**
@@ -77,7 +77,9 @@ public class DelayTimer {
   }
 
   private void onTimerFinish() {
-    if (mTimerFinishListener != null) mTimerFinishListener.onTimerFinish();
+    if (mTimerFinishListener != null) {
+      mTimerFinishListener.onTimerFinish();
+    }
   }
 
   /**
@@ -93,7 +95,7 @@ public class DelayTimer {
       stop();
       onTimerFinish();
       if (BuildConfig.DEBUG) {
-        Log.d("mbrc-log", "delay timer tick");
+        Ln.d("delay timer tick");
       }
     }
   }

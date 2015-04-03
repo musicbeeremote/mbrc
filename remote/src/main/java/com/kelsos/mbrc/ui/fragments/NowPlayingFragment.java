@@ -94,7 +94,9 @@ public class NowPlayingFragment extends RoboListFragment implements SearchView.O
   }
 
   @Subscribe public void handlePlayingTrackChange(TrackInfoChange event) {
-    if (adapter == null || !adapter.getClass().equals(NowPlayingAdapter.class)) return;
+    if (adapter == null || !adapter.getClass().equals(NowPlayingAdapter.class)) {
+      return;
+    }
     adapter.setPlayingTrackIndex(
         adapter.getPosition(new MusicTrack(event.getArtist(), event.getTitle())));
     adapter.notifyDataSetChanged();

@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.model;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
@@ -49,7 +48,6 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
 @Singleton public class MainDataModel {
 
   private MainThreadBusWrapper bus;
-  private Context context;
   private float rating;
   private String title;
   private String artist;
@@ -58,7 +56,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
   private String lyrics;
   private int volume;
   private Bitmap cover;
-  private boolean isConnectionOn;
+  private boolean connectionActive;
   private boolean isHandShakeDone;
   private boolean isRepeatActive;
   private String mShuffleState;
@@ -73,15 +71,14 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
   private LfmStatus lfmRating;
   private String pluginVersion;
 
-  @Inject public MainDataModel(MainThreadBusWrapper bus, Context context) {
-    this.context = context;
+  @Inject public MainDataModel(MainThreadBusWrapper bus) {
     this.bus = bus;
     bus.register(this);
 
     title = artist = album = year = Const.EMPTY;
     volume = 100;
 
-    isConnectionOn = false;
+    connectionActive = false;
     isHandShakeDone = false;
     isRepeatActive = false;
     mShuffleState = OFF;
@@ -187,7 +184,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
   }
 
   private void updateNotification() {
-    if (!isConnectionOn) {
+    if (!connectionActive) {
       bus.post(new MessageEvent(UserInputEventType.CancelNotification));
     } else {
       bus.post(new NotificationDataAvailable(artist, title, album, cover, playState));
@@ -255,30 +252,30 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
   }
 
   public void setConnectionState(String connectionActive) {
-    isConnectionOn = Boolean.parseBoolean(connectionActive);
-    if (!isConnectionOn) {
+    this.connectionActive = Boolean.parseBoolean(connectionActive);
+    if (!this.connectionActive) {
       setPlayState(Const.STOPPED);
     }
     bus.post(new ConnectionStatusChange(
-        isConnectionOn ? (isHandShakeDone ? ConnectionStatus.CONNECTION_ACTIVE
+        this.connectionActive ? (isHandShakeDone ? ConnectionStatus.CONNECTION_ACTIVE
             : ConnectionStatus.CONNECTION_ON) : ConnectionStatus.CONNECTION_OFF));
   }
 
   public void setHandShakeDone(boolean handShakeDone) {
     this.isHandShakeDone = handShakeDone;
     bus.post(new ConnectionStatusChange(
-        isConnectionOn ? (isHandShakeDone ? ConnectionStatus.CONNECTION_ACTIVE
+        connectionActive ? (isHandShakeDone ? ConnectionStatus.CONNECTION_ACTIVE
             : ConnectionStatus.CONNECTION_ON) : ConnectionStatus.CONNECTION_OFF));
   }
 
   @Produce public ConnectionStatusChange produceConnectionStatus() {
     return new ConnectionStatusChange(
-        isConnectionOn ? (isHandShakeDone ? ConnectionStatus.CONNECTION_ACTIVE
+        connectionActive ? (isHandShakeDone ? ConnectionStatus.CONNECTION_ACTIVE
             : ConnectionStatus.CONNECTION_ON) : ConnectionStatus.CONNECTION_OFF);
   }
 
-  public boolean getIsConnectionActive() {
-    return isConnectionOn;
+  public boolean isConnectionActive() {
+    return connectionActive;
   }
 
   public void setRepeatState(String repeatButtonActive) {
@@ -323,7 +320,9 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
       newState = PlayState.Playing;
     } else if (Const.STOPPED.equalsIgnoreCase(playState)) {
       newState = PlayState.Stopped;
-    } else if (Const.PAUSED.equalsIgnoreCase(playState)) newState = PlayState.Paused;
+    } else if (Const.PAUSED.equalsIgnoreCase(playState)) {
+      newState = PlayState.Paused;
+    }
     this.playState = newState;
     bus.post(new PlayStateChange(this.playState));
     updateNotification();
@@ -338,7 +337,9 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
   }
 
   public void setLyrics(String lyrics) {
-    if (lyrics == null || this.lyrics.equals(lyrics)) return;
+    if (lyrics == null || this.lyrics.equals(lyrics)) {
+      return;
+    }
     this.lyrics = lyrics.replace("<p>", "\r\n")
         .replace("<br>", "\n")
         .replace("&lt;", "<")

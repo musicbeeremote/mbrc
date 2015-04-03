@@ -81,8 +81,10 @@ public class MiniControlFragment extends RoboFragment {
   }
 
   @Subscribe public void handleCoverChange(CoverAvailable event) {
-    if (trackCover == null) return;
-    if (event.getIsAvailable()) {
+    if (trackCover == null) {
+      return;
+    }
+    if (event.isAvailable()) {
       trackCover.setImageBitmap(event.getCover());
     } else {
       trackCover.setImageResource(R.drawable.ic_image_no_cover);

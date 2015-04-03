@@ -62,7 +62,9 @@ import roboguice.util.Ln;
     switch (action) {
       case RESET:
         cleanupSocket();
-        if (cThread != null) cThread.interrupt();
+        if (cThread != null) {
+          cThread.interrupt();
+        }
         cThread = null;
         shouldStop = false;
         numOfRetries = 0;
@@ -79,7 +81,9 @@ import roboguice.util.Ln;
         break;
       case RETRY:
         cleanupSocket();
-        if (cThread != null) cThread.interrupt();
+        if (cThread != null) {
+          cThread.interrupt();
+        }
         cThread = null;
         if (shouldStop) {
           shouldStop = false;
@@ -106,7 +110,9 @@ import roboguice.util.Ln;
   }
 
   private void cleanupSocket() {
-    if (!sIsConnected()) return;
+    if (!sIsConnected()) {
+      return;
+    }
     try {
       if (output != null) {
         output.flush();
@@ -143,7 +149,9 @@ import roboguice.util.Ln;
     public void run() {
       SocketAddress socketAddress = settingsManager.getSocketAddress();
       bus.post(new MessageEvent(SocketEventType.SocketHandshakeUpdate, false));
-      if (null == socketAddress) return;
+      if (null == socketAddress) {
+        return;
+      }
       BufferedReader input;
       try {
         socket = new Socket();
@@ -160,7 +168,9 @@ import roboguice.util.Ln;
         while (socket.isConnected()) {
           try {
             final String incoming = input.readLine();
-            if (incoming == null) throw new IOException();
+            if (incoming == null) {
+              throw new IOException();
+            }
             if (incoming.length() > 0) {
               bus.post(new MessageEvent(SocketEventType.SocketDataAvailable, incoming));
             }
