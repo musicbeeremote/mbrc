@@ -127,5 +127,6 @@
   <string name="menu_autodj">AutoDJ</string>
   <string name="rate_the_playing_track">Rate the playing track</string>
   <string name="fab_title_clear_search">Clear Search</string>
+  <string name="unknown_reason">Unknown reason!</string>
 
 </resources>

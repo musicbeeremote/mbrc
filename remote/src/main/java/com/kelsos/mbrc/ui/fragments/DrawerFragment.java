@@ -150,6 +150,9 @@ public class DrawerFragment extends RoboListFragment
       case CONNECTION_ACTIVE:
         connectText.setText(R.string.drawer_connection_status_active);
         break;
+      default:
+        connectText.setText(R.string.drawer_connection_status_off);
+        break;
     }
   }
 

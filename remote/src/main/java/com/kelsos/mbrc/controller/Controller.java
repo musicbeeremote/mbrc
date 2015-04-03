@@ -61,7 +61,7 @@ import rx.schedulers.Schedulers;
       executeCommand(event);
       subscriber.onCompleted();
     }).subscribeOn(Schedulers.io())
-        .subscribe(o -> {});
+        .subscribe(o -> { });
   }
 
   public void executeCommand(IEvent event) {

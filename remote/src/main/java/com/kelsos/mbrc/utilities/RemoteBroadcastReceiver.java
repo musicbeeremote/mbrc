@@ -67,13 +67,13 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
    * Android operating system.
    */
   private void installFilter() {
-    IntentFilter _nmFilter = new IntentFilter();
-    _nmFilter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
-    _nmFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-    _nmFilter.addAction(NotificationService.NOTIFICATION_PLAY_PRESSED);
-    _nmFilter.addAction(NotificationService.NOTIFICATION_NEXT_PRESSED);
-    _nmFilter.addAction(NotificationService.NOTIFICATION_CLOSE_PRESSED);
-    _nmFilter.addAction(NotificationService.NOTIFICATION_PREVIOUS_PRESSED);
-    context.registerReceiver(this, _nmFilter);
+    IntentFilter filter = new IntentFilter();
+    filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
+    filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+    filter.addAction(NotificationService.NOTIFICATION_PLAY_PRESSED);
+    filter.addAction(NotificationService.NOTIFICATION_NEXT_PRESSED);
+    filter.addAction(NotificationService.NOTIFICATION_CLOSE_PRESSED);
+    filter.addAction(NotificationService.NOTIFICATION_PREVIOUS_PRESSED);
+    context.registerReceiver(this, filter);
   }
 }

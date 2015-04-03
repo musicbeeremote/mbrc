@@ -80,6 +80,9 @@ public class SearchArtistFragment extends RoboFragment
       case R.id.popup_artist_album:
         ua = new UserAction(gSub, query);
         break;
+      default:
+        break;
+
     }
 
     if (ua != null) bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));

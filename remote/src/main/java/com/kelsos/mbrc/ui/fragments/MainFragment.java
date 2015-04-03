@@ -176,7 +176,7 @@ import roboguice.util.Ln;
 
   @Override public void onStart() {
     super.onStart();
-    SetTextViewTypeface();
+    setTextViewTypeface();
     bus.register(this);
   }
 
@@ -208,8 +208,9 @@ import roboguice.util.Ln;
   /**
    * Sets the typeface of the text views in the main activity to roboto.
    */
-  private void SetTextViewTypeface() {		/* Marquee Hack */
+  private void setTextViewTypeface() {
     try {
+      /* Marquee Hack */
       artistLabel.setSelected(true);
       titleLabel.setSelected(true);
       albumLabel.setSelected(true);
@@ -312,7 +313,7 @@ import roboguice.util.Ln;
         stopTrackProgressAnimation();
         activateStoppedState();
         break;
-      case Undefined:
+      default:
         playPauseButton.setImageResource(R.drawable.ic_play_circle_fill);
         break;
     }
@@ -331,9 +332,12 @@ import roboguice.util.Ln;
    * Starts the progress animation when called. If It was previously running then it restarts it.
    */
   private void trackProgressAnimation() {
-    if (!isVisible()) return;
-        /* If the scheduled tasks is not null then cancel it and clear it along with the timer to create them anew */
-    final int TIME_PERIOD = 1;
+    if (!isVisible()) {
+      return;
+    }
+    /* If the scheduled tasks is not null then cancel it and clear it along with the
+    timer to create them anew */
+    final int timePeriod = 1;
     stopTrackProgressAnimation();
     if (playPauseButton.getTag().equals("Stopped") || playPauseButton.getTag().equals("Paused")) {
       return;
@@ -361,7 +365,7 @@ import roboguice.util.Ln;
     };
 
     mProgressUpdateHandler =
-        progressScheduler.scheduleAtFixedRate(updateProgress, 0, TIME_PERIOD, TimeUnit.SECONDS);
+        progressScheduler.scheduleAtFixedRate(updateProgress, 0, timePeriod, TimeUnit.SECONDS);
   }
 
   private void activateStoppedState() {
@@ -439,9 +443,7 @@ import roboguice.util.Ln;
       case LOVED:
         favoriteMenuItem.setIcon(R.drawable.ic_action_favorite);
         break;
-      case BANNED:
-        break;
-      case NORMAL:
+      default:
         favoriteMenuItem.setIcon(R.drawable.ic_action_favorite_outline);
         break;
     }

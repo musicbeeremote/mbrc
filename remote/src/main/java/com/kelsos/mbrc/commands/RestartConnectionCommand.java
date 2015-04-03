@@ -14,6 +14,6 @@ public class RestartConnectionCommand implements ICommand {
   }
 
   @Override public void execute(IEvent e) {
-    socket.SocketManager(SocketAction.RESET);
+    socket.socketManager(SocketAction.RESET);
   }
 }

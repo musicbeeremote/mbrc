@@ -120,6 +120,8 @@ public class MainFragmentActivity extends RoboActionBarActivity {
         LyricsFragment lFragment = new LyricsFragment();
         replaceFragment(lFragment, "lyrics");
         break;
+      default:
+        break;
     }
     navChanged = false;
   }
@@ -171,7 +173,7 @@ public class MainFragmentActivity extends RoboActionBarActivity {
     }
   }
 
-  @Subscribe public void ShowSetupDialog(DisplayDialog event) {
+  @Subscribe public void showSetupDialog(DisplayDialog event) {
     if (mDialog != null) return;
     if (event.getDialogType() == DisplayDialog.SETUP) {
       mDialog = new SetupDialogFragment();

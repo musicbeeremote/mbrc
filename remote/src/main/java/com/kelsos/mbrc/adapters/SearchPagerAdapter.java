@@ -11,7 +11,7 @@ import com.kelsos.mbrc.ui.fragments.SearchTrackFragment;
 public class SearchPagerAdapter extends FragmentStatePagerAdapter {
   private static final int mCount = 4;
   private final CharSequence pageTitles[] =
-      new CharSequence[] { "Genre", "Artist", "Album", "Track" };
+      new CharSequence[] {"Genre", "Artist", "Album", "Track"};
 
   public SearchPagerAdapter(FragmentActivity activity) {
     super(activity.getSupportFragmentManager());
@@ -28,6 +28,8 @@ public class SearchPagerAdapter extends FragmentStatePagerAdapter {
         return new SearchAlbumFragment();
       case 3:
         return new SearchTrackFragment();
+      default:
+        break;
     }
     return null;
   }

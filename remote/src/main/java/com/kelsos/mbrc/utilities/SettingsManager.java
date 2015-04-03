@@ -219,6 +219,8 @@ import org.codehaus.jackson.node.ArrayNode;
         bus.post(new ConnectionSettingsChanged(mSettings, event.getSettings().getIndex()));
         bus.post(new MessageEvent(UserInputEventType.SettingsChanged));
         break;
+      default:
+        break;
     }
   }
 

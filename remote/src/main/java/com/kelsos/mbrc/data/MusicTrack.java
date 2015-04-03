@@ -45,4 +45,8 @@ public class MusicTrack {
     }
     return rValue;
   }
+
+  @Override public int hashCode() {
+    return title.hashCode() + artist.hashCode();
+  }
 }

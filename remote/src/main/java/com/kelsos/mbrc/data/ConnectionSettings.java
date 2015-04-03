@@ -58,6 +58,10 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
     return equality;
   }
 
+  @Override public int hashCode() {
+    return address.hashCode() + port;
+  }
+
   public int getIndex() {
     return index;
   }

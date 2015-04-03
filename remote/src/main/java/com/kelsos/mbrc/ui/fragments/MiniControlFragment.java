@@ -99,13 +99,8 @@ public class MiniControlFragment extends RoboFragment {
       case Playing:
         playPause.setImageResource(R.drawable.ic_action_pause);
         break;
-      case Paused:
+      default:
         playPause.setImageResource(R.drawable.ic_action_play);
-        break;
-      case Stopped:
-        playPause.setImageResource(R.drawable.ic_action_play);
-        break;
-      case Undefined:
         break;
     }
   }

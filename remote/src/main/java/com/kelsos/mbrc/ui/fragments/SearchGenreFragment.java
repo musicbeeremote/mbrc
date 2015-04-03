@@ -80,6 +80,8 @@ public class SearchGenreFragment extends RoboFragment
       case R.id.popup_genre_artists:
         ua = new UserAction(gSub, query);
         break;
+      default:
+        break;
     }
 
     if (ua != null) bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));

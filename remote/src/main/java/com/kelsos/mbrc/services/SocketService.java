@@ -40,7 +40,7 @@ import roboguice.util.Ln;
   private DelayTimer cTimer;
   private DelayTimer.TimerFinishEvent timerFinishEvent = new DelayTimer.TimerFinishEvent() {
     public void onTimerFinish() {
-      cThread = new Thread(new socketConnection());
+      cThread = new Thread(new SocketConnection());
       cThread.start();
       numOfRetries++;
     }
@@ -55,10 +55,10 @@ import roboguice.util.Ln;
     cTimer = new DelayTimer(3, timerFinishEvent);
     numOfRetries = 0;
     shouldStop = false;
-    SocketManager(SocketAction.START);
+    socketManager(SocketAction.START);
   }
 
-  public void SocketManager(SocketAction action) {
+  public void socketManager(SocketAction action) {
     switch (action) {
       case RESET:
         cleanupSocket();
@@ -90,6 +90,8 @@ import roboguice.util.Ln;
         break;
       case STOP:
         shouldStop = true;
+        break;
+      default:
         break;
     }
   }
@@ -137,7 +139,7 @@ import roboguice.util.Ln;
     }
   }
 
-  private class socketConnection implements Runnable {
+  private class SocketConnection implements Runnable {
     public void run() {
       SocketAddress socketAddress = settingsManager.getSocketAddress();
       bus.post(new MessageEvent(SocketEventType.SocketHandshakeUpdate, false));
@@ -181,7 +183,7 @@ import roboguice.util.Ln;
         clSocket = null;
 
         bus.post(new MessageEvent(SocketEventType.SocketStatusChanged, false));
-        if (numOfRetries < MAX_RETRIES) SocketManager(SocketAction.RETRY);
+        if (numOfRetries < MAX_RETRIES) socketManager(SocketAction.RETRY);
         if (BuildConfig.DEBUG) {
           Log.d("mbrc-log", "socket closed");
         }

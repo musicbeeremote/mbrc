@@ -98,7 +98,7 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
       mProgress.dismiss();
     }
 
-    String message = "";
+    String message;
     switch (event.getReason()) {
       case NO_WIFI:
         message = getString(R.string.con_man_no_wifi);
@@ -108,6 +108,9 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
         break;
       case COMPLETE:
         message = getString(R.string.con_man_success);
+        break;
+      default:
+        message = getString(R.string.unknown_reason);
         break;
     }
 

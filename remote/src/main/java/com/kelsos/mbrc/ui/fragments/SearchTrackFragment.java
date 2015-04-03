@@ -76,6 +76,8 @@ public class SearchTrackFragment extends RoboFragment
       case R.id.popup_track_play:
         ua = new UserAction(qContext, new Queue(Queue.NOW, query));
         break;
+      default:
+        break;
     }
 
     if (ua != null) bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));

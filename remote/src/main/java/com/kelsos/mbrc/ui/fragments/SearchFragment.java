@@ -55,6 +55,8 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
       case 3:
         pContext = Protocol.LibrarySearchTitle;
         break;
+      default:
+        break;
     }
 
     mSearchView.setIconified(true);
@@ -80,6 +82,8 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
         break;
       case 3:
         bus.post(new TrackSearchResults(new ArrayList<>(), true));
+        break;
+      default:
         break;
     }
   }

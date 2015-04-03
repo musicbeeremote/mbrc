@@ -12,7 +12,7 @@ public class DisplayDialog {
 
   @IntDef({NONE, SETUP, UPGRADE, INSTALL})
   @Retention(RetentionPolicy.SOURCE)
-  public @interface DialogType {}
+  public @interface DialogType { }
 
   private int dialogType;
 
