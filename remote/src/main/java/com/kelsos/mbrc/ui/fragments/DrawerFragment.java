@@ -14,6 +14,10 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+import butterknife.OnLongClick;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.DrawerAdapter;
@@ -24,50 +28,28 @@ import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
+import com.kelsos.mbrc.ui.activities.FeedbackActivity;
 import com.kelsos.mbrc.ui.activities.SettingsActivity;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import roboguice.fragment.RoboListFragment;
-import roboguice.inject.InjectView;
 
 public class DrawerFragment extends RoboListFragment
     implements FragmentManager.OnBackStackChangedListener {
 
   private final ArrayList<NavigationEntry> mNavigation;
   @Inject Bus bus;
-  @InjectView(R.id.connect_layout) View connectButton;
   @InjectView(R.id.menu_connect) TextView connectText;
-  @InjectView(R.id.exit_layout) View exitButton;
   @InjectView(R.id.menu_exit) TextView exitText;
-  @InjectView(R.id.help_layout) View helpButton;
   @InjectView(R.id.menu_help) TextView helpText;
-  @InjectView(R.id.settings_layout) View settingsButton;
   @InjectView(R.id.menu_settings) TextView settingsText;
+  @InjectView(R.id.menu_feedback) TextView feedbackText;
+
   private Typeface robotoMedium;
   private DrawerLayout mDrawerLayout;
   private int mSelection;
   private boolean mBackstackChanging;
-  private TextView.OnLongClickListener connectButtonLongClick = new TextView.OnLongClickListener() {
-    @Override public boolean onLongClick(View view) {
-      bus.post(new MessageEvent(UserInputEventType.ResetConnection));
-      return false;
-    }
-  };
-
-  private TextView.OnClickListener connectButtonClick = new TextView.OnClickListener() {
-
-    public void onClick(View v) {
-      bus.post(new MessageEvent(UserInputEventType.StartConnection));
-    }
-  };
-
-  private View.OnClickListener settingsButtonClick = new View.OnClickListener() {
-    @Override public void onClick(View v) {
-      bus.post(new DrawerEvent());
-      startActivity(new Intent(getActivity(), SettingsActivity.class));
-    }
-  };
 
   public DrawerFragment() {
     mNavigation = new ArrayList<>();
@@ -95,32 +77,19 @@ public class DrawerFragment extends RoboListFragment
     final ListView list = (ListView) view.findViewById(android.R.id.list);
     final View footer = inflater.inflate(R.layout.ui_drawer_footer, list, false);
     list.addFooterView(footer, null, false);
+    ButterKnife.inject(this, view);
     return view;
   }
 
   @Override public void onStart() {
     super.onStart();
     bus.register(this);
-    connectButton.setOnClickListener(connectButtonClick);
-    connectButton.setOnLongClickListener(connectButtonLongClick);
-    settingsButton.setOnClickListener(settingsButtonClick);
-    helpButton.setOnClickListener(v -> {
-      bus.post(new DrawerEvent());
-      Intent openHelp = new Intent(Intent.ACTION_VIEW);
-      openHelp.setData(Uri.parse("http://kelsos.net/musicbeeremote/help/"));
-      startActivity(openHelp);
-    });
 
     connectText.setTypeface(robotoMedium);
     helpText.setTypeface(robotoMedium);
     exitText.setTypeface(robotoMedium);
     settingsText.setTypeface(robotoMedium);
-
-    exitButton.setOnClickListener(v -> {
-      final Activity activity = getActivity();
-      activity.stopService(new Intent(activity, Controller.class));
-      activity.finish();
-    });
+    feedbackText.setTypeface(robotoMedium);
 
     setListAdapter(new DrawerAdapter(getActivity(), R.layout.ui_drawer_item, mNavigation));
     getListView().setOnItemClickListener(new DrawerOnClickListener());
@@ -131,6 +100,38 @@ public class DrawerFragment extends RoboListFragment
     if (mDrawerLayout == null) {
       mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
     }
+  }
+
+  @OnLongClick(R.id.connect_layout) public boolean onConnectLongClick(View view) {
+    bus.post(new MessageEvent(UserInputEventType.ResetConnection));
+    return false;
+  }
+
+  @OnClick(R.id.connect_layout) public void onClick(View v) {
+    bus.post(new MessageEvent(UserInputEventType.StartConnection));
+  }
+
+  @OnClick(R.id.settings_layout) public void onSettingsClicked(View v) {
+    bus.post(new DrawerEvent());
+    startActivity(new Intent(getActivity(), SettingsActivity.class));
+  }
+
+  @OnClick(R.id.help_layout) public void onHelpClicked(View v) {
+    bus.post(new DrawerEvent());
+    Intent openHelp = new Intent(Intent.ACTION_VIEW);
+    openHelp.setData(Uri.parse("http://kelsos.net/musicbeeremote/help/"));
+    startActivity(openHelp);
+  }
+
+  @OnClick(R.id.exit_layout) public void onExitClicked(View v) {
+    final Activity activity = getActivity();
+    activity.stopService(new Intent(activity, Controller.class));
+    activity.finish();
+  }
+
+  @OnClick(R.id.feedback_layout) public void onFeedbackClicked(View v) {
+    final Activity activity = getActivity();
+    activity.startActivity(new Intent(activity, FeedbackActivity.class));
   }
 
   @Override public void onStop() {

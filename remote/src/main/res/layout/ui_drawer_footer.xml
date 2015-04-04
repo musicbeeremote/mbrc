@@ -47,6 +47,23 @@
   </LinearLayout>
 
   <LinearLayout
+      android:id="@+id/feedback_layout"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/mbrc_drawer_item_height"
+      android:background="@drawable/selectable_background"
+      android:clickable="true"
+      android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/menu_feedback"
+        style="@style/Menu.Title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start|center_vertical"
+        android:text="@string/main_menu_feedback" />
+  </LinearLayout>
+
+  <LinearLayout
     android:id="@+id/connect_layout"
     android:layout_width="match_parent"
     android:layout_height="@dimen/mbrc_drawer_item_height"
