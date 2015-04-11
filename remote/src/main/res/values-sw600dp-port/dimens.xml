@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <dimen name="cover_height">500dp</dimen>
   <dimen name="mbrc_volume_seekbar_height">5dp</dimen>
   <dimen name="mbrc_volume_seekbar_padding">9dp</dimen>
   <dimen name="mbrc_volume_seekbar_thumb_offset">6dp</dimen>
