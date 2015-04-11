@@ -55,11 +55,7 @@ import rx.schedulers.Schedulers;
    * @param event The message received.
    */
   @Subscribe public void handleUserActionEvents(MessageEvent event) {
-    Observable.create(subscriber -> {
-      executeCommand(event);
-      subscriber.onCompleted();
-    }).subscribeOn(Schedulers.io())
-        .subscribe(o -> { });
+    executeCommand(event);
   }
 
   public void executeCommand(IEvent event) {
@@ -73,7 +69,12 @@ import rx.schedulers.Schedulers;
       if (commandInstance == null) {
         return;
       }
-      commandInstance.execute(event);
+
+      Observable.create(subscriber -> {
+        commandInstance.execute(event);
+        subscriber.onCompleted();
+      }).subscribeOn(Schedulers.io())
+          .subscribe(o -> { }, Ln::d);
     } catch (Exception ex) {
       if (BuildConfig.DEBUG) {
         Ln.d(ex, String.format("executing command for type: \t%s", event.getType()));

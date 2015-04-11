@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.services;
 
-import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
@@ -26,13 +25,14 @@ public class ServiceDiscovery {
   public static final String NOTIFY = "notify";
   private WifiManager manager;
   private WifiManager.MulticastLock mLock;
+  private ConnectivityManager connectivityManager;
   private ObjectMapper mapper;
-  private Context mContext;
   private MainThreadBusWrapper bus;
 
-  @Inject public ServiceDiscovery(Context context, ObjectMapper mapper, MainThreadBusWrapper bus) {
-    this.mContext = context;
-    manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+  @Inject public ServiceDiscovery(WifiManager manager, ConnectivityManager connectivityManager,
+      ObjectMapper mapper, MainThreadBusWrapper bus) {
+    this.manager = manager;
+    this.connectivityManager = connectivityManager;
     this.mapper = mapper;
     this.bus = bus;
   }
@@ -65,9 +65,7 @@ public class ServiceDiscovery {
   }
 
   private boolean isWifiConnected() {
-    ConnectivityManager cMan =
-        (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-    NetworkInfo current = cMan.getActiveNetworkInfo();
+    NetworkInfo current = connectivityManager.getActiveNetworkInfo();
     return current != null && current.getType() == ConnectivityManager.TYPE_WIFI;
   }
 
