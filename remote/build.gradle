@@ -55,7 +55,7 @@ android {
     minSdkVersion 8
     targetSdkVersion 22
     versionCode 98
-    versionName "0.10.0.6"
+    versionName "0.11.0"
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
     buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
     manifestPlaceholders = [fabricApiKey: fabricApiKey]
