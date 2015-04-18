@@ -8,6 +8,10 @@ import com.kelsos.mbrc.model.MainDataModel;
 import java.util.ArrayList;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
+import roboguice.util.Ln;
+import rx.Observable;
+import rx.Subscriber;
+import rx.schedulers.Schedulers;
 
 public class UpdateNowPlayingList implements ICommand {
   private MainDataModel model;
@@ -17,13 +21,16 @@ public class UpdateNowPlayingList implements ICommand {
   }
 
   @Override public void execute(final IEvent e) {
-    ArrayNode node = (ArrayNode) e.getData();
-    ArrayList<MusicTrack> playList = new ArrayList<>();
-    for (int i = 0; i < node.size(); i++) {
-      JsonNode jNode = node.get(i);
-      playList.add(new MusicTrack(jNode));
-    }
 
-    model.setNowPlayingList(playList);
+    Observable.create((Subscriber<? super ArrayList<MusicTrack>> subscriber) -> {
+      ArrayNode node = (ArrayNode) e.getData();
+      ArrayList<MusicTrack> playList = new ArrayList<>();
+      for (int i = 0; i < node.size(); i++) {
+        JsonNode jNode = node.get(i);
+        playList.add(new MusicTrack(jNode));
+      }
+      subscriber.onNext(playList);
+      subscriber.onCompleted();
+    }).subscribeOn(Schedulers.io()).subscribe(model::setNowPlayingList, Ln::d);
   }
 }

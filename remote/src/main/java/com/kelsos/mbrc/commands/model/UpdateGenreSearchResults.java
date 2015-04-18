@@ -8,6 +8,10 @@ import com.kelsos.mbrc.model.MainDataModel;
 import java.util.ArrayList;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
+import roboguice.util.Ln;
+import rx.Observable;
+import rx.Subscriber;
+import rx.schedulers.Schedulers;
 
 public class UpdateGenreSearchResults implements ICommand {
   private MainDataModel model;
@@ -17,13 +21,16 @@ public class UpdateGenreSearchResults implements ICommand {
   }
 
   @Override public void execute(IEvent e) {
-    ArrayList<GenreEntry> genres = new ArrayList<>();
-    ArrayNode node = (ArrayNode) e.getData();
-    for (int i = 0; i < node.size(); i++) {
-      JsonNode jNode = node.get(i);
-      GenreEntry entry = new GenreEntry(jNode);
-      genres.add(entry);
-    }
-    model.setSearchGenres(genres);
+    Observable.create((Subscriber<? super ArrayList<GenreEntry>> subscriber) -> {
+      ArrayList<GenreEntry> genres = new ArrayList<>();
+      ArrayNode node = (ArrayNode) e.getData();
+      for (int i = 0; i < node.size(); i++) {
+        JsonNode jNode = node.get(i);
+        GenreEntry entry = new GenreEntry(jNode);
+        genres.add(entry);
+      }
+      subscriber.onNext(genres);
+      subscriber.onCompleted();
+    }).subscribeOn(Schedulers.io()).subscribe(model::setSearchGenres, Ln::d);
   }
 }

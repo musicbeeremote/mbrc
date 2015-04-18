@@ -18,8 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 import roboguice.service.RoboService;
 import roboguice.util.Ln;
-import rx.Observable;
-import rx.schedulers.Schedulers;
 
 @Singleton public class Controller extends RoboService {
 
@@ -69,12 +67,8 @@ import rx.schedulers.Schedulers;
       if (commandInstance == null) {
         return;
       }
+      commandInstance.execute(event);
 
-      Observable.create(subscriber -> {
-        commandInstance.execute(event);
-        subscriber.onCompleted();
-      }).subscribeOn(Schedulers.io())
-          .subscribe(o -> { }, Ln::d);
     } catch (Exception ex) {
       if (BuildConfig.DEBUG) {
         Ln.d(ex, String.format("executing command for type: \t%s", event.getType()));
