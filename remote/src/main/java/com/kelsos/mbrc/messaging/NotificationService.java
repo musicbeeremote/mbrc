@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.IntDef;
@@ -18,6 +19,7 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
+import com.kelsos.mbrc.services.RemoteSessionManager;
 import com.kelsos.mbrc.ui.activities.MainFragmentActivity;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.kelsos.mbrc.utilities.SettingsManager;
@@ -46,11 +48,14 @@ import java.lang.annotation.RetentionPolicy;
   private Notification mNotification;
   private NotificationManager mNotificationManager;
   private Context mContext;
+  private final RemoteSessionManager sessionManager;
   private SettingsManager mSettings;
 
   @Inject
-  public NotificationService(Context context, MainThreadBusWrapper bus, SettingsManager mSettings) {
+  public NotificationService(Context context, MainThreadBusWrapper bus,
+      RemoteSessionManager sessionManager, SettingsManager mSettings) {
     this.mContext = context;
+    this.sessionManager = sessionManager;
     this.mSettings = mSettings;
     mNotificationManager =
         (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -130,13 +135,18 @@ import java.lang.annotation.RetentionPolicy;
     int playStateIcon = event.getState() == PlayState.Playing ? R.drawable.ic_action_pause
         : R.drawable.ic_action_play;
 
+    final Notification.MediaStyle mediaStyle = new Notification.MediaStyle();
+
+    mediaStyle.setMediaSession(
+        (MediaSession.Token) sessionManager.getMediaSessionToken().getToken());
+
     Notification.Builder builder =
         new Notification.Builder(mContext).setVisibility(Notification.VISIBILITY_PUBLIC)
             .setSmallIcon(R.drawable.ic_mbrc_status)
             .addAction(R.drawable.ic_action_previous, "Previous", getPendingIntent(PREVIOUS))
             .addAction(playStateIcon, "Play/Pause", getPendingIntent(PLAY))
             .addAction(R.drawable.ic_action_next, "Next", getPendingIntent(NEXT))
-            .setStyle(new Notification.MediaStyle().setShowActionsInCompactView(1, 2))
+            .setStyle(mediaStyle.setShowActionsInCompactView(1, 2))
             .setContentTitle(event.getTitle())
             .setContentText(event.getArtist())
             .setSubText(event.getAlbum());
