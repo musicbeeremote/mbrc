@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.ViewConfiguration;
 import com.crashlytics.android.Crashlytics;
-import com.kelsos.mbrc.controller.Controller;
+import com.kelsos.mbrc.controller.RemoteService;
 import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.model.MainDataModel;
 import com.kelsos.mbrc.services.ProtocolHandler;
@@ -23,7 +23,7 @@ public class RemoteApplication extends Application {
     Fabric.with(this, new Crashlytics());
     final RoboInjector injector = RoboGuice.getInjector(this);
 
-    startService(new Intent(this, Controller.class));
+    startService(new Intent(this, RemoteService.class));
 
     //Initialization of the background service
     injector.getInstance(MainDataModel.class);

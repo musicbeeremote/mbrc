@@ -58,7 +58,7 @@
     </activity>
 
     <service
-        android:name=".controller.Controller"
+        android:name=".controller.RemoteService"
         android:description="@string/info_service_description"
         android:permission="android.permission.READ_PHONE_STATE">
       <intent-filter>

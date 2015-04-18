@@ -184,7 +184,9 @@ import roboguice.util.Ln;
             }
           } catch (IOException e) {
             input.close();
-            socket.close();
+            if (socket != null) {
+              socket.close();
+            }
             throw e;
           }
         }
@@ -197,9 +199,9 @@ import roboguice.util.Ln;
         Ln.d(npe);
       } finally {
         if (output != null) {
-          output.flush();
           output.close();
         }
+
         socket = null;
 
         bus.post(new MessageEvent(SocketEventType.SocketStatusChanged, false));

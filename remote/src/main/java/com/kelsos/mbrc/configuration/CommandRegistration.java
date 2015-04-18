@@ -45,10 +45,10 @@ import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.SocketEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.controller.Controller;
+import com.kelsos.mbrc.controller.RemoteController;
 
 public class CommandRegistration {
-  @Inject public static void register(Controller controller) {
+  @Inject public static void register(RemoteController controller) {
     controller.register(ProtocolEventType.ReduceVolume, ReduceVolumeOnRingCommand.class);
     controller.register(ProtocolEventType.HandshakeComplete, VisualUpdateHandshakeComplete.class);
     controller.register(ProtocolEventType.InformClientNotAllowed, NotifyNotAllowedCommand.class);
@@ -94,5 +94,53 @@ public class CommandRegistration {
     controller.register(SocketEventType.SocketDataAvailable, SocketDataAvailableCommand.class);
     controller.register(SocketEventType.SocketStatusChanged, ConnectionStatusChangedCommand.class);
     controller.register(SocketEventType.SocketHandshakeUpdate, HandleHandshake.class);
+  }
+
+  public static void unregister(RemoteController controller) {
+    controller.unregister(ProtocolEventType.ReduceVolume, ReduceVolumeOnRingCommand.class);
+    controller.unregister(ProtocolEventType.HandshakeComplete, VisualUpdateHandshakeComplete.class);
+    controller.unregister(ProtocolEventType.InformClientNotAllowed, NotifyNotAllowedCommand.class);
+    controller.unregister(ProtocolEventType.InformClientPluginOutOfDate,
+        NotifyPluginOutOfDateCommand.class);
+    controller.unregister(ProtocolEventType.InitiateProtocolRequest, ProtocolRequest.class);
+    controller.unregister(ProtocolEventType.PluginVersionCheck, VersionCheckCommand.class);
+    controller.unregister(ProtocolEventType.UserAction, ProcessUserAction.class);
+    controller.unregister(Protocol.NowPlayingTrack, UpdateNowPlayingTrack.class);
+    controller.unregister(Protocol.NowPlayingCover, UpdateCover.class);
+    controller.unregister(Protocol.NowPlayingRating, UpdateRating.class);
+    controller.unregister(Protocol.PlayerStatus, UpdatePlayerStatus.class);
+    controller.unregister(Protocol.PlayerState, UpdatePlayState.class);
+    controller.unregister(Protocol.PlayerRepeat, UpdateRepeat.class);
+    controller.unregister(Protocol.PlayerVolume, UpdateVolume.class);
+    controller.unregister(Protocol.PlayerMute, UpdateMute.class);
+    controller.unregister(Protocol.PlayerShuffle, UpdateShuffle.class);
+    controller.unregister(Protocol.PlayerScrobble, UpdateLastFm.class);
+    controller.unregister(Protocol.NowPlayingLyrics, UpdateLyrics.class);
+    controller.unregister(Protocol.NowPlayingList, UpdateNowPlayingList.class);
+    controller.unregister(Protocol.NowPlayingLfmRating, UpdateLfmRating.class);
+    controller.unregister(Protocol.NowPlayingListRemove, UpdateNowPlayingTrackRemoval.class);
+    controller.unregister(Protocol.NowPlayingListMove, UpdateNowPlayingTrackMoved.class);
+    controller.unregister(Protocol.LibrarySearchArtist, UpdateArtistSearchResults.class);
+    controller.unregister(Protocol.LibrarySearchAlbum, UpdateAlbumSearchResults.class);
+    controller.unregister(Protocol.LibrarySearchGenre, UpdateGenreSearchResults.class);
+    controller.unregister(Protocol.LibrarySearchTitle, UpdateTrackSearchResults.class);
+    controller.unregister(Protocol.LibraryArtistAlbums, UpdateAlbumSearchResults.class);
+    controller.unregister(Protocol.LibraryGenreArtists, UpdateArtistSearchResults.class);
+    controller.unregister(Protocol.LibraryAlbumTracks, UpdateTrackSearchResults.class);
+    controller.unregister(Protocol.NowPlayingPosition, UpdatePlaybackPositionCommand.class);
+    controller.unregister(Protocol.PluginVersion, UpdatePluginVersionCommand.class);
+    controller.unregister(Protocol.PING, ProtocolPingHandle.class);
+    controller.unregister(Protocol.PONG, ProtocolPongHandle.class);
+    controller.unregister(UserInputEventType.SettingsChanged, RestartConnectionCommand.class);
+    controller.unregister(UserInputEventType.CancelNotification, CancelNotificationCommand.class);
+    controller.unregister(UserInputEventType.StartConnection, InitiateConnectionCommand.class);
+    controller.unregister(UserInputEventType.TerminateConnection, TerminateConnectionCommand.class);
+    controller.unregister(UserInputEventType.ResetConnection, RestartConnectionCommand.class);
+    controller.unregister(UserInputEventType.StartDiscovery, StartDiscoveryCommand.class);
+    controller.unregister(UserInputEventType.KeyVolumeUp, KeyVolumeUpCommand.class);
+    controller.unregister(UserInputEventType.KeyVolumeDown, KeyVolumeDownCommand.class);
+    controller.unregister(SocketEventType.SocketDataAvailable, SocketDataAvailableCommand.class);
+    controller.unregister(SocketEventType.SocketStatusChanged, ConnectionStatusChangedCommand.class);
+    controller.unregister(SocketEventType.SocketHandshakeUpdate, HandleHandshake.class);
   }
 }

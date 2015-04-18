@@ -1,14 +1,8 @@
 package com.kelsos.mbrc.controller;
 
-import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
-import com.kelsos.mbrc.configuration.CommandRegistration;
-import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
@@ -16,20 +10,18 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import java.util.HashMap;
 import java.util.Map;
-import roboguice.service.RoboService;
+import java.util.concurrent.LinkedBlockingQueue;
 import roboguice.util.Ln;
 
-@Singleton public class Controller extends RoboService {
-
-  private final IBinder mBinder = new ControllerBinder();
-  @Inject private Injector injector;
-  @Inject private Bus bus;
+public class RemoteController implements Runnable {
+  private Injector injector;
   private Map<String, Class<? extends ICommand>> commandMap;
+  private LinkedBlockingQueue<IEvent> eventQueue;
 
-  public Controller() { }
-
-  @Override public IBinder onBind(Intent intent) {
-    return mBinder;
+  @Inject public RemoteController(Bus bus, Injector injector) {
+    this.injector = injector;
+    eventQueue = new LinkedBlockingQueue<>();
+    bus.register(this);
   }
 
   public void register(String type, Class<? extends ICommand> command) {
@@ -53,10 +45,10 @@ import roboguice.util.Ln;
    * @param event The message received.
    */
   @Subscribe public void handleUserActionEvents(MessageEvent event) {
-    executeCommand(event);
+    eventQueue.add(event);
   }
 
-  public void executeCommand(IEvent event) {
+  public synchronized void executeCommand(IEvent event) {
     final Class<? extends ICommand> commandClass = commandMap.get(event.getType());
     if (commandClass == null) {
       return;
@@ -68,7 +60,6 @@ import roboguice.util.Ln;
         return;
       }
       commandInstance.execute(event);
-
     } catch (Exception ex) {
       if (BuildConfig.DEBUG) {
         Ln.d(ex, String.format("executing command for type: \t%s", event.getType()));
@@ -77,23 +68,15 @@ import roboguice.util.Ln;
     }
   }
 
-  @Override public int onStartCommand(Intent intent, int flags, int startId) {
-    Ln.d("Background Service::Started");
-    bus.register(this);
-    CommandRegistration.register(this);
-    return super.onStartCommand(intent, flags, startId);
-  }
-
-  @Override public void onDestroy() {
-    executeCommand(new MessageEvent(UserInputEventType.CancelNotification));
-    executeCommand(new MessageEvent(UserInputEventType.TerminateConnection));
-    Ln.d("Background Service::Destroyed");
-    super.onDestroy();
-  }
-
-  public class ControllerBinder extends Binder {
-    @SuppressWarnings("unused") ControllerBinder getService() {
-      return ControllerBinder.this;
+  @Override public void run() {
+    try {
+      //noinspection InfiniteLoopStatement
+      while (true) {
+        executeCommand(eventQueue.take());
+        Ln.d("Executing");
+      }
+    } catch (InterruptedException e) {
+      Ln.d(e);
     }
   }
 }
