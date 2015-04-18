@@ -4,5 +4,6 @@ public enum SocketAction {
   RESET,
   START,
   RETRY,
+  TERMINATE,
   STOP
 }

@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.commands;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.interfaces.ICommand;
@@ -16,7 +15,6 @@ public class ProcessUserAction implements ICommand {
   }
 
   @Override public void execute(IEvent e) {
-    socket.sendData(new SocketMessage(((UserAction) e.getData()).getContext(), Protocol.Request,
-        ((UserAction) e.getData()).getData()));
+    socket.sendData(new SocketMessage(((UserAction) e.getData()).getContext(), ((UserAction) e.getData()).getData()));
   }
 }

@@ -17,7 +17,6 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/mbrc_drawer_item_height"
     android:background="@drawable/selectable_background"
-    android:clickable="true"
     android:orientation="vertical">
 
     <TextView

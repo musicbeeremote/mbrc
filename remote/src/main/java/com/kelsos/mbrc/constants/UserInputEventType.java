@@ -9,4 +9,5 @@ public class UserInputEventType {
   public static final String StartDiscovery = "StartDiscovery";
   public static final String KeyVolumeUp = "KeyVolumeUp";
   public static final String KeyVolumeDown = "KeyVolumeDown";
+  public static final String TerminateConnection = "TerminateConnection";
 }

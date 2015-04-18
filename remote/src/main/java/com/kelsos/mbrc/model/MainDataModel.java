@@ -27,6 +27,7 @@ import com.kelsos.mbrc.events.ui.LfmRatingChanged;
 import com.kelsos.mbrc.events.ui.LyricsUpdated;
 import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
 import com.kelsos.mbrc.events.ui.NowPlayingListAvailable;
+import com.kelsos.mbrc.events.ui.OnMainFragmentOptionsInflated;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RatingChanged;
 import com.kelsos.mbrc.events.ui.RepeatChange;
@@ -37,6 +38,7 @@ import com.kelsos.mbrc.events.ui.TrackSearchResults;
 import com.kelsos.mbrc.events.ui.VolumeChange;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.squareup.otto.Produce;
+import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import rx.Observable;
 import rx.Subscriber;
@@ -70,6 +72,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
   private ArrayList<MusicTrack> nowPlayingList;
   private LfmStatus lfmRating;
   private String pluginVersion;
+  private double pluginProtocol;
 
   @Inject public MainDataModel(MainThreadBusWrapper bus) {
     this.bus = bus;
@@ -355,6 +358,19 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
 
   public boolean isMute() {
     return isMuteActive;
+  }
+
+  public void setPluginProtocol(double pluginProtocol) {
+    this.pluginProtocol = pluginProtocol;
+  }
+
+  public double getPluginProtocol() {
+    return this.pluginProtocol;
+  }
+
+  @Subscribe public void resendOnInflate(OnMainFragmentOptionsInflated inflated) {
+    bus.post(new ScrobbleChange(isScrobblingActive));
+    bus.post(new LfmRatingChanged(lfmRating));
   }
 }
 

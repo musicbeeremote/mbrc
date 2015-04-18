@@ -35,6 +35,7 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
 import com.kelsos.mbrc.events.ui.CoverAvailable;
 import com.kelsos.mbrc.events.ui.LfmRatingChanged;
+import com.kelsos.mbrc.events.ui.OnMainFragmentOptionsInflated;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RepeatChange;
 import com.kelsos.mbrc.events.ui.ScrobbleChange;
@@ -237,6 +238,7 @@ import roboguice.util.Ln;
     MenuItem shareItem = menu.findItem(R.id.actionbar_share);
     mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
     mShareActionProvider.setShareIntent(getShareIntent());
+    bus.post(new OnMainFragmentOptionsInflated());
   }
 
   private Intent getShareIntent() {

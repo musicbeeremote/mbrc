@@ -95,6 +95,14 @@ import roboguice.util.Ln;
       case STOP:
         shouldStop = true;
         break;
+      case TERMINATE:
+        shouldStop = true;
+        cleanupSocket();
+        if (cThreadIsAlive()) {
+          cThread.interrupt();
+          cThread = null;
+        }
+        break;
       default:
         break;
     }

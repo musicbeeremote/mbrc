@@ -7,6 +7,7 @@ import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.model.MainDataModel;
 import com.squareup.otto.Bus;
 import java.io.IOException;
 import org.codehaus.jackson.JsonNode;
@@ -17,10 +18,12 @@ import roboguice.util.Ln;
   private Bus bus;
   private boolean isHandshakeComplete;
   private ObjectMapper mapper;
+  private MainDataModel model;
 
-  @Inject public ProtocolHandler(Bus bus, ObjectMapper mapper) {
+  @Inject public ProtocolHandler(Bus bus, ObjectMapper mapper, MainDataModel model) {
     this.bus = bus;
     this.mapper = mapper;
+    this.model = model;
   }
 
   public void resetHandshake() {
@@ -44,6 +47,15 @@ import roboguice.util.Ln;
           if (context.contains(Protocol.Player)) {
             bus.post(new MessageEvent(ProtocolEventType.InitiateProtocolRequest));
           } else if (context.contains(Protocol.ProtocolTag)) {
+
+            double protocolVersion;
+            try{
+              protocolVersion = Double.parseDouble(node.path(Const.DATA).asText());
+            } catch (Exception ignore) {
+              protocolVersion = 2.0;
+            }
+
+            model.setPluginProtocol(protocolVersion);
             isHandshakeComplete = true;
             bus.post(new MessageEvent(ProtocolEventType.HandshakeComplete, true));
           } else {

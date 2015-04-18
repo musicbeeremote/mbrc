@@ -54,8 +54,8 @@ android {
     applicationId "com.kelsos.mbrc"
     minSdkVersion 8
     targetSdkVersion 22
-    versionCode 98
-    versionName "0.10.0.6"
+    versionCode 99
+    versionName "0.10.0-rc.3"
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
     buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
     manifestPlaceholders = [fabricApiKey: fabricApiKey]
@@ -146,7 +146,7 @@ dependencies {
   compile 'com.android.support:support-annotations:20.0.0'
   compile 'com.android.support:recyclerview-v7:21.0.0'
   compile 'org.roboguice:roboguice:3.0.1'
-  compile 'com.squareup:otto:1.3.5'
+  compile 'com.squareup:otto:1.3.6'
   compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
   compile 'com.github.mrengineer13:snackbar:1.1.0'
   compile 'com.mobeta.android.dslv:drag-sort-listview:0.6.1.1@aar'

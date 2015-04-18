@@ -84,6 +84,7 @@ import rx.schedulers.Schedulers;
   }
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
+    Ln.d("Background Service::Started");
     bus.register(this);
     CommandRegistration.register(this);
     return super.onStartCommand(intent, flags, startId);
@@ -91,6 +92,8 @@ import rx.schedulers.Schedulers;
 
   @Override public void onDestroy() {
     executeCommand(new MessageEvent(UserInputEventType.CancelNotification));
+    executeCommand(new MessageEvent(UserInputEventType.TerminateConnection));
+    Ln.d("Background Service::Destroyed");
     super.onDestroy();
   }
 

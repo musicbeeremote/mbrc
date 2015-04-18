@@ -25,21 +25,25 @@ public class VisualUpdateHandshakeComplete implements ICommand {
     boolean isComplete = (Boolean) e.getData();
     model.setHandShakeDone(isComplete);
 
-    if (!isComplete) {
-      return;
-    }
-    ArrayList<SocketMessage> messages = new ArrayList<>();
-    messages.add(new SocketMessage(Protocol.NowPlayingCover, Protocol.Request, EMPTY));
-    messages.add(new SocketMessage(Protocol.PlayerStatus, Protocol.Request, EMPTY));
-    messages.add(new SocketMessage(Protocol.NowPlayingTrack, Protocol.Request, EMPTY));
-    messages.add(new SocketMessage(Protocol.NowPlayingLyrics, Protocol.Request, EMPTY));
-    messages.add(new SocketMessage(Protocol.NowPlayingPosition, Protocol.Request, EMPTY));
-    messages.add(new SocketMessage(Protocol.PluginVersion, Protocol.Request, EMPTY));
+    if (model.getPluginProtocol() < 2.1) {
+      if (!isComplete) {
+        return;
+      }
+      ArrayList<SocketMessage> messages = new ArrayList<>();
+      messages.add(new SocketMessage(Protocol.NowPlayingCover, EMPTY));
+      messages.add(new SocketMessage(Protocol.PlayerStatus, EMPTY));
+      messages.add(new SocketMessage(Protocol.NowPlayingTrack, EMPTY));
+      messages.add(new SocketMessage(Protocol.NowPlayingLyrics, EMPTY));
+      messages.add(new SocketMessage(Protocol.NowPlayingPosition, EMPTY));
+      messages.add(new SocketMessage(Protocol.PluginVersion, EMPTY));
 
-    int totalMessages = messages.size();
-    Observable.interval(150, TimeUnit.MILLISECONDS)
-        .take(totalMessages)
-        .subscribe(tick -> service.sendData(messages.remove(0)));
+      int totalMessages = messages.size();
+      Observable.interval(150, TimeUnit.MILLISECONDS)
+          .take(totalMessages)
+          .subscribe(tick -> service.sendData(messages.remove(0)));
+    } else {
+      service.sendData(new SocketMessage(Protocol.INIT, EMPTY));
+    }
   }
 }
 
