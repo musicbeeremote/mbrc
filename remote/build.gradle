@@ -2,7 +2,6 @@ import java.text.SimpleDateFormat
 
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
 apply plugin: 'checkstyle'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
@@ -16,16 +15,6 @@ def buildTime() {
 
 def gitHash() {
   return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
-}
-
-// Load the fabric api key.
-def fabricApiKey = ""
-def crashProperties = file('fabric.properties')
-
-if (crashProperties.exists()) {
-  def properties = new Properties()
-  properties.load(new FileInputStream(crashProperties))
-  fabricApiKey = properties.getAt('apiKey')
 }
 
 def hasModifiedDeletedOrOtherFiles() {
@@ -58,7 +47,6 @@ android {
     versionName "0.10.0-rc.3"
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
     buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
-    manifestPlaceholders = [fabricApiKey: fabricApiKey]
   }
 
   signingConfigs {
@@ -156,9 +144,6 @@ dependencies {
   compile 'com.jakewharton:butterknife:6.1.0'
   compile 'io.reactivex:rxandroid:0.24.0'
   provided 'org.roboguice:roboblender:3.0.1'
-  compile('com.crashlytics.sdk.android:crashlytics:2.2.2@aar') {
-    transitive = true;
-  }
 }
 
 allprojects {

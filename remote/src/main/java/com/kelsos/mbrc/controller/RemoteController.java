@@ -73,7 +73,6 @@ public class RemoteController implements Runnable {
       //noinspection InfiniteLoopStatement
       while (true) {
         executeCommand(eventQueue.take());
-        Ln.d("Executing");
       }
     } catch (InterruptedException e) {
       Ln.d(e);

@@ -71,6 +71,15 @@
       </intent-filter>
     </service>
 
+    <receiver android:name=".utilities.MediaButtonReceiver">
+      <intent-filter>
+        <action android:name="android.media.AUDIO_BECOMING_NOISY" />
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.MEDIA_BUTTON" />
+      </intent-filter>
+    </receiver>
+
     <meta-data
         android:name="roboguice.modules"
         android:value="com.kelsos.mbrc.RemoteModule" />
@@ -78,8 +87,5 @@
         android:name="roboguice.annotations.packages"
         android:value="roboguice,mbrc" />
 
-    <meta-data
-        android:name="io.fabric.ApiKey"
-        android:value="${fabricApiKey}" />
   </application>
 </manifest>

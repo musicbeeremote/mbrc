@@ -5,13 +5,11 @@ buildscript {
         mavenCentral()
         mavenLocal()
         jcenter()
-        maven { url 'https://maven.fabric.io/public' }
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.0-beta1'
-        classpath 'me.tatarka:gradle-retrolambda:3.0.0'
-        classpath 'io.fabric.tools:gradle:1.18.0'
+        classpath 'me.tatarka:gradle-retrolambda:3.0.1'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -20,7 +18,6 @@ buildscript {
 allprojects {
     repositories {
         maven { url 'http://dl.bintray.com/kelsos/maven' }
-        maven { url 'https://maven.fabric.io/public' }
         mavenCentral()
         mavenLocal()
         jcenter()

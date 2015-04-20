@@ -9,6 +9,8 @@ import com.kelsos.mbrc.configuration.CommandRegistration;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.squareup.otto.Subscribe;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import roboguice.service.RoboService;
 import roboguice.util.Ln;
 
@@ -17,7 +19,7 @@ import roboguice.util.Ln;
   private final IBinder mBinder = new ControllerBinder();
   @Inject
   private RemoteController remoteController;
-  private Thread controllerThread;
+  private ExecutorService threadPoolExecutor;
 
   public RemoteService() { }
 
@@ -37,8 +39,8 @@ import roboguice.util.Ln;
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
     Ln.d("Background Service::Started");
     CommandRegistration.register(remoteController);
-    controllerThread = new Thread(remoteController);
-    controllerThread.start();
+    threadPoolExecutor = Executors.newSingleThreadExecutor();
+    threadPoolExecutor.execute(remoteController);
     return super.onStartCommand(intent, flags, startId);
   }
 
@@ -46,9 +48,8 @@ import roboguice.util.Ln;
     remoteController.executeCommand(new MessageEvent(UserInputEventType.CancelNotification));
     remoteController.executeCommand(new MessageEvent(UserInputEventType.TerminateConnection));
     CommandRegistration.unregister(remoteController);
-    if (controllerThread != null && controllerThread.isAlive()) {
-      controllerThread.interrupt();
-      controllerThread = null;
+    if (threadPoolExecutor != null) {
+      threadPoolExecutor.shutdownNow();
     }
     Ln.d("Background Service::Destroyed");
     super.onDestroy();

@@ -30,6 +30,7 @@ import com.kelsos.mbrc.events.ui.NowPlayingListAvailable;
 import com.kelsos.mbrc.events.ui.OnMainFragmentOptionsInflated;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RatingChanged;
+import com.kelsos.mbrc.events.ui.RemoteClientMetaData;
 import com.kelsos.mbrc.events.ui.RepeatChange;
 import com.kelsos.mbrc.events.ui.ScrobbleChange;
 import com.kelsos.mbrc.events.ui.ShuffleChange;
@@ -201,6 +202,11 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
     this.title = title;
     bus.post(new TrackInfoChange(artist, title, album, year));
     updateNotification();
+    updateRemoteClient();
+  }
+
+  private void updateRemoteClient() {
+    bus.post(new RemoteClientMetaData(artist, title, album, cover));
   }
 
   @Produce public TrackInfoChange produceTrackInfo() {
@@ -231,6 +237,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
       cover = null;
       bus.post(new CoverAvailable());
       updateNotification();
+      updateRemoteClient();
     } else {
       Observable.create((Subscriber<? super Bitmap> subscriber) -> {
         byte[] decodedImage = Base64.decode(base64format, Base64.DEFAULT);
@@ -248,6 +255,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
     this.cover = cover;
     bus.post(new CoverAvailable(cover));
     updateNotification();
+    updateRemoteClient();
   }
 
   @Produce public CoverAvailable produceAvailableCover() {

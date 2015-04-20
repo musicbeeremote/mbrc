@@ -49,7 +49,7 @@ import roboguice.util.Ln;
           } else if (context.contains(Protocol.ProtocolTag)) {
 
             double protocolVersion;
-            try{
+            try {
               protocolVersion = Double.parseDouble(node.path(Const.DATA).asText());
             } catch (Exception ignore) {
               protocolVersion = 2.0;

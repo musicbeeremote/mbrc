@@ -140,7 +140,8 @@ public class CommandRegistration {
     controller.unregister(UserInputEventType.KeyVolumeUp, KeyVolumeUpCommand.class);
     controller.unregister(UserInputEventType.KeyVolumeDown, KeyVolumeDownCommand.class);
     controller.unregister(SocketEventType.SocketDataAvailable, SocketDataAvailableCommand.class);
-    controller.unregister(SocketEventType.SocketStatusChanged, ConnectionStatusChangedCommand.class);
+    controller.unregister(SocketEventType.SocketStatusChanged,
+        ConnectionStatusChangedCommand.class);
     controller.unregister(SocketEventType.SocketHandshakeUpdate, HandleHandshake.class);
   }
 }

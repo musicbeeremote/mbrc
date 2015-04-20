@@ -106,9 +106,11 @@ import roboguice.util.Ln;
           }
         }
 
-        public void onStartTrackingTouch(SeekBar seekBar) { }
+        public void onStartTrackingTouch(SeekBar seekBar) {
+        }
 
-        public void onStopTrackingTouch(SeekBar seekBar) { }
+        public void onStopTrackingTouch(SeekBar seekBar) {
+        }
       };
 
   @OnClick(R.id.main_button_play_pause) public void playButtonPressed(View v) {

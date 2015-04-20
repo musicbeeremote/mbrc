@@ -6,7 +6,6 @@ import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.services.SocketService;
-import com.kelsos.mbrc.utilities.RemoteUtils;
 
 public class ProtocolPingHandle implements ICommand {
   private final SocketService service;
@@ -16,6 +15,6 @@ public class ProtocolPingHandle implements ICommand {
   }
 
   @Override public void execute(IEvent e) {
-    service.sendData(new SocketMessage(Protocol.PONG, RemoteUtils.getUtcNow()));
+    service.sendData(new SocketMessage(Protocol.PONG, ""));
   }
 }
