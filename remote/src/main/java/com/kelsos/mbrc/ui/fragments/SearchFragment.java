@@ -20,6 +20,7 @@ import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.general.ClearCachedSearchResults;
 import com.kelsos.mbrc.events.ui.AlbumSearchResults;
 import com.kelsos.mbrc.events.ui.ArtistSearchResults;
 import com.kelsos.mbrc.events.ui.GenreSearchResults;
@@ -70,6 +71,8 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
   @OnClick(R.id.search_clear_fab) public void onFabClick(View view) {
     int current = mPager.getCurrentItem();
     // Not the most elegant but the fastest way to do it at this point
+    //noinspection ResourceType
+    bus.post(new ClearCachedSearchResults(current));
     switch (current) {
       case 0:
         bus.post(new GenreSearchResults(new ArrayList<>(), true));

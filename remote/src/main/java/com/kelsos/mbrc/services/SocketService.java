@@ -138,10 +138,10 @@ import roboguice.util.Ln;
     return cThread != null && cThread.isAlive();
   }
 
-  public void sendData(SocketMessage message) {
+  public synchronized void sendData(SocketMessage message) {
     try {
       if (sIsConnected()) {
-        output.println(mapper.writeValueAsString(message) + Const.NEWLINE);
+        output.print(mapper.writeValueAsString(message) + Const.NEWLINE);
         if (output.checkError()) {
           throw new Exception("Check error");
         }

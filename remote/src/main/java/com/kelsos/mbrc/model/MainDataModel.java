@@ -18,6 +18,7 @@ import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.general.ClearCachedSearchResults;
 import com.kelsos.mbrc.events.ui.AlbumSearchResults;
 import com.kelsos.mbrc.events.ui.ArtistSearchResults;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
@@ -41,6 +42,7 @@ import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
+import roboguice.util.Ln;
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
@@ -170,6 +172,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
   }
 
   public void setSearchGenres(ArrayList<GenreEntry> searchGenres) {
+    Ln.d(searchGenres.toString());
     this.searchGenres = searchGenres;
     bus.post(new GenreSearchResults(searchGenres, false));
   }
@@ -379,6 +382,25 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
   @Subscribe public void resendOnInflate(OnMainFragmentOptionsInflated inflated) {
     bus.post(new ScrobbleChange(isScrobblingActive));
     bus.post(new LfmRatingChanged(lfmRating));
+  }
+
+  @Subscribe public void onClearCachedResults(final ClearCachedSearchResults event) {
+    switch (event.getType()) {
+      case ClearCachedSearchResults.ResultType.ALBUM:
+        searchAlbums.clear();
+        break;
+      case ClearCachedSearchResults.ResultType.ARTIST:
+        searchArtists.clear();
+        break;
+      case ClearCachedSearchResults.ResultType.GENRE:
+        searchGenres.clear();
+        break;
+      case ClearCachedSearchResults.ResultType.TRACK:
+        searchTracks.clear();
+        break;
+      default:
+        break;
+    }
   }
 }
 
