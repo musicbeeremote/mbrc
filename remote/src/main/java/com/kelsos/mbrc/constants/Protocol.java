@@ -57,4 +57,7 @@ public class Protocol {
   public static final String PING = "ping";
   public static final String PONG = "pong";
   public static final String INIT = "init";
+
+  public static final String PlayerPlay = "playerplay";
+  public static final String PlayerPause = "playerpause";
 }

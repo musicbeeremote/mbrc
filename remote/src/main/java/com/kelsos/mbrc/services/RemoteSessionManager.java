@@ -13,26 +13,35 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.constants.Protocol;
+import com.kelsos.mbrc.constants.ProtocolEventType;
+import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.enums.PlayState;
+import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RemoteClientMetaData;
 import com.kelsos.mbrc.utilities.MediaButtonReceiver;
+import com.kelsos.mbrc.utilities.MediaIntentHandler;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.util.Ln;
 
 @Singleton public class RemoteSessionManager implements AudioManager.OnAudioFocusChangeListener {
   private static final long PLAYBACK_ACTIONS = PlaybackStateCompat.ACTION_PAUSE
+      | PlaybackStateCompat.ACTION_PLAY_PAUSE
       | PlaybackStateCompat.ACTION_PLAY
       | PlaybackStateCompat.ACTION_SKIP_TO_NEXT
       | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
       | PlaybackStateCompat.ACTION_STOP;
   private final AudioManager manager;
+  private final Bus bus;
   private MediaSessionCompat mMediaSession;
+  @Inject private MediaIntentHandler handler;
 
   @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH) @Inject
   public RemoteSessionManager(final Context context, final Bus bus, final AudioManager manager) {
     this.manager = manager;
+    this.bus = bus;
     bus.register(this);
     ComponentName myEventReceiver =
         new ComponentName(context.getPackageName(), MediaButtonReceiver.class.getName());
@@ -46,6 +55,39 @@ import roboguice.util.Ln;
 
     mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS
         | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      mMediaSession.setCallback(new MediaSessionCompat.Callback() {
+        @Override public boolean onMediaButtonEvent(Intent mediaButtonEvent) {
+          boolean success = handler.handleMediaIntent(mediaButtonEvent);
+          return success || super.onMediaButtonEvent(mediaButtonEvent);
+        }
+
+        @Override public void onPlay() {
+          postAction(new UserAction(Protocol.PlayerPlay, true));
+        }
+
+        @Override public void onPause() {
+          postAction(new UserAction(Protocol.PlayerPause, true));
+        }
+
+        @Override public void onSkipToNext() {
+          postAction(new UserAction(Protocol.PlayerNext, true));
+        }
+
+        @Override public void onSkipToPrevious() {
+          postAction(new UserAction(Protocol.PlayerPrevious, true));
+        }
+
+        @Override public void onStop() {
+          postAction(new UserAction(Protocol.PlayerStop, true));
+        }
+      });
+    }
+  }
+
+  private void postAction(UserAction action) {
+    bus.post(new MessageEvent(ProtocolEventType.UserAction, action));
   }
 
   public MediaSessionCompat.Token getMediaSessionToken() {

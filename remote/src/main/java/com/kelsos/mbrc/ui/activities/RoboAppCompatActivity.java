@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
@@ -41,6 +42,8 @@ public class RoboAppCompatActivity extends RoboFragmentActivity implements AppCo
   public void setSupportActionBar(@Nullable Toolbar toolbar) {
     getDelegate().setSupportActionBar(toolbar);
   }
+
+  @NonNull
   @Override
   public MenuInflater getMenuInflater() {
     return getDelegate().getMenuInflater();
@@ -83,8 +86,8 @@ public class RoboAppCompatActivity extends RoboFragmentActivity implements AppCo
     }
 
     final ActionBar ab = getSupportActionBar();
-    if (item.getItemId() == android.R.id.home && ab != null &&
-        (ab.getDisplayOptions() & ActionBar.DISPLAY_HOME_AS_UP) != 0) {
+    if (item.getItemId() == android.R.id.home && ab != null
+        && (ab.getDisplayOptions() & ActionBar.DISPLAY_HOME_AS_UP) != 0) {
       return onSupportNavigateUp();
     }
     return false;
