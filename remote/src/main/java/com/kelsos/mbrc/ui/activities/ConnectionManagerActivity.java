@@ -24,9 +24,8 @@ import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import roboguice.activity.RoboActionBarActivity;
 
-public class ConnectionManagerActivity extends RoboActionBarActivity
+public class ConnectionManagerActivity extends RoboAppCompatActivity
     implements SettingsDialogFragment.SettingsDialogListener {
   @Inject Bus bus;
   private MaterialDialog mProgress;

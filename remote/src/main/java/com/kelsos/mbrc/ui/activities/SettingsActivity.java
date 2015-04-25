@@ -7,9 +7,8 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.fragments.SettingsFragment;
 import com.squareup.otto.Bus;
-import roboguice.activity.RoboActionBarActivity;
 
-public class SettingsActivity extends RoboActionBarActivity {
+public class SettingsActivity extends RoboAppCompatActivity {
 
   @Inject private Bus bus;
 

@@ -2,7 +2,6 @@ package com.kelsos.mbrc.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
@@ -12,7 +11,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import com.kelsos.mbrc.R;
 
-public class FeedbackActivity extends ActionBarActivity {
+public class FeedbackActivity extends RoboAppCompatActivity {
 
   @InjectView(R.id.toolbar) Toolbar mToolbar;
   @InjectView(R.id.feedback_content) EditText feedbackEditText;

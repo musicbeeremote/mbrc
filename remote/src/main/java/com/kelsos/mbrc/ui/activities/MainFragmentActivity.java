@@ -34,9 +34,8 @@ import com.kelsos.mbrc.ui.fragments.NowPlayingFragment;
 import com.kelsos.mbrc.ui.fragments.SearchFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import roboguice.activity.RoboActionBarActivity;
 
-public class MainFragmentActivity extends RoboActionBarActivity {
+public class MainFragmentActivity extends RoboAppCompatActivity {
   @Inject Bus bus;
   private ActionBarDrawerToggle mDrawerToggle;
   private DrawerLayout mDrawerLayout;
