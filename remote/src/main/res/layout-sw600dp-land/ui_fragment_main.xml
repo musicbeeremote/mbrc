@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout android:id="@+id/mainRelativeLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mainRelativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -9,8 +9,8 @@
   <FrameLayout
       android:id="@+id/album_cover_area"
       android:layout_width="match_parent"
-      android:layout_weight="1"
-      android:layout_height="0dp">
+      android:layout_height="0dp"
+      android:layout_weight="1">
 
     <ImageView
         android:id="@+id/main_album_cover_image_view"
@@ -84,11 +84,11 @@
       android:id="@+id/tablet_bottom_bar"
       android:layout_width="fill_parent"
       android:layout_height="@dimen/mbrc_info_tab_height"
+      android:layout_marginBottom="@dimen/small_margin"
+      android:layout_marginTop="@dimen/small_margin"
       android:baselineAligned="false"
       android:gravity="center_vertical"
       android:orientation="horizontal"
-      android:layout_marginBottom="@dimen/small_margin"
-      android:layout_marginTop="@dimen/small_margin"
       android:paddingLeft="@dimen/normal_margin"
       android:paddingRight="@dimen/normal_margin">
 
@@ -164,7 +164,6 @@
           android:layout_width="@dimen/small_button_size"
           android:layout_height="@dimen/small_button_size"
           android:layout_gravity="center_vertical"
-          android:background="@drawable/selectable_background"
           android:contentDescription="@string/main_button_repeat_description"
           android:src="@drawable/ic_repeat_grey600_24dp"
           android:tint="@color/button_material_dark" />
@@ -175,7 +174,6 @@
           android:layout_height="@dimen/medium_button_size"
           android:layout_marginLeft="@dimen/second_tier_button_margin"
           android:layout_marginStart="@dimen/second_tier_button_margin"
-          android:background="@drawable/selectable_background"
           android:contentDescription="@string/main_button_previous_description"
           android:scaleType="fitCenter"
           android:src="@drawable/ic_skip_previous_black_36dp"
@@ -187,7 +185,6 @@
           android:layout_height="@dimen/large_button_size"
           android:layout_marginLeft="@dimen/center_button_margin"
           android:layout_marginRight="@dimen/center_button_margin"
-          android:background="@drawable/selectable_background"
           android:clickable="true"
           android:contentDescription="@string/main_button_play_pause_description"
           android:scaleType="fitCenter"
@@ -199,7 +196,6 @@
           android:layout_height="@dimen/medium_button_size"
           android:layout_marginEnd="@dimen/second_tier_button_margin"
           android:layout_marginRight="@dimen/second_tier_button_margin"
-          android:background="@drawable/selectable_background"
           android:contentDescription="@string/main_button_next_description"
           android:scaleType="fitCenter"
           android:src="@drawable/ic_skip_next_black_36dp"
@@ -210,7 +206,6 @@
           android:layout_width="@dimen/small_button_size"
           android:layout_height="@dimen/small_button_size"
           android:layout_gravity="center_vertical"
-          android:background="@drawable/selectable_background"
           android:contentDescription="@string/main_button_shuffle_description"
           android:src="@drawable/ic_shuffle_grey600_24dp"
           android:tint="@color/button_material_dark" />
@@ -230,7 +225,6 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_gravity="center"
-          android:background="@drawable/selectable_background"
           android:contentDescription="@string/main_button_mute_description"
           android:paddingLeft="@dimen/small_margin"
           android:paddingRight="@dimen/small_margin"

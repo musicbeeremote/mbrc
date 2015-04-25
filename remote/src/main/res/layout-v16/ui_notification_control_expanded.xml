@@ -1,132 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
-  android:layout_width="match_parent"
-  android:layout_height="128dip">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="128dip">
 
   <!-- Please keep the height above hardcoded removing it will cause an android.app.RemoteServiceException -->
 
   <ImageView
-    android:id="@+id/expanded_notification_cover"
-    android:layout_width="@dimen/mbrc_notification_expanded_height"
-    android:layout_height="@dimen/mbrc_notification_expanded_height"
-    android:layout_alignParentBottom="true"
-    android:layout_alignParentTop="true"
-    android:contentDescription="@string/description_album_cover"
-    android:scaleType="fitXY"
-    android:src="@drawable/ic_image_no_cover" />
+      android:id="@+id/expanded_notification_cover"
+      android:layout_width="@dimen/mbrc_notification_expanded_height"
+      android:layout_height="@dimen/mbrc_notification_expanded_height"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentTop="true"
+      android:contentDescription="@string/description_album_cover"
+      android:scaleType="fitXY"
+      android:src="@drawable/ic_image_no_cover" />
 
   <LinearLayout
-    android:id="@+id/expanded_notification_text"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentTop="true"
-    android:layout_marginLeft="@dimen/small_margin"
-    android:layout_marginRight="@dimen/small_margin"
-    android:layout_marginTop="@dimen/small_margin"
-    android:layout_toEndOf="@+id/expanded_notification_cover"
-    android:layout_toLeftOf="@+id/expanded_notification_remove"
-    android:layout_toRightOf="@+id/expanded_notification_cover"
-    android:layout_toStartOf="@+id/expanded_notification_remove"
-    android:orientation="vertical">
+      android:id="@+id/expanded_notification_text"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentTop="true"
+      android:layout_marginLeft="@dimen/small_margin"
+      android:layout_marginRight="@dimen/small_margin"
+      android:layout_marginTop="@dimen/small_margin"
+      android:layout_toEndOf="@+id/expanded_notification_cover"
+      android:layout_toLeftOf="@+id/expanded_notification_remove"
+      android:layout_toRightOf="@+id/expanded_notification_cover"
+      android:layout_toStartOf="@+id/expanded_notification_remove"
+      android:orientation="vertical">
 
     <TextView
-      android:id="@+id/expanded_notification_line_one"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:ellipsize="end"
-      android:fontFamily="sans-serif-medium"
-      android:singleLine="true"
-      android:textColor="@color/remoteText"
-      android:textSize="@dimen/abc_text_size_title_material"
-      tools:text="All night" />
+        android:id="@+id/expanded_notification_line_one"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:singleLine="true"
+        android:textColor="@color/remoteText"
+        android:textSize="@dimen/abc_text_size_title_material"
+        tools:text="All night" />
 
     <TextView
-      android:id="@+id/expanded_notification_line_two"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:ellipsize="end"
-      android:fontFamily="sans-serif-regular"
-      android:singleLine="true"
-      android:textColor="@color/remoteSecondaryText"
-      android:textSize="@dimen/abc_text_size_subhead_material"
-      tools:text="Parov Stelar" />
+        android:id="@+id/expanded_notification_line_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-regular"
+        android:singleLine="true"
+        android:textColor="@color/remoteSecondaryText"
+        android:textSize="@dimen/abc_text_size_subhead_material"
+        tools:text="Parov Stelar" />
 
     <TextView
-      android:id="@+id/expanded_notification_line_three"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:ellipsize="end"
-      android:fontFamily="sans-serif-medium"
-      android:singleLine="true"
-      android:textColor="@color/remoteSecondaryText"
-      android:textSize="@dimen/abc_text_size_body_1_material"
-      tools:text="The Princess" />
+        android:id="@+id/expanded_notification_line_three"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:singleLine="true"
+        android:textColor="@color/remoteSecondaryText"
+        android:textSize="@dimen/abc_text_size_body_1_material"
+        tools:text="The Princess" />
 
   </LinearLayout>
 
   <ImageView
-    android:id="@+id/expanded_notification_divider"
-    android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:layout_above="@+id/expanded_notification_button_bar"
-    android:layout_toEndOf="@+id/expanded_notification_cover"
-    android:layout_toRightOf="@+id/expanded_notification_cover"
-    android:background="@drawable/abc_list_selector_holo_dark"
-    android:contentDescription="@string/description_divider" />
+      android:id="@+id/expanded_notification_divider"
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      android:layout_above="@+id/expanded_notification_button_bar"
+      android:layout_toEndOf="@+id/expanded_notification_cover"
+      android:layout_toRightOf="@+id/expanded_notification_cover"
+      android:background="@drawable/abc_list_selector_holo_dark"
+      android:contentDescription="@string/description_divider" />
 
   <LinearLayout
-    android:id="@+id/expanded_notification_button_bar"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    android:layout_toEndOf="@+id/expanded_notification_cover"
-    android:layout_toRightOf="@+id/expanded_notification_cover"
-    android:divider="?android:listDivider"
-    android:dividerPadding="@dimen/small_margin"
-    android:gravity="center_vertical"
-    android:showDividers="middle">
+      android:id="@+id/expanded_notification_button_bar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_toEndOf="@+id/expanded_notification_cover"
+      android:layout_toRightOf="@+id/expanded_notification_cover"
+      android:divider="?android:listDivider"
+      android:dividerPadding="@dimen/small_margin"
+      android:gravity="center_vertical"
+      android:showDividers="middle">
 
     <ImageButton
-      android:id="@+id/expanded_notification_previous"
-      android:layout_width="0dip"
-      android:layout_height="@dimen/mbrc_notification_expanded_button_height"
-      android:layout_weight="1"
-      android:background="@drawable/selectable_background"
-      android:contentDescription="@string/main_button_previous_description"
-      android:src="@drawable/ic_action_previous" />
+        android:id="@+id/expanded_notification_previous"
+        android:layout_width="0dip"
+        android:layout_height="@dimen/mbrc_notification_expanded_button_height"
+        android:layout_weight="1"
+        android:background="?attr/selectableItemBackground"
+        android:contentDescription="@string/main_button_previous_description"
+        android:src="@drawable/ic_action_previous" />
 
     <ImageButton
-      android:id="@+id/expanded_notification_playpause"
-      android:layout_width="0dip"
-      android:layout_height="@dimen/mbrc_notification_expanded_button_height"
-      android:layout_weight="1"
-      android:background="@drawable/selectable_background"
-      android:contentDescription="@string/main_button_play_pause_description"
-      android:src="@drawable/ic_action_play" />
+        android:id="@+id/expanded_notification_playpause"
+        android:layout_width="0dip"
+        android:layout_height="@dimen/mbrc_notification_expanded_button_height"
+        android:layout_weight="1"
+        android:background="?attr/selectableItemBackground"
+        android:contentDescription="@string/main_button_play_pause_description"
+        android:src="@drawable/ic_action_play" />
 
     <ImageButton
-      android:id="@+id/expanded_notification_next"
-      android:layout_width="0dip"
-      android:layout_height="@dimen/mbrc_notification_expanded_button_height"
-      android:layout_weight="1"
-      android:background="@drawable/selectable_background"
-      android:contentDescription="@string/main_button_next_description"
-      android:focusable="false"
-      android:src="@drawable/ic_action_next" />
+        android:id="@+id/expanded_notification_next"
+        android:layout_width="0dip"
+        android:layout_height="@dimen/mbrc_notification_expanded_button_height"
+        android:layout_weight="1"
+        android:background="?attr/selectableItemBackground"
+        android:contentDescription="@string/main_button_next_description"
+        android:focusable="false"
+        android:src="@drawable/ic_action_next" />
   </LinearLayout>
 
   <ImageButton
-    android:id="@+id/expanded_notification_remove"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentEnd="true"
-    android:layout_alignParentRight="true"
-    android:layout_alignParentTop="true"
-    android:background="@drawable/selectable_background"
-    android:contentDescription="@string/description_button_notification_close"
-    android:padding="@dimen/small_margin"
-    android:src="@drawable/ic_action_collapse" />
+      android:id="@+id/expanded_notification_remove"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentEnd="true"
+      android:layout_alignParentRight="true"
+      android:layout_alignParentTop="true"
+      android:background="?attr/selectableItemBackground"
+      android:contentDescription="@string/description_button_notification_close"
+      android:padding="@dimen/small_margin"
+      android:src="@drawable/ic_action_collapse" />
 
 </RelativeLayout>

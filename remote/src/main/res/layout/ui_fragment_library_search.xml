@@ -12,8 +12,6 @@
     android:layout_height="0dip"
     android:layout_weight="1"
     android:paddingBottom="@dimen/small_margin"
-    android:paddingLeft="@dimen/normal_margin"
-    android:paddingRight="@dimen/normal_margin"
     android:paddingTop="@dimen/small_margin"
     android:scrollbars="vertical"
     tools:listitem="@layout/ui_list_single" />
