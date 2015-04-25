@@ -22,6 +22,7 @@ public class FeedbackActivity extends RoboAppCompatActivity {
     ButterKnife.inject(this);
     setSupportActionBar(mToolbar);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    getSupportActionBar().setHomeButtonEnabled(true);
   }
 
   @OnClick(R.id.feedback_button) public void onFeedbackButtonClicked(View v) {

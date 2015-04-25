@@ -130,6 +130,7 @@ public class DrawerFragment extends RoboListFragment
   }
 
   @OnClick(R.id.feedback_layout) public void onFeedbackClicked(View v) {
+    bus.post(new DrawerEvent());
     final Activity activity = getActivity();
     activity.startActivity(new Intent(activity, FeedbackActivity.class));
   }

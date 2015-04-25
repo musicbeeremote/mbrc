@@ -8,5 +8,5 @@
   android:background="@color/colorPrimary"
   android:minHeight="?attr/actionBarSize"
   app:popupTheme="@style/Theme.AppCompat"
-  app:theme="@style/ActionBarStyle"
+  android:theme="@style/ActionBarStyle"
   tools:showIn="@layout/ui_main_container" />

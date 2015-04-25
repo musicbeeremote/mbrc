@@ -29,6 +29,7 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
+
     <activity
         android:name=".ui.activities.SettingsActivity"
         android:parentActivityName=".ui.activities.MainFragmentActivity">
@@ -37,6 +38,7 @@
           android:name="android.support.PARENT_ACTIVITY"
           android:value=".ui.activities.MainFragmentActivity" />
     </activity>
+
     <activity
         android:name=".ui.activities.ConnectionManagerActivity"
         android:parentActivityName=".ui.activities.SettingsActivity"
@@ -49,12 +51,13 @@
     </activity>
 
     <activity
-        android:name="com.kelsos.mbrc.ui.activities.FeedbackActivity"
+        android:name=".ui.activities.FeedbackActivity"
         android:label="@string/title_activity_feedback"
         android:parentActivityName=".ui.activities.MainFragmentActivity">
+      <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.activities.MainFragmentActivity" />
+          android:value="com.kelsos.mbrc.ui.activities.MainFragmentActivity" />
     </activity>
 
     <service
