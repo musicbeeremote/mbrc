@@ -120,6 +120,10 @@ import roboguice.util.Ln;
         true);
   }
 
+  public boolean isPluginUpdateCheckEnabled() {
+    return mPreferences.getBoolean(mContext.getString(R.string.settings_key_plugin_check), false);
+  }
+
   @SuppressLint("NewApi") private void storeSettings() { //NOPMD
     SharedPreferences.Editor editor = mPreferences.edit();
     try {

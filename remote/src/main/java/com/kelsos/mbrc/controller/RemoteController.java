@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.controller;
 
+import android.app.Application;
+import android.content.Context;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.kelsos.mbrc.BuildConfig;
@@ -11,17 +13,23 @@ import com.squareup.otto.Subscribe;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
+import roboguice.RoboGuice;
+import roboguice.inject.ContextScope;
 import roboguice.util.Ln;
 
 public class RemoteController implements Runnable {
   private Injector injector;
   private Map<String, Class<? extends ICommand>> commandMap;
   private LinkedBlockingQueue<IEvent> eventQueue;
+  private ContextScope scope;
+  private final Context context;
 
-  @Inject public RemoteController(Bus bus, Injector injector) {
+  @Inject public RemoteController(Bus bus, Injector injector, Application app) {
     this.injector = injector;
     eventQueue = new LinkedBlockingQueue<>();
     bus.register(this);
+    scope = RoboGuice.getOrCreateBaseApplicationInjector(app).getInstance(ContextScope.class);
+    context = app.getApplicationContext();
   }
 
   public void register(String type, Class<? extends ICommand> command) {
@@ -55,7 +63,9 @@ public class RemoteController implements Runnable {
     }
     ICommand commandInstance;
     try {
+      scope.enter(context);
       commandInstance = injector.getInstance(commandClass);
+      scope.exit(context);
       if (commandInstance == null) {
         return;
       }

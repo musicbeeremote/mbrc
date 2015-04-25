@@ -42,6 +42,11 @@ public class VersionCheckCommand implements ICommand {
   }
 
   @Override public void execute(IEvent e) {
+
+    if (!manager.isPluginUpdateCheckEnabled()) {
+      return;
+    }
+
     Calendar calendar = Calendar.getInstance();
     calendar.setTimeInMillis(manager.getLastUpdated().getTime());
     calendar.add(Calendar.DATE, 2);

@@ -137,5 +137,8 @@
   <string name="main_menu_feedback">Feedback</string>
   <string name="feedback_subject">MusicBeeRemote InApp Feedback</string>
   <string name="feedback_chooser_title">Send feedback using...</string>
+  <string name="setting_miscellaneous_plugin_updates">Plugin Update Check</string>
+  <string name="setting_miscellaneous_plugin_updates_summary">Periodically check for updated versions of the plugin</string>
+  <string name="settings_key_plugin_check">plugin_update_check</string>
 
 </resources>
