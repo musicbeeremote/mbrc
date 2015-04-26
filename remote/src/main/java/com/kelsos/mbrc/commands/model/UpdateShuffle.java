@@ -19,7 +19,7 @@ public class UpdateShuffle implements ICommand {
 
     // Older plugin support, where the shuffle had boolean value.
     if (data == null) {
-      data = ((JsonNode)e.getData()).asBoolean() ? ShuffleChange.SHUFFLE : ShuffleChange.OFF;
+      data = ((JsonNode) e.getData()).asBoolean() ? ShuffleChange.SHUFFLE : ShuffleChange.OFF;
     }
 
     //noinspection ResourceType

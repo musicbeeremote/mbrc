@@ -12,10 +12,10 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.enums.SettingsAction;
 import com.kelsos.mbrc.events.ui.ChangeSettings;
+import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
 import com.squareup.otto.Bus;
 import java.util.List;
-import roboguice.activity.RoboActionBarActivity;
 
 public class ConnectionSettingsAdapter
     extends RecyclerView.Adapter<ConnectionSettingsAdapter.ConnectionViewHolder> {
@@ -60,7 +60,7 @@ public class ConnectionSettingsAdapter
             SettingsDialogFragment settingsDialog =
                 SettingsDialogFragment.newInstance(settings);
             FragmentManager fragmentManager =
-                ((RoboActionBarActivity) v.getContext()).getSupportFragmentManager();
+                ((ConnectionManagerActivity) v.getContext()).getSupportFragmentManager();
             settingsDialog.show(fragmentManager, "settings_dialog");
             break;
           case R.id.connection_delete:

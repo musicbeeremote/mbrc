@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/mainRelativeLayout"
+<LinearLayout
+    android:id="@+id/mainRelativeLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -164,6 +165,7 @@
           android:layout_width="@dimen/small_button_size"
           android:layout_height="@dimen/small_button_size"
           android:layout_gravity="center_vertical"
+          android:background="@drawable/md_transparent"
           android:contentDescription="@string/main_button_repeat_description"
           android:src="@drawable/ic_repeat_grey600_24dp"
           android:tint="@color/button_material_dark" />
@@ -174,6 +176,7 @@
           android:layout_height="@dimen/medium_button_size"
           android:layout_marginLeft="@dimen/second_tier_button_margin"
           android:layout_marginStart="@dimen/second_tier_button_margin"
+          android:background="@drawable/md_transparent"
           android:contentDescription="@string/main_button_previous_description"
           android:scaleType="fitCenter"
           android:src="@drawable/ic_skip_previous_black_36dp"
@@ -185,6 +188,7 @@
           android:layout_height="@dimen/large_button_size"
           android:layout_marginLeft="@dimen/center_button_margin"
           android:layout_marginRight="@dimen/center_button_margin"
+          android:background="@drawable/md_transparent"
           android:clickable="true"
           android:contentDescription="@string/main_button_play_pause_description"
           android:scaleType="fitCenter"
@@ -196,6 +200,7 @@
           android:layout_height="@dimen/medium_button_size"
           android:layout_marginEnd="@dimen/second_tier_button_margin"
           android:layout_marginRight="@dimen/second_tier_button_margin"
+          android:background="@drawable/md_transparent"
           android:contentDescription="@string/main_button_next_description"
           android:scaleType="fitCenter"
           android:src="@drawable/ic_skip_next_black_36dp"
@@ -206,6 +211,7 @@
           android:layout_width="@dimen/small_button_size"
           android:layout_height="@dimen/small_button_size"
           android:layout_gravity="center_vertical"
+          android:background="@drawable/md_transparent"
           android:contentDescription="@string/main_button_shuffle_description"
           android:src="@drawable/ic_shuffle_grey600_24dp"
           android:tint="@color/button_material_dark" />
@@ -225,6 +231,7 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_gravity="center"
+          android:background="@drawable/md_transparent"
           android:contentDescription="@string/main_button_mute_description"
           android:paddingLeft="@dimen/small_margin"
           android:paddingRight="@dimen/small_margin"
