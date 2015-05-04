@@ -63,10 +63,19 @@ public class ConnectionManagerActivity extends RoboAppCompatActivity
 
   @Override protected void onStart() {
     super.onStart();
-    bus.register(this);
     mContext = this;
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setTitle(R.string.connection_manager_title);
+  }
+
+  @Override protected void onResume() {
+    super.onResume();
+    bus.register(this);
+  }
+
+  @Override protected void onPause() {
+    super.onPause();
+    bus.unregister(this);
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
