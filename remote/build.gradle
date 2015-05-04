@@ -43,8 +43,8 @@ android {
     applicationId "com.kelsos.mbrc"
     minSdkVersion 8
     targetSdkVersion 22
-    versionCode 102
-    versionName "0.10.1"
+    versionCode 103
+    versionName "0.11.0-alpha.1"
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
     buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
   }
@@ -139,8 +139,8 @@ dependencies {
   compile 'com.github.mrengineer13:snackbar:1.1.0'
   compile 'com.mobeta.android.dslv:drag-sort-listview:0.6.1.1@aar'
   compile 'com.github.machinarius:preferencefragment:0.1.2'
-  compile 'com.afollestad:material-dialogs:0.7.1.2'
-  compile 'net.i2p.android.ext:floatingactionbutton:1.8.0'
+  compile 'com.afollestad:material-dialogs:0.7.3.1'
+  compile 'net.i2p.android.ext:floatingactionbutton:1.9.0'
   compile 'com.jakewharton:butterknife:6.1.0'
   compile 'io.reactivex:rxandroid:0.24.0'
   provided 'org.roboguice:roboblender:3.0.1'
