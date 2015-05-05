@@ -13,7 +13,6 @@ import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.messaging.NotificationService;
 import com.squareup.otto.Bus;
 import roboguice.receiver.RoboBroadcastReceiver;
 
@@ -48,15 +47,15 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
       } else //noinspection StatementWithEmptyBody
         if (NetworkInfo.State.DISCONNECTING.equals(networkInfo.getState())) {
         }
-    } else if (NotificationService.NOTIFICATION_PLAY_PRESSED.equals(intent.getAction())) {
+    } else if (RemoteViewIntentBuilder.REMOTE_PLAY_PRESSED.equals(intent.getAction())) {
       bus.post(new MessageEvent(ProtocolEventType.UserAction,
           new UserAction(Protocol.PlayerPlayPause, true)));
-    } else if (NotificationService.NOTIFICATION_NEXT_PRESSED.equals(intent.getAction())) {
+    } else if (RemoteViewIntentBuilder.REMOTE_NEXT_PRESSED.equals(intent.getAction())) {
       bus.post(new MessageEvent(ProtocolEventType.UserAction,
           new UserAction(Protocol.PlayerNext, true)));
-    } else if (NotificationService.NOTIFICATION_CLOSE_PRESSED.equals(intent.getAction())) {
+    } else if (RemoteViewIntentBuilder.REMOTE_CLOSE_PRESSED.equals(intent.getAction())) {
       bus.post(new MessageEvent(UserInputEventType.CancelNotification));
-    } else if (NotificationService.NOTIFICATION_PREVIOUS_PRESSED.equals(intent.getAction())) {
+    } else if (RemoteViewIntentBuilder.REMOTE_PREVIOUS_PRESSED.equals(intent.getAction())) {
       bus.post(new MessageEvent(ProtocolEventType.UserAction,
           new UserAction(Protocol.PlayerPrevious, true)));
     }
@@ -71,10 +70,10 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
     IntentFilter filter = new IntentFilter();
     filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
     filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-    filter.addAction(NotificationService.NOTIFICATION_PLAY_PRESSED);
-    filter.addAction(NotificationService.NOTIFICATION_NEXT_PRESSED);
-    filter.addAction(NotificationService.NOTIFICATION_CLOSE_PRESSED);
-    filter.addAction(NotificationService.NOTIFICATION_PREVIOUS_PRESSED);
+    filter.addAction(RemoteViewIntentBuilder.REMOTE_PLAY_PRESSED);
+    filter.addAction(RemoteViewIntentBuilder.REMOTE_NEXT_PRESSED);
+    filter.addAction(RemoteViewIntentBuilder.REMOTE_CLOSE_PRESSED);
+    filter.addAction(RemoteViewIntentBuilder.REMOTE_PREVIOUS_PRESSED);
     context.registerReceiver(this, filter);
   }
 }
