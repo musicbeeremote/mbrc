@@ -90,5 +90,13 @@
         android:name="roboguice.annotations.packages"
         android:value="roboguice,mbrc" />
 
+    <receiver android:name=".widgets.WidgetSmall" >
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider"
+          android:resource="@xml/remote_widget_small" />
+    </receiver>
+
   </application>
 </manifest>
