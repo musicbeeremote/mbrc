@@ -11,7 +11,6 @@ import android.graphics.BitmapFactory;
 import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 import com.google.inject.Inject;
@@ -20,28 +19,14 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
 import com.kelsos.mbrc.services.RemoteSessionManager;
-import com.kelsos.mbrc.ui.activities.MainFragmentActivity;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
+import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.squareup.otto.Subscribe;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 @Singleton public class NotificationService {
   public static final int PLUGIN_OUT_OF_DATE = 15612;
   public static final int NOW_PLAYING_PLACEHOLDER = 15613;
-
-  public static final String NOTIFICATION_PLAY_PRESSED = "com.kelsos.mbrc.notification.play";
-  public static final String NOTIFICATION_NEXT_PRESSED = "com.kelsos.mbrc.notification.next";
-  public static final String NOTIFICATION_CLOSE_PRESSED = "com.kelsos.mbrc.notification.close";
-  public static final String NOTIFICATION_PREVIOUS_PRESSED =
-      "com.kelsos.mbrc.notification.previous";
-
-  private static final int OPEN = 0;
-  private static final int PLAY = 1;
-  private static final int NEXT = 2;
-  private static final int CLOSE = 3;
-  private static final int PREVIOUS = 4;
 
   private RemoteViews mNormalView;
   private RemoteViews mExpandedView;
@@ -95,10 +80,14 @@ import java.lang.annotation.RetentionPolicy;
     mNormalView = new RemoteViews(mContext.getPackageName(), R.layout.ui_notification_control);
     updateNormalNotification(artist, title, cover);
 
-    mBuilder.setContentIntent(getPendingIntent(OPEN));
-    mNormalView.setOnClickPendingIntent(R.id.notification_play, getPendingIntent(PLAY));
-    mNormalView.setOnClickPendingIntent(R.id.notification_next, getPendingIntent(NEXT));
-    mNormalView.setOnClickPendingIntent(R.id.notification_close, getPendingIntent(CLOSE));
+    mBuilder.setContentIntent(
+        RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.OPEN, mContext));
+    mNormalView.setOnClickPendingIntent(R.id.notification_play, RemoteViewIntentBuilder.getPendingIntent(
+        RemoteViewIntentBuilder.PLAY, mContext));
+    mNormalView.setOnClickPendingIntent(R.id.notification_next, RemoteViewIntentBuilder.getPendingIntent(
+        RemoteViewIntentBuilder.NEXT, mContext));
+    mNormalView.setOnClickPendingIntent(R.id.notification_close, RemoteViewIntentBuilder.getPendingIntent(
+        RemoteViewIntentBuilder.CLOSE, mContext));
 
     mNotification = mBuilder.build();
 
@@ -107,13 +96,13 @@ import java.lang.annotation.RetentionPolicy;
           new RemoteViews(mContext.getPackageName(), R.layout.ui_notification_control_expanded);
       updateExpandedNotification(artist, title, album, cover);
       mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_playpause,
-          getPendingIntent(PLAY));
+          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PLAY, mContext));
       mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_next,
-          getPendingIntent(NEXT));
+          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.NEXT, mContext));
       mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_previous,
-          getPendingIntent(PREVIOUS));
+          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PREVIOUS, mContext));
       mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_remove,
-          getPendingIntent(CLOSE));
+          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.CLOSE, mContext));
       mNotification.bigContentView = mExpandedView;
     }
 
@@ -143,15 +132,19 @@ import java.lang.annotation.RetentionPolicy;
     Notification.Builder builder =
         new Notification.Builder(mContext).setVisibility(Notification.VISIBILITY_PUBLIC)
             .setSmallIcon(R.drawable.ic_mbrc_status)
-            .addAction(R.drawable.ic_action_previous, "Previous", getPendingIntent(PREVIOUS))
-            .addAction(playStateIcon, "Play/Pause", getPendingIntent(PLAY))
-            .addAction(R.drawable.ic_action_next, "Next", getPendingIntent(NEXT))
+            .addAction(R.drawable.ic_action_previous, "Previous", RemoteViewIntentBuilder.getPendingIntent(
+                RemoteViewIntentBuilder.PREVIOUS, mContext))
+            .addAction(playStateIcon, "Play/Pause", RemoteViewIntentBuilder.getPendingIntent(
+                RemoteViewIntentBuilder.PLAY, mContext))
+            .addAction(R.drawable.ic_action_next, "Next", RemoteViewIntentBuilder.getPendingIntent(
+                RemoteViewIntentBuilder.NEXT, mContext))
             .setStyle(mediaStyle.setShowActionsInCompactView(1, 2))
             .setContentTitle(event.getTitle())
             .setContentText(event.getArtist())
             .setSubText(event.getAlbum());
 
-    builder.setContentIntent(getPendingIntent(OPEN));
+    builder.setContentIntent(
+        RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.OPEN, mContext));
 
     if (event.getCover() != null) {
       builder.setLargeIcon(event.getCover());
@@ -174,33 +167,6 @@ import java.lang.annotation.RetentionPolicy;
       mNormalView.setImageViewBitmap(R.id.notification_album_art, cover);
     } else {
       mNormalView.setImageViewResource(R.id.notification_album_art, R.drawable.ic_image_no_cover);
-    }
-  }
-
-  private PendingIntent getPendingIntent(@ButtonAction int id) {
-    switch (id) {
-      case OPEN:
-        Intent notificationIntent = new Intent(mContext, MainFragmentActivity.class);
-        return PendingIntent.getActivity(mContext, 0, notificationIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT);
-      case PLAY:
-        Intent playPressedIntent = new Intent(NOTIFICATION_PLAY_PRESSED);
-        return PendingIntent.getBroadcast(mContext, 1, playPressedIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT);
-      case NEXT:
-        Intent mediaNextButtonIntent = new Intent(NOTIFICATION_NEXT_PRESSED);
-        return PendingIntent.getBroadcast(mContext, 2, mediaNextButtonIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT);
-      case CLOSE:
-        Intent clearNotificationIntent = new Intent(NOTIFICATION_CLOSE_PRESSED);
-        return PendingIntent.getBroadcast(mContext, 3, clearNotificationIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT);
-      case PREVIOUS:
-        Intent mediaPreviousButtonIntent = new Intent(NOTIFICATION_PREVIOUS_PRESSED);
-        return PendingIntent.getBroadcast(mContext, 4, mediaPreviousButtonIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT);
-      default:
-        throw new IndexOutOfBoundsException();
     }
   }
 
@@ -263,7 +229,4 @@ import java.lang.annotation.RetentionPolicy;
     notification.flags = Notification.FLAG_AUTO_CANCEL;
     mNotificationManager.notify(PLUGIN_OUT_OF_DATE, notification);
   }
-
-  @IntDef({ OPEN, PLAY, CLOSE, PREVIOUS, NEXT })
-  @Retention(RetentionPolicy.SOURCE) public @interface ButtonAction { }
 }
