@@ -2,6 +2,4 @@
     android:initialLayout="@layout/widget_small"
     android:minHeight="@dimen/widget_small_min_height"
     android:minWidth="@dimen/widget_small_min_width"
-
-    android:updatePeriodMillis="0"
-    android:widgetCategory="keyguard|home_screen" />
+    android:updatePeriodMillis="0"/>
