@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.events.ui;
 
 import android.graphics.Bitmap;
+import android.support.annotation.Nullable;
 
 public class CoverAvailable {
   private boolean available;
@@ -20,6 +21,7 @@ public class CoverAvailable {
     return this.available;
   }
 
+  @Nullable
   public Bitmap getCover() {
     return this.cover;
   }

@@ -17,7 +17,7 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.receiver.RoboAppWidgetProvider;
 
-public class WidgetSmall extends RoboAppWidgetProvider {
+public class WidgetNormal extends RoboAppWidgetProvider {
 
   @Inject private Context context;
   @Inject private Bus bus;
@@ -42,17 +42,17 @@ public class WidgetSmall extends RoboAppWidgetProvider {
 
       // Get the layout for the App Widget and attach an on-click listener
       // to the button
-      RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_small);
+      RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_normal);
 
-      views.setOnClickPendingIntent(R.id.widget_small_image, pendingIntent);
+      views.setOnClickPendingIntent(R.id.widget_normal_image, pendingIntent);
 
-      views.setOnClickPendingIntent(R.id.widget_small_play,
+      views.setOnClickPendingIntent(R.id.widget_normal_play,
           RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PLAY, context));
 
-      views.setOnClickPendingIntent(R.id.widget_small_next,
+      views.setOnClickPendingIntent(R.id.widget_normal_next,
           RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.NEXT, context));
 
-      views.setOnClickPendingIntent(R.id.widget_small_previous,
+      views.setOnClickPendingIntent(R.id.widget_normal_previous,
           RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PREVIOUS, context));
 
       // Tell the AppWidgetManager to perform an update on the current app widget
@@ -63,34 +63,35 @@ public class WidgetSmall extends RoboAppWidgetProvider {
   @Subscribe public void updateDisplay(TrackInfoChange info) {
 
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
-    final RemoteViews smallWidget =
-        new RemoteViews(context.getPackageName(), R.layout.widget_small);
+    final RemoteViews widget =
+        new RemoteViews(context.getPackageName(), R.layout.widget_normal);
 
-    smallWidget.setTextViewText(R.id.widget_small_line_one, info.title);
-    smallWidget.setTextViewText(R.id.widget_small_line_two, info.artist);
-    manager.updateAppWidget(widgetsIds, smallWidget);
+    widget.setTextViewText(R.id.widget_normal_line_one, info.title);
+    widget.setTextViewText(R.id.widget_normal_line_two, info.artist);
+    widget.setTextViewText(R.id.widget_normal_line_three, info.album);
+    manager.updateAppWidget(widgetsIds, widget);
   }
 
   @Subscribe public void updateCover(CoverAvailable coverAvailable) {
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
-    final RemoteViews smallWidget =
-        new RemoteViews(context.getPackageName(), R.layout.widget_small);
+    final RemoteViews widget =
+        new RemoteViews(context.getPackageName(), R.layout.widget_normal);
     if (coverAvailable.isAvailable()) {
-      smallWidget.setImageViewBitmap(R.id.widget_small_image, coverAvailable.getCover());
+      widget.setImageViewBitmap(R.id.widget_normal_image, coverAvailable.getCover());
     } else {
-      smallWidget.setImageViewResource(R.id.widget_small_image, R.drawable.ic_image_no_cover);
+      widget.setImageViewResource(R.id.widget_normal_image, R.drawable.ic_image_no_cover);
     }
-    manager.updateAppWidget(widgetsIds, smallWidget);
+    manager.updateAppWidget(widgetsIds, widget);
   }
 
   @Subscribe public void updatePlayState(PlayStateChange state) {
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
-    final RemoteViews smallWidget =
-        new RemoteViews(context.getPackageName(), R.layout.widget_small);
+    final RemoteViews widget =
+        new RemoteViews(context.getPackageName(), R.layout.widget_normal);
 
-    smallWidget.setImageViewResource(R.id.widget_small_play,
+    widget.setImageViewResource(R.id.widget_normal_play,
         state.getState() == PlayState.Playing ? R.drawable.ic_action_pause
             : R.drawable.ic_action_play);
-    manager.updateAppWidget(widgetsIds, smallWidget);
+    manager.updateAppWidget(widgetsIds, widget);
   }
 }
