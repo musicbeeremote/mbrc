@@ -27,17 +27,15 @@ import com.squareup.otto.Subscribe;
 @Singleton public class NotificationService {
   public static final int PLUGIN_OUT_OF_DATE = 15612;
   public static final int NOW_PLAYING_PLACEHOLDER = 15613;
-
+  private final RemoteSessionManager sessionManager;
   private RemoteViews mNormalView;
   private RemoteViews mExpandedView;
   private Notification mNotification;
   private NotificationManager mNotificationManager;
   private Context mContext;
-  private final RemoteSessionManager sessionManager;
   private SettingsManager mSettings;
 
-  @Inject
-  public NotificationService(Context context, MainThreadBusWrapper bus,
+  @Inject public NotificationService(Context context, MainThreadBusWrapper bus,
       RemoteSessionManager sessionManager, SettingsManager mSettings) {
     this.mContext = context;
     this.sessionManager = sessionManager;
@@ -82,12 +80,12 @@ import com.squareup.otto.Subscribe;
 
     mBuilder.setContentIntent(
         RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.OPEN, mContext));
-    mNormalView.setOnClickPendingIntent(R.id.notification_play, RemoteViewIntentBuilder.getPendingIntent(
-        RemoteViewIntentBuilder.PLAY, mContext));
-    mNormalView.setOnClickPendingIntent(R.id.notification_next, RemoteViewIntentBuilder.getPendingIntent(
-        RemoteViewIntentBuilder.NEXT, mContext));
-    mNormalView.setOnClickPendingIntent(R.id.notification_close, RemoteViewIntentBuilder.getPendingIntent(
-        RemoteViewIntentBuilder.CLOSE, mContext));
+    mNormalView.setOnClickPendingIntent(R.id.notification_play,
+        RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PLAY, mContext));
+    mNormalView.setOnClickPendingIntent(R.id.notification_next,
+        RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.NEXT, mContext));
+    mNormalView.setOnClickPendingIntent(R.id.notification_close,
+        RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.CLOSE, mContext));
 
     mNotification = mBuilder.build();
 
@@ -132,12 +130,13 @@ import com.squareup.otto.Subscribe;
     Notification.Builder builder =
         new Notification.Builder(mContext).setVisibility(Notification.VISIBILITY_PUBLIC)
             .setSmallIcon(R.drawable.ic_mbrc_status)
-            .addAction(R.drawable.ic_action_previous, "Previous", RemoteViewIntentBuilder.getPendingIntent(
-                RemoteViewIntentBuilder.PREVIOUS, mContext))
-            .addAction(playStateIcon, "Play/Pause", RemoteViewIntentBuilder.getPendingIntent(
-                RemoteViewIntentBuilder.PLAY, mContext))
-            .addAction(R.drawable.ic_action_next, "Next", RemoteViewIntentBuilder.getPendingIntent(
-                RemoteViewIntentBuilder.NEXT, mContext))
+            .addAction(R.drawable.ic_action_previous, "Previous",
+                RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PREVIOUS,
+                    mContext))
+            .addAction(playStateIcon, "Play/Pause",
+                RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PLAY, mContext))
+            .addAction(R.drawable.ic_action_next, "Next",
+                RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.NEXT, mContext))
             .setStyle(mediaStyle.setShowActionsInCompactView(1, 2))
             .setContentTitle(event.getTitle())
             .setContentText(event.getArtist())
