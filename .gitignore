@@ -11,12 +11,12 @@
 # generated files
 bin/
 gen/
+src-gen
 
 # Local configuration file (sdk path, etc)
 local.properties
 signing.properties
 development.properties
-fabric.properties
 
 # Eclipse project files
 .classpath
