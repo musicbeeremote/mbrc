@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,7 +17,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import com.github.mrengineer13.snackbar.SnackBar;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
@@ -228,7 +228,7 @@ public class MainFragmentActivity extends RoboAppCompatActivity {
     final String message =
         event.isFromResource() ? getString(event.getResId()) : event.getMessage();
 
-    new SnackBar.Builder(this).withMessage(message).withStyle(SnackBar.Style.INFO).show();
+    Snackbar.make(getCurrentFocus(), message, Snackbar.LENGTH_SHORT).show();
   }
 
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {

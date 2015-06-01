@@ -182,4 +182,9 @@ public class RoboAppCompatActivity extends RoboFragmentActivity implements AppCo
   @Override public void onSupportActionModeFinished(ActionMode actionMode) {
 
   }
+
+  @Nullable @Override
+  public ActionMode onWindowStartingSupportActionMode(ActionMode.Callback callback) {
+    return null;
+  }
 }
