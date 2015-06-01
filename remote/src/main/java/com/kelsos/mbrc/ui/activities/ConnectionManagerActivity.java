@@ -2,6 +2,7 @@ package com.kelsos.mbrc.ui.activities;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -11,7 +12,6 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.github.mrengineer13.snackbar.SnackBar;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ConnectionSettingsAdapter;
@@ -28,11 +28,10 @@ import com.squareup.otto.Subscribe;
 public class ConnectionManagerActivity extends RoboAppCompatActivity
     implements SettingsDialogFragment.SettingsDialogListener {
   @Inject Bus bus;
-  private MaterialDialog mProgress;
-
-  private Context mContext;
   @InjectView(R.id.connection_list) RecyclerView mRecyclerView;
   @InjectView(R.id.toolbar) Toolbar mToolbar;
+  private MaterialDialog mProgress;
+  private Context mContext;
 
   @OnClick(R.id.connection_add) public void onAddButtonClick(View v) {
     SettingsDialogFragment settingsDialog = new SettingsDialogFragment();
@@ -122,13 +121,13 @@ public class ConnectionManagerActivity extends RoboAppCompatActivity
         break;
     }
 
-    new SnackBar.Builder(this).withMessage(message).withStyle(SnackBar.Style.INFO).show();
+    Snackbar.make(getCurrentFocus(), message, Snackbar.LENGTH_SHORT).show();
   }
 
   @Subscribe public void handleUserNotification(NotifyUser event) {
     final String message =
         event.isFromResource() ? getString(event.getResId()) : event.getMessage();
 
-    new SnackBar.Builder(this).withMessage(message).withStyle(SnackBar.Style.INFO).show();
+    Snackbar.make(getCurrentFocus(), message, Snackbar.LENGTH_SHORT).show();
   }
 }

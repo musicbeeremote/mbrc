@@ -16,18 +16,26 @@
   </style>
 
   <style name="RatingBar"
-    parent="@android:style/Widget.RatingBar">
+      parent="@android:style/Widget.RatingBar">
     <item name="android:progressDrawable">@drawable/ui_rating_bar</item>
     <item name="android:maxHeight">24dip</item>
     <item name="android:minHeight">24dip</item>
   </style>
 
   <style name="ActionBarStyle"
-    parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+      parent="ThemeOverlay.AppCompat.Dark.ActionBar">
     <item name="android:textColorPrimary">@color/abc_primary_text_material_light</item>
     <item name="android:textColor">@color/abc_primary_text_material_dark</item>
     <item name="actionMenuTextColor">@color/abc_primary_text_material_light</item>
     <item name="android:textColorSecondary">@color/abc_secondary_text_material_light</item>
+  </style>
+
+  <style name="NotificationText">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:ellipsize">end</item>
+    <item name="android:fadingEdge">horizontal</item>
+    <item name="android:singleLine">true</item>
   </style>
 
 </resources>
