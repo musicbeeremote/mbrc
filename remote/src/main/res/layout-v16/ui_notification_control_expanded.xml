@@ -33,35 +33,29 @@
 
     <TextView
         android:id="@+id/expanded_notification_line_one"
+        style="@style/NotificationText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
-        android:singleLine="true"
-        android:textColor="@color/remoteText"
-        android:textSize="@dimen/abc_text_size_title_material"
+        android:textAppearance="@android:style/TextAppearance.StatusBar.EventContent.Title"
         tools:text="All night" />
 
     <TextView
         android:id="@+id/expanded_notification_line_two"
+        style="@style/NotificationText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
         android:fontFamily="sans-serif-regular"
-        android:singleLine="true"
-        android:textColor="@color/remoteSecondaryText"
-        android:textSize="@dimen/abc_text_size_subhead_material"
+        android:textAppearance="@android:style/TextAppearance.StatusBar.EventContent"
         tools:text="Parov Stelar" />
 
     <TextView
         android:id="@+id/expanded_notification_line_three"
+        style="@style/NotificationText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
-        android:singleLine="true"
-        android:textColor="@color/remoteSecondaryText"
-        android:textSize="@dimen/abc_text_size_body_1_material"
+        android:textAppearance="@android:style/TextAppearance.StatusBar.EventContent"
         tools:text="The Princess" />
 
   </LinearLayout>

@@ -25,22 +25,19 @@
 
     <TextView
         android:id="@+id/notification_title"
+        style="@style/NotificationText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:textColor="@color/remoteText"
-        android:textSize="@dimen/abc_text_size_title_material"
+        android:textAppearance="@android:style/TextAppearance.StatusBar.EventContent.Title"
         android:textStyle="bold"
         tools:text="All night" />
 
     <TextView
         android:id="@+id/notification_artist"
+        style="@style/NotificationText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:textSize="@dimen/abc_text_size_subhead_material"
+        android:textAppearance="@android:style/TextAppearance.StatusBar.EventContent"
         tools:text="Parov Stelar" />
 
   </LinearLayout>

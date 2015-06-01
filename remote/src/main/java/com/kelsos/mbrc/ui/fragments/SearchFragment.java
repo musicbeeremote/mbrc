@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.ui.fragments;
 
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
@@ -35,6 +36,8 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
 
   @Inject Bus bus;
   @InjectView(R.id.search_pager) ViewPager mPager;
+  @InjectView(R.id.pager_tab_strip) TabLayout tabs;
+
   private SearchView mSearchView;
   private MenuItem mSearchItem;
   private SearchPagerAdapter mAdapter;
@@ -100,6 +103,7 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
     final View view = inflater.inflate(R.layout.ui_fragment_search, container, false);
     ButterKnife.inject(this, view);
     mPager.setAdapter(mAdapter);
+    tabs.setupWithViewPager(mPager);
     return view;
   }
 
