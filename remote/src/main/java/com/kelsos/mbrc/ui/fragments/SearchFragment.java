@@ -11,8 +11,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.ButterKnife;
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
@@ -36,7 +36,7 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
 
   @Inject Bus bus;
   @Bind(R.id.search_pager) ViewPager mPager;
-  @Bind(R.id.pager_tab_strip) TabLayout tabs;
+  private TabLayout tabs;
 
   private SearchView mSearchView;
   private MenuItem mSearchItem;
@@ -102,9 +102,16 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
       Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.ui_fragment_search, container, false);
     ButterKnife.bind(this, view);
+    tabs = (TabLayout) getActivity().getWindow().getDecorView().findViewById(R.id.pager_tab_strip);
     mPager.setAdapter(mAdapter);
     tabs.setupWithViewPager(mPager);
+    tabs.setVisibility(View.VISIBLE);
     return view;
+  }
+
+  @Override public void onDestroyView() {
+    super.onDestroyView();
+    tabs.setVisibility(View.GONE);
   }
 
   @Override public void onStart() {

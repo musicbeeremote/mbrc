@@ -6,7 +6,7 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
-  <LinearLayout
+  <android.support.design.widget.CoordinatorLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -17,7 +17,7 @@
       android:id="@+id/fragment_container"
       android:layout_width="match_parent"
       android:layout_height="match_parent" />
-  </LinearLayout>
+  </android.support.design.widget.CoordinatorLayout>
 
   <fragment
     android:id="@+id/drawer_menu"

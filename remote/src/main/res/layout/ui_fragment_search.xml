@@ -1,26 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-  <android.support.design.widget.TabLayout
-      android:id="@+id/pager_tab_strip"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_gravity="top"
-      android:background="@color/colorPrimary"
-      android:textColor="@color/primary_text_default_material_light">
-
-  </android.support.design.widget.TabLayout>
 
   <android.support.v4.view.ViewPager
       android:id="@+id/search_pager"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:layout_above="@+id/search_mini_control"
-      android:layout_below="@+id/pager_tab_strip">
+      android:layout_above="@+id/search_mini_control">
 
   </android.support.v4.view.ViewPager>
 
@@ -34,7 +25,8 @@
       android:layout_marginBottom="@dimen/extra_small_margin"
       android:layout_marginEnd="@dimen/extra_small_margin"
       android:layout_marginRight="@dimen/extra_small_margin"
-      android:src="@drawable/ic_clear_all_white_48dp" />
+      android:src="@drawable/ic_clear_all_white_48dp"
+      app:layout_scrollFlags="scroll|enterAlways" />
 
   <View
       android:layout_width="fill_parent"
