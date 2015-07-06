@@ -1,9 +1,9 @@
 package com.kelsos.mbrc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
-import org.codehaus.jackson.map.ObjectMapper;
 
 @SuppressWarnings("unused") public class RemoteModule extends AbstractModule {
   @Override public void configure() {

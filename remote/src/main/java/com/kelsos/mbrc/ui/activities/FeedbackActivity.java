@@ -7,19 +7,19 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.Bind;
 import butterknife.OnClick;
 import com.kelsos.mbrc.R;
 
 public class FeedbackActivity extends RoboAppCompatActivity {
 
-  @InjectView(R.id.toolbar) Toolbar mToolbar;
-  @InjectView(R.id.feedback_content) EditText feedbackEditText;
+  @Bind(R.id.toolbar) Toolbar mToolbar;
+  @Bind(R.id.feedback_content) EditText feedbackEditText;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_feedback);
-    ButterKnife.inject(this);
+    ButterKnife.bind(this);
     setSupportActionBar(mToolbar);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setHomeButtonEnabled(true);

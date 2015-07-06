@@ -4,6 +4,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
@@ -18,8 +20,6 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.Hashtable;
 import java.util.Locale;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 
 public class ServiceDiscovery {
   public static final String NOTIFY = "notify";

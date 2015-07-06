@@ -2,6 +2,8 @@ package com.kelsos.mbrc.commands;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.kelsos.mbrc.BuildConfig;
@@ -18,8 +20,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import roboguice.util.Ln;
 
 public class VersionCheckCommand implements ICommand {

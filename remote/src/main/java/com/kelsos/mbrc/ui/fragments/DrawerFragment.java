@@ -15,7 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.Bind;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 import com.google.inject.Inject;
@@ -40,11 +40,11 @@ public class DrawerFragment extends RoboListFragment
 
   private final ArrayList<NavigationEntry> mNavigation;
   @Inject Bus bus;
-  @InjectView(R.id.menu_connect) TextView connectText;
-  @InjectView(R.id.menu_exit) TextView exitText;
-  @InjectView(R.id.menu_help) TextView helpText;
-  @InjectView(R.id.menu_settings) TextView settingsText;
-  @InjectView(R.id.menu_feedback) TextView feedbackText;
+  @Bind(R.id.menu_connect) TextView connectText;
+  @Bind(R.id.menu_exit) TextView exitText;
+  @Bind(R.id.menu_help) TextView helpText;
+  @Bind(R.id.menu_settings) TextView settingsText;
+  @Bind(R.id.menu_feedback) TextView feedbackText;
 
   private Typeface robotoMedium;
   private DrawerLayout mDrawerLayout;
@@ -77,7 +77,7 @@ public class DrawerFragment extends RoboListFragment
     final ListView list = (ListView) view.findViewById(android.R.id.list);
     final View footer = inflater.inflate(R.layout.ui_drawer_footer, list, false);
     list.addFooterView(footer, null, false);
-    ButterKnife.inject(this, view);
+    ButterKnife.bind(this, view);
     return view;
   }
 
