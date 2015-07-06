@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.data;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SocketMessage {
   @JsonProperty private String context;

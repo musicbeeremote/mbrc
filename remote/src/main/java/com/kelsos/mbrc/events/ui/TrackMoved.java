@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.events.ui;
 
-import org.codehaus.jackson.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class TrackMoved {
   private boolean success;

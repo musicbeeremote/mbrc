@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
@@ -23,7 +24,6 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import org.codehaus.jackson.map.ObjectMapper;
 import roboguice.util.Ln;
 
 @Singleton public class SocketService {

@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.data;
 
 import android.support.annotation.StringDef;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 public class Queue {
   public static final String NEXT = "next";

@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.data;
 
 import android.support.annotation.NonNull;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @JsonIgnoreProperties({ "index" }) public class ConnectionSettings
     implements Comparable<ConnectionSettings> {

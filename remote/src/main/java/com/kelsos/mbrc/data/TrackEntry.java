@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.data;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class TrackEntry {
   private String artist;
@@ -8,9 +8,9 @@ public class TrackEntry {
   private String src;
 
   public TrackEntry(JsonNode jNode) {
-    this.artist = jNode.path("artist").getTextValue();
-    this.title = jNode.path("title").getTextValue();
-    this.src = jNode.path("src").getTextValue();
+    this.artist = jNode.path("artist").textValue();
+    this.title = jNode.path("title").textValue();
+    this.src = jNode.path("src").textValue();
   }
 
   public String getArtist() {
