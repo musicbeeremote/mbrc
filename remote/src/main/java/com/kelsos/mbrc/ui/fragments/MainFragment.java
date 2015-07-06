@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.Bind;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 import com.google.inject.Inject;
@@ -58,18 +58,18 @@ import roboguice.util.Ln;
   // Injects
   @Inject protected Bus bus;
   // Inject elements of the view
-  @InjectView(R.id.main_artist_label) TextView artistLabel;
-  @InjectView(R.id.main_title_label) TextView titleLabel;
-  @InjectView(R.id.main_label_album) TextView albumLabel;
-  @InjectView(R.id.main_track_progress_current) TextView trackProgressCurrent;
-  @InjectView(R.id.main_track_duration_total) TextView trackDuration;
-  @InjectView(R.id.main_button_play_pause) ImageButton playPauseButton;
-  @InjectView(R.id.main_volume_seeker) SeekBar volumeBar;
-  @InjectView(R.id.main_track_progress_seeker) SeekBar progressBar;
-  @InjectView(R.id.main_mute_button) ImageButton muteButton;
-  @InjectView(R.id.main_shuffle_button) ImageButton shuffleButton;
-  @InjectView(R.id.main_repeat_button) ImageButton repeatButton;
-  @InjectView(R.id.main_album_cover_image_view) ImageView albumCover;
+  @Bind(R.id.main_artist_label) TextView artistLabel;
+  @Bind(R.id.main_title_label) TextView titleLabel;
+  @Bind(R.id.main_label_album) TextView albumLabel;
+  @Bind(R.id.main_track_progress_current) TextView trackProgressCurrent;
+  @Bind(R.id.main_track_duration_total) TextView trackDuration;
+  @Bind(R.id.main_button_play_pause) ImageButton playPauseButton;
+  @Bind(R.id.main_volume_seeker) SeekBar volumeBar;
+  @Bind(R.id.main_track_progress_seeker) SeekBar progressBar;
+  @Bind(R.id.main_mute_button) ImageButton muteButton;
+  @Bind(R.id.main_shuffle_button) ImageButton shuffleButton;
+  @Bind(R.id.main_repeat_button) ImageButton repeatButton;
+  @Bind(R.id.main_album_cover_image_view) ImageView albumCover;
   private ShareActionProvider mShareActionProvider;
   private boolean userChangingVolume;
   private int previousVol;
@@ -168,7 +168,7 @@ import roboguice.util.Ln;
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.ui_fragment_main, container, false);
-    ButterKnife.inject(this, view);
+    ButterKnife.bind(this, view);
     progressBar.setOnSeekBarChangeListener(progressBarChangeListener);
     volumeBar.setOnSeekBarChangeListener(volumeBarChangeListener);
     return view;

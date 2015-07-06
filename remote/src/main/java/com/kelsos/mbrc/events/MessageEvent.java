@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.events;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.kelsos.mbrc.interfaces.IEvent;
-import org.codehaus.jackson.node.TextNode;
 
 public class MessageEvent implements IEvent {
   private String type;

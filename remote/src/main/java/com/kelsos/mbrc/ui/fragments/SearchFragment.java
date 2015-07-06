@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.Bind;
 import butterknife.OnClick;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
@@ -35,8 +35,8 @@ import roboguice.fragment.RoboFragment;
 public class SearchFragment extends RoboFragment implements SearchView.OnQueryTextListener {
 
   @Inject Bus bus;
-  @InjectView(R.id.search_pager) ViewPager mPager;
-  @InjectView(R.id.pager_tab_strip) TabLayout tabs;
+  @Bind(R.id.search_pager) ViewPager mPager;
+  @Bind(R.id.pager_tab_strip) TabLayout tabs;
 
   private SearchView mSearchView;
   private MenuItem mSearchItem;
@@ -101,7 +101,7 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.ui_fragment_search, container, false);
-    ButterKnife.inject(this, view);
+    ButterKnife.bind(this, view);
     mPager.setAdapter(mAdapter);
     tabs.setupWithViewPager(mPager);
     return view;

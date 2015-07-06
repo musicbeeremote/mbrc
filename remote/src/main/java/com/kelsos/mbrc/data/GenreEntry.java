@@ -1,14 +1,14 @@
 package com.kelsos.mbrc.data;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class GenreEntry {
   private int count;
   private String name;
 
   public GenreEntry(JsonNode node) {
-    this.name = node.path("genre").getTextValue();
-    this.count = node.path("count").getIntValue();
+    this.name = node.path("genre").textValue();
+    this.count = node.path("count").intValue();
   }
 
   @SuppressWarnings("unused") public int getCount() {

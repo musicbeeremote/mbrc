@@ -1,11 +1,11 @@
 package com.kelsos.mbrc.commands.model;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.events.ui.ShuffleChange;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
-import org.codehaus.jackson.JsonNode;
 
 public class UpdateShuffle implements ICommand {
   private MainDataModel model;

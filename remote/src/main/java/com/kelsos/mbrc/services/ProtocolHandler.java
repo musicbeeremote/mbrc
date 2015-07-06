@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.services;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
@@ -10,8 +12,6 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.model.MainDataModel;
 import com.squareup.otto.Bus;
 import java.io.IOException;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import roboguice.util.Ln;
 
 @Singleton public class ProtocolHandler {
@@ -36,7 +36,7 @@ import roboguice.util.Ln;
       for (String reply : replies) {
 
         JsonNode node = mapper.readValue(reply, JsonNode.class);
-        String context = node.path("context").getTextValue();
+        String context = node.path("context").textValue();
 
         if (context.contains(Protocol.ClientNotAllowed)) {
           bus.post(new MessageEvent(ProtocolEventType.InformClientNotAllowed));

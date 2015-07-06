@@ -1,21 +1,21 @@
 package com.kelsos.mbrc.data;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class ArtistEntry {
-    private String artist;
-    private int count;
+  private String artist;
+  private int count;
 
-    public ArtistEntry(JsonNode node) {
-        this.artist = node.path("artist").getTextValue();
-        this.count = node.path("count").getIntValue();
-    }
+  public ArtistEntry(JsonNode node) {
+    this.artist = node.path("artist").textValue();
+    this.count = node.path("count").intValue();
+  }
 
-    public String getArtist() {
-        return artist;
-    }
+  public String getArtist() {
+    return artist;
+  }
 
-    @SuppressWarnings("unused") public int getCount() {
-        return count;
-    }
+  @SuppressWarnings("unused") public int getCount() {
+    return count;
+  }
 }

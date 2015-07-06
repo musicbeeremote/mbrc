@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.Bind;
 import butterknife.OnClick;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.inject.Inject;
@@ -28,8 +28,8 @@ import com.squareup.otto.Subscribe;
 public class ConnectionManagerActivity extends RoboAppCompatActivity
     implements SettingsDialogFragment.SettingsDialogListener {
   @Inject Bus bus;
-  @InjectView(R.id.connection_list) RecyclerView mRecyclerView;
-  @InjectView(R.id.toolbar) Toolbar mToolbar;
+  @Bind(R.id.connection_list) RecyclerView mRecyclerView;
+  @Bind(R.id.toolbar) Toolbar mToolbar;
   private MaterialDialog mProgress;
   private Context mContext;
 
@@ -53,7 +53,7 @@ public class ConnectionManagerActivity extends RoboAppCompatActivity
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.ui_activity_connection_manager);
-    ButterKnife.inject(this);
+    ButterKnife.bind(this);
     setSupportActionBar(mToolbar);
     mRecyclerView.setHasFixedSize(true);
     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
