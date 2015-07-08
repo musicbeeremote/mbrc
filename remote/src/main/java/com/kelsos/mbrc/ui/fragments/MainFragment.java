@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -17,8 +18,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import butterknife.ButterKnife;
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 import com.google.inject.Inject;
@@ -70,6 +71,7 @@ import roboguice.util.Ln;
   @Bind(R.id.main_shuffle_button) ImageButton shuffleButton;
   @Bind(R.id.main_repeat_button) ImageButton repeatButton;
   @Bind(R.id.main_album_cover_image_view) ImageView albumCover;
+
   private ShareActionProvider mShareActionProvider;
   private boolean userChangingVolume;
   private int previousVol;
@@ -94,7 +96,6 @@ import roboguice.util.Ln;
           userChangingVolume = true;
         }
       };
-
   private SeekBar.OnSeekBarChangeListener progressBarChangeListener =
       new SeekBar.OnSeekBarChangeListener() {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -112,6 +113,7 @@ import roboguice.util.Ln;
         public void onStopTrackingTouch(SeekBar seekBar) {
         }
       };
+  private OnExpandToolbarListener listener;
 
   @OnClick(R.id.main_button_play_pause) public void playButtonPressed(View v) {
     final UserAction action = new UserAction(Protocol.PlayerPlayPause, true);
@@ -182,6 +184,7 @@ import roboguice.util.Ln;
 
   @Override public void onResume() {
     super.onResume();
+    listener.expandToolbar();
     final UserAction action = new UserAction(Protocol.NowPlayingPosition, true);
     bus.post(new MessageEvent(ProtocolEventType.UserAction, action));
   }
@@ -479,5 +482,18 @@ import roboguice.util.Ln;
         favoriteMenuItem.setIcon(R.drawable.ic_action_favorite_outline);
         break;
     }
+  }
+
+  @Override public void onAttach(Activity activity) {
+    super.onAttach(activity);
+    try {
+      listener = (OnExpandToolbarListener) activity;
+    } catch (ClassCastException ex) {
+      throw new ClassCastException(activity.toString() + "must Implement OnExpandToolbarListener");
+    }
+  }
+
+  public interface OnExpandToolbarListener {
+    void expandToolbar();
   }
 }

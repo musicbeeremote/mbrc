@@ -1,7 +1,12 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.annotation.SuppressLint;
+import android.graphics.drawable.NinePatchDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -9,9 +14,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
+import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
+import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
+import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.NowPlayingAdapter;
 import com.kelsos.mbrc.constants.Protocol;
@@ -23,83 +34,38 @@ import com.kelsos.mbrc.events.ui.NowPlayingListAvailable;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.events.ui.TrackMoved;
 import com.kelsos.mbrc.events.ui.TrackRemoval;
-import com.mobeta.android.dslv.DragSortController;
-import com.mobeta.android.dslv.DragSortListView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import java.util.HashMap;
 import java.util.Map;
-import roboguice.fragment.RoboListFragment;
+import roboguice.fragment.RoboFragment;
 
-public class NowPlayingFragment extends RoboListFragment implements SearchView.OnQueryTextListener {
-  public int dragStartMode = DragSortController.ON_DOWN;
-  public boolean removeEnabled = true;
-  public int removeMode = DragSortController.FLING_REMOVE;
-  public boolean sortEnabled = true;
-  public boolean dragEnabled = true;
-  @Inject Injector injector;
+public class NowPlayingFragment extends RoboFragment
+    implements SearchView.OnQueryTextListener, NowPlayingAdapter.OnUserActionListener {
+
+  @Bind(R.id.now_playing_recycler) RecyclerView recyclerView;
+  @Inject NowPlayingAdapter adapter;
   @Inject private Bus bus;
-  private NowPlayingAdapter adapter;
+  private LinearLayoutManager layoutManager;
+  private RecyclerView.Adapter wrappedAdapter;
   private SearchView mSearchView;
   private MenuItem mSearchItem;
   private MusicTrack mTrack;
-  private DragSortListView mDslv;
-  private DragSortController mController;
-  private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
-    @Override public void drop(int from, int to) {
-      if (from != to) {
-        mTrack = adapter.getItem(from);
-        adapter.remove(mTrack);
-        adapter.insert(mTrack, to);
-        adapter.notifyDataSetChanged();
-
-        adapter.setPlayingTrackIndex(calculateNewIndex(from, to, adapter.getPlayingTrackIndex()));
-
-        Map<String, Integer> move = new HashMap<>();
-        move.put("from", from);
-        move.put("to", to);
-        bus.post(new MessageEvent(ProtocolEventType.UserAction,
-            new UserAction(Protocol.NowPlayingListMove, move)));
-      }
-    }
-  };
-  private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
-    @Override public void remove(int which) {
-      mTrack = adapter.getItem(which);
-      adapter.remove(mTrack);
-      adapter.notifyDataSetChanged();
-      bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.NowPlayingListRemove, which)));
-    }
-  };
-
-  public DragSortController buildController(DragSortListView dslv) {
-    // defaults are
-    // dragStartMode = onDown
-    // removeMode = flingRight
-    DragSortController controller = new DragSortController(dslv);
-    controller.setDragHandleId(R.id.drag_handle);
-    controller.setRemoveEnabled(removeEnabled);
-    controller.setSortEnabled(sortEnabled);
-    controller.setDragInitMode(dragStartMode);
-    controller.setRemoveMode(removeMode);
-    return controller;
-  }
+  private RecyclerViewDragDropManager dragAndDropManager;
+  private RecyclerViewTouchActionGuardManager touchActionGuardManager;
+  private RecyclerViewSwipeManager swipeManager;
 
   @Subscribe public void handleNowPlayingListAvailable(NowPlayingListAvailable event) {
-    adapter = new NowPlayingAdapter(getActivity(), R.layout.ui_list_track_item, event.getList());
-    setListAdapter(adapter);
+    adapter.setData(event.getList());
     adapter.setPlayingTrackIndex(event.getIndex());
-    this.getListView().setSelection(event.getIndex());
   }
 
   @Subscribe public void handlePlayingTrackChange(TrackInfoChange event) {
     if (adapter == null || !adapter.getClass().equals(NowPlayingAdapter.class)) {
       return;
     }
-    adapter.setPlayingTrackIndex(
-        adapter.getPosition(new MusicTrack(event.getArtist(), event.getTitle())));
-    adapter.notifyDataSetChanged();
+    final MusicTrack track = new MusicTrack(event.getArtist(), event.getTitle());
+    adapter.setPlayingTrack(track);
   }
 
   public boolean onQueryTextSubmit(String query) {
@@ -128,14 +94,6 @@ public class NowPlayingFragment extends RoboListFragment implements SearchView.O
     setHasOptionsMenu(true);
   }
 
-  @Override public void onActivityCreated(Bundle savedInstanceState) {
-    super.onActivityCreated(savedInstanceState);
-    mDslv = (DragSortListView) getListView();
-    mDslv.setDropListener(onDrop);
-    mDslv.setRemoveListener(onRemove);
-    injector.injectMembers(getListView());
-  }
-
   @Override public void onStart() {
     super.onStart();
     bus.register(this);
@@ -150,21 +108,44 @@ public class NowPlayingFragment extends RoboListFragment implements SearchView.O
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
-    View mView = inflater.inflate(R.layout.ui_fragment_nowplaying, container, false);
-    mDslv = (DragSortListView) mView.findViewById(android.R.id.list);
-    mController = buildController(mDslv);
-    mDslv.setFloatViewManager(mController);
-    mDslv.setOnTouchListener(mController);
-    mDslv.setDragEnabled(dragEnabled);
-    return mView;
-  }
+    View view = inflater.inflate(R.layout.ui_fragment_nowplaying, container, false);
+    ButterKnife.bind(this, view);
 
-  @Override public void onListItemClick(ListView l, View v, int position, long id) {
-    super.onListItemClick(l, v, position, id);
-    adapter.setPlayingTrackIndex(position);
-    adapter.notifyDataSetChanged();
-    bus.post(new MessageEvent(ProtocolEventType.UserAction,
-        new UserAction(Protocol.NowPlayingListPlay, position + 1)));
+    final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
+    animator.setSupportsChangeAnimations(false);
+
+    layoutManager = new LinearLayoutManager(getActivity());
+    recyclerView.setLayoutManager(layoutManager);
+    recyclerView.setItemAnimator(animator);
+
+    touchActionGuardManager = new RecyclerViewTouchActionGuardManager();
+    touchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
+    touchActionGuardManager.setEnabled(true);
+
+    // drag & drop manager
+    dragAndDropManager = new RecyclerViewDragDropManager();
+
+    @SuppressWarnings("deprecation")
+    @SuppressLint({ "NewApi", "LocalSuppress" })
+    final NinePatchDrawable drawable = Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP
+        ? (NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z3)
+        : (NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z3, null);
+
+    dragAndDropManager.setDraggingItemShadowDrawable(drawable);
+    swipeManager = new RecyclerViewSwipeManager();
+
+    adapter.setOnUserActionListener(this);
+
+    wrappedAdapter = dragAndDropManager.createWrappedAdapter(adapter);
+    wrappedAdapter = swipeManager.createWrappedAdapter(wrappedAdapter);
+
+    recyclerView.setAdapter(wrappedAdapter);
+
+    touchActionGuardManager.attachRecyclerView(recyclerView);
+    dragAndDropManager.attachRecyclerView(recyclerView);
+    swipeManager.attachRecyclerView(recyclerView);
+
+    return view;
   }
 
   private int calculateNewIndex(int from, int to, int index) {
@@ -186,9 +167,7 @@ public class NowPlayingFragment extends RoboListFragment implements SearchView.O
   @Subscribe public void handleTrackMoved(TrackMoved event) {
     // In case the action failed revert the change
     if (!event.isSuccess()) {
-      mTrack = adapter.getItem(event.getTo());
-      adapter.remove(mTrack);
-      adapter.insert(mTrack, event.getFrom());
+      adapter.restorePositions(event.getFrom(), event.getTo());
     }
   }
 
@@ -197,5 +176,62 @@ public class NowPlayingFragment extends RoboListFragment implements SearchView.O
     if (!event.isSuccess()) {
       adapter.insert(mTrack, event.getIndex());
     }
+  }
+
+  @Override public void onTrackRemoved(int position) {
+    bus.post(new MessageEvent(ProtocolEventType.UserAction,
+        new UserAction(Protocol.NowPlayingListRemove, position)));
+  }
+
+  @Override public void onTrackMoved(int from, int to) {
+    adapter.setPlayingTrackIndex(calculateNewIndex(from, to, adapter.getPlayingTrackIndex()));
+
+    Map<String, Integer> move = new HashMap<>();
+    move.put("from", from);
+    move.put("to", to);
+    bus.post(new MessageEvent(ProtocolEventType.UserAction,
+        new UserAction(Protocol.NowPlayingListMove, move)));
+  }
+
+  @Override public void onItemClicked(int position) {
+    adapter.setPlayingTrackIndex(position);
+    bus.post(new MessageEvent(ProtocolEventType.UserAction,
+        new UserAction(Protocol.NowPlayingListPlay, position + 1)));
+  }
+
+  @Override public void onPause() {
+    dragAndDropManager.cancelDrag();
+    super.onPause();
+  }
+
+  @Override public void onDestroyView() {
+    if (dragAndDropManager != null) {
+      dragAndDropManager.release();
+      dragAndDropManager = null;
+    }
+
+    if (swipeManager != null) {
+      swipeManager.release();
+      swipeManager = null;
+    }
+
+    if (touchActionGuardManager != null) {
+      touchActionGuardManager.release();
+      touchActionGuardManager = null;
+    }
+
+    if (recyclerView != null) {
+      recyclerView.setItemAnimator(null);
+      recyclerView.setAdapter(null);
+      recyclerView = null;
+    }
+
+    if (wrappedAdapter != null) {
+      WrapperAdapterUtils.releaseAll(wrappedAdapter);
+      wrappedAdapter = null;
+    }
+    adapter = null;
+    layoutManager = null;
+    super.onDestroyView();
   }
 }

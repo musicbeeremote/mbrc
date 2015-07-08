@@ -6,17 +6,23 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
@@ -35,7 +41,12 @@ import com.kelsos.mbrc.ui.fragments.SearchFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
-public class MainFragmentActivity extends RoboAppCompatActivity {
+public class MainFragmentActivity extends RoboAppCompatActivity
+    implements MainFragment.OnExpandToolbarListener {
+
+  @Nullable @Bind(R.id.app_bar) AppBarLayout appBarLayout;
+  @Nullable @Bind(R.id.coordinator_layout) CoordinatorLayout coordinatorLayout;
+
   @Inject Bus bus;
   private ActionBarDrawerToggle mDrawerToggle;
   private DrawerLayout mDrawerLayout;
@@ -58,6 +69,7 @@ public class MainFragmentActivity extends RoboAppCompatActivity {
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.ui_main_container);
+    ButterKnife.bind(this);
 
     if (!isMyServiceRunning(RemoteService.class)) {
       startService(new Intent(this, RemoteService.class));
@@ -84,7 +96,7 @@ public class MainFragmentActivity extends RoboAppCompatActivity {
     };
 
     mDrawerLayout.setDrawerListener(mDrawerToggle);
-    mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, 1);
+    mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.END);
 
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setHomeButtonEnabled(true);
@@ -241,6 +253,20 @@ public class MainFragmentActivity extends RoboAppCompatActivity {
         return true;
       default:
         return super.onKeyDown(keyCode, event);
+    }
+  }
+
+  public void expandToolbar() {
+    if (appBarLayout == null) {
+      return;
+    }
+
+    CoordinatorLayout.LayoutParams params =
+        (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
+    AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
+    if (behavior != null) {
+      behavior.setTopAndBottomOffset(0);
+      behavior.onNestedPreScroll(coordinatorLayout, appBarLayout, null, 0, 1, new int[2]);
     }
   }
 }

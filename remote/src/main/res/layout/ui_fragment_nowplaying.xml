@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-  <com.mobeta.android.dslv.DragSortListView
-      android:id="@+id/android:list"
+  <android.support.v7.widget.RecyclerView
+      android:id="@+id/now_playing_recycler"
       android:layout_width="match_parent"
       android:layout_height="0dp"
       android:layout_marginTop="@dimen/small_margin"
