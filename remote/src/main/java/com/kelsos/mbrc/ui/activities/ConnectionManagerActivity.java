@@ -24,13 +24,11 @@ import com.kelsos.mbrc.events.ui.SettingsChange;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
 import com.kelsos.mbrc.util.Logger;
 import java.util.ArrayList;
-import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
-import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class ConnectionManagerActivity extends RoboActionBarActivity
+public class ConnectionManagerActivity extends RoboAppCompatActivity
     implements SettingsDialogFragment.SettingsDialogListener {
 
   @InjectView(R.id.connection_scan) private Button scanButton;
@@ -72,17 +70,16 @@ public class ConnectionManagerActivity extends RoboActionBarActivity
       settingsDialog.show(getFragmentManager(), "settings_dialog");
     });
 
-    AppObservable.bindActivity(this, Events.discoveryStatusSub)
-        .subscribeOn(Schedulers.io())
+    Events.discoveryStatusSub.subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::handleDiscoveryStatusChange, Logger::logThrowable);
 
-    AppObservable.bindActivity(this, Events.connectionSettingsSub)
+    Events.connectionSettingsSub
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::handleConnectionSettingsChange, Logger::logThrowable);
 
-    AppObservable.bindActivity(this, Events.userMessageSub)
+    Events.userMessageSub
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::handleUserNotification, Logger::logThrowable);

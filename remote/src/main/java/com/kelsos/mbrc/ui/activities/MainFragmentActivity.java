@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -34,12 +35,10 @@ import com.kelsos.mbrc.ui.fragments.PlaylistFragment;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseFragment;
 import com.kelsos.mbrc.ui.fragments.queue.CurrentQueueFragment;
 import com.kelsos.mbrc.util.Logger;
-import roboguice.activity.RoboActionBarActivity;
-import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class HomeActivity extends RoboActionBarActivity {
+public class MainFragmentActivity extends RoboAppCompatActivity {
   private ActionBarDrawerToggle mDrawerToggle;
   private DrawerLayout mDrawerLayout;
   private View mDrawerMenu;
@@ -75,7 +74,7 @@ public class HomeActivity extends RoboActionBarActivity {
     };
 
     mDrawerLayout.setDrawerListener(mDrawerToggle);
-    mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, 1);
+    mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setHomeButtonEnabled(true);
@@ -94,14 +93,14 @@ public class HomeActivity extends RoboActionBarActivity {
     fragmentTransaction.replace(R.id.fragment_container, mFragment, "main_fragment");
     fragmentTransaction.commit();
 
-    AppObservable.bindActivity(this, mDrawerFragment.getDrawerSelectionObservable())
+    mDrawerFragment.getDrawerSelectionObservable()
         .subscribe(this::handleDrawerEvent, Logger::logThrowable);
-    AppObservable.bindActivity(this, Events.userMessageSub)
+    Events.userMessageSub
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::handleUserNotification, Logger::logThrowable);
 
-    AppObservable.bindActivity(this, Events.trackInfoSub)
+    Events.trackInfoSub
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
         .subscribe(this::handleTrackInfoChange, Logger::logThrowable);
@@ -205,7 +204,7 @@ public class HomeActivity extends RoboActionBarActivity {
         replaceFragment(plFragment, "playlist");
         break;
       case SETTINGS:
-        Intent openSettingsIntent = new Intent(this, Settings.class);
+        Intent openSettingsIntent = new Intent(this, SettingsActivity.class);
         startActivity(openSettingsIntent);
         break;
       default:

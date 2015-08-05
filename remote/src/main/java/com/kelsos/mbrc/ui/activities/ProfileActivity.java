@@ -13,10 +13,9 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.fragments.profile.AlbumTracksFragment;
 import com.kelsos.mbrc.ui.fragments.profile.ArtistAlbumsFragment;
 import com.kelsos.mbrc.ui.fragments.profile.GenreArtistsFragment;
-import roboguice.activity.RoboActionBarActivity;
 import roboguice.fragment.provided.RoboFragment;
 
-public class ProfileActivity extends RoboActionBarActivity {
+public class ProfileActivity extends RoboAppCompatActivity {
 
   public static final String GENRE = "genre";
   public static final String ARTIST = "artist";

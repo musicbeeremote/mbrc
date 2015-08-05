@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import roboguice.util.Ln;
 
 public class ServiceDiscovery {
   public static final String NOTIFY = "notify";
@@ -49,9 +50,13 @@ public class ServiceDiscovery {
   }
 
   public void stopDiscovery() {
-    if (mLock != null) {
-      mLock.release();
-      mLock = null;
+    try {
+      if (mLock != null) {
+        mLock.release();
+        mLock = null;
+      }
+    } catch (Exception e) {
+      Ln.d(e);
     }
   }
 

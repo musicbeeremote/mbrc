@@ -20,7 +20,6 @@ import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.util.Logger;
 import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
-import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -69,17 +68,17 @@ public class MiniControlFragment extends RoboFragment {
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    AppObservable.bindFragment(this, Events.coverAvailableSub)
+    Events.coverAvailableSub
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::updateAlbumCover, Logger::logThrowable);
 
-    AppObservable.bindFragment(this, Events.trackInfoSub)
+    Events.trackInfoSub
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::handleTrackInfoChange, Logger::logThrowable);
 
-    AppObservable.bindFragment(this, playerState.observePlaystate())
+    playerState.observePlaystate()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::handlePlayStateChange, Logger::logThrowable);

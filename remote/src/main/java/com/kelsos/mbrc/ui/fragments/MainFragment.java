@@ -45,7 +45,6 @@ import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
 import roboguice.util.Ln;
 import rx.Observable;
-import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -94,7 +93,7 @@ import rx.schedulers.Schedulers;
   private RatingBar.OnRatingBarChangeListener ratingChangeListener = (ratingBar, v, b) -> {
     if (b) {
 
-      AppObservable.bindFragment(this, api.updateRating(v))
+      api.updateRating(v)
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(resp -> Ln.d("Success %b", resp.isSuccess()),
@@ -171,24 +170,24 @@ import rx.schedulers.Schedulers;
     setTextViewTypeface();
     registerListeners();
 
-    AppObservable.bindFragment(this, Events.coverAvailableSub)
-        .subscribeOn(Schedulers.io())
+
+    Events.coverAvailableSub.subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(notification -> updateAlbumCover(notification.getCover()), Logger::logThrowable);
 
-    AppObservable.bindFragment(this, api.getCurrentPosition())
+    api.getCurrentPosition()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .repeatWhen(a -> a.flatMap(n -> Observable.timer(DELAY, TimeUnit.SECONDS)))
         .subscribe(update -> handlePositionUpdate(update.getPosition(), update.getDuration()),
             Logger::logThrowable);
 
-    AppObservable.bindFragment(this, Events.trackInfoSub)
+    Events.trackInfoSub
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
         .subscribe(this::handleTrackInfoChange, Logger::logThrowable);
 
-    AppObservable.bindFragment(this, playerStateModel.observePlaystate())
+    playerStateModel.observePlaystate()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
         .subscribe(this::handlePlayStateChange, Logger::logThrowable);

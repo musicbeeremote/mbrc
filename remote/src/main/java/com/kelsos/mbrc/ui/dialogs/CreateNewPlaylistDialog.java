@@ -1,13 +1,13 @@
 package com.kelsos.mbrc.ui.dialogs;
 
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.widget.EditText;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.R;
+import roboguice.fragment.RoboDialogFragment;
 
-public class CreateNewPlaylistDialog extends DialogFragment {
+public class CreateNewPlaylistDialog extends RoboDialogFragment {
 
   private OnPlaylistNameSelectedListener mListener;
 
@@ -40,6 +40,8 @@ public class CreateNewPlaylistDialog extends DialogFragment {
   public void setOnPlaylistNameSelectedListener(OnPlaylistNameSelectedListener mListener) {
     this.mListener = mListener;
   }
+
+
 
   /**
    * Interface that must be implemented by the fragment or activity

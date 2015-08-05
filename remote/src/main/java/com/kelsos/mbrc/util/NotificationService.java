@@ -16,7 +16,7 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
-import com.kelsos.mbrc.ui.activities.HomeActivity;
+import com.kelsos.mbrc.ui.activities.MainFragmentActivity;
 
 @Singleton public class NotificationService {
   public static final int PLUGIN_OUT_OF_DATE = 15612;
@@ -137,7 +137,7 @@ import com.kelsos.mbrc.ui.activities.HomeActivity;
   private PendingIntent getPendingIntent(int id) {
     switch (id) {
       case OPEN:
-        Intent notificationIntent = new Intent(mContext, HomeActivity.class);
+        Intent notificationIntent = new Intent(mContext, MainFragmentActivity.class);
         return PendingIntent.getActivity(mContext, 0, notificationIntent,
             PendingIntent.FLAG_UPDATE_CURRENT);
       case PLAY:

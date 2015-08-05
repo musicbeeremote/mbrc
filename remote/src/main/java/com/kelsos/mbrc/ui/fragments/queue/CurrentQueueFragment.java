@@ -39,7 +39,6 @@ import de.greenrobot.dao.query.QueryBuilder;
 import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
 import roboguice.util.Ln;
-import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -74,12 +73,12 @@ public class CurrentQueueFragment extends RoboFragment
     getLoaderManager().initLoader(URL_LOADER, null, this);
     mQueueAdapter = new CurrentQueueAdapter(getActivity(), null, 0);
 
-    AppObservable.bindFragment(this, state.observePlaystate())
+    state.observePlaystate()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(mQueueAdapter::setPlayState, Logger::logThrowable);
 
-    AppObservable.bindFragment(this, Events.trackInfoSub)
+    Events.trackInfoSub
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(msg -> {

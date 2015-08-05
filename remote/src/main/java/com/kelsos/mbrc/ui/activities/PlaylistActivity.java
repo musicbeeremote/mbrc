@@ -11,10 +11,9 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistTrackCursorAdapter;
 import com.kelsos.mbrc.ui.fragments.MiniControlFragment;
 import com.mobeta.android.dslv.DragSortListView;
-import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
-public class PlaylistActivity extends RoboActionBarActivity
+public class PlaylistActivity extends RoboAppCompatActivity
     implements LoaderManager.LoaderCallbacks<Cursor> {
   public static final String NAME = "name";
   public static final String PATH = "path";

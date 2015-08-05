@@ -20,7 +20,7 @@
     android:logo="@drawable/ic_launcher"
     android:theme="@style/Theme.Remote">
     <activity
-      android:name="com.kelsos.mbrc.ui.activities.HomeActivity"
+      android:name="com.kelsos.mbrc.ui.activities.MainFragmentActivity"
       android:launchMode="singleTop"
       android:windowSoftInputMode="adjustNothing">
       <intent-filter>
@@ -63,22 +63,22 @@
       android:value="roboguice,com.kelsos.mbrc" />
 
     <activity
-      android:name="com.kelsos.mbrc.ui.activities.Settings"
+      android:name="com.kelsos.mbrc.ui.activities.SettingsActivity"
       android:label="@string/title_activity_settings"
-      android:parentActivityName="com.kelsos.mbrc.ui.activities.HomeActivity"
+      android:parentActivityName="com.kelsos.mbrc.ui.activities.MainFragmentActivity"
       tools:ignore="UnusedAttribute">
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
-        android:value="com.kelsos.mbrc.ui.activities.HomeActivity" />
+        android:value="com.kelsos.mbrc.ui.activities.MainFragmentActivity" />
     </activity>
     <activity
       android:name="com.kelsos.mbrc.ui.activities.QueueResultActivity"
       android:label="@string/title_activity_queue_result"
-      android:parentActivityName="com.kelsos.mbrc.ui.activities.HomeActivity"
+      android:parentActivityName="com.kelsos.mbrc.ui.activities.MainFragmentActivity"
       tools:ignore="UnusedAttribute">
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
-        android:value="com.kelsos.mbrc.ui.activities.HomeActivity" />
+        android:value="com.kelsos.mbrc.ui.activities.MainFragmentActivity" />
     </activity>
   </application>
 

@@ -15,7 +15,6 @@ import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.util.Logger;
 import roboguice.fragment.provided.RoboFragment;
 import roboguice.inject.InjectView;
-import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -61,17 +60,17 @@ public class ButtonFragment extends RoboFragment {
     repeatButton.setOnClickListener(
         v -> Events.buttonPressedSub.onNext(new ButtonPressedEvent(Button.REPEAT)));
 
-    AppObservable.bindFragment(this, playerStateModel.observePlaystate())
+    playerStateModel.observePlaystate()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
         .subscribe(this::updatePlaystate, Logger::logThrowable);
 
-    AppObservable.bindFragment(this, playerStateModel.observeShuffleState())
+    playerStateModel.observeShuffleState()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
         .subscribe(this::handleShuffleChange, Logger::logThrowable);
 
-    AppObservable.bindFragment(this, playerStateModel.observeRepeatState())
+    playerStateModel.observeRepeatState()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
         .subscribe(this::handleRepeatChange, Logger::logThrowable);

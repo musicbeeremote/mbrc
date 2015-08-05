@@ -8,7 +8,7 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.fragments.SettingsFragment;
 import roboguice.activity.RoboActionBarActivity;
 
-public class Settings extends RoboActionBarActivity {
+public class SettingsActivity extends RoboAppCompatActivity {
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

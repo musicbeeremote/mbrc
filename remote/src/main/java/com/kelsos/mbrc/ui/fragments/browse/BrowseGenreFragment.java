@@ -1,12 +1,12 @@
 package com.kelsos.mbrc.ui.fragments.browse;
 
-import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,8 +25,7 @@ import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import com.kelsos.mbrc.util.Logger;
-import roboguice.fragment.provided.RoboListFragment;
-import rx.android.app.AppObservable;
+import roboguice.fragment.RoboListFragment;
 import rx.schedulers.Schedulers;
 
 public class BrowseGenreFragment extends RoboListFragment
@@ -43,7 +42,7 @@ public class BrowseGenreFragment extends RoboListFragment
     setHasOptionsMenu(true);
     getLoaderManager().initLoader(URL_LOADER, null, this);
     setListAdapter(mAdapter);
-    AppObservable.bindFragment(this, mAdapter.getPopupObservable())
+    mAdapter.getPopupObservable()
         .subscribe(this::handlePopup, Logger::logThrowable);
   }
 
@@ -100,7 +99,8 @@ public class BrowseGenreFragment extends RoboListFragment
         GenreHelper.getProjection(), null, null, null);
   }
 
-  @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+  @Override
+  public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
     mAdapter.swapCursor(data);
   }
 
@@ -108,13 +108,14 @@ public class BrowseGenreFragment extends RoboListFragment
     mAdapter.swapCursor(null);
   }
 
+
   @Override public void onPlaylistSelected(String hash) {
   }
 
   @Override public void onNewPlaylistSelected() {
     final CreateNewPlaylistDialog npDialog = new CreateNewPlaylistDialog();
     npDialog.setOnPlaylistNameSelectedListener(this);
-    npDialog.show(getFragmentManager(), "npDialog");
+     npDialog.show(getActivity().getSupportFragmentManager(), "npDialog");
   }
 
   @Override public void onPlaylistNameSelected(String name) {

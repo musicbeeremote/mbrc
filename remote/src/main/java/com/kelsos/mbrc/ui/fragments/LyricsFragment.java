@@ -13,7 +13,6 @@ import com.kelsos.mbrc.util.Logger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import roboguice.fragment.provided.RoboListFragment;
-import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -27,7 +26,7 @@ public class LyricsFragment extends RoboListFragment {
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    AppObservable.bindFragment(this, model.getLyricsObservable())
+    model.getLyricsObservable()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::updateLyricsData, Logger::logThrowable);

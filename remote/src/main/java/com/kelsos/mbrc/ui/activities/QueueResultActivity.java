@@ -6,9 +6,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.fragments.queue.QueueResultFragment;
-import roboguice.activity.RoboActionBarActivity;
 
-public class QueueResultActivity extends RoboActionBarActivity {
+public class QueueResultActivity extends RoboAppCompatActivity {
 
   public static final String QUEUE_FILTER = "QueueFilter";
 

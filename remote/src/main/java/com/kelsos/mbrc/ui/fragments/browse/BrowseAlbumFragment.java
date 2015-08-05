@@ -1,12 +1,12 @@
 package com.kelsos.mbrc.ui.fragments.browse;
 
-import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -24,9 +24,8 @@ import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import com.kelsos.mbrc.util.Logger;
-import roboguice.fragment.provided.RoboFragment;
+import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
-import rx.android.app.AppObservable;
 import rx.schedulers.Schedulers;
 
 public class BrowseAlbumFragment extends RoboFragment
@@ -65,7 +64,7 @@ public class BrowseAlbumFragment extends RoboFragment
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     getLoaderManager().initLoader(URL_LOADER, null, this);
-    AppObservable.bindFragment(this, mAdapter.getPopupObservable())
+    mAdapter.getPopupObservable()
         .subscribe(this::handlePopup, Logger::logThrowable);
   }
 

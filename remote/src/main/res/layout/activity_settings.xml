@@ -11,6 +11,6 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.kelsos.mbrc.ui.activities.Settings"
+        tools:context="com.kelsos.mbrc.ui.activities.SettingsActivity"
         tools:ignore="MergeRootFrame"/>
 </LinearLayout>
