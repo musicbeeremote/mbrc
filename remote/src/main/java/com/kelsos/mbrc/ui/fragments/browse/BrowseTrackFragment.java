@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -15,7 +14,6 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.TrackCursorAdapter;
 import com.kelsos.mbrc.dao.Track;
-import com.kelsos.mbrc.dao.TrackHelper;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import com.kelsos.mbrc.util.Logger;
@@ -72,8 +70,9 @@ public class BrowseTrackFragment extends RoboListFragment
   }
 
   @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-    return new CursorLoader(getActivity(), TrackHelper.CONTENT_URI,
-        TrackHelper.getProjection(), null, null, null);
+    //return new CursorLoader(getActivity(), TrackHelper.CONTENT_URI,
+    //    TrackHelper.getProjection(), null, null, null);
+    return null;
   }
 
   @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {

@@ -115,10 +115,10 @@ import roboguice.util.Ln;
     PlaybackStateCompat.Builder builder = new PlaybackStateCompat.Builder();
     builder.setActions(PLAYBACK_ACTIONS);
     switch (stateChange.getState()) {
-      case Playing:
+      case PLAYING:
         builder.setState(PlaybackStateCompat.STATE_PLAYING, -1, 1);
         break;
-      case Paused:
+      case PAUSED:
         builder.setState(PlaybackStateCompat.STATE_PAUSED, -1, 0);
         break;
       default:
@@ -129,16 +129,16 @@ import roboguice.util.Ln;
     mMediaSession.setPlaybackState(playbackState);
     ensureTransportControls(playbackState);
 
-    mMediaSession.setActive(stateChange.getState() != PlayState.Stopped
-        || stateChange.getState() != PlayState.Undefined);
+    mMediaSession.setActive(stateChange.getState() != PlayState.STOPPED
+        || stateChange.getState() != PlayState.UNDEFINED);
   }
 
   @Subscribe public void onPlayStateChange(PlayStateChange change) {
     switch (change.getState()) {
-      case Playing:
+      case PLAYING:
         requestFocus();
         break;
-      case Paused:
+      case PAUSED:
         break;
       default:
         abandonFocus();

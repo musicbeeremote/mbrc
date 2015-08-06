@@ -5,8 +5,6 @@ import android.os.IBinder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.constants.EventType;
-import com.kelsos.mbrc.dao.DaoSession;
-import com.kelsos.mbrc.data.DatabaseUtils;
 import com.kelsos.mbrc.data.SyncManager;
 import com.kelsos.mbrc.data.model.PlayerState;
 import com.kelsos.mbrc.data.model.TrackState;
@@ -20,6 +18,7 @@ import com.kelsos.mbrc.util.Logger;
 import com.kelsos.mbrc.util.NotificationService;
 import com.kelsos.mbrc.util.RemoteBroadcastReceiver;
 import com.kelsos.mbrc.util.SettingsManager;
+import com.raizlabs.android.dbflow.config.FlowManager;
 import roboguice.service.RoboService;
 import roboguice.util.Ln;
 import rx.schedulers.Schedulers;
@@ -35,7 +34,6 @@ import rx.schedulers.Schedulers;
   @Inject private TrackState trackState;
   @Inject private PlayerState playerState;
   @Inject private RemoteApi api;
-  @Inject private DaoSession daoSession;
 
   public Controller() {
     Ln.d("Application Controller Initialized");
@@ -53,7 +51,8 @@ import rx.schedulers.Schedulers;
         .filter(msg -> EventType.START_DISCOVERY.equals(msg.getType()))
         .subscribe(msg -> discovery.startDiscovery(), Logger::logThrowable);
 
-    DatabaseUtils.createDatabaseTrigger(daoSession.getDatabase());
+    //DatabaseUtils.createDatabaseTrigger(daoSession.getDatabase());
+    FlowManager.init(getApplicationContext());
 
     return super.onStartCommand(intent, flags, startId);
   }
@@ -62,6 +61,7 @@ import rx.schedulers.Schedulers;
     super.onDestroy();
     socket.socketManager(SocketAction.STOP);
     notificationService.cancelNotification(NotificationService.NOW_PLAYING_PLACEHOLDER);
+    FlowManager.destroy();
     this.unregisterReceiver(receiver);
   }
 }

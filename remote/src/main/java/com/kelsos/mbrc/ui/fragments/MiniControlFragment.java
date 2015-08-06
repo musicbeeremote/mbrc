@@ -2,12 +2,15 @@ package com.kelsos.mbrc.ui.fragments;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import butterknife.Bind;
+import butterknife.OnClick;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.Protocol;
@@ -20,37 +23,30 @@ import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.fragment.RoboFragment;
-import roboguice.inject.InjectView;
 
 public class MiniControlFragment extends RoboFragment {
 
   @Inject Bus bus;
-  @InjectView(R.id.mc_track_cover) ImageView trackCover;
-  @InjectView(R.id.mc_track_artist) TextView trackArtist;
-  @InjectView(R.id.mc_track_title) TextView trackTitle;
-  @InjectView(R.id.mc_next_track) ImageButton playNext;
-  @InjectView(R.id.mc_play_pause) ImageButton playPause;
-  @InjectView(R.id.mc_prev_track) ImageButton playPrevious;
 
-  ImageButton.OnClickListener playNextListener = new ImageButton.OnClickListener() {
+  @Bind(R.id.mc_track_cover) ImageView trackCover;
+  @Bind(R.id.mc_track_artist) TextView trackArtist;
+  @Bind(R.id.mc_track_title) TextView trackTitle;
+  @Bind(R.id.mc_play_pause) ImageButton playPause;
 
-    @Override public void onClick(View view) {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.PlayerNext, true)));
-    }
-  };
-  ImageButton.OnClickListener playPauseListener = new ImageButton.OnClickListener() {
-    @Override public void onClick(View view) {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.PlayerPlayPause, true)));
-    }
-  };
-  ImageButton.OnClickListener playPreviousListener = new ImageButton.OnClickListener() {
-    @Override public void onClick(View view) {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.PlayerPrevious, true)));
-    }
-  };
+  @OnClick(R.id.mc_next_track) public void onNextClicked() {
+    bus.post(new MessageEvent(ProtocolEventType.UserAction,
+        new UserAction(Protocol.PlayerNext, true)));
+  }
+
+  @OnClick(R.id.mc_play_pause) public void onPlayPauseClicked() {
+    bus.post(new MessageEvent(ProtocolEventType.UserAction,
+        new UserAction(Protocol.PlayerPlayPause, true)));
+  }
+
+  @OnClick(R.id.mc_prev_track) public void onPreviousClicked() {
+    bus.post(new MessageEvent(ProtocolEventType.UserAction,
+        new UserAction(Protocol.PlayerPrevious, true)));
+  }
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -64,9 +60,6 @@ public class MiniControlFragment extends RoboFragment {
   @Override public void onStart() {
     super.onStart();
     bus.register(this);
-    playNext.setOnClickListener(playNextListener);
-    playPause.setOnClickListener(playPauseListener);
-    playPrevious.setOnClickListener(playPreviousListener);
     Typeface robotoRegular =
         Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
     Typeface robotoMedium =
@@ -98,12 +91,16 @@ public class MiniControlFragment extends RoboFragment {
 
   @Subscribe public void handlePlayStateChange(PlayStateChange event) {
     switch (event.getState()) {
-      case Playing:
+      case PLAYING:
         playPause.setImageResource(R.drawable.ic_action_pause);
         break;
       default:
         playPause.setImageResource(R.drawable.ic_action_play);
         break;
     }
+  }
+
+  public static Fragment newInstance() {
+    return new MiniControlFragment();
   }
 }

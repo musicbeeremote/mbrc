@@ -2,7 +2,6 @@ package com.kelsos.mbrc.ui.fragments.profile;
 
 import android.app.LoaderManager;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -22,8 +21,6 @@ import com.kelsos.mbrc.adapters.AlbumProfileCursorAdapter;
 import com.kelsos.mbrc.dao.Album;
 import com.kelsos.mbrc.dao.Artist;
 import com.kelsos.mbrc.dao.Cover;
-import com.kelsos.mbrc.dao.DaoSession;
-import com.kelsos.mbrc.dao.TrackHelper;
 import com.kelsos.mbrc.util.RemoteUtils;
 import com.squareup.picasso.Picasso;
 import java.io.File;
@@ -53,7 +50,6 @@ public class AlbumTracksFragment extends RoboListFragment
   @InjectView(R.id.header_artist) private TextView mArtist;
   @InjectView(R.id.header_artwork) private ImageView mArtwork;
 
-  @Inject private DaoSession daoSession;
 
   private OnScrollListener mOnScrollListener = new OnScrollListener() {
     @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -142,18 +138,20 @@ public class AlbumTracksFragment extends RoboListFragment
   }
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-    final String sortOrder = String.format("%s ASC", TrackHelper.POSITION);
-    final String selection = String.format("%s = ?", TrackHelper.ALBUMID);
-    final String[] selectionArgs = {
-        String.valueOf(albumId)
-    };
-    return new CursorLoader(getActivity(), TrackHelper.CONTENT_URI,
-        TrackHelper.getProjection(),
-        selection, selectionArgs, sortOrder);
+    //final String sortOrder = String.format("%s ASC", TrackHelper.POSITION);
+    //final String selection = String.format("%s = ?", TrackHelper.ALBUMID);
+    //final String[] selectionArgs = {
+    //    String.valueOf(albumId)
+    //};
+    //return new CursorLoader(getActivity(), TrackHelper.CONTENT_URI,
+    //    TrackHelper.getProjection(),
+    //    selection, selectionArgs, sortOrder);
+    return null;
   }
 
   @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-    final Album album = daoSession.getAlbumDao().loadByRowId(albumId);
+    // FIXME: 8/6/15 temporarily disabled
+    final Album album = new Album();
     final Cover cover = album.getCover();
     final Artist artist = album.getArtist();
     mAdapter.swapCursor(cursor);

@@ -1,29 +1,27 @@
 <LinearLayout
+    android:id="@+id/album_profile"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:id="@+id/album_profile"
     tools:context="com.kelsos.mbrc.ui.fragments.profile.AlbumTracksFragment">
 
-    <ListView
-        android:id="@android:id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/side_margin_half"
-        android:layout_marginTop="@dimen/side_margin_half"
-        android:divider="@null"
-        android:drawSelectorOnTop="true"
-        android:fastScrollEnabled="false"
-        android:listSelector="@drawable/mbrc_dark_compo_list_selector_holo_dark"
-        tools:listitem="@layout/listitem_single"/>
+  <ListView
+      android:id="@android:id/list"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginBottom="@dimen/small_margin"
+      android:layout_marginTop="@dimen/small_margin"
+      android:divider="@null"
+      android:drawSelectorOnTop="true"
+      android:fastScrollEnabled="false"
+      tools:listitem="@layout/listitem_single" />
 
-    <View
-        android:layout_gravity="top"
-        android:id="@+id/listview_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/mbrc_background" />
+  <View
+      android:id="@+id/listview_background"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_gravity="top" />
 
 </LinearLayout>

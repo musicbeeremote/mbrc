@@ -1,7 +1,5 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.enums.DiscoveryStop;
-
 public class DiscoveryStopped {
   private DiscoveryStop reason;
 
@@ -11,5 +9,11 @@ public class DiscoveryStopped {
 
   public DiscoveryStop getReason() {
     return reason;
+  }
+
+  public enum DiscoveryStop {
+    NO_WIFI,
+    NOT_FOUND,
+    COMPLETE
   }
 }

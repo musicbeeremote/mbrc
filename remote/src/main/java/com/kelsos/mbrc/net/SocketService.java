@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.net;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
@@ -7,39 +9,36 @@ import com.kelsos.mbrc.constants.EventType;
 import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.Message;
-import com.kelsos.mbrc.util.DelayTimer;
 import com.kelsos.mbrc.util.SettingsManager;
-import com.koushikdutta.async.http.AsyncHttpClient;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+import com.squareup.okhttp.ws.WebSocket;
+import com.squareup.okhttp.ws.WebSocketCall;
+import com.squareup.okhttp.ws.WebSocketListener;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import okio.Buffer;
+import okio.BufferedSource;
 import roboguice.util.Ln;
 import rx.schedulers.Schedulers;
 
-@Singleton public class SocketService {
-  public static final int MAX_RETRIES = 3;
-  public static final int BUFFER_SIZE = 4096;
-  public static final int DELAY = 3;
-  public static final int SUB_START = 26;
-  private static int numOfRetries;
+@Singleton public class SocketService implements WebSocketListener {
   private SettingsManager settingsManager;
   private ObjectMapper mapper;
+  private OkHttpClient client;
   private boolean shouldStop;
   private Socket clSocket;
   private PrintWriter output;
-  private DelayTimer cTimer;
   private Thread mThread;
 
-  @Inject public SocketService(SettingsManager settingsManager, ObjectMapper mapper) {
+  @Inject
+  public SocketService(SettingsManager settingsManager, ObjectMapper mapper, OkHttpClient client) {
     this.settingsManager = settingsManager;
     this.mapper = mapper;
+    this.client = client;
 
-    cTimer = new DelayTimer(DELAY, () -> {
-
-    });
-    numOfRetries = 0;
     shouldStop = false;
     socketManager(SocketAction.START);
     subscribeToEvents();
@@ -82,23 +81,18 @@ import rx.schedulers.Schedulers;
     stopThread();
     if (shouldStop) {
       shouldStop = false;
-      numOfRetries = 0;
       return;
     }
-    cTimer.start();
   }
 
   private void reset() {
     cleanupSocket();
     stopThread();
     shouldStop = false;
-    numOfRetries = 0;
-    cTimer.start();
   }
 
   private void start() {
     if (!sIsConnected()) {
-      cTimer.start();
     }
     startWebSocket();
   }
@@ -142,15 +136,9 @@ import rx.schedulers.Schedulers;
   }
 
   private void startWebSocket() {
-    AsyncHttpClient.getDefaultInstance()
-        .websocket("ws://development.lan:3000", "mbrc-pro", (ex, webSocket) -> {
-          if (ex != null) {
-            Ln.d(ex);
-            return;
-          }
+    Request request = new Request.Builder().url("ws://development.lan:3000").build();
 
-          webSocket.setStringCallback(this::tryProcessIncoming);
-        });
+    WebSocketCall.create(client, request).enqueue(this);
   }
 
   private void processIncoming(String incoming) throws IOException {
@@ -158,7 +146,7 @@ import rx.schedulers.Schedulers;
     for (String reply : replies) {
 
       JsonNode node = mapper.readValue(reply, JsonNode.class);
-      String context = node.path("message").getTextValue();
+      String context = node.path("message").asText();
 
       if (context.contains(Notification.CLIENT_NOT_ALLOWED)) {
         return;
@@ -166,5 +154,29 @@ import rx.schedulers.Schedulers;
 
       Events.messages.onNext(new Message(context));
     }
+  }
+
+  @Override public void onOpen(WebSocket webSocket, Response response) {
+
+  }
+
+  @Override public void onFailure(IOException e, Response response) {
+
+  }
+
+  @Override public void onMessage(BufferedSource payload, WebSocket.PayloadType type)
+      throws IOException {
+
+    if (type == WebSocket.PayloadType.TEXT) {
+      tryProcessIncoming(payload.readUtf8());
+    }
+  }
+
+  @Override public void onPong(Buffer payload) {
+
+  }
+
+  @Override public void onClose(int code, String reason) {
+
   }
 }

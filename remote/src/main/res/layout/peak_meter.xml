@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:id="@+id/peak_wrapper"
-             android:layout_width="wrap_content"
-             android:layout_height="match_parent">
+<FrameLayout android:id="@+id/peak_wrapper"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent">
 
-    <!--suppress Annotator -->
-    <LinearLayout
+  <!--suppress Annotator -->
+  <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:dividerPadding="1dp"
+      android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/peak_one"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:dividerPadding="1dp"
-        android:orientation="horizontal">
+        android:contentDescription="@string/peak_meter"
+        android:src="@anim/peak_meter_1"
+        android:tint="@color/primary_material_light" />
 
-        <ImageView
-            android:id="@+id/peak_one"
-            android:tint="@color/primary_material_light"
-            android:src="@anim/peak_meter_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/peak_meter"/>
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent" />
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"/>
+    <ImageView
+        android:id="@+id/peak_two"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/peak_meter"
+        android:src="@anim/peak_meter_2"
+        android:tint="@color/primary_material_light" />
 
-        <ImageView
-            android:id="@+id/peak_two"
-            android:tint="@color/primary_material_light"
-            android:src="@anim/peak_meter_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/peak_meter"/>
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent" />
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"/>
-
-        <ImageView
-            android:id="@+id/peak_three"
-            android:tint="@color/primary_material_light"
-            android:src="@anim/peak_meter_3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/peak_meter"/>
+    <ImageView
+        android:id="@+id/peak_three"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/peak_meter"
+        android:src="@anim/peak_meter_3"
+        android:tint="@color/primary_material_light" />
 
 
-    </LinearLayout>
+  </LinearLayout>
 
 </FrameLayout>

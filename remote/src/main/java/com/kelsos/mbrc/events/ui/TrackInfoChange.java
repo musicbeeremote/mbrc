@@ -5,12 +5,14 @@ public class TrackInfoChange {
   public String title;
   public String album;
   public String year;
+  private String path;
 
-  public TrackInfoChange(String artist, String title, String album, String year) {
+  public TrackInfoChange(String artist, String title, String album, String year, String path) {
     this.artist = artist;
     this.title = title;
     this.album = album;
     this.year = year;
+    this.path = path;
   }
 
   public String getArtist() {
@@ -27,5 +29,9 @@ public class TrackInfoChange {
 
   public String getYear() {
     return year;
+  }
+
+  public String getPath() {
+    return path;
   }
 }

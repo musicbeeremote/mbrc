@@ -11,7 +11,7 @@
         android:id="@+id/dlv_current_queue"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/side_margin_half"
+        android:layout_marginTop="@dimen/small_margin"
         android:clipToPadding="false"
         android:divider="@null"
         android:fitsSystemWindows="true"

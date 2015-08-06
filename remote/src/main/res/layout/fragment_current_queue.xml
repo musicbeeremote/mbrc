@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <com.mobeta.android.dslv.DragSortListView
-        android:id="@+id/dlv_current_queue"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/side_margin_half"
-        android:clipToPadding="false"
-        android:divider="@null"
-        android:fitsSystemWindows="true"
-        tools:listitem="@layout/listitem_track"
-        android:layout_weight="1"/>
+  <com.mobeta.android.dslv.DragSortListView
+      android:id="@+id/dlv_current_queue"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_marginTop="@dimen/small_margin"
+      android:layout_weight="1"
+      android:clipToPadding="false"
+      android:divider="@null"
+      android:fitsSystemWindows="true"
+      tools:listitem="@layout/listitem_track" />
 
-    <FrameLayout
-        android:id="@+id/np_mini_control"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/mini_control_height"
-        tools:context="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
-        tools:layout="@layout/ui_fragment_mini_control"/>
+  <FrameLayout
+      android:id="@+id/np_mini_control"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/mini_control_height"
+      tools:context="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
+      tools:layout="@layout/ui_fragment_mini_control" />
 
 </LinearLayout>

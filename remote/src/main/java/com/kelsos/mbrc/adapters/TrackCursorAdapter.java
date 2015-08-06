@@ -13,21 +13,17 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.dao.Artist;
-import com.kelsos.mbrc.dao.DaoSession;
 import com.kelsos.mbrc.dao.Track;
-import com.kelsos.mbrc.dao.TrackHelper;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
 public class TrackCursorAdapter extends CursorAdapter {
 
-  private final DaoSession daoSession;
   private final LayoutInflater inflater;
   private PublishSubject<Pair<MenuItem, Track>> menuClickPublisher;
 
-  @Inject public TrackCursorAdapter(Context context, DaoSession daoSession) {
+  @Inject public TrackCursorAdapter(Context context) {
     super(context, null, 0);
-    this.daoSession = daoSession;
     inflater = LayoutInflater.from(context);
     menuClickPublisher = PublishSubject.create();
   }
@@ -43,8 +39,8 @@ public class TrackCursorAdapter extends CursorAdapter {
   }
 
   @Override public void bindView(final View view, Context context, Cursor cursor) {
-    final Track track = TrackHelper.fromCursor(cursor);
-    track.__setDaoSession(daoSession);
+    final Track track = new Track();
+
     final Artist artist = track.getArtist();
 
     ViewHolder holder = (ViewHolder) view.getTag();

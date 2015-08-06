@@ -40,7 +40,7 @@
           android:layout_height="wrap_content"
           android:ellipsize="none"
           android:singleLine="true"
-          android:textColor="@color/remoteText"
+          android:textColor="@color/remote_text"
           android:textSize="@dimen/widget_small_text"
           android:textStyle="bold"
           tools:text="Rock it for me" />
@@ -59,7 +59,7 @@
           android:layout_height="wrap_content"
           android:ellipsize="marquee"
           android:singleLine="true"
-          android:textColor="@color/remoteSecondaryText"
+          android:textColor="@color/remote_secondary_text"
           android:textSize="@dimen/widget_small_text"
           tools:text="Caravan Palace" />
 

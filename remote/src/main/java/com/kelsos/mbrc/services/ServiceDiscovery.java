@@ -10,7 +10,6 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.data.ConnectionSettings;
-import com.kelsos.mbrc.enums.DiscoveryStop;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import java.io.IOException;
@@ -20,6 +19,8 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.Hashtable;
 import java.util.Locale;
+
+import static com.kelsos.mbrc.events.ui.DiscoveryStopped.*;
 
 public class ServiceDiscovery {
   public static final String NOTIFY = "notify";

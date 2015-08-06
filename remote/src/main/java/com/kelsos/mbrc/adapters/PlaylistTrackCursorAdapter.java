@@ -12,7 +12,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.dao.PlaylistTrack;
-import com.kelsos.mbrc.dao.PlaylistTrackHelper;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
@@ -38,7 +37,8 @@ public class PlaylistTrackCursorAdapter extends CursorAdapter {
   }
 
   @Override public void bindView(final View view, Context context, Cursor cursor) {
-    final PlaylistTrack track = PlaylistTrackHelper.fromCursor(cursor);
+    // FIXME: 8/6/15 Temporarily does nothing
+    final PlaylistTrack track = new PlaylistTrack();
     ViewHolder holder = (ViewHolder) view.getTag();
     holder.lineOne.setText(track.getTitle());
     holder.lineTwo.setText(track.getArtist());

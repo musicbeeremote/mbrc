@@ -1,3 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <dimen name="medium_button_size">48dp</dimen>
+  <dimen name="large_button_size">68dp</dimen>
+  <dimen name="small_button_size">30dp</dimen>
+  <dimen name="center_button_margin">25dp</dimen>
+  <dimen name="second_tier_button_margin">40dp</dimen>
 </resources>

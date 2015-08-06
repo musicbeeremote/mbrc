@@ -36,4 +36,17 @@
   <dimen name="widget_normal_min_width">250dp</dimen>
   <dimen name="widget_normal_height">128dp</dimen>
   <dimen name="widget_normal_text">16sp</dimen>
+  <dimen name="dialog_title_height">54dp</dimen>
+  <dimen name="dialog_title_margin">16dip</dimen>
+  <dimen name="mbrc_grid_item_width">150dp</dimen>
+  <dimen name="mbrc_grid_line_one_size">16sp</dimen>
+  <dimen name="mbrc_grid_line_two_size">12sp</dimen>
+  <dimen name="list_item_two">14sp</dimen>
+  <dimen name="playlist_entry_text_size">18sp</dimen>
+  <dimen name="mbrc_volume_seekbar_height">8dp</dimen>
+  <dimen name="mbrc_volume_seekbar_padding">9dp</dimen>
+  <dimen name="mbrc_volume_seekbar_thumb_offset">16dp</dimen>
+  <dimen name="drawer_width">320dp</dimen>
+  <dimen name="playlist_entry_height">48dp</dimen>
+  <dimen name="thumb_size">12dp</dimen>
 </resources>

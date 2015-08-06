@@ -41,7 +41,7 @@
           android:shadowDy="1"
           android:shadowRadius="1.5"
           android:text="@string/main_label_duration_current"
-          android:textColor="@color/remoteText"
+          android:textColor="@color/remote_text"
           android:textSize="12sp" />
 
       <TextView
@@ -58,7 +58,7 @@
           android:shadowDy="1"
           android:shadowRadius="1.5"
           android:text="@string/main_label_duration_total"
-          android:textColor="@color/remoteText"
+          android:textColor="@color/remote_text"
           android:textSize="12sp"
           tools:ignore="RelativeOverlap" />
     </RelativeLayout>
@@ -113,7 +113,7 @@
           android:marqueeRepeatLimit="marquee_forever"
           android:scrollHorizontally="true"
           android:singleLine="true"
-          android:textColor="@color/remoteText"
+          android:textColor="@color/remote_text"
           android:textSize="@dimen/text_title_size"
           tools:text="Rock it for me" />
 
@@ -129,7 +129,7 @@
           android:marqueeRepeatLimit="marquee_forever"
           android:scrollHorizontally="true"
           android:singleLine="true"
-          android:textColor="@color/remoteText"
+          android:textColor="@color/remote_text"
           android:textSize="@dimen/text_subhead_size"
           tools:text="Caravan Palace" />
 
@@ -145,7 +145,7 @@
           android:marqueeRepeatLimit="marquee_forever"
           android:scrollHorizontally="true"
           android:singleLine="true"
-          android:textColor="@color/remoteText"
+          android:textColor="@color/remote_text"
           android:textSize="@dimen/text_body_size"
           tools:text="Panic [2012]" />
 
@@ -165,7 +165,7 @@
           android:layout_width="@dimen/small_button_size"
           android:layout_height="@dimen/small_button_size"
           android:layout_gravity="center_vertical"
-          android:background="@drawable/md_transparent"
+          android:background="?attr/selectableItemBackground"
           android:contentDescription="@string/main_button_repeat_description"
           android:src="@drawable/ic_repeat_grey600_24dp"
           android:tint="@color/button_material_dark" />
@@ -176,7 +176,7 @@
           android:layout_height="@dimen/medium_button_size"
           android:layout_marginLeft="@dimen/second_tier_button_margin"
           android:layout_marginStart="@dimen/second_tier_button_margin"
-          android:background="@drawable/md_transparent"
+          android:background="?attr/selectableItemBackground"
           android:contentDescription="@string/main_button_previous_description"
           android:scaleType="fitCenter"
           android:src="@drawable/ic_skip_previous_black_36dp"
@@ -188,7 +188,7 @@
           android:layout_height="@dimen/large_button_size"
           android:layout_marginLeft="@dimen/center_button_margin"
           android:layout_marginRight="@dimen/center_button_margin"
-          android:background="@drawable/md_transparent"
+          android:background="?attr/selectableItemBackground"
           android:clickable="true"
           android:contentDescription="@string/main_button_play_pause_description"
           android:scaleType="fitCenter"
@@ -200,7 +200,7 @@
           android:layout_height="@dimen/medium_button_size"
           android:layout_marginEnd="@dimen/second_tier_button_margin"
           android:layout_marginRight="@dimen/second_tier_button_margin"
-          android:background="@drawable/md_transparent"
+          android:background="?attr/selectableItemBackground"
           android:contentDescription="@string/main_button_next_description"
           android:scaleType="fitCenter"
           android:src="@drawable/ic_skip_next_black_36dp"
@@ -211,7 +211,7 @@
           android:layout_width="@dimen/small_button_size"
           android:layout_height="@dimen/small_button_size"
           android:layout_gravity="center_vertical"
-          android:background="@drawable/md_transparent"
+          android:background="?attr/selectableItemBackground"
           android:contentDescription="@string/main_button_shuffle_description"
           android:src="@drawable/ic_shuffle_grey600_24dp"
           android:tint="@color/button_material_dark" />
@@ -231,7 +231,7 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_gravity="center"
-          android:background="@drawable/md_transparent"
+          android:background="?attr/selectableItemBackground"
           android:contentDescription="@string/main_button_mute_description"
           android:paddingLeft="@dimen/small_margin"
           android:paddingRight="@dimen/small_margin"

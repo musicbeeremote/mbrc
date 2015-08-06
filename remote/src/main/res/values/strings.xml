@@ -165,10 +165,27 @@
   <string name="feedback_button_text">Send Feedback</string>
   <string name="main_menu_feedback">Feedback</string>
   <string name="feedback_subject">MusicBeeRemote InApp Feedback</string>
-  <string name="feedback_chooser_title">Send feedback using...</string>
+  <string name="feedback_chooser_title">Send feedback using…</string>
   <string name="setting_miscellaneous_plugin_updates">Plugin Update Check</string>
   <string name="setting_miscellaneous_plugin_updates_summary">Periodically check for updated versions of the plugin</string>
   <string name="settings_key_plugin_check">plugin_update_check</string>
   <string name="dash">-</string>
+  <string name="profile_header_cover_description">The header of the album profile</string>
+  <string name="grid_album_cover">Album Cover</string>
+  <string name="peak_meter">Peak meter</string>
+  <string name="text_create_new">Create New</string>
+  <string name="menu_add_to_playlist">Add to playlist</string>
+  <string name="playlist_list_play_now">Play Now</string>
+  <string name="playlist_list_get_track">Get Track</string>
+  <string name="queue_track_play">Play</string>
+  <string name="queue_track_delete">Delete</string>
+  <string name="settings_key_http">settings_key_http</string>
+  <string name="playlist_dialog_new_title">New Playlist</string>
+  <string name="playlist_dialog_title">Add to playlist</string>
+  <string name="settings_dialog_hint_http">The port of the webserver</string>
+  <string name="track_count">Total tracks</string>
+  <string name="mbrc_library_sync">Syncing library</string>
+  <string name="mbrc_libary_sync_msg">Sync in progress</string>
+  <string name="mbrc_library_sync_complete">Sync complete</string>
 
 </resources>

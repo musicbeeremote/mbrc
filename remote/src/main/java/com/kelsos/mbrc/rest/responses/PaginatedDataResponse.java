@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.rest.responses;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
-import org.codehaus.jackson.JsonNode;
 
 public class PaginatedDataResponse {
   private int offset;

@@ -10,8 +10,8 @@
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
     <item name="background">@color/background_material_dark</item>
-    <item name="android:textColorPrimary">@color/remoteText</item>
-    <item name="android:textColor">@color/remoteSecondaryText</item>
+    <item name="android:textColorPrimary">@color/remote_text</item>
+    <item name="android:textColor">@color/remote_secondary_text</item>
     <item name="android:windowNoTitle">true</item>
     <item name="windowActionBar">false</item>
     <item name="windowNoTitle">true</item>

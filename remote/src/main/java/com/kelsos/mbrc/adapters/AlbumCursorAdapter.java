@@ -14,10 +14,8 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.dao.Album;
-import com.kelsos.mbrc.dao.AlbumHelper;
 import com.kelsos.mbrc.dao.Artist;
 import com.kelsos.mbrc.dao.Cover;
-import com.kelsos.mbrc.dao.DaoSession;
 import com.kelsos.mbrc.util.RemoteUtils;
 import com.squareup.picasso.Picasso;
 import java.io.File;
@@ -25,13 +23,12 @@ import rx.Observable;
 import rx.subjects.PublishSubject;
 
 public class AlbumCursorAdapter extends CursorAdapter {
-  private final DaoSession daoSession;
   private final LayoutInflater inflater;
   private PublishSubject<Pair<MenuItem, Album>> menuClickPublisher;
 
-  @Inject public AlbumCursorAdapter(Context context, DaoSession daoSession) {
+  @Inject public AlbumCursorAdapter(Context context) {
     super(context, null, 0);
-    this.daoSession = daoSession;
+
     inflater = LayoutInflater.from(context);
     menuClickPublisher = PublishSubject.create();
   }
@@ -48,8 +45,9 @@ public class AlbumCursorAdapter extends CursorAdapter {
   }
 
   @Override public void bindView(final View view, Context context, Cursor cursor) {
-    final Album album = AlbumHelper.fromCursor(cursor);
-    album.__setDaoSession(daoSession);
+    // FIXME: 8/6/15 Temporarily disabled
+    final Album album = new Album();
+
     final Artist artist = album.getArtist();
     final Cover cover = album.getCover();
 

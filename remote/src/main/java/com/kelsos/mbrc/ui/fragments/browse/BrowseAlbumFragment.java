@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -18,7 +17,6 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumCursorAdapter;
 import com.kelsos.mbrc.dao.Album;
-import com.kelsos.mbrc.dao.AlbumHelper;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
@@ -109,8 +107,9 @@ public class BrowseAlbumFragment extends RoboFragment
   }
 
   @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-    return new CursorLoader(getActivity(), AlbumHelper.CONTENT_URI,
-        AlbumHelper.getProjection(), null, null, null);
+    //return new CursorLoader(getActivity(), AlbumHelper.CONTENT_URI,
+    //    AlbumHelper.getProjection(), null, null, null);
+    return null;
   }
 
   @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {

@@ -89,7 +89,7 @@ public class WidgetSmall extends RoboAppWidgetProvider {
         new RemoteViews(context.getPackageName(), R.layout.widget_small);
 
     smallWidget.setImageViewResource(R.id.widget_small_play,
-        state.getState() == PlayState.Playing ? R.drawable.ic_action_pause
+        state.getState() == PlayState.PLAYING ? R.drawable.ic_action_pause
             : R.drawable.ic_action_play);
     manager.updateAppWidget(widgetsIds, smallWidget);
   }

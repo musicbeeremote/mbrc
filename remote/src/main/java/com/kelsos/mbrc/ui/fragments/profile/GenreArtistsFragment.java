@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.ui.fragments.profile;
 
 import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.widget.ListView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistCursorAdapter;
-import com.kelsos.mbrc.dao.ArtistHelper;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import roboguice.fragment.provided.RoboListFragment;
@@ -56,14 +54,15 @@ public class GenreArtistsFragment extends RoboListFragment
   }
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-    final String sortOrder = String.format("%s ASC", ArtistHelper.NAME);
-    //todo add genre to artist?
-    final String selection = String.format("%s = ?", ArtistHelper.ARTIST_ID);
-    final String[] selectionArgs = {
-        String.valueOf(genreId)
-    };
-    return new CursorLoader(getActivity(), ArtistHelper.CONTENT_URI, ArtistHelper.getProjection(),
-        selection, selectionArgs, sortOrder);
+    //final String sortOrder = String.format("%s ASC", ArtistHelper.NAME);
+    ////todo add genre to artist?
+    //final String selection = String.format("%s = ?", ArtistHelper.ARTIST_ID);
+    //final String[] selectionArgs = {
+    //    String.valueOf(genreId)
+    //};
+    //return new CursorLoader(getActivity(), ArtistHelper.CONTENT_URI, ArtistHelper.getProjection(),
+    //    selection, selectionArgs, sortOrder);
+    return null;
   }
 
   @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {

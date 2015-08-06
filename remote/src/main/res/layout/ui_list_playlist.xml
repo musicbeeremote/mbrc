@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="vertical"
-              android:paddingLeft="@dimen/side_margin_half"
-              android:paddingRight="@dimen/side_margin_half"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/small_margin"
+    android:paddingRight="@dimen/small_margin">
 
-    <TextView
-        android:id="@+id/line_one"
-        android:textColor="@color/remote_text"
-        android:gravity="center_vertical"
-        android:singleLine="true"
-        android:ellipsize="end"
-        android:textSize="@dimen/playlist_entry_text_size"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/playlist_entry_height"
-        tools:text="Playlist Name"/>
+  <TextView
+      android:id="@+id/line_one"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/playlist_entry_height"
+      android:ellipsize="end"
+      android:gravity="center_vertical"
+      android:singleLine="true"
+      android:textColor="@color/remote_text"
+      android:textSize="@dimen/playlist_entry_text_size"
+      tools:text="Playlist Name" />
 
-    <View android:id="@+id/divider"
-          android:layout_width="match_parent"
-          android:layout_height="0.5dip"
-          android:paddingRight="@dimen/side_margin_extra"
-          android:paddingLeft="@dimen/side_margin_extra"/>
+  <View
+      android:id="@+id/divider"
+      android:layout_width="match_parent"
+      android:layout_height="0.5dip"
+      android:paddingLeft="@dimen/normal_margin"
+      android:paddingRight="@dimen/normal_margin" />
 
 </LinearLayout>

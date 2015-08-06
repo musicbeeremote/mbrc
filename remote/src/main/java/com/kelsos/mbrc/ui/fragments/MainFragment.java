@@ -310,7 +310,7 @@ import roboguice.util.Ln;
       return;
     }
     switch (change.getState()) {
-      case Playing:
+      case PLAYING:
         playPauseButton.setImageResource(R.drawable.ic_pause_circle_fill);
         playPauseButton.setTag("Playing");
 
@@ -319,13 +319,13 @@ import roboguice.util.Ln;
             new UserAction(Protocol.NowPlayingPosition, true)));
         trackProgressAnimation();
         break;
-      case Paused:
+      case PAUSED:
         playPauseButton.setImageResource(R.drawable.ic_play_circle_fill);
         playPauseButton.setTag("Paused");
         /* Stop the animation if the track is paused*/
         stopTrackProgressAnimation();
         break;
-      case Stopped:
+      case STOPPED:
         playPauseButton.setImageResource(R.drawable.ic_play_circle_fill);
         playPauseButton.setTag("Stopped");
         /* Stop the animation if the track is paused*/

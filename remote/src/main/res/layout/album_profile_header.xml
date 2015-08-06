@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/mbrc_cover"
         android:contentDescription="@string/profile_header_cover_description"
-        android:background="@drawable/ui_list_item_background"/>
+        android:background="@android:color/transparent"/>
 
     <LinearLayout
         android:paddingTop="24dp"
@@ -25,8 +25,8 @@
         android:layout_height="fill_parent"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:paddingRight="@dimen/side_margin_half"
-        android:paddingLeft="@dimen/side_margin_half">
+        android:paddingRight="@dimen/small_margin"
+        android:paddingLeft="@dimen/small_margin">
 
         <TextView
             android:id="@+id/header_album"

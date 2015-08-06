@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.dao.Track;
-import com.kelsos.mbrc.dao.TrackHelper;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
@@ -39,7 +38,8 @@ public class AlbumProfileCursorAdapter extends CursorAdapter {
 
   @Override public void bindView(final View view, Context context, Cursor cursor) {
     ViewHolder holder = (ViewHolder) view.getTag();
-    final Track track = TrackHelper.fromCursor(cursor);
+    // FIXME: 8/6/15 Temporarily disabled
+    final Track track = null;
     holder.lineOne.setText(track.getTitle());
     holder.overflow.setOnClickListener(v -> showPopup(v, track));
   }

@@ -12,7 +12,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.dao.QueueTrack;
-import com.kelsos.mbrc.dao.QueueTrackHelper;
 import com.kelsos.mbrc.enums.PlayState;
 import com.mobeta.android.dslv.DragSortCursorAdapter;
 
@@ -57,7 +56,7 @@ public class CurrentQueueAdapter extends DragSortCursorAdapter {
 
     LinearLayout overflow = (LinearLayout) view.findViewById(R.id.list_overflow);
 
-    final QueueTrack track = QueueTrackHelper.fromCursor(mCursor);
+    final QueueTrack track = null;
 
     final String title = track.getTitle();
     final String artist = track.getArtist();

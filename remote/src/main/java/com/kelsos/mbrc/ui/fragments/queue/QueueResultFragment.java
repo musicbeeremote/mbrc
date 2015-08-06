@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.ui.fragments.queue;
 
 import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.dao.QueueTrackHelper;
 import roboguice.fragment.provided.RoboListFragment;
 
 public class QueueResultFragment extends RoboListFragment
@@ -50,7 +48,7 @@ public class QueueResultFragment extends RoboListFragment
     };
 
     final String[] from = {
-        QueueTrackHelper.TITLE, QueueTrackHelper.ARTIST
+        //QueueTrackHelper.TITLE, QueueTrackHelper.ARTIST
     };
 
     mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.listitem_track, null, from, to, 0);
@@ -64,15 +62,16 @@ public class QueueResultFragment extends RoboListFragment
 
   @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-    final String selection =
-        String.format("%s LIKE ? OR %s LIKE ?", QueueTrackHelper.ARTIST, QueueTrackHelper.TITLE);
-    final String like = String.format("%%%s%%", mCurFilter);
-    final String[] selectionArgs = {
-        like, like
-    };
-
-    return new CursorLoader(getActivity(), QueueTrackHelper.CONTENT_URI,
-        QueueTrackHelper.getProjection(), selection, selectionArgs, null);
+    //final String selection =
+    //    String.format("%s LIKE ? OR %s LIKE ?", QueueTrackHelper.ARTIST, QueueTrackHelper.TITLE);
+    //final String like = String.format("%%%s%%", mCurFilter);
+    //final String[] selectionArgs = {
+    //    like, like
+    //};
+    //
+    //return new CursorLoader(getActivity(), QueueTrackHelper.CONTENT_URI,
+    //    QueueTrackHelper.getProjection(), selection, selectionArgs, null);
+    return null;
   }
 
   @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {

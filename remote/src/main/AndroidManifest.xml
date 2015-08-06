@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.kelsos.mbrc"
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
-  android:installLocation="auto">
+<manifest
+    package="com.kelsos.mbrc"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:installLocation="auto">
 
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -13,17 +14,17 @@
 
   <application
       android:name=".RemoteApplication"
-    android:allowBackup="true"
-    android:description="@string/application_description"
+      android:allowBackup="true"
+      android:description="@string/application_description"
       android:icon="@mipmap/ic_launcher"
-    android:label="@string/application_name"
+      android:label="@string/application_name"
       android:logo="@mipmap/ic_launcher"
       android:theme="@style/AppTheme"
       tools:ignore="UnusedAttribute">
     <activity
         android:name=".ui.activities.MainFragmentActivity"
-      android:launchMode="singleTop"
-      android:windowSoftInputMode="adjustNothing">
+        android:launchMode="singleTop"
+        android:windowSoftInputMode="adjustNothing">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
 
@@ -33,13 +34,13 @@
     <activity android:name=".ui.activities.ProfileActivity" />
     <activity android:name="com.kelsos.mbrc.ui.activities.PlaylistActivity" />
     <activity
-      android:name="com.kelsos.mbrc.ui.activities.ConnectionManagerActivity"
-      android:windowSoftInputMode="adjustNothing" />
+        android:name="com.kelsos.mbrc.ui.activities.ConnectionManagerActivity"
+        android:windowSoftInputMode="adjustNothing" />
 
     <service
-      android:name="com.kelsos.mbrc.controller.Controller"
-      android:description="@string/info_service_description"
-      android:permission="android.permission.READ_PHONE_STATE">
+        android:name="com.kelsos.mbrc.controller.Controller"
+        android:description="@string/info_service_description"
+        android:permission="android.permission.READ_PHONE_STATE">
       <intent-filter>
         <action android:name="android.intent.action.PHONE_STATE" />
         <action android:name="android.net.wifi.STATE_CHANGE" />
@@ -49,12 +50,6 @@
         <action android:name="com.kelsos.mbrc.notification.previous" />
       </intent-filter>
     </service>
-
-    <provider
-      android:name="com.kelsos.mbrc.dao.LibraryProvider"
-      android:authorities="com.kelsos.mbrc.dao.provider"
-      android:enabled="true"
-      android:exported="false" />
 
     <receiver android:name=".utilities.MediaButtonReceiver">
       <intent-filter>
@@ -66,32 +61,30 @@
     </receiver>
 
     <meta-data
-      android:name="roboguice.modules"
-      android:value="com.kelsos.mbrc.RemoteModule" />
+        android:name="roboguice.modules"
+        android:value="com.kelsos.mbrc.RemoteModule" />
     <meta-data
-      android:name="roboguice.annotations.packages"
-      android:value="roboguice,com.kelsos.mbrc" />
+        android:name="roboguice.annotations.packages"
+        android:value="roboguice,com.kelsos.mbrc" />
 
     <activity
-      android:name="com.kelsos.mbrc.ui.activities.SettingsActivity"
-      android:label="@string/title_activity_settings"
-      android:parentActivityName="com.kelsos.mbrc.ui.activities.MainFragmentActivity"
-      tools:ignore="UnusedAttribute">
+        android:name="com.kelsos.mbrc.ui.activities.SettingsActivity"
+        android:parentActivityName="com.kelsos.mbrc.ui.activities.MainFragmentActivity"
+        tools:ignore="UnusedAttribute">
       <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value="com.kelsos.mbrc.ui.activities.MainFragmentActivity" />
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value="com.kelsos.mbrc.ui.activities.MainFragmentActivity" />
     </activity>
     <activity
-      android:name="com.kelsos.mbrc.ui.activities.QueueResultActivity"
-      android:label="@string/title_activity_queue_result"
-      android:parentActivityName="com.kelsos.mbrc.ui.activities.MainFragmentActivity"
-      tools:ignore="UnusedAttribute">
+        android:name="com.kelsos.mbrc.ui.activities.QueueResultActivity"
+        android:parentActivityName="com.kelsos.mbrc.ui.activities.MainFragmentActivity"
+        tools:ignore="UnusedAttribute">
       <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value="com.kelsos.mbrc.ui.activities.MainFragmentActivity" />
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value="com.kelsos.mbrc.ui.activities.MainFragmentActivity" />
     </activity>
 
-  <receiver android:name=".widgets.WidgetSmall">
+    <receiver android:name=".widgets.WidgetSmall">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>

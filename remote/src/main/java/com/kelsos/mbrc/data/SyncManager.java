@@ -2,43 +2,32 @@ package com.kelsos.mbrc.data;
 
 import android.content.Context;
 import android.os.Environment;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.dao.Album;
-import com.kelsos.mbrc.dao.AlbumDao;
-import com.kelsos.mbrc.dao.AlbumHelper;
 import com.kelsos.mbrc.dao.Artist;
-import com.kelsos.mbrc.dao.ArtistDao;
-import com.kelsos.mbrc.dao.ArtistHelper;
 import com.kelsos.mbrc.dao.Cover;
-import com.kelsos.mbrc.dao.CoverDao;
-import com.kelsos.mbrc.dao.DaoSession;
 import com.kelsos.mbrc.dao.Genre;
-import com.kelsos.mbrc.dao.GenreDao;
-import com.kelsos.mbrc.dao.GenreHelper;
 import com.kelsos.mbrc.dao.Playlist;
-import com.kelsos.mbrc.dao.PlaylistDao;
-import com.kelsos.mbrc.dao.PlaylistHelper;
 import com.kelsos.mbrc.dao.PlaylistTrack;
-import com.kelsos.mbrc.dao.PlaylistTrackDao;
-import com.kelsos.mbrc.dao.PlaylistTrackHelper;
 import com.kelsos.mbrc.dao.QueueTrack;
-import com.kelsos.mbrc.dao.QueueTrackDao;
-import com.kelsos.mbrc.dao.QueueTrackHelper;
 import com.kelsos.mbrc.dao.Track;
-import com.kelsos.mbrc.dao.TrackDao;
-import com.kelsos.mbrc.dao.TrackHelper;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.rest.responses.PaginatedDataResponse;
 import com.kelsos.mbrc.util.Logger;
+import com.raizlabs.android.dbflow.runtime.DBTransactionInfo;
+import com.raizlabs.android.dbflow.runtime.TransactionManager;
+import com.raizlabs.android.dbflow.runtime.transaction.DeleteTransaction;
+import com.raizlabs.android.dbflow.sql.language.Select;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import retrofit.client.Response;
 import roboguice.util.Ln;
 import rx.Observable;
@@ -50,15 +39,13 @@ public class SyncManager {
   public static final int BUFFER_SIZE = 1024;
   private static final int STARTING_OFFSET = 0;
   private static final int LIMIT = 800;
-  private final DaoSession daoSession;
   private RemoteApi api;
   private ObjectMapper mapper;
   @Inject private Context mContext;
 
-  @Inject public SyncManager(RemoteApi api, ObjectMapper mapper, DaoSession daoSession) {
+  @Inject public SyncManager(RemoteApi api, ObjectMapper mapper) {
     this.api = api;
     this.mapper = mapper;
-    this.daoSession = daoSession;
   }
 
   public void startLibrarySyncing() {
@@ -74,17 +61,17 @@ public class SyncManager {
   }
 
   private void processPlaylists(PaginatedDataResponse data) {
-    PlaylistDao playlistDao = daoSession.getPlaylistDao();
-    daoSession.runInTx(() -> {
+    final TransactionManager manager = TransactionManager.getInstance();
+
+    for (JsonNode node : data.getData()) {
+      final Playlist playlist;
       try {
-        for (JsonNode node : data.getData()) {
-          final Playlist playlist = mapper.readValue(node, Playlist.class);
-          playlistDao.insert(playlist);
-        }
-      } catch (IOException e) {
-        Ln.d(e);
+        playlist = mapper.treeToValue(node, Playlist.class);
+        manager.saveOnSaveQueue(playlist);
+      } catch (JsonProcessingException e) {
+        Ln.v(e);
       }
-    });
+    }
 
     int total = data.getTotal();
     int offset = data.getOffset();
@@ -95,7 +82,7 @@ public class SyncManager {
           .observeOn(Schedulers.io())
           .subscribe(this::processPlaylists, Logger::logThrowable);
     } else {
-      mContext.getContentResolver().notifyChange(PlaylistHelper.CONTENT_URI, null);
+
       Ln.d("Playlist sync complete.");
       startPlaylistTrackSyncing();
     }
@@ -124,22 +111,21 @@ public class SyncManager {
   }
 
   private void clearCurrentQueue() {
-    QueueTrackDao queueTrackDao = daoSession.getQueueTrackDao();
-    daoSession.runInTx(queueTrackDao::deleteAll);
+    TransactionManager.getInstance()
+        .addTransaction(new DeleteTransaction<>(DBTransactionInfo.create(), QueueTrack.class));
   }
 
   private void processCurrentQueue(PaginatedDataResponse paginatedData) {
-    QueueTrackDao queueTrackDao = daoSession.getQueueTrackDao();
-    daoSession.runInTx(() -> {
+    final TransactionManager manager = TransactionManager.getInstance();
+    for (JsonNode node : paginatedData.getData()) {
+      final QueueTrack track;
       try {
-        for (JsonNode node : paginatedData.getData()) {
-          final QueueTrack track = mapper.readValue(node, QueueTrack.class);
-          queueTrackDao.insert(track);
-        }
-      } catch (IOException e) {
-        Ln.d(e);
+        track = mapper.treeToValue(node, QueueTrack.class);
+        manager.saveOnSaveQueue(track);
+      } catch (JsonProcessingException e) {
+        Ln.e(e);
       }
-    });
+    }
 
     int total = paginatedData.getTotal();
     int offset = paginatedData.getOffset();
@@ -152,22 +138,19 @@ public class SyncManager {
           .subscribe(this::processCurrentQueue, Logger::logThrowable);
     } else {
       Ln.d("Queue track sync complete.");
-      mContext.getContentResolver().notifyChange(QueueTrackHelper.CONTENT_URI, null);
     }
   }
 
   private void processCovers(PaginatedDataResponse paginatedData) {
-    CoverDao coverDao = daoSession.getCoverDao();
-    daoSession.runInTx(() -> {
-      try {
-        for (JsonNode node : paginatedData.getData()) {
-          final Cover cover = mapper.readValue(node, Cover.class);
-          coverDao.insert(cover);
-        }
-      } catch (IOException e) {
-        Ln.d(e);
+
+    try {
+      for (JsonNode node : paginatedData.getData()) {
+        final Cover cover = mapper.treeToValue(node, Cover.class);
+
       }
-    });
+    } catch (IOException e) {
+      Ln.d(e);
+    }
 
     int total = paginatedData.getTotal();
     int offset = paginatedData.getOffset();
@@ -183,17 +166,13 @@ public class SyncManager {
 
   private void processGenres(PaginatedDataResponse paginatedData) {
 
-    GenreDao genreDao = daoSession.getGenreDao();
-    daoSession.runInTx(() -> {
-      try {
-        for (JsonNode node : paginatedData.getData()) {
-          final Genre genre = mapper.readValue(node, Genre.class);
-          genreDao.insert(genre);
-        }
-      } catch (IOException e) {
-        Ln.d(e);
+    try {
+      for (JsonNode node : paginatedData.getData()) {
+        final Genre genre = mapper.treeToValue(node, Genre.class);
       }
-    });
+    } catch (IOException e) {
+      Ln.d(e);
+    }
 
     int total = paginatedData.getTotal();
     int offset = paginatedData.getOffset();
@@ -202,23 +181,21 @@ public class SyncManager {
     if (offset + limit < total) {
       getGenres(offset + limit, limit).subscribe(this::processGenres, Logger::logThrowable);
     } else {
-      mContext.getContentResolver().notifyChange(GenreHelper.CONTENT_URI, null);
+
       Ln.d("Genre sync complete.");
     }
   }
 
   private void processArtists(PaginatedDataResponse paginatedData) {
-    ArtistDao artistDao = daoSession.getArtistDao();
-    daoSession.runInTx(() -> {
-      try {
-        for (JsonNode node : paginatedData.getData()) {
-          final Artist artist = mapper.readValue(node, Artist.class);
-          artistDao.insert(artist);
-        }
-      } catch (IOException e) {
-        Ln.d(e);
+    try {
+      for (JsonNode node : paginatedData.getData()) {
+        final Artist artist = mapper.treeToValue(node, Artist.class);
+
       }
-    });
+    } catch (IOException e) {
+      Ln.d(e);
+    }
+
 
     int total = paginatedData.getTotal();
     int offset = paginatedData.getOffset();
@@ -227,18 +204,19 @@ public class SyncManager {
     if (offset + limit < total) {
       getArtists(offset + limit, limit).subscribe(this::processArtists, Logger::logThrowable);
     } else {
-      mContext.getContentResolver().notifyChange(ArtistHelper.CONTENT_URI, null);
+
       Ln.d("Artist sync complete.");
     }
   }
 
   private void startPlaylistTrackSyncing() {
     Observable.create((Subscriber<? super List<Playlist>> subscriber) -> {
-      PlaylistDao playlistDao = daoSession.getPlaylistDao();
-      final List<Playlist> playlists = playlistDao.loadAll();
+
+      final List<Playlist> playlists = new Select().from(Playlist.class).queryList();
       subscriber.onNext(playlists);
       subscriber.onCompleted();
-    }).subscribeOn(Schedulers.io())
+    })
+        .subscribeOn(Schedulers.io())
         .observeOn(Schedulers.io())
         .subscribe(this::startGettingTracksForPlaylists, Logger::logThrowable);
   }
@@ -252,17 +230,15 @@ public class SyncManager {
   }
 
   private void processPlaylistTracks(PaginatedDataResponse data) {
-    PlaylistTrackDao dao = daoSession.getPlaylistTrackDao();
-    daoSession.runInTx(() -> {
-      try {
-        for (JsonNode node : data.getData()) {
-          final PlaylistTrack album = mapper.readValue(node, PlaylistTrack.class);
-          dao.insert(album);
-        }
-      } catch (IOException e) {
-        Ln.d(e);
+
+    try {
+      for (JsonNode node : data.getData()) {
+        final PlaylistTrack album = mapper.treeToValue(node, PlaylistTrack.class);
+
       }
-    });
+    } catch (IOException e) {
+      Ln.d(e);
+    }
 
     int total = data.getTotal();
     int offset = data.getOffset();
@@ -271,24 +247,21 @@ public class SyncManager {
     if (offset + limit < total) {
       //getAlbums(offset + limit, limit).subscribe(this::processAlbums, Logger::logThrowable);
     } else {
-      mContext.getContentResolver().notifyChange(PlaylistTrackHelper.CONTENT_URI, null);
+
       Ln.d("Playlist sync complete.");
     }
   }
 
   private void processAlbums(PaginatedDataResponse paginatedData) {
 
-    AlbumDao albumDao = daoSession.getAlbumDao();
-    daoSession.runInTx(() -> {
-      try {
-        for (JsonNode node : paginatedData.getData()) {
-          final Album album = mapper.readValue(node, Album.class);
-          albumDao.insert(album);
-        }
-      } catch (IOException e) {
-        Ln.d(e);
+    try {
+      for (JsonNode node : paginatedData.getData()) {
+        final Album album = mapper.treeToValue(node, Album.class);
+
       }
-    });
+    } catch (IOException e) {
+      Ln.d(e);
+    }
 
     int total = paginatedData.getTotal();
     int offset = paginatedData.getOffset();
@@ -297,25 +270,22 @@ public class SyncManager {
     if (offset + limit < total) {
       getAlbums(offset + limit, limit).subscribe(this::processAlbums, Logger::logThrowable);
     } else {
-      mContext.getContentResolver().notifyChange(AlbumHelper.CONTENT_URI, null);
+
       Ln.d("Album sync complete.");
     }
   }
 
   private void processTracks(PaginatedDataResponse paginatedData) {
 
-    TrackDao trackDao = daoSession.getTrackDao();
-    daoSession.runInTx(() -> {
-      try {
+    try {
 
-        for (JsonNode node : paginatedData.getData()) {
-          final Track track = mapper.readValue(node, Track.class);
-          trackDao.insert(track);
-        }
-      } catch (IOException e) {
-        Ln.d(e);
+      for (JsonNode node : paginatedData.getData()) {
+        final Track track = mapper.treeToValue(node, Track.class);
+
       }
-    });
+    } catch (IOException e) {
+      Ln.d(e);
+    }
 
     int total = paginatedData.getTotal();
     int offset = paginatedData.getOffset();
@@ -324,14 +294,14 @@ public class SyncManager {
     if (offset + limit < total) {
       getTracks(offset + limit, limit).subscribe(this::processTracks, Logger::logThrowable);
     } else {
-      mContext.getContentResolver().notifyChange(TrackHelper.CONTENT_URI, null);
+
       Ln.d("Track sync complete.");
     }
   }
 
   private void fetchCovers() {
-    CoverDao coverDao = daoSession.getCoverDao();
-    List<Cover> covers = coverDao.loadAll();
+
+    List<Cover> covers = new Select().from(Cover.class).queryList();
     for (Cover cover : covers) {
       api.getCoverById(cover.getId())
           .subscribeOn(Schedulers.io())

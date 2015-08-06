@@ -2,8 +2,8 @@
 <resources>
   <color name="mbrc_pressed_default">#44ffffff</color>
   <color name="mbrc_selected_item">#11ffffff</color>
-  <color name="remoteText">#ffffffff</color>
-  <color name="remoteSecondaryText">#b3ffffff</color>
+  <color name="remote_text">#ffffffff</color>
+  <color name="remote_secondary_text">#b3ffffff</color>
   <color name="mbrc_transparent_dark">#99000000</color>
   <color name="colorPrimary">#ffc107</color>
   <color name="colorPrimaryDark">#ffa000</color>

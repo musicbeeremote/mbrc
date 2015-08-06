@@ -119,7 +119,7 @@ import com.squareup.otto.Subscribe;
    * @param event A notification event that the notification service received
    */
   @SuppressLint("NewApi") private void buildLollipopNotification(NotificationDataAvailable event) {
-    int playStateIcon = event.getState() == PlayState.Playing ? R.drawable.ic_action_pause
+    int playStateIcon = event.getState() == PlayState.PLAYING ? R.drawable.ic_action_pause
         : R.drawable.ic_action_play;
 
     final Notification.MediaStyle mediaStyle = new Notification.MediaStyle();
@@ -193,12 +193,12 @@ import com.squareup.otto.Subscribe;
     }
 
     mNormalView.setImageViewResource(R.id.notification_play,
-        state == PlayState.Playing ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
+        state == PlayState.PLAYING ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
 
     if (isJellyBean() && mExpandedView != null) {
 
       mExpandedView.setImageViewResource(R.id.expanded_notification_playpause,
-          state == PlayState.Playing ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
+          state == PlayState.PLAYING ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
     }
   }
 

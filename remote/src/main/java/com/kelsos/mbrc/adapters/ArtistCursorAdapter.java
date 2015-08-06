@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.dao.Artist;
-import com.kelsos.mbrc.dao.ArtistHelper;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
@@ -38,7 +37,8 @@ public class ArtistCursorAdapter extends CursorAdapter {
   }
 
   @Override public void bindView(final View view, Context context, Cursor cursor) {
-    final Artist artist = ArtistHelper.fromCursor(cursor);
+    // FIXME: 8/6/15 Temporarily disabled
+    final Artist artist = new Artist();
     ViewHolder holder = (ViewHolder) view.getTag();
     holder.lineOne.setText(artist.getName());
     holder.overflow.setOnClickListener(v -> showPopup(v, artist));

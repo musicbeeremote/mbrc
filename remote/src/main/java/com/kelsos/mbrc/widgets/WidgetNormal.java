@@ -90,7 +90,7 @@ public class WidgetNormal extends RoboAppWidgetProvider {
         new RemoteViews(context.getPackageName(), R.layout.widget_normal);
 
     widget.setImageViewResource(R.id.widget_normal_play,
-        state.getState() == PlayState.Playing ? R.drawable.ic_action_pause
+        state.getState() == PlayState.PLAYING ? R.drawable.ic_action_pause
             : R.drawable.ic_action_play);
     manager.updateAppWidget(widgetsIds, widget);
   }

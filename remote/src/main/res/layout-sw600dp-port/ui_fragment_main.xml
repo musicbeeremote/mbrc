@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout android:id="@+id/mainRelativeLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mainRelativeLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
@@ -9,8 +9,8 @@
   <FrameLayout
       android:id="@+id/album_cover_area"
       android:layout_width="match_parent"
-      android:layout_weight="1"
-      android:layout_height="0dp">
+      android:layout_height="0dp"
+      android:layout_weight="1">
 
     <ImageView
         android:id="@id/main_album_cover_image_view"
@@ -40,7 +40,7 @@
           android:shadowDy="1"
           android:shadowRadius="1.5"
           android:text="@string/main_label_duration_current"
-          android:textColor="@color/remoteText"
+          android:textColor="@color/remote_text"
           android:textSize="12sp" />
 
       <TextView
@@ -57,7 +57,7 @@
           android:shadowDy="1"
           android:shadowRadius="1.5"
           android:text="@string/main_label_duration_total"
-          android:textColor="@color/remoteText"
+          android:textColor="@color/remote_text"
           android:textSize="12sp"
           tools:ignore="RelativeOverlap" />
 
@@ -86,9 +86,9 @@
       android:id="@+id/main_track_info_one"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="horizontal"
       android:layout_marginBottom="@dimen/small_margin"
       android:layout_marginTop="@dimen/small_margin"
+      android:orientation="horizontal"
       android:paddingLeft="@dimen/normal_margin"
       android:paddingRight="@dimen/normal_margin">
 
@@ -104,7 +104,7 @@
         android:scrollHorizontally="true"
         android:singleLine="true"
         android:text="@string/main_label_track_title"
-        android:textColor="@color/remoteText"
+        android:textColor="@color/remote_text"
         android:textSize="@dimen/text_title_size" />
 
     <TextView
@@ -120,7 +120,7 @@
         android:scrollHorizontally="true"
         android:singleLine="true"
         android:text="@string/main_label_artist"
-        android:textColor="@color/remoteText"
+        android:textColor="@color/remote_text"
         android:textSize="@dimen/text_subhead_size" />
 
     <TextView
@@ -136,7 +136,7 @@
         android:scrollHorizontally="true"
         android:singleLine="true"
         android:text="@string/main_label_album"
-        android:textColor="@color/remoteText"
+        android:textColor="@color/remote_text"
         android:textSize="@dimen/text_body_size" />
 
   </RelativeLayout>
@@ -151,7 +151,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:background="@drawable/md_transparent"
+        android:background="?attr/selectableItemBackground"
         android:contentDescription="@string/main_button_mute_description"
         android:paddingLeft="@dimen/normal_margin"
         android:paddingRight="@dimen/normal_margin"
@@ -198,7 +198,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="0.7"
-        android:background="@drawable/md_transparent"
+        android:background="?attr/selectableItemBackground"
         android:contentDescription="@string/main_button_repeat_description"
         android:src="@drawable/ic_repeat_grey600_24dp"
         android:tint="@color/button_material_dark" />
@@ -208,7 +208,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.8"
-        android:background="@drawable/md_transparent"
+        android:background="?attr/selectableItemBackground"
         android:contentDescription="@string/main_button_previous_description"
         android:src="@drawable/ic_skip_previous_black_36dp"
         android:tint="@color/button_material_dark" />
@@ -218,7 +218,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:background="@drawable/md_transparent"
+        android:background="?attr/selectableItemBackground"
         android:contentDescription="@string/main_button_play_pause_description"
         android:src="@drawable/ic_play_circle_fill" />
 
@@ -227,7 +227,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.8"
-        android:background="@drawable/md_transparent"
+        android:background="?attr/selectableItemBackground"
         android:contentDescription="@string/main_button_next_description"
         android:src="@drawable/ic_skip_next_black_36dp"
         android:tint="@color/button_material_dark" />
@@ -238,7 +238,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:background="@drawable/md_transparent"
+        android:background="?attr/selectableItemBackground"
         android:contentDescription="@string/main_button_shuffle_description"
         android:src="@drawable/ic_shuffle_grey600_24dp"
         android:tint="@color/button_material_dark" />

@@ -1,8 +1,5 @@
 package com.kelsos.mbrc.ui.fragments;
 
-import android.annotation.SuppressLint;
-import android.graphics.drawable.NinePatchDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -125,13 +122,6 @@ public class NowPlayingFragment extends RoboFragment
     // drag & drop manager
     dragAndDropManager = new RecyclerViewDragDropManager();
 
-    @SuppressWarnings("deprecation")
-    @SuppressLint({ "NewApi", "LocalSuppress" })
-    final NinePatchDrawable drawable = Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP
-        ? (NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z3)
-        : (NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z3, null);
-
-    dragAndDropManager.setDraggingItemShadowDrawable(drawable);
     swipeManager = new RecyclerViewSwipeManager();
 
     adapter.setOnUserActionListener(this);

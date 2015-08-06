@@ -1,82 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:background="@drawable/ui_list_item_background"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/ui_grid_image"
-        android:src="@drawable/ic_image_no_cover"
+  <ImageView
+      android:id="@+id/ui_grid_image"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/mbrc_grid_item_width"
+      android:contentDescription="@string/grid_album_cover"
+      android:scaleType="centerCrop"
+      android:src="@drawable/ic_image_no_cover" />
+
+  <RelativeLayout
+      android:id="@+id/grid_info_layout"
+      android:layout_width="match_parent"
+      android:layout_height="68dp"
+      android:orientation="horizontal">
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:scaleType="centerCrop"
-        android:layout_height="@dimen/mbrc_grid_item_width"
-        android:contentDescription="@string/grid_album_cover"/>
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/ui_item_context_indicator"
+        android:layout_toStartOf="@+id/ui_item_context_indicator"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/normal_margin"
+        android:paddingStart="@dimen/normal_margin">
 
-    <RelativeLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="68dp"
-        android:id="@+id/grid_info_layout">
+      <TextView
+          android:id="@+id/line_one"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:ellipsize="end"
+          android:singleLine="true"
+          android:textColor="@color/remote_text"
+          android:textSize="@dimen/mbrc_grid_line_one_size"
+          android:textStyle="normal"
+          tools:text="Title" />
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingStart="@dimen/side_margin"
-            android:paddingLeft="@dimen/side_margin"
-            android:gravity="center_vertical"
-            android:layout_toLeftOf="@+id/ui_item_context_indicator"
-            android:layout_toStartOf="@+id/ui_item_context_indicator"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
+      <TextView
+          android:id="@+id/line_two"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:ellipsize="end"
+          android:singleLine="true"
+          android:textColor="@color/remote_secondary_text"
+          android:textSize="@dimen/mbrc_grid_line_two_size"
+          android:textStyle="normal"
+          tools:text="Artist" />
+    </LinearLayout>
 
-            <TextView
-                tools:text="Title"
-                android:id="@+id/line_one"
-                android:textColor="@color/remote_text"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:layout_width="match_parent"
-                android:textStyle="normal"
-                android:textSize="@dimen/mbrc_grid_line_one_size"
-                android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:id="@+id/ui_item_context_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:padding="@dimen/normal_margin">
 
-            <TextView
-                tools:text="Artist"
-                android:ellipsize="end"
-                android:textColor="@color/remote_secondary_text"
-                android:id="@+id/line_two"
-                android:singleLine="true"
-                android:textStyle="normal"
-                android:textSize="@dimen/mbrc_grid_line_two_size"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ui_item_context_indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:padding="@dimen/side_margin"
-            android:background="@drawable/selectable_background_mbrc_dark"
-            android:gravity="center_vertical"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true">
-
-            <ImageView
-                android:id="@+id/grid_track_overflow"
-                android:layout_gravity="center_vertical"
-                android:layout_width="wrap_content"
-                android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
-                android:tint="@android:color/white"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/abc_action_menu_overflow_description"/>
-        </LinearLayout>
+      <ImageView
+          android:id="@+id/grid_track_overflow"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical"
+          android:contentDescription="@string/abc_action_menu_overflow_description"
+          android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+          android:tint="@android:color/white" />
+    </LinearLayout>
 
 
-    </RelativeLayout>
+  </RelativeLayout>
 
 </LinearLayout>

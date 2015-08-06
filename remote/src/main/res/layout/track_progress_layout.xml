@@ -8,7 +8,7 @@
     android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/side_margin_half"
+    android:padding="@dimen/small_margin"
     tools:showIn="@layout/ui_fragment_main">
 
     <TextView

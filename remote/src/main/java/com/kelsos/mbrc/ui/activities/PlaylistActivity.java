@@ -32,7 +32,7 @@ public class PlaylistActivity extends RoboAppCompatActivity
     mTitle = intent.getStringExtra(NAME);
     path = intent.getStringExtra(PATH);
 
-    getFragmentManager().beginTransaction()
+    getSupportFragmentManager().beginTransaction()
         .replace(R.id.playlist_mini_control, MiniControlFragment.newInstance())
         .commit();
   }

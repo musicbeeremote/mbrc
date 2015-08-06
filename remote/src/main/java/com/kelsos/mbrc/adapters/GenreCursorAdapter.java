@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.dao.Genre;
-import com.kelsos.mbrc.dao.GenreHelper;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
@@ -38,7 +37,8 @@ public class GenreCursorAdapter extends CursorAdapter {
   }
 
   @Override public void bindView(final View view, final Context context, Cursor cursor) {
-    final Genre genre = GenreHelper.fromCursor(cursor);
+    // FIXME: 8/6/15 temporarily disabled
+    final Genre genre = new Genre();
     ViewHolder holder = (ViewHolder) view.getTag();
     holder.lineOne.setText(genre.getName());
     holder.overflow.setOnClickListener(v -> showPopup(v, genre));

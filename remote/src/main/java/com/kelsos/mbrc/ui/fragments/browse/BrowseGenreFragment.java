@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -19,7 +18,6 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.GenreCursorAdapter;
 import com.kelsos.mbrc.dao.Genre;
-import com.kelsos.mbrc.dao.GenreHelper;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
@@ -95,8 +93,9 @@ public class BrowseGenreFragment extends RoboListFragment
   }
 
   @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-    return new CursorLoader(getActivity(), GenreHelper.CONTENT_URI,
-        GenreHelper.getProjection(), null, null, null);
+    //return new CursorLoader(getActivity(), GenreHelper.CONTENT_URI,
+    //    GenreHelper.getProjection(), null, null, null);
+    return null;
   }
 
   @Override

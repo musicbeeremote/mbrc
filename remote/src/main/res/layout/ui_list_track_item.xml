@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textColor="@color/remoteText"
+            android:textColor="@color/remote_text"
             android:textSize="@dimen/abc_text_size_title_material"
             tools:text="Track title" />
 
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textColor="@color/remoteSecondaryText"
+            android:textColor="@color/remote_secondary_text"
             android:textSize="@dimen/abc_text_size_subhead_material"
             tools:text="Artist Name" />
       </LinearLayout>

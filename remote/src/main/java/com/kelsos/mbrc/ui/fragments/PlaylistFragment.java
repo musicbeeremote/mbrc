@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.ui.fragments;
 
 import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.widget.ListView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistCursorAdapter;
-import com.kelsos.mbrc.dao.PlaylistHelper;
 import com.kelsos.mbrc.data.SyncManager;
 import roboguice.fragment.provided.RoboListFragment;
 import roboguice.inject.InjectView;
@@ -48,8 +46,9 @@ public class PlaylistFragment extends RoboListFragment
   }
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-    return new CursorLoader(getActivity(), PlaylistHelper.CONTENT_URI,
-        PlaylistHelper.getProjection(), null, null, null);
+    //return new CursorLoader(getActivity(), PlaylistHelper.CONTENT_URI,
+    //    PlaylistHelper.getProjection(), null, null, null);
+    return null;
   }
 
   @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {

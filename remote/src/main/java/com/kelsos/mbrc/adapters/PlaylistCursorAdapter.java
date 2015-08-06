@@ -14,7 +14,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.dao.Playlist;
-import com.kelsos.mbrc.dao.PlaylistHelper;
+
 import com.kelsos.mbrc.ui.activities.PlaylistActivity;
 
 public class PlaylistCursorAdapter extends CursorAdapter {
@@ -30,7 +30,8 @@ public class PlaylistCursorAdapter extends CursorAdapter {
   }
 
   @Override public void bindView(final View view, Context context, Cursor cursor) {
-    final Playlist playlist = PlaylistHelper.fromCursor(cursor);
+    // FIXME: 8/6/15 Temporarily does nothing
+    final Playlist playlist = new Playlist();
     TextView lineOne = (TextView) view.findViewById(R.id.line_one);
     LinearLayout overflow = (LinearLayout) view.findViewById(R.id.ui_item_context_indicator);
     lineOne.setTypeface(robotoRegular);

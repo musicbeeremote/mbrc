@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:gravity="center_vertical"
-              android:orientation="vertical"
-              android:background="@color/mbrc_background">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
 
-    <ListView
-        android:id="@android:id/list"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:drawSelectorOnTop="false"
-        android:fastScrollAlwaysVisible="false"
-        android:dividerHeight="0dp"
-        android:divider="@null"
-        android:fastScrollEnabled="true"
-        android:listSelector="@drawable/mbrc_dark_compo_list_selector_holo_dark"/>
+  <ListView
+      android:id="@android:id/list"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1"
+      android:divider="@null"
+      android:dividerHeight="0dp"
+      android:drawSelectorOnTop="false"
+      android:fastScrollAlwaysVisible="false"
+      android:fastScrollEnabled="true"
+      />
 
 </LinearLayout>
