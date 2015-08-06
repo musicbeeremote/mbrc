@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-                 xmlns:tools="http://schemas.android.com/tools"
-                 android:layout_width="match_parent"
-                 android:layout_height="@dimen/mbrc_drawer_item_height"
-                 android:id="@+id/dr_option_text"
-                 android:layout_gravity="start|center_vertical"
-                 tools:text="Menu entry"
-                 style="@style/Menu.Title"/>
+<com.kelsos.mbrc.ui.layout.CheckableLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/mbrc_drawer_item_height"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="horizontal">
+
+  <ImageView
+      android:id="@+id/rowIcon"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:contentDescription="@string/description_checkable_linearlayout_icon"
+      android:tint="@color/hint_foreground_material_dark" />
+
+  <CheckedTextView
+      android:id="@+id/rowText"
+      style="@style/Menu.Title"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_gravity="start|center_vertical"
+      android:text="@string/drawer_connection_status_off" />
+
+</com.kelsos.mbrc.ui.layout.CheckableLinearLayout>

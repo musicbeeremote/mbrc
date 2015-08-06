@@ -2,16 +2,15 @@ package com.kelsos.mbrc.ui.dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
-import roboguice.fragment.provided.RoboDialogFragment;
-
-import static com.kelsos.mbrc.util.RemoteUtils.isNullOrEmpty;
+import roboguice.fragment.RoboDialogFragment;
 
 public class SettingsDialogFragment extends RoboDialogFragment {
 
@@ -52,7 +51,6 @@ public class SettingsDialogFragment extends RoboDialogFragment {
     args.putString(NAME, settings.getName());
     args.putString(ADDRESS, settings.getAddress());
     args.putInt(PORT, settings.getPort());
-    args.putInt(HTTP, settings.getHttp());
     fragment.setArguments(args);
     return fragment;
   }
@@ -67,14 +65,15 @@ public class SettingsDialogFragment extends RoboDialogFragment {
     }
   }
 
-  @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+  @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
     MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
     builder.customView(R.layout.ui_dialog_settings, false);
     builder.title(R.string.settings_dialog_add);
     builder.positiveText(R.string.settings_dialog_add);
     builder.negativeText(android.R.string.cancel);
     builder.callback(new MaterialDialog.ButtonCallback() {
-      @Override public void onPositive(MaterialDialog materialDialog) {
+      @Override public void onPositive(MaterialDialog dialog) {
+
         boolean shouldIClose = true;
         String hostname = hostEdit.getText().toString();
         String computerName = nameEdit.getText().toString();
@@ -93,12 +92,12 @@ public class SettingsDialogFragment extends RoboDialogFragment {
           ConnectionSettings settings =
               new ConnectionSettings(hostname, computerName, portNum, currentIndex, httpNum);
           mListener.onDialogPositiveClick(SettingsDialogFragment.this, settings);
-          materialDialog.dismiss();
+          dialog.dismiss();
         }
       }
 
-      @Override public void onNegative(MaterialDialog materialDialog) {
-        materialDialog.cancel();
+      @Override public void onNegative(MaterialDialog dialog) {
+        dialog.cancel();
       }
     });
 
@@ -107,14 +106,20 @@ public class SettingsDialogFragment extends RoboDialogFragment {
     hostEdit = (EditText) view.findViewById(R.id.settings_dialog_host);
     nameEdit = (EditText) view.findViewById(R.id.settings_dialog_name);
     portEdit = (EditText) view.findViewById(R.id.settings_dialog_port);
+
     httpEdit = (EditText) view.findViewById(R.id.settings_dialog_http);
     return materialDialog;
+  }
+
+  private boolean isNullOrEmpty(String portText) {
+    return portText == null || TextUtils.isEmpty(portText);
   }
 
   @Override public void onStart() {
     super.onStart();
     nameEdit.setText(currentName);
     hostEdit.setText(currentAddress);
+
     if (currentHttpPort > 0) {
       httpEdit.setText(String.format("%d", currentHttpPort));
     }
@@ -149,6 +154,6 @@ public class SettingsDialogFragment extends RoboDialogFragment {
   }
 
   public interface SettingsDialogListener {
-    void onDialogPositiveClick(DialogFragment dialog, ConnectionSettings settings);
+    void onDialogPositiveClick(SettingsDialogFragment dialog, ConnectionSettings settings);
   }
 }

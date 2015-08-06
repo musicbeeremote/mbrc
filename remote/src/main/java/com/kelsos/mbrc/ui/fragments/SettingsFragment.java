@@ -1,43 +1,38 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.view.MenuItem;
-import android.webkit.WebView;
-import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.machinarius.preferencefragment.PreferenceFragment;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.constants.EventType;
-import com.kelsos.mbrc.events.Events;
-import com.kelsos.mbrc.events.Message;
+import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity;
+import com.kelsos.mbrc.ui.dialogs.WebViewDialog;
+import com.kelsos.mbrc.utilities.RemoteUtils;
+import com.squareup.otto.Bus;
+import roboguice.util.Ln;
 
-/**
- * A {@link android.preference.PreferenceFragment} subclass.
- * Used on devices with API > 11;
- * Use the {@link SettingsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SettingsFragment extends PreferenceFragment {
-  public SettingsFragment() {
+
+  private Bus bus;
+  private Context mContext;
+
+  public static SettingsFragment newInstance(Bus bus) {
+    final SettingsFragment fragment = new SettingsFragment();
+    fragment.setBus(bus);
+    return fragment;
   }
 
-  /**
-   * Use this factory method to create a new instance of
-   * this fragment using the provided parameters.
-   *
-   * @return A new instance of fragment SettingsFragment.
-   */
-  public static SettingsFragment newInstance() {
-    return new SettingsFragment();
-  }
-
-  @Override public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setHasOptionsMenu(true);
+  @Override public void onCreate(Bundle paramBundle) {
+    super.onCreate(paramBundle);
     addPreferencesFromResource(R.xml.application_settings);
+    mContext = getActivity();
 
     final Preference mOpenSource =
         findPreference(getResources().getString(R.string.preferences_open_source));
@@ -57,34 +52,35 @@ public class SettingsFragment extends PreferenceFragment {
 
     if (mManager != null) {
       mManager.setOnPreferenceClickListener(preference -> {
-        startActivity(new Intent(getActivity(), ConnectionManagerActivity.class));
+        startActivity(new Intent(mContext, ConnectionManagerActivity.class));
         return false;
       });
     }
 
     if (mVersion != null) {
-      mVersion.setSummary(String.format(getResources().getString(R.string.settings_version_number),
-          BuildConfig.VERSION_NAME));
-    }
-
-    if (mBuild != null) {
-      mBuild.setSummary(BuildConfig.BUILD_TIME);
-    }
-
-    if (mRevision != null) {
-      mRevision.setSummary(BuildConfig.GIT_SHA);
-    }
-
-    final Preference mShowNotification = findPreference(getResources().
-        getString(R.string.settings_key_notification_control));
-    if (mShowNotification != null) {
-      mShowNotification.setOnPreferenceChangeListener((preference, newValue) -> {
-        boolean value = (Boolean) newValue;
-        if (!value) {
-          Events.messages.onNext(new Message(EventType.CANCEL_NOTIFICATION));
+      try {
+        mVersion.setSummary(
+            String.format(getResources().getString(R.string.settings_version_number),
+                RemoteUtils.getVersion(mContext)));
+      } catch (PackageManager.NameNotFoundException e) {
+        if (BuildConfig.DEBUG) {
+          Ln.d(e);
         }
-        return true;
-      });
+      }
+    }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+      final Preference mShowNotification = findPreference(getResources().
+          getString(R.string.settings_key_notification_control));
+      if (mShowNotification != null) {
+        mShowNotification.setOnPreferenceChangeListener((preference, newValue) -> {
+          boolean value = (Boolean) newValue;
+          if (!value) {
+            bus.post(new MessageEvent(UserInputEventType.CancelNotification));
+          }
+          return true;
+        });
+      }
     }
 
     final Preference mLicense =
@@ -95,28 +91,31 @@ public class SettingsFragment extends PreferenceFragment {
         return false;
       });
     }
+
+    if (mBuild != null) {
+      mBuild.setSummary(BuildConfig.BUILD_TIME);
+    }
+    if (mRevision != null) {
+      mRevision.setSummary(BuildConfig.GIT_SHA);
+    }
   }
 
   private void showLicenseDialog() {
-    final WebView webView = new WebView(getActivity());
-    webView.loadUrl("file:///android_asset/license.html");
-    new MaterialDialog.Builder(getActivity())
-        .customView(webView, false)
-        .positiveText(android.R.string.ok)
-        .title("MusicBee Remote license")
-        .build()
-        .show();
+    Bundle args = new Bundle();
+    args.putString(WebViewDialog.ARG_URL, "file:///android_asset/license.html");
+    args.putInt(WebViewDialog.ARG_TITLE, R.string.musicbee_remote_license_title);
+    WebViewDialog dialog = new WebViewDialog();
+    dialog.setArguments(args);
+    dialog.show(getActivity().getSupportFragmentManager(), "license_dialog");
   }
 
   private void showOpenSourceLicenseDialog() {
-    final WebView webView = new WebView(getActivity());
-    webView.loadUrl("file:///android_asset/licenses.html");
-    new MaterialDialog.Builder(getActivity())
-        .customView(webView, false)
-        .positiveText(android.R.string.ok)
-        .title("Open source licenses")
-        .build()
-        .show();
+    Bundle args = new Bundle();
+    args.putString(WebViewDialog.ARG_URL, "file:///android_asset/licenses.html");
+    args.putInt(WebViewDialog.ARG_TITLE, R.string.open_source_licenses_title);
+    WebViewDialog dialog = new WebViewDialog();
+    dialog.setArguments(args);
+    dialog.show(getActivity().getSupportFragmentManager(), "licenses_dialogs");
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
@@ -127,5 +126,9 @@ public class SettingsFragment extends PreferenceFragment {
       default:
         return super.onOptionsItemSelected(item);
     }
+  }
+
+  public void setBus(Bus bus) {
+    this.bus = bus;
   }
 }

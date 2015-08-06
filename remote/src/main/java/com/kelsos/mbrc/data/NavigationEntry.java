@@ -1,13 +1,22 @@
 package com.kelsos.mbrc.data;
 
+import android.support.annotation.DrawableRes;
+import android.support.annotation.StringRes;
 public class NavigationEntry {
-  private String label;
+  @StringRes private int stringId;
 
-  public NavigationEntry(String label) {
-    this.label = label;
+  @DrawableRes private int drawableId;
+
+  public NavigationEntry(@StringRes int stringId, @DrawableRes int drawableId) {
+    this.stringId = stringId;
+    this.drawableId = drawableId;
   }
 
-  public String getLabel() {
-    return label;
+  @StringRes public int getTitleId() {
+    return stringId;
+  }
+
+  @DrawableRes public int getDrawableId() {
+    return this.drawableId;
   }
 }

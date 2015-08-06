@@ -1,12 +1,12 @@
 package com.kelsos.mbrc.ui.fragments;
 
-import android.app.FragmentManager;
+import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,73 +14,96 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RatingBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnLongClick;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.constants.EventType;
-import com.kelsos.mbrc.data.model.PlayerState;
-import com.kelsos.mbrc.enums.PlayState;
-import com.kelsos.mbrc.events.Events;
-import com.kelsos.mbrc.events.Message;
+import com.kelsos.mbrc.constants.Const;
+import com.kelsos.mbrc.constants.Protocol;
+import com.kelsos.mbrc.constants.ProtocolEventType;
+import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.data.UserAction;
+import com.kelsos.mbrc.enums.ConnectionStatus;
+import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
+import com.kelsos.mbrc.events.ui.CoverAvailable;
+import com.kelsos.mbrc.events.ui.LfmRatingChanged;
+import com.kelsos.mbrc.events.ui.OnMainFragmentOptionsInflated;
+import com.kelsos.mbrc.events.ui.PlayStateChange;
+import com.kelsos.mbrc.events.ui.RepeatChange;
+import com.kelsos.mbrc.events.ui.ScrobbleChange;
+import com.kelsos.mbrc.events.ui.ShuffleChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
-import com.kelsos.mbrc.rest.RemoteApi;
-import com.kelsos.mbrc.util.Logger;
+import com.kelsos.mbrc.events.ui.UpdatePosition;
+import com.kelsos.mbrc.events.ui.VolumeChange;
+import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import javax.inject.Inject;
-import roboguice.fragment.provided.RoboFragment;
-import roboguice.inject.InjectView;
+import roboguice.fragment.RoboFragment;
 import roboguice.util.Ln;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 @Singleton public class MainFragment extends RoboFragment {
-  /**
-   * Total milliseconds in a second (1000)
-   */
-  public static final int MILLISECONDS = 1000;
-  /**
-   * Total seconds in a minute (60)
-   */
-  public static final int SECONDS = 60;
-  public static final int TIME_PERIOD = 1;
-  public static final int DELAY = 20;
   private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
-  private ShareActionProvider mShareActionProvider;
-  private Intent mShareIntent;
+  // Injects
+  @Inject protected Bus bus;
+  // Inject elements of the view
+  @Bind(R.id.main_artist_label) TextView artistLabel;
+  @Bind(R.id.main_title_label) TextView titleLabel;
+  @Bind(R.id.main_label_album) TextView albumLabel;
+  @Bind(R.id.main_track_progress_current) TextView trackProgressCurrent;
+  @Bind(R.id.main_track_duration_total) TextView trackDuration;
+  @Bind(R.id.main_button_play_pause) ImageButton playPauseButton;
+  @Bind(R.id.main_volume_seeker) SeekBar volumeBar;
+  @Bind(R.id.main_track_progress_seeker) SeekBar progressBar;
+  @Bind(R.id.main_mute_button) ImageButton muteButton;
+  @Bind(R.id.main_shuffle_button) ImageButton shuffleButton;
+  @Bind(R.id.main_repeat_button) ImageButton repeatButton;
+  @Bind(R.id.main_album_cover_image_view) ImageView albumCover;
 
-  @InjectView(R.id.main_track_progress_current) private TextView trackProgressCurrent;
-  @InjectView(R.id.main_track_duration_total) private TextView trackDuration;
-  @InjectView(R.id.main_track_progress_seeker) private SeekBar trackProgressSlider;
-  @InjectView(R.id.main_album_cover_image_view) private ImageView albumCover;
-  @InjectView(R.id.ratingWrapper) private LinearLayout ratingWrapper;
-  @InjectView(R.id.track_rating_bar) private RatingBar trackRating;
-  @Inject private RemoteApi api;
-  @Inject private PlayerState playerStateModel;
+  private ShareActionProvider mShareActionProvider;
+  private boolean userChangingVolume;
+  private int previousVol;
   private ScheduledFuture mProgressUpdateHandler;
-  private SeekBar.OnSeekBarChangeListener durationSeekBarChangeListener =
+  private Menu menu;
+  private SeekBar.OnSeekBarChangeListener volumeBarChangeListener =
       new SeekBar.OnSeekBarChangeListener() {
+
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
           if (fromUser) {
-            api.updatePosition(progress)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(resp -> handlePositionUpdate(resp.getPosition(), resp.getDuration()),
-                    Logger::logThrowable);
+            final UserAction action =
+                new UserAction(Protocol.PlayerVolume, String.valueOf(seekBar.getProgress()));
+            postAction(action);
+          }
+        }
+
+        public void onStopTrackingTouch(SeekBar seekBar) {
+          userChangingVolume = false;
+        }
+
+        public void onStartTrackingTouch(SeekBar seekBar) {
+          userChangingVolume = true;
+        }
+      };
+  private SeekBar.OnSeekBarChangeListener progressBarChangeListener =
+      new SeekBar.OnSeekBarChangeListener() {
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+          if (fromUser && progress != previousVol) {
+            final UserAction action =
+                new UserAction(Protocol.NowPlayingPosition, String.valueOf(progress));
+            postAction(action);
+            previousVol = progress;
           }
         }
 
@@ -90,125 +113,99 @@ import rx.schedulers.Schedulers;
         public void onStopTrackingTouch(SeekBar seekBar) {
         }
       };
-  private RatingBar.OnRatingBarChangeListener ratingChangeListener = (ratingBar, v, b) -> {
-    if (b) {
+  private OnExpandToolbarListener listener;
 
-      api.updateRating(v)
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(resp -> Ln.d("Success %b", resp.isSuccess()),
-              error -> Ln.d("error %s", error.getMessage()));
-    }
-  };
-  private ImageView.OnClickListener coverOnClick = new ImageView.OnClickListener() {
+  @OnClick(R.id.main_button_play_pause) public void playButtonPressed(View v) {
+    final UserAction action = new UserAction(Protocol.PlayerPlayPause, true);
+    postAction(action);
+  }
 
-    private boolean isActive = false;
+  @OnClick(R.id.main_button_previous) public void onPreviousButtonPressed(View v) {
+    final UserAction action = new UserAction(Protocol.PlayerPrevious, true);
+    postAction(action);
+  }
 
-    @Override public void onClick(View view) {
+  @OnClick(R.id.main_button_next) public void onNextButtonPressed() {
+    final UserAction action = new UserAction(Protocol.PlayerNext, true);
+    postAction(action);
+  }
 
-      if (!isActive) {
-        animateRatingBar();
-      }
-    }
+  @OnLongClick(R.id.main_button_play_pause) public boolean onPlayerStopPressed() {
+    final UserAction action = new UserAction(Protocol.PlayerStop, true);
+    postAction(action);
+    return true;
+  }
 
-    private void animateRatingBar() {
-      final int fadeInDuration = 300;
-      final int timeBetween = 3000;
-      final int fadeOutDuration = 800;
+  @OnClick(R.id.main_mute_button) public void onMuteButtonPressed(View v) {
+    final UserAction action = new UserAction(Protocol.PlayerMute, Const.TOGGLE);
+    postAction(action);
+  }
 
-      Animation fadeIn = new AlphaAnimation(0, 1);
-      fadeIn.setInterpolator(new DecelerateInterpolator());
-      fadeIn.setDuration(fadeInDuration);
+  @OnClick(R.id.main_shuffle_button) public void onShuffleButtonClicked(View v) {
+    final UserAction action = new UserAction(Protocol.PlayerShuffle, Const.TOGGLE);
+    postAction(action);
+  }
 
-      Animation fadeOut = new AlphaAnimation(1, 0);
-      fadeOut.setInterpolator(new AccelerateInterpolator());
-      fadeOut.setStartOffset(fadeInDuration + timeBetween);
-      fadeOut.setDuration(fadeOutDuration);
+  @OnClick(R.id.main_repeat_button) public void onRepeatButtonPressed(View v) {
+    final UserAction action = new UserAction(Protocol.PlayerRepeat, Const.TOGGLE);
+    postAction(action);
+  }
 
-      AnimationSet animation = new AnimationSet(false);
-      animation.addAnimation(fadeIn);
-      animation.addAnimation(fadeOut);
-      animation.setRepeatCount(1);
-
-      animation.setAnimationListener(new Animation.AnimationListener() {
-        @Override public void onAnimationStart(Animation animation) {
-          isActive = true;
-        }
-
-        @Override public void onAnimationEnd(Animation animation) {
-          isActive = false;
-          ratingWrapper.setVisibility(View.INVISIBLE);
-        }
-
-        @Override public void onAnimationRepeat(Animation animation) {
-        }
-      });
-      ratingWrapper.setVisibility(View.VISIBLE);
-      ratingWrapper.startAnimation(animation);
-    }
-  };
+  /**
+   * Posts a user action wrapped in a MessageEvent. The bus will
+   * pass the MessageEvent through the Socket to the plugin.
+   *
+   * @param action Any kind of UserAction available in the {@link Protocol}
+   */
+  private void postAction(UserAction action) {
+    bus.post(new MessageEvent(ProtocolEventType.UserAction, action));
+  }
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setHasOptionsMenu(true);
+    userChangingVolume = false;
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.ui_fragment_main, container, false);
-  }
-
-  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-    FragmentManager fragmentManager = getFragmentManager();
-    final ButtonFragment fragment = ButtonFragment.newInstance();
-    fragmentManager.beginTransaction().replace(R.id.mbrc_controls, fragment).commit();
+    final View view = inflater.inflate(R.layout.ui_fragment_main, container, false);
+    ButterKnife.bind(this, view);
+    progressBar.setOnSeekBarChangeListener(progressBarChangeListener);
+    volumeBar.setOnSeekBarChangeListener(volumeBarChangeListener);
+    return view;
   }
 
   @Override public void onStart() {
     super.onStart();
     setTextViewTypeface();
-    registerListeners();
-
-
-    Events.coverAvailableSub.subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(notification -> updateAlbumCover(notification.getCover()), Logger::logThrowable);
-
-    api.getCurrentPosition()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .repeatWhen(a -> a.flatMap(n -> Observable.timer(DELAY, TimeUnit.SECONDS)))
-        .subscribe(update -> handlePositionUpdate(update.getPosition(), update.getDuration()),
-            Logger::logThrowable);
-
-    Events.trackInfoSub
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeOn(Schedulers.io())
-        .subscribe(this::handleTrackInfoChange, Logger::logThrowable);
-
-    playerStateModel.observePlaystate()
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeOn(Schedulers.io())
-        .subscribe(this::handlePlayStateChange, Logger::logThrowable);
-  }
-
-  private void updateAlbumCover(final Bitmap bitmap) {
-    albumCover.setImageBitmap(bitmap);
+    bus.register(this);
   }
 
   @Override public void onResume() {
     super.onResume();
+    listener.expandToolbar();
+    final UserAction action = new UserAction(Protocol.NowPlayingPosition, true);
+    bus.post(new MessageEvent(ProtocolEventType.UserAction, action));
   }
 
-  /**
-   * Registers the listeners for the interface elements used for interaction.
-   */
-  private void registerListeners() {
-    ratingWrapper.setVisibility(View.INVISIBLE);
-    trackRating.setOnRatingBarChangeListener(ratingChangeListener);
-    trackProgressSlider.setOnSeekBarChangeListener(durationSeekBarChangeListener);
-    albumCover.setOnClickListener(coverOnClick);
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.menu_lastfm_scrobble:
+        bus.post(new MessageEvent(ProtocolEventType.UserAction,
+            new UserAction(Protocol.PlayerScrobble, Const.TOGGLE)));
+        return true;
+      case R.id.menu_rating_dialog:
+        final RatingDialogFragment ratingDialog = new RatingDialogFragment();
+        ratingDialog.show(getActivity().getSupportFragmentManager(), "RatingDialog");
+        return true;
+      case R.id.menu_lastfm_love:
+        bus.post(new MessageEvent(ProtocolEventType.UserAction,
+            new UserAction(Protocol.NowPlayingLfmRating, Const.TOGGLE)));
+        return true;
+      default:
+        return false;
+    }
   }
 
   /**
@@ -216,59 +213,127 @@ import rx.schedulers.Schedulers;
    */
   private void setTextViewTypeface() {
     try {
+      /* Marquee Hack */
+      artistLabel.setSelected(true);
+      titleLabel.setSelected(true);
+      albumLabel.setSelected(true);
+
       Typeface robotoRegular =
           Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
-      trackProgressCurrent.setTypeface(robotoRegular);
-      trackDuration.setTypeface(robotoRegular);
-    } catch (Exception e) {
-      if (BuildConfig.DEBUG) {
-        Ln.e(e, "setting typeface");
-      }
+      Typeface robotoMedium =
+          Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_medium.ttf");
+      artistLabel.setTypeface(robotoRegular);
+      titleLabel.setTypeface(robotoMedium);
+      albumLabel.setTypeface(robotoMedium);
+      trackProgressCurrent.setTypeface(robotoMedium);
+      trackDuration.setTypeface(robotoMedium);
+    } catch (Exception ignore) {
+      Ln.d(ignore);
     }
+  }
+
+  @Override public void onStop() {
+    super.onStop();
+    bus.unregister(this);
   }
 
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    inflater.inflate(R.menu.share, menu);
+    inflater.inflate(R.menu.menu, menu);
+    this.menu = menu;
     MenuItem shareItem = menu.findItem(R.id.actionbar_share);
     mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
-    updateShareIntent("", "");
-    mShareActionProvider.setShareIntent(mShareIntent);
+    mShareActionProvider.setShareIntent(getShareIntent());
+    bus.post(new OnMainFragmentOptionsInflated());
   }
 
-  private void updateShareIntent(String artist, String title) {
-    mShareIntent = new Intent(Intent.ACTION_SEND);
-    mShareIntent.setType("text/plain");
-    final String payload = String.format("Now Playing: %s - %s", artist, title);
-    mShareIntent.putExtra(Intent.EXTRA_TEXT, payload);
+  private Intent getShareIntent() {
+    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+    shareIntent.setType("text/plain");
+    final String payload =
+        String.format("Now Playing: %s - %s", artistLabel.getText(), titleLabel.getText());
+    shareIntent.putExtra(Intent.EXTRA_TEXT, payload);
+    return shareIntent;
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case R.id.actionbar_share:
-        mShareActionProvider.setShareIntent(mShareIntent);
-        return true;
-      default:
-        return false;
+  @Subscribe public void handleCoverEvent(final CoverAvailable cevent) {
+    if (albumCover == null) {
+      return;
+    }
+    if (cevent.isAvailable()) {
+      albumCover.setImageBitmap(cevent.getCover());
+    } else {
+      albumCover.setImageResource(R.drawable.ic_image_no_cover);
     }
   }
 
-  @SuppressWarnings("UnusedDeclaration") public void handleRatingChange(float rating) {
-    if (trackRating != null) {
-      trackRating.setRating(rating);
+  @Subscribe public void handleShuffleChange(ShuffleChange change) {
+    if (shuffleButton == null) {
+      return;
     }
+
+    int color = getResources().getColor(
+        !ShuffleChange.OFF.equals(change.getShuffleState()) ? R.color.colorAccent
+            : R.color.button_material_dark);
+    shuffleButton.setColorFilter(color);
+
+    shuffleButton.setImageResource(
+        ShuffleChange.AUTODJ.equals(change.getShuffleState()) ? R.drawable.ic_headset_grey600_24dp
+            : R.drawable.ic_shuffle_grey600_24dp);
   }
 
-  private void handlePlayStateChange(PlayState state) {
-    switch (state) {
-      case PLAYING:
+  @Subscribe public void updateRepeatButtonState(RepeatChange change) {
+    if (repeatButton == null) {
+      return;
+    }
+
+    int color = getResources().getColor(
+        change.isActive() ? R.color.colorAccent : R.color.button_material_dark);
+    repeatButton.setColorFilter(color);
+  }
+
+  @Subscribe public void updateVolumeData(VolumeChange change) {
+    if (volumeBar == null) {
+      return;
+    }
+    if (!userChangingVolume) {
+      volumeBar.setProgress(change.getVolume());
+    }
+    if (muteButton == null) {
+      return;
+    }
+    muteButton.setImageResource(change.isMute() ? R.drawable.ic_volume_off_grey600_24dp
+        : R.drawable.ic_volume_up_grey600_24dp);
+  }
+
+  @Subscribe public void handlePlayStateChange(final PlayStateChange change) {
+    if (playPauseButton == null) {
+      return;
+    }
+    switch (change.getState()) {
+      case Playing:
+        playPauseButton.setImageResource(R.drawable.ic_pause_circle_fill);
+        playPauseButton.setTag("Playing");
+
+                /* Start the animation if the track is playing*/
+        bus.post(new MessageEvent(ProtocolEventType.UserAction,
+            new UserAction(Protocol.NowPlayingPosition, true)));
         trackProgressAnimation();
         break;
-      case PAUSED:
+      case Paused:
+        playPauseButton.setImageResource(R.drawable.ic_play_circle_fill);
+        playPauseButton.setTag("Paused");
+        /* Stop the animation if the track is paused*/
         stopTrackProgressAnimation();
         break;
-      default:
+      case Stopped:
+        playPauseButton.setImageResource(R.drawable.ic_play_circle_fill);
+        playPauseButton.setTag("Stopped");
+        /* Stop the animation if the track is paused*/
         stopTrackProgressAnimation();
         activateStoppedState();
+        break;
+      default:
+        playPauseButton.setImageResource(R.drawable.ic_play_circle_fill);
         break;
     }
   }
@@ -289,15 +354,19 @@ import rx.schedulers.Schedulers;
     if (!isVisible()) {
       return;
     }
-    /* If the scheduled tasks is not null then cancel it and clear it along with the timer
-     to create them anew */
+    /* If the scheduled tasks is not null then cancel it and clear it along with the
+    timer to create them anew */
+    final int timePeriod = 1;
     stopTrackProgressAnimation();
+    if (playPauseButton.getTag().equals("Stopped") || playPauseButton.getTag().equals("Paused")) {
+      return;
+    }
 
     final Runnable updateProgress = () -> {
 
-      int currentProgress = trackProgressSlider.getProgress() / MILLISECONDS;
-      final int currentMinutes = currentProgress / SECONDS;
-      final int currentSeconds = currentProgress % SECONDS;
+      int currentProgress = progressBar.getProgress() / 1000;
+      final int currentMinutes = currentProgress / 60;
+      final int currentSeconds = currentProgress % 60;
 
       if (getActivity() == null) {
         return;
@@ -305,13 +374,12 @@ import rx.schedulers.Schedulers;
 
       getActivity().runOnUiThread(() -> {
         try {
-          if (trackProgressSlider == null) {
+          if (progressBar == null) {
             return;
           }
-          trackProgressSlider.setProgress(trackProgressSlider.getProgress() + MILLISECONDS);
+          progressBar.setProgress(progressBar.getProgress() + 1000);
           trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
         } catch (Exception ex) {
-
           if (BuildConfig.DEBUG) {
             Log.d("mbrc-log:", "animation timer", ex);
           }
@@ -320,24 +388,33 @@ import rx.schedulers.Schedulers;
     };
 
     mProgressUpdateHandler =
-        progressScheduler.scheduleAtFixedRate(updateProgress, 0, TIME_PERIOD, TimeUnit.SECONDS);
+        progressScheduler.scheduleAtFixedRate(updateProgress, 0, timePeriod, TimeUnit.SECONDS);
   }
 
   private void activateStoppedState() {
-    if (trackProgressCurrent == null || trackProgressSlider == null) {
+    if (trackProgressCurrent == null || progressBar == null) {
       return;
     }
-    trackProgressSlider.setProgress(0);
+    progressBar.setProgress(0);
     trackProgressCurrent.setText("00:00");
   }
 
-  public void handleTrackInfoChange(final TrackInfoChange change) {
-    updateShareIntent(change.getArtist(), change.getTitle());
+  @Subscribe public void handleTrackInfoChange(final TrackInfoChange change) {
+    if (artistLabel == null) {
+      return;
+    }
+    artistLabel.setText(change.getArtist());
+    titleLabel.setText(change.getTitle());
+    albumLabel.setText(TextUtils.isEmpty(change.getYear()) ? change.getAlbum()
+        : String.format("%s [%s]", change.getAlbum(), change.getYear()));
+
+    if (mShareActionProvider != null) {
+      mShareActionProvider.setShareIntent(getShareIntent());
+    }
   }
 
-  @SuppressWarnings("UnusedDeclaration")
-  public void handleConnectionStatusChange(final ConnectionStatusChange change) {
-    if (change.getStatus() == ConnectionStatusChange.Status.CONNECTION_OFF) {
+  @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChange change) {
+    if (change.getStatus() == ConnectionStatus.CONNECTION_OFF) {
       stopTrackProgressAnimation();
       activateStoppedState();
     }
@@ -348,32 +425,75 @@ import rx.schedulers.Schedulers;
    * duration and the
    * current progress of playback
    */
-
-  public void handlePositionUpdate(int current, int total) {
-    if (trackProgressCurrent == null || trackProgressSlider == null || trackDuration == null) {
+  @Subscribe public void handlePositionUpdate(UpdatePosition position) {
+    final int total = position.getTotal();
+    final int current = position.getCurrent();
+    if (trackProgressCurrent == null || progressBar == null || trackDuration == null) {
       return;
     }
     if (total == 0) {
-      new Message(EventType.REQUEST_POSITION);
+      bus.post(new MessageEvent(UserInputEventType.RequestPosition));
       return;
     }
-    int currentSeconds = current / MILLISECONDS;
-    int totalSeconds = total / MILLISECONDS;
+    int currentSeconds = current / 1000;
+    int totalSeconds = total / 1000;
 
-    final int currentMinutes = currentSeconds / SECONDS;
-    final int totalMinutes = totalSeconds / SECONDS;
+    final int currentMinutes = currentSeconds / 60;
+    final int totalMinutes = totalSeconds / 60;
 
-    currentSeconds %= SECONDS;
-    totalSeconds %= SECONDS;
+    currentSeconds %= 60;
+    totalSeconds %= 60;
     final int finalTotalSeconds = totalSeconds;
     final int finalCurrentSeconds = currentSeconds;
 
     trackDuration.setText(String.format("%02d:%02d", totalMinutes, finalTotalSeconds));
     trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, finalCurrentSeconds));
 
-    trackProgressSlider.setMax(total);
-    trackProgressSlider.setProgress(current);
+    progressBar.setMax(total);
+    progressBar.setProgress(current);
 
     trackProgressAnimation();
+  }
+
+  @Subscribe public void handleScrobbleChange(ScrobbleChange event) {
+    if (menu == null) {
+      return;
+    }
+    final MenuItem scrobbleMenuItem = menu.findItem(R.id.menu_lastfm_scrobble);
+    if (scrobbleMenuItem == null) {
+      return;
+    }
+    scrobbleMenuItem.setChecked(event.isActive());
+  }
+
+  @Subscribe public void handleLfmLoveChange(LfmRatingChanged event) {
+    if (menu == null) {
+      return;
+    }
+    final MenuItem favoriteMenuItem = menu.findItem(R.id.menu_lastfm_love);
+    if (favoriteMenuItem == null) {
+      return;
+    }
+    switch (event.getStatus()) {
+      case LOVED:
+        favoriteMenuItem.setIcon(R.drawable.ic_action_favorite);
+        break;
+      default:
+        favoriteMenuItem.setIcon(R.drawable.ic_action_favorite_outline);
+        break;
+    }
+  }
+
+  @Override public void onAttach(Activity activity) {
+    super.onAttach(activity);
+    try {
+      listener = (OnExpandToolbarListener) activity;
+    } catch (ClassCastException ex) {
+      throw new ClassCastException(activity.toString() + "must Implement OnExpandToolbarListener");
+    }
+  }
+
+  public interface OnExpandToolbarListener {
+    void expandToolbar();
   }
 }

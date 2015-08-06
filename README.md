@@ -83,6 +83,7 @@ The project also uses [Retrolamda](https://github.com/evant/gradle-retrolambda)/
 
 License
 ----------
+
 The source code of the application is licensed under the [GPLv3](https://www.gnu.org/licenses/gpl.html) license.
 
     MusicBee Remote (for Android)

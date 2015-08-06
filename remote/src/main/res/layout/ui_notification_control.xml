@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="64dp"
     android:orientation="horizontal">
 
   <ImageView
@@ -11,7 +11,7 @@
       android:layout_width="@dimen/mbrc_notification_height"
       android:layout_height="@dimen/mbrc_notification_height"
       android:background="@drawable/ic_image_no_cover"
-      android:contentDescription="@string/main_image_view_cover_description"
+      android:contentDescription="@string/description_album_cover"
       android:scaleType="fitCenter" />
 
   <LinearLayout
@@ -20,30 +20,25 @@
       android:layout_gravity="center_vertical"
       android:layout_weight="1"
       android:orientation="vertical"
-      android:paddingEnd="11dp"
-      android:paddingLeft="11dp"
-      android:paddingRight="11dp"
-      android:paddingStart="11dp">
+      android:paddingLeft="@dimen/small_margin"
+      android:paddingRight="@dimen/small_margin">
 
     <TextView
         android:id="@+id/notification_title"
+        style="@style/NotificationText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:textColor="@color/remote_text"
-        android:textSize="17sp"
+        android:textAppearance="@android:style/TextAppearance.StatusBar.EventContent.Title"
         android:textStyle="bold"
-        tools:text="Track Title" />
+        tools:text="All night" />
 
     <TextView
         android:id="@+id/notification_artist"
+        style="@style/NotificationText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:textColor="@color/remote_secondary_text"
-        tools:text="Artist Name" />
+        android:textAppearance="@android:style/TextAppearance.StatusBar.EventContent"
+        tools:text="Parov Stelar" />
 
   </LinearLayout>
 
@@ -52,7 +47,7 @@
       android:layout_width="@dimen/mbrc_notification_button_height"
       android:layout_height="@dimen/mbrc_notification_button_height"
       android:layout_gravity="center|end"
-      android:background="@drawable/selectable_background_mbrc_dark"
+      android:background="@drawable/notification_button_background"
       android:contentDescription="@string/main_button_play_pause_description"
       android:src="@drawable/ic_action_play" />
 
@@ -61,7 +56,7 @@
       android:layout_width="@dimen/mbrc_notification_button_height"
       android:layout_height="@dimen/mbrc_notification_button_height"
       android:layout_gravity="center|end"
-      android:background="@drawable/selectable_background_mbrc_dark"
+      android:background="@drawable/notification_button_background"
       android:contentDescription="@string/main_button_next_description"
       android:src="@drawable/ic_action_next" />
 
@@ -70,8 +65,8 @@
       android:layout_width="@dimen/mbrc_notification_button_height"
       android:layout_height="@dimen/mbrc_notification_button_height"
       android:layout_gravity="center|end"
-      android:background="@drawable/selectable_background_mbrc_dark"
-      android:contentDescription="@string/notification_close_description"
+      android:background="@drawable/notification_button_background"
+      android:contentDescription="@string/description_button_notification_close"
       android:src="@drawable/ic_action_collapse" />
 
 </LinearLayout>

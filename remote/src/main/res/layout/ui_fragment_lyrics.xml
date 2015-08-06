@@ -1,33 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:baselineAligned="true"
-              android:gravity="top"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:baselineAligned="true"
+    android:gravity="top"
+    android:orientation="vertical">
 
-    <ListView
-        android:id="@android:id/list"
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:layout_marginLeft="@dimen/side_margin_half"
-        android:layout_marginRight="@dimen/side_margin_half"
-        android:layout_marginTop="@dimen/side_margin_half"
-        android:layout_marginBottom="@dimen/side_margin_half"
-        android:divider="@null"
-        android:dividerHeight="0dip"
-        android:fastScrollEnabled="true"
-        android:listSelector="@android:color/transparent"
-        tools:listitem="@layout/ui_list_lyrics_item">
-    </ListView>
+  <android.support.v7.widget.RecyclerView
+      android:id="@+id/lyrics_recycler_view"
+      android:layout_width="match_parent"
+      android:layout_height="0dip"
+      android:layout_weight="1"
+      android:paddingLeft="@dimen/normal_margin"
+      android:paddingRight="@dimen/normal_margin"
+      android:paddingTop="@dimen/small_margin"
+      android:scrollbars="vertical"
+      app:layout_behavior="@string/appbar_scrolling_view_behavior"
+      tools:listitem="@layout/ui_list_lyrics_item" />
 
-    <FrameLayout
-        android:id="@+id/lyrics_mini_control"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/mini_control_height"
-        tools:context="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
-        tools:layout="@layout/ui_fragment_mini_control"/>
+  <View
+      android:layout_width="fill_parent"
+      android:layout_height="4dip"
+      android:background="@drawable/drop_shadow" />
+
+  <fragment
+      android:id="@+id/lyrics_mini_control"
+      android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/mini_control_height"
+      android:layout="@layout/ui_fragment_mini_control"
+      tools:layout="@layout/ui_fragment_mini_control" />
 
 </LinearLayout>

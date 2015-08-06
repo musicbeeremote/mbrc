@@ -1,14 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <resources>
 
-    <style name="Theme.Remote" parent="Theme.AppCompat">
-        <item name="colorPrimary">@color/remote_primary</item>
-        <item name="colorPrimaryDark">@color/remote_primary_dark</item>
-        <item name="colorAccent">@color/remote_accent</item>
-        <item name="background">@color/mbrc_background</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-    </style>
+  <style name="AppTheme"
+    parent="AppTheme.Base" />
+
+  <style name="AppTheme.Base"
+    parent="Theme.AppCompat">
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorAccent">@color/colorAccent</item>
+    <item name="background">@color/background_material_dark</item>
+    <item name="android:textColorPrimary">@color/remoteText</item>
+    <item name="android:textColor">@color/remoteSecondaryText</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
+    <item name="md_dark_theme">true</item>
+  </style>
+
+  <style name="Theme.Settings"
+    parent="@style/AppTheme">
+    <item name="android:windowNoTitle">true</item>
+    <item name="windowActionBar">false</item>
+    <item name="toolbarStyle">@style/Widget.Toolbar</item>
+  </style>
+
+  <style name="Widget.Toolbar"
+    parent="@style/Widget.AppCompat.Toolbar">
+    <item name="android:background">?attr/colorPrimary</item>
+    <item name="navigationIcon">?attr/homeAsUpIndicator</item>
+  </style>
 
 </resources>

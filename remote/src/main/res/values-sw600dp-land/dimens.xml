@@ -1,11 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="mbrc_cover">400dp</dimen>
-    <dimen name="mbrc_artist_text_size">18sp</dimen>
-    <dimen name="mbrc_title_text_size">20sp</dimen>
-    <dimen name="mbrc_album_text_size">16sp</dimen>
-    <dimen name="mbrc_year_text_size">14sp</dimen>
-    <dimen name="mbrc_duration_text_size">12sp</dimen>
-    <dimen name="mbrc_control_button">55dp</dimen>
-    <dimen name="mbrc_secondary_control_button">40dp</dimen>
 </resources>

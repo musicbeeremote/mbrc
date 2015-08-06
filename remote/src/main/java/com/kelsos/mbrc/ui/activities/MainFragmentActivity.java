@@ -1,80 +1,102 @@
 package com.kelsos.mbrc.ui.activities;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import com.github.mrengineer13.snackbar.SnackBar;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.constants.EventType;
+import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.controller.RemoteService;
 import com.kelsos.mbrc.enums.DisplayFragment;
-import com.kelsos.mbrc.enums.LfmStatus;
-import com.kelsos.mbrc.events.Events;
-import com.kelsos.mbrc.events.Message;
-import com.kelsos.mbrc.events.ui.DrawerSelection;
+import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.ui.DisplayDialog;
+import com.kelsos.mbrc.events.ui.DrawerEvent;
 import com.kelsos.mbrc.events.ui.NotifyUser;
-import com.kelsos.mbrc.events.ui.TrackInfoChange;
-import com.kelsos.mbrc.ui.fragments.DrawerFragment;
+import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
+import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.kelsos.mbrc.ui.fragments.LyricsFragment;
 import com.kelsos.mbrc.ui.fragments.MainFragment;
-import com.kelsos.mbrc.ui.fragments.PlaylistFragment;
-import com.kelsos.mbrc.ui.fragments.browse.BrowseFragment;
-import com.kelsos.mbrc.ui.fragments.queue.CurrentQueueFragment;
-import com.kelsos.mbrc.util.Logger;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import com.kelsos.mbrc.ui.fragments.NowPlayingFragment;
+import com.kelsos.mbrc.ui.fragments.SearchFragment;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
-public class MainFragmentActivity extends RoboAppCompatActivity {
+public class MainFragmentActivity extends RoboAppCompatActivity
+    implements MainFragment.OnExpandToolbarListener {
+
+  @Nullable @Bind(R.id.app_bar) AppBarLayout appBarLayout;
+  @Nullable @Bind(R.id.coordinator_layout) CoordinatorLayout coordinatorLayout;
+
+  @Inject Bus bus;
   private ActionBarDrawerToggle mDrawerToggle;
   private DrawerLayout mDrawerLayout;
   private View mDrawerMenu;
   private DisplayFragment mDisplay;
   private boolean navChanged;
-  private MenuItem favoriteItem;
-  private DrawerFragment mDrawerFragment;
+  private DialogFragment mDialog;
 
-  @SuppressWarnings("Annotator") @Override public void onCreate(Bundle savedInstanceState) {
+  private boolean isMyServiceRunning(Class<?> serviceClass) {
+    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+    for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(
+        Integer.MAX_VALUE)) {
+      if (serviceClass.getName().equals(service.service.getClassName())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.ui_main_container);
+    ButterKnife.bind(this);
+
+    if (!isMyServiceRunning(RemoteService.class)) {
+      startService(new Intent(this, RemoteService.class));
+    }
 
     Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(mToolbar);
-    getSupportActionBar().setDisplayShowTitleEnabled(false);
 
     mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
     mDrawerMenu = findViewById(R.id.drawer_menu);
-    mDrawerFragment = (DrawerFragment) getFragmentManager().findFragmentById(R.id.drawer_menu);
 
     mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open,
         R.string.drawer_close) {
+      public void onDrawerOpened(View view) {
+        invalidateOptionsMenu();
+      }
+
       public void onDrawerClosed(View view) {
         invalidateOptionsMenu();
         if (navChanged) {
           navigateToView();
         }
       }
-
-      public void onDrawerOpened(View view) {
-        invalidateOptionsMenu();
-      }
     };
 
     mDrawerLayout.setDrawerListener(mDrawerToggle);
-    mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+    mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.END);
 
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setHomeButtonEnabled(true);
@@ -89,34 +111,19 @@ public class MainFragmentActivity extends RoboAppCompatActivity {
     MainFragment mFragment = new MainFragment();
     mFragment.setArguments(getIntent().getExtras());
 
-    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
     fragmentTransaction.replace(R.id.fragment_container, mFragment, "main_fragment");
     fragmentTransaction.commit();
-
-    mDrawerFragment.getDrawerSelectionObservable()
-        .subscribe(this::handleDrawerEvent, Logger::logThrowable);
-    Events.userMessageSub
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(this::handleUserNotification, Logger::logThrowable);
-
-    Events.trackInfoSub
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeOn(Schedulers.io())
-        .subscribe(this::handleTrackInfoChange, Logger::logThrowable);
   }
 
-  public void handleTrackInfoChange(final TrackInfoChange change) {
-    ActionBar actionBar = getSupportActionBar();
-    actionBar.setTitle(change.getTitle());
-    actionBar.setSubtitle(change.getArtist());
-    actionBar.setDisplayShowTitleEnabled(true);
+  @Override public void onStart() {
+    super.onStart();
+    bus.register(this);
   }
 
-  private void closeDrawer() {
-    if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
-      mDrawerLayout.closeDrawer(mDrawerMenu);
-    }
+  @Override public void onStop() {
+    super.onStop();
+    bus.unregister(this);
   }
 
   @Override public void onConfigurationChanged(Configuration newConfig) {
@@ -124,11 +131,62 @@ public class MainFragmentActivity extends RoboAppCompatActivity {
     mDrawerToggle.onConfigurationChanged(newConfig);
   }
 
-  public boolean onCreateOptionsMenu(Menu menu) {
-    MenuInflater inflater = getMenuInflater();
-    inflater.inflate(R.menu.menu, menu);
-    favoriteItem = menu.findItem(R.id.action_bar_favorite);
-    return true;
+  private void navigateToView() {
+    switch (mDisplay) {
+      case HOME:
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+          onBackPressed();
+        }
+        break;
+      case SEARCH:
+        SearchFragment slsFragment = new SearchFragment();
+        replaceFragment(slsFragment, "library_search");
+        break;
+      case NOW_PLAYING_LIST:
+        NowPlayingFragment npFragment = new NowPlayingFragment();
+        replaceFragment(npFragment, "now_playing_list");
+        break;
+      case LYRICS:
+        LyricsFragment lFragment = new LyricsFragment();
+        replaceFragment(lFragment, "lyrics");
+        break;
+      default:
+        break;
+    }
+    navChanged = false;
+  }
+
+  private void replaceFragment(Fragment fragment, String tag) {
+
+    FragmentManager fragmentManager = getSupportFragmentManager();
+    int bsCount = fragmentManager.getBackStackEntryCount();
+
+    for (int i = 0; i < bsCount; i++) {
+      int bsId = fragmentManager.getBackStackEntryAt(i).getId();
+      fragmentManager.popBackStack(bsId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    }
+
+    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+    fragmentTransaction.replace(R.id.fragment_container, fragment);
+    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+    fragmentTransaction.addToBackStack(tag);
+    fragmentTransaction.commit();
+  }
+
+  @Override protected void onPostCreate(Bundle savedInstanceState) {
+    super.onPostCreate(savedInstanceState);
+    mDrawerToggle.syncState();
+  }
+
+  @Override public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
+    switch (keyCode) {
+      case KeyEvent.KEYCODE_VOLUME_UP:
+        return true;
+      case KeyEvent.KEYCODE_VOLUME_DOWN:
+        return true;
+      default:
+        return super.onKeyUp(keyCode, event);
+    }
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
@@ -139,30 +197,30 @@ public class MainFragmentActivity extends RoboAppCompatActivity {
         } else {
           mDrawerLayout.openDrawer(mDrawerMenu);
         }
-
-        return true;
-      case R.id.actionbar_help:
-        Intent openHelp = new Intent(Intent.ACTION_VIEW);
-        openHelp.setData(Uri.parse("http://kelsos.net/musicbeeremote/help/"));
-        startActivity(openHelp);
-        return true;
-      case R.id.action_bar_favorite:
-        return true;
-      case R.id.popup_auto_dj:
-        return true;
-      case R.id.popup_scrobble:
         return true;
       default:
         return false;
     }
   }
 
-  @Override protected void onPostCreate(Bundle savedInstanceState) {
-    super.onPostCreate(savedInstanceState);
-    mDrawerToggle.syncState();
+  @Subscribe public void showSetupDialog(DisplayDialog event) {
+    if (mDialog != null) {
+      return;
+    }
+    if (event.getDialogType() == DisplayDialog.SETUP) {
+      mDialog = new SetupDialogFragment();
+      mDialog.show(getSupportFragmentManager(), "SetupDialogFragment");
+    } else if (event.getDialogType() == DisplayDialog.UPGRADE) {
+      mDialog = new UpgradeDialogFragment();
+      mDialog.show(getSupportFragmentManager(), "UpgradeDialogFragment");
+    } else if (event.getDialogType() == DisplayDialog.INSTALL) {
+      mDialog = new UpgradeDialogFragment();
+      ((UpgradeDialogFragment) mDialog).setNewInstall(true);
+      mDialog.show(getSupportFragmentManager(), "UpgradeDialogFragment");
+    }
   }
 
-  public void handleDrawerEvent(DrawerSelection event) {
+  @Subscribe public void handleDrawerEvent(DrawerEvent event) {
     if (event.isCloseDrawer()) {
       closeDrawer();
     } else {
@@ -172,99 +230,43 @@ public class MainFragmentActivity extends RoboAppCompatActivity {
     }
   }
 
-  private void replaceFragment(Fragment fragment, String tag) {
-    FragmentManager fragmentManager = getFragmentManager();
-    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-    fragmentTransaction.replace(R.id.fragment_container, fragment);
-    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-    fragmentTransaction.addToBackStack(tag);
-    fragmentTransaction.commit();
-  }
-
-  private void navigateToView() {
-    switch (mDisplay) {
-      case HOME:
-        MainFragment mainFragment = new MainFragment();
-        replaceFragment(mainFragment, "main_fragment");
-        break;
-      case SEARCH:
-        BrowseFragment slsFragment = new BrowseFragment();
-        replaceFragment(slsFragment, "library_search");
-        break;
-      case NOW_PLAYING_LIST:
-        CurrentQueueFragment npFragment = new CurrentQueueFragment();
-        replaceFragment(npFragment, "now_playing_list");
-        break;
-      case LYRICS:
-        LyricsFragment lFragment = new LyricsFragment();
-        replaceFragment(lFragment, "lyrics");
-        break;
-      case PLAYLIST:
-        PlaylistFragment plFragment = new PlaylistFragment();
-        replaceFragment(plFragment, "playlist");
-        break;
-      case SETTINGS:
-        Intent openSettingsIntent = new Intent(this, SettingsActivity.class);
-        startActivity(openSettingsIntent);
-        break;
-      default:
-        break;
+  private void closeDrawer() {
+    if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
+      mDrawerLayout.closeDrawer(mDrawerMenu);
     }
-    navChanged = false;
   }
 
-  public void handleUserNotification(NotifyUser event) {
-    String message = event.isFromResource() ? getString(event.getResId()) : event.getMessage();
+  @Subscribe public void handleUserNotification(NotifyUser event) {
+    final String message =
+        event.isFromResource() ? getString(event.getResId()) : event.getMessage();
 
-    new SnackBar.Builder(this).withMessage(message)
-        .withStyle(SnackBar.Style.INFO)
-        .withDuration(SnackBar.SHORT_SNACK)
-        .show();
+    Snackbar.make(getCurrentFocus(), message, Snackbar.LENGTH_SHORT).show();
   }
 
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
     switch (keyCode) {
       case KeyEvent.KEYCODE_VOLUME_UP:
-        Events.messages.onNext(new Message(EventType.KEY_VOLUME_UP));
+        bus.post(new MessageEvent(UserInputEventType.KeyVolumeUp));
         return true;
       case KeyEvent.KEYCODE_VOLUME_DOWN:
-        Events.messages.onNext(new Message(EventType.KEY_VOLUME_DOWN));
+        bus.post(new MessageEvent(UserInputEventType.KeyVolumeDown));
         return true;
       default:
         return super.onKeyDown(keyCode, event);
     }
   }
 
-  @Override public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
-    switch (keyCode) {
-      case KeyEvent.KEYCODE_VOLUME_UP:
-        Events.messages.onNext(new Message(EventType.KEY_VOLUME_UP));
-        return true;
-      case KeyEvent.KEYCODE_VOLUME_DOWN:
-        Events.messages.onNext(new Message(EventType.KEY_VOLUME_DOWN));
-        return true;
-      default:
-        return super.onKeyUp(keyCode, event);
-    }
-  }
-
-  @SuppressWarnings("UnusedDeclaration") public void handleLfmStatusChange(LfmStatus status) {
-    if (favoriteItem == null) {
+  public void expandToolbar() {
+    if (appBarLayout == null) {
       return;
     }
-    switch (status) {
-      case LOVED:
-        favoriteItem.setIcon(R.drawable.ic_action_rating_favorite);
-        break;
-      case BANNED:
-        favoriteItem.setIcon(R.drawable.ic_media_lfm_banned);
-        break;
-      case NORMAL:
-        favoriteItem.setIcon(R.drawable.ic_action_rating_favorite_disabled);
-        break;
-      default:
-        favoriteItem.setIcon(R.drawable.ic_action_rating_favorite_disabled);
-        break;
+
+    CoordinatorLayout.LayoutParams params =
+        (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
+    AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
+    if (behavior != null) {
+      behavior.setTopAndBottomOffset(0);
+      behavior.onNestedPreScroll(coordinatorLayout, appBarLayout, null, 0, 1, new int[2]);
     }
   }
 }

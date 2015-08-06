@@ -10,37 +10,50 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.model.PlayerState;
-import com.kelsos.mbrc.enums.PlayState;
-import com.kelsos.mbrc.events.Events;
-import com.kelsos.mbrc.events.actions.ButtonPressedEvent;
-import com.kelsos.mbrc.events.actions.ButtonPressedEvent.Button;
+import com.kelsos.mbrc.constants.Protocol;
+import com.kelsos.mbrc.constants.ProtocolEventType;
+import com.kelsos.mbrc.data.UserAction;
+import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.CoverAvailable;
+import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
-import com.kelsos.mbrc.util.Logger;
-import roboguice.fragment.provided.RoboFragment;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
+import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class MiniControlFragment extends RoboFragment {
 
-  @InjectView(R.id.mc_track_cover) private ImageView trackCover;
+  @Inject Bus bus;
+  @InjectView(R.id.mc_track_cover) ImageView trackCover;
+  @InjectView(R.id.mc_track_artist) TextView trackArtist;
+  @InjectView(R.id.mc_track_title) TextView trackTitle;
+  @InjectView(R.id.mc_next_track) ImageButton playNext;
+  @InjectView(R.id.mc_play_pause) ImageButton playPause;
+  @InjectView(R.id.mc_prev_track) ImageButton playPrevious;
 
-  @InjectView(R.id.mc_track_artist) private TextView trackArtist;
+  ImageButton.OnClickListener playNextListener = new ImageButton.OnClickListener() {
 
-  @InjectView(R.id.mc_track_title) private TextView trackTitle;
+    @Override public void onClick(View view) {
+      bus.post(new MessageEvent(ProtocolEventType.UserAction,
+          new UserAction(Protocol.PlayerNext, true)));
+    }
+  };
+  ImageButton.OnClickListener playPauseListener = new ImageButton.OnClickListener() {
+    @Override public void onClick(View view) {
+      bus.post(new MessageEvent(ProtocolEventType.UserAction,
+          new UserAction(Protocol.PlayerPlayPause, true)));
+    }
+  };
+  ImageButton.OnClickListener playPreviousListener = new ImageButton.OnClickListener() {
+    @Override public void onClick(View view) {
+      bus.post(new MessageEvent(ProtocolEventType.UserAction,
+          new UserAction(Protocol.PlayerPrevious, true)));
+    }
+  };
 
-  @InjectView(R.id.mc_next_track) private ImageButton playNext;
-
-  @InjectView(R.id.mc_play_pause) private ImageButton playPause;
-
-  @InjectView(R.id.mc_prev_track) private ImageButton playPrevious;
-
-  @Inject private PlayerState playerState;
-
-  public static MiniControlFragment newInstance() {
-    return new MiniControlFragment();
+  @Override public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,64 +63,46 @@ public class MiniControlFragment extends RoboFragment {
 
   @Override public void onStart() {
     super.onStart();
-
-    playNext.setOnClickListener(
-        view -> Events.buttonPressedSub.onNext(new ButtonPressedEvent(Button.NEXT)));
-
-    playPause.setOnClickListener(view -> Events.buttonPressedSub.
-            onNext(new ButtonPressedEvent(Button.PLAYPAUSE)));
-
-    playPrevious.setOnClickListener(view -> Events.buttonPressedSub.
-            onNext(new ButtonPressedEvent(Button.PREVIOUS)));
-
-    Typeface robotoLight =
-        Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
-    trackTitle.setTypeface(robotoLight);
+    bus.register(this);
+    playNext.setOnClickListener(playNextListener);
+    playPause.setOnClickListener(playPauseListener);
+    playPrevious.setOnClickListener(playPreviousListener);
+    Typeface robotoRegular =
+        Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
+    Typeface robotoMedium =
+        Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_medium.ttf");
+    trackTitle.setTypeface(robotoMedium);
+    trackArtist.setTypeface(robotoRegular);
   }
 
-  @Override public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-
-    Events.coverAvailableSub
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(this::updateAlbumCover, Logger::logThrowable);
-
-    Events.trackInfoSub
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(this::handleTrackInfoChange, Logger::logThrowable);
-
-    playerState.observePlaystate()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(this::handlePlayStateChange, Logger::logThrowable);
+  @Override public void onStop() {
+    super.onStop();
+    bus.unregister(this);
   }
 
-  private void updateAlbumCover(final CoverAvailable coverAvailable) {
-    trackCover.setImageBitmap(coverAvailable.getCover());
+  @Subscribe public void handleCoverChange(CoverAvailable event) {
+    if (trackCover == null) {
+      return;
+    }
+    if (event.isAvailable()) {
+      trackCover.setImageBitmap(event.getCover());
+    } else {
+      trackCover.setImageResource(R.drawable.ic_image_no_cover);
+    }
   }
 
-  public void handleTrackInfoChange(TrackInfoChange event) {
+  @Subscribe public void handleTrackInfoChange(TrackInfoChange event) {
     trackArtist.setText(event.getArtist());
     trackTitle.setText(event.getTitle());
   }
 
-  public void handlePlayStateChange(PlayState playState) {
-    switch (playState) {
-      case PLAYING:
+  @Subscribe public void handlePlayStateChange(PlayStateChange event) {
+    switch (event.getState()) {
+      case Playing:
         playPause.setImageResource(R.drawable.ic_action_pause);
         break;
-      case PAUSED:
-        playPause.setImageResource(R.drawable.ic_action_play);
-        break;
-      case STOPPED:
-        playPause.setImageResource(R.drawable.ic_action_play);
-        break;
-      case UNDEFINED:
-        break;
       default:
-        playPause.setImageResource(R.drawable.ic_media_stop);
+        playPause.setImageResource(R.drawable.ic_action_play);
         break;
     }
   }

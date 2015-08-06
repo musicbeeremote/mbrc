@@ -1,48 +1,57 @@
 package com.kelsos.mbrc.ui.fragments;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.LyricsAdapter;
-import com.kelsos.mbrc.data.model.TrackState;
-import com.kelsos.mbrc.util.Logger;
+import com.kelsos.mbrc.events.ui.LyricsUpdated;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.Arrays;
-import roboguice.fragment.provided.RoboListFragment;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import roboguice.fragment.RoboFragment;
+import roboguice.inject.InjectView;
 
-public class LyricsFragment extends RoboListFragment {
-  @Inject private TrackState model;
-
-  @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.ui_fragment_lyrics, container, false);
-  }
+public class LyricsFragment extends RoboFragment {
+  public static final String NEWLINE = "\r\n";
+  @Inject Bus bus;
+  @InjectView(R.id.lyrics_recycler_view) private RecyclerView mRecyclerView;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    model.getLyricsObservable()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(this::updateLyricsData, Logger::logThrowable);
   }
 
   @Override public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    getFragmentManager().beginTransaction()
-        .replace(R.id.lyrics_mini_control, MiniControlFragment.newInstance())
-        .commit();
+    mRecyclerView.setHasFixedSize(true);
+    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+    mRecyclerView.setLayoutManager(layoutManager);
   }
 
-  public void updateLyricsData(String lyrics) {
-    final ArrayList<String> lyricsList = new ArrayList<>(Arrays.asList(lyrics.split("\r\n")));
-    final LyricsAdapter lyricsAdapter =
-        new LyricsAdapter(getActivity(), R.layout.ui_list_lyrics_item, lyricsList);
-    setListAdapter(lyricsAdapter);
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.ui_fragment_lyrics, container, false);
+  }
+
+  @Override public void onStart() {
+    super.onStart();
+    bus.register(this);
+  }
+
+  @Override public void onStop() {
+    super.onStop();
+    bus.unregister(this);
+  }
+
+  @Subscribe public void updateLyricsData(LyricsUpdated update) {
+    final ArrayList<String> lyrics =
+        new ArrayList<>(Arrays.asList(update.getLyrics().split(NEWLINE)));
+    LyricsAdapter adapter = new LyricsAdapter(getActivity(), lyrics);
+    mRecyclerView.setAdapter(adapter);
   }
 }

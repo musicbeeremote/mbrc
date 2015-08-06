@@ -1,9 +1,11 @@
 package com.kelsos.mbrc.data;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import android.support.annotation.NonNull;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.JsonNode;
 
-@JsonIgnoreProperties({ "index" }) public class ConnectionSettings {
+@JsonIgnoreProperties({ "index" }) public class ConnectionSettings
+    implements Comparable<ConnectionSettings> {
   private String address;
   private String name;
   private int port;
@@ -42,6 +44,10 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
     this.http = node.path("http").asInt();
   }
 
+  public void updateIndex(int index) {
+    this.index = index;
+}
+
   public String getAddress() {
     return this.address;
   }
@@ -77,5 +83,28 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
   public int getIndex() {
     return index;
+  }
+
+  /**
+   * Compares this object to the specified object to determine their relative
+   * order.
+   *
+   * @param another the object to compare to this instance.
+   * @return a negative integer if this instance is less than {@code another};
+   * a positive integer if this instance is greater than
+   * {@code another}; 0 if this instance has the same order as
+   * {@code another}.
+   * @throws ClassCastException if {@code another} cannot be converted into something
+   * comparable to {@code this} instance.
+   */
+  @Override public int compareTo(@NonNull ConnectionSettings another) {
+    int compare = 0;
+
+    if (index < another.getIndex()) {
+      compare = -1;
+    } else if (index > another.getIndex()) {
+      compare = 1;
+    }
+    return compare;
   }
 }

@@ -7,23 +7,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.NavigationEntry;
-import java.util.List;
+import java.util.ArrayList;
 
 public class DrawerAdapter extends ArrayAdapter<NavigationEntry> {
   private Context mContext;
   private int mResource;
-  private List<NavigationEntry> mData;
+  private ArrayList<NavigationEntry> mData;
   private Typeface robotoMedium;
 
-  public DrawerAdapter(Context context, int resource, List<NavigationEntry> objects) {
+  public DrawerAdapter(Context context, int resource, ArrayList<NavigationEntry> objects) {
     super(context, resource, objects);
     this.mResource = resource;
     this.mContext = context;
     this.mData = objects;
-    robotoMedium = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_medium.ttf");
+    robotoMedium = Typeface.createFromAsset(mContext.getAssets(), "fonts/roboto_medium.ttf");
   }
 
   @Override public View getView(int position, View convertView, ViewGroup parent) {
@@ -36,18 +37,21 @@ public class DrawerAdapter extends ArrayAdapter<NavigationEntry> {
       row = layoutInflater.inflate(mResource, parent, false);
 
       holder = new Holder();
-      holder.itemName = (TextView) row.findViewById(R.id.dr_option_text);
-      holder.itemName.setTypeface(robotoMedium);
+      holder.rowText = (TextView) row.findViewById(R.id.rowText);
+      holder.rowText.setTypeface(robotoMedium);
+      holder.rowIcon = (ImageView) row.findViewById(R.id.rowIcon);
       row.setTag(holder);
     } else {
       holder = (Holder) row.getTag();
     }
 
-    holder.itemName.setText(current.getLabel());
+    holder.rowText.setText(current.getTitleId());
+    holder.rowIcon.setImageResource(current.getDrawableId());
     return row;
   }
 
   static class Holder {
-    TextView itemName;
+    TextView rowText;
+    ImageView rowIcon;
   }
 }

@@ -2,49 +2,36 @@ package com.kelsos.mbrc.ui.activities;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
+import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.fragments.SettingsFragment;
-import roboguice.activity.RoboActionBarActivity;
+import com.squareup.otto.Bus;
 
 public class SettingsActivity extends RoboAppCompatActivity {
 
+  @Inject private Bus bus;
+
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_settings);
+    setContentView(R.layout.settings_activity);
+
     Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(mToolbar);
-    if (savedInstanceState == null) {
-      getFragmentManager().beginTransaction()
-          .add(R.id.container, SettingsFragment.newInstance())
-          .commit();
-    }
-  }
 
-  @Override protected void onStart() {
-    super.onStart();
     getSupportActionBar().setHomeButtonEnabled(true);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-  }
+    getSupportActionBar().setTitle(R.string.main_menu_settings);
 
-  @Override public boolean onCreateOptionsMenu(Menu menu) {
-    // Inflate the menu; this adds items to the action bar if it is present.
-    getMenuInflater().inflate(R.menu.menu_settings, menu);
-    return true;
+    final SettingsFragment fragment = SettingsFragment.newInstance(bus);
+    getSupportFragmentManager().beginTransaction().replace(R.id.content_wrapper, fragment).commit();
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
-    int id = item.getItemId();
-
-    //noinspection SimplifiableIfStatement
-    if (id == R.id.action_settings) {
+    if (item.getItemId() == android.R.id.home) {
+      finish();
       return true;
     }
-
     return super.onOptionsItemSelected(item);
   }
 }

@@ -1,99 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              xmlns:card_view="http://schemas.android.com/apk/res-auto"
-              android:orientation="horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="@dimen/list_item_height">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_dual_item_height"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:orientation="horizontal">
 
-    <android.support.v7.widget.CardView
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:gravity="center_vertical"
-        android:layout_height="fill_parent"
-        card_view:cardBackgroundColor="@color/cardview_dark_background"
-        card_view:elevation="2dp"
-        card_view:cardCornerRadius="2dp">
+  <LinearLayout
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:layout_weight="1"
+      android:orientation="vertical"
+      android:paddingEnd="@dimen/normal_margin"
+      android:paddingLeft="@dimen/normal_margin"
+      android:paddingRight="@dimen/normal_margin"
+      android:paddingStart="@dimen/normal_margin">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/side_margin_half"
-            android:orientation="horizontal">
+    <TextView
+        android:id="@+id/cs_list_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:linksClickable="false"
+        android:textColor="@color/remoteText"
+        android:textSize="@dimen/text_subhead_size"
+        tools:text="Computer Name" />
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="#FFFFFF"
-                    android:id="@+id/cs_list_name"
-                    android:lines="1"
-                    android:linksClickable="false"
-                    android:textSize="18sp"
-                    tools:text="Computer Name"/>
+      <TextView
+          android:id="@+id/cs_list_host"
+          android:layout_width="0dip"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:textColor="@color/remoteSecondaryText"
+          android:textSize="@dimen/text_body_size"
+          tools:text="192.168.100.10" />
 
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+      <TextView
+          android:id="@+id/cs_list_port"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textColor="@color/remoteSecondaryText"
+          android:textSize="@dimen/text_body_size"
+          tools:text="3132" />
+    </LinearLayout>
 
-                    <TextView
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/cs_list_host"
-                        android:textSize="14sp"
-                        android:layout_weight="1"
-                        tools:text="192.168.100.10"/>
+  </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"/>
+  <ImageView
+      android:id="@+id/cs_list_default"
+      android:layout_width="40dp"
+      android:layout_height="40dp"
+      android:layout_gravity="center_vertical"
+      android:layout_marginBottom="4dp"
+      android:layout_marginEnd="@dimen/small_margin"
+      android:layout_marginRight="@dimen/small_margin"
+      android:layout_marginTop="4dp"
+      android:contentDescription="@string/connection_default_description"
+      android:enabled="false" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/cs_list_port"
-                        android:textSize="14sp"
-                        tools:text="3132 / 8188"/>
-                </LinearLayout>
+  <LinearLayout
+      android:id="@+id/cs_list_overflow"
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:layout_weight="0"
+      android:background="?attr/selectableItemBackground"
+      android:clickable="true"
+      android:gravity="center_vertical"
+      android:padding="@dimen/normal_margin">
 
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:enabled="false"
-                android:id="@+id/cs_list_default"
-                android:layout_marginRight="@dimen/side_margin_half"
-                android:layout_marginEnd="@dimen/side_margin_half"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="4dp"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="@string/connection_default_description"/>
-
-            <ImageView
-                android:padding="5dp"
-                android:id="@+id/cs_list_overflow"
-                android:layout_gravity="center_vertical"
-                android:layout_width="wrap_content"
-                android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
-                android:tint="@android:color/white"
-                android:layout_height="wrap_content"
-                android:background="@drawable/selectable_background_mbrc_dark"
-                android:contentDescription="@string/abc_action_menu_overflow_description"/>
-
-        </LinearLayout>
-
-
-    </android.support.v7.widget.CardView>
-
+    <ImageView
+        android:id="@+id/list_item_track_overflow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/abc_action_menu_overflow_description"
+        android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+        android:tint="@android:color/white" />
+  </LinearLayout>
 
 </LinearLayout>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height"
+    android:orientation="horizontal">
+
+  <FrameLayout
+      android:id="@+id/container"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:clickable="true"
+      android:foreground="?attr/selectableItemBackground"
+      android:orientation="horizontal"
+      tools:ignore="UselessParent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        tools:ignore="UselessParent">
+
+      <LinearLayout
+          android:id="@+id/drag_handle"
+          android:layout_width="42dp"
+          android:layout_height="match_parent"
+          android:gravity="center_vertical"
+          android:paddingLeft="@dimen/normal_margin"
+          android:paddingRight="@dimen/normal_margin">
+
+        <ImageView
+            android:layout_width="@dimen/mbrc_list_drag_icon"
+            android:layout_height="@dimen/mbrc_list_drag_icon"
+            android:background="@drawable/ic_list_drag_icon"
+            android:contentDescription="@string/drag_n_drop_description" />
+      </LinearLayout>
+
+      <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="match_parent"
+          android:layout_gravity="center"
+          android:layout_marginEnd="@dimen/small_margin"
+          android:layout_marginRight="@dimen/small_margin"
+          android:layout_weight="1"
+          android:gravity="center_vertical"
+          android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/track_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/remoteText"
+            android:textSize="@dimen/abc_text_size_title_material"
+            tools:text="Track title" />
+
+        <TextView
+            android:id="@+id/track_artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/remoteSecondaryText"
+            android:textSize="@dimen/abc_text_size_subhead_material"
+            tools:text="Artist Name" />
+      </LinearLayout>
+
+      <ImageView
+          android:id="@+id/track_indicator_view"
+          android:layout_width="@dimen/normal_margin"
+          android:layout_height="match_parent"
+          android:layout_gravity="end|center_vertical"
+          android:clickable="false"
+          android:contentDescription="@string/now_playing_indicator"
+          android:scaleType="fitCenter" />
+
+      <LinearLayout
+          android:id="@+id/list_overflow"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:layout_gravity="end|center_vertical"
+          android:gravity="center_vertical"
+          android:paddingLeft="@dimen/normal_margin"
+          android:paddingRight="@dimen/normal_margin">
+
+        <ImageView
+            android:id="@+id/list_item_track_overflow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/abc_action_menu_overflow_description"
+            android:tint="@android:color/transparent" />
+
+      </LinearLayout>
+
+
+    </LinearLayout>
+
+
+  </FrameLayout>
+
+
+</RelativeLayout>

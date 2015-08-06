@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <style name="AppTheme"
+    parent="AppTheme.Base">
+    <item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb</item>
+  </style>
+
+  <style name="Theme.Settings"
+    parent="@style/AppTheme">
+    <item name="android:windowNoTitle">true</item>
+    <item name="android:windowActionBar">false</item>
+    <item name="toolbarStyle">@style/Widget.Toolbar</item>
+  </style>
+
+</resources>

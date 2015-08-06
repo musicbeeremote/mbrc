@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="mbrc_black">#000000</color>
-    <color name="remote_primary">#ffc107</color>
-    <color name="remote_primary_dark">#FFA000</color>
-    <color name="remote_accent">#7C4DFF</color>
-    <color name="mbrc_background">#424242</color>
-    <color name="remote_text">#ffffffff</color>
-    <color name="remote_divider">#1fffffff</color>
-    <color name="remote_secondary_text">#b3ffffff</color>
-    <color name="remote_transparent">#00000000</color>
-    <color name="remote_hint">#4dffffff</color>
+  <color name="mbrc_pressed_default">#44ffffff</color>
+  <color name="mbrc_selected_item">#11ffffff</color>
+  <color name="remoteText">#ffffffff</color>
+  <color name="remoteSecondaryText">#b3ffffff</color>
+  <color name="mbrc_transparent_dark">#99000000</color>
+  <color name="colorPrimary">#ffc107</color>
+  <color name="colorPrimaryDark">#ffa000</color>
+  <color name="colorAccent">#ff5722</color>
+  <color name="color_divider">#1fffffff</color>
+  <color name="drop_shadow_end">#66000000</color>
+  <color name="drop_shadow_start">#00000000</color>
+  <color name="colorAccentPressed">#f53900</color>
 </resources>

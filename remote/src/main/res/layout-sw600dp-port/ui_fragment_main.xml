@@ -1,182 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/mainRelativeLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:orientation="horizontal">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainRelativeLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/album_cover_area"
+  <FrameLayout
+      android:id="@+id/album_cover_area"
+      android:layout_width="match_parent"
+      android:layout_weight="1"
+      android:layout_height="0dp">
+
+    <ImageView
+        android:id="@id/main_album_cover_image_view"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/mbrc_cover">
+        android:layout_height="match_parent"
+        android:adjustViewBounds="false"
+        android:contentDescription="@string/description_album_cover"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_image_no_cover" />
 
-        <ImageView
-            android:id="@+id/main_album_cover_image_view"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            android:adjustViewBounds="false"
-            android:contentDescription="@string/main_image_view_cover_description"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_image_no_cover"/>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/mbrc_rating_bar_wrapper"
-            android:background="@color/remote_transparent"
-            android:layout_gravity="center_horizontal|bottom"
-            android:id="@+id/ratingWrapper"
-            android:layout_marginLeft="1dp"
-            android:layout_marginRight="1dp"
-            android:layout_marginBottom="1dp">
-
-            <RatingBar
-                android:id="@+id/track_rating_bar"
-                style="@style/RatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:numStars="5"
-                android:stepSize="0.5"
-                android:layout_gravity="center"/>
-        </LinearLayout>
-
-    </FrameLayout>
-
-    <LinearLayout
-        android:id="@+id/main_track_info"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@+id/album_cover_area"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_gravity="bottom">
 
-        <TextView
-            android:id="@+id/main_title_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:freezesText="true"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:text="@string/main_label_track_title"
-            android:textColor="@color/remote_text"
-            android:textSize="@dimen/mbrc_title_text_size"
-            android:textStyle="normal"
+      <TextView
+          android:id="@+id/main_track_progress_current"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentLeft="true"
+          android:layout_alignParentStart="true"
+          android:paddingEnd="@dimen/small_margin"
+          android:paddingLeft="@dimen/small_margin"
+          android:paddingRight="@dimen/small_margin"
+          android:shadowColor="@android:color/black"
+          android:shadowDx="1"
+          android:shadowDy="1"
+          android:shadowRadius="1.5"
+          android:text="@string/main_label_duration_current"
+          android:textColor="@color/remoteText"
+          android:textSize="12sp" />
 
-            android:typeface="sans"/>
+      <TextView
+          android:id="@+id/main_track_duration_total"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentEnd="true"
+          android:layout_alignParentRight="true"
+          android:paddingEnd="@dimen/small_margin"
+          android:paddingLeft="@dimen/small_margin"
+          android:paddingRight="@dimen/small_margin"
+          android:shadowColor="@android:color/black"
+          android:shadowDx="1"
+          android:shadowDy="1"
+          android:shadowRadius="1.5"
+          android:text="@string/main_label_duration_total"
+          android:textColor="@color/remoteText"
+          android:textSize="12sp"
+          tools:ignore="RelativeOverlap" />
 
-        <TextView
-            android:id="@+id/main_artist_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/side_margin_half"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:freezesText="true"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:text="@string/main_label_artist"
-            android:textColor="@color/remote_text"
-            android:textSize="@dimen/mbrc_artist_text_size"/>
+    </RelativeLayout>
 
-        <TextView
-            android:id="@+id/main_label_album"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:lines="1"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:text="@string/main_label_album"
-            android:textColor="@color/remote_text"
-            android:textSize="@dimen/mbrc_album_text_size"
-            android:typeface="sans"/>
+  </FrameLayout>
 
-        <TextView
-            android:id="@+id/main_label_year"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/side_margin_half"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:lines="1"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:text="@string/main_label_date"
-            android:textColor="@color/remote_text"
-            android:textSize="@dimen/mbrc_year_text_size"/>
+  <SeekBar
+      android:id="@+id/main_track_progress_seeker"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="top"
+      android:layout_marginTop="1dp"
+      android:gravity="center"
+      android:maxHeight="4dp"
+      android:minHeight="4dp"
+      android:paddingLeft="0dp"
+      android:paddingRight="0dp"
+      android:progress="0"
+      android:progressDrawable="@drawable/ic_duration_bar_progress"
+      android:secondaryProgress="0"
+      android:thumb="@drawable/ic_duration_thumb"
+      android:thumbOffset="4dp" />
 
-    </LinearLayout>
+  <RelativeLayout
+      android:id="@+id/main_track_info_one"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_marginBottom="@dimen/small_margin"
+      android:layout_marginTop="@dimen/small_margin"
+      android:paddingLeft="@dimen/normal_margin"
+      android:paddingRight="@dimen/normal_margin">
 
-
-    <LinearLayout
+    <TextView
+        android:id="@+id/main_title_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_above="@+id/mbrc_controls">
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:freezesText="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:text="@string/main_label_track_title"
+        android:textColor="@color/remoteText"
+        android:textSize="@dimen/text_title_size" />
 
-        <ImageButton
-            android:id="@+id/main_mute_button"
-            android:layout_width="@dimen/mbrc_secondary_control_button"
-            android:layout_height="@dimen/mbrc_secondary_control_button"
-            android:background="@drawable/selectable_background_mbrc_dark"
-            android:contentDescription="@string/main_button_mute_description"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_media_mute_full"/>
-
-        <SeekBar
-            android:id="@+id/main_volume_seeker"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:max="100"
-            android:maxHeight="@dimen/mbrc_volume_seekbar_height"
-            android:minHeight="@dimen/mbrc_volume_seekbar_height"
-            android:paddingLeft="@dimen/mbrc_volume_seekbar_padding"
-            android:paddingRight="@dimen/mbrc_volume_seekbar_padding"
-            android:progress="0"
-            android:progressDrawable="@drawable/ic_volume_bar_progress"
-            android:secondaryProgress="0"
-            android:thumb="@drawable/volume_thumb"
-            android:thumbOffset="@dimen/mbrc_volume_seekbar_thumb_offset"
-            android:layout_marginTop="14dp"
-            android:layout_marginStart="@dimen/side_margin"
-            android:layout_marginLeft="@dimen/side_margin"
-            android:layout_marginEnd="@dimen/side_margin_half"
-            android:layout_marginRight="@dimen/side_margin_half"/>
-
-    </LinearLayout>
-
-    <fragment
-        android:id="@+id/mbrc_controls"
-        tools:layout="@layout/ui_main_buttons"
-        tools:context="com.kelsos.mbrc.ui.fragments.ButtonFragment"
-        android:name="com.kelsos.mbrc.ui.fragments.ButtonFragment"
+    <TextView
+        android:id="@+id/main_artist_label"
         android:layout_width="match_parent"
-        android:layout_height="103dp"
-        android:padding="@dimen/side_margin_half"
-        android:layout_above="@+id/include"/>
-
-    <include
-        layout="@layout/track_progress_layout"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/include"/>
+        android:layout_below="@+id/main_title_label"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:freezesText="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:text="@string/main_label_artist"
+        android:textColor="@color/remoteText"
+        android:textSize="@dimen/text_subhead_size" />
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/main_label_album"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/main_artist_label"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:lines="1"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:text="@string/main_label_album"
+        android:textColor="@color/remoteText"
+        android:textSize="@dimen/text_body_size" />
+
+  </RelativeLayout>
+
+  <RelativeLayout
+      android:id="@+id/main_volume_area"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+    <ImageButton
+        android:id="@+id/main_mute_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:background="@drawable/md_transparent"
+        android:contentDescription="@string/main_button_mute_description"
+        android:paddingLeft="@dimen/normal_margin"
+        android:paddingRight="@dimen/normal_margin"
+        android:src="@drawable/ic_volume_off_grey600_24dp"
+        android:tint="@color/button_material_dark" />
+
+    <SeekBar
+        android:id="@+id/main_volume_seeker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/normal_margin"
+        android:layout_marginRight="@dimen/normal_margin"
+        android:layout_toEndOf="@+id/main_mute_button"
+        android:layout_toRightOf="@+id/main_mute_button"
+        android:gravity="center"
+        android:max="100"
+        android:maxHeight="@dimen/mbrc_volume_seekbar_height"
+        android:minHeight="@dimen/mbrc_volume_seekbar_height"
+        android:paddingLeft="@dimen/mbrc_volume_seekbar_padding"
+        android:paddingRight="@dimen/mbrc_volume_seekbar_padding"
+        android:progress="0"
+        android:progressDrawable="@drawable/ic_volume_bar_progress"
+        android:secondaryProgress="0"
+        android:thumb="@drawable/volume_thumb"
+        android:thumbOffset="@dimen/mbrc_volume_seekbar_thumb_offset" />
+  </RelativeLayout>
+
+  <LinearLayout
+      android:id="@+id/main_media_button_group"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/mbrc_info_tab_height"
+      android:layout_marginBottom="@dimen/small_margin"
+      android:layout_marginTop="@dimen/small_margin"
+      android:gravity="center_vertical|center_horizontal"
+      android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/main_repeat_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0.7"
+        android:background="@drawable/md_transparent"
+        android:contentDescription="@string/main_button_repeat_description"
+        android:src="@drawable/ic_repeat_grey600_24dp"
+        android:tint="@color/button_material_dark" />
+
+    <ImageButton
+        android:id="@+id/main_button_previous"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.8"
+        android:background="@drawable/md_transparent"
+        android:contentDescription="@string/main_button_previous_description"
+        android:src="@drawable/ic_skip_previous_black_36dp"
+        android:tint="@color/button_material_dark" />
+
+    <ImageButton
+        android:id="@+id/main_button_play_pause"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/md_transparent"
+        android:contentDescription="@string/main_button_play_pause_description"
+        android:src="@drawable/ic_play_circle_fill" />
+
+    <ImageButton
+        android:id="@+id/main_button_next"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:background="@drawable/md_transparent"
+        android:contentDescription="@string/main_button_next_description"
+        android:src="@drawable/ic_skip_next_black_36dp"
+        android:tint="@color/button_material_dark" />
+
+    <ImageButton
+        android:id="@+id/main_shuffle_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:background="@drawable/md_transparent"
+        android:contentDescription="@string/main_button_shuffle_description"
+        android:src="@drawable/ic_shuffle_grey600_24dp"
+        android:tint="@color/button_material_dark" />
+  </LinearLayout>
+
+</LinearLayout>
