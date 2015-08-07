@@ -4,7 +4,7 @@ About
 -------
 MusicBee is a remote control application that is used to control [MusicBee](http://getmusicbee.com/) player using a network connected Android device. The application is freely available through [Google Play](https://play.google.com/store/apps/details?id=com.kelsos.mbrc) and also requires the associated [plugin](https://github.com/kelsos/mbrc-plugin) (dll) for MusicBee to function.
 
-The application consumes an RESTlike HTTP API provided by the plugin. There is also a socket connection used to pass messages to the client for changes. The plan is for the socket to be replaced with a web socket implementation in the future.
+The application consumes an RESTlike HTTP API provided by the plugin. And uses a websocket connection for small push notifications.
 
 MusicBee Remote was presented as part of my thesis on "*Android and application development for mobile devices*".
 
@@ -15,8 +15,6 @@ You can also find information about the plugin and the remote to the dedicated t
 Building
 -------
 Clone the repository and import on IntelliJ IDEA or Android Studio.
-
-Before building the project you have to execute the `run` task for the DaoGenerator module in order to generate the Dao classes along with the Helper classes and the `ContentProvider`.
 
 Credits
 -----------
@@ -67,9 +65,9 @@ along with [Google Play Music for Android](https://play.google.com/store/apps/de
 
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
-*   [GreenDao](https://github.com/greenrobot/greenDAO)
+*   [DBFlow](https://github.com/Raizlabs/DBFlow)
 
-    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+    License: [MIT](https://github.com/Raizlabs/DBFlow/blob/master/LICENSE)
 
 *   [Snackbar](https://github.com/MrEngineer13/SnackBar)
 
@@ -78,8 +76,12 @@ along with [Google Play Music for Android](https://play.google.com/store/apps/de
 *   [Material Dialogs](https://github.com/afollestad/material-dialogs/)
 
     License: [MIT](https://github.com/afollestad/material-dialogs/blob/master/LICENSE.txt)
+    
+*   [Butterknife](https://github.com/JakeWharton/butterknife)
+    
+    License: [Apache 2.0](https://github.com/JakeWharton/butterknife/blob/master/LICENSE.txt)
 
-The project also uses [Retrolamda](https://github.com/evant/gradle-retrolambda)/
+The project also uses [Retrolamda](https://github.com/evant/gradle-retrolambda)
 
 License
 ----------
