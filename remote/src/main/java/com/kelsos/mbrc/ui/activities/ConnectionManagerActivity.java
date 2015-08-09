@@ -27,9 +27,11 @@ import com.squareup.otto.Subscribe;
 
 public class ConnectionManagerActivity extends RoboAppCompatActivity
     implements SettingsDialogFragment.SettingsDialogListener {
-  @Inject Bus bus;
+
+  @Inject private Bus bus;
   @Bind(R.id.connection_list) RecyclerView mRecyclerView;
   @Bind(R.id.toolbar) Toolbar mToolbar;
+
   private MaterialDialog mProgress;
   private Context mContext;
 

@@ -10,7 +10,7 @@ import com.kelsos.mbrc.events.actions.ButtonPressedEvent.Button;
 import com.kelsos.mbrc.net.Notification;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.rest.responses.SuccessResponse;
-import com.kelsos.mbrc.util.Logger;
+import com.kelsos.mbrc.utilities.Logger;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;

@@ -9,9 +9,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
+import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.ConnectionSettings;
+import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
-import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
+import com.kelsos.mbrc.utilities.MainThreadBus;
+import com.squareup.otto.Subscribe;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.DatagramPacket;
@@ -28,14 +31,23 @@ public class ServiceDiscovery {
   private WifiManager.MulticastLock mLock;
   private ConnectivityManager connectivityManager;
   private ObjectMapper mapper;
-  private MainThreadBusWrapper bus;
+  private MainThreadBus bus;
 
   @Inject public ServiceDiscovery(WifiManager manager, ConnectivityManager connectivityManager,
-      ObjectMapper mapper, MainThreadBusWrapper bus) {
+      ObjectMapper mapper, MainThreadBus bus) {
     this.manager = manager;
     this.connectivityManager = connectivityManager;
     this.mapper = mapper;
     this.bus = bus;
+
+    bus.register(this);
+  }
+
+  @Subscribe public void onDiscoveryMessage(MessageEvent messageEvent) {
+    if (!UserInputEventType.StartDiscovery.equals(messageEvent.getType())) {
+      return;
+    }
+    startDiscovery();
   }
 
   public void startDiscovery() {

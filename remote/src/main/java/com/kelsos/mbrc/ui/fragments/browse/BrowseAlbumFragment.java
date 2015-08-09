@@ -21,7 +21,7 @@ import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
-import com.kelsos.mbrc.util.Logger;
+import com.kelsos.mbrc.utilities.Logger;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 import rx.schedulers.Schedulers;

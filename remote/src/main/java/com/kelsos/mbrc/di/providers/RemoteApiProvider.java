@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.providers;
+package com.kelsos.mbrc.di.providers;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;

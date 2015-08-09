@@ -21,7 +21,7 @@ import com.kelsos.mbrc.adapters.AlbumProfileCursorAdapter;
 import com.kelsos.mbrc.dao.Album;
 import com.kelsos.mbrc.dao.Artist;
 import com.kelsos.mbrc.dao.Cover;
-import com.kelsos.mbrc.util.RemoteUtils;
+import com.kelsos.mbrc.utilities.RemoteUtils;
 import com.squareup.picasso.Picasso;
 import java.io.File;
 import roboguice.fragment.provided.RoboListFragment;

@@ -12,13 +12,13 @@ import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.RatingChanged;
-import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
+import com.kelsos.mbrc.utilities.MainThreadBus;
 import com.squareup.otto.Subscribe;
 import roboguice.fragment.RoboDialogFragment;
 
 public class RatingDialogFragment extends RoboDialogFragment {
 
-  @Inject private MainThreadBusWrapper bus;
+  @Inject private MainThreadBus bus;
   private RatingBar mRatingBar;
   private float mRating;
 

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.providers;
+package com.kelsos.mbrc.di.providers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Provider;

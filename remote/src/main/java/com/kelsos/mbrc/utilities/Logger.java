@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.util;
+package com.kelsos.mbrc.utilities;
 
 import roboguice.util.Ln;
 

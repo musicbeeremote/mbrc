@@ -9,7 +9,7 @@ import com.kelsos.mbrc.constants.EventType;
 import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.events.Events;
 import com.kelsos.mbrc.events.Message;
-import com.kelsos.mbrc.util.SettingsManager;
+import com.kelsos.mbrc.utilities.SettingsManager;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;

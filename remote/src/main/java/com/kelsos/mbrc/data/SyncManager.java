@@ -17,7 +17,7 @@ import com.kelsos.mbrc.dao.QueueTrack;
 import com.kelsos.mbrc.dao.Track;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.rest.responses.PaginatedDataResponse;
-import com.kelsos.mbrc.util.Logger;
+import com.kelsos.mbrc.utilities.Logger;
 import com.raizlabs.android.dbflow.runtime.DBTransactionInfo;
 import com.raizlabs.android.dbflow.runtime.TransactionManager;
 import com.raizlabs.android.dbflow.runtime.transaction.DeleteTransaction;

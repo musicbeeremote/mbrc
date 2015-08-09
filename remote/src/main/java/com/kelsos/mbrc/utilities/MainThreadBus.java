@@ -5,11 +5,11 @@ import android.os.Looper;
 import com.google.inject.Inject;
 import com.squareup.otto.Bus;
 
-public class MainThreadBusWrapper {
+public class MainThreadBus {
   private final Bus bus;
   private final Handler mHandler = new Handler(Looper.getMainLooper());
 
-  @Inject public MainThreadBusWrapper(final Bus bus) {
+  @Inject public MainThreadBus(final Bus bus) {
     if (bus == null) {
       throw new NullPointerException("Bus is null");
     }

@@ -34,14 +34,14 @@ import roboguice.util.Ln;
 @Singleton public class SettingsManager {
   private SharedPreferences mPreferences;
   private Context mContext;
-  private MainThreadBusWrapper bus;
+  private MainThreadBus bus;
   private ArrayList<ConnectionSettings> mSettings;
   private ObjectMapper mMapper;
   private int defaultIndex;
   private boolean isFirstRun;
 
   @Inject
-  public SettingsManager(Context context, SharedPreferences preferences, MainThreadBusWrapper bus,
+  public SettingsManager(Context context, SharedPreferences preferences, MainThreadBus bus,
       ObjectMapper mapper) {
     this.mPreferences = preferences;
     this.mContext = context;
