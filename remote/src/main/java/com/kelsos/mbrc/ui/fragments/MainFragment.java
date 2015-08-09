@@ -30,6 +30,7 @@ import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.controller.MainViewController;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.events.MessageEvent;
@@ -58,6 +59,7 @@ import roboguice.util.Ln;
   private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
   // Injects
   @Inject protected Bus bus;
+  @Inject private MainViewController controller;
   // Inject elements of the view
   @Bind(R.id.main_artist_label) TextView artistLabel;
   @Bind(R.id.main_title_label) TextView titleLabel;
@@ -116,39 +118,32 @@ import roboguice.util.Ln;
   private OnExpandToolbarListener listener;
 
   @OnClick(R.id.main_button_play_pause) public void playButtonPressed(View v) {
-    final UserAction action = new UserAction(Protocol.PlayerPlayPause, true);
-    postAction(action);
+    controller.onPlayPressed();
   }
 
   @OnClick(R.id.main_button_previous) public void onPreviousButtonPressed(View v) {
-    final UserAction action = new UserAction(Protocol.PlayerPrevious, true);
-    postAction(action);
+    controller.onPreviousPressed();
   }
 
   @OnClick(R.id.main_button_next) public void onNextButtonPressed() {
-    final UserAction action = new UserAction(Protocol.PlayerNext, true);
-    postAction(action);
+    controller.onNextPressed();
   }
 
   @OnLongClick(R.id.main_button_play_pause) public boolean onPlayerStopPressed() {
-    final UserAction action = new UserAction(Protocol.PlayerStop, true);
-    postAction(action);
+    controller.onStopPressed();
     return true;
   }
 
   @OnClick(R.id.main_mute_button) public void onMuteButtonPressed(View v) {
-    final UserAction action = new UserAction(Protocol.PlayerMute, Const.TOGGLE);
-    postAction(action);
+    controller.onMutePressed();
   }
 
   @OnClick(R.id.main_shuffle_button) public void onShuffleButtonClicked(View v) {
-    final UserAction action = new UserAction(Protocol.PlayerShuffle, Const.TOGGLE);
-    postAction(action);
+    controller.onShufflePressed();
   }
 
   @OnClick(R.id.main_repeat_button) public void onRepeatButtonPressed(View v) {
-    final UserAction action = new UserAction(Protocol.PlayerRepeat, Const.TOGGLE);
-    postAction(action);
+    controller.onRepeatPressed();
   }
 
   /**

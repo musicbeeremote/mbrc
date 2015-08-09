@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.rest;
 
+import com.kelsos.mbrc.annotations.PlaybackAction;
 import com.kelsos.mbrc.rest.responses.LyricsResponse;
 import com.kelsos.mbrc.rest.responses.PaginatedDataResponse;
 import com.kelsos.mbrc.rest.responses.PlayerStatusResponse;
@@ -50,23 +51,8 @@ public interface RemoteApi {
   @PUT("/player/autodj")
   Observable<SuccessResponse> updateAutoDjState(@Query("enabled") boolean enabled);
 
-  @GET("/player/previous")
-  Observable<SuccessResponse> playPrevious();
-
-  @GET("/player/next")
-  Observable<SuccessResponse> playNext();
-
   @PUT("/playlists/play")
   Observable<SuccessResponse> playPlaylist(@Query("path") String path);
-
-  @GET("/player/stop")
-  Observable<SuccessResponse> playbackStop();
-
-  @GET("/player/play")
-  Observable<SuccessResponse> playbackStart();
-
-  @GET("/player/pause")
-  Observable<SuccessResponse> playbackPause();
 
   @DELETE("/nowplaying/{id}")
   Observable<SuccessResponse> nowPlayingRemoveTrack(@Path("id") int id);
@@ -175,8 +161,8 @@ public interface RemoteApi {
   @PUT("/playlists/{id}/tracks")
   Observable<SuccessResponse> addTracksToPlaylist(@Path("id") int id, List<String> list);
 
-  @PUT("/player/playpause")
-  Observable<SuccessResponse> playPause();
+  @GET("/player/action")
+  Observable<SuccessResponse> performPlayerAction(@Query("action") @PlaybackAction String action);
 
   @PUT("/nowplaying/queue/")
   Observable<SuccessResponse> nowplayingQueue(@Query("type") String type,

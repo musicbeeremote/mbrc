@@ -2,6 +2,7 @@ package com.kelsos.mbrc.data.model;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.annotations.PlaybackAction;
 import com.kelsos.mbrc.constants.EventType;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.Events;
@@ -60,10 +61,10 @@ import rx.subjects.BehaviorSubject;
     getMessageObservable(EventType.KEY_VOLUME_DOWN).subscribe(msg -> reduceVolume(),
         Logger::logThrowable);
 
-    subscribeToButtonEvent(Button.PREVIOUS, api.playPrevious());
-    subscribeToButtonEvent(Button.NEXT, api.playNext());
-    subscribeToButtonEvent(Button.STOP, api.playbackStop());
-    subscribeToButtonEvent(Button.PLAYPAUSE, api.playPause());
+    subscribeToButtonEvent(Button.PREVIOUS, api.performPlayerAction(PlaybackAction.PREVIOUS));
+    subscribeToButtonEvent(Button.NEXT, api.performPlayerAction(PlaybackAction.NEXT));
+    subscribeToButtonEvent(Button.STOP, api.performPlayerAction(PlaybackAction.STOP));
+    subscribeToButtonEvent(Button.PLAYPAUSE, api.performPlayerAction(PlaybackAction.PLAY_PLAUSE));
     requestPlayerStatus();
     subscribeToRepeatChanges();
     subscribeToShuffleChanges();
