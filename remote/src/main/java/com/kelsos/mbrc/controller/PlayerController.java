@@ -2,15 +2,18 @@ package com.kelsos.mbrc.controller;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.annotations.PlaybackAction;
+import com.kelsos.mbrc.data.model.PlayerModel;
 import com.kelsos.mbrc.rest.RemoteApi;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class PlayerController {
   private RemoteApi api;
+  private PlayerModel model;
 
-  @Inject public PlayerController(RemoteApi api) {
+  @Inject public PlayerController(RemoteApi api, PlayerModel model) {
     this.api = api;
+    this.model = model;
   }
 
   public void onPlayPressed() {

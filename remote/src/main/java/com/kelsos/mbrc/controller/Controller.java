@@ -5,8 +5,8 @@ import android.os.IBinder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.data.SyncManager;
-import com.kelsos.mbrc.data.model.PlayerState;
-import com.kelsos.mbrc.data.model.TrackState;
+import com.kelsos.mbrc.data.model.PlayerModel;
+import com.kelsos.mbrc.data.model.TrackModel;
 import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.net.SocketService;
@@ -26,8 +26,8 @@ import roboguice.util.Ln;
   @Inject private ServiceDiscovery discovery;
   @Inject private SettingsManager settingsManager;
   @Inject private SyncManager syncManager;
-  @Inject private TrackState trackState;
-  @Inject private PlayerState playerState;
+  @Inject private TrackModel trackModel;
+  @Inject private PlayerModel playerModel;
   @Inject private RemoteApi api;
 
   public Controller() {
