@@ -6,10 +6,10 @@ import com.kelsos.mbrc.rest.RemoteApi;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class MainViewController {
+public class PlayerController {
   private RemoteApi api;
 
-  @Inject public MainViewController(RemoteApi api) {
+  @Inject public PlayerController(RemoteApi api) {
     this.api = api;
   }
 

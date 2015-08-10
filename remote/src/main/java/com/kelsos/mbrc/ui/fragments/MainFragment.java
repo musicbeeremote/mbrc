@@ -30,7 +30,7 @@ import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.controller.MainViewController;
+import com.kelsos.mbrc.controller.PlayerController;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.events.MessageEvent;
@@ -59,7 +59,7 @@ import roboguice.util.Ln;
   private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
   // Injects
   @Inject protected Bus bus;
-  @Inject private MainViewController controller;
+  @Inject private PlayerController controller;
   // Inject elements of the view
   @Bind(R.id.main_artist_label) TextView artistLabel;
   @Bind(R.id.main_title_label) TextView titleLabel;
