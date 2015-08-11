@@ -8,7 +8,9 @@ import com.kelsos.mbrc.di.providers.ObjectMapperProvider;
 import com.kelsos.mbrc.di.providers.OkHttpClientProvider;
 import com.kelsos.mbrc.di.providers.RemoteApiProvider;
 import com.kelsos.mbrc.di.providers.RestAdapterBuilderProvider;
+import com.kelsos.mbrc.presenters.MainViewPresenter;
 import com.kelsos.mbrc.presenters.MiniControlPresenter;
+import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
 import com.kelsos.mbrc.presenters.interfaces.IMiniControlPresenter;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.squareup.okhttp.OkHttpClient;
@@ -23,5 +25,6 @@ import retrofit.RestAdapter;
     bind(Bus.class).toProvider(BusProvider.class).in(Singleton.class);
     bind(OkHttpClient.class).toProvider(OkHttpClientProvider.class).in(Singleton.class);
     bind(IMiniControlPresenter.class).to(MiniControlPresenter.class);
+    bind(IMainViewPresenter.class).to(MainViewPresenter.class);
   }
 }

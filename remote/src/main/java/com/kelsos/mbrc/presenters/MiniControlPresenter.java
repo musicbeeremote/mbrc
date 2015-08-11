@@ -9,7 +9,9 @@ import com.kelsos.mbrc.presenters.interfaces.IMiniControlPresenter;
 import com.kelsos.mbrc.ui.views.MiniControlView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+import roboguice.inject.ContextSingleton;
 
+@ContextSingleton
 public class MiniControlPresenter implements IMiniControlPresenter {
   private MiniControlView view;
   @Inject private Bus bus;

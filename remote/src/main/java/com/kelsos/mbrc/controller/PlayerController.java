@@ -3,6 +3,7 @@ package com.kelsos.mbrc.controller;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.annotations.PlaybackAction;
 import com.kelsos.mbrc.data.model.PlayerModel;
+import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.rest.RemoteApi;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -14,6 +15,10 @@ public class PlayerController {
   @Inject public PlayerController(RemoteApi api, PlayerModel model) {
     this.api = api;
     this.model = model;
+  }
+
+  public PlayState getPlayState() {
+    return model.getPlayState();
   }
 
   public void onPlayPressed() {
