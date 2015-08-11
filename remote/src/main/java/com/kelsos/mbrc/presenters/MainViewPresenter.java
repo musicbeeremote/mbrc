@@ -62,31 +62,31 @@ public class MainViewPresenter implements IMainViewPresenter {
   }
 
   @Override public void onPlayPausePressed() {
-
+    controller.onPlayPressed();
   }
 
   @Override public void onPreviousPressed() {
-
+    controller.onPreviousPressed();
   }
 
   @Override public void onNextPressed() {
-
+    controller.onNextPressed();
   }
 
   @Override public void onStopPressed() {
-
+    controller.onStopPressed();
   }
 
   @Override public void onMutePressed() {
-
+    controller.onMutePressed();
   }
 
   @Override public void onShufflePressed() {
-
+    controller.onShufflePressed();
   }
 
   @Override public void onRepeatPressed() {
-
+    controller.onRepeatPressed();
   }
 
   @Override public void onVolumeChange(int volume) {
