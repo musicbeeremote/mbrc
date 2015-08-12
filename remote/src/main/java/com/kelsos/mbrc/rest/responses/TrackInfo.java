@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.rest.responses;
 
-public class TrackResponse {
+public class TrackInfo {
   private String artist;
   private String title;
   private String album;
@@ -8,7 +8,7 @@ public class TrackResponse {
   private String path;
 
   @SuppressWarnings("UnusedDeclaration")
-  public TrackResponse(String artist, String title, String album, String year, String path) {
+  public TrackInfo(String artist, String title, String album, String year, String path) {
     this.artist = artist;
     this.title = title;
     this.album = album;
@@ -16,7 +16,7 @@ public class TrackResponse {
     this.path = path;
   }
 
-  @SuppressWarnings("UnusedDeclaration") public TrackResponse() { }
+  @SuppressWarnings("UnusedDeclaration") public TrackInfo() { }
 
   public String getArtist() {
     return artist;

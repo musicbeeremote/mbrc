@@ -5,6 +5,7 @@ import android.support.annotation.UiThread;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.ui.ShuffleChange;
+import com.kelsos.mbrc.rest.responses.TrackInfo;
 
 public interface MainView {
   void updateCover(Bitmap bitmap);
@@ -23,8 +24,6 @@ public interface MainView {
 
   void updateMute(boolean enabled);
 
-  void updateTrackInfo(String artist, String album, String title, String year);
-
   @UiThread void updateProgress(int progress, int min, int sec);
 
   void updateDuration(int total, int min, int sec);
@@ -32,4 +31,6 @@ public interface MainView {
   int getCurrentProgress();
 
   void setStoppedState();
+
+  void updateTrackInfo(TrackInfo trackInfo);
 }

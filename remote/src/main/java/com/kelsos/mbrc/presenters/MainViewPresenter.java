@@ -2,6 +2,7 @@ package com.kelsos.mbrc.presenters;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.controller.PlayerController;
+import com.kelsos.mbrc.controller.TrackController;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
 import com.kelsos.mbrc.ui.views.MainView;
@@ -16,7 +17,8 @@ public class MainViewPresenter implements IMainViewPresenter {
   private MainView mainView;
   private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
   private ScheduledFuture progressUpdateHandler;
-  @Inject private PlayerController controller;
+  @Inject private PlayerController playerController;
+  @Inject private TrackController trackController;
 
   @Override public void bind(MainView mainView) {
     this.mainView = mainView;
@@ -34,7 +36,7 @@ public class MainViewPresenter implements IMainViewPresenter {
     /* If the scheduled tasks is not null then cancel it and clear it along with the
     timer to create them anew */
     final int timePeriod = 1;
-    PlayState state = controller.getPlayState();
+    PlayState state = playerController.getPlayState();
     if (state == PlayState.PAUSED || state == PlayState.STOPPED) {
       return;
     }
@@ -58,35 +60,36 @@ public class MainViewPresenter implements IMainViewPresenter {
   }
 
   @Override public void onResume() {
-
+    mainView.updateCover(trackController.getCover());
+    mainView.updateTrackInfo(trackController.getTrackInfo());
   }
 
   @Override public void onPlayPausePressed() {
-    controller.onPlayPressed();
+    playerController.onPlayPressed();
   }
 
   @Override public void onPreviousPressed() {
-    controller.onPreviousPressed();
+    playerController.onPreviousPressed();
   }
 
   @Override public void onNextPressed() {
-    controller.onNextPressed();
+    playerController.onNextPressed();
   }
 
   @Override public void onStopPressed() {
-    controller.onStopPressed();
+    playerController.onStopPressed();
   }
 
   @Override public void onMutePressed() {
-    controller.onMutePressed();
+    playerController.onMutePressed();
   }
 
   @Override public void onShufflePressed() {
-    controller.onShufflePressed();
+    playerController.onShufflePressed();
   }
 
   @Override public void onRepeatPressed() {
-    controller.onRepeatPressed();
+    playerController.onRepeatPressed();
   }
 
   @Override public void onVolumeChange(int volume) {

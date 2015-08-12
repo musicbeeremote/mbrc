@@ -5,11 +5,10 @@ import android.graphics.BitmapFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.data.model.TrackModel;
-import com.kelsos.mbrc.events.ui.CoverAvailable;
 import com.kelsos.mbrc.rest.RemoteApi;
+import com.kelsos.mbrc.rest.responses.TrackInfo;
 import com.kelsos.mbrc.utilities.MainThreadBus;
 import com.kelsos.mbrc.utilities.RemoteUtils;
-import com.squareup.otto.Produce;
 import java.io.InputStream;
 import retrofit.client.Response;
 import roboguice.util.Ln;
@@ -25,12 +24,36 @@ public class TrackController {
     this.model = model;
     this.api = api;
     this.bus = bus;
+    this.init();
   }
 
-  public void getCover() {
+  private void init() {
+    retrieveCover();
+    retrieveTrackInfo();
+  }
+
+  public Bitmap getCover() {
+    return model.getAlbumCover();
+  }
+
+  public void retrieveCover() {
     api.getTrackCover(RemoteUtils.getTimeStamp())
         .subscribeOn(Schedulers.io())
         .subscribe(this::createBitmap, Ln::d);
+  }
+
+  public void retrieveTrackInfo() {
+    api.getTrackInfo().subscribe(model::setTrackInfo, Ln::d);
+  }
+
+  public TrackInfo getTrackInfo() {
+    return model.getInfo();
+  }
+
+  public void retrieveLyrics() {
+    api.getTrackLyrics().subscribe(lyricsResponse -> {
+      model.setLyrics(lyricsResponse.getLyrics());
+    }, Ln::d);
   }
 
   private void createBitmap(Response response) {
@@ -38,13 +61,8 @@ public class TrackController {
       final InputStream stream = response.getBody().in();
       Bitmap cover = BitmapFactory.decodeStream(stream);
       model.setAlbumCover(cover);
-      bus.post(new CoverAvailable(cover));
     } catch (Exception ex) {
       Ln.d("Exception while creating bitmap :: %s", ex.getMessage());
     }
-  }
-
-  @Produce public CoverAvailable produceCoverAvailable() {
-    return new CoverAvailable(model.getAlbumCover());
   }
 }

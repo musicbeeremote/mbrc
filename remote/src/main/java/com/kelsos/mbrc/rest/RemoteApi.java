@@ -11,7 +11,7 @@ import com.kelsos.mbrc.rest.responses.SuccessStateResponse;
 import com.kelsos.mbrc.rest.responses.SuccessVolumeResponse;
 import com.kelsos.mbrc.rest.responses.TextValueResponse;
 import com.kelsos.mbrc.rest.responses.TrackPositionResponse;
-import com.kelsos.mbrc.rest.responses.TrackResponse;
+import com.kelsos.mbrc.rest.responses.TrackInfo;
 import com.kelsos.mbrc.rest.responses.ValueResponse;
 import java.util.List;
 import retrofit.client.Response;
@@ -82,7 +82,7 @@ public interface RemoteApi {
   Observable<Response> getTrackCover(@Query("t") String timestamp);
 
   @GET("/track")
-  Observable<TrackResponse> getTrackInfo();
+  Observable<TrackInfo> getTrackInfo();
 
   @GET("/player/shuffle")
   Observable<StateResponse> getShuffleState();

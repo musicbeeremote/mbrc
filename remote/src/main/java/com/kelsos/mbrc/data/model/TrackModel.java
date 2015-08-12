@@ -5,18 +5,14 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.annotations.LastfmState;
 import com.kelsos.mbrc.enums.LfmStatus;
-import com.kelsos.mbrc.rest.responses.TrackResponse;
+import com.kelsos.mbrc.rest.responses.TrackInfo;
 
 @Singleton public class TrackModel {
   private float rating;
-  private String title;
-  private String artist;
-  private String album;
-  private String year;
   private String lyrics;
   private LfmStatus lfmRating;
   private Bitmap albumCover;
-  private String path;
+  private TrackInfo info;
 
   @Inject public TrackModel() {
     lyrics = "";
@@ -39,12 +35,8 @@ import com.kelsos.mbrc.rest.responses.TrackResponse;
     return this;
   }
 
-  public TrackModel setTrackInfo(TrackResponse response) {
-    this.artist = response.getArtist();
-    this.album = response.getAlbum();
-    this.year = response.getYear();
-    this.title = response.getTitle();
-    this.path = response.getPath();
+  public TrackModel setTrackInfo(TrackInfo info) {
+    this.info = info;
     return this;
   }
 
@@ -54,42 +46,6 @@ import com.kelsos.mbrc.rest.responses.TrackResponse;
 
   public TrackModel setRating(float rating) {
     this.rating = rating;
-    return this;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public TrackModel setTitle(String title) {
-    this.title = title;
-    return this;
-  }
-
-  public String getArtist() {
-    return artist;
-  }
-
-  public TrackModel setArtist(String artist) {
-    this.artist = artist;
-    return this;
-  }
-
-  public String getAlbum() {
-    return album;
-  }
-
-  public TrackModel setAlbum(String album) {
-    this.album = album;
-    return this;
-  }
-
-  public String getYear() {
-    return year;
-  }
-
-  public TrackModel setYear(String year) {
-    this.year = year;
     return this;
   }
 
@@ -134,12 +90,7 @@ import com.kelsos.mbrc.rest.responses.TrackResponse;
     return this;
   }
 
-  public String getPath() {
-    return path;
-  }
-
-  public TrackModel setPath(String path) {
-    this.path = path;
-    return this;
+  public TrackInfo getInfo() {
+    return info;
   }
 }

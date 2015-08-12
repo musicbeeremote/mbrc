@@ -30,6 +30,7 @@ import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.ui.ShuffleChange;
 import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
+import com.kelsos.mbrc.rest.responses.TrackInfo;
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
 import com.kelsos.mbrc.ui.views.MainView;
 import com.kelsos.mbrc.utilities.FontUtils;
@@ -124,6 +125,7 @@ import roboguice.fragment.RoboFragment;
       Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.ui_fragment_main, container, false);
     ButterKnife.bind(this, view);
+    presenter.bind(this);
 
     artistLabel.setSelected(true);
     titleLabel.setSelected(true);
@@ -270,16 +272,6 @@ import roboguice.fragment.RoboFragment;
         enabled ? R.drawable.ic_volume_off_grey600_24dp : R.drawable.ic_volume_up_grey600_24dp);
   }
 
-  @Override public void updateTrackInfo(String artist, String album, String title, String year) {
-    artistLabel.setText(artist);
-    titleLabel.setText(title);
-    albumLabel.setText(TextUtils.isEmpty(year) ? album : String.format("%s [%s]", album, year));
-
-    if (mShareActionProvider != null) {
-      mShareActionProvider.setShareIntent(getShareIntent());
-    }
-  }
-
   @Override public void updateProgress(int progress, int min, int sec) {
     trackProgressCurrent.setText(String.format("%02d:%02d", min, sec));
     progressBar.setProgress(progress);
@@ -297,6 +289,18 @@ import roboguice.fragment.RoboFragment;
   @Override public void setStoppedState() {
     progressBar.setProgress(0);
     trackProgressCurrent.setText("00:00");
+  }
+
+  @Override public void updateTrackInfo(TrackInfo info) {
+    artistLabel.setText(info.getArtist());
+    titleLabel.setText(info.getTitle());
+    albumLabel.setText(TextUtils.isEmpty(info.getYear())
+        ? info.getAlbum()
+        : String.format("%s [%s]", info.getAlbum(), info.getYear()));
+
+    if (mShareActionProvider != null) {
+      mShareActionProvider.setShareIntent(getShareIntent());
+    }
   }
 
   public interface OnExpandToolbarListener {
