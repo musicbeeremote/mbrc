@@ -62,6 +62,7 @@ public class MainViewPresenter implements IMainViewPresenter {
   @Override public void onResume() {
     mainView.updateCover(trackController.getCover());
     mainView.updateTrackInfo(trackController.getTrackInfo());
+    mainView.updateShuffle(playerController.getShuffleState());
   }
 
   @Override public void onPlayPausePressed() {

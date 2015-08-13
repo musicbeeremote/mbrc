@@ -5,6 +5,7 @@ import com.kelsos.mbrc.rest.responses.LyricsResponse;
 import com.kelsos.mbrc.rest.responses.PaginatedDataResponse;
 import com.kelsos.mbrc.rest.responses.PlayerStatusResponse;
 import com.kelsos.mbrc.rest.responses.RatingResponse;
+import com.kelsos.mbrc.rest.responses.ShuffleStateResponse;
 import com.kelsos.mbrc.rest.responses.StateResponse;
 import com.kelsos.mbrc.rest.responses.SuccessResponse;
 import com.kelsos.mbrc.rest.responses.SuccessStateResponse;
@@ -85,7 +86,7 @@ public interface RemoteApi {
   Observable<TrackInfo> getTrackInfo();
 
   @GET("/player/shuffle")
-  Observable<StateResponse> getShuffleState();
+  Observable<ShuffleStateResponse> getShuffleState();
 
   @PUT("/player/shuffle")
   Observable<SuccessStateResponse> toggleShuffleState();

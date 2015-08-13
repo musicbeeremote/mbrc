@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.annotations.Playstate;
 import com.kelsos.mbrc.enums.PlayState;
+import com.kelsos.mbrc.events.ui.ShuffleChange;
 
 @Singleton public class PlayerModel {
   public static final int MAX_VOLUME = 100;
@@ -16,11 +17,11 @@ import com.kelsos.mbrc.enums.PlayState;
   public static final String ALL = "All";
 
   boolean repeatActive;
-  boolean shuffleActive;
   boolean isScrobblingActive;
   boolean isMuteActive;
   private int volume;
   private PlayState playState;
+  private String shuffleState;
 
   @Inject public PlayerModel() {
 
@@ -77,15 +78,6 @@ import com.kelsos.mbrc.enums.PlayState;
     return this;
   }
 
-  public boolean isShuffleActive() {
-    return shuffleActive;
-  }
-
-  public PlayerModel setShuffleActive(boolean shuffleActive) {
-    this.shuffleActive = shuffleActive;
-    return this;
-  }
-
   public boolean isRepeatActive() {
     return repeatActive;
   }
@@ -125,5 +117,15 @@ import com.kelsos.mbrc.enums.PlayState;
       }
     }
     return newVolume;
+  }
+
+  @ShuffleChange.ShuffleState
+  public String getShuffleState() {
+    return shuffleState;
+  }
+
+  public PlayerModel setShuffleState(@ShuffleChange.ShuffleState String shuffleState) {
+    this.shuffleState = shuffleState;
+    return this;
   }
 }

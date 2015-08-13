@@ -19,6 +19,11 @@ public class ShuffleChange {
     return this.shuffleState;
   }
 
-  @StringDef({ OFF, AUTODJ, SHUFFLE })
-  @Retention(RetentionPolicy.SOURCE) public @interface ShuffleState { }
+  @StringDef({
+      OFF,
+      AUTODJ,
+      SHUFFLE
+  })
+  @Retention(RetentionPolicy.SOURCE)
+  public @interface ShuffleState { }
 }
