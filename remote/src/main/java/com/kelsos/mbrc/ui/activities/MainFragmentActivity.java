@@ -212,9 +212,14 @@ public class MainFragmentActivity extends RoboAppCompatActivity {
     if (event.isCloseDrawer()) {
       closeDrawer();
     } else {
+
       navChanged = true;
       mDisplay = event.getNavigate();
-      closeDrawer();
+      if (!event.isExternal()) {
+        closeDrawer();
+      } else {
+        navigateToView();
+      }
     }
   }
 
