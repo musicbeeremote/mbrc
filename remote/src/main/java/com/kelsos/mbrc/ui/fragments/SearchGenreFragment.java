@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.GenreEntryAdapter;
+import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.GenreEntry;
@@ -35,7 +36,8 @@ public class SearchGenreFragment extends RoboFragment
     mDefault = action.getAction();
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     return inflater.inflate(R.layout.ui_fragment_library_search, container, false);
   }
@@ -94,7 +96,12 @@ public class SearchGenreFragment extends RoboFragment
   }
 
   @Override public void onItemClicked(GenreEntry genre) {
-    bus.post(new MessageEvent(ProtocolEventType.UserAction,
-        new UserAction(Protocol.LibraryQueueGenre, new Queue(mDefault, genre.getName()))));
+    if (!mDefault.equals(Const.SUB)) {
+      bus.post(new MessageEvent(ProtocolEventType.UserAction,
+          new UserAction(Protocol.LibraryQueueGenre, new Queue(mDefault, genre.getName()))));
+    } else {
+      bus.post(new MessageEvent(ProtocolEventType.UserAction,
+          new UserAction(Protocol.LibraryGenreArtists, genre.getName())));
+    }
   }
 }

@@ -91,7 +91,7 @@
   <string name="settings_manage_connections">Manage Connections</string>
   <string name="settings_search_default_title">Search list default action</string>
   <string name="settings_search_default_summary">Set the default press action for the search list.</string>
-  <string name="search_click_default_value">last</string>
+  <string name="search_click_default_value">sub</string>
   <string name="settings_key_notification_control">set_show_notification</string>
   <string name="settings_sum_notification_control">Show a notification control widget</string>
   <string name="settings_title_notification_control">Notification Control</string>
