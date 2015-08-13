@@ -52,15 +52,22 @@ import roboguice.util.Ln;
     this.settingsManager = settingsManager;
     this.mapper = mapper;
 
-    cTimer = new DelayTimer(3, timerFinishEvent);
+    initDelayTimer();
     numOfRetries = 0;
     shouldStop = false;
     socketManager(SocketAction.START);
   }
 
+  private void initDelayTimer() {
+    if (cTimer == null) {
+      cTimer = new DelayTimer(3, timerFinishEvent);
+    }
+  }
+
   public void socketManager(SocketAction action) {
     switch (action) {
       case RESET:
+        initDelayTimer();
         cleanupSocket();
         if (cThread != null) {
           cThread.interrupt();
@@ -71,6 +78,7 @@ import roboguice.util.Ln;
         cTimer.start();
         break;
       case START:
+        initDelayTimer();
         if (sIsConnected() || cThreadIsAlive()) {
           return;
         } else if (!sIsConnected() && cThreadIsAlive()) {
@@ -80,6 +88,7 @@ import roboguice.util.Ln;
         cTimer.start();
         break;
       case RETRY:
+        initDelayTimer();
         cleanupSocket();
         if (cThread != null) {
           cThread.interrupt();
