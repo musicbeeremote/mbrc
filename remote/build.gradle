@@ -44,7 +44,7 @@ android {
     minSdkVersion 9
     targetSdkVersion 22
     versionCode 103
-    versionName "0.11.0-alpha.1"
+    versionName "0.11.0"
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
     buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
   }
