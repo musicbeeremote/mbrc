@@ -18,6 +18,7 @@ import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.events.ui.GenreSearchResults;
+import com.kelsos.mbrc.utilities.ScrollListener;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.fragment.RoboFragment;
@@ -26,6 +27,7 @@ import roboguice.inject.InjectView;
 public class SearchGenreFragment extends RoboFragment
     implements GenreEntryAdapter.MenuItemSelectedListener {
   @Inject Bus bus;
+  @Inject private ScrollListener scrollListener;
   private String mDefault;
   @InjectView(R.id.search_recycler_view) private RecyclerView mRecyclerView;
 
@@ -38,14 +40,16 @@ public class SearchGenreFragment extends RoboFragment
     return inflater.inflate(R.layout.ui_fragment_library_search, container, false);
   }
 
-  @Override public void onStart() {
-    super.onStart();
+  @Override public void onResume() {
+    super.onResume();
     bus.register(this);
+    mRecyclerView.addOnScrollListener(scrollListener);
   }
 
   @Override public void onStop() {
     super.onStop();
     bus.unregister(this);
+    mRecyclerView.removeOnScrollListener(scrollListener);
   }
 
   @Override public void onViewCreated(View view, Bundle savedInstanceState) {
