@@ -34,7 +34,8 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import roboguice.fragment.RoboFragment;
 
-public class SearchFragment extends RoboFragment implements SearchView.OnQueryTextListener {
+public class SearchFragment extends RoboFragment implements SearchView.OnQueryTextListener,
+    ViewPager.OnPageChangeListener {
 
   @Inject Bus bus;
   @Bind(R.id.search_pager) ViewPager mPager;
@@ -107,6 +108,7 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
     ButterKnife.bind(this, view);
     mPager.setAdapter(mAdapter);
     tabs.setupWithViewPager(mPager);
+    mPager.addOnPageChangeListener(this);
     return view;
   }
 
@@ -184,5 +186,20 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
   @Override public void onDestroy() {
     super.onDestroy();
     mAdapter = null;
+  }
+
+  @Override
+  public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+  }
+
+  @Override public void onPageSelected(int position) {
+    if (!fab.isShown()) {
+      fab.show();
+    }
+  }
+
+  @Override public void onPageScrollStateChanged(int state) {
+
   }
 }
