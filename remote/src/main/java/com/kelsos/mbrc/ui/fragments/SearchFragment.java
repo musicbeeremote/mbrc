@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.ui.fragments;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -11,8 +12,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.ButterKnife;
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
@@ -26,6 +27,7 @@ import com.kelsos.mbrc.events.ui.AlbumSearchResults;
 import com.kelsos.mbrc.events.ui.ArtistSearchResults;
 import com.kelsos.mbrc.events.ui.GenreSearchResults;
 import com.kelsos.mbrc.events.ui.NotifyUser;
+import com.kelsos.mbrc.events.ui.SearchScrollChanged;
 import com.kelsos.mbrc.events.ui.TrackSearchResults;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -37,6 +39,7 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
   @Inject Bus bus;
   @Bind(R.id.search_pager) ViewPager mPager;
   @Bind(R.id.pager_tab_strip) TabLayout tabs;
+  @Bind(R.id.search_clear_fab) FloatingActionButton fab;
 
   private SearchView mSearchView;
   private MenuItem mSearchItem;
@@ -167,6 +170,16 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
       }
     }
   }
+
+  @Subscribe public void handleScrollChange(SearchScrollChanged event) {
+    if (event.isScrollingUpwards()) {
+      fab.hide();
+    } else {
+      fab.show();
+    }
+  }
+
+
 
   @Override public void onDestroy() {
     super.onDestroy();
