@@ -41,6 +41,7 @@ import roboguice.util.Ln;
     CommandRegistration.register(remoteController);
     threadPoolExecutor = Executors.newSingleThreadExecutor();
     threadPoolExecutor.execute(remoteController);
+    remoteController.executeCommand(new MessageEvent(UserInputEventType.StartConnection));
     return super.onStartCommand(intent, flags, startId);
   }
 
