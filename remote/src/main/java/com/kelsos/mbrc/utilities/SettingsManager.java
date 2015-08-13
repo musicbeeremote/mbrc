@@ -207,10 +207,11 @@ import roboguice.util.Ln;
   }
 
   @Subscribe public void handleSettingsChange(ChangeSettings event) {
+    int index = event.getSettings().getIndex();
     switch (event.getAction()) {
       case DELETE:
         mSettings.remove(event.getSettings());
-        if (event.getSettings().getIndex() == defaultIndex && mSettings.size() > 0) {
+        if (index == defaultIndex && mSettings.size() > 0) {
           updateDefault(0, mSettings.get(0));
           bus.post(new MessageEvent(UserInputEventType.SettingsChanged));
         } else {
@@ -219,9 +220,12 @@ import roboguice.util.Ln;
         storeSettings();
         break;
       case DEFAULT:
-        ConnectionSettings settings = mSettings.get(event.getSettings().getIndex());
-        updateDefault(event.getSettings().getIndex(), settings);
-        bus.post(new ConnectionSettingsChanged(mSettings, event.getSettings().getIndex()));
+        if (index == mSettings.size()) {
+          index -= 1;
+        }
+        ConnectionSettings settings = mSettings.get(index);
+        updateDefault(index, settings);
+        bus.post(new ConnectionSettingsChanged(mSettings, index));
         bus.post(new MessageEvent(UserInputEventType.SettingsChanged));
         break;
       default:
