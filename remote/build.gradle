@@ -44,7 +44,7 @@ android {
     applicationId 'com.kelsos.mbrc'
     minSdkVersion 15
     targetSdkVersion 22
-    versionCode 103
+    versionCode 104
     versionName "1.0.0-alpha.1"
 
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
