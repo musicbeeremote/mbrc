@@ -8,65 +8,66 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
+import com.kelsos.mbrc.enums.DisplayFragment;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.CoverAvailable;
+import com.kelsos.mbrc.events.ui.DrawerEvent;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.fragment.RoboFragment;
-import roboguice.inject.InjectView;
 
 public class MiniControlFragment extends RoboFragment {
 
   @Inject Bus bus;
-  @InjectView(R.id.mc_track_cover) ImageView trackCover;
-  @InjectView(R.id.mc_track_artist) TextView trackArtist;
-  @InjectView(R.id.mc_track_title) TextView trackTitle;
-  @InjectView(R.id.mc_next_track) ImageButton playNext;
-  @InjectView(R.id.mc_play_pause) ImageButton playPause;
-  @InjectView(R.id.mc_prev_track) ImageButton playPrevious;
+  @Bind(R.id.mc_track_cover) ImageView trackCover;
+  @Bind(R.id.mc_track_artist) TextView trackArtist;
+  @Bind(R.id.mc_track_title) TextView trackTitle;
+  @Bind(R.id.mc_play_pause) ImageButton playPause;
 
-  ImageButton.OnClickListener playNextListener = new ImageButton.OnClickListener() {
+  @OnClick(R.id.mini_control) public void onControlClick() {
+    bus.post(new DrawerEvent(DisplayFragment.HOME, true));
+  }
 
-    @Override public void onClick(View view) {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.PlayerNext, true)));
-    }
-  };
-  ImageButton.OnClickListener playPauseListener = new ImageButton.OnClickListener() {
-    @Override public void onClick(View view) {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.PlayerPlayPause, true)));
-    }
-  };
-  ImageButton.OnClickListener playPreviousListener = new ImageButton.OnClickListener() {
-    @Override public void onClick(View view) {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.PlayerPrevious, true)));
-    }
-  };
+  @OnClick(R.id.mc_next_track) public void onNextClick(View view) {
+    bus.post(
+        new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerNext, true)));
+  }
+
+  @OnClick(R.id.mc_play_pause) public void onPlayClick(View view) {
+    bus.post(new MessageEvent(ProtocolEventType.UserAction,
+        new UserAction(Protocol.PlayerPlayPause, true)));
+  }
+
+  @OnClick(R.id.mc_prev_track) public void onPreviousClick(View view) {
+    bus.post(new MessageEvent(ProtocolEventType.UserAction,
+        new UserAction(Protocol.PlayerPrevious, true)));
+  }
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.ui_fragment_mini_control, container, false);
+    final View view = inflater.inflate(R.layout.ui_fragment_mini_control, container, false);
+    ButterKnife.bind(this, view);
+    return view;
   }
 
   @Override public void onStart() {
     super.onStart();
     bus.register(this);
-    playNext.setOnClickListener(playNextListener);
-    playPause.setOnClickListener(playPauseListener);
-    playPrevious.setOnClickListener(playPreviousListener);
     Typeface robotoRegular =
         Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
     Typeface robotoMedium =
