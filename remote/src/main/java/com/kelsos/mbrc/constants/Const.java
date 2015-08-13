@@ -4,6 +4,7 @@ public class Const {
   public static final String EMPTY = "";
   public static final String PLUGIN = "plugin";
   public static final String VERSIONS = "versions";
+  public static final String SUB = "sub";
 
   private Const() { }
   public static final String DATA = "data";
