@@ -4,11 +4,13 @@
     <item>Queue Next</item>
     <item>Queue Last</item>
     <item>Play Now</item>
+    <item>Get Subcategory</item>
   </string-array>
 
   <string-array name="search_click_options_values">
     <item>next</item>
     <item>last</item>
     <item>now</item>
+    <item>sub</item>
   </string-array>
 </resources>

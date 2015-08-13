@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter;
+import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.ArtistEntry;
@@ -35,7 +36,8 @@ public class SearchArtistFragment extends RoboFragment
     mDefault = action.getAction();
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     return inflater.inflate(R.layout.ui_fragment_library_search, container, false);
   }
@@ -86,7 +88,6 @@ public class SearchArtistFragment extends RoboFragment
         break;
       default:
         break;
-
     }
 
     if (ua != null) {
@@ -95,7 +96,12 @@ public class SearchArtistFragment extends RoboFragment
   }
 
   @Override public void onItemClicked(ArtistEntry artist) {
-    bus.post(new MessageEvent(ProtocolEventType.UserAction,
-        new UserAction(Protocol.LibraryQueueArtist, new Queue(mDefault, artist.getArtist()))));
+    if (!mDefault.equals(Const.SUB)) {
+      bus.post(new MessageEvent(ProtocolEventType.UserAction,
+          new UserAction(Protocol.LibraryQueueArtist, new Queue(mDefault, artist.getArtist()))));
+    } else {
+      bus.post(new MessageEvent(ProtocolEventType.UserAction,
+          new UserAction(Protocol.LibraryArtistAlbums, artist.getArtist())));
+    }
   }
 }

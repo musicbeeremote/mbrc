@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumEntryAdapter;
+import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.AlbumEntry;
@@ -35,7 +36,8 @@ public class SearchAlbumFragment extends RoboFragment
     mDefault = action.getAction();
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     return inflater.inflate(R.layout.ui_fragment_library_search, container, false);
   }
@@ -57,7 +59,6 @@ public class SearchAlbumFragment extends RoboFragment
     mRecyclerView.setHasFixedSize(true);
     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
     mRecyclerView.setLayoutManager(mLayoutManager);
-
   }
 
   @Subscribe public void handleAlbumResults(AlbumSearchResults results) {
@@ -96,7 +97,12 @@ public class SearchAlbumFragment extends RoboFragment
   }
 
   @Override public void onItemClicked(AlbumEntry album) {
-    bus.post(new MessageEvent(ProtocolEventType.UserAction,
-        new UserAction(Protocol.LibraryQueueAlbum, new Queue(mDefault, album.getAlbum()))));
+    if (!mDefault.equals(Const.SUB)) {
+      bus.post(new MessageEvent(ProtocolEventType.UserAction,
+          new UserAction(Protocol.LibraryQueueAlbum, new Queue(mDefault, album.getAlbum()))));
+    } else {
+      bus.post(new MessageEvent(ProtocolEventType.UserAction,
+          new UserAction(Protocol.LibraryAlbumTracks, album.getAlbum())));
+    }
   }
 }
