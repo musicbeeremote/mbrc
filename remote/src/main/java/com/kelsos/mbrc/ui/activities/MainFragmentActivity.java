@@ -37,7 +37,6 @@ import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.kelsos.mbrc.ui.fragments.LyricsFragment;
 import com.kelsos.mbrc.ui.fragments.MainFragment;
 import com.kelsos.mbrc.ui.fragments.NowPlayingFragment;
-import com.kelsos.mbrc.ui.fragments.SearchFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -139,8 +138,8 @@ public class MainFragmentActivity extends RoboAppCompatActivity
         }
         break;
       case SEARCH:
-        SearchFragment slsFragment = new SearchFragment();
-        replaceFragment(slsFragment, "library_search");
+        //SearchFragment slsFragment = new SearchFragment();
+        //replaceFragment(slsFragment, "library_search");
         break;
       case NOW_PLAYING_LIST:
         NowPlayingFragment npFragment = new NowPlayingFragment();
