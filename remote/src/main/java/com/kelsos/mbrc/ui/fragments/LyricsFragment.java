@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.LyricsAdapter;
@@ -15,12 +17,11 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.Arrays;
 import roboguice.fragment.RoboFragment;
-import roboguice.inject.InjectView;
 
 public class LyricsFragment extends RoboFragment {
   public static final String NEWLINE = "\r\n";
   @Inject Bus bus;
-  @InjectView(R.id.lyrics_recycler_view) private RecyclerView mRecyclerView;
+  @Bind(R.id.lyrics_recycler_view) RecyclerView recyclerView;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -28,14 +29,16 @@ public class LyricsFragment extends RoboFragment {
 
   @Override public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    mRecyclerView.setHasFixedSize(true);
+    recyclerView.setHasFixedSize(true);
     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-    mRecyclerView.setLayoutManager(layoutManager);
+    recyclerView.setLayoutManager(layoutManager);
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.ui_fragment_lyrics, container, false);
+    final View view = inflater.inflate(R.layout.ui_fragment_lyrics, container, false);
+    ButterKnife.bind(this, view);
+    return view;
   }
 
   @Override public void onStart() {
@@ -52,6 +55,6 @@ public class LyricsFragment extends RoboFragment {
     final ArrayList<String> lyrics =
         new ArrayList<>(Arrays.asList(update.getLyrics().split(NEWLINE)));
     LyricsAdapter adapter = new LyricsAdapter(getActivity(), lyrics);
-    mRecyclerView.setAdapter(adapter);
+    recyclerView.setAdapter(adapter);
   }
 }
