@@ -138,17 +138,22 @@ public class NowPlayingFragment extends RoboListFragment implements SearchView.O
 
   @Override public void onStart() {
     super.onStart();
-    bus.register(this);
     bus.post(new MessageEvent(ProtocolEventType.UserAction,
         new UserAction(Protocol.NowPlayingList, true)));
   }
 
-  @Override public void onStop() {
-    super.onStop();
+  @Override public void onResume() {
+    super.onResume();
+    bus.register(this);
+  }
+
+  @Override public void onPause() {
+    super.onPause();
     bus.unregister(this);
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     View mView = inflater.inflate(R.layout.ui_fragment_nowplaying, container, false);
     mDslv = (DragSortListView) mView.findViewById(android.R.id.list);
