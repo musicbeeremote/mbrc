@@ -1,63 +1,41 @@
 package com.kelsos.mbrc.ui.fragments;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import butterknife.Bind;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistAdapter;
 import com.kelsos.mbrc.data.SyncManager;
-import roboguice.fragment.RoboListFragment;
-import roboguice.inject.InjectView;
+import roboguice.fragment.RoboFragment;
 
-public class PlaylistFragment extends RoboListFragment
-    implements LoaderManager.LoaderCallbacks<Cursor> {
+public class PlaylistFragment extends RoboFragment {
 
-  private static final int URL_LOADER = 1921;
+  @Bind(R.id.playlist_recycler) RecyclerView recyclerView;
   @Inject private SyncManager syncManager;
-  @InjectView(android.R.id.list) private ListView mListView;
-  private PlaylistAdapter mAdapter;
+  @Inject private PlaylistAdapter adapter;
 
   @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.ui_fragment_playlist, container, false);
+    final View view = inflater.inflate(R.layout.ui_fragment_playlist, container, false);
+    RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity());
+    recyclerView.setLayoutManager(manager);
+    recyclerView.setAdapter(adapter);
+    return view;
   }
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    mAdapter = new PlaylistAdapter(getActivity(), null, 0);
-    getLoaderManager().initLoader(URL_LOADER, null, this);
-  }
-
-  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-    mListView.setAdapter(mAdapter);
   }
 
   @Override public void onStart() {
     super.onStart();
     syncManager.startPlaylistSync();
-  }
-
-  @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-    //return new CursorLoader(getActivity(), PlaylistHelper.CONTENT_URI,
-    //    PlaylistHelper.getProjection(), null, null, null);
-    return null;
-  }
-
-  @Override
-  public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-    mAdapter.swapCursor(data);
-  }
-
-  @Override public void onLoaderReset(Loader<Cursor> loader) {
-    mAdapter.swapCursor(null);
   }
 
   public static PlaylistFragment newInstance() {

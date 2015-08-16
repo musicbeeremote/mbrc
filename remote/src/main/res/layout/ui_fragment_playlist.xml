@@ -1,30 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:gravity="center_vertical"
-              android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
 
-    <ListView
-        android:id="@android:id/list"
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:paddingTop="@dimen/small_margin"
-        android:paddingBottom="@dimen/small_margin"
-        android:drawSelectorOnTop="true"
-        android:divider="@null"
-        android:fastScrollEnabled="true"
-        tools:listitem="@layout/listitem_single"/>
+  <android.support.v7.widget.RecyclerView
+      android:id="@+id/playlist_recycler"
+      android:layout_width="match_parent"
+      android:layout_height="0dip"
+      android:layout_weight="1"
+      android:paddingBottom="@dimen/small_margin"
+      android:paddingTop="@dimen/small_margin"
+      tools:listitem="@layout/listitem_single" />
 
-    <FrameLayout
-        android:id="@+id/playlist_mini_control"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/mini_control_height"
-        android:layout="@layout/ui_fragment_mini_control"
-        tools:context="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
-        tools:layout="@layout/ui_fragment_mini_control"
-        />
+  <FrameLayout
+      android:id="@+id/playlist_mini_control"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/mini_control_height"
+      android:layout="@layout/ui_fragment_mini_control"
+      tools:context="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
+      tools:layout="@layout/ui_fragment_mini_control"
+      />
 
 </LinearLayout>

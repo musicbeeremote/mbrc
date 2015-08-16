@@ -1,9 +1,6 @@
 package com.kelsos.mbrc.ui.fragments.profile;
 
-import android.app.LoaderManager;
 import android.content.Context;
-import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -18,21 +15,13 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumProfileAdapter;
-import com.kelsos.mbrc.dao.Album;
-import com.kelsos.mbrc.dao.Artist;
-import com.kelsos.mbrc.dao.Cover;
-import com.kelsos.mbrc.utilities.RemoteUtils;
-import com.squareup.picasso.Picasso;
-import java.io.File;
-import roboguice.fragment.provided.RoboListFragment;
+import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
 import static android.widget.AbsListView.OnScrollListener;
 
-public class AlbumTracksFragment extends RoboListFragment
-    implements LoaderManager.LoaderCallbacks<Cursor> {
+public class AlbumTracksFragment extends RoboFragment{
 
-  public static final int URL_LOADER = 0x928a;
   private static final String ALBUM_ID = "albumId";
   private long albumId;
   @Inject private AlbumProfileAdapter mAdapter;
@@ -90,8 +79,6 @@ public class AlbumTracksFragment extends RoboListFragment
       albumId = getArguments().getLong(ALBUM_ID);
     }
     mContext = getActivity();
-    this.setListAdapter(mAdapter);
-    getLoaderManager().initLoader(URL_LOADER, null, this);
   }
 
   @Override public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -133,29 +120,8 @@ public class AlbumTracksFragment extends RoboListFragment
     return mContentView;
   }
 
-  @Override public void onListItemClick(ListView l, View v, int position, long id) {
-    super.onListItemClick(l, v, position, id);
-  }
-
-  @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-    //final String sortOrder = String.format("%s ASC", TrackHelper.POSITION);
-    //final String selection = String.format("%s = ?", TrackHelper.ALBUMID);
-    //final String[] selectionArgs = {
-    //    String.valueOf(albumId)
-    //};
-    //return new CursorLoader(getActivity(), TrackHelper.CONTENT_URI,
-    //    TrackHelper.getProjection(),
-    //    selection, selectionArgs, sortOrder);
-    return null;
-  }
-
-  @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-    // FIXME: 8/6/15 temporarily disabled
-    final Album album = new Album();
-    final Cover cover = album.getCover();
-    final Artist artist = album.getArtist();
-    mAdapter.swapCursor(cursor);
-    mTracks.setText(getString(R.string.track_count, mAdapter.getCount()));
+  /*
+   mTracks.setText(getString(R.string.track_count, mAdapter.getCount()));
     mAlbum.setText(album.getName());
 
     if (artist != null) {
@@ -172,11 +138,8 @@ public class AlbumTracksFragment extends RoboListFragment
           .centerCrop()
           .into(mArtwork);
     }
-  }
+   */
 
-  @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
-    mAdapter.swapCursor(null);
-  }
 
   private void scrollToPosition(int position) {
 

@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.ui.activities;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,7 +13,7 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.fragments.profile.AlbumTracksFragment;
 import com.kelsos.mbrc.ui.fragments.profile.ArtistAlbumsFragment;
 import com.kelsos.mbrc.ui.fragments.profile.GenreArtistsFragment;
-import roboguice.fragment.provided.RoboFragment;
+import roboguice.fragment.RoboFragment;
 
 public class ProfileActivity extends RoboAppCompatActivity {
 
@@ -51,7 +51,10 @@ public class ProfileActivity extends RoboAppCompatActivity {
       }
 
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-      getFragmentManager().beginTransaction().add(R.id.container, fragment).commit();
+      getSupportFragmentManager()
+          .beginTransaction()
+          .add(R.id.container, fragment)
+          .commit();
     }
 
     getSupportActionBar().setTitle(intent.getStringExtra("name"));
