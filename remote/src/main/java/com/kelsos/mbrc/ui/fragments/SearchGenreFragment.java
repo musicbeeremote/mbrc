@@ -48,8 +48,8 @@ public class SearchGenreFragment extends RoboFragment
     mRecyclerView.addOnScrollListener(scrollListener);
   }
 
-  @Override public void onStop() {
-    super.onStop();
+  @Override public void onPause() {
+    super.onPause();
     bus.unregister(this);
     mRecyclerView.removeOnScrollListener(scrollListener);
   }

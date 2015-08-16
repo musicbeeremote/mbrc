@@ -329,20 +329,27 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
   }
 
   public void setPlayState(String playState) {
-    PlayState newState = PlayState.Undefined;
+    PlayState newState;
     if (Const.PLAYING.equalsIgnoreCase(playState)) {
       newState = PlayState.Playing;
     } else if (Const.STOPPED.equalsIgnoreCase(playState)) {
       newState = PlayState.Stopped;
     } else if (Const.PAUSED.equalsIgnoreCase(playState)) {
       newState = PlayState.Paused;
+    } else {
+      newState = PlayState.Undefined;
     }
+
     this.playState = newState;
+
     bus.post(new PlayStateChange(this.playState));
     updateNotification();
   }
 
   @Produce public PlayStateChange producePlayState() {
+    if (this.playState == null) {
+      playState = PlayState.Undefined;
+    }
     return new PlayStateChange(this.playState);
   }
 
