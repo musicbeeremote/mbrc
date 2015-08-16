@@ -6,16 +6,13 @@
     android:gravity="center_vertical"
     android:orientation="vertical">
 
-  <ListView
-      android:id="@android:id/list"
+  <android.support.v7.widget.RecyclerView
+      android:id="@+id/library_recycler"
       android:layout_width="match_parent"
       android:layout_height="0dip"
       android:layout_marginBottom="@dimen/small_margin"
       android:layout_marginTop="@dimen/small_margin"
       android:layout_weight="1"
-      android:divider="@null"
-      android:drawSelectorOnTop="true"
-      android:fastScrollEnabled="true"
       tools:listitem="@layout/listitem_single" />
 
 </LinearLayout>

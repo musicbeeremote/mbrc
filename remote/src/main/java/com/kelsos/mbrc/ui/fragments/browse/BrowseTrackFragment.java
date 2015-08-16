@@ -1,39 +1,31 @@
 package com.kelsos.mbrc.ui.fragments.browse;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.adapters.TrackCursorAdapter;
+import com.kelsos.mbrc.adapters.TrackEntryAdapter;
 import com.kelsos.mbrc.dao.Track;
-import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
-import com.kelsos.mbrc.utilities.Logger;
-import roboguice.fragment.RoboListFragment;
-import rx.schedulers.Schedulers;
+import roboguice.fragment.RoboFragment;
 
-public class BrowseTrackFragment extends RoboListFragment
-    implements LoaderManager.LoaderCallbacks<Cursor>,
-    PlaylistDialogFragment.OnPlaylistSelectedListener {
+public class BrowseTrackFragment extends RoboFragment
+    implements PlaylistDialogFragment.OnPlaylistSelectedListener {
 
-  private static final int URL_LOADER = 0x53;
-  @Inject private TrackCursorAdapter mAdapter;
-  @Inject private RemoteApi api;
+  @Bind(R.id.library_recycler) RecyclerView recyclerView;
+  @Inject private TrackEntryAdapter mAdapter;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    getLoaderManager().initLoader(URL_LOADER, null, this);
-    this.setListAdapter(mAdapter);
-    mAdapter.getPopupObservable()
-        .subscribe(this::handlePopupSelection, Logger::logThrowable);
   }
 
   private void handlePopupSelection(Pair<MenuItem, Track> pair) {
@@ -58,29 +50,17 @@ public class BrowseTrackFragment extends RoboListFragment
   }
 
   private void queueTracks(Track track, String action) {
-    api.nowplayingQueue("track", action, track.getId())
-        .observeOn(Schedulers.io())
-        .subscribe((r) -> {
-        }, Logger::logThrowable);
+
   }
 
-  @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+  @Override
+  public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_library, container, false);
-  }
-
-  @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-    //return new CursorLoader(getActivity(), TrackHelper.CONTENT_URI,
-    //    TrackHelper.getProjection(), null, null, null);
-    return null;
-  }
-
-  @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-    mAdapter.swapCursor(data);
-  }
-
-  @Override public void onLoaderReset(Loader<Cursor> loader) {
-    mAdapter.swapCursor(null);
+    final View view = inflater.inflate(R.layout.fragment_library, container, false);
+    ButterKnife.bind(this, view);
+    RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity());
+    recyclerView.setLayoutManager(manager);
+    return view;
   }
 
   @Override public void onPlaylistSelected(String hash) {
