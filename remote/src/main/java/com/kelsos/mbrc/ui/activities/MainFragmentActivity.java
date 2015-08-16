@@ -104,8 +104,8 @@ public class MainFragmentActivity extends RoboAppCompatActivity {
     fragmentTransaction.commit();
   }
 
-  @Override public void onStart() {
-    super.onStart();
+  @Override protected void onResume() {
+    super.onResume();
     bus.register(this);
   }
 

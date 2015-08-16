@@ -112,13 +112,13 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
     return view;
   }
 
-  @Override public void onStart() {
-    super.onStart();
+  @Override public void onResume() {
+    super.onResume();
     bus.register(this);
   }
 
-  @Override public void onStop() {
-    super.onStop();
+  @Override public void onPause() {
+    super.onPause();
     bus.unregister(this);
   }
 
