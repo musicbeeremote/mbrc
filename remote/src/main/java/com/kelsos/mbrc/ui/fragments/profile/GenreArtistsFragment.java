@@ -1,31 +1,28 @@
 package com.kelsos.mbrc.ui.fragments.profile;
 
-import android.app.LoaderManager;
-import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.adapters.ArtistCursorAdapter;
+import com.kelsos.mbrc.adapters.ArtistAdapter;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
-import roboguice.fragment.provided.RoboListFragment;
+import roboguice.fragment.RoboFragment;
 
-public class GenreArtistsFragment extends RoboListFragment
-    implements LoaderManager.LoaderCallbacks<Cursor>,
-    PlaylistDialogFragment.OnPlaylistSelectedListener,
+public class GenreArtistsFragment extends RoboFragment
+    implements PlaylistDialogFragment.OnPlaylistSelectedListener,
     CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
 
   private static final String GENRE_ID = "genreId";
-  private static final int GROUP_ID = 2983;
-  private static final int URL_LOADER = 0x15;
-  @Inject private ArtistCursorAdapter mAdapter;
-  private long genreId;
+  @Inject private ArtistAdapter adapter;
+  @Bind(R.id.genre_artists_recycler) RecyclerView recyclerView;
 
   public GenreArtistsFragment() {
     // Required empty public constructor
@@ -42,39 +39,18 @@ public class GenreArtistsFragment extends RoboListFragment
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (getArguments() != null) {
-      genreId = getArguments().getLong(GENRE_ID);
     }
-    setListAdapter(mAdapter);
-    getLoaderManager().initLoader(URL_LOADER, null, this);
   }
 
-  @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+  @Override
+  public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_genre_artists, container, false);
-  }
-
-  @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-    //final String sortOrder = String.format("%s ASC", ArtistHelper.NAME);
-    ////todo add genre to artist?
-    //final String selection = String.format("%s = ?", ArtistHelper.ARTIST_ID);
-    //final String[] selectionArgs = {
-    //    String.valueOf(genreId)
-    //};
-    //return new CursorLoader(getActivity(), ArtistHelper.CONTENT_URI, ArtistHelper.getProjection(),
-    //    selection, selectionArgs, sortOrder);
-    return null;
-  }
-
-  @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-    mAdapter.swapCursor(cursor);
-  }
-
-  @Override public void onListItemClick(ListView l, View v, int position, long id) {
-    super.onListItemClick(l, v, position, id);
-  }
-
-  @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
-    mAdapter.swapCursor(null);
+    final View view = inflater.inflate(R.layout.fragment_genre_artists, container, false);
+    ButterKnife.bind(this, view);
+    RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity());
+    recyclerView.setLayoutManager(manager);
+    recyclerView.setAdapter(adapter);
+    return view;
   }
 
   @Override public void onPlaylistNameSelected(String name) {

@@ -60,7 +60,7 @@ public class ArtistAlbumsFragment extends RoboFragment
     getLoaderManager().initLoader(URL_LOADER, null, this);
     final View view = inflater.inflate(R.layout.ui_library_grid, container, false);
     if (view != null) {
-      mGrid = (GridView) view.findViewById(R.id.mbrc_grid_view);
+      mGrid = (GridView) view.findViewById(R.id.album_recycler);
       mGrid.setOnItemClickListener(this);
       mGrid.setAdapter(mAdapter);
     }

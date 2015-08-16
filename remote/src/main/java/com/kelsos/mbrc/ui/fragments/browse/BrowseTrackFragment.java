@@ -13,7 +13,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.adapters.TrackEntryAdapter;
+import com.kelsos.mbrc.adapters.TrackAdapter;
 import com.kelsos.mbrc.dao.Track;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import roboguice.fragment.RoboFragment;
@@ -22,7 +22,7 @@ public class BrowseTrackFragment extends RoboFragment
     implements PlaylistDialogFragment.OnPlaylistSelectedListener {
 
   @Bind(R.id.library_recycler) RecyclerView recyclerView;
-  @Inject private TrackEntryAdapter mAdapter;
+  @Inject private TrackAdapter mAdapter;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

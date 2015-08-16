@@ -10,34 +10,45 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.AlbumEntry;
+import com.kelsos.mbrc.dao.Artist;
+import com.kelsos.mbrc.utilities.FontUtils;
 import java.util.ArrayList;
 
-public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.ViewHolder> {
-  private ArrayList<AlbumEntry> mData;
+public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder> {
+  private ArrayList<Artist> data;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
 
-  public AlbumEntryAdapter(Context context, ArrayList<AlbumEntry> data) {
-    this.mData = data;
-    robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
+  @Inject
+  public ArtistAdapter(Context context) {
+    this.data = new ArrayList<>();
+    robotoRegular = FontUtils.getRobotoRegular(context);
+  }
+
+  public void setMenuItemSelectedListener(MenuItemSelectedListener listener) {
+    mListener = listener;
+  }
+
+  public void updateData(ArrayList<Artist> data) {
+    this.data = data;
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View view =
-        LayoutInflater.from(parent.getContext()).inflate(R.layout.ui_list_dual, parent, false);
+    final View view =
+        LayoutInflater.from(parent.getContext()).inflate(R.layout.ui_list_single, parent, false);
     return new ViewHolder(view, robotoRegular);
   }
-
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
-    final AlbumEntry entry = mData.get(position);
-    holder.album.setText(entry.getAlbum());
-    holder.artist.setText(entry.getArtist());
+    final Artist entry = data.get(position);
+    holder.title.setText(entry.getName());
 
     holder.indicator.setOnClickListener(v -> {
       PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
-      popupMenu.inflate(R.menu.popup_album);
+      popupMenu.inflate(R.menu.popup_artist);
       popupMenu.setOnMenuItemClickListener(menuItem -> {
         if (mListener != null) {
           mListener.onMenuItemSelected(menuItem, entry);
@@ -55,32 +66,29 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.Vi
     });
   }
 
+  /**
+   * Returns the total number of items in the data set hold by the adapter.
+   *
+   * @return The total number of items in this adapter.
+   */
   @Override public int getItemCount() {
-    return mData == null ? 0 : mData.size();
-  }
-
-  public void setMenuItemSelectedListener(MenuItemSelectedListener listener) {
-    mListener = listener;
+    return data == null ? 0 : data.size();
   }
 
   public interface MenuItemSelectedListener {
-    void onMenuItemSelected(MenuItem menuItem, AlbumEntry entry);
+    void onMenuItemSelected(MenuItem menuItem, Artist entry);
 
-    void onItemClicked(AlbumEntry album);
+    void onItemClicked(Artist artist);
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
-    TextView artist;
-    TextView album;
-    LinearLayout indicator;
+    @Bind(R.id.line_one) TextView title;
+    @Bind(R.id.ui_item_context_indicator) LinearLayout indicator;
 
     public ViewHolder(View itemView, Typeface typeface) {
       super(itemView);
-      album = (TextView) itemView.findViewById(R.id.line_one);
-      artist = (TextView) itemView.findViewById(R.id.line_two);
-      indicator = (LinearLayout) itemView.findViewById(R.id.ui_item_context_indicator);
-      album.setTypeface(typeface);
-      artist.setTypeface(typeface);
+      ButterKnife.bind(this, itemView);
+      title.setTypeface(typeface);
     }
   }
 }
