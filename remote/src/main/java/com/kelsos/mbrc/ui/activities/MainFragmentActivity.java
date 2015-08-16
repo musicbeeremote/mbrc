@@ -27,7 +27,7 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.controller.Controller;
-import com.kelsos.mbrc.enums.DisplayFragment;
+import com.kelsos.mbrc.enums.DisplaySelection;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
@@ -37,6 +37,8 @@ import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.kelsos.mbrc.ui.fragments.LyricsFragment;
 import com.kelsos.mbrc.ui.fragments.MainFragment;
 import com.kelsos.mbrc.ui.fragments.NowPlayingFragment;
+import com.kelsos.mbrc.ui.fragments.PlaylistFragment;
+import com.kelsos.mbrc.ui.fragments.browse.BrowseFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -50,7 +52,7 @@ public class MainFragmentActivity extends RoboAppCompatActivity
   private ActionBarDrawerToggle mDrawerToggle;
   private DrawerLayout mDrawerLayout;
   private View mDrawerMenu;
-  private DisplayFragment mDisplay;
+  private DisplaySelection mDisplay;
   private boolean navChanged;
   private DialogFragment mDialog;
 
@@ -105,7 +107,7 @@ public class MainFragmentActivity extends RoboAppCompatActivity
     }
 
     navChanged = false;
-    mDisplay = DisplayFragment.HOME;
+    mDisplay = DisplaySelection.HOME;
 
     MainFragment mFragment = new MainFragment();
     mFragment.setArguments(getIntent().getExtras());
@@ -137,13 +139,17 @@ public class MainFragmentActivity extends RoboAppCompatActivity
           onBackPressed();
         }
         break;
-      case SEARCH:
-        //SearchFragment slsFragment = new SearchFragment();
-        //replaceFragment(slsFragment, "library_search");
+      case LIBRARY:
+        BrowseFragment browseFragment = BrowseFragment.newInstance();
+        replaceFragment(browseFragment, "library");
         break;
-      case NOW_PLAYING_LIST:
+      case PLAYLISTS:
+        PlaylistFragment playlistFragment = PlaylistFragment.newInstance();
+        replaceFragment(playlistFragment, "playlist");
+        break;
+      case NOW_PLAYING:
         NowPlayingFragment npFragment = new NowPlayingFragment();
-        replaceFragment(npFragment, "now_playing_list");
+        replaceFragment(npFragment, "now_playing");
         break;
       case LYRICS:
         LyricsFragment lFragment = new LyricsFragment();

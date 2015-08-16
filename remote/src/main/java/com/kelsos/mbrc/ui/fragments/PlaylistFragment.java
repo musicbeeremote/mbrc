@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.ui.fragments;
 
-import android.app.LoaderManager;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +13,7 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistCursorAdapter;
 import com.kelsos.mbrc.data.SyncManager;
-import roboguice.fragment.provided.RoboListFragment;
+import roboguice.fragment.RoboListFragment;
 import roboguice.inject.InjectView;
 
 public class PlaylistFragment extends RoboListFragment
@@ -51,11 +51,16 @@ public class PlaylistFragment extends RoboListFragment
     return null;
   }
 
-  @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-    mAdapter.swapCursor(cursor);
+  @Override
+  public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    mAdapter.swapCursor(data);
   }
 
-  @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+  @Override public void onLoaderReset(Loader<Cursor> loader) {
     mAdapter.swapCursor(null);
+  }
+
+  public static PlaylistFragment newInstance() {
+    return new PlaylistFragment();
   }
 }

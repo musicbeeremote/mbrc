@@ -1,16 +1,16 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.enums.DisplayFragment;
+import com.kelsos.mbrc.enums.DisplaySelection;
 
 public class DrawerSelection {
   private boolean closeDrawer;
-  private DisplayFragment navigate;
+  private DisplaySelection navigate;
 
   public DrawerSelection() {
     closeDrawer = true;
   }
 
-  public DrawerSelection(DisplayFragment navigate) {
+  public DrawerSelection(DisplaySelection navigate) {
     closeDrawer = false;
     this.navigate = navigate;
   }
@@ -19,7 +19,7 @@ public class DrawerSelection {
     return closeDrawer;
   }
 
-  public DisplayFragment getNavigate() {
+  public DisplaySelection getNavigate() {
     return navigate;
   }
 }

@@ -12,7 +12,7 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.BrowsePagerAdapter;
 import com.kelsos.mbrc.data.SyncManager;
-import roboguice.fragment.provided.RoboFragment;
+import roboguice.fragment.RoboFragment;
 
 public class BrowseFragment extends RoboFragment {
   public static final int LIBRARY_SYNC = 1;
@@ -63,5 +63,9 @@ public class BrowseFragment extends RoboFragment {
   @Override public void onDestroy() {
     super.onDestroy();
     mAdapter = null;
+  }
+
+  public static BrowseFragment newInstance() {
+    return new BrowseFragment();
   }
 }

@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent"
-  android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
 
-  <ListView
-    android:id="@android:id/list"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_gravity="start"
-    android:background="@color/background_material_dark"
-    android:choiceMode="singleChoice"
-    android:divider="@android:color/transparent"
-    android:dividerHeight="0dp"
-    android:paddingBottom="@dimen/small_margin"
-    android:paddingTop="@dimen/small_margin"
-    tools:listitem="@layout/ui_drawer_item" />
+  <android.support.design.widget.NavigationView
+      android:id="@+id/navigation_view"
+      android:layout_height="match_parent"
+      android:layout_width="wrap_content"
+      android:layout_gravity="start"
+      app:menu="@menu/drawer">
+
+  </android.support.design.widget.NavigationView>
+
 
 </LinearLayout>

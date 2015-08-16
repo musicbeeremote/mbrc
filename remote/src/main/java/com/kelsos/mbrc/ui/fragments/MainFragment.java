@@ -292,6 +292,10 @@ import roboguice.fragment.RoboFragment;
   }
 
   @Override public void updateTrackInfo(TrackInfo info) {
+    if (info == null) {
+      return;
+    }
+
     artistLabel.setText(info.getArtist());
     titleLabel.setText(info.getTitle());
     albumLabel.setText(TextUtils.isEmpty(info.getYear())
