@@ -17,7 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.adapters.AlbumProfileCursorAdapter;
+import com.kelsos.mbrc.adapters.AlbumProfileAdapter;
 import com.kelsos.mbrc.dao.Album;
 import com.kelsos.mbrc.dao.Artist;
 import com.kelsos.mbrc.dao.Cover;
@@ -35,7 +35,7 @@ public class AlbumTracksFragment extends RoboListFragment
   public static final int URL_LOADER = 0x928a;
   private static final String ALBUM_ID = "albumId";
   private long albumId;
-  @Inject private AlbumProfileCursorAdapter mAdapter;
+  @Inject private AlbumProfileAdapter mAdapter;
   private Context mContext;
   private int mOldHeaderHeight = -1;
   private int mLastDampedScroll;

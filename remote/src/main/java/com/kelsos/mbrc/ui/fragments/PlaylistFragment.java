@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.adapters.PlaylistCursorAdapter;
+import com.kelsos.mbrc.adapters.PlaylistAdapter;
 import com.kelsos.mbrc.data.SyncManager;
 import roboguice.fragment.RoboListFragment;
 import roboguice.inject.InjectView;
@@ -22,7 +22,7 @@ public class PlaylistFragment extends RoboListFragment
   private static final int URL_LOADER = 1921;
   @Inject private SyncManager syncManager;
   @InjectView(android.R.id.list) private ListView mListView;
-  private PlaylistCursorAdapter mAdapter;
+  private PlaylistAdapter mAdapter;
 
   @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class PlaylistFragment extends RoboListFragment
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    mAdapter = new PlaylistCursorAdapter(getActivity(), null, 0);
+    mAdapter = new PlaylistAdapter(getActivity(), null, 0);
     getLoaderManager().initLoader(URL_LOADER, null, this);
   }
 

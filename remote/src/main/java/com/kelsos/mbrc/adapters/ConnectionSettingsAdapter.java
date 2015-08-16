@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.enums.SettingsAction;
@@ -60,8 +62,7 @@ public class ConnectionSettingsAdapter
             bus.post(new ChangeSettings(SettingsAction.DEFAULT, settings));
             break;
           case R.id.connection_edit:
-            SettingsDialogFragment settingsDialog =
-                SettingsDialogFragment.newInstance(settings);
+            SettingsDialogFragment settingsDialog = SettingsDialogFragment.newInstance(settings);
             FragmentManager fragmentManager =
                 ((ConnectionManagerActivity) v.getContext()).getSupportFragmentManager();
             settingsDialog.show(fragmentManager, "settings_dialog");
@@ -86,19 +87,15 @@ public class ConnectionSettingsAdapter
 
   public class ConnectionViewHolder extends RecyclerView.ViewHolder {
 
-    TextView hostname;
-    TextView portNum;
-    TextView computerName;
-    ImageView defaultSettings;
-    View overflow;
+    @Bind(R.id.cs_list_host) TextView hostname;
+    @Bind(R.id.cs_list_port) TextView portNum;
+    @Bind(R.id.cs_list_name) TextView computerName;
+    @Bind(R.id.cs_list_default) ImageView defaultSettings;
+    @Bind(R.id.cs_list_overflow) View overflow;
 
     public ConnectionViewHolder(View itemView) {
       super(itemView);
-      hostname = (TextView) itemView.findViewById(R.id.cs_list_host);
-      portNum = (TextView) itemView.findViewById(R.id.cs_list_port);
-      computerName = (TextView) itemView.findViewById(R.id.cs_list_name);
-      defaultSettings = (ImageView) itemView.findViewById(R.id.cs_list_default);
-      overflow = itemView.findViewById(R.id.cs_list_overflow);
+      ButterKnife.bind(this, itemView);
     }
   }
 }
