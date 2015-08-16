@@ -12,11 +12,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumProfileAdapter;
 import roboguice.fragment.RoboFragment;
-import roboguice.inject.InjectView;
 
 import static android.widget.AbsListView.OnScrollListener;
 
@@ -34,10 +35,10 @@ public class AlbumTracksFragment extends RoboFragment{
   private View mContentView;
   private int mLastScrollPosition;
   private boolean isInit;
-  @InjectView(R.id.header_tracks) private TextView mTracks;
-  @InjectView(R.id.header_album) private TextView mAlbum;
-  @InjectView(R.id.header_artist) private TextView mArtist;
-  @InjectView(R.id.header_artwork) private ImageView mArtwork;
+  @Bind(R.id.header_tracks) TextView mTracks;
+  @Bind(R.id.header_album) TextView mAlbum;
+  @Bind(R.id.header_artist) TextView mArtist;
+  @Bind(R.id.header_artwork) ImageView mArtwork;
 
 
   private OnScrollListener mOnScrollListener = new OnScrollListener() {
@@ -89,6 +90,7 @@ public class AlbumTracksFragment extends RoboFragment{
       Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     mContentView = inflater.inflate(R.layout.fragment_album_tracks, container, false);
+
     if (mContentView != null) {
       View header = inflater.inflate(R.layout.album_profile_header, container, false);
       mHeader = header.findViewById(R.id.album_header);
@@ -117,6 +119,9 @@ public class AlbumTracksFragment extends RoboFragment{
         }
       });
     }
+
+    ButterKnife.bind(this, mContentView);
+
     return mContentView;
   }
 
