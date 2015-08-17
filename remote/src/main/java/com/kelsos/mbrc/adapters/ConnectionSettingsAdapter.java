@@ -46,7 +46,7 @@ public class ConnectionSettingsAdapter
     final ConnectionSettings settings = mData.get(position);
     connectionViewHolder.computerName.setText(settings.getName());
     connectionViewHolder.hostname.setText(settings.getAddress());
-    connectionViewHolder.portNum.setText(String.format("%d", settings.getPort()));
+    connectionViewHolder.portNum.setText(String.format("%d / %d", settings.getPort(), settings.getHttp()));
 
     if (settings.getIndex() == defaultIndex) {
       connectionViewHolder.defaultSettings.setImageResource(R.drawable.ic_selection_default);
