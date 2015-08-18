@@ -37,13 +37,13 @@ def gitDescription() {
 }
 
 android {
-  compileSdkVersion 22
-  buildToolsVersion "22.0.1"
+  compileSdkVersion 23
+  buildToolsVersion "23.0.0"
 
   defaultConfig {
     applicationId 'com.kelsos.mbrc'
     minSdkVersion 15
-    targetSdkVersion 22
+    targetSdkVersion 23
     versionCode 104
     versionName "1.0.0-alpha.1"
 
@@ -139,18 +139,18 @@ idea {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.5'
+  gradleVersion = '2.6'
 }
 
 dependencies {
 
-  compile 'com.android.support:support-v4:22.2.1'
-  compile 'com.android.support:appcompat-v7:22.2.1'
-  compile 'com.android.support:cardview-v7:22.2.1'
-  compile 'com.android.support:recyclerview-v7:22.2.1'
-  compile 'com.android.support:palette-v7:22.2.1'
-  compile 'com.android.support:support-annotations:22.2.1'
-  compile 'com.android.support:design:22.2.1'
+  compile 'com.android.support:support-v4:23.0.0'
+  compile 'com.android.support:appcompat-v7:23.0.0'
+  compile 'com.android.support:cardview-v7:23.0.0'
+  compile 'com.android.support:recyclerview-v7:23.0.0'
+  compile 'com.android.support:palette-v7:23.0.0'
+  compile 'com.android.support:support-annotations:23.0.0'
+  compile 'com.android.support:design:23.0.0'
   compile 'com.mobeta.android.dslv:drag-sort-listview:0.6.2@aar'
   compile 'org.roboguice:roboguice:3.0.1'
   compile 'com.fasterxml.jackson.core:jackson-core:2.5.3'
