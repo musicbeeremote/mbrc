@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.kelsos.mbrc.dao.QueueTrack;
 import com.kelsos.mbrc.dao.QueueTrack$Table;
 import com.raizlabs.android.dbflow.sql.builder.Condition;
+import com.raizlabs.android.dbflow.sql.builder.ConditionQueryBuilder;
 import com.raizlabs.android.dbflow.sql.language.Update;
 import com.raizlabs.android.dbflow.sql.trigger.CompletedTrigger;
 import com.raizlabs.android.dbflow.sql.trigger.Trigger;
@@ -36,23 +37,19 @@ public final class DatabaseUtils {
     db.execSQL(query);
   }
 
-  public static void updatePosition(SQLiteDatabase db, int fromPosition, int toPosition) {
-    String query;
-    if (fromPosition < toPosition) {
-      query = "UPDATE QUEUE_TRACK\n"
-          + "SET POSITION = POSITION-1\n"
-          + "WHERE POSITION > ? AND POSITION <= ? ";
-    } else {
-      query = "UPDATE QUEUE_TRACK\n"
-          + "SET POSITION = POSITION+1\n"
-          + "WHERE POSITION < ? AND POSITION >= ? ";
-    }
+  public static void updatePosition(int fromPosition, int toPosition) {
+    ConditionQueryBuilder<QueueTrack> queryBuilder =
+        fromPosition < toPosition ? new ConditionQueryBuilder<>(QueueTrack.class,
+            Condition.column(QueueTrack$Table.POSITION).greaterThan(fromPosition)).and(
+            Condition.column(QueueTrack$Table.POSITION).lessThanOrEq(toPosition))
+            : new ConditionQueryBuilder<>(QueueTrack.class,
+                Condition.column(QueueTrack$Table.POSITION).lessThan(fromPosition)).and(
+                Condition.column(QueueTrack$Table.POSITION).greaterThanOrEq(toPosition));
 
-    Integer[] args = new Integer[] {
-        fromPosition,
-        toPosition
-    };
-
-    db.execSQL(query, args);
+    final String change = fromPosition < toPosition ? "-1" : "+1";
+    new Update<>(QueueTrack.class).set(
+        Condition.column(QueueTrack$Table.POSITION).is(QueueTrack$Table.POSITION).postfix(change))
+        .where(queryBuilder)
+        .queryClose();
   }
 }
