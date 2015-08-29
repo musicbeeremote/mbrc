@@ -7,7 +7,6 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.data.SyncManager;
 import com.kelsos.mbrc.data.model.PlayerModel;
 import com.kelsos.mbrc.data.model.TrackModel;
-import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.net.SocketService;
 import com.kelsos.mbrc.rest.RemoteApi;
@@ -49,7 +48,6 @@ import roboguice.util.Ln;
 
   @Override public void onDestroy() {
     super.onDestroy();
-    socket.socketManager(SocketAction.STOP);
     notificationService.cancelNotification(NotificationService.NOW_PLAYING_PLACEHOLDER);
     FlowManager.destroy();
     this.unregisterReceiver(receiver);

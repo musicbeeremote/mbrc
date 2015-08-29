@@ -35,7 +35,7 @@ public class MainViewPresenter implements IMainViewPresenter {
 
     /* If the scheduled tasks is not null then cancel it and clear it along with the
     timer to create them anew */
-    final int timePeriod = 1;
+    final int period = 1;
     PlayState state = playerController.getPlayState();
     if (state == PlayState.PAUSED || state == PlayState.STOPPED) {
       return;
@@ -52,7 +52,7 @@ public class MainViewPresenter implements IMainViewPresenter {
     };
 
     progressUpdateHandler =
-        progressScheduler.scheduleAtFixedRate(updateProgress, 0, timePeriod, TimeUnit.SECONDS);
+        progressScheduler.scheduleAtFixedRate(updateProgress, 0, period, TimeUnit.SECONDS);
   }
 
   @Override public void onPause() {
