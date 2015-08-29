@@ -98,7 +98,9 @@ public class MainViewPresenter implements IMainViewPresenter {
   }
 
   @Override public void onPositionChange(int position) {
+    trackController.changePosition(position).subscribe(trackPositionResponse -> {
 
+    });
   }
 
   @Override public void onScrobbleToggle() {

@@ -16,6 +16,7 @@
     <item name="windowActionBar">false</item>
     <item name="windowNoTitle">true</item>
     <item name="md_dark_theme">true</item>
+    <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
   </style>
 
   <style name="Theme.Settings"

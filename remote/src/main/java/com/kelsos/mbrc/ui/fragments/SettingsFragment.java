@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.Preference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.MenuItem;
-import com.github.machinarius.preferencefragment.PreferenceFragment;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
@@ -18,7 +18,7 @@ import com.kelsos.mbrc.utilities.RemoteUtils;
 import com.squareup.otto.Bus;
 import roboguice.util.Ln;
 
-public class SettingsFragment extends PreferenceFragment {
+public class SettingsFragment extends PreferenceFragmentCompat {
 
   private Bus bus;
   private Context mContext;
@@ -29,8 +29,8 @@ public class SettingsFragment extends PreferenceFragment {
     return fragment;
   }
 
-  @Override public void onCreate(Bundle paramBundle) {
-    super.onCreate(paramBundle);
+
+  @Override public void onCreatePreferences(Bundle bundle, String s) {
     addPreferencesFromResource(R.xml.application_settings);
     mContext = getActivity();
 

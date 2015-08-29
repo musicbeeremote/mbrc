@@ -12,8 +12,8 @@ import com.squareup.otto.Bus;
 
 public class SettingsActivity extends RoboAppCompatActivity {
 
-  @Inject private Bus bus;
   @Bind(R.id.toolbar) Toolbar toolbar;
+  @Inject private Bus bus;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -27,7 +27,9 @@ public class SettingsActivity extends RoboAppCompatActivity {
     getSupportActionBar().setTitle(R.string.menu_settings);
 
     final SettingsFragment fragment = SettingsFragment.newInstance(bus);
-    getSupportFragmentManager().beginTransaction().replace(R.id.content_wrapper, fragment).commit();
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.content_wrapper, fragment)
+        .commitAllowingStateLoss();
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {

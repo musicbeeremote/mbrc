@@ -14,20 +14,13 @@ import android.view.ViewGroup;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
-import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
-import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.NowPlayingAdapter;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.MusicTrack;
+import com.kelsos.mbrc.dao.QueueTrack;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.NowPlayingListAvailable;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.events.ui.TrackMoved;
 import com.kelsos.mbrc.events.ui.TrackRemoval;
@@ -47,21 +40,15 @@ public class NowPlayingFragment extends RoboFragment
   private RecyclerView.Adapter wrappedAdapter;
   private SearchView mSearchView;
   private MenuItem mSearchItem;
-  private MusicTrack mTrack;
-  private RecyclerViewDragDropManager dragAndDropManager;
-  private RecyclerViewTouchActionGuardManager touchActionGuardManager;
-  private RecyclerViewSwipeManager swipeManager;
 
-  @Subscribe public void handleNowPlayingListAvailable(NowPlayingListAvailable event) {
-    adapter.setData(event.getList());
-    adapter.setPlayingTrackIndex(event.getIndex());
-  }
 
   @Subscribe public void handlePlayingTrackChange(TrackInfoChange event) {
     if (adapter == null || !adapter.getClass().equals(NowPlayingAdapter.class)) {
       return;
     }
-    final MusicTrack track = new MusicTrack(event.getArtist(), event.getTitle());
+    final QueueTrack track = new QueueTrack()
+        .setArtist(event.getArtist())
+        .setTitle(event.getTitle());
     adapter.setPlayingTrack(track);
   }
 
@@ -103,37 +90,17 @@ public class NowPlayingFragment extends RoboFragment
     bus.unregister(this);
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.ui_fragment_nowplaying, container, false);
     ButterKnife.bind(this, view);
 
-    final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
-    animator.setSupportsChangeAnimations(false);
 
     layoutManager = new LinearLayoutManager(getActivity());
     recyclerView.setLayoutManager(layoutManager);
-    recyclerView.setItemAnimator(animator);
-
-    touchActionGuardManager = new RecyclerViewTouchActionGuardManager();
-    touchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
-    touchActionGuardManager.setEnabled(true);
-
-    // drag & drop manager
-    dragAndDropManager = new RecyclerViewDragDropManager();
-
-    swipeManager = new RecyclerViewSwipeManager();
-
     adapter.setOnUserActionListener(this);
-
-    wrappedAdapter = dragAndDropManager.createWrappedAdapter(adapter);
-    wrappedAdapter = swipeManager.createWrappedAdapter(wrappedAdapter);
-
     recyclerView.setAdapter(wrappedAdapter);
-
-    touchActionGuardManager.attachRecyclerView(recyclerView);
-    dragAndDropManager.attachRecyclerView(recyclerView);
-    swipeManager.attachRecyclerView(recyclerView);
 
     return view;
   }
@@ -164,7 +131,8 @@ public class NowPlayingFragment extends RoboFragment
   @Subscribe public void handleTrackRemoval(TrackRemoval event) {
     // In case the action failed revert the change
     if (!event.isSuccess()) {
-      adapter.insert(mTrack, event.getIndex());
+      // TODO: 8/18/15 fix caching of track until successful removal
+      //adapter.insert(track, event.getIndex());
     }
   }
 
@@ -190,25 +158,10 @@ public class NowPlayingFragment extends RoboFragment
   }
 
   @Override public void onPause() {
-    dragAndDropManager.cancelDrag();
     super.onPause();
   }
 
   @Override public void onDestroyView() {
-    if (dragAndDropManager != null) {
-      dragAndDropManager.release();
-      dragAndDropManager = null;
-    }
-
-    if (swipeManager != null) {
-      swipeManager.release();
-      swipeManager = null;
-    }
-
-    if (touchActionGuardManager != null) {
-      touchActionGuardManager.release();
-      touchActionGuardManager = null;
-    }
 
     if (recyclerView != null) {
       recyclerView.setItemAnimator(null);
@@ -217,7 +170,6 @@ public class NowPlayingFragment extends RoboFragment
     }
 
     if (wrappedAdapter != null) {
-      WrapperAdapterUtils.releaseAll(wrappedAdapter);
       wrappedAdapter = null;
     }
     adapter = null;

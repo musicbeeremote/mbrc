@@ -7,11 +7,14 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.data.model.TrackModel;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.rest.responses.TrackInfo;
+import com.kelsos.mbrc.rest.responses.TrackPositionResponse;
 import com.kelsos.mbrc.utilities.MainThreadBus;
 import com.kelsos.mbrc.utilities.RemoteUtils;
 import java.io.InputStream;
 import retrofit.client.Response;
 import roboguice.util.Ln;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 @Singleton
@@ -64,5 +67,18 @@ public class TrackController {
     } catch (Exception ex) {
       Ln.d("Exception while creating bitmap :: %s", ex.getMessage());
     }
+  }
+
+  public void getTrackRating() {
+    api.getTrackRating().subscribeOn(Schedulers.io()).
+        subscribe(ratingResponse ->  {
+          model.setRating(ratingResponse.getRating());
+        });
+  }
+
+  public Observable<TrackPositionResponse> changePosition(int position) {
+    return api.updatePosition(position)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeOn(Schedulers.io());
   }
 }

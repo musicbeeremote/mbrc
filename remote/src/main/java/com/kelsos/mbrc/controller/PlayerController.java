@@ -89,4 +89,5 @@ public class PlayerController {
   @ShuffleChange.ShuffleState public String getShuffleState() {
     return model.getShuffleState();
   }
+
 }

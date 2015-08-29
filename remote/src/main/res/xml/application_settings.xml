@@ -25,7 +25,7 @@
         android:title="@string/setting_miscellaneous_plugin_updates"/>
 
   </PreferenceCategory>
-  <com.afollestad.materialdialogs.prefs.MaterialListPreference
+  <ListPreference
     android:defaultValue="@string/search_click_default_value"
     android:dialogTitle="@string/settings_search_default_title"
     android:entries="@array/search_click_options"
