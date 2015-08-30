@@ -26,9 +26,9 @@ import butterknife.OnLongClick;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.annotations.ShuffleState;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.enums.PlayState;
-import com.kelsos.mbrc.events.ui.ShuffleChange;
 import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
 import com.kelsos.mbrc.rest.responses.TrackInfo;
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
@@ -207,13 +207,13 @@ import roboguice.fragment.RoboFragment;
     }
   }
 
-  @Override public void updateShuffle(@ShuffleChange.ShuffleState String state) {
+  @Override public void updateShuffle(@ShuffleState String state) {
     int color = getResources().getColor(
-        !ShuffleChange.OFF.equals(state) ? R.color.colorAccent : R.color.button_material_dark);
+        !ShuffleState.OFF.equals(state) ? R.color.colorAccent : R.color.button_material_dark);
     shuffleButton.setColorFilter(color);
 
     shuffleButton.setImageResource(
-        ShuffleChange.AUTODJ.equals(state) ? R.drawable.ic_headset_grey600_24dp
+        ShuffleState.AUTODJ.equals(state) ? R.drawable.ic_headset_grey600_24dp
             : R.drawable.ic_shuffle_grey600_24dp);
   }
 

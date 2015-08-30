@@ -3,8 +3,8 @@ package com.kelsos.mbrc.data.model;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.annotations.Playstate;
+import com.kelsos.mbrc.annotations.ShuffleState;
 import com.kelsos.mbrc.enums.PlayState;
-import com.kelsos.mbrc.events.ui.ShuffleChange;
 
 @Singleton public class PlayerModel {
   public static final int MAX_VOLUME = 100;
@@ -119,12 +119,12 @@ import com.kelsos.mbrc.events.ui.ShuffleChange;
     return newVolume;
   }
 
-  @ShuffleChange.ShuffleState
+  @ShuffleState
   public String getShuffleState() {
     return shuffleState;
   }
 
-  public PlayerModel setShuffleState(@ShuffleChange.ShuffleState String shuffleState) {
+  public PlayerModel setShuffleState(@ShuffleState String shuffleState) {
     this.shuffleState = shuffleState;
     return this;
   }

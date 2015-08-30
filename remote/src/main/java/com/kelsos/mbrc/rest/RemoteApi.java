@@ -1,6 +1,13 @@
 package com.kelsos.mbrc.rest;
 
 import com.kelsos.mbrc.annotations.PlaybackAction;
+import com.kelsos.mbrc.rest.requests.EnableRequest;
+import com.kelsos.mbrc.rest.requests.PlayPathRequest;
+import com.kelsos.mbrc.rest.requests.PositionRequest;
+import com.kelsos.mbrc.rest.requests.RatingRequest;
+import com.kelsos.mbrc.rest.requests.RepeatRequest;
+import com.kelsos.mbrc.rest.requests.ShuffleRequest;
+import com.kelsos.mbrc.rest.requests.VolumeRequest;
 import com.kelsos.mbrc.rest.responses.LyricsResponse;
 import com.kelsos.mbrc.rest.responses.PaginatedDataResponse;
 import com.kelsos.mbrc.rest.responses.PlayerStatusResponse;
@@ -11,11 +18,12 @@ import com.kelsos.mbrc.rest.responses.SuccessResponse;
 import com.kelsos.mbrc.rest.responses.SuccessStateResponse;
 import com.kelsos.mbrc.rest.responses.SuccessVolumeResponse;
 import com.kelsos.mbrc.rest.responses.TextValueResponse;
-import com.kelsos.mbrc.rest.responses.TrackPositionResponse;
 import com.kelsos.mbrc.rest.responses.TrackInfo;
+import com.kelsos.mbrc.rest.responses.TrackPositionResponse;
 import com.kelsos.mbrc.rest.responses.ValueResponse;
 import java.util.List;
 import retrofit.client.Response;
+import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
 import retrofit.http.PUT;
@@ -29,37 +37,34 @@ public interface RemoteApi {
   Observable<ValueResponse> getVolume();
 
   @PUT("/player/volume")
-  Observable<SuccessVolumeResponse> updateVolume(@Query("value") int volume);
+  Observable<SuccessVolumeResponse> updateVolume(@Body VolumeRequest body);
 
   @PUT("/track/rating")
-  Observable<SuccessResponse> updateRating(@Query("rating") float rating);
+  Observable<SuccessResponse> updateRating(@Body RatingRequest body);
 
   @PUT("/track/position")
-  Observable<TrackPositionResponse> updatePosition(@Query("position") int position);
+  Observable<TrackPositionResponse> updatePosition(@Body PositionRequest body);
 
   @PUT("/player/shuffle")
-  Observable<SuccessResponse> updateShuffleState(@Query("enabled") boolean enabled);
+  Observable<SuccessStateResponse> updateShuffleState(@Body ShuffleRequest body);
 
   @PUT("/player/scrobble")
-  Observable<SuccessResponse> updateScrobbleState(@Query("enabled") boolean enabled);
+  Observable<SuccessResponse> updateScrobbleState(@Body EnableRequest body);
 
   @PUT("/player/repeat")
-  Observable<SuccessResponse> updateRepeatState(@Query("enabled") String mode);
+  Observable<SuccessResponse> updateRepeatState(@Body RepeatRequest body);
 
   @PUT("/player/mute")
-  Observable<SuccessResponse> updateMuteState(@Query("enabled") boolean enabled);
-
-  @PUT("/player/autodj")
-  Observable<SuccessResponse> updateAutoDjState(@Query("enabled") boolean enabled);
+  Observable<SuccessResponse> updateMuteState(@Body EnableRequest body);
 
   @PUT("/playlists/play")
-  Observable<SuccessResponse> playPlaylist(@Query("path") String path);
+  Observable<SuccessResponse> playPlaylist(@Body PlayPathRequest body);
 
   @DELETE("/nowplaying/{id}")
   Observable<SuccessResponse> nowPlayingRemoveTrack(@Path("id") int id);
 
   @PUT("/nowplaying/play")
-  Observable<SuccessResponse> nowPlayingPlayTrack(@Query("path") String path);
+  Observable<SuccessResponse> nowPlayingPlayTrack(@Body PlayPathRequest body);
 
   @PUT("/nowplaying/move")
   Observable<SuccessResponse> nowPlayingMoveTrack(@Query("from") int from, @Query("to") int to);
@@ -88,17 +93,11 @@ public interface RemoteApi {
   @GET("/player/shuffle")
   Observable<ShuffleStateResponse> getShuffleState();
 
-  @PUT("/player/shuffle")
-  Observable<SuccessStateResponse> toggleShuffleState();
-
   @GET("/player/scrobble")
   Observable<StateResponse> getScrobbleState();
 
   @GET("/player/repeat")
   Observable<TextValueResponse> getRepeatMode();
-
-  @PUT("/player/repeat")
-  Observable<TextValueResponse> changeRepeatMode();
 
   @GET("/player/playstate")
   Observable<TextValueResponse> getPlaystate();

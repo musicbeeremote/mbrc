@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.data.model.TrackModel;
 import com.kelsos.mbrc.rest.RemoteApi;
+import com.kelsos.mbrc.rest.requests.PositionRequest;
 import com.kelsos.mbrc.rest.responses.TrackInfo;
 import com.kelsos.mbrc.rest.responses.TrackPositionResponse;
 import com.kelsos.mbrc.utilities.MainThreadBus;
@@ -77,7 +78,7 @@ public class TrackController {
   }
 
   public Observable<TrackPositionResponse> changePosition(int position) {
-    return api.updatePosition(position)
+    return api.updatePosition(new PositionRequest(position))
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io());
   }
