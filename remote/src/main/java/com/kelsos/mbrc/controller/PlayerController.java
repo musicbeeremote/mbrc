@@ -7,7 +7,7 @@ import com.kelsos.mbrc.annotations.ShuffleState;
 import com.kelsos.mbrc.data.model.PlayerModel;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.rest.RemoteApi;
-import com.kelsos.mbrc.rest.requests.EnableRequest;
+import com.kelsos.mbrc.rest.requests.ChangeStateRequest;
 import com.kelsos.mbrc.rest.requests.RepeatRequest;
 import com.kelsos.mbrc.rest.requests.ShuffleRequest;
 import rx.android.schedulers.AndroidSchedulers;
@@ -66,7 +66,7 @@ public class PlayerController {
   }
 
   public void onMutePressed() {
-    api.updateMuteState(new EnableRequest(null))
+    api.updateMuteState(new ChangeStateRequest().setEnabled(null))
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
         .subscribe(successResponse -> {
@@ -83,7 +83,7 @@ public class PlayerController {
   }
 
   public void onRepeatPressed() {
-    api.updateRepeatState(new RepeatRequest(RepeatMode.CHANGE))
+    api.updateRepeatState(new RepeatRequest().setMode(RepeatMode.CHANGE))
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
         .subscribe(successResponse -> {

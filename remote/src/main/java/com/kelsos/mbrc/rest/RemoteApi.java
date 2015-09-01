@@ -1,8 +1,11 @@
 package com.kelsos.mbrc.rest;
 
 import com.kelsos.mbrc.annotations.PlaybackAction;
-import com.kelsos.mbrc.rest.requests.EnableRequest;
+import com.kelsos.mbrc.rest.requests.ChangeStateRequest;
+import com.kelsos.mbrc.rest.requests.MoveRequest;
+import com.kelsos.mbrc.rest.requests.NowPlayingQueueRequest;
 import com.kelsos.mbrc.rest.requests.PlayPathRequest;
+import com.kelsos.mbrc.rest.requests.PlaylistRequest;
 import com.kelsos.mbrc.rest.requests.PositionRequest;
 import com.kelsos.mbrc.rest.requests.RatingRequest;
 import com.kelsos.mbrc.rest.requests.RepeatRequest;
@@ -21,7 +24,6 @@ import com.kelsos.mbrc.rest.responses.TextValueResponse;
 import com.kelsos.mbrc.rest.responses.TrackInfo;
 import com.kelsos.mbrc.rest.responses.TrackPositionResponse;
 import com.kelsos.mbrc.rest.responses.ValueResponse;
-import java.util.List;
 import retrofit.client.Response;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
@@ -49,13 +51,13 @@ public interface RemoteApi {
   Observable<SuccessStateResponse> updateShuffleState(@Body ShuffleRequest body);
 
   @PUT("/player/scrobble")
-  Observable<SuccessResponse> updateScrobbleState(@Body EnableRequest body);
+  Observable<SuccessResponse> updateScrobbleState(@Body ChangeStateRequest body);
 
   @PUT("/player/repeat")
   Observable<SuccessResponse> updateRepeatState(@Body RepeatRequest body);
 
   @PUT("/player/mute")
-  Observable<SuccessResponse> updateMuteState(@Body EnableRequest body);
+  Observable<SuccessResponse> updateMuteState(@Body ChangeStateRequest body);
 
   @PUT("/playlists/play")
   Observable<SuccessResponse> playPlaylist(@Body PlayPathRequest body);
@@ -67,12 +69,10 @@ public interface RemoteApi {
   Observable<SuccessResponse> nowPlayingPlayTrack(@Body PlayPathRequest body);
 
   @PUT("/nowplaying/move")
-  Observable<SuccessResponse> nowPlayingMoveTrack(@Query("from") int from, @Query("to") int to);
+  Observable<SuccessResponse> nowPlayingMoveTrack(@Body MoveRequest body);
 
   @PUT("/playlists/{id}/tracks/move")
-  Observable<SuccessResponse> playlistMoveTrack(@Path("id") int id,
-      @Query("from") int from,
-      @Query("to") int to);
+  Observable<SuccessResponse> playlistMoveTrack(@Path("id") int id, @Body MoveRequest body);
 
   @GET("/track/rating")
   Observable<RatingResponse> getTrackRating();
@@ -147,8 +147,7 @@ public interface RemoteApi {
   Observable<SuccessResponse> deletePlaylist(@Path("id") int id);
 
   @PUT("/playlists")
-  Observable<SuccessResponse> createPlaylist(@Query("name") String name,
-      @Query("list") List<String> list);
+  Observable<SuccessResponse> createPlaylist(@Body PlaylistRequest body);
 
   @GET("/playlists")
   Observable<PaginatedDataResponse> getPlaylists(@Query("offset") int offset,
@@ -159,13 +158,11 @@ public interface RemoteApi {
       @Query("limit") int limit);
 
   @PUT("/playlists/{id}/tracks")
-  Observable<SuccessResponse> addTracksToPlaylist(@Path("id") int id, List<String> list);
+  Observable<SuccessResponse> addTracksToPlaylist(@Path("id") int id, @Body PlaylistRequest body);
 
   @GET("/player/action")
   Observable<SuccessResponse> performPlayerAction(@Query("action") @PlaybackAction String action);
 
   @PUT("/nowplaying/queue/")
-  Observable<SuccessResponse> nowplayingQueue(@Query("type") String type,
-      @Query("action") String action,
-      @Query("id") long id);
+  Observable<SuccessResponse> nowplayingQueue(@Body NowPlayingQueueRequest body);
 }

@@ -3,40 +3,37 @@ package com.kelsos.mbrc.rest.requests;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.kelsos.mbrc.annotations.RepeatMode;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "mode"
+    "enabled"
 })
-public class RepeatRequest {
+public class ChangeStateRequest {
 
-  @RepeatMode
-  @JsonProperty("mode")
-  private String mode;
+  @JsonProperty("enabled")
+  private Boolean enabled;
 
   /**
    *
    * @return
-   * The mode
+   * The enabled
    */
-  @RepeatMode
-  @JsonProperty("mode")
-  public String getMode() {
-    return mode;
+  @JsonProperty("enabled")
+  public Boolean isEnabled() {
+    return enabled;
   }
 
   /**
    *
-   * @param mode
-   * The mode
+   * @param enabled
+   * The enabled
    */
-  @JsonProperty("mode")
-  public RepeatRequest setMode(@RepeatMode String mode) {
-    this.mode = mode;
+  @JsonProperty("enabled")
+  public ChangeStateRequest setEnabled(Boolean enabled) {
+    this.enabled = enabled;
     return this;
   }
 
@@ -47,7 +44,7 @@ public class RepeatRequest {
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder().append(mode).toHashCode();
+    return new HashCodeBuilder().append(enabled).toHashCode();
   }
 
   @Override
@@ -55,10 +52,11 @@ public class RepeatRequest {
     if (other == this) {
       return true;
     }
-    if (!(other instanceof RepeatRequest)) {
+    if (!(other instanceof ChangeStateRequest)) {
       return false;
     }
-    RepeatRequest rhs = ((RepeatRequest) other);
-    return new EqualsBuilder().append(mode, rhs.mode).isEquals();
+    ChangeStateRequest rhs = ((ChangeStateRequest) other);
+    return new EqualsBuilder().append(enabled, rhs.enabled).isEquals();
   }
+
 }

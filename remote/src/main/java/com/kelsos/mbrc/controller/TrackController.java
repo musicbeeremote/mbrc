@@ -78,7 +78,7 @@ public class TrackController {
   }
 
   public Observable<TrackPositionResponse> changePosition(int position) {
-    return api.updatePosition(new PositionRequest(position))
+    return api.updatePosition(new PositionRequest().setPosition(position))
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io());
   }
