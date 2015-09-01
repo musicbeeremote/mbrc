@@ -41,7 +41,7 @@
           android:shadowDy="1"
           android:shadowRadius="1.5"
           android:text="@string/main_label_duration_current"
-          android:textColor="@color/remote_text"
+          android:textColor="@color/primary_text"
           android:textSize="12sp" />
 
       <TextView
@@ -58,7 +58,7 @@
           android:shadowDy="1"
           android:shadowRadius="1.5"
           android:text="@string/main_label_duration_total"
-          android:textColor="@color/remote_text"
+          android:textColor="@color/primary_text"
           android:textSize="12sp"
           tools:ignore="RelativeOverlap" />
     </RelativeLayout>
@@ -113,7 +113,7 @@
           android:marqueeRepeatLimit="marquee_forever"
           android:scrollHorizontally="true"
           android:singleLine="true"
-          android:textColor="@color/remote_text"
+          android:textColor="@color/primary_text"
           android:textSize="@dimen/text_title_size"
           tools:text="Rock it for me" />
 
@@ -129,7 +129,7 @@
           android:marqueeRepeatLimit="marquee_forever"
           android:scrollHorizontally="true"
           android:singleLine="true"
-          android:textColor="@color/remote_text"
+          android:textColor="@color/primary_text"
           android:textSize="@dimen/text_subhead_size"
           tools:text="Caravan Palace" />
 
@@ -145,7 +145,7 @@
           android:marqueeRepeatLimit="marquee_forever"
           android:scrollHorizontally="true"
           android:singleLine="true"
-          android:textColor="@color/remote_text"
+          android:textColor="@color/primary_text"
           android:textSize="@dimen/text_body_size"
           tools:text="Panic [2012]" />
 
@@ -168,7 +168,7 @@
           android:background="?attr/selectableItemBackground"
           android:contentDescription="@string/main_button_repeat_description"
           android:src="@drawable/ic_repeat_grey600_24dp"
-          android:tint="@color/button_material_dark" />
+          android:tint="@color/button_dark" />
 
       <ImageButton
           android:id="@+id/main_button_previous"
@@ -180,7 +180,7 @@
           android:contentDescription="@string/main_button_previous_description"
           android:scaleType="fitCenter"
           android:src="@drawable/ic_skip_previous_black_36dp"
-          android:tint="@color/button_material_dark" />
+          android:tint="@color/button_dark" />
 
       <ImageButton
           android:id="@+id/main_button_play_pause"
@@ -204,7 +204,7 @@
           android:contentDescription="@string/main_button_next_description"
           android:scaleType="fitCenter"
           android:src="@drawable/ic_skip_next_black_36dp"
-          android:tint="@color/button_material_dark" />
+          android:tint="@color/button_dark" />
 
       <ImageButton
           android:id="@+id/main_shuffle_button"
@@ -214,7 +214,7 @@
           android:background="?attr/selectableItemBackground"
           android:contentDescription="@string/main_button_shuffle_description"
           android:src="@drawable/ic_shuffle_grey600_24dp"
-          android:tint="@color/button_material_dark" />
+          android:tint="@color/button_dark" />
     </LinearLayout>
 
     <LinearLayout
@@ -236,7 +236,7 @@
           android:paddingLeft="@dimen/small_margin"
           android:paddingRight="@dimen/small_margin"
           android:src="@drawable/ic_volume_off_grey600_24dp"
-          android:tint="@color/button_material_dark" />
+          android:tint="@color/button_dark" />
 
       <SeekBar
           android:id="@+id/main_volume_seeker"

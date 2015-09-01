@@ -6,7 +6,7 @@
   <size
       android:width="@dimen/thumb_size"
       android:height="@dimen/thumb_size" />
-  <solid android:color="@color/colorPrimary" />
+  <solid android:color="@color/primary" />
   <corners android:radius="1dp" />
 
 </shape>

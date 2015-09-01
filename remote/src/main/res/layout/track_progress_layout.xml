@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/main_label_duration_current"
-        android:textColor="@color/remote_text"
+        android:textColor="@color/primary_text"
         android:textSize="@dimen/mbrc_duration_text_size"/>
 
     <SeekBar
@@ -42,6 +42,6 @@
         android:layout_height="wrap_content"
         android:gravity="end"
         android:text="@string/main_label_duration_total"
-        android:textColor="@color/remote_text"
+        android:textColor="@color/primary_text"
         android:textSize="@dimen/mbrc_duration_text_size"/>
 </LinearLayout>

@@ -36,7 +36,7 @@
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
         android:singleLine="true"
-        android:textColor="@color/remote_text"
+        android:textColor="@color/primary_text"
         android:textSize="@dimen/abc_text_size_title_material"
         tools:ignore="UnusedAttribute"
         tools:text="All night" />
@@ -49,7 +49,7 @@
         android:ellipsize="end"
         android:fontFamily="sans-serif"
         android:singleLine="true"
-        android:textColor="@color/remote_secondary_text"
+        android:textColor="@color/secondary_text"
         android:textSize="@dimen/abc_text_size_small_material"
         tools:ignore="UnusedAttribute"
         tools:text="Parov Stelar" />

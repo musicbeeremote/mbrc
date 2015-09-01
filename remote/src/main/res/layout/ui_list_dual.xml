@@ -32,7 +32,7 @@
         android:singleLine="true"
         android:text="@string/title_placeholder"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/remote_text"
+        android:textColor="@color/primary_text"
         android:textSize="@dimen/abc_text_size_title_material" />
 
     <TextView
@@ -45,7 +45,7 @@
         android:singleLine="true"
         android:text="@string/artist_placeholder"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/remote_secondary_text"
+        android:textColor="@color/secondary_text"
         android:textSize="@dimen/abc_text_size_subhead_material" />
   </LinearLayout>
 

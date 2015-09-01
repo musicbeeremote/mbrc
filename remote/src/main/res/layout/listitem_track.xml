@@ -48,7 +48,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/remote_text"
+            android:textColor="@color/primary_text"
             android:textSize="@dimen/list_item_one"
             tools:text="Track title" />
 
@@ -59,7 +59,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/remote_secondary_text"
+            android:textColor="@color/secondary_text"
             android:textSize="@dimen/list_item_two"
             tools:text="Artist Name" />
       </LinearLayout>

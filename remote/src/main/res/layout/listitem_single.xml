@@ -18,7 +18,7 @@
       android:paddingLeft="@dimen/normal_margin"
       android:singleLine="true"
       android:text="@string/artist_placeholder"
-      android:textColor="@color/remote_text"
+      android:textColor="@color/primary_text"
       android:textSize="@dimen/list_item_one"
       android:textStyle="normal"
       tools:ignore="RtlHardcoded,RtlSymmetry" />

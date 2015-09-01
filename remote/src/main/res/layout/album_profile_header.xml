@@ -35,7 +35,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:textSize="20sp"
-            android:textColor="@color/remote_text"
+            android:textColor="@color/primary_text"
             tools:text="Album Name"/>
 
         <TextView
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textColor="@color/remote_secondary_text"
+            android:textColor="@color/secondary_text"
             android:textSize="12sp"
             tools:text="18 tracks"/>
 

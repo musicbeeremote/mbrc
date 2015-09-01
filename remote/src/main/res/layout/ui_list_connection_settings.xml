@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:lines="1"
         android:linksClickable="false"
-        android:textColor="@color/remote_text"
+        android:textColor="@color/primary_text"
         android:textSize="@dimen/text_subhead_size"
         tools:text="Computer Name" />
 
@@ -39,7 +39,7 @@
           android:layout_width="0dip"
           android:layout_height="wrap_content"
           android:layout_weight="1"
-          android:textColor="@color/remote_secondary_text"
+          android:textColor="@color/secondary_text"
           android:textSize="@dimen/text_body_size"
           tools:text="192.168.100.10" />
 
@@ -47,7 +47,7 @@
           android:id="@+id/cs_list_port"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:textColor="@color/remote_secondary_text"
+          android:textColor="@color/secondary_text"
           android:textSize="@dimen/text_body_size"
           tools:text="3132" />
     </LinearLayout>

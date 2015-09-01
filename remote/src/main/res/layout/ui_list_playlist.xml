@@ -15,7 +15,7 @@
       android:ellipsize="end"
       android:gravity="center_vertical"
       android:singleLine="true"
-      android:textColor="@color/remote_text"
+      android:textColor="@color/primary_text"
       android:textSize="@dimen/playlist_entry_text_size"
       tools:text="Playlist Name" />
 

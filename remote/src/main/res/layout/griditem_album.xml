@@ -39,7 +39,7 @@
           android:layout_height="wrap_content"
           android:ellipsize="end"
           android:singleLine="true"
-          android:textColor="@color/remote_text"
+          android:textColor="@color/primary_text"
           android:textSize="@dimen/mbrc_grid_line_one_size"
           android:textStyle="normal"
           tools:text="Title" />
@@ -50,7 +50,7 @@
           android:layout_height="wrap_content"
           android:ellipsize="end"
           android:singleLine="true"
-          android:textColor="@color/remote_secondary_text"
+          android:textColor="@color/secondary_text"
           android:textSize="@dimen/mbrc_grid_line_two_size"
           android:textStyle="normal"
           tools:text="Artist" />

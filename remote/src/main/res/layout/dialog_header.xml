@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:singleLine="true"
-        android:textColor="@color/remote_text"
+        android:textColor="@color/primary_text"
         android:textSize="22sp"
         tools:text="Dialog Header" />
   </LinearLayout>
@@ -30,6 +30,6 @@
   <View
       android:layout_width="match_parent"
       android:layout_height="2dip"
-      android:background="@color/colorPrimary" />
+      android:background="@color/secondary_text" />
 
 </LinearLayout>

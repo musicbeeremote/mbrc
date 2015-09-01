@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.fragments;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
@@ -190,12 +190,12 @@ import roboguice.fragment.RoboFragment;
     return shareIntent;
   }
 
-  @Override public void onAttach(Activity activity) {
-    super.onAttach(activity);
+  @Override public void onAttach(Context context) {
+    super.onAttach(context);
     try {
-      listener = (OnExpandToolbarListener) activity;
+      listener = (OnExpandToolbarListener) context;
     } catch (ClassCastException ex) {
-      throw new ClassCastException(activity.toString() + "must Implement OnExpandToolbarListener");
+      throw new ClassCastException(context.toString() + "must Implement OnExpandToolbarListener");
     }
   }
 
@@ -209,7 +209,7 @@ import roboguice.fragment.RoboFragment;
 
   @Override public void updateShuffle(@ShuffleState String state) {
     int color = getResources().getColor(
-        !ShuffleState.OFF.equals(state) ? R.color.colorAccent : R.color.button_material_dark);
+        !ShuffleState.OFF.equals(state) ? R.color.accent : R.color.button_dark);
     shuffleButton.setColorFilter(color);
 
     shuffleButton.setImageResource(
@@ -219,7 +219,7 @@ import roboguice.fragment.RoboFragment;
 
   @Override public void updateRepeat(boolean enabled) {
     int color =
-        getResources().getColor(enabled ? R.color.colorAccent : R.color.button_material_dark);
+        getResources().getColor(enabled ? R.color.accent : R.color.button_dark);
     repeatButton.setColorFilter(color);
   }
 
