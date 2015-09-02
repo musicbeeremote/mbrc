@@ -1,6 +1,14 @@
 package com.kelsos.mbrc.rest;
 
 import com.kelsos.mbrc.annotations.PlaybackAction;
+import com.kelsos.mbrc.dto.Artist;
+import com.kelsos.mbrc.dto.Cover;
+import com.kelsos.mbrc.dto.Genre;
+import com.kelsos.mbrc.dto.LibraryAlbum;
+import com.kelsos.mbrc.dto.NowPlayingTrack;
+import com.kelsos.mbrc.dto.Playlist;
+import com.kelsos.mbrc.dto.PlaylistTrack;
+import com.kelsos.mbrc.dto.Track;
 import com.kelsos.mbrc.rest.requests.ChangeStateRequest;
 import com.kelsos.mbrc.rest.requests.MoveRequest;
 import com.kelsos.mbrc.rest.requests.NowPlayingQueueRequest;
@@ -12,7 +20,7 @@ import com.kelsos.mbrc.rest.requests.RepeatRequest;
 import com.kelsos.mbrc.rest.requests.ShuffleRequest;
 import com.kelsos.mbrc.rest.requests.VolumeRequest;
 import com.kelsos.mbrc.rest.responses.LyricsResponse;
-import com.kelsos.mbrc.rest.responses.PaginatedDataResponse;
+import com.kelsos.mbrc.rest.responses.PaginatedResponse;
 import com.kelsos.mbrc.rest.responses.PlayerStatusResponse;
 import com.kelsos.mbrc.rest.responses.RatingResponse;
 import com.kelsos.mbrc.rest.responses.ShuffleStateResponse;
@@ -103,7 +111,7 @@ public interface RemoteApi {
   Observable<TextValueResponse> getPlaystate();
 
   @GET("/playlists/{id}/tracks")
-  Observable<PaginatedDataResponse> getPlaylistTracks(@Path("id") Long id,
+  Observable<PaginatedResponse<PlaylistTrack>> getPlaylistTracks(@Path("id") Long id,
       @Query("offset") int offset,
       @Query("limit") int limit);
 
@@ -114,23 +122,23 @@ public interface RemoteApi {
   Observable<StateResponse> getMuteState();
 
   @GET("/library/genres")
-  Observable<PaginatedDataResponse> getLibraryGenres(@Query("offset") int offset,
+  Observable<PaginatedResponse<Genre>> getLibraryGenres(@Query("offset") int offset,
       @Query("limit") int limit);
 
   @GET("/library/tracks")
-  Observable<PaginatedDataResponse> getLibraryTracks(@Query("offset") int offset,
+  Observable<PaginatedResponse<Track>> getLibraryTracks(@Query("offset") int offset,
       @Query("limit") int limit);
 
   @GET("/library/covers")
-  Observable<PaginatedDataResponse> getLibraryCovers(@Query("offset") int offset,
+  Observable<PaginatedResponse<Cover>> getLibraryCovers(@Query("offset") int offset,
       @Query("limit") int limit);
 
   @GET("/library/artists")
-  Observable<PaginatedDataResponse> getLibraryArtists(@Query("offset") int offset,
+  Observable<PaginatedResponse<Artist>> getLibraryArtists(@Query("offset") int offset,
       @Query("limit") int limit);
 
   @GET("/library/albums")
-  Observable<PaginatedDataResponse> getLibraryAlbums(@Query("offset") int offset,
+  Observable<PaginatedResponse<LibraryAlbum>> getLibraryAlbums(@Query("offset") int offset,
       @Query("limit") int limit);
 
   @Streaming
@@ -150,11 +158,11 @@ public interface RemoteApi {
   Observable<SuccessResponse> createPlaylist(@Body PlaylistRequest body);
 
   @GET("/playlists")
-  Observable<PaginatedDataResponse> getPlaylists(@Query("offset") int offset,
+  Observable<PaginatedResponse<Playlist>> getPlaylists(@Query("offset") int offset,
       @Query("limit") int limit);
 
   @GET("/nowplaying")
-  Observable<PaginatedDataResponse> getNowPlayingList(@Query("offset") int offset,
+  Observable<PaginatedResponse<NowPlayingTrack>> getNowPlayingList(@Query("offset") int offset,
       @Query("limit") int limit);
 
   @PUT("/playlists/{id}/tracks")

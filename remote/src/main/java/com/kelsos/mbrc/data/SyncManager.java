@@ -2,8 +2,7 @@ package com.kelsos.mbrc.data;
 
 import android.content.Context;
 import android.os.Environment;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.annimon.stream.Stream;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.BuildConfig;
@@ -12,11 +11,11 @@ import com.kelsos.mbrc.dao.Artist;
 import com.kelsos.mbrc.dao.Cover;
 import com.kelsos.mbrc.dao.Genre;
 import com.kelsos.mbrc.dao.Playlist;
-import com.kelsos.mbrc.dao.PlaylistTrack;
 import com.kelsos.mbrc.dao.QueueTrack;
-import com.kelsos.mbrc.dao.Track;
+import com.kelsos.mbrc.dto.LibraryAlbum;
+import com.kelsos.mbrc.dto.NowPlayingTrack;
 import com.kelsos.mbrc.rest.RemoteApi;
-import com.kelsos.mbrc.rest.responses.PaginatedDataResponse;
+import com.kelsos.mbrc.rest.responses.PaginatedResponse;
 import com.kelsos.mbrc.utilities.Logger;
 import com.raizlabs.android.dbflow.runtime.DBTransactionInfo;
 import com.raizlabs.android.dbflow.runtime.TransactionManager;
@@ -60,18 +59,20 @@ public class SyncManager {
     getPlaylists(STARTING_OFFSET, LIMIT).subscribe(this::processPlaylists, Logger::logThrowable);
   }
 
-  private void processPlaylists(PaginatedDataResponse data) {
+  private void processPlaylists(PaginatedResponse<com.kelsos.mbrc.dto.Playlist> data) {
     final TransactionManager manager = TransactionManager.getInstance();
 
-    for (JsonNode node : data.getData()) {
-      final Playlist playlist;
-      try {
-        playlist = mapper.treeToValue(node, Playlist.class);
-        manager.saveOnSaveQueue(playlist);
-      } catch (JsonProcessingException e) {
-        Ln.v(e);
-      }
-    }
+    Stream.of(data.getData())
+        .forEach(value -> {
+
+          Playlist playlist = new Playlist().setId(value.getId())
+              .setName(value.getName())
+              .setPath(value.getPath())
+              .setReadOnly(value.getReadOnly())
+              .setTracks(value.getTracks());
+
+          manager.saveOnSaveQueue(playlist);
+        });
 
     int total = data.getTotal();
     int offset = data.getOffset();
@@ -88,8 +89,11 @@ public class SyncManager {
     }
   }
 
-  private Observable<PaginatedDataResponse> getPlaylists(int offset, int limit) {
-    return api.getPlaylists(offset, limit).observeOn(Schedulers.io()).subscribeOn(Schedulers.io());
+  private Observable<PaginatedResponse<com.kelsos.mbrc.dto.Playlist>> getPlaylists(int offset,
+      int limit) {
+    return api.getPlaylists(offset, limit)
+        .observeOn(Schedulers.io())
+        .subscribeOn(Schedulers.io());
   }
 
   public void reloadQueue() {
@@ -115,21 +119,24 @@ public class SyncManager {
         .addTransaction(new DeleteTransaction<>(DBTransactionInfo.create(), QueueTrack.class));
   }
 
-  private void processCurrentQueue(PaginatedDataResponse paginatedData) {
+  private void processCurrentQueue(PaginatedResponse<NowPlayingTrack> page) {
     final TransactionManager manager = TransactionManager.getInstance();
-    for (JsonNode node : paginatedData.getData()) {
-      final QueueTrack track;
-      try {
-        track = mapper.treeToValue(node, QueueTrack.class);
-        manager.saveOnSaveQueue(track);
-      } catch (JsonProcessingException e) {
-        Ln.e(e);
-      }
-    }
 
-    int total = paginatedData.getTotal();
-    int offset = paginatedData.getOffset();
-    int limit = paginatedData.getLimit();
+    Stream.of(page.getData())
+        .forEach(value -> {
+
+          QueueTrack track = new QueueTrack().setTitle(value.getTitle())
+              .setArtist(value.getArtist())
+              .setPath(value.getPath())
+              .setId(value.getId())
+              .setPosition(value.getPosition());
+
+          manager.saveOnSaveQueue(track);
+        });
+
+    int total = page.getTotal();
+    int offset = page.getOffset();
+    int limit = page.getLimit();
 
     if (offset + limit < total) {
       api.getNowPlayingList(offset + limit, limit)
@@ -141,20 +148,19 @@ public class SyncManager {
     }
   }
 
-  private void processCovers(PaginatedDataResponse paginatedData) {
+  private void processCovers(PaginatedResponse<com.kelsos.mbrc.dto.Cover> page) {
+    final TransactionManager manager = TransactionManager.getInstance();
 
-    try {
-      for (JsonNode node : paginatedData.getData()) {
-        final Cover cover = mapper.treeToValue(node, Cover.class);
+    Stream.of(page.getData())
+        .forEach(value -> {
+          Cover cover = new Cover().setHash(value.getHash())
+              .setId(value.getId());
+          manager.saveOnSaveQueue(cover);
+        });
 
-      }
-    } catch (IOException e) {
-      Ln.d(e);
-    }
-
-    int total = paginatedData.getTotal();
-    int offset = paginatedData.getOffset();
-    int limit = paginatedData.getLimit();
+    int total = page.getTotal();
+    int offset = page.getOffset();
+    int limit = page.getLimit();
 
     if (offset + limit < total) {
       getCovers(offset + limit, limit).subscribe(this::processCovers, Logger::logThrowable);
@@ -164,19 +170,19 @@ public class SyncManager {
     }
   }
 
-  private void processGenres(PaginatedDataResponse paginatedData) {
+  private void processGenres(PaginatedResponse<com.kelsos.mbrc.dto.Genre> page) {
+    final TransactionManager manager = TransactionManager.getInstance();
 
-    try {
-      for (JsonNode node : paginatedData.getData()) {
-        final Genre genre = mapper.treeToValue(node, Genre.class);
-      }
-    } catch (IOException e) {
-      Ln.d(e);
-    }
+    Stream.of(page.getData())
+        .forEach(value -> {
+          Genre genre = new Genre().setId(value.getId())
+              .setName(value.getName());
+          manager.saveOnSaveQueue(genre);
+        });
 
-    int total = paginatedData.getTotal();
-    int offset = paginatedData.getOffset();
-    int limit = paginatedData.getLimit();
+    int total = page.getTotal();
+    int offset = page.getOffset();
+    int limit = page.getLimit();
 
     if (offset + limit < total) {
       getGenres(offset + limit, limit).subscribe(this::processGenres, Logger::logThrowable);
@@ -186,16 +192,15 @@ public class SyncManager {
     }
   }
 
-  private void processArtists(PaginatedDataResponse paginatedData) {
-    try {
-      for (JsonNode node : paginatedData.getData()) {
-        final Artist artist = mapper.treeToValue(node, Artist.class);
+  private void processArtists(PaginatedResponse<com.kelsos.mbrc.dto.Artist> paginatedData) {
+    final TransactionManager manager = TransactionManager.getInstance();
 
-      }
-    } catch (IOException e) {
-      Ln.d(e);
-    }
+    Stream.of(paginatedData.getData()).forEach(value -> {
+      Artist artist = new Artist().setId(value.getId())
+          .setName(value.getName());
 
+      manager.saveOnSaveQueue(artist);
+    });
 
     int total = paginatedData.getTotal();
     int offset = paginatedData.getOffset();
@@ -212,7 +217,8 @@ public class SyncManager {
   private void startPlaylistTrackSyncing() {
     Observable.create((Subscriber<? super List<Playlist>> subscriber) -> {
 
-      final List<Playlist> playlists = new Select().from(Playlist.class).queryList();
+      final List<Playlist> playlists = new Select().from(Playlist.class)
+          .queryList();
       subscriber.onNext(playlists);
       subscriber.onCompleted();
     })
@@ -229,16 +235,14 @@ public class SyncManager {
             this::processPlaylistTracks, Logger::logThrowable), Logger::logThrowable);
   }
 
-  private void processPlaylistTracks(PaginatedDataResponse data) {
+  private void processPlaylistTracks(PaginatedResponse<com.kelsos.mbrc.dto.PlaylistTrack> data) {
 
-    try {
-      for (JsonNode node : data.getData()) {
-        final PlaylistTrack album = mapper.treeToValue(node, PlaylistTrack.class);
+    TransactionManager manager = TransactionManager.getInstance();
 
-      }
-    } catch (IOException e) {
-      Ln.d(e);
-    }
+    Stream.of(data.getData()).forEach(value -> {
+      // TODO: 9/2/15 Update the model in the database
+    });
+
 
     int total = data.getTotal();
     int offset = data.getOffset();
@@ -252,16 +256,13 @@ public class SyncManager {
     }
   }
 
-  private void processAlbums(PaginatedDataResponse paginatedData) {
+  private void processAlbums(PaginatedResponse<LibraryAlbum> paginatedData) {
 
-    try {
-      for (JsonNode node : paginatedData.getData()) {
-        final Album album = mapper.treeToValue(node, Album.class);
+    Stream.of(paginatedData.getData()).forEach(value -> {
+      final Album album = new Album();
+      // TODO: 9/2/15 Fix the proper mapping
+    });
 
-      }
-    } catch (IOException e) {
-      Ln.d(e);
-    }
 
     int total = paginatedData.getTotal();
     int offset = paginatedData.getOffset();
@@ -275,17 +276,9 @@ public class SyncManager {
     }
   }
 
-  private void processTracks(PaginatedDataResponse paginatedData) {
+  private void processTracks(PaginatedResponse<com.kelsos.mbrc.dto.Track> paginatedData) {
 
-    try {
-
-      for (JsonNode node : paginatedData.getData()) {
-        final Track track = mapper.treeToValue(node, Track.class);
-
-      }
-    } catch (IOException e) {
-      Ln.d(e);
-    }
+    // TODO: 9/2/15 Fix track processing
 
     int total = paginatedData.getTotal();
     int offset = paginatedData.getOffset();
@@ -301,7 +294,8 @@ public class SyncManager {
 
   private void fetchCovers() {
 
-    List<Cover> covers = new Select().from(Cover.class).queryList();
+    List<Cover> covers = new Select().from(Cover.class)
+        .queryList();
     for (Cover cover : covers) {
       api.getCoverById(cover.getId())
           .subscribeOn(Schedulers.io())
@@ -319,7 +313,8 @@ public class SyncManager {
     try {
       final OutputStream output = new FileOutputStream(file);
       final byte[] buffer = new byte[BUFFER_SIZE];
-      final InputStream input = response.getBody().in();
+      final InputStream input = response.getBody()
+          .in();
       int read;
       while ((read = input.read(buffer)) != -1) {
         output.write(buffer, 0, read);
@@ -332,38 +327,42 @@ public class SyncManager {
     }
   }
 
-  private Observable<PaginatedDataResponse> getGenres(int offset, int limit) {
+  private Observable<PaginatedResponse<com.kelsos.mbrc.dto.Genre>> getGenres(int offset,
+      int limit) {
     return api.getLibraryGenres(offset, limit)
         .observeOn(Schedulers.io())
         .subscribeOn(Schedulers.io());
   }
 
-  private Observable<PaginatedDataResponse> getArtists(int offset, int limit) {
+  private Observable<PaginatedResponse<com.kelsos.mbrc.dto.Artist>> getArtists(int offset,
+      int limit) {
     return api.getLibraryArtists(offset, limit)
         .observeOn(Schedulers.io())
         .subscribeOn(Schedulers.io());
   }
 
-  private Observable<PaginatedDataResponse> getAlbums(int offset, int limit) {
+  private Observable<PaginatedResponse<LibraryAlbum>> getAlbums(int offset, int limit) {
     return api.getLibraryAlbums(offset, limit)
         .observeOn(Schedulers.io())
         .subscribeOn(Schedulers.io());
   }
 
-  private Observable<PaginatedDataResponse> getTracks(int offset, int limit) {
+  private Observable<PaginatedResponse<com.kelsos.mbrc.dto.Track>> getTracks(int offset,
+      int limit) {
     return api.getLibraryTracks(offset, limit)
         .observeOn(Schedulers.io())
         .subscribeOn(Schedulers.io());
   }
 
-  private Observable<PaginatedDataResponse> getCovers(int offset, int limit) {
+  private Observable<PaginatedResponse<com.kelsos.mbrc.dto.Cover>> getCovers(int offset,
+      int limit) {
     return api.getLibraryCovers(offset, limit)
         .observeOn(Schedulers.io())
         .subscribeOn(Schedulers.io());
   }
 
-  private Observable<PaginatedDataResponse> getPlaylistTracks(Long playlistId, int offset,
-      int limit) {
+  private Observable<PaginatedResponse<com.kelsos.mbrc.dto.PlaylistTrack>> getPlaylistTracks(
+      Long playlistId, int offset, int limit) {
     return api.getPlaylistTracks(playlistId, offset, limit)
         .observeOn(Schedulers.io())
         .subscribeOn(Schedulers.io());
