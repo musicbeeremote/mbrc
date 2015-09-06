@@ -1,15 +1,53 @@
 package com.kelsos.mbrc.rest.responses;
 
-public class LyricsResponse {
-  private String lyrics;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
-  public LyricsResponse(String lyrics) {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+
+@JsonPropertyOrder({
+    "lyrics"
+})
+public class LyricsResponse {
+
+  @JsonProperty("lyrics") private String lyrics;
+
+  /**
+   * @return The lyrics
+   */
+  @JsonProperty("lyrics") public String getLyrics() {
+    return lyrics;
+  }
+
+  /**
+   * @param lyrics The lyrics
+   */
+  @JsonProperty("lyrics") public void setLyrics(String lyrics) {
     this.lyrics = lyrics;
   }
 
-  public LyricsResponse() { }
+  @Override public String toString() {
+    return ToStringBuilder.reflectionToString(this);
+  }
 
-  public String getLyrics() {
-    return lyrics;
+  @Override public int hashCode() {
+    return new HashCodeBuilder().append(lyrics)
+        .toHashCode();
+  }
+
+  @Override public boolean equals(Object other) {
+    if (other == this) {
+      return true;
+    }
+    if (!(other instanceof LyricsResponse)) {
+      return false;
+    }
+    LyricsResponse rhs = ((LyricsResponse) other);
+    return new EqualsBuilder().append(lyrics, rhs.lyrics)
+        .isEquals();
   }
 }

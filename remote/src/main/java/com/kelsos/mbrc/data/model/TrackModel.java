@@ -8,7 +8,7 @@ import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.rest.responses.TrackInfo;
 
 @Singleton public class TrackModel {
-  private float rating;
+  private double rating;
   private String lyrics;
   private LfmStatus lfmRating;
   private Bitmap albumCover;
@@ -40,11 +40,11 @@ import com.kelsos.mbrc.rest.responses.TrackInfo;
     return this;
   }
 
-  public float getRating() {
+  public double getRating() {
     return rating;
   }
 
-  public TrackModel setRating(float rating) {
+  public TrackModel setRating(double rating) {
     this.rating = rating;
     return this;
   }

@@ -24,7 +24,7 @@ import com.kelsos.mbrc.rest.responses.PaginatedResponse;
 import com.kelsos.mbrc.rest.responses.PlayerStatusResponse;
 import com.kelsos.mbrc.rest.responses.RatingResponse;
 import com.kelsos.mbrc.rest.responses.ShuffleStateResponse;
-import com.kelsos.mbrc.rest.responses.StateResponse;
+import com.kelsos.mbrc.rest.responses.SuccessBooleanStateResponse;
 import com.kelsos.mbrc.rest.responses.SuccessResponse;
 import com.kelsos.mbrc.rest.responses.SuccessStateResponse;
 import com.kelsos.mbrc.rest.responses.SuccessVolumeResponse;
@@ -102,7 +102,7 @@ public interface RemoteApi {
   Observable<ShuffleStateResponse> getShuffleState();
 
   @GET("/player/scrobble")
-  Observable<StateResponse> getScrobbleState();
+  Observable<SuccessBooleanStateResponse> getScrobbleState();
 
   @GET("/player/repeat")
   Observable<TextValueResponse> getRepeatMode();
@@ -119,7 +119,7 @@ public interface RemoteApi {
   Observable<PlayerStatusResponse> getPlayerStatus();
 
   @GET("/player/mute")
-  Observable<StateResponse> getMuteState();
+  Observable<SuccessBooleanStateResponse> getMuteState();
 
   @GET("/library/genres")
   Observable<PaginatedResponse<Genre>> getLibraryGenres(@Query("offset") int offset,
@@ -144,9 +144,6 @@ public interface RemoteApi {
   @Streaming
   @GET("/library/covers/{id}/raw")
   Observable<Response> getCoverById(@Path("id") long id);
-
-  @GET("/library/autodj")
-  Observable<StateResponse> getAutodjState();
 
   @DELETE("/playlists/{id}/tracks")
   Observable<SuccessResponse> deletePlaylistTrack(@Path("id") int id, @Query("index") int index);
