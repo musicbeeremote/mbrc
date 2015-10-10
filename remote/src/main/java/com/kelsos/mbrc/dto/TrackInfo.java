@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.rest.responses;
+package com.kelsos.mbrc.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

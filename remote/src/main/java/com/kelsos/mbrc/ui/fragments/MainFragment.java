@@ -19,21 +19,23 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnLongClick;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.annotations.ShuffleState;
+import com.kelsos.mbrc.dto.TrackInfo;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
-import com.kelsos.mbrc.rest.responses.TrackInfo;
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
 import com.kelsos.mbrc.ui.views.MainView;
 import com.kelsos.mbrc.utilities.FontUtils;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnLongClick;
 import roboguice.fragment.RoboFragment;
 
 @Singleton public class MainFragment extends RoboFragment implements MainView {

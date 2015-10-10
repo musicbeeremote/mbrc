@@ -2,6 +2,7 @@ package com.kelsos.mbrc.data;
 
 import android.content.Context;
 import android.os.Environment;
+
 import com.annimon.stream.Stream;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
@@ -14,6 +15,8 @@ import com.kelsos.mbrc.dao.Playlist;
 import com.kelsos.mbrc.dao.QueueTrack;
 import com.kelsos.mbrc.dto.LibraryAlbum;
 import com.kelsos.mbrc.dto.NowPlayingTrack;
+import com.kelsos.mbrc.dto.PlaylistTrack;
+import com.kelsos.mbrc.dto.Track;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.rest.responses.PaginatedResponse;
 import com.kelsos.mbrc.utilities.Logger;
@@ -21,16 +24,13 @@ import com.raizlabs.android.dbflow.runtime.DBTransactionInfo;
 import com.raizlabs.android.dbflow.runtime.TransactionManager;
 import com.raizlabs.android.dbflow.runtime.transaction.DeleteTransaction;
 import com.raizlabs.android.dbflow.sql.language.Select;
+
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 
-import retrofit.Response;
 import roboguice.util.Ln;
 import rx.Observable;
+import rx.Single;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
@@ -90,8 +90,8 @@ public class SyncManager {
     }
   }
 
-  private Observable<PaginatedResponse<com.kelsos.mbrc.dto.Playlist>> getPlaylists(int offset,
-      int limit) {
+  private Single<PaginatedResponse<com.kelsos.mbrc.dto.Playlist>> getPlaylists(int offset,
+                                                                               int limit) {
     return api.getPlaylists(offset, limit)
         .observeOn(Schedulers.io())
         .subscribeOn(Schedulers.io());
@@ -298,9 +298,9 @@ public class SyncManager {
     List<Cover> covers = new Select().from(Cover.class)
         .queryList();
     for (Cover cover : covers) {
-      api.getCoverById(cover.getId())
-          .subscribeOn(Schedulers.io())
-          .subscribe(result -> storeCover(result, cover.getHash()), Logger::logThrowable);
+//      api.getCoverById(cover.getId())
+//          .subscribeOn(Schedulers.io())
+//          .subscribe(result -> storeCover(result, cover.getHash()), Logger::logThrowable);
     }
   }
 
@@ -313,41 +313,41 @@ public class SyncManager {
 
   }
 
-  private Observable<PaginatedResponse<com.kelsos.mbrc.dto.Genre>> getGenres(int offset,
-      int limit) {
+  private Single<PaginatedResponse<com.kelsos.mbrc.dto.Genre>> getGenres(int offset,
+                                                                         int limit) {
     return api.getLibraryGenres(offset, limit)
         .observeOn(Schedulers.io())
         .subscribeOn(Schedulers.io());
   }
 
-  private Observable<PaginatedResponse<com.kelsos.mbrc.dto.Artist>> getArtists(int offset,
-      int limit) {
+  private Single<PaginatedResponse<com.kelsos.mbrc.dto.Artist>> getArtists(int offset,
+                                                                           int limit) {
     return api.getLibraryArtists(offset, limit)
         .observeOn(Schedulers.io())
         .subscribeOn(Schedulers.io());
   }
 
-  private Observable<PaginatedResponse<LibraryAlbum>> getAlbums(int offset, int limit) {
+  private Single<PaginatedResponse<LibraryAlbum>> getAlbums(int offset, int limit) {
     return api.getLibraryAlbums(offset, limit)
         .observeOn(Schedulers.io())
         .subscribeOn(Schedulers.io());
   }
 
-  private Observable<PaginatedResponse<com.kelsos.mbrc.dto.Track>> getTracks(int offset,
-      int limit) {
+  private Single<PaginatedResponse<Track>> getTracks(int offset,
+                                                     int limit) {
     return api.getLibraryTracks(offset, limit)
         .observeOn(Schedulers.io())
         .subscribeOn(Schedulers.io());
   }
 
-  private Observable<PaginatedResponse<com.kelsos.mbrc.dto.Cover>> getCovers(int offset,
-      int limit) {
+  private Single<PaginatedResponse<com.kelsos.mbrc.dto.Cover>> getCovers(int offset,
+                                                                         int limit) {
     return api.getLibraryCovers(offset, limit)
         .observeOn(Schedulers.io())
         .subscribeOn(Schedulers.io());
   }
 
-  private Observable<PaginatedResponse<com.kelsos.mbrc.dto.PlaylistTrack>> getPlaylistTracks(
+  private Single<PaginatedResponse<PlaylistTrack>> getPlaylistTracks(
       Long playlistId, int offset, int limit) {
     return api.getPlaylistTracks(playlistId, offset, limit)
         .observeOn(Schedulers.io())

@@ -1,6 +1,5 @@
-package com.kelsos.mbrc.rest.responses;
+package com.kelsos.mbrc.dto;
 
-import com.kelsos.mbrc.annotations.ShuffleState;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -11,33 +10,31 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
 @JsonPropertyOrder({
-    "state"
+    "rating"
 })
-public class ShuffleStateResponse {
+public class Rating {
 
-  @JsonProperty("state")
-  @ShuffleState
-  private String state;
+  @JsonProperty("rating")
+  private double rating;
 
   /**
    *
    * @return
-   *     The state
+   *     The rating
    */
-  @JsonProperty("state")
-  @ShuffleState
-  public String getState() {
-    return state;
+  @JsonProperty("rating")
+  public double getRating() {
+    return rating;
   }
 
   /**
    *
-   * @param state
-   *     The state
+   * @param rating
+   *     The rating
    */
-  @JsonProperty("state")
-  public void setState(@ShuffleState String state) {
-    this.state = state;
+  @JsonProperty("rating")
+  public void setRating(double rating) {
+    this.rating = rating;
   }
 
   @Override
@@ -47,7 +44,7 @@ public class ShuffleStateResponse {
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder().append(state).toHashCode();
+    return new HashCodeBuilder().append(rating).toHashCode();
   }
 
   @Override
@@ -55,11 +52,11 @@ public class ShuffleStateResponse {
     if (other == this) {
       return true;
     }
-    if (!(other instanceof ShuffleStateResponse)) {
+    if (!(other instanceof Rating)) {
       return false;
     }
-    ShuffleStateResponse rhs = ((ShuffleStateResponse) other);
-    return new EqualsBuilder().append(state, rhs.state).isEquals();
+    Rating rhs = ((Rating) other);
+    return new EqualsBuilder().append(rating, rhs.rating).isEquals();
   }
 
 }

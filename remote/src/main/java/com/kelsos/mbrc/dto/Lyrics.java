@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.rest.responses;
+package com.kelsos.mbrc.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @JsonPropertyOrder({
     "lyrics"
 })
-public class LyricsResponse {
+public class Lyrics {
 
   @JsonProperty("lyrics") private String lyrics;
 
@@ -43,10 +43,10 @@ public class LyricsResponse {
     if (other == this) {
       return true;
     }
-    if (!(other instanceof LyricsResponse)) {
+    if (!(other instanceof Lyrics)) {
       return false;
     }
-    LyricsResponse rhs = ((LyricsResponse) other);
+    Lyrics rhs = ((Lyrics) other);
     return new EqualsBuilder().append(lyrics, rhs.lyrics)
         .isEquals();
   }

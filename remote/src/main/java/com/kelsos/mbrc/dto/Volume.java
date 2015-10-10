@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.rest.responses;
+package com.kelsos.mbrc.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -13,7 +13,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @JsonPropertyOrder({
     "value"
 })
-public class ValueResponse {
+public class Volume {
 
   @JsonProperty("value")
   private int value;
@@ -53,10 +53,10 @@ public class ValueResponse {
     if (other == this) {
       return true;
     }
-    if (!(other instanceof ValueResponse)) {
+    if (!(other instanceof Volume)) {
       return false;
     }
-    ValueResponse rhs = ((ValueResponse) other);
+    Volume rhs = ((Volume) other);
     return new EqualsBuilder().append(value, rhs.value).isEquals();
   }
 

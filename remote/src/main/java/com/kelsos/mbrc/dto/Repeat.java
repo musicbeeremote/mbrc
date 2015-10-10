@@ -1,8 +1,10 @@
-package com.kelsos.mbrc.rest.responses;
+package com.kelsos.mbrc.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.kelsos.mbrc.annotations.RepeatMode;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -10,31 +12,29 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
 @JsonPropertyOrder({
-    "rating"
+    "value"
 })
-public class RatingResponse {
+public class Repeat {
 
-  @JsonProperty("rating")
-  private double rating;
+  @JsonProperty("value")
+  @RepeatMode
+  private String value;
 
   /**
-   *
-   * @return
-   *     The rating
+   * @return The value
    */
-  @JsonProperty("rating")
-  public double getRating() {
-    return rating;
+  @JsonProperty("value")
+  @RepeatMode
+  public String getValue() {
+    return value;
   }
 
   /**
-   *
-   * @param rating
-   *     The rating
+   * @param value The value
    */
-  @JsonProperty("rating")
-  public void setRating(double rating) {
-    this.rating = rating;
+  @JsonProperty("value")
+  public void setValue(@RepeatMode String value) {
+    this.value = value;
   }
 
   @Override
@@ -44,7 +44,7 @@ public class RatingResponse {
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder().append(rating).toHashCode();
+    return new HashCodeBuilder().append(value).toHashCode();
   }
 
   @Override
@@ -52,11 +52,11 @@ public class RatingResponse {
     if (other == this) {
       return true;
     }
-    if (!(other instanceof RatingResponse)) {
+    if (!(other instanceof PlaybackState)) {
       return false;
     }
-    RatingResponse rhs = ((RatingResponse) other);
-    return new EqualsBuilder().append(rating, rhs.rating).isEquals();
+    Repeat rhs = ((Repeat) other);
+    return new EqualsBuilder().append(value, rhs.value).isEquals();
   }
 
 }

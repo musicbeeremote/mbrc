@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.presenters;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.controller.PlayerController;
 import com.kelsos.mbrc.events.ui.CoverAvailable;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
@@ -9,24 +8,24 @@ import com.kelsos.mbrc.presenters.interfaces.IMiniControlPresenter;
 import com.kelsos.mbrc.ui.views.MiniControlView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+
 import roboguice.inject.ContextSingleton;
 
 @ContextSingleton
 public class MiniControlPresenter implements IMiniControlPresenter {
   private MiniControlView view;
   @Inject private Bus bus;
-  @Inject private PlayerController controller;
 
   @Override public void onNextPressed() {
-    controller.onNextPressed();
+
   }
 
   @Override public void onPreviousPressed() {
-    controller.onPreviousPressed();
+
   }
 
   @Override public void onPlayPause() {
-    controller.onPlayPressed();
+
   }
 
   @Override public void bind(MiniControlView view) {

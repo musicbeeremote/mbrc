@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.rest.responses;
+package com.kelsos.mbrc.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,29 +12,29 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @JsonPropertyOrder({
     "position",
     "duration"
-}) public class TrackPositionResponse {
+}) public class Position {
 
-  @JsonProperty("position") private int position;
-  @JsonProperty("duration") private Integer duration;
+  @JsonProperty("position") private long position;
+  @JsonProperty("duration") private long duration;
 
   /**
    * @return The position
    */
-  @JsonProperty("position") public int getPosition() {
+  @JsonProperty("position") public long getPosition() {
     return position;
   }
 
   /**
    * @param position The position
    */
-  @JsonProperty("position") public void setPosition(int position) {
+  @JsonProperty("position") public void setPosition(long position) {
     this.position = position;
   }
 
   /**
    * @return The duration
    */
-  @JsonProperty("duration") public int getDuration() {
+  @JsonProperty("duration") public long getDuration() {
     return duration;
   }
 
@@ -59,10 +59,10 @@ import org.apache.commons.lang.builder.ToStringBuilder;
     if (other == this) {
       return true;
     }
-    if (!(other instanceof TrackPositionResponse)) {
+    if (!(other instanceof Position)) {
       return false;
     }
-    TrackPositionResponse rhs = ((TrackPositionResponse) other);
+    Position rhs = ((Position) other);
     return new EqualsBuilder().append(position, rhs.position)
         .append(duration, rhs.duration)
         .isEquals();

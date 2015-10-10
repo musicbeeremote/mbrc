@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.annotations.LastfmState;
 import com.kelsos.mbrc.enums.LfmStatus;
-import com.kelsos.mbrc.rest.responses.TrackInfo;
+import com.kelsos.mbrc.dto.TrackInfo;
 
 @Singleton public class TrackModel {
   private double rating;

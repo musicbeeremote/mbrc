@@ -1,14 +1,23 @@
 package com.kelsos.mbrc.rest;
 
+import android.graphics.Bitmap;
+
 import com.kelsos.mbrc.annotations.PlaybackAction;
 import com.kelsos.mbrc.dto.Artist;
 import com.kelsos.mbrc.dto.Cover;
 import com.kelsos.mbrc.dto.Genre;
 import com.kelsos.mbrc.dto.LibraryAlbum;
+import com.kelsos.mbrc.dto.Lyrics;
 import com.kelsos.mbrc.dto.NowPlayingTrack;
+import com.kelsos.mbrc.dto.PlaybackState;
 import com.kelsos.mbrc.dto.Playlist;
 import com.kelsos.mbrc.dto.PlaylistTrack;
+import com.kelsos.mbrc.dto.Position;
+import com.kelsos.mbrc.dto.Rating;
+import com.kelsos.mbrc.dto.Shuffle;
 import com.kelsos.mbrc.dto.Track;
+import com.kelsos.mbrc.dto.TrackInfo;
+import com.kelsos.mbrc.dto.Volume;
 import com.kelsos.mbrc.rest.requests.ChangeStateRequest;
 import com.kelsos.mbrc.rest.requests.MoveRequest;
 import com.kelsos.mbrc.rest.requests.NowPlayingQueueRequest;
@@ -19,24 +28,13 @@ import com.kelsos.mbrc.rest.requests.RatingRequest;
 import com.kelsos.mbrc.rest.requests.RepeatRequest;
 import com.kelsos.mbrc.rest.requests.ShuffleRequest;
 import com.kelsos.mbrc.rest.requests.VolumeRequest;
-import com.kelsos.mbrc.rest.responses.LyricsResponse;
 import com.kelsos.mbrc.rest.responses.PaginatedResponse;
 import com.kelsos.mbrc.rest.responses.PlayerStatusResponse;
-import com.kelsos.mbrc.rest.responses.RatingResponse;
-import com.kelsos.mbrc.rest.responses.ShuffleStateResponse;
 import com.kelsos.mbrc.rest.responses.SuccessBooleanStateResponse;
 import com.kelsos.mbrc.rest.responses.SuccessResponse;
-import com.kelsos.mbrc.rest.responses.SuccessStateResponse;
 import com.kelsos.mbrc.rest.responses.SuccessVolumeResponse;
 import com.kelsos.mbrc.rest.responses.TextValueResponse;
-import com.kelsos.mbrc.rest.responses.TrackInfo;
-import com.kelsos.mbrc.rest.responses.TrackPositionResponse;
-import com.kelsos.mbrc.rest.responses.ValueResponse;
 
-import java.io.File;
-
-import retrofit.Response;
-import retrofit.Result;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
@@ -44,134 +42,134 @@ import retrofit.http.PUT;
 import retrofit.http.Path;
 import retrofit.http.Query;
 import retrofit.http.Streaming;
-import rx.Observable;
+import rx.Single;
 
 public interface RemoteApi {
   @GET("/player/volume")
-  Observable<ValueResponse> getVolume();
+  Single<Volume> getVolume();
 
   @PUT("/player/volume")
-  Observable<SuccessVolumeResponse> updateVolume(@Body VolumeRequest body);
+  Single<SuccessVolumeResponse> updateVolume(@Body VolumeRequest body);
 
   @PUT("/track/rating")
-  Observable<SuccessResponse> updateRating(@Body RatingRequest body);
+  Single<SuccessResponse> updateRating(@Body RatingRequest body);
 
   @PUT("/track/position")
-  Observable<TrackPositionResponse> updatePosition(@Body PositionRequest body);
+  Single<Position> updatePosition(@Body PositionRequest body);
 
   @PUT("/player/shuffle")
-  Observable<SuccessStateResponse> updateShuffleState(@Body ShuffleRequest body);
+  Single<Shuffle> updateShuffleState(@Body ShuffleRequest body);
 
   @PUT("/player/scrobble")
-  Observable<SuccessResponse> updateScrobbleState(@Body ChangeStateRequest body);
+  Single<SuccessResponse> updateScrobbleState(@Body ChangeStateRequest body);
 
   @PUT("/player/repeat")
-  Observable<SuccessResponse> updateRepeatState(@Body RepeatRequest body);
+  Single<SuccessResponse> updateRepeatState(@Body RepeatRequest body);
 
   @PUT("/player/mute")
-  Observable<SuccessResponse> updateMuteState(@Body ChangeStateRequest body);
+  Single<SuccessResponse> updateMuteState(@Body ChangeStateRequest body);
 
   @PUT("/playlists/play")
-  Observable<SuccessResponse> playPlaylist(@Body PlayPathRequest body);
+  Single<SuccessResponse> playPlaylist(@Body PlayPathRequest body);
 
   @DELETE("/nowplaying/{id}")
-  Observable<SuccessResponse> nowPlayingRemoveTrack(@Path("id") int id);
+  Single<SuccessResponse> nowPlayingRemoveTrack(@Path("id") int id);
 
   @PUT("/nowplaying/play")
-  Observable<SuccessResponse> nowPlayingPlayTrack(@Body PlayPathRequest body);
+  Single<SuccessResponse> nowPlayingPlayTrack(@Body PlayPathRequest body);
 
   @PUT("/nowplaying/move")
-  Observable<SuccessResponse> nowPlayingMoveTrack(@Body MoveRequest body);
+  Single<SuccessResponse> nowPlayingMoveTrack(@Body MoveRequest body);
 
   @PUT("/playlists/{id}/tracks/move")
-  Observable<SuccessResponse> playlistMoveTrack(@Path("id") int id, @Body MoveRequest body);
+  Single<SuccessResponse> playlistMoveTrack(@Path("id") int id, @Body MoveRequest body);
 
   @GET("/track/rating")
-  Observable<RatingResponse> getTrackRating();
+  Single<Rating> getTrackRating();
 
   @GET("/track/position")
-  Observable<TrackPositionResponse> getCurrentPosition();
+  Single<Position> getCurrentPosition();
 
   @GET("/track/lyrics")
-  Observable<LyricsResponse> getTrackLyrics();
+  Single<Lyrics> getTrackLyrics();
 
   @GET("/track/cover")
   @Streaming
-  Observable<File> getTrackCover(@Query("t") String timestamp);
+  Single<Bitmap> getTrackCover(@Query("t") String timestamp);
 
   @GET("/track")
-  Observable<TrackInfo> getTrackInfo();
+  Single<TrackInfo> getTrackInfo();
 
   @GET("/player/shuffle")
-  Observable<ShuffleStateResponse> getShuffleState();
+  Single<Shuffle> getShuffleState();
 
   @GET("/player/scrobble")
-  Observable<SuccessBooleanStateResponse> getScrobbleState();
+  Single<SuccessBooleanStateResponse> getScrobbleState();
 
   @GET("/player/repeat")
-  Observable<TextValueResponse> getRepeatMode();
+  Single<TextValueResponse> getRepeatMode();
 
   @GET("/player/playstate")
-  Observable<TextValueResponse> getPlaystate();
+  Single<PlaybackState> getPlaystate();
 
   @GET("/playlists/{id}/tracks")
-  Observable<PaginatedResponse<PlaylistTrack>> getPlaylistTracks(@Path("id") Long id,
+  Single<PaginatedResponse<PlaylistTrack>> getPlaylistTracks(@Path("id") Long id,
       @Query("offset") int offset,
       @Query("limit") int limit);
 
   @GET("/player/status")
-  Observable<PlayerStatusResponse> getPlayerStatus();
+  Single<PlayerStatusResponse> getPlayerStatus();
 
   @GET("/player/mute")
-  Observable<SuccessBooleanStateResponse> getMuteState();
+  Single<SuccessBooleanStateResponse> getMuteState();
 
   @GET("/library/genres")
-  Observable<PaginatedResponse<Genre>> getLibraryGenres(@Query("offset") int offset,
+  Single<PaginatedResponse<Genre>> getLibraryGenres(@Query("offset") int offset,
       @Query("limit") int limit);
 
   @GET("/library/tracks")
-  Observable<PaginatedResponse<Track>> getLibraryTracks(@Query("offset") int offset,
+  Single<PaginatedResponse<Track>> getLibraryTracks(@Query("offset") int offset,
       @Query("limit") int limit);
 
   @GET("/library/covers")
-  Observable<PaginatedResponse<Cover>> getLibraryCovers(@Query("offset") int offset,
+  Single<PaginatedResponse<Cover>> getLibraryCovers(@Query("offset") int offset,
       @Query("limit") int limit);
 
   @GET("/library/artists")
-  Observable<PaginatedResponse<Artist>> getLibraryArtists(@Query("offset") int offset,
+  Single<PaginatedResponse<Artist>> getLibraryArtists(@Query("offset") int offset,
       @Query("limit") int limit);
 
   @GET("/library/albums")
-  Observable<PaginatedResponse<LibraryAlbum>> getLibraryAlbums(@Query("offset") int offset,
+  Single<PaginatedResponse<LibraryAlbum>> getLibraryAlbums(@Query("offset") int offset,
       @Query("limit") int limit);
 
   @Streaming
   @GET("/library/covers/{id}/raw")
-  Observable<File> getCoverById(@Path("id") long id);
+  Single<Bitmap> getCoverById(@Path("id") long id);
 
   @DELETE("/playlists/{id}/tracks")
-  Observable<SuccessResponse> deletePlaylistTrack(@Path("id") int id, @Query("index") int index);
+  Single<SuccessResponse> deletePlaylistTrack(@Path("id") int id, @Query("index") int index);
 
   @DELETE("/playlists/{id}")
-  Observable<SuccessResponse> deletePlaylist(@Path("id") int id);
+  Single<SuccessResponse> deletePlaylist(@Path("id") int id);
 
   @PUT("/playlists")
-  Observable<SuccessResponse> createPlaylist(@Body PlaylistRequest body);
+  Single<SuccessResponse> createPlaylist(@Body PlaylistRequest body);
 
   @GET("/playlists")
-  Observable<PaginatedResponse<Playlist>> getPlaylists(@Query("offset") int offset,
+  Single<PaginatedResponse<Playlist>> getPlaylists(@Query("offset") int offset,
       @Query("limit") int limit);
 
   @GET("/nowplaying")
-  Observable<PaginatedResponse<NowPlayingTrack>> getNowPlayingList(@Query("offset") int offset,
+  Single<PaginatedResponse<NowPlayingTrack>> getNowPlayingList(@Query("offset") int offset,
       @Query("limit") int limit);
 
   @PUT("/playlists/{id}/tracks")
-  Observable<SuccessResponse> addTracksToPlaylist(@Path("id") int id, @Body PlaylistRequest body);
+  Single<SuccessResponse> addTracksToPlaylist(@Path("id") int id, @Body PlaylistRequest body);
 
   @GET("/player/action")
-  Observable<SuccessResponse> performPlayerAction(@Query("action") @PlaybackAction String action);
+  Single<SuccessResponse> performPlayerAction(@Query("action") @PlaybackAction String action);
 
   @PUT("/nowplaying/queue/")
-  Observable<SuccessResponse> nowplayingQueue(@Body NowPlayingQueueRequest body);
+  Single<SuccessResponse> nowplayingQueue(@Body NowPlayingQueueRequest body);
 }

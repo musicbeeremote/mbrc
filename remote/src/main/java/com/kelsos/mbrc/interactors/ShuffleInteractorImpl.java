@@ -1,0 +1,28 @@
+package com.kelsos.mbrc.interactors;
+
+import com.google.inject.Inject;
+import com.kelsos.mbrc.annotations.ShuffleState;
+import com.kelsos.mbrc.dto.Shuffle;
+import com.kelsos.mbrc.rest.RemoteApi;
+import com.kelsos.mbrc.rest.requests.ShuffleRequest;
+
+import rx.Single;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+public class ShuffleInteractorImpl implements ShuffleInteractor {
+  @Inject private RemoteApi api;
+  @Override
+  public Single<Shuffle> execute() {
+    return api.getShuffleState()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread());
+  }
+
+  @Override
+  public Single<Shuffle> execute(@ShuffleState String state) {
+    return api.updateShuffleState(new ShuffleRequest().setStatus(state))
+        .observeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread());
+  }
+}

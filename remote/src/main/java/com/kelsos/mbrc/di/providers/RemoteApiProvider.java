@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.rest.RemoteEndPoint;
+import com.kelsos.mbrc.utilities.BitmapConverterFactory;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 
@@ -34,6 +35,7 @@ public class RemoteApiProvider implements Provider<RemoteApi> {
     });
 
     final Retrofit retrofit = new Retrofit.Builder().baseUrl(endPoint.getUrl())
+        .addConverterFactory(BitmapConverterFactory.create())
         .addConverterFactory(JacksonConverterFactory.create(mapper))
         .addCallAdapterFactory(RxJavaCallAdapterFactory.create()).client(client)
         .callbackExecutor(executor)
