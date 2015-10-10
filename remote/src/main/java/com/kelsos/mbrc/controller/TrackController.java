@@ -11,8 +11,12 @@ import com.kelsos.mbrc.rest.responses.TrackInfo;
 import com.kelsos.mbrc.rest.responses.TrackPositionResponse;
 import com.kelsos.mbrc.utilities.MainThreadBus;
 import com.kelsos.mbrc.utilities.RemoteUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
-import retrofit.client.Response;
+
+import retrofit.Response;
 import roboguice.util.Ln;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -60,10 +64,10 @@ public class TrackController {
     }, Ln::d);
   }
 
-  private void createBitmap(Response response) {
+  private void createBitmap(File file) {
     try {
-      final InputStream stream = response.getBody().in();
-      Bitmap cover = BitmapFactory.decodeStream(stream);
+      FileInputStream input = new FileInputStream(file);
+      Bitmap cover = BitmapFactory.decodeStream(input);
       model.setAlbumCover(cover);
     } catch (Exception ex) {
       Ln.d("Exception while creating bitmap :: %s", ex.getMessage());

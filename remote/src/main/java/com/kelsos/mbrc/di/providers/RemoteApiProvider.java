@@ -1,48 +1,44 @@
 package com.kelsos.mbrc.di.providers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.kelsos.mbrc.BuildConfig;
-import com.kelsos.mbrc.converter.JacksonConverter;
 import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.rest.RemoteEndPoint;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import retrofit.RequestInterceptor;
-import retrofit.RestAdapter;
-import retrofit.client.OkClient;
-import roboguice.util.Ln;
+
+import retrofit.JacksonConverterFactory;
+import retrofit.Retrofit;
+import retrofit.RxJavaCallAdapterFactory;
 
 public class RemoteApiProvider implements Provider<RemoteApi> {
 
-  @Inject private RestAdapter.Builder builder;
-
   @Inject private RemoteEndPoint endPoint;
-
   @Inject private OkHttpClient client;
+  @Inject private ObjectMapper mapper;
 
-  @Inject private JacksonConverter converter;
-
-  @Override public RemoteApi get() {
-
-    RequestInterceptor interceptor = request -> request.addHeader("Accept", "application/json");
+  @Override
+  public RemoteApi get() {
 
     Executor executor = Executors.newSingleThreadExecutor();
+    client.interceptors().add(chain -> {
+      Request request = chain.request();
+      request = request.newBuilder()
+          .addHeader("Accept", "application/json")
+          .build();
+      return chain.proceed(request);
+    });
 
-    final RestAdapter.Builder builder = this.builder.setEndpoint(endPoint)
-        .setConverter(converter)
-        .setClient(new OkClient(client))
-        .setExecutors(executor, executor)
-        .setRequestInterceptor(interceptor);
-
-    if (BuildConfig.DEBUG) {
-      builder.setLog(Ln::v);
-    }
-
-    RestAdapter restAdapter = builder
+    final Retrofit retrofit = new Retrofit.Builder().baseUrl(endPoint.getUrl())
+        .addConverterFactory(JacksonConverterFactory.create(mapper))
+        .addCallAdapterFactory(RxJavaCallAdapterFactory.create()).client(client)
+        .callbackExecutor(executor)
         .build();
 
-    return restAdapter.create(RemoteApi.class);
+    return retrofit.create(RemoteApi.class);
   }
 }

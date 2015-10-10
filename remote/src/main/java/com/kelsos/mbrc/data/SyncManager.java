@@ -27,7 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
-import retrofit.client.Response;
+
+import retrofit.Response;
 import roboguice.util.Ln;
 import rx.Observable;
 import rx.Subscriber;
@@ -299,32 +300,17 @@ public class SyncManager {
     for (Cover cover : covers) {
       api.getCoverById(cover.getId())
           .subscribeOn(Schedulers.io())
-          .subscribe(resp -> storeCover(resp, cover.getHash()), Logger::logThrowable);
+          .subscribe(result -> storeCover(result, cover.getHash()), Logger::logThrowable);
     }
   }
 
-  private void storeCover(Response response, String hash) {
+  private void storeCover(File file, String hash) {
     File sdCard = Environment.getExternalStorageDirectory();
     File dir = new File(String.format("%s/Android/data/%s/cache", sdCard.getAbsolutePath(),
         BuildConfig.APPLICATION_ID));
     //noinspection ResultOfMethodCallIgnored
     dir.mkdirs();
-    File file = new File(dir, hash);
-    try {
-      final OutputStream output = new FileOutputStream(file);
-      final byte[] buffer = new byte[BUFFER_SIZE];
-      final InputStream input = response.getBody()
-          .in();
-      int read;
-      while ((read = input.read(buffer)) != -1) {
-        output.write(buffer, 0, read);
-      }
-      output.flush();
-      output.close();
-      input.close();
-    } catch (IOException e) {
-      Ln.d(e);
-    }
+
   }
 
   private Observable<PaginatedResponse<com.kelsos.mbrc.dto.Genre>> getGenres(int offset,

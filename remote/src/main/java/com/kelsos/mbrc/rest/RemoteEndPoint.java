@@ -2,9 +2,9 @@ package com.kelsos.mbrc.rest;
 
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
-import retrofit.Endpoint;
 
-@Singleton public class RemoteEndPoint implements Endpoint {
+@Singleton
+public class RemoteEndPoint {
 
   private static final String DEFAULT_ENDPOINT =
       String.format("http://%s:8188", BuildConfig.DEVHOST);
@@ -14,11 +14,11 @@ import retrofit.Endpoint;
     mEndPoint = String.format("http://%s:%d", address, port);
   }
 
-  @Override public String getUrl() {
+  public String getUrl() {
     return mEndPoint != null ? mEndPoint : DEFAULT_ENDPOINT;
   }
 
-  @Override public String getName() {
+  public String getName() {
     return "remote";
   }
 }

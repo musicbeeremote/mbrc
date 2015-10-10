@@ -32,7 +32,11 @@ import com.kelsos.mbrc.rest.responses.TextValueResponse;
 import com.kelsos.mbrc.rest.responses.TrackInfo;
 import com.kelsos.mbrc.rest.responses.TrackPositionResponse;
 import com.kelsos.mbrc.rest.responses.ValueResponse;
-import retrofit.client.Response;
+
+import java.io.File;
+
+import retrofit.Response;
+import retrofit.Result;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
@@ -93,7 +97,7 @@ public interface RemoteApi {
 
   @GET("/track/cover")
   @Streaming
-  Observable<Response> getTrackCover(@Query("t") String timestamp);
+  Observable<File> getTrackCover(@Query("t") String timestamp);
 
   @GET("/track")
   Observable<TrackInfo> getTrackInfo();
@@ -143,7 +147,7 @@ public interface RemoteApi {
 
   @Streaming
   @GET("/library/covers/{id}/raw")
-  Observable<Response> getCoverById(@Path("id") long id);
+  Observable<File> getCoverById(@Path("id") long id);
 
   @DELETE("/playlists/{id}/tracks")
   Observable<SuccessResponse> deletePlaylistTrack(@Path("id") int id, @Query("index") int index);

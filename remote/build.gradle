@@ -139,23 +139,24 @@ idea {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.6'
+  gradleVersion = '2.8-rc-1'
 }
 
 dependencies {
-
-  compile 'com.android.support:support-v4:23.0.0'
-  compile 'com.android.support:appcompat-v7:23.0.0'
-  compile 'com.android.support:cardview-v7:23.0.0'
-  compile 'com.android.support:preference-v7:23.0.0'
-  compile 'com.android.support:recyclerview-v7:23.0.0'
-  compile 'com.android.support:palette-v7:23.0.0'
-  compile 'com.android.support:support-annotations:23.0.0'
-  compile 'com.android.support:design:23.0.0'
+  compile 'com.android.support:support-v4:23.0.1'
+  compile 'com.android.support:appcompat-v7:23.0.1'
+  compile 'com.android.support:cardview-v7:23.0.1'
+  compile 'com.android.support:preference-v7:23.0.1'
+  compile 'com.android.support:recyclerview-v7:23.0.1'
+  compile 'com.android.support:palette-v7:23.0.1'
+  compile 'com.android.support:support-annotations:23.0.1'
+  compile 'com.android.support:design:23.0.1'
   compile 'org.roboguice:roboguice:3.0.1'
-  compile 'com.fasterxml.jackson.core:jackson-core:2.5.3'
-  compile 'com.fasterxml.jackson.core:jackson-databind:2.5.3'
-  compile 'com.squareup.retrofit:retrofit:1.9.0'
+  compile 'com.fasterxml.jackson.core:jackson-core:2.6.1'
+  compile 'com.fasterxml.jackson.core:jackson-databind:2.6.1'
+  compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
+  compile 'com.squareup.retrofit:adapter-rxjava:2.0.0-beta2'
+  compile 'com.squareup.retrofit:converter-jackson:2.0.0-beta2'
   compile 'com.annimon:stream:1.0.3'
   compile 'com.squareup.picasso:picasso:2.5.2'
   compile 'com.squareup.okhttp:okhttp-urlconnection:2.5.0'
@@ -164,12 +165,21 @@ dependencies {
   compile 'com.squareup:otto:1.3.8'
   compile 'com.github.mrengineer13:snackbar:1.2.0'
   compile 'io.reactivex:rxandroid:1.0.1'
-  compile 'com.afollestad:material-dialogs:0.7.8.1'
+  compile 'io.reactivex:rxjava:1.0.14'
+
   compile 'com.jakewharton:butterknife:7.0.1'
 
   apt 'com.raizlabs.android:DBFlow-Compiler:2.2.1'
   compile "com.raizlabs.android:DBFlow-Core:2.2.1"
   compile "com.raizlabs.android:DBFlow:2.2.1"
+
+  compile('com.afollestad.material-dialogs:core:0.8.2.0@aar') {
+    transitive = true
+  }
+
+  compile('com.afollestad.material-dialogs:commons:0.8.2.0@aar') {
+    transitive = true
+  }
 
   provided 'org.roboguice:roboblender:3.0.1'
 
