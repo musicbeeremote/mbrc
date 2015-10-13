@@ -7,17 +7,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.Bind;
+
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistAdapter;
-import com.kelsos.mbrc.data.SyncManager;
+
+import butterknife.Bind;
 import roboguice.fragment.RoboFragment;
 
 public class PlaylistFragment extends RoboFragment {
 
   @Bind(R.id.playlist_recycler) RecyclerView recyclerView;
-  @Inject private SyncManager syncManager;
   @Inject private PlaylistAdapter adapter;
 
   @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -35,7 +35,6 @@ public class PlaylistFragment extends RoboFragment {
 
   @Override public void onStart() {
     super.onStart();
-    syncManager.startPlaylistSync();
   }
 
   public static PlaylistFragment newInstance() {

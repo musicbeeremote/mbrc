@@ -2,18 +2,16 @@ package com.kelsos.mbrc.controller;
 
 import android.content.Intent;
 import android.os.IBinder;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.data.SyncManager;
-import com.kelsos.mbrc.data.model.PlayerModel;
-import com.kelsos.mbrc.data.model.TrackModel;
 import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.net.SocketService;
-import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.services.ServiceDiscovery;
 import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.raizlabs.android.dbflow.config.FlowManager;
+
 import roboguice.service.RoboService;
 import roboguice.util.Ln;
 
@@ -24,10 +22,6 @@ import roboguice.util.Ln;
   @Inject private NotificationService notificationService;
   @Inject private ServiceDiscovery discovery;
   @Inject private SettingsManager settingsManager;
-  @Inject private SyncManager syncManager;
-  @Inject private TrackModel trackModel;
-  @Inject private PlayerModel playerModel;
-  @Inject private RemoteApi api;
 
   public Controller() {
     Ln.d("Application Controller Initialized");

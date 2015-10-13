@@ -3,17 +3,18 @@ package com.kelsos.mbrc.di.modules;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.di.providers.ApiServiceProvider;
 import com.kelsos.mbrc.di.providers.BusProvider;
 import com.kelsos.mbrc.di.providers.ObjectMapperProvider;
 import com.kelsos.mbrc.di.providers.OkHttpClientProvider;
-import com.kelsos.mbrc.di.providers.RemoteApiProvider;
+import com.kelsos.mbrc.di.providers.RetrofitProvider;
 import com.kelsos.mbrc.interactors.PlayerInteractor;
-import com.kelsos.mbrc.interactors.TrackCoverInteractor;
-import com.kelsos.mbrc.interactors.TrackInfoInteractor;
-import com.kelsos.mbrc.interactors.TrackRatingInteractor;
 import com.kelsos.mbrc.interactors.PlayerInteractorImpl;
+import com.kelsos.mbrc.interactors.TrackCoverInteractor;
 import com.kelsos.mbrc.interactors.TrackCoverInteractorImpl;
+import com.kelsos.mbrc.interactors.TrackInfoInteractor;
 import com.kelsos.mbrc.interactors.TrackInfoInteractorImpl;
+import com.kelsos.mbrc.interactors.TrackRatingInteractor;
 import com.kelsos.mbrc.interactors.TrackRatingInteractorImpl;
 import com.kelsos.mbrc.models.MainViewModel;
 import com.kelsos.mbrc.models.MainViewModelImpl;
@@ -23,15 +24,21 @@ import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
 import com.kelsos.mbrc.presenters.interfaces.IMiniControlPresenter;
 import com.kelsos.mbrc.repository.TrackRepository;
 import com.kelsos.mbrc.repository.TrackRepositoryImpl;
-import com.kelsos.mbrc.rest.RemoteApi;
+import com.kelsos.mbrc.services.api.LibraryService;
+import com.kelsos.mbrc.services.api.NowPlayingService;
+import com.kelsos.mbrc.services.api.PlayerService;
+import com.kelsos.mbrc.services.api.PlaylistService;
+import com.kelsos.mbrc.services.api.TrackService;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.otto.Bus;
+
+import retrofit.Retrofit;
 
 @SuppressWarnings("UnusedDeclaration") public class RemoteModule extends AbstractModule {
   public void configure() {
     bind(ObjectMapper.class).toProvider(ObjectMapperProvider.class).asEagerSingleton();
     bind(OkHttpClient.class).toProvider(OkHttpClientProvider.class).in(Singleton.class);
-    bind(RemoteApi.class).toProvider(RemoteApiProvider.class).asEagerSingleton();
+    bind(Retrofit.class).toProvider(RetrofitProvider.class).in(Singleton.class);
     bind(Bus.class).toProvider(BusProvider.class).in(Singleton.class);
     bind(IMiniControlPresenter.class).to(MiniControlPresenter.class);
     bind(IMainViewPresenter.class).to(MainViewPresenter.class);
@@ -42,5 +49,11 @@ import com.squareup.otto.Bus;
     bind(TrackCoverInteractor.class).to(TrackCoverInteractorImpl.class);
     bind(PlayerInteractor.class).to(PlayerInteractorImpl.class);
     bind(TrackRepository.class).to(TrackRepositoryImpl.class);
+
+    bind(TrackService.class).toProvider(new ApiServiceProvider<>(TrackService.class)).in(Singleton.class);
+    bind(PlayerService.class).toProvider(new ApiServiceProvider<>(PlayerService.class)).in(Singleton.class);
+    bind(LibraryService.class).toProvider(new ApiServiceProvider<>(LibraryService.class)).in(Singleton.class);
+    bind(NowPlayingService.class).toProvider(new ApiServiceProvider<>(NowPlayingService.class)).in(Singleton.class);
+    bind(PlaylistService.class).toProvider(new ApiServiceProvider<>(PlaylistService.class)).in(Singleton.class);
   }
 }

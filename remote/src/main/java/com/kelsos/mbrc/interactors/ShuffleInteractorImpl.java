@@ -3,15 +3,15 @@ package com.kelsos.mbrc.interactors;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.annotations.ShuffleState;
 import com.kelsos.mbrc.dto.Shuffle;
-import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.rest.requests.ShuffleRequest;
+import com.kelsos.mbrc.services.api.PlayerService;
 
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class ShuffleInteractorImpl implements ShuffleInteractor {
-  @Inject private RemoteApi api;
+  @Inject private PlayerService api;
   @Override
   public Single<Shuffle> execute() {
     return api.getShuffleState()

@@ -10,16 +10,17 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.Bind;
-import butterknife.ButterKnife;
+
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumAdapter;
 import com.kelsos.mbrc.dao.Album;
-import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import roboguice.fragment.RoboFragment;
 
 public class BrowseAlbumFragment extends RoboFragment
@@ -28,7 +29,7 @@ public class BrowseAlbumFragment extends RoboFragment
     CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
 
   @Inject private AlbumAdapter adapter;
-  @Inject private RemoteApi api;
+
   @Bind(R.id.album_recycler) RecyclerView recyclerView;
 
   @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,

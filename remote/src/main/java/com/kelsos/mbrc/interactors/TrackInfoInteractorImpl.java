@@ -2,12 +2,12 @@ package com.kelsos.mbrc.interactors;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.dto.TrackInfo;
-import com.kelsos.mbrc.rest.RemoteApi;
+import com.kelsos.mbrc.services.api.TrackService;
 
 import rx.Single;
 
 public class TrackInfoInteractorImpl implements TrackInfoInteractor {
-  @Inject private RemoteApi api;
+  @Inject private TrackService api;
   @Override
   public Single<TrackInfo> execute() {
     return api.getTrackInfo();

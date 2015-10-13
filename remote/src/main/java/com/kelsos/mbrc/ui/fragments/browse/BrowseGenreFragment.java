@@ -10,15 +10,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.ButterKnife;
+
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.GenreAdapter;
 import com.kelsos.mbrc.dao.Genre;
-import com.kelsos.mbrc.rest.RemoteApi;
 import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+
+import butterknife.ButterKnife;
 import roboguice.fragment.RoboListFragment;
 
 public class BrowseGenreFragment extends RoboListFragment
@@ -26,7 +27,6 @@ public class BrowseGenreFragment extends RoboListFragment
     CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
 
   @Inject private GenreAdapter mAdapter;
-  @Inject private RemoteApi api;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
