@@ -2,9 +2,11 @@ package com.kelsos.mbrc.presenters;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.annotations.PlaybackAction;
+import com.kelsos.mbrc.annotations.RepeatMode;
 import com.kelsos.mbrc.interactors.PlayerInteractor;
 import com.kelsos.mbrc.models.MainViewModel;
 import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
+import com.kelsos.mbrc.repository.PlayerRepository;
 import com.kelsos.mbrc.repository.TrackRepository;
 import com.kelsos.mbrc.ui.views.MainView;
 
@@ -15,10 +17,10 @@ import rx.schedulers.Schedulers;
 
 @ContextSingleton
 public class MainViewPresenter implements IMainViewPresenter {
-  @Inject
-  private MainViewModel model;
+  @Inject private MainViewModel model;
   @Inject private PlayerInteractor actionUserCase;
   @Inject private TrackRepository trackRepository;
+  @Inject private PlayerRepository playerRepository;
   private MainView mainView;
 
   @Override public void bind(MainView mainView) {
@@ -30,6 +32,14 @@ public class MainViewPresenter implements IMainViewPresenter {
   }
 
   @Override public void onResume() {
+    loadTrackInfo();
+    loadCover();
+    loadShuffle();
+    loadRepeat();
+    loadVolume();
+  }
+
+  private void loadTrackInfo() {
     if (model.getTrackInfo() == null) {
       trackRepository.getTrackInfo().subscribe(trackInfo -> {
         model.setTrackInfo(trackInfo);
@@ -38,15 +48,9 @@ public class MainViewPresenter implements IMainViewPresenter {
     } else {
       mainView.updateTrackInfo(model.getTrackInfo());
     }
+  }
 
-    if (model.getRating() == null) {
-      trackRepository.getRating().subscribe(rating -> {
-        model.setRating(rating);
-      });
-    } else {
-
-    }
-
+  private void loadCover() {
     if (model.getTrackCover() == null) {
       trackRepository.getTrackCover().subscribe(bitmap -> {
         model.setTrackCover(bitmap);
@@ -56,6 +60,39 @@ public class MainViewPresenter implements IMainViewPresenter {
       });
     } else {
       mainView.updateCover(model.getTrackCover());
+    }
+  }
+
+  private void loadShuffle() {
+    if (model.getShuffle() == null) {
+      playerRepository.getShuffleState().subscribe(shuffle -> {
+        model.setShuffle(shuffle);
+        mainView.updateShuffle(shuffle.getState());
+      });
+    } else {
+      mainView.updateShuffle(model.getShuffle().getState());
+    }
+  }
+
+  private void loadRepeat() {
+    if (model.getRepeat() == null) {
+      playerRepository.getRepeat().subscribe(repeat -> {
+        model.setRepeat(repeat);
+        mainView.updateRepeat(RepeatMode.ALL.equals(repeat.getValue()));
+      });
+    } else {
+      mainView.updateRepeat(RepeatMode.ALL.equals(model.getRepeat().getValue()));
+    }
+  }
+
+  private void loadVolume() {
+    if (model.getVolume() == null) {
+      playerRepository.getVolume().subscribe(volume -> {
+        model.setVolume(volume);
+        mainView.updateVolume(volume.getValue());
+      });
+    } else {
+      mainView.updateVolume(model.getVolume().getValue());
     }
   }
 

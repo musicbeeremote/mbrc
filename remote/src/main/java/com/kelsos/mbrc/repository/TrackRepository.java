@@ -12,8 +12,8 @@ import rx.Single;
 
 public interface TrackRepository {
   Single<TrackInfo> getTrackInfo();
-  Observable<Lyrics> getTrackLyrics();
+  Single<Lyrics> getTrackLyrics();
   Single<Bitmap> getTrackCover();
-  Observable<Position> getPosition();
+  Single<Position> getPosition();
   Single<Rating> getRating();
 }

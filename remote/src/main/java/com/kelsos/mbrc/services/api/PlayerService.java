@@ -2,6 +2,7 @@ package com.kelsos.mbrc.services.api;
 
 import com.kelsos.mbrc.annotations.PlaybackAction;
 import com.kelsos.mbrc.dto.PlaybackState;
+import com.kelsos.mbrc.dto.Repeat;
 import com.kelsos.mbrc.dto.Shuffle;
 import com.kelsos.mbrc.dto.Volume;
 import com.kelsos.mbrc.rest.requests.ChangeStateRequest;
@@ -11,8 +12,6 @@ import com.kelsos.mbrc.rest.requests.VolumeRequest;
 import com.kelsos.mbrc.rest.responses.PlayerStatusResponse;
 import com.kelsos.mbrc.rest.responses.SuccessBooleanStateResponse;
 import com.kelsos.mbrc.rest.responses.SuccessResponse;
-import com.kelsos.mbrc.rest.responses.SuccessVolumeResponse;
-import com.kelsos.mbrc.rest.responses.TextValueResponse;
 
 import retrofit.http.Body;
 import retrofit.http.GET;
@@ -25,7 +24,7 @@ public interface PlayerService {
   Single<Volume> getVolume();
 
   @PUT("/player/volume")
-  Single<SuccessVolumeResponse> updateVolume(@Body VolumeRequest body);
+  Single<Volume> updateVolume(@Body VolumeRequest body);
 
   @PUT("/player/shuffle")
   Single<Shuffle> updateShuffleState(@Body ShuffleRequest body);
@@ -46,7 +45,7 @@ public interface PlayerService {
   Single<SuccessBooleanStateResponse> getScrobbleState();
 
   @GET("/player/repeat")
-  Single<TextValueResponse> getRepeatMode();
+  Single<Repeat> getRepeatMode();
 
   @GET("/player/playstate")
   Single<PlaybackState> getPlaystate();

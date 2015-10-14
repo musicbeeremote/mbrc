@@ -3,15 +3,17 @@ package com.kelsos.mbrc.repository;
 import android.graphics.Bitmap;
 
 import com.google.inject.Inject;
+import com.kelsos.mbrc.cache.TrackCache;
 import com.kelsos.mbrc.dto.Lyrics;
 import com.kelsos.mbrc.dto.Position;
 import com.kelsos.mbrc.dto.Rating;
 import com.kelsos.mbrc.dto.TrackInfo;
 import com.kelsos.mbrc.interactors.TrackCoverInteractor;
 import com.kelsos.mbrc.interactors.TrackInfoInteractor;
+import com.kelsos.mbrc.interactors.TrackLyricsInteractor;
+import com.kelsos.mbrc.interactors.TrackPositionInteractor;
 import com.kelsos.mbrc.interactors.TrackRatingInteractor;
 
-import rx.Observable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -20,34 +22,81 @@ public class TrackRepositoryImpl implements TrackRepository {
   @Inject private TrackInfoInteractor trackInfoUseCase;
   @Inject private TrackRatingInteractor trackRatingUserCase;
   @Inject private TrackCoverInteractor trackCoverUserCase;
+  @Inject private TrackLyricsInteractor trackLyricsUseCase;
+  @Inject private TrackPositionInteractor trackPositionInteractor;
+  @Inject private TrackCache cache;
   @Override
   public Single<TrackInfo> getTrackInfo() {
-    return trackInfoUseCase.execute().subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread());
+    if (cache.getTrackinfo() == null) {
+      return trackInfoUseCase.execute()
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .flatMap(trackInfo -> {
+            cache.setTrackinfo(trackInfo);
+            return Single.create(subscriber -> subscriber.onSuccess(trackInfo));
+          });
+    } else {
+      return Single.just(cache.getTrackinfo());
+    }
   }
 
   @Override
-  public Observable<Lyrics> getTrackLyrics() {
-    return null;
+  public Single<Lyrics> getTrackLyrics() {
+    if (cache.getLyrics() == null) {
+      return trackLyricsUseCase.execute()
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .flatMap(lyrics -> {
+            cache.setLyrics(lyrics);
+            return Single.just(lyrics);
+          });
+    } else {
+      return Single.just(cache.getLyrics());
+    }
   }
 
   @Override
   public Single<Bitmap> getTrackCover() {
-    return trackCoverUserCase.getCover()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread());
+    if (cache.getCover() == null) {
+      return trackCoverUserCase.getCover()
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .flatMap(bitmap -> {
+            cache.setCover(bitmap);
+            return Single.just(bitmap);
+          });
+    } else {
+      return Single.just(cache.getCover());
+    }
   }
 
   @Override
-  public Observable<Position> getPosition() {
+  public Single<Position> getPosition() {
+    if (cache.getPosition() == null) {
+      trackPositionInteractor.execute().subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .flatMap(position -> {
+            cache.setPosition(position);
+            return Single.just(position);
+          });
+    } else {
+      return Single.just(cache.getPosition());
+    }
     return null;
   }
 
   @Override
   public Single<Rating> getRating() {
-    return trackRatingUserCase.execute()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread());
-
+    if (cache.getRating() == null) {
+      return trackRatingUserCase.execute()
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .flatMap(rating -> {
+            cache.setRating(rating);
+            return Single.just(rating);
+          });
+    } else {
+      return Single.just(cache.getRating());
+    }
   }
 }
