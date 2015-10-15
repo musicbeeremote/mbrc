@@ -1,11 +1,12 @@
 package com.kelsos.mbrc.ui.views;
 
 import android.graphics.Bitmap;
-import android.support.annotation.UiThread;
+
 import com.kelsos.mbrc.annotations.ShuffleState;
+import com.kelsos.mbrc.domain.TrackPosition;
+import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.enums.PlayState;
-import com.kelsos.mbrc.dto.track.TrackInfo;
 
 public interface MainView {
   void updateCover(Bitmap bitmap);
@@ -24,9 +25,7 @@ public interface MainView {
 
   void updateMute(boolean enabled);
 
-  @UiThread void updateProgress(int progress, int min, int sec);
-
-  void updateDuration(int total, int min, int sec);
+  void updatePosition(TrackPosition position);
 
   int getCurrentProgress();
 

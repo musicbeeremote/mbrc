@@ -16,27 +16,27 @@ import org.apache.commons.lang.builder.ToStringBuilder;
     "duration"
 }) public class Position extends BaseResponse {
 
-  @JsonProperty("position") private long position;
-  @JsonProperty("duration") private long duration;
+  @JsonProperty("position") private int position;
+  @JsonProperty("duration") private int duration;
 
   /**
    * @return The position
    */
-  @JsonProperty("position") public long getPosition() {
+  @JsonProperty("position") public int getPosition() {
     return position;
   }
 
   /**
    * @param position The position
    */
-  @JsonProperty("position") public void setPosition(long position) {
+  @JsonProperty("position") public void setPosition(int position) {
     this.position = position;
   }
 
   /**
    * @return The duration
    */
-  @JsonProperty("duration") public long getDuration() {
+  @JsonProperty("duration") public int getDuration() {
     return duration;
   }
 

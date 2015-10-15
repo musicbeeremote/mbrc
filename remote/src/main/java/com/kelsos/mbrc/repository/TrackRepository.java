@@ -7,12 +7,13 @@ import com.kelsos.mbrc.dto.track.Position;
 import com.kelsos.mbrc.dto.track.Rating;
 import com.kelsos.mbrc.dto.track.TrackInfo;
 
+import rx.Observable;
 import rx.Single;
 
 public interface TrackRepository {
   Single<TrackInfo> getTrackInfo();
   Single<Lyrics> getTrackLyrics();
   Single<Bitmap> getTrackCover();
-  Single<Position> getPosition();
+  Observable<Position> getPosition();
   Single<Rating> getRating();
 }

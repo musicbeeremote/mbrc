@@ -11,7 +11,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.ConnectionSettings;
+import com.kelsos.mbrc.domain.ConnectionSettings;
 import com.kelsos.mbrc.enums.SettingsAction;
 import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity;

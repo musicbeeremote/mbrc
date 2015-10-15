@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.data;
+package com.kelsos.mbrc.domain;
 
 import android.support.annotation.NonNull;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

@@ -13,4 +13,6 @@ public interface PlayerRepository {
   Single<PlaybackState> getPlaybackState();
   Single<Boolean> getMute();
   Single<Repeat> getRepeat();
+
+  void setVolume(Volume volume);
 }

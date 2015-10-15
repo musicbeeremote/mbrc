@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.ConnectionSettings;
+import com.kelsos.mbrc.domain.ConnectionSettings;
 import roboguice.fragment.RoboDialogFragment;
 
 public class SettingsDialogFragment extends RoboDialogFragment {

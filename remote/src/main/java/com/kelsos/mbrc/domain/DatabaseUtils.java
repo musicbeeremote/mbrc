@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.data;
+package com.kelsos.mbrc.domain;
 
 import android.database.sqlite.SQLiteDatabase;
 import com.kelsos.mbrc.dao.QueueTrack;

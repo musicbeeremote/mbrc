@@ -15,6 +15,7 @@ import retrofit.http.GET;
 import retrofit.http.PUT;
 import retrofit.http.Query;
 import retrofit.http.Streaming;
+import rx.Observable;
 import rx.Single;
 
 public interface TrackService {
@@ -28,7 +29,7 @@ public interface TrackService {
   Single<Rating> getTrackRating();
 
   @GET("/track/position")
-  Single<Position> getCurrentPosition();
+  Observable<Position> getCurrentPosition();
 
   @GET("/track/lyrics")
   Single<Lyrics> getTrackLyrics();

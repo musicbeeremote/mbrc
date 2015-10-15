@@ -24,6 +24,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.annotations.ShuffleState;
+import com.kelsos.mbrc.domain.TrackPosition;
 import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.enums.PlayState;
@@ -274,14 +275,17 @@ import roboguice.fragment.RoboFragment;
         enabled ? R.drawable.ic_volume_off_grey600_24dp : R.drawable.ic_volume_up_grey600_24dp);
   }
 
-  @Override public void updateProgress(int progress, int min, int sec) {
-    trackProgressCurrent.setText(String.format("%02d:%02d", min, sec));
-    progressBar.setProgress(progress);
-  }
+  @Override public void updatePosition(TrackPosition position) {
+    trackProgressCurrent.setText(String.format("%02d:%02d",
+        position.getCurrentMinutes(),
+        position.getCurrentSeconds()));
 
-  @Override public void updateDuration(int total, int min, int sec) {
-    trackDuration.setText(String.format("%02d:%02d", min, sec));
-    progressBar.setMax(total);
+    trackDuration.setText(String.format("%02d:%02d",
+        position.getTotalMinutes(),
+        position.getTotalSeconds()));
+
+    progressBar.setProgress(position.getCurrent());
+    progressBar.setMax(position.getTotal());
   }
 
   @Override public int getCurrentProgress() {

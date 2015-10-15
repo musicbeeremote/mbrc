@@ -3,7 +3,11 @@ package com.kelsos.mbrc.presenters;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.annotations.PlaybackAction;
 import com.kelsos.mbrc.annotations.RepeatMode;
+import com.kelsos.mbrc.domain.TrackPosition;
+import com.kelsos.mbrc.dto.track.Position;
 import com.kelsos.mbrc.interactors.PlayerInteractor;
+import com.kelsos.mbrc.interactors.ShuffleInteractor;
+import com.kelsos.mbrc.interactors.VolumeInteractor;
 import com.kelsos.mbrc.models.MainViewModel;
 import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
 import com.kelsos.mbrc.repository.PlayerRepository;
@@ -18,7 +22,10 @@ import rx.schedulers.Schedulers;
 @ContextSingleton
 public class MainViewPresenter implements IMainViewPresenter {
   @Inject private MainViewModel model;
-  @Inject private PlayerInteractor actionUserCase;
+  @Inject private PlayerInteractor playerInteractor;
+  @Inject private VolumeInteractor volumeInteractor;
+  @Inject private ShuffleInteractor shuffleInteractor;
+
   @Inject private TrackRepository trackRepository;
   @Inject private PlayerRepository playerRepository;
   private MainView mainView;
@@ -37,6 +44,7 @@ public class MainViewPresenter implements IMainViewPresenter {
     loadShuffle();
     loadRepeat();
     loadVolume();
+    loadPosition();
   }
 
   private void loadTrackInfo() {
@@ -96,6 +104,18 @@ public class MainViewPresenter implements IMainViewPresenter {
     }
   }
 
+  private void loadPosition() {
+    if (model.getPosition() == null) {
+      trackRepository.getPosition().subscribe(position -> {
+        model.setPosition(position);
+        mainView.updatePosition(new TrackPosition(position.getPosition(), position.getDuration()));
+      });
+    } else {
+      Position position = model.getPosition();
+      mainView.updatePosition(new TrackPosition(position.getPosition(), position.getDuration()));
+    }
+  }
+
   @Override public void onPlayPausePressed() {
     performAction(PlaybackAction.PLAY_PLAUSE);
   }
@@ -109,7 +129,7 @@ public class MainViewPresenter implements IMainViewPresenter {
   }
 
   private void performAction(String action) {
-    actionUserCase.execute(action).subscribeOn(Schedulers.io())
+    playerInteractor.execute(action).subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(response -> {
 
@@ -134,7 +154,10 @@ public class MainViewPresenter implements IMainViewPresenter {
   }
 
   @Override public void onVolumeChange(int volume) {
-
+    volumeInteractor.execute(volume)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(playerRepository::setVolume);
   }
 
   @Override public void onPositionChange(int position) {

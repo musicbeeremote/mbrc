@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.data.ConnectionSettings;
+import com.kelsos.mbrc.domain.ConnectionSettings;
 import com.kelsos.mbrc.enums.SettingsAction;
 
 public class ChangeSettings {

@@ -14,6 +14,7 @@ import com.kelsos.mbrc.interactors.TrackLyricsInteractor;
 import com.kelsos.mbrc.interactors.TrackPositionInteractor;
 import com.kelsos.mbrc.interactors.TrackRatingInteractor;
 
+import rx.Observable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -71,18 +72,17 @@ public class TrackRepositoryImpl implements TrackRepository {
   }
 
   @Override
-  public Single<Position> getPosition() {
+  public Observable<Position> getPosition() {
     if (cache.getPosition() == null) {
-      trackPositionInteractor.execute().subscribeOn(Schedulers.io())
+      return trackPositionInteractor.execute().subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
           .flatMap(position -> {
             cache.setPosition(position);
-            return Single.just(position);
+            return Observable.just(position);
           });
     } else {
-      return Single.just(cache.getPosition());
+      return Observable.just(cache.getPosition());
     }
-    return null;
   }
 
   @Override

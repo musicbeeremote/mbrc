@@ -74,4 +74,9 @@ public class PlayerRepositoryImpl implements PlayerRepository {
       return Single.just(playerCache.getRepeat());
     }
   }
+
+  @Override
+  public void setVolume(Volume volume) {
+    playerCache.setVolume(volume);
+  }
 }
