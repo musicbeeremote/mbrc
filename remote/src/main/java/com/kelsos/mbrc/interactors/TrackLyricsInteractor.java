@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.interactors;
 
-import com.kelsos.mbrc.dto.Lyrics;
+import com.kelsos.mbrc.dto.track.Lyrics;
 
 import rx.Single;
 

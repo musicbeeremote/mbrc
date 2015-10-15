@@ -2,8 +2,8 @@ package com.kelsos.mbrc.interactors;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.annotations.ShuffleState;
-import com.kelsos.mbrc.dto.Shuffle;
-import com.kelsos.mbrc.rest.requests.ShuffleRequest;
+import com.kelsos.mbrc.dto.player.Shuffle;
+import com.kelsos.mbrc.dto.requests.ShuffleRequest;
 import com.kelsos.mbrc.services.api.PlayerService;
 
 import rx.Single;

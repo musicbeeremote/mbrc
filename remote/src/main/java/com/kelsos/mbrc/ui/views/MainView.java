@@ -5,7 +5,7 @@ import android.support.annotation.UiThread;
 import com.kelsos.mbrc.annotations.ShuffleState;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.enums.PlayState;
-import com.kelsos.mbrc.dto.TrackInfo;
+import com.kelsos.mbrc.dto.track.TrackInfo;
 
 public interface MainView {
   void updateCover(Bitmap bitmap);

@@ -4,10 +4,10 @@ import android.graphics.Bitmap;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.cache.TrackCache;
-import com.kelsos.mbrc.dto.Lyrics;
-import com.kelsos.mbrc.dto.Position;
-import com.kelsos.mbrc.dto.Rating;
-import com.kelsos.mbrc.dto.TrackInfo;
+import com.kelsos.mbrc.dto.track.Lyrics;
+import com.kelsos.mbrc.dto.track.Position;
+import com.kelsos.mbrc.dto.track.Rating;
+import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.interactors.TrackCoverInteractor;
 import com.kelsos.mbrc.interactors.TrackInfoInteractor;
 import com.kelsos.mbrc.interactors.TrackLyricsInteractor;

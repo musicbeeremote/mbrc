@@ -1,11 +1,11 @@
 package com.kelsos.mbrc.services.api;
 
+import com.kelsos.mbrc.dto.BaseResponse;
 import com.kelsos.mbrc.dto.NowPlayingTrack;
-import com.kelsos.mbrc.rest.requests.MoveRequest;
-import com.kelsos.mbrc.rest.requests.NowPlayingQueueRequest;
-import com.kelsos.mbrc.rest.requests.PlayPathRequest;
-import com.kelsos.mbrc.rest.responses.PaginatedResponse;
-import com.kelsos.mbrc.rest.responses.SuccessResponse;
+import com.kelsos.mbrc.dto.PaginatedResponse;
+import com.kelsos.mbrc.dto.requests.MoveRequest;
+import com.kelsos.mbrc.dto.requests.NowPlayingQueueRequest;
+import com.kelsos.mbrc.dto.requests.PlayPathRequest;
 
 import retrofit.http.Body;
 import retrofit.http.DELETE;
@@ -19,7 +19,7 @@ public interface NowPlayingService {
 
 
   @PUT("/nowplaying/queue/")
-  Single<SuccessResponse> nowplayingQueue(@Body NowPlayingQueueRequest body);
+  Single<BaseResponse> nowplayingQueue(@Body NowPlayingQueueRequest body);
 
   @GET("/nowplaying")
   Single<PaginatedResponse<NowPlayingTrack>> getNowPlayingList(@Query("offset") int offset,
@@ -27,12 +27,12 @@ public interface NowPlayingService {
 
 
   @DELETE("/nowplaying/{id}")
-  Single<SuccessResponse> nowPlayingRemoveTrack(@Path("id") int id);
+  Single<BaseResponse> nowPlayingRemoveTrack(@Path("id") int id);
 
   @PUT("/nowplaying/play")
-  Single<SuccessResponse> nowPlayingPlayTrack(@Body PlayPathRequest body);
+  Single<BaseResponse> nowPlayingPlayTrack(@Body PlayPathRequest body);
 
   @PUT("/nowplaying/move")
-  Single<SuccessResponse> nowPlayingMoveTrack(@Body MoveRequest body);
+  Single<BaseResponse> nowPlayingMoveTrack(@Body MoveRequest body);
 
 }

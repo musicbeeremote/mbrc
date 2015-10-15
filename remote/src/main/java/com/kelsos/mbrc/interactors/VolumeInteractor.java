@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.interactors;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.dto.Volume;
-import com.kelsos.mbrc.rest.requests.VolumeRequest;
+import com.kelsos.mbrc.dto.player.Volume;
+import com.kelsos.mbrc.dto.requests.VolumeRequest;
 import com.kelsos.mbrc.services.api.PlayerService;
 
 import rx.Single;

@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.interactors;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.dto.TrackInfo;
+import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.services.api.TrackService;
 
 import rx.Single;

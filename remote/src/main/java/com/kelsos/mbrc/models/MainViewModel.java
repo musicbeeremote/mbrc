@@ -2,13 +2,13 @@ package com.kelsos.mbrc.models;
 
 import android.graphics.Bitmap;
 
-import com.kelsos.mbrc.dto.PlaybackState;
-import com.kelsos.mbrc.dto.Position;
-import com.kelsos.mbrc.dto.Rating;
-import com.kelsos.mbrc.dto.Repeat;
-import com.kelsos.mbrc.dto.Shuffle;
-import com.kelsos.mbrc.dto.TrackInfo;
-import com.kelsos.mbrc.dto.Volume;
+import com.kelsos.mbrc.dto.player.PlaybackState;
+import com.kelsos.mbrc.dto.track.Position;
+import com.kelsos.mbrc.dto.track.Rating;
+import com.kelsos.mbrc.dto.player.Repeat;
+import com.kelsos.mbrc.dto.player.Shuffle;
+import com.kelsos.mbrc.dto.track.TrackInfo;
+import com.kelsos.mbrc.dto.player.Volume;
 
 public interface MainViewModel {
   Shuffle getShuffle();

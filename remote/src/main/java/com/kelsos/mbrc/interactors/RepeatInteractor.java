@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.interactors;
 
-import com.kelsos.mbrc.dto.Repeat;
+import com.kelsos.mbrc.dto.player.Repeat;
 
 import rx.Single;
 

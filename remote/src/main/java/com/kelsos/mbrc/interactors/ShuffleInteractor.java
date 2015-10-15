@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.interactors;
 
 import com.kelsos.mbrc.annotations.ShuffleState;
-import com.kelsos.mbrc.dto.Shuffle;
+import com.kelsos.mbrc.dto.player.Shuffle;
 
 import rx.Single;
 

@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.repository;
 
-import com.kelsos.mbrc.dto.Playlist;
-import com.kelsos.mbrc.dto.PlaylistTrack;
-import com.kelsos.mbrc.dto.PlaylistTrackInfo;
+import com.kelsos.mbrc.dto.playlist.Playlist;
+import com.kelsos.mbrc.dto.playlist.PlaylistTrack;
+import com.kelsos.mbrc.dto.playlist.PlaylistTrackInfo;
 
 import java.util.List;
 

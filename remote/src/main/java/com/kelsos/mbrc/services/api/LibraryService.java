@@ -2,12 +2,12 @@ package com.kelsos.mbrc.services.api;
 
 import android.graphics.Bitmap;
 
-import com.kelsos.mbrc.dto.Artist;
-import com.kelsos.mbrc.dto.Cover;
-import com.kelsos.mbrc.dto.Genre;
-import com.kelsos.mbrc.dto.LibraryAlbum;
-import com.kelsos.mbrc.dto.Track;
-import com.kelsos.mbrc.rest.responses.PaginatedResponse;
+import com.kelsos.mbrc.dto.library.Artist;
+import com.kelsos.mbrc.dto.library.Cover;
+import com.kelsos.mbrc.dto.library.Genre;
+import com.kelsos.mbrc.dto.library.LibraryAlbum;
+import com.kelsos.mbrc.dto.library.Track;
+import com.kelsos.mbrc.dto.PaginatedResponse;
 
 import retrofit.http.GET;
 import retrofit.http.Path;

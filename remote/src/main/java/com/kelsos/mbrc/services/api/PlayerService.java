@@ -1,17 +1,17 @@
 package com.kelsos.mbrc.services.api;
 
 import com.kelsos.mbrc.annotations.PlaybackAction;
-import com.kelsos.mbrc.dto.PlaybackState;
-import com.kelsos.mbrc.dto.Repeat;
-import com.kelsos.mbrc.dto.Shuffle;
-import com.kelsos.mbrc.dto.Volume;
-import com.kelsos.mbrc.rest.requests.ChangeStateRequest;
-import com.kelsos.mbrc.rest.requests.RepeatRequest;
-import com.kelsos.mbrc.rest.requests.ShuffleRequest;
-import com.kelsos.mbrc.rest.requests.VolumeRequest;
-import com.kelsos.mbrc.rest.responses.PlayerStatusResponse;
-import com.kelsos.mbrc.rest.responses.SuccessBooleanStateResponse;
-import com.kelsos.mbrc.rest.responses.SuccessResponse;
+import com.kelsos.mbrc.dto.BaseResponse;
+import com.kelsos.mbrc.dto.player.PlaybackState;
+import com.kelsos.mbrc.dto.player.PlayerStatusResponse;
+import com.kelsos.mbrc.dto.player.Repeat;
+import com.kelsos.mbrc.dto.player.Shuffle;
+import com.kelsos.mbrc.dto.player.StatusResponse;
+import com.kelsos.mbrc.dto.player.Volume;
+import com.kelsos.mbrc.dto.requests.ChangeStateRequest;
+import com.kelsos.mbrc.dto.requests.RepeatRequest;
+import com.kelsos.mbrc.dto.requests.ShuffleRequest;
+import com.kelsos.mbrc.dto.requests.VolumeRequest;
 
 import retrofit.http.Body;
 import retrofit.http.GET;
@@ -30,19 +30,19 @@ public interface PlayerService {
   Single<Shuffle> updateShuffleState(@Body ShuffleRequest body);
 
   @PUT("/player/scrobble")
-  Single<SuccessResponse> updateScrobbleState(@Body ChangeStateRequest body);
+  Single<BaseResponse> updateScrobbleState(@Body ChangeStateRequest body);
 
   @PUT("/player/repeat")
-  Single<SuccessResponse> updateRepeatState(@Body RepeatRequest body);
+  Single<BaseResponse> updateRepeatState(@Body RepeatRequest body);
 
   @PUT("/player/mute")
-  Single<SuccessResponse> updateMuteState(@Body ChangeStateRequest body);
+  Single<BaseResponse> updateMuteState(@Body ChangeStateRequest body);
 
   @GET("/player/shuffle")
   Single<Shuffle> getShuffleState();
 
   @GET("/player/scrobble")
-  Single<SuccessBooleanStateResponse> getScrobbleState();
+  Single<StatusResponse> getScrobbleState();
 
   @GET("/player/repeat")
   Single<Repeat> getRepeatMode();
@@ -54,10 +54,10 @@ public interface PlayerService {
   Single<PlayerStatusResponse> getPlayerStatus();
 
   @GET("/player/mute")
-  Single<SuccessBooleanStateResponse> getMuteState();
+  Single<StatusResponse> getMuteState();
 
 
   @GET("/player/action")
-  Single<SuccessResponse> performPlayerAction(@Query("action") @PlaybackAction String action);
+  Single<BaseResponse> performPlayerAction(@Query("action") @PlaybackAction String action);
 
 }

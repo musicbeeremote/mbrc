@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.interactors;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.dto.Lyrics;
+import com.kelsos.mbrc.dto.track.Lyrics;
 import com.kelsos.mbrc.services.api.TrackService;
 
 import rx.Single;
