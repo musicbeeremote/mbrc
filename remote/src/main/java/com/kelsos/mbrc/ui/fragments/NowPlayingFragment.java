@@ -11,8 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.Bind;
-import butterknife.ButterKnife;
+
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.NowPlayingAdapter;
@@ -20,14 +19,19 @@ import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.dao.QueueTrack;
 import com.kelsos.mbrc.domain.UserAction;
+import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.TrackInfoChange;
+import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.events.ui.TrackMoved;
 import com.kelsos.mbrc.events.ui.TrackRemoval;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import roboguice.fragment.RoboFragment;
 
 public class NowPlayingFragment extends RoboFragment
@@ -42,13 +46,14 @@ public class NowPlayingFragment extends RoboFragment
   private MenuItem mSearchItem;
 
 
-  @Subscribe public void handlePlayingTrackChange(TrackInfoChange event) {
+  @Subscribe public void handlePlayingTrackChange(TrackInfoChangeEvent event) {
     if (adapter == null || !adapter.getClass().equals(NowPlayingAdapter.class)) {
       return;
     }
+    final TrackInfo info = event.getTrackInfo();
     final QueueTrack track = new QueueTrack()
-        .setArtist(event.getArtist())
-        .setTitle(event.getTitle());
+        .setArtist(info.getArtist())
+        .setTitle(info.getTitle());
     adapter.setPlayingTrack(track);
   }
 

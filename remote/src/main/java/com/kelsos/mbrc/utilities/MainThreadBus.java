@@ -2,14 +2,19 @@ package com.kelsos.mbrc.utilities;
 
 import android.os.Handler;
 import android.os.Looper;
+
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.squareup.otto.Bus;
 
+@Singleton
 public class MainThreadBus {
   private final Bus bus;
-  private final Handler mHandler = new Handler(Looper.getMainLooper());
+  private final Handler handler;
 
-  @Inject public MainThreadBus(final Bus bus) {
+  @Inject
+  public MainThreadBus(final Bus bus, Handler handler) {
+    this.handler = handler;
     if (bus == null) {
       throw new NullPointerException("Bus is null");
     }
@@ -20,7 +25,7 @@ public class MainThreadBus {
     if (Looper.myLooper() == Looper.getMainLooper()) {
       bus.post(event);
     } else {
-      mHandler.post(() -> bus.post(event));
+      handler.post(() -> bus.post(event));
     }
   }
 

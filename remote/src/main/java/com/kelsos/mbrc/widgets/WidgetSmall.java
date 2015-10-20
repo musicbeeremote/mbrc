@@ -7,10 +7,11 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.enums.PlayState;
-import com.kelsos.mbrc.events.ui.CoverAvailable;
+import com.kelsos.mbrc.events.ui.CoverChangedEvent;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
-import com.kelsos.mbrc.events.ui.TrackInfoChange;
+import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.ui.activities.MainFragmentActivity;
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder;
 import com.squareup.otto.Bus;
@@ -60,23 +61,24 @@ public class WidgetSmall extends RoboAppWidgetProvider {
     }
   }
 
-  @Subscribe public void updateDisplay(TrackInfoChange info) {
+  @Subscribe public void updateDisplay(TrackInfoChangeEvent event) {
 
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
     final RemoteViews smallWidget =
         new RemoteViews(context.getPackageName(), R.layout.widget_small);
 
-    smallWidget.setTextViewText(R.id.widget_small_line_one, info.title);
-    smallWidget.setTextViewText(R.id.widget_small_line_two, info.artist);
+    final TrackInfo info = event.getTrackInfo();
+    smallWidget.setTextViewText(R.id.widget_small_line_one, info.getTitle());
+    smallWidget.setTextViewText(R.id.widget_small_line_two, info.getArtist());
     manager.updateAppWidget(widgetsIds, smallWidget);
   }
 
-  @Subscribe public void updateCover(CoverAvailable coverAvailable) {
+  @Subscribe public void updateCover(CoverChangedEvent coverChangedEvent) {
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
     final RemoteViews smallWidget =
         new RemoteViews(context.getPackageName(), R.layout.widget_small);
-    if (coverAvailable.isAvailable()) {
-      smallWidget.setImageViewBitmap(R.id.widget_small_image, coverAvailable.getCover());
+    if (coverChangedEvent.isAvailable()) {
+      smallWidget.setImageViewBitmap(R.id.widget_small_image, coverChangedEvent.getCover());
     } else {
       smallWidget.setImageViewResource(R.id.widget_small_image, R.drawable.ic_image_no_cover);
     }

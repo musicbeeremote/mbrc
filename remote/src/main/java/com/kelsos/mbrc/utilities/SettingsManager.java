@@ -96,6 +96,10 @@ import roboguice.util.Ln;
     return new InetSocketAddress(serverAddress, serverPort);
   }
 
+  public ConnectionSettings getDefault() {
+    return mSettings.get(defaultIndex);
+  }
+
   private boolean checkIfRemoteSettingsExist() {
     String serverAddress =
         mPreferences.getString(mContext.getString(R.string.settings_key_hostname), null);
@@ -181,7 +185,7 @@ import roboguice.util.Ln;
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
       editor.apply();
     } else {
-      editor.commit();
+      editor.apply();
     }
     defaultIndex = index;
   }
@@ -198,7 +202,7 @@ import roboguice.util.Ln;
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
       editor.apply();
     } else {
-      editor.commit();
+      editor.apply();
     }
   }
 
@@ -261,7 +265,7 @@ import roboguice.util.Ln;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
           editor.apply();
         } else {
-          editor.commit();
+          editor.apply();
         }
 
         if (BuildConfig.DEBUG) {

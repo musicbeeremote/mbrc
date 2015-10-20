@@ -6,6 +6,7 @@ import android.os.IBinder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.messaging.NotificationService;
+import com.kelsos.mbrc.messaging.SocketMessageHandler;
 import com.kelsos.mbrc.net.SocketService;
 import com.kelsos.mbrc.services.ServiceDiscovery;
 import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver;
@@ -22,6 +23,7 @@ import roboguice.util.Ln;
   @Inject private NotificationService notificationService;
   @Inject private ServiceDiscovery discovery;
   @Inject private SettingsManager settingsManager;
+  @Inject private SocketMessageHandler handler;
 
   public Controller() {
     Ln.d("Application Controller Initialized");
@@ -33,10 +35,8 @@ import roboguice.util.Ln;
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
     discovery.startDiscovery();
-
-    //DatabaseUtils.createDatabaseTrigger(daoSession.getDatabase());
     FlowManager.init(getApplicationContext());
-
+    socket.startWebSocket();
     return super.onStartCommand(intent, flags, startId);
   }
 

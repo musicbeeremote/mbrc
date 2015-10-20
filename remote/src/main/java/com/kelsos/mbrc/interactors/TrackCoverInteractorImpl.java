@@ -11,7 +11,7 @@ import rx.Single;
 public class TrackCoverInteractorImpl implements TrackCoverInteractor {
   @Inject private TrackService api;
   @Override
-  public Single<Bitmap> getCover() {
+  public Single<Bitmap> execute() {
     return api.getTrackCover(RemoteUtils.getTimeStamp());
   }
 }

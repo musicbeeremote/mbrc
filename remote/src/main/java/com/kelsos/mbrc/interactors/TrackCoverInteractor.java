@@ -6,5 +6,5 @@ import rx.Observable;
 import rx.Single;
 
 public interface TrackCoverInteractor {
-  Single<Bitmap> getCover();
+  Single<Bitmap> execute();
 }

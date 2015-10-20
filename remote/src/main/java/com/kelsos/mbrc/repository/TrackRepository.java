@@ -16,4 +16,10 @@ public interface TrackRepository {
   Single<Bitmap> getTrackCover();
   Observable<Position> getPosition();
   Single<Rating> getRating();
+
+  void setTrackInfo(TrackInfo trackInfo);
+  void setLyrics(Lyrics lyrics);
+  void setTrackCover(Bitmap cover);
+  void setPosition(Position position);
+  void setRating(Rating rating);
 }

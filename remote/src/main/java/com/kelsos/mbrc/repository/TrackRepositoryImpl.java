@@ -20,12 +20,19 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class TrackRepositoryImpl implements TrackRepository {
-  @Inject private TrackInfoInteractor trackInfoUseCase;
-  @Inject private TrackRatingInteractor trackRatingUserCase;
-  @Inject private TrackCoverInteractor trackCoverUserCase;
-  @Inject private TrackLyricsInteractor trackLyricsUseCase;
-  @Inject private TrackPositionInteractor trackPositionInteractor;
-  @Inject private TrackCache cache;
+  @Inject
+  private TrackInfoInteractor trackInfoUseCase;
+  @Inject
+  private TrackRatingInteractor trackRatingUserCase;
+  @Inject
+  private TrackCoverInteractor trackCoverUserCase;
+  @Inject
+  private TrackLyricsInteractor trackLyricsUseCase;
+  @Inject
+  private TrackPositionInteractor trackPositionInteractor;
+  @Inject
+  private TrackCache cache;
+
   @Override
   public Single<TrackInfo> getTrackInfo() {
     if (cache.getTrackinfo() == null) {
@@ -39,6 +46,11 @@ public class TrackRepositoryImpl implements TrackRepository {
     } else {
       return Single.just(cache.getTrackinfo());
     }
+  }
+
+  @Override
+  public void setTrackInfo(TrackInfo trackInfo) {
+    cache.setTrackinfo(trackInfo);
   }
 
   @Override
@@ -59,7 +71,7 @@ public class TrackRepositoryImpl implements TrackRepository {
   @Override
   public Single<Bitmap> getTrackCover() {
     if (cache.getCover() == null) {
-      return trackCoverUserCase.getCover()
+      return trackCoverUserCase.execute()
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
           .flatMap(bitmap -> {
@@ -69,6 +81,11 @@ public class TrackRepositoryImpl implements TrackRepository {
     } else {
       return Single.just(cache.getCover());
     }
+  }
+
+  @Override
+  public void setTrackCover(Bitmap cover) {
+    cache.setCover(cover);
   }
 
   @Override
@@ -86,6 +103,11 @@ public class TrackRepositoryImpl implements TrackRepository {
   }
 
   @Override
+  public void setPosition(Position position) {
+    cache.setPosition(position);
+  }
+
+  @Override
   public Single<Rating> getRating() {
     if (cache.getRating() == null) {
       return trackRatingUserCase.execute()
@@ -98,5 +120,15 @@ public class TrackRepositoryImpl implements TrackRepository {
     } else {
       return Single.just(cache.getRating());
     }
+  }
+
+  @Override
+  public void setRating(Rating rating) {
+    cache.setRating(rating);
+  }
+
+  @Override
+  public void setLyrics(Lyrics lyrics) {
+    cache.setLyrics(lyrics);
   }
 }

@@ -7,10 +7,11 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.enums.PlayState;
-import com.kelsos.mbrc.events.ui.CoverAvailable;
+import com.kelsos.mbrc.events.ui.CoverChangedEvent;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
-import com.kelsos.mbrc.events.ui.TrackInfoChange;
+import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.ui.activities.MainFragmentActivity;
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder;
 import com.squareup.otto.Bus;
@@ -60,24 +61,25 @@ public class WidgetNormal extends RoboAppWidgetProvider {
     }
   }
 
-  @Subscribe public void updateDisplay(TrackInfoChange info) {
+  @Subscribe public void updateDisplay(TrackInfoChangeEvent event) {
 
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
     final RemoteViews widget =
         new RemoteViews(context.getPackageName(), R.layout.widget_normal);
 
-    widget.setTextViewText(R.id.widget_normal_line_one, info.title);
-    widget.setTextViewText(R.id.widget_normal_line_two, info.artist);
-    widget.setTextViewText(R.id.widget_normal_line_three, info.album);
+    final TrackInfo trackInfo = event.getTrackInfo();
+    widget.setTextViewText(R.id.widget_normal_line_one, trackInfo.getTitle());
+    widget.setTextViewText(R.id.widget_normal_line_two, trackInfo.getArtist());
+    widget.setTextViewText(R.id.widget_normal_line_three, trackInfo.getAlbum());
     manager.updateAppWidget(widgetsIds, widget);
   }
 
-  @Subscribe public void updateCover(CoverAvailable coverAvailable) {
+  @Subscribe public void updateCover(CoverChangedEvent coverChangedEvent) {
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
     final RemoteViews widget =
         new RemoteViews(context.getPackageName(), R.layout.widget_normal);
-    if (coverAvailable.isAvailable()) {
-      widget.setImageViewBitmap(R.id.widget_normal_image, coverAvailable.getCover());
+    if (coverChangedEvent.isAvailable()) {
+      widget.setImageViewBitmap(R.id.widget_normal_image, coverChangedEvent.getCover());
     } else {
       widget.setImageViewResource(R.id.widget_normal_image, R.drawable.ic_image_no_cover);
     }

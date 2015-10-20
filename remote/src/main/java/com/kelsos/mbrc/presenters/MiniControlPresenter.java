@@ -1,9 +1,10 @@
 package com.kelsos.mbrc.presenters;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.events.ui.CoverAvailable;
+import com.kelsos.mbrc.dto.track.TrackInfo;
+import com.kelsos.mbrc.events.ui.CoverChangedEvent;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
-import com.kelsos.mbrc.events.ui.TrackInfoChange;
+import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.presenters.interfaces.IMiniControlPresenter;
 import com.kelsos.mbrc.ui.views.MiniControlView;
 import com.squareup.otto.Bus;
@@ -40,7 +41,7 @@ public class MiniControlPresenter implements IMiniControlPresenter {
     bus.unregister(this);
   }
 
-  @Subscribe public void onCoverAvailable(CoverAvailable event) {
+  @Subscribe public void onCoverAvailable(CoverChangedEvent event) {
     view.updateCover(event.getCover());
   }
 
@@ -48,7 +49,8 @@ public class MiniControlPresenter implements IMiniControlPresenter {
     view.updatePlaystate(event.getState());
   }
 
-  @Subscribe public void onTrackInfoChange(TrackInfoChange event) {
-    view.updateTrack(event.getArtist(), event.getAlbum());
+  @Subscribe public void onTrackInfoChange(TrackInfoChangeEvent event) {
+    final TrackInfo info = event.getTrackInfo();
+    view.updateTrack(info.getArtist(), info.getAlbum());
   }
 }

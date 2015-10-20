@@ -3,7 +3,6 @@ apply plugin: 'build-dashboard'
 
 buildscript {
   repositories {
-    mavenCentral()
     mavenLocal()
     jcenter()
   }
@@ -24,7 +23,6 @@ allprojects {
   repositories {
     maven { url 'http://dl.bintray.com/kelsos/maven' }
     maven { url "https://jitpack.io" }
-    mavenCentral()
     mavenLocal()
     jcenter()
   }
