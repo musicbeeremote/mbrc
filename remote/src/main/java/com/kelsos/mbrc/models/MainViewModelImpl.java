@@ -2,13 +2,13 @@ package com.kelsos.mbrc.models;
 
 import android.graphics.Bitmap;
 
+import com.kelsos.mbrc.annotations.RepeatMode;
 import com.kelsos.mbrc.dto.player.PlaybackState;
+import com.kelsos.mbrc.dto.player.Shuffle;
+import com.kelsos.mbrc.dto.player.Volume;
 import com.kelsos.mbrc.dto.track.Position;
 import com.kelsos.mbrc.dto.track.Rating;
-import com.kelsos.mbrc.dto.player.Repeat;
-import com.kelsos.mbrc.dto.player.Shuffle;
 import com.kelsos.mbrc.dto.track.TrackInfo;
-import com.kelsos.mbrc.dto.player.Volume;
 
 public class MainViewModelImpl implements MainViewModel {
   private TrackInfo trackInfo;
@@ -17,7 +17,7 @@ public class MainViewModelImpl implements MainViewModel {
   private Rating rating;
   private Shuffle shuffle;
   private PlaybackState playbackState;
-  private Repeat repeat;
+  @RepeatMode private String repeat;
   private boolean muted;
   private Volume volume;
 
@@ -37,11 +37,11 @@ public class MainViewModelImpl implements MainViewModel {
     this.playbackState = playbackState;
   }
 
-  @Override public Repeat getRepeat() {
+  @Override @RepeatMode public String getRepeat() {
     return repeat;
   }
 
-  @Override public void setRepeat(Repeat repeat) {
+  @Override public void setRepeat(@RepeatMode String repeat) {
     this.repeat = repeat;
   }
 

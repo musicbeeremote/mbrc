@@ -17,6 +17,7 @@ import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.PUT;
 import retrofit.http.Query;
+import rx.Observable;
 import rx.Single;
 
 public interface PlayerService {
@@ -44,8 +45,7 @@ public interface PlayerService {
   @GET("/player/scrobble")
   Single<StatusResponse> getScrobbleState();
 
-  @GET("/player/repeat")
-  Single<Repeat> getRepeatMode();
+  @GET("/player/repeat") Observable<Repeat> getRepeatMode();
 
   @GET("/player/playstate")
   Single<PlaybackState> getPlaystate();

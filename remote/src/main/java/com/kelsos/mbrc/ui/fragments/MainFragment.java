@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.annotations.RepeatMode;
 import com.kelsos.mbrc.annotations.ShuffleState;
 import com.kelsos.mbrc.domain.TrackPosition;
 import com.kelsos.mbrc.dto.track.TrackInfo;
@@ -220,9 +221,8 @@ import roboguice.fragment.RoboFragment;
             : R.drawable.ic_shuffle_grey600_24dp);
   }
 
-  @Override public void updateRepeat(boolean enabled) {
-    int color =
-        getResources().getColor(enabled ? R.color.accent : R.color.button_dark);
+  @Override public void updateRepeat(@RepeatMode String mode) {
+    int color = getResources().getColor(mode.equals(RepeatMode.ALL) ? R.color.accent : R.color.button_dark);
     repeatButton.setColorFilter(color);
   }
 
@@ -250,7 +250,7 @@ import roboguice.fragment.RoboFragment;
   }
 
   @Override public void updateVolume(int volume) {
-
+    volumeBar.setProgress(volume);
   }
 
   @Override public void updatePlaystate(PlayState playstate) {

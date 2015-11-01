@@ -3,15 +3,16 @@ package com.kelsos.mbrc.cache;
 import android.graphics.Bitmap;
 
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.dto.track.Lyrics;
 import com.kelsos.mbrc.dto.track.Position;
 import com.kelsos.mbrc.dto.track.Rating;
 import com.kelsos.mbrc.dto.track.TrackInfo;
 
+import java.util.List;
+
 @Singleton
 public class TrackCacheImpl implements TrackCache {
   private TrackInfo trackinfo;
-  private Lyrics lyrics;
+  private List<String> lyrics;
   private Bitmap cover;
   private Position position;
   private Rating rating;
@@ -27,12 +28,12 @@ public class TrackCacheImpl implements TrackCache {
   }
 
   @Override
-  public Lyrics getLyrics() {
+  public List<String> getLyrics() {
     return lyrics;
   }
 
   @Override
-  public void setLyrics(Lyrics lyrics) {
+  public void setLyrics(List<String> lyrics) {
     this.lyrics = lyrics;
   }
 

@@ -85,6 +85,8 @@ public class ServiceDiscovery {
   private class ServiceListener implements Runnable {
 
     public static final String DISCOVERY_ADDRESS = "239.1.5.10"; //NOPMD
+    public static final int PORT = 45345;
+    public static final int BUFFER = 512;
 
     @Override public void run() {
       try {
@@ -95,13 +97,13 @@ public class ServiceDiscovery {
         mSocket.joinGroup(group);
 
         DatagramPacket mPacket;
-        byte[] buffer = new byte[512];
+        byte[] buffer = new byte[BUFFER];
         mPacket = new DatagramPacket(buffer, buffer.length);
         Hashtable<String, String> discoveryMessage = new Hashtable<>();
         discoveryMessage.put(Protocol.CONTEXT, Protocol.DISCOVERY);
         discoveryMessage.put(Protocol.ADDRESS, getWifiAddress());
         byte[] discovery = mapper.writeValueAsBytes(discoveryMessage);
-        mSocket.send(new DatagramPacket(discovery, discovery.length, group, 45345));
+        mSocket.send(new DatagramPacket(discovery, discovery.length, group, PORT));
         String incoming;
 
         while (true) {

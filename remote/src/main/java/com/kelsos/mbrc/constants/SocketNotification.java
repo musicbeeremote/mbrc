@@ -8,6 +8,7 @@ public class SocketNotification {
   public static final String COVER = "cover-changed";
   public static final String LYRICS = "lyrics-changed";
   public static final String TRACK = "track-changed";
+  public static final String REPEAT = "repeat-status-changed";
 
   private SocketNotification() {
     //no instance

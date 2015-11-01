@@ -2,10 +2,13 @@ package com.kelsos.mbrc.presenters;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.annotations.PlaybackAction;
-import com.kelsos.mbrc.annotations.RepeatMode;
 import com.kelsos.mbrc.domain.TrackPosition;
+import com.kelsos.mbrc.dto.player.Volume;
 import com.kelsos.mbrc.dto.track.Position;
+import com.kelsos.mbrc.events.ui.RepeatChange;
+import com.kelsos.mbrc.events.ui.VolumeChangeEvent;
 import com.kelsos.mbrc.interactors.PlayerInteractor;
+import com.kelsos.mbrc.interactors.RepeatInteractor;
 import com.kelsos.mbrc.interactors.ShuffleInteractor;
 import com.kelsos.mbrc.interactors.VolumeInteractor;
 import com.kelsos.mbrc.models.MainViewModel;
@@ -13,6 +16,8 @@ import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
 import com.kelsos.mbrc.repository.PlayerRepository;
 import com.kelsos.mbrc.repository.TrackRepository;
 import com.kelsos.mbrc.ui.views.MainView;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import roboguice.inject.ContextSingleton;
 import roboguice.util.Ln;
@@ -25,9 +30,12 @@ public class MainViewPresenter implements IMainViewPresenter {
   @Inject private PlayerInteractor playerInteractor;
   @Inject private VolumeInteractor volumeInteractor;
   @Inject private ShuffleInteractor shuffleInteractor;
+  @Inject private RepeatInteractor repeatInteractor;
 
   @Inject private TrackRepository trackRepository;
   @Inject private PlayerRepository playerRepository;
+  @Inject private Bus bus;
+
   private MainView mainView;
 
   @Override public void bind(MainView mainView) {
@@ -35,7 +43,7 @@ public class MainViewPresenter implements IMainViewPresenter {
   }
 
   @Override public void onPause() {
-
+    bus.unregister(this);
   }
 
   @Override public void onResume() {
@@ -45,11 +53,12 @@ public class MainViewPresenter implements IMainViewPresenter {
     loadRepeat();
     loadVolume();
     loadPosition();
+    bus.register(this);
   }
 
   private void loadTrackInfo() {
     if (model.getTrackInfo() == null) {
-      trackRepository.getTrackInfo().subscribe(trackInfo -> {
+      trackRepository.getTrackInfo(false).subscribe(trackInfo -> {
         model.setTrackInfo(trackInfo);
         mainView.updateTrackInfo(trackInfo);
       });
@@ -63,9 +72,7 @@ public class MainViewPresenter implements IMainViewPresenter {
       trackRepository.getTrackCover().subscribe(bitmap -> {
         model.setTrackCover(bitmap);
         mainView.updateCover(bitmap);
-      }, throwable -> {
-        Ln.v(throwable);
-      });
+      }, Ln::v);
     } else {
       mainView.updateCover(model.getTrackCover());
     }
@@ -84,12 +91,12 @@ public class MainViewPresenter implements IMainViewPresenter {
 
   private void loadRepeat() {
     if (model.getRepeat() == null) {
-      playerRepository.getRepeat().subscribe(repeat -> {
+      playerRepository.getRepeat(false).subscribe(repeat -> {
         model.setRepeat(repeat);
-        mainView.updateRepeat(RepeatMode.ALL.equals(repeat.getValue()));
+        mainView.updateRepeat(repeat);
       });
     } else {
-      mainView.updateRepeat(RepeatMode.ALL.equals(model.getRepeat().getValue()));
+      mainView.updateRepeat(model.getRepeat());
     }
   }
 
@@ -150,7 +157,10 @@ public class MainViewPresenter implements IMainViewPresenter {
   }
 
   @Override public void onRepeatPressed() {
-
+    repeatInteractor.execute(false).subscribeOn(Schedulers.io())
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(mainView::updateRepeat, Ln::v);
   }
 
   @Override public void onVolumeChange(int volume) {
@@ -170,6 +180,17 @@ public class MainViewPresenter implements IMainViewPresenter {
 
   @Override public void onLfmLoveToggle() {
 
+  }
+
+  @Subscribe public void onVolumeChangedEvent(VolumeChangeEvent event) {
+    final Volume volume = event.getVolume();
+    model.setVolume(volume);
+    mainView.updateVolume(volume.getValue());
+  }
+
+  @Subscribe public void onRepeatChangedEvent(RepeatChange event) {
+    model.setRepeat(event.getMode());
+    mainView.updateRepeat(event.getMode());
   }
 
 }

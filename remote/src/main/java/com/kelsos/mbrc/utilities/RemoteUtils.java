@@ -48,11 +48,6 @@ public class RemoteUtils {
     return simpleDateFormat.format(new Date());
   }
 
-  public static boolean isNullOrEmpty(String string) {
-    final String empty = "";
-    return (string == null || empty.equals(string));
-  }
-
   public static File getStorage() {
     return CACHE;
   }

@@ -30,6 +30,8 @@ import com.kelsos.mbrc.interactors.TrackRatingInteractor;
 import com.kelsos.mbrc.interactors.TrackRatingInteractorImpl;
 import com.kelsos.mbrc.models.MainViewModel;
 import com.kelsos.mbrc.models.MainViewModelImpl;
+import com.kelsos.mbrc.presenters.LyricsPresenter;
+import com.kelsos.mbrc.presenters.LyricsPresenterImpl;
 import com.kelsos.mbrc.presenters.MainViewPresenter;
 import com.kelsos.mbrc.presenters.MiniControlPresenter;
 import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
@@ -47,6 +49,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.otto.Bus;
 
 import retrofit.Retrofit;
+import roboguice.inject.ContextSingleton;
 
 @SuppressWarnings("UnusedDeclaration") public class RemoteModule extends AbstractModule {
   public void configure() {
@@ -57,6 +60,7 @@ import retrofit.Retrofit;
     bind(IMiniControlPresenter.class).to(MiniControlPresenter.class);
     bind(IMainViewPresenter.class).to(MainViewPresenter.class);
     bind(MainViewModel.class).to(MainViewModelImpl.class);
+    bind(LyricsPresenter.class).to(LyricsPresenterImpl.class).in(ContextSingleton.class);
 
     bind(TrackInfoInteractor.class).to(TrackInfoInteractorImpl.class);
     bind(TrackRatingInteractor.class).to(TrackRatingInteractorImpl.class);

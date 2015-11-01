@@ -1,24 +1,33 @@
 package com.kelsos.mbrc.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class LyricsAdapter extends RecyclerView.Adapter<LyricsAdapter.ViewHolder> {
-  private ArrayList<String> mData;
+  private List<String> data;
   private Typeface robotoLight;
 
-  public LyricsAdapter(Context context, ArrayList<String> objects) {
-    this.mData = objects;
+  @Inject
+  public LyricsAdapter(Context context) {
     robotoLight = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_light.ttf");
+    data = new ArrayList<>();
+  }
+
+  public void updateData(List<String> data) {
+    this.data.clear();
+    this.data.addAll(data);
+    notifyDataSetChanged();
   }
 
   /**
@@ -65,7 +74,7 @@ public class LyricsAdapter extends RecyclerView.Adapter<LyricsAdapter.ViewHolder
    * @param position The position of the item within the adapter's data set.
    */
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
-    String str = mData.get(position);
+    String str = data.get(position);
     holder.title.setText(str);
   }
 
@@ -75,7 +84,7 @@ public class LyricsAdapter extends RecyclerView.Adapter<LyricsAdapter.ViewHolder
    * @return The total number of items in this adapter.
    */
   @Override public int getItemCount() {
-    return mData == null ? 0 : mData.size();
+    return data == null ? 0 : data.size();
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {

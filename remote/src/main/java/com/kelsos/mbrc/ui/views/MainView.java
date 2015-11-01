@@ -2,6 +2,7 @@ package com.kelsos.mbrc.ui.views;
 
 import android.graphics.Bitmap;
 
+import com.kelsos.mbrc.annotations.RepeatMode;
 import com.kelsos.mbrc.annotations.ShuffleState;
 import com.kelsos.mbrc.domain.TrackPosition;
 import com.kelsos.mbrc.dto.track.TrackInfo;
@@ -13,7 +14,7 @@ public interface MainView {
 
   void updateShuffle(@ShuffleState String state);
 
-  void updateRepeat(boolean enabled);
+  void updateRepeat(@RepeatMode String mode);
 
   void updateScrobbling(boolean enabled);
 

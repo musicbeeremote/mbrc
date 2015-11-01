@@ -85,8 +85,8 @@ public class SettingsDialogFragment extends RoboDialogFragment {
         String portText = portEdit.getText().toString();
         String httpText = httpEdit.getText().toString();
 
-        int portNum = isNullOrEmpty(portText) ? 0 : Integer.parseInt(portText);
-        int httpNum = isNullOrEmpty(httpText) ? 0 : Integer.parseInt(httpText);
+        int portNum = TextUtils.isEmpty(portText) ? 0 : Integer.parseInt(portText);
+        int httpNum = TextUtils.isEmpty(httpText) ? 0 : Integer.parseInt(httpText);
 
         if (isValid(portNum) && isValid(httpNum) && shouldIClose) {
           ConnectionSettings settings =
@@ -109,10 +109,6 @@ public class SettingsDialogFragment extends RoboDialogFragment {
 
     httpEdit = (EditText) view.findViewById(R.id.settings_dialog_http);
     return materialDialog;
-  }
-
-  private boolean isNullOrEmpty(String portText) {
-    return portText == null || TextUtils.isEmpty(portText);
   }
 
   @Override public void onStart() {

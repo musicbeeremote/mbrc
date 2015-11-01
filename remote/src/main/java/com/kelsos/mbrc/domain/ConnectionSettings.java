@@ -32,11 +32,6 @@ import com.fasterxml.jackson.databind.JsonNode;
     this.name = "";
   }
 
-  public ConnectionSettings(JsonNode node, int i) {
-    initFromJson(node);
-    this.index = i;
-  }
-
   private void initFromJson(JsonNode node) {
     this.address = node.path("address").asText();
     this.name = node.path("name").asText();
