@@ -3,7 +3,7 @@ package com.kelsos.mbrc.repository;
 import android.text.TextUtils;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.annotations.RepeatMode;
+import com.kelsos.mbrc.annotations.Repeat;
 import com.kelsos.mbrc.cache.PlayerCache;
 import com.kelsos.mbrc.dto.player.PlaybackState;
 import com.kelsos.mbrc.dto.player.Shuffle;
@@ -80,7 +80,7 @@ public class PlayerRepositoryImpl implements PlayerRepository {
   }
 
   @Override
-  public void setRepeat(@RepeatMode String repeat) {
+  public void setRepeat(@Repeat.Mode String repeat) {
     playerCache.setRepeat(repeat);
   }
 

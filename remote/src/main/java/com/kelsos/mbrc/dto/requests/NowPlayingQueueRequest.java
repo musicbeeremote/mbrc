@@ -3,8 +3,9 @@ package com.kelsos.mbrc.dto.requests;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.kelsos.mbrc.annotations.MetaType;
-import com.kelsos.mbrc.annotations.QueueAction;
+import com.kelsos.mbrc.annotations.MetaDataType;
+import com.kelsos.mbrc.annotations.Queue;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -18,14 +19,14 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 public class NowPlayingQueueRequest {
 
-  @MetaType @JsonProperty("type") private String type;
-  @QueueAction @JsonProperty("action") private String action;
+  @MetaDataType.Type @JsonProperty("type") private String type;
+  @Queue.Action @JsonProperty("action") private String action;
   @JsonProperty("id") private int id;
 
   /**
    * @return The type
    */
-  @MetaType
+  @MetaDataType.Type
   @JsonProperty("type") public String getType() {
     return type;
   }
@@ -33,7 +34,7 @@ public class NowPlayingQueueRequest {
   /**
    * @param type The type
    */
-  @JsonProperty("type") public NowPlayingQueueRequest setType(@MetaType String type) {
+  @JsonProperty("type") public NowPlayingQueueRequest setType(@MetaDataType.Type String type) {
     this.type = type;
     return this;
   }
@@ -41,7 +42,7 @@ public class NowPlayingQueueRequest {
   /**
    * @return The action
    */
-  @QueueAction
+  @Queue.Action
   @JsonProperty("action") public String getAction() {
     return action;
   }
@@ -49,7 +50,7 @@ public class NowPlayingQueueRequest {
   /**
    * @param action The action
    */
-  @JsonProperty("action") public NowPlayingQueueRequest setAction(@QueueAction String action) {
+  @JsonProperty("action") public NowPlayingQueueRequest setAction(@Queue.Action String action) {
     this.action = action;
     return this;
   }

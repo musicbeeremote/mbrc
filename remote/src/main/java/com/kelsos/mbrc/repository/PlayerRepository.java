@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.repository;
 
-import com.kelsos.mbrc.annotations.RepeatMode;
+import com.kelsos.mbrc.annotations.Repeat;
 import com.kelsos.mbrc.dto.player.PlaybackState;
 import com.kelsos.mbrc.dto.player.Shuffle;
 import com.kelsos.mbrc.dto.player.Volume;
@@ -16,5 +16,5 @@ public interface PlayerRepository {
   Observable<String> getRepeat(boolean reload);
 
   void setVolume(Volume volume);
-  void setRepeat(@RepeatMode String repeat);
+  void setRepeat(@Repeat.Mode String repeat);
 }

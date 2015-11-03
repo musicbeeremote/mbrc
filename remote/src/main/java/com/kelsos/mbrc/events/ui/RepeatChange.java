@@ -1,12 +1,13 @@
 package com.kelsos.mbrc.events.ui;
 
 import android.support.annotation.NonNull;
-import com.kelsos.mbrc.annotations.RepeatMode;
+
+import com.kelsos.mbrc.annotations.Repeat;
 
 public class RepeatChange {
-  @RepeatMode private String mode;
+  @Repeat.Mode private String mode;
 
-  public RepeatChange(@RepeatMode String mode) {
+  public RepeatChange(@Repeat.Mode String mode) {
     this.mode = mode;
   }
 
@@ -24,7 +25,7 @@ public class RepeatChange {
     return builder;
   }
 
-  @RepeatMode public String getMode() {
+  @Repeat.Mode public String getMode() {
     return this.mode;
   }
 
@@ -43,7 +44,7 @@ public class RepeatChange {
      * @param val the {@code mode} to set
      * @return a reference to this Builder
      */
-    @NonNull public Builder withMode(@NonNull @RepeatMode String val) {
+    @NonNull public Builder withMode(@NonNull @Repeat.Mode String val) {
       mode = val;
       return this;
     }

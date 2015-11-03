@@ -2,8 +2,8 @@ package com.kelsos.mbrc.ui.views;
 
 import android.graphics.Bitmap;
 
-import com.kelsos.mbrc.annotations.RepeatMode;
-import com.kelsos.mbrc.annotations.ShuffleState;
+import com.kelsos.mbrc.annotations.Repeat;
+import com.kelsos.mbrc.annotations.Shuffle;
 import com.kelsos.mbrc.domain.TrackPosition;
 import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.enums.LfmStatus;
@@ -12,9 +12,9 @@ import com.kelsos.mbrc.enums.PlayState;
 public interface MainView {
   void updateCover(Bitmap bitmap);
 
-  void updateShuffle(@ShuffleState String state);
+  void updateShuffle(@Shuffle.State String state);
 
-  void updateRepeat(@RepeatMode String mode);
+  void updateRepeat(@Repeat.Mode String mode);
 
   void updateScrobbling(boolean enabled);
 

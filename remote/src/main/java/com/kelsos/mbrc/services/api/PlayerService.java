@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.services.api;
 
-import com.kelsos.mbrc.annotations.PlaybackAction;
+import com.kelsos.mbrc.annotations.PlayerAction;
 import com.kelsos.mbrc.dto.BaseResponse;
 import com.kelsos.mbrc.dto.player.PlaybackState;
 import com.kelsos.mbrc.dto.player.PlayerStatusResponse;
@@ -58,6 +58,6 @@ public interface PlayerService {
 
 
   @GET("/player/action")
-  Single<BaseResponse> performPlayerAction(@Query("action") @PlaybackAction String action);
+  Single<BaseResponse> performPlayerAction(@Query("action") @PlayerAction.Action String action);
 
 }

@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.dto.player;
 
-import com.kelsos.mbrc.annotations.ShuffleState;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -18,7 +17,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public class Shuffle extends BaseResponse {
 
   @JsonProperty("state")
-  @ShuffleState
+  @com.kelsos.mbrc.annotations.Shuffle.State
   private String state;
 
   /**
@@ -27,7 +26,7 @@ public class Shuffle extends BaseResponse {
    *     The state
    */
   @JsonProperty("state")
-  @ShuffleState
+  @com.kelsos.mbrc.annotations.Shuffle.State
   public String getState() {
     return state;
   }
@@ -38,7 +37,7 @@ public class Shuffle extends BaseResponse {
    *     The state
    */
   @JsonProperty("state")
-  public void setState(@ShuffleState String state) {
+  public void setState(@com.kelsos.mbrc.annotations.Shuffle.State String state) {
     this.state = state;
   }
 

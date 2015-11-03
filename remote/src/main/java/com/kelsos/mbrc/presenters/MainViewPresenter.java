@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.presenters;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.annotations.PlaybackAction;
+import com.kelsos.mbrc.annotations.PlayerAction;
 import com.kelsos.mbrc.domain.TrackPosition;
 import com.kelsos.mbrc.dto.player.Volume;
 import com.kelsos.mbrc.dto.track.Position;
@@ -124,15 +124,15 @@ public class MainViewPresenter implements IMainViewPresenter {
   }
 
   @Override public void onPlayPausePressed() {
-    performAction(PlaybackAction.PLAY_PLAUSE);
+    performAction(PlayerAction.PLAY_PLAUSE);
   }
 
   @Override public void onPreviousPressed() {
-    performAction(PlaybackAction.PREVIOUS);
+    performAction(PlayerAction.PREVIOUS);
   }
 
   @Override public void onNextPressed() {
-    performAction(PlaybackAction.NEXT);
+    performAction(PlayerAction.NEXT);
   }
 
   private void performAction(String action) {
@@ -145,7 +145,7 @@ public class MainViewPresenter implements IMainViewPresenter {
 
 
   @Override public void onStopPressed() {
-    performAction(PlaybackAction.STOP);
+    performAction(PlayerAction.STOP);
   }
 
   @Override public void onMutePressed() {

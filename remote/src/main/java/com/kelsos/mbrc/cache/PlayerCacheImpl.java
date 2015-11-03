@@ -1,8 +1,7 @@
 package com.kelsos.mbrc.cache;
 
-import com.kelsos.mbrc.annotations.RepeatMode;
+import com.kelsos.mbrc.annotations.Repeat;
 import com.kelsos.mbrc.dto.player.PlaybackState;
-import com.kelsos.mbrc.dto.player.Repeat;
 import com.kelsos.mbrc.dto.player.Shuffle;
 import com.kelsos.mbrc.dto.player.Volume;
 
@@ -11,7 +10,7 @@ public class PlayerCacheImpl implements PlayerCache {
   private Volume volume;
   private PlaybackState playbackState;
   private boolean mute;
-  @RepeatMode private String repeat;
+  @Repeat.Mode private String repeat;
 
   @Override
   public Shuffle getShuffle() {
@@ -54,12 +53,12 @@ public class PlayerCacheImpl implements PlayerCache {
   }
 
   @Override
-  @RepeatMode public String getRepeat() {
+  @Repeat.Mode public String getRepeat() {
     return repeat;
   }
 
   @Override
-  public void setRepeat(@RepeatMode String repeat) {
+  public void setRepeat(@Repeat.Mode String repeat) {
     this.repeat = repeat;
   }
 }

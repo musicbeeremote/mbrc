@@ -23,8 +23,8 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.annotations.RepeatMode;
-import com.kelsos.mbrc.annotations.ShuffleState;
+import com.kelsos.mbrc.annotations.Repeat;
+import com.kelsos.mbrc.annotations.Shuffle;
 import com.kelsos.mbrc.domain.TrackPosition;
 import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.enums.LfmStatus;
@@ -211,18 +211,18 @@ import roboguice.fragment.RoboFragment;
     }
   }
 
-  @Override public void updateShuffle(@ShuffleState String state) {
+  @Override public void updateShuffle(@Shuffle.State String state) {
     int color = getResources().getColor(
-        !ShuffleState.OFF.equals(state) ? R.color.accent : R.color.button_dark);
+        !Shuffle.OFF.equals(state) ? R.color.accent : R.color.button_dark);
     shuffleButton.setColorFilter(color);
 
     shuffleButton.setImageResource(
-        ShuffleState.AUTODJ.equals(state) ? R.drawable.ic_headset_grey600_24dp
+        Shuffle.AUTODJ.equals(state) ? R.drawable.ic_headset_grey600_24dp
             : R.drawable.ic_shuffle_grey600_24dp);
   }
 
-  @Override public void updateRepeat(@RepeatMode String mode) {
-    int color = getResources().getColor(mode.equals(RepeatMode.ALL) ? R.color.accent : R.color.button_dark);
+  @Override public void updateRepeat(@Repeat.Mode String mode) {
+    int color = getResources().getColor(mode.equals(Repeat.ALL) ? R.color.accent : R.color.button_dark);
     repeatButton.setColorFilter(color);
   }
 

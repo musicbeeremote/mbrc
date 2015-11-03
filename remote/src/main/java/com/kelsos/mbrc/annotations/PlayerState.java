@@ -5,19 +5,20 @@ import android.support.annotation.StringDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public class LastfmState {
-  public static final String LOVE = "Love";
-  public static final String BAN = "Ban";
-  public static final String NORMAL = "Normal";
-  private LastfmState() {
+public class PlayerState {
+  public static final String PLAYING = "playing";
+  public static final String PAUSED = "paused";
+  public static final String STOPPED = "stopped";
+
+  private PlayerState() {
     //no instance
   }
 
   @Retention(RetentionPolicy.SOURCE)
   @StringDef({
-                 BAN,
-                 LOVE,
-                 NORMAL
+                 PAUSED,
+                 PLAYING,
+                 STOPPED
              })
   public @interface State {
   }

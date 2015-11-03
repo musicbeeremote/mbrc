@@ -3,7 +3,6 @@ package com.kelsos.mbrc.dto.player;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.kelsos.mbrc.annotations.RepeatMode;
 import com.kelsos.mbrc.dto.BaseResponse;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -18,14 +17,14 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public class Repeat extends BaseResponse {
 
   @JsonProperty("value")
-  @RepeatMode
+  @com.kelsos.mbrc.annotations.Repeat.Mode
   private String value;
 
   /**
    * @return The value
    */
   @JsonProperty("value")
-  @RepeatMode
+  @com.kelsos.mbrc.annotations.Repeat.Mode
   public String getValue() {
     return value;
   }
@@ -34,7 +33,7 @@ public class Repeat extends BaseResponse {
    * @param value The value
    */
   @JsonProperty("value")
-  public void setValue(@RepeatMode String value) {
+  public void setValue(@com.kelsos.mbrc.annotations.Repeat.Mode String value) {
     this.value = value;
   }
 
