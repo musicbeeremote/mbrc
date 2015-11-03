@@ -16,16 +16,17 @@ import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
 import com.kelsos.mbrc.repository.PlayerRepository;
 import com.kelsos.mbrc.repository.TrackRepository;
 import com.kelsos.mbrc.ui.views.MainView;
+import com.kelsos.mbrc.utilities.ErrorHandler;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import roboguice.inject.ContextSingleton;
-import roboguice.util.Ln;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 @ContextSingleton
 public class MainViewPresenter implements IMainViewPresenter {
+  @Inject private ErrorHandler errorHandler;
   @Inject private MainViewModel model;
   @Inject private PlayerInteractor playerInteractor;
   @Inject private VolumeInteractor volumeInteractor;
@@ -61,7 +62,7 @@ public class MainViewPresenter implements IMainViewPresenter {
       trackRepository.getTrackInfo(false).subscribe(trackInfo -> {
         model.setTrackInfo(trackInfo);
         mainView.updateTrackInfo(trackInfo);
-      });
+      }, errorHandler::handleThrowable);
     } else {
       mainView.updateTrackInfo(model.getTrackInfo());
     }
@@ -72,7 +73,7 @@ public class MainViewPresenter implements IMainViewPresenter {
       trackRepository.getTrackCover().subscribe(bitmap -> {
         model.setTrackCover(bitmap);
         mainView.updateCover(bitmap);
-      }, Ln::v);
+      }, errorHandler::handleThrowable);
     } else {
       mainView.updateCover(model.getTrackCover());
     }
@@ -83,7 +84,7 @@ public class MainViewPresenter implements IMainViewPresenter {
       playerRepository.getShuffleState().subscribe(shuffle -> {
         model.setShuffle(shuffle);
         mainView.updateShuffle(shuffle.getState());
-      });
+      }, errorHandler::handleThrowable);
     } else {
       mainView.updateShuffle(model.getShuffle().getState());
     }
@@ -94,7 +95,7 @@ public class MainViewPresenter implements IMainViewPresenter {
       playerRepository.getRepeat(false).subscribe(repeat -> {
         model.setRepeat(repeat);
         mainView.updateRepeat(repeat);
-      });
+      }, errorHandler::handleThrowable);
     } else {
       mainView.updateRepeat(model.getRepeat());
     }
@@ -105,7 +106,7 @@ public class MainViewPresenter implements IMainViewPresenter {
       playerRepository.getVolume().subscribe(volume -> {
         model.setVolume(volume);
         mainView.updateVolume(volume.getValue());
-      });
+      }, errorHandler::handleThrowable);
     } else {
       mainView.updateVolume(model.getVolume().getValue());
     }
@@ -116,7 +117,7 @@ public class MainViewPresenter implements IMainViewPresenter {
       trackRepository.getPosition().subscribe(position -> {
         model.setPosition(position);
         mainView.updatePosition(new TrackPosition(position.getPosition(), position.getDuration()));
-      });
+      }, errorHandler::handleThrowable);
     } else {
       Position position = model.getPosition();
       mainView.updatePosition(new TrackPosition(position.getPosition(), position.getDuration()));
@@ -140,7 +141,7 @@ public class MainViewPresenter implements IMainViewPresenter {
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(response -> {
 
-        });
+        }, errorHandler::handleThrowable);
   }
 
 
@@ -160,14 +161,14 @@ public class MainViewPresenter implements IMainViewPresenter {
     repeatInteractor.execute(false).subscribeOn(Schedulers.io())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(mainView::updateRepeat, Ln::v);
+        .subscribe(mainView::updateRepeat, errorHandler::handleThrowable);
   }
 
   @Override public void onVolumeChange(int volume) {
     volumeInteractor.execute(volume)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(playerRepository::setVolume);
+        .subscribe(playerRepository::setVolume, errorHandler::handleThrowable);
   }
 
   @Override public void onPositionChange(int position) {
