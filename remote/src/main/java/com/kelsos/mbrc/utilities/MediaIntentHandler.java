@@ -3,12 +3,9 @@ package com.kelsos.mbrc.utilities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.constants.Protocol;
-import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.domain.UserAction;
-import com.kelsos.mbrc.events.MessageEvent;
 import com.squareup.otto.Bus;
 
 @Singleton public class MediaIntentHandler {
@@ -40,27 +37,27 @@ import com.squareup.otto.Bus;
         case KeyEvent.KEYCODE_HEADSETHOOK:
           long currentClick = System.currentTimeMillis();
           if (currentClick - previousClick < DOUBLE_CLICK_INTERVAL) {
-            result = postAction(new UserAction(Protocol.PlayerNext, true));
+
             break;
           }
           previousClick = currentClick;
         case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-          result = postAction(new UserAction(Protocol.PlayerPlayPause, true));
+
           break;
         case KeyEvent.KEYCODE_MEDIA_PLAY:
-          result = postAction(new UserAction(Protocol.PlayerPlay, true));
+
           break;
         case KeyEvent.KEYCODE_MEDIA_PAUSE:
-          result = postAction(new UserAction(Protocol.PlayerPause, true));
+
           break;
         case KeyEvent.KEYCODE_MEDIA_STOP:
-          result = postAction(new UserAction(Protocol.PlayerStop, true));
+
           break;
         case KeyEvent.KEYCODE_MEDIA_NEXT:
-          result = postAction(new UserAction(Protocol.PlayerNext, true));
+
           break;
         case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-          result = postAction(new UserAction(Protocol.PlayerPrevious, true));
+
           break;
         default:
           break;
@@ -69,8 +66,4 @@ import com.squareup.otto.Bus;
     return result;
   }
 
-  private boolean postAction(UserAction action) {
-    bus.post(new MessageEvent(ProtocolEventType.UserAction, action));
-    return true;
-  }
 }

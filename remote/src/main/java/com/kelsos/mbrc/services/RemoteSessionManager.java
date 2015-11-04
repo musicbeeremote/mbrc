@@ -11,19 +11,17 @@ import android.os.Build;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.constants.Protocol;
-import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.domain.UserAction;
 import com.kelsos.mbrc.enums.PlayState;
-import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RemoteClientMetaData;
 import com.kelsos.mbrc.utilities.MediaButtonReceiver;
 import com.kelsos.mbrc.utilities.MediaIntentHandler;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+
 import roboguice.util.Ln;
 
 @Singleton public class RemoteSessionManager implements AudioManager.OnAudioFocusChangeListener {
@@ -64,30 +62,26 @@ import roboguice.util.Ln;
         }
 
         @Override public void onPlay() {
-          postAction(new UserAction(Protocol.PlayerPlay, true));
+
         }
 
         @Override public void onPause() {
-          postAction(new UserAction(Protocol.PlayerPause, true));
+
         }
 
         @Override public void onSkipToNext() {
-          postAction(new UserAction(Protocol.PlayerNext, true));
+
         }
 
         @Override public void onSkipToPrevious() {
-          postAction(new UserAction(Protocol.PlayerPrevious, true));
+
         }
 
         @Override public void onStop() {
-          postAction(new UserAction(Protocol.PlayerStop, true));
+
         }
       });
     }
-  }
-
-  private void postAction(UserAction action) {
-    bus.post(new MessageEvent(ProtocolEventType.UserAction, action));
   }
 
   public MediaSessionCompat.Token getMediaSessionToken() {

@@ -1,5 +1,10 @@
 package com.kelsos.mbrc.constants;
 
+import android.support.annotation.StringDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 public class SocketNotification {
   public static final String MUTE = "mute-status-changed";
   public static final String VOLUME = "volume-changed";
@@ -13,4 +18,17 @@ public class SocketNotification {
   private SocketNotification() {
     //no instance
   }
+
+  @Retention(RetentionPolicy.SOURCE)
+  @StringDef({
+                 MUTE,
+                 VOLUME,
+                 NOW_PLAYING,
+                 PLAY_STATUS,
+                 COVER,
+                 LYRICS,
+                 TRACK,
+                 REPEAT,
+             })
+  public @interface Context {}
 }

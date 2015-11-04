@@ -7,8 +7,6 @@ import android.net.wifi.WifiManager;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.constants.Const;
-import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.domain.ConnectionSettings;
 import com.kelsos.mbrc.events.MessageEvent;
@@ -27,6 +25,10 @@ import static com.kelsos.mbrc.events.ui.DiscoveryStopped.*;
 
 public class ServiceDiscovery {
   public static final String NOTIFY = "notify";
+  public static final String UTF_8 = "UTF-8";
+  public static final String CONTEXT = "context";
+  public static final String DISCOVERY = "discovery";
+  public static final String ADDRESS = "address";
   private WifiManager manager;
   private WifiManager.MulticastLock mLock;
   private ConnectivityManager connectivityManager;
@@ -100,18 +102,18 @@ public class ServiceDiscovery {
         byte[] buffer = new byte[BUFFER];
         mPacket = new DatagramPacket(buffer, buffer.length);
         Hashtable<String, String> discoveryMessage = new Hashtable<>();
-        discoveryMessage.put(Protocol.CONTEXT, Protocol.DISCOVERY);
-        discoveryMessage.put(Protocol.ADDRESS, getWifiAddress());
+        discoveryMessage.put(CONTEXT, DISCOVERY);
+        discoveryMessage.put(ADDRESS, getWifiAddress());
         byte[] discovery = mapper.writeValueAsBytes(discoveryMessage);
         mSocket.send(new DatagramPacket(discovery, discovery.length, group, PORT));
         String incoming;
 
         while (true) {
           mSocket.receive(mPacket);
-          incoming = new String(mPacket.getData(), Const.UTF_8);
+          incoming = new String(mPacket.getData(), UTF_8);
 
           JsonNode node = mapper.readValue(incoming, JsonNode.class);
-          if (NOTIFY.equals(node.path(Protocol.CONTEXT).asText())) {
+          if (NOTIFY.equals(node.path(CONTEXT).asText())) {
             ConnectionSettings settings = new ConnectionSettings(node);
             bus.post(settings);
             break;

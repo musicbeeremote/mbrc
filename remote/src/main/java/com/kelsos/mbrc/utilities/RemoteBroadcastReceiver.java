@@ -7,13 +7,12 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+
 import com.google.inject.Inject;
-import com.kelsos.mbrc.constants.Protocol;
-import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.domain.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.squareup.otto.Bus;
+
 import roboguice.receiver.RoboBroadcastReceiver;
 
 public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
@@ -38,7 +37,7 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
       String state = bundle.getString(TelephonyManager.EXTRA_STATE);
       if (TelephonyManager.EXTRA_STATE_RINGING.equalsIgnoreCase(state)
           && settingsManager.isVolumeReducedOnRinging()) {
-        bus.post(new MessageEvent(ProtocolEventType.ReduceVolume));
+
       }
     } else if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction())) {
       NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
@@ -48,16 +47,13 @@ public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
         if (NetworkInfo.State.DISCONNECTING.equals(networkInfo.getState())) {
         }
     } else if (RemoteViewIntentBuilder.REMOTE_PLAY_PRESSED.equals(intent.getAction())) {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.PlayerPlayPause, true)));
+
     } else if (RemoteViewIntentBuilder.REMOTE_NEXT_PRESSED.equals(intent.getAction())) {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.PlayerNext, true)));
+
     } else if (RemoteViewIntentBuilder.REMOTE_CLOSE_PRESSED.equals(intent.getAction())) {
-      bus.post(new MessageEvent(UserInputEventType.CancelNotification));
+
     } else if (RemoteViewIntentBuilder.REMOTE_PREVIOUS_PRESSED.equals(intent.getAction())) {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.PlayerPrevious, true)));
+
     }
   }
 

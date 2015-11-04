@@ -15,12 +15,8 @@ import android.view.ViewGroup;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.NowPlayingAdapter;
-import com.kelsos.mbrc.constants.Protocol;
-import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.dao.QueueTrack;
-import com.kelsos.mbrc.domain.UserAction;
 import com.kelsos.mbrc.dto.track.TrackInfo;
-import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.events.ui.TrackMoved;
 import com.kelsos.mbrc.events.ui.TrackRemoval;
@@ -58,8 +54,6 @@ public class NowPlayingFragment extends RoboFragment
   }
 
   public boolean onQueryTextSubmit(String query) {
-    bus.post(new MessageEvent(ProtocolEventType.UserAction,
-        new UserAction(Protocol.NowPlayingListSearch, query.trim())));
     mSearchView.setIconified(true);
     MenuItemCompat.collapseActionView(mSearchItem);
     return false;
@@ -86,8 +80,6 @@ public class NowPlayingFragment extends RoboFragment
   @Override public void onStart() {
     super.onStart();
     bus.register(this);
-    bus.post(new MessageEvent(ProtocolEventType.UserAction,
-        new UserAction(Protocol.NowPlayingList, true)));
   }
 
   @Override public void onStop() {
@@ -142,8 +134,7 @@ public class NowPlayingFragment extends RoboFragment
   }
 
   @Override public void onTrackRemoved(int position) {
-    bus.post(new MessageEvent(ProtocolEventType.UserAction,
-        new UserAction(Protocol.NowPlayingListRemove, position)));
+
   }
 
   @Override public void onTrackMoved(int from, int to) {
@@ -152,14 +143,12 @@ public class NowPlayingFragment extends RoboFragment
     Map<String, Integer> move = new HashMap<>();
     move.put("from", from);
     move.put("to", to);
-    bus.post(new MessageEvent(ProtocolEventType.UserAction,
-        new UserAction(Protocol.NowPlayingListMove, move)));
+
   }
 
   @Override public void onItemClicked(int position) {
     adapter.setPlayingTrackIndex(position);
-    bus.post(new MessageEvent(ProtocolEventType.UserAction,
-        new UserAction(Protocol.NowPlayingListPlay, position + 1)));
+
   }
 
   @Override public void onPause() {
