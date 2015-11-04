@@ -44,6 +44,8 @@ import rx.subjects.PublishSubject;
     this.settingsManager = settingsManager;
     this.mapper = mapper;
     this.client = client.clone();
+    this.client.interceptors().clear();
+
     messagePublisher = PublishSubject.create();
     messagePublisher.subscribeOn(Schedulers.io()).subscribe((incoming) -> {
       try {

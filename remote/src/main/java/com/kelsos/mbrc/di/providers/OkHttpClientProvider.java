@@ -4,19 +4,20 @@ import android.text.TextUtils;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.kelsos.mbrc.BuildConfig;
-import com.kelsos.mbrc.interceptors.LoggingInterceptor;
-import com.kelsos.mbrc.rest.RemoteEndPoint;
+import com.kelsos.mbrc.domain.ConnectionSettings;
+import com.kelsos.mbrc.utilities.SettingsManager;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import java.util.concurrent.TimeUnit;
 
 import roboguice.util.Ln;
 
 public class OkHttpClientProvider implements Provider<OkHttpClient> {
-  @Inject private RemoteEndPoint endPoint;
+
+  @Inject private SettingsManager manager;
 
   @Override public OkHttpClient get() {
     final OkHttpClient httpClient = new OkHttpClient();
@@ -24,24 +25,33 @@ public class OkHttpClientProvider implements Provider<OkHttpClient> {
     httpClient.setReadTimeout(40, TimeUnit.SECONDS);
     httpClient.setWriteTimeout(40, TimeUnit.SECONDS);
 
-    if (BuildConfig.DEBUG) {
-      httpClient.interceptors().add(new LoggingInterceptor());
-      httpClient.interceptors().add(chain -> {
-        Request request = chain.request();
+    httpClient.interceptors().add(chain -> {
+      final long start = System.currentTimeMillis();
+      final ConnectionSettings settings = manager.getDefault();
+      Request request = chain.request();
 
-        if (!TextUtils.isEmpty(endPoint.getAddress())) {
-          final HttpUrl url = request.httpUrl()
-              .newBuilder()
-              .host(endPoint.getAddress())
-              .port(endPoint.getHttpPort())
-              .build();
-          Ln.v(url.toString());
-          request = request.newBuilder().url(url).build();
-        }
+      final Request.Builder builder = request.newBuilder()
+          .addHeader("Accept", "application/json");
 
-        return chain.proceed(request);
-      });
-    }
+      if (!TextUtils.isEmpty(settings.getAddress())) {
+        final HttpUrl url = request.httpUrl()
+            .newBuilder()
+            .host(settings.getAddress())
+            .port(settings.getHttp())
+            .build();
+
+        builder.url(url);
+      }
+
+      request = builder.build();
+      Ln.v("[Interceptor] Sending Request to [%s]", request.httpUrl());
+      final Response response = chain.proceed(request);
+      final long end = System.currentTimeMillis();
+      Ln.v("[Interceptor] Request Complete [%s] :: duration [%d] ms :: code %d ", request.httpUrl(), (end - start), response.code());
+
+      return response;
+    });
+
     return httpClient;
   }
 }

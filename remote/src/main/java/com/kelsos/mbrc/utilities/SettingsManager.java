@@ -22,7 +22,6 @@ import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.NotifyUser;
-import com.kelsos.mbrc.rest.RemoteEndPoint;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 
@@ -45,7 +44,6 @@ public class SettingsManager {
   private ObjectMapper mapper;
   private int defaultIndex;
   private boolean isFirstRun;
-  @Inject private RemoteEndPoint endPoint;
 
   @Inject
   public SettingsManager(Context context, SharedPreferences preferences, MainThreadBus bus, ObjectMapper mapper) {
@@ -180,7 +178,6 @@ public class SettingsManager {
     editor.putInt(context.getString(R.string.settings_key_default_index), index);
     editor.apply();
     defaultIndex = index;
-    endPoint.setConnectionSettings(settings.getAddress(), settings.getHttp());
   }
 
   public Date getLastUpdated() {
