@@ -47,9 +47,8 @@ public class SocketMessageHandler {
     });
 
     actions.put(SocketNotification.COVER, () -> {
-      coverInteractor.execute().subscribeOn(Schedulers.io()).subscribe((cover) -> {
-        trackRepository.setTrackCover(cover);
-        bus.post(CoverChangedEvent.newInstance(cover));
+      coverInteractor.execute(true).subscribeOn(Schedulers.io()).subscribe((cover) -> {
+        bus.post(CoverChangedEvent.newBuilder().withCover(cover).build());
       });
     });
 
@@ -61,9 +60,8 @@ public class SocketMessageHandler {
     });
 
     actions.put(SocketNotification.TRACK, () -> {
-      trackInfoInteractor.execute().subscribeOn(Schedulers.io()).subscribe((trackInfo) -> {
-        trackRepository.setTrackInfo(trackInfo);
-        bus.post(TrackInfoChangeEvent.newInstance(trackInfo));
+      trackInfoInteractor.execute(true).subscribeOn(Schedulers.io()).subscribe((trackInfo) -> {
+        bus.post(TrackInfoChangeEvent.newBuilder().withTrackInfo(trackInfo).build());
       });
     });
 

@@ -8,10 +8,10 @@ import com.kelsos.mbrc.cache.TrackCache;
 import com.kelsos.mbrc.dto.track.Position;
 import com.kelsos.mbrc.dto.track.Rating;
 import com.kelsos.mbrc.dto.track.TrackInfo;
-import com.kelsos.mbrc.interactors.TrackCoverInteractor;
 import com.kelsos.mbrc.interactors.TrackPositionInteractor;
 import com.kelsos.mbrc.interactors.TrackRatingInteractor;
 import com.kelsos.mbrc.services.api.TrackService;
+import com.kelsos.mbrc.utilities.RemoteUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,8 +25,6 @@ import rx.schedulers.Schedulers;
 public class TrackRepositoryImpl implements TrackRepository {
   @Inject
   private TrackRatingInteractor trackRatingUserCase;
-  @Inject
-  private TrackCoverInteractor trackCoverUserCase;
   @Inject
   private TrackPositionInteractor trackPositionInteractor;
   @Inject
@@ -89,18 +87,20 @@ public class TrackRepositoryImpl implements TrackRepository {
   }
 
   @Override
-  public Observable<Bitmap> getTrackCover() {
-    if (cache.getCover() == null) {
-      return trackCoverUserCase.execute()
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .flatMap(bitmap -> {
-            cache.setCover(bitmap);
-            return Observable.just(bitmap);
-          });
-    } else {
-      return Observable.just(cache.getCover());
-    }
+  public Observable<Bitmap> getTrackCover(boolean reload) {
+    final Observable<Bitmap> remote = trackService.getTrackCover(RemoteUtils.getTimeStamp()).
+        subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .flatMap(bitmap -> {
+          cache.setCover(bitmap);
+          return Observable.just(bitmap);
+        });
+
+    return reload
+        ? remote
+        : Observable.concat(Observable.just(cache.getCover()), remote)
+        .filter(bitmap -> bitmap != null)
+        .first();
   }
 
   @Override

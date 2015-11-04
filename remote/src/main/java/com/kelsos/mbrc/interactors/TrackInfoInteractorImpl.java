@@ -2,14 +2,14 @@ package com.kelsos.mbrc.interactors;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.dto.track.TrackInfo;
-import com.kelsos.mbrc.services.api.TrackService;
+import com.kelsos.mbrc.repository.TrackRepository;
 
 import rx.Observable;
 
 public class TrackInfoInteractorImpl implements TrackInfoInteractor {
-  @Inject private TrackService api;
+  @Inject private TrackRepository repository;
   @Override
-  public Observable<TrackInfo> execute() {
-    return api.getTrackInfo();
+  public Observable<TrackInfo> execute(boolean reload) {
+    return repository.getTrackInfo(reload);
   }
 }

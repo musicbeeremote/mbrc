@@ -5,11 +5,14 @@ import com.kelsos.mbrc.annotations.PlayerAction;
 import com.kelsos.mbrc.domain.TrackPosition;
 import com.kelsos.mbrc.dto.player.Volume;
 import com.kelsos.mbrc.dto.track.Position;
+import com.kelsos.mbrc.events.ui.CoverChangedEvent;
 import com.kelsos.mbrc.events.ui.RepeatChange;
+import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.events.ui.VolumeChangeEvent;
 import com.kelsos.mbrc.interactors.PlayerInteractor;
 import com.kelsos.mbrc.interactors.RepeatInteractor;
 import com.kelsos.mbrc.interactors.ShuffleInteractor;
+import com.kelsos.mbrc.interactors.TrackInfoInteractor;
 import com.kelsos.mbrc.interactors.VolumeInteractor;
 import com.kelsos.mbrc.models.MainViewModel;
 import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
@@ -29,6 +32,7 @@ public class MainViewPresenter implements IMainViewPresenter {
   @Inject private ErrorHandler errorHandler;
   @Inject private MainViewModel model;
   @Inject private PlayerInteractor playerInteractor;
+  @Inject private TrackInfoInteractor trackInfoInteractor;
   @Inject private VolumeInteractor volumeInteractor;
   @Inject private ShuffleInteractor shuffleInteractor;
   @Inject private RepeatInteractor repeatInteractor;
@@ -59,7 +63,7 @@ public class MainViewPresenter implements IMainViewPresenter {
 
   private void loadTrackInfo() {
     if (model.getTrackInfo() == null) {
-      trackRepository.getTrackInfo(false).subscribe(trackInfo -> {
+      trackInfoInteractor.execute(false).subscribe(trackInfo -> {
         model.setTrackInfo(trackInfo);
         mainView.updateTrackInfo(trackInfo);
       }, errorHandler::handleThrowable);
@@ -70,7 +74,7 @@ public class MainViewPresenter implements IMainViewPresenter {
 
   private void loadCover() {
     if (model.getTrackCover() == null) {
-      trackRepository.getTrackCover().subscribe(bitmap -> {
+      trackRepository.getTrackCover(false).subscribe(bitmap -> {
         model.setTrackCover(bitmap);
         mainView.updateCover(bitmap);
       }, errorHandler::handleThrowable);
@@ -192,6 +196,16 @@ public class MainViewPresenter implements IMainViewPresenter {
   @Subscribe public void onRepeatChangedEvent(RepeatChange event) {
     model.setRepeat(event.getMode());
     mainView.updateRepeat(event.getMode());
+  }
+
+  @Subscribe public void onTrackInfoChangedEvent(TrackInfoChangeEvent event) {
+    model.setTrackInfo(event.getTrackInfo());
+    mainView.updateTrackInfo(event.getTrackInfo());
+  }
+
+  @Subscribe public void onCoverChangedEvent(CoverChangedEvent event) {
+    model.setTrackCover(event.getCover());
+    mainView.updateCover(event.getCover());
   }
 
 }

@@ -13,7 +13,7 @@ import rx.Observable;
 public interface TrackRepository {
   Observable<TrackInfo> getTrackInfo(boolean reload);
   Observable<List<String>> getTrackLyrics(boolean reload);
-  Observable<Bitmap> getTrackCover();
+  Observable<Bitmap> getTrackCover(boolean reload);
   Observable<Position> getPosition();
   Observable<Rating> getRating();
 

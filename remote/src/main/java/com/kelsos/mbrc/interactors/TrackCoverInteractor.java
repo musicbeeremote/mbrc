@@ -5,5 +5,5 @@ import android.graphics.Bitmap;
 import rx.Observable;
 
 public interface TrackCoverInteractor {
-  Observable<Bitmap> execute();
+  Observable<Bitmap> execute(boolean b);
 }
