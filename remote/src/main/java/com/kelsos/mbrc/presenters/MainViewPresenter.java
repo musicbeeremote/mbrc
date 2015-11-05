@@ -6,6 +6,7 @@ import com.kelsos.mbrc.domain.TrackPosition;
 import com.kelsos.mbrc.dto.player.Volume;
 import com.kelsos.mbrc.dto.track.Position;
 import com.kelsos.mbrc.events.ui.CoverChangedEvent;
+import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RepeatChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.events.ui.VolumeChangeEvent;
@@ -206,6 +207,11 @@ public class MainViewPresenter implements IMainViewPresenter {
   @Subscribe public void onCoverChangedEvent(CoverChangedEvent event) {
     model.setTrackCover(event.getCover());
     mainView.updateCover(event.getCover());
+  }
+
+  @Subscribe public void onPlayStateChanged(PlayStateChange event) {
+    model.setPlayState(event.getState());
+    mainView.updatePlayState(event.getState());
   }
 
 }

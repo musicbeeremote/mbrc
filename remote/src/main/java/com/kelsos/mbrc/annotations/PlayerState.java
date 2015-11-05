@@ -9,6 +9,7 @@ public class PlayerState {
   public static final String PLAYING = "playing";
   public static final String PAUSED = "paused";
   public static final String STOPPED = "stopped";
+  public static final String UNDEFINED = "undefined";
 
   private PlayerState() {
     //no instance
@@ -18,7 +19,8 @@ public class PlayerState {
   @StringDef({
                  PAUSED,
                  PLAYING,
-                 STOPPED
+                 STOPPED,
+                 UNDEFINED
              })
   public @interface State {
   }

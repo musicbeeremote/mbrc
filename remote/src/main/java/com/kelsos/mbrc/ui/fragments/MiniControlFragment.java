@@ -11,15 +11,17 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.enums.PlayState;
+import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.presenters.interfaces.IMiniControlPresenter;
 import com.kelsos.mbrc.ui.views.MiniControlView;
 import com.kelsos.mbrc.utilities.FontUtils;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import roboguice.fragment.RoboFragment;
 
 public class MiniControlFragment extends RoboFragment implements MiniControlView {
@@ -80,9 +82,9 @@ public class MiniControlFragment extends RoboFragment implements MiniControlView
     trackTitle.setText(title);
   }
 
-  public void updatePlaystate(PlayState playState) {
+  public void updatePlayerState(@PlayerState.State String playState) {
     switch (playState) {
-      case PLAYING:
+      case PlayerState.PLAYING:
         playPause.setImageResource(R.drawable.ic_action_pause);
         break;
       default:

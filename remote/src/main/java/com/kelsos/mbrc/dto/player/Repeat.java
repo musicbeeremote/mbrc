@@ -52,7 +52,7 @@ public class Repeat extends BaseResponse {
     if (other == this) {
       return true;
     }
-    if (!(other instanceof PlaybackState)) {
+    if (!(other instanceof PlayState)) {
       return false;
     }
     Repeat rhs = ((Repeat) other);

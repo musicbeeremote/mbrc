@@ -21,8 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import butterknife.Bind;
-import butterknife.ButterKnife;
+
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
@@ -41,6 +40,9 @@ import com.kelsos.mbrc.ui.fragments.PlaylistFragment;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class MainFragmentActivity extends RoboAppCompatActivity
     implements MainFragment.OnExpandToolbarListener {
@@ -242,10 +244,15 @@ public class MainFragmentActivity extends RoboAppCompatActivity
   }
 
   @Subscribe public void handleUserNotification(NotifyUser event) {
-    final String message =
-        event.isFromResource() ? getString(event.getResId()) : event.getMessage();
+    final String message = event.isFromResource()
+        ? getString(event.getResId())
+        : event.getMessage();
 
-    Snackbar.make(getCurrentFocus(), message, Snackbar.LENGTH_SHORT).show();
+    if (appBarLayout == null) {
+      return;
+    }
+
+    Snackbar.make(appBarLayout, message, Snackbar.LENGTH_SHORT).show();
   }
 
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {

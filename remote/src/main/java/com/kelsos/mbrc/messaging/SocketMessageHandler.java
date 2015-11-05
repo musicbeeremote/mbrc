@@ -6,9 +6,11 @@ import com.kelsos.mbrc.constants.SocketNotification;
 import com.kelsos.mbrc.dto.WebSocketMessage;
 import com.kelsos.mbrc.events.ui.CoverChangedEvent;
 import com.kelsos.mbrc.events.ui.LyricsChangedEvent;
+import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RepeatChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.events.ui.VolumeChangeEvent;
+import com.kelsos.mbrc.interactors.PlayerStateInteractor;
 import com.kelsos.mbrc.interactors.RepeatInteractor;
 import com.kelsos.mbrc.interactors.TrackCoverInteractor;
 import com.kelsos.mbrc.interactors.TrackInfoInteractor;
@@ -27,6 +29,7 @@ import rx.schedulers.Schedulers;
 
 @Singleton
 public class SocketMessageHandler {
+
   private Map<String, Action0> actions;
   @Inject private VolumeInteractor volumeInteractor;
   @Inject private PlayerRepository playerRepository;
@@ -35,6 +38,7 @@ public class SocketMessageHandler {
   @Inject private TrackLyricsInteractor lyricsInteractor;
   @Inject private TrackInfoInteractor trackInfoInteractor;
   @Inject private RepeatInteractor repeatInteractor;
+  @Inject private PlayerStateInteractor playerStateInteractor;
 
   @Inject public SocketMessageHandler(MainThreadBus bus) {
     bus.register(this);
@@ -66,7 +70,9 @@ public class SocketMessageHandler {
     });
 
     actions.put(SocketNotification.PLAY_STATUS, () -> {
-
+      playerStateInteractor.execute(true).subscribeOn(Schedulers.io()).subscribe(playState -> {
+        bus.post(PlayStateChange.newBuilder().withState(playState).build());
+      });
     });
 
     actions.put(SocketNotification.REPEAT, () -> {

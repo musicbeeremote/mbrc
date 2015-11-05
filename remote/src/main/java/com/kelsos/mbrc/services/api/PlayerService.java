@@ -2,7 +2,7 @@ package com.kelsos.mbrc.services.api;
 
 import com.kelsos.mbrc.annotations.PlayerAction;
 import com.kelsos.mbrc.dto.BaseResponse;
-import com.kelsos.mbrc.dto.player.PlaybackState;
+import com.kelsos.mbrc.dto.player.PlayState;
 import com.kelsos.mbrc.dto.player.PlayerStatusResponse;
 import com.kelsos.mbrc.dto.player.Repeat;
 import com.kelsos.mbrc.dto.player.Shuffle;
@@ -47,8 +47,7 @@ public interface PlayerService {
 
   @GET("/player/repeat") Observable<Repeat> getRepeatMode();
 
-  @GET("/player/playstate")
-  Single<PlaybackState> getPlaystate();
+  @GET("/player/playstate") Observable<PlayState> getPlayState();
 
   @GET("/player/status")
   Single<PlayerStatusResponse> getPlayerStatus();

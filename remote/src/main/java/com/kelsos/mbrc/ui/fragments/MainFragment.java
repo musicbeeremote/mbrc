@@ -23,12 +23,13 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.annotations.Repeat;
 import com.kelsos.mbrc.annotations.Shuffle;
 import com.kelsos.mbrc.domain.TrackPosition;
+import com.kelsos.mbrc.dto.player.PlayState;
 import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.enums.LfmStatus;
-import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
 import com.kelsos.mbrc.ui.views.MainView;
@@ -253,15 +254,15 @@ import roboguice.fragment.RoboFragment;
     volumeBar.setProgress(volume);
   }
 
-  @Override public void updatePlaystate(PlayState playstate) {
-    switch (playstate) {
-      case PLAYING:
+  @Override public void updatePlayState(PlayState playstate) {
+    switch (playstate.getValue()) {
+      case PlayerState.PLAYING:
         playPauseButton.setImageResource(R.drawable.ic_pause_circle_fill);
         break;
-      case PAUSED:
+      case PlayerState.PAUSED:
         playPauseButton.setImageResource(R.drawable.ic_play_circle_fill);
         break;
-      case STOPPED:
+      case PlayerState.STOPPED:
         playPauseButton.setImageResource(R.drawable.ic_play_circle_fill);
         break;
       default:

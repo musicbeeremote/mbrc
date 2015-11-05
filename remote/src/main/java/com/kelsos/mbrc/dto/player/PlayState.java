@@ -16,7 +16,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @JsonPropertyOrder({
     "value"
 })
-public class PlaybackState extends BaseResponse {
+public class PlayState extends BaseResponse {
 
   @JsonProperty("value")
   @PlayerState.State
@@ -54,10 +54,10 @@ public class PlaybackState extends BaseResponse {
     if (other == this) {
       return true;
     }
-    if (!(other instanceof PlaybackState)) {
+    if (!(other instanceof PlayState)) {
       return false;
     }
-    PlaybackState rhs = ((PlaybackState) other);
+    PlayState rhs = ((PlayState) other);
     return new EqualsBuilder().append(value, rhs.value).isEquals();
   }
 

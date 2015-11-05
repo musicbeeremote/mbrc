@@ -14,7 +14,7 @@ import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.enums.PlayState;
+import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RemoteClientMetaData;
 import com.kelsos.mbrc.utilities.MediaButtonReceiver;
@@ -108,11 +108,12 @@ import roboguice.util.Ln;
 
     PlaybackStateCompat.Builder builder = new PlaybackStateCompat.Builder();
     builder.setActions(PLAYBACK_ACTIONS);
-    switch (stateChange.getState()) {
-      case PLAYING:
+    final String playerState = stateChange.getState().getValue();
+    switch (playerState) {
+      case PlayerState.PLAYING:
         builder.setState(PlaybackStateCompat.STATE_PLAYING, -1, 1);
         break;
-      case PAUSED:
+      case PlayerState.PAUSED:
         builder.setState(PlaybackStateCompat.STATE_PAUSED, -1, 0);
         break;
       default:
@@ -123,16 +124,17 @@ import roboguice.util.Ln;
     mMediaSession.setPlaybackState(playbackState);
     ensureTransportControls(playbackState);
 
-    mMediaSession.setActive(stateChange.getState() != PlayState.STOPPED
-        || stateChange.getState() != PlayState.UNDEFINED);
+    final boolean isActive = PlayerState.STOPPED.equals(playerState)
+        || PlayerState.UNDEFINED.equals(playerState);
+    mMediaSession.setActive(isActive);
   }
 
   @Subscribe public void onPlayStateChange(PlayStateChange change) {
-    switch (change.getState()) {
-      case PLAYING:
+    switch (change.getState().getValue()) {
+      case PlayerState.PLAYING:
         requestFocus();
         break;
-      case PAUSED:
+      case PlayerState.PAUSED:
         break;
       default:
         abandonFocus();

@@ -14,6 +14,8 @@ import com.kelsos.mbrc.di.providers.OkHttpClientProvider;
 import com.kelsos.mbrc.di.providers.RetrofitProvider;
 import com.kelsos.mbrc.interactors.PlayerInteractor;
 import com.kelsos.mbrc.interactors.PlayerInteractorImpl;
+import com.kelsos.mbrc.interactors.PlayerStateInteractor;
+import com.kelsos.mbrc.interactors.PlayerStateInteractorImpl;
 import com.kelsos.mbrc.interactors.RepeatInteractor;
 import com.kelsos.mbrc.interactors.RepeatInteractorImpl;
 import com.kelsos.mbrc.interactors.ShuffleInteractor;
@@ -70,6 +72,7 @@ import roboguice.inject.ContextSingleton;
     bind(PlayerInteractor.class).to(PlayerInteractorImpl.class);
     bind(ShuffleInteractor.class).to(ShuffleInteractorImpl.class);
     bind(RepeatInteractor.class).to(RepeatInteractorImpl.class);
+    bind(PlayerStateInteractor.class).to(PlayerStateInteractorImpl.class);
 
     bind(TrackRepository.class).to(TrackRepositoryImpl.class).in(Singleton.class);
     bind(PlayerRepository.class).to(PlayerRepositoryImpl.class).in(Singleton.class);
