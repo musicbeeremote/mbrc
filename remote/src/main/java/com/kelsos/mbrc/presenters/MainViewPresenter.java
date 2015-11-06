@@ -108,7 +108,7 @@ public class MainViewPresenter implements IMainViewPresenter {
 
   private void loadVolume() {
     if (model.getVolume() == null) {
-      playerRepository.getVolume().subscribe(volume -> {
+      volumeInteractor.execute(false).subscribe(volume -> {
         model.setVolume(volume);
         mainView.updateVolume(volume.getValue());
       }, errorHandler::handleThrowable);

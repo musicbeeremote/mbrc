@@ -22,7 +22,7 @@ import rx.Single;
 
 public interface PlayerService {
   @GET("/player/volume")
-  Single<Volume> getVolume();
+  Observable<Volume> getVolume();
 
   @PUT("/player/volume")
   Single<Volume> updateVolume(@Body VolumeRequest body);

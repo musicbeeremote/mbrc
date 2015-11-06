@@ -10,7 +10,7 @@ import rx.Single;
 
 public interface PlayerRepository {
   Single<Shuffle> getShuffleState();
-  Single<Volume> getVolume();
+  Observable<Volume> getVolume(boolean reload);
   Observable<PlayState> getPlayState(boolean reload);
   Single<Boolean> getMute();
   Observable<String> getRepeat(boolean reload);

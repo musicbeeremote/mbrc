@@ -44,8 +44,7 @@ public class SocketMessageHandler {
     bus.register(this);
     actions = new HashMap<>();
     actions.put(SocketNotification.VOLUME, () ->  {
-      volumeInteractor.execute().subscribeOn(Schedulers.io()).subscribe((volume) -> {
-        playerRepository.setVolume(volume);
+      volumeInteractor.execute(true).subscribeOn(Schedulers.io()).subscribe((volume) -> {
         bus.post(VolumeChangeEvent.newInstance(volume));
       });
     });

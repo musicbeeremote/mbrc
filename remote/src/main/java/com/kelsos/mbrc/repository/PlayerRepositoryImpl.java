@@ -39,18 +39,17 @@ public class PlayerRepositoryImpl implements PlayerRepository {
   }
 
   @Override
-  public Single<Volume> getVolume() {
-    if (playerCache.getVolume() == null) {
-      return volumeInteractor.execute()
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread()).flatMap(volume -> {
-            playerCache.setVolume(volume);
-            return Single.just(volume);
-          });
+  public Observable<Volume> getVolume(boolean reload) {
+    final Observable<Volume> remote = service.getVolume()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread()).flatMap(volume -> {
+          playerCache.setVolume(volume);
+          return Observable.just(volume);
+        });
 
-    } else  {
-      return Single.just(playerCache.getVolume());
-    }
+    return reload ? remote : Observable.concat(Observable.just(playerCache.getVolume()), remote)
+        .filter(o -> o != null)
+        .first();
   }
 
   @Override
