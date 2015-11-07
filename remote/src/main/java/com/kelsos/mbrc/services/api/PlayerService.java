@@ -37,7 +37,7 @@ public interface PlayerService {
   Single<BaseResponse> updateRepeatState(@Body RepeatRequest body);
 
   @PUT("/player/mute")
-  Single<BaseResponse> updateMuteState(@Body ChangeStateRequest body);
+  Observable<StatusResponse> updateMuteState(@Body ChangeStateRequest body);
 
   @GET("/player/shuffle")
   Single<Shuffle> getShuffleState();
@@ -53,7 +53,7 @@ public interface PlayerService {
   Single<PlayerStatusResponse> getPlayerStatus();
 
   @GET("/player/mute")
-  Single<StatusResponse> getMuteState();
+  Observable<StatusResponse> getMuteState();
 
 
   @GET("/player/action")

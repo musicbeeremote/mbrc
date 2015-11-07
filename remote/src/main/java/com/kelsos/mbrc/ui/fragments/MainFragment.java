@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
@@ -122,7 +123,6 @@ import roboguice.fragment.RoboFragment;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setHasOptionsMenu(true);
   }
 
   @Override
@@ -147,6 +147,7 @@ import roboguice.fragment.RoboFragment;
 
     progressBar.setOnSeekBarChangeListener(progressBarChangeListener);
     volumeBar.setOnSeekBarChangeListener(volumeBarChangeListener);
+    setHasOptionsMenu(true);
     return view;
   }
 
@@ -213,7 +214,7 @@ import roboguice.fragment.RoboFragment;
   }
 
   @Override public void updateShuffle(@Shuffle.State String state) {
-    int color = getResources().getColor(
+    int color = ContextCompat.getColor(getContext(),
         !Shuffle.OFF.equals(state) ? R.color.accent : R.color.button_dark);
     shuffleButton.setColorFilter(color);
 
@@ -223,7 +224,7 @@ import roboguice.fragment.RoboFragment;
   }
 
   @Override public void updateRepeat(@Repeat.Mode String mode) {
-    int color = getResources().getColor(mode.equals(Repeat.ALL) ? R.color.accent : R.color.button_dark);
+    int color = ContextCompat.getColor(getContext(), mode.equals(Repeat.ALL) ? R.color.accent : R.color.button_dark);
     repeatButton.setColorFilter(color);
   }
 

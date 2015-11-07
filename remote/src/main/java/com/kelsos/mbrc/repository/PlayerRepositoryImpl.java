@@ -68,8 +68,15 @@ public class PlayerRepositoryImpl implements PlayerRepository {
   }
 
   @Override
-  public Single<Boolean> getMute() {
-    return null;
+  public Observable<Boolean> getMute(boolean reload) {
+    final Observable<Boolean> remote = service.getMuteState().subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .flatMap(status -> {
+          playerCache.setMute(status.getEnabled());
+          return Observable.just(status.getEnabled());
+        });
+
+    return Observable.concat(Observable.just(playerCache.isMute()), remote);
   }
 
   @Override
@@ -91,6 +98,10 @@ public class PlayerRepositoryImpl implements PlayerRepository {
   @Override
   public void setRepeat(@Repeat.Mode String repeat) {
     playerCache.setRepeat(repeat);
+  }
+
+  @Override public void setMute(Boolean enabled) {
+    playerCache.setMute(enabled);
   }
 
   @Override

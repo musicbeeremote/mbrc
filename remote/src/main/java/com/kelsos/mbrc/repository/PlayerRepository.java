@@ -12,9 +12,10 @@ public interface PlayerRepository {
   Single<Shuffle> getShuffleState();
   Observable<Volume> getVolume(boolean reload);
   Observable<PlayState> getPlayState(boolean reload);
-  Single<Boolean> getMute();
+  Observable<Boolean> getMute(boolean reload);
   Observable<String> getRepeat(boolean reload);
 
   void setVolume(Volume volume);
   void setRepeat(@Repeat.Mode String repeat);
+  void setMute(Boolean enabled);
 }

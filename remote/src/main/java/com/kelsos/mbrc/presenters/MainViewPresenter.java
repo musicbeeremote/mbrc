@@ -6,10 +6,12 @@ import com.kelsos.mbrc.domain.TrackPosition;
 import com.kelsos.mbrc.dto.player.Volume;
 import com.kelsos.mbrc.dto.track.Position;
 import com.kelsos.mbrc.events.ui.CoverChangedEvent;
+import com.kelsos.mbrc.events.ui.MuteChangeEvent;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RepeatChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.events.ui.VolumeChangeEvent;
+import com.kelsos.mbrc.interactors.MuteInteractor;
 import com.kelsos.mbrc.interactors.PlayerInteractor;
 import com.kelsos.mbrc.interactors.RepeatInteractor;
 import com.kelsos.mbrc.interactors.ShuffleInteractor;
@@ -37,12 +39,14 @@ public class MainViewPresenter implements IMainViewPresenter {
   @Inject private VolumeInteractor volumeInteractor;
   @Inject private ShuffleInteractor shuffleInteractor;
   @Inject private RepeatInteractor repeatInteractor;
+  @Inject private MuteInteractor muteInteractor;
 
   @Inject private TrackRepository trackRepository;
   @Inject private PlayerRepository playerRepository;
   @Inject private Bus bus;
 
   private MainView mainView;
+
 
   @Override public void bind(MainView mainView) {
     this.mainView = mainView;
@@ -155,7 +159,12 @@ public class MainViewPresenter implements IMainViewPresenter {
   }
 
   @Override public void onMutePressed() {
-
+    muteInteractor.execute().subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(isMute -> {
+          model.setMuted(isMute);
+          mainView.updateMute(isMute);
+        }, errorHandler::handleThrowable);
   }
 
   @Override public void onShufflePressed() {
@@ -212,6 +221,11 @@ public class MainViewPresenter implements IMainViewPresenter {
   @Subscribe public void onPlayStateChanged(PlayStateChange event) {
     model.setPlayState(event.getState());
     mainView.updatePlayState(event.getState());
+  }
+
+  @Subscribe public void onMuteChanged(MuteChangeEvent event) {
+    model.setMuted(event.isMute());
+    mainView.updateMute(event.isMute());
   }
 
 }
