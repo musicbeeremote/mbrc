@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.net;
 
+import android.text.TextUtils;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -42,6 +44,8 @@ import rx.subjects.PublishSubject;
     this.settingsManager = settingsManager;
     this.mapper = mapper;
     this.client = client.clone();
+    this.client.interceptors().clear();
+
     messagePublisher = PublishSubject.create();
     messagePublisher.subscribeOn(Schedulers.io()).subscribe((incoming) -> {
       try {
@@ -58,6 +62,10 @@ import rx.subjects.PublishSubject;
     }
 
     ConnectionSettings settings = settingsManager.getDefault();
+    if (TextUtils.isEmpty(settings.getAddress()) || settings.getPort() == 0) {
+      return;
+    }
+
     String url = String.format("ws://%s:%d", settings.getAddress(), settings.getPort());
     Request request = new Request.Builder().url(url).build();
 

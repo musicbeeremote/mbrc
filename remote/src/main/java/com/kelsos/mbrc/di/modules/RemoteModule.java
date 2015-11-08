@@ -12,8 +12,12 @@ import com.kelsos.mbrc.di.providers.BusProvider;
 import com.kelsos.mbrc.di.providers.ObjectMapperProvider;
 import com.kelsos.mbrc.di.providers.OkHttpClientProvider;
 import com.kelsos.mbrc.di.providers.RetrofitProvider;
+import com.kelsos.mbrc.interactors.MuteInteractor;
+import com.kelsos.mbrc.interactors.MuteInteractorImpl;
 import com.kelsos.mbrc.interactors.PlayerInteractor;
 import com.kelsos.mbrc.interactors.PlayerInteractorImpl;
+import com.kelsos.mbrc.interactors.PlayerStateInteractor;
+import com.kelsos.mbrc.interactors.PlayerStateInteractorImpl;
 import com.kelsos.mbrc.interactors.RepeatInteractor;
 import com.kelsos.mbrc.interactors.RepeatInteractorImpl;
 import com.kelsos.mbrc.interactors.ShuffleInteractor;
@@ -30,6 +34,8 @@ import com.kelsos.mbrc.interactors.TrackRatingInteractor;
 import com.kelsos.mbrc.interactors.TrackRatingInteractorImpl;
 import com.kelsos.mbrc.models.MainViewModel;
 import com.kelsos.mbrc.models.MainViewModelImpl;
+import com.kelsos.mbrc.presenters.LyricsPresenter;
+import com.kelsos.mbrc.presenters.LyricsPresenterImpl;
 import com.kelsos.mbrc.presenters.MainViewPresenter;
 import com.kelsos.mbrc.presenters.MiniControlPresenter;
 import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
@@ -47,6 +53,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.otto.Bus;
 
 import retrofit.Retrofit;
+import roboguice.inject.ContextSingleton;
 
 @SuppressWarnings("UnusedDeclaration") public class RemoteModule extends AbstractModule {
   public void configure() {
@@ -54,9 +61,10 @@ import retrofit.Retrofit;
     bind(OkHttpClient.class).toProvider(OkHttpClientProvider.class).in(Singleton.class);
     bind(Retrofit.class).toProvider(RetrofitProvider.class).in(Singleton.class);
     bind(Bus.class).toProvider(BusProvider.class).in(Singleton.class);
-    bind(IMiniControlPresenter.class).to(MiniControlPresenter.class);
-    bind(IMainViewPresenter.class).to(MainViewPresenter.class);
-    bind(MainViewModel.class).to(MainViewModelImpl.class);
+    bind(IMiniControlPresenter.class).to(MiniControlPresenter.class).in(ContextSingleton.class);
+    bind(IMainViewPresenter.class).to(MainViewPresenter.class).in(ContextSingleton.class);
+    bind(MainViewModel.class).to(MainViewModelImpl.class).in(ContextSingleton.class);
+    bind(LyricsPresenter.class).to(LyricsPresenterImpl.class).in(ContextSingleton.class);
 
     bind(TrackInfoInteractor.class).to(TrackInfoInteractorImpl.class);
     bind(TrackRatingInteractor.class).to(TrackRatingInteractorImpl.class);
@@ -66,6 +74,8 @@ import retrofit.Retrofit;
     bind(PlayerInteractor.class).to(PlayerInteractorImpl.class);
     bind(ShuffleInteractor.class).to(ShuffleInteractorImpl.class);
     bind(RepeatInteractor.class).to(RepeatInteractorImpl.class);
+    bind(PlayerStateInteractor.class).to(PlayerStateInteractorImpl.class);
+    bind(MuteInteractor.class).to(MuteInteractorImpl.class);
 
     bind(TrackRepository.class).to(TrackRepositoryImpl.class).in(Singleton.class);
     bind(PlayerRepository.class).to(PlayerRepositoryImpl.class).in(Singleton.class);

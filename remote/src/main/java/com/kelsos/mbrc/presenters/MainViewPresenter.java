@@ -1,41 +1,59 @@
 package com.kelsos.mbrc.presenters;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.annotations.PlaybackAction;
-import com.kelsos.mbrc.annotations.RepeatMode;
+import com.kelsos.mbrc.annotations.PlayerAction;
 import com.kelsos.mbrc.domain.TrackPosition;
+import com.kelsos.mbrc.dto.player.Volume;
 import com.kelsos.mbrc.dto.track.Position;
+import com.kelsos.mbrc.events.ui.CoverChangedEvent;
+import com.kelsos.mbrc.events.ui.MuteChangeEvent;
+import com.kelsos.mbrc.events.ui.PlayStateChange;
+import com.kelsos.mbrc.events.ui.RepeatChange;
+import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
+import com.kelsos.mbrc.events.ui.VolumeChangeEvent;
+import com.kelsos.mbrc.interactors.MuteInteractor;
 import com.kelsos.mbrc.interactors.PlayerInteractor;
+import com.kelsos.mbrc.interactors.RepeatInteractor;
 import com.kelsos.mbrc.interactors.ShuffleInteractor;
+import com.kelsos.mbrc.interactors.TrackInfoInteractor;
 import com.kelsos.mbrc.interactors.VolumeInteractor;
 import com.kelsos.mbrc.models.MainViewModel;
 import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
 import com.kelsos.mbrc.repository.PlayerRepository;
 import com.kelsos.mbrc.repository.TrackRepository;
 import com.kelsos.mbrc.ui.views.MainView;
+import com.kelsos.mbrc.utilities.ErrorHandler;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import roboguice.inject.ContextSingleton;
-import roboguice.util.Ln;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 @ContextSingleton
 public class MainViewPresenter implements IMainViewPresenter {
+  @Inject private ErrorHandler errorHandler;
   @Inject private MainViewModel model;
   @Inject private PlayerInteractor playerInteractor;
+  @Inject private TrackInfoInteractor trackInfoInteractor;
   @Inject private VolumeInteractor volumeInteractor;
   @Inject private ShuffleInteractor shuffleInteractor;
+  @Inject private RepeatInteractor repeatInteractor;
+  @Inject private MuteInteractor muteInteractor;
 
   @Inject private TrackRepository trackRepository;
   @Inject private PlayerRepository playerRepository;
+  @Inject private Bus bus;
+
   private MainView mainView;
+
 
   @Override public void bind(MainView mainView) {
     this.mainView = mainView;
   }
 
   @Override public void onPause() {
-
+    bus.unregister(this);
   }
 
   @Override public void onResume() {
@@ -45,14 +63,15 @@ public class MainViewPresenter implements IMainViewPresenter {
     loadRepeat();
     loadVolume();
     loadPosition();
+    bus.register(this);
   }
 
   private void loadTrackInfo() {
     if (model.getTrackInfo() == null) {
-      trackRepository.getTrackInfo().subscribe(trackInfo -> {
+      trackInfoInteractor.execute(false).subscribe(trackInfo -> {
         model.setTrackInfo(trackInfo);
         mainView.updateTrackInfo(trackInfo);
-      });
+      }, errorHandler::handleThrowable);
     } else {
       mainView.updateTrackInfo(model.getTrackInfo());
     }
@@ -60,12 +79,10 @@ public class MainViewPresenter implements IMainViewPresenter {
 
   private void loadCover() {
     if (model.getTrackCover() == null) {
-      trackRepository.getTrackCover().subscribe(bitmap -> {
+      trackRepository.getTrackCover(false).subscribe(bitmap -> {
         model.setTrackCover(bitmap);
         mainView.updateCover(bitmap);
-      }, throwable -> {
-        Ln.v(throwable);
-      });
+      }, errorHandler::handleThrowable);
     } else {
       mainView.updateCover(model.getTrackCover());
     }
@@ -76,7 +93,7 @@ public class MainViewPresenter implements IMainViewPresenter {
       playerRepository.getShuffleState().subscribe(shuffle -> {
         model.setShuffle(shuffle);
         mainView.updateShuffle(shuffle.getState());
-      });
+      }, errorHandler::handleThrowable);
     } else {
       mainView.updateShuffle(model.getShuffle().getState());
     }
@@ -84,21 +101,21 @@ public class MainViewPresenter implements IMainViewPresenter {
 
   private void loadRepeat() {
     if (model.getRepeat() == null) {
-      playerRepository.getRepeat().subscribe(repeat -> {
+      playerRepository.getRepeat(false).subscribe(repeat -> {
         model.setRepeat(repeat);
-        mainView.updateRepeat(RepeatMode.ALL.equals(repeat.getValue()));
-      });
+        mainView.updateRepeat(repeat);
+      }, errorHandler::handleThrowable);
     } else {
-      mainView.updateRepeat(RepeatMode.ALL.equals(model.getRepeat().getValue()));
+      mainView.updateRepeat(model.getRepeat());
     }
   }
 
   private void loadVolume() {
     if (model.getVolume() == null) {
-      playerRepository.getVolume().subscribe(volume -> {
+      volumeInteractor.execute(false).subscribe(volume -> {
         model.setVolume(volume);
         mainView.updateVolume(volume.getValue());
-      });
+      }, errorHandler::handleThrowable);
     } else {
       mainView.updateVolume(model.getVolume().getValue());
     }
@@ -109,7 +126,7 @@ public class MainViewPresenter implements IMainViewPresenter {
       trackRepository.getPosition().subscribe(position -> {
         model.setPosition(position);
         mainView.updatePosition(new TrackPosition(position.getPosition(), position.getDuration()));
-      });
+      }, errorHandler::handleThrowable);
     } else {
       Position position = model.getPosition();
       mainView.updatePosition(new TrackPosition(position.getPosition(), position.getDuration()));
@@ -117,15 +134,15 @@ public class MainViewPresenter implements IMainViewPresenter {
   }
 
   @Override public void onPlayPausePressed() {
-    performAction(PlaybackAction.PLAY_PLAUSE);
+    performAction(PlayerAction.PLAY_PLAUSE);
   }
 
   @Override public void onPreviousPressed() {
-    performAction(PlaybackAction.PREVIOUS);
+    performAction(PlayerAction.PREVIOUS);
   }
 
   @Override public void onNextPressed() {
-    performAction(PlaybackAction.NEXT);
+    performAction(PlayerAction.NEXT);
   }
 
   private void performAction(String action) {
@@ -133,16 +150,21 @@ public class MainViewPresenter implements IMainViewPresenter {
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(response -> {
 
-        });
+        }, errorHandler::handleThrowable);
   }
 
 
   @Override public void onStopPressed() {
-    performAction(PlaybackAction.STOP);
+    performAction(PlayerAction.STOP);
   }
 
   @Override public void onMutePressed() {
-
+    muteInteractor.execute().subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(isMute -> {
+          model.setMuted(isMute);
+          mainView.updateMute(isMute);
+        }, errorHandler::handleThrowable);
   }
 
   @Override public void onShufflePressed() {
@@ -150,14 +172,17 @@ public class MainViewPresenter implements IMainViewPresenter {
   }
 
   @Override public void onRepeatPressed() {
-
+    repeatInteractor.execute(false).subscribeOn(Schedulers.io())
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(mainView::updateRepeat, errorHandler::handleThrowable);
   }
 
   @Override public void onVolumeChange(int volume) {
     volumeInteractor.execute(volume)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(playerRepository::setVolume);
+        .subscribe(playerRepository::setVolume, errorHandler::handleThrowable);
   }
 
   @Override public void onPositionChange(int position) {
@@ -170,6 +195,37 @@ public class MainViewPresenter implements IMainViewPresenter {
 
   @Override public void onLfmLoveToggle() {
 
+  }
+
+  @Subscribe public void onVolumeChangedEvent(VolumeChangeEvent event) {
+    final Volume volume = event.getVolume();
+    model.setVolume(volume);
+    mainView.updateVolume(volume.getValue());
+  }
+
+  @Subscribe public void onRepeatChangedEvent(RepeatChange event) {
+    model.setRepeat(event.getMode());
+    mainView.updateRepeat(event.getMode());
+  }
+
+  @Subscribe public void onTrackInfoChangedEvent(TrackInfoChangeEvent event) {
+    model.setTrackInfo(event.getTrackInfo());
+    mainView.updateTrackInfo(event.getTrackInfo());
+  }
+
+  @Subscribe public void onCoverChangedEvent(CoverChangedEvent event) {
+    model.setTrackCover(event.getCover());
+    mainView.updateCover(event.getCover());
+  }
+
+  @Subscribe public void onPlayStateChanged(PlayStateChange event) {
+    model.setPlayState(event.getState());
+    mainView.updatePlayState(event.getState());
+  }
+
+  @Subscribe public void onMuteChanged(MuteChangeEvent event) {
+    model.setMuted(event.isMute());
+    mainView.updateMute(event.isMute());
   }
 
 }

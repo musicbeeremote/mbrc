@@ -10,54 +10,58 @@ import android.view.ViewGroup;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.LyricsAdapter;
-import com.kelsos.mbrc.events.ui.LyricsChangedEvent;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
+import com.kelsos.mbrc.presenters.LyricsPresenter;
+import com.kelsos.mbrc.ui.views.LyricsView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import roboguice.fragment.RoboFragment;
 
-public class LyricsFragment extends RoboFragment {
-  public static final String NEWLINE = "\r\n";
-  @Inject Bus bus;
-  @Bind(R.id.lyrics_recycler_view) RecyclerView recyclerView;
+public class LyricsFragment extends RoboFragment implements LyricsView {
 
-  @Override public void onCreate(Bundle savedInstanceState) {
+  @Bind(R.id.lyrics_recycler_view)
+  RecyclerView recyclerView;
+  @Inject
+  private LyricsAdapter adapter;
+  @Inject private LyricsPresenter presenter;
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
   }
 
-  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
+  @Override
+  public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    presenter.bind(this);
     recyclerView.setHasFixedSize(true);
     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
     recyclerView.setLayoutManager(layoutManager);
+    recyclerView.setAdapter(adapter);
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                           Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.ui_fragment_lyrics, container, false);
     ButterKnife.bind(this, view);
     return view;
   }
 
-  @Override public void onStart() {
-    super.onStart();
-    bus.register(this);
+  @Override public void onPause() {
+    super.onPause();
+    presenter.onPause();
   }
 
-  @Override public void onStop() {
-    super.onStop();
-    bus.unregister(this);
+  @Override public void onResume() {
+    super.onResume();
+    presenter.onResume();
   }
 
-  @Subscribe public void updateLyricsData(LyricsChangedEvent update) {
-    final ArrayList<String> lyrics =
-        new ArrayList<>(Arrays.asList(update.getLyrics().getLyrics().split(NEWLINE)));
-    LyricsAdapter adapter = new LyricsAdapter(getActivity(), lyrics);
-    recyclerView.setAdapter(adapter);
+  @Override
+  public void updateLyrics(List<String> lyrics) {
+    adapter.updateData(lyrics);
   }
 }

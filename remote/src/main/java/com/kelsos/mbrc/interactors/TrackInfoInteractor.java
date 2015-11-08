@@ -2,8 +2,8 @@ package com.kelsos.mbrc.interactors;
 
 import com.kelsos.mbrc.dto.track.TrackInfo;
 
-import rx.Single;
+import rx.Observable;
 
 public interface TrackInfoInteractor {
-  Single<TrackInfo> execute();
+  Observable<TrackInfo> execute(boolean reload);
 }

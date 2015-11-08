@@ -4,13 +4,13 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.dto.track.Rating;
 import com.kelsos.mbrc.services.api.TrackService;
 
-import rx.Single;
+import rx.Observable;
 
 public class TrackRatingInteractorImpl implements TrackRatingInteractor {
   @Inject private TrackService api;
 
   @Override
-  public Single<Rating> execute() {
+  public Observable<Rating> execute() {
     return api.getTrackRating();
   }
 }

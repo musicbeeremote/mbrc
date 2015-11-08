@@ -2,19 +2,20 @@ package com.kelsos.mbrc.cache;
 
 import android.graphics.Bitmap;
 
-import com.kelsos.mbrc.dto.track.Lyrics;
 import com.kelsos.mbrc.dto.track.Position;
 import com.kelsos.mbrc.dto.track.Rating;
 import com.kelsos.mbrc.dto.track.TrackInfo;
+
+import java.util.List;
 
 public interface TrackCache {
   TrackInfo getTrackinfo();
 
   void setTrackinfo(TrackInfo trackinfo);
 
-  Lyrics getLyrics();
+  List<String> getLyrics();
 
-  void setLyrics(Lyrics lyrics);
+  void setLyrics(List<String> lyrics);
 
   Bitmap getCover();
 

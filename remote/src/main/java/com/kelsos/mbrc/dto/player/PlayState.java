@@ -3,7 +3,7 @@ package com.kelsos.mbrc.dto.player;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.kelsos.mbrc.annotations.Playstate;
+import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.dto.BaseResponse;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -16,17 +16,17 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @JsonPropertyOrder({
     "value"
 })
-public class PlaybackState extends BaseResponse {
+public class PlayState extends BaseResponse {
 
   @JsonProperty("value")
-  @Playstate
+  @PlayerState.State
   private String value;
 
   /**
    * @return The value
    */
   @JsonProperty("value")
-  @Playstate
+  @PlayerState.State
   public String getValue() {
     return value;
   }
@@ -35,7 +35,7 @@ public class PlaybackState extends BaseResponse {
    * @param value The value
    */
   @JsonProperty("value")
-  public void setValue(@Playstate String value) {
+  public void setValue(@PlayerState.State String value) {
     this.value = value;
   }
 
@@ -54,10 +54,10 @@ public class PlaybackState extends BaseResponse {
     if (other == this) {
       return true;
     }
-    if (!(other instanceof PlaybackState)) {
+    if (!(other instanceof PlayState)) {
       return false;
     }
-    PlaybackState rhs = ((PlaybackState) other);
+    PlayState rhs = ((PlayState) other);
     return new EqualsBuilder().append(value, rhs.value).isEquals();
   }
 

@@ -112,7 +112,7 @@ android {
   applicationVariants.all { variant ->
     variant.outputs.each { output ->
       def originalFilename = output.outputFile
-      def versionInfo = "-v${variant.mergedFlavor.versionCode}-${variant.mergedFlavor.versionName}-${gitDescription()}"
+      def versionInfo = "-v${variant.mergedFlavor.versionCode}-${variant.mergedFlavor.versionName}"
       def filename = originalFilename.name
           .replace(".apk", versionInfo + ".apk")
           .replace(project.name, defaultConfig.applicationId);

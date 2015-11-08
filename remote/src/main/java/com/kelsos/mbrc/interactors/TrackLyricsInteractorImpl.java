@@ -1,33 +1,18 @@
 package com.kelsos.mbrc.interactors;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.dto.track.Lyrics;
-import com.kelsos.mbrc.services.api.TrackService;
+import com.kelsos.mbrc.repository.TrackRepository;
 
-import rx.Single;
+import java.util.List;
+
+import rx.Observable;
 
 public class TrackLyricsInteractorImpl implements TrackLyricsInteractor {
 
-  @Inject private TrackService api;
+  @Inject private TrackRepository repository;
 
   @Override
-  public Single<Lyrics> execute() {
-    return api.getTrackLyrics().flatMap(lyrics -> {
-      String trackLyrics = lyrics.getLyrics();
-
-      trackLyrics = trackLyrics.replace("<p>", "\r\n")
-          .replace("<br>", "\n")
-          .replace("&lt;", "<")
-          .replace("&gt;", ">")
-          .replace("&quot;", "\"")
-          .replace("&apos;", "'")
-          .replace("&amp;", "&")
-          .replace("<p>", "\r\n")
-          .replace("<br>", "\n")
-          .trim();
-
-      lyrics.setLyrics(trackLyrics);
-      return Single.just(lyrics);
-    });
+  public Observable<List<String>> execute(boolean reload) {
+    return repository.getTrackLyrics(reload);
   }
 }

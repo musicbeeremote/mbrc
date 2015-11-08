@@ -3,15 +3,14 @@ package com.kelsos.mbrc.interactors;
 import android.graphics.Bitmap;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.services.api.TrackService;
-import com.kelsos.mbrc.utilities.RemoteUtils;
+import com.kelsos.mbrc.repository.TrackRepository;
 
-import rx.Single;
+import rx.Observable;
 
 public class TrackCoverInteractorImpl implements TrackCoverInteractor {
-  @Inject private TrackService api;
+  @Inject private TrackRepository repository;
   @Override
-  public Single<Bitmap> execute() {
-    return api.getTrackCover(RemoteUtils.getTimeStamp());
+  public Observable<Bitmap> execute(boolean reload) {
+    return repository.getTrackCover(reload);
   }
 }

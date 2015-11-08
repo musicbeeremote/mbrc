@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
@@ -23,11 +24,13 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.annotations.ShuffleState;
+import com.kelsos.mbrc.annotations.PlayerState;
+import com.kelsos.mbrc.annotations.Repeat;
+import com.kelsos.mbrc.annotations.Shuffle;
 import com.kelsos.mbrc.domain.TrackPosition;
+import com.kelsos.mbrc.dto.player.PlayState;
 import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.enums.LfmStatus;
-import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
 import com.kelsos.mbrc.ui.views.MainView;
@@ -120,7 +123,6 @@ import roboguice.fragment.RoboFragment;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setHasOptionsMenu(true);
   }
 
   @Override
@@ -145,6 +147,7 @@ import roboguice.fragment.RoboFragment;
 
     progressBar.setOnSeekBarChangeListener(progressBarChangeListener);
     volumeBar.setOnSeekBarChangeListener(volumeBarChangeListener);
+    setHasOptionsMenu(true);
     return view;
   }
 
@@ -210,19 +213,18 @@ import roboguice.fragment.RoboFragment;
     }
   }
 
-  @Override public void updateShuffle(@ShuffleState String state) {
-    int color = getResources().getColor(
-        !ShuffleState.OFF.equals(state) ? R.color.accent : R.color.button_dark);
+  @Override public void updateShuffle(@Shuffle.State String state) {
+    int color = ContextCompat.getColor(getContext(),
+        !Shuffle.OFF.equals(state) ? R.color.accent : R.color.button_dark);
     shuffleButton.setColorFilter(color);
 
     shuffleButton.setImageResource(
-        ShuffleState.AUTODJ.equals(state) ? R.drawable.ic_headset_grey600_24dp
+        Shuffle.AUTODJ.equals(state) ? R.drawable.ic_headset_grey600_24dp
             : R.drawable.ic_shuffle_grey600_24dp);
   }
 
-  @Override public void updateRepeat(boolean enabled) {
-    int color =
-        getResources().getColor(enabled ? R.color.accent : R.color.button_dark);
+  @Override public void updateRepeat(@Repeat.Mode String mode) {
+    int color = ContextCompat.getColor(getContext(), mode.equals(Repeat.ALL) ? R.color.accent : R.color.button_dark);
     repeatButton.setColorFilter(color);
   }
 
@@ -250,18 +252,18 @@ import roboguice.fragment.RoboFragment;
   }
 
   @Override public void updateVolume(int volume) {
-
+    volumeBar.setProgress(volume);
   }
 
-  @Override public void updatePlaystate(PlayState playstate) {
-    switch (playstate) {
-      case PLAYING:
+  @Override public void updatePlayState(PlayState playstate) {
+    switch (playstate.getValue()) {
+      case PlayerState.PLAYING:
         playPauseButton.setImageResource(R.drawable.ic_pause_circle_fill);
         break;
-      case PAUSED:
+      case PlayerState.PAUSED:
         playPauseButton.setImageResource(R.drawable.ic_play_circle_fill);
         break;
-      case STOPPED:
+      case PlayerState.STOPPED:
         playPauseButton.setImageResource(R.drawable.ic_play_circle_fill);
         break;
       default:

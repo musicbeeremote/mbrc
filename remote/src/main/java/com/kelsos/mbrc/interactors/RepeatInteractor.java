@@ -1,12 +1,10 @@
 package com.kelsos.mbrc.interactors;
 
-import com.kelsos.mbrc.dto.player.Repeat;
+import com.kelsos.mbrc.annotations.Repeat;
 
-import rx.Single;
+import rx.Observable;
 
-/**
- * Created by kelsos on 10/14/2015.
- */
 public interface RepeatInteractor {
-  Single<Repeat> execute();
+  Observable<String> execute(boolean reload);
+  Observable<String> execute(@Repeat.Mode String mode);
 }

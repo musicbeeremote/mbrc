@@ -32,11 +32,6 @@ import com.fasterxml.jackson.databind.JsonNode;
     this.name = "";
   }
 
-  public ConnectionSettings(JsonNode node, int i) {
-    initFromJson(node);
-    this.index = i;
-  }
-
   private void initFromJson(JsonNode node) {
     this.address = node.path("address").asText();
     this.name = node.path("name").asText();
@@ -100,9 +95,9 @@ import com.fasterxml.jackson.databind.JsonNode;
   @Override public int compareTo(@NonNull ConnectionSettings another) {
     int compare = 0;
 
-    if (index < another.getIndex()) {
+    if (index < another.index) {
       compare = -1;
-    } else if (index > another.getIndex()) {
+    } else if (index > another.index) {
       compare = 1;
     }
     return compare;

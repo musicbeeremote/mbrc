@@ -3,7 +3,8 @@ package com.kelsos.mbrc.dto.requests;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.kelsos.mbrc.annotations.RepeatMode;
+import com.kelsos.mbrc.annotations.Repeat;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -14,7 +15,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 })
 public class RepeatRequest {
 
-  @RepeatMode
+  @Repeat.Mode
   @JsonProperty("mode")
   private String mode;
 
@@ -23,7 +24,7 @@ public class RepeatRequest {
    * @return
    * The mode
    */
-  @RepeatMode
+  @Repeat.Mode
   @JsonProperty("mode")
   public String getMode() {
     return mode;
@@ -35,7 +36,7 @@ public class RepeatRequest {
    * The mode
    */
   @JsonProperty("mode")
-  public RepeatRequest setMode(@RepeatMode String mode) {
+  public RepeatRequest setMode(@Repeat.Mode String mode) {
     this.mode = mode;
     return this;
   }

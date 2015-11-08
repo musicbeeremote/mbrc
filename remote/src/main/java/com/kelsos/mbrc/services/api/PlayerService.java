@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.services.api;
 
-import com.kelsos.mbrc.annotations.PlaybackAction;
+import com.kelsos.mbrc.annotations.PlayerAction;
 import com.kelsos.mbrc.dto.BaseResponse;
-import com.kelsos.mbrc.dto.player.PlaybackState;
+import com.kelsos.mbrc.dto.player.PlayState;
 import com.kelsos.mbrc.dto.player.PlayerStatusResponse;
 import com.kelsos.mbrc.dto.player.Repeat;
 import com.kelsos.mbrc.dto.player.Shuffle;
@@ -17,11 +17,12 @@ import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.PUT;
 import retrofit.http.Query;
+import rx.Observable;
 import rx.Single;
 
 public interface PlayerService {
   @GET("/player/volume")
-  Single<Volume> getVolume();
+  Observable<Volume> getVolume();
 
   @PUT("/player/volume")
   Single<Volume> updateVolume(@Body VolumeRequest body);
@@ -36,7 +37,7 @@ public interface PlayerService {
   Single<BaseResponse> updateRepeatState(@Body RepeatRequest body);
 
   @PUT("/player/mute")
-  Single<BaseResponse> updateMuteState(@Body ChangeStateRequest body);
+  Observable<StatusResponse> updateMuteState(@Body ChangeStateRequest body);
 
   @GET("/player/shuffle")
   Single<Shuffle> getShuffleState();
@@ -44,20 +45,18 @@ public interface PlayerService {
   @GET("/player/scrobble")
   Single<StatusResponse> getScrobbleState();
 
-  @GET("/player/repeat")
-  Single<Repeat> getRepeatMode();
+  @GET("/player/repeat") Observable<Repeat> getRepeatMode();
 
-  @GET("/player/playstate")
-  Single<PlaybackState> getPlaystate();
+  @GET("/player/playstate") Observable<PlayState> getPlayState();
 
   @GET("/player/status")
   Single<PlayerStatusResponse> getPlayerStatus();
 
   @GET("/player/mute")
-  Single<StatusResponse> getMuteState();
+  Observable<StatusResponse> getMuteState();
 
 
   @GET("/player/action")
-  Single<BaseResponse> performPlayerAction(@Query("action") @PlaybackAction String action);
+  Single<BaseResponse> performPlayerAction(@Query("action") @PlayerAction.Action String action);
 
 }

@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.interactors;
 
-import com.kelsos.mbrc.dto.track.Lyrics;
+import java.util.List;
 
-import rx.Single;
+import rx.Observable;
 
 public interface TrackLyricsInteractor {
-  Single<Lyrics> execute();
+  Observable<List<String>> execute(boolean reload);
 }

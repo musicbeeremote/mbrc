@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.cache;
 
-import com.kelsos.mbrc.dto.player.PlaybackState;
-import com.kelsos.mbrc.dto.player.Repeat;
+import com.kelsos.mbrc.annotations.Repeat;
+import com.kelsos.mbrc.dto.player.PlayState;
 import com.kelsos.mbrc.dto.player.Shuffle;
 import com.kelsos.mbrc.dto.player.Volume;
 
@@ -14,15 +14,15 @@ public interface PlayerCache {
 
   void setVolume(Volume volume);
 
-  PlaybackState getPlaybackState();
+  PlayState getPlayState();
 
-  void setPlaybackState(PlaybackState playbackState);
+  void setPlayState(PlayState playState);
 
   boolean isMute();
 
   void setMute(boolean mute);
 
-  Repeat getRepeat();
+  @Repeat.Mode String getRepeat();
 
-  void setRepeat(Repeat repeat);
+  void setRepeat(@Repeat.Mode String repeat);
 }
