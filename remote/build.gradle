@@ -120,15 +120,6 @@ android {
       output.outputFile = file(filename)
     }
   }
-
-  sourceSets {
-    main {
-      java {
-        srcDir 'src/main'
-        srcDir 'src-gen'
-      }
-    }
-  }
 }
 
 idea {

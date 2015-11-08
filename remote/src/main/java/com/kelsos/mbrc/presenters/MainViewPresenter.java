@@ -2,6 +2,7 @@ package com.kelsos.mbrc.presenters;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.annotations.PlayerAction;
+import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.domain.TrackPosition;
 import com.kelsos.mbrc.dto.player.Volume;
 import com.kelsos.mbrc.dto.track.Position;
@@ -15,18 +16,20 @@ import com.kelsos.mbrc.interactors.MuteInteractor;
 import com.kelsos.mbrc.interactors.PlayerInteractor;
 import com.kelsos.mbrc.interactors.RepeatInteractor;
 import com.kelsos.mbrc.interactors.ShuffleInteractor;
+import com.kelsos.mbrc.interactors.TrackCoverInteractor;
 import com.kelsos.mbrc.interactors.TrackInfoInteractor;
+import com.kelsos.mbrc.interactors.TrackPositionInteractor;
 import com.kelsos.mbrc.interactors.VolumeInteractor;
 import com.kelsos.mbrc.models.MainViewModel;
 import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
-import com.kelsos.mbrc.repository.PlayerRepository;
-import com.kelsos.mbrc.repository.TrackRepository;
 import com.kelsos.mbrc.ui.views.MainView;
 import com.kelsos.mbrc.utilities.ErrorHandler;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-
+import java.util.concurrent.TimeUnit;
 import roboguice.inject.ContextSingleton;
+import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -40,13 +43,13 @@ public class MainViewPresenter implements IMainViewPresenter {
   @Inject private ShuffleInteractor shuffleInteractor;
   @Inject private RepeatInteractor repeatInteractor;
   @Inject private MuteInteractor muteInteractor;
+  @Inject private TrackCoverInteractor coverInteractor;
+  @Inject private TrackPositionInteractor positionInteractor;
 
-  @Inject private TrackRepository trackRepository;
-  @Inject private PlayerRepository playerRepository;
   @Inject private Bus bus;
 
   private MainView mainView;
-
+  private Subscription positionUpdate;
 
   @Override public void bind(MainView mainView) {
     this.mainView = mainView;
@@ -79,7 +82,7 @@ public class MainViewPresenter implements IMainViewPresenter {
 
   private void loadCover() {
     if (model.getTrackCover() == null) {
-      trackRepository.getTrackCover(false).subscribe(bitmap -> {
+      coverInteractor.execute(false).subscribe(bitmap -> {
         model.setTrackCover(bitmap);
         mainView.updateCover(bitmap);
       }, errorHandler::handleThrowable);
@@ -90,18 +93,19 @@ public class MainViewPresenter implements IMainViewPresenter {
 
   private void loadShuffle() {
     if (model.getShuffle() == null) {
-      playerRepository.getShuffleState().subscribe(shuffle -> {
+      shuffleInteractor.execute().subscribe(shuffle -> {
         model.setShuffle(shuffle);
         mainView.updateShuffle(shuffle.getState());
       }, errorHandler::handleThrowable);
     } else {
-      mainView.updateShuffle(model.getShuffle().getState());
+      mainView.updateShuffle(model.getShuffle()
+          .getState());
     }
   }
 
   private void loadRepeat() {
     if (model.getRepeat() == null) {
-      playerRepository.getRepeat(false).subscribe(repeat -> {
+      repeatInteractor.execute(false).subscribe(repeat -> {
         model.setRepeat(repeat);
         mainView.updateRepeat(repeat);
       }, errorHandler::handleThrowable);
@@ -117,13 +121,14 @@ public class MainViewPresenter implements IMainViewPresenter {
         mainView.updateVolume(volume.getValue());
       }, errorHandler::handleThrowable);
     } else {
-      mainView.updateVolume(model.getVolume().getValue());
+      mainView.updateVolume(model.getVolume()
+          .getValue());
     }
   }
 
   private void loadPosition() {
     if (model.getPosition() == null) {
-      trackRepository.getPosition().subscribe(position -> {
+      positionInteractor.execute().subscribe(position -> {
         model.setPosition(position);
         mainView.updatePosition(new TrackPosition(position.getPosition(), position.getDuration()));
       }, errorHandler::handleThrowable);
@@ -182,11 +187,18 @@ public class MainViewPresenter implements IMainViewPresenter {
     volumeInteractor.execute(volume)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(playerRepository::setVolume, errorHandler::handleThrowable);
+        .subscribe(model::setVolume, errorHandler::handleThrowable);
   }
 
   @Override public void onPositionChange(int position) {
-
+    stopPositionUpdate();
+    positionInteractor.execute()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe((position1) -> {
+          model.setPosition(position1);
+          startPositionUpdate();
+        }, errorHandler::handleThrowable);
   }
 
   @Override public void onScrobbleToggle() {
@@ -221,6 +233,46 @@ public class MainViewPresenter implements IMainViewPresenter {
   @Subscribe public void onPlayStateChanged(PlayStateChange event) {
     model.setPlayState(event.getState());
     mainView.updatePlayState(event.getState());
+
+    final String state = event.getState().getValue();
+    updatePlaystate(state);
+  }
+
+  private void updatePlaystate(String state) {
+    if (PlayerState.PLAYING.equals(state)) {
+      startPositionUpdate();
+    } else {
+      stopPositionUpdate();
+    }
+  }
+
+  private void stopPositionUpdate() {
+    if (positionUpdate != null && !positionUpdate.isUnsubscribed()) {
+      positionUpdate.unsubscribe();
+      positionUpdate = null;
+    }
+  }
+
+  private void startPositionUpdate() {
+    if (positionUpdate != null) {
+      return;
+    }
+
+    positionUpdate = Observable.interval(0, 1, TimeUnit.SECONDS)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .takeWhile(aLong1 -> {
+          final Position position = model.getPosition();
+          return position.getPosition() < position.getDuration();
+        })
+        .subscribe(aLong -> {
+          final Position modelPosition = model.getPosition();
+          final int position = modelPosition.getPosition();
+          modelPosition.setPosition(position + 1000);
+          model.setPosition(modelPosition);
+          mainView.updatePosition(
+              new TrackPosition(modelPosition.getPosition(), modelPosition.getDuration()));
+        }, errorHandler::handleThrowable);
   }
 
   @Subscribe public void onMuteChanged(MuteChangeEvent event) {

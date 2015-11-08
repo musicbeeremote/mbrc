@@ -6,4 +6,5 @@ import rx.Observable;
 
 public interface TrackPositionInteractor {
   Observable<Position> execute();
+  Observable<Position> execute(int position);
 }

@@ -79,7 +79,9 @@ import roboguice.fragment.RoboFragment;
   private SeekBar.OnSeekBarChangeListener progressBarChangeListener =
       new SeekBar.OnSeekBarChangeListener() {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-          presenter.onPositionChange(progress);
+          if (fromUser) {
+            presenter.onPositionChange(progress);
+          }
         }
 
         public void onStartTrackingTouch(SeekBar seekBar) { }
