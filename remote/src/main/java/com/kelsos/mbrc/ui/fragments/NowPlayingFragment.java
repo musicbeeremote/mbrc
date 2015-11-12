@@ -20,6 +20,7 @@ import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.events.ui.TrackMoved;
 import com.kelsos.mbrc.events.ui.TrackRemoval;
+import com.kelsos.mbrc.interactors.NowPlayingListInteractor;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -36,10 +37,12 @@ public class NowPlayingFragment extends RoboFragment
   @Bind(R.id.now_playing_recycler) RecyclerView recyclerView;
   @Inject NowPlayingAdapter adapter;
   @Inject private Bus bus;
+  @Inject private NowPlayingListInteractor interactor;
   private LinearLayoutManager layoutManager;
   private RecyclerView.Adapter wrappedAdapter;
   private SearchView mSearchView;
   private MenuItem mSearchItem;
+
 
 
   @Subscribe public void handlePlayingTrackChange(TrackInfoChangeEvent event) {

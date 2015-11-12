@@ -25,6 +25,8 @@ public class NowPlayingTrack {
   @JsonProperty("path") private String path;
   @JsonProperty("id") private int id;
   @JsonProperty("date_added") private String dateAdded;
+  @JsonProperty("date_updated") private String dateUpdated;
+  @JsonProperty("date_deleted") private String dateDeleted;
 
   /**
    * @return The artist
@@ -139,5 +141,21 @@ public class NowPlayingTrack {
         .append(id, rhs.id)
         .append(dateAdded, rhs.dateAdded)
         .isEquals();
+  }
+
+  @JsonProperty("date_updated") public String getDateUpdated() {
+    return dateUpdated;
+  }
+
+  @JsonProperty("date_updated") public void setDateUpdated(String dateUpdated) {
+    this.dateUpdated = dateUpdated;
+  }
+
+  @JsonProperty("date_deleted") public String getDateDeleted() {
+    return dateDeleted;
+  }
+
+  @JsonProperty("date_deleted") public void setDateDeleted(String dateDeleted) {
+    this.dateDeleted = dateDeleted;
   }
 }

@@ -13,6 +13,7 @@ import retrofit.http.GET;
 import retrofit.http.PUT;
 import retrofit.http.Path;
 import retrofit.http.Query;
+import rx.Observable;
 import rx.Single;
 
 public interface NowPlayingService {
@@ -22,7 +23,7 @@ public interface NowPlayingService {
   Single<BaseResponse> nowplayingQueue(@Body NowPlayingQueueRequest body);
 
   @GET("/nowplaying")
-  Single<PaginatedResponse<NowPlayingTrack>> getNowPlayingList(@Query("offset") int offset,
+  Observable<PaginatedResponse<NowPlayingTrack>> getNowPlayingList(@Query("offset") int offset,
                                                                @Query("limit") int limit);
 
 
