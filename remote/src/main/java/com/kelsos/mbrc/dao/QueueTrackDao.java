@@ -7,7 +7,7 @@ import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 @Table(databaseName = RemoteDatabase.NAME)
-public class QueueTrack extends BaseModel {
+public class QueueTrackDao extends BaseModel {
   @Column @PrimaryKey(autoincrement = true) long id;
   @Column private String artist;
   @Column private String title;
@@ -18,7 +18,7 @@ public class QueueTrack extends BaseModel {
     return position;
   }
 
-  public QueueTrack setPosition(int position) {
+  public QueueTrackDao setPosition(int position) {
     this.position = position;
     return this;
   }
@@ -27,7 +27,7 @@ public class QueueTrack extends BaseModel {
     return path;
   }
 
-  public QueueTrack setPath(String path) {
+  public QueueTrackDao setPath(String path) {
     this.path = path;
     return this;
   }
@@ -36,7 +36,7 @@ public class QueueTrack extends BaseModel {
     return title;
   }
 
-  public QueueTrack setTitle(String title) {
+  public QueueTrackDao setTitle(String title) {
     this.title = title;
     return this;
   }
@@ -45,7 +45,7 @@ public class QueueTrack extends BaseModel {
     return artist;
   }
 
-  public QueueTrack setArtist(String artist) {
+  public QueueTrackDao setArtist(String artist) {
     this.artist = artist;
     return this;
   }
@@ -54,7 +54,7 @@ public class QueueTrack extends BaseModel {
     return id;
   }
 
-  public QueueTrack setId(long id) {
+  public QueueTrackDao setId(long id) {
     this.id = id;
     return this;
   }

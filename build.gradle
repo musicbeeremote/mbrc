@@ -8,7 +8,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:1.4.0-beta6'
+    classpath 'com.android.tools.build:gradle:1.5.0-beta1'
     classpath 'me.tatarka:gradle-retrolambda:3.2.3'
     classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
     classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
@@ -21,10 +21,13 @@ buildscript {
 
 allprojects {
   repositories {
-    maven { url 'http://dl.bintray.com/kelsos/maven' }
     maven { url "https://jitpack.io" }
     mavenLocal()
     jcenter()
+    def androidHome = System.getenv("ANDROID_HOME")
+    maven {
+      url "$androidHome/extras/android/m2repository/"
+    }
   }
 }
 

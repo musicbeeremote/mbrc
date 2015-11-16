@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.NowPlayingAdapter;
-import com.kelsos.mbrc.dao.QueueTrack;
+import com.kelsos.mbrc.domain.QueueTrack;
 import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.events.ui.TrackMoved;
@@ -30,6 +30,7 @@ import java.util.Map;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import roboguice.fragment.RoboFragment;
+import roboguice.util.Ln;
 
 public class NowPlayingFragment extends RoboFragment
     implements SearchView.OnQueryTextListener, NowPlayingAdapter.OnUserActionListener {
@@ -39,7 +40,6 @@ public class NowPlayingFragment extends RoboFragment
   @Inject private Bus bus;
   @Inject private NowPlayingListInteractor interactor;
   private LinearLayoutManager layoutManager;
-  private RecyclerView.Adapter wrappedAdapter;
   private SearchView mSearchView;
   private MenuItem mSearchItem;
 
@@ -50,9 +50,10 @@ public class NowPlayingFragment extends RoboFragment
       return;
     }
     final TrackInfo info = event.getTrackInfo();
-    final QueueTrack track = new QueueTrack()
-        .setArtist(info.getArtist())
-        .setTitle(info.getTitle());
+    final QueueTrack track = new QueueTrack();
+
+        track.setArtist(info.getArtist());
+        track.setTitle(info.getTitle());
     adapter.setPlayingTrack(track);
   }
 
@@ -96,11 +97,11 @@ public class NowPlayingFragment extends RoboFragment
     View view = inflater.inflate(R.layout.ui_fragment_nowplaying, container, false);
     ButterKnife.bind(this, view);
 
-
     layoutManager = new LinearLayoutManager(getActivity());
     recyclerView.setLayoutManager(layoutManager);
     adapter.setOnUserActionListener(this);
-    recyclerView.setAdapter(wrappedAdapter);
+    recyclerView.setAdapter(adapter);
+    interactor.execute().subscribe(adapter::setData, Ln::v);
 
     return view;
   }
@@ -166,9 +167,6 @@ public class NowPlayingFragment extends RoboFragment
       recyclerView = null;
     }
 
-    if (wrappedAdapter != null) {
-      wrappedAdapter = null;
-    }
     adapter = null;
     layoutManager = null;
     super.onDestroyView();

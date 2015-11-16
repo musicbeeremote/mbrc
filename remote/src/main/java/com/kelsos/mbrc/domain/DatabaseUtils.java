@@ -1,8 +1,9 @@
 package com.kelsos.mbrc.domain;
 
 import android.database.sqlite.SQLiteDatabase;
-import com.kelsos.mbrc.dao.QueueTrack;
-import com.kelsos.mbrc.dao.QueueTrack$Table;
+
+import com.kelsos.mbrc.dao.QueueTrackDao$Table;
+import com.kelsos.mbrc.dao.QueueTrackDao;
 import com.raizlabs.android.dbflow.sql.builder.Condition;
 import com.raizlabs.android.dbflow.sql.builder.ConditionQueryBuilder;
 import com.raizlabs.android.dbflow.sql.language.Update;
@@ -15,14 +16,14 @@ public final class DatabaseUtils {
   }
 
   public static void createPositionTrigger() {
-    CompletedTrigger<QueueTrack> trigger = Trigger.create("update_position")
+    CompletedTrigger<QueueTrackDao> trigger = Trigger.create("update_position")
         .after()
-        .delete(QueueTrack.class)
-        .begin(new Update<>(QueueTrack.class).set(Condition.column(QueueTrack$Table.POSITION)
-                .is(QueueTrack$Table.POSITION)
+        .delete(QueueTrackDao.class)
+        .begin(new Update<>(QueueTrackDao.class).set(Condition.column(QueueTrackDao$Table.POSITION)
+                .is(QueueTrackDao$Table.POSITION)
                 .postfix(" - 1"))
-                .where(Condition.column(QueueTrack$Table.POSITION)
-                    .greaterThan("old." + QueueTrack$Table.POSITION))
+                .where(Condition.column(QueueTrackDao$Table.POSITION)
+                    .greaterThan("old." + QueueTrackDao$Table.POSITION))
 
         );
   }
@@ -38,17 +39,17 @@ public final class DatabaseUtils {
   }
 
   public static void updatePosition(int fromPosition, int toPosition) {
-    ConditionQueryBuilder<QueueTrack> queryBuilder =
-        fromPosition < toPosition ? new ConditionQueryBuilder<>(QueueTrack.class,
-            Condition.column(QueueTrack$Table.POSITION).greaterThan(fromPosition)).and(
-            Condition.column(QueueTrack$Table.POSITION).lessThanOrEq(toPosition))
-            : new ConditionQueryBuilder<>(QueueTrack.class,
-                Condition.column(QueueTrack$Table.POSITION).lessThan(fromPosition)).and(
-                Condition.column(QueueTrack$Table.POSITION).greaterThanOrEq(toPosition));
+    ConditionQueryBuilder<QueueTrackDao> queryBuilder =
+        fromPosition < toPosition ? new ConditionQueryBuilder<>(QueueTrackDao.class,
+            Condition.column(QueueTrackDao$Table.POSITION).greaterThan(fromPosition)).and(
+            Condition.column(QueueTrackDao$Table.POSITION).lessThanOrEq(toPosition))
+            : new ConditionQueryBuilder<>(QueueTrackDao.class,
+                Condition.column(QueueTrackDao$Table.POSITION).lessThan(fromPosition)).and(
+                Condition.column(QueueTrackDao$Table.POSITION).greaterThanOrEq(toPosition));
 
     final String change = fromPosition < toPosition ? "-1" : "+1";
-    new Update<>(QueueTrack.class).set(
-        Condition.column(QueueTrack$Table.POSITION).is(QueueTrack$Table.POSITION).postfix(change))
+    new Update<>(QueueTrackDao.class).set(
+        Condition.column(QueueTrackDao$Table.POSITION).is(QueueTrackDao$Table.POSITION).postfix(change))
         .where(queryBuilder)
         .queryClose();
   }

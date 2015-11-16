@@ -8,12 +8,16 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import butterknife.Bind;
-import butterknife.ButterKnife;
+
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.dao.QueueTrack;
+import com.kelsos.mbrc.dao.QueueTrackDao;
+import com.kelsos.mbrc.domain.QueueTrack;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.TrackHolder> {
   private List<QueueTrack> data;
@@ -96,7 +100,7 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
    * This method is used to restore the tracks to their original positions in case the move
    * failed to complete.
    *
-   * @param from The original position of the {@link QueueTrack}.
+   * @param from The original position of the {@link QueueTrackDao}.
    * @param to The position the element was original moved to.
    */
   public void restorePositions(int from, int to) {
