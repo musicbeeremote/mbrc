@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.annotations.PlayerState;
-import com.kelsos.mbrc.presenters.interfaces.IMiniControlPresenter;
+import com.kelsos.mbrc.presenters.MiniControlPresenter;
 import com.kelsos.mbrc.ui.views.MiniControlView;
 import com.kelsos.mbrc.utilities.FontUtils;
 
@@ -31,7 +31,7 @@ public class MiniControlFragment extends RoboFragment implements MiniControlView
   @Bind(R.id.mc_track_title) TextView trackTitle;
   @Bind(R.id.mc_play_pause) ImageButton playPause;
 
-  @Inject private IMiniControlPresenter presenter;
+  @Inject private MiniControlPresenter presenter;
 
   @NonNull public static Fragment newInstance() {
     return new MiniControlFragment();
@@ -54,8 +54,10 @@ public class MiniControlFragment extends RoboFragment implements MiniControlView
       Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.ui_fragment_mini_control, container, false);
     ButterKnife.bind(this, view);
+    presenter.bind(this);
     trackTitle.setTypeface(FontUtils.getRobotoMedium(getActivity()));
     trackArtist.setTypeface(FontUtils.getRobotoRegular(getActivity()));
+    presenter.load();
     return view;
   }
 
