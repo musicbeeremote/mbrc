@@ -18,6 +18,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import roboguice.util.Ln;
 
 public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.TrackHolder> {
   private List<QueueTrack> data;
@@ -30,8 +31,13 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
     setHasStableIds(true);
   }
 
-  public void setData(List<QueueTrack> data) {
-    this.data = data;
+  public void updateData(List<QueueTrack> data) {
+    this.data.addAll(data);
+    notifyDataSetChanged();
+  }
+
+  public void clearData() {
+    this.data.clear();
     notifyDataSetChanged();
   }
 
@@ -64,10 +70,13 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
       holder.trackPlaying.setImageResource(android.R.color.transparent);
     }
 
-    holder.itemView.setOnClickListener(v -> {
-      if (listener != null) {
-        listener.onItemClicked(position);
+    holder.container.setOnClickListener(v -> {
+      Ln.v("Clicked");
+      if (listener == null) {
+        return;
       }
+
+      listener.onItemClicked(position, track);
     });
   }
 
@@ -123,7 +132,7 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
 
     void onTrackMoved(int from, int to);
 
-    void onItemClicked(int position);
+    void onItemClicked(int position, QueueTrack track);
   }
 
   static class TrackHolder extends RecyclerView.ViewHolder {

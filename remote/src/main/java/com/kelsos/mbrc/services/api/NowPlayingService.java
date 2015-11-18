@@ -31,7 +31,7 @@ public interface NowPlayingService {
   Single<BaseResponse> nowPlayingRemoveTrack(@Path("id") int id);
 
   @PUT("/nowplaying/play")
-  Single<BaseResponse> nowPlayingPlayTrack(@Body PlayPathRequest body);
+  Observable<BaseResponse> nowPlayingPlayTrack(@Body PlayPathRequest body);
 
   @PUT("/nowplaying/move")
   Single<BaseResponse> nowPlayingMoveTrack(@Body MoveRequest body);

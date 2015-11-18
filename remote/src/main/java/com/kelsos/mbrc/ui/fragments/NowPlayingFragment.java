@@ -11,7 +11,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.NowPlayingAdapter;
@@ -20,25 +21,23 @@ import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.events.ui.TrackMoved;
 import com.kelsos.mbrc.events.ui.TrackRemoval;
-import com.kelsos.mbrc.interactors.NowPlayingListInteractor;
+import com.kelsos.mbrc.presenters.NowPlayingPresenter;
+import com.kelsos.mbrc.ui.views.NowPlayingView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
 import roboguice.fragment.RoboFragment;
-import roboguice.util.Ln;
 
 public class NowPlayingFragment extends RoboFragment
-    implements SearchView.OnQueryTextListener, NowPlayingAdapter.OnUserActionListener {
+    implements SearchView.OnQueryTextListener, NowPlayingAdapter.OnUserActionListener,
+    NowPlayingView {
 
   @Bind(R.id.now_playing_recycler) RecyclerView recyclerView;
-  @Inject NowPlayingAdapter adapter;
+  @Inject private NowPlayingAdapter adapter;
   @Inject private Bus bus;
-  @Inject private NowPlayingListInteractor interactor;
+  @Inject private NowPlayingPresenter presenter;
   private LinearLayoutManager layoutManager;
   private SearchView mSearchView;
   private MenuItem mSearchItem;
@@ -62,6 +61,8 @@ public class NowPlayingFragment extends RoboFragment
     MenuItemCompat.collapseActionView(mSearchItem);
     return false;
   }
+
+
 
   public boolean onQueryTextChange(String newText) {
     return true;
@@ -96,13 +97,14 @@ public class NowPlayingFragment extends RoboFragment
       Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.ui_fragment_nowplaying, container, false);
     ButterKnife.bind(this, view);
+    presenter.bind(this);
 
     layoutManager = new LinearLayoutManager(getActivity());
     recyclerView.setLayoutManager(layoutManager);
     adapter.setOnUserActionListener(this);
     recyclerView.setAdapter(adapter);
-    interactor.execute().subscribe(adapter::setData, Ln::v);
 
+    presenter.loadData();
     return view;
   }
 
@@ -142,6 +144,18 @@ public class NowPlayingFragment extends RoboFragment
   }
 
   @Override public void onTrackMoved(int from, int to) {
+
+  }
+
+  @Override public void updatePlayingTrack(QueueTrack track) {
+    adapter.setPlayingTrack(track);
+  }
+
+  @Override public void removeTrack(int position) {
+
+  }
+
+  @Override public void moveTrack(int from, int to) {
     adapter.setPlayingTrackIndex(calculateNewIndex(from, to, adapter.getPlayingTrackIndex()));
 
     Map<String, Integer> move = new HashMap<>();
@@ -150,9 +164,12 @@ public class NowPlayingFragment extends RoboFragment
 
   }
 
-  @Override public void onItemClicked(int position) {
-    adapter.setPlayingTrackIndex(position);
+  @Override public void updateAdapter(List<QueueTrack> data) {
+    adapter.updateData(data);
+  }
 
+  @Override public void onItemClicked(int position, QueueTrack track) {
+    presenter.playTrack(track);
   }
 
   @Override public void onPause() {
