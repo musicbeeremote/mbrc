@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.net;
 
 import android.text.TextUtils;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -9,20 +8,20 @@ import com.kelsos.mbrc.domain.ConnectionSettings;
 import com.kelsos.mbrc.dto.WebSocketMessage;
 import com.kelsos.mbrc.utilities.MainThreadBus;
 import com.kelsos.mbrc.utilities.SettingsManager;
+import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+import com.squareup.okhttp.ResponseBody;
 import com.squareup.okhttp.ws.WebSocket;
 import com.squareup.okhttp.ws.WebSocketCall;
 import com.squareup.okhttp.ws.WebSocketListener;
-
 import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
 import okio.Buffer;
-import okio.BufferedSource;
 import roboguice.util.Ln;
 import rx.Observable;
 import rx.Subscription;
@@ -106,7 +105,8 @@ import rx.subjects.PublishSubject;
   private void Send(WebSocket webSocket, String message) {
     executor.execute(() -> {
       try {
-        webSocket.sendMessage(WebSocket.PayloadType.TEXT, new Buffer().write(message.getBytes()));
+        final MediaType contentType = MediaType.parse("application/json");
+        webSocket.sendMessage(RequestBody.create(contentType, message.getBytes()));
       } catch (IOException e) {
         Ln.v(e);
       }
@@ -118,13 +118,9 @@ import rx.subjects.PublishSubject;
     Ln.v(e, "[Websocket] io ex");
   }
 
-  @Override public void onMessage(BufferedSource payload, WebSocket.PayloadType type)
-      throws IOException {
+  @Override public void onMessage(ResponseBody responseBody) throws IOException {
+    messagePublisher.onNext(responseBody.string());
 
-    if (type == WebSocket.PayloadType.TEXT) {
-      messagePublisher.onNext(payload.readUtf8());
-      payload.close();
-    }
   }
 
   @Override public void onPong(Buffer payload) {
