@@ -44,7 +44,7 @@ public class PlaylistDialogFragment extends DialogFragment
       }
     });
 
-    final ListView list = ((ListView) dialogView.findViewById(R.id.playlist_list));
+    final ListView list = ((ListView) dialogView.findViewById(R.id.playlist));
     list.setOnItemClickListener(this);
     return mDialog;
   }

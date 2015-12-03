@@ -18,7 +18,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
     "date_added",
     "date_updated",
     "date_deleted"
-}) public class Playlist {
+}) public class PlaylistDto {
 
   @JsonProperty("name") private String name;
   @JsonProperty("tracks") private Integer tracks;
@@ -161,10 +161,10 @@ import org.apache.commons.lang.builder.ToStringBuilder;
     if (other == this) {
       return true;
     }
-    if (!(other instanceof Playlist)) {
+    if (!(other instanceof PlaylistDto)) {
       return false;
     }
-    Playlist rhs = ((Playlist) other);
+    PlaylistDto rhs = ((PlaylistDto) other);
     return new EqualsBuilder().append(name, rhs.name)
         .append(tracks, rhs.tracks)
         .append(readOnly, rhs.readOnly)

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.repository;
 
-import com.kelsos.mbrc.dto.playlist.Playlist;
+import com.kelsos.mbrc.dto.playlist.PlaylistDto;
 import com.kelsos.mbrc.dto.playlist.PlaylistTrack;
 import com.kelsos.mbrc.dto.playlist.PlaylistTrackInfo;
 
@@ -10,7 +10,7 @@ import rx.Observable;
 
 public class PlaylistRepositoryImpl implements PlaylistRepository {
   @Override
-  public Observable<List<Playlist>> getPlaylists() {
+  public Observable<List<PlaylistDto>> getPlaylists() {
     return null;
   }
 

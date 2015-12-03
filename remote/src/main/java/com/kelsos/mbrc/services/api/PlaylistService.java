@@ -2,18 +2,18 @@ package com.kelsos.mbrc.services.api;
 
 import com.kelsos.mbrc.dto.BaseResponse;
 import com.kelsos.mbrc.dto.PaginatedResponse;
-import com.kelsos.mbrc.dto.playlist.Playlist;
+import com.kelsos.mbrc.dto.playlist.PlaylistDto;
 import com.kelsos.mbrc.dto.playlist.PlaylistTrack;
 import com.kelsos.mbrc.dto.requests.MoveRequest;
 import com.kelsos.mbrc.dto.requests.PlayPathRequest;
 import com.kelsos.mbrc.dto.requests.PlaylistRequest;
-
 import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
 import retrofit.http.PUT;
 import retrofit.http.Path;
 import retrofit.http.Query;
+import rx.Observable;
 import rx.Single;
 
 public interface PlaylistService {
@@ -39,8 +39,8 @@ public interface PlaylistService {
   Single<BaseResponse> createPlaylist(@Body PlaylistRequest body);
 
   @GET("/playlists")
-  Single<PaginatedResponse<Playlist>> getPlaylists(@Query("offset") int offset,
-                                                   @Query("limit") int limit);
+  Observable<PaginatedResponse<PlaylistDto>> getPlaylists(@Query("offset") int offset,
+      @Query("limit") int limit);
 
 
 

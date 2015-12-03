@@ -36,7 +36,7 @@ import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.kelsos.mbrc.ui.fragments.LyricsFragment;
 import com.kelsos.mbrc.ui.fragments.MainFragment;
 import com.kelsos.mbrc.ui.fragments.NowPlayingFragment;
-import com.kelsos.mbrc.ui.fragments.PlaylistFragment;
+import com.kelsos.mbrc.ui.fragments.PlaylistListFragment;
 import com.kelsos.mbrc.ui.fragments.browse.BrowseFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -146,7 +146,7 @@ public class MainFragmentActivity extends RoboAppCompatActivity
         replaceFragment(browseFragment, "library");
         break;
       case PLAYLISTS:
-        PlaylistFragment playlistFragment = PlaylistFragment.newInstance();
+        PlaylistListFragment playlistFragment = PlaylistListFragment.newInstance();
         replaceFragment(playlistFragment, "playlist");
         break;
       case NOW_PLAYING:

@@ -29,7 +29,7 @@
       android:layout_height="1dip" />
 
   <ListView
-      android:id="@+id/playlist_list"
+      android:id="@+id/playlist"
       android:layout_width="match_parent"
       android:layout_height="150dp"
       android:divider="@null"

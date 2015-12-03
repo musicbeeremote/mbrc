@@ -33,6 +33,7 @@
     </activity>
     <activity android:name=".ui.activities.ProfileActivity" />
     <activity android:name="com.kelsos.mbrc.ui.activities.PlaylistActivity" />
+    <activity android:name=".ui.activities.FeedbackActivity"/>
     <activity
         android:name="com.kelsos.mbrc.ui.activities.ConnectionManagerActivity"
         android:windowSoftInputMode="adjustNothing" />
