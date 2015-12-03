@@ -3,6 +3,8 @@ package com.kelsos.mbrc.presenters;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.annotations.PlayerAction;
 import com.kelsos.mbrc.annotations.PlayerState;
+import com.kelsos.mbrc.annotations.Repeat;
+import com.kelsos.mbrc.annotations.Shuffle;
 import com.kelsos.mbrc.domain.TrackPosition;
 import com.kelsos.mbrc.dto.player.Volume;
 import com.kelsos.mbrc.dto.track.Position;
@@ -21,7 +23,7 @@ import com.kelsos.mbrc.interactors.TrackInfoInteractor;
 import com.kelsos.mbrc.interactors.TrackPositionInteractor;
 import com.kelsos.mbrc.interactors.VolumeInteractor;
 import com.kelsos.mbrc.models.MainViewModel;
-import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
+import com.kelsos.mbrc.presenters.interfaces.MainViewPresenter;
 import com.kelsos.mbrc.ui.views.MainView;
 import com.kelsos.mbrc.utilities.ErrorHandler;
 import com.squareup.otto.Bus;
@@ -34,7 +36,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 @ContextSingleton
-public class MainViewPresenter implements IMainViewPresenter {
+public class MainViewPresenterImpl implements MainViewPresenter {
   @Inject private ErrorHandler errorHandler;
   @Inject private MainViewModel model;
   @Inject private PlayerInteractor playerInteractor;
@@ -173,11 +175,14 @@ public class MainViewPresenter implements IMainViewPresenter {
   }
 
   @Override public void onShufflePressed() {
-
+    shuffleInteractor.execute(Shuffle.TOGGLE).subscribe(shuffle -> {
+      model.setShuffle(shuffle);
+      mainView.updateShuffle(shuffle.getState());
+    }, errorHandler::handleThrowable);
   }
 
   @Override public void onRepeatPressed() {
-    repeatInteractor.execute(false).subscribeOn(Schedulers.io())
+    repeatInteractor.execute(Repeat.CHANGE).subscribeOn(Schedulers.io())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(mainView::updateRepeat, errorHandler::handleThrowable);

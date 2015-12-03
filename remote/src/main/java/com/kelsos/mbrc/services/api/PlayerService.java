@@ -2,6 +2,7 @@ package com.kelsos.mbrc.services.api;
 
 import com.kelsos.mbrc.annotations.PlayerAction;
 import com.kelsos.mbrc.dto.BaseResponse;
+import com.kelsos.mbrc.dto.RepeatResponse;
 import com.kelsos.mbrc.dto.player.PlayState;
 import com.kelsos.mbrc.dto.player.PlayerStatusResponse;
 import com.kelsos.mbrc.dto.player.Repeat;
@@ -34,7 +35,7 @@ public interface PlayerService {
   Single<BaseResponse> updateScrobbleState(@Body ChangeStateRequest body);
 
   @PUT("/player/repeat")
-  Single<BaseResponse> updateRepeatState(@Body RepeatRequest body);
+  Observable<RepeatResponse> updateRepeatState(@Body RepeatRequest body);
 
   @PUT("/player/mute")
   Observable<StatusResponse> updateMuteState(@Body ChangeStateRequest body);

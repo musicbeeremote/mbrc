@@ -8,7 +8,6 @@ import com.kelsos.mbrc.domain.ConnectionSettings;
 import com.kelsos.mbrc.dto.WebSocketMessage;
 import com.kelsos.mbrc.utilities.MainThreadBus;
 import com.kelsos.mbrc.utilities.SettingsManager;
-import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
@@ -105,8 +104,7 @@ import rx.subjects.PublishSubject;
   private void Send(WebSocket webSocket, String message) {
     executor.execute(() -> {
       try {
-        final MediaType contentType = MediaType.parse("application/json");
-        webSocket.sendMessage(RequestBody.create(contentType, message.getBytes()));
+        webSocket.sendMessage(RequestBody.create(WebSocket.TEXT, message.getBytes()));
       } catch (IOException e) {
         Ln.v(e);
       }

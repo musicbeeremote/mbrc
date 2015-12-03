@@ -26,6 +26,7 @@ import com.squareup.otto.Subscribe;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.concurrent.TimeUnit;
 import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
@@ -48,6 +49,7 @@ public class SocketMessageHandler {
     bus.register(this);
     actions = new HashMap<>();
     actions.put(SocketNotification.VOLUME, () -> volumeInteractor.execute(true)
+        .debounce(1, TimeUnit.SECONDS)
         .subscribeOn(Schedulers.io())
         .subscribe((volume) -> {
           bus.post(VolumeChangeEvent.newInstance(volume));

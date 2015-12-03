@@ -2,7 +2,7 @@ package com.kelsos.mbrc.presenters.interfaces;
 
 import com.kelsos.mbrc.ui.views.MainView;
 
-public interface IMainViewPresenter {
+public interface MainViewPresenter {
   void bind(MainView mainView);
 
   void onPause();

@@ -31,7 +31,7 @@ import com.kelsos.mbrc.domain.TrackPosition;
 import com.kelsos.mbrc.dto.player.PlayState;
 import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.enums.LfmStatus;
-import com.kelsos.mbrc.presenters.interfaces.IMainViewPresenter;
+import com.kelsos.mbrc.presenters.interfaces.MainViewPresenter;
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
 import com.kelsos.mbrc.ui.views.MainView;
 import com.kelsos.mbrc.utilities.FontUtils;
@@ -57,7 +57,7 @@ import roboguice.fragment.RoboFragment;
   @Bind(R.id.main_repeat_button) ImageButton repeatButton;
   @Bind(R.id.main_album_cover_image_view) ImageView albumCover;
 
-  @Inject private IMainViewPresenter presenter;
+  @Inject private MainViewPresenter presenter;
 
   private ShareActionProvider mShareActionProvider;
 

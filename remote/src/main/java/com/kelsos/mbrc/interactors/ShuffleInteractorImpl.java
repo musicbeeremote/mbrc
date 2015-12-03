@@ -21,7 +21,7 @@ public class ShuffleInteractorImpl implements ShuffleInteractor {
   @Override
   public Single<Shuffle> execute(@com.kelsos.mbrc.annotations.Shuffle.State String state) {
     return api.updateShuffleState(new ShuffleRequest().setStatus(state))
-        .observeOn(Schedulers.io())
+        .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread());
   }
 }
