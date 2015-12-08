@@ -23,7 +23,6 @@ import com.kelsos.mbrc.interactors.TrackInfoInteractor;
 import com.kelsos.mbrc.interactors.TrackPositionInteractor;
 import com.kelsos.mbrc.interactors.VolumeInteractor;
 import com.kelsos.mbrc.models.MainViewModel;
-import com.kelsos.mbrc.presenters.interfaces.MainViewPresenter;
 import com.kelsos.mbrc.ui.views.MainView;
 import com.kelsos.mbrc.utilities.ErrorHandler;
 import com.squareup.otto.Bus;

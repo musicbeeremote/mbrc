@@ -18,24 +18,6 @@ def gitHash() {
   return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
 
-def hasModifiedDeletedOrOtherFiles() {
-  return !"git -C ${rootDir} ls-files -mdo --exclude-standard".execute().text.trim().isEmpty()
-}
-
-def hasStagedFiles() {
-  return !"git -C ${rootDir} diff-index --no-ext-diff --name-only --cached HEAD".execute().text.
-      trim().
-      isEmpty()
-}
-
-def dirtyWorkingCopy() {
-  return hasModifiedDeletedOrOtherFiles() || hasStagedFiles()
-}
-
-def gitDescription() {
-  return dirtyWorkingCopy() ? "${gitHash()}-dirty" : gitHash()
-}
-
 android {
   compileSdkVersion 23
   buildToolsVersion '23.0.2'
@@ -49,9 +31,6 @@ android {
 
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
     buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
-    buildConfigField "String", "DEVHOST", "\"192.168.1.5\""
-    buildConfigField "int", "DEVSOCKPORT", "8187"
-
   }
 
   signingConfigs {

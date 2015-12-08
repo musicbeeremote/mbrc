@@ -19,7 +19,7 @@ import rx.Single;
 public interface PlaylistService {
 
   @PUT("/playlists/play")
-  Single<BaseResponse> playPlaylist(@Body PlayPathRequest body);
+  Observable<BaseResponse> playPlaylist(@Body PlayPathRequest body);
 
   @PUT("/playlists/{id}/tracks/move")
   Single<BaseResponse> playlistMoveTrack(@Path("id") int id, @Body MoveRequest body);

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.presenters.interfaces;
+package com.kelsos.mbrc.presenters;
 
 import com.kelsos.mbrc.ui.views.MainView;
 

@@ -40,16 +40,20 @@ import com.kelsos.mbrc.models.MainViewModel;
 import com.kelsos.mbrc.models.MainViewModelImpl;
 import com.kelsos.mbrc.presenters.LyricsPresenter;
 import com.kelsos.mbrc.presenters.LyricsPresenterImpl;
+import com.kelsos.mbrc.presenters.MainViewPresenter;
 import com.kelsos.mbrc.presenters.MainViewPresenterImpl;
+import com.kelsos.mbrc.presenters.MiniControlPresenter;
 import com.kelsos.mbrc.presenters.MiniControlPresenterImpl;
 import com.kelsos.mbrc.presenters.PlaylistPresenter;
 import com.kelsos.mbrc.presenters.PlaylistPresenterImpl;
-import com.kelsos.mbrc.presenters.interfaces.MainViewPresenter;
-import com.kelsos.mbrc.presenters.MiniControlPresenter;
+import com.kelsos.mbrc.presenters.PlaylistTrackPresenter;
+import com.kelsos.mbrc.presenters.PlaylistTrackPresenterImpl;
 import com.kelsos.mbrc.repository.NowPlayingRepository;
 import com.kelsos.mbrc.repository.NowPlayingRepositoryImpl;
 import com.kelsos.mbrc.repository.PlayerRepository;
 import com.kelsos.mbrc.repository.PlayerRepositoryImpl;
+import com.kelsos.mbrc.repository.PlaylistRepository;
+import com.kelsos.mbrc.repository.PlaylistRepositoryImpl;
 import com.kelsos.mbrc.repository.TrackRepository;
 import com.kelsos.mbrc.repository.TrackRepositoryImpl;
 import com.kelsos.mbrc.services.api.LibraryService;
@@ -59,7 +63,6 @@ import com.kelsos.mbrc.services.api.PlaylistService;
 import com.kelsos.mbrc.services.api.TrackService;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.otto.Bus;
-
 import retrofit.Retrofit;
 import roboguice.inject.ContextSingleton;
 
@@ -87,10 +90,12 @@ import roboguice.inject.ContextSingleton;
     bind(MuteInteractor.class).to(MuteInteractorImpl.class);
     bind(NowPlayingListInteractor.class).to(NowPlayingListInteractorImpl.class);
     bind(PlaylistInteractor.class).to(PlaylistInteractorImpl.class);
+    bind(PlaylistTrackPresenter.class).to(PlaylistTrackPresenterImpl.class);
 
     bind(TrackRepository.class).to(TrackRepositoryImpl.class).in(Singleton.class);
     bind(PlayerRepository.class).to(PlayerRepositoryImpl.class).in(Singleton.class);
     bind(NowPlayingRepository.class).to(NowPlayingRepositoryImpl.class).in(Singleton.class);
+    bind(PlaylistRepository.class).to(PlaylistRepositoryImpl.class).in(Singleton.class);
 
     bind(TrackCache.class).to(TrackCacheImpl.class).in(Singleton.class);
     bind(PlayerCache.class).to(PlayerCacheImpl.class).in(Singleton.class);

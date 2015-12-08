@@ -19,13 +19,13 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
           @ForeignKeyReference(columnName = "playlist_id",
               columnType = Long.class,
               foreignColumnName = "id")
-      }, saveForeignKeyModel = false) private Playlist playlist;
+      }, saveForeignKeyModel = false) private PlaylistDao playlist;
 
-  public Playlist getPlaylist() {
+  public PlaylistDao getPlaylist() {
     return playlist;
   }
 
-  public PlaylistTrack setPlaylist(Playlist playlist) {
+  public PlaylistTrack setPlaylist(PlaylistDao playlist) {
     this.playlist = playlist;
     return this;
   }

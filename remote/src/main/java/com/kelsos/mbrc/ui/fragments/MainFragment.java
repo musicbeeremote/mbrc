@@ -31,7 +31,7 @@ import com.kelsos.mbrc.domain.TrackPosition;
 import com.kelsos.mbrc.dto.player.PlayState;
 import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.enums.LfmStatus;
-import com.kelsos.mbrc.presenters.interfaces.MainViewPresenter;
+import com.kelsos.mbrc.presenters.MainViewPresenter;
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
 import com.kelsos.mbrc.ui.views.MainView;
 import com.kelsos.mbrc.utilities.FontUtils;

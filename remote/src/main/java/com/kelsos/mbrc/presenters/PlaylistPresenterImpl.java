@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.presenters;
 
 import com.google.inject.Inject;
+import com.kelsos.mbrc.interactors.PlaylistActionInteractor;
 import com.kelsos.mbrc.interactors.PlaylistInteractor;
 import com.kelsos.mbrc.ui.views.PlaylistListView;
 import roboguice.util.Ln;
@@ -10,6 +11,7 @@ public class PlaylistPresenterImpl implements PlaylistPresenter {
   private PlaylistListView view;
 
   @Inject private PlaylistInteractor playlistInteractor;
+  @Inject private PlaylistActionInteractor actionInteractor;
 
   @Override public void bind(PlaylistListView view) {
     this.view = view;
@@ -22,6 +24,10 @@ public class PlaylistPresenterImpl implements PlaylistPresenter {
   }
 
   @Override public void play(String path) {
+    actionInteractor.play(path).subscribe(aBoolean -> {
 
+    }, throwable -> {
+
+    });
   }
 }

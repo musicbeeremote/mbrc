@@ -25,12 +25,16 @@ public class PlaylistListAdapter extends RecyclerView.Adapter<PlaylistListAdapte
   private final LayoutInflater inflater;
   private Typeface robotoRegular;
   private List<Playlist> data;
+  private OnPlaylistPlayPressedListener onPlaylistPlayPressedListener;
 
-  @Inject
-  public PlaylistListAdapter(Context context) {
+  @Inject public PlaylistListAdapter(Context context) {
     robotoRegular = FontUtils.getRobotoRegular(context);
     inflater = LayoutInflater.from(context);
     data = new ArrayList<>();
+  }
+
+  public void setOnPlaylistPlayPressedListener(OnPlaylistPlayPressedListener onPlaylistPlayPressedListener) {
+    this.onPlaylistPlayPressedListener = onPlaylistPlayPressedListener;
   }
 
   public void updateData(List<Playlist> data) {
@@ -51,6 +55,9 @@ public class PlaylistListAdapter extends RecyclerView.Adapter<PlaylistListAdapte
     final Playlist playlist = data.get(position);
     holder.lineOne.setTypeface(robotoRegular);
     holder.lineOne.setText(playlist.getName());
+    holder.itemView.setOnClickListener(v1 -> {
+      startPlaylistActivity(data.get(holder.getAdapterPosition()), v1);
+    });
 
     holder.overflow.setOnClickListener(v -> {
       PopupMenu menu = new PopupMenu(v.getContext(), v);
@@ -59,12 +66,13 @@ public class PlaylistListAdapter extends RecyclerView.Adapter<PlaylistListAdapte
 
       menu.setOnMenuItemClickListener(item -> {
         if (item.getItemId() == R.id.playlist_tracks) {
-          Bundle bundle = new Bundle();
-          bundle.putString(PlaylistActivity.NAME, playlist.getName());
-          bundle.putString(PlaylistActivity.PATH, playlist.getPath());
-          Intent intent = new Intent(v.getContext(), PlaylistActivity.class);
-          intent.putExtras(bundle);
-          v.getContext().startActivity(intent);
+          startPlaylistActivity(playlist, v);
+          return true;
+        } else if (item.getItemId() == R.id.playlist_play) {
+          if (onPlaylistPlayPressedListener != null) {
+            onPlaylistPlayPressedListener.playlistPlayPressed(data.get(holder.getAdapterPosition()),
+                holder.getAdapterPosition());
+          }
           return true;
         }
         return false;
@@ -72,8 +80,21 @@ public class PlaylistListAdapter extends RecyclerView.Adapter<PlaylistListAdapte
     });
   }
 
+  private void startPlaylistActivity(Playlist playlist, View v) {
+    Bundle bundle = new Bundle();
+    bundle.putString(PlaylistActivity.NAME, playlist.getName());
+    bundle.putString(PlaylistActivity.PATH, playlist.getPath());
+    Intent intent = new Intent(v.getContext(), PlaylistActivity.class);
+    intent.putExtras(bundle);
+    v.getContext().startActivity(intent);
+  }
+
   @Override public int getItemCount() {
     return data.size();
+  }
+
+  public interface OnPlaylistPlayPressedListener {
+    void playlistPlayPressed(Playlist playlist, int position);
   }
 
   static class ViewHolder extends RecyclerView.ViewHolder {

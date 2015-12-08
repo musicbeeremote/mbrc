@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_single_height"
+    android:background="?attr/selectableItemBackground"
     android:layout_gravity="center_vertical"
     android:clickable="false"
     android:gravity="center_vertical">
