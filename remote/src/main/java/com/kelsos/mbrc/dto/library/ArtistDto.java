@@ -11,17 +11,21 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonPropertyOrder({
     "name",
+    "genre",
+    "image_url",
     "id",
     "date_added",
     "date_updated",
     "date_deleted"
-}) public class Genre {
+}) public class ArtistDto {
 
   @JsonProperty("name") private String name;
-  @JsonProperty("id") private Integer id;
-  @JsonProperty("date_added") private String dateAdded;
-  @JsonProperty("date_updated") private String dateUpdated;
-  @JsonProperty("date_deleted") private String dateDeleted;
+  @JsonProperty("genre") private int genre;
+  @JsonProperty("image_url") private String imageUrl;
+  @JsonProperty("id") private int id;
+  @JsonProperty("date_added") private long dateAdded;
+  @JsonProperty("date_updated") private long dateUpdated;
+  @JsonProperty("date_deleted") private long dateDeleted;
 
   /**
    * @return The name
@@ -38,58 +42,86 @@ import org.apache.commons.lang.builder.ToStringBuilder;
   }
 
   /**
+   * @return The genre
+   */
+  @JsonProperty("genre") public int getGenre() {
+    return genre;
+  }
+
+  /**
+   * @param genre The genre
+   */
+  @JsonProperty("genre") public void setGenre(int genre) {
+    this.genre = genre;
+  }
+
+  /**
+   * @return The imageUrl
+   */
+  @JsonProperty("image_url") public String getImageUrl() {
+    return imageUrl;
+  }
+
+  /**
+   * @param imageUrl The image_url
+   */
+  @JsonProperty("image_url") public void setImageUrl(String imageUrl) {
+    this.imageUrl = imageUrl;
+  }
+
+  /**
    * @return The id
    */
-  @JsonProperty("id") public Integer getId() {
+  @JsonProperty("id") public int getId() {
     return id;
   }
 
   /**
    * @param id The id
    */
-  @JsonProperty("id") public void setId(Integer id) {
+  @JsonProperty("id") public void setId(int id) {
     this.id = id;
   }
 
   /**
    * @return The dateAdded
    */
-  @JsonProperty("date_added") public String getDateAdded() {
+  @JsonProperty("date_added") public long getDateAdded() {
     return dateAdded;
   }
 
   /**
    * @param dateAdded The date_added
    */
-  @JsonProperty("date_added") public void setDateAdded(String dateAdded) {
+  @JsonProperty("date_added") public void setDateAdded(long dateAdded) {
     this.dateAdded = dateAdded;
   }
 
   /**
    * @return The dateUpdated
    */
-  @JsonProperty("date_updated") public String getDateUpdated() {
+  @JsonProperty("date_updated") public long getDateUpdated() {
     return dateUpdated;
   }
 
   /**
    * @param dateUpdated The date_updated
    */
-  @JsonProperty("date_updated") public void setDateUpdated(String dateUpdated) {
+  @JsonProperty("date_updated") public void setDateUpdated(long dateUpdated) {
     this.dateUpdated = dateUpdated;
   }
 
   /**
    * @return The dateDeleted
    */
-  @JsonProperty("date_deleted") public String getDateDeleted() {
+  @JsonProperty("date_deleted") public long getDateDeleted() {
     return dateDeleted;
   }
 
   /**
    * @param dateDeleted The date_deleted
    */
-  @JsonProperty("date_deleted") public void setDateDeleted(String dateDeleted) {
+  @JsonProperty("date_deleted") public void setDateDeleted(long dateDeleted) {
     this.dateDeleted = dateDeleted;
   }
 
@@ -99,6 +131,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
   @Override public int hashCode() {
     return new HashCodeBuilder().append(name)
+        .append(genre)
+        .append(imageUrl)
         .append(id)
         .append(dateAdded)
         .append(dateUpdated)
@@ -110,11 +144,13 @@ import org.apache.commons.lang.builder.ToStringBuilder;
     if (other == this) {
       return true;
     }
-    if (!(other instanceof Genre)) {
+    if (!(other instanceof ArtistDto)) {
       return false;
     }
-    Genre rhs = ((Genre) other);
+    ArtistDto rhs = ((ArtistDto) other);
     return new EqualsBuilder().append(name, rhs.name)
+        .append(genre, rhs.genre)
+        .append(imageUrl, rhs.imageUrl)
         .append(id, rhs.id)
         .append(dateAdded, rhs.dateAdded)
         .append(dateUpdated, rhs.dateUpdated)

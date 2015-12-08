@@ -14,13 +14,13 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.dao.Artist;
-import com.kelsos.mbrc.dao.Track;
+import com.kelsos.mbrc.dao.ArtistDao;
+import com.kelsos.mbrc.dao.TrackDao;
 import com.kelsos.mbrc.utilities.FontUtils;
 import java.util.ArrayList;
 
 public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> {
-  private ArrayList<Track> data;
+  private ArrayList<TrackDao> data;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
 
@@ -30,7 +30,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
     robotoRegular = FontUtils.getRobotoRegular(context);
   }
 
-  public void updateData(ArrayList<Track> data) {
+  public void updateData(ArrayList<TrackDao> data) {
     this.data = data;
   }
 
@@ -45,8 +45,8 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
   }
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
-    final Track entry = data.get(position);
-    final Artist artist = entry.getArtist();
+    final TrackDao entry = data.get(position);
+    final ArtistDao artist = entry.getArtist();
     holder.title.setText(entry.getTitle());
     holder.artist.setText(artist.getName());
 
@@ -80,9 +80,9 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
   }
 
   public interface MenuItemSelectedListener {
-    void onMenuItemSelected(MenuItem menuItem, Track entry);
+    void onMenuItemSelected(MenuItem menuItem, TrackDao entry);
 
-    void onItemClicked(Track track);
+    void onItemClicked(TrackDao track);
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {

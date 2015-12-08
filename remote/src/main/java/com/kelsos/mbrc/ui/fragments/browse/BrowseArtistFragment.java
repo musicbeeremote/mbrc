@@ -16,7 +16,7 @@ import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistAdapter;
-import com.kelsos.mbrc.dao.Artist;
+import com.kelsos.mbrc.dao.ArtistDao;
 import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
@@ -62,9 +62,9 @@ public class BrowseArtistFragment extends RoboListFragment
     super.onCreate(savedInstanceState);
   }
 
-  private void handlePopupSelection(Pair<MenuItem, Artist> pair) {
+  private void handlePopupSelection(Pair<MenuItem, ArtistDao> pair) {
     final MenuItem item = pair.first;
-    final Artist artist = pair.second;
+    final ArtistDao artist = pair.second;
 
     switch (item.getItemId()) {
       case R.id.popup_artist_queue_next:
@@ -89,7 +89,7 @@ public class BrowseArtistFragment extends RoboListFragment
     }
   }
 
-  private void queueTracks(Artist artist, String action) {
+  private void queueTracks(ArtistDao artist, String action) {
 
   }
 }

@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumAdapter;
-import com.kelsos.mbrc.dao.Album;
+import com.kelsos.mbrc.dao.AlbumDao;
 import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
@@ -61,9 +61,9 @@ public class BrowseAlbumFragment extends RoboFragment
 
   }
 
-  private void handlePopup(Pair<MenuItem, Album> pair) {
+  private void handlePopup(Pair<MenuItem, AlbumDao> pair) {
     final MenuItem item = pair.first;
-    final Album album = pair.second;
+    final AlbumDao album = pair.second;
 
     switch (item.getItemId()) {
       case R.id.popup_album_tracks:
@@ -88,7 +88,7 @@ public class BrowseAlbumFragment extends RoboFragment
     }
   }
 
-  private void queueTracks(Album album, String action) {
+  private void queueTracks(AlbumDao album, String action) {
 
   }
 }

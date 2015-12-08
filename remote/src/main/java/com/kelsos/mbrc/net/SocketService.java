@@ -6,6 +6,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.domain.ConnectionSettings;
 import com.kelsos.mbrc.dto.WebSocketMessage;
+import com.kelsos.mbrc.annotations.Connection;
+import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
 import com.kelsos.mbrc.utilities.MainThreadBus;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.squareup.okhttp.OkHttpClient;
@@ -84,6 +86,7 @@ import rx.subjects.PublishSubject;
 
   @Override public void onOpen(WebSocket webSocket, Response response) {
     this.connected = true;
+    bus.post(ConnectionStatusChangeEvent.create(Connection.ON));
     String message = "{\"message\":\"connected\"}";
     Send(webSocket, message);
 
@@ -114,6 +117,7 @@ import rx.subjects.PublishSubject;
   @Override public void onFailure(IOException e, Response response) {
     this.connected = false;
     Ln.v(e, "[Websocket] io ex");
+    bus.post(ConnectionStatusChangeEvent.create(Connection.OFF));
   }
 
   @Override public void onMessage(ResponseBody responseBody) throws IOException {
@@ -129,5 +133,6 @@ import rx.subjects.PublishSubject;
     this.connected = false;
     subscription.unsubscribe();
     Ln.v("[Websocket] closing (%d) %s", code, reason);
+    bus.post(ConnectionStatusChangeEvent.create(Connection.OFF));
   }
 }

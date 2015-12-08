@@ -8,7 +8,7 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-@Table(databaseName = RemoteDatabase.NAME) public class PlaylistTrack extends BaseModel {
+@Table(databaseName = RemoteDatabase.NAME, tableName = "playlist_tracks") public class PlaylistTrack extends BaseModel {
   @Column @PrimaryKey(autoincrement = true) long id;
   @Column private int position;
   @Column private String path;

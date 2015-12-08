@@ -17,11 +17,12 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.annotations.Connection;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.controller.Controller;
 import com.kelsos.mbrc.enums.DisplaySelection;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
+import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
 import com.kelsos.mbrc.events.ui.DrawerEvent;
 import com.kelsos.mbrc.ui.activities.FeedbackActivity;
 import com.kelsos.mbrc.ui.activities.SettingsActivity;
@@ -176,18 +177,15 @@ public class DrawerFragment extends RoboFragment
     bus.unregister(this);
   }
 
-  @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChange change) {
+  @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChangeEvent change) {
     if (connectionStatus == null) {
       return;
     }
     switch (change.getStatus()) {
-      case CONNECTION_OFF:
+      case Connection.OFF:
         connectionStatus.setTitle(R.string.drawer_connection_status_off);
         break;
-      case CONNECTION_ON:
-        connectionStatus.setTitle(R.string.drawer_connection_status_on);
-        break;
-      case CONNECTION_ACTIVE:
+      case Connection.ON:
         connectionStatus.setTitle(R.string.drawer_connection_status_active);
         break;
       default:

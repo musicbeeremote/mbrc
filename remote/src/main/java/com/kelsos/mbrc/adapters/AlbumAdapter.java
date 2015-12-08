@@ -15,9 +15,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.dao.Album;
-import com.kelsos.mbrc.dao.Artist;
-import com.kelsos.mbrc.dao.Cover;
+import com.kelsos.mbrc.dao.AlbumDao;
+import com.kelsos.mbrc.dao.ArtistDao;
+import com.kelsos.mbrc.dao.CoverDao;
 import com.kelsos.mbrc.utilities.FontUtils;
 import com.kelsos.mbrc.utilities.RemoteUtils;
 import com.squareup.picasso.Picasso;
@@ -25,7 +25,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> {
-  private ArrayList<Album> data;
+  private ArrayList<AlbumDao> data;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
 
@@ -34,7 +34,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
     robotoRegular = FontUtils.getRobotoRegular(context);
   }
 
-  public void updateData(ArrayList<Album> data) {
+  public void updateData(ArrayList<AlbumDao> data) {
     this.data = data;
   }
 
@@ -45,9 +45,9 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
   }
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
-    final Album album = data.get(position);
-    final Artist albumArtist = album.getArtist();
-    final Cover cover = album.getCover();
+    final AlbumDao album = data.get(position);
+    final ArtistDao albumArtist = album.getArtist();
+    final CoverDao cover = album.getCover();
     final View itemView = holder.itemView;
 
     holder.album.setText(album.getName());
@@ -94,9 +94,9 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
   }
 
   public interface MenuItemSelectedListener {
-    void onMenuItemSelected(MenuItem menuItem, Album entry);
+    void onMenuItemSelected(MenuItem menuItem, AlbumDao entry);
 
-    void onItemClicked(Album album);
+    void onItemClicked(AlbumDao album);
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {

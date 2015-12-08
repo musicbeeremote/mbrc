@@ -14,12 +14,12 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.dao.Artist;
+import com.kelsos.mbrc.dao.ArtistDao;
 import com.kelsos.mbrc.utilities.FontUtils;
 import java.util.ArrayList;
 
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder> {
-  private ArrayList<Artist> data;
+  private ArrayList<ArtistDao> data;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
 
@@ -33,7 +33,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     mListener = listener;
   }
 
-  public void updateData(ArrayList<Artist> data) {
+  public void updateData(ArrayList<ArtistDao> data) {
     this.data = data;
   }
 
@@ -43,7 +43,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     return new ViewHolder(view, robotoRegular);
   }
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
-    final Artist entry = data.get(position);
+    final ArtistDao entry = data.get(position);
     holder.title.setText(entry.getName());
 
     holder.indicator.setOnClickListener(v -> {
@@ -76,9 +76,9 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
   }
 
   public interface MenuItemSelectedListener {
-    void onMenuItemSelected(MenuItem menuItem, Artist entry);
+    void onMenuItemSelected(MenuItem menuItem, ArtistDao entry);
 
-    void onItemClicked(Artist artist);
+    void onItemClicked(ArtistDao artist);
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {

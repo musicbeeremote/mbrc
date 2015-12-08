@@ -6,7 +6,7 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-@Table(databaseName = RemoteDatabase.NAME)
+@Table(databaseName = RemoteDatabase.NAME, tableName = "queue_tracks")
 public class QueueTrackDao extends BaseModel {
   @Column @PrimaryKey(autoincrement = true) long id;
   @Column private String artist;

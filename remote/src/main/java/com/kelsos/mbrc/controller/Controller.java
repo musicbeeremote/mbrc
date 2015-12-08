@@ -9,6 +9,7 @@ import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.messaging.SocketMessageHandler;
 import com.kelsos.mbrc.net.SocketService;
 import com.kelsos.mbrc.services.ServiceDiscovery;
+import com.kelsos.mbrc.utilities.LibrarySyncManager;
 import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.raizlabs.android.dbflow.config.FlowManager;
@@ -24,6 +25,7 @@ import roboguice.util.Ln;
   @Inject private ServiceDiscovery discovery;
   @Inject private SettingsManager settingsManager;
   @Inject private SocketMessageHandler handler;
+  @Inject private LibrarySyncManager syncManager;
 
   public Controller() {
     Ln.d("Application Controller Initialized");
@@ -37,6 +39,7 @@ import roboguice.util.Ln;
     discovery.startDiscovery();
     FlowManager.init(getApplicationContext());
     socket.startWebSocket();
+    syncManager.sync();
     return super.onStartCommand(intent, flags, startId);
   }
 

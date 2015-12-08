@@ -8,7 +8,7 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-@Table(databaseName = RemoteDatabase.NAME) public class Track extends BaseModel {
+@Table(databaseName = RemoteDatabase.NAME, tableName = "tracks") public class TrackDao extends BaseModel {
   @Column @PrimaryKey(autoincrement = true) long id;
   @Column private String title;
   @Column private int position;
@@ -18,35 +18,38 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
               columnType = Long.class,
               foreignColumnName = "id")
       }, saveForeignKeyModel = false)
-  private Genre genre;
+  private GenreDao genre;
   @Column @ForeignKey(
       references = {
           @ForeignKeyReference(columnName = "artist_id",
               columnType = Long.class,
               foreignColumnName = "id")
-      }, saveForeignKeyModel = false) private Artist artist;
+      }, saveForeignKeyModel = false) private ArtistDao artist;
   @Column @ForeignKey(
       references = {
           @ForeignKeyReference(columnName = "album_artist_id",
               columnType = Long.class,
               foreignColumnName = "id")
       }, saveForeignKeyModel = false)
-  private Artist albumArtist;
+  private ArtistDao albumArtist;
   @Column @ForeignKey(
       references = {
           @ForeignKeyReference(columnName = "album_id",
               columnType = Long.class,
               foreignColumnName = "id")
       }, saveForeignKeyModel = false)
-  private Album album;
+  private AlbumDao album;
   @Column private String year;
   @Column private String path;
+  @Column(name = "date_added") private long dateAdded;
+  @Column(name = "date_updated") private long dateUpdated;
+  @Column(name = "date_deleted") private long dateDeleted;
 
   public String getPath() {
     return path;
   }
 
-  public Track setPath(String path) {
+  public TrackDao setPath(String path) {
     this.path = path;
     return this;
   }
@@ -55,43 +58,43 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
     return year;
   }
 
-  public Track setYear(String year) {
+  public TrackDao setYear(String year) {
     this.year = year;
     return this;
   }
 
-  public Album getAlbum() {
+  public AlbumDao getAlbum() {
     return album;
   }
 
-  public Track setAlbum(Album album) {
+  public TrackDao setAlbum(AlbumDao album) {
     this.album = album;
     return this;
   }
 
-  public Artist getAlbumArtist() {
+  public ArtistDao getAlbumArtist() {
     return albumArtist;
   }
 
-  public Track setAlbumArtist(Artist albumArtist) {
+  public TrackDao setAlbumArtist(ArtistDao albumArtist) {
     this.albumArtist = albumArtist;
     return this;
   }
 
-  public Artist getArtist() {
+  public ArtistDao getArtist() {
     return artist;
   }
 
-  public Track setArtist(Artist artist) {
+  public TrackDao setArtist(ArtistDao artist) {
     this.artist = artist;
     return this;
   }
 
-  public Genre getGenre() {
+  public GenreDao getGenre() {
     return genre;
   }
 
-  public Track setGenre(Genre genre) {
+  public TrackDao setGenre(GenreDao genre) {
     this.genre = genre;
     return this;
   }
@@ -100,7 +103,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
     return position;
   }
 
-  public Track setPosition(int position) {
+  public TrackDao setPosition(int position) {
     this.position = position;
     return this;
   }
@@ -109,7 +112,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
     return title;
   }
 
-  public Track setTitle(String title) {
+  public TrackDao setTitle(String title) {
     this.title = title;
     return this;
   }
@@ -118,8 +121,32 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
     return id;
   }
 
-  public Track setId(long id) {
+  public TrackDao setId(long id) {
     this.id = id;
     return this;
+  }
+
+  public long getDateAdded() {
+    return dateAdded;
+  }
+
+  public void setDateAdded(long dateAdded) {
+    this.dateAdded = dateAdded;
+  }
+
+  public long getDateUpdated() {
+    return dateUpdated;
+  }
+
+  public void setDateUpdated(long dateUpdated) {
+    this.dateUpdated = dateUpdated;
+  }
+
+  public long getDateDeleted() {
+    return dateDeleted;
+  }
+
+  public void setDateDeleted(long dateDeleted) {
+    this.dateDeleted = dateDeleted;
   }
 }

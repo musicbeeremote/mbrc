@@ -48,6 +48,8 @@ import com.kelsos.mbrc.presenters.PlaylistPresenter;
 import com.kelsos.mbrc.presenters.PlaylistPresenterImpl;
 import com.kelsos.mbrc.presenters.PlaylistTrackPresenter;
 import com.kelsos.mbrc.presenters.PlaylistTrackPresenterImpl;
+import com.kelsos.mbrc.repository.LibraryRepository;
+import com.kelsos.mbrc.repository.LibraryRepositoryImpl;
 import com.kelsos.mbrc.repository.NowPlayingRepository;
 import com.kelsos.mbrc.repository.NowPlayingRepositoryImpl;
 import com.kelsos.mbrc.repository.PlayerRepository;
@@ -96,6 +98,7 @@ import roboguice.inject.ContextSingleton;
     bind(PlayerRepository.class).to(PlayerRepositoryImpl.class).in(Singleton.class);
     bind(NowPlayingRepository.class).to(NowPlayingRepositoryImpl.class).in(Singleton.class);
     bind(PlaylistRepository.class).to(PlaylistRepositoryImpl.class).in(Singleton.class);
+    bind(LibraryRepository.class).to(LibraryRepositoryImpl.class).in(Singleton.class);
 
     bind(TrackCache.class).to(TrackCacheImpl.class).in(Singleton.class);
     bind(PlayerCache.class).to(PlayerCacheImpl.class).in(Singleton.class);

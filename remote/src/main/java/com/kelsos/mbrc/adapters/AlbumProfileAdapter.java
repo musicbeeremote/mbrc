@@ -11,14 +11,14 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.dao.Track;
+import com.kelsos.mbrc.dao.TrackDao;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AlbumProfileAdapter extends RecyclerView.Adapter<AlbumProfileAdapter.ViewHolder> {
 
   private LayoutInflater inflater;
-  private List<Track> data;
+  private List<TrackDao> data;
 
 
   @Inject public AlbumProfileAdapter(Context context) {
@@ -26,11 +26,11 @@ public class AlbumProfileAdapter extends RecyclerView.Adapter<AlbumProfileAdapte
     data = new ArrayList<>();
   }
 
-  public void updateData(List<Track> data) {
+  public void updateData(List<TrackDao> data) {
     this.data = data;
   }
 
-  private void showPopup(View view, Track track) {
+  private void showPopup(View view, TrackDao track) {
     PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
     popupMenu.inflate(R.menu.popup_track);
     popupMenu.setOnMenuItemClickListener(menuItem -> {
@@ -46,7 +46,7 @@ public class AlbumProfileAdapter extends RecyclerView.Adapter<AlbumProfileAdapte
   }
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
-    final Track track = data.get(position);
+    final TrackDao track = data.get(position);
     holder.lineOne.setText(track.getTitle());
     holder.overflow.setOnClickListener(v -> showPopup(v, track));
   }

@@ -14,7 +14,7 @@ import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.TrackAdapter;
-import com.kelsos.mbrc.dao.Track;
+import com.kelsos.mbrc.dao.TrackDao;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import roboguice.fragment.RoboFragment;
 
@@ -28,9 +28,9 @@ public class BrowseTrackFragment extends RoboFragment
     super.onCreate(savedInstanceState);
   }
 
-  private void handlePopupSelection(Pair<MenuItem, Track> pair) {
+  private void handlePopupSelection(Pair<MenuItem, TrackDao> pair) {
     final MenuItem item = pair.first;
-    final Track track = pair.second;
+    final TrackDao track = pair.second;
 
     switch (item.getItemId()) {
       case R.id.popup_track_play:
@@ -49,7 +49,7 @@ public class BrowseTrackFragment extends RoboFragment
     }
   }
 
-  private void queueTracks(Track track, String action) {
+  private void queueTracks(TrackDao track, String action) {
 
   }
 

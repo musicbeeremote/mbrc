@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.GenreAdapter;
-import com.kelsos.mbrc.dao.Genre;
+import com.kelsos.mbrc.dao.GenreDao;
 import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
@@ -33,9 +33,9 @@ public class BrowseGenreFragment extends RoboListFragment
     setHasOptionsMenu(true);
   }
 
-  private void handlePopup(Pair<MenuItem, Genre> pair) {
+  private void handlePopup(Pair<MenuItem, GenreDao> pair) {
     final MenuItem item = pair.first;
-    final Genre genre = pair.second;
+    final GenreDao genre = pair.second;
 
     switch (item.getItemId()) {
       case R.id.popup_genre_play:
@@ -60,7 +60,7 @@ public class BrowseGenreFragment extends RoboListFragment
     }
   }
 
-  private void queueTracks(Genre genre, String action) {
+  private void queueTracks(GenreDao genre, String action) {
 
   }
 
