@@ -2,6 +2,7 @@ package com.kelsos.mbrc.repository;
 
 import com.kelsos.mbrc.dao.AlbumDao;
 import com.kelsos.mbrc.dao.ArtistDao;
+import com.kelsos.mbrc.dao.CoverDao;
 import com.kelsos.mbrc.dao.GenreDao;
 import com.kelsos.mbrc.dao.TrackDao;
 import com.kelsos.mbrc.dto.library.AlbumDto;
@@ -18,6 +19,8 @@ public interface LibraryRepository {
 
   Observable<ArtistDao> getArtists();
 
+  Observable<List<CoverDao>> getCovers();
+
   void saveGenres(List<GenreDao> objects);
 
   void saveArtists(List<ArtistDao> objects);
@@ -28,5 +31,13 @@ public interface LibraryRepository {
 
   void saveRemoteTracks(List<TrackDto> data);
 
+  ArtistDao getArtistById(int artistId);
+
+  AlbumDao getAlbumById(int albumId);
+
   void saveRemoteAlbums(List<AlbumDto> data);
+
+  CoverDao getCoverById(int coverId);
+
+  void saveCovers(List<CoverDao> map);
 }

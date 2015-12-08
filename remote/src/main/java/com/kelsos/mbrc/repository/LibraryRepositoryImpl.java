@@ -4,6 +4,7 @@ import com.annimon.stream.Stream;
 import com.kelsos.mbrc.RemoteDatabase;
 import com.kelsos.mbrc.dao.AlbumDao;
 import com.kelsos.mbrc.dao.ArtistDao;
+import com.kelsos.mbrc.dao.CoverDao;
 import com.kelsos.mbrc.dao.GenreDao;
 import com.kelsos.mbrc.dao.TrackDao;
 import com.kelsos.mbrc.dto.library.AlbumDto;
@@ -29,6 +30,10 @@ public class LibraryRepositoryImpl implements LibraryRepository {
 
   @Override public Observable<ArtistDao> getArtists() {
     return null;
+  }
+
+  @Override public Observable<List<CoverDao>> getCovers() {
+    return Observable.defer(() -> Observable.just(new Select().from(CoverDao.class).queryList()));
   }
 
   @Override public void saveGenres(List<GenreDao> objects) {
@@ -67,38 +72,25 @@ public class LibraryRepositoryImpl implements LibraryRepository {
         dao.setDateAdded(value.getDateAdded());
         dao.setDateDeleted(value.getDateDeleted());
         dao.setDateUpdated(value.getDateUpdated());
-
-        final GenreDao genre = new Select().from(GenreDao.class).byIds(value.getGenreId()).querySingle();
-        if (genre != null) {
-          dao.setGenre(genre);
-        }
-
-        final ArtistDao albumArtist = getArtistById(value.getAlbumArtistId());
-        if (albumArtist != null) {
-          dao.setAlbumArtist(albumArtist);
-        }
-
-        final ArtistDao artist = getArtistById(value.getArtistId());
-        if (artist != null) {
-          dao.setArtist(artist);
-        }
-
-        final AlbumDao album = getAlbumById(value.getAlbumId());
-        if (album != null) {
-          dao.setAlbum(album);
-        }
-
+        dao.setGenre(getGenreById(value.getGenreId()));
+        dao.setAlbumArtist(getArtistById(value.getAlbumArtistId()));
+        dao.setArtist(getArtistById(value.getArtistId()));
+        dao.setAlbum(getAlbumById(value.getAlbumId()));
         dao.save();
       });
     });
 
   }
 
-  private ArtistDao getArtistById(int artistId) {
+  private GenreDao getGenreById(int genreId) {
+    return new Select().from(GenreDao.class).byIds(genreId).querySingle();
+  }
+
+  @Override public ArtistDao getArtistById(int artistId) {
     return new Select().from(ArtistDao.class).byIds(artistId).querySingle();
   }
 
-  private AlbumDao getAlbumById(int albumId) {
+  @Override public AlbumDao getAlbumById(int albumId) {
     return new Select().from(AlbumDao.class).byIds(albumId).querySingle();
   }
 
@@ -107,14 +99,25 @@ public class LibraryRepositoryImpl implements LibraryRepository {
       Stream.of(data).forEach(value -> {
         AlbumDao dao = new AlbumDao();
         dao.setId(value.getId());
-
         dao.setDateAdded(value.getDateAdded());
         dao.setDateDeleted(value.getDateDeleted());
         dao.setDateUpdated(value.getDateUpdated());
         dao.setArtist(getArtistById(value.getArtistId()));
+        dao.setCover(getCoverById(value.getCoverId()));
         dao.setName(value.getName());
         dao.save();
       });
     });
+  }
+
+  @Override public CoverDao getCoverById(int coverId) {
+    return new Select().from(CoverDao.class).byIds(coverId).querySingle();
+  }
+
+  @Override public void saveCovers(List<CoverDao> objects) {
+    TransactionManager.transact(RemoteDatabase.NAME, () -> {
+      Stream.of(objects).forEach(CoverDao::save);
+    });
+
   }
 }

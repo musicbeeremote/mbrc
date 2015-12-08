@@ -3,7 +3,7 @@ package com.kelsos.mbrc.services.api;
 import android.graphics.Bitmap;
 
 import com.kelsos.mbrc.dto.library.ArtistDto;
-import com.kelsos.mbrc.dto.library.Cover;
+import com.kelsos.mbrc.dto.library.CoverDto;
 import com.kelsos.mbrc.dto.library.GenreDto;
 import com.kelsos.mbrc.dto.library.AlbumDto;
 import com.kelsos.mbrc.dto.library.TrackDto;
@@ -26,7 +26,7 @@ public interface LibraryService {
                                                     @Query("limit") int limit);
 
   @GET("/library/covers")
-  Observable<PaginatedResponse<Cover>> getLibraryCovers(@Query("offset") int offset,
+  Observable<PaginatedResponse<CoverDto>> getLibraryCovers(@Query("offset") int offset,
                                                     @Query("limit") int limit);
 
   @GET("/library/artists")
