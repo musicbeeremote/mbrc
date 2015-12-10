@@ -3,49 +3,101 @@ package com.kelsos.mbrc.ui.fragments.browse;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Pair;
+import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.GenreAdapter;
-import com.kelsos.mbrc.dao.GenreDao;
+import com.kelsos.mbrc.annotations.Queue;
+import com.kelsos.mbrc.domain.Genre;
+import com.kelsos.mbrc.presenters.BrowseGenrePresenter;
 import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+import com.kelsos.mbrc.ui.views.BrowseGenreView;
+import java.util.List;
+import roboguice.fragment.RoboFragment;
 
-import butterknife.ButterKnife;
-import roboguice.fragment.RoboListFragment;
+public class BrowseGenreFragment extends RoboFragment implements PlaylistDialogFragment.OnPlaylistSelectedListener,
+    CreateNewPlaylistDialog.OnPlaylistNameSelectedListener, BrowseGenreView, GenreAdapter.MenuItemSelectedListener {
 
-public class BrowseGenreFragment extends RoboListFragment
-    implements PlaylistDialogFragment.OnPlaylistSelectedListener,
-    CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
+  @Bind(R.id.library_recycler) RecyclerView list;
+  @Inject private GenreAdapter adapter;
+  @Inject private BrowseGenrePresenter presenter;
 
-  @Inject private GenreAdapter mAdapter;
+  @NonNull public static BrowseGenreFragment newInstance() {
+    return new BrowseGenreFragment();
+  }
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setHasOptionsMenu(true);
   }
 
-  private void handlePopup(Pair<MenuItem, GenreDao> pair) {
-    final MenuItem item = pair.first;
-    final GenreDao genre = pair.second;
+  private void queueTracks(Genre genre, @Queue.Action String action) {
+    presenter.queue(genre, action);
+  }
 
+  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    super.onCreateOptionsMenu(menu, inflater);
+    inflater.inflate(R.menu.menu_now_playing, menu);
+  }
+
+  @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    final View view = inflater.inflate(R.layout.fragment_library, container, false);
+    ButterKnife.bind(this, view);
+    presenter.bind(this);
+    list.setLayoutManager(new LinearLayoutManager(getContext()));
+    list.setAdapter(adapter);
+    adapter.setMenuItemSelectedListener(this);
+    presenter.load();
+    return view;
+  }
+
+  @Override public void onPlaylistSelected(String hash) {
+  }
+
+  @Override public void onNewPlaylistSelected() {
+    final CreateNewPlaylistDialog npDialog = new CreateNewPlaylistDialog();
+    npDialog.setOnPlaylistNameSelectedListener(this);
+    npDialog.show(getActivity().getSupportFragmentManager(), "npDialog");
+  }
+
+  @Override public void onPlaylistNameSelected(String name) {
+
+  }
+
+  @Override public void update(List<Genre> data) {
+    adapter.updateData(data);
+  }
+
+  @Override public void showEnqueueFailure() {
+    Snackbar.make(list, R.string.genre_enqueue_failed, Snackbar.LENGTH_SHORT).show();
+  }
+
+  @Override public void showEnqueueSuccess() {
+    Snackbar.make(list, R.string.genre_queued, Snackbar.LENGTH_SHORT).show();
+  }
+
+  @Override public void onMenuItemSelected(MenuItem item, Genre genre) {
     switch (item.getItemId()) {
       case R.id.popup_genre_play:
-        queueTracks(genre, "now");
+        queueTracks(genre, Queue.NOW);
         break;
       case R.id.popup_genre_queue_last:
-        queueTracks(genre, "last");
+        queueTracks(genre, Queue.LAST);
         break;
       case R.id.popup_genre_queue_next:
-        queueTracks(genre, "next");
+        queueTracks(genre, Queue.NEXT);
         break;
       case R.id.popup_genre_playlist:
         break;
@@ -60,33 +112,7 @@ public class BrowseGenreFragment extends RoboListFragment
     }
   }
 
-  private void queueTracks(GenreDao genre, String action) {
-
-  }
-
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    super.onCreateOptionsMenu(menu, inflater);
-    inflater.inflate(R.menu.menu_now_playing, menu);
-  }
-
-  @Override
-  public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
-    final View view = inflater.inflate(R.layout.fragment_library, container, false);
-    ButterKnife.bind(this, view);
-    return view;
-  }
-
-  @Override public void onPlaylistSelected(String hash) {
-  }
-
-  @Override public void onNewPlaylistSelected() {
-    final CreateNewPlaylistDialog npDialog = new CreateNewPlaylistDialog();
-    npDialog.setOnPlaylistNameSelectedListener(this);
-    npDialog.show(getActivity().getSupportFragmentManager(), "npDialog");
-  }
-
-  @Override public void onPlaylistNameSelected(String name) {
+  @Override public void onItemClicked(Genre genre) {
 
   }
 }

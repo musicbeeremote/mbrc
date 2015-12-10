@@ -11,6 +11,8 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.concurrent.TimeUnit;
 
 import roboguice.util.Ln;
@@ -24,6 +26,8 @@ public class OkHttpClientProvider implements Provider<OkHttpClient> {
     httpClient.setConnectTimeout(40, TimeUnit.SECONDS);
     httpClient.setReadTimeout(40, TimeUnit.SECONDS);
     httpClient.setWriteTimeout(40, TimeUnit.SECONDS);
+
+    httpClient.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.3", 8881)));
 
     httpClient.interceptors().add(chain -> {
       final long start = System.currentTimeMillis();

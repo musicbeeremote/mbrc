@@ -18,7 +18,6 @@
       android:layout_weight="1"
       android:ellipsize="end"
       android:focusableInTouchMode="false"
-      android:paddingLeft="@dimen/normal_margin"
       android:singleLine="true"
       android:text="@string/artist_placeholder"
       android:textColor="@color/primary_text"

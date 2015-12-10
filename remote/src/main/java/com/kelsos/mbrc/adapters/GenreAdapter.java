@@ -14,12 +14,13 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.dao.GenreDao;
+import com.kelsos.mbrc.domain.Genre;
 import com.kelsos.mbrc.utilities.FontUtils;
 import java.util.ArrayList;
+import java.util.List;
 
 public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.ViewHolder> {
-  private ArrayList<GenreDao> data;
+  private List<Genre> data;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
 
@@ -29,8 +30,10 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.ViewHolder> 
     robotoRegular = FontUtils.getRobotoRegular(context);
   }
 
-  public void updateData(ArrayList<GenreDao> data) {
-    this.data = data;
+  public void updateData(List<Genre> data) {
+    this.data.clear();
+    this.data.addAll(data);
+    notifyDataSetChanged();
   }
 
   public void setMenuItemSelectedListener(MenuItemSelectedListener listener) {
@@ -44,7 +47,7 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.ViewHolder> 
   }
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
-    final GenreDao entry = data.get(position);
+    final Genre entry = data.get(position);
     holder.title.setText(entry.getName());
 
     holder.indicator.setOnClickListener(v -> {
@@ -77,9 +80,9 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.ViewHolder> 
   }
 
   public interface MenuItemSelectedListener {
-    void onMenuItemSelected(MenuItem menuItem, GenreDao entry);
+    void onMenuItemSelected(MenuItem menuItem, Genre entry);
 
-    void onItemClicked(GenreDao genre);
+    void onItemClicked(Genre genre);
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {

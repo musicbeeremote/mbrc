@@ -13,7 +13,7 @@ import rx.Observable;
 public interface LibraryRepository {
   Observable<AlbumDao> getAlbums();
 
-  Observable<GenreDao> getGenres();
+  Observable<List<GenreDao>> getGenres();
 
   Observable<TrackDao> getTracks();
 

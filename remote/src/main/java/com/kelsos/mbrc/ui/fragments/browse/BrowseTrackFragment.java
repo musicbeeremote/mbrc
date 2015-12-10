@@ -24,6 +24,10 @@ public class BrowseTrackFragment extends RoboFragment
   @Bind(R.id.library_recycler) RecyclerView recyclerView;
   @Inject private TrackAdapter mAdapter;
 
+  @NonNull public static BrowseTrackFragment newInstance() {
+    return new BrowseTrackFragment();
+  }
+
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
   }

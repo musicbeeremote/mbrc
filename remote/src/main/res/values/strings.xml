@@ -189,5 +189,7 @@
   <string name="mbrc_library_sync_complete">Sync complete</string>
   <string name="menu_library">Library</string>
   <string name="menu_playlist">Playlist</string>
+  <string name="genre_queued">Genre was added in now playing queue</string>
+  <string name="genre_enqueue_failed">Failed to enqueue the selected genre</string>
 
 </resources>

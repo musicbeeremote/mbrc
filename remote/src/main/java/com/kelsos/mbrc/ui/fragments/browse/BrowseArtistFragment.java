@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
@@ -20,14 +19,18 @@ import com.kelsos.mbrc.dao.ArtistDao;
 import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
-import roboguice.fragment.RoboListFragment;
+import roboguice.fragment.RoboFragment;
 
-public class BrowseArtistFragment extends RoboListFragment
+public class BrowseArtistFragment extends RoboFragment
     implements PlaylistDialogFragment.OnPlaylistSelectedListener,
     CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
 
   @Bind(R.id.library_recycler) RecyclerView recyclerView;
   @Inject private ArtistAdapter adapter;
+
+  @NonNull public static BrowseArtistFragment newInstance() {
+    return new BrowseArtistFragment();
+  }
 
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -38,10 +41,6 @@ public class BrowseArtistFragment extends RoboListFragment
     recyclerView.setLayoutManager(manager);
     recyclerView.setAdapter(adapter);
     return view;
-  }
-
-  @Override public void onListItemClick(ListView l, View v, int position, long id) {
-    super.onListItemClick(l, v, position, id);
   }
 
   @Override public void onPlaylistSelected(String hash) {

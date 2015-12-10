@@ -6,7 +6,6 @@ import com.kelsos.mbrc.dto.PaginatedResponse;
 import com.kelsos.mbrc.dto.requests.MoveRequest;
 import com.kelsos.mbrc.dto.requests.NowPlayingQueueRequest;
 import com.kelsos.mbrc.dto.requests.PlayPathRequest;
-
 import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
@@ -18,14 +17,12 @@ import rx.Single;
 
 public interface NowPlayingService {
 
-
   @PUT("/nowplaying/queue/")
-  Single<BaseResponse> nowplayingQueue(@Body NowPlayingQueueRequest body);
+  Observable<BaseResponse> nowplayingQueue(@Body NowPlayingQueueRequest body);
 
   @GET("/nowplaying")
   Observable<PaginatedResponse<NowPlayingTrack>> getNowPlayingList(@Query("offset") int offset,
-                                                               @Query("limit") int limit);
-
+      @Query("limit") int limit);
 
   @DELETE("/nowplaying/{id}")
   Single<BaseResponse> nowPlayingRemoveTrack(@Path("id") int id);
@@ -35,5 +32,4 @@ public interface NowPlayingService {
 
   @PUT("/nowplaying/move")
   Single<BaseResponse> nowPlayingMoveTrack(@Body MoveRequest body);
-
 }

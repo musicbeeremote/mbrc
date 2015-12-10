@@ -38,6 +38,8 @@ import com.kelsos.mbrc.interactors.TrackRatingInteractor;
 import com.kelsos.mbrc.interactors.TrackRatingInteractorImpl;
 import com.kelsos.mbrc.models.MainViewModel;
 import com.kelsos.mbrc.models.MainViewModelImpl;
+import com.kelsos.mbrc.presenters.BrowseGenrePresenter;
+import com.kelsos.mbrc.presenters.BrowseGenrePresenterImpl;
 import com.kelsos.mbrc.presenters.LyricsPresenter;
 import com.kelsos.mbrc.presenters.LyricsPresenterImpl;
 import com.kelsos.mbrc.presenters.MainViewPresenter;
@@ -79,6 +81,7 @@ import roboguice.inject.ContextSingleton;
     bind(MainViewModel.class).to(MainViewModelImpl.class).in(ContextSingleton.class);
     bind(LyricsPresenter.class).to(LyricsPresenterImpl.class).in(ContextSingleton.class);
     bind(PlaylistPresenter.class).to(PlaylistPresenterImpl.class).in(ContextSingleton.class);
+    bind(BrowseGenrePresenter.class).to(BrowseGenrePresenterImpl.class).in(ContextSingleton.class);
 
     bind(TrackInfoInteractor.class).to(TrackInfoInteractorImpl.class);
     bind(TrackRatingInteractor.class).to(TrackRatingInteractorImpl.class);
