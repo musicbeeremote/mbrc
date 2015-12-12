@@ -43,10 +43,6 @@ public class BrowseGenreFragment extends RoboFragment implements PlaylistDialogF
     setHasOptionsMenu(true);
   }
 
-  private void queueTracks(Genre genre, @Queue.Action String action) {
-    presenter.queue(genre, action);
-  }
-
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     super.onCreateOptionsMenu(menu, inflater);
     inflater.inflate(R.menu.menu_now_playing, menu);
@@ -91,13 +87,13 @@ public class BrowseGenreFragment extends RoboFragment implements PlaylistDialogF
   @Override public void onMenuItemSelected(MenuItem item, Genre genre) {
     switch (item.getItemId()) {
       case R.id.popup_genre_play:
-        queueTracks(genre, Queue.NOW);
+        presenter.queue(genre, Queue.NOW);
         break;
       case R.id.popup_genre_queue_last:
-        queueTracks(genre, Queue.LAST);
+        presenter.queue(genre, Queue.LAST);
         break;
       case R.id.popup_genre_queue_next:
-        queueTracks(genre, Queue.NEXT);
+        presenter.queue(genre, Queue.NEXT);
         break;
       case R.id.popup_genre_playlist:
         break;

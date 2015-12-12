@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,18 +14,23 @@ import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistAdapter;
-import com.kelsos.mbrc.dao.ArtistDao;
+import com.kelsos.mbrc.annotations.Queue;
+import com.kelsos.mbrc.domain.Artist;
+import com.kelsos.mbrc.presenters.BrowseArtistPresenter;
 import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+import com.kelsos.mbrc.ui.views.BrowseArtistView;
+import java.util.List;
 import roboguice.fragment.RoboFragment;
 
 public class BrowseArtistFragment extends RoboFragment
     implements PlaylistDialogFragment.OnPlaylistSelectedListener,
-    CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
+    CreateNewPlaylistDialog.OnPlaylistNameSelectedListener, BrowseArtistView, ArtistAdapter.MenuItemSelectedListener {
 
   @Bind(R.id.library_recycler) RecyclerView recyclerView;
   @Inject private ArtistAdapter adapter;
+  @Inject private BrowseArtistPresenter presenter;
 
   @NonNull public static BrowseArtistFragment newInstance() {
     return new BrowseArtistFragment();
@@ -37,9 +41,11 @@ public class BrowseArtistFragment extends RoboFragment
       Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.fragment_library, container, false);
     ButterKnife.bind(this, view);
-    RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity());
-    recyclerView.setLayoutManager(manager);
+    presenter.bind(this);
+    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     recyclerView.setAdapter(adapter);
+    adapter.setMenuItemSelectedListener(this);
+    presenter.load();
     return view;
   }
 
@@ -61,19 +67,16 @@ public class BrowseArtistFragment extends RoboFragment
     super.onCreate(savedInstanceState);
   }
 
-  private void handlePopupSelection(Pair<MenuItem, ArtistDao> pair) {
-    final MenuItem item = pair.first;
-    final ArtistDao artist = pair.second;
-
+  @Override public void onMenuItemSelected(MenuItem item, Artist artist) {
     switch (item.getItemId()) {
       case R.id.popup_artist_queue_next:
-        queueTracks(artist, "next");
+        presenter.queue(artist, Queue.NEXT);
         break;
       case R.id.popup_artist_queue_last:
-        queueTracks(artist, "last");
+        presenter.queue(artist, Queue.LAST);
         break;
       case R.id.popup_artist_play:
-        queueTracks(artist, "now");
+        presenter.queue(artist, Queue.NOW);
         break;
       case R.id.popup_artist_album:
         Intent intent = new Intent(getActivity(), ProfileActivity.class);
@@ -88,7 +91,19 @@ public class BrowseArtistFragment extends RoboFragment
     }
   }
 
-  private void queueTracks(ArtistDao artist, String action) {
+  @Override public void onItemClicked(Artist artist) {
 
+  }
+
+  @Override public void showEnqueueSuccess() {
+
+  }
+
+  @Override public void showEnqueueFailure() {
+
+  }
+
+  @Override public void update(List<Artist> artists) {
+    adapter.updateData(artists);
   }
 }

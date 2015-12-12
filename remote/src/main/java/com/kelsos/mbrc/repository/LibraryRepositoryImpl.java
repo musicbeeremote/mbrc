@@ -28,8 +28,8 @@ public class LibraryRepositoryImpl implements LibraryRepository {
     return null;
   }
 
-  @Override public Observable<ArtistDao> getArtists() {
-    return null;
+  @Override public Observable<List<ArtistDao>> getArtists() {
+    return Observable.defer(() -> Observable.just(new Select().from(ArtistDao.class).queryList()));
   }
 
   @Override public Observable<List<CoverDao>> getCovers() {

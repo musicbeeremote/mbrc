@@ -17,7 +17,7 @@ public interface LibraryRepository {
 
   Observable<TrackDao> getTracks();
 
-  Observable<ArtistDao> getArtists();
+  Observable<List<ArtistDao>> getArtists();
 
   Observable<List<CoverDao>> getCovers();
 
