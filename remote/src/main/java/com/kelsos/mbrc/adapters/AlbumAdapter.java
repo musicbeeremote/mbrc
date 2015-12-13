@@ -15,17 +15,16 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.dao.AlbumDao;
-import com.kelsos.mbrc.dao.ArtistDao;
-import com.kelsos.mbrc.dao.CoverDao;
+import com.kelsos.mbrc.domain.Album;
 import com.kelsos.mbrc.utilities.FontUtils;
 import com.kelsos.mbrc.utilities.RemoteUtils;
 import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> {
-  private ArrayList<AlbumDao> data;
+  private List<Album> data;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
 
@@ -34,8 +33,9 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
     robotoRegular = FontUtils.getRobotoRegular(context);
   }
 
-  public void updateData(ArrayList<AlbumDao> data) {
+  public void updateData(List<Album> data) {
     this.data = data;
+    this.notifyDataSetChanged();
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -45,13 +45,12 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
   }
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
-    final AlbumDao album = data.get(position);
-    final ArtistDao albumArtist = album.getArtist();
-    final CoverDao cover = album.getCover();
+    final Album album = data.get(position);
     final View itemView = holder.itemView;
+    final String cover = album.getCover();
 
     holder.album.setText(album.getName());
-    holder.artist.setText(albumArtist.getName());
+    holder.artist.setText(album.getArtist());
 
     holder.indicator.setOnClickListener(v -> {
       PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
@@ -73,7 +72,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
     });
 
     if (cover != null) {
-      final File image = new File(RemoteUtils.getStorage(), cover.getHash());
+      final File image = new File(RemoteUtils.getStorage(), cover);
 
       Picasso.with(itemView.getContext())
           .load(image)
@@ -94,9 +93,9 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
   }
 
   public interface MenuItemSelectedListener {
-    void onMenuItemSelected(MenuItem menuItem, AlbumDao entry);
+    void onMenuItemSelected(MenuItem menuItem, Album album);
 
-    void onItemClicked(AlbumDao album);
+    void onItemClicked(Album album);
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
