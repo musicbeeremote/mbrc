@@ -17,7 +17,6 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.domain.Album;
 import com.kelsos.mbrc.utilities.FontUtils;
-import com.kelsos.mbrc.utilities.RemoteUtils;
 import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.ArrayList;
@@ -27,10 +26,12 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
   private List<Album> data;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
+  private final File coversDir;
 
   @Inject public AlbumAdapter(Context context) {
     this.data = new ArrayList<>();
     robotoRegular = FontUtils.getRobotoRegular(context);
+    coversDir = new File(context.getFilesDir(), "covers");
   }
 
   public void updateData(List<Album> data) {
@@ -72,7 +73,8 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
     });
 
     if (cover != null) {
-      final File image = new File(RemoteUtils.getStorage(), cover);
+
+      final File image = new File(coversDir, cover);
 
       Picasso.with(itemView.getContext())
           .load(image)

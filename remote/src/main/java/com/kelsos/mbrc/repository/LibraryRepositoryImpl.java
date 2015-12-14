@@ -16,16 +16,16 @@ import java.util.List;
 import rx.Observable;
 
 public class LibraryRepositoryImpl implements LibraryRepository {
-  @Override public Observable<AlbumDao> getAlbums() {
-    return null;
+  @Override public Observable<List<AlbumDao>> getAlbums() {
+    return Observable.defer(() -> Observable.just(new Select().from(AlbumDao.class).queryList()));
   }
 
   @Override public Observable<List<GenreDao>> getGenres() {
     return Observable.defer(() -> Observable.just(new Select().from(GenreDao.class).queryList()));
   }
 
-  @Override public Observable<TrackDao> getTracks() {
-    return null;
+  @Override public Observable<List<TrackDao>> getTracks() {
+    return Observable.defer(() -> Observable.just(new Select().from(TrackDao.class).queryList()));
   }
 
   @Override public Observable<List<ArtistDao>> getArtists() {

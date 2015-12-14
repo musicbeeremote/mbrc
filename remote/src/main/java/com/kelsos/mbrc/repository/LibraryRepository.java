@@ -11,11 +11,11 @@ import java.util.List;
 import rx.Observable;
 
 public interface LibraryRepository {
-  Observable<AlbumDao> getAlbums();
+  Observable<List<AlbumDao>> getAlbums();
 
   Observable<List<GenreDao>> getGenres();
 
-  Observable<TrackDao> getTracks();
+  Observable<List<TrackDao>> getTracks();
 
   Observable<List<ArtistDao>> getArtists();
 
