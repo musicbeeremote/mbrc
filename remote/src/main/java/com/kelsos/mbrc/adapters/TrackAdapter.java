@@ -14,13 +14,13 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.dao.ArtistDao;
-import com.kelsos.mbrc.dao.TrackDao;
+import com.kelsos.mbrc.domain.Track;
 import com.kelsos.mbrc.utilities.FontUtils;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> {
-  private ArrayList<TrackDao> data;
+  private List<Track> data;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
 
@@ -30,8 +30,9 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
     robotoRegular = FontUtils.getRobotoRegular(context);
   }
 
-  public void updateData(ArrayList<TrackDao> data) {
+  public void updateData(List<Track> data) {
     this.data = data;
+    notifyDataSetChanged();
   }
 
   public void setMenuItemSelectedListener(MenuItemSelectedListener listener) {
@@ -45,10 +46,10 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
   }
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
-    final TrackDao entry = data.get(position);
-    final ArtistDao artist = entry.getArtist();
+    final Track entry = data.get(position);
+
     holder.title.setText(entry.getTitle());
-    holder.artist.setText(artist.getName());
+    holder.artist.setText(entry.getArtist());
 
     holder.indicator.setOnClickListener(v -> {
       PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
@@ -80,9 +81,9 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
   }
 
   public interface MenuItemSelectedListener {
-    void onMenuItemSelected(MenuItem menuItem, TrackDao entry);
+    void onMenuItemSelected(MenuItem item, Track track);
 
-    void onItemClicked(TrackDao track);
+    void onItemClicked(Track track);
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {

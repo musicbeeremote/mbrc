@@ -14,6 +14,8 @@ import com.kelsos.mbrc.di.providers.OkHttpClientProvider;
 import com.kelsos.mbrc.di.providers.RetrofitProvider;
 import com.kelsos.mbrc.interactors.LibraryAlbumInteractor;
 import com.kelsos.mbrc.interactors.LibraryAlbumInteractorImpl;
+import com.kelsos.mbrc.interactors.LibraryTrackInteractor;
+import com.kelsos.mbrc.interactors.LibraryTrackInteractorImpl;
 import com.kelsos.mbrc.interactors.MuteInteractor;
 import com.kelsos.mbrc.interactors.MuteInteractorImpl;
 import com.kelsos.mbrc.interactors.NowPlayingListInteractor;
@@ -44,6 +46,8 @@ import com.kelsos.mbrc.presenters.BrowseAlbumPresenter;
 import com.kelsos.mbrc.presenters.BrowseAlbumPresenterImpl;
 import com.kelsos.mbrc.presenters.BrowseGenrePresenter;
 import com.kelsos.mbrc.presenters.BrowseGenrePresenterImpl;
+import com.kelsos.mbrc.presenters.BrowseTrackPresenter;
+import com.kelsos.mbrc.presenters.BrowseTrackPresenterImpl;
 import com.kelsos.mbrc.presenters.LyricsPresenter;
 import com.kelsos.mbrc.presenters.LyricsPresenterImpl;
 import com.kelsos.mbrc.presenters.MainViewPresenter;
@@ -85,8 +89,10 @@ import roboguice.inject.ContextSingleton;
     bind(MainViewModel.class).to(MainViewModelImpl.class).in(ContextSingleton.class);
     bind(LyricsPresenter.class).to(LyricsPresenterImpl.class).in(ContextSingleton.class);
     bind(PlaylistPresenter.class).to(PlaylistPresenterImpl.class).in(ContextSingleton.class);
+    bind(PlaylistTrackPresenter.class).to(PlaylistTrackPresenterImpl.class).in(ContextSingleton.class);
     bind(BrowseGenrePresenter.class).to(BrowseGenrePresenterImpl.class).in(ContextSingleton.class);
     bind(BrowseAlbumPresenter.class).to(BrowseAlbumPresenterImpl.class).in(ContextSingleton.class);
+    bind(BrowseTrackPresenter.class).to(BrowseTrackPresenterImpl.class).in(ContextSingleton.class);
 
     bind(TrackInfoInteractor.class).to(TrackInfoInteractorImpl.class);
     bind(TrackRatingInteractor.class).to(TrackRatingInteractorImpl.class);
@@ -100,7 +106,7 @@ import roboguice.inject.ContextSingleton;
     bind(MuteInteractor.class).to(MuteInteractorImpl.class);
     bind(NowPlayingListInteractor.class).to(NowPlayingListInteractorImpl.class);
     bind(PlaylistInteractor.class).to(PlaylistInteractorImpl.class);
-    bind(PlaylistTrackPresenter.class).to(PlaylistTrackPresenterImpl.class);
+    bind(LibraryTrackInteractor.class).to(LibraryTrackInteractorImpl.class);
 
     bind(LibraryAlbumInteractor.class).to(LibraryAlbumInteractorImpl.class);
 
