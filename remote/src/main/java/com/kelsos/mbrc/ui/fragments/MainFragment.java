@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.ui.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -20,7 +20,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnLongClick;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
@@ -35,11 +38,6 @@ import com.kelsos.mbrc.presenters.MainViewPresenter;
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
 import com.kelsos.mbrc.ui.views.MainView;
 import com.kelsos.mbrc.utilities.FontUtils;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnLongClick;
 import roboguice.fragment.RoboFragment;
 
 @Singleton public class MainFragment extends RoboFragment implements MainView {
@@ -89,9 +87,11 @@ import roboguice.fragment.RoboFragment;
         public void onStopTrackingTouch(SeekBar seekBar) { }
       };
 
-  private OnExpandToolbarListener listener;
-
   public MainFragment() {
+  }
+
+  @NonNull public static MainFragment newInstance() {
+    return new MainFragment();
   }
 
   @OnClick(R.id.main_button_play_pause) public void playButtonPressed(View v) {
@@ -160,7 +160,6 @@ import roboguice.fragment.RoboFragment;
 
   @Override public void onResume() {
     super.onResume();
-    listener.expandToolbar();
     presenter.onResume();
   }
 
@@ -196,15 +195,6 @@ import roboguice.fragment.RoboFragment;
         String.format("Now Playing: %s - %s", artistLabel.getText(), titleLabel.getText());
     shareIntent.putExtra(Intent.EXTRA_TEXT, payload);
     return shareIntent;
-  }
-
-  @Override public void onAttach(Context context) {
-    super.onAttach(context);
-    try {
-      listener = (OnExpandToolbarListener) context;
-    } catch (ClassCastException ex) {
-      throw new ClassCastException(context.toString() + "must Implement OnExpandToolbarListener");
-    }
   }
 
   @Override public void updateCover(@Nullable Bitmap bitmap) {
@@ -315,9 +305,5 @@ import roboguice.fragment.RoboFragment;
     if (mShareActionProvider != null) {
       mShareActionProvider.setShareIntent(getShareIntent());
     }
-  }
-
-  public interface OnExpandToolbarListener {
-    void expandToolbar();
   }
 }

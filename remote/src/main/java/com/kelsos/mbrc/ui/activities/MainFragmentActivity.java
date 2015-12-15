@@ -4,11 +4,10 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -20,16 +19,17 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.View;
-
+import android.widget.TextView;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.annotations.Connection;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.controller.Controller;
-import com.kelsos.mbrc.enums.DisplaySelection;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
 import com.kelsos.mbrc.events.ui.DisplayDialog;
-import com.kelsos.mbrc.events.ui.DrawerEvent;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
@@ -41,27 +41,19 @@ import com.kelsos.mbrc.ui.fragments.browse.BrowseFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 public class MainFragmentActivity extends RoboAppCompatActivity
-    implements MainFragment.OnExpandToolbarListener {
-
-  @Nullable @Bind(R.id.app_bar) AppBarLayout appBarLayout;
-  @Nullable @Bind(R.id.coordinator_layout) CoordinatorLayout coordinatorLayout;
+    implements NavigationView.OnNavigationItemSelectedListener {
 
   @Inject Bus bus;
-  private ActionBarDrawerToggle mDrawerToggle;
-  private DrawerLayout mDrawerLayout;
-  private View mDrawerMenu;
-  private DisplaySelection mDisplay;
-  private boolean navChanged;
+  @Bind(R.id.toolbar) Toolbar toolbar;
+  @Bind(R.id.drawer_layout) DrawerLayout drawer;
+  @Bind(R.id.navigation_view) NavigationView navigationView;
+  private ActionBarDrawerToggle toggle;
   private DialogFragment mDialog;
 
   private boolean isMyServiceRunning(Class<?> serviceClass) {
     ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-    for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(
-        Integer.MAX_VALUE)) {
+    for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
       if (serviceClass.getName().equals(service.service.getClassName())) {
         return true;
       }
@@ -73,33 +65,16 @@ public class MainFragmentActivity extends RoboAppCompatActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.ui_main_container);
     ButterKnife.bind(this);
+    setSupportActionBar(toolbar);
+    navigationView.setNavigationItemSelectedListener(this);
 
     if (!isMyServiceRunning(Controller.class)) {
       startService(new Intent(this, Controller.class));
     }
 
-    Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
-    setSupportActionBar(mToolbar);
-
-    mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-    mDrawerMenu = findViewById(R.id.drawer_menu);
-
-    mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open,
-        R.string.drawer_close) {
-      public void onDrawerOpened(View view) {
-        invalidateOptionsMenu();
-      }
-
-      public void onDrawerClosed(View view) {
-        invalidateOptionsMenu();
-        if (navChanged) {
-          navigateToView();
-        }
-      }
-    };
-
-    mDrawerLayout.setDrawerListener(mDrawerToggle);
-    mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.END);
+    toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close);
+    drawer.setDrawerListener(toggle);
+    toggle.syncState();
 
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setHomeButtonEnabled(true);
@@ -107,9 +82,6 @@ public class MainFragmentActivity extends RoboAppCompatActivity
     if (savedInstanceState != null) {
       return;
     }
-
-    navChanged = false;
-    mDisplay = DisplaySelection.HOME;
 
     MainFragment mFragment = new MainFragment();
     mFragment.setArguments(getIntent().getExtras());
@@ -131,36 +103,7 @@ public class MainFragmentActivity extends RoboAppCompatActivity
 
   @Override public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
-    mDrawerToggle.onConfigurationChanged(newConfig);
-  }
-
-  private void navigateToView() {
-    switch (mDisplay) {
-      case HOME:
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-          onBackPressed();
-        }
-        break;
-      case LIBRARY:
-        BrowseFragment browseFragment = BrowseFragment.newInstance();
-        replaceFragment(browseFragment, "library");
-        break;
-      case PLAYLISTS:
-        PlaylistListFragment playlistFragment = PlaylistListFragment.newInstance();
-        replaceFragment(playlistFragment, "playlist");
-        break;
-      case NOW_PLAYING:
-        NowPlayingFragment npFragment = new NowPlayingFragment();
-        replaceFragment(npFragment, "now_playing");
-        break;
-      case LYRICS:
-        LyricsFragment lFragment = new LyricsFragment();
-        replaceFragment(lFragment, "lyrics");
-        break;
-      default:
-        break;
-    }
-    navChanged = false;
+    toggle.onConfigurationChanged(newConfig);
   }
 
   private void replaceFragment(Fragment fragment, String tag) {
@@ -182,7 +125,7 @@ public class MainFragmentActivity extends RoboAppCompatActivity
 
   @Override protected void onPostCreate(Bundle savedInstanceState) {
     super.onPostCreate(savedInstanceState);
-    mDrawerToggle.syncState();
+    toggle.syncState();
   }
 
   @Override public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
@@ -197,17 +140,7 @@ public class MainFragmentActivity extends RoboAppCompatActivity
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
-          mDrawerLayout.closeDrawer(mDrawerMenu);
-        } else {
-          mDrawerLayout.openDrawer(mDrawerMenu);
-        }
-        return true;
-      default:
-        return false;
-    }
+    return super.onOptionsItemSelected(item);
   }
 
   @Subscribe public void showSetupDialog(DisplayDialog event) {
@@ -227,32 +160,17 @@ public class MainFragmentActivity extends RoboAppCompatActivity
     }
   }
 
-  @Subscribe public void handleDrawerEvent(DrawerEvent event) {
-    if (event.isCloseDrawer()) {
-      closeDrawer();
-    } else {
-      navChanged = true;
-      mDisplay = event.getNavigate();
-      closeDrawer();
-    }
-  }
-
-  private void closeDrawer() {
-    if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
-      mDrawerLayout.closeDrawer(mDrawerMenu);
-    }
-  }
-
   @Subscribe public void handleUserNotification(NotifyUser event) {
-    final String message = event.isFromResource()
-        ? getString(event.getResId())
-        : event.getMessage();
+    final String message = event.isFromResource() ? getString(event.getResId()) : event.getMessage();
+    Snackbar.make(toolbar, message, Snackbar.LENGTH_SHORT).show();
+  }
 
-    if (appBarLayout == null) {
-      return;
+  @Override public void onBackPressed() {
+    if (drawer.isDrawerOpen(GravityCompat.START)) {
+      drawer.closeDrawer(GravityCompat.START);
+    } else {
+      super.onBackPressed();
     }
-
-    Snackbar.make(appBarLayout, message, Snackbar.LENGTH_SHORT).show();
   }
 
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -268,17 +186,79 @@ public class MainFragmentActivity extends RoboAppCompatActivity
     }
   }
 
-  public void expandToolbar() {
-    if (appBarLayout == null) {
-      return;
+  @Override public boolean onNavigationItemSelected(MenuItem item) {
+    int id = item.getItemId();
+    if (id == R.id.drawer_menu_home) {
+      if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+        onBackPressed();
+      }
+    } else if (id == R.id.drawer_menu_library) {
+      BrowseFragment browseFragment = BrowseFragment.newInstance();
+      replaceFragment(browseFragment, "library");
+    } else if (id == R.id.drawer_menu_playlist) {
+      PlaylistListFragment playlistFragment = PlaylistListFragment.newInstance();
+      replaceFragment(playlistFragment, "playlist");
+    } else if (id == R.id.drawer_menu_now_playing) {
+      NowPlayingFragment npFragment = new NowPlayingFragment();
+      replaceFragment(npFragment, "now_playing");
+    } else if (id == R.id.drawer_menu_lyrics) {
+      LyricsFragment lFragment = new LyricsFragment();
+      replaceFragment(lFragment, "lyrics");
+    } else if (id == R.id.drawer_menu_settings) {
+      onSettingsClicked();
+    } else if (id == R.id.drawer_menu_exit) {
+      onExitClicked();
+    } else if (id == R.id.drawer_menu_connect) {
+      onConnectClick();
+    } else if (id == R.id.drawer_menu_feedback) {
+      onFeedbackClicked();
+    } else if (id == R.id.drawer_menu_help) {
+      onHelpClicked();
     }
 
-    CoordinatorLayout.LayoutParams params =
-        (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
-    AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
-    if (behavior != null) {
-      behavior.setTopAndBottomOffset(0);
-      behavior.onNestedPreScroll(coordinatorLayout, appBarLayout, null, 0, 1, new int[2]);
+    drawer.closeDrawer(GravityCompat.START);
+    return true;
+  }
+
+  private void onConnectClick() {
+    bus.post(new MessageEvent(UserInputEventType.ResetConnection));
+  }
+
+  private void onSettingsClicked() {
+    startActivity(new Intent(this, SettingsActivity.class));
+  }
+
+  private void onHelpClicked() {
+    Intent openHelp = new Intent(Intent.ACTION_VIEW);
+    openHelp.setData(Uri.parse("http://kelsos.net/musicbeeremote/help/"));
+    startActivity(openHelp);
+  }
+
+  private void onExitClicked() {
+    stopService(new Intent(this, Controller.class));
+    finish();
+  }
+
+  private void onFeedbackClicked() {
+    startActivity(new Intent(this, FeedbackActivity.class));
+  }
+
+  @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChangeEvent change) {
+
+    final TextView view = (TextView)navigationView.findViewById(R.id.drawer_menu_connect);
+    if (view == null) {
+      return;
+    }
+    switch (change.getStatus()) {
+      case Connection.OFF:
+        view.setText(R.string.drawer_connection_status_off);
+        break;
+      case Connection.ON:
+        view.setText(R.string.drawer_connection_status_active);
+        break;
+      default:
+        view.setText(R.string.drawer_connection_status_off);
+        break;
     }
   }
 }
