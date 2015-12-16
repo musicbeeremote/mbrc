@@ -120,4 +120,12 @@ public class LibraryRepositoryImpl implements LibraryRepository {
     });
 
   }
+
+  @Override public Observable<List<TrackDao>> getTracks(int offset, int limit) {
+    return Observable.defer(() -> Observable.just(new Select().from(TrackDao.class)
+        .where()
+        .offset(offset)
+        .limit(limit)
+        .queryList()));
+  }
 }

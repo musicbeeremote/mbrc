@@ -21,7 +21,12 @@ public class BrowseTrackPresenterImpl implements BrowseTrackPresenter {
   }
 
   @Override public void load() {
-    trackInteractor.execute().observeOn(AndroidSchedulers.mainThread()).subscribe(tracks -> view.update(tracks), Ln::v);
+    trackInteractor.execute(0, 5)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(tracks -> {
+          view.clearData();
+          view.appendPage(tracks);
+        }, Ln::v);
   }
 
   @Override public void queue(Track track, @Queue.Action String action) {
@@ -30,5 +35,11 @@ public class BrowseTrackPresenterImpl implements BrowseTrackPresenter {
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(aBoolean -> {
         }, Ln::v);
+  }
+
+  @Override public void load(int page, int totalItemsCount) {
+    trackInteractor.execute(page, totalItemsCount)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(tracks -> view.appendPage(tracks), Ln::v);
   }
 }

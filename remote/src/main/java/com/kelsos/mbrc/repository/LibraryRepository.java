@@ -40,4 +40,6 @@ public interface LibraryRepository {
   CoverDao getCoverById(int coverId);
 
   void saveCovers(List<CoverDao> map);
+
+  Observable<List<TrackDao>> getTracks(int offset, int limit);
 }

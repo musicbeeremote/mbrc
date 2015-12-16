@@ -10,4 +10,6 @@ public interface BrowseTrackPresenter {
   void load();
 
   void queue(Track track, @Action String action);
+
+  void load(int page, int totalItemsCount);
 }

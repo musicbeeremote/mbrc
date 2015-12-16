@@ -15,19 +15,23 @@ import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.domain.Track;
+import com.kelsos.mbrc.ui.SquareImageView;
 import com.kelsos.mbrc.utilities.FontUtils;
+import com.squareup.picasso.Picasso;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> {
+  private final File coversDir;
   private List<Track> data;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
 
-  @Inject
-  public TrackAdapter(Context context) {
+  @Inject public TrackAdapter(Context context) {
     this.data = new ArrayList<>();
     robotoRegular = FontUtils.getRobotoRegular(context);
+    coversDir = new File(context.getFilesDir(), "covers");
   }
 
   public void updateData(List<Track> data) {
@@ -40,8 +44,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View view =
-        LayoutInflater.from(parent.getContext()).inflate(R.layout.ui_list_dual, parent, false);
+    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ui_list_library_track, parent, false);
     return new ViewHolder(view, robotoRegular);
   }
 
@@ -50,6 +53,19 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
 
     holder.title.setText(entry.getTitle());
     holder.artist.setText(entry.getArtist());
+    final String cover = entry.getCover();
+    if (cover != null) {
+
+      final File image = new File(coversDir, cover);
+
+      Picasso.with(holder.itemView.getContext())
+          .load(image)
+          .placeholder(R.drawable.ic_image_no_cover)
+          .fit()
+          .centerCrop()
+          .tag(holder.itemView.getContext())
+          .into(holder.cover);
+    }
 
     holder.indicator.setOnClickListener(v -> {
       PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
@@ -80,6 +96,16 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
     return data.size();
   }
 
+  public void clearData() {
+    data.clear();
+  }
+
+  public void appendData(List<Track> tracks) {
+    int previousSize = data.size();
+    data.addAll(tracks);
+    notifyItemRangeInserted(previousSize, data.size() - 1);
+  }
+
   public interface MenuItemSelectedListener {
     void onMenuItemSelected(MenuItem item, Track track);
 
@@ -87,6 +113,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
+    @Bind(R.id.track_cover) SquareImageView cover;
     @Bind(R.id.line_one) TextView artist;
     @Bind(R.id.line_two) TextView title;
     @Bind(R.id.ui_item_context_indicator) LinearLayout indicator;

@@ -49,4 +49,6 @@
   <dimen name="drawer_width">320dp</dimen>
   <dimen name="playlist_entry_height">48dp</dimen>
   <dimen name="thumb_size">12dp</dimen>
+  <dimen name="list_item_track_height">60dp</dimen>
+  <dimen name="list_item_track_cover_end_padding">12dp</dimen>
 </resources>

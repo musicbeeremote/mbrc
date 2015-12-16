@@ -4,5 +4,8 @@ import com.kelsos.mbrc.domain.Track;
 import java.util.List;
 
 public interface BrowseTrackView {
-  void update(List<Track> tracks);
+
+  void clearData();
+
+  void appendPage(List<Track> tracks);
 }

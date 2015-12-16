@@ -12,6 +12,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.adapters.EndlessRecyclerViewScrollListener;
 import com.kelsos.mbrc.adapters.TrackAdapter;
 import com.kelsos.mbrc.annotations.Queue;
 import com.kelsos.mbrc.domain.Track;
@@ -26,8 +27,10 @@ public class BrowseTrackFragment extends RoboFragment
     TrackAdapter.MenuItemSelectedListener {
 
   @Bind(R.id.library_recycler) RecyclerView recyclerView;
-  @Inject private TrackAdapter mAdapter;
+  @Inject private TrackAdapter adapter;
   @Inject private BrowseTrackPresenter presenter;
+  private LinearLayoutManager manager;
+  private EndlessRecyclerViewScrollListener scrollListener;
 
   @NonNull public static BrowseTrackFragment newInstance() {
     return new BrowseTrackFragment();
@@ -35,23 +38,33 @@ public class BrowseTrackFragment extends RoboFragment
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    manager = new LinearLayoutManager(getContext());
+    adapter.setMenuItemSelectedListener(this);
+    scrollListener = new EndlessRecyclerViewScrollListener(manager) {
+      @Override public void onLoadMore(int page, int totalItemsCount) {
+        presenter.load(page, totalItemsCount);
+      }
+    };
   }
 
-  @Override
-  public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.fragment_library, container, false);
     ButterKnife.bind(this, view);
     presenter.bind(this);
-    RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity());
     recyclerView.setLayoutManager(manager);
-    mAdapter.setMenuItemSelectedListener(this);
+    recyclerView.setAdapter(adapter);
+    presenter.load();
     return view;
   }
 
-  @Override public void onStart() {
-    super.onStart();
-    presenter.load();
+  @Override public void onResume() {
+    super.onResume();
+    recyclerView.addOnScrollListener(scrollListener);
+  }
+
+  @Override public void onPause() {
+    super.onPause();
+    recyclerView.removeOnScrollListener(scrollListener);
   }
 
   @Override public void onPlaylistSelected(String hash) {
@@ -84,7 +97,11 @@ public class BrowseTrackFragment extends RoboFragment
 
   }
 
-  @Override public void update(List<Track> tracks) {
-    mAdapter.updateData(tracks);
+  @Override public void clearData() {
+    adapter.clearData();
+  }
+
+  @Override public void appendPage(List<Track> tracks) {
+    adapter.appendData(tracks);
   }
 }

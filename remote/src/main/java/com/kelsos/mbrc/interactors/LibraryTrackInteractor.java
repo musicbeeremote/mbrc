@@ -5,5 +5,5 @@ import java.util.List;
 import rx.Observable;
 
 public interface LibraryTrackInteractor {
-  Observable<List<Track>> execute();
+  Observable<List<Track>> execute(int page, int items);
 }
