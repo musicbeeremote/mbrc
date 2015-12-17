@@ -16,8 +16,12 @@ import java.util.List;
 import rx.Observable;
 
 public class LibraryRepositoryImpl implements LibraryRepository {
-  @Override public Observable<List<AlbumDao>> getAlbums() {
-    return Observable.defer(() -> Observable.just(new Select().from(AlbumDao.class).queryList()));
+  @Override public Observable<List<AlbumDao>> getAlbums(int offset, int limit) {
+    return Observable.defer(() -> Observable.just(new Select().from(AlbumDao.class)
+        .where()
+        .offset(offset)
+        .limit(limit)
+        .queryList()));
   }
 
   @Override public Observable<List<GenreDao>> getGenres() {
@@ -79,7 +83,6 @@ public class LibraryRepositoryImpl implements LibraryRepository {
         dao.save();
       });
     });
-
   }
 
   private GenreDao getGenreById(int genreId) {
@@ -118,7 +121,6 @@ public class LibraryRepositoryImpl implements LibraryRepository {
     TransactionManager.transact(RemoteDatabase.NAME, () -> {
       Stream.of(objects).forEach(CoverDao::save);
     });
-
   }
 
   @Override public Observable<List<TrackDao>> getTracks(int offset, int limit) {

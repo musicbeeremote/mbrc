@@ -10,4 +10,6 @@ public interface BrowseAlbumPresenter {
   void queue(Album album, @Queue.Action String action);
 
   void load();
+
+  void load(int page);
 }

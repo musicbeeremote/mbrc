@@ -15,6 +15,7 @@ import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumAdapter;
+import com.kelsos.mbrc.adapters.EndlessGridRecyclerViewScrollListener;
 import com.kelsos.mbrc.annotations.Queue;
 import com.kelsos.mbrc.domain.Album;
 import com.kelsos.mbrc.presenters.BrowseAlbumPresenter;
@@ -31,6 +32,7 @@ public class BrowseAlbumFragment extends RoboFragment implements PlaylistDialogF
   @Bind(R.id.album_recycler) RecyclerView recyclerView;
   @Inject private AlbumAdapter adapter;
   @Inject private BrowseAlbumPresenter presenter;
+  private EndlessGridRecyclerViewScrollListener scrollListener;
 
   @NonNull public static BrowseAlbumFragment newInstance() {
     return new BrowseAlbumFragment();
@@ -41,12 +43,27 @@ public class BrowseAlbumFragment extends RoboFragment implements PlaylistDialogF
     final View view = inflater.inflate(R.layout.ui_library_grid, container, false);
     ButterKnife.bind(this, view);
     presenter.bind(this);
-    RecyclerView.LayoutManager manager = new GridLayoutManager(getActivity(), 2);
-    recyclerView.setLayoutManager(manager);
+    GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+    scrollListener = new EndlessGridRecyclerViewScrollListener(layoutManager) {
+      @Override public void onLoadMore(int page, int totalItemsCount) {
+        presenter.load(page);
+      }
+    };
+    recyclerView.setLayoutManager(layoutManager);
     recyclerView.setAdapter(adapter);
     adapter.setMenuItemSelectedListener(this);
     presenter.load();
     return view;
+  }
+
+  @Override public void onResume() {
+    super.onResume();
+    recyclerView.addOnScrollListener(scrollListener);
+  }
+
+  @Override public void onPause() {
+    super.onPause();
+    recyclerView.removeOnScrollListener(scrollListener);
   }
 
   @Override public void onPlaylistSelected(String hash) {
@@ -95,7 +112,11 @@ public class BrowseAlbumFragment extends RoboFragment implements PlaylistDialogF
 
   }
 
-  @Override public void update(List<Album> data) {
+  @Override public void updateData(List<Album> data) {
     adapter.updateData(data);
+  }
+
+  @Override public void clearData() {
+    adapter.clearData();
   }
 }

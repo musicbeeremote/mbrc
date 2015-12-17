@@ -12,6 +12,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class BrowseAlbumPresenterImpl implements BrowseAlbumPresenter {
+  private static final int PAGE_SIZE = 100;
   @Inject private QueueInteractor queueInteractor;
   @Inject private LibraryAlbumInteractor albumInteractor;
   private BrowseAlbumView view;
@@ -27,9 +28,19 @@ public class BrowseAlbumPresenterImpl implements BrowseAlbumPresenter {
   }
 
   @Override public void load() {
-    albumInteractor.execute()
+    albumInteractor.execute(0, PAGE_SIZE)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(albums -> view.update(albums), Ln::v);
+        .subscribe(albums -> {
+          view.clearData();
+          view.updateData(albums);
+        }, Ln::v);
+  }
+
+  @Override public void load(int page) {
+    albumInteractor.execute(page * PAGE_SIZE, PAGE_SIZE)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(albums -> view.updateData(albums), Ln::v);
   }
 }

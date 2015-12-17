@@ -35,8 +35,9 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
   }
 
   public void updateData(List<Album> data) {
-    this.data = data;
-    this.notifyDataSetChanged();
+    int previousSize = this.data.size();
+    this.data.addAll(data);
+    notifyItemRangeInserted(previousSize, this.data.size() - 1);
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -92,6 +93,10 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
 
   public void setMenuItemSelectedListener(MenuItemSelectedListener listener) {
     mListener = listener;
+  }
+
+  public void clearData() {
+    data.clear();
   }
 
   public interface MenuItemSelectedListener {

@@ -5,5 +5,5 @@ import java.util.List;
 import rx.Observable;
 
 public interface LibraryAlbumInteractor {
-  Observable<List<Album>> execute();
+  Observable<List<Album>> execute(int offset, int limit);
 }

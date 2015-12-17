@@ -11,7 +11,7 @@ import java.util.List;
 import rx.Observable;
 
 public interface LibraryRepository {
-  Observable<List<AlbumDao>> getAlbums();
+  Observable<List<AlbumDao>> getAlbums(int offset, int limit);
 
   Observable<List<GenreDao>> getGenres();
 
