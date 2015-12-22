@@ -10,4 +10,6 @@ public interface BrowseGenrePresenter {
   void load();
 
   void queue(Genre genre, @Queue.Action String action);
+
+  void load(int page);
 }

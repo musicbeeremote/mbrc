@@ -58,7 +58,7 @@ public class WidgetNormal extends RoboAppWidgetProvider {
       views.setOnClickPendingIntent(R.id.widget_normal_previous,
           RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PREVIOUS, context));
 
-      // Tell the AppWidgetManager to perform an update on the current app widget
+      // Tell the AppWidgetManager to perform an load on the current app widget
       appWidgetManager.updateAppWidget(appWidgetId, views);
     }
   }

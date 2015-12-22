@@ -261,7 +261,7 @@ public class SettingsManager {
         }
 
         if (BuildConfig.DEBUG) {
-          Ln.d("update or fresh install");
+          Ln.d("load or fresh install");
         }
       }
     } catch (PackageManager.NameNotFoundException e) {

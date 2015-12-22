@@ -3,6 +3,7 @@ package com.kelsos.mbrc.presenters;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.annotations.MetaDataType;
 import com.kelsos.mbrc.annotations.Queue;
+import com.kelsos.mbrc.constants.Constants;
 import com.kelsos.mbrc.domain.Genre;
 import com.kelsos.mbrc.interactors.QueueInteractor;
 import com.kelsos.mbrc.interactors.library.LibraryGenreInteractor;
@@ -21,9 +22,13 @@ public class BrowseGenrePresenterImpl implements BrowseGenrePresenter {
   }
 
   @Override public void load() {
-    interactor.execute().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(genres -> {
-      view.update(genres);
-    }, Ln::v);
+    interactor.execute(0, Constants.PAGE_SIZE)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(genres -> {
+          view.clear();
+          view.update(genres);
+        }, Ln::v);
   }
 
   @Override public void queue(Genre genre, @Queue.Action String action) {
@@ -38,5 +43,14 @@ public class BrowseGenrePresenterImpl implements BrowseGenrePresenter {
         }, throwable -> {
           view.showEnqueueFailure();
         });
+  }
+
+  @Override public void load(int page) {
+    interactor.execute(page * Constants.PAGE_SIZE, Constants.PAGE_SIZE)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(genres -> {
+          view.update(genres);
+        }, Ln::v);
   }
 }

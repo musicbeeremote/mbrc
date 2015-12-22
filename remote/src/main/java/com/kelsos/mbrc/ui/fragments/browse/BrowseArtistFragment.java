@@ -14,6 +14,7 @@ import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistAdapter;
+import com.kelsos.mbrc.adapters.EndlessRecyclerViewScrollListener;
 import com.kelsos.mbrc.annotations.Queue;
 import com.kelsos.mbrc.domain.Artist;
 import com.kelsos.mbrc.presenters.BrowseArtistPresenter;
@@ -31,6 +32,8 @@ public class BrowseArtistFragment extends RoboFragment
   @Bind(R.id.library_recycler) RecyclerView recyclerView;
   @Inject private ArtistAdapter adapter;
   @Inject private BrowseArtistPresenter presenter;
+  private LinearLayoutManager layoutManager;
+  private EndlessRecyclerViewScrollListener scrollListener;
 
   @NonNull public static BrowseArtistFragment newInstance() {
     return new BrowseArtistFragment();
@@ -42,11 +45,27 @@ public class BrowseArtistFragment extends RoboFragment
     final View view = inflater.inflate(R.layout.fragment_library, container, false);
     ButterKnife.bind(this, view);
     presenter.bind(this);
-    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+    layoutManager = new LinearLayoutManager(getContext());
+    recyclerView.setLayoutManager(layoutManager);
     recyclerView.setAdapter(adapter);
+    scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+      @Override public void onLoadMore(int page, int totalItemsCount) {
+        presenter.load(page);
+      }
+    };
     adapter.setMenuItemSelectedListener(this);
     presenter.load();
     return view;
+  }
+
+  @Override public void onResume() {
+    super.onResume();
+    recyclerView.addOnScrollListener(scrollListener);
+  }
+
+  @Override public void onPause() {
+    super.onPause();
+    recyclerView.removeOnScrollListener(scrollListener);
   }
 
   @Override public void onPlaylistSelected(String hash) {
@@ -103,7 +122,11 @@ public class BrowseArtistFragment extends RoboFragment
 
   }
 
-  @Override public void update(List<Artist> artists) {
+  @Override public void load(List<Artist> artists) {
     adapter.updateData(artists);
+  }
+
+  @Override public void clear() {
+    adapter.clear();
   }
 }

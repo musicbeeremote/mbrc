@@ -16,6 +16,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.adapters.EndlessRecyclerViewScrollListener;
 import com.kelsos.mbrc.adapters.GenreAdapter;
 import com.kelsos.mbrc.annotations.Queue;
 import com.kelsos.mbrc.domain.Genre;
@@ -30,9 +31,10 @@ import roboguice.fragment.RoboFragment;
 public class BrowseGenreFragment extends RoboFragment implements PlaylistDialogFragment.OnPlaylistSelectedListener,
     CreateNewPlaylistDialog.OnPlaylistNameSelectedListener, BrowseGenreView, GenreAdapter.MenuItemSelectedListener {
 
-  @Bind(R.id.library_recycler) RecyclerView list;
+  @Bind(R.id.library_recycler) RecyclerView recyclerView;
   @Inject private GenreAdapter adapter;
   @Inject private BrowseGenrePresenter presenter;
+  private EndlessRecyclerViewScrollListener scrollListener;
 
   @NonNull public static BrowseGenreFragment newInstance() {
     return new BrowseGenreFragment();
@@ -52,8 +54,14 @@ public class BrowseGenreFragment extends RoboFragment implements PlaylistDialogF
     final View view = inflater.inflate(R.layout.fragment_library, container, false);
     ButterKnife.bind(this, view);
     presenter.bind(this);
-    list.setLayoutManager(new LinearLayoutManager(getContext()));
-    list.setAdapter(adapter);
+    LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+    recyclerView.setLayoutManager(layoutManager);
+    recyclerView.setAdapter(adapter);
+    scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+      @Override public void onLoadMore(int page, int totalItemsCount) {
+        presenter.load(page);
+      }
+    };
     adapter.setMenuItemSelectedListener(this);
     presenter.load();
     return view;
@@ -77,11 +85,15 @@ public class BrowseGenreFragment extends RoboFragment implements PlaylistDialogF
   }
 
   @Override public void showEnqueueFailure() {
-    Snackbar.make(list, R.string.genre_enqueue_failed, Snackbar.LENGTH_SHORT).show();
+    Snackbar.make(recyclerView, R.string.genre_enqueue_failed, Snackbar.LENGTH_SHORT).show();
   }
 
   @Override public void showEnqueueSuccess() {
-    Snackbar.make(list, R.string.genre_queued, Snackbar.LENGTH_SHORT).show();
+    Snackbar.make(recyclerView, R.string.genre_queued, Snackbar.LENGTH_SHORT).show();
+  }
+
+  @Override public void clear() {
+    adapter.clear();
   }
 
   @Override public void onMenuItemSelected(MenuItem item, Genre genre) {
@@ -110,5 +122,15 @@ public class BrowseGenreFragment extends RoboFragment implements PlaylistDialogF
 
   @Override public void onItemClicked(Genre genre) {
 
+  }
+
+  @Override public void onResume() {
+    super.onResume();
+    recyclerView.addOnScrollListener(scrollListener);
+  }
+
+  @Override public void onPause() {
+    super.onPause();
+    recyclerView.addOnScrollListener(scrollListener);
   }
 }

@@ -11,8 +11,9 @@ import rx.schedulers.Schedulers;
 public class LibraryArtistInteractor {
   @Inject private LibraryRepository repository;
 
-  public Observable<List<Artist>> execute() {
-    return repository.getArtists().flatMap(artists -> Observable.just(ArtistMapper.mapData(artists)))
+  public Observable<List<Artist>> execute(int offset, int limit) {
+    return repository.getArtists(offset, limit)
+        .flatMap(artists -> Observable.just(ArtistMapper.mapData(artists)))
         .subscribeOn(Schedulers.io());
   }
 }

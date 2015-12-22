@@ -9,4 +9,6 @@ public interface BrowseGenreView {
   void showEnqueueFailure();
 
   void showEnqueueSuccess();
+
+  void clear();
 }

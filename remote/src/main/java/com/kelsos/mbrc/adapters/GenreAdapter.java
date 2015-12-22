@@ -31,7 +31,6 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.ViewHolder> 
   }
 
   public void updateData(List<Genre> data) {
-    this.data.clear();
     this.data.addAll(data);
     notifyDataSetChanged();
   }
@@ -77,6 +76,11 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.ViewHolder> 
    */
   @Override public int getItemCount() {
     return data.size();
+  }
+
+  public void clear() {
+    data.clear();
+    notifyDataSetChanged();
   }
 
   public interface MenuItemSelectedListener {

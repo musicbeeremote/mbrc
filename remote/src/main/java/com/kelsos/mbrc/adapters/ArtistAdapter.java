@@ -35,7 +35,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
   }
 
   public void updateData(List<Artist> data) {
-    this.data = data;
+    this.data.addAll(data);
     notifyDataSetChanged();
   }
 
@@ -75,6 +75,11 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
    */
   @Override public int getItemCount() {
     return data == null ? 0 : data.size();
+  }
+
+  public void clear() {
+    data.clear();
+    notifyDataSetChanged();
   }
 
   public interface MenuItemSelectedListener {

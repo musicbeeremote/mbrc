@@ -11,8 +11,10 @@ import roboguice.util.Ln;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+import static com.kelsos.mbrc.constants.Constants.PAGE_SIZE;
+
 public class BrowseAlbumPresenterImpl implements BrowseAlbumPresenter {
-  private static final int PAGE_SIZE = 100;
+
   @Inject private QueueInteractor queueInteractor;
   @Inject private LibraryAlbumInteractor albumInteractor;
   private BrowseAlbumView view;

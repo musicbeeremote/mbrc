@@ -8,5 +8,7 @@ public interface BrowseArtistView {
 
   void showEnqueueFailure();
 
-  void update(List<Artist> artists);
+  void load(List<Artist> artists);
+
+  void clear();
 }

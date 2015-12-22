@@ -13,11 +13,11 @@ import rx.Observable;
 public interface LibraryRepository {
   Observable<List<AlbumDao>> getAlbums(int offset, int limit);
 
-  Observable<List<GenreDao>> getGenres();
+  Observable<List<GenreDao>> getGenres(int offset, int limit);
 
-  Observable<List<TrackDao>> getTracks();
+  Observable<List<ArtistDao>> getArtists(int offset, int limit);
 
-  Observable<List<ArtistDao>> getArtists();
+  Observable<List<TrackDao>> getTracks(int offset, int limit);
 
   Observable<List<CoverDao>> getCovers();
 
@@ -40,6 +40,4 @@ public interface LibraryRepository {
   CoverDao getCoverById(int coverId);
 
   void saveCovers(List<CoverDao> map);
-
-  Observable<List<TrackDao>> getTracks(int offset, int limit);
 }

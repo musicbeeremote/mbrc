@@ -3,7 +3,9 @@ package com.kelsos.mbrc.repository;
 import com.annimon.stream.Stream;
 import com.kelsos.mbrc.RemoteDatabase;
 import com.kelsos.mbrc.dao.AlbumDao;
+import com.kelsos.mbrc.dao.AlbumDao$Table;
 import com.kelsos.mbrc.dao.ArtistDao;
+import com.kelsos.mbrc.dao.ArtistDao$Table;
 import com.kelsos.mbrc.dao.CoverDao;
 import com.kelsos.mbrc.dao.GenreDao;
 import com.kelsos.mbrc.dao.TrackDao;
@@ -21,19 +23,25 @@ public class LibraryRepositoryImpl implements LibraryRepository {
         .where()
         .offset(offset)
         .limit(limit)
+        .orderBy(true, ArtistDao$Table.NAME, AlbumDao$Table.NAME)
         .queryList()));
   }
 
-  @Override public Observable<List<GenreDao>> getGenres() {
-    return Observable.defer(() -> Observable.just(new Select().from(GenreDao.class).queryList()));
+  @Override public Observable<List<GenreDao>> getGenres(int offset, int limit) {
+    return Observable.defer(() -> Observable.just(new Select().from(GenreDao.class).where()
+        .offset(offset)
+        .orderBy(ArtistDao$Table.NAME)
+        .limit(limit)
+        .queryList()));
   }
 
-  @Override public Observable<List<TrackDao>> getTracks() {
-    return Observable.defer(() -> Observable.just(new Select().from(TrackDao.class).queryList()));
-  }
-
-  @Override public Observable<List<ArtistDao>> getArtists() {
-    return Observable.defer(() -> Observable.just(new Select().from(ArtistDao.class).queryList()));
+  @Override public Observable<List<ArtistDao>> getArtists(int offset, int limit) {
+    return Observable.defer(() -> Observable.just(new Select().from(ArtistDao.class)
+        .where()
+        .offset(offset)
+        .orderBy(ArtistDao$Table.NAME)
+        .limit(limit)
+        .queryList()));
   }
 
   @Override public Observable<List<CoverDao>> getCovers() {

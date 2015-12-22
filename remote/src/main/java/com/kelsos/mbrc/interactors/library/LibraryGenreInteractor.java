@@ -11,8 +11,9 @@ import rx.schedulers.Schedulers;
 public class LibraryGenreInteractor {
   @Inject private LibraryRepository repository;
 
-  public Observable<List<Genre>> execute() {
-    return repository.getGenres().flatMap(genres -> Observable.just(GenreMapper.mapToModel(genres)))
+  public Observable<List<Genre>> execute(int offset, int limit) {
+    return repository.getGenres(offset, limit)
+        .flatMap(genres -> Observable.just(GenreMapper.mapToModel(genres)))
         .subscribeOn(Schedulers.io());
   }
 }

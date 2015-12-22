@@ -15,7 +15,7 @@ public class UpgradeDialogFragment extends RoboDialogFragment {
 
   @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
     final WebView webView = new WebView(getActivity());
-    webView.loadUrl("file:///android_asset/update.html");
+    webView.loadUrl("file:///android_asset/load.html");
     MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
     builder.customView(webView, false);
     builder.title(R.string.dialog_upgrade_title);

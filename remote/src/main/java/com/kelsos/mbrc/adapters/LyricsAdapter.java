@@ -58,7 +58,7 @@ public class LyricsAdapter extends RecyclerView.Adapter<LyricsAdapter.ViewHolder
 
   /**
    * Called by RecyclerView to display the data at the specified position. This method
-   * should update the contents of the {@link ViewHolder#itemView} to reflect the item at
+   * should load the contents of the {@link ViewHolder#itemView} to reflect the item at
    * the given position.
    * <p/>
    * Note that unlike {@link android.widget.ListView}, RecyclerView will not call this
