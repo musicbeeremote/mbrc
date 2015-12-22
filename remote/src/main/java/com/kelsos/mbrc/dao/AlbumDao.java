@@ -10,7 +10,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 
 @Table(databaseName = RemoteDatabase.NAME, tableName = "albums") public class AlbumDao extends BaseModel {
   @Column @PrimaryKey(autoincrement = true) long id;
-  @Column private String name;
+  @Column(name = "album_name") private String name;
   @Column @ForeignKey(
       references = {
           @ForeignKeyReference(columnName = "artist_id",

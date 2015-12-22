@@ -36,10 +36,11 @@ import roboguice.util.Ln;
   }
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
-    discovery.startDiscovery();
+    discovery.startDiscovery().subscribe(connectionSettings -> {
+      syncManager.sync();
+    }, Ln::v);
     FlowManager.init(getApplicationContext());
     socket.startWebSocket();
-    syncManager.sync();
     return super.onStartCommand(intent, flags, startId);
   }
 

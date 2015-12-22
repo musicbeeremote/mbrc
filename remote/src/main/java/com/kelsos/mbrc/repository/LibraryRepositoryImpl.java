@@ -9,26 +9,43 @@ import com.kelsos.mbrc.dao.ArtistDao$Table;
 import com.kelsos.mbrc.dao.CoverDao;
 import com.kelsos.mbrc.dao.GenreDao;
 import com.kelsos.mbrc.dao.TrackDao;
+import com.kelsos.mbrc.dao.TrackDao$Table;
 import com.kelsos.mbrc.dto.library.AlbumDto;
 import com.kelsos.mbrc.dto.library.TrackDto;
 import com.raizlabs.android.dbflow.runtime.TransactionManager;
+import com.raizlabs.android.dbflow.sql.builder.Condition;
+import com.raizlabs.android.dbflow.sql.language.Join;
 import com.raizlabs.android.dbflow.sql.language.Select;
+import com.raizlabs.android.dbflow.sql.language.Where;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import java.util.List;
 import rx.Observable;
 
 public class LibraryRepositoryImpl implements LibraryRepository {
   @Override public Observable<List<AlbumDao>> getAlbums(int offset, int limit) {
-    return Observable.defer(() -> Observable.just(new Select().from(AlbumDao.class)
-        .where()
-        .offset(offset)
-        .limit(limit)
-        .orderBy(true, ArtistDao$Table.NAME, AlbumDao$Table.NAME)
-        .queryList()));
+    final String artistName = ArtistDao$Table.TABLE_NAME + "." + ArtistDao$Table.NAME;
+    final String albumName = AlbumDao$Table.TABLE_NAME + "." + AlbumDao$Table.ALBUM_NAME;
+    return Observable.defer(() -> {
+
+      final Where<AlbumDao> albumDaoWhere = new Select(AlbumDao$Table.TABLE_NAME + "." + AlbumDao$Table.ID,
+          AlbumDao$Table.ALBUM_NAME,
+          AlbumDao$Table.ARTIST_ARTIST_ID,
+          AlbumDao$Table.COVER_COVER_ID).from(AlbumDao.class)
+          .join(ArtistDao.class, Join.JoinType.INNER)
+          .on(Condition.column(ArtistDao$Table.TABLE_NAME + "." + ArtistDao$Table.ID)
+              .is(AlbumDao$Table.ARTIST_ARTIST_ID))
+          .where()
+          .offset(offset)
+          .limit(limit)
+          .orderBy(true, artistName, albumName);
+
+      return Observable.just(albumDaoWhere.queryList());
+    });
   }
 
   @Override public Observable<List<GenreDao>> getGenres(int offset, int limit) {
-    return Observable.defer(() -> Observable.just(new Select().from(GenreDao.class).where()
+    return Observable.defer(() -> Observable.just(new Select().from(GenreDao.class)
+        .where()
         .offset(offset)
         .orderBy(ArtistDao$Table.NAME)
         .limit(limit)
@@ -132,10 +149,23 @@ public class LibraryRepositoryImpl implements LibraryRepository {
   }
 
   @Override public Observable<List<TrackDao>> getTracks(int offset, int limit) {
-    return Observable.defer(() -> Observable.just(new Select().from(TrackDao.class)
-        .where()
-        .offset(offset)
-        .limit(limit)
-        .queryList()));
+    final String albumName = AlbumDao$Table.TABLE_NAME + "." + AlbumDao$Table.ALBUM_NAME;
+    final String albumArtist = ArtistDao$Table.TABLE_NAME + "." + ArtistDao$Table.NAME;
+    return Observable.defer(() -> {
+      final Where<TrackDao> where = new Select(TrackDao$Table.TABLE_NAME + "." + TrackDao$Table.ID,
+          TrackDao$Table.TITLE,
+          TrackDao$Table.ALBUM_ALBUM_ID,
+          TrackDao$Table.TABLE_NAME + "." + TrackDao$Table.ARTIST_ARTIST_ID).from(TrackDao.class)
+          .join(AlbumDao.class, Join.JoinType.INNER)
+          .on(Condition.column(AlbumDao$Table.TABLE_NAME + "." + AlbumDao$Table.ID).is(TrackDao$Table.ALBUM_ALBUM_ID))
+          .join(ArtistDao.class, Join.JoinType.INNER)
+          .on(Condition.column(ArtistDao$Table.TABLE_NAME + "." + ArtistDao$Table.ID)
+              .is(TrackDao$Table.ALBUMARTIST_ALBUM_ARTIST_ID))
+          .where()
+          .offset(offset)
+          .limit(limit)
+          .orderBy(true, albumArtist, albumName, TrackDao$Table.POSITION);
+      return Observable.just(where.queryList());
+    });
   }
 }

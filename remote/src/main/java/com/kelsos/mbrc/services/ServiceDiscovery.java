@@ -19,6 +19,7 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.Hashtable;
 import java.util.Locale;
+import roboguice.util.Ln;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
@@ -58,21 +59,22 @@ public class ServiceDiscovery {
     if (!UserInputEventType.StartDiscovery.equals(messageEvent.getType())) {
       return;
     }
-    startDiscovery();
+    startDiscovery().subscribe(connectionSettings -> {
+
+    }, Ln::v);
   }
 
-  public void startDiscovery() {
+  public Observable<ConnectionSettings> startDiscovery() {
 
     if (!isWifiConnected()) {
       bus.post(new DiscoveryStopped(DiscoveryStop.NO_WIFI));
-      return;
+      return Observable.empty();
     }
 
-    discover().subscribeOn(Schedulers.io()).subscribe(connectionSettings -> bus.post(connectionSettings), throwable -> {
-      bus.post(new DiscoveryStopped(DiscoveryStop.COMPLETE));
-    }, () -> {
+    return discover().subscribeOn(Schedulers.io()).doOnTerminate(() -> {
       stopDiscovery();
-    });
+      bus.post(new DiscoveryStopped(DiscoveryStop.COMPLETE));
+    }).doOnNext(connectionSettings -> bus.post(connectionSettings));
   }
 
   public void stopDiscovery() {
