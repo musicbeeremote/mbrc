@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.ui.fragments.profile.AlbumTracksFragment;
 import com.kelsos.mbrc.ui.fragments.profile.ArtistAlbumsFragment;
 import com.kelsos.mbrc.ui.fragments.profile.GenreArtistsFragment;
 import roboguice.fragment.RoboFragment;
@@ -41,9 +40,6 @@ public class ProfileActivity extends RoboAppCompatActivity {
           break;
         case ARTIST:
           fragment = ArtistAlbumsFragment.newInstance(id);
-          break;
-        case ALBUM:
-          fragment = AlbumTracksFragment.newInstance(id);
           break;
         default:
           fragment = new PlaceholderFragment();

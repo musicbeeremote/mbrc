@@ -22,6 +22,7 @@ import com.kelsos.mbrc.presenters.BrowseAlbumPresenter;
 import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+import com.kelsos.mbrc.ui.fragments.profile.AlbumTracksActivity;
 import com.kelsos.mbrc.ui.views.BrowseAlbumView;
 import java.util.List;
 import roboguice.fragment.RoboFragment;
@@ -109,7 +110,11 @@ public class BrowseAlbumFragment extends RoboFragment implements PlaylistDialogF
   }
 
   @Override public void onItemClicked(Album album) {
-
+    Intent intent = new Intent(getContext(), AlbumTracksActivity.class);
+    Bundle bundle = new Bundle();
+    bundle.putLong(AlbumTracksActivity.ALBUM_ID, album.getId());
+    intent.putExtras(bundle);
+    startActivity(intent);
   }
 
   @Override public void updateData(List<Album> data) {

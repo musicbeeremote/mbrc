@@ -168,4 +168,19 @@ public class LibraryRepositoryImpl implements LibraryRepository {
       return Observable.just(where.queryList());
     });
   }
+
+  @Override public Observable<List<TrackDao>> getTracksByAlbumId(long albumId) {
+    return Observable.defer(() -> {
+      final Where<TrackDao> where = new Select(TrackDao$Table.TABLE_NAME + "." + TrackDao$Table.ID,
+          TrackDao$Table.TITLE,
+          TrackDao$Table.ALBUM_ALBUM_ID,
+          TrackDao$Table.TABLE_NAME + "." + TrackDao$Table.ARTIST_ARTIST_ID).from(TrackDao.class)
+          .join(ArtistDao.class, Join.JoinType.INNER)
+          .on(Condition.column(ArtistDao$Table.TABLE_NAME + "." + ArtistDao$Table.ID)
+              .is(TrackDao$Table.ALBUMARTIST_ALBUM_ARTIST_ID))
+          .where(Condition.column(TrackDao$Table.ALBUM_ALBUM_ID).is(albumId))
+          .orderBy(true, TrackDao$Table.POSITION);
+      return Observable.just(where.queryList());
+    });
+  }
 }

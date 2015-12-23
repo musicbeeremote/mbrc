@@ -1,27 +1,86 @@
-<LinearLayout
-    android:id="@+id/album_profile"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.kelsos.mbrc.ui.fragments.profile.AlbumTracksFragment">
+    android:fitsSystemWindows="true">
 
-  <ListView
-      android:id="@android:id/list"
+  <android.support.design.widget.AppBarLayout
+      android:id="@+id/app_bar_layout"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:layout_marginBottom="@dimen/small_margin"
-      android:layout_marginTop="@dimen/small_margin"
-      android:divider="@null"
-      android:drawSelectorOnTop="true"
-      android:fastScrollEnabled="false"
-      tools:listitem="@layout/listitem_single" />
+      android:layout_height="wrap_content"
+      android:fitsSystemWindows="true"
+      android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-  <View
-      android:id="@+id/listview_background"
+    <android.support.design.widget.CollapsingToolbarLayout
+        android:id="@+id/collapsing_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        app:contentScrim="?attr/colorPrimary"
+        app:expandedTitleMarginEnd="64dp"
+        app:expandedTitleMarginStart="48dp"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+      <ImageView
+          android:id="@+id/imageView_list"
+          android:layout_width="match_parent"
+          android:layout_height="275dp"
+          android:fitsSystemWindows="true"
+          android:scaleType="fitXY"
+          app:layout_collapseMode="parallax" />
+
+      <android.support.v7.widget.Toolbar
+          android:id="@+id/toolbar"
+          android:layout_width="match_parent"
+          android:layout_height="?attr/actionBarSize"
+          app:layout_collapseMode="pin"
+          app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+
+    </android.support.design.widget.CollapsingToolbarLayout>
+  </android.support.design.widget.AppBarLayout>
+
+  <RelativeLayout
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:layout_gravity="top" />
+      android:layout_height="wrap_content"
+      app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-</LinearLayout>
+    <TextView
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:id="@+id/album_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        tools:text="Rock it for me"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@+id/album_title"
+        android:id="@+id/list_tracks"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/small_margin"
+        android:layout_marginTop="@dimen/small_margin"
+
+        tools:listitem="@layout/listitem_single" />
+
+  </RelativeLayout>
+
+
+  <android.support.design.widget.FloatingActionButton
+      android:id="@+id/play_album"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="@dimen/fab_margin"
+      android:clickable="true"
+      android:src="@drawable/ic_action_play"
+      app:layout_anchor="@+id/app_bar_layout"
+      app:layout_anchorGravity="bottom|right|end" />
+
+
+</android.support.design.widget.CoordinatorLayout>
+
