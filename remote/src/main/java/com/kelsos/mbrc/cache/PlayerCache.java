@@ -1,22 +1,23 @@
 package com.kelsos.mbrc.cache;
 
+import android.support.annotation.IntRange;
+
+import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.annotations.Repeat;
-import com.kelsos.mbrc.dto.player.PlayState;
-import com.kelsos.mbrc.dto.player.Shuffle;
-import com.kelsos.mbrc.dto.player.Volume;
+import com.kelsos.mbrc.annotations.Shuffle.State;
 
 public interface PlayerCache {
-  Shuffle getShuffle();
+  @State String getShuffle();
 
-  void setShuffle(Shuffle shuffle);
+  void setShuffle(@State String val);
 
-  Volume getVolume();
+  @IntRange(from = 0, to = 100) int getVolume();
 
-  void setVolume(Volume volume);
+  void setVolume(@IntRange(from = 0, to = 100) int val);
 
-  PlayState getPlayState();
+  @PlayerState.State String getPlayState();
 
-  void setPlayState(PlayState playState);
+  void setPlayState(@PlayerState.State String val);
 
   boolean isMute();
 

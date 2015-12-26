@@ -1,18 +1,18 @@
 package com.kelsos.mbrc.events.ui;
 
 import com.kelsos.mbrc.domain.ConnectionSettings;
-import com.kelsos.mbrc.enums.SettingsAction;
+import com.kelsos.mbrc.annotations.SettingsAction;
 
 public class ChangeSettings {
-  private SettingsAction action;
+  private int action;
   private ConnectionSettings settings;
 
-  public ChangeSettings(SettingsAction action, ConnectionSettings settings) {
+  public ChangeSettings(@SettingsAction.Action int action, ConnectionSettings settings) {
     this.action = action;
     this.settings = settings;
   }
 
-  public SettingsAction getAction() {
+  @SettingsAction.Action public int getAction() {
     return action;
   }
 

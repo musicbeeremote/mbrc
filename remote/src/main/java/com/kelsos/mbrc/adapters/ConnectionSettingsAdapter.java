@@ -12,7 +12,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.domain.ConnectionSettings;
-import com.kelsos.mbrc.enums.SettingsAction;
+import com.kelsos.mbrc.annotations.SettingsAction;
 import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;

@@ -16,7 +16,7 @@ import android.widget.RemoteViews;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.enums.PlayState;
+import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
 import com.kelsos.mbrc.services.RemoteSessionManager;
 import com.kelsos.mbrc.utilities.MainThreadBus;
@@ -69,7 +69,7 @@ import com.squareup.otto.Subscribe;
    * @param state The current play state is used to display the proper play or pause icon.
    */
   @SuppressLint("NewApi") private void notificationBuilder(final String title, final String artist,
-      final String album, final Bitmap cover, final PlayState state) {
+      final String album, final Bitmap cover, final String state) {
 
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
       return;
@@ -120,8 +120,8 @@ import com.squareup.otto.Subscribe;
    * @param event A notification event that the notification service received
    */
   @SuppressLint("NewApi") private void buildLollipopNotification(NotificationDataAvailable event) {
-    int playStateIcon = event.getState() == PlayState.PLAYING ? R.drawable.ic_action_pause
-        : R.drawable.ic_action_play;
+    int playStateIcon = PlayerState.PLAYING.equals(event.getState()) ? R.drawable.ic_action_pause
+                                                                              : R.drawable.ic_action_play;
 
     final Notification.MediaStyle mediaStyle = new Notification.MediaStyle();
 
@@ -188,18 +188,17 @@ import com.squareup.otto.Subscribe;
     }
   }
 
-  private void updatePlayState(final PlayState state) {
+  private void updatePlayState(final String state) {
     if (mNormalView == null || mNotification == null) {
       return;
     }
 
-    mNormalView.setImageViewResource(R.id.notification_play,
-        state == PlayState.PLAYING ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
+    mNormalView.setImageViewResource(R.id.notification_play, PlayerState.PLAYING.equals(state) ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
 
     if (isJellyBean() && mExpandedView != null) {
 
       mExpandedView.setImageViewResource(R.id.expanded_notification_playpause,
-          state == PlayState.PLAYING ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
+          PlayerState.PLAYING.equals(state) ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
     }
   }
 

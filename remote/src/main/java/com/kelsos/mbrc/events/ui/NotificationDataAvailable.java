@@ -1,17 +1,17 @@
 package com.kelsos.mbrc.events.ui;
 
 import android.graphics.Bitmap;
-import com.kelsos.mbrc.enums.PlayState;
+import com.kelsos.mbrc.annotations.PlayerState;
 
 public class NotificationDataAvailable {
   private String artist;
   private String title;
   private String album;
   private Bitmap cover;
-  private PlayState state;
+  @PlayerState.State private String state;
 
   public NotificationDataAvailable(String artist, String title, String album, Bitmap cover,
-      PlayState state) {
+      @PlayerState.State String state) {
     this.artist = artist;
     this.title = title;
     this.album = album;
@@ -31,7 +31,7 @@ public class NotificationDataAvailable {
     return cover;
   }
 
-  public PlayState getState() {
+  @PlayerState.State public String getState() {
     return state;
   }
 
