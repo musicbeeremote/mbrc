@@ -191,5 +191,6 @@
   <string name="menu_playlist">Playlist</string>
   <string name="genre_queued">Genre was added in now playing queue</string>
   <string name="genre_enqueue_failed">Failed to enqueue the selected genre</string>
+  <string name="title_activity_debug">DebugActivity</string>
 
 </resources>

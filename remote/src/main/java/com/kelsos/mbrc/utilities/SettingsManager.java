@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.text.TextUtils;
-
 import com.annimon.stream.Stream;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +13,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.annotations.SettingsAction;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.domain.ConnectionSettings;
 import com.kelsos.mbrc.events.MessageEvent;
@@ -24,7 +24,6 @@ import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -32,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
 import roboguice.util.Ln;
 
 @Singleton
@@ -201,7 +199,7 @@ public class SettingsManager {
   @Subscribe
   public void handleSettingsChange(ChangeSettings event) {
     switch (event.getAction()) {
-      case DELETE:
+      case SettingsAction.DELETE:
         mSettings.remove(event.getSettings());
         if (event.getSettings().getIndex() == defaultIndex && mSettings.size() > 0) {
           updateDefault(0, mSettings.get(0));
@@ -211,7 +209,7 @@ public class SettingsManager {
         }
         storeSettings();
         break;
-      case DEFAULT:
+      case SettingsAction.DEFAULT:
         ConnectionSettings settings = mSettings.get(event.getSettings().getIndex());
         updateDefault(event.getSettings().getIndex(), settings);
         bus.post(new ConnectionSettingsChanged(mSettings, event.getSettings().getIndex()));

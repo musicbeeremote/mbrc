@@ -2,17 +2,18 @@ package com.kelsos.mbrc.utilities;
 
 import android.graphics.Bitmap;
 
-import com.squareup.okhttp.ResponseBody;
+import okhttp3.ResponseBody;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-import retrofit.Converter;
+import retrofit2.Converter;
+import retrofit2.Retrofit;
 
 /**
- * A {@linkplain retrofit.Converter.Factory} which decodes bitmaps.
+ * A {@linkplain retrofit2.Converter.Factory} which decodes bitmaps.
  * <p>
- *  This converter only applies to {@link Bitmap} items.
+ * This converter only applies to {@link Bitmap} items.
  */
 public class BitmapConverterFactory extends Converter.Factory {
 
@@ -25,8 +26,7 @@ public class BitmapConverterFactory extends Converter.Factory {
   }
 
   @Override
-  public Converter<ResponseBody, ?> fromResponseBody(Type type, Annotation[] annotations) {
-
+  public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
     if (!(type instanceof Class<?>)) {
       return null;
     }

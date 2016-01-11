@@ -5,13 +5,14 @@ import com.annimon.stream.Stream;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.dao.CoverDao;
 import com.kelsos.mbrc.domain.ConnectionSettings;
-import com.squareup.okhttp.HttpUrl;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okio.BufferedSink;
 import okio.Okio;
 import roboguice.util.Ln;
@@ -52,7 +53,6 @@ public class CoverDownloader {
       }
     });
   }
-
 
   private void download(CoverDao cover, File file) throws IOException {
     final HttpUrl httpUrl = baseUrl.newBuilder()

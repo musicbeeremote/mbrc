@@ -5,10 +5,10 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.kelsos.mbrc.domain.ConnectionSettings;
 import com.kelsos.mbrc.utilities.SettingsManager;
-import com.squareup.okhttp.HttpUrl;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import java.util.concurrent.TimeUnit;
 import roboguice.util.Ln;
 
@@ -17,38 +17,33 @@ public class OkHttpClientProvider implements Provider<OkHttpClient> {
   @Inject private SettingsManager manager;
 
   @Override public OkHttpClient get() {
-    final OkHttpClient httpClient = new OkHttpClient();
-    httpClient.setConnectTimeout(40, TimeUnit.SECONDS);
-    httpClient.setReadTimeout(40, TimeUnit.SECONDS);
-    httpClient.setWriteTimeout(40, TimeUnit.SECONDS);
 
-    httpClient.interceptors().add(chain -> {
+    Ln.d("[Provider] returning OkHttpClient");
+    return new OkHttpClient.Builder().addInterceptor(chain -> {
       final long start = System.currentTimeMillis();
       final ConnectionSettings settings = manager.getDefault();
       Request request = chain.request();
 
-      final Request.Builder builder = request.newBuilder()
-          .addHeader("Accept", "application/json");
+      final Request.Builder builder = request.newBuilder().header("Accept", "application/json");
 
       if (!TextUtils.isEmpty(settings.getAddress())) {
-        final HttpUrl url = request.httpUrl()
-            .newBuilder()
-            .host(settings.getAddress())
-            .port(settings.getHttp())
-            .build();
-
+        final HttpUrl url = request.url().newBuilder().host(settings.getAddress()).port(settings.getHttp()).build();
         builder.url(url);
       }
 
       request = builder.build();
-      Ln.v("[Interceptor] Sending Request to [%s]", request.httpUrl());
+      Ln.v("[Interceptor] Sending Request to [%s]", request.url());
       final Response response = chain.proceed(request);
       final long end = System.currentTimeMillis();
-      Ln.v("[Interceptor] Request Complete [%s] :: duration [%d] ms :: code %d ", request.httpUrl(), (end - start), response.code());
+      Ln.v("[Interceptor] Request Complete [%s] :: duration [%d] ms :: code %d ",
+          request.url(),
+          (end - start),
+          response.code());
 
       return response;
-    });
-
-    return httpClient;
+    }).readTimeout(40, TimeUnit.SECONDS)
+        .connectTimeout(40, TimeUnit.SECONDS)
+        .writeTimeout(40, TimeUnit.SECONDS)
+        .build();
   }
 }

@@ -3,11 +3,11 @@ package com.kelsos.mbrc.utilities;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.squareup.okhttp.ResponseBody;
+import okhttp3.ResponseBody;
 
 import java.io.IOException;
 
-import retrofit.Converter;
+import retrofit2.Converter;
 
 public class BitmapResponseBodyConverter implements Converter<ResponseBody, Bitmap> {
   @Override

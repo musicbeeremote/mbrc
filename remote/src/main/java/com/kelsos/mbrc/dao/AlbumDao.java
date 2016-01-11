@@ -8,21 +8,23 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-@Table(databaseName = RemoteDatabase.NAME, tableName = "albums") public class AlbumDao extends BaseModel {
-  @Column @PrimaryKey(autoincrement = true) long id;
+@Table(database = RemoteDatabase.class, name = "albums") public class AlbumDao extends BaseModel {
+  @PrimaryKey(autoincrement = true) private long id;
   @Column(name = "album_name") private String name;
   @Column @ForeignKey(
       references = {
           @ForeignKeyReference(columnName = "artist_id",
-              columnType = Long.class,
-              foreignColumnName = "id")
+              columnType = long.class,
+              referencedFieldIsPrivate = true,
+              foreignKeyColumnName = "id")
       }, saveForeignKeyModel = false) private ArtistDao artist;
 
   @Column @ForeignKey(
       references = {
           @ForeignKeyReference(columnName = "cover_id",
-              columnType = Long.class,
-              foreignColumnName = "id")
+              columnType = long.class,
+              referencedFieldIsPrivate = true,
+              foreignKeyColumnName = "id")
       }, saveForeignKeyModel = false) private CoverDao cover;
 
   @Column(name = "date_added") private long dateAdded;

@@ -214,6 +214,9 @@ public class MainFragmentActivity extends RoboAppCompatActivity
       onFeedbackClicked();
     } else if (id == R.id.drawer_menu_help) {
       onHelpClicked();
+    } else if (id == R.id.drawer_menu_debug) {
+      Intent start = new Intent(this, DebugActivity.class);
+      startActivity(start);
     }
 
     drawer.closeDrawer(GravityCompat.START);

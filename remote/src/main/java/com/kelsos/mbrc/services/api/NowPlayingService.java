@@ -6,12 +6,13 @@ import com.kelsos.mbrc.dto.PaginatedResponse;
 import com.kelsos.mbrc.dto.requests.MoveRequest;
 import com.kelsos.mbrc.dto.requests.NowPlayingQueueRequest;
 import com.kelsos.mbrc.dto.requests.PlayPathRequest;
-import retrofit.http.Body;
-import retrofit.http.DELETE;
-import retrofit.http.GET;
-import retrofit.http.PUT;
-import retrofit.http.Path;
-import retrofit.http.Query;
+
+import retrofit2.http.Body;
+import retrofit2.http.DELETE;
+import retrofit2.http.GET;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 import rx.Observable;
 import rx.Single;
 

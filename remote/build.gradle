@@ -100,7 +100,9 @@ android {
     }
   }
   dexOptions {
+    jumboMode true
     incremental true
+    javaMaxHeapSize "4g"
   }
 }
 
@@ -117,10 +119,10 @@ task wrapper(type: Wrapper) {
 
 ext {
   supportLibraryVersion = '23.1.1'
-  jacksonVersion = '2.6.3'
-  okhttpVersion = '2.6.0'
-  dbflowVersion = '2.2.1'
-  retrofitVersion = '2.0.0-beta2'
+  jacksonVersion = '2.6.4'
+  okhttpVersion = '3.0.0-RC1'
+  dbflowVersion = 'develop-SNAPSHOT'
+  retrofitVersion = '2.0.0-beta3'
 }
 
 dependencies {
@@ -135,28 +137,29 @@ dependencies {
   compile "org.roboguice:roboguice:3.0.1"
   compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
   compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-  compile "com.squareup.retrofit:retrofit:${retrofitVersion}"
-  compile "com.squareup.retrofit:adapter-rxjava:${retrofitVersion}"
-  compile "com.squareup.retrofit:converter-jackson:${retrofitVersion}"
+  compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+  compile "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
+  compile "com.squareup.retrofit2:converter-jackson:${retrofitVersion}"
   compile "com.annimon:stream:1.0.5"
   compile "com.squareup.picasso:picasso:2.5.2"
-  compile "com.squareup.okhttp:okhttp-urlconnection:${okhttpVersion}"
-  compile "com.squareup.okhttp:okhttp:${okhttpVersion}"
-  compile "com.squareup.okhttp:okhttp-ws:${okhttpVersion}"
+  compile "com.squareup.okhttp3:okhttp-urlconnection:${okhttpVersion}"
+  compile "com.squareup.okhttp3:okhttp:${okhttpVersion}"
+  compile "com.squareup.okhttp3:okhttp-ws:${okhttpVersion}"
   compile "com.squareup:otto:1.3.8"
   compile "io.reactivex:rxandroid:1.1.0"
   compile "io.reactivex:rxjava:1.1.0"
   compile "commons-lang:commons-lang:2.6"
   compile "com.jakewharton:butterknife:7.0.1"
-  apt "com.raizlabs.android:DBFlow-Compiler:${dbflowVersion}"
-  compile "com.raizlabs.android:DBFlow-Core:${dbflowVersion}"
-  compile "com.raizlabs.android:DBFlow:${dbflowVersion}"
-  compile("com.afollestad.material-dialogs:core:0.8.5.2@aar") {
+
+  apt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflowVersion}"
+  compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflowVersion}"
+  compile "com.github.Raizlabs.DBFlow:dbflow:${dbflowVersion}"
+
+
+  compile("com.afollestad.material-dialogs:core:0.8.5.3@aar") {
     transitive = true
   }
-  compile("com.afollestad.material-dialogs:commons:0.8.5.2@aar") {
-    transitive = true
-  }
+
   provided "org.roboguice:roboblender:3.0.1"
   testCompile "junit:junit:4.12"
   testCompile "org.mockito:mockito-core:1.10.19"

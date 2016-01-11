@@ -6,8 +6,8 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-@Table(databaseName = RemoteDatabase.NAME,tableName = "covers") public class CoverDao extends BaseModel {
-  @Column @PrimaryKey(autoincrement = true) long id;
+@Table(database = RemoteDatabase.class, name = "covers") public class CoverDao extends BaseModel {
+  @Column @PrimaryKey(autoincrement = true) private long id;
   @Column private String hash;
   @Column(name = "date_added") private long dateAdded;
   @Column(name = "date_updated") private long dateUpdated;

@@ -75,9 +75,9 @@ import com.kelsos.mbrc.services.api.NowPlayingService;
 import com.kelsos.mbrc.services.api.PlayerService;
 import com.kelsos.mbrc.services.api.PlaylistService;
 import com.kelsos.mbrc.services.api.TrackService;
-import com.squareup.okhttp.OkHttpClient;
+import okhttp3.OkHttpClient;
 import com.squareup.otto.Bus;
-import retrofit.Retrofit;
+import retrofit2.Retrofit;
 import roboguice.inject.ContextSingleton;
 
 @SuppressWarnings("UnusedDeclaration") public class RemoteModule extends AbstractModule {

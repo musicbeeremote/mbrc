@@ -3,7 +3,7 @@ package com.kelsos.mbrc.di.providers;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import retrofit.Retrofit;
+import retrofit2.Retrofit;
 
 public class ApiServiceProvider<T> implements Provider<T> {
   @Inject private Retrofit retrofit;

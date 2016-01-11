@@ -8,35 +8,39 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-@Table(databaseName = RemoteDatabase.NAME, tableName = "tracks") public class TrackDao extends BaseModel {
-  @Column @PrimaryKey(autoincrement = true) long id;
+@Table(database = RemoteDatabase.class, name = "tracks") public class TrackDao extends BaseModel {
+  @Column @PrimaryKey(autoincrement = true) private long id;
   @Column private String title;
   @Column private int position;
   @Column @ForeignKey(
       references = {
           @ForeignKeyReference(columnName = "genre_id",
-              columnType = Long.class,
-              foreignColumnName = "id")
+              columnType = long.class,
+              referencedFieldIsPrivate = true,
+              foreignKeyColumnName = "id")
       }, saveForeignKeyModel = false)
   private GenreDao genre;
   @Column @ForeignKey(
       references = {
           @ForeignKeyReference(columnName = "artist_id",
-              columnType = Long.class,
-              foreignColumnName = "id")
+              columnType = long.class,
+              referencedFieldIsPrivate = true,
+              foreignKeyColumnName = "id")
       }, saveForeignKeyModel = false) private ArtistDao artist;
   @Column @ForeignKey(
       references = {
           @ForeignKeyReference(columnName = "album_artist_id",
-              columnType = Long.class,
-              foreignColumnName = "id")
+              columnType = long.class,
+              referencedFieldIsPrivate = true,
+              foreignKeyColumnName = "id")
       }, saveForeignKeyModel = false)
   private ArtistDao albumArtist;
   @Column @ForeignKey(
       references = {
           @ForeignKeyReference(columnName = "album_id",
-              columnType = Long.class,
-              foreignColumnName = "id")
+              columnType = long.class,
+              referencedFieldIsPrivate = true,
+              foreignKeyColumnName = "id")
       }, saveForeignKeyModel = false)
   private AlbumDao album;
   @Column private String year;

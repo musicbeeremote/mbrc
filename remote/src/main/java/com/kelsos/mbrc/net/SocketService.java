@@ -10,18 +10,18 @@ import com.kelsos.mbrc.annotations.Connection;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
 import com.kelsos.mbrc.utilities.MainThreadBus;
 import com.kelsos.mbrc.utilities.SettingsManager;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
-import com.squareup.okhttp.ws.WebSocket;
-import com.squareup.okhttp.ws.WebSocketCall;
-import com.squareup.okhttp.ws.WebSocketListener;
 import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import okhttp3.ws.WebSocket;
+import okhttp3.ws.WebSocketCall;
+import okhttp3.ws.WebSocketListener;
 import okio.Buffer;
 import roboguice.util.Ln;
 import rx.Observable;
@@ -43,8 +43,10 @@ import rx.subjects.PublishSubject;
   public SocketService(SettingsManager settingsManager, ObjectMapper mapper, OkHttpClient client) {
     this.settingsManager = settingsManager;
     this.mapper = mapper;
-    this.client = client.clone();
-    this.client.interceptors().clear();
+    OkHttpClient.Builder newBuilder = client.newBuilder();
+    newBuilder.interceptors().clear();
+    this.client = newBuilder.build();
+
 
     messagePublisher = PublishSubject.create();
     messagePublisher.subscribeOn(Schedulers.io()).subscribe((incoming) -> {

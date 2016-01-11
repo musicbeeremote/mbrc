@@ -6,8 +6,8 @@ import com.kelsos.mbrc.dto.library.ArtistDto;
 import com.kelsos.mbrc.dto.library.CoverDto;
 import com.kelsos.mbrc.dto.library.GenreDto;
 import com.kelsos.mbrc.dto.library.TrackDto;
-import retrofit.http.GET;
-import retrofit.http.Query;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
 import rx.Observable;
 
 public interface LibraryService {

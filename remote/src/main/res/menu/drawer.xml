@@ -25,7 +25,8 @@
         android:title="@string/menu_lyrics" />
   </group>
 
-  <item android:id="@+id/drawer_submenu"
+  <item
+      android:id="@+id/drawer_submenu"
       android:title="">
     <menu>
       <item
@@ -42,6 +43,10 @@
       <item
           android:id="@+id/drawer_menu_connect"
           android:title="@string/drawer_connection_status_off" />
+
+      <item
+          android:id="@+id/drawer_menu_debug"
+          android:title="debug" />
       <item
           android:id="@+id/drawer_menu_exit"
           android:title="@string/menu_exit" />

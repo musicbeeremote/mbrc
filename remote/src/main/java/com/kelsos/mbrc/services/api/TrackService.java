@@ -10,11 +10,11 @@ import com.kelsos.mbrc.dto.track.Position;
 import com.kelsos.mbrc.dto.track.Rating;
 import com.kelsos.mbrc.dto.track.TrackInfo;
 
-import retrofit.http.Body;
-import retrofit.http.GET;
-import retrofit.http.PUT;
-import retrofit.http.Query;
-import retrofit.http.Streaming;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.PUT;
+import retrofit2.http.Query;
+import retrofit2.http.Streaming;
 import rx.Observable;
 
 public interface TrackService {

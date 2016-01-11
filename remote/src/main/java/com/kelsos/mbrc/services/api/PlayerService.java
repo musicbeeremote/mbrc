@@ -14,10 +14,10 @@ import com.kelsos.mbrc.dto.requests.RepeatRequest;
 import com.kelsos.mbrc.dto.requests.ShuffleRequest;
 import com.kelsos.mbrc.dto.requests.VolumeRequest;
 
-import retrofit.http.Body;
-import retrofit.http.GET;
-import retrofit.http.PUT;
-import retrofit.http.Query;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.PUT;
+import retrofit2.http.Query;
 import rx.Observable;
 import rx.Single;
 

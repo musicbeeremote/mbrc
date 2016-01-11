@@ -8,8 +8,8 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-@Table(databaseName = RemoteDatabase.NAME, tableName = "playlist_tracks") public class PlaylistTrack extends BaseModel {
-  @Column @PrimaryKey(autoincrement = true) long id;
+@Table(database = RemoteDatabase.class, name = "playlist_tracks") public class PlaylistTrack extends BaseModel {
+  @Column @PrimaryKey(autoincrement = true) private long id;
   @Column private int position;
   @Column private String path;
   @Column private String artist;
@@ -17,8 +17,9 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
   @Column @ForeignKey(
       references = {
           @ForeignKeyReference(columnName = "playlist_id",
-              columnType = Long.class,
-              foreignColumnName = "id")
+              columnType = long.class,
+              referencedFieldIsPrivate = true,
+              foreignKeyColumnName = "id")
       }, saveForeignKeyModel = false) private PlaylistDao playlist;
 
   public PlaylistDao getPlaylist() {

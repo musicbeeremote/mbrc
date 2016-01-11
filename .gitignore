@@ -17,6 +17,7 @@ src-gen
 local.properties
 signing.properties
 development.properties
+gradle.properties
 
 # Eclipse project files
 .classpath

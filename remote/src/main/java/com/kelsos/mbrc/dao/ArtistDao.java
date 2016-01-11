@@ -6,9 +6,9 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-@Table(databaseName = RemoteDatabase.NAME, tableName = "artists") public class ArtistDao extends BaseModel {
+@Table(database = RemoteDatabase.class, name = "artists") public class ArtistDao extends BaseModel {
 
-  @Column @PrimaryKey(autoincrement = true) long id;
+  @Column @PrimaryKey(autoincrement = true)private long id;
   @Column private String name;
   @Column(name = "date_added") private long dateAdded;
   @Column(name = "date_updated") private long dateUpdated;
