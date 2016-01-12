@@ -27,6 +27,9 @@ public class LibrarySyncManager {
       syncCovers(after);
       syncAlbums(after);
       syncTracks(after);
+
+      subscriber.onCompleted();
+
       repository.getCovers()
           .subscribeOn(Schedulers.immediate())
           .subscribe(covers -> downloader.download(covers), Ln::v);

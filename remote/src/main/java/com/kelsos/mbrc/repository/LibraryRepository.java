@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.repository;
 
 import com.kelsos.mbrc.dao.AlbumDao;
+import com.kelsos.mbrc.dao.AlbumModelView;
 import com.kelsos.mbrc.dao.ArtistDao;
 import com.kelsos.mbrc.dao.CoverDao;
 import com.kelsos.mbrc.dao.GenreDao;
@@ -11,7 +12,7 @@ import java.util.List;
 import rx.Observable;
 
 public interface LibraryRepository {
-  Observable<List<AlbumDao>> getAlbums(int offset, int limit);
+  Observable<List<AlbumModelView>> getAlbums(int offset, int limit);
 
   Observable<List<GenreDao>> getGenres(int offset, int limit);
 

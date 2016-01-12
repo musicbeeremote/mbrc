@@ -7,26 +7,24 @@ import com.raizlabs.android.dbflow.annotation.ModelViewQuery;
 import com.raizlabs.android.dbflow.sql.Query;
 import com.raizlabs.android.dbflow.sql.language.Join;
 import com.raizlabs.android.dbflow.sql.language.NameAlias;
+import com.raizlabs.android.dbflow.sql.language.OrderBy;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModelView;
 
-@ModelView(database = RemoteDatabase.class, name = "album_view") public class AlbumModelView extends BaseModelView<AlbumDao> {
+@ModelView(database = RemoteDatabase.class, name = "album_view") public class AlbumModelView
+    extends BaseModelView<AlbumDao> {
 
-  public static final String ALBUM = "album";
-  public static final String ARTIST = "artist";
-
-  public static final String COVER = "cover";
-  @ModelViewQuery public static final Query QUERY = SQLite.select(AlbumDao_Table.id.withTable(new NameAlias(ALBUM)),
-      AlbumDao_Table.album_name.withTable(new NameAlias(ALBUM).as("name")),
-      ArtistDao_Table.name.withTable(new NameAlias(ARTIST).as(ARTIST)),
-      CoverDao_Table.hash.withTable(new NameAlias(COVER)).as(COVER))
+  @ModelViewQuery public static final Query QUERY = SQLite.select(AlbumDao_Table.id.as("id").withTable(),
+      AlbumDao_Table.album_name.as("name").withTable(),
+      ArtistDao_Table.name.as("artist").withTable(),
+      CoverDao_Table.hash.as("cover").withTable())
       .from(AlbumDao.class)
       .join(ArtistDao.class, Join.JoinType.INNER)
-      .on(AlbumDao_Table.artist_id.withTable(new NameAlias(ALBUM))
-          .is(ArtistDao_Table.id.withTable(new NameAlias(ARTIST))))
+      .on(AlbumDao_Table.artist_id.withTable().is(ArtistDao_Table.id.withTable()))
       .join(CoverDao.class, Join.JoinType.INNER)
-      .on(AlbumDao_Table.cover_id.withTable(new NameAlias(ALBUM))
-          .is(CoverDao_Table.id.withTable(new NameAlias(COVER))));
+      .on(AlbumDao_Table.cover_id.withTable().is(CoverDao_Table.id.withTable()))
+      .orderBy(OrderBy.fromNameAlias(new NameAlias("artist")).ascending())
+      .orderBy(OrderBy.fromNameAlias(new NameAlias("name")).ascending());
 
   @Column private long id;
   @Column private String name;
