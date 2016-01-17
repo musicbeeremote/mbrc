@@ -36,15 +36,15 @@ def gitDescription() {
 }
 
 android {
-  compileSdkVersion 22
-  buildToolsVersion "22.0.1"
+  compileSdkVersion 23
+  buildToolsVersion "23.0.2"
 
   defaultConfig {
     applicationId "com.kelsos.mbrc"
     minSdkVersion 9
-    targetSdkVersion 22
-    versionCode 103
-    versionName "0.11.0"
+    targetSdkVersion 23
+    versionCode 104
+    versionName "0.11.1"
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
     buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
   }
@@ -125,25 +125,31 @@ idea {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.4'
+  gradleVersion = '2.10'
+}
+
+ext {
+  supportLibraryVersion = "23.1.1"
 }
 
 dependencies {
-  compile 'com.android.support:appcompat-v7:22.2.1'
-  compile 'com.android.support:support-v4:22.2.1'
-  compile 'com.android.support:support-annotations:22.2.1'
-  compile 'com.android.support:recyclerview-v7:22.2.1'
-  compile 'com.android.support:design:22.2.1'
+  compile "com.android.support:appcompat-v7:${supportLibraryVersion}"
+  compile "com.android.support:support-v4:${supportLibraryVersion}"
+  compile "com.android.support:support-annotations:${supportLibraryVersion}"
+  compile "com.android.support:recyclerview-v7:${supportLibraryVersion}"
+  compile "com.android.support:design:${supportLibraryVersion}"
   compile 'org.roboguice:roboguice:3.0.1'
   compile 'com.squareup:otto:1.3.8'
-  compile 'com.fasterxml.jackson.core:jackson-core:2.5.3'
-  compile 'com.fasterxml.jackson.core:jackson-databind:2.5.3'
+  compile 'com.fasterxml.jackson.core:jackson-core:2.6.4'
+  compile 'com.fasterxml.jackson.core:jackson-databind:2.6.4'
   compile 'com.mobeta.android.dslv:drag-sort-listview:0.6.1.1@aar'
   compile 'com.github.machinarius:preferencefragment:0.1.2'
-  compile 'com.afollestad:material-dialogs:0.7.3.1'
   compile 'com.jakewharton:butterknife:7.0.1'
-  compile 'io.reactivex:rxandroid:0.25.0'
+  compile 'io.reactivex:rxandroid:1.1.0'
   provided 'org.roboguice:roboblender:3.0.1'
+  compile('com.github.afollestad.material-dialogs:core:0.8.5.3@aar') {
+    transitive = true
+  }
 }
 
 allprojects {
