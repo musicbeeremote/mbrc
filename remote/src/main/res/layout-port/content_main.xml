@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/mainRelativeLayout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:id="@+id/content_wrapper"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
-  <FrameLayout
-      android:id="@+id/cover_area"
+  <include layout="@layout/toolbar"
       android:layout_width="match_parent"
-      android:layout_height="0dp"
-      android:layout_weight="1">
+      android:layout_height="?attr/actionBarSize"
+      android:id="@+id/include" />
+
+  <FrameLayout
+      android:id="@+id/album_cover_area"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_above="@+id/main_track_progress_seeker"
+      android:layout_below="@+id/include">
 
     <ImageView
         android:id="@+id/main_album_cover_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="top"
         android:adjustViewBounds="false"
         android:contentDescription="@string/description_album_cover"
-        android:longClickable="true"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_image_no_cover" />
 
@@ -64,68 +68,6 @@
           tools:ignore="RelativeOverlap" />
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/main_track_info_one"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|top"
-        android:layout_marginBottom="1dp"
-        android:layout_marginLeft="1dp"
-        android:layout_marginRight="1dp"
-        android:background="@color/mbrc_transparent_dark"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/small_margin"
-        android:paddingLeft="@dimen/normal_margin"
-        android:paddingRight="@dimen/normal_margin"
-        android:paddingTop="@dimen/small_margin">
-
-      <TextView
-          android:id="@+id/main_title_label"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:ellipsize="marquee"
-          android:focusable="true"
-          android:focusableInTouchMode="true"
-          android:freezesText="true"
-          android:marqueeRepeatLimit="marquee_forever"
-          android:scrollHorizontally="true"
-          android:singleLine="true"
-          android:textColor="@color/primary_text"
-          android:textSize="@dimen/text_title_size"
-          tools:text="Rock it for me" />
-
-      <TextView
-          android:id="@+id/main_artist_label"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:ellipsize="marquee"
-          android:focusable="true"
-          android:focusableInTouchMode="true"
-          android:freezesText="true"
-          android:marqueeRepeatLimit="marquee_forever"
-          android:scrollHorizontally="true"
-          android:singleLine="true"
-          android:textColor="@color/primary_text"
-          android:textSize="@dimen/text_subhead_size"
-          tools:text="Caravan Palace" />
-
-      <TextView
-          android:id="@+id/main_label_album"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:ellipsize="marquee"
-          android:focusable="true"
-          android:focusableInTouchMode="true"
-          android:lines="1"
-          android:marqueeRepeatLimit="marquee_forever"
-          android:scrollHorizontally="true"
-          android:singleLine="true"
-          android:textColor="@color/primary_text"
-          android:textSize="@dimen/text_body_size"
-          tools:text="Panic [2012]" />
-
-    </LinearLayout>
-
   </FrameLayout>
 
   <SeekBar
@@ -133,7 +75,6 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="top"
-      android:layout_marginTop="-1dp"
       android:gravity="center"
       android:maxHeight="4dp"
       android:minHeight="4dp"
@@ -143,25 +84,94 @@
       android:progressDrawable="@drawable/ic_duration_bar_progress"
       android:secondaryProgress="0"
       android:thumb="@drawable/ic_duration_thumb"
-      android:thumbOffset="4dp" />
+      android:thumbOffset="4dp"
+      android:layout_above="@+id/main_track_info_one"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentStart="true" />
 
+  <RelativeLayout
+      android:id="@+id/main_track_info_one"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:paddingLeft="@dimen/normal_margin"
+      android:paddingRight="@dimen/normal_margin"
+      android:paddingBottom="@dimen/small_margin"
+      android:paddingTop="@dimen/small_margin"
+      android:layout_above="@+id/main_volume_area"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentStart="true">
+
+    <TextView
+        android:id="@+id/main_title_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:freezesText="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/text_title_size"
+        tools:text="Rock it for me" />
+
+    <TextView
+        android:id="@+id/main_artist_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/main_title_label"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:freezesText="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/text_subhead_size"
+        tools:text="Caravan Palace" />
+
+    <TextView
+        android:id="@+id/main_label_album"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/main_artist_label"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:lines="1"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/text_body_size"
+        tools:text="Panic [2012]" />
+
+  </RelativeLayout>
 
   <RelativeLayout
       android:id="@+id/main_volume_area"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content">
+      android:layout_height="wrap_content"
+      android:layout_above="@+id/main_media_button_group"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentStart="true">
 
     <ImageButton
         android:id="@+id/main_mute_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/main_button_mute_description"
+        android:paddingEnd="@dimen/small_margin"
         android:paddingLeft="@dimen/normal_margin"
-        android:paddingRight="@dimen/normal_margin"
-        android:scaleType="fitCenter"
+        android:paddingRight="@dimen/small_margin"
         android:src="@drawable/ic_volume_off_grey600_24dp"
-        android:tint="@color/button_dark" />
+        android:tint="@color/button_dark"
+        tools:ignore="RtlHardcoded,RtlSymmetry" />
 
     <SeekBar
         android:id="@+id/main_volume_seeker"
@@ -193,7 +203,12 @@
       android:layout_width="match_parent"
       android:layout_height="@dimen/mbrc_info_tab_height"
       android:gravity="center_vertical|center_horizontal"
-      android:orientation="horizontal">
+      android:orientation="horizontal"
+      android:paddingLeft="@dimen/normal_margin"
+      android:paddingRight="@dimen/normal_margin"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentStart="true">
 
     <ImageButton
         android:id="@+id/main_repeat_button"
@@ -201,7 +216,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="0.7"
-        android:background="?attr/selectableItemBackground"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/main_button_repeat_description"
         android:src="@drawable/ic_repeat_grey600_24dp"
         android:tint="@color/button_dark" />
@@ -211,7 +226,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.8"
-        android:background="?attr/selectableItemBackground"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/main_button_previous_description"
         android:src="@drawable/ic_skip_previous_black_36dp"
         android:tint="@color/button_dark" />
@@ -221,10 +236,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:background="?attr/selectableItemBackground"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:contentDescription="@string/main_button_play_pause_description"
-        android:scaleType="fitCenter"
         android:src="@drawable/ic_play_circle_fill" />
 
     <ImageButton
@@ -232,9 +246,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.8"
-        android:background="?attr/selectableItemBackground"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/main_button_next_description"
-        android:scaleType="fitCenter"
         android:src="@drawable/ic_skip_next_black_36dp"
         android:tint="@color/button_dark" />
 
@@ -244,10 +257,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="0.7"
-        android:background="?attr/selectableItemBackground"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/main_button_shuffle_description"
         android:src="@drawable/ic_shuffle_grey600_24dp"
         android:tint="@color/button_dark" />
   </LinearLayout>
 
-</LinearLayout>
+
+</RelativeLayout>

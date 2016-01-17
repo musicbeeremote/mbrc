@@ -1,16 +1,12 @@
-package com.kelsos.mbrc.ui.fragments;
+package com.kelsos.mbrc.ui.navigation;
 
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
@@ -22,27 +18,22 @@ import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.events.ui.TrackMoved;
 import com.kelsos.mbrc.events.ui.TrackRemoval;
 import com.kelsos.mbrc.presenters.NowPlayingPresenter;
+import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.views.NowPlayingView;
-import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import roboguice.fragment.RoboFragment;
 
-public class NowPlayingFragment extends RoboFragment
-    implements SearchView.OnQueryTextListener, NowPlayingAdapter.OnUserActionListener,
-    NowPlayingView {
+public class NowPlayingActivity extends BaseActivity
+    implements SearchView.OnQueryTextListener, NowPlayingAdapter.OnUserActionListener, NowPlayingView {
 
   @Bind(R.id.now_playing_recycler) RecyclerView recyclerView;
   @Inject private NowPlayingAdapter adapter;
-  @Inject private Bus bus;
   @Inject private NowPlayingPresenter presenter;
   private LinearLayoutManager layoutManager;
   private SearchView mSearchView;
   private MenuItem mSearchItem;
-
-
 
   @Subscribe public void handlePlayingTrackChange(TrackInfoChangeEvent event) {
     if (adapter == null || !adapter.getClass().equals(NowPlayingAdapter.class)) {
@@ -51,8 +42,8 @@ public class NowPlayingFragment extends RoboFragment
     final TrackInfo info = event.getTrackInfo();
     final QueueTrack track = new QueueTrack();
 
-        track.setArtist(info.getArtist());
-        track.setTitle(info.getTitle());
+    track.setArtist(info.getArtist());
+    track.setTitle(info.getTitle());
     adapter.setPlayingTrack(track);
   }
 
@@ -62,50 +53,33 @@ public class NowPlayingFragment extends RoboFragment
     return false;
   }
 
-
-
   public boolean onQueryTextChange(String newText) {
     return true;
   }
 
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    inflater.inflate(R.menu.menu_now_playing, menu);
+  @Override public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu_now_playing, menu);
     mSearchItem = menu.findItem(R.id.now_playing_search_item);
     mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
     mSearchView.setQueryHint(getString(R.string.now_playing_search_hint));
     mSearchView.setIconifiedByDefault(true);
     mSearchView.setOnQueryTextListener(this);
+    return true;
   }
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setHasOptionsMenu(true);
-  }
-
-  @Override public void onStart() {
-    super.onStart();
-    bus.register(this);
-  }
-
-  @Override public void onStop() {
-    super.onStop();
-    bus.unregister(this);
-  }
-
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.ui_fragment_nowplaying, container, false);
-    ButterKnife.bind(this, view);
+    setContentView(R.layout.activity_now_playing);
+    ButterKnife.bind(this);
+    initialize();
     presenter.bind(this);
 
-    layoutManager = new LinearLayoutManager(getActivity());
+    layoutManager = new LinearLayoutManager(getBaseContext());
     recyclerView.setLayoutManager(layoutManager);
     adapter.setOnUserActionListener(this);
     recyclerView.setAdapter(adapter);
 
     presenter.loadData();
-    return view;
   }
 
   private int calculateNewIndex(int from, int to, int index) {
@@ -161,7 +135,6 @@ public class NowPlayingFragment extends RoboFragment
     Map<String, Integer> move = new HashMap<>();
     move.put("from", from);
     move.put("to", to);
-
   }
 
   @Override public void updateAdapter(List<QueueTrack> data) {
@@ -170,22 +143,5 @@ public class NowPlayingFragment extends RoboFragment
 
   @Override public void onItemClicked(int position, QueueTrack track) {
     presenter.playTrack(track);
-  }
-
-  @Override public void onPause() {
-    super.onPause();
-  }
-
-  @Override public void onDestroyView() {
-
-    if (recyclerView != null) {
-      recyclerView.setItemAnimator(null);
-      recyclerView.setAdapter(null);
-      recyclerView = null;
-    }
-
-    adapter = null;
-    layoutManager = null;
-    super.onDestroyView();
   }
 }

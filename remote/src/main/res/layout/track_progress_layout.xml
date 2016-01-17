@@ -9,7 +9,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/small_margin"
-    tools:showIn="@layout/ui_fragment_main">
+    tools:showIn="@layout/content_main">
 
     <TextView
         android:id="@+id/main_track_progress_current"

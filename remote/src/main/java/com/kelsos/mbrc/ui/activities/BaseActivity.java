@@ -10,9 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -33,23 +30,29 @@ import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
-import com.kelsos.mbrc.ui.fragments.LyricsFragment;
-import com.kelsos.mbrc.ui.fragments.MainFragment;
-import com.kelsos.mbrc.ui.fragments.NowPlayingFragment;
-import com.kelsos.mbrc.ui.fragments.PlaylistListFragment;
-import com.kelsos.mbrc.ui.fragments.browse.BrowseFragment;
+import com.kelsos.mbrc.ui.navigation.LibraryActivity;
+import com.kelsos.mbrc.ui.navigation.LyricsActivity;
+import com.kelsos.mbrc.ui.navigation.NowPlayingActivity;
+import com.kelsos.mbrc.ui.navigation.PlaylistListActivity;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
-public class MainFragmentActivity extends RoboAppCompatActivity
-    implements NavigationView.OnNavigationItemSelectedListener {
+public class BaseActivity extends RoboAppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-  @Inject Bus bus;
   @Bind(R.id.toolbar) Toolbar toolbar;
   @Bind(R.id.drawer_layout) DrawerLayout drawer;
   @Bind(R.id.navigation_view) NavigationView navigationView;
+  @Inject private Bus bus;
   private ActionBarDrawerToggle toggle;
   private DialogFragment mDialog;
+
+  /**
+   * Sends an event object.
+   * @param object
+   */
+  protected void post(Object object) {
+    bus.post(object);
+  }
 
   private boolean isMyServiceRunning(Class<?> serviceClass) {
     ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -61,9 +64,7 @@ public class MainFragmentActivity extends RoboAppCompatActivity
     return false;
   }
 
-  @Override public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.ui_main_container);
+  protected void initialize() {
     ButterKnife.bind(this);
     setSupportActionBar(toolbar);
     navigationView.setNavigationItemSelectedListener(this);
@@ -78,49 +79,21 @@ public class MainFragmentActivity extends RoboAppCompatActivity
 
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setHomeButtonEnabled(true);
-
-    if (savedInstanceState != null) {
-      return;
-    }
-
-    MainFragment mFragment = new MainFragment();
-    mFragment.setArguments(getIntent().getExtras());
-
-    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-    fragmentTransaction.replace(R.id.fragment_container, mFragment, "main_fragment");
-    fragmentTransaction.commit();
   }
 
-  @Override public void onStart() {
-    super.onStart();
+  @Override protected void onResume() {
+    super.onResume();
     bus.register(this);
   }
 
-  @Override public void onStop() {
-    super.onStop();
+  @Override protected void onPause() {
+    super.onPause();
     bus.unregister(this);
   }
 
   @Override public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
     toggle.onConfigurationChanged(newConfig);
-  }
-
-  private void replaceFragment(Fragment fragment, String tag) {
-
-    FragmentManager fragmentManager = getSupportFragmentManager();
-    int bsCount = fragmentManager.getBackStackEntryCount();
-
-    for (int i = 0; i < bsCount; i++) {
-      int bsId = fragmentManager.getBackStackEntryAt(i).getId();
-      fragmentManager.popBackStack(bsId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-    }
-
-    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-    fragmentTransaction.replace(R.id.fragment_container, fragment);
-    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-    fragmentTransaction.addToBackStack(tag);
-    fragmentTransaction.commit();
   }
 
   @Override protected void onPostCreate(Bundle savedInstanceState) {
@@ -193,17 +166,13 @@ public class MainFragmentActivity extends RoboAppCompatActivity
         onBackPressed();
       }
     } else if (id == R.id.drawer_menu_library) {
-      BrowseFragment browseFragment = BrowseFragment.newInstance();
-      replaceFragment(browseFragment, "library");
+      startActivity(new Intent(this, LibraryActivity.class));
     } else if (id == R.id.drawer_menu_playlist) {
-      PlaylistListFragment playlistFragment = PlaylistListFragment.newInstance();
-      replaceFragment(playlistFragment, "playlist");
+      startActivity(new Intent(this, PlaylistListActivity.class));
     } else if (id == R.id.drawer_menu_now_playing) {
-      NowPlayingFragment npFragment = new NowPlayingFragment();
-      replaceFragment(npFragment, "now_playing");
+      startActivity(new Intent(this, NowPlayingActivity.class));
     } else if (id == R.id.drawer_menu_lyrics) {
-      LyricsFragment lFragment = new LyricsFragment();
-      replaceFragment(lFragment, "lyrics");
+      startActivity(new Intent(this, LyricsActivity.class));
     } else if (id == R.id.drawer_menu_settings) {
       onSettingsClicked();
     } else if (id == R.id.drawer_menu_exit) {
@@ -248,7 +217,7 @@ public class MainFragmentActivity extends RoboAppCompatActivity
 
   @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChangeEvent change) {
 
-    final TextView view = (TextView)navigationView.findViewById(R.id.drawer_menu_connect);
+    final TextView view = (TextView) navigationView.findViewById(R.id.drawer_menu_connect);
     if (view == null) {
       return;
     }

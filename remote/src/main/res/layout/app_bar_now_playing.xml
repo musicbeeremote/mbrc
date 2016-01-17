@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:showIn="@layout/content_main">
+    tools:showIn="@layout/content_now_playing">
 
   <android.support.design.widget.AppBarLayout
       android:id="@+id/app_bar"
@@ -28,6 +28,6 @@
 
   </android.support.design.widget.AppBarLayout>
 
-  <include layout="@layout/content_main" />
+  <include layout="@layout/content_now_playing" />
 
 </android.support.design.widget.CoordinatorLayout>

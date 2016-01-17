@@ -21,7 +21,7 @@
       android:theme="@style/AppTheme"
       tools:ignore="UnusedAttribute">
     <activity
-        android:name=".ui.activities.MainFragmentActivity"
+        android:name=".ui.navigation.MainActivity"
         android:launchMode="singleTop"
         android:windowSoftInputMode="adjustNothing">
       <intent-filter>
@@ -30,6 +30,43 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
+
+    <activity
+        android:name=".ui.navigation.LibraryActivity"
+        android:parentActivityName=".ui.navigation.MainActivity"
+        tools:ignore="UnusedAttribute">
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.navigation.MainActivity" />
+    </activity>
+
+    <activity
+        android:name=".ui.navigation.NowPlayingActivity"
+        android:parentActivityName=".ui.navigation.MainActivity"
+        tools:ignore="UnusedAttribute">
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.navigation.MainActivity" />
+    </activity>
+
+    <activity
+        android:name=".ui.navigation.LyricsActivity"
+        android:parentActivityName=".ui.navigation.MainActivity"
+        tools:ignore="UnusedAttribute">
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.navigation.MainActivity" />
+    </activity>
+
+    <activity
+        android:name=".ui.navigation.PlaylistListActivity"
+        android:parentActivityName=".ui.navigation.MainActivity"
+        tools:ignore="UnusedAttribute">
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.navigation.MainActivity" />
+    </activity>
+
     <activity android:name=".ui.activities.ProfileActivity" />
     <activity android:name=".ui.activities.PlaylistActivity" />
     <activity android:name=".ui.activities.FeedbackActivity" />
@@ -70,19 +107,19 @@
 
     <activity
         android:name=".ui.activities.SettingsActivity"
-        android:parentActivityName=".ui.activities.MainFragmentActivity"
+        android:parentActivityName=".ui.activities.BaseActivity"
         tools:ignore="UnusedAttribute">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value="com.kelsos.mbrc.ui.activities.MainFragmentActivity" />
+          android:value=".ui.activities.BaseActivity" />
     </activity>
     <activity
         android:name=".ui.activities.QueueResultActivity"
-        android:parentActivityName=".ui.activities.MainFragmentActivity"
+        android:parentActivityName=".ui.activities.BaseActivity"
         tools:ignore="UnusedAttribute">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value="com.kelsos.mbrc.ui.activities.MainFragmentActivity" />
+          android:value=".ui.activities.BaseActivity" />
     </activity>
 
     <receiver android:name=".widgets.WidgetSmall">

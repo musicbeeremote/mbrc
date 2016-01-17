@@ -1,21 +1,17 @@
-package com.kelsos.mbrc.ui.fragments;
+package com.kelsos.mbrc.ui.navigation;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -35,12 +31,12 @@ import com.kelsos.mbrc.dto.player.PlayState;
 import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.presenters.MainViewPresenter;
+import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
 import com.kelsos.mbrc.ui.views.MainView;
 import com.kelsos.mbrc.utilities.FontUtils;
-import roboguice.fragment.RoboFragment;
 
-@Singleton public class MainFragment extends RoboFragment implements MainView {
+@Singleton public class MainActivity extends BaseActivity implements MainView {
   // Inject elements of the view
   @Bind(R.id.main_artist_label) TextView artistLabel;
   @Bind(R.id.main_title_label) TextView titleLabel;
@@ -60,38 +56,38 @@ import roboguice.fragment.RoboFragment;
   private ShareActionProvider mShareActionProvider;
 
   private Menu menu;
-  private SeekBar.OnSeekBarChangeListener volumeBarChangeListener =
-      new SeekBar.OnSeekBarChangeListener() {
 
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-          if (fromUser) {
-            presenter.onVolumeChange(progress);
-          }
-        }
+  private SeekBar.OnSeekBarChangeListener volumeBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
 
-        public void onStopTrackingTouch(SeekBar seekBar) { }
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+      if (fromUser) {
+        presenter.onVolumeChange(progress);
+      }
+    }
 
-        public void onStartTrackingTouch(SeekBar seekBar) { }
-      };
+    public void onStopTrackingTouch(SeekBar seekBar) {
+    }
 
-  private SeekBar.OnSeekBarChangeListener progressBarChangeListener =
-      new SeekBar.OnSeekBarChangeListener() {
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-          if (fromUser) {
-            presenter.onPositionChange(progress);
-          }
-        }
+    public void onStartTrackingTouch(SeekBar seekBar) {
+    }
+  };
 
-        public void onStartTrackingTouch(SeekBar seekBar) { }
+  private SeekBar.OnSeekBarChangeListener progressBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+      if (fromUser) {
+        presenter.onPositionChange(progress);
+      }
+    }
 
-        public void onStopTrackingTouch(SeekBar seekBar) { }
-      };
+    public void onStartTrackingTouch(SeekBar seekBar) {
+    }
 
-  public MainFragment() {
-  }
+    public void onStopTrackingTouch(SeekBar seekBar) {
+    }
+  };
 
-  @NonNull public static MainFragment newInstance() {
-    return new MainFragment();
+  public MainActivity() {
+
   }
 
   @OnClick(R.id.main_button_play_pause) public void playButtonPressed(View v) {
@@ -125,21 +121,17 @@ import roboguice.fragment.RoboFragment;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-  }
-
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
-    final View view = inflater.inflate(R.layout.ui_fragment_main, container, false);
-    ButterKnife.bind(this, view);
+    setContentView(R.layout.activity_main);
+    super.initialize();
+    ButterKnife.bind(this);
     presenter.bind(this);
 
     artistLabel.setSelected(true);
     titleLabel.setSelected(true);
     albumLabel.setSelected(true);
 
-    Typeface robotoRegular = FontUtils.getRobotoRegular(getActivity());
-    Typeface robotoMedium = FontUtils.getRobotoMedium(getActivity());
+    Typeface robotoRegular = FontUtils.getRobotoRegular(getBaseContext());
+    Typeface robotoMedium = FontUtils.getRobotoMedium(getBaseContext());
 
     artistLabel.setTypeface(robotoRegular);
     titleLabel.setTypeface(robotoMedium);
@@ -149,8 +141,6 @@ import roboguice.fragment.RoboFragment;
 
     progressBar.setOnSeekBarChangeListener(progressBarChangeListener);
     volumeBar.setOnSeekBarChangeListener(volumeBarChangeListener);
-    setHasOptionsMenu(true);
-    return view;
   }
 
   @Override public void onPause() {
@@ -170,7 +160,7 @@ import roboguice.fragment.RoboFragment;
         return true;
       case R.id.menu_rating_dialog:
         final RatingDialogFragment ratingDialog = new RatingDialogFragment();
-        ratingDialog.show(getActivity().getSupportFragmentManager(), "RatingDialog");
+        ratingDialog.show(getSupportFragmentManager(), "RatingDialog");
         return true;
       case R.id.menu_lastfm_love:
         presenter.onLfmLoveToggle();
@@ -180,19 +170,19 @@ import roboguice.fragment.RoboFragment;
     }
   }
 
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    inflater.inflate(R.menu.menu, menu);
+  @Override public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu, menu);
     this.menu = menu;
     MenuItem shareItem = menu.findItem(R.id.actionbar_share);
     mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
     mShareActionProvider.setShareIntent(getShareIntent());
+    return true;
   }
 
   private Intent getShareIntent() {
     Intent shareIntent = new Intent(Intent.ACTION_SEND);
     shareIntent.setType("text/plain");
-    final String payload =
-        String.format("Now Playing: %s - %s", artistLabel.getText(), titleLabel.getText());
+    final String payload = String.format("Now Playing: %s - %s", artistLabel.getText(), titleLabel.getText());
     shareIntent.putExtra(Intent.EXTRA_TEXT, payload);
     return shareIntent;
   }
@@ -206,17 +196,18 @@ import roboguice.fragment.RoboFragment;
   }
 
   @Override public void updateShuffle(@Shuffle.State String state) {
-    int color = ContextCompat.getColor(getContext(),
+    int color = ContextCompat.getColor(getBaseContext(),
         !Shuffle.OFF.equals(state) ? R.color.accent : R.color.button_dark);
     shuffleButton.setColorFilter(color);
 
-    shuffleButton.setImageResource(
-        Shuffle.AUTODJ.equals(state) ? R.drawable.ic_headset_grey600_24dp
-            : R.drawable.ic_shuffle_grey600_24dp);
+    shuffleButton.setImageResource(Shuffle.AUTODJ.equals(state)
+                                   ? R.drawable.ic_headset_grey600_24dp
+                                   : R.drawable.ic_shuffle_grey600_24dp);
   }
 
   @Override public void updateRepeat(@Repeat.Mode String mode) {
-    int color = ContextCompat.getColor(getContext(), mode.equals(Repeat.ALL) ? R.color.accent : R.color.button_dark);
+    int color = ContextCompat.getColor(getBaseContext(),
+        mode.equals(Repeat.ALL) ? R.color.accent : R.color.button_dark);
     repeatButton.setColorFilter(color);
   }
 
@@ -265,8 +256,7 @@ import roboguice.fragment.RoboFragment;
   }
 
   @Override public void updateMute(boolean enabled) {
-    muteButton.setImageResource(
-        enabled ? R.drawable.ic_volume_off_grey600_24dp : R.drawable.ic_volume_up_grey600_24dp);
+    muteButton.setImageResource(enabled ? R.drawable.ic_volume_off_grey600_24dp : R.drawable.ic_volume_up_grey600_24dp);
   }
 
   @Override public void updatePosition(TrackPosition position) {
@@ -274,9 +264,7 @@ import roboguice.fragment.RoboFragment;
         position.getCurrentMinutes(),
         position.getCurrentSeconds()));
 
-    trackDuration.setText(String.format("%02d:%02d",
-        position.getTotalMinutes(),
-        position.getTotalSeconds()));
+    trackDuration.setText(String.format("%02d:%02d", position.getTotalMinutes(), position.getTotalSeconds()));
 
     progressBar.setProgress(position.getCurrent());
     progressBar.setMax(position.getTotal());
@@ -299,8 +287,8 @@ import roboguice.fragment.RoboFragment;
     artistLabel.setText(info.getArtist());
     titleLabel.setText(info.getTitle());
     albumLabel.setText(TextUtils.isEmpty(info.getYear())
-        ? info.getAlbum()
-        : String.format("%s [%s]", info.getAlbum(), info.getYear()));
+                       ? info.getAlbum()
+                       : String.format("%s [%s]", info.getAlbum(), info.getYear()));
 
     if (mShareActionProvider != null) {
       mShareActionProvider.setShareIntent(getShareIntent());

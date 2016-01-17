@@ -13,7 +13,7 @@ public class MainThreadBus {
   private final Handler handler;
 
   @Inject
-  public MainThreadBus(final Bus bus, Handler handler) {
+  public MainThreadBus(Bus bus, Handler handler) {
     this.handler = handler;
     if (bus == null) {
       throw new NullPointerException("Bus is null");

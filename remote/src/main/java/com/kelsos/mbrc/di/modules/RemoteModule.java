@@ -82,10 +82,10 @@ import roboguice.inject.ContextSingleton;
 
 @SuppressWarnings("UnusedDeclaration") public class RemoteModule extends AbstractModule {
   public void configure() {
+    bind(Bus.class).toProvider(BusProvider.class).in(Singleton.class);
     bind(ObjectMapper.class).toProvider(ObjectMapperProvider.class).asEagerSingleton();
     bind(OkHttpClient.class).toProvider(OkHttpClientProvider.class).in(Singleton.class);
     bind(Retrofit.class).toProvider(RetrofitProvider.class).in(Singleton.class);
-    bind(Bus.class).toProvider(BusProvider.class).in(Singleton.class);
     bind(MiniControlPresenter.class).to(MiniControlPresenterImpl.class).in(ContextSingleton.class);
     bind(MainViewPresenter.class).to(MainViewPresenterImpl.class).in(ContextSingleton.class);
     bind(MainViewModel.class).to(MainViewModelImpl.class).in(ContextSingleton.class);

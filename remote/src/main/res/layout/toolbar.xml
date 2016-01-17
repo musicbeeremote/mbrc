@@ -12,4 +12,4 @@
     android:theme="@style/ActionBarStyle"
     app:layout_scrollFlags="scroll|enterAlways"
     app:popupTheme="@style/Theme.AppCompat"
-    tools:showIn="@layout/ui_main_container" />
+    tools:showIn="@layout/content_main" />
