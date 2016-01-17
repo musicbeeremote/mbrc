@@ -1,11 +1,13 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.support.v4.app.ActivityCompat;
 import android.view.MenuItem;
 import com.github.machinarius.preferencefragment.PreferenceFragment;
 import com.kelsos.mbrc.BuildConfig;
@@ -20,6 +22,7 @@ import roboguice.util.Ln;
 
 public class SettingsFragment extends PreferenceFragment {
 
+  public static final int REQUEST_CODE = 15;
   private Bus bus;
   private Context mContext;
 
@@ -34,19 +37,25 @@ public class SettingsFragment extends PreferenceFragment {
     addPreferencesFromResource(R.xml.application_settings);
     mContext = getActivity();
 
-    final Preference mOpenSource =
-        findPreference(getResources().getString(R.string.preferences_open_source));
-    final Preference mManager =
-        findPreference(getResources().getString(R.string.preferences_key_connection_manager));
+    final Preference reduceOnIncoming = findPreference(getString(R.string.settings_key_reduce_volume));
+    final Preference mOpenSource = findPreference(getString(R.string.preferences_open_source));
+    final Preference mManager = findPreference(getResources().getString(R.string.preferences_key_connection_manager));
     final Preference mVersion = findPreference(getResources().getString(R.string.settings_version));
-    final Preference mBuild =
-        findPreference(getResources().getString(R.string.pref_key_build_time));
-    final Preference mRevision =
-        findPreference(getResources().getString(R.string.pref_key_revision));
+    final Preference mBuild = findPreference(getResources().getString(R.string.pref_key_build_time));
+    final Preference mRevision = findPreference(getResources().getString(R.string.pref_key_revision));
     if (mOpenSource != null) {
       mOpenSource.setOnPreferenceClickListener(preference -> {
         showOpenSourceLicenseDialog();
         return false;
+      });
+    }
+
+    if (reduceOnIncoming != null) {
+      reduceOnIncoming.setOnPreferenceChangeListener((preference, newValue) -> {
+        if (!hasPhonePermission() && (boolean) newValue) {
+          requestPhoneStatePermission();
+        }
+        return true;
       });
     }
 
@@ -59,9 +68,8 @@ public class SettingsFragment extends PreferenceFragment {
 
     if (mVersion != null) {
       try {
-        mVersion.setSummary(
-            String.format(getResources().getString(R.string.settings_version_number),
-                RemoteUtils.getVersion(mContext)));
+        mVersion.setSummary(String.format(getResources().getString(R.string.settings_version_number),
+            RemoteUtils.getVersion(mContext)));
       } catch (PackageManager.NameNotFoundException e) {
         if (BuildConfig.DEBUG) {
           Ln.d(e);
@@ -83,8 +91,7 @@ public class SettingsFragment extends PreferenceFragment {
       }
     }
 
-    final Preference mLicense =
-        findPreference(getResources().getString(R.string.settings_key_license));
+    final Preference mLicense = findPreference(getResources().getString(R.string.settings_key_license));
     if (mLicense != null) {
       mLicense.setOnPreferenceClickListener(preference -> {
         showLicenseDialog();
@@ -98,6 +105,17 @@ public class SettingsFragment extends PreferenceFragment {
     if (mRevision != null) {
       mRevision.setSummary(BuildConfig.GIT_SHA);
     }
+  }
+
+  public void requestPhoneStatePermission() {
+    ActivityCompat.requestPermissions(getActivity(), new String[] {
+        Manifest.permission.READ_PHONE_STATE
+    }, REQUEST_CODE);
+  }
+
+  public boolean hasPhonePermission() {
+    return ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE)
+        == PackageManager.PERMISSION_GRANTED;
   }
 
   private void showLicenseDialog() {
