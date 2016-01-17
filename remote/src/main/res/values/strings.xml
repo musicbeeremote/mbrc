@@ -24,7 +24,7 @@
   <string name="settings_miscellaneous">Miscellaneous</string>
   <string name="settings_key_reduce_volume">reduce_volume_on_ring</string>
   <string name="settings_miscellaneous_reduce_volume">Reduce on Incoming</string>
-  <string name="settings_miscellaneous_reduce_volume_description">Reduce the player volume on incoming call</string>
+  <string name="settings_miscellaneous_reduce_volume_description">Reduce the player volume on incoming call \n\nPermission to read phone state is required to detect the incoming call</string>
   <string name="main_label_track_title">MusicBee Remote Control</string>
   <string name="main_label_artist">Konstantinos Paparas</string>
   <string name="main_label_duration_current">01:03</string>
@@ -136,7 +136,7 @@
   <string name="feedback_button_text">Send Feedback</string>
   <string name="main_menu_feedback">Feedback</string>
   <string name="feedback_subject">MusicBeeRemote InApp Feedback</string>
-  <string name="feedback_chooser_title">Send feedback using...</string>
+  <string name="feedback_chooser_title">Send feedback using…</string>
   <string name="setting_miscellaneous_plugin_updates">Plugin Update Check</string>
   <string name="setting_miscellaneous_plugin_updates_summary">Periodically check for updated versions of the plugin</string>
   <string name="settings_key_plugin_check">plugin_update_check</string>
