@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.interactors;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.dao.AlbumDao;
+import com.kelsos.mbrc.dao.AlbumModelView;
 import com.kelsos.mbrc.domain.AlbumTrackModel;
 import com.kelsos.mbrc.domain.Track;
 import com.kelsos.mbrc.mappers.AlbumMapper;
@@ -17,7 +17,7 @@ public class AlbumTrackInteractor {
   public Observable<AlbumTrackModel> execute(long id) {
     final Observable<List<Track>> tracks = repository.getTracksByAlbumId(id)
         .flatMap(data -> Observable.just(TrackMapper.map(data)));
-    final AlbumDao album = repository.getAlbumById((int) id);
+    final AlbumModelView album = repository.getAlbumViewById((int) id);
     return Observable.zip(tracks, Observable.just(AlbumMapper.map(album)), AlbumTrackModel::new).subscribeOn(Schedulers.io());
   }
 }

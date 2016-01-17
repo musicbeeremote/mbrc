@@ -12,6 +12,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @JsonPropertyOrder({
     "title",
     "position",
+    "disc",
     "genre_id",
     "artist_id",
     "album_artist_id",
@@ -26,6 +27,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
   @JsonProperty("title") private String title;
   @JsonProperty("position") private int position;
+  @JsonProperty("disc") private int disc;
   @JsonProperty("genre_id") private int genreId;
   @JsonProperty("artist_id") private int artistId;
   @JsonProperty("album_artist_id") private int albumArtistId;
@@ -222,6 +224,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
         .append(dateAdded)
         .append(dateUpdated)
         .append(dateDeleted)
+        .append(disc)
         .toHashCode();
   }
 
@@ -239,6 +242,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
         .append(artistId, rhs.artistId)
         .append(albumArtistId, rhs.albumArtistId)
         .append(albumId, rhs.albumId)
+        .append(disc, rhs.disc)
         .append(year, rhs.year)
         .append(path, rhs.path)
         .append(id, rhs.id)
@@ -246,5 +250,13 @@ import org.apache.commons.lang.builder.ToStringBuilder;
         .append(dateUpdated, rhs.dateUpdated)
         .append(dateDeleted, rhs.dateDeleted)
         .isEquals();
+  }
+
+  @JsonProperty("disc") public int getDisc() {
+    return disc;
+  }
+
+  @JsonProperty("disc") public void setDisc(int disc) {
+    this.disc = disc;
   }
 }

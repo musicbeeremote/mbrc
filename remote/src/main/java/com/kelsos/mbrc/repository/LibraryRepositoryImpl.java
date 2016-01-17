@@ -5,6 +5,7 @@ import com.kelsos.mbrc.RemoteDatabase;
 import com.kelsos.mbrc.dao.AlbumDao;
 import com.kelsos.mbrc.dao.AlbumDao_Table;
 import com.kelsos.mbrc.dao.AlbumModelView;
+import com.kelsos.mbrc.dao.AlbumModelView_ViewTable;
 import com.kelsos.mbrc.dao.ArtistDao;
 import com.kelsos.mbrc.dao.ArtistDao_Table;
 import com.kelsos.mbrc.dao.CoverDao;
@@ -87,6 +88,7 @@ public class LibraryRepositoryImpl implements LibraryRepository {
         dao.setPath(value.getPath());
         dao.setPosition(value.getPosition());
         dao.setTitle(value.getTitle());
+        dao.setDisc(value.getDisc());
         dao.setYear(value.getYear());
         dao.setDateAdded(value.getDateAdded());
         dao.setDateDeleted(value.getDateDeleted());
@@ -110,6 +112,10 @@ public class LibraryRepositoryImpl implements LibraryRepository {
 
   @Override public AlbumDao getAlbumById(int albumId) {
     return SQLite.select().from(AlbumDao.class).where(AlbumDao_Table.id.is(albumId)).querySingle();
+  }
+
+  @Override public AlbumModelView getAlbumViewById(int albumId) {
+    return SQLite.select().from(AlbumModelView.class).where(AlbumModelView_ViewTable.id.is(albumId)).querySingle();
   }
 
   @Override public void saveRemoteAlbums(List<AlbumDto> data) {

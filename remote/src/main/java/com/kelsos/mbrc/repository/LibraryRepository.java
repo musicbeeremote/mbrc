@@ -36,6 +36,8 @@ public interface LibraryRepository {
 
   AlbumDao getAlbumById(int albumId);
 
+  AlbumModelView getAlbumViewById(int albumId);
+
   void saveRemoteAlbums(List<AlbumDto> data);
 
   CoverDao getCoverById(int coverId);

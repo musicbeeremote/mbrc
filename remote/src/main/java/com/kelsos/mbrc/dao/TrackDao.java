@@ -18,8 +18,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
               columnType = long.class,
               referencedFieldIsPrivate = true,
               foreignKeyColumnName = "id")
-      }, saveForeignKeyModel = false)
-  private GenreDao genre;
+      }, saveForeignKeyModel = false) private GenreDao genre;
   @Column @ForeignKey(
       references = {
           @ForeignKeyReference(columnName = "artist_id",
@@ -33,21 +32,20 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
               columnType = long.class,
               referencedFieldIsPrivate = true,
               foreignKeyColumnName = "id")
-      }, saveForeignKeyModel = false)
-  private ArtistDao albumArtist;
+      }, saveForeignKeyModel = false) private ArtistDao albumArtist;
   @Column @ForeignKey(
       references = {
           @ForeignKeyReference(columnName = "album_id",
               columnType = long.class,
               referencedFieldIsPrivate = true,
               foreignKeyColumnName = "id")
-      }, saveForeignKeyModel = false)
-  private AlbumDao album;
+      }, saveForeignKeyModel = false) private AlbumDao album;
   @Column private String year;
   @Column private String path;
   @Column(name = "date_added") private long dateAdded;
   @Column(name = "date_updated") private long dateUpdated;
   @Column(name = "date_deleted") private long dateDeleted;
+  @Column private int disc;
 
   public String getPath() {
     return path;
@@ -152,5 +150,13 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 
   public void setDateDeleted(long dateDeleted) {
     this.dateDeleted = dateDeleted;
+  }
+
+  public void setDisc(int disc) {
+    this.disc = disc;
+  }
+
+  public int getDisc() {
+    return disc;
   }
 }
