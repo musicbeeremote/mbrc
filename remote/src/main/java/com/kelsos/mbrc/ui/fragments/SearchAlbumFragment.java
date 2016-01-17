@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumEntryAdapter;
@@ -23,48 +26,61 @@ import com.kelsos.mbrc.utilities.ScrollListener;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.fragment.RoboFragment;
-import roboguice.inject.InjectView;
 
-public class SearchAlbumFragment extends RoboFragment
-    implements AlbumEntryAdapter.MenuItemSelectedListener {
+public class SearchAlbumFragment extends RoboFragment implements AlbumEntryAdapter.MenuItemSelectedListener {
   @Inject Bus bus;
+  @Bind(R.id.search_recycler_view) RecyclerView recycler;
+  @Bind(R.id.empty_view) LinearLayout emptyView;
   @Inject private ScrollListener scrollListener;
   private String mDefault;
-  @InjectView(R.id.search_recycler_view) private RecyclerView mRecyclerView;
+  @Inject private AlbumEntryAdapter adapter;
 
   @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
     mDefault = action.getAction();
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.ui_fragment_library_search, container, false);
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    View view = inflater.inflate(R.layout.ui_fragment_library_search, container, false);
+    ButterKnife.bind(this, view);
+    return view;
   }
 
   @Override public void onResume() {
     super.onResume();
     bus.register(this);
-    mRecyclerView.addOnScrollListener(scrollListener);
+    recycler.addOnScrollListener(scrollListener);
   }
 
   @Override public void onPause() {
     super.onPause();
     bus.unregister(this);
-    mRecyclerView.removeOnScrollListener(scrollListener);
+    recycler.removeOnScrollListener(scrollListener);
   }
 
   @Override public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    mRecyclerView.setHasFixedSize(true);
+    recycler.setHasFixedSize(true);
     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-    mRecyclerView.setLayoutManager(mLayoutManager);
+    recycler.setLayoutManager(mLayoutManager);
+    adapter.setMenuItemSelectedListener(this);
+    recycler.setAdapter(adapter);
+    displayProperView(true);
   }
 
   @Subscribe public void handleAlbumResults(AlbumSearchResults results) {
-    AlbumEntryAdapter adapter = new AlbumEntryAdapter(getActivity(), results.getList());
-    adapter.setMenuItemSelectedListener(this);
-    mRecyclerView.setAdapter(adapter);
+    boolean noData = results.getList().isEmpty();
+    displayProperView(noData);
+    adapter.update(results.getList());
+  }
+
+  public void displayProperView(boolean noData) {
+    if (noData) {
+      emptyView.setVisibility(View.VISIBLE);
+      recycler.setVisibility(View.GONE);
+    } else {
+      emptyView.setVisibility(View.GONE);
+      recycler.setVisibility(View.VISIBLE);
+    }
   }
 
   @Override public void onMenuItemSelected(MenuItem menuItem, AlbumEntry entry) {

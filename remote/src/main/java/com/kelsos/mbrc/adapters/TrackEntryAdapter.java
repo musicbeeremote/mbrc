@@ -10,17 +10,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.TrackEntry;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.ViewHolder> {
   private ArrayList<TrackEntry> mData;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
+  private LayoutInflater inflater;
 
-  public TrackEntryAdapter(Context context, ArrayList<TrackEntry> objects) {
-    this.mData = objects;
+  @Inject public TrackEntryAdapter(Context context) {
+    inflater = LayoutInflater.from(context);
+    this.mData = new ArrayList<>();
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
   }
 
@@ -49,8 +53,7 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
    * @see #onBindViewHolder(ViewHolder, int)
    */
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View view =
-        LayoutInflater.from(parent.getContext()).inflate(R.layout.ui_list_dual, parent, false);
+    View view = inflater.inflate(R.layout.ui_list_dual, parent, false);
     return new ViewHolder(view, robotoRegular);
   }
 
@@ -103,6 +106,12 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
    */
   @Override public int getItemCount() {
     return mData == null ? 0 : mData.size();
+  }
+
+  public void update(List<TrackEntry> list) {
+    this.mData.clear();
+    this.mData.addAll(list);
+    notifyDataSetChanged();
   }
 
   public interface MenuItemSelectedListener {

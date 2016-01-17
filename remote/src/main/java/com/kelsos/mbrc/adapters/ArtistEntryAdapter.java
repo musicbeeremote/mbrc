@@ -10,17 +10,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ArtistEntry;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.ViewHolder> {
-  private ArrayList<ArtistEntry> mData;
+  private final LayoutInflater inflater;
+  private List<ArtistEntry> mData;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
 
-  public ArtistEntryAdapter(Context context, ArrayList<ArtistEntry> objects) {
-    this.mData = objects;
+  @Inject public ArtistEntryAdapter(Context context) {
+    this.mData = new ArrayList<>();
+    inflater = LayoutInflater.from(context);
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
   }
 
@@ -49,8 +53,7 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
    * @see #onBindViewHolder(ViewHolder, int)
    */
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    final View view =
-        LayoutInflater.from(parent.getContext()).inflate(R.layout.ui_list_single, parent, false);
+    final View view = inflater.inflate(R.layout.ui_list_single, parent, false);
     return new ViewHolder(view, robotoRegular);
   }
 
@@ -102,6 +105,12 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
    */
   @Override public int getItemCount() {
     return mData == null ? 0 : mData.size();
+  }
+
+  public void update(List<ArtistEntry> data) {
+    this.mData.clear();
+    this.mData.addAll(data);
+    notifyDataSetChanged();
   }
 
   public interface MenuItemSelectedListener {
