@@ -10,23 +10,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.AlbumEntry;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.ViewHolder> {
-  private ArrayList<AlbumEntry> mData;
+  private final LayoutInflater inflater;
+  private List<AlbumEntry> mData;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
 
-  public AlbumEntryAdapter(Context context, ArrayList<AlbumEntry> data) {
-    this.mData = data;
+  @Inject public AlbumEntryAdapter(Context context) {
+    this.mData = new ArrayList<>();
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
+    inflater = LayoutInflater.from(context);
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View view =
-        LayoutInflater.from(parent.getContext()).inflate(R.layout.ui_list_dual, parent, false);
+
+    View view = inflater.inflate(R.layout.ui_list_dual, parent, false);
     return new ViewHolder(view, robotoRegular);
   }
 
@@ -61,6 +65,12 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.Vi
 
   public void setMenuItemSelectedListener(MenuItemSelectedListener listener) {
     mListener = listener;
+  }
+
+  public void update(List<AlbumEntry> list) {
+    mData.clear();
+    mData.addAll(list);
+    notifyDataSetChanged();
   }
 
   public interface MenuItemSelectedListener {

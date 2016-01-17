@@ -17,24 +17,6 @@ def gitHash() {
   return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
 
-def hasModifiedDeletedOrOtherFiles() {
-  return !"git -C ${rootDir} ls-files -mdo --exclude-standard".execute().text.trim().isEmpty()
-}
-
-def hasStagedFiles() {
-  return !"git -C ${rootDir} diff-index --no-ext-diff --name-only --cached HEAD".execute().text.
-      trim().
-      isEmpty()
-}
-
-def dirtyWorkingCopy() {
-  return hasModifiedDeletedOrOtherFiles() || hasStagedFiles()
-}
-
-def gitDescription() {
-  return dirtyWorkingCopy() ? "${gitHash()}-dirty" : gitHash()
-}
-
 android {
   compileSdkVersion 23
   buildToolsVersion "23.0.2"
@@ -107,7 +89,7 @@ android {
   applicationVariants.all { variant ->
     variant.outputs.each { output ->
       def originalFilename = output.outputFile
-      def versionInfo = "-v${variant.mergedFlavor.versionCode}-${variant.mergedFlavor.versionName}-${gitDescription()}"
+      def versionInfo = "-v${variant.mergedFlavor.versionCode}-${variant.mergedFlavor.versionName}"
       def filename = originalFilename.name
           .replace(".apk", versionInfo + ".apk")
           .replace(project.name, defaultConfig.applicationId);
