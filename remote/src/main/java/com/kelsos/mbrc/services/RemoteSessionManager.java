@@ -114,23 +114,24 @@ import roboguice.util.Ln;
 
     PlaybackStateCompat.Builder builder = new PlaybackStateCompat.Builder();
     builder.setActions(PLAYBACK_ACTIONS);
-    switch (stateChange.getState()) {
+    PlayState state = stateChange.getState();
+    switch (state) {
       case Playing:
         builder.setState(PlaybackStateCompat.STATE_PLAYING, -1, 1);
+        mMediaSession.setActive(true);
         break;
       case Paused:
         builder.setState(PlaybackStateCompat.STATE_PAUSED, -1, 0);
+        mMediaSession.setActive(true);
         break;
       default:
         builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0);
+        mMediaSession.setActive(false);
         break;
     }
     PlaybackStateCompat playbackState = builder.build();
     mMediaSession.setPlaybackState(playbackState);
     ensureTransportControls(playbackState);
-
-    mMediaSession.setActive(stateChange.getState() != PlayState.Stopped
-        || stateChange.getState() != PlayState.Undefined);
   }
 
   @Subscribe public void onPlayStateChange(PlayStateChange change) {
