@@ -3,25 +3,25 @@
   <group android:checkableBehavior="single">
     <item
         android:id="@+id/drawer_menu_home"
-        android:icon="@drawable/ic_home_grey_600_24dp"
+        android:icon="@drawable/ic_home_black_24dp"
         android:title="@string/menu_home" />
     <item
         android:id="@+id/drawer_menu_library"
-        android:icon="@drawable/ic_storage_grey_600_24dp"
+        android:icon="@drawable/ic_storage_black_24dp"
         android:title="@string/menu_library" />
     <item
         android:id="@+id/drawer_menu_playlist"
-        android:icon="@drawable/ic_list_grey_600_24dp"
+        android:icon="@drawable/ic_view_list_black_24dp"
         android:title="@string/menu_playlist" />
 
     <item
         android:id="@+id/drawer_menu_now_playing"
-        android:icon="@drawable/ic_view_list_grey_600_24dp"
+        android:icon="@drawable/ic_queue_music_black_24dp"
         android:title="@string/menu_now_playing" />
 
     <item
         android:id="@+id/drawer_menu_lyrics"
-        android:icon="@drawable/ic_view_headline_grey_600_24dp"
+        android:icon="@drawable/ic_view_headline_black_24dp"
         android:title="@string/menu_lyrics" />
   </group>
 
