@@ -122,7 +122,8 @@ import com.kelsos.mbrc.utilities.FontUtils;
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    super.initialize();
+    initialize();
+    setCurrentSelection(R.id.drawer_menu_home);
     ButterKnife.bind(this);
     presenter.bind(this);
 

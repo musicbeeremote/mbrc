@@ -6,6 +6,7 @@ import com.kelsos.mbrc.dao.ArtistDao;
 import com.kelsos.mbrc.dao.CoverDao;
 import com.kelsos.mbrc.dao.GenreDao;
 import com.kelsos.mbrc.dao.TrackDao;
+import com.kelsos.mbrc.dao.TrackModelView;
 import com.kelsos.mbrc.dto.library.AlbumDto;
 import com.kelsos.mbrc.dto.library.TrackDto;
 import java.util.List;
@@ -18,7 +19,7 @@ public interface LibraryRepository {
 
   Observable<List<ArtistDao>> getArtists(int offset, int limit);
 
-  Observable<List<TrackDao>> getTracks(int offset, int limit);
+  Observable<List<TrackModelView>> getTracks(int offset, int limit);
 
   Observable<List<CoverDao>> getCovers();
 
@@ -44,5 +45,5 @@ public interface LibraryRepository {
 
   void saveCovers(List<CoverDao> map);
 
-  Observable<List<TrackDao>> getTracksByAlbumId(long albumId);
+  Observable<List<TrackModelView>> getTracksByAlbumId(long albumId);
 }

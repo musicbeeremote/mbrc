@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="2dp"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    tools:showIn="@layout/activity_lyrics"
+    tools:targetApi="lollipop">
+
+  <View
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      android:background="@color/primary_dark" />
+
+  <fragment
+      android:id="@+id/lyrics_mini_control"
+      android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/mini_control_height"
+      android:layout="@layout/ui_fragment_mini_control"
+      tools:layout="@layout/ui_fragment_mini_control" />
+</LinearLayout>

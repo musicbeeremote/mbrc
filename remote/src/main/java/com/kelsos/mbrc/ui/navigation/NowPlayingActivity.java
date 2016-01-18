@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.ui.navigation;
 
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -72,6 +73,7 @@ public class NowPlayingActivity extends BaseActivity
     setContentView(R.layout.activity_now_playing);
     ButterKnife.bind(this);
     initialize();
+    setCurrentSelection(R.id.drawer_menu_now_playing);
     presenter.bind(this);
 
     layoutManager = new LinearLayoutManager(getBaseContext());
@@ -143,5 +145,9 @@ public class NowPlayingActivity extends BaseActivity
 
   @Override public void onItemClicked(int position, QueueTrack track) {
     presenter.playTrack(track);
+  }
+
+  @Override public void onBackPressed() {
+    ActivityCompat.finishAfterTransition(this);
   }
 }

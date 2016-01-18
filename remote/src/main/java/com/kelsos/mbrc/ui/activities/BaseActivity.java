@@ -1,15 +1,22 @@
 package com.kelsos.mbrc.ui.activities;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -32,6 +39,7 @@ import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.kelsos.mbrc.ui.navigation.LibraryActivity;
 import com.kelsos.mbrc.ui.navigation.LyricsActivity;
+import com.kelsos.mbrc.ui.navigation.MainActivity;
 import com.kelsos.mbrc.ui.navigation.NowPlayingActivity;
 import com.kelsos.mbrc.ui.navigation.PlaylistListActivity;
 import com.squareup.otto.Bus;
@@ -39,16 +47,69 @@ import com.squareup.otto.Subscribe;
 
 public class BaseActivity extends RoboAppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+  public static final int NAVIGATION_DELAY = 250;
+
   @Bind(R.id.toolbar) Toolbar toolbar;
   @Bind(R.id.drawer_layout) DrawerLayout drawer;
   @Bind(R.id.navigation_view) NavigationView navigationView;
   @Inject private Bus bus;
+  @Inject private Handler handler;
   private ActionBarDrawerToggle toggle;
   private DialogFragment mDialog;
 
   /**
+   * This utility method handles Up navigation intents by searching for a parent activity and
+   * navigating there if defined. When using this for an activity make sure to define both the
+   * native parentActivity as well as the AppCompat one when supporting API levels less than 16.
+   * when the activity has a single parent activity. If the activity doesn't have a single parent
+   * activity then don't define one and this method will use back button functionality. If "Up"
+   * functionality is still desired for activities without parents then use
+   * {@code syntheticParentActivity} to define one dynamically.
+   *
+   * Note: Up navigation intents are represented by a back arrow in the top left of the Toolbar
+   * in Material Design guidelines.
+   *
+   * @param currentActivity Activity in use when navigate Up action occurred.
+   * @param syntheticParentActivity Parent activity to use when one is not already configured.
+   */
+  public static void navigateUpOrBack(Activity currentActivity, Class<? extends Activity> syntheticParentActivity) {
+    // Retrieve parent activity from AndroidManifest.
+    Intent intent = NavUtils.getParentActivityIntent(currentActivity);
+
+    // Synthesize the parent activity when a natural one doesn't exist.
+    if (intent == null && syntheticParentActivity != null) {
+      try {
+        intent = NavUtils.getParentActivityIntent(currentActivity, syntheticParentActivity);
+      } catch (PackageManager.NameNotFoundException e) {
+        e.printStackTrace();
+      }
+    }
+
+    if (intent == null) {
+      // No parent defined in manifest. This indicates the activity may be used by
+      // in multiple flows throughout the app and doesn't have a strict parent. In
+      // this case the navigation up button should act in the same manner as the
+      // back button. This will result in users being forwarded back to other
+      // applications if currentActivity was invoked from another application.
+      currentActivity.onBackPressed();
+    } else {
+      if (NavUtils.shouldUpRecreateTask(currentActivity, intent)) {
+        // Need to synthesize a backstack since currentActivity was probably invoked by a
+        // different app. The preserves the "Up" functionality within the app according to
+        // the activity hierarchy defined in AndroidManifest.xml via parentActivity
+        // attributes.
+        TaskStackBuilder builder = TaskStackBuilder.create(currentActivity);
+        builder.addNextIntentWithParentStack(intent);
+        builder.startActivities();
+      } else {
+        // Navigate normally to the manifest defined "Up" activity.
+        NavUtils.navigateUpTo(currentActivity, intent);
+      }
+    }
+  }
+
+  /**
    * Sends an event object.
-   * @param object
    */
   protected void post(Object object) {
     bus.post(object);
@@ -62,6 +123,10 @@ public class BaseActivity extends RoboAppCompatActivity implements NavigationVie
       }
     }
     return false;
+  }
+
+  protected void setCurrentSelection(@IdRes int id) {
+    navigationView.getMenu().findItem(id).setChecked(true);
   }
 
   protected void initialize() {
@@ -160,44 +225,50 @@ public class BaseActivity extends RoboAppCompatActivity implements NavigationVie
   }
 
   @Override public boolean onNavigationItemSelected(MenuItem item) {
-    int id = item.getItemId();
+    handler.postDelayed(() -> navigate(item.getItemId()), NAVIGATION_DELAY);
+    drawer.closeDrawer(GravityCompat.START);
+    return true;
+  }
+
+  public void navigate(int id) {
     if (id == R.id.drawer_menu_home) {
-      if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-        onBackPressed();
-      }
+      createBackStack(new Intent(this, MainActivity.class));
     } else if (id == R.id.drawer_menu_library) {
-      startActivity(new Intent(this, LibraryActivity.class));
+      createBackStack(new Intent(this, LibraryActivity.class));
     } else if (id == R.id.drawer_menu_playlist) {
-      startActivity(new Intent(this, PlaylistListActivity.class));
+      createBackStack(new Intent(this, PlaylistListActivity.class));
     } else if (id == R.id.drawer_menu_now_playing) {
-      startActivity(new Intent(this, NowPlayingActivity.class));
+      createBackStack(new Intent(this, NowPlayingActivity.class));
     } else if (id == R.id.drawer_menu_lyrics) {
-      startActivity(new Intent(this, LyricsActivity.class));
+      createBackStack(new Intent(this, LyricsActivity.class));
     } else if (id == R.id.drawer_menu_settings) {
-      onSettingsClicked();
+      createBackStack(new Intent(this, SettingsActivity.class));
     } else if (id == R.id.drawer_menu_exit) {
       onExitClicked();
     } else if (id == R.id.drawer_menu_connect) {
       onConnectClick();
     } else if (id == R.id.drawer_menu_feedback) {
-      onFeedbackClicked();
+      createBackStack(new Intent(this, FeedbackActivity.class));
     } else if (id == R.id.drawer_menu_help) {
       onHelpClicked();
     } else if (id == R.id.drawer_menu_debug) {
-      Intent start = new Intent(this, DebugActivity.class);
-      startActivity(start);
+      createBackStack(new Intent(this, DebugActivity.class));
     }
+  }
 
-    drawer.closeDrawer(GravityCompat.START);
-    return true;
+  private void createBackStack(Intent intent) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+      TaskStackBuilder builder = TaskStackBuilder.create(this);
+      builder.addNextIntentWithParentStack(intent);
+      builder.startActivities();
+    } else {
+      startActivity(intent);
+      finish();
+    }
   }
 
   private void onConnectClick() {
     bus.post(new MessageEvent(UserInputEventType.ResetConnection));
-  }
-
-  private void onSettingsClicked() {
-    startActivity(new Intent(this, SettingsActivity.class));
   }
 
   private void onHelpClicked() {
@@ -209,10 +280,6 @@ public class BaseActivity extends RoboAppCompatActivity implements NavigationVie
   private void onExitClicked() {
     stopService(new Intent(this, Controller.class));
     finish();
-  }
-
-  private void onFeedbackClicked() {
-    startActivity(new Intent(this, FeedbackActivity.class));
   }
 
   @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChangeEvent change) {

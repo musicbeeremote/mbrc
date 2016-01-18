@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.ui.navigation;
 
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import butterknife.Bind;
@@ -26,6 +27,7 @@ public class PlaylistListActivity extends BaseActivity implements PlaylistListVi
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_playlist_list);
     initialize();
+    setCurrentSelection(R.id.drawer_menu_playlist);
     ButterKnife.bind(this);
     presenter.bind(this);
     adapter.setOnPlaylistPlayPressedListener(this);
@@ -46,5 +48,9 @@ public class PlaylistListActivity extends BaseActivity implements PlaylistListVi
 
   @Override public void playlistPlayPressed(Playlist playlist, int position) {
     presenter.play(playlist.getPath());
+  }
+
+  @Override public void onBackPressed() {
+    ActivityCompat.finishAfterTransition(this);
   }
 }

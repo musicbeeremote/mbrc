@@ -40,11 +40,6 @@ along with [Google Play Music for Android](https://play.google.com/store/apps/de
 
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
-*   [DragSortListView](https://github.com/kelsos/drag-sort-listview)
-    (A fork of the library is used int th project)
-
-    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-
 *   [RxJava](https://github.com/ReactiveX/RxJava)
 
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
@@ -69,10 +64,6 @@ along with [Google Play Music for Android](https://play.google.com/store/apps/de
 
     License: [MIT](https://github.com/Raizlabs/DBFlow/blob/master/LICENSE)
 
-*   [Snackbar](https://github.com/MrEngineer13/SnackBar)
-
-    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-
 *   [Material Dialogs](https://github.com/afollestad/material-dialogs/)
 
     License: [MIT](https://github.com/afollestad/material-dialogs/blob/master/LICENSE.txt)
@@ -89,7 +80,7 @@ License
 The source code of the application is licensed under the [GPLv3](https://www.gnu.org/licenses/gpl.html) license.
 
     MusicBee Remote (for Android)
-    Copyright (C) 2013  Konstantinos Paparas
+    Copyright (C) 2011-2015  Konstantinos Paparas
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

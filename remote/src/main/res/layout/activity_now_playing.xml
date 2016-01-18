@@ -9,6 +9,8 @@
 
   <include layout="@layout/app_bar_now_playing" />
 
+  <include layout="@layout/mini_control_layout" />
+
   <android.support.design.widget.NavigationView
       android:id="@+id/navigation_view"
       android:layout_width="wrap_content"

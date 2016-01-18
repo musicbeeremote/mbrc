@@ -4,33 +4,12 @@
     android:id="@+id/drawer_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
   <include layout="@layout/app_bar_lyrics" />
 
-  <LinearLayout
-      android:gravity="bottom"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:elevation="2dp"
-      android:orientation="vertical"
-      tools:targetApi="lollipop">
-
-    <View
-        android:background="@color/primary_dark"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"/>
-
-    <fragment
-        android:id="@+id/lyrics_mini_control"
-        android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/mini_control_height"
-        android:layout="@layout/ui_fragment_mini_control"
-        tools:layout="@layout/ui_fragment_mini_control" />
-  </LinearLayout>
+  <include layout="@layout/mini_control_layout" />
 
   <android.support.design.widget.NavigationView
       android:id="@+id/navigation_view"

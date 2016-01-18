@@ -13,12 +13,13 @@ import com.kelsos.mbrc.dao.CoverDao_Table;
 import com.kelsos.mbrc.dao.GenreDao;
 import com.kelsos.mbrc.dao.GenreDao_Table;
 import com.kelsos.mbrc.dao.TrackDao;
+import com.kelsos.mbrc.dao.TrackModelView;
+import com.kelsos.mbrc.dao.TrackModelView_ViewTable;
 import com.kelsos.mbrc.dto.library.AlbumDto;
 import com.kelsos.mbrc.dto.library.TrackDto;
 import com.raizlabs.android.dbflow.runtime.TransactionManager;
 import com.raizlabs.android.dbflow.sql.language.OrderBy;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.sql.language.Select;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import java.util.List;
 import rx.Observable;
@@ -35,7 +36,8 @@ public class LibraryRepositoryImpl implements LibraryRepository {
   }
 
   @Override public Observable<List<GenreDao>> getGenres(int offset, int limit) {
-    return Observable.defer(() -> Observable.just(new Select().from(GenreDao.class)
+    return Observable.defer(() -> Observable.just(SQLite.select()
+        .from(GenreDao.class)
         .where()
         .offset(offset)
         .orderBy(OrderBy.fromProperty(GenreDao_Table.name).ascending())
@@ -44,7 +46,8 @@ public class LibraryRepositoryImpl implements LibraryRepository {
   }
 
   @Override public Observable<List<ArtistDao>> getArtists(int offset, int limit) {
-    return Observable.defer(() -> Observable.just(new Select().from(ArtistDao.class)
+    return Observable.defer(() -> Observable.just(SQLite.select()
+        .from(ArtistDao.class)
         .where()
         .offset(offset)
         .orderBy(OrderBy.fromProperty(ArtistDao_Table.name).ascending())
@@ -53,7 +56,7 @@ public class LibraryRepositoryImpl implements LibraryRepository {
   }
 
   @Override public Observable<List<CoverDao>> getCovers() {
-    return Observable.defer(() -> Observable.just(new Select().from(CoverDao.class).queryList()));
+    return Observable.defer(() -> Observable.just(SQLite.select().from(CoverDao.class).queryList()));
   }
 
   @Override public void saveGenres(List<GenreDao> objects) {
@@ -144,12 +147,19 @@ public class LibraryRepositoryImpl implements LibraryRepository {
     });
   }
 
-  @Override public Observable<List<TrackDao>> getTracks(int offset, int limit) {
-    return Observable.empty();
+  @Override public Observable<List<TrackModelView>> getTracks(int offset, int limit) {
+    return Observable.defer(() -> Observable.just(SQLite.select()
+        .from(TrackModelView.class)
+        .where()
+        .limit(limit)
+        .offset(offset)
+        .queryList()));
   }
 
-  @Override public Observable<List<TrackDao>> getTracksByAlbumId(long albumId) {
-
-    return Observable.empty();
+  @Override public Observable<List<TrackModelView>> getTracksByAlbumId(long albumId) {
+    return Observable.just(SQLite.select()
+        .from(TrackModelView.class)
+        .where(TrackModelView_ViewTable.album_id.is(albumId))
+        .queryList());
   }
 }

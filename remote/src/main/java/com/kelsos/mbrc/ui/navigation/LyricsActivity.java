@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.ui.navigation;
 
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import butterknife.Bind;
@@ -23,6 +24,7 @@ public class LyricsActivity extends BaseActivity implements LyricsView {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_lyrics);
     initialize();
+    setCurrentSelection(R.id.drawer_menu_lyrics);
     ButterKnife.bind(this);
     presenter.bind(this);
     recyclerView.setHasFixedSize(true);
@@ -43,5 +45,9 @@ public class LyricsActivity extends BaseActivity implements LyricsView {
 
   @Override public void updateLyrics(List<String> lyrics) {
     adapter.updateData(lyrics);
+  }
+
+  @Override public void onBackPressed() {
+    ActivityCompat.finishAfterTransition(this);
   }
 }
