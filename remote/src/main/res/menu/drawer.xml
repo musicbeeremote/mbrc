@@ -31,16 +31,15 @@
     <menu>
       <item
           android:id="@+id/drawer_menu_settings"
+          android:icon="@drawable/ic_settings_black_24dp"
           android:title="@string/menu_settings" />
       <item
           android:id="@+id/drawer_menu_help"
+          android:icon="@drawable/ic_help_black_24dp"
           android:title="@string/menu_help" />
 
       <item
-          android:id="@+id/drawer_menu_feedback"
-          android:title="@string/menu_feedback" />
-
-      <item
+          android:icon="@drawable/ic_power_black_24dp"
           android:id="@+id/drawer_menu_connect"
           android:title="@string/drawer_connection_status_off" />
 

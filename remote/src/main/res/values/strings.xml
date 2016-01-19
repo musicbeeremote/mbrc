@@ -127,7 +127,7 @@
   <string name="settings_key_last_update_check">last_update_check</string>
   <string name="settings_title_license">License</string>
   <string name="settings_key_license">mbrc_license</string>
-  <string name="menu_help">Help</string>
+  <string name="menu_help">Help &amp; Feedback</string>
   <string name="settings_key_last_version_run">last_version_run</string>
   <string name="dialog_upgrade_negative">OK</string>
   <string name="dialog_upgrade_title">Welcome</string>
