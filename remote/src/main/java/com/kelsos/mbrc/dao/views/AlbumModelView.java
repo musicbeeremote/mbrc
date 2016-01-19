@@ -1,6 +1,12 @@
-package com.kelsos.mbrc.dao;
+package com.kelsos.mbrc.dao.views;
 
 import com.kelsos.mbrc.RemoteDatabase;
+import com.kelsos.mbrc.dao.AlbumDao;
+import com.kelsos.mbrc.dao.AlbumDao_Table;
+import com.kelsos.mbrc.dao.ArtistDao;
+import com.kelsos.mbrc.dao.ArtistDao_Table;
+import com.kelsos.mbrc.dao.CoverDao;
+import com.kelsos.mbrc.dao.CoverDao_Table;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ModelView;
 import com.raizlabs.android.dbflow.annotation.ModelViewQuery;

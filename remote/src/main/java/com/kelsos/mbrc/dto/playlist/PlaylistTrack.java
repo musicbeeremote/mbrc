@@ -17,184 +17,144 @@ import org.apache.commons.lang.builder.ToStringBuilder;
     "date_added",
     "date_updated",
     "date_deleted"
-})
-public class PlaylistTrack {
+}) public class PlaylistTrack {
 
-    @JsonProperty("track_info_id")
-    private Integer trackInfoId;
-    @JsonProperty("playlist_id")
-    private Integer playlistId;
-    @JsonProperty("position")
-    private Integer position;
-    @JsonProperty("id")
-    private Integer id;
-    @JsonProperty("date_added")
-    private String dateAdded;
-    @JsonProperty("date_updated")
-    private String dateUpdated;
-    @JsonProperty("date_deleted")
-    private String dateDeleted;
+  @JsonProperty("track_info_id") private long trackInfoId;
+  @JsonProperty("playlist_id") private long playlistId;
+  @JsonProperty("position") private int position;
+  @JsonProperty("id") private long id;
+  @JsonProperty("date_added") private long dateAdded;
+  @JsonProperty("date_updated") private long dateUpdated;
+  @JsonProperty("date_deleted") private long dateDeleted;
 
-    /**
-     *
-     * @return
-     *     The trackInfoId
-     */
-    @JsonProperty("track_info_id")
-    public Integer getTrackInfoId() {
-        return trackInfoId;
+  /**
+   * @return The trackInfoId
+   */
+  @JsonProperty("track_info_id") public long getTrackInfoId() {
+    return trackInfoId;
+  }
+
+  /**
+   * @param trackInfoId The track_info_id
+   */
+  @JsonProperty("track_info_id") public void setTrackInfoId(long trackInfoId) {
+    this.trackInfoId = trackInfoId;
+  }
+
+  /**
+   * @return The playlistId
+   */
+  @JsonProperty("playlist_id") public long getPlaylistId() {
+    return playlistId;
+  }
+
+  /**
+   * @param playlistId The playlist_id
+   */
+  @JsonProperty("playlist_id") public void setPlaylistId(long playlistId) {
+    this.playlistId = playlistId;
+  }
+
+  /**
+   * @return The position
+   */
+  @JsonProperty("position") public int getPosition() {
+    return position;
+  }
+
+  /**
+   * @param position The position
+   */
+  @JsonProperty("position") public void setPosition(int position) {
+    this.position = position;
+  }
+
+  /**
+   * @return The id
+   */
+  @JsonProperty("id") public long getId() {
+    return id;
+  }
+
+  /**
+   * @param id The id
+   */
+  @JsonProperty("id") public void setId(long id) {
+    this.id = id;
+  }
+
+  /**
+   * @return The dateAdded
+   */
+  @JsonProperty("date_added") public long getDateAdded() {
+    return dateAdded;
+  }
+
+  /**
+   * @param dateAdded The date_added
+   */
+  @JsonProperty("date_added") public void setDateAdded(long dateAdded) {
+    this.dateAdded = dateAdded;
+  }
+
+  /**
+   * @return The dateUpdated
+   */
+  @JsonProperty("date_updated") public long getDateUpdated() {
+    return dateUpdated;
+  }
+
+  /**
+   * @param dateUpdated The date_updated
+   */
+  @JsonProperty("date_updated") public void setDateUpdated(long dateUpdated) {
+    this.dateUpdated = dateUpdated;
+  }
+
+  /**
+   * @return The dateDeleted
+   */
+  @JsonProperty("date_deleted") public long getDateDeleted() {
+    return dateDeleted;
+  }
+
+  /**
+   * @param dateDeleted The date_deleted
+   */
+  @JsonProperty("date_deleted") public void setDateDeleted(long dateDeleted) {
+    this.dateDeleted = dateDeleted;
+  }
+
+  @Override public String toString() {
+    return ToStringBuilder.reflectionToString(this);
+  }
+
+  @Override public int hashCode() {
+    return new HashCodeBuilder().append(trackInfoId)
+        .append(playlistId)
+        .append(position)
+        .append(id)
+        .append(dateAdded)
+        .append(dateUpdated)
+        .append(dateDeleted)
+        .toHashCode();
+  }
+
+  @Override public boolean equals(Object other) {
+    if (other == this) {
+      return true;
     }
-
-    /**
-     *
-     * @param trackInfoId
-     *     The track_info_id
-     */
-    @JsonProperty("track_info_id")
-    public void setTrackInfoId(Integer trackInfoId) {
-        this.trackInfoId = trackInfoId;
+    if (!(other instanceof PlaylistTrack)) {
+      return false;
     }
-
-    /**
-     *
-     * @return
-     *     The playlistId
-     */
-    @JsonProperty("playlist_id")
-    public Integer getPlaylistId() {
-        return playlistId;
-    }
-
-    /**
-     *
-     * @param playlistId
-     *     The playlist_id
-     */
-    @JsonProperty("playlist_id")
-    public void setPlaylistId(Integer playlistId) {
-        this.playlistId = playlistId;
-    }
-
-    /**
-     *
-     * @return
-     *     The position
-     */
-    @JsonProperty("position")
-    public Integer getPosition() {
-        return position;
-    }
-
-    /**
-     *
-     * @param position
-     *     The position
-     */
-    @JsonProperty("position")
-    public void setPosition(Integer position) {
-        this.position = position;
-    }
-
-    /**
-     *
-     * @return
-     *     The id
-     */
-    @JsonProperty("id")
-    public Integer getId() {
-        return id;
-    }
-
-    /**
-     *
-     * @param id
-     *     The id
-     */
-    @JsonProperty("id")
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    /**
-     *
-     * @return
-     *     The dateAdded
-     */
-    @JsonProperty("date_added")
-    public String getDateAdded() {
-        return dateAdded;
-    }
-
-    /**
-     *
-     * @param dateAdded
-     *     The date_added
-     */
-    @JsonProperty("date_added")
-    public void setDateAdded(String dateAdded) {
-        this.dateAdded = dateAdded;
-    }
-
-    /**
-     *
-     * @return
-     *     The dateUpdated
-     */
-    @JsonProperty("date_updated")
-    public String getDateUpdated() {
-        return dateUpdated;
-    }
-
-    /**
-     *
-     * @param dateUpdated
-     *     The date_updated
-     */
-    @JsonProperty("date_updated")
-    public void setDateUpdated(String dateUpdated) {
-        this.dateUpdated = dateUpdated;
-    }
-
-    /**
-     *
-     * @return
-     *     The dateDeleted
-     */
-    @JsonProperty("date_deleted")
-    public String getDateDeleted() {
-        return dateDeleted;
-    }
-
-    /**
-     *
-     * @param dateDeleted
-     *     The date_deleted
-     */
-    @JsonProperty("date_deleted")
-    public void setDateDeleted(String dateDeleted) {
-        this.dateDeleted = dateDeleted;
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(trackInfoId).append(playlistId).append(position).append(id).append(dateAdded).append(dateUpdated).append(dateDeleted).toHashCode();
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if ((other instanceof PlaylistTrack) == false) {
-            return false;
-        }
-        PlaylistTrack rhs = ((PlaylistTrack) other);
-        return new EqualsBuilder().append(trackInfoId, rhs.trackInfoId).append(playlistId, rhs.playlistId).append(position, rhs.position).append(id, rhs.id).append(dateAdded, rhs.dateAdded).append(dateUpdated, rhs.dateUpdated).append(dateDeleted, rhs.dateDeleted).isEquals();
-    }
-
+    PlaylistTrack rhs = ((PlaylistTrack) other);
+    return new EqualsBuilder().append(trackInfoId, rhs.trackInfoId)
+        .append(playlistId, rhs.playlistId)
+        .append(position, rhs.position)
+        .append(id, rhs.id)
+        .append(dateAdded, rhs.dateAdded)
+        .append(dateUpdated, rhs.dateUpdated)
+        .append(dateDeleted, rhs.dateDeleted)
+        .isEquals();
+  }
 }

@@ -5,6 +5,9 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.mappers.ArtistMapper;
 import com.kelsos.mbrc.mappers.CoverMapper;
 import com.kelsos.mbrc.mappers.GenreMapper;
+import com.kelsos.mbrc.mappers.PlaylistMapper;
+import com.kelsos.mbrc.mappers.PlaylistTrackInfoMapper;
+import com.kelsos.mbrc.mappers.PlaylistTrackMapper;
 import com.kelsos.mbrc.repository.LibraryRepository;
 import com.kelsos.mbrc.repository.PlaylistRepository;
 import com.kelsos.mbrc.services.api.LibraryService;
@@ -32,11 +35,21 @@ public class LibrarySyncManager {
       syncAlbums(after);
       syncTracks(after);
 
-      subscriber.onCompleted();
-
       repository.getCovers()
           .subscribeOn(Schedulers.immediate())
           .subscribe(covers -> downloader.download(covers), Ln::v);
+
+      syncPlaylistTrackInfo(after);
+      syncPlaylists(after);
+
+      playlistRepository.getPlaylists()
+          .subscribeOn(Schedulers.immediate())
+          .observeOn(Schedulers.immediate())
+          .concatMap(Observable::from)
+          .subscribe(playlist -> {
+            syncPlaylistTracks(playlist.getId(), after);
+          }, Ln::v);
+
       subscriber.onCompleted();
     }).subscribeOn(Schedulers.io()).subscribe(o -> {
     }, throwable -> {
@@ -103,20 +116,34 @@ public class LibrarySyncManager {
   }
 
   private void syncPlaylists(long after) {
-
+    Observable.range(0, Integer.MAX_VALUE - 1)
+        .concatMap(integer -> playlistService.getPlaylists(LIMIT * integer, LIMIT, after))
+        .subscribeOn(Schedulers.immediate())
+        .takeWhile(page -> (page.getOffset() + page.getData().size()) <= page.getTotal())
+        .subscribe(tracks -> {
+          playlistRepository.savePlaylists(PlaylistMapper.mapDto(tracks.getData()));
+        });
   }
 
-  private void syncPlaylistTracks(long after) {
-
+  private void syncPlaylistTracks(long playlistId, long after) {
+    Observable.range(0, Integer.MAX_VALUE - 1)
+        .concatMap(integer -> playlistService.getPlaylistTracks(playlistId, LIMIT * integer, LIMIT, after))
+        .subscribeOn(Schedulers.immediate())
+        .takeWhile(page -> (page.getOffset() + page.getData().size()) <= page.getTotal())
+        .subscribe(tracks -> {
+          playlistRepository.savePlaylistTracks(PlaylistTrackMapper.map(tracks.getData(),
+              playlistRepository::getPlaylistById,
+              playlistRepository::getTrackInfoById));
+        });
   }
 
   private void syncPlaylistTrackInfo(long after) {
-    Observable.range(0, Integer.MAX_VALUE - 1).
-    concatMap(integer -> playlistService.getPlaylistTrackInfo(LIMIT * integer, LIMIT, after))
+    Observable.range(0, Integer.MAX_VALUE - 1)
+        .concatMap(integer -> playlistService.getPlaylistTrackInfo(LIMIT * integer, LIMIT, after))
         .subscribeOn(Schedulers.immediate())
         .takeWhile(page -> (page.getOffset() + page.getData().size()) <= page.getTotal())
         .subscribe(info -> {
-
+          playlistRepository.savePlaylistTrackInfo(PlaylistTrackInfoMapper.map(info.getData()));
         });
   }
 }

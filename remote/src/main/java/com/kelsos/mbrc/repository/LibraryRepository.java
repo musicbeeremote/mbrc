@@ -1,12 +1,12 @@
 package com.kelsos.mbrc.repository;
 
 import com.kelsos.mbrc.dao.AlbumDao;
-import com.kelsos.mbrc.dao.AlbumModelView;
+import com.kelsos.mbrc.dao.views.AlbumModelView;
 import com.kelsos.mbrc.dao.ArtistDao;
 import com.kelsos.mbrc.dao.CoverDao;
 import com.kelsos.mbrc.dao.GenreDao;
 import com.kelsos.mbrc.dao.TrackDao;
-import com.kelsos.mbrc.dao.TrackModelView;
+import com.kelsos.mbrc.dao.views.TrackModelView;
 import com.kelsos.mbrc.dto.library.AlbumDto;
 import com.kelsos.mbrc.dto.library.TrackDto;
 import java.util.List;

@@ -1,12 +1,12 @@
 package com.kelsos.mbrc.repository;
 
 import com.kelsos.mbrc.dao.PlaylistDao;
+import com.kelsos.mbrc.dao.PlaylistTrackDao;
+import com.kelsos.mbrc.dao.PlaylistTrackInfoDao;
 import com.kelsos.mbrc.domain.Playlist;
 import com.kelsos.mbrc.dto.playlist.PlaylistTrack;
 import com.kelsos.mbrc.dto.playlist.PlaylistTrackInfo;
-
 import java.util.List;
-
 import rx.Observable;
 
 public interface PlaylistRepository {
@@ -15,5 +15,14 @@ public interface PlaylistRepository {
   void savePlaylists(List<PlaylistDao> playlists);
 
   Observable<List<PlaylistTrack>> getPlaylistTracks(long playlistId);
+
   Observable<List<PlaylistTrackInfo>> getTrackInfo();
+
+  void savePlaylistTrackInfo(List<PlaylistTrackInfoDao> data);
+
+  void savePlaylistTracks(List<PlaylistTrackDao> data);
+
+  PlaylistDao getPlaylistById(long id);
+
+  PlaylistTrackInfoDao getTrackInfoById(long id);
 }

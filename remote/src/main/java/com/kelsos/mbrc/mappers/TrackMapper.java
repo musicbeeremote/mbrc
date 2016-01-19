@@ -2,7 +2,7 @@ package com.kelsos.mbrc.mappers;
 
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
-import com.kelsos.mbrc.dao.TrackModelView;
+import com.kelsos.mbrc.dao.views.TrackModelView;
 import com.kelsos.mbrc.domain.Track;
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.interactors;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.dao.AlbumModelView;
+import com.kelsos.mbrc.dao.views.AlbumModelView;
 import com.kelsos.mbrc.domain.AlbumTrackModel;
 import com.kelsos.mbrc.domain.Track;
 import com.kelsos.mbrc.mappers.AlbumMapper;

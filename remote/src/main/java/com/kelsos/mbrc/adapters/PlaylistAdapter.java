@@ -10,7 +10,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.dao.PlaylistTrack;
+import com.kelsos.mbrc.domain.PlaylistTrack;
 import java.util.ArrayList;
 import java.util.List;
 
