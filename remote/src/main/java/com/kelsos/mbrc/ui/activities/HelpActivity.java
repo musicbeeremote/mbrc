@@ -4,14 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import butterknife.ButterKnife;
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.kelsos.mbrc.R;
 
-public class FeedbackActivity extends RoboAppCompatActivity {
+public class HelpActivity extends RoboAppCompatActivity {
 
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.feedback_content) EditText feedbackEditText;
@@ -32,10 +34,22 @@ public class FeedbackActivity extends RoboAppCompatActivity {
     }
 
     Intent emailIntent = new Intent(Intent.ACTION_SEND);
-    emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"kelsos@kelsos.net"});
+    emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "kelsos@kelsos.net" });
     emailIntent.setType("message/rfc822");
     emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject));
     emailIntent.putExtra(Intent.EXTRA_TEXT, feedbackText);
     startActivity(Intent.createChooser(emailIntent, getString(R.string.feedback_chooser_title)));
+  }
+
+  @Override public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.help, menu);
+    return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == R.id.action_feedback) {
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 }

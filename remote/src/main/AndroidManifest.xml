@@ -68,9 +68,30 @@
     </activity>
 
     <activity android:name=".ui.activities.ProfileActivity" />
-    <activity android:name=".ui.activities.PlaylistActivity" />
-    <activity android:name=".ui.activities.FeedbackActivity" />
-    <activity android:name=".ui.fragments.profile.AlbumTracksActivity" />
+    <activity
+        android:name=".ui.activities.PlaylistActivity"
+        android:parentActivityName=".ui.navigation.PlaylistListActivity">
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.navigation.PlaylistListActivity" />
+    </activity>
+    <activity
+        android:name=".ui.activities.HelpActivity"
+        android:parentActivityName=".ui.navigation.MainActivity"
+        tools:ignore="UnusedAttribute">
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.navigation.MainActivity" />
+    </activity>
+
+    <activity
+        android:name=".ui.fragments.profile.AlbumTracksActivity"
+        android:parentActivityName=".ui.navigation.LibraryActivity">
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.navigation.LibraryActivity" />
+    </activity>
+
     <activity
         android:name=".ui.activities.ConnectionManagerActivity"
         android:windowSoftInputMode="adjustNothing" />
@@ -143,7 +164,7 @@
 
     <activity
         android:name=".ui.activities.DebugActivity"
-        android:label="@string/title_activity_debug">
+        android:label="@string/debug">
     </activity>
   </application>
 

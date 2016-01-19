@@ -38,7 +38,8 @@ public class PlaylistListAdapter extends RecyclerView.Adapter<PlaylistListAdapte
   }
 
   public void updateData(List<Playlist> data) {
-    this.data = data;
+    this.data.clear();
+    this.data.addAll(data);
     notifyDataSetChanged();
   }
 

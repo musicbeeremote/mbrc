@@ -27,6 +27,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
+import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.annotations.Connection;
 import com.kelsos.mbrc.constants.UserInputEventType;
@@ -48,6 +49,9 @@ import com.squareup.otto.Subscribe;
 public class BaseActivity extends RoboAppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
   public static final int NAVIGATION_DELAY = 250;
+  public static final int DEBUG_ORDER = 999;
+  public static final int DEBUG_ITEM_ID = 890;
+  public static final int DEBUG_ITEM_GROUP = 0;
 
   @Bind(R.id.toolbar) Toolbar toolbar;
   @Bind(R.id.drawer_layout) DrawerLayout drawer;
@@ -133,6 +137,10 @@ public class BaseActivity extends RoboAppCompatActivity implements NavigationVie
     ButterKnife.bind(this);
     setSupportActionBar(toolbar);
     navigationView.setNavigationItemSelectedListener(this);
+
+    if (BuildConfig.DEBUG) {
+      navigationView.getMenu().add(DEBUG_ITEM_GROUP, DEBUG_ITEM_ID, DEBUG_ORDER, R.string.debug);
+    }
 
     if (!isMyServiceRunning(Controller.class)) {
       startService(new Intent(this, Controller.class));
@@ -247,11 +255,9 @@ public class BaseActivity extends RoboAppCompatActivity implements NavigationVie
       onExitClicked();
     } else if (id == R.id.drawer_menu_connect) {
       onConnectClick();
-    } else if (id == R.id.drawer_menu_feedback) {
-      createBackStack(new Intent(this, FeedbackActivity.class));
     } else if (id == R.id.drawer_menu_help) {
-      onHelpClicked();
-    } else if (id == R.id.drawer_menu_debug) {
+      createBackStack(new Intent(this, HelpActivity.class));
+    } else if (id == DEBUG_ITEM_ID) {
       createBackStack(new Intent(this, DebugActivity.class));
     }
   }

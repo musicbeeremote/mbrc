@@ -18,7 +18,7 @@ public class PlaylistInteractorImpl implements PlaylistInteractor {
   @Override public Observable<List<Playlist>> execute() {
 
     Observable.range(0, Integer.MAX_VALUE - 1)
-        .concatMap(integer -> service.getPlaylists(LIMIT * integer, LIMIT)
+        .concatMap(integer -> service.getPlaylists(LIMIT * integer, LIMIT, 0)
             .subscribeOn(Schedulers.io()))
         .takeWhile(page -> page.getOffset() < page.getTotal()).subscribe(response -> {
       repository.savePlaylists(PlaylistMapper.mapDto(response.getData()));

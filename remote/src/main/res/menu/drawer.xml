@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-  <group android:checkableBehavior="single">
+  <group
+      android:id="@+id/navigation_group"
+      android:checkableBehavior="single">
     <item
         android:id="@+id/drawer_menu_home"
         android:icon="@drawable/ic_home_black_24dp"
@@ -25,32 +27,25 @@
         android:title="@string/menu_lyrics" />
   </group>
 
-  <item
-      android:id="@+id/drawer_submenu"
-      android:title="">
-    <menu>
-      <item
-          android:id="@+id/drawer_menu_settings"
-          android:icon="@drawable/ic_settings_black_24dp"
-          android:title="@string/menu_settings" />
-      <item
-          android:id="@+id/drawer_menu_help"
-          android:icon="@drawable/ic_help_black_24dp"
-          android:title="@string/menu_help" />
+  <group android:id="@+id/extra_group">
+    <item
+        android:id="@+id/drawer_menu_settings"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="@string/menu_settings" />
+    <item
+        android:id="@+id/drawer_menu_help"
+        android:icon="@drawable/ic_help_black_24dp"
+        android:title="@string/menu_help" />
 
-      <item
-          android:icon="@drawable/ic_power_black_24dp"
-          android:id="@+id/drawer_menu_connect"
-          android:title="@string/drawer_connection_status_off" />
+    <item
+        android:id="@+id/drawer_menu_connect"
+        android:icon="@drawable/ic_power_black_24dp"
+        android:title="@string/drawer_connection_status_off" />
 
-      <item
-          android:id="@+id/drawer_menu_debug"
-          android:title="debug" />
-      <item
-          android:id="@+id/drawer_menu_exit"
-          android:title="@string/menu_exit" />
-    </menu>
-
-  </item>
+    <item
+        android:id="@+id/drawer_menu_exit"
+        android:icon="@drawable/ic_close_black_24dp"
+        android:title="@string/menu_exit" />
+  </group>
 
 </menu>

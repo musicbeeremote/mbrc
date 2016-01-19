@@ -4,6 +4,7 @@ import com.kelsos.mbrc.dto.BaseResponse;
 import com.kelsos.mbrc.dto.PaginatedResponse;
 import com.kelsos.mbrc.dto.playlist.PlaylistDto;
 import com.kelsos.mbrc.dto.playlist.PlaylistTrack;
+import com.kelsos.mbrc.dto.playlist.PlaylistTrackInfo;
 import com.kelsos.mbrc.dto.requests.MoveRequest;
 import com.kelsos.mbrc.dto.requests.PlayPathRequest;
 import com.kelsos.mbrc.dto.requests.PlaylistRequest;
@@ -25,9 +26,8 @@ public interface PlaylistService {
   Single<BaseResponse> playlistMoveTrack(@Path("id") int id, @Body MoveRequest body);
 
   @GET("/playlists/{id}/tracks")
-  Single<PaginatedResponse<PlaylistTrack>> getPlaylistTracks(@Path("id") Long id,
-                                                             @Query("offset") int offset,
-                                                             @Query("limit") int limit);
+  Single<PaginatedResponse<PlaylistTrack>> getPlaylistTracks(@Path("id") Long id, @Query("offset") int offset,
+      @Query("limit") int limit, @Query("after") long after);
 
   @DELETE("/playlists/{id}/tracks")
   Single<BaseResponse> deletePlaylistTrack(@Path("id") int id, @Query("index") int index);
@@ -39,12 +39,14 @@ public interface PlaylistService {
   Single<BaseResponse> createPlaylist(@Body PlaylistRequest body);
 
   @GET("/playlists")
-  Observable<PaginatedResponse<PlaylistDto>> getPlaylists(@Query("offset") int offset,
-      @Query("limit") int limit);
-
-
+  Observable<PaginatedResponse<PlaylistDto>> getPlaylists(@Query("offset") int offset, @Query("limit") int limit,
+      @Query("after") long after);
 
   @PUT("/playlists/{id}/tracks")
   Single<BaseResponse> addTracksToPlaylist(@Path("id") int id, @Body PlaylistRequest body);
 
+  @GET("/playlists/trackinfo")
+  Observable<PaginatedResponse<PlaylistTrackInfo>> getPlaylistTrackInfo(@Query("offset") int offset,
+      @Query("limit") int limit,
+      @Query("after") long after);
 }

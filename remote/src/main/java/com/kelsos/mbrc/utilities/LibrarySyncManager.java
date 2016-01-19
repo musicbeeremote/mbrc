@@ -6,7 +6,9 @@ import com.kelsos.mbrc.mappers.ArtistMapper;
 import com.kelsos.mbrc.mappers.CoverMapper;
 import com.kelsos.mbrc.mappers.GenreMapper;
 import com.kelsos.mbrc.repository.LibraryRepository;
+import com.kelsos.mbrc.repository.PlaylistRepository;
 import com.kelsos.mbrc.services.api.LibraryService;
+import com.kelsos.mbrc.services.api.PlaylistService;
 import roboguice.util.Ln;
 import rx.Observable;
 import rx.schedulers.Schedulers;
@@ -18,6 +20,8 @@ public class LibrarySyncManager {
   @Inject private LibraryRepository repository;
   @Inject private CoverDownloader downloader;
   @Inject private SharedPreferences preferences;
+  @Inject private PlaylistService playlistService;
+  @Inject private PlaylistRepository playlistRepository;
 
   public void sync() {
     final long after = preferences.getLong(LAST_SYNC, 0);
@@ -95,6 +99,24 @@ public class LibrarySyncManager {
           repository.saveCovers(CoverMapper.map(covers.getData()));
         }, throwable -> {
         }, () -> {
+        });
+  }
+
+  private void syncPlaylists(long after) {
+
+  }
+
+  private void syncPlaylistTracks(long after) {
+
+  }
+
+  private void syncPlaylistTrackInfo(long after) {
+    Observable.range(0, Integer.MAX_VALUE - 1).
+    concatMap(integer -> playlistService.getPlaylistTrackInfo(LIMIT * integer, LIMIT, after))
+        .subscribeOn(Schedulers.immediate())
+        .takeWhile(page -> (page.getOffset() + page.getData().size()) <= page.getTotal())
+        .subscribe(info -> {
+
         });
   }
 }
