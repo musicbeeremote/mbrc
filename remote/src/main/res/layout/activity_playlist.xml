@@ -1,24 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-  <include layout="@layout/toolbar" />
-
-  <android.support.v7.widget.RecyclerView
-      android:id="@+id/playlist"
+  <include
+      android:id="@+id/playlist_content"
+      layout="@layout/app_bar_playlist"
       android:layout_width="match_parent"
-      android:layout_height="match_parent">
+      android:layout_height="match_parent"
+      android:layout_above="@+id/mini_control" />
 
-  </android.support.v7.widget.RecyclerView>
-
-  <FrameLayout
-      android:id="@+id/playlist_mini_control"
+  <include
+      android:id="@+id/mini_control"
+      layout="@layout/mini_control_layout"
       android:layout_width="match_parent"
-      android:layout_height="@dimen/mini_control_height"
-      tools:context="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
-      tools:layout="@layout/ui_fragment_mini_control" />
-
-</LinearLayout>
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true" />
+</RelativeLayout>

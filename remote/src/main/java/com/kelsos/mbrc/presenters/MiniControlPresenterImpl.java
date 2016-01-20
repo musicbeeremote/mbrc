@@ -100,6 +100,6 @@ import rx.schedulers.Schedulers;
 
   @Subscribe public void onTrackInfoChange(TrackInfoChangeEvent event) {
     final TrackInfo info = event.getTrackInfo();
-    view.updateTrack(info.getArtist(), info.getAlbum());
+    view.updateTrack(info.getArtist(), info.getTitle());
   }
 }

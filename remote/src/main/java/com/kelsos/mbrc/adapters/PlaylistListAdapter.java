@@ -16,7 +16,7 @@ import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.domain.Playlist;
-import com.kelsos.mbrc.ui.activities.PlaylistActivity;
+import com.kelsos.mbrc.ui.activities.PlaylistTrackActivity;
 import com.kelsos.mbrc.utilities.FontUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,9 +83,9 @@ public class PlaylistListAdapter extends RecyclerView.Adapter<PlaylistListAdapte
 
   private void startPlaylistActivity(Playlist playlist, View v) {
     Bundle bundle = new Bundle();
-    bundle.putString(PlaylistActivity.NAME, playlist.getName());
-    bundle.putString(PlaylistActivity.PATH, playlist.getPath());
-    Intent intent = new Intent(v.getContext(), PlaylistActivity.class);
+    bundle.putString(PlaylistTrackActivity.NAME, playlist.getName());
+    bundle.putLong(PlaylistTrackActivity.ID, playlist.getId());
+    Intent intent = new Intent(v.getContext(), PlaylistTrackActivity.class);
     intent.putExtras(bundle);
     v.getContext().startActivity(intent);
   }

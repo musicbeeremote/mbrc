@@ -4,12 +4,13 @@ import android.text.TextUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.annotations.Connection;
 import com.kelsos.mbrc.domain.ConnectionSettings;
 import com.kelsos.mbrc.dto.WebSocketMessage;
-import com.kelsos.mbrc.annotations.Connection;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
 import com.kelsos.mbrc.utilities.MainThreadBus;
 import com.kelsos.mbrc.utilities.SettingsManager;
+import com.squareup.otto.Produce;
 import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -30,23 +31,24 @@ import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 @Singleton public class SocketService implements WebSocketListener {
+  private final PublishSubject<String> messagePublisher;
   private SettingsManager settingsManager;
   private ObjectMapper mapper;
   private OkHttpClient client;
   private boolean connected;
-  private final PublishSubject<String> messagePublisher;
   private Executor executor = Executors.newSingleThreadExecutor();
   private Subscription subscription;
-  @Inject private MainThreadBus bus;
+  private MainThreadBus bus;
 
   @Inject
-  public SocketService(SettingsManager settingsManager, ObjectMapper mapper, OkHttpClient client) {
+  public SocketService(SettingsManager settingsManager, ObjectMapper mapper, OkHttpClient client, MainThreadBus bus) {
     this.settingsManager = settingsManager;
     this.mapper = mapper;
+    this.bus = bus;
     OkHttpClient.Builder newBuilder = client.newBuilder();
     newBuilder.interceptors().clear();
     this.client = newBuilder.build();
-
+    this.bus.register(this);
 
     messagePublisher = PublishSubject.create();
     messagePublisher.subscribeOn(Schedulers.io()).subscribe((incoming) -> {
@@ -124,7 +126,6 @@ import rx.subjects.PublishSubject;
 
   @Override public void onMessage(ResponseBody responseBody) throws IOException {
     messagePublisher.onNext(responseBody.string());
-
   }
 
   @Override public void onPong(Buffer payload) {
@@ -136,5 +137,9 @@ import rx.subjects.PublishSubject;
     subscription.unsubscribe();
     Ln.v("[Websocket] closing (%d) %s", code, reason);
     bus.post(ConnectionStatusChangeEvent.create(Connection.OFF));
+  }
+
+  @Produce public ConnectionStatusChangeEvent produceConnectionStatus() {
+    return ConnectionStatusChangeEvent.create(connected ? Connection.ON : Connection.OFF);
   }
 }

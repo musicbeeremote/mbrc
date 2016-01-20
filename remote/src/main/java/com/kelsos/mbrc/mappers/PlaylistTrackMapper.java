@@ -5,6 +5,7 @@ import com.annimon.stream.Stream;
 import com.kelsos.mbrc.dao.PlaylistDao;
 import com.kelsos.mbrc.dao.PlaylistTrackDao;
 import com.kelsos.mbrc.dao.PlaylistTrackInfoDao;
+import com.kelsos.mbrc.dao.views.PlaylistTrackView;
 import com.kelsos.mbrc.dto.playlist.PlaylistTrack;
 import com.kelsos.mbrc.interfaces.ItemProvider;
 import java.util.List;
@@ -32,5 +33,15 @@ public class PlaylistTrackMapper {
     dao.setDateDeleted(data.getDateDeleted());
 
     return dao;
+  }
+
+  public static com.kelsos.mbrc.domain.PlaylistTrack map(PlaylistTrackView view) {
+    com.kelsos.mbrc.domain.PlaylistTrack track = new com.kelsos.mbrc.domain.PlaylistTrack();
+    track.setPath(view.getPath());
+    track.setPosition(view.getPosition());
+    track.setId(view.getId());
+    track.setArtist(view.getArtist());
+    track.setTitle(view.getTitle());
+    return track;
   }
 }

@@ -40,6 +40,8 @@ import com.kelsos.mbrc.interactors.TrackPositionInteractor;
 import com.kelsos.mbrc.interactors.TrackPositionInteractorImpl;
 import com.kelsos.mbrc.interactors.TrackRatingInteractor;
 import com.kelsos.mbrc.interactors.TrackRatingInteractorImpl;
+import com.kelsos.mbrc.interactors.playlists.PlaylistTrackInteractor;
+import com.kelsos.mbrc.interactors.playlists.PlaylistTrackInteractorImpl;
 import com.kelsos.mbrc.models.MainViewModel;
 import com.kelsos.mbrc.models.MainViewModelImpl;
 import com.kelsos.mbrc.presenters.AlbumTracksPresenter;
@@ -75,8 +77,8 @@ import com.kelsos.mbrc.services.api.NowPlayingService;
 import com.kelsos.mbrc.services.api.PlayerService;
 import com.kelsos.mbrc.services.api.PlaylistService;
 import com.kelsos.mbrc.services.api.TrackService;
-import okhttp3.OkHttpClient;
 import com.squareup.otto.Bus;
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import roboguice.inject.ContextSingleton;
 
@@ -110,6 +112,7 @@ import roboguice.inject.ContextSingleton;
     bind(NowPlayingListInteractor.class).to(NowPlayingListInteractorImpl.class);
     bind(PlaylistInteractor.class).to(PlaylistInteractorImpl.class);
     bind(LibraryTrackInteractor.class).to(LibraryTrackInteractorImpl.class);
+    bind(PlaylistTrackInteractor.class).to(PlaylistTrackInteractorImpl.class);
 
     bind(LibraryAlbumInteractor.class).to(LibraryAlbumInteractorImpl.class);
 

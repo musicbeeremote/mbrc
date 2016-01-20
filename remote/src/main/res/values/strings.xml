@@ -192,5 +192,7 @@
   <string name="genre_queued">Genre was added in now playing queue</string>
   <string name="genre_enqueue_failed">Failed to enqueue the selected genre</string>
   <string name="debug">DebugActivity</string>
+  <string name="list_item_overflow_description">More options for the item</string>
+  <string name="activity_library">Library</string>
 
 </resources>

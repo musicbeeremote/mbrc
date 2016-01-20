@@ -52,4 +52,9 @@
   <dimen name="list_item_track_height">60dp</dimen>
   <dimen name="list_item_track_cover_end_padding">12dp</dimen>
   <dimen name="fab_margin">8dp</dimen>
+  <dimen name="dual_list_title">16sp</dimen>
+  <dimen name="dual_list_subtitle">14sp</dimen>
+  <dimen name="list_item_padding">16dp</dimen>
+  <dimen name="mini_control_title_text_size">16sp</dimen>
+  <dimen name="mini_control_subtitle_text_size">14sp</dimen>
 </resources>

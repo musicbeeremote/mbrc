@@ -29,7 +29,7 @@ import com.raizlabs.android.dbflow.structure.BaseModelView;
       .orderBy(OrderBy.fromProperty(PlaylistTrackDao_Table.position).ascending());
 
   @Column private long id;
-  @Column(name = "playlistId") private long playlistId;
+  @Column(name = "playlist_id") private long playlistId;
   @Column private long position;
   @Column private String path;
   @Column private String artist;

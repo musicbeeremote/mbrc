@@ -5,16 +5,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.kelsos.mbrc.annotations.MetaDataType;
 import com.kelsos.mbrc.annotations.Queue;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
+@JsonInclude(JsonInclude.Include.NON_NULL) @JsonPropertyOrder({
     "type",
     "action",
-    "id"
+    "id",
+    "path"
 })
 
 public class NowPlayingQueueRequest {
@@ -22,12 +21,20 @@ public class NowPlayingQueueRequest {
   @MetaDataType.Type @JsonProperty("type") private String type;
   @Queue.Action @JsonProperty("action") private String action;
   @JsonProperty("id") private int id;
+  @JsonProperty("path") private String path;
+
+  @JsonProperty("path") public String getPath() {
+    return path;
+  }
+
+  @JsonProperty("path") public void setPath(String path) {
+    this.path = path;
+  }
 
   /**
    * @return The type
    */
-  @MetaDataType.Type
-  @JsonProperty("type") public String getType() {
+  @MetaDataType.Type @JsonProperty("type") public String getType() {
     return type;
   }
 
@@ -42,8 +49,7 @@ public class NowPlayingQueueRequest {
   /**
    * @return The action
    */
-  @Queue.Action
-  @JsonProperty("action") public String getAction() {
+  @Queue.Action @JsonProperty("action") public String getAction() {
     return action;
   }
 
@@ -75,10 +81,7 @@ public class NowPlayingQueueRequest {
   }
 
   @Override public int hashCode() {
-    return new HashCodeBuilder().append(type)
-        .append(action)
-        .append(id)
-        .toHashCode();
+    return new HashCodeBuilder().append(type).append(action).append(id).toHashCode();
   }
 
   @Override public boolean equals(Object other) {
@@ -89,10 +92,7 @@ public class NowPlayingQueueRequest {
       return false;
     }
     NowPlayingQueueRequest rhs = ((NowPlayingQueueRequest) other);
-    return new EqualsBuilder().append(type, rhs.type)
-        .append(action, rhs.action)
-        .append(id, rhs.id)
-        .isEquals();
+    return new EqualsBuilder().append(type, rhs.type).append(action, rhs.action).append(id, rhs.id).isEquals();
   }
 }
 

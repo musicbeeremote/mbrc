@@ -11,17 +11,15 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.presenters.MiniControlPresenter;
 import com.kelsos.mbrc.ui.views.MiniControlView;
 import com.kelsos.mbrc.utilities.FontUtils;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import roboguice.fragment.RoboFragment;
 
 public class MiniControlFragment extends RoboFragment implements MiniControlView {
@@ -49,9 +47,7 @@ public class MiniControlFragment extends RoboFragment implements MiniControlView
     presenter.onPreviousPressed();
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.ui_fragment_mini_control, container, false);
     ButterKnife.bind(this, view);
     presenter.bind(this);
@@ -87,10 +83,10 @@ public class MiniControlFragment extends RoboFragment implements MiniControlView
   public void updatePlayerState(@PlayerState.State String playState) {
     switch (playState) {
       case PlayerState.PLAYING:
-        playPause.setImageResource(R.drawable.ic_action_pause);
+        playPause.setImageResource(R.drawable.ic_pause_black_36dp);
         break;
       default:
-        playPause.setImageResource(R.drawable.ic_action_play);
+        playPause.setImageResource(R.drawable.ic_play_arrow_black_36dp);
         break;
     }
   }

@@ -21,4 +21,13 @@ public class QueueInteractor {
         .flatMap(baseResponse -> Observable.just(baseResponse.getCode() == Code.SUCCESS))
         .subscribeOn(Schedulers.io());
   }
+
+  public Observable<Boolean> execute(@Queue.Action String action, String path) {
+    final NowPlayingQueueRequest body = new NowPlayingQueueRequest();
+    body.setAction(action);
+    body.setPath(path);
+    return service.nowplayingQueue(body)
+        .flatMap(baseResponse -> Observable.just(baseResponse.getCode() == Code.SUCCESS))
+        .subscribeOn(Schedulers.io());
+  }
 }

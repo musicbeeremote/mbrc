@@ -94,7 +94,7 @@ public class BrowseTrackFragment extends RoboFragment
   }
 
   @Override public void onItemClicked(Track track) {
-
+    presenter.queue(track, Queue.NOW);
   }
 
   @Override public void clearData() {

@@ -7,8 +7,9 @@ import com.kelsos.mbrc.dao.PlaylistDao_Table;
 import com.kelsos.mbrc.dao.PlaylistTrackDao;
 import com.kelsos.mbrc.dao.PlaylistTrackInfoDao;
 import com.kelsos.mbrc.dao.PlaylistTrackInfoDao_Table;
+import com.kelsos.mbrc.dao.views.PlaylistTrackView;
+import com.kelsos.mbrc.dao.views.PlaylistTrackView_ViewTable;
 import com.kelsos.mbrc.domain.Playlist;
-import com.kelsos.mbrc.dto.playlist.PlaylistTrack;
 import com.kelsos.mbrc.dto.playlist.PlaylistTrackInfo;
 import com.kelsos.mbrc.mappers.PlaylistMapper;
 import com.raizlabs.android.dbflow.runtime.TransactionManager;
@@ -43,8 +44,13 @@ public class PlaylistRepositoryImpl implements PlaylistRepository {
     });
   }
 
-  @Override public Observable<List<PlaylistTrack>> getPlaylistTracks(long playlistId) {
-    return null;
+  @Override public Observable<List<PlaylistTrackView>> getPlaylistTracks(long playlistId) {
+    List<PlaylistTrackView> list = SQLite.select()
+        .from(PlaylistTrackView.class)
+        .where(PlaylistTrackView_ViewTable.playlist_id.eq(playlistId))
+        .queryList();
+
+    return Observable.just(list);
   }
 
   @Override public Observable<List<PlaylistTrackInfo>> getTrackInfo() {

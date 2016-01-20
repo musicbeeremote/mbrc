@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="@dimen/list_item_height"
     android:layout_gravity="center_vertical"
     android:background="?attr/selectableItemBackground"
-    android:paddingStart="@dimen/normal_margin"
-    android:paddingEnd="@dimen/normal_margin"
     android:baselineAligned="false"
     android:clickable="true"
     android:gravity="center_vertical"
@@ -17,36 +16,29 @@
       android:layout_weight="1"
       android:gravity="center_vertical"
       android:orientation="vertical"
-      android:paddingEnd="@dimen/normal_margin"
-      android:paddingLeft="@dimen/normal_margin"
-      android:paddingRight="@dimen/normal_margin"
-      android:paddingStart="@dimen/normal_margin">
+      android:paddingLeft="@dimen/list_item_padding"
+      android:paddingStart="@dimen/list_item_padding"
+      tools:ignore="RtlSymmetry">
 
     <TextView
         android:id="@+id/line_one"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:paddingLeft="@dimen/small_margin"
-        android:paddingRight="@dimen/small_margin"
         android:singleLine="true"
-        android:text="@string/title_placeholder"
-        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/primary_text"
-        android:textSize="@dimen/abc_text_size_title_material" />
+        android:textSize="@dimen/dual_list_title"
+        tools:text="Back in black" />
 
     <TextView
         android:id="@+id/line_two"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:paddingLeft="@dimen/small_margin"
-        android:paddingRight="@dimen/small_margin"
         android:singleLine="true"
-        android:text="@string/artist_placeholder"
-        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/secondary_text"
-        android:textSize="@dimen/abc_text_size_subhead_material" />
+        android:textSize="@dimen/dual_list_subtitle"
+        tools:text="AC/DC" />
   </LinearLayout>
 
   <LinearLayout
@@ -63,8 +55,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:contentDescription="@string/abc_action_menu_overflow_description"
-        android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+        android:contentDescription="@string/list_item_overflow_description"
+        android:src="@drawable/ic_more_vert_black_24dp"
         android:tint="@android:color/white" />
   </LinearLayout>
 </LinearLayout>

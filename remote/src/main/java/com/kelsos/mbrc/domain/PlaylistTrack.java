@@ -4,7 +4,8 @@ public class PlaylistTrack {
   private long id;
   private String artist;
   private String title;
-  private int position;
+  private String path;
+  private long position;
 
   public long getId() {
     return id;
@@ -30,11 +31,19 @@ public class PlaylistTrack {
     this.title = title;
   }
 
-  public int getPosition() {
+  public long getPosition() {
     return position;
   }
 
-  public void setPosition(int position) {
+  public void setPosition(long position) {
     this.position = position;
+  }
+
+  public String getPath() {
+    return path;
+  }
+
+  public void setPath(String path) {
+    this.path = path;
   }
 }

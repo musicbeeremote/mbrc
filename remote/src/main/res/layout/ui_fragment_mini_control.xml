@@ -37,7 +37,7 @@
         android:fontFamily="sans-serif-medium"
         android:singleLine="true"
         android:textColor="@color/primary_text"
-        android:textSize="@dimen/abc_text_size_title_material"
+        android:textSize="@dimen/mini_control_title_text_size"
         tools:ignore="UnusedAttribute"
         tools:text="All night" />
 
@@ -50,7 +50,7 @@
         android:fontFamily="sans-serif"
         android:singleLine="true"
         android:textColor="@color/secondary_text"
-        android:textSize="@dimen/abc_text_size_small_material"
+        android:textSize="@dimen/mini_control_subtitle_text_size"
         tools:ignore="UnusedAttribute"
         tools:text="Parov Stelar" />
 
@@ -72,7 +72,8 @@
         android:background="?attr/selectableItemBackground"
         android:baselineAlignBottom="false"
         android:contentDescription="@string/main_button_previous_description"
-        android:src="@drawable/ic_action_previous" />
+        android:tint="@color/white"
+        android:src="@drawable/ic_skip_previous_black_36dp" />
 
     <ImageButton
         android:id="@+id/mc_play_pause"
@@ -81,7 +82,8 @@
         android:background="?attr/selectableItemBackground"
         android:baselineAlignBottom="false"
         android:contentDescription="@string/main_button_play_pause_description"
-        android:src="@drawable/ic_action_play" />
+        android:tint="@color/white"
+        android:src="@drawable/ic_play_arrow_black_36dp" />
 
     <ImageButton
         android:id="@+id/mc_next_track"
@@ -90,7 +92,8 @@
         android:background="?attr/selectableItemBackground"
         android:baselineAlignBottom="false"
         android:contentDescription="@string/main_button_next_description"
-        android:src="@drawable/ic_action_next" />
+        android:tint="@color/white"
+        android:src="@drawable/ic_skip_next_black_36dp" />
 
   </LinearLayout>
 
