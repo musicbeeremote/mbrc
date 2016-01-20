@@ -235,6 +235,7 @@ import roboguice.util.Ln;
   }
 
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    super.onCreateOptionsMenu(menu, inflater);
     inflater.inflate(R.menu.menu, menu);
     this.menu = menu;
     MenuItem shareItem = menu.findItem(R.id.actionbar_share);
