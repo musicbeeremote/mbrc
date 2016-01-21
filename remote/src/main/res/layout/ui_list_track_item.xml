@@ -53,7 +53,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:textColor="@color/primary_text"
-            android:textSize="@dimen/abc_text_size_title_material"
+            android:textSize="@dimen/dual_list_title"
             tools:text="Track title" />
 
         <TextView
@@ -63,7 +63,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:textColor="@color/secondary_text"
-            android:textSize="@dimen/abc_text_size_subhead_material"
+            android:textSize="@dimen/dual_list_subtitle"
             tools:text="Artist Name" />
       </LinearLayout>
 
