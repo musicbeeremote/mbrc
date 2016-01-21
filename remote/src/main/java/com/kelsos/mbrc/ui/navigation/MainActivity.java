@@ -202,8 +202,8 @@ import com.kelsos.mbrc.utilities.FontUtils;
     shuffleButton.setColorFilter(color);
 
     shuffleButton.setImageResource(Shuffle.AUTODJ.equals(state)
-                                   ? R.drawable.ic_headset_grey600_24dp
-                                   : R.drawable.ic_shuffle_grey600_24dp);
+                                   ? R.drawable.ic_headset_black_24dp
+                                   : R.drawable.ic_shuffle_black_24dp);
   }
 
   @Override public void updateRepeat(@Repeat.Mode String mode) {
@@ -227,10 +227,10 @@ import com.kelsos.mbrc.utilities.FontUtils;
     }
     switch (status) {
       case LOVED:
-        favoriteMenuItem.setIcon(R.drawable.ic_action_favorite);
+        favoriteMenuItem.setIcon(R.drawable.ic_favorite_black_24dp);
         break;
       default:
-        favoriteMenuItem.setIcon(R.drawable.ic_action_favorite_outline);
+        favoriteMenuItem.setIcon(R.drawable.ic_favorite_border_black_24dp);
         break;
     }
   }
@@ -257,7 +257,8 @@ import com.kelsos.mbrc.utilities.FontUtils;
   }
 
   @Override public void updateMute(boolean enabled) {
-    muteButton.setImageResource(enabled ? R.drawable.ic_volume_off_grey600_24dp : R.drawable.ic_volume_up_grey600_24dp);
+    muteButton.setImageResource(enabled ? R.drawable.ic_volume_off_black_24dp : R.drawable.ic_volume_up_black_24dp);
+    muteButton.setColorFilter(ContextCompat.getColor(this, R.color.button_dark));
   }
 
   @Override public void updatePosition(TrackPosition position) {

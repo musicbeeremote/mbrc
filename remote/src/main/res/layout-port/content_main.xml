@@ -169,7 +169,7 @@
         android:paddingEnd="@dimen/small_margin"
         android:paddingLeft="@dimen/normal_margin"
         android:paddingRight="@dimen/small_margin"
-        android:src="@drawable/ic_volume_off_grey600_24dp"
+        android:src="@drawable/ic_volume_off_black_24dp"
         android:tint="@color/button_dark"
         tools:ignore="RtlHardcoded,RtlSymmetry" />
 
@@ -218,7 +218,7 @@
         android:layout_weight="0.7"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/main_button_repeat_description"
-        android:src="@drawable/ic_repeat_grey600_24dp"
+        android:src="@drawable/ic_repeat_black_24dp"
         android:tint="@color/button_dark" />
 
     <ImageButton
@@ -259,7 +259,7 @@
         android:layout_weight="0.7"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/main_button_shuffle_description"
-        android:src="@drawable/ic_shuffle_grey600_24dp"
+        android:src="@drawable/ic_shuffle_black_24dp"
         android:tint="@color/button_dark" />
   </LinearLayout>
 

@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.adapters;
 
+import android.content.Context;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -49,7 +51,9 @@ public class ConnectionSettingsAdapter
     connectionViewHolder.portNum.setText(String.format("%d / %d", settings.getPort(), settings.getHttp()));
 
     if (settings.getIndex() == defaultIndex) {
-      connectionViewHolder.defaultSettings.setImageResource(R.drawable.ic_selection_default);
+      connectionViewHolder.defaultSettings.setImageResource(R.drawable.ic_check_black_24dp);
+      Context context = connectionViewHolder.itemView.getContext();
+      connectionViewHolder.defaultSettings.setColorFilter(ContextCompat.getColor(context, R.color.white));
     }
 
     connectionViewHolder.overflow.setOnClickListener(v -> {
