@@ -6,6 +6,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import butterknife.Bind;
@@ -13,6 +14,7 @@ import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.NowPlayingAdapter;
+import com.kelsos.mbrc.adapters.SimpleItemTouchHelperCallback;
 import com.kelsos.mbrc.domain.QueueTrack;
 import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
@@ -22,9 +24,7 @@ import com.kelsos.mbrc.presenters.NowPlayingPresenter;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.views.NowPlayingView;
 import com.squareup.otto.Subscribe;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class NowPlayingActivity extends BaseActivity
     implements SearchView.OnQueryTextListener, NowPlayingAdapter.OnUserActionListener, NowPlayingView {
@@ -80,24 +80,11 @@ public class NowPlayingActivity extends BaseActivity
     recyclerView.setLayoutManager(layoutManager);
     adapter.setOnUserActionListener(this);
     recyclerView.setAdapter(adapter);
+    SimpleItemTouchHelperCallback callback = new SimpleItemTouchHelperCallback(adapter);
+    ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+    touchHelper.attachToRecyclerView(recyclerView);
 
     presenter.loadData();
-  }
-
-  private int calculateNewIndex(int from, int to, int index) {
-    int dist = Math.abs(from - to);
-    if (dist == 1 && index == from
-        || dist > 1 && from > to && index == from
-        || dist > 1 && from < to && index == from) {
-      index = to;
-    } else if (dist == 1 && index == to) {
-      index = from;
-    } else if (dist > 1 && from > to && index == to || from > index && to < index) {
-      index += 1;
-    } else if (dist > 1 && from < to && index == to || from < index && to > index) {
-      index -= 1;
-    }
-    return index;
   }
 
   @Subscribe public void handleTrackMoved(TrackMoved event) {
@@ -115,28 +102,16 @@ public class NowPlayingActivity extends BaseActivity
     }
   }
 
-  @Override public void onTrackRemoved(int position) {
-
+  @Override public void onItemRemoved(int position) {
+    presenter.removeItem(position);
   }
 
-  @Override public void onTrackMoved(int from, int to) {
-
+  @Override public void onItemMoved(int from, int to) {
+    presenter.moveItem(from, to);
   }
 
   @Override public void updatePlayingTrack(QueueTrack track) {
     adapter.setPlayingTrack(track);
-  }
-
-  @Override public void removeTrack(int position) {
-
-  }
-
-  @Override public void moveTrack(int from, int to) {
-    adapter.setPlayingTrackIndex(calculateNewIndex(from, to, adapter.getPlayingTrackIndex()));
-
-    Map<String, Integer> move = new HashMap<>();
-    move.put("from", from);
-    move.put("to", to);
   }
 
   @Override public void updateAdapter(List<QueueTrack> data) {

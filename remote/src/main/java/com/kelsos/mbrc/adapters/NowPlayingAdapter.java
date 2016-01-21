@@ -8,25 +8,27 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.dao.QueueTrackDao;
 import com.kelsos.mbrc.domain.QueueTrack;
-
+import com.kelsos.mbrc.interfaces.ITouchHelperAdapter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
 import roboguice.util.Ln;
 
-public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.TrackHolder> {
+public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.TrackHolder>
+    implements ITouchHelperAdapter {
   private List<QueueTrack> data;
   private int playingTrackIndex;
   private LayoutInflater inflater;
   private OnUserActionListener listener;
 
-  public NowPlayingAdapter() {
+  @Inject public NowPlayingAdapter(Context context) {
+    inflater = LayoutInflater.from(context);
     data = new ArrayList<>();
     setHasStableIds(true);
   }
@@ -41,20 +43,12 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
     notifyDataSetChanged();
   }
 
-  public int getPlayingTrackIndex() {
-    return this.playingTrackIndex;
-  }
-
   public void setPlayingTrackIndex(int index) {
     this.playingTrackIndex = index;
     notifyDataSetChanged();
   }
 
   @Override public TrackHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    if (inflater == null) {
-      final Context context = parent.getContext();
-      inflater = LayoutInflater.from(context);
-    }
     final View view = inflater.inflate(R.layout.ui_list_track_item, parent, false);
     return new TrackHolder(view);
   }
@@ -88,19 +82,6 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
     return data.get(position).getPosition();
   }
 
- public void onMoveItem(int from, int to) {
-    final QueueTrack track = data.get(from);
-    data.remove(track);
-    data.add(to, track);
-
-    notifyItemMoved(from, to);
-
-    if (listener != null) {
-      listener.onTrackMoved(from, to);
-    }
-  }
-
-
   public void setOnUserActionListener(OnUserActionListener listener) {
     this.listener = listener;
   }
@@ -127,10 +108,36 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
     notifyDataSetChanged();
   }
 
-  public interface OnUserActionListener {
-    void onTrackRemoved(int position);
+  @Override public void onItemMove(int from, int to) {
+    if (from < to) {
+      for (int i = from; i < to; i++) {
+        Collections.swap(data, i, i + 1);
+      }
+    } else {
+      for (int i = from; i > to; i--) {
+        Collections.swap(data, i, i - 1);
+      }
+    }
+    notifyItemMoved(from, to);
 
-    void onTrackMoved(int from, int to);
+    if (listener != null) {
+      listener.onItemMoved(from, to);
+    }
+  }
+
+  @Override public void onItemDismiss(int position) {
+    data.remove(position);
+    notifyItemRemoved(position);
+
+    if (listener != null) {
+      listener.onItemRemoved(position);
+    }
+  }
+
+  public interface OnUserActionListener {
+    void onItemRemoved(int position);
+
+    void onItemMoved(int from, int to);
 
     void onItemClicked(int position, QueueTrack track);
   }
