@@ -87,12 +87,12 @@ import rx.schedulers.Schedulers;
   }
 
   private void subscribe() {
-    activeSubscriptions.add(bus.register(VolumeChangeEvent.class, this::onVolumeChangedEvent));
-    activeSubscriptions.add(bus.register(RepeatChange.class, this::onRepeatChangedEvent));
-    activeSubscriptions.add(bus.register(TrackInfoChangeEvent.class, this::onTrackInfoChangedEvent));
-    activeSubscriptions.add(bus.register(CoverChangedEvent.class, this::onCoverChangedEvent));
-    activeSubscriptions.add(bus.register(PlayStateChange.class, this::onPlayStateChanged));
-    activeSubscriptions.add(bus.register(MuteChangeEvent.class, this::onMuteChanged));
+    activeSubscriptions.add(bus.register(VolumeChangeEvent.class, this::onVolumeChangedEvent, true));
+    activeSubscriptions.add(bus.register(RepeatChange.class, this::onRepeatChangedEvent, true));
+    activeSubscriptions.add(bus.register(TrackInfoChangeEvent.class, this::onTrackInfoChangedEvent, true));
+    activeSubscriptions.add(bus.register(CoverChangedEvent.class, this::onCoverChangedEvent, true));
+    activeSubscriptions.add(bus.register(PlayStateChange.class, this::onPlayStateChanged, true));
+    activeSubscriptions.add(bus.register(MuteChangeEvent.class, this::onMuteChanged, true));
   }
 
   private void loadPlayerState() {

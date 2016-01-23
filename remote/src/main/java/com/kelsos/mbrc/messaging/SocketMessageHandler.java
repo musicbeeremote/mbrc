@@ -48,7 +48,7 @@ import rx.subjects.PublishSubject;
   private PublishSubject<WebSocketMessage> volumeDebouncer = PublishSubject.create();
 
   @Inject public SocketMessageHandler(RxBus bus) {
-    bus.register(WebSocketMessage.class, this::onWebSocketMessage);
+    bus.register(WebSocketMessage.class, this::onWebSocketMessage, false);
     volumeDebouncer.debounce(1, TimeUnit.SECONDS).subscribe(this::handleVolume);
 
     actions = new HashMap<>();

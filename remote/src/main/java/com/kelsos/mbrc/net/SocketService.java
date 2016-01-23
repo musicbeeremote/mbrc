@@ -130,6 +130,7 @@ import rx.subjects.PublishSubject;
   }
 
   @Override public void onFailure(IOException e, Response response) {
+    stopPing();
     this.connected = false;
     Ln.v(e, "[Websocket] io ex");
     bus.post(ConnectionStatusChangeEvent.create(Connection.OFF));
@@ -146,6 +147,7 @@ import rx.subjects.PublishSubject;
   @Override public void onClose(int code, String reason) {
     this.connected = false;
     subscription.unsubscribe();
+    webSocket = null;
     Ln.v("[Websocket] closing (%d) %s", code, reason);
     bus.post(ConnectionStatusChangeEvent.create(Connection.OFF));
   }
@@ -156,6 +158,11 @@ import rx.subjects.PublishSubject;
 
   public void disconnect() {
     stopPing();
+
+    if (webSocket == null) {
+      Ln.v("No WebSocket available nothing to do here");
+      return;
+    }
     try {
       webSocket.close(1000, "Disconnecting");
     } catch (IOException e) {
