@@ -41,6 +41,7 @@ import rx.subjects.PublishSubject;
   private Subscription subscription;
   private MainThreadBus bus;
   @Inject private RxBus rxBus;
+  private WebSocket webSocket;
 
   @Inject
   public SocketService(SettingsManager settingsManager, ObjectMapper mapper, OkHttpClient client, MainThreadBus bus) {
@@ -91,15 +92,17 @@ import rx.subjects.PublishSubject;
   }
 
   @Override public void onOpen(WebSocket webSocket, Response response) {
+    this.webSocket = webSocket;
     this.connected = true;
     bus.post(ConnectionStatusChangeEvent.create(Connection.ON));
     String message = "{\"message\":\"connected\"}";
     Send(webSocket, message);
 
-    if (subscription != null && !subscription.isUnsubscribed()) {
-      subscription.unsubscribe();
-    }
+    stopPing();
+    startPing(webSocket);
+  }
 
+  public void startPing(WebSocket webSocket) {
     subscription = Observable.interval(15, TimeUnit.SECONDS).subscribe(aLong -> {
       try {
         webSocket.sendPing(new Buffer());
@@ -108,6 +111,12 @@ import rx.subjects.PublishSubject;
         e.printStackTrace();
       }
     });
+  }
+
+  public void stopPing() {
+    if (subscription != null && !subscription.isUnsubscribed()) {
+      subscription.unsubscribe();
+    }
   }
 
   private void Send(WebSocket webSocket, String message) {
@@ -143,5 +152,14 @@ import rx.subjects.PublishSubject;
 
   @Produce public ConnectionStatusChangeEvent produceConnectionStatus() {
     return ConnectionStatusChangeEvent.create(connected ? Connection.ON : Connection.OFF);
+  }
+
+  public void disconnect() {
+    stopPing();
+    try {
+      webSocket.close(1000, "Disconnecting");
+    } catch (IOException e) {
+      Ln.v(e, "While closing the websocket");
+    }
   }
 }

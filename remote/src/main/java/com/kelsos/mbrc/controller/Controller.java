@@ -24,7 +24,7 @@ import roboguice.util.Ln;
   @Inject private NotificationService notificationService;
   @Inject private ServiceDiscovery discovery;
   @Inject private SettingsManager settingsManager;
-  @Inject private SocketMessageHandler handler;
+  @Inject private SocketMessageHandler messageHandler;
   @Inject private LibrarySyncManager syncManager;
 
   public Controller() {
@@ -35,7 +35,9 @@ import roboguice.util.Ln;
     return null;
   }
 
+
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
+    Ln.v("[Service] start command received");
     discovery.startDiscovery().subscribe(connectionSettings -> {
 
     }, Ln::v);
@@ -46,7 +48,9 @@ import roboguice.util.Ln;
 
   @Override public void onDestroy() {
     super.onDestroy();
+    Ln.v("[Service] destroying service");
     notificationService.cancelNotification(NotificationService.NOW_PLAYING_PLACEHOLDER);
+    socket.disconnect();
     FlowManager.destroy();
     this.unregisterReceiver(receiver);
   }

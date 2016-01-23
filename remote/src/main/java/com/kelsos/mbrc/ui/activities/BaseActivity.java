@@ -45,6 +45,7 @@ import com.kelsos.mbrc.ui.navigation.NowPlayingActivity;
 import com.kelsos.mbrc.ui.navigation.PlaylistListActivity;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+import roboguice.util.Ln;
 
 public class BaseActivity extends RoboAppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -284,6 +285,7 @@ public class BaseActivity extends RoboAppCompatActivity implements NavigationVie
   }
 
   private void onExitClicked() {
+    Ln.v("[Menu] User pressed exit");
     stopService(new Intent(this, Controller.class));
     finish();
   }
