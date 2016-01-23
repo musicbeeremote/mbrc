@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.interactors;
 
-import com.kelsos.mbrc.dto.track.Position;
+import com.kelsos.mbrc.domain.TrackPosition;
 
 import rx.Observable;
 
 public interface TrackPositionInteractor {
-  Observable<Position> execute();
-  Observable<Position> execute(int position);
+  Observable<TrackPosition> getPosition();
+  Observable<TrackPosition> setPosition(int position);
 }

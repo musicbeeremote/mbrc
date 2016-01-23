@@ -3,8 +3,8 @@ package com.kelsos.mbrc.di.modules;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.cache.PlayerCache;
-import com.kelsos.mbrc.cache.PlayerCacheImpl;
+import com.kelsos.mbrc.cache.PlayerStateCache;
+import com.kelsos.mbrc.cache.PlayerStateCacheImpl;
 import com.kelsos.mbrc.cache.TrackCache;
 import com.kelsos.mbrc.cache.TrackCacheImpl;
 import com.kelsos.mbrc.di.providers.ApiServiceProvider;
@@ -44,8 +44,6 @@ import com.kelsos.mbrc.interactors.nowplaying.NowPlayingActionInteractor;
 import com.kelsos.mbrc.interactors.nowplaying.NowPlayingActionInteractorImpl;
 import com.kelsos.mbrc.interactors.playlists.PlaylistTrackInteractor;
 import com.kelsos.mbrc.interactors.playlists.PlaylistTrackInteractorImpl;
-import com.kelsos.mbrc.models.MainViewModel;
-import com.kelsos.mbrc.models.MainViewModelImpl;
 import com.kelsos.mbrc.presenters.AlbumTracksPresenter;
 import com.kelsos.mbrc.presenters.AlbumTracksPresenterImpl;
 import com.kelsos.mbrc.presenters.BrowseAlbumPresenter;
@@ -68,8 +66,6 @@ import com.kelsos.mbrc.repository.LibraryRepository;
 import com.kelsos.mbrc.repository.LibraryRepositoryImpl;
 import com.kelsos.mbrc.repository.NowPlayingRepository;
 import com.kelsos.mbrc.repository.NowPlayingRepositoryImpl;
-import com.kelsos.mbrc.repository.PlayerRepository;
-import com.kelsos.mbrc.repository.PlayerRepositoryImpl;
 import com.kelsos.mbrc.repository.PlaylistRepository;
 import com.kelsos.mbrc.repository.PlaylistRepositoryImpl;
 import com.kelsos.mbrc.repository.TrackRepository;
@@ -79,6 +75,10 @@ import com.kelsos.mbrc.services.api.NowPlayingService;
 import com.kelsos.mbrc.services.api.PlayerService;
 import com.kelsos.mbrc.services.api.PlaylistService;
 import com.kelsos.mbrc.services.api.TrackService;
+import com.kelsos.mbrc.utilities.RxBus;
+import com.kelsos.mbrc.utilities.RxBusImpl;
+import com.kelsos.mbrc.viewmodels.MainViewModel;
+import com.kelsos.mbrc.viewmodels.MainViewModelImpl;
 import com.squareup.otto.Bus;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -110,6 +110,7 @@ import roboguice.inject.ContextSingleton;
     bind(ShuffleInteractor.class).to(ShuffleInteractorImpl.class);
     bind(RepeatInteractor.class).to(RepeatInteractorImpl.class);
     bind(PlayerStateInteractor.class).to(PlayerStateInteractorImpl.class);
+
     bind(MuteInteractor.class).to(MuteInteractorImpl.class);
     bind(NowPlayingListInteractor.class).to(NowPlayingListInteractorImpl.class);
     bind(NowPlayingActionInteractor.class).to(NowPlayingActionInteractorImpl.class);
@@ -120,18 +121,19 @@ import roboguice.inject.ContextSingleton;
     bind(LibraryAlbumInteractor.class).to(LibraryAlbumInteractorImpl.class);
 
     bind(TrackRepository.class).to(TrackRepositoryImpl.class).in(Singleton.class);
-    bind(PlayerRepository.class).to(PlayerRepositoryImpl.class).in(Singleton.class);
+
     bind(NowPlayingRepository.class).to(NowPlayingRepositoryImpl.class).in(Singleton.class);
     bind(PlaylistRepository.class).to(PlaylistRepositoryImpl.class).in(Singleton.class);
     bind(LibraryRepository.class).to(LibraryRepositoryImpl.class).in(Singleton.class);
 
     bind(TrackCache.class).to(TrackCacheImpl.class).in(Singleton.class);
-    bind(PlayerCache.class).to(PlayerCacheImpl.class).in(Singleton.class);
+    bind(PlayerStateCache.class).to(PlayerStateCacheImpl.class).in(Singleton.class);
 
     bind(TrackService.class).toProvider(new ApiServiceProvider<>(TrackService.class)).in(Singleton.class);
     bind(PlayerService.class).toProvider(new ApiServiceProvider<>(PlayerService.class)).in(Singleton.class);
     bind(LibraryService.class).toProvider(new ApiServiceProvider<>(LibraryService.class)).in(Singleton.class);
     bind(NowPlayingService.class).toProvider(new ApiServiceProvider<>(NowPlayingService.class)).in(Singleton.class);
     bind(PlaylistService.class).toProvider(new ApiServiceProvider<>(PlaylistService.class)).in(Singleton.class);
+    bind(RxBus.class).to(RxBusImpl.class).in(Singleton.class);
   }
 }

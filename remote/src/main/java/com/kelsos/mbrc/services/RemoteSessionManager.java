@@ -108,7 +108,7 @@ import roboguice.util.Ln;
 
     PlaybackStateCompat.Builder builder = new PlaybackStateCompat.Builder();
     builder.setActions(PLAYBACK_ACTIONS);
-    final String playerState = stateChange.getState().getValue();
+    final String playerState = stateChange.getState();
     switch (playerState) {
       case PlayerState.PLAYING:
         builder.setState(PlaybackStateCompat.STATE_PLAYING, -1, 1);
@@ -130,7 +130,7 @@ import roboguice.util.Ln;
   }
 
   @Subscribe public void onPlayStateChange(PlayStateChange change) {
-    switch (change.getState().getValue()) {
+    switch (change.getState()) {
       case PlayerState.PLAYING:
         requestFocus();
         break;

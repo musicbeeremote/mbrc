@@ -92,7 +92,7 @@ public class WidgetNormal extends RoboAppWidgetProvider {
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
     final RemoteViews widget =
         new RemoteViews(context.getPackageName(), R.layout.widget_normal);
-    final boolean isPlaying = PlayerState.PLAYING.equals(state.getState().getValue());
+    final boolean isPlaying = PlayerState.PLAYING.equals(state.getState());
     widget.setImageViewResource(R.id.widget_normal_play, isPlaying
         ? R.drawable.ic_action_pause
         : R.drawable.ic_action_play);

@@ -27,7 +27,6 @@ import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.annotations.Repeat;
 import com.kelsos.mbrc.annotations.Shuffle;
 import com.kelsos.mbrc.domain.TrackPosition;
-import com.kelsos.mbrc.dto.player.PlayState;
 import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.presenters.MainViewPresenter;
@@ -239,8 +238,8 @@ import com.kelsos.mbrc.utilities.FontUtils;
     volumeBar.setProgress(volume);
   }
 
-  @Override public void updatePlayState(PlayState playstate) {
-    switch (playstate.getValue()) {
+  @Override public void updatePlayState(@PlayerState.State String state) {
+    switch (state) {
       case PlayerState.PLAYING:
         playPauseButton.setImageResource(R.drawable.ic_pause_circle_fill);
         break;

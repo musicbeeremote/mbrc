@@ -91,7 +91,7 @@ public class WidgetSmall extends RoboAppWidgetProvider {
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
     final RemoteViews smallWidget =
         new RemoteViews(context.getPackageName(), R.layout.widget_small);
-    final boolean isPlaying = PlayerState.PLAYING.equals(state.getState().getValue());
+    final boolean isPlaying = PlayerState.PLAYING.equals(state.getState());
     smallWidget.setImageViewResource(R.id.widget_small_play, isPlaying
         ? R.drawable.ic_action_pause
         : R.drawable.ic_action_play);

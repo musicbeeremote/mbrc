@@ -2,22 +2,19 @@ package com.kelsos.mbrc.repository;
 
 import android.graphics.Bitmap;
 import android.text.TextUtils;
-
 import com.google.inject.Inject;
 import com.kelsos.mbrc.cache.TrackCache;
-import com.kelsos.mbrc.dto.track.Position;
+import com.kelsos.mbrc.domain.TrackPosition;
 import com.kelsos.mbrc.dto.track.Rating;
 import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.interactors.TrackPositionInteractor;
 import com.kelsos.mbrc.interactors.TrackRatingInteractor;
 import com.kelsos.mbrc.services.api.TrackService;
 import com.kelsos.mbrc.utilities.RemoteUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -109,9 +106,9 @@ public class TrackRepositoryImpl implements TrackRepository {
   }
 
   @Override
-  public Observable<Position> getPosition() {
+  public Observable<TrackPosition> getPosition() {
     if (cache.getPosition() == null) {
-      return trackPositionInteractor.execute().subscribeOn(Schedulers.io())
+      return trackPositionInteractor.getPosition().subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
           .flatMap(position -> {
             cache.setPosition(position);
@@ -123,7 +120,7 @@ public class TrackRepositoryImpl implements TrackRepository {
   }
 
   @Override
-  public void setPosition(Position position) {
+  public void setPosition(TrackPosition position) {
     cache.setPosition(position);
   }
 

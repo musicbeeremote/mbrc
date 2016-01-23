@@ -1,11 +1,9 @@
 package com.kelsos.mbrc.cache;
 
 import android.graphics.Bitmap;
-
-import com.kelsos.mbrc.dto.track.Position;
+import com.kelsos.mbrc.domain.TrackPosition;
 import com.kelsos.mbrc.dto.track.Rating;
 import com.kelsos.mbrc.dto.track.TrackInfo;
-
 import java.util.List;
 
 public interface TrackCache {
@@ -21,9 +19,9 @@ public interface TrackCache {
 
   void setCover(Bitmap cover);
 
-  Position getPosition();
+  TrackPosition getPosition();
 
-  void setPosition(Position position);
+  void setPosition(TrackPosition position);
 
   Rating getRating();
 

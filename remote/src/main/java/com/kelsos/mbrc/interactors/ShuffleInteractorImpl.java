@@ -1,27 +1,26 @@
 package com.kelsos.mbrc.interactors;
 
 import com.google.inject.Inject;
-import com.kelsos.mbrc.dto.player.Shuffle;
 import com.kelsos.mbrc.dto.requests.ShuffleRequest;
 import com.kelsos.mbrc.services.api.PlayerService;
-
-import rx.Single;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class ShuffleInteractorImpl implements ShuffleInteractor {
   @Inject private PlayerService api;
-  @Override
-  public Single<Shuffle> execute() {
+
+  @Override public Observable<String> getShuffle() {
     return api.getShuffleState()
         .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread());
+        .observeOn(AndroidSchedulers.mainThread())
+        .flatMap(shuffle -> Observable.just(shuffle.getState()));
   }
 
-  @Override
-  public Single<Shuffle> execute(@com.kelsos.mbrc.annotations.Shuffle.State String state) {
+  @Override public Observable<String> updateShuffle(@com.kelsos.mbrc.annotations.Shuffle.State String state) {
     return api.updateShuffleState(new ShuffleRequest().setStatus(state))
         .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread());
+        .observeOn(AndroidSchedulers.mainThread())
+        .flatMap(shuffle -> Observable.just(shuffle.getState()));
   }
 }

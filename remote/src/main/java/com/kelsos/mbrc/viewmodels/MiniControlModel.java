@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.models;
+package com.kelsos.mbrc.viewmodels;
 
 import android.graphics.Bitmap;
 import com.kelsos.mbrc.annotations.PlayerState;

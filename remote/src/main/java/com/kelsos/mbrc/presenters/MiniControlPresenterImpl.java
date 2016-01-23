@@ -10,7 +10,7 @@ import com.kelsos.mbrc.interactors.PlayerInteractor;
 import com.kelsos.mbrc.interactors.PlayerStateInteractor;
 import com.kelsos.mbrc.interactors.TrackCoverInteractor;
 import com.kelsos.mbrc.interactors.TrackInfoInteractor;
-import com.kelsos.mbrc.models.MiniControlModel;
+import com.kelsos.mbrc.viewmodels.MiniControlModel;
 import com.kelsos.mbrc.ui.views.MiniControlView;
 import com.kelsos.mbrc.utilities.ErrorHandler;
 import com.squareup.otto.Bus;
@@ -79,12 +79,12 @@ import rx.schedulers.Schedulers;
           model.setTitle(trackInfo.getTitle());
         }, handler::handleThrowable);
 
-    playerStateInteractor.execute(false)
+    playerStateInteractor.getState()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
+        .doOnNext(model::setPlayerState)
         .subscribe(playState -> {
-          model.setPlayerState(playState.getValue());
-          view.updatePlayerState(playState.getValue());
+          view.updatePlayerState(playState);
         }, handler::handleThrowable);
 
   }
@@ -94,8 +94,7 @@ import rx.schedulers.Schedulers;
   }
 
   @Subscribe public void onPlayStateChange(PlayStateChange event) {
-    view.updatePlayerState(event.getState()
-        .getValue());
+    view.updatePlayerState(event.getState());
   }
 
   @Subscribe public void onTrackInfoChange(TrackInfoChangeEvent event) {

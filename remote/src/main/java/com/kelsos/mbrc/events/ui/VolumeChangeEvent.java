@@ -1,19 +1,19 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.dto.player.Volume;
+import android.support.annotation.IntRange;
 
 public class VolumeChangeEvent {
-  private Volume volume;
+  @IntRange(from = -1, to = 100) private int volume;
 
-  private VolumeChangeEvent(Volume volume) {
+  private VolumeChangeEvent(@IntRange(from = -1, to = 100) int volume) {
     this.volume = volume;
   }
 
-  public static VolumeChangeEvent newInstance(Volume volume) {
+  public static VolumeChangeEvent newInstance(@IntRange(from = -1, to = 100) int volume) {
     return new VolumeChangeEvent(volume);
   }
 
-  public Volume getVolume() {
+  @IntRange(from = -1, to = 100) public int getVolume() {
     return volume;
   }
 }

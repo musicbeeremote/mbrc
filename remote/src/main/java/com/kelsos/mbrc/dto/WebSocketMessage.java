@@ -13,7 +13,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @JsonPropertyOrder({
     "message"
 })
-public class WebSocketMessage {
+public class WebSocketMessage implements IMessage {
 
   @JsonProperty("message")
   private String message;
@@ -36,7 +36,7 @@ public class WebSocketMessage {
   /**
    * @return The message
    */
-  @JsonProperty("message")
+  @Override @JsonProperty("message")
   public String getMessage() {
     return message;
   }
@@ -44,7 +44,7 @@ public class WebSocketMessage {
   /**
    * @param message The message
    */
-  @JsonProperty("message")
+  @Override @JsonProperty("message")
   public void setMessage(String message) {
     this.message = message;
   }

@@ -9,6 +9,7 @@ import com.kelsos.mbrc.domain.ConnectionSettings;
 import com.kelsos.mbrc.dto.WebSocketMessage;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
 import com.kelsos.mbrc.utilities.MainThreadBus;
+import com.kelsos.mbrc.utilities.RxBus;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.squareup.otto.Produce;
 import java.io.IOException;
@@ -39,6 +40,7 @@ import rx.subjects.PublishSubject;
   private Executor executor = Executors.newSingleThreadExecutor();
   private Subscription subscription;
   private MainThreadBus bus;
+  @Inject private RxBus rxBus;
 
   @Inject
   public SocketService(SettingsManager settingsManager, ObjectMapper mapper, OkHttpClient client, MainThreadBus bus) {
@@ -84,7 +86,7 @@ import rx.subjects.PublishSubject;
       return;
     }
 
-    bus.post(message);
+    rxBus.post(message);
     Ln.v("[Incoming] %s", message);
   }
 

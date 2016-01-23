@@ -1,11 +1,10 @@
 package com.kelsos.mbrc.events.ui;
 
 import android.support.annotation.NonNull;
-
-import com.kelsos.mbrc.dto.player.PlayState;
+import com.kelsos.mbrc.annotations.PlayerState;
 
 public class PlayStateChange {
-  private PlayState state;
+  @PlayerState.State private String state;
 
   private PlayStateChange(Builder builder) {
     state = builder.state;
@@ -21,7 +20,7 @@ public class PlayStateChange {
     return builder;
   }
 
-  public PlayState getState() {
+  public @PlayerState.State String getState() {
     return this.state;
   }
 
@@ -29,7 +28,7 @@ public class PlayStateChange {
    * {@code PlayStateChange} builder static inner class.
    */
   public static final class Builder {
-    private PlayState state;
+    @PlayerState.State private String state;
 
     private Builder() {
     }
@@ -40,7 +39,7 @@ public class PlayStateChange {
      * @param val the {@code state} to set
      * @return a reference to this Builder
      */
-    @NonNull public Builder withState(@NonNull PlayState val) {
+    @NonNull public Builder withState(@PlayerState.State @NonNull String val) {
       state = val;
       return this;
     }
