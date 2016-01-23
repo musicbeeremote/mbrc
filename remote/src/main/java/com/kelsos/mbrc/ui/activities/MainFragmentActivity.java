@@ -11,7 +11,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
@@ -84,10 +86,14 @@ public class MainFragmentActivity extends RoboAppCompatActivity {
     };
 
     mDrawerLayout.setDrawerListener(mDrawerToggle);
-    mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, 1);
+    mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
-    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    getSupportActionBar().setHomeButtonEnabled(true);
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setHomeButtonEnabled(true);
+    }
+
 
     if (savedInstanceState != null) {
       return;
@@ -109,8 +115,8 @@ public class MainFragmentActivity extends RoboAppCompatActivity {
     bus.register(this);
   }
 
-  @Override public void onStop() {
-    super.onStop();
+  @Override protected void onPause() {
+    super.onPause();
     bus.unregister(this);
   }
 
@@ -233,7 +239,10 @@ public class MainFragmentActivity extends RoboAppCompatActivity {
     final String message =
         event.isFromResource() ? getString(event.getResId()) : event.getMessage();
 
-    Snackbar.make(getCurrentFocus(), message, Snackbar.LENGTH_SHORT).show();
+    View focus = getCurrentFocus();
+    if (focus != null) {
+      Snackbar.make(focus, message, Snackbar.LENGTH_SHORT).show();
+    }
   }
 
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
