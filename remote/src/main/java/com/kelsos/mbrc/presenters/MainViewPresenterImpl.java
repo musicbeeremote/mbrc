@@ -225,11 +225,14 @@ import rx.schedulers.Schedulers;
 
   @Override public void onPositionChange(int position) {
     stopPositionUpdate();
-    positionInteractor.getPosition()
-        .subscribeOn(Schedulers.io())
+    updatePosition(positionInteractor.setPosition(position));
+  }
+
+  public void updatePosition(Observable<TrackPosition> positionObservable) {
+    positionObservable.subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe((position1) -> {
-          model.setPosition(position1);
+        .doOnNext(model::setPosition)
+        .subscribe((newPosition) -> {
           startPositionUpdate();
         }, errorHandler::handleThrowable);
   }
@@ -255,6 +258,8 @@ import rx.schedulers.Schedulers;
   @Subscribe public void onTrackInfoChangedEvent(TrackInfoChangeEvent event) {
     model.setTrackInfo(event.getTrackInfo());
     mainView.updateTrackInfo(event.getTrackInfo());
+    startPositionUpdate();
+    updatePosition(positionInteractor.getPosition());
   }
 
   @Subscribe public void onCoverChangedEvent(CoverChangedEvent event) {
