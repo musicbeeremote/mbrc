@@ -11,8 +11,7 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.domain.ConnectionSettings;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
-import com.kelsos.mbrc.utilities.MainThreadBus;
-import com.squareup.otto.Subscribe;
+import com.kelsos.mbrc.utilities.RxBus;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -40,22 +39,22 @@ public class ServiceDiscovery {
   private WifiManager.MulticastLock mLock;
   private ConnectivityManager connectivityManager;
   private ObjectMapper mapper;
-  private MainThreadBus bus;
+  private RxBus bus;
 
   @Inject
   public ServiceDiscovery(WifiManager manager,
       ConnectivityManager connectivityManager,
       ObjectMapper mapper,
-      MainThreadBus bus) {
+      RxBus bus) {
     this.manager = manager;
     this.connectivityManager = connectivityManager;
     this.mapper = mapper;
     this.bus = bus;
 
-    bus.register(this);
+    bus.register(this, MessageEvent.class, this::onDiscoveryMessage);
   }
 
-  @Subscribe public void onDiscoveryMessage(MessageEvent messageEvent) {
+  public void onDiscoveryMessage(MessageEvent messageEvent) {
     if (!UserInputEventType.StartDiscovery.equals(messageEvent.getType())) {
       return;
     }

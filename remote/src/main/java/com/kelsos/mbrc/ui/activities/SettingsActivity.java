@@ -8,12 +8,12 @@ import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.fragments.SettingsFragment;
-import com.squareup.otto.Bus;
+import com.kelsos.mbrc.utilities.RxBus;
 
 public class SettingsActivity extends RoboAppCompatActivity {
 
   @Bind(R.id.toolbar) Toolbar toolbar;
-  @Inject private Bus bus;
+  @Inject private RxBus bus;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

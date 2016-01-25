@@ -25,9 +25,6 @@ import com.kelsos.mbrc.ui.views.MainView;
 import com.kelsos.mbrc.utilities.ErrorHandler;
 import com.kelsos.mbrc.utilities.RxBus;
 import com.kelsos.mbrc.viewmodels.MainViewModel;
-import com.squareup.otto.Subscribe;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import roboguice.inject.ContextSingleton;
 import roboguice.util.Ln;
@@ -54,10 +51,7 @@ import rx.schedulers.Schedulers;
   private MainView mainView;
   private Subscription positionUpdate;
 
-  private List<Subscription> activeSubscriptions;
-
   public MainViewPresenterImpl() {
-    activeSubscriptions = new LinkedList<>();
   }
 
   @Override public void bind(MainView mainView) {
@@ -65,13 +59,7 @@ import rx.schedulers.Schedulers;
   }
 
   @Override public void onPause() {
-    unsubscribe();
-  }
-
-  private void unsubscribe() {
-    Observable.from(activeSubscriptions)
-        .filter(subscription -> !subscription.isUnsubscribed())
-        .subscribe(Subscription::unsubscribe, errorHandler::handleThrowable);
+    bus.unregister(this);
   }
 
   @Override public void onResume() {
@@ -87,12 +75,12 @@ import rx.schedulers.Schedulers;
   }
 
   private void subscribe() {
-    activeSubscriptions.add(bus.register(VolumeChangeEvent.class, this::onVolumeChangedEvent, true));
-    activeSubscriptions.add(bus.register(RepeatChange.class, this::onRepeatChangedEvent, true));
-    activeSubscriptions.add(bus.register(TrackInfoChangeEvent.class, this::onTrackInfoChangedEvent, true));
-    activeSubscriptions.add(bus.register(CoverChangedEvent.class, this::onCoverChangedEvent, true));
-    activeSubscriptions.add(bus.register(PlayStateChange.class, this::onPlayStateChanged, true));
-    activeSubscriptions.add(bus.register(MuteChangeEvent.class, this::onMuteChanged, true));
+    bus.registerOnMain(this, VolumeChangeEvent.class, this::onVolumeChangedEvent);
+    bus.registerOnMain(this, RepeatChange.class, this::onRepeatChangedEvent);
+    bus.registerOnMain(this, TrackInfoChangeEvent.class, this::onTrackInfoChangedEvent);
+    bus.registerOnMain(this, CoverChangedEvent.class, this::onCoverChangedEvent);
+    bus.registerOnMain(this, PlayStateChange.class, this::onPlayStateChanged);
+    bus.registerOnMain(this, MuteChangeEvent.class, this::onMuteChanged);
   }
 
   private void loadPlayerState() {
@@ -245,29 +233,29 @@ import rx.schedulers.Schedulers;
 
   }
 
-  @Subscribe public void onVolumeChangedEvent(VolumeChangeEvent event) {
+  public void onVolumeChangedEvent(VolumeChangeEvent event) {
     model.setVolume(event.getVolume());
     mainView.updateVolume(event.getVolume());
   }
 
-  @Subscribe public void onRepeatChangedEvent(RepeatChange event) {
+  public void onRepeatChangedEvent(RepeatChange event) {
     model.setRepeat(event.getMode());
     mainView.updateRepeat(event.getMode());
   }
 
-  @Subscribe public void onTrackInfoChangedEvent(TrackInfoChangeEvent event) {
+  public void onTrackInfoChangedEvent(TrackInfoChangeEvent event) {
     model.setTrackInfo(event.getTrackInfo());
     mainView.updateTrackInfo(event.getTrackInfo());
     startPositionUpdate();
     updatePosition(positionInteractor.getPosition());
   }
 
-  @Subscribe public void onCoverChangedEvent(CoverChangedEvent event) {
+  public void onCoverChangedEvent(CoverChangedEvent event) {
     model.setTrackCover(event.getCover());
     mainView.updateCover(event.getCover());
   }
 
-  @Subscribe public void onPlayStateChanged(PlayStateChange event) {
+  public void onPlayStateChanged(PlayStateChange event) {
     model.setPlayState(event.getState());
     mainView.updatePlayState(event.getState());
     updatePlaystate(event.getState());
@@ -310,7 +298,7 @@ import rx.schedulers.Schedulers;
         }, errorHandler::handleThrowable);
   }
 
-  @Subscribe public void onMuteChanged(MuteChangeEvent event) {
+  public void onMuteChanged(MuteChangeEvent event) {
     model.setMuted(event.isMute());
     mainView.updateMute(event.isMute());
   }

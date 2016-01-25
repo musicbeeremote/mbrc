@@ -4,27 +4,24 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.widget.RatingBar;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.events.ui.RatingChanged;
-import com.kelsos.mbrc.utilities.MainThreadBus;
-import com.squareup.otto.Subscribe;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import com.kelsos.mbrc.utilities.RxBus;
 import roboguice.fragment.RoboDialogFragment;
 
 public class RatingDialogFragment extends RoboDialogFragment {
 
-  @Inject private MainThreadBus bus;
-  @Bind(R.id.ratingBar) RatingBar mRatingBar;
+  @Bind(R.id.ratingBar) RatingBar ratingBar;
+  @Inject private RxBus bus;
   private float mRating;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    bus.register(this);
+    bus.registerOnMain(this, RatingChanged.class, this::handleRatingChange);
   }
 
   @Override public void onDestroy() {
@@ -32,7 +29,7 @@ public class RatingDialogFragment extends RoboDialogFragment {
     super.onDestroy();
   }
 
-  @Subscribe public void handleRatingChange(RatingChanged event) {
+  public void handleRatingChange(RatingChanged event) {
     mRating = event.getRating();
   }
 
@@ -43,12 +40,12 @@ public class RatingDialogFragment extends RoboDialogFragment {
     final MaterialDialog dialog = builder.build();
     ButterKnife.bind(this, dialog.getCustomView());
 
-    mRatingBar.setOnRatingBarChangeListener((ratingBar, ratingValue, isUserInitiated) -> {
+    ratingBar.setOnRatingBarChangeListener((ratingBar, ratingValue, isUserInitiated) -> {
       if (isUserInitiated) {
 
       }
     });
-    mRatingBar.setRating(mRating);
+    ratingBar.setRating(mRating);
 
     return dialog;
   }

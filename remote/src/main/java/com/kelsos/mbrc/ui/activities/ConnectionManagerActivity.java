@@ -3,13 +3,14 @@ package com.kelsos.mbrc.ui.activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import butterknife.ButterKnife;
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.inject.Inject;
@@ -22,13 +23,12 @@ import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
+import com.kelsos.mbrc.utilities.RxBus;
 
 public class ConnectionManagerActivity extends RoboAppCompatActivity
     implements SettingsDialogFragment.SettingsDialogListener {
 
-  @Inject private Bus bus;
+  @Inject private RxBus bus;
   @Bind(R.id.connection_list) RecyclerView mRecyclerView;
   @Bind(R.id.toolbar) Toolbar mToolbar;
 
@@ -65,13 +65,19 @@ public class ConnectionManagerActivity extends RoboAppCompatActivity
   @Override protected void onStart() {
     super.onStart();
     mContext = this;
-    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    getSupportActionBar().setTitle(R.string.connection_manager_title);
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setTitle(R.string.connection_manager_title);
+    }
+
   }
 
   @Override protected void onResume() {
     super.onResume();
-    bus.register(this);
+    bus.register(ConnectionSettingsChanged.class, this::handleConnectionSettingsChange, false);
+    bus.register(DiscoveryStopped.class, this::handleDiscoveryStopped, false);
+    bus.register(NotifyUser.class, this::handleUserNotification, false);
   }
 
   @Override protected void onPause() {
@@ -95,13 +101,13 @@ public class ConnectionManagerActivity extends RoboAppCompatActivity
     bus.post(settings);
   }
 
-  @Subscribe public void handleConnectionSettingsChange(ConnectionSettingsChanged event) {
+  public void handleConnectionSettingsChange(ConnectionSettingsChanged event) {
     ConnectionSettingsAdapter mAdapter = new ConnectionSettingsAdapter(event.getSettings(), bus);
     mAdapter.setDefaultIndex(event.getDefaultIndex());
     mRecyclerView.setAdapter(mAdapter);
   }
 
-  @Subscribe public void handleDiscoveryStopped(DiscoveryStopped event) {
+  public void handleDiscoveryStopped(DiscoveryStopped event) {
 
     if (mProgress != null) {
       mProgress.dismiss();
@@ -123,13 +129,13 @@ public class ConnectionManagerActivity extends RoboAppCompatActivity
         break;
     }
 
-    Snackbar.make(getCurrentFocus(), message, Snackbar.LENGTH_SHORT).show();
+    Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show();
   }
 
-  @Subscribe public void handleUserNotification(NotifyUser event) {
+  public void handleUserNotification(NotifyUser event) {
     final String message =
         event.isFromResource() ? getString(event.getResId()) : event.getMessage();
 
-    Snackbar.make(getCurrentFocus(), message, Snackbar.LENGTH_SHORT).show();
+    Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show();
   }
 }

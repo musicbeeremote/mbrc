@@ -11,17 +11,17 @@ import android.telephony.TelephonyManager;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.squareup.otto.Bus;
+
 
 import roboguice.receiver.RoboBroadcastReceiver;
 
 public class RemoteBroadcastReceiver extends RoboBroadcastReceiver {
   private SettingsManager settingsManager;
-  private Bus bus;
+  private RxBus bus;
   private Context context;
 
   @Inject
-  public RemoteBroadcastReceiver(SettingsManager settingsManager, Bus bus, Context context) {
+  public RemoteBroadcastReceiver(SettingsManager settingsManager, RxBus bus, Context context) {
     this.settingsManager = settingsManager;
     this.bus = bus;
     this.context = context;

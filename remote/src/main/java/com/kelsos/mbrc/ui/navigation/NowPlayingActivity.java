@@ -23,7 +23,6 @@ import com.kelsos.mbrc.events.ui.TrackRemoval;
 import com.kelsos.mbrc.presenters.NowPlayingPresenter;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.views.NowPlayingView;
-import com.squareup.otto.Subscribe;
 import java.util.List;
 
 public class NowPlayingActivity extends BaseActivity
@@ -36,7 +35,12 @@ public class NowPlayingActivity extends BaseActivity
   private SearchView mSearchView;
   private MenuItem mSearchItem;
 
-  @Subscribe public void handlePlayingTrackChange(TrackInfoChangeEvent event) {
+  @Override protected void onStart() {
+    super.onStart();
+
+  }
+
+  public void handlePlayingTrackChange(TrackInfoChangeEvent event) {
     if (adapter == null || !adapter.getClass().equals(NowPlayingAdapter.class)) {
       return;
     }
@@ -87,14 +91,14 @@ public class NowPlayingActivity extends BaseActivity
     presenter.loadData();
   }
 
-  @Subscribe public void handleTrackMoved(TrackMoved event) {
+  public void handleTrackMoved(TrackMoved event) {
     // In case the action failed revert the change
     if (!event.isSuccess()) {
       adapter.restorePositions(event.getFrom(), event.getTo());
     }
   }
 
-  @Subscribe public void handleTrackRemoval(TrackRemoval event) {
+  public void handleTrackRemoval(TrackRemoval event) {
     // In case the action failed revert the change
     if (!event.isSuccess()) {
       // TODO: 8/18/15 fix caching of track until successful removal

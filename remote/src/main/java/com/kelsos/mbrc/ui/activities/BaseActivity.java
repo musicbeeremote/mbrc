@@ -44,7 +44,6 @@ import com.kelsos.mbrc.ui.navigation.NowPlayingActivity;
 import com.kelsos.mbrc.ui.navigation.PlaylistListActivity;
 import com.kelsos.mbrc.utilities.RxBus;
 import com.kelsos.mbrc.viewmodels.ConnectionStatusModel;
-import com.squareup.otto.Subscribe;
 import roboguice.util.Ln;
 import rx.Subscription;
 
@@ -163,15 +162,16 @@ public class BaseActivity extends RoboAppCompatActivity implements NavigationVie
 
   @Override protected void onResume() {
     super.onResume();
-    subscription = rxBus.register(ConnectionStatusChangeEvent.class, this::handleConnectionStatusChange, true);
+    rxBus.registerOnMain(this, ConnectionStatusChangeEvent.class, this::handleConnectionStatusChange);
+    rxBus.registerOnMain(this, DisplayDialog.class, this::showSetupDialog);
+    rxBus.registerOnMain(this, NotifyUser.class, this::handleUserNotification);
+
     updateStatus(model.getStatus());
   }
 
   @Override protected void onPause() {
     super.onPause();
-    if (subscription != null && !subscription.isUnsubscribed()) {
-      subscription.unsubscribe();
-    }
+    rxBus.unregister(this);
   }
 
   @Override public void onConfigurationChanged(Configuration newConfig) {
@@ -199,7 +199,7 @@ public class BaseActivity extends RoboAppCompatActivity implements NavigationVie
     return super.onOptionsItemSelected(item);
   }
 
-  @Subscribe public void showSetupDialog(DisplayDialog event) {
+  public void showSetupDialog(DisplayDialog event) {
     if (mDialog != null) {
       return;
     }
@@ -216,7 +216,7 @@ public class BaseActivity extends RoboAppCompatActivity implements NavigationVie
     }
   }
 
-  @Subscribe public void handleUserNotification(NotifyUser event) {
+  private void handleUserNotification(NotifyUser event) {
     final String message = event.isFromResource() ? getString(event.getResId()) : event.getMessage();
     Snackbar.make(toolbar, message, Snackbar.LENGTH_SHORT).show();
   }

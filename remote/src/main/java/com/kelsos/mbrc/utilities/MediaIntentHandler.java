@@ -6,15 +6,14 @@ import android.view.KeyEvent;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.squareup.otto.Bus;
 
 @Singleton public class MediaIntentHandler {
 
   public static final int DOUBLE_CLICK_INTERVAL = 350;
-  private final Bus bus;
+  private final RxBus bus;
   private long previousClick;
 
-  @Inject public MediaIntentHandler(Bus bus) {
+  @Inject public MediaIntentHandler(RxBus bus) {
     this.bus = bus;
     previousClick = 0;
   }

@@ -22,8 +22,6 @@ import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.NotifyUser;
-import com.squareup.otto.Produce;
-import com.squareup.otto.Subscribe;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -37,19 +35,19 @@ import roboguice.util.Ln;
 public class SettingsManager {
   private SharedPreferences preferences;
   private Context context;
-  private MainThreadBus bus;
+  private RxBus bus;
   private ArrayList<ConnectionSettings> mSettings;
   private ObjectMapper mapper;
   private int defaultIndex;
   private boolean isFirstRun;
 
   @Inject
-  public SettingsManager(Context context, SharedPreferences preferences, MainThreadBus bus, ObjectMapper mapper) {
+  public SettingsManager(Context context, SharedPreferences preferences, RxBus bus, ObjectMapper mapper) {
     this.preferences = preferences;
     this.context = context;
     this.bus = bus;
     this.mapper = mapper;
-    bus.register(this);
+    bus.register(ConnectionSettings.class, this::handleConnectionSettings, false);
 
     String storedSettings = preferences.getString(context.getString(R.string.settings_key_array), null);
     mSettings = new ArrayList<>();
@@ -138,7 +136,6 @@ public class SettingsManager {
     }
   }
 
-  @Subscribe
   public void handleConnectionSettings(ConnectionSettings settings) {
     if (settings.getIndex() < 0) {
       if (!mSettings.contains(settings)) {
@@ -191,12 +188,12 @@ public class SettingsManager {
     editor.apply();
   }
 
-  @Produce
+
   public ConnectionSettingsChanged produceConnectionSettings() {
     return new ConnectionSettingsChanged(mSettings, defaultIndex);
   }
 
-  @Subscribe
+
   public void handleSettingsChange(ChangeSettings event) {
     switch (event.getAction()) {
       case SettingsAction.DELETE:
@@ -220,14 +217,12 @@ public class SettingsManager {
     }
   }
 
-  @Produce
   public SearchDefaultAction produceAction() {
     return new SearchDefaultAction(
         preferences.getString(context.getString(R.string.settings_search_default_key),
             context.getString(R.string.search_click_default_value)));
   }
 
-  @Produce
   public DisplayDialog produceDisplayDialog() {
     int run = DisplayDialog.NONE;
     if (isFirstRun && checkIfRemoteSettingsExist()) {

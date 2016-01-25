@@ -8,7 +8,6 @@ import com.kelsos.mbrc.cache.PlayerStateCacheImpl;
 import com.kelsos.mbrc.cache.TrackCache;
 import com.kelsos.mbrc.cache.TrackCacheImpl;
 import com.kelsos.mbrc.di.providers.ApiServiceProvider;
-import com.kelsos.mbrc.di.providers.BusProvider;
 import com.kelsos.mbrc.di.providers.ObjectMapperProvider;
 import com.kelsos.mbrc.di.providers.OkHttpClientProvider;
 import com.kelsos.mbrc.di.providers.RetrofitProvider;
@@ -79,14 +78,12 @@ import com.kelsos.mbrc.utilities.RxBus;
 import com.kelsos.mbrc.utilities.RxBusImpl;
 import com.kelsos.mbrc.viewmodels.MainViewModel;
 import com.kelsos.mbrc.viewmodels.MainViewModelImpl;
-import com.squareup.otto.Bus;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import roboguice.inject.ContextSingleton;
 
 @SuppressWarnings("UnusedDeclaration") public class RemoteModule extends AbstractModule {
   public void configure() {
-    bind(Bus.class).toProvider(BusProvider.class).in(Singleton.class);
     bind(ObjectMapper.class).toProvider(ObjectMapperProvider.class).asEagerSingleton();
     bind(OkHttpClient.class).toProvider(OkHttpClientProvider.class).in(Singleton.class);
     bind(Retrofit.class).toProvider(RetrofitProvider.class).in(Singleton.class);

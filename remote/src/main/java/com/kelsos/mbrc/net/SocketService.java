@@ -8,7 +8,6 @@ import com.kelsos.mbrc.annotations.Connection;
 import com.kelsos.mbrc.domain.ConnectionSettings;
 import com.kelsos.mbrc.dto.WebSocketMessage;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
-import com.kelsos.mbrc.utilities.MainThreadBus;
 import com.kelsos.mbrc.utilities.RxBus;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import java.io.IOException;
@@ -42,7 +41,7 @@ import rx.subjects.PublishSubject;
   private WebSocket webSocket;
 
   @Inject
-  public SocketService(SettingsManager settingsManager, ObjectMapper mapper, OkHttpClient client, MainThreadBus bus) {
+  public SocketService(SettingsManager settingsManager, ObjectMapper mapper, OkHttpClient client) {
     this.settingsManager = settingsManager;
     this.mapper = mapper;
     OkHttpClient.Builder newBuilder = client.newBuilder();

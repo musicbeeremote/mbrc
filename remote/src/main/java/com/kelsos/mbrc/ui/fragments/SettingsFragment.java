@@ -15,15 +15,15 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity;
 import com.kelsos.mbrc.ui.dialogs.WebViewDialog;
 import com.kelsos.mbrc.utilities.RemoteUtils;
-import com.squareup.otto.Bus;
+import com.kelsos.mbrc.utilities.RxBus;
 import roboguice.util.Ln;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
-  private Bus bus;
+  private RxBus bus;
   private Context mContext;
 
-  public static SettingsFragment newInstance(Bus bus) {
+  public static SettingsFragment newInstance(RxBus bus) {
     final SettingsFragment fragment = new SettingsFragment();
     fragment.setBus(bus);
     return fragment;
@@ -128,7 +128,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
   }
 
-  public void setBus(Bus bus) {
+  public void setBus(RxBus bus) {
     this.bus = bus;
   }
 }

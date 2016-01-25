@@ -10,18 +10,17 @@ import com.kelsos.mbrc.interactors.PlayerInteractor;
 import com.kelsos.mbrc.interactors.PlayerStateInteractor;
 import com.kelsos.mbrc.interactors.TrackCoverInteractor;
 import com.kelsos.mbrc.interactors.TrackInfoInteractor;
-import com.kelsos.mbrc.viewmodels.MiniControlModel;
 import com.kelsos.mbrc.ui.views.MiniControlView;
 import com.kelsos.mbrc.utilities.ErrorHandler;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
+import com.kelsos.mbrc.utilities.RxBus;
+import com.kelsos.mbrc.viewmodels.MiniControlModel;
 import roboguice.inject.ContextSingleton;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 @ContextSingleton public class MiniControlPresenterImpl implements MiniControlPresenter {
   private MiniControlView view;
-  @Inject private Bus bus;
+  @Inject private RxBus bus;
   @Inject private PlayerInteractor interactor;
   @Inject private ErrorHandler handler;
   @Inject private MiniControlModel model;
@@ -54,7 +53,9 @@ import rx.schedulers.Schedulers;
   }
 
   @Override public void onResume() {
-    bus.register(this);
+    bus.register(this, CoverChangedEvent.class, this::onCoverAvailable);
+    bus.register(this, PlayStateChange.class, this::onPlayStateChange);
+    bus.register(this, TrackInfoChangeEvent.class, this::onTrackInfoChange);
   }
 
   @Override public void onPause() {
@@ -86,18 +87,17 @@ import rx.schedulers.Schedulers;
         .subscribe(playState -> {
           view.updatePlayerState(playState);
         }, handler::handleThrowable);
-
   }
 
-  @Subscribe public void onCoverAvailable(CoverChangedEvent event) {
+  public void onCoverAvailable(CoverChangedEvent event) {
     view.updateCover(event.getCover());
   }
 
-  @Subscribe public void onPlayStateChange(PlayStateChange event) {
+  public void onPlayStateChange(PlayStateChange event) {
     view.updatePlayerState(event.getState());
   }
 
-  @Subscribe public void onTrackInfoChange(TrackInfoChangeEvent event) {
+  public void onTrackInfoChange(TrackInfoChangeEvent event) {
     final TrackInfo info = event.getTrackInfo();
     view.updateTrack(info.getArtist(), info.getTitle());
   }

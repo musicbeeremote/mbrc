@@ -11,7 +11,6 @@ import android.os.Build;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.annotations.PlayerState;
@@ -19,9 +18,7 @@ import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RemoteClientMetaData;
 import com.kelsos.mbrc.utilities.MediaButtonReceiver;
 import com.kelsos.mbrc.utilities.MediaIntentHandler;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
-
+import com.kelsos.mbrc.utilities.RxBus;
 import roboguice.util.Ln;
 
 @Singleton public class RemoteSessionManager implements AudioManager.OnAudioFocusChangeListener {
@@ -32,15 +29,19 @@ import roboguice.util.Ln;
       | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
       | PlaybackStateCompat.ACTION_STOP;
   private final AudioManager manager;
-  private final Bus bus;
+  private final RxBus bus;
   private MediaSessionCompat mMediaSession;
   @Inject private MediaIntentHandler handler;
 
   @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH) @Inject
-  public RemoteSessionManager(final Context context, final Bus bus, final AudioManager manager) {
+  public RemoteSessionManager(final Context context, final RxBus bus, final AudioManager manager) {
     this.manager = manager;
     this.bus = bus;
-    bus.register(this);
+
+    bus.register(this, RemoteClientMetaData.class, this::metadataUpdate);
+    bus.register(this, PlayStateChange.class, this::updateState);
+    bus.register(this, PlayStateChange.class, this::onPlayStateChange);
+
     ComponentName myEventReceiver =
         new ComponentName(context.getPackageName(), MediaButtonReceiver.class.getName());
     Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
@@ -88,10 +89,11 @@ import roboguice.util.Ln;
     return mMediaSession.getSessionToken();
   }
 
-  @Subscribe public void metadataUpdate(RemoteClientMetaData data) {
+  public void metadataUpdate(RemoteClientMetaData data) {
     if (mMediaSession == null) {
       return;
     }
+
 
     MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder();
     builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, data.getAlbum());
@@ -101,7 +103,7 @@ import roboguice.util.Ln;
     mMediaSession.setMetadata(builder.build());
   }
 
-  @Subscribe public void updateState(PlayStateChange stateChange) {
+  public void updateState(PlayStateChange stateChange) {
     if (mMediaSession == null) {
       return;
     }
@@ -129,7 +131,7 @@ import roboguice.util.Ln;
     mMediaSession.setActive(isActive);
   }
 
-  @Subscribe public void onPlayStateChange(PlayStateChange change) {
+  public void onPlayStateChange(PlayStateChange change) {
     switch (change.getState()) {
       case PlayerState.PLAYING:
         requestFocus();
