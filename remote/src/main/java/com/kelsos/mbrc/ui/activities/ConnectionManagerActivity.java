@@ -49,7 +49,7 @@ public class ConnectionManagerActivity extends RoboAppCompatActivity
     mBuilder.content(R.string.progress_scanning_message);
     mBuilder.progress(true, 0);
     mProgress = mBuilder.show();
-    bus.post(new MessageEvent(UserInputEventType.StartDiscovery));
+    bus.post(MessageEvent.newInstance(UserInputEventType.StartDiscovery));
   }
 
   @Override protected void onCreate(Bundle savedInstanceState) {

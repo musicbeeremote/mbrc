@@ -1,34 +1,20 @@
 package com.kelsos.mbrc.events;
 
+import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.interfaces.IEvent;
 
 public class MessageEvent implements IEvent {
-  private String type;
-  private Object data;
-  private String message;
+  @UserInputEventType.Event private String type;
 
-  public MessageEvent(String type) {
+  private MessageEvent(@UserInputEventType.Event String type) {
     this.type = type;
-    data = "";
   }
 
-  public MessageEvent(String type, Object data) {
-    this.type = type;
-    this.data = data;
-    if (data instanceof String) {
-      message = (String) data;
-    }
+  public static MessageEvent newInstance(@UserInputEventType.Event String type) {
+    return new MessageEvent(type);
   }
 
-  public String getType() {
+  @UserInputEventType.Event public String getType() {
     return type;
-  }
-
-  @Override public String getMessage() {
-    return message;
-  }
-
-  public Object getData() {
-    return data;
   }
 }

@@ -11,7 +11,6 @@ import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
 import com.kelsos.mbrc.utilities.MainThreadBus;
 import com.kelsos.mbrc.utilities.RxBus;
 import com.kelsos.mbrc.utilities.SettingsManager;
-import com.squareup.otto.Produce;
 import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -39,7 +38,6 @@ import rx.subjects.PublishSubject;
   private boolean connected;
   private Executor executor = Executors.newSingleThreadExecutor();
   private Subscription subscription;
-  private MainThreadBus bus;
   @Inject private RxBus rxBus;
   private WebSocket webSocket;
 
@@ -47,11 +45,9 @@ import rx.subjects.PublishSubject;
   public SocketService(SettingsManager settingsManager, ObjectMapper mapper, OkHttpClient client, MainThreadBus bus) {
     this.settingsManager = settingsManager;
     this.mapper = mapper;
-    this.bus = bus;
     OkHttpClient.Builder newBuilder = client.newBuilder();
     newBuilder.interceptors().clear();
     this.client = newBuilder.build();
-    this.bus.register(this);
 
     messagePublisher = PublishSubject.create();
     messagePublisher.subscribeOn(Schedulers.io()).subscribe((incoming) -> {
@@ -94,7 +90,7 @@ import rx.subjects.PublishSubject;
   @Override public void onOpen(WebSocket webSocket, Response response) {
     this.webSocket = webSocket;
     this.connected = true;
-    bus.post(ConnectionStatusChangeEvent.create(Connection.ON));
+    rxBus.post(ConnectionStatusChangeEvent.create(Connection.ON));
     String message = "{\"message\":\"connected\"}";
     Send(webSocket, message);
 
@@ -133,7 +129,7 @@ import rx.subjects.PublishSubject;
     stopPing();
     this.connected = false;
     Ln.v(e, "[Websocket] io ex");
-    bus.post(ConnectionStatusChangeEvent.create(Connection.OFF));
+    rxBus.post(ConnectionStatusChangeEvent.create(Connection.OFF));
   }
 
   @Override public void onMessage(ResponseBody responseBody) throws IOException {
@@ -149,11 +145,7 @@ import rx.subjects.PublishSubject;
     subscription.unsubscribe();
     webSocket = null;
     Ln.v("[Websocket] closing (%d) %s", code, reason);
-    bus.post(ConnectionStatusChangeEvent.create(Connection.OFF));
-  }
-
-  @Produce public ConnectionStatusChangeEvent produceConnectionStatus() {
-    return ConnectionStatusChangeEvent.create(connected ? Connection.ON : Connection.OFF);
+    rxBus.post(ConnectionStatusChangeEvent.create(Connection.OFF));
   }
 
   public void disconnect() {

@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,11 +18,11 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
@@ -43,9 +42,11 @@ import com.kelsos.mbrc.ui.navigation.LyricsActivity;
 import com.kelsos.mbrc.ui.navigation.MainActivity;
 import com.kelsos.mbrc.ui.navigation.NowPlayingActivity;
 import com.kelsos.mbrc.ui.navigation.PlaylistListActivity;
-import com.squareup.otto.Bus;
+import com.kelsos.mbrc.utilities.RxBus;
+import com.kelsos.mbrc.viewmodels.ConnectionStatusModel;
 import com.squareup.otto.Subscribe;
 import roboguice.util.Ln;
+import rx.Subscription;
 
 public class BaseActivity extends RoboAppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -57,10 +58,12 @@ public class BaseActivity extends RoboAppCompatActivity implements NavigationVie
   @Bind(R.id.toolbar) Toolbar toolbar;
   @Bind(R.id.drawer_layout) DrawerLayout drawer;
   @Bind(R.id.navigation_view) NavigationView navigationView;
-  @Inject private Bus bus;
+  @Inject private RxBus rxBus;
   @Inject private Handler handler;
+  @Inject private ConnectionStatusModel model;
   private ActionBarDrawerToggle toggle;
   private DialogFragment mDialog;
+  private Subscription subscription;
 
   /**
    * This utility method handles Up navigation intents by searching for a parent activity and
@@ -117,7 +120,7 @@ public class BaseActivity extends RoboAppCompatActivity implements NavigationVie
    * Sends an event object.
    */
   protected void post(Object object) {
-    bus.post(object);
+    rxBus.post(object);
   }
 
   private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -151,18 +154,24 @@ public class BaseActivity extends RoboAppCompatActivity implements NavigationVie
     drawer.setDrawerListener(toggle);
     toggle.syncState();
 
-    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    getSupportActionBar().setHomeButtonEnabled(true);
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      getSupportActionBar().setHomeButtonEnabled(true);
+    }
   }
 
   @Override protected void onResume() {
     super.onResume();
-    bus.register(this);
+    subscription = rxBus.register(ConnectionStatusChangeEvent.class, this::handleConnectionStatusChange, true);
+    updateStatus(model.getStatus());
   }
 
   @Override protected void onPause() {
     super.onPause();
-    bus.unregister(this);
+    if (subscription != null && !subscription.isUnsubscribed()) {
+      subscription.unsubscribe();
+    }
   }
 
   @Override public void onConfigurationChanged(Configuration newConfig) {
@@ -223,10 +232,10 @@ public class BaseActivity extends RoboAppCompatActivity implements NavigationVie
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
     switch (keyCode) {
       case KeyEvent.KEYCODE_VOLUME_UP:
-        bus.post(new MessageEvent(UserInputEventType.KeyVolumeUp));
+        rxBus.post(MessageEvent.newInstance(UserInputEventType.KeyVolumeUp));
         return true;
       case KeyEvent.KEYCODE_VOLUME_DOWN:
-        bus.post(new MessageEvent(UserInputEventType.KeyVolumeDown));
+        rxBus.post(MessageEvent.newInstance(UserInputEventType.KeyVolumeDown));
         return true;
       default:
         return super.onKeyDown(keyCode, event);
@@ -275,13 +284,7 @@ public class BaseActivity extends RoboAppCompatActivity implements NavigationVie
   }
 
   private void onConnectClick() {
-    bus.post(new MessageEvent(UserInputEventType.ResetConnection));
-  }
-
-  private void onHelpClicked() {
-    Intent openHelp = new Intent(Intent.ACTION_VIEW);
-    openHelp.setData(Uri.parse("http://kelsos.net/musicbeeremote/help/"));
-    startActivity(openHelp);
+    rxBus.post(MessageEvent.newInstance(UserInputEventType.ResetConnection));
   }
 
   private void onExitClicked() {
@@ -290,21 +293,30 @@ public class BaseActivity extends RoboAppCompatActivity implements NavigationVie
     finish();
   }
 
-  @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChangeEvent change) {
+  private void handleConnectionStatusChange(ConnectionStatusChangeEvent change) {
 
-    final TextView view = (TextView) navigationView.findViewById(R.id.drawer_menu_connect);
-    if (view == null) {
+    int status = change.getStatus();
+    Ln.v("Connection event received %s", status);
+    model.setStatus(status);
+    updateStatus(status);
+  }
+
+  private void updateStatus(@Connection.Status int status) {
+    MenuItem item = navigationView.getMenu().findItem(R.id.drawer_menu_connect);
+
+    if (item == null) {
+      Ln.v("Connection event received but view item null");
       return;
     }
-    switch (change.getStatus()) {
+    switch (status) {
       case Connection.OFF:
-        view.setText(R.string.drawer_connection_status_off);
+        item.setTitle(R.string.drawer_connection_status_off);
         break;
       case Connection.ON:
-        view.setText(R.string.drawer_connection_status_active);
+        item.setTitle(R.string.drawer_connection_status_active);
         break;
       default:
-        view.setText(R.string.drawer_connection_status_off);
+        item.setTitle(R.string.drawer_connection_status_off);
         break;
     }
   }

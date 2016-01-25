@@ -76,7 +76,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         mShowNotification.setOnPreferenceChangeListener((preference, newValue) -> {
           boolean value = (Boolean) newValue;
           if (!value) {
-            bus.post(new MessageEvent(UserInputEventType.CancelNotification));
+            bus.post(MessageEvent.newInstance(UserInputEventType.CancelNotification));
           }
           return true;
         });

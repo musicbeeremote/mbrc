@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.interfaces;
 
+import com.kelsos.mbrc.constants.UserInputEventType;
+
 /**
  * Interface that represents the an event.
  */
@@ -9,12 +11,5 @@ public interface IEvent {
    *
    * @return The string representing the type.
    */
-  String getType();
-
-  /**
-   * Returns a string contained in the message
-   *
-   * @return Object with the data
-   */
-  String getMessage();
+  @UserInputEventType.Event String getType();
 }
