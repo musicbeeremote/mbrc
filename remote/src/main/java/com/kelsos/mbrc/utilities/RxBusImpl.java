@@ -50,6 +50,8 @@ public class RxBusImpl implements RxBus {
       Observable.from(subscriptions)
           .filter(subscription -> !subscription.isUnsubscribed())
           .subscribe(Subscription::unsubscribe);
+
+      activeSubscriptions.remove(subscriptions);
     }
   }
 
