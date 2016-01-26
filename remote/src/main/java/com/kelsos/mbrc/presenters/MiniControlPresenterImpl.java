@@ -53,9 +53,9 @@ import rx.schedulers.Schedulers;
   }
 
   @Override public void onResume() {
-    bus.register(this, CoverChangedEvent.class, this::onCoverAvailable);
-    bus.register(this, PlayStateChange.class, this::onPlayStateChange);
-    bus.register(this, TrackInfoChangeEvent.class, this::onTrackInfoChange);
+    bus.registerOnMain(this, CoverChangedEvent.class, this::onCoverAvailable);
+    bus.registerOnMain(this, PlayStateChange.class, this::onPlayStateChange);
+    bus.registerOnMain(this, TrackInfoChangeEvent.class, this::onTrackInfoChange);
   }
 
   @Override public void onPause() {
