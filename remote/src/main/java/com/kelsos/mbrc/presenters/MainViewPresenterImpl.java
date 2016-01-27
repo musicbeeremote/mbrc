@@ -170,7 +170,7 @@ import rx.schedulers.Schedulers;
   }
 
   private void performAction(String action) {
-    playerInteractor.execute(action)
+    playerInteractor.performAction(action)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(response -> {

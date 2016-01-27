@@ -10,7 +10,7 @@ import rx.Observable;
 public class PlayerInteractorImpl implements PlayerInteractor {
   @Inject private PlayerService api;
   @Override
-  public Observable<BaseResponse> execute(@PlayerAction.Action String action) {
+  public Observable<BaseResponse> performAction(@PlayerAction.Action String action) {
     return api.performPlayerAction(action);
   }
 }

@@ -17,8 +17,21 @@ public class MainViewModelImpl implements MainViewModel {
   @PlayerState.State private String playState;
   @Repeat.Mode private String repeat;
   private boolean muted;
-  @IntRange(from = 0, to = 100) private int volume;
+  @IntRange(from = -1, to = 100) private int volume;
   private boolean loaded;
+
+  public MainViewModelImpl() {
+    trackInfo = new TrackInfo();
+    cover = null;
+    position = new TrackPosition(0, 0);
+    rating = 0;
+    shuffle = Shuffle.UNDEF;
+    playState = PlayerState.UNDEFINED;
+    repeat = Repeat.UNDEFINED;
+    muted = false;
+    volume = -1;
+    loaded = false;
+  }
 
   @Shuffle.State @Override public String getShuffle() {
     return shuffle;
@@ -84,11 +97,11 @@ public class MainViewModelImpl implements MainViewModel {
     this.rating = rating;
   }
 
-  @IntRange(from = 0, to = 100) @Override public int getVolume() {
+  @IntRange(from = -1, to = 100) @Override public int getVolume() {
     return volume;
   }
 
-  @Override public void setVolume(@IntRange(from = 0, to = 100) int volume) {
+  @Override public void setVolume(@IntRange(from = -1, to = 100) int volume) {
     this.volume = volume;
   }
 

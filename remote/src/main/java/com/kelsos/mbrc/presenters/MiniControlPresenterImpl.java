@@ -33,7 +33,7 @@ import rx.schedulers.Schedulers;
   }
 
   private void action(@PlayerAction.Action String action) {
-    interactor.execute(action)
+    interactor.performAction(action)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(baseResponse -> {

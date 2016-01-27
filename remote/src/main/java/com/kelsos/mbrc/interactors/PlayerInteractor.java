@@ -6,5 +6,5 @@ import com.kelsos.mbrc.dto.BaseResponse;
 import rx.Observable;
 
 public interface PlayerInteractor {
-  Observable<BaseResponse> execute(@PlayerAction.Action String action);
+  Observable<BaseResponse> performAction(@PlayerAction.Action String action);
 }

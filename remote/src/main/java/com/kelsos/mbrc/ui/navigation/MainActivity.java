@@ -206,8 +206,8 @@ import com.kelsos.mbrc.utilities.FontUtils;
   }
 
   @Override public void updateRepeat(@Repeat.Mode String mode) {
-    int color = ContextCompat.getColor(getBaseContext(),
-        mode.equals(Repeat.ALL) ? R.color.accent : R.color.button_dark);
+    int colorId = Repeat.ALL.equals(mode) ? R.color.accent : R.color.button_dark;
+    int color = ContextCompat.getColor(getBaseContext(), colorId);
     repeatButton.setColorFilter(color);
   }
 

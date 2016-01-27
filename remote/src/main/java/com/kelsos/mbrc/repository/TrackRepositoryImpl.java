@@ -127,7 +127,7 @@ public class TrackRepositoryImpl implements TrackRepository {
   @Override
   public Observable<Rating> getRating() {
     if (cache.getRating() == null) {
-      return trackRatingUserCase.execute()
+      return trackRatingUserCase.getRating()
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
           .flatMap(rating -> {

@@ -10,13 +10,16 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.events.ui.RatingChanged;
+import com.kelsos.mbrc.interactors.TrackRatingInteractor;
 import com.kelsos.mbrc.utilities.RxBus;
 import roboguice.fragment.RoboDialogFragment;
+import roboguice.util.Ln;
 
 public class RatingDialogFragment extends RoboDialogFragment {
 
   @Bind(R.id.ratingBar) RatingBar ratingBar;
   @Inject private RxBus bus;
+  @Inject private TrackRatingInteractor ratingInteractor;
   private float mRating;
 
   @Override public void onCreate(Bundle savedInstanceState) {
@@ -42,7 +45,9 @@ public class RatingDialogFragment extends RoboDialogFragment {
 
     ratingBar.setOnRatingBarChangeListener((ratingBar, ratingValue, isUserInitiated) -> {
       if (isUserInitiated) {
-
+        ratingInteractor.updateRating(ratingValue).subscribe(aFloat -> {
+          Ln.v("su");
+        }, throwable -> {});
       }
     });
     ratingBar.setRating(mRating);
