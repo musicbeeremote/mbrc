@@ -194,5 +194,8 @@
   <string name="debug">DebugActivity</string>
   <string name="list_item_overflow_description">More options for the item</string>
   <string name="activity_library">Library</string>
+  <string name="notification_action_previous">Previous</string>
+  <string name="notification_action_play">Play/Pause</string>
+  <string name="notification_action_next">Next</string>
 
 </resources>

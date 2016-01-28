@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.messaging;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -8,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Icon;
 import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Build;
@@ -19,9 +21,15 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
 import com.kelsos.mbrc.services.RemoteSessionManager;
-import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder;
 import com.kelsos.mbrc.utilities.RxBus;
 import com.kelsos.mbrc.utilities.SettingsManager;
+
+import static com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.CLOSE;
+import static com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.NEXT;
+import static com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.OPEN;
+import static com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PLAY;
+import static com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PREVIOUS;
+import static com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.getPendingIntent;
 
 @Singleton public class NotificationService {
   public static final int PLUGIN_OUT_OF_DATE = 15612;
@@ -31,20 +39,25 @@ import com.kelsos.mbrc.utilities.SettingsManager;
   private RemoteViews mNormalView;
   private RemoteViews mExpandedView;
   private Notification mNotification;
-  private NotificationManager mNotificationManager;
-  private Context mContext;
+  @Inject private NotificationManager mNotificationManager;
+  private Context context;
   private SettingsManager mSettings;
+  private String previous;
+  private String play;
+  private String next;
 
   @Inject
   public NotificationService(Context context,
       RxBus bus,
       RemoteSessionManager sessionManager,
       SettingsManager mSettings) {
-    this.mContext = context;
+    this.context = context;
     this.sessionManager = sessionManager;
     this.mSettings = mSettings;
-    mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
     bus.register(this, NotificationDataAvailable.class, this::handleNotificationData);
+    previous = context.getString(R.string.notification_action_previous);
+    play = context.getString(R.string.notification_action_play);
+    next = context.getString(R.string.notification_action_next);
   }
 
   public void handleNotificationData(final NotificationDataAvailable event) {
@@ -78,31 +91,24 @@ import com.kelsos.mbrc.utilities.SettingsManager;
       return;
     }
 
-    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
-    mNormalView = new RemoteViews(mContext.getPackageName(), R.layout.ui_notification_control);
+    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
+    mNormalView = new RemoteViews(context.getPackageName(), R.layout.ui_notification_control);
     updateNormalNotification(artist, title, cover);
 
-    mBuilder.setContentIntent(RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.OPEN, mContext));
-    mNormalView.setOnClickPendingIntent(R.id.notification_play,
-        RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PLAY, mContext));
-    mNormalView.setOnClickPendingIntent(R.id.notification_next,
-        RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.NEXT, mContext));
-    mNormalView.setOnClickPendingIntent(R.id.notification_close,
-        RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.CLOSE, mContext));
+    mBuilder.setContentIntent(getPendingIntent(OPEN, context));
+    mNormalView.setOnClickPendingIntent(R.id.notification_play, getPendingIntent(PLAY, context));
+    mNormalView.setOnClickPendingIntent(R.id.notification_next, getPendingIntent(NEXT, context));
+    mNormalView.setOnClickPendingIntent(R.id.notification_close, getPendingIntent(CLOSE, context));
 
-    mNotification = mBuilder.build();
+    mNotification = mBuilder.setSmallIcon(R.drawable.ic_mbrc_status).build();
 
     if (isJellyBean()) {
-      mExpandedView = new RemoteViews(mContext.getPackageName(), R.layout.ui_notification_control_expanded);
+      mExpandedView = new RemoteViews(context.getPackageName(), R.layout.ui_notification_control_expanded);
       updateExpandedNotification(artist, title, album, cover);
-      mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_playpause,
-          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PLAY, mContext));
-      mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_next,
-          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.NEXT, mContext));
-      mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_previous,
-          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PREVIOUS, mContext));
-      mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_remove,
-          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.CLOSE, mContext));
+      mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_playpause, getPendingIntent(PLAY, context));
+      mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_next, getPendingIntent(NEXT, context));
+      mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_previous, getPendingIntent(PREVIOUS, context));
+      mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_remove, getPendingIntent(CLOSE, context));
       mNotification.bigContentView = mExpandedView;
     }
 
@@ -110,7 +116,6 @@ import com.kelsos.mbrc.utilities.SettingsManager;
 
     mNotification.contentView = mNormalView;
     mNotification.flags = Notification.FLAG_ONGOING_EVENT;
-    mNotification.icon = R.drawable.ic_mbrc_status;
     mNotificationManager.notify(NOW_PLAYING_PLACEHOLDER, mNotification);
   }
 
@@ -129,34 +134,55 @@ import com.kelsos.mbrc.utilities.SettingsManager;
 
     mediaStyle.setMediaSession((MediaSession.Token) sessionManager.getMediaSessionToken().getToken());
 
-    Notification.Builder builder = new Notification.Builder(mContext).setVisibility(Notification.VISIBILITY_PUBLIC)
+    Notification.Builder builder = new Notification.Builder(context).setVisibility(Notification.VISIBILITY_PUBLIC)
         .setSmallIcon(R.drawable.ic_mbrc_status)
-        .addAction(R.drawable.ic_action_previous,
-            "Previous",
-            RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PREVIOUS, mContext))
-        .addAction(playStateIcon,
-            "Play/Pause",
-            RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PLAY, mContext))
-        .addAction(R.drawable.ic_action_next,
-            "Next",
-            RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.NEXT, mContext))
         .setStyle(mediaStyle.setShowActionsInCompactView(1, 2))
         .setContentTitle(event.getTitle())
         .setContentText(event.getArtist())
         .setSubText(event.getAlbum());
 
-    builder.setContentIntent(RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.OPEN, mContext));
+    if (Build.VERSION_CODES.M < Build.VERSION.SDK_INT) {
+      //noinspection deprecation
+      builder.addAction(R.drawable.ic_action_previous, previous, getPendingIntent(PREVIOUS, context))
+          .addAction(playStateIcon, play, getPendingIntent(PLAY, context))
+          .addAction(R.drawable.ic_action_next, next, getPendingIntent(NEXT, context));
+    } else {
+      Notification.Action previous = getPreviousAction();
+      Notification.Action play = getPlayAction(playStateIcon);
+      Notification.Action next = getNextAction();
+      builder.addAction(previous).addAction(play).addAction(next);
+    }
+
+    builder.setContentIntent(getPendingIntent(OPEN, context));
 
     if (event.getCover() != null) {
       builder.setLargeIcon(event.getCover());
     } else {
-      Bitmap icon = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_image_no_cover);
+      Bitmap icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_image_no_cover);
       builder.setLargeIcon(icon);
     }
 
     mNotification = builder.build();
 
     mNotificationManager.notify(NOW_PLAYING_PLACEHOLDER, mNotification);
+  }
+
+  @TargetApi(Build.VERSION_CODES.M) private Notification.Action getPreviousAction() {
+    PendingIntent previousIntent = getPendingIntent(PREVIOUS, context);
+    Icon previousIcon = Icon.createWithResource(context, R.drawable.ic_action_previous);
+    return new Notification.Action.Builder(previousIcon, previous, previousIntent).build();
+  }
+
+  @TargetApi(Build.VERSION_CODES.M) private Notification.Action getPlayAction(int playStateIcon) {
+    PendingIntent playIntent = getPendingIntent(PLAY, context);
+    Icon playIcon = Icon.createWithResource(context, playStateIcon);
+    return new Notification.Action.Builder(playIcon, play, playIntent).build();
+  }
+
+  @TargetApi(Build.VERSION_CODES.M) private Notification.Action getNextAction() {
+    PendingIntent nextIntent = getPendingIntent(NEXT, context);
+    Icon nextIcon = Icon.createWithResource(context, R.drawable.ic_action_next);
+    return new Notification.Action.Builder(nextIcon, next, nextIntent).build();
   }
 
   private void updateNormalNotification(final String artist, final String title, final Bitmap cover) {
@@ -210,9 +236,9 @@ import com.kelsos.mbrc.utilities.SettingsManager;
   @SuppressLint("NewApi") public void updateAvailableNotificationBuilder() {
     NotificationCompat.Builder
         mBuilder
-        = new NotificationCompat.Builder(mContext).setSmallIcon(R.drawable.ic_mbrc_status)
-        .setContentTitle(mContext.getString(R.string.application_name))
-        .setContentText(mContext.getString(R.string.notification_plugin_out_of_date));
+        = new NotificationCompat.Builder(context).setSmallIcon(R.drawable.ic_mbrc_status)
+        .setContentTitle(context.getString(R.string.application_name))
+        .setContentText(context.getString(R.string.notification_plugin_out_of_date));
 
     Intent resultIntent = new Intent(Intent.ACTION_VIEW);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -223,7 +249,7 @@ import com.kelsos.mbrc.utilities.SettingsManager;
 
     resultIntent.setData(Uri.parse("http://kelsos.net/musicbeeremote/download/"));
 
-    PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext,
+    PendingIntent resultPendingIntent = PendingIntent.getActivity(context,
         0,
         resultIntent,
         PendingIntent.FLAG_UPDATE_CURRENT);
@@ -234,15 +260,15 @@ import com.kelsos.mbrc.utilities.SettingsManager;
   }
 
   public void librarySyncNotification(final int total, final int current) {
-    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
-    mBuilder.setContentTitle(mContext.getString(R.string.mbrc_library_sync))
-        .setContentText(mContext.getString(R.string.mbrc_libary_sync_msg))
+    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
+    mBuilder.setContentTitle(context.getString(R.string.mbrc_library_sync))
+        .setContentText(context.getString(R.string.mbrc_libary_sync_msg))
         .setSmallIcon(R.drawable.ic_mbrc_status);
 
     if (current == total) {
-      mBuilder.setContentText(mContext.getString(R.string.mbrc_library_sync_complete)).setProgress(0, 0, false);
+      mBuilder.setContentText(context.getString(R.string.mbrc_library_sync_complete)).setProgress(0, 0, false);
     } else {
-      mBuilder.setContentText(String.format(mContext.getString(R.string.mbrc_libary_sync_msg), current, total))
+      mBuilder.setContentText(String.format(context.getString(R.string.mbrc_libary_sync_msg), current, total))
           .setProgress(total, current, false);
     }
     mNotificationManager.notify(SYNC_UPDATE, mBuilder.build());
