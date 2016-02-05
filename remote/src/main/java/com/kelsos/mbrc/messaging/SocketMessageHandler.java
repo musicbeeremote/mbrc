@@ -9,7 +9,6 @@ import com.kelsos.mbrc.dto.WebSocketMessage;
 import com.kelsos.mbrc.events.ui.CoverChangedEvent;
 import com.kelsos.mbrc.events.ui.LyricsChangedEvent;
 import com.kelsos.mbrc.events.ui.MuteChangeEvent;
-import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RepeatChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
@@ -78,18 +77,12 @@ import rx.subjects.PublishSubject;
   @NonNull public SocketAction getPlayStatusAction(RxBus bus) {
     return () -> playerStateInteractor.getState().subscribeOn(Schedulers.io()).subscribe(playState -> {
       bus.post(PlayStateChange.newBuilder().withState(playState).build());
-      bus.post(NotificationDataAvailable.newBuilder().withState(playState).build());
     });
   }
 
   @NonNull public SocketAction getTrackAction(RxBus bus) {
     return () -> trackInfoInteractor.execute(true).subscribeOn(Schedulers.io()).subscribe((trackInfo) -> {
       bus.post(TrackInfoChangeEvent.newBuilder().withTrackInfo(trackInfo).build());
-      bus.post(NotificationDataAvailable.newBuilder()
-          .withTitle(trackInfo.getTitle())
-          .withArtist(trackInfo.getArtist())
-          .withAlbum(trackInfo.getAlbum())
-          .build());
     });
   }
 
@@ -102,7 +95,6 @@ import rx.subjects.PublishSubject;
   @NonNull public SocketAction getCoverAction(RxBus bus) {
     return () -> coverInteractor.execute(true).subscribeOn(Schedulers.io()).subscribe((cover) -> {
       bus.post(CoverChangedEvent.newBuilder().withCover(cover).build());
-      bus.post(NotificationDataAvailable.newBuilder().withCover(cover).build());
     });
   }
 
