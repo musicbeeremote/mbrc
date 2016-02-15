@@ -4,14 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.kelsos.mbrc.utilities.BitmapConverterFactory;
-import okhttp3.OkHttpClient;
-
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
-import retrofit2.JacksonConverterFactory;
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public class RetrofitProvider implements Provider<Retrofit> {
   @Inject private OkHttpClient client;
