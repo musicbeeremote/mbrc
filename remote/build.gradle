@@ -123,7 +123,7 @@ ext {
   jacksonVersion = '2.7.2'
   okhttpVersion = '3.2.0'
   dbflowVersion = '3.0.0-beta5'
-  retrofitVersion = '2.0.0-beta4'
+  retrofitVersion = '2.0.0'
 }
 
 dependencies {
