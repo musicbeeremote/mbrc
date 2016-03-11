@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.ui.activities;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import butterknife.Bind;
@@ -10,7 +12,7 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.fragments.SettingsFragment;
 import com.kelsos.mbrc.utilities.RxBus;
 
-public class SettingsActivity extends RoboAppCompatActivity {
+public class SettingsActivity extends AppCompatActivity {
 
   @Bind(R.id.toolbar) Toolbar toolbar;
   @Inject private RxBus bus;
@@ -22,9 +24,14 @@ public class SettingsActivity extends RoboAppCompatActivity {
 
     setSupportActionBar(toolbar);
 
-    getSupportActionBar().setHomeButtonEnabled(true);
-    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    getSupportActionBar().setTitle(R.string.menu_settings);
+    ActionBar actionBar = getSupportActionBar();
+
+    if (actionBar != null) {
+      actionBar.setHomeButtonEnabled(true);
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setTitle(R.string.menu_settings);
+    }
+
 
     final SettingsFragment fragment = SettingsFragment.newInstance(bus);
     getSupportFragmentManager().beginTransaction()

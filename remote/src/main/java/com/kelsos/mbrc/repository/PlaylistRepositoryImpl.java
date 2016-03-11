@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.repository;
 
-import com.annimon.stream.Stream;
 import com.kelsos.mbrc.RemoteDatabase;
 import com.kelsos.mbrc.dao.PlaylistDao;
 import com.kelsos.mbrc.dao.PlaylistDao_Table;
@@ -33,7 +32,7 @@ public class PlaylistRepositoryImpl implements PlaylistRepository {
 
   @Override public void savePlaylists(List<PlaylistDao> playlists) {
     TransactionManager.transact(RemoteDatabase.NAME, () -> {
-      Stream.of(playlists).forEach(value -> {
+      Observable.from(playlists).forEach(value -> {
         if (value.getDateDeleted() > 0) {
           value.delete();
           return;

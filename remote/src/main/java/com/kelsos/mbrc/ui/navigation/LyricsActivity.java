@@ -13,6 +13,7 @@ import com.kelsos.mbrc.presenters.LyricsPresenter;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.views.LyricsView;
 import java.util.List;
+import roboguice.RoboGuice;
 
 public class LyricsActivity extends BaseActivity implements LyricsView {
 
@@ -22,6 +23,7 @@ public class LyricsActivity extends BaseActivity implements LyricsView {
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    RoboGuice.getInjector(this).injectMembers(this);
     setContentView(R.layout.activity_lyrics);
     initialize();
     setCurrentSelection(R.id.drawer_menu_lyrics);

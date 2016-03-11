@@ -24,6 +24,7 @@ import com.kelsos.mbrc.presenters.NowPlayingPresenter;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.views.NowPlayingView;
 import java.util.List;
+import roboguice.RoboGuice;
 
 public class NowPlayingActivity extends BaseActivity
     implements SearchView.OnQueryTextListener, NowPlayingAdapter.OnUserActionListener, NowPlayingView {
@@ -74,6 +75,7 @@ public class NowPlayingActivity extends BaseActivity
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    RoboGuice.getInjector(this).injectMembers(this);
     setContentView(R.layout.activity_now_playing);
     ButterKnife.bind(this);
     initialize();

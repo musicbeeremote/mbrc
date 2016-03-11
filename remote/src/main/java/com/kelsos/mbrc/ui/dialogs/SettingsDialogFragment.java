@@ -4,15 +4,15 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.domain.ConnectionSettings;
-import roboguice.fragment.RoboDialogFragment;
 
-public class SettingsDialogFragment extends RoboDialogFragment {
+public class SettingsDialogFragment extends DialogFragment {
 
   public static final int MAX_PORT = 65535;
   public static final int MIN_PORT = 1;

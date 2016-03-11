@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -17,8 +18,9 @@ import com.kelsos.mbrc.domain.PlaylistTrack;
 import com.kelsos.mbrc.presenters.PlaylistTrackPresenter;
 import com.kelsos.mbrc.ui.views.PlaylistTrackView;
 import java.util.List;
+import roboguice.RoboGuice;
 
-public class PlaylistTrackActivity extends RoboAppCompatActivity
+public class PlaylistTrackActivity extends AppCompatActivity
     implements PlaylistTrackView, PlaylistAdapter.MenuItemSelectedListener {
 
   public static final String NAME = "name";
@@ -34,6 +36,7 @@ public class PlaylistTrackActivity extends RoboAppCompatActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_playlist);
     ButterKnife.bind(this);
+    RoboGuice.getInjector(this).injectMembers(this);
     presenter.bind(this);
     setSupportActionBar(toolbar);
     ActionBar actionBar = getSupportActionBar();

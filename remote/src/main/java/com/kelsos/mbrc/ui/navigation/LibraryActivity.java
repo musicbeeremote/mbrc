@@ -10,6 +10,7 @@ import butterknife.ButterKnife;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.BrowsePagerAdapter;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
+import roboguice.RoboGuice;
 
 public class LibraryActivity extends BaseActivity {
   @Bind(R.id.library_pager) ViewPager pager;
@@ -23,6 +24,7 @@ public class LibraryActivity extends BaseActivity {
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_library);
+    RoboGuice.getInjector(this).injectMembers(this);
     initialize();
     setCurrentSelection(R.id.drawer_menu_library);
     ButterKnife.bind(this);

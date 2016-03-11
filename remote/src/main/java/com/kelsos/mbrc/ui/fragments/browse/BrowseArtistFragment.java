@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.fragments.browse;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,10 +24,9 @@ import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import com.kelsos.mbrc.ui.views.BrowseArtistView;
 import java.util.List;
-import roboguice.fragment.RoboFragment;
+import roboguice.RoboGuice;
 
-public class BrowseArtistFragment extends RoboFragment
-    implements PlaylistDialogFragment.OnPlaylistSelectedListener,
+public class BrowseArtistFragment extends Fragment implements PlaylistDialogFragment.OnPlaylistSelectedListener,
     CreateNewPlaylistDialog.OnPlaylistNameSelectedListener, BrowseArtistView, ArtistAdapter.MenuItemSelectedListener {
 
   @Bind(R.id.library_recycler) RecyclerView recyclerView;
@@ -39,11 +39,10 @@ public class BrowseArtistFragment extends RoboFragment
     return new BrowseArtistFragment();
   }
 
-  @Override
-  public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.fragment_library, container, false);
     ButterKnife.bind(this, view);
+    RoboGuice.getInjector(getContext()).injectMembers(this);
     presenter.bind(this);
     layoutManager = new LinearLayoutManager(getContext());
     recyclerView.setLayoutManager(layoutManager);

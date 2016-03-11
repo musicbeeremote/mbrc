@@ -138,14 +138,6 @@
           android:name="android.support.PARENT_ACTIVITY"
           android:value=".ui.navigation.MainActivity" />
     </activity>
-    <activity
-        android:name=".ui.activities.QueueResultActivity"
-        android:parentActivityName=".ui.navigation.MainActivity"
-        tools:ignore="UnusedAttribute">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.navigation.MainActivity" />
-    </activity>
 
     <receiver android:name=".widgets.WidgetSmall">
       <intent-filter>

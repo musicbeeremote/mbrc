@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -25,9 +26,9 @@ import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import com.kelsos.mbrc.ui.fragments.profile.AlbumTracksActivity;
 import com.kelsos.mbrc.ui.views.BrowseAlbumView;
 import java.util.List;
-import roboguice.fragment.RoboFragment;
+import roboguice.RoboGuice;
 
-public class BrowseAlbumFragment extends RoboFragment implements PlaylistDialogFragment.OnPlaylistSelectedListener,
+public class BrowseAlbumFragment extends Fragment implements PlaylistDialogFragment.OnPlaylistSelectedListener,
     CreateNewPlaylistDialog.OnPlaylistNameSelectedListener, AlbumAdapter.MenuItemSelectedListener, BrowseAlbumView {
 
   @Bind(R.id.album_recycler) RecyclerView recyclerView;
@@ -43,6 +44,7 @@ public class BrowseAlbumFragment extends RoboFragment implements PlaylistDialogF
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.ui_library_grid, container, false);
     ButterKnife.bind(this, view);
+    RoboGuice.getInjector(getContext()).injectMembers(this);
     presenter.bind(this);
     GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
     scrollListener = new EndlessGridRecyclerViewScrollListener(layoutManager) {

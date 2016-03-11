@@ -2,6 +2,8 @@ package com.kelsos.mbrc.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -12,8 +14,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.kelsos.mbrc.R;
+import roboguice.RoboGuice;
 
-public class HelpActivity extends RoboAppCompatActivity {
+public class HelpActivity extends AppCompatActivity {
 
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.feedback_content) EditText feedbackEditText;
@@ -22,9 +25,15 @@ public class HelpActivity extends RoboAppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_feedback);
     ButterKnife.bind(this);
+    RoboGuice.getInjector(this).injectMembers(this);
     setSupportActionBar(mToolbar);
-    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    getSupportActionBar().setHomeButtonEnabled(true);
+    ActionBar actionBar = getSupportActionBar();
+
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setHomeButtonEnabled(true);
+    }
+
   }
 
   @OnClick(R.id.feedback_button) public void onFeedbackButtonClicked(View v) {

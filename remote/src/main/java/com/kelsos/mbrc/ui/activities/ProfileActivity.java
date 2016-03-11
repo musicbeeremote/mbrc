@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,9 +13,9 @@ import android.view.ViewGroup;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.fragments.profile.ArtistAlbumsFragment;
 import com.kelsos.mbrc.ui.fragments.profile.GenreArtistsFragment;
-import roboguice.fragment.RoboFragment;
 
-public class ProfileActivity extends RoboAppCompatActivity {
+
+public class ProfileActivity extends AppCompatActivity {
 
   public static final String GENRE = "genre";
   public static final String ARTIST = "artist";
@@ -79,7 +80,7 @@ public class ProfileActivity extends RoboAppCompatActivity {
   /**
    * A placeholder fragment containing a simple view.
    */
-  public static class PlaceholderFragment extends RoboFragment {
+  public static class PlaceholderFragment extends Fragment {
 
     public PlaceholderFragment() {
     }

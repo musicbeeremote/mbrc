@@ -4,13 +4,13 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.webkit.WebView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.activities.SettingsActivity;
-import roboguice.fragment.RoboDialogFragment;
 
-public class UpgradeDialogFragment extends RoboDialogFragment {
+public class UpgradeDialogFragment extends DialogFragment {
   private boolean isNewInstall;
 
   @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -24,16 +24,12 @@ public class UpgradeDialogFragment extends RoboDialogFragment {
     if (isNewInstall) {
       builder.positiveText(R.string.dialog_application_setup_positive);
     }
-
-    builder.callback(new MaterialDialog.ButtonCallback() {
-      @Override public void onNegative(MaterialDialog dialog) {
-        UpgradeDialogFragment.this.dismiss();
-      }
-
-      @Override public void onPositive(MaterialDialog dialog) {
-        startActivity(new Intent(getActivity(), SettingsActivity.class));
-      }
+    builder.onPositive((dialog, which) -> {
+      startActivity(new Intent(getActivity(), SettingsActivity.class));
+      dialog.dismiss();
     });
+
+    builder.onNegative((dialog, which) -> dialog.dismiss());
     return builder.build();
   }
 

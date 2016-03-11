@@ -1,11 +1,10 @@
 package com.kelsos.mbrc.mappers;
 
-import com.annimon.stream.Collectors;
-import com.annimon.stream.Stream;
 import com.kelsos.mbrc.dao.PlaylistDao;
 import com.kelsos.mbrc.domain.Playlist;
 import com.kelsos.mbrc.dto.playlist.PlaylistDto;
 import java.util.List;
+import rx.Observable;
 
 public class PlaylistMapper {
 
@@ -20,11 +19,11 @@ public class PlaylistMapper {
   }
 
   public static List<Playlist> map(List<PlaylistDto> collection) {
-    return Stream.of(collection).map(PlaylistMapper::map).collect(Collectors.toList());
+    return Observable.from(collection).map(PlaylistMapper::map).toList().toBlocking().first();
   }
 
   public static List<Playlist> mapData(List<PlaylistDao> collection) {
-    return Stream.of(collection).map(PlaylistMapper::mapData).collect(Collectors.toList());
+    return Observable.from(collection).map(PlaylistMapper::mapData).toList().toBlocking().first();
   }
 
   private static Playlist mapData(PlaylistDao playlistDao) {
@@ -50,7 +49,7 @@ public class PlaylistMapper {
   }
 
   public static List<PlaylistDao> mapDto(List<PlaylistDto> objects) {
-    return Stream.of(objects).map(PlaylistMapper::mapDto).collect(Collectors.toList());
+    return Observable.from(objects).map(PlaylistMapper::mapDto).toList().toBlocking().first();
   }
 
 }

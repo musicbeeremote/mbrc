@@ -20,9 +20,9 @@ import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.presenters.MiniControlPresenter;
 import com.kelsos.mbrc.ui.views.MiniControlView;
 import com.kelsos.mbrc.utilities.FontUtils;
-import roboguice.fragment.RoboFragment;
+import roboguice.RoboGuice;
 
-public class MiniControlFragment extends RoboFragment implements MiniControlView {
+public class MiniControlFragment extends Fragment implements MiniControlView {
 
   @Bind(R.id.mc_track_cover) ImageView trackCover;
   @Bind(R.id.mc_track_artist) TextView trackArtist;
@@ -50,6 +50,7 @@ public class MiniControlFragment extends RoboFragment implements MiniControlView
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.ui_fragment_mini_control, container, false);
     ButterKnife.bind(this, view);
+    RoboGuice.getInjector(getContext()).injectMembers(this);
     presenter.bind(this);
     trackTitle.setTypeface(FontUtils.getRobotoMedium(getActivity()));
     trackArtist.setTypeface(FontUtils.getRobotoRegular(getActivity()));

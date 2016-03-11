@@ -34,6 +34,7 @@ import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
 import com.kelsos.mbrc.ui.views.MainView;
 import com.kelsos.mbrc.utilities.FontUtils;
+import roboguice.RoboGuice;
 
 @Singleton public class MainActivity extends BaseActivity implements MainView {
   // Inject elements of the view
@@ -121,6 +122,7 @@ import com.kelsos.mbrc.utilities.FontUtils;
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    RoboGuice.getInjector(this).injectMembers(this);
     initialize();
     setCurrentSelection(R.id.drawer_menu_home);
     ButterKnife.bind(this);

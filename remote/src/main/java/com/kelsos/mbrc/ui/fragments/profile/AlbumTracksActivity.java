@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -20,13 +21,13 @@ import com.kelsos.mbrc.adapters.AlbumProfileAdapter;
 import com.kelsos.mbrc.domain.Album;
 import com.kelsos.mbrc.domain.Track;
 import com.kelsos.mbrc.presenters.AlbumTracksPresenter;
-import com.kelsos.mbrc.ui.activities.RoboAppCompatActivity;
 import com.kelsos.mbrc.ui.views.AlbumTrackView;
 import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.List;
+import roboguice.RoboGuice;
 
-public class AlbumTracksActivity extends RoboAppCompatActivity implements AlbumTrackView {
+public class AlbumTracksActivity extends AppCompatActivity implements AlbumTrackView {
 
   public static final String ALBUM_ID = "albumId";
   @Bind(R.id.imageView_list) ImageView imageViewList;
@@ -48,6 +49,7 @@ public class AlbumTracksActivity extends RoboAppCompatActivity implements AlbumT
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.fragment_album_tracks);
+    RoboGuice.getInjector(this).injectMembers(this);
     ButterKnife.bind(this);
     presenter.bind(this);
     final Bundle extras = getIntent().getExtras();
@@ -59,8 +61,12 @@ public class AlbumTracksActivity extends RoboAppCompatActivity implements AlbumT
 
     setSupportActionBar(toolbar);
     final ActionBar actionBar = getSupportActionBar();
-    actionBar.setDisplayHomeAsUpEnabled(true);
-    actionBar.setDisplayShowHomeEnabled(true);
+
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setDisplayShowHomeEnabled(true);
+    }
+
     collapsingToolbar.setTitleEnabled(false);
     listTracks.setLayoutManager(new LinearLayoutManager(getBaseContext()));
     listTracks.setAdapter(adapter);

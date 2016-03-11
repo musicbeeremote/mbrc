@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.repository;
 
-import com.annimon.stream.Stream;
 import com.kelsos.mbrc.RemoteDatabase;
 import com.kelsos.mbrc.dao.AlbumDao;
 import com.kelsos.mbrc.dao.AlbumDao_Table;
@@ -61,31 +60,31 @@ public class LibraryRepositoryImpl implements LibraryRepository {
 
   @Override public void saveGenres(List<GenreDao> objects) {
     TransactionManager.transact(RemoteDatabase.NAME, () -> {
-      Stream.of(objects).forEach(BaseModel::save);
+      Observable.from(objects).forEach(BaseModel::save);
     });
   }
 
   @Override public void saveArtists(List<ArtistDao> objects) {
     TransactionManager.transact(RemoteDatabase.NAME, () -> {
-      Stream.of(objects).forEach(BaseModel::save);
+      Observable.from(objects).forEach(BaseModel::save);
     });
   }
 
   @Override public void saveTracks(List<TrackDao> objects) {
     TransactionManager.transact(RemoteDatabase.NAME, () -> {
-      Stream.of(objects).forEach(BaseModel::save);
+      Observable.from(objects).forEach(BaseModel::save);
     });
   }
 
   @Override public void saveAlbums(List<AlbumDao> objects) {
     TransactionManager.transact(RemoteDatabase.NAME, () -> {
-      Stream.of(objects).forEach(BaseModel::save);
+      Observable.from(objects).forEach(BaseModel::save);
     });
   }
 
   @Override public void saveRemoteTracks(List<TrackDto> data) {
     TransactionManager.transact(RemoteDatabase.NAME, () -> {
-      Stream.of(data).forEach(value -> {
+      Observable.from(data).forEach(value -> {
         TrackDao dao = new TrackDao();
         dao.setId(value.getId());
         dao.setPath(value.getPath());
@@ -123,7 +122,7 @@ public class LibraryRepositoryImpl implements LibraryRepository {
 
   @Override public void saveRemoteAlbums(List<AlbumDto> data) {
     TransactionManager.transact(RemoteDatabase.NAME, () -> {
-      Stream.of(data).forEach(value -> {
+      Observable.from(data).forEach(value -> {
         AlbumDao dao = new AlbumDao();
         dao.setId(value.getId());
         dao.setDateAdded(value.getDateAdded());
@@ -143,7 +142,7 @@ public class LibraryRepositoryImpl implements LibraryRepository {
 
   @Override public void saveCovers(List<CoverDao> objects) {
     TransactionManager.transact(RemoteDatabase.NAME, () -> {
-      Stream.of(objects).forEach(CoverDao::save);
+      Observable.from(objects).forEach(CoverDao::save);
     });
   }
 

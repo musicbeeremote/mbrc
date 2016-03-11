@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -26,9 +27,9 @@ import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import com.kelsos.mbrc.ui.views.BrowseGenreView;
 import java.util.List;
-import roboguice.fragment.RoboFragment;
+import roboguice.RoboGuice;
 
-public class BrowseGenreFragment extends RoboFragment implements PlaylistDialogFragment.OnPlaylistSelectedListener,
+public class BrowseGenreFragment extends Fragment implements PlaylistDialogFragment.OnPlaylistSelectedListener,
     CreateNewPlaylistDialog.OnPlaylistNameSelectedListener, BrowseGenreView, GenreAdapter.MenuItemSelectedListener {
 
   @Bind(R.id.library_recycler) RecyclerView recyclerView;
@@ -42,6 +43,7 @@ public class BrowseGenreFragment extends RoboFragment implements PlaylistDialogF
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    RoboGuice.getInjector(getContext()).injectMembers(this);
     setHasOptionsMenu(true);
   }
 

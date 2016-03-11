@@ -1,14 +1,13 @@
 package com.kelsos.mbrc.mappers;
 
-import com.annimon.stream.Collectors;
-import com.annimon.stream.Stream;
 import com.kelsos.mbrc.dao.CoverDao;
 import com.kelsos.mbrc.dto.library.CoverDto;
 import java.util.List;
+import rx.Observable;
 
 public class CoverMapper {
   public static List<CoverDao> map(List<CoverDto> objects) {
-    return Stream.of(objects).map(CoverMapper::map).collect(Collectors.toList());
+    return Observable.from(objects).map(CoverMapper::map).toList().toBlocking().first();
   }
 
   public static CoverDao map(CoverDto object) {

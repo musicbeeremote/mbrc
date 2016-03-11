@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -24,8 +25,9 @@ import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
 import com.kelsos.mbrc.utilities.RxBus;
+import roboguice.RoboGuice;
 
-public class ConnectionManagerActivity extends RoboAppCompatActivity
+public class ConnectionManagerActivity extends AppCompatActivity
     implements SettingsDialogFragment.SettingsDialogListener {
 
   @Inject private RxBus bus;
@@ -56,6 +58,7 @@ public class ConnectionManagerActivity extends RoboAppCompatActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.ui_activity_connection_manager);
     ButterKnife.bind(this);
+    RoboGuice.getInjector(this).injectMembers(this);
     setSupportActionBar(mToolbar);
     mRecyclerView.setHasFixedSize(true);
     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);

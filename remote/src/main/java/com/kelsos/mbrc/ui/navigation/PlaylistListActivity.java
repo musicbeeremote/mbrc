@@ -15,6 +15,7 @@ import com.kelsos.mbrc.presenters.PlaylistPresenter;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.views.PlaylistListView;
 import java.util.List;
+import roboguice.RoboGuice;
 
 public class PlaylistListActivity extends BaseActivity implements PlaylistListView, OnPlaylistPlayPressedListener {
 
@@ -25,6 +26,7 @@ public class PlaylistListActivity extends BaseActivity implements PlaylistListVi
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    RoboGuice.getInjector(this).injectMembers(this);
     setContentView(R.layout.activity_playlist_list);
     initialize();
     setCurrentSelection(R.id.drawer_menu_playlist);

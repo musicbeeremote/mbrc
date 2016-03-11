@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.dialogs;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.widget.RatingBar;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -12,10 +13,10 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.events.ui.RatingChanged;
 import com.kelsos.mbrc.interactors.TrackRatingInteractor;
 import com.kelsos.mbrc.utilities.RxBus;
-import roboguice.fragment.RoboDialogFragment;
+import roboguice.RoboGuice;
 import roboguice.util.Ln;
 
-public class RatingDialogFragment extends RoboDialogFragment {
+public class RatingDialogFragment extends DialogFragment {
 
   @Bind(R.id.ratingBar) RatingBar ratingBar;
   @Inject private RxBus bus;
@@ -24,6 +25,7 @@ public class RatingDialogFragment extends RoboDialogFragment {
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    RoboGuice.getInjector(getContext()).injectMembers(this);
     bus.registerOnMain(this, RatingChanged.class, this::handleRatingChange);
   }
 

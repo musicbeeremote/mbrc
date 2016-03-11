@@ -1,16 +1,15 @@
 package com.kelsos.mbrc.mappers;
 
 import android.support.annotation.NonNull;
-import com.annimon.stream.Collectors;
-import com.annimon.stream.Stream;
 import com.kelsos.mbrc.dao.ArtistDao;
 import com.kelsos.mbrc.domain.Artist;
 import com.kelsos.mbrc.dto.library.ArtistDto;
 import java.util.List;
+import rx.Observable;
 
 public class ArtistMapper {
   public static List<ArtistDao> map(List<ArtistDto> data) {
-    return Stream.of(data).map(ArtistMapper::map).collect(Collectors.toList());
+    return Observable.from(data).map(ArtistMapper::map).toList().toBlocking().first();
   }
 
   public static ArtistDao map(ArtistDto dto) {
@@ -28,6 +27,6 @@ public class ArtistMapper {
   }
 
   public static List<Artist> mapData(List<ArtistDao> data) {
-    return Stream.of(data).map(ArtistMapper::map).collect(Collectors.toList());
+    return Observable.from(data).map(ArtistMapper::map).toList().toBlocking().first();
   }
 }

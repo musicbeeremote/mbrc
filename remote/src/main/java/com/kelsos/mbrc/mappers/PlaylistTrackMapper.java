@@ -1,7 +1,5 @@
 package com.kelsos.mbrc.mappers;
 
-import com.annimon.stream.Collectors;
-import com.annimon.stream.Stream;
 import com.kelsos.mbrc.dao.PlaylistDao;
 import com.kelsos.mbrc.dao.PlaylistTrackDao;
 import com.kelsos.mbrc.dao.PlaylistTrackInfoDao;
@@ -9,14 +7,15 @@ import com.kelsos.mbrc.dao.views.PlaylistTrackView;
 import com.kelsos.mbrc.dto.playlist.PlaylistTrack;
 import com.kelsos.mbrc.interfaces.ItemProvider;
 import java.util.List;
+import rx.Observable;
 
 public class PlaylistTrackMapper {
   public static List<PlaylistTrackDao> map(List<PlaylistTrack> data,
       ItemProvider<PlaylistDao> playlistItemProvider,
       ItemProvider<PlaylistTrackInfoDao> infoDaoItemProvider) {
-    return Stream.of(data)
+    return Observable.from(data)
         .map(value -> map(value, playlistItemProvider, infoDaoItemProvider))
-        .collect(Collectors.toList());
+        .toList().toBlocking().first();
   }
 
   public static PlaylistTrackDao map(PlaylistTrack data,

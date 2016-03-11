@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.text.TextUtils;
-import com.annimon.stream.Stream;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
@@ -30,6 +29,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import roboguice.util.Ln;
+import rx.Observable;
 
 @Singleton
 public class SettingsManager {
@@ -57,7 +57,11 @@ public class SettingsManager {
         mSettings = this.mapper.readValue(storedSettings, new TypeReference<List<ConnectionSettings>>() {
         });
         final int[] counter = new int[1];
-        Stream.of(mSettings).forEach(value -> value.updateIndex(counter[0]++));
+
+        Observable.from(mSettings).forEach(connectionSettings -> {
+          connectionSettings.updateIndex(counter[0]++);
+        });
+
       } catch (IOException e) {
         if (BuildConfig.DEBUG) {
           Ln.d(e, "Loading settings.");

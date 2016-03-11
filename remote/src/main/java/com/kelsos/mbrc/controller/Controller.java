@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.controller;
 
+import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.messaging.NotificationService;
@@ -13,11 +13,10 @@ import com.kelsos.mbrc.utilities.LibrarySyncManager;
 import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.raizlabs.android.dbflow.config.FlowManager;
-
-import roboguice.service.RoboService;
+import roboguice.RoboGuice;
 import roboguice.util.Ln;
 
-@Singleton public class Controller extends RoboService {
+@Singleton public class Controller extends Service {
 
   @Inject private SocketService socket;
   @Inject private RemoteBroadcastReceiver receiver;
@@ -35,6 +34,10 @@ import roboguice.util.Ln;
     return null;
   }
 
+  @Override public void onCreate() {
+    super.onCreate();
+    RoboGuice.getInjector(this).injectMembers(this);
+  }
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
     Ln.v("[Service] start command received");

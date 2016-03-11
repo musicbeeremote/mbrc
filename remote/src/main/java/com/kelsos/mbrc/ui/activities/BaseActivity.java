@@ -9,6 +9,8 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PersistableBundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -20,6 +22,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -44,10 +47,11 @@ import com.kelsos.mbrc.ui.navigation.NowPlayingActivity;
 import com.kelsos.mbrc.ui.navigation.PlaylistListActivity;
 import com.kelsos.mbrc.utilities.RxBus;
 import com.kelsos.mbrc.viewmodels.ConnectionStatusModel;
+import roboguice.RoboGuice;
 import roboguice.util.Ln;
 import rx.Subscription;
 
-public class BaseActivity extends RoboAppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
   public static final int NAVIGATION_DELAY = 250;
   public static final int DEBUG_ORDER = 999;
@@ -150,7 +154,6 @@ public class BaseActivity extends RoboAppCompatActivity implements NavigationVie
     }
 
     toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close);
-    drawer.setDrawerListener(toggle);
     toggle.syncState();
 
     ActionBar actionBar = getSupportActionBar();
@@ -172,6 +175,12 @@ public class BaseActivity extends RoboAppCompatActivity implements NavigationVie
   @Override protected void onPause() {
     super.onPause();
     rxBus.unregister(this);
+  }
+
+  @CallSuper
+  @Override public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
+    super.onCreate(savedInstanceState, persistentState);
+    RoboGuice.getInjector(this).injectMembers(this);
   }
 
   @Override public void onConfigurationChanged(Configuration newConfig) {

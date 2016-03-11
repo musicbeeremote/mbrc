@@ -1,11 +1,9 @@
 package com.kelsos.mbrc.utilities;
 
 import android.content.Context;
-import com.annimon.stream.Stream;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.dao.CoverDao;
 import com.kelsos.mbrc.domain.ConnectionSettings;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -39,15 +37,15 @@ public class CoverDownloader {
         .addPathSegment("covers")
         .build();
 
-    Stream.of(covers).forEach(value -> {
-      File file = new File(coverDirectory, value.getHash());
+    rx.Observable.from(covers).forEach(cover -> {
+      File file = new File(coverDirectory, cover.getHash());
       if (file.exists()) {
         return;
       }
 
       try {
 
-        download(value, file);
+        download(cover, file);
       } catch (IOException e) {
         e.printStackTrace();
       }

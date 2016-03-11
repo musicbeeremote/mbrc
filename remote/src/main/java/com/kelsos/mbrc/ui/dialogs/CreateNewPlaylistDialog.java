@@ -2,46 +2,38 @@ package com.kelsos.mbrc.ui.dialogs;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.widget.EditText;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.R;
-import roboguice.fragment.RoboDialogFragment;
 
-public class CreateNewPlaylistDialog extends RoboDialogFragment {
+public class CreateNewPlaylistDialog extends DialogFragment {
 
   private OnPlaylistNameSelectedListener mListener;
 
   @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-    MaterialDialog.Builder mBuilder = new MaterialDialog.Builder(getActivity());
-    mBuilder.title(R.string.playlist_dialog_new_title);
-    mBuilder.customView(R.layout.playlist_create, false);
-    mBuilder.positiveText(android.R.string.ok);
-    mBuilder.negativeText(android.R.string.cancel);
-    mBuilder.callback(new MaterialDialog.ButtonCallback() {
-      @Override public void onPositive(MaterialDialog dialog) {
-        EditText mPlaylistNameText =
-            ((EditText) dialog.getCustomView().findViewById(R.id.playlist_name_text));
-        final String name = mPlaylistNameText.getText().toString();
-        if (mListener != null) {
-          mListener.onPlaylistNameSelected(name);
-        }
-        dialog.dismiss();
+    MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
+    builder.title(R.string.playlist_dialog_new_title);
+    builder.customView(R.layout.playlist_create, false);
+    builder.positiveText(android.R.string.ok);
+    builder.negativeText(android.R.string.cancel);
+    builder.onPositive((dialog, which) -> {
+      EditText mPlaylistNameText = ((EditText) dialog.getCustomView().findViewById(R.id.playlist_name_text));
+      final String name = mPlaylistNameText.getText().toString();
+      if (mListener != null) {
+        mListener.onPlaylistNameSelected(name);
       }
-
-      @Override public void onNegative(MaterialDialog dialog) {
-        dialog.dismiss();
-      }
+      dialog.dismiss();
     });
+    builder.onNegative((dialog, which) -> dialog.dismiss());
 
-    return mBuilder.build();
+    return builder.build();
   }
 
   public void setOnPlaylistNameSelectedListener(OnPlaylistNameSelectedListener mListener) {
     this.mListener = mListener;
   }
-
-
 
   /**
    * Interface that must be implemented by the fragment or activity

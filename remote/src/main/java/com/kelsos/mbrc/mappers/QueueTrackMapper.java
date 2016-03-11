@@ -1,16 +1,15 @@
 package com.kelsos.mbrc.mappers;
 
-import com.annimon.stream.Collectors;
-import com.annimon.stream.Stream;
 import com.kelsos.mbrc.domain.QueueTrack;
 import com.kelsos.mbrc.dto.NowPlayingTrack;
-
 import java.util.List;
+import rx.Observable;
 
 public class QueueTrackMapper {
   private QueueTrackMapper() {
     //no instance
   }
+
   public static QueueTrack map(final NowPlayingTrack track) {
     QueueTrack queueTrack = new QueueTrack();
     queueTrack.setPosition(track.getPosition());
@@ -21,6 +20,6 @@ public class QueueTrackMapper {
   }
 
   public static List<QueueTrack> map(List<NowPlayingTrack> list) {
-    return Stream.of(list).map(QueueTrackMapper::map).collect(Collectors.toList());
+    return Observable.from(list).map(QueueTrackMapper::map).toList().toBlocking().first();
   }
 }

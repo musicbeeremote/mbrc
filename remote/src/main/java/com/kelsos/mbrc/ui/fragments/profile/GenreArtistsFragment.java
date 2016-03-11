@@ -2,6 +2,7 @@ package com.kelsos.mbrc.ui.fragments.profile;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,9 +15,9 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistAdapter;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
-import roboguice.fragment.RoboFragment;
+import roboguice.RoboGuice;
 
-public class GenreArtistsFragment extends RoboFragment
+public class GenreArtistsFragment extends Fragment
     implements PlaylistDialogFragment.OnPlaylistSelectedListener,
     CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
 
@@ -38,6 +39,7 @@ public class GenreArtistsFragment extends RoboFragment
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    RoboGuice.getInjector(getContext()).injectMembers(this);
     if (getArguments() != null) {
     }
   }

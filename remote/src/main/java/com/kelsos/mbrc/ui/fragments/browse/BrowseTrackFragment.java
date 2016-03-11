@@ -2,6 +2,7 @@ package com.kelsos.mbrc.ui.fragments.browse;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,9 +21,9 @@ import com.kelsos.mbrc.presenters.BrowseTrackPresenter;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import com.kelsos.mbrc.ui.views.BrowseTrackView;
 import java.util.List;
-import roboguice.fragment.RoboFragment;
+import roboguice.RoboGuice;
 
-public class BrowseTrackFragment extends RoboFragment
+public class BrowseTrackFragment extends Fragment
     implements PlaylistDialogFragment.OnPlaylistSelectedListener, BrowseTrackView,
     TrackAdapter.MenuItemSelectedListener {
 
@@ -38,6 +39,7 @@ public class BrowseTrackFragment extends RoboFragment
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    RoboGuice.getInjector(getContext()).injectMembers(this);
     manager = new LinearLayoutManager(getContext());
     adapter.setMenuItemSelectedListener(this);
     scrollListener = new EndlessRecyclerViewScrollListener(manager) {

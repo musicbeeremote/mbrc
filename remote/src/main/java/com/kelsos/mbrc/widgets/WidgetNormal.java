@@ -2,6 +2,7 @@ package com.kelsos.mbrc.widgets;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
@@ -15,17 +16,23 @@ import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder;
 import com.kelsos.mbrc.utilities.RxBus;
-import roboguice.receiver.RoboAppWidgetProvider;
+import roboguice.RoboGuice;
 
-public class WidgetNormal extends RoboAppWidgetProvider {
+public class WidgetNormal extends AppWidgetProvider {
 
   @Inject private Context context;
   @Inject private RxBus bus;
 
   private int[] widgetsIds;
 
-  @Override public void onHandleUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+  @Override public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+    super.onUpdate(context, appWidgetManager, appWidgetIds);
 
+    if (this.context == null) {
+      RoboGuice.getInjector(context).injectMembers(this);
+      this.context = context;
+
+    }
     widgetsIds = appWidgetIds;
 
     try {

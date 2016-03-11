@@ -1,11 +1,10 @@
 package com.kelsos.mbrc.mappers;
 
 import android.support.annotation.NonNull;
-import com.annimon.stream.Collectors;
-import com.annimon.stream.Stream;
 import com.kelsos.mbrc.dao.views.AlbumModelView;
 import com.kelsos.mbrc.domain.Album;
 import java.util.List;
+import rx.Observable;
 
 public class AlbumMapper {
   @NonNull public static Album map(AlbumModelView dao) {
@@ -13,6 +12,6 @@ public class AlbumMapper {
   }
 
   public static List<Album> map(List<AlbumModelView> daoList) {
-    return Stream.of(daoList).map(AlbumMapper::map).collect(Collectors.toList());
+    return Observable.from(daoList).map(AlbumMapper::map).toList().toBlocking().first();
   }
 }
