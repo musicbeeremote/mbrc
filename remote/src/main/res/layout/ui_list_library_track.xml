@@ -70,7 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/abc_action_menu_overflow_description"
-        android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+        android:src="@drawable/ic_more_vert_black_24dp"
         android:tint="@android:color/white" />
   </LinearLayout>
 </RelativeLayout>

@@ -119,10 +119,10 @@ task wrapper(type: Wrapper) {
 }
 
 ext {
-  supportLibraryVersion = '23.1.1'
-  jacksonVersion = '2.7.0'
-  okhttpVersion = '3.1.2'
-  dbflowVersion = '3.0.0-beta3'
+  supportLibraryVersion = '23.2.0'
+  jacksonVersion = '2.7.2'
+  okhttpVersion = '3.2.0'
+  dbflowVersion = '3.0.0-beta4'
   retrofitVersion = '2.0.0-beta4'
 }
 
@@ -156,7 +156,7 @@ dependencies {
   compile "com.github.Raizlabs.DBFlow:dbflow:${dbflowVersion}"
 
 
-  compile("com.afollestad.material-dialogs:core:0.8.5.4@aar") {
+  compile("com.afollestad.material-dialogs:core:0.8.5.6@aar") {
     transitive = true
   }
 
