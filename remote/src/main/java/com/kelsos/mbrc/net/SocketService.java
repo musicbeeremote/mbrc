@@ -23,11 +23,11 @@ import okhttp3.ws.WebSocket;
 import okhttp3.ws.WebSocketCall;
 import okhttp3.ws.WebSocketListener;
 import okio.Buffer;
-import roboguice.util.Ln;
 import rx.Observable;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
+import timber.log.Timber;
 
 @Singleton public class SocketService implements WebSocketListener {
   private final PublishSubject<String> messagePublisher;
@@ -71,7 +71,7 @@ import rx.subjects.PublishSubject;
     String url = String.format("ws://%s:%d", settings.getAddress(), settings.getPort());
     Request request = new Request.Builder().url(url).build();
 
-    Ln.v("[WebSocket] attempting to connect to [%s]", url);
+    Timber.v("[WebSocket] attempting to connect to [%s]", url);
     WebSocketCall.create(client, request).enqueue(this);
   }
 
@@ -83,7 +83,7 @@ import rx.subjects.PublishSubject;
     }
 
     rxBus.post(message);
-    Ln.v("[Incoming] %s", message);
+    Timber.v("[Incoming] %s", message);
   }
 
   @Override public void onOpen(WebSocket webSocket, Response response) {
@@ -101,7 +101,7 @@ import rx.subjects.PublishSubject;
     subscription = Observable.interval(15, TimeUnit.SECONDS).subscribe(aLong -> {
       try {
         webSocket.sendPing(new Buffer());
-        Ln.v("send ping");
+        Timber.v("send ping");
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -119,7 +119,7 @@ import rx.subjects.PublishSubject;
       try {
         webSocket.sendMessage(RequestBody.create(WebSocket.TEXT, message.getBytes()));
       } catch (IOException e) {
-        Ln.v(e);
+        Timber.e(e, "Failed to send the message");
       }
     });
   }
@@ -127,7 +127,7 @@ import rx.subjects.PublishSubject;
   @Override public void onFailure(IOException e, Response response) {
     stopPing();
     this.connected = false;
-    Ln.v(e, "[Websocket] io ex");
+    Timber.e(e, "[Websocket] io ex");
     rxBus.post(ConnectionStatusChangeEvent.create(Connection.OFF));
   }
 
@@ -136,14 +136,14 @@ import rx.subjects.PublishSubject;
   }
 
   @Override public void onPong(Buffer payload) {
-    Ln.v("pong");
+    Timber.v("pong");
   }
 
   @Override public void onClose(int code, String reason) {
     this.connected = false;
     subscription.unsubscribe();
     webSocket = null;
-    Ln.v("[Websocket] closing (%d) %s", code, reason);
+    Timber.v("[Websocket] closing (%d) %s", code, reason);
     rxBus.post(ConnectionStatusChangeEvent.create(Connection.OFF));
   }
 
@@ -151,13 +151,13 @@ import rx.subjects.PublishSubject;
     stopPing();
 
     if (webSocket == null) {
-      Ln.v("No WebSocket available nothing to do here");
+      Timber.v("No WebSocket available nothing to do here");
       return;
     }
     try {
       webSocket.close(1000, "Disconnecting");
     } catch (IOException e) {
-      Ln.v(e, "While closing the websocket");
+      Timber.v(e, "While closing the websocket");
     }
   }
 }

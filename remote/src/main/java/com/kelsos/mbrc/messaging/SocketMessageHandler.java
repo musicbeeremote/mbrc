@@ -26,10 +26,10 @@ import com.kelsos.mbrc.utilities.RxBus;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import roboguice.util.Ln;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
+import timber.log.Timber;
 
 @Singleton public class SocketMessageHandler {
 
@@ -109,11 +109,11 @@ import rx.subjects.PublishSubject;
 
   private void onWebSocketMessage(WebSocketMessage message) {
     String action = message.getMessage();
-    Ln.v("[Message] processing %s", action);
+    Timber.v("[Message] processing %s", action);
 
     Subscription actionSubscription = activeSubscriptions.get(action);
     if (actionSubscription != null && !actionSubscription.isUnsubscribed()) {
-      Ln.v("There is already an active operation for the received action %s", action);
+      Timber.v("There is already an active operation for the received action %s", action);
       return;
     }
 

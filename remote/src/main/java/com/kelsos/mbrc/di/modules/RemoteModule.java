@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.di.modules;
 
+import android.support.v4.app.NotificationManagerCompat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
@@ -8,6 +9,7 @@ import com.kelsos.mbrc.cache.PlayerStateCacheImpl;
 import com.kelsos.mbrc.cache.TrackCache;
 import com.kelsos.mbrc.cache.TrackCacheImpl;
 import com.kelsos.mbrc.di.providers.ApiServiceProvider;
+import com.kelsos.mbrc.di.providers.NotificationManagerCompatProvider;
 import com.kelsos.mbrc.di.providers.ObjectMapperProvider;
 import com.kelsos.mbrc.di.providers.OkHttpClientProvider;
 import com.kelsos.mbrc.di.providers.RetrofitProvider;
@@ -132,5 +134,7 @@ import roboguice.inject.ContextSingleton;
     bind(NowPlayingService.class).toProvider(new ApiServiceProvider<>(NowPlayingService.class)).in(Singleton.class);
     bind(PlaylistService.class).toProvider(new ApiServiceProvider<>(PlaylistService.class)).in(Singleton.class);
     bind(RxBus.class).to(RxBusImpl.class).in(Singleton.class);
+
+    bind(NotificationManagerCompat.class).toProvider(NotificationManagerCompatProvider.class).in(Singleton.class);
   }
 }

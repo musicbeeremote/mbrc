@@ -27,11 +27,11 @@ import com.kelsos.mbrc.utilities.RxBus;
 import com.kelsos.mbrc.viewmodels.MainViewModel;
 import java.util.concurrent.TimeUnit;
 import roboguice.inject.ContextSingleton;
-import roboguice.util.Ln;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 @ContextSingleton public class MainViewPresenterImpl implements MainViewPresenter {
   @Inject private ErrorHandler errorHandler;
@@ -244,6 +244,7 @@ import rx.schedulers.Schedulers;
   }
 
   public void onTrackInfoChangedEvent(TrackInfoChangeEvent event) {
+    Timber.v("Received change event");
     model.setTrackInfo(event.getTrackInfo());
     mainView.updateTrackInfo(event.getTrackInfo());
     startPositionUpdate();
@@ -270,7 +271,7 @@ import rx.schedulers.Schedulers;
   }
 
   private void stopPositionUpdate() {
-    Ln.v("Track now is either paused or stoped");
+    Timber.v("Track now is either paused or stoped");
     if (positionUpdate != null && !positionUpdate.isUnsubscribed()) {
       positionUpdate.unsubscribe();
       positionUpdate = null;
@@ -282,7 +283,7 @@ import rx.schedulers.Schedulers;
       return;
     }
 
-    Ln.v("Track is now playing");
+    Timber.v("Track is now playing");
     positionUpdate = Observable.interval(0, 1, TimeUnit.SECONDS)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())

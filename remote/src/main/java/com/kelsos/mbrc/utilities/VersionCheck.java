@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
-import roboguice.util.Ln;
+import timber.log.Timber;
 
 public class VersionCheck {
   private ObjectMapper mapper;
@@ -39,7 +39,7 @@ public class VersionCheck {
 
     if (nextCheck.after(now)) {
       if (BuildConfig.DEBUG) {
-        Ln.d("next check: %s", Long.toString(nextCheck.getTime()));
+        Timber.d("next check: %s", Long.toString(nextCheck.getTime()));
       }
       return true;
     }
@@ -70,9 +70,9 @@ public class VersionCheck {
 
     manager.setLastUpdated(now);
     if (BuildConfig.DEBUG) {
-      Ln.d("last check on: %s", Long.toString(now.getTime()));
-      Ln.d("plugin reported version: %s", pluginVersion);
-      Ln.d("plugin suggested version: %s", suggestedVersion);
+      Timber.d("last check on: %s", Long.toString(now.getTime()));
+      Timber.d("plugin reported version: %s", pluginVersion);
+      Timber.d("plugin suggested version: %s", suggestedVersion);
     }
 
     return isOutOfDate;
@@ -85,9 +85,7 @@ public class VersionCheck {
 
         }
       } catch (IOException | NumberFormatException e) {
-        if (BuildConfig.DEBUG) {
-          Ln.d(e);
-        }
+        Timber.e(e, "Version Check failed");
       }
     }
   }

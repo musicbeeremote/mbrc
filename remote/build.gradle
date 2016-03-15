@@ -149,6 +149,7 @@ dependencies {
   compile "io.reactivex:rxjava:1.1.1"
   compile "commons-lang:commons-lang:2.6"
   compile "com.jakewharton:butterknife:7.0.1"
+  compile 'com.jakewharton.timber:timber:4.1.1'
 
   apt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflowVersion}"
   compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflowVersion}"

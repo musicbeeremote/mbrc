@@ -18,7 +18,7 @@ import com.kelsos.mbrc.interfaces.ITouchHelperAdapter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import roboguice.util.Ln;
+import timber.log.Timber;
 
 public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.TrackHolder>
     implements ITouchHelperAdapter {
@@ -65,7 +65,7 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
     }
 
     holder.container.setOnClickListener(v -> {
-      Ln.v("Clicked");
+      Timber.v("Clicked");
       if (listener == null) {
         return;
       }

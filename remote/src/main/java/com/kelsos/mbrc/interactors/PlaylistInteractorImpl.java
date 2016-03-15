@@ -6,9 +6,9 @@ import com.kelsos.mbrc.mappers.PlaylistMapper;
 import com.kelsos.mbrc.repository.PlaylistRepository;
 import com.kelsos.mbrc.services.api.PlaylistService;
 import java.util.List;
-import roboguice.util.Ln;
 import rx.Observable;
 import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class PlaylistInteractorImpl implements PlaylistInteractor {
   private static final int LIMIT = 400;
@@ -22,8 +22,10 @@ public class PlaylistInteractorImpl implements PlaylistInteractor {
             .subscribeOn(Schedulers.io()))
         .takeWhile(page -> page.getOffset() < page.getTotal()).subscribe(response -> {
       repository.savePlaylists(PlaylistMapper.mapDto(response.getData()));
-    }, Ln::v, () -> {
-      Ln.v("Complete");
+    }, t -> {
+      Timber.e(t, "Error retrieving a playlist page");
+    }, () -> {
+      Timber.v("Complete");
     });
 
     return repository.getPlaylists();

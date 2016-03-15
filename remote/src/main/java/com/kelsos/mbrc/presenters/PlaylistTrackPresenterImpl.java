@@ -6,9 +6,9 @@ import com.kelsos.mbrc.domain.PlaylistTrack;
 import com.kelsos.mbrc.interactors.QueueInteractor;
 import com.kelsos.mbrc.interactors.playlists.PlaylistTrackInteractor;
 import com.kelsos.mbrc.ui.views.PlaylistTrackView;
-import roboguice.util.Ln;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class PlaylistTrackPresenterImpl implements PlaylistTrackPresenter {
   private PlaylistTrackView view;
@@ -28,7 +28,7 @@ public class PlaylistTrackPresenterImpl implements PlaylistTrackPresenter {
           view.update(playlistTracks);
         }, throwable -> {
           view.showErrorWhileLoading();
-          Ln.v(throwable, "");
+          Timber.e(throwable, "");
         });
   }
 
@@ -36,7 +36,7 @@ public class PlaylistTrackPresenterImpl implements PlaylistTrackPresenter {
     queueInteractor.execute(action, track.getPath()).subscribe(aBoolean -> {
 
     }, throwable -> {
-      Ln.v(throwable);
+      Timber.e(throwable, "Queueing failed");
     });
   }
 }

@@ -15,10 +15,10 @@ import com.raizlabs.android.dbflow.runtime.TransactionManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import java.util.List;
-import roboguice.util.Ln;
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class PlaylistRepositoryImpl implements PlaylistRepository {
 
@@ -81,7 +81,7 @@ public class PlaylistRepositoryImpl implements PlaylistRepository {
 
         info.save();
       }, throwable -> {
-        Ln.v(throwable);
+        Timber.e(throwable, "Failed to save playlist tracks");
       });
     });
   }

@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import roboguice.util.Ln;
+import timber.log.Timber;
 
 public class OkHttpClientProvider implements Provider<OkHttpClient> {
 
@@ -24,7 +24,7 @@ public class OkHttpClientProvider implements Provider<OkHttpClient> {
       if (!TextUtils.isEmpty(settings.getAddress())) {
         final HttpUrl url = request.url().newBuilder().host(settings.getAddress()).port(settings.getHttp()).build();
         builder.url(url);
-        Ln.v("URL -> %s", url.toString());
+        Timber.v("URL -> %s", url.toString());
       }
 
       return chain.proceed(builder.build());

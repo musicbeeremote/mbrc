@@ -13,7 +13,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okio.BufferedSink;
 import okio.Okio;
-import roboguice.util.Ln;
+import timber.log.Timber;
 
 public class CoverDownloader {
   @Inject private OkHttpClient client;
@@ -27,7 +27,7 @@ public class CoverDownloader {
     File filesDir = context.getFilesDir();
     coverDirectory = new File(filesDir, "covers");
     final boolean mkdirs = coverDirectory.mkdirs();
-    Ln.v("[Cover] directory created [%s] [%s]", coverDirectory.getAbsolutePath(), mkdirs);
+    Timber.v("[Cover] directory created [%s] [%s]", coverDirectory.getAbsolutePath(), mkdirs);
 
     final ConnectionSettings settings = manager.getDefault();
     baseUrl = new HttpUrl.Builder().host(settings.getAddress())
@@ -66,7 +66,7 @@ public class CoverDownloader {
       BufferedSink sink = Okio.buffer(Okio.sink(file));
       sink.writeAll(response.body().source());
       sink.close();
-      Ln.v("[Cover] downloaded [%s]", file.getAbsolutePath());
+      Timber.v("[Cover] downloaded [%s]", file.getAbsolutePath());
     }
   }
 }

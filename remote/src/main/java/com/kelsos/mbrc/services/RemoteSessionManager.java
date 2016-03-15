@@ -19,7 +19,7 @@ import com.kelsos.mbrc.events.ui.RemoteClientMetaData;
 import com.kelsos.mbrc.utilities.MediaButtonReceiver;
 import com.kelsos.mbrc.utilities.MediaIntentHandler;
 import com.kelsos.mbrc.utilities.RxBus;
-import roboguice.util.Ln;
+import timber.log.Timber;
 
 @Singleton public class RemoteSessionManager implements AudioManager.OnAudioFocusChangeListener {
   private static final long PLAYBACK_ACTIONS = PlaybackStateCompat.ACTION_PAUSE
@@ -205,14 +205,14 @@ import roboguice.util.Ln;
   public void onAudioFocusChange(int focusChange) {
     switch (focusChange) {
       case AudioManager.AUDIOFOCUS_GAIN:
-        Ln.d("gained");
+        Timber.d("gained");
         break;
       case AudioManager.AUDIOFOCUS_LOSS:
       case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-        Ln.d("transient loss");
+        Timber.d("transient loss");
         break;
       case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-        Ln.d("Loss can duck");
+        Timber.d("Loss can duck");
         break;
       default:
     }

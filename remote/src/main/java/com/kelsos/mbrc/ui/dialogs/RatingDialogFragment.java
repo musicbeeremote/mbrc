@@ -14,7 +14,7 @@ import com.kelsos.mbrc.events.ui.RatingChanged;
 import com.kelsos.mbrc.interactors.TrackRatingInteractor;
 import com.kelsos.mbrc.utilities.RxBus;
 import roboguice.RoboGuice;
-import roboguice.util.Ln;
+import timber.log.Timber;
 
 public class RatingDialogFragment extends DialogFragment {
 
@@ -48,7 +48,7 @@ public class RatingDialogFragment extends DialogFragment {
     ratingBar.setOnRatingBarChangeListener((ratingBar, ratingValue, isUserInitiated) -> {
       if (isUserInitiated) {
         ratingInteractor.updateRating(ratingValue).subscribe(aFloat -> {
-          Ln.v("su");
+          Timber.v("su");
         }, throwable -> {});
       }
     });

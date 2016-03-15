@@ -1,12 +1,11 @@
 package com.kelsos.mbrc.utilities;
 
 import com.google.inject.Singleton;
-
-import roboguice.util.Ln;
+import timber.log.Timber;
 
 @Singleton
 public class ErrorHandler {
   public void handleThrowable(Throwable throwable) {
-    Ln.v(throwable);
+    Timber.e(throwable, "Something wrong");
   }
 }

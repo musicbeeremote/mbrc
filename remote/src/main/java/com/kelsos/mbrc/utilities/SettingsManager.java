@@ -28,8 +28,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import roboguice.util.Ln;
 import rx.Observable;
+import timber.log.Timber;
 
 @Singleton
 public class SettingsManager {
@@ -64,7 +64,7 @@ public class SettingsManager {
 
       } catch (IOException e) {
         if (BuildConfig.DEBUG) {
-          Ln.d(e, "Loading settings.");
+          Timber.d(e, "Loading settings.");
         }
       }
     }
@@ -135,7 +135,7 @@ public class SettingsManager {
       bus.post(new ConnectionSettingsChanged(mSettings, 0));
     } catch (IOException e) {
       if (BuildConfig.DEBUG) {
-        Ln.d(e, "Settings store");
+        Timber.d(e, "Settings store");
       }
     }
   }
@@ -258,12 +258,12 @@ public class SettingsManager {
         }
 
         if (BuildConfig.DEBUG) {
-          Ln.d("load or fresh install");
+          Timber.d("load or fresh install");
         }
       }
     } catch (PackageManager.NameNotFoundException e) {
       if (BuildConfig.DEBUG) {
-        Ln.d(e, "check for first run");
+        Timber.d(e, "check for first run");
       }
     }
   }

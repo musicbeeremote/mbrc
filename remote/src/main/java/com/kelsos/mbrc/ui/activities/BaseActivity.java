@@ -34,6 +34,7 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.annotations.Connection;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.controller.Controller;
+import com.kelsos.mbrc.events.ChangeWebSocketStatusEvent;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
 import com.kelsos.mbrc.events.ui.DisplayDialog;
@@ -48,8 +49,8 @@ import com.kelsos.mbrc.ui.navigation.PlaylistListActivity;
 import com.kelsos.mbrc.utilities.RxBus;
 import com.kelsos.mbrc.viewmodels.ConnectionStatusModel;
 import roboguice.RoboGuice;
-import roboguice.util.Ln;
 import rx.Subscription;
+import timber.log.Timber;
 
 public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -293,11 +294,11 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
   }
 
   private void onConnectClick() {
-    rxBus.post(MessageEvent.newInstance(UserInputEventType.ResetConnection));
+    rxBus.post(ChangeWebSocketStatusEvent.newInstance(ChangeWebSocketStatusEvent.CONNECT));
   }
 
   private void onExitClicked() {
-    Ln.v("[Menu] User pressed exit");
+    Timber.v("[Menu] User pressed exit");
     stopService(new Intent(this, Controller.class));
     finish();
   }
@@ -305,7 +306,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
   private void handleConnectionStatusChange(ConnectionStatusChangeEvent change) {
 
     int status = change.getStatus();
-    Ln.v("Connection event received %s", status);
+    Timber.v("Connection event received %s", status);
     model.setStatus(status);
     updateStatus(status);
   }
@@ -314,7 +315,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
     MenuItem item = navigationView.getMenu().findItem(R.id.drawer_menu_connect);
 
     if (item == null) {
-      Ln.v("Connection event received but view item null");
+      Timber.v("Connection event received but view item null");
       return;
     }
     switch (status) {

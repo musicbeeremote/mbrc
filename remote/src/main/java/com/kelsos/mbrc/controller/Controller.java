@@ -5,16 +5,20 @@ import android.content.Intent;
 import android.os.IBinder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.events.ChangeWebSocketStatusEvent;
 import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.messaging.SocketMessageHandler;
 import com.kelsos.mbrc.net.SocketService;
 import com.kelsos.mbrc.services.ServiceDiscovery;
 import com.kelsos.mbrc.utilities.LibrarySyncManager;
 import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver;
+import com.kelsos.mbrc.utilities.RxBus;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import roboguice.RoboGuice;
 import roboguice.util.Ln;
+import rx.Observable;
+import timber.log.Timber;
 
 @Singleton public class Controller extends Service {
 
@@ -25,9 +29,10 @@ import roboguice.util.Ln;
   @Inject private SettingsManager settingsManager;
   @Inject private SocketMessageHandler messageHandler;
   @Inject private LibrarySyncManager syncManager;
+  @Inject private RxBus bus;
 
   public Controller() {
-    Ln.d("Application Controller Initialized");
+    Timber.d("Application Controller Initialized");
   }
 
   @Override public IBinder onBind(Intent intent) {
@@ -37,24 +42,46 @@ import roboguice.util.Ln;
   @Override public void onCreate() {
     super.onCreate();
     RoboGuice.getInjector(this).injectMembers(this);
+    bus.register(this, ChangeWebSocketStatusEvent.class, this::onWebSocketActionRequest);
   }
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
-    Ln.v("[Service] start command received");
-    discovery.startDiscovery().subscribe(connectionSettings -> {
+    Timber.v("[Service] start command received");
+    FlowManager.init(getApplicationContext());
+    Observable.merge(discovery.startDiscovery(), Observable.just(settingsManager.getDefault()))
+        .first()
+        .subscribe(connectionSettings -> {
+          if (connectionSettings != null) {
+            socket.startWebSocket();
+          }
 
     }, Ln::v);
-    FlowManager.init(getApplicationContext());
-    socket.startWebSocket();
+
     return super.onStartCommand(intent, flags, startId);
   }
 
   @Override public void onDestroy() {
     super.onDestroy();
-    Ln.v("[Service] destroying service");
+    Timber.v("[Service] destroying service");
+    bus.unregister(this);
     notificationService.cancelNotification(NotificationService.NOW_PLAYING_PLACEHOLDER);
     socket.disconnect();
     FlowManager.destroy();
     this.unregisterReceiver(receiver);
   }
+
+  private void onWebSocketActionRequest(ChangeWebSocketStatusEvent event) {
+    switch (event.getAction()) {
+      case ChangeWebSocketStatusEvent.CONNECT:
+        Timber.v("Attempting to start the websocket");
+        socket.startWebSocket();
+        break;
+      case ChangeWebSocketStatusEvent.DISCONNECT:
+        Timber.v("Attempting to stop the websocket");
+        socket.disconnect();
+        break;
+    }
+  }
+
+
 }
