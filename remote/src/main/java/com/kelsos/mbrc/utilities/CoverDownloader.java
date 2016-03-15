@@ -47,7 +47,7 @@ public class CoverDownloader {
 
         download(cover, file);
       } catch (IOException e) {
-        e.printStackTrace();
+        Timber.e(e, "On file download");
       }
     });
   }

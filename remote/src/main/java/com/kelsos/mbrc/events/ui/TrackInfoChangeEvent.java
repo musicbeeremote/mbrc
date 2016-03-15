@@ -1,8 +1,7 @@
 package com.kelsos.mbrc.events.ui;
 
 import android.support.annotation.NonNull;
-
-import com.kelsos.mbrc.dto.track.TrackInfo;
+import com.kelsos.mbrc.domain.TrackInfo;
 
 public class TrackInfoChangeEvent {
 

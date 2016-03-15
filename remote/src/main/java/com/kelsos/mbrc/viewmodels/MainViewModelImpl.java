@@ -5,8 +5,8 @@ import android.support.annotation.IntRange;
 import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.annotations.Repeat;
 import com.kelsos.mbrc.annotations.Shuffle;
+import com.kelsos.mbrc.domain.TrackInfo;
 import com.kelsos.mbrc.domain.TrackPosition;
-import com.kelsos.mbrc.dto.track.TrackInfo;
 
 public class MainViewModelImpl implements MainViewModel {
   private TrackInfo trackInfo;

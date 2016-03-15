@@ -8,7 +8,7 @@ import com.kelsos.mbrc.dto.requests.RatingRequest;
 import com.kelsos.mbrc.dto.track.Lyrics;
 import com.kelsos.mbrc.dto.track.Position;
 import com.kelsos.mbrc.dto.track.Rating;
-import com.kelsos.mbrc.dto.track.TrackInfo;
+import com.kelsos.mbrc.dto.track.TrackInfoResponse;
 
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -38,7 +38,7 @@ public interface TrackService {
   Observable<Bitmap> getTrackCover(@Query("t") String timestamp);
 
   @GET("/track")
-  Observable<TrackInfo> getTrackInfo();
+  Observable<TrackInfoResponse> getTrackInfo();
 
 
 }

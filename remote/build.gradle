@@ -1,12 +1,14 @@
 import java.text.SimpleDateFormat
 
-apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'checkstyle'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
 apply plugin: 'idea'
-apply plugin: 'com.neenbedankt.android-apt'
+
 
 def buildTime() {
   def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
@@ -29,8 +31,9 @@ android {
     versionCode 105
     versionName "1.0.0-alpha.1"
 
-    buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
-    buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
+    // Enabling multidex support.
+    multiDexEnabled true
+
   }
 
   signingConfigs {
@@ -49,11 +52,16 @@ android {
       zipAlignEnabled true
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+      buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
+      buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
     }
 
     debug {
       applicationIdSuffix ".dev"
       versionNameSuffix "-dev"
+      buildConfigField "String", "GIT_SHA", "\"debug_build\""
+      buildConfigField "String", "BUILD_TIME", "\"debug_build\""
     }
 
     preview {
@@ -64,6 +72,24 @@ android {
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       applicationIdSuffix ".preview"
       versionNameSuffix "-preview"
+
+      buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
+      buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
+    }
+  }
+
+  sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+  }
+
+  productFlavors {
+
+    development {
+      minSdkVersion 21
+    }
+
+    production {
+      // Default minSdkVersion
     }
   }
 
@@ -78,6 +104,8 @@ android {
     exclude 'META-INF/NOTICE'
     exclude 'META-INF/services/javax.annotation.processing.Processor'
   }
+
+
 
   lintOptions {
     abortOnError false
@@ -115,7 +143,7 @@ idea {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.11'
+  gradleVersion = '2.12'
 }
 
 ext {
@@ -150,10 +178,13 @@ dependencies {
   compile "commons-lang:commons-lang:2.6"
   compile "com.jakewharton:butterknife:7.0.1"
   compile 'com.jakewharton.timber:timber:4.1.1'
+  compile 'com.android.support:multidex:1.0.0'
 
   apt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflowVersion}"
   compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflowVersion}"
   compile "com.github.Raizlabs.DBFlow:dbflow:${dbflowVersion}"
+
+  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
 
   compile("com.afollestad.material-dialogs:core:0.8.5.6@aar") {
@@ -261,5 +292,16 @@ gradle.taskGraph.afterTask { Task task, TaskState state ->
           style: new File(rootDir, 'config/quality/checkstyle/checkstyle-noframes-sorted.xsl'),
           out: new File("$buildDir/reports/checkstyle/checkstyle.html"))
     }
+  }
+}
+
+buildscript {
+  ext.kotlin_version = '1.0.0'
+
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
 }

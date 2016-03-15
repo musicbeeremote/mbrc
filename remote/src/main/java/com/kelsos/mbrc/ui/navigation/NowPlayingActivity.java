@@ -16,7 +16,7 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.NowPlayingAdapter;
 import com.kelsos.mbrc.adapters.SimpleItemTouchHelperCallback;
 import com.kelsos.mbrc.domain.QueueTrack;
-import com.kelsos.mbrc.dto.track.TrackInfo;
+import com.kelsos.mbrc.domain.TrackInfo;
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.events.ui.TrackMoved;
 import com.kelsos.mbrc.events.ui.TrackRemoval;

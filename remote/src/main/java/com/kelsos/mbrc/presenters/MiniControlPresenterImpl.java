@@ -2,7 +2,7 @@ package com.kelsos.mbrc.presenters;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.annotations.PlayerAction;
-import com.kelsos.mbrc.dto.track.TrackInfo;
+import com.kelsos.mbrc.domain.TrackInfo;
 import com.kelsos.mbrc.events.ui.CoverChangedEvent;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;

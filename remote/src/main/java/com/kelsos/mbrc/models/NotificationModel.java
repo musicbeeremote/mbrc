@@ -2,7 +2,7 @@ package com.kelsos.mbrc.models;
 
 import android.graphics.Bitmap;
 import com.kelsos.mbrc.annotations.PlayerState;
-import com.kelsos.mbrc.dto.track.TrackInfo;
+import com.kelsos.mbrc.domain.TrackInfo;
 
 public class NotificationModel {
   private TrackInfo trackInfo;

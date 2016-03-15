@@ -12,7 +12,7 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.annotations.Connection;
 import com.kelsos.mbrc.annotations.PlayerState;
-import com.kelsos.mbrc.dto.track.TrackInfo;
+import com.kelsos.mbrc.domain.TrackInfo;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
 import com.kelsos.mbrc.events.ui.CoverChangedEvent;
 import com.kelsos.mbrc.events.ui.PlayStateChange;

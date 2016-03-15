@@ -18,7 +18,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
     "year",
     "path"
 })
-public class TrackInfo extends BaseResponse{
+public class TrackInfoResponse extends BaseResponse{
 
   @JsonProperty("artist")
   private String artist;
@@ -146,11 +146,12 @@ public class TrackInfo extends BaseResponse{
     if (other == this) {
       return true;
     }
-    if (!(other instanceof TrackInfo)) {
+    if (!(other instanceof TrackInfoResponse)) {
       return false;
     }
-    TrackInfo rhs = ((TrackInfo) other);
+    TrackInfoResponse rhs = ((TrackInfoResponse) other);
     return new EqualsBuilder().append(artist, rhs.artist).append(title, rhs.title).append(album, rhs.album).append(year, rhs.year).append(path, rhs.path).isEquals();
   }
+
 
 }

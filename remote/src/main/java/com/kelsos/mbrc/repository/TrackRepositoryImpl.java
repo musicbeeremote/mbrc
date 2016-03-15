@@ -4,11 +4,12 @@ import android.graphics.Bitmap;
 import android.text.TextUtils;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.cache.TrackCache;
+import com.kelsos.mbrc.domain.TrackInfo;
 import com.kelsos.mbrc.domain.TrackPosition;
 import com.kelsos.mbrc.dto.track.Rating;
-import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.interactors.TrackPositionInteractor;
 import com.kelsos.mbrc.interactors.TrackRatingInteractor;
+import com.kelsos.mbrc.mappers.TrackInfoMapper;
 import com.kelsos.mbrc.services.api.TrackService;
 import com.kelsos.mbrc.utilities.RemoteUtils;
 import java.util.ArrayList;
@@ -34,8 +35,9 @@ public class TrackRepositoryImpl implements TrackRepository {
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .flatMap(trackInfo -> {
-          cache.setTrackinfo(trackInfo);
-          return Observable.just(trackInfo);
+          TrackInfo info = TrackInfoMapper.Companion.map(trackInfo);
+          cache.setTrackinfo(info);
+          return Observable.just(info);
         });
 
     return reload ? infoObservable : Observable.concat(Observable.just(cache.getTrackinfo()), infoObservable)

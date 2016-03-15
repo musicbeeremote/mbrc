@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.repository;
 
 import android.graphics.Bitmap;
+import com.kelsos.mbrc.domain.TrackInfo;
 import com.kelsos.mbrc.domain.TrackPosition;
 import com.kelsos.mbrc.dto.track.Rating;
-import com.kelsos.mbrc.dto.track.TrackInfo;
 import java.util.List;
 import rx.Observable;
 
@@ -21,6 +21,7 @@ public interface TrackRepository {
   Observable<Rating> getRating();
 
   void setRating(Rating rating);
+
 
   void setTrackInfo(TrackInfo trackInfo);
 

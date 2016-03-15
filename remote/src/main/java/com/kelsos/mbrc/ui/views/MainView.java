@@ -4,8 +4,8 @@ import android.graphics.Bitmap;
 import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.annotations.Repeat;
 import com.kelsos.mbrc.annotations.Shuffle;
+import com.kelsos.mbrc.domain.TrackInfo;
 import com.kelsos.mbrc.domain.TrackPosition;
-import com.kelsos.mbrc.dto.track.TrackInfo;
 import com.kelsos.mbrc.enums.LfmStatus;
 
 public interface MainView {

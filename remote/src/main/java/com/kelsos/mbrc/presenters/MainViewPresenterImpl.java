@@ -95,7 +95,7 @@ import timber.log.Timber;
   }
 
   private void loadTrackInfo() {
-    if (model.getTrackInfo() == null) {
+    if (model.getTrackInfo().isEmpty()) {
       trackInfoInteractor.execute(false).subscribe(trackInfo -> {
         model.setTrackInfo(trackInfo);
         mainView.updateTrackInfo(trackInfo);
