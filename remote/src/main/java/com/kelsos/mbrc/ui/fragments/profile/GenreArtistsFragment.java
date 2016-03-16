@@ -13,17 +13,20 @@ import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistAdapter;
+import com.kelsos.mbrc.presenters.GenreArtistsPresenter;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+import com.kelsos.mbrc.ui.views.GenreArtistView;
 import roboguice.RoboGuice;
 
 public class GenreArtistsFragment extends Fragment
-    implements PlaylistDialogFragment.OnPlaylistSelectedListener,
+    implements GenreArtistView, PlaylistDialogFragment.OnPlaylistSelectedListener,
     CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
 
   private static final String GENRE_ID = "genreId";
   @Inject private ArtistAdapter adapter;
   @Bind(R.id.genre_artists_recycler) RecyclerView recyclerView;
+  @Inject private GenreArtistsPresenter presenter;
 
   public GenreArtistsFragment() {
     // Required empty public constructor
@@ -41,6 +44,7 @@ public class GenreArtistsFragment extends Fragment
     super.onCreate(savedInstanceState);
     RoboGuice.getInjector(getContext()).injectMembers(this);
     if (getArguments() != null) {
+      presenter.load(getArguments().getLong(GENRE_ID));
     }
   }
 
