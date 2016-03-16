@@ -7,8 +7,10 @@ import com.kelsos.mbrc.domain.ConnectionSettings;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import java.util.concurrent.TimeUnit;
 import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
 import timber.log.Timber;
 
 public class OkHttpClientProvider implements Provider<OkHttpClient> {
@@ -16,7 +18,10 @@ public class OkHttpClientProvider implements Provider<OkHttpClient> {
   @Inject private SettingsManager manager;
 
   @Override public OkHttpClient get() {
-    return new OkHttpClient.Builder().addInterceptor(chain -> {
+    HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(msg -> Timber.tag("OkHttp").d(msg));
+    loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+
+    Interceptor accept = chain -> {
       final ConnectionSettings settings = manager.getDefault();
       Request request = chain.request();
       final Request.Builder builder = request.newBuilder().header("Accept", "application/json");
@@ -28,7 +33,9 @@ public class OkHttpClientProvider implements Provider<OkHttpClient> {
       }
 
       return chain.proceed(builder.build());
-    })
+    };
+    return new OkHttpClient.Builder().addInterceptor(accept)
+        .addInterceptor(loggingInterceptor)
         .readTimeout(40, TimeUnit.SECONDS)
         .connectTimeout(40, TimeUnit.SECONDS)
         .writeTimeout(40, TimeUnit.SECONDS)

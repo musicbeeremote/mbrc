@@ -173,12 +173,13 @@ dependencies {
   compile "com.squareup.okhttp3:okhttp-urlconnection:${okhttpVersion}"
   compile "com.squareup.okhttp3:okhttp:${okhttpVersion}"
   compile "com.squareup.okhttp3:okhttp-ws:${okhttpVersion}"
+  compile "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
   compile "io.reactivex:rxandroid:1.1.0"
   compile "io.reactivex:rxjava:1.1.1"
   compile "commons-lang:commons-lang:2.6"
   compile "com.jakewharton:butterknife:7.0.1"
   compile 'com.jakewharton.timber:timber:4.1.1'
-  compile 'com.android.support:multidex:1.0.0'
+  compile 'com.android.support:multidex:1.0.1'
 
   apt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflowVersion}"
   compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflowVersion}"
