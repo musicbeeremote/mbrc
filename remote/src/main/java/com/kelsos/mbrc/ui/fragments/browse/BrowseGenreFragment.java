@@ -115,6 +115,7 @@ public class BrowseGenreFragment extends Fragment implements PlaylistDialogFragm
         Intent intent = new Intent(getActivity(), ProfileActivity.class);
         intent.putExtra(ProfileActivity.TYPE, ProfileActivity.GENRE);
         intent.putExtra(ProfileActivity.ID, genre.getId());
+        intent.putExtra(ProfileActivity.NAME, genre.getName());
         startActivity(intent);
         break;
       default:

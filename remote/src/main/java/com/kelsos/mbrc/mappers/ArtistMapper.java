@@ -2,6 +2,7 @@ package com.kelsos.mbrc.mappers;
 
 import android.support.annotation.NonNull;
 import com.kelsos.mbrc.dao.ArtistDao;
+import com.kelsos.mbrc.dao.views.GenreArtistView;
 import com.kelsos.mbrc.domain.Artist;
 import com.kelsos.mbrc.dto.library.ArtistDto;
 import java.util.List;
@@ -28,5 +29,13 @@ public class ArtistMapper {
 
   public static List<Artist> mapData(List<ArtistDao> data) {
     return Observable.from(data).map(ArtistMapper::map).toList().toBlocking().first();
+  }
+
+  public static List<Artist> mapGenreArtists(List<GenreArtistView> genreArtistViews) {
+    return Observable.from(genreArtistViews).map(ArtistMapper::mapGenreArtist).toList().toBlocking().first();
+  }
+
+  @NonNull public static Artist mapGenreArtist(GenreArtistView genreArtist) {
+   return new Artist(genreArtist.getId(), genreArtist.getName());
   }
 }

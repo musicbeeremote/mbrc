@@ -78,7 +78,7 @@ public class ConnectionManagerActivity extends AppCompatActivity
 
   @Override protected void onResume() {
     super.onResume();
-    bus.register(ConnectionSettingsChanged.class, this::handleConnectionSettingsChange, false);
+    bus.register(ConnectionSettingsChanged.class, this::handleConnectionSettingsChange, true);
     bus.register(DiscoveryStopped.class, this::handleDiscoveryStopped, false);
     bus.register(NotifyUser.class, this::handleUserNotification, false);
   }

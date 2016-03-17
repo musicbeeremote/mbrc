@@ -5,5 +5,5 @@ import java.util.List;
 import rx.Observable;
 
 public interface GenreArtistInteractor {
-  Observable<List<Artist>> getGenreArtists();
+  Observable<List<Artist>> getGenreArtists(long genreId);
 }

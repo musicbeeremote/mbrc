@@ -16,7 +16,6 @@ import com.kelsos.mbrc.utilities.RxBus;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import roboguice.RoboGuice;
-import roboguice.util.Ln;
 import rx.Observable;
 import timber.log.Timber;
 
@@ -55,7 +54,7 @@ import timber.log.Timber;
             socket.startWebSocket();
           }
 
-    }, Ln::v);
+    }, throwable -> Timber.v(throwable, "Discovery failed"));
 
     return super.onStartCommand(intent, flags, startId);
   }

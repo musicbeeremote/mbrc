@@ -34,6 +34,8 @@ public class ServiceDiscovery {
   public static final String DISCOVERY_ADDRESS = "239.1.5.10"; //NOPMD
   public static final int PORT = 45345;
   public static final int BUFFER = 512;
+  public static final int DISCOVERY_TIMEOUT = 5000;
+  public static final int MULTICAST_PORT = 45345;
 
   private WifiManager manager;
   private WifiManager.MulticastLock mLock;
@@ -106,8 +108,8 @@ public class ServiceDiscovery {
         mLock.setReferenceCounted(true);
         mLock.acquire();
 
-        MulticastSocket mSocket = new MulticastSocket(45345);
-        mSocket.setSoTimeout(2000);
+        MulticastSocket mSocket = new MulticastSocket(MULTICAST_PORT);
+        mSocket.setSoTimeout(DISCOVERY_TIMEOUT);
         InetAddress group = InetAddress.getByName(DISCOVERY_ADDRESS);
         mSocket.joinGroup(group);
 

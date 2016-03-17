@@ -22,6 +22,7 @@ public class ProfileActivity extends AppCompatActivity {
   public static final String ALBUM = "album";
   public static final String TYPE = "type";
   public static final String ID = "id";
+  public static final String NAME = "name";
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -34,10 +35,11 @@ public class ProfileActivity extends AppCompatActivity {
       Fragment fragment;
 
       String type = intent.getStringExtra(TYPE);
+      String name = intent.getStringExtra(NAME);
       long id = intent.getLongExtra(ID, 0);
       switch (type) {
         case GENRE:
-          fragment = GenreArtistsFragment.newInstance(id);
+          fragment = GenreArtistsFragment.newInstance(id, name);
           break;
         case ARTIST:
           fragment = ArtistAlbumsFragment.newInstance(id);
