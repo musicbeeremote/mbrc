@@ -37,19 +37,21 @@ public class CoverDownloader {
         .addPathSegment("covers")
         .build();
 
-    rx.Observable.from(covers).forEach(cover -> {
-      File file = new File(coverDirectory, cover.getHash());
-      if (file.exists()) {
-        return;
-      }
+    rx.Observable.from(covers).window(5).
+        subscribe(window -> {
+          window.subscribe(cover -> {
+            File file = new File(coverDirectory, cover.getHash());
+            if (file.exists()) {
+              return;
+            }
 
-      try {
-
-        download(cover, file);
-      } catch (IOException e) {
-        Timber.e(e, "On file download");
-      }
-    });
+            try {
+              download(cover, file);
+            } catch (IOException e) {
+              Timber.e(e, "On file download");
+            }
+          });
+        });
   }
 
   private void download(CoverDao cover, File file) throws IOException {

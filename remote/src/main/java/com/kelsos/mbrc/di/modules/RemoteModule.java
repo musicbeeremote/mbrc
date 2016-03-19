@@ -59,6 +59,8 @@ import com.kelsos.mbrc.presenters.DeviceManagerPresenter;
 import com.kelsos.mbrc.presenters.DeviceManagerPresenterImpl;
 import com.kelsos.mbrc.presenters.GenreArtistsPresenter;
 import com.kelsos.mbrc.presenters.GenreArtistsPresenterImpl;
+import com.kelsos.mbrc.presenters.LibraryActivityPresenter;
+import com.kelsos.mbrc.presenters.LibraryActivityPresenterImpl;
 import com.kelsos.mbrc.presenters.LyricsPresenter;
 import com.kelsos.mbrc.presenters.LyricsPresenterImpl;
 import com.kelsos.mbrc.presenters.MainViewPresenter;
@@ -111,6 +113,7 @@ import roboguice.inject.ContextSingleton;
     bind(AlbumTracksPresenter.class).to(AlbumTracksPresenterImpl.class).in(ContextSingleton.class);
     bind(GenreArtistsPresenter.class).to(GenreArtistsPresenterImpl.class).in(ContextSingleton.class);
     bind(DeviceManagerPresenter.class).to(DeviceManagerPresenterImpl.class).in(ContextSingleton.class);
+    bind(LibraryActivityPresenter.class).to(LibraryActivityPresenterImpl.class).in(ContextSingleton.class);
 
     bind(TrackInfoInteractor.class).to(TrackInfoInteractorImpl.class);
     bind(TrackRatingInteractor.class).to(TrackRatingInteractorImpl.class);

@@ -57,12 +57,8 @@ import timber.log.Timber;
     return preferences.getBoolean(context.getString(R.string.settings_key_plugin_check), false);
   }
 
-  private void updateDefault(int index, DeviceSettings settings) {
-    SharedPreferences.Editor editor = preferences.edit();
-    editor.putString(context.getString(R.string.settings_key_hostname), settings.getAddress());
-    editor.putInt(context.getString(R.string.settings_key_port), settings.getPort());
-    editor.putInt(context.getString(R.string.settings_key_default_index), index);
-    editor.apply();
+  private void updateDefault(int id) {
+    preferences.edit().putLong(DEFAULT_ID, id).apply();
   }
 
   public Date getLastUpdated() {
