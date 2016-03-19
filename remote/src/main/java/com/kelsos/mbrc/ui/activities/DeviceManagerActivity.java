@@ -28,6 +28,7 @@ import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment.SettingsDialogListener;
 import com.kelsos.mbrc.ui.views.DeviceManagerView;
 import com.kelsos.mbrc.utilities.RxBus;
+import java.util.List;
 import roboguice.RoboGuice;
 
 public class DeviceManagerActivity extends AppCompatActivity
@@ -134,6 +135,10 @@ public class DeviceManagerActivity extends AppCompatActivity
     final String message = event.isFromResource() ? getString(event.getResId()) : event.getMessage();
 
     Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show();
+  }
+
+  @Override public void updateDevices(List<DeviceSettings> list) {
+    adapter.updateDevices(list);
   }
 
   @Override public void onDelete(DeviceSettings settings) {

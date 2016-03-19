@@ -97,6 +97,12 @@ public class DeviceManagerAdapter extends RecyclerView.Adapter<DeviceManagerAdap
     this.listener = listener;
   }
 
+  public void updateDevices(List<DeviceSettings> list) {
+    data.clear();
+    data.addAll(list);
+    notifyDataSetChanged();
+  }
+
   public interface DeviceActionListener {
     void onDelete(DeviceSettings settings);
 

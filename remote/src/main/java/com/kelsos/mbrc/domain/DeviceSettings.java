@@ -11,7 +11,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 
 @Table(database = RemoteDatabase.class, name = "settings",
     uniqueColumnGroups = {
-        @UniqueGroup(groupNumber = 1, uniqueConflict = ConflictAction.REPLACE)
+        @UniqueGroup(groupNumber = 1, uniqueConflict = ConflictAction.IGNORE)
     }) public class DeviceSettings extends BaseModel {
   @Column(name = "id") @PrimaryKey(autoincrement = true) private long id;
   @Column(name = "address") @Unique(uniqueGroups = 1, unique = false) private String address;

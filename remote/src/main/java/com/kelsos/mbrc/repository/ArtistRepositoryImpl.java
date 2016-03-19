@@ -50,7 +50,7 @@ public class ArtistRepositoryImpl implements ArtistRepository {
     });
   }
 
-  @Override public ArtistDao getById(int id) {
+  @Override public ArtistDao getById(long id) {
     return SQLite.select().from(ArtistDao.class).where(ArtistDao_Table.id.is(id)).querySingle();
   }
 

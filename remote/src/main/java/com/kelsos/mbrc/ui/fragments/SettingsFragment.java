@@ -29,20 +29,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     return fragment;
   }
 
-
   @Override public void onCreatePreferences(Bundle bundle, String s) {
     addPreferencesFromResource(R.xml.application_settings);
     mContext = getActivity();
 
-    final Preference mOpenSource =
-        findPreference(getResources().getString(R.string.preferences_open_source));
-    final Preference mManager =
-        findPreference(getResources().getString(R.string.preferences_key_connection_manager));
+    final Preference mOpenSource = findPreference(getResources().getString(R.string.preferences_open_source));
+    final Preference mManager = findPreference(getResources().getString(R.string.preferences_key_connection_manager));
     final Preference mVersion = findPreference(getResources().getString(R.string.settings_version));
-    final Preference mBuild =
-        findPreference(getResources().getString(R.string.pref_key_build_time));
-    final Preference mRevision =
-        findPreference(getResources().getString(R.string.pref_key_revision));
+    final Preference mBuild = findPreference(getResources().getString(R.string.pref_key_build_time));
+    final Preference mRevision = findPreference(getResources().getString(R.string.pref_key_revision));
     if (mOpenSource != null) {
       mOpenSource.setOnPreferenceClickListener(preference -> {
         showOpenSourceLicenseDialog();
@@ -59,9 +54,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     if (mVersion != null) {
       try {
-        mVersion.setSummary(
-            String.format(getResources().getString(R.string.settings_version_number),
-                RemoteUtils.getVersion(mContext)));
+        mVersion.setSummary(String.format(getResources().getString(R.string.settings_version_number),
+            RemoteUtils.getVersion(mContext)));
       } catch (PackageManager.NameNotFoundException e) {
         Timber.d(e, "Name not found");
       }
@@ -81,8 +75,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
       }
     }
 
-    final Preference mLicense =
-        findPreference(getResources().getString(R.string.settings_key_license));
+    final Preference mLicense = findPreference(getResources().getString(R.string.settings_key_license));
     if (mLicense != null) {
       mLicense.setOnPreferenceClickListener(preference -> {
         showLicenseDialog();

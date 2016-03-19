@@ -121,11 +121,15 @@ import timber.log.Timber;
   }
 
   public Observable<DeviceSettings> getDefault() {
-    return Observable.just(preferences.getInt(DEFAULT_ID, -1)).flatMap(id -> Observable.create(subscriber -> {
+    return Observable.just(preferences.getLong(DEFAULT_ID, -1)).flatMap(id -> Observable.create(subscriber -> {
       if (id > 0) {
         subscriber.onNext(repository.getById(id));
       }
       subscriber.onCompleted();
     }));
+  }
+
+  public void setDefault(long id) {
+    preferences.edit().putLong(DEFAULT_ID, id).apply();
   }
 }

@@ -8,7 +8,7 @@ public interface Repository<T> {
 
   Observable<List<T>> getAll();
 
-  T getById(int id);
+  T getById(long id);
 
   void save(List<T> items);
 

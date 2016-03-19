@@ -65,7 +65,7 @@ import timber.log.Timber;
 
     settingsManager.getDefault()
         .filter(settings -> !(TextUtils.isEmpty(settings.getAddress()) || settings.getPort() == 0))
-        .map(settings -> new HttpUrl.Builder().scheme("ws")
+        .map(settings -> new HttpUrl.Builder().scheme("http")
             .host(settings.getAddress())
             .port(settings.getPort())
             .build())
