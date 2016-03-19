@@ -97,7 +97,7 @@
     </activity>
 
     <activity
-        android:name=".ui.activities.ConnectionManagerActivity"
+        android:name=".ui.activities.DeviceManagerActivity"
         android:windowSoftInputMode="adjustNothing" />
 
     <service

@@ -3,7 +3,7 @@ package com.kelsos.mbrc.di.providers;
 import android.text.TextUtils;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.kelsos.mbrc.domain.ConnectionSettings;
+import com.kelsos.mbrc.domain.DeviceSettings;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import java.util.concurrent.TimeUnit;
 import okhttp3.HttpUrl;
@@ -22,7 +22,7 @@ public class OkHttpClientProvider implements Provider<OkHttpClient> {
     loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
 
     Interceptor accept = chain -> {
-      final ConnectionSettings settings = manager.getDefault();
+      final DeviceSettings settings = manager.getDefault().toBlocking().first();
       Request request = chain.request();
       final Request.Builder builder = request.newBuilder().header("Accept", "application/json");
 

@@ -12,7 +12,7 @@ import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity;
+import com.kelsos.mbrc.ui.activities.DeviceManagerActivity;
 import com.kelsos.mbrc.ui.dialogs.WebViewDialog;
 import com.kelsos.mbrc.utilities.RemoteUtils;
 import com.kelsos.mbrc.utilities.RxBus;
@@ -52,7 +52,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     if (mManager != null) {
       mManager.setOnPreferenceClickListener(preference -> {
-        startActivity(new Intent(mContext, ConnectionManagerActivity.class));
+        startActivity(new Intent(mContext, DeviceManagerActivity.class));
         return false;
       });
     }

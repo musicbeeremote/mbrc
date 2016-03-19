@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.annotations.Connection;
-import com.kelsos.mbrc.domain.ConnectionSettings;
 import com.kelsos.mbrc.dto.WebSocketMessage;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
 import com.kelsos.mbrc.utilities.RxBus;
@@ -14,6 +13,7 @@ import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -63,16 +63,20 @@ import timber.log.Timber;
       return;
     }
 
-    ConnectionSettings settings = settingsManager.getDefault();
-    if (TextUtils.isEmpty(settings.getAddress()) || settings.getPort() == 0) {
-      return;
-    }
+    settingsManager.getDefault()
+        .filter(settings -> !(TextUtils.isEmpty(settings.getAddress()) || settings.getPort() == 0))
+        .map(settings -> new HttpUrl.Builder().scheme("ws")
+            .host(settings.getAddress())
+            .port(settings.getPort())
+            .build())
+        .subscribe(url -> {
+          Request request = new Request.Builder().url(url).build();
 
-    String url = String.format("ws://%s:%d", settings.getAddress(), settings.getPort());
-    Request request = new Request.Builder().url(url).build();
-
-    Timber.v("[WebSocket] attempting to connect to [%s]", url);
-    WebSocketCall.create(client, request).enqueue(this);
+          Timber.v("[WebSocket] attempting to connect to [%s]", url);
+          WebSocketCall.create(client, request).enqueue(this);
+        }, t -> {
+          Timber.e(t, "While connecting to the websocket");
+        });
   }
 
   private void processIncoming(String incoming) throws IOException {

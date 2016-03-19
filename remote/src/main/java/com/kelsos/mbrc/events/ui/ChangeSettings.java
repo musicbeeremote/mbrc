@@ -1,13 +1,13 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.domain.ConnectionSettings;
+import com.kelsos.mbrc.domain.DeviceSettings;
 import com.kelsos.mbrc.annotations.SettingsAction;
 
 public class ChangeSettings {
   private int action;
-  private ConnectionSettings settings;
+  private DeviceSettings settings;
 
-  public ChangeSettings(@SettingsAction.Action int action, ConnectionSettings settings) {
+  public ChangeSettings(@SettingsAction.Action int action, DeviceSettings settings) {
     this.action = action;
     this.settings = settings;
   }
@@ -16,7 +16,7 @@ public class ChangeSettings {
     return action;
   }
 
-  public ConnectionSettings getSettings() {
+  public DeviceSettings getSettings() {
     return settings;
   }
 }

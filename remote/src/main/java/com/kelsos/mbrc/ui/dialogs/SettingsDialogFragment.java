@@ -10,14 +10,16 @@ import android.view.View;
 import android.widget.EditText;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.domain.ConnectionSettings;
+import com.kelsos.mbrc.domain.DeviceSettings;
 
 public class SettingsDialogFragment extends DialogFragment {
+
+  public static final String TAG = "settings_dialog";
 
   public static final int MAX_PORT = 65535;
   public static final int MIN_PORT = 1;
 
-  public static final String INDEX = "index";
+  public static final String ID = "index";
   public static final String PORT = "port";
   public static final String ADDRESS = "address";
   public static final String NAME = "name";
@@ -39,15 +41,15 @@ public class SettingsDialogFragment extends DialogFragment {
   public static SettingsDialogFragment newInstance(int index) {
     SettingsDialogFragment fragment = new SettingsDialogFragment();
     Bundle args = new Bundle();
-    args.putInt(INDEX, index);
+    args.putInt(ID, index);
     fragment.setArguments(args);
     return fragment;
   }
 
-  public static SettingsDialogFragment newInstance(ConnectionSettings settings) {
+  public static SettingsDialogFragment newInstance(DeviceSettings settings) {
     SettingsDialogFragment fragment = new SettingsDialogFragment();
     Bundle args = new Bundle();
-    args.putInt(INDEX, settings.getIndex());
+    args.putLong(ID, settings.getId());
     args.putString(NAME, settings.getName());
     args.putString(ADDRESS, settings.getAddress());
     args.putInt(PORT, settings.getPort());
@@ -71,33 +73,31 @@ public class SettingsDialogFragment extends DialogFragment {
     builder.title(R.string.settings_dialog_add);
     builder.positiveText(R.string.settings_dialog_add);
     builder.negativeText(android.R.string.cancel);
-    builder.callback(new MaterialDialog.ButtonCallback() {
-      @Override public void onPositive(MaterialDialog dialog) {
+    builder.onPositive((dialog, which) -> {
+      boolean shouldIClose = true;
+      String hostname = hostEdit.getText().toString();
+      String computerName = nameEdit.getText().toString();
 
-        boolean shouldIClose = true;
-        String hostname = hostEdit.getText().toString();
-        String computerName = nameEdit.getText().toString();
-
-        if (hostname.length() == 0 || computerName.length() == 0) {
-          shouldIClose = false;
-        }
-
-        String portText = portEdit.getText().toString();
-        String httpText = httpEdit.getText().toString();
-
-        int portNum = TextUtils.isEmpty(portText) ? 0 : Integer.parseInt(portText);
-        int httpNum = TextUtils.isEmpty(httpText) ? 0 : Integer.parseInt(httpText);
-
-        if (isValid(portNum) && isValid(httpNum) && shouldIClose) {
-          ConnectionSettings settings =
-              new ConnectionSettings(hostname, computerName, portNum, currentIndex, httpNum);
-          mListener.onDialogPositiveClick(SettingsDialogFragment.this, settings);
-          dialog.dismiss();
-        }
+      if (hostname.length() == 0 || computerName.length() == 0) {
+        shouldIClose = false;
       }
 
-      @Override public void onNegative(MaterialDialog dialog) {
-        dialog.cancel();
+      String portText = portEdit.getText().toString();
+      String httpText = httpEdit.getText().toString();
+
+      int portNum = TextUtils.isEmpty(portText) ? 0 : Integer.parseInt(portText);
+      int httpNum = TextUtils.isEmpty(httpText) ? 0 : Integer.parseInt(httpText);
+
+      if (isValid(portNum) && isValid(httpNum) && shouldIClose) {
+
+        DeviceSettings settings = new DeviceSettings();
+        settings.setAddress(hostname);
+        settings.setName(computerName);
+        settings.setPort(portNum);
+        settings.setHttp(httpNum);
+
+        mListener.onDialogPositiveClick(SettingsDialogFragment.this, settings);
+        dialog.dismiss();
       }
     });
 
@@ -141,7 +141,7 @@ public class SettingsDialogFragment extends DialogFragment {
     super.onCreate(savedInstanceState);
     Bundle args = getArguments();
     if (args != null) {
-      currentIndex = args.getInt(INDEX);
+      currentIndex = args.getInt(ID);
       currentPort = args.getInt(PORT);
       currentAddress = args.getString(ADDRESS);
       currentName = args.getString(NAME);
@@ -150,6 +150,6 @@ public class SettingsDialogFragment extends DialogFragment {
   }
 
   public interface SettingsDialogListener {
-    void onDialogPositiveClick(SettingsDialogFragment dialog, ConnectionSettings settings);
+    void onDialogPositiveClick(SettingsDialogFragment dialog, DeviceSettings settings);
   }
 }

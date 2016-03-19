@@ -4,13 +4,16 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.domain.ConnectionSettings;
+import com.kelsos.mbrc.domain.DeviceSettings;
+import com.kelsos.mbrc.dto.DiscoveryResponse;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
+import com.kelsos.mbrc.mappers.DeviceSettingsMapper;
+import com.kelsos.mbrc.repository.DeviceRepository;
 import com.kelsos.mbrc.utilities.RxBus;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -21,9 +24,9 @@ import java.util.Locale;
 import roboguice.util.Ln;
 import rx.Observable;
 import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
-import static com.kelsos.mbrc.events.ui.DiscoveryStopped.DiscoveryStop;
-
+@Singleton
 public class ServiceDiscovery {
   public static final String NOTIFY = "notify";
   public static final String UTF_8 = "UTF-8";
@@ -38,20 +41,22 @@ public class ServiceDiscovery {
   public static final int MULTICAST_PORT = 45345;
 
   private WifiManager manager;
-  private WifiManager.MulticastLock mLock;
+  private WifiManager.MulticastLock multicastLock;
   private ConnectivityManager connectivityManager;
   private ObjectMapper mapper;
   private RxBus bus;
+  private DeviceRepository repository;
 
   @Inject
   public ServiceDiscovery(WifiManager manager,
       ConnectivityManager connectivityManager,
       ObjectMapper mapper,
-      RxBus bus) {
+      RxBus bus, DeviceRepository repository) {
     this.manager = manager;
     this.connectivityManager = connectivityManager;
     this.mapper = mapper;
     this.bus = bus;
+    this.repository = repository;
 
     bus.register(this, MessageEvent.class, this::onDiscoveryMessage);
   }
@@ -65,23 +70,28 @@ public class ServiceDiscovery {
     }, Ln::v);
   }
 
-  public Observable<ConnectionSettings> startDiscovery() {
+  public Observable<DeviceSettings> startDiscovery() {
 
     if (!isWifiConnected()) {
-      bus.post(new DiscoveryStopped(DiscoveryStop.NO_WIFI));
+      bus.post(new DiscoveryStopped(DiscoveryStopped.NO_WIFI, null));
       return Observable.empty();
     }
 
-    return discover().subscribeOn(Schedulers.io()).doOnTerminate(() -> {
-      stopDiscovery();
-      bus.post(new DiscoveryStopped(DiscoveryStop.COMPLETE));
-    }).doOnNext(connectionSettings -> bus.post(connectionSettings));
+    return discover().subscribeOn(Schedulers.io())
+        .doOnTerminate(this::stopDiscovery)
+        .doOnNext(connectionSettings -> {
+          repository.save(connectionSettings);
+          bus.post(new DiscoveryStopped(DiscoveryStopped.SUCCESS, connectionSettings));
+        }).doOnError(t -> {
+          bus.post(new DiscoveryStopped(DiscoveryStopped.NOT_FOUND, null));
+          Timber.e(t, "During service discovery");
+        });
   }
 
   public void stopDiscovery() {
-    if (mLock != null) {
-      mLock.release();
-      mLock = null;
+    if (multicastLock != null) {
+      multicastLock.release();
+      multicastLock = null;
     }
   }
 
@@ -101,12 +111,12 @@ public class ServiceDiscovery {
     return current != null && current.getType() == ConnectivityManager.TYPE_WIFI;
   }
 
-  public Observable<ConnectionSettings> discover() {
+  public Observable<DeviceSettings> discover() {
     return Observable.create(subscriber -> {
       try {
-        mLock = manager.createMulticastLock("locked");
-        mLock.setReferenceCounted(true);
-        mLock.acquire();
+        multicastLock = manager.createMulticastLock("locked");
+        multicastLock.setReferenceCounted(true);
+        multicastLock.acquire();
 
         MulticastSocket mSocket = new MulticastSocket(MULTICAST_PORT);
         mSocket.setSoTimeout(DISCOVERY_TIMEOUT);
@@ -127,10 +137,9 @@ public class ServiceDiscovery {
           mSocket.receive(mPacket);
           incoming = new String(mPacket.getData(), UTF_8);
 
-          JsonNode node = mapper.readValue(incoming, JsonNode.class);
-          if (NOTIFY.equals(node.path(CONTEXT).asText())) {
-            ConnectionSettings settings = new ConnectionSettings(node);
-            subscriber.onNext(settings);
+          DiscoveryResponse node = mapper.readValue(incoming, DiscoveryResponse.class);
+          if (NOTIFY.equals(node.getContext())) {
+            subscriber.onNext(DeviceSettingsMapper.fromResponse(node));
             subscriber.onCompleted();
             break;
           }

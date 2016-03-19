@@ -3,7 +3,7 @@ package com.kelsos.mbrc.utilities;
 import android.content.Context;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.dao.CoverDao;
-import com.kelsos.mbrc.domain.ConnectionSettings;
+import com.kelsos.mbrc.domain.DeviceSettings;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -29,7 +29,7 @@ public class CoverDownloader {
     final boolean mkdirs = coverDirectory.mkdirs();
     Timber.v("[Cover] directory created [%s] [%s]", coverDirectory.getAbsolutePath(), mkdirs);
 
-    final ConnectionSettings settings = manager.getDefault();
+    final DeviceSettings settings = manager.getDefault().toBlocking().first();
     baseUrl = new HttpUrl.Builder().host(settings.getAddress())
         .scheme("http")
         .port(settings.getHttp())

@@ -47,14 +47,14 @@ import timber.log.Timber;
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
     Timber.v("[Service] start command received");
     FlowManager.init(getApplicationContext());
-    Observable.merge(discovery.startDiscovery(), Observable.just(settingsManager.getDefault()))
+    Observable.merge(discovery.startDiscovery(), settingsManager.getDefault())
         .first()
         .subscribe(connectionSettings -> {
           if (connectionSettings != null) {
             socket.startWebSocket();
           }
 
-    }, throwable -> Timber.v(throwable, "Discovery failed"));
+    }, t -> Timber.v(t, "Discovery failed"));
 
     return super.onStartCommand(intent, flags, startId);
   }

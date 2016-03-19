@@ -16,25 +16,29 @@ import butterknife.OnClick;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.adapters.ConnectionSettingsAdapter;
+import com.kelsos.mbrc.adapters.DeviceManagerAdapter;
+import com.kelsos.mbrc.adapters.DeviceManagerAdapter.DeviceActionListener;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.domain.ConnectionSettings;
+import com.kelsos.mbrc.domain.DeviceSettings;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.events.ui.NotifyUser;
+import com.kelsos.mbrc.presenters.DeviceManagerPresenter;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
+import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment.SettingsDialogListener;
+import com.kelsos.mbrc.ui.views.DeviceManagerView;
 import com.kelsos.mbrc.utilities.RxBus;
 import roboguice.RoboGuice;
 
-public class ConnectionManagerActivity extends AppCompatActivity
-    implements SettingsDialogFragment.SettingsDialogListener {
+public class DeviceManagerActivity extends AppCompatActivity
+    implements DeviceManagerView, SettingsDialogListener, DeviceActionListener {
 
-  @Inject private RxBus bus;
   @Bind(R.id.connection_list) RecyclerView mRecyclerView;
   @Bind(R.id.toolbar) Toolbar mToolbar;
-
-  private MaterialDialog mProgress;
+  @Inject private RxBus bus;
+  @Inject private DeviceManagerPresenter presenter;
+  @Inject private DeviceManagerAdapter adapter;
+  private MaterialDialog progressDialog;
   private Context mContext;
 
   @OnClick(R.id.connection_add) public void onAddButtonClick(View v) {
@@ -50,7 +54,7 @@ public class ConnectionManagerActivity extends AppCompatActivity
     mBuilder.title(R.string.progress_scanning);
     mBuilder.content(R.string.progress_scanning_message);
     mBuilder.progress(true, 0);
-    mProgress = mBuilder.show();
+    progressDialog = mBuilder.show();
     bus.post(MessageEvent.newInstance(UserInputEventType.StartDiscovery));
   }
 
@@ -59,10 +63,14 @@ public class ConnectionManagerActivity extends AppCompatActivity
     setContentView(R.layout.ui_activity_connection_manager);
     ButterKnife.bind(this);
     RoboGuice.getInjector(this).injectMembers(this);
+    presenter.bind(this);
+    adapter.setDeviceActionListener(this);
     setSupportActionBar(mToolbar);
     mRecyclerView.setHasFixedSize(true);
-    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-    mRecyclerView.setLayoutManager(mLayoutManager);
+    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+    mRecyclerView.setLayoutManager(layoutManager);
+    mRecyclerView.setAdapter(adapter);
+    presenter.loadDevices();
   }
 
   @Override protected void onStart() {
@@ -73,19 +81,16 @@ public class ConnectionManagerActivity extends AppCompatActivity
       actionBar.setDisplayHomeAsUpEnabled(true);
       actionBar.setTitle(R.string.connection_manager_title);
     }
-
   }
 
   @Override protected void onResume() {
     super.onResume();
-    bus.register(ConnectionSettingsChanged.class, this::handleConnectionSettingsChange, true);
-    bus.register(DiscoveryStopped.class, this::handleDiscoveryStopped, false);
-    bus.register(NotifyUser.class, this::handleUserNotification, false);
+    presenter.onResume();
   }
 
   @Override protected void onPause() {
     super.onPause();
-    bus.unregister(this);
+    presenter.onPause();
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
@@ -99,46 +104,48 @@ public class ConnectionManagerActivity extends AppCompatActivity
     return true;
   }
 
-  @Override
-  public void onDialogPositiveClick(SettingsDialogFragment dialog, ConnectionSettings settings) {
-    bus.post(settings);
+  @Override public void onDialogPositiveClick(SettingsDialogFragment dialog, DeviceSettings settings) {
+    presenter.saveSettings(settings);
   }
 
-  public void handleConnectionSettingsChange(ConnectionSettingsChanged event) {
-    ConnectionSettingsAdapter mAdapter = new ConnectionSettingsAdapter(event.getSettings(), bus);
-    mAdapter.setDefaultIndex(event.getDefaultIndex());
-    mRecyclerView.setAdapter(mAdapter);
-  }
-
-  public void handleDiscoveryStopped(DiscoveryStopped event) {
-
-    if (mProgress != null) {
-      mProgress.dismiss();
-    }
+  @Override public void showDiscoveryResult(@DiscoveryStopped.Status long reason) {
 
     String message;
-    switch (event.getReason()) {
-      case NO_WIFI:
-        message = getString(R.string.con_man_no_wifi);
-        break;
-      case NOT_FOUND:
-        message = getString(R.string.con_man_not_found);
-        break;
-      case COMPLETE:
-        message = getString(R.string.con_man_success);
-        break;
-      default:
-        message = getString(R.string.unknown_reason);
-        break;
+    if (reason == DiscoveryStopped.NO_WIFI) {
+      message = getString(R.string.con_man_no_wifi);
+    } else if (reason == DiscoveryStopped.NOT_FOUND) {
+      message = getString(R.string.con_man_not_found);
+    } else if (reason == DiscoveryStopped.SUCCESS) {
+      message = getString(R.string.con_man_success);
+    } else {
+      message = getString(R.string.unknown_reason);
     }
 
     Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show();
   }
 
-  public void handleUserNotification(NotifyUser event) {
-    final String message =
-        event.isFromResource() ? getString(event.getResId()) : event.getMessage();
+  @Override public void dismissLoadingDialog() {
+    if (progressDialog != null && progressDialog.isShowing()) {
+      progressDialog.dismiss();
+    }
+  }
+
+  @Override public void showNotification(NotifyUser event) {
+    final String message = event.isFromResource() ? getString(event.getResId()) : event.getMessage();
 
     Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show();
+  }
+
+  @Override public void onDelete(DeviceSettings settings) {
+    presenter.deleteSettings(settings);
+  }
+
+  @Override public void onDefault(DeviceSettings settings) {
+    presenter.setDefault(settings);
+  }
+
+  @Override public void onEdit(DeviceSettings settings) {
+    SettingsDialogFragment settingsDialog = SettingsDialogFragment.newInstance(settings);
+    settingsDialog.show(getSupportFragmentManager(), SettingsDialogFragment.TAG);
   }
 }
