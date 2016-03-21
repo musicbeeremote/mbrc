@@ -29,7 +29,6 @@ public class OkHttpClientProvider implements Provider<OkHttpClient> {
       if (settings != null && !TextUtils.isEmpty(settings.getAddress())) {
         final HttpUrl url = request.url().newBuilder().host(settings.getAddress()).port(settings.getHttp()).build();
         builder.url(url);
-        Timber.v("URL -> %s", url.toString());
       }
 
       return chain.proceed(builder.build());

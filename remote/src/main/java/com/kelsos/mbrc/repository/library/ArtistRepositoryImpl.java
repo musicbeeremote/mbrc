@@ -6,7 +6,6 @@ import com.kelsos.mbrc.dao.ArtistDao_Table;
 import com.kelsos.mbrc.dao.views.GenreArtistView;
 import com.kelsos.mbrc.dao.views.GenreArtistView_ViewTable;
 import com.raizlabs.android.dbflow.runtime.TransactionManager;
-import com.raizlabs.android.dbflow.sql.language.OrderBy;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import java.util.List;
@@ -37,12 +36,12 @@ public class ArtistRepositoryImpl implements ArtistRepository {
         .from(ArtistDao.class)
         .limit(limit)
         .offset(offset)
-        .orderBy(OrderBy.fromProperty(ArtistDao_Table.name))
+        .orderBy(ArtistDao_Table.name, true)
         .queryList();
   }
 
   @Override public List<ArtistDao> getAll() {
-    return SQLite.select().from(ArtistDao.class).orderBy(OrderBy.fromProperty(ArtistDao_Table.name)).queryList();
+    return SQLite.select().from(ArtistDao.class).orderBy(ArtistDao_Table.name, true).queryList();
   }
 
   @Override public ArtistDao getById(long id) {
