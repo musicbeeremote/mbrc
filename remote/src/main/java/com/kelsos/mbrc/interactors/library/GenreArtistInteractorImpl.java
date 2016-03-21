@@ -3,7 +3,7 @@ package com.kelsos.mbrc.interactors.library;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.domain.Artist;
 import com.kelsos.mbrc.mappers.ArtistMapper;
-import com.kelsos.mbrc.repository.ArtistRepository;
+import com.kelsos.mbrc.repository.library.ArtistRepository;
 import java.util.List;
 import rx.Observable;
 

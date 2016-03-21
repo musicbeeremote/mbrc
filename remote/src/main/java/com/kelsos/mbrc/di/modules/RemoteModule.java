@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.di.modules;
 
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationManagerCompat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
@@ -15,6 +16,8 @@ import com.kelsos.mbrc.di.providers.OkHttpClientProvider;
 import com.kelsos.mbrc.di.providers.RetrofitProvider;
 import com.kelsos.mbrc.interactors.LibraryAlbumInteractor;
 import com.kelsos.mbrc.interactors.LibraryAlbumInteractorImpl;
+import com.kelsos.mbrc.interactors.LibraryStatusInteractor;
+import com.kelsos.mbrc.interactors.LibraryStatusInteractorImpl;
 import com.kelsos.mbrc.interactors.LibraryTrackInteractor;
 import com.kelsos.mbrc.interactors.LibraryTrackInteractorImpl;
 import com.kelsos.mbrc.interactors.MuteInteractor;
@@ -71,18 +74,22 @@ import com.kelsos.mbrc.presenters.PlaylistPresenter;
 import com.kelsos.mbrc.presenters.PlaylistPresenterImpl;
 import com.kelsos.mbrc.presenters.PlaylistTrackPresenter;
 import com.kelsos.mbrc.presenters.PlaylistTrackPresenterImpl;
-import com.kelsos.mbrc.repository.ArtistRepository;
-import com.kelsos.mbrc.repository.ArtistRepositoryImpl;
 import com.kelsos.mbrc.repository.DeviceRepository;
 import com.kelsos.mbrc.repository.DeviceRepositoryImpl;
-import com.kelsos.mbrc.repository.LibraryRepository;
-import com.kelsos.mbrc.repository.LibraryRepositoryImpl;
 import com.kelsos.mbrc.repository.NowPlayingRepository;
 import com.kelsos.mbrc.repository.NowPlayingRepositoryImpl;
 import com.kelsos.mbrc.repository.PlaylistRepository;
 import com.kelsos.mbrc.repository.PlaylistRepositoryImpl;
 import com.kelsos.mbrc.repository.TrackRepository;
 import com.kelsos.mbrc.repository.TrackRepositoryImpl;
+import com.kelsos.mbrc.repository.library.AlbumRepository;
+import com.kelsos.mbrc.repository.library.AlbumRepositoryImpl;
+import com.kelsos.mbrc.repository.library.ArtistRepository;
+import com.kelsos.mbrc.repository.library.ArtistRepositoryImpl;
+import com.kelsos.mbrc.repository.library.CoverRepository;
+import com.kelsos.mbrc.repository.library.CoverRepositoryImpl;
+import com.kelsos.mbrc.repository.library.GenreRepository;
+import com.kelsos.mbrc.repository.library.GenreRepositoryImpl;
 import com.kelsos.mbrc.services.api.LibraryService;
 import com.kelsos.mbrc.services.api.NowPlayingService;
 import com.kelsos.mbrc.services.api.PlayerService;
@@ -95,6 +102,7 @@ import com.kelsos.mbrc.viewmodels.MainViewModelImpl;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import roboguice.inject.ContextSingleton;
+import roboguice.inject.fragment.SupportFragmentManagerProvider;
 
 @SuppressWarnings("UnusedDeclaration") public class RemoteModule extends AbstractModule {
   public void configure() {
@@ -134,13 +142,21 @@ import roboguice.inject.ContextSingleton;
     bind(PlaylistTrackInteractor.class).to(PlaylistTrackInteractorImpl.class);
 
     bind(LibraryAlbumInteractor.class).to(LibraryAlbumInteractorImpl.class);
+    bind(LibraryStatusInteractor.class).to(LibraryStatusInteractorImpl.class);
 
     bind(TrackRepository.class).to(TrackRepositoryImpl.class).in(Singleton.class);
+
     bind(ArtistRepository.class).to(ArtistRepositoryImpl.class).in(Singleton.class);
+    bind(AlbumRepository.class).to(AlbumRepositoryImpl.class).in(Singleton.class);
+    bind(GenreRepository.class).to(GenreRepositoryImpl.class).in(Singleton.class);
+    bind(com.kelsos.mbrc.repository.library.TrackRepository.class)
+        .to(com.kelsos.mbrc.repository.library.TrackRepositoryImpl.class)
+        .in(Singleton.class);
+
+    bind(CoverRepository.class).to(CoverRepositoryImpl.class).in(Singleton.class);
 
     bind(NowPlayingRepository.class).to(NowPlayingRepositoryImpl.class).in(Singleton.class);
     bind(PlaylistRepository.class).to(PlaylistRepositoryImpl.class).in(Singleton.class);
-    bind(LibraryRepository.class).to(LibraryRepositoryImpl.class).in(Singleton.class);
     bind(DeviceRepository.class).to(DeviceRepositoryImpl.class).in(Singleton.class);
 
     bind(TrackCache.class).to(TrackCacheImpl.class).in(Singleton.class);
@@ -154,5 +170,6 @@ import roboguice.inject.ContextSingleton;
     bind(RxBus.class).to(RxBusImpl.class).in(Singleton.class);
 
     bind(NotificationManagerCompat.class).toProvider(NotificationManagerCompatProvider.class).in(Singleton.class);
+    bind(FragmentManager.class).toProvider(SupportFragmentManagerProvider.class).in(ContextSingleton.class);
   }
 }

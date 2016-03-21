@@ -3,17 +3,26 @@ package com.kelsos.mbrc.utilities;
 import android.content.SharedPreferences;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.Code;
+import com.kelsos.mbrc.dao.AlbumDao;
+import com.kelsos.mbrc.dao.TrackDao;
 import com.kelsos.mbrc.dto.PaginatedResponse;
+import com.kelsos.mbrc.mappers.AlbumMapper;
 import com.kelsos.mbrc.mappers.ArtistMapper;
 import com.kelsos.mbrc.mappers.CoverMapper;
 import com.kelsos.mbrc.mappers.GenreMapper;
 import com.kelsos.mbrc.mappers.PlaylistMapper;
 import com.kelsos.mbrc.mappers.PlaylistTrackInfoMapper;
 import com.kelsos.mbrc.mappers.PlaylistTrackMapper;
-import com.kelsos.mbrc.repository.LibraryRepository;
+import com.kelsos.mbrc.mappers.TrackMapper;
 import com.kelsos.mbrc.repository.PlaylistRepository;
+import com.kelsos.mbrc.repository.library.AlbumRepository;
+import com.kelsos.mbrc.repository.library.ArtistRepository;
+import com.kelsos.mbrc.repository.library.CoverRepository;
+import com.kelsos.mbrc.repository.library.GenreRepository;
+import com.kelsos.mbrc.repository.library.TrackRepository;
 import com.kelsos.mbrc.services.api.LibraryService;
 import com.kelsos.mbrc.services.api.PlaylistService;
+import java.util.List;
 import roboguice.util.Ln;
 import rx.Observable;
 import rx.schedulers.Schedulers;
@@ -23,7 +32,11 @@ public class LibrarySyncManager {
   public static final int LIMIT = 400;
   public static final String LAST_SYNC = "last_sync";
   @Inject private LibraryService service;
-  @Inject private LibraryRepository repository;
+  @Inject private AlbumRepository albumRepository;
+  @Inject private ArtistRepository artistRepository;
+  @Inject private GenreRepository genreRepository;
+  @Inject private TrackRepository trackRepository;
+  @Inject private CoverRepository coverRepository;
   @Inject private CoverDownloader downloader;
   @Inject private SharedPreferences preferences;
   @Inject private PlaylistService playlistService;
@@ -38,7 +51,7 @@ public class LibrarySyncManager {
       syncAlbums(after);
       syncTracks(after);
 
-      repository.getCovers()
+      coverRepository.getAllObservable()
           .subscribeOn(Schedulers.immediate())
           .subscribe(covers -> downloader.download(covers), Ln::v);
 
@@ -65,7 +78,12 @@ public class LibrarySyncManager {
         .subscribeOn(Schedulers.immediate())
         .takeWhile(this::canGetNext)
         .subscribe(tracks -> {
-          repository.saveRemoteTracks(tracks.getData());
+          List<TrackDao> daos = TrackMapper.mapDtos(tracks.getData(),
+              artistRepository.getAll(),
+              genreRepository.getAll(),
+              albumRepository.getAll());
+
+          trackRepository.save(daos);
         }, throwable -> {
         }, () -> {
         });
@@ -77,7 +95,7 @@ public class LibrarySyncManager {
         .subscribeOn(Schedulers.immediate())
         .takeWhile(this::canGetNext)
         .subscribe(genres -> {
-          repository.saveGenres(GenreMapper.map(genres.getData()));
+          genreRepository.save(GenreMapper.map(genres.getData()));
         }, t -> {
           Timber.v(t, "Error while syncing");
         });
@@ -88,7 +106,7 @@ public class LibrarySyncManager {
         .concatMap(integer -> service.getLibraryArtists(LIMIT * integer, LIMIT, after))
         .subscribeOn(Schedulers.immediate())
         .takeWhile(this::canGetNext)
-        .subscribe(artists -> repository.saveArtists(ArtistMapper.map(artists.getData())), throwable -> {
+        .subscribe(artists -> artistRepository.save(ArtistMapper.map(artists.getData())), throwable -> {
         }, () -> {
 
         });
@@ -105,7 +123,10 @@ public class LibrarySyncManager {
         .subscribeOn(Schedulers.immediate())
         .takeWhile(this::canGetNext)
         .subscribe(albums -> {
-          repository.saveRemoteAlbums(albums.getData());
+          List<AlbumDao> daos = AlbumMapper.mapDtos(albums.getData(),
+              coverRepository.getAll(),
+              artistRepository.getAll());
+          albumRepository.save(daos);
         }, throwable -> {
         }, () -> {
         });
@@ -117,7 +138,7 @@ public class LibrarySyncManager {
         .subscribeOn(Schedulers.immediate())
         .takeWhile(this::canGetNext)
         .subscribe(covers -> {
-          repository.saveCovers(CoverMapper.map(covers.getData()));
+          coverRepository.save(CoverMapper.map(covers.getData()));
         }, throwable -> {
         }, () -> {
         });

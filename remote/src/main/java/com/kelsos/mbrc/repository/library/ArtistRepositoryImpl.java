@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.repository;
+package com.kelsos.mbrc.repository.library;
 
 import com.kelsos.mbrc.RemoteDatabase;
 import com.kelsos.mbrc.dao.ArtistDao;
@@ -24,30 +24,25 @@ public class ArtistRepositoryImpl implements ArtistRepository {
     });
   }
 
-  @Override public Observable<List<ArtistDao>> getPage(int offset, int limit) {
-    return Observable.create(subscriber -> {
-      List<ArtistDao> artists = SQLite.select()
-          .from(ArtistDao.class)
-          .limit(limit)
-          .offset(offset)
-          .orderBy(OrderBy.fromProperty(ArtistDao_Table.name))
-          .queryList();
-
-      subscriber.onNext(artists);
-      subscriber.onCompleted();
-    });
+  @Override public Observable<List<ArtistDao>> getPageObservable(int offset, int limit) {
+    return Observable.defer(() -> Observable.just(getPage(offset, limit)));
   }
 
-  @Override public Observable<List<ArtistDao>> getAll() {
-    return Observable.create(subscriber -> {
-      List<ArtistDao> artists = SQLite.select()
-          .from(ArtistDao.class)
-          .orderBy(OrderBy.fromProperty(ArtistDao_Table.name))
-          .queryList();
+  @Override public Observable<List<ArtistDao>> getAllObservable() {
+    return Observable.defer(() -> Observable.just(getAll()));
+  }
 
-      subscriber.onNext(artists);
-      subscriber.onCompleted();
-    });
+  @Override public List<ArtistDao> getPage(int offset, int limit) {
+    return SQLite.select()
+        .from(ArtistDao.class)
+        .limit(limit)
+        .offset(offset)
+        .orderBy(OrderBy.fromProperty(ArtistDao_Table.name))
+        .queryList();
+  }
+
+  @Override public List<ArtistDao> getAll() {
+    return SQLite.select().from(ArtistDao.class).orderBy(OrderBy.fromProperty(ArtistDao_Table.name)).queryList();
   }
 
   @Override public ArtistDao getById(long id) {

@@ -2,7 +2,6 @@ package com.kelsos.mbrc.presenters;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.domain.DeviceSettings;
-import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.repository.DeviceRepository;
@@ -38,7 +37,7 @@ public class DeviceManagerPresenterImpl implements DeviceManagerPresenter {
   }
 
   @Override public void loadDevices() {
-    repository.getAll().subscribe(list -> {
+    repository.getAllObservable().subscribe(list -> {
       view.updateDevices(list);
     }, t -> {
       Timber.e(t, "Failed");
