@@ -112,19 +112,23 @@ public class BrowseGenreFragment extends Fragment implements PlaylistDialogFragm
       case R.id.popup_genre_playlist:
         break;
       case R.id.popup_genre_artists:
-        Intent intent = new Intent(getActivity(), ProfileActivity.class);
-        intent.putExtra(ProfileActivity.TYPE, ProfileActivity.GENRE);
-        intent.putExtra(ProfileActivity.ID, genre.getId());
-        intent.putExtra(ProfileActivity.NAME, genre.getName());
-        startActivity(intent);
+        openProfile(genre);
         break;
       default:
         break;
     }
   }
 
-  @Override public void onItemClicked(Genre genre) {
+  private void openProfile(Genre genre) {
+    Intent intent = new Intent(getActivity(), ProfileActivity.class);
+    intent.putExtra(ProfileActivity.TYPE, ProfileActivity.GENRE);
+    intent.putExtra(ProfileActivity.ID, genre.getId());
+    intent.putExtra(ProfileActivity.NAME, genre.getName());
+    startActivity(intent);
+  }
 
+  @Override public void onItemClicked(Genre genre) {
+    openProfile(genre);
   }
 
   @Override public void onResume() {

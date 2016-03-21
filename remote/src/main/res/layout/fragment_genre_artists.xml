@@ -8,9 +8,6 @@
       android:id="@+id/genre_artists_recycler"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:layout_marginBottom="@dimen/small_margin"
-      android:layout_marginLeft="@dimen/normal_margin"
-      android:layout_marginRight="@dimen/normal_margin"
       android:layout_marginTop="@dimen/small_margin"
       tools:listitem="@layout/ui_list_single" />
 

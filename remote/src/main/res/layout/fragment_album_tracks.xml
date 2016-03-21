@@ -47,22 +47,39 @@
       android:layout_height="wrap_content"
       app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <TextView
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:id="@+id/album_title"
+    <LinearLayout
+        android:id="@+id/title_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        tools:text="Rock it for me"/>
+        android:orientation="vertical"
+        android:paddingBottom="8dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="18dp">
+
+      <TextView
+          android:id="@+id/album_title"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-condensed"
+          android:textSize="18sp"
+          tools:text="Rock it for me" />
+
+      <TextView
+          android:id="@+id/album_year"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:textSize="14sp"
+          tools:text="2004" />
+
+    </LinearLayout>
+
 
     <android.support.v7.widget.RecyclerView
-        android:layout_below="@+id/album_title"
         android:id="@+id/list_tracks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/title_wrapper"
         android:layout_marginBottom="@dimen/small_margin"
         android:layout_marginTop="@dimen/small_margin"
 

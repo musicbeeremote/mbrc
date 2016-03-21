@@ -36,6 +36,7 @@ public class AlbumTracksActivity extends AppCompatActivity implements AlbumTrack
   @Bind(R.id.app_bar_layout) AppBarLayout appBarLayout;
   @Bind(R.id.list_tracks) RecyclerView listTracks;
   @Bind(R.id.album_title) TextView albumTitle;
+  @Bind(R.id.album_year) TextView albumYear;
   @Inject private AlbumProfileAdapter adapter;
   @Inject private AlbumTracksPresenter presenter;
 
@@ -82,6 +83,7 @@ public class AlbumTracksActivity extends AppCompatActivity implements AlbumTrack
     final String cover = album.getCover();
 
     albumTitle.setText(album.getName());
+    albumYear.setText("");
 
     if (!TextUtils.isEmpty(cover)) {
 
