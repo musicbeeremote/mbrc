@@ -1,8 +1,11 @@
 package com.kelsos.mbrc.repository.library;
 
+import android.text.TextUtils;
 import com.kelsos.mbrc.RemoteDatabase;
 import com.kelsos.mbrc.dao.AlbumDao;
 import com.kelsos.mbrc.dao.AlbumDao_Table;
+import com.kelsos.mbrc.dao.TrackDao;
+import com.kelsos.mbrc.dao.TrackDao_Table;
 import com.kelsos.mbrc.dao.views.AlbumModelView;
 import com.kelsos.mbrc.dao.views.AlbumModelView_ViewTable;
 import com.raizlabs.android.dbflow.runtime.TransactionManager;
@@ -56,5 +59,20 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 
   @Override public Observable<List<AlbumModelView>> getAlbumViews(int offset, int limit) {
     return Observable.defer(() -> Observable.just(SQLite.select().from(AlbumModelView.class).queryList()));
+  }
+
+  @Override public String getAlbumYear(long id) {
+    TrackDao trackDao = SQLite.select(TrackDao_Table.year)
+        .distinct()
+        .from(TrackDao.class)
+        .where(TrackDao_Table.album_id.eq(id))
+        .groupBy(TrackDao_Table.year)
+        .querySingle();
+
+    if (trackDao == null) {
+      return "";
+    } else {
+      return TextUtils.isEmpty(trackDao.getYear()) ? "" : trackDao.getYear();
+    }
   }
 }

@@ -1,8 +1,10 @@
 package com.kelsos.mbrc.ui.fragments.profile;
 
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +20,7 @@ import butterknife.OnClick;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumProfileAdapter;
+import com.kelsos.mbrc.annotations.Queue;
 import com.kelsos.mbrc.domain.Album;
 import com.kelsos.mbrc.domain.Track;
 import com.kelsos.mbrc.presenters.AlbumTracksPresenter;
@@ -27,7 +30,8 @@ import java.io.File;
 import java.util.List;
 import roboguice.RoboGuice;
 
-public class AlbumTracksActivity extends AppCompatActivity implements AlbumTrackView {
+public class AlbumTracksActivity extends AppCompatActivity implements AlbumTrackView,
+    AlbumProfileAdapter.MenuItemSelectedListener {
 
   public static final String ALBUM_ID = "albumId";
   @Bind(R.id.imageView_list) ImageView imageViewList;
@@ -37,8 +41,11 @@ public class AlbumTracksActivity extends AppCompatActivity implements AlbumTrack
   @Bind(R.id.list_tracks) RecyclerView listTracks;
   @Bind(R.id.album_title) TextView albumTitle;
   @Bind(R.id.album_year) TextView albumYear;
+  @Bind(R.id.album_tracks) TextView albumTracks;
+
   @Inject private AlbumProfileAdapter adapter;
   @Inject private AlbumTracksPresenter presenter;
+  private long albumId;
 
   /**
    * Mandatory empty constructor for the fragment manager to instantiate the
@@ -54,7 +61,7 @@ public class AlbumTracksActivity extends AppCompatActivity implements AlbumTrack
     ButterKnife.bind(this);
     presenter.bind(this);
     final Bundle extras = getIntent().getExtras();
-    long albumId = 0;
+    albumId = 0;
 
     if (extras != null) {
       albumId = extras.getLong(ALBUM_ID, 0);
@@ -68,13 +75,14 @@ public class AlbumTracksActivity extends AppCompatActivity implements AlbumTrack
       actionBar.setDisplayShowHomeEnabled(true);
     }
 
-    collapsingToolbar.setTitleEnabled(false);
+    collapsingToolbar.setTitleEnabled(true);
     listTracks.setLayoutManager(new LinearLayoutManager(getBaseContext()));
     listTracks.setAdapter(adapter);
 
     if (albumId == 0) {
       finish();
     }
+    adapter.setListener(this);
 
     presenter.load(albumId);
   }
@@ -83,7 +91,8 @@ public class AlbumTracksActivity extends AppCompatActivity implements AlbumTrack
     final String cover = album.getCover();
 
     albumTitle.setText(album.getName());
-    albumYear.setText("");
+    albumYear.setText(album.getYear());
+    collapsingToolbar.setTitle(album.getArtist());
 
     if (!TextUtils.isEmpty(cover)) {
 
@@ -111,9 +120,53 @@ public class AlbumTracksActivity extends AppCompatActivity implements AlbumTrack
 
   @Override public void updateTracks(List<Track> tracks) {
     adapter.updateData(tracks);
+    albumTracks.setText(getString(R.string.number_of_tracks, tracks.size()));
+  }
+
+  @Override public void showPlaySuccess() {
+    showSnackbar(R.string.album_play_success);
+  }
+
+  private void showSnackbar(@StringRes int resId) {
+    Snackbar.make(appBarLayout, resId, Snackbar.LENGTH_SHORT).show();
+  }
+
+  @Override public void showPlayFailed() {
+    showSnackbar(R.string.album_play_failure);
+  }
+
+  @Override public void showTrackSuccess() {
+    showSnackbar(R.string.track_added_successfully);
+  }
+
+  @Override public void showTrackFailed() {
+    showSnackbar(R.string.track_add_failed);
   }
 
   @OnClick(R.id.play_album) public void onPlayClicked() {
-    presenter.play();
+    presenter.play(albumId);
+  }
+
+
+  @Override public void onMenuItemSelected(MenuItem menuItem, Track entry) {
+    switch (menuItem.getItemId()) {
+      case R.id.popup_track_play:
+        presenter.queue(entry, Queue.NOW);
+        break;
+      case R.id.popup_track_queue_last:
+        presenter.queue(entry, Queue.LAST);
+        break;
+      case R.id.popup_track_queue_next:
+        presenter.queue(entry, Queue.NEXT);
+        break;
+      case R.id.popup_track_playlist:
+        break;
+      default:
+        break;
+    }
+  }
+
+  @Override public void onItemClicked(Track track) {
+    presenter.queue(track, Queue.NOW);
   }
 }

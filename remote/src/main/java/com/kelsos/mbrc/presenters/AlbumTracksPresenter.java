@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.presenters;
 
+import com.kelsos.mbrc.annotations.Queue;
+import com.kelsos.mbrc.domain.Track;
 import com.kelsos.mbrc.ui.views.AlbumTrackView;
 
 public interface AlbumTracksPresenter {
@@ -7,5 +9,7 @@ public interface AlbumTracksPresenter {
 
   void load(long albumId);
 
-  void play();
+  void play(long albumId);
+
+  void queue(Track entry, @Queue.Action String action);
 }

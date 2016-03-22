@@ -3,6 +3,7 @@ package com.kelsos.mbrc.adapters;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
@@ -19,7 +20,7 @@ public class AlbumProfileAdapter extends RecyclerView.Adapter<AlbumProfileAdapte
 
   private LayoutInflater inflater;
   private List<Track> data;
-
+  private MenuItemSelectedListener listener;
 
   @Inject public AlbumProfileAdapter(Context context) {
     inflater = LayoutInflater.from(context);
@@ -36,25 +37,50 @@ public class AlbumProfileAdapter extends RecyclerView.Adapter<AlbumProfileAdapte
     PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
     popupMenu.inflate(R.menu.popup_track);
     popupMenu.setOnMenuItemClickListener(menuItem -> {
-      // FIXME: 8/16/15 add proper interface to propagate
-      return true;
+      if (listener != null) {
+        listener.onMenuItemSelected(menuItem, track);
+        return true;
+      }
+      return false;
     });
     popupMenu.show();
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     final View view = inflater.inflate(R.layout.listitem_single, parent, false);
-    return new ViewHolder(view);
+    ViewHolder holder = new ViewHolder(view);
+    holder.overflow.setOnClickListener(v -> {
+      int position = holder.getAdapterPosition();
+      Track track = data.get(position);
+      showPopup(v, track);
+    });
+    holder.itemView.setOnClickListener(v -> {
+      if (listener !=  null) {
+        int position = holder.getAdapterPosition();
+        Track track = data.get(position);
+        listener.onItemClicked(track);
+      }
+    });
+    return holder;
   }
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
     final Track track = data.get(position);
     holder.lineOne.setText(track.getTitle());
-    holder.overflow.setOnClickListener(v -> showPopup(v, track));
   }
 
   @Override public int getItemCount() {
     return data.size();
+  }
+
+  public void setListener(MenuItemSelectedListener listener) {
+    this.listener = listener;
+  }
+
+  public interface MenuItemSelectedListener {
+    void onMenuItemSelected(MenuItem menuItem, Track entry);
+
+    void onItemClicked(Track track);
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {

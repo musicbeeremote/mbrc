@@ -72,6 +72,14 @@
           android:textSize="14sp"
           tools:text="2004" />
 
+      <TextView
+          android:id="@+id/album_tracks"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:textSize="12sp"
+          android:text="@string/number_of_tracks"
+          tools:text="13 tracks"/>
+
     </LinearLayout>
 
 

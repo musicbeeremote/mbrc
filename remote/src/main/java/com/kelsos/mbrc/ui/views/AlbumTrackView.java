@@ -8,4 +8,12 @@ public interface AlbumTrackView {
   void updateAlbum(Album album);
 
   void updateTracks(List<Track> tracks);
+
+  void showPlaySuccess();
+
+  void showPlayFailed();
+
+  void showTrackSuccess();
+
+  void showTrackFailed();
 }

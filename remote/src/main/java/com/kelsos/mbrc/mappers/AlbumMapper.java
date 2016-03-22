@@ -11,12 +11,12 @@ import java.util.List;
 import rx.Observable;
 
 public class AlbumMapper {
-  @NonNull public static Album map(AlbumModelView dao) {
-    return new Album(dao.getId(), dao.getName(), dao.getArtist(), dao.getCover());
+  @NonNull public static Album map(AlbumModelView dao, String year) {
+    return new Album(dao.getId(), dao.getName(), dao.getArtist(), dao.getCover(), year);
   }
 
   public static List<Album> map(List<AlbumModelView> daoList) {
-    return Observable.from(daoList).map(AlbumMapper::map).toList().toBlocking().first();
+    return Observable.from(daoList).map(albumModelView -> map(albumModelView, "")).toList().toBlocking().first();
   }
 
   public static List<AlbumDao> mapDtos(List<AlbumDto> albums, List<CoverDao> covers, List<ArtistDao> artists) {

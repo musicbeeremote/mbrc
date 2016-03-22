@@ -197,5 +197,10 @@
   <string name="notification_action_previous">Previous</string>
   <string name="notification_action_play">Play/Pause</string>
   <string name="notification_action_next">Next</string>
+  <string name="number_of_tracks">%1$d tracks</string>
+  <string name="album_play_success">The album was added successfully</string>
+  <string name="album_play_failure">There was a problem while trying to play trhe album</string>
+  <string name="track_added_successfully">Track added to queue successfully.</string>
+  <string name="track_add_failed" >Failed to add the track to queue.</string>
 
 </resources>
