@@ -12,4 +12,6 @@ public interface AlbumRepository extends Repository<AlbumDao> {
   Observable<List<AlbumModelView>> getAlbumViews(int offset, int limit);
 
   String getAlbumYear(long id);
+
+  Observable<List<AlbumModelView>> getAlbumsByArtist(long artistId);
 }

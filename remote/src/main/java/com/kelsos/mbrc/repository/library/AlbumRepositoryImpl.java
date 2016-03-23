@@ -24,11 +24,7 @@ public class AlbumRepositoryImpl implements AlbumRepository {
   }
 
   @Override public List<AlbumDao> getPage(int offset, int limit) {
-    return SQLite.select()
-        .from(AlbumDao.class)
-        .limit(limit)
-        .offset(offset)
-        .queryList();
+    return SQLite.select().from(AlbumDao.class).limit(limit).offset(offset).queryList();
   }
 
   @Override public List<AlbumDao> getAll() {
@@ -74,5 +70,12 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     } else {
       return TextUtils.isEmpty(trackDao.getYear()) ? "" : trackDao.getYear();
     }
+  }
+
+  @Override public Observable<List<AlbumModelView>> getAlbumsByArtist(long artistId) {
+    return Observable.defer(() -> Observable.just(SQLite.select()
+        .from(AlbumModelView.class)
+        .where(AlbumModelView_ViewTable.artist_id.eq(artistId))
+        .queryList()));
   }
 }

@@ -23,6 +23,7 @@ import com.raizlabs.android.dbflow.structure.BaseModelView;
   @ModelViewQuery public static final Query QUERY = SQLite.select(AlbumDao_Table.id.as("id").withTable(),
       AlbumDao_Table.album_name.as("name").withTable(),
       ArtistDao_Table.name.as("artist").withTable(),
+      ArtistDao_Table.id.as("artist_id").withTable(),
       CoverDao_Table.hash.as("cover").withTable())
       .from(AlbumDao.class)
       .join(ArtistDao.class, Join.JoinType.INNER)
@@ -33,6 +34,7 @@ import com.raizlabs.android.dbflow.structure.BaseModelView;
       .orderBy(OrderBy.fromNameAlias(new NameAlias("name")).ascending());
 
   @Column private long id;
+  @Column(name = "artist_id") private long artistId;
   @Column private String name;
   @Column private String artist;
   @Column private String cover;
@@ -67,5 +69,13 @@ import com.raizlabs.android.dbflow.structure.BaseModelView;
 
   public void setCover(String cover) {
     this.cover = cover;
+  }
+
+  public long getArtistId() {
+    return artistId;
+  }
+
+  public void setArtistId(long artistId) {
+    this.artistId = artistId;
   }
 }

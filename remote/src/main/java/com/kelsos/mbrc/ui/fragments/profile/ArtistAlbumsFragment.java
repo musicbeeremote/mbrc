@@ -7,25 +7,25 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumAdapter;
-import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
-import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+import com.kelsos.mbrc.domain.Album;
+import com.kelsos.mbrc.domain.Artist;
+import com.kelsos.mbrc.presenters.ArtistAlbumPresenter;
+import com.kelsos.mbrc.ui.views.ArtistAlbumsView;
+import java.util.List;
 import roboguice.RoboGuice;
 
-public class ArtistAlbumsFragment extends Fragment
-    implements
-    PlaylistDialogFragment.OnPlaylistSelectedListener,
-    CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
+public class ArtistAlbumsFragment extends Fragment implements ArtistAlbumsView {
 
   private static final String ARTIST_ID = "artistId";
-  @Inject private AlbumAdapter adapter;
   @Bind(R.id.album_recycler) RecyclerView recyclerView;
-  private GridView mGrid;
+  @Inject private AlbumAdapter adapter;
+  @Inject private ArtistAlbumPresenter presenter;
+
   private long artistId;
 
   public ArtistAlbumsFragment() {
@@ -48,31 +48,26 @@ public class ArtistAlbumsFragment extends Fragment
     }
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
-
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.ui_library_grid, container, false);
     ButterKnife.bind(this, view);
+    presenter.bind(this);
     GridLayoutManager manager = new GridLayoutManager(getActivity(), 2);
     recyclerView.setLayoutManager(manager);
     recyclerView.setAdapter(adapter);
+    presenter.load(artistId);
     return view;
   }
 
-  @Override public void onActivityCreated(Bundle savedInstanceState) {
-    super.onActivityCreated(savedInstanceState);
-    registerForContextMenu(mGrid);
-  }
-
-  @Override public void onPlaylistNameSelected(String name) {
+  @Override public void updateArtistInfo(Artist artist) {
 
   }
 
-  @Override public void onPlaylistSelected(String hash) {
-
+  @Override public void update(List<Album> data) {
+    adapter.updateData(data);
   }
 
-  @Override public void onNewPlaylistSelected() {
+  @Override public void showLoadFailed() {
 
   }
 }
