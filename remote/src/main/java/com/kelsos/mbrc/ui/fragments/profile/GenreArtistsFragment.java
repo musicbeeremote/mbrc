@@ -1,12 +1,14 @@
 package com.kelsos.mbrc.ui.fragments.profile;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.Bind;
@@ -16,15 +18,12 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistAdapter;
 import com.kelsos.mbrc.domain.Artist;
 import com.kelsos.mbrc.presenters.GenreArtistsPresenter;
-import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
-import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.views.GenreArtistView;
 import java.util.List;
 import roboguice.RoboGuice;
 
-public class GenreArtistsFragment extends Fragment
-    implements GenreArtistView, PlaylistDialogFragment.OnPlaylistSelectedListener,
-    CreateNewPlaylistDialog.OnPlaylistNameSelectedListener {
+public class GenreArtistsFragment extends Fragment implements GenreArtistView, ArtistAdapter.MenuItemSelectedListener {
 
   private static final String GENRE_ID = "genre_id";
   private static final String GENRE_NAME = "genre_name";
@@ -68,22 +67,27 @@ public class GenreArtistsFragment extends Fragment
     RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity());
     recyclerView.setLayoutManager(manager);
     recyclerView.setAdapter(adapter);
+    adapter.setMenuItemSelectedListener(this);
     return view;
-  }
-
-  @Override public void onPlaylistNameSelected(String name) {
-
-  }
-
-  @Override public void onPlaylistSelected(String hash) {
-
-  }
-
-  @Override public void onNewPlaylistSelected() {
-
   }
 
   @Override public void update(List<Artist> data) {
     adapter.updateData(data);
+  }
+
+  private void openProfile(Artist artist) {
+    Intent intent = new Intent(getActivity(), ProfileActivity.class);
+    intent.putExtra(ProfileActivity.TYPE, ProfileActivity.ARTIST);
+    intent.putExtra(ProfileActivity.ID, artist.getId());
+    intent.putExtra(ProfileActivity.NAME, artist.getName());
+    startActivity(intent);
+  }
+
+  @Override public void onMenuItemSelected(MenuItem menuItem, Artist entry) {
+
+  }
+
+  @Override public void onItemClicked(Artist artist) {
+    openProfile(artist);
   }
 }

@@ -4,6 +4,9 @@ import android.content.SharedPreferences;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.Code;
 import com.kelsos.mbrc.dao.AlbumDao;
+import com.kelsos.mbrc.dao.ArtistDao;
+import com.kelsos.mbrc.dao.CoverDao;
+import com.kelsos.mbrc.dao.GenreDao;
 import com.kelsos.mbrc.dao.TrackDao;
 import com.kelsos.mbrc.dto.PaginatedResponse;
 import com.kelsos.mbrc.mappers.AlbumMapper;
@@ -73,16 +76,15 @@ public class LibrarySyncManager {
   }
 
   private void syncTracks(long after) {
+    List<ArtistDao> artists = artistRepository.getAll();
+    List<GenreDao> genres = genreRepository.getAll();
+    List<AlbumDao> albums = albumRepository.getAll();
     Observable.range(0, Integer.MAX_VALUE - 1)
         .concatMap(integer -> service.getLibraryTracks(LIMIT * integer, LIMIT, after))
         .subscribeOn(Schedulers.immediate())
         .takeWhile(this::canGetNext)
         .subscribe(tracks -> {
-          List<TrackDao> daos = TrackMapper.mapDtos(tracks.getData(),
-              artistRepository.getAll(),
-              genreRepository.getAll(),
-              albumRepository.getAll());
-
+          List<TrackDao> daos = TrackMapper.mapDtos(tracks.getData(), artists, genres, albums);
           trackRepository.save(daos);
         }, throwable -> {
         }, () -> {
@@ -118,14 +120,14 @@ public class LibrarySyncManager {
   }
 
   private void syncAlbums(long after) {
+    List<CoverDao> cachedCovers = coverRepository.getAll();
+    List<ArtistDao> cachedArtists = artistRepository.getAll();
     Observable.range(0, Integer.MAX_VALUE - 1)
         .concatMap(integer -> service.getLibraryAlbums(LIMIT * integer, LIMIT, after))
         .subscribeOn(Schedulers.immediate())
         .takeWhile(this::canGetNext)
         .subscribe(albums -> {
-          List<AlbumDao> daos = AlbumMapper.mapDtos(albums.getData(),
-              coverRepository.getAll(),
-              artistRepository.getAll());
+          List<AlbumDao> daos = AlbumMapper.mapDtos(albums.getData(), cachedCovers, cachedArtists);
           albumRepository.save(daos);
         }, throwable -> {
         }, () -> {

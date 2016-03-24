@@ -87,7 +87,7 @@ public class AlbumTracksActivity extends AppCompatActivity implements AlbumTrack
     presenter.load(albumId);
   }
 
-  @Override public void updateAlbum(Album album) {
+  @Override public void updateAlbum(final Album album) {
     final String cover = album.getCover();
 
     albumTitle.setText(album.getName());
@@ -107,7 +107,7 @@ public class AlbumTracksActivity extends AppCompatActivity implements AlbumTrack
     }
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onOptionsItemSelected(final MenuItem item) {
     final int itemId = item.getItemId();
 
     if (itemId == android.R.id.home) {
