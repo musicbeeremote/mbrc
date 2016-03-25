@@ -28,7 +28,7 @@ import com.raizlabs.android.dbflow.structure.BaseModelView;
       .from(AlbumDao.class)
       .join(ArtistDao.class, Join.JoinType.INNER)
       .on(AlbumDao_Table.artist_id.withTable().is(ArtistDao_Table.id.withTable()))
-      .join(CoverDao.class, Join.JoinType.INNER)
+      .join(CoverDao.class, Join.JoinType.LEFT_OUTER)
       .on(AlbumDao_Table.cover_id.withTable().is(CoverDao_Table.id.withTable()))
       .orderBy(OrderBy.fromNameAlias(new NameAlias("artist")).ascending())
       .orderBy(OrderBy.fromNameAlias(new NameAlias("name")).ascending());

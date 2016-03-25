@@ -37,7 +37,7 @@ import com.raizlabs.android.dbflow.structure.BaseModelView;
       .join(ArtistDao.class, Join.JoinType.INNER)
       .as("album_artist")
       .on(TrackDao_Table.album_artist_id.withTable().is(ArtistDao_Table.id.withTable(new NameAlias("album_artist"))))
-      .join(CoverDao.class, Join.JoinType.INNER)
+      .join(CoverDao.class, Join.JoinType.LEFT_OUTER)
       .on(AlbumDao_Table.cover_id.withTable().is(CoverDao_Table.id.withTable()))
       .orderBy(OrderBy.fromNameAlias(new NameAlias("name").withTable("album_artist")).ascending())
       .orderBy(OrderBy.fromNameAlias(new NameAlias("album")).ascending())
