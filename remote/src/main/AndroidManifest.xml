@@ -30,7 +30,6 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
-
     <activity
         android:name=".ui.navigation.LibraryActivity"
         android:label="@string/menu_library"
@@ -40,7 +39,6 @@
           android:name="android.support.PARENT_ACTIVITY"
           android:value=".ui.navigation.MainActivity" />
     </activity>
-
     <activity
         android:name=".ui.navigation.NowPlayingActivity"
         android:label="@string/menu_now_playing"
@@ -50,7 +48,6 @@
           android:name="android.support.PARENT_ACTIVITY"
           android:value=".ui.navigation.MainActivity" />
     </activity>
-
     <activity
         android:name=".ui.navigation.LyricsActivity"
         android:label="@string/menu_lyrics"
@@ -60,7 +57,6 @@
           android:name="android.support.PARENT_ACTIVITY"
           android:value=".ui.navigation.MainActivity" />
     </activity>
-
     <activity
         android:name=".ui.navigation.PlaylistListActivity"
         android:label="@string/menu_playlist"
@@ -70,7 +66,6 @@
           android:name="android.support.PARENT_ACTIVITY"
           android:value=".ui.navigation.MainActivity" />
     </activity>
-
     <activity
         android:name=".ui.activities.PlaylistTrackActivity"
         android:parentActivityName=".ui.navigation.PlaylistListActivity">
@@ -86,7 +81,6 @@
           android:name="android.support.PARENT_ACTIVITY"
           android:value=".ui.navigation.MainActivity" />
     </activity>
-
     <activity
         android:name=".ui.fragments.profile.AlbumTracksActivity"
         android:parentActivityName=".ui.navigation.LibraryActivity">
@@ -94,7 +88,6 @@
           android:name="android.support.PARENT_ACTIVITY"
           android:value=".ui.navigation.LibraryActivity" />
     </activity>
-
     <activity
         android:name=".ui.fragments.profile.GenreArtistsActivity"
         android:parentActivityName=".ui.navigation.LibraryActivity">
@@ -102,7 +95,6 @@
           android:name="android.support.PARENT_ACTIVITY"
           android:value=".ui.navigation.LibraryActivity" />
     </activity>
-
     <activity
         android:name=".ui.fragments.profile.ArtistAlbumsActivity"
         android:parentActivityName=".ui.navigation.LibraryActivity">
@@ -110,7 +102,6 @@
           android:name="android.support.PARENT_ACTIVITY"
           android:value=".ui.navigation.LibraryActivity" />
     </activity>
-
     <activity
         android:name=".ui.activities.DeviceManagerActivity"
         android:windowSoftInputMode="adjustNothing" />
@@ -181,6 +172,12 @@
           android:name="android.support.PARENT_ACTIVITY"
           android:value=".ui.navigation.MainActivity" />
     </activity>
+
+    <receiver
+        android:name=".receivers.PlayerActionReceiver"
+        android:enabled="true"
+        android:exported="false">
+    </receiver>
   </application>
 
 </manifest>

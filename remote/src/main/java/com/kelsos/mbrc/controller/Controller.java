@@ -9,9 +9,10 @@ import com.kelsos.mbrc.events.ChangeWebSocketStatusEvent;
 import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.messaging.SocketMessageHandler;
 import com.kelsos.mbrc.net.SocketService;
+import com.kelsos.mbrc.receivers.PlayerActionReceiver;
 import com.kelsos.mbrc.services.ServiceDiscovery;
 import com.kelsos.mbrc.utilities.LibrarySyncManager;
-import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver;
+import com.kelsos.mbrc.receivers.RemoteBroadcastReceiver;
 import com.kelsos.mbrc.utilities.RxBus;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.raizlabs.android.dbflow.config.FlowManager;
@@ -23,6 +24,7 @@ import timber.log.Timber;
 
   @Inject private SocketService socket;
   @Inject private RemoteBroadcastReceiver receiver;
+  @Inject private PlayerActionReceiver actionReceiver;
   @Inject private NotificationService notificationService;
   @Inject private ServiceDiscovery discovery;
   @Inject private SettingsManager settingsManager;
@@ -41,6 +43,7 @@ import timber.log.Timber;
   @Override public void onCreate() {
     super.onCreate();
     RoboGuice.getInjector(this).injectMembers(this);
+    this.registerReceiver(actionReceiver, actionReceiver.getIntentFilter());
     bus.register(this, ChangeWebSocketStatusEvent.class, this::onWebSocketActionRequest);
   }
 
@@ -67,6 +70,7 @@ import timber.log.Timber;
     socket.disconnect();
     FlowManager.destroy();
     this.unregisterReceiver(receiver);
+    this.unregisterReceiver(actionReceiver);
   }
 
   private void onWebSocketActionRequest(ChangeWebSocketStatusEvent event) {

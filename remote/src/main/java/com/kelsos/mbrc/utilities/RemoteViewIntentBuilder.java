@@ -23,30 +23,30 @@ public class RemoteViewIntentBuilder {
     switch (id) {
       case OPEN:
         Intent notificationIntent = new Intent(mContext, BaseActivity.class);
-        return PendingIntent.getActivity(mContext, 0, notificationIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getActivity(mContext, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
       case PLAY:
         Intent playPressedIntent = new Intent(REMOTE_PLAY_PRESSED);
-        return PendingIntent.getBroadcast(mContext, 1, playPressedIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getBroadcast(mContext, 1, playPressedIntent, PendingIntent.FLAG_UPDATE_CURRENT);
       case NEXT:
         Intent mediaNextButtonIntent = new Intent(REMOTE_NEXT_PRESSED);
-        return PendingIntent.getBroadcast(mContext, 2, mediaNextButtonIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getBroadcast(mContext, 2, mediaNextButtonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
       case CLOSE:
         Intent clearNotificationIntent = new Intent(REMOTE_CLOSE_PRESSED);
-        return PendingIntent.getBroadcast(mContext, 3, clearNotificationIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getBroadcast(mContext, 3, clearNotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
       case PREVIOUS:
         Intent mediaPreviousButtonIntent = new Intent(REMOTE_PREVIOUS_PRESSED);
-        return PendingIntent.getBroadcast(mContext, 4, mediaPreviousButtonIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getBroadcast(mContext, 4, mediaPreviousButtonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
       default:
         throw new IndexOutOfBoundsException();
     }
   }
 
-  @IntDef({ OPEN, PLAY, CLOSE, PREVIOUS, NEXT })
-  @Retention(RetentionPolicy.SOURCE)
-  public @interface ButtonAction { }
+  @IntDef({
+      OPEN,
+      PLAY,
+      CLOSE,
+      PREVIOUS,
+      NEXT
+  }) @Retention(RetentionPolicy.SOURCE) public @interface ButtonAction {
+  }
 }

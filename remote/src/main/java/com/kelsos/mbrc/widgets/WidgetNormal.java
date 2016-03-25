@@ -33,7 +33,6 @@ public class WidgetNormal extends AppWidgetProvider {
     if (this.context == null) {
       RoboGuice.getInjector(context).injectMembers(this);
       this.context = context;
-
     }
     widgetsIds = appWidgetIds;
 
