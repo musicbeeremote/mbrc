@@ -5,4 +5,8 @@ import java.util.List;
 
 public interface GenreArtistView {
   void update(List<Artist> data);
+
+  void onQueueSuccess();
+
+  void onQueueFailure();
 }

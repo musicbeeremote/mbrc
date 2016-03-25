@@ -19,9 +19,9 @@ import com.kelsos.mbrc.adapters.EndlessRecyclerViewScrollListener;
 import com.kelsos.mbrc.annotations.Queue;
 import com.kelsos.mbrc.domain.Artist;
 import com.kelsos.mbrc.presenters.BrowseArtistPresenter;
-import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+import com.kelsos.mbrc.ui.fragments.profile.ArtistAlbumsActivity;
 import com.kelsos.mbrc.ui.views.BrowseArtistView;
 import java.util.List;
 import roboguice.RoboGuice;
@@ -107,10 +107,9 @@ public class BrowseArtistFragment extends Fragment implements PlaylistDialogFrag
   }
 
   private void openProfile(Artist artist) {
-    Intent intent = new Intent(getActivity(), ProfileActivity.class);
-    intent.putExtra(ProfileActivity.TYPE, ProfileActivity.ARTIST);
-    intent.putExtra(ProfileActivity.ID, artist.getId());
-    intent.putExtra(ProfileActivity.NAME, artist.getName());
+    Intent intent = new Intent(getActivity(), ArtistAlbumsActivity.class);
+    intent.putExtra(ArtistAlbumsActivity.ARTIST_ID, artist.getId());
+    intent.putExtra(ArtistAlbumsActivity.ARTIST_NAME, artist.getName());
     startActivity(intent);
   }
 

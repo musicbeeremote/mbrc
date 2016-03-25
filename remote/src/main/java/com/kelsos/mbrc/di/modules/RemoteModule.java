@@ -14,8 +14,6 @@ import com.kelsos.mbrc.di.providers.NotificationManagerCompatProvider;
 import com.kelsos.mbrc.di.providers.ObjectMapperProvider;
 import com.kelsos.mbrc.di.providers.OkHttpClientProvider;
 import com.kelsos.mbrc.di.providers.RetrofitProvider;
-import com.kelsos.mbrc.interactors.ArtistInteractor;
-import com.kelsos.mbrc.interactors.ArtistInteractorImpl;
 import com.kelsos.mbrc.interactors.LibraryAlbumInteractor;
 import com.kelsos.mbrc.interactors.LibraryAlbumInteractorImpl;
 import com.kelsos.mbrc.interactors.LibraryStatusInteractor;
@@ -141,7 +139,6 @@ import roboguice.inject.fragment.SupportFragmentManagerProvider;
     bind(PlayerStateInteractor.class).to(PlayerStateInteractorImpl.class);
     bind(GenreArtistInteractor.class).to(GenreArtistInteractorImpl.class);
     bind(ArtistAlbumInteractor.class).to(ArtistAlbumInteractorImpl.class);
-    bind(ArtistInteractor.class).to(ArtistInteractorImpl.class);
 
     bind(MuteInteractor.class).to(MuteInteractorImpl.class);
     bind(NowPlayingListInteractor.class).to(NowPlayingListInteractorImpl.class);

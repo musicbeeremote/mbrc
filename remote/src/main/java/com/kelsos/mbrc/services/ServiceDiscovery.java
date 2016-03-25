@@ -15,6 +15,7 @@ import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.mappers.DeviceSettingsMapper;
 import com.kelsos.mbrc.repository.DeviceRepository;
 import com.kelsos.mbrc.utilities.RxBus;
+import com.kelsos.mbrc.utilities.SettingsManager;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -46,17 +47,19 @@ public class ServiceDiscovery {
   private ObjectMapper mapper;
   private RxBus bus;
   private DeviceRepository repository;
+  private SettingsManager settingsManager;
 
   @Inject
   public ServiceDiscovery(WifiManager manager,
       ConnectivityManager connectivityManager,
       ObjectMapper mapper,
-      RxBus bus, DeviceRepository repository) {
+      RxBus bus, DeviceRepository repository, SettingsManager settingsManager) {
     this.manager = manager;
     this.connectivityManager = connectivityManager;
     this.mapper = mapper;
     this.bus = bus;
     this.repository = repository;
+    this.settingsManager = settingsManager;
 
     bus.register(this, MessageEvent.class, this::onDiscoveryMessage);
   }
@@ -81,6 +84,12 @@ public class ServiceDiscovery {
         .doOnTerminate(this::stopDiscovery)
         .doOnNext(connectionSettings -> {
           repository.save(connectionSettings);
+
+          if (repository.count() == 1) {
+            Timber.v("Only one entry found, setting it as default");
+            settingsManager.setDefault(1);
+          }
+
           bus.post(new DiscoveryStopped(DiscoveryStopped.SUCCESS, connectionSettings));
         }).doOnError(t -> {
           bus.post(new DiscoveryStopped(DiscoveryStopped.NOT_FOUND, null));

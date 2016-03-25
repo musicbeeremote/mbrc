@@ -71,7 +71,6 @@
           android:value=".ui.navigation.MainActivity" />
     </activity>
 
-    <activity android:name=".ui.activities.ProfileActivity" />
     <activity
         android:name=".ui.activities.PlaylistTrackActivity"
         android:parentActivityName=".ui.navigation.PlaylistListActivity">
@@ -90,6 +89,22 @@
 
     <activity
         android:name=".ui.fragments.profile.AlbumTracksActivity"
+        android:parentActivityName=".ui.navigation.LibraryActivity">
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.navigation.LibraryActivity" />
+    </activity>
+
+    <activity
+        android:name=".ui.fragments.profile.GenreArtistsActivity"
+        android:parentActivityName=".ui.navigation.LibraryActivity">
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.navigation.LibraryActivity" />
+    </activity>
+
+    <activity
+        android:name=".ui.fragments.profile.ArtistAlbumsActivity"
         android:parentActivityName=".ui.navigation.LibraryActivity">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"

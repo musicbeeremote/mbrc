@@ -22,9 +22,9 @@ import com.kelsos.mbrc.adapters.GenreAdapter;
 import com.kelsos.mbrc.annotations.Queue;
 import com.kelsos.mbrc.domain.Genre;
 import com.kelsos.mbrc.presenters.BrowseGenrePresenter;
-import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
+import com.kelsos.mbrc.ui.fragments.profile.GenreArtistsActivity;
 import com.kelsos.mbrc.ui.views.BrowseGenreView;
 import java.util.List;
 import roboguice.RoboGuice;
@@ -120,10 +120,9 @@ public class BrowseGenreFragment extends Fragment implements PlaylistDialogFragm
   }
 
   private void openProfile(Genre genre) {
-    Intent intent = new Intent(getActivity(), ProfileActivity.class);
-    intent.putExtra(ProfileActivity.TYPE, ProfileActivity.GENRE);
-    intent.putExtra(ProfileActivity.ID, genre.getId());
-    intent.putExtra(ProfileActivity.NAME, genre.getName());
+    Intent intent = new Intent(getActivity(), GenreArtistsActivity.class);
+    intent.putExtra(GenreArtistsActivity.GENRE_ID, genre.getId());
+    intent.putExtra(GenreArtistsActivity.GENRE_NAME, genre.getName());
     startActivity(intent);
   }
 

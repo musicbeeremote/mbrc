@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+  <android.support.design.widget.AppBarLayout
+      android:id="@+id/app_bar_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:fitsSystemWindows="true"
+      android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_collapseMode="pin"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+  </android.support.design.widget.AppBarLayout>
+
+  <android.support.v7.widget.RecyclerView
+      android:id="@+id/album_recycler"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:gravity="center"
+      android:horizontalSpacing="4dp"
+      android:numColumns="auto_fit"
+      android:stretchMode="columnWidth"
+      android:verticalSpacing="4dp"
+      tools:listitem="@layout/griditem_album" />
+
+</android.support.design.widget.CoordinatorLayout>
+

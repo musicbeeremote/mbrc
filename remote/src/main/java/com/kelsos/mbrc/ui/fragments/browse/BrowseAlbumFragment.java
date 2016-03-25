@@ -20,7 +20,6 @@ import com.kelsos.mbrc.adapters.EndlessGridRecyclerViewScrollListener;
 import com.kelsos.mbrc.annotations.Queue;
 import com.kelsos.mbrc.domain.Album;
 import com.kelsos.mbrc.presenters.BrowseAlbumPresenter;
-import com.kelsos.mbrc.ui.activities.ProfileActivity;
 import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import com.kelsos.mbrc.ui.fragments.profile.AlbumTracksActivity;
@@ -90,9 +89,8 @@ public class BrowseAlbumFragment extends Fragment implements PlaylistDialogFragm
   @Override public void onMenuItemSelected(MenuItem item, Album album) {
     switch (item.getItemId()) {
       case R.id.popup_album_tracks:
-        Intent intent = new Intent(getActivity(), ProfileActivity.class);
-        intent.putExtra(ProfileActivity.TYPE, ProfileActivity.ALBUM);
-        intent.putExtra(ProfileActivity.ID, album.getId());
+        Intent intent = new Intent(getActivity(), AlbumTracksActivity.class);
+        intent.putExtra(AlbumTracksActivity.ALBUM_ID, album.getId());
         startActivity(intent);
         break;
       case R.id.popup_album_play:
