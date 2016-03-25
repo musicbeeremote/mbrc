@@ -4,13 +4,14 @@ import com.kelsos.mbrc.RemoteDatabase;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.ForeignKeyReference;
+import com.raizlabs.android.dbflow.annotation.Index;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 @Table(database = RemoteDatabase.class, name = "albums") public class AlbumDao extends BaseModel {
   @PrimaryKey(autoincrement = true) private long id;
-  @Column(name = "album_name") private String name;
+  @Column(name = "name") @Index private String name;
   @Column @ForeignKey(
       references = {
           @ForeignKeyReference(columnName = "artist_id",
