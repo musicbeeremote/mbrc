@@ -16,7 +16,9 @@ import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder;
 import com.kelsos.mbrc.utilities.RxBus;
+import java.util.Arrays;
 import roboguice.RoboGuice;
+import timber.log.Timber;
 
 public class WidgetSmall extends AppWidgetProvider {
 
@@ -77,6 +79,7 @@ public class WidgetSmall extends AppWidgetProvider {
     smallWidget.setTextViewText(R.id.widget_small_line_one, info.getTitle());
     smallWidget.setTextViewText(R.id.widget_small_line_two, info.getArtist());
     manager.updateAppWidget(widgetsIds, smallWidget);
+    Timber.i("[Small] Updating info for widgets %s", Arrays.toString(widgetsIds));
   }
 
   public void updateCover(CoverChangedEvent coverChangedEvent) {
@@ -88,6 +91,7 @@ public class WidgetSmall extends AppWidgetProvider {
       smallWidget.setImageViewResource(R.id.widget_small_image, R.drawable.ic_image_no_cover);
     }
     manager.updateAppWidget(widgetsIds, smallWidget);
+    Timber.i("[Small] Updating cover for widgets %s", Arrays.toString(widgetsIds));
   }
 
   public void updatePlayState(PlayStateChange state) {
@@ -97,5 +101,6 @@ public class WidgetSmall extends AppWidgetProvider {
     smallWidget.setImageViewResource(R.id.widget_small_play,
         isPlaying ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
     manager.updateAppWidget(widgetsIds, smallWidget);
+    Timber.i("[Small] Updating state for widgets %s", Arrays.toString(widgetsIds));
   }
 }

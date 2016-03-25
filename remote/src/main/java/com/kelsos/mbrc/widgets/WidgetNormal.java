@@ -16,7 +16,9 @@ import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder;
 import com.kelsos.mbrc.utilities.RxBus;
+import java.util.Arrays;
 import roboguice.RoboGuice;
+import timber.log.Timber;
 
 public class WidgetNormal extends AppWidgetProvider {
 
@@ -78,6 +80,7 @@ public class WidgetNormal extends AppWidgetProvider {
     widget.setTextViewText(R.id.widget_normal_line_two, trackInfo.getArtist());
     widget.setTextViewText(R.id.widget_normal_line_three, trackInfo.getAlbum());
     manager.updateAppWidget(widgetsIds, widget);
+    Timber.i("[Normal] Updating info for widgets %s", Arrays.toString(widgetsIds));
   }
 
   public void updateCover(CoverChangedEvent coverChangedEvent) {
@@ -89,6 +92,7 @@ public class WidgetNormal extends AppWidgetProvider {
       widget.setImageViewResource(R.id.widget_normal_image, R.drawable.ic_image_no_cover);
     }
     manager.updateAppWidget(widgetsIds, widget);
+    Timber.i("[Normal] Updating cover for widgets %s", Arrays.toString(widgetsIds));
   }
 
   public void updatePlayState(PlayStateChange state) {
@@ -98,5 +102,6 @@ public class WidgetNormal extends AppWidgetProvider {
     widget.setImageViewResource(R.id.widget_normal_play,
         isPlaying ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
     manager.updateAppWidget(widgetsIds, widget);
+    Timber.i("[Normal] Updating state for widgets %s", Arrays.toString(widgetsIds));
   }
 }
