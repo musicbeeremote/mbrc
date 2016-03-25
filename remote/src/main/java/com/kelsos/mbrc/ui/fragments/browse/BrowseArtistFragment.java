@@ -97,10 +97,7 @@ public class BrowseArtistFragment extends Fragment implements PlaylistDialogFrag
         presenter.queue(artist, Queue.NOW);
         break;
       case R.id.popup_artist_album:
-        Intent intent = new Intent(getActivity(), ProfileActivity.class);
-        intent.putExtra(ProfileActivity.TYPE, ProfileActivity.ARTIST);
-        intent.putExtra(ProfileActivity.ID, artist.getId());
-        startActivity(intent);
+        openProfile(artist);
         break;
       case R.id.popup_artist_playlist:
         break;
@@ -109,8 +106,16 @@ public class BrowseArtistFragment extends Fragment implements PlaylistDialogFrag
     }
   }
 
-  @Override public void onItemClicked(Artist artist) {
+  private void openProfile(Artist artist) {
+    Intent intent = new Intent(getActivity(), ProfileActivity.class);
+    intent.putExtra(ProfileActivity.TYPE, ProfileActivity.ARTIST);
+    intent.putExtra(ProfileActivity.ID, artist.getId());
+    intent.putExtra(ProfileActivity.NAME, artist.getName());
+    startActivity(intent);
+  }
 
+  @Override public void onItemClicked(Artist artist) {
+    openProfile(artist);
   }
 
   @Override public void showEnqueueSuccess() {

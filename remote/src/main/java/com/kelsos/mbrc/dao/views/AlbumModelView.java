@@ -21,7 +21,7 @@ import com.raizlabs.android.dbflow.structure.BaseModelView;
     extends BaseModelView<AlbumDao> {
 
   @ModelViewQuery public static final Query QUERY = SQLite.select(AlbumDao_Table.id.as("id").withTable(),
-      AlbumDao_Table.album_name.as("name").withTable(),
+      AlbumDao_Table.name.as("name").withTable(),
       ArtistDao_Table.name.as("artist").withTable(),
       ArtistDao_Table.id.as("artist_id").withTable(),
       CoverDao_Table.hash.as("cover").withTable())

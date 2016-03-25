@@ -2,6 +2,7 @@ package com.kelsos.mbrc.repository.library;
 
 import com.kelsos.mbrc.dao.AlbumDao;
 import com.kelsos.mbrc.dao.views.AlbumModelView;
+import com.kelsos.mbrc.dao.views.ArtistAlbumView;
 import com.kelsos.mbrc.repository.Repository;
 import java.util.List;
 import rx.Observable;
@@ -13,5 +14,5 @@ public interface AlbumRepository extends Repository<AlbumDao> {
 
   String getAlbumYear(long id);
 
-  Observable<List<AlbumModelView>> getAlbumsByArtist(long artistId);
+  Observable<List<ArtistAlbumView>> getAlbumsByArtist(long artistId);
 }

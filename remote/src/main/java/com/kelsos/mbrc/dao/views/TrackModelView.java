@@ -25,7 +25,7 @@ import com.raizlabs.android.dbflow.structure.BaseModelView;
       TrackDao_Table.disc.as("disc").withTable(),
       TrackDao_Table.position.as("position").withTable(),
       TrackDao_Table.title.as("title").withTable(),
-      AlbumDao_Table.album_name.as("album").withTable(),
+      AlbumDao_Table.name.as("album").withTable(),
       AlbumDao_Table.id.as("album_id").withTable(),
       ArtistDao_Table.name.as("artist").withTable(),
       CoverDao_Table.hash.as("cover").withTable())

@@ -21,7 +21,7 @@ import com.raizlabs.android.dbflow.structure.BaseModelView;
 @ModelView(database = RemoteDatabase.class, name = "artist_album_view") public class ArtistAlbumView
     extends BaseModelView<TrackDao> {
   @ModelViewQuery public static final Query QUERY = SQLite.select(AlbumDao_Table.id.as("id").withTable(),
-      AlbumDao_Table.album_name.as("name").withTable(),
+      AlbumDao_Table.name.as("name").withTable(),
       ArtistDao_Table.name.as("artist").withTable(),
       ArtistDao_Table.id.as("artist_id").withTable(),
       CoverDao_Table.hash.as("cover").withTable())
@@ -31,7 +31,7 @@ import com.raizlabs.android.dbflow.structure.BaseModelView;
       .on(TrackDao_Table.album_id.withTable().is(AlbumDao_Table.id.withTable()))
       .innerJoin(ArtistDao.class)
       .on(TrackDao_Table.artist_id.withTable().is(ArtistDao_Table.id.withTable()))
-      .innerJoin(CoverDao.class)
+      .leftOuterJoin(CoverDao.class)
       .on(AlbumDao_Table.cover_id.withTable().is(CoverDao_Table.id.withTable()))
       .orderBy(OrderBy.fromNameAlias(new NameAlias("name")).ascending());
 

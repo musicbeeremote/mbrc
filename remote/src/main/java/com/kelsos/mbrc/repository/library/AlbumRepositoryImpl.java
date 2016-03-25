@@ -8,6 +8,8 @@ import com.kelsos.mbrc.dao.TrackDao;
 import com.kelsos.mbrc.dao.TrackDao_Table;
 import com.kelsos.mbrc.dao.views.AlbumModelView;
 import com.kelsos.mbrc.dao.views.AlbumModelView_ViewTable;
+import com.kelsos.mbrc.dao.views.ArtistAlbumView;
+import com.kelsos.mbrc.dao.views.ArtistAlbumView_ViewTable;
 import com.raizlabs.android.dbflow.runtime.TransactionManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
@@ -72,10 +74,10 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     }
   }
 
-  @Override public Observable<List<AlbumModelView>> getAlbumsByArtist(long artistId) {
+  @Override public Observable<List<ArtistAlbumView>> getAlbumsByArtist(long artistId) {
     return Observable.defer(() -> Observable.just(SQLite.select()
-        .from(AlbumModelView.class)
-        .where(AlbumModelView_ViewTable.artist_id.eq(artistId))
+        .from(ArtistAlbumView.class)
+        .where(ArtistAlbumView_ViewTable.artist_id.eq(artistId))
         .queryList()));
   }
 }

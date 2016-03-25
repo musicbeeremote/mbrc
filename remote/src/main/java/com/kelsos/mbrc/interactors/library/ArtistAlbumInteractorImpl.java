@@ -12,6 +12,6 @@ public class ArtistAlbumInteractorImpl implements ArtistAlbumInteractor {
 
   @Override public Observable<List<Album>> getArtistAlbums(long artistId) {
     return repository.getAlbumsByArtist(artistId)
-        .flatMap(albums -> Observable.defer(() -> Observable.just(AlbumMapper.map(albums))));
+        .flatMap(albums -> Observable.defer(() -> Observable.just(AlbumMapper.mapArtistAlbums(albums))));
   }
 }

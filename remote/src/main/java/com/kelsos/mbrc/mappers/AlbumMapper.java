@@ -5,6 +5,7 @@ import com.kelsos.mbrc.dao.AlbumDao;
 import com.kelsos.mbrc.dao.ArtistDao;
 import com.kelsos.mbrc.dao.CoverDao;
 import com.kelsos.mbrc.dao.views.AlbumModelView;
+import com.kelsos.mbrc.dao.views.ArtistAlbumView;
 import com.kelsos.mbrc.domain.Album;
 import com.kelsos.mbrc.dto.library.AlbumDto;
 import java.util.List;
@@ -33,5 +34,13 @@ public class AlbumMapper {
     dao.setCover(MapperUtils.getCoverById(album.getCoverId(), covers));
     dao.setName(album.getName());
     return dao;
+  }
+
+  public static List<Album> mapArtistAlbums(List<ArtistAlbumView> albums) {
+    return Observable.from(albums).map(AlbumMapper::mapArtistAlbum).toList().toBlocking().first();
+  }
+
+  public static Album mapArtistAlbum(ArtistAlbumView view) {
+    return new Album(view.getId(), view.getName(), view.getArtist(), view.getCover(), "");
   }
 }
