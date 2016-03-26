@@ -5,13 +5,18 @@ import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.ForeignKeyReference;
 import com.raizlabs.android.dbflow.annotation.Index;
+import com.raizlabs.android.dbflow.annotation.IndexGroup;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-@Table(database = RemoteDatabase.class, name = "tracks") public class TrackDao extends BaseModel {
+@Table(database = RemoteDatabase.class, name = "tracks",
+    indexGroups = {
+        @IndexGroup(number = 1, name = "track_title_index")
+    })
+public class TrackDao extends BaseModel {
   @Column @PrimaryKey(autoincrement = true) private long id;
-  @Column @Index private String title;
+  @Column @Index(indexGroups = 1) private String title;
   @Column private int position;
   @Column @ForeignKey(
       references = {

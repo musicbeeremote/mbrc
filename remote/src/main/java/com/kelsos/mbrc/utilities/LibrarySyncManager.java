@@ -4,10 +4,15 @@ import android.content.SharedPreferences;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.Code;
 import com.kelsos.mbrc.dao.AlbumDao;
+import com.kelsos.mbrc.dao.AlbumDao_Table;
 import com.kelsos.mbrc.dao.ArtistDao;
+import com.kelsos.mbrc.dao.ArtistDao_Table;
 import com.kelsos.mbrc.dao.CoverDao;
 import com.kelsos.mbrc.dao.GenreDao;
+import com.kelsos.mbrc.dao.GenreDao_Table;
+import com.kelsos.mbrc.dao.PlaylistDao_Table;
 import com.kelsos.mbrc.dao.TrackDao;
+import com.kelsos.mbrc.dao.TrackDao_Table;
 import com.kelsos.mbrc.dto.PaginatedResponse;
 import com.kelsos.mbrc.mappers.AlbumMapper;
 import com.kelsos.mbrc.mappers.ArtistMapper;
@@ -46,6 +51,14 @@ public class LibrarySyncManager {
   @Inject private PlaylistRepository playlistRepository;
 
   public void sync() {
+    GenreDao_Table.index_genre_name_index.createIfNotExists();
+    AlbumDao_Table.index_album_name_index.createIfNotExists();
+    ArtistDao_Table.index_artist_name_index.createIfNotExists();
+    TrackDao_Table.index_track_title_index.createIfNotExists();
+    PlaylistDao_Table.index_playlist_name_index.createIfNotExists();
+
+
+
     final long after = preferences.getLong(LAST_SYNC, 0);
     Observable.create(subscriber -> {
       syncGenres(after);

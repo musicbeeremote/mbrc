@@ -3,13 +3,18 @@ package com.kelsos.mbrc.dao;
 import com.kelsos.mbrc.RemoteDatabase;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.Index;
+import com.raizlabs.android.dbflow.annotation.IndexGroup;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-@Table(database = RemoteDatabase.class, name = "genres") public class GenreDao extends BaseModel {
+@Table(database = RemoteDatabase.class, name = "genres",
+    indexGroups = {
+        @IndexGroup(number = 1, name = "genre_name_index")
+    })
+public class GenreDao extends BaseModel {
   @Column @PrimaryKey(autoincrement = true) private long id;
-  @Column @Index private String name;
+  @Column @Index(indexGroups = 1) private String name;
   @Column(name = "date_added") private long dateAdded;
   @Column(name = "date_updated") private long dateUpdated;
   @Column(name = "date_deleted") private long dateDeleted;

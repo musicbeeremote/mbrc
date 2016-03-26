@@ -3,13 +3,18 @@ package com.kelsos.mbrc.dao;
 import com.kelsos.mbrc.RemoteDatabase;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.Index;
+import com.raizlabs.android.dbflow.annotation.IndexGroup;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-@Table(database = RemoteDatabase.class, name = "playlists") public class PlaylistDao extends BaseModel {
+@Table(database = RemoteDatabase.class, name = "playlists",
+    indexGroups = {
+        @IndexGroup(number = 1, name = "playlist_name_index")
+    })
+public class PlaylistDao extends BaseModel {
   @Column @PrimaryKey(autoincrement = true) private long id;
-  @Column @Index private String name;
+  @Column @Index(indexGroups = 1) private String name;
   @Column(name = "read_only") private boolean readOnly;
   @Column private String path;
   @Column private int tracks;
