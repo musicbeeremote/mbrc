@@ -12,7 +12,7 @@ import com.kelsos.mbrc.net.SocketService;
 import com.kelsos.mbrc.receivers.PlayerActionReceiver;
 import com.kelsos.mbrc.services.ServiceDiscovery;
 import com.kelsos.mbrc.utilities.LibrarySyncManager;
-import com.kelsos.mbrc.receivers.RemoteBroadcastReceiver;
+import com.kelsos.mbrc.receivers.StateBroadcastReceiver;
 import com.kelsos.mbrc.utilities.RxBus;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.raizlabs.android.dbflow.config.FlowManager;
@@ -23,7 +23,7 @@ import timber.log.Timber;
 @Singleton public class Controller extends Service {
 
   @Inject private SocketService socket;
-  @Inject private RemoteBroadcastReceiver receiver;
+  @Inject private StateBroadcastReceiver receiver;
   @Inject private PlayerActionReceiver actionReceiver;
   @Inject private NotificationService notificationService;
   @Inject private ServiceDiscovery discovery;
@@ -44,6 +44,7 @@ import timber.log.Timber;
     super.onCreate();
     RoboGuice.getInjector(this).injectMembers(this);
     this.registerReceiver(actionReceiver, actionReceiver.getIntentFilter());
+    this.registerReceiver(receiver, receiver.getIntentFilter());
     bus.register(this, ChangeWebSocketStatusEvent.class, this::onWebSocketActionRequest);
   }
 
