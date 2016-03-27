@@ -39,3 +39,6 @@ target/
 gen-external-apklibs/
 remote/src/main/java-gen
 remote/src-gen/
+
+# Pulled library
+library.db
