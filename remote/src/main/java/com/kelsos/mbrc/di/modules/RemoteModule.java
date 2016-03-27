@@ -50,6 +50,8 @@ import com.kelsos.mbrc.interactors.library.GenreArtistInteractor;
 import com.kelsos.mbrc.interactors.library.GenreArtistInteractorImpl;
 import com.kelsos.mbrc.interactors.nowplaying.NowPlayingActionInteractor;
 import com.kelsos.mbrc.interactors.nowplaying.NowPlayingActionInteractorImpl;
+import com.kelsos.mbrc.interactors.playlists.PlaylistAddInteractor;
+import com.kelsos.mbrc.interactors.playlists.PlaylistAddInteractorImpl;
 import com.kelsos.mbrc.interactors.playlists.PlaylistTrackInteractor;
 import com.kelsos.mbrc.interactors.playlists.PlaylistTrackInteractorImpl;
 import com.kelsos.mbrc.presenters.AlbumTracksPresenter;
@@ -74,6 +76,8 @@ import com.kelsos.mbrc.presenters.MainViewPresenter;
 import com.kelsos.mbrc.presenters.MainViewPresenterImpl;
 import com.kelsos.mbrc.presenters.MiniControlPresenter;
 import com.kelsos.mbrc.presenters.MiniControlPresenterImpl;
+import com.kelsos.mbrc.presenters.PlaylistDialogPresenter;
+import com.kelsos.mbrc.presenters.PlaylistDialogPresenterImpl;
 import com.kelsos.mbrc.presenters.PlaylistPresenter;
 import com.kelsos.mbrc.presenters.PlaylistPresenterImpl;
 import com.kelsos.mbrc.presenters.PlaylistTrackPresenter;
@@ -127,6 +131,7 @@ import roboguice.inject.fragment.SupportFragmentManagerProvider;
     bind(DeviceManagerPresenter.class).to(DeviceManagerPresenterImpl.class).in(ContextSingleton.class);
     bind(LibraryActivityPresenter.class).to(LibraryActivityPresenterImpl.class).in(ContextSingleton.class);
     bind(ArtistAlbumPresenter.class).to(ArtistAlbumPresenterImpl.class).in(ContextSingleton.class);
+    bind(PlaylistDialogPresenter.class).to(PlaylistDialogPresenterImpl.class).in(ContextSingleton.class);
 
     bind(TrackInfoInteractor.class).to(TrackInfoInteractorImpl.class);
     bind(TrackRatingInteractor.class).to(TrackRatingInteractorImpl.class);
@@ -139,6 +144,8 @@ import roboguice.inject.fragment.SupportFragmentManagerProvider;
     bind(PlayerStateInteractor.class).to(PlayerStateInteractorImpl.class);
     bind(GenreArtistInteractor.class).to(GenreArtistInteractorImpl.class);
     bind(ArtistAlbumInteractor.class).to(ArtistAlbumInteractorImpl.class);
+
+    bind(PlaylistAddInteractor.class).to(PlaylistAddInteractorImpl.class);
 
     bind(MuteInteractor.class).to(MuteInteractorImpl.class);
     bind(NowPlayingListInteractor.class).to(NowPlayingListInteractorImpl.class);

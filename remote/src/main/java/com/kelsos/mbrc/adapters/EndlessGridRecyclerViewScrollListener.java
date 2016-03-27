@@ -49,7 +49,7 @@ public abstract class EndlessGridRecyclerViewScrollListener extends RecyclerView
 
     // If it isn’t currently loading, we check to see if we have breached
     // the visibleThreshold and need to reload more data.
-    // If we do need to reload some more data, we execute onLoadMore to fetch the data.
+    // If we do need to reload some more data, we getAllPlaylists onLoadMore to fetch the data.
     if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
       currentPage++;
       onLoadMore(currentPage, totalItemCount);

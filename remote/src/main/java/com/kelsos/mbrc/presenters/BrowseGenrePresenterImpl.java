@@ -7,6 +7,7 @@ import com.kelsos.mbrc.constants.Constants;
 import com.kelsos.mbrc.domain.Genre;
 import com.kelsos.mbrc.interactors.QueueInteractor;
 import com.kelsos.mbrc.interactors.library.LibraryGenreInteractor;
+import com.kelsos.mbrc.interactors.playlists.PlaylistAddInteractor;
 import com.kelsos.mbrc.ui.views.BrowseGenreView;
 import roboguice.util.Ln;
 import rx.android.schedulers.AndroidSchedulers;
@@ -16,6 +17,7 @@ public class BrowseGenrePresenterImpl implements BrowseGenrePresenter {
   private BrowseGenreView view;
   @Inject private LibraryGenreInteractor interactor;
   @Inject private QueueInteractor queue;
+  @Inject private PlaylistAddInteractor playlistAddInteractor;
 
   @Override public void bind(BrowseGenreView view) {
     this.view = view;
@@ -52,5 +54,13 @@ public class BrowseGenrePresenterImpl implements BrowseGenrePresenter {
         .subscribe(genres -> {
           view.update(genres);
         }, Ln::v);
+  }
+
+  @Override public void createPlaylist(long selectionId, String name) {
+
+  }
+
+  @Override public void playlistAdd(long selectionId, long playlistId) {
+
   }
 }

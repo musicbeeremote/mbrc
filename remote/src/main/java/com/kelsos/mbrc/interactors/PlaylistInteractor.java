@@ -5,5 +5,7 @@ import java.util.List;
 import rx.Observable;
 
 public interface PlaylistInteractor {
-  Observable<List<Playlist>> execute();
+  Observable<List<Playlist>> getAllPlaylists();
+
+  Observable<List<Playlist>> getUserPlaylists();
 }

@@ -18,7 +18,7 @@ public class PlaylistPresenterImpl implements PlaylistPresenter {
   }
 
   @Override public void load() {
-    playlistInteractor.execute()
+    playlistInteractor.getAllPlaylists()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(playlists -> view.update(playlists), Ln::v);
   }

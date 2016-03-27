@@ -18,13 +18,12 @@ import com.kelsos.mbrc.adapters.TrackAdapter;
 import com.kelsos.mbrc.annotations.Queue;
 import com.kelsos.mbrc.domain.Track;
 import com.kelsos.mbrc.presenters.BrowseTrackPresenter;
-import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import com.kelsos.mbrc.ui.views.BrowseTrackView;
 import java.util.List;
 import roboguice.RoboGuice;
 
 public class BrowseTrackFragment extends Fragment
-    implements PlaylistDialogFragment.OnPlaylistSelectedListener, BrowseTrackView,
+    implements BrowseTrackView,
     TrackAdapter.MenuItemSelectedListener {
 
   @Bind(R.id.library_recycler) RecyclerView recyclerView;
@@ -67,14 +66,6 @@ public class BrowseTrackFragment extends Fragment
   @Override public void onPause() {
     super.onPause();
     recyclerView.removeOnScrollListener(scrollListener);
-  }
-
-  @Override public void onPlaylistSelected(String hash) {
-
-  }
-
-  @Override public void onNewPlaylistSelected() {
-
   }
 
   @Override public void onMenuItemSelected(MenuItem item, Track track) {

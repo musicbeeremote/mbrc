@@ -6,33 +6,31 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-  <include
-      layout="@layout/dialog_header"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center_horizontal" />
-
-  <Button
-      android:id="@+id/new_playlist_button"
+  <RelativeLayout
+      android:id="@+id/playlist_name_wrapper"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:background="?attr/selectableItemBackground"
-      android:gravity="center_vertical"
-      android:paddingLeft="@dimen/small_margin"
-      android:paddingRight="@dimen/small_margin"
-      android:text="@string/text_create_new"
-      android:textSize="@dimen/playlist_entry_text_size" />
+      android:visibility="gone">
 
-  <View
-      android:id="@+id/titleDividerTop"
-      android:layout_width="match_parent"
-      android:layout_height="1dip" />
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/playlist_name_til"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-  <ListView
-      android:id="@+id/playlist"
+      <EditText
+          android:id="@+id/playlist_name_text"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:hint="@string/dialog_playlist_name_hint"
+          android:inputType="text" />
+    </android.support.design.widget.TextInputLayout>
+
+  </RelativeLayout>
+
+  <android.support.v7.widget.RecyclerView
+      android:id="@+id/playlist_dialog_playlists"
       android:layout_width="match_parent"
-      android:layout_height="150dp"
-      android:divider="@null"
-      tools:layout="@layout/ui_list_playlist" />
+      android:layout_height="152dp"
+      tools:listitem="@layout/listitem_single_text_only" />
 
 </LinearLayout>

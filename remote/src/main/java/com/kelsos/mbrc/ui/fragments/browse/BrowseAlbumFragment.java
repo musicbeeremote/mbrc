@@ -20,15 +20,13 @@ import com.kelsos.mbrc.adapters.EndlessGridRecyclerViewScrollListener;
 import com.kelsos.mbrc.annotations.Queue;
 import com.kelsos.mbrc.domain.Album;
 import com.kelsos.mbrc.presenters.BrowseAlbumPresenter;
-import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
-import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import com.kelsos.mbrc.ui.fragments.profile.AlbumTracksActivity;
 import com.kelsos.mbrc.ui.views.BrowseAlbumView;
 import java.util.List;
 import roboguice.RoboGuice;
 
-public class BrowseAlbumFragment extends Fragment implements PlaylistDialogFragment.OnPlaylistSelectedListener,
-    CreateNewPlaylistDialog.OnPlaylistNameSelectedListener, AlbumAdapter.MenuItemSelectedListener, BrowseAlbumView {
+public class BrowseAlbumFragment extends Fragment
+    implements AlbumAdapter.MenuItemSelectedListener, BrowseAlbumView {
 
   @Bind(R.id.album_recycler) RecyclerView recyclerView;
   @Inject private AlbumAdapter adapter;
@@ -39,8 +37,8 @@ public class BrowseAlbumFragment extends Fragment implements PlaylistDialogFragm
     return new BrowseAlbumFragment();
   }
 
-  @Nullable @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.ui_library_grid, container, false);
     ButterKnife.bind(this, view);
     RoboGuice.getInjector(getContext()).injectMembers(this);
@@ -68,20 +66,6 @@ public class BrowseAlbumFragment extends Fragment implements PlaylistDialogFragm
     recyclerView.removeOnScrollListener(scrollListener);
   }
 
-  @Override public void onPlaylistSelected(String hash) {
-
-  }
-
-  @Override public void onNewPlaylistSelected() {
-    final CreateNewPlaylistDialog npDialog = new CreateNewPlaylistDialog();
-    npDialog.setOnPlaylistNameSelectedListener(this);
-    npDialog.show(getFragmentManager(), "npDialog");
-  }
-
-  @Override public void onPlaylistNameSelected(String name) {
-
-  }
-
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
   }
@@ -89,9 +73,7 @@ public class BrowseAlbumFragment extends Fragment implements PlaylistDialogFragm
   @Override public void onMenuItemSelected(MenuItem item, Album album) {
     switch (item.getItemId()) {
       case R.id.popup_album_tracks:
-        Intent intent = new Intent(getActivity(), AlbumTracksActivity.class);
-        intent.putExtra(AlbumTracksActivity.ALBUM_ID, album.getId());
-        startActivity(intent);
+        openProfile(album);
         break;
       case R.id.popup_album_play:
         presenter.queue(album, Queue.NOW);
@@ -110,6 +92,10 @@ public class BrowseAlbumFragment extends Fragment implements PlaylistDialogFragm
   }
 
   @Override public void onItemClicked(Album album) {
+    openProfile(album);
+  }
+
+  private void openProfile(Album album) {
     Intent intent = new Intent(getContext(), AlbumTracksActivity.class);
     Bundle bundle = new Bundle();
     bundle.putLong(AlbumTracksActivity.ALBUM_ID, album.getId());

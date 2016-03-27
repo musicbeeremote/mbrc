@@ -22,15 +22,15 @@ import com.kelsos.mbrc.adapters.GenreAdapter;
 import com.kelsos.mbrc.annotations.Queue;
 import com.kelsos.mbrc.domain.Genre;
 import com.kelsos.mbrc.presenters.BrowseGenrePresenter;
-import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import com.kelsos.mbrc.ui.fragments.profile.GenreArtistsActivity;
 import com.kelsos.mbrc.ui.views.BrowseGenreView;
 import java.util.List;
 import roboguice.RoboGuice;
 
-public class BrowseGenreFragment extends Fragment implements PlaylistDialogFragment.OnPlaylistSelectedListener,
-    CreateNewPlaylistDialog.OnPlaylistNameSelectedListener, BrowseGenreView, GenreAdapter.MenuItemSelectedListener {
+public class BrowseGenreFragment extends Fragment
+    implements BrowseGenreView, GenreAdapter.MenuItemSelectedListener,
+    PlaylistDialogFragment.PlaylistActionListener {
 
   @Bind(R.id.library_recycler) RecyclerView recyclerView;
   @Inject private GenreAdapter adapter;
@@ -52,7 +52,8 @@ public class BrowseGenreFragment extends Fragment implements PlaylistDialogFragm
     inflater.inflate(R.menu.menu_now_playing, menu);
   }
 
-  @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.fragment_library, container, false);
     ButterKnife.bind(this, view);
     presenter.bind(this);
@@ -67,19 +68,6 @@ public class BrowseGenreFragment extends Fragment implements PlaylistDialogFragm
     adapter.setMenuItemSelectedListener(this);
     presenter.load();
     return view;
-  }
-
-  @Override public void onPlaylistSelected(String hash) {
-  }
-
-  @Override public void onNewPlaylistSelected() {
-    final CreateNewPlaylistDialog npDialog = new CreateNewPlaylistDialog();
-    npDialog.setOnPlaylistNameSelectedListener(this);
-    npDialog.show(getActivity().getSupportFragmentManager(), "npDialog");
-  }
-
-  @Override public void onPlaylistNameSelected(String name) {
-
   }
 
   @Override public void update(List<Genre> data) {
@@ -110,6 +98,7 @@ public class BrowseGenreFragment extends Fragment implements PlaylistDialogFragm
         presenter.queue(genre, Queue.NEXT);
         break;
       case R.id.popup_genre_playlist:
+        showPlaylistDialog(genre.getId());
         break;
       case R.id.popup_genre_artists:
         openProfile(genre);
@@ -117,6 +106,12 @@ public class BrowseGenreFragment extends Fragment implements PlaylistDialogFragm
       default:
         break;
     }
+  }
+
+  private void showPlaylistDialog(long id) {
+    PlaylistDialogFragment dialog = PlaylistDialogFragment.newInstance(id);
+    dialog.setPlaylistActionListener(this);
+    dialog.show(getFragmentManager(), "dialog");
   }
 
   private void openProfile(Genre genre) {
@@ -138,5 +133,13 @@ public class BrowseGenreFragment extends Fragment implements PlaylistDialogFragm
   @Override public void onPause() {
     super.onPause();
     recyclerView.addOnScrollListener(scrollListener);
+  }
+
+  @Override public void onExistingSelected(long selectionId, long playlistId) {
+    presenter.playlistAdd(selectionId, playlistId);
+  }
+
+  @Override public void onNewSelected(long selectionId, String name) {
+    presenter.createPlaylist(selectionId, name);
   }
 }

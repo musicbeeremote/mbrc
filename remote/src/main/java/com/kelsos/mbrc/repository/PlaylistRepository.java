@@ -12,6 +12,8 @@ import rx.Observable;
 public interface PlaylistRepository {
   Observable<List<Playlist>> getPlaylists();
 
+  Observable<List<Playlist>> getUserPlaylists();
+
   void savePlaylists(List<PlaylistDao> playlists);
 
   Observable<List<PlaylistTrackView>> getPlaylistTracks(long playlistId);

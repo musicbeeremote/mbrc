@@ -19,15 +19,12 @@ import com.kelsos.mbrc.adapters.EndlessRecyclerViewScrollListener;
 import com.kelsos.mbrc.annotations.Queue;
 import com.kelsos.mbrc.domain.Artist;
 import com.kelsos.mbrc.presenters.BrowseArtistPresenter;
-import com.kelsos.mbrc.ui.dialogs.CreateNewPlaylistDialog;
-import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment;
 import com.kelsos.mbrc.ui.fragments.profile.ArtistAlbumsActivity;
 import com.kelsos.mbrc.ui.views.BrowseArtistView;
 import java.util.List;
 import roboguice.RoboGuice;
 
-public class BrowseArtistFragment extends Fragment implements PlaylistDialogFragment.OnPlaylistSelectedListener,
-    CreateNewPlaylistDialog.OnPlaylistNameSelectedListener, BrowseArtistView, ArtistAdapter.MenuItemSelectedListener {
+public class BrowseArtistFragment extends Fragment implements BrowseArtistView, ArtistAdapter.MenuItemSelectedListener {
 
   @Bind(R.id.library_recycler) RecyclerView recyclerView;
   @Inject private ArtistAdapter adapter;
@@ -65,20 +62,6 @@ public class BrowseArtistFragment extends Fragment implements PlaylistDialogFrag
   @Override public void onPause() {
     super.onPause();
     recyclerView.removeOnScrollListener(scrollListener);
-  }
-
-  @Override public void onPlaylistSelected(String hash) {
-
-  }
-
-  @Override public void onNewPlaylistSelected() {
-    final CreateNewPlaylistDialog npDialog = new CreateNewPlaylistDialog();
-    npDialog.setOnPlaylistNameSelectedListener(this);
-    npDialog.show(getActivity().getSupportFragmentManager(), "npDialog");
-  }
-
-  @Override public void onPlaylistNameSelected(String name) {
-
   }
 
   @Override public void onCreate(Bundle savedInstanceState) {

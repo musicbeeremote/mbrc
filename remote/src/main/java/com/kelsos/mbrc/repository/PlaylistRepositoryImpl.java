@@ -30,6 +30,17 @@ public class PlaylistRepositoryImpl implements PlaylistRepository {
     }).subscribeOn(Schedulers.io());
   }
 
+  @Override public Observable<List<Playlist>> getUserPlaylists() {
+    return Observable.create((Subscriber<? super List<Playlist>> subscriber) -> {
+      final List<PlaylistDao> playlistDaos = SQLite.select()
+          .from(PlaylistDao.class)
+          .where(PlaylistDao_Table.read_only.eq(false))
+          .queryList();
+      subscriber.onNext(PlaylistMapper.mapData(playlistDaos));
+      subscriber.onCompleted();
+    }).subscribeOn(Schedulers.io());
+  }
+
   @Override public void savePlaylists(List<PlaylistDao> playlists) {
     TransactionManager.transact(RemoteDatabase.NAME, () -> {
       Observable.from(playlists).forEach(value -> {

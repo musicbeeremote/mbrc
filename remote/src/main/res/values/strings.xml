@@ -173,7 +173,7 @@
   <string name="profile_header_cover_description">The header of the album profile</string>
   <string name="grid_album_cover">Album Cover</string>
   <string name="peak_meter">Peak meter</string>
-  <string name="text_create_new">Create New</string>
+  <string name="playlist_dialog_create">Create</string>
   <string name="menu_add_to_playlist">Add to playlist</string>
   <string name="playlist_list_play_now">Play Now</string>
   <string name="playlist_list_get_track">Get Track</string>
@@ -202,5 +202,9 @@
   <string name="album_play_failure">There was a problem while trying to play trhe album</string>
   <string name="track_added_successfully">Track added to queue successfully.</string>
   <string name="track_add_failed" >Failed to add the track to queue.</string>
+  <string name="dialog_playlist_name_hint">Playlist Name</string>
+  <string name="field_cannot_be_empty">The field cannot be empty.</string>
+  <string name="playlist_add">Done</string>
+  <string name="playlist_dialog_select">Select</string>
 
 </resources>

@@ -42,6 +42,7 @@ import timber.log.Timber;
 
   @Override public void onCreate() {
     super.onCreate();
+    FlowManager.init(getApplicationContext());
     RoboGuice.getInjector(this).injectMembers(this);
     this.registerReceiver(actionReceiver, actionReceiver.getIntentFilter());
     this.registerReceiver(receiver, receiver.getIntentFilter());
@@ -50,7 +51,6 @@ import timber.log.Timber;
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
     Timber.v("[Service] start command received");
-    FlowManager.init(getApplicationContext());
     Observable.merge(discovery.startDiscovery(), settingsManager.getDefault())
         .first()
         .subscribe(connectionSettings -> {

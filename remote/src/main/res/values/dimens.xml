@@ -42,7 +42,7 @@
   <dimen name="mbrc_grid_line_one_size">16sp</dimen>
   <dimen name="mbrc_grid_line_two_size">12sp</dimen>
   <dimen name="list_item_two">14sp</dimen>
-  <dimen name="playlist_entry_text_size">18sp</dimen>
+  <dimen name="playlist_entry_text_size">14sp</dimen>
   <dimen name="mbrc_volume_seekbar_height">8dp</dimen>
   <dimen name="mbrc_volume_seekbar_padding">9dp</dimen>
   <dimen name="mbrc_volume_seekbar_thumb_offset">16dp</dimen>
@@ -55,6 +55,8 @@
   <dimen name="dual_list_title">16sp</dimen>
   <dimen name="dual_list_subtitle">14sp</dimen>
   <dimen name="list_item_padding">16dp</dimen>
+  <dimen name="playlist_dialog_item_height">36dp</dimen>
   <dimen name="mini_control_title_text_size">16sp</dimen>
   <dimen name="mini_control_subtitle_text_size">14sp</dimen>
+  <dimen name="playlist_name_action_button_size">34dp</dimen>
 </resources>
