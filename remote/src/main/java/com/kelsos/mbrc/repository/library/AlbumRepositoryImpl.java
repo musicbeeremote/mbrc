@@ -37,7 +37,7 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     return SQLite.select().from(AlbumDao.class).where(AlbumDao_Table.id.eq(id)).querySingle();
   }
 
-  @Override public void save(List<AlbumDao> items) {
+  @Override public void save(List<? extends AlbumDao> items) {
     TransactionManager.transact(RemoteDatabase.NAME, () -> {
       Observable.from(items).forEach(BaseModel::save);
     });

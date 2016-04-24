@@ -32,7 +32,7 @@ public class TrackRepositoryImpl implements TrackRepository {
     return SQLite.select().from(TrackDao.class).where(TrackDao_Table.id.eq(id)).querySingle();
   }
 
-  @Override public void save(List<TrackDao> items) {
+  @Override public void save(List<? extends TrackDao> items) {
     TransactionManager.transact(RemoteDatabase.NAME, () -> {
       Observable.from(items).forEach(BaseModel::save);
     });

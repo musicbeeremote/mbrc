@@ -48,7 +48,7 @@ public class ArtistRepositoryImpl implements ArtistRepository {
     return SQLite.select().from(ArtistDao.class).where(ArtistDao_Table.id.is(id)).querySingle();
   }
 
-  @Override public void save(List<ArtistDao> items) {
+  @Override public void save(List<? extends ArtistDao> items) {
     TransactionManager.transact(RemoteDatabase.NAME, () -> {
       Observable.from(items).forEach(BaseModel::save);
     });

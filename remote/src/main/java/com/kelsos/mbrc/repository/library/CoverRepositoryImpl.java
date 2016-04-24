@@ -7,6 +7,7 @@ import com.raizlabs.android.dbflow.runtime.TransactionManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import rx.Observable;
 
 public class CoverRepositoryImpl implements CoverRepository {
@@ -36,11 +37,6 @@ public class CoverRepositoryImpl implements CoverRepository {
     return SQLite.select().from(CoverDao.class).where(TrackDao_Table.id.eq(id)).querySingle();
   }
 
-  @Override public void save(List<CoverDao> items) {
-    TransactionManager.transact(RemoteDatabase.NAME, () -> {
-      Observable.from(items).forEach(BaseModel::save);
-    });
-  }
 
   @Override public void save(CoverDao item) {
     item.save();
@@ -48,5 +44,11 @@ public class CoverRepositoryImpl implements CoverRepository {
 
   @Override public long count() {
     return SQLite.selectCountOf().from(CoverDao.class).count();
+  }
+
+  @Override public void save(@NotNull List<? extends CoverDao> items) {
+    TransactionManager.transact(RemoteDatabase.NAME, () -> {
+      Observable.from(items).forEach(BaseModel::save);
+    });
   }
 }

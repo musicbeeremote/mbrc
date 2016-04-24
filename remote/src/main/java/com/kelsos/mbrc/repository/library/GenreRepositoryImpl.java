@@ -41,7 +41,7 @@ public class GenreRepositoryImpl implements GenreRepository {
     return SQLite.select().from(GenreDao.class).where(GenreDao_Table.id.eq(id)).querySingle();
   }
 
-  @Override public void save(List<GenreDao> items) {
+  @Override public void save(List<? extends GenreDao> items) {
     TransactionManager.transact(RemoteDatabase.NAME, () -> {
       Observable.from(items).forEach(BaseModel::save);
     });
