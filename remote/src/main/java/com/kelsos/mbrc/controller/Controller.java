@@ -7,12 +7,10 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.events.ChangeWebSocketStatusEvent;
 import com.kelsos.mbrc.messaging.NotificationService;
-import com.kelsos.mbrc.messaging.SocketMessageHandler;
 import com.kelsos.mbrc.net.SocketService;
 import com.kelsos.mbrc.receivers.PlayerActionReceiver;
-import com.kelsos.mbrc.services.ServiceDiscovery;
-import com.kelsos.mbrc.utilities.LibrarySyncManager;
 import com.kelsos.mbrc.receivers.StateBroadcastReceiver;
+import com.kelsos.mbrc.services.ServiceDiscovery;
 import com.kelsos.mbrc.utilities.RxBus;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.raizlabs.android.dbflow.config.FlowManager;
@@ -28,8 +26,6 @@ import timber.log.Timber;
   @Inject private NotificationService notificationService;
   @Inject private ServiceDiscovery discovery;
   @Inject private SettingsManager settingsManager;
-  @Inject private SocketMessageHandler messageHandler;
-  @Inject private LibrarySyncManager syncManager;
   @Inject private RxBus bus;
 
   public Controller() {
