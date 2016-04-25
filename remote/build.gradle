@@ -3,9 +3,6 @@ import java.text.SimpleDateFormat
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.neenbedankt.android-apt'
-apply plugin: 'checkstyle'
-apply plugin: 'findbugs'
-apply plugin: 'pmd'
 apply plugin: 'idea'
 
 
@@ -139,7 +136,7 @@ idea {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.12'
+  gradleVersion = '2.13'
 }
 
 ext {
@@ -220,73 +217,4 @@ allprojects {
 
 project.tasks.withType(JavaCompile) {
   task -> options.compilerArgs << "-AguiceAnnotationDatabasePackageName=com.kelsos.mbrc"
-}
-
-task findbugs(type: FindBugs) {
-  ignoreFailures = false
-  effort = "max"
-  reportLevel = "high"
-  excludeFilter = new File("${project.rootDir}/config/quality/findbugs/findbugs-filter.xml")
-  classes = fileTree("${project.rootDir}/remote/build/intermediates/classes/debug/")
-
-  source fileTree('src/main/java')
-  include '**/*.java'
-  exclude '**/gen/**'
-
-  reports {
-    xml.enabled = false
-    html.enabled = true
-    html {
-      destination "$project.buildDir/reports/findbugs/findbugs.html"
-    }
-  }
-
-  classpath = files(project.configurations.compile.asPath)
-}
-
-checkstyle {
-  toolVersion = "6.5"
-}
-
-task checkstyle(type: Checkstyle) {
-
-  configFile file("${project.rootDir}/config/quality/checkstyle/checkstyle.xml")
-  showViolations true
-  configProperties = [
-      'checkstyle.cache.file': rootProject.file('build/checkstyle.cache'),
-      'checkstyle.config.dir': rootProject.file('config/quality/checkstyle/')
-  ]
-  configProperties.checkstyleSuppressionsPath = file("${project.rootDir}/config/quality/checkstyle/suppressions.xml").absolutePath // Where is my suppressions file for checkstyle is...
-  source 'src'
-  include '**/*.java'
-  exclude '**/gen/**'
-  classpath = files(project.configurations.compile.asPath)
-}
-
-task pmd(type: Pmd) {
-  ignoreFailures = false
-  ruleSetFiles = files("${project.rootDir}/config/quality/pmd/pmd-ruleset.xml")
-  ruleSets = []
-  source 'src/main/java'
-  include '**/*.java'
-  exclude '**/gen/**'
-  reports {
-    xml.enabled = false
-    html.enabled = true
-    html {
-      destination "$project.buildDir/reports/pmd/pmd.html"
-    }
-  }
-}
-
-check.dependsOn 'checkstyle', 'findbugs', 'pmd', 'lint'
-
-gradle.taskGraph.afterTask { Task task, TaskState state ->
-  if (state.failure) {
-    if (task.name in ['checkstyle']) {
-      ant.xslt(in: "$buildDir/reports/checkstyle/checkstyle.xml",
-          style: new File(rootDir, 'config/quality/checkstyle/checkstyle-noframes-sorted.xsl'),
-          out: new File("$buildDir/reports/checkstyle/checkstyle.html"))
-    }
-  }
 }
