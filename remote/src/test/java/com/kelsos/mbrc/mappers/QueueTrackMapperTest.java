@@ -48,7 +48,7 @@ public class QueueTrackMapperTest {
 
   @Test
   public void testMapSingle() throws Exception {
-    final QueueTrack track = QueueTrackMapper.map(tracks.get(0));
+    final QueueTrack track = QueueTrackMapper.INSTANCE.map(tracks.get(0));
 
     assertEquals(TRACK_TITLE_1, track.getTitle());
     assertEquals(TRACK_ARIST_1, track.getArtist());
@@ -58,7 +58,7 @@ public class QueueTrackMapperTest {
 
   @Test
   public void testMapMultiple() throws Exception {
-    final List<QueueTrack> tracks = QueueTrackMapper.map(this.tracks);
+    final List<QueueTrack> tracks = QueueTrackMapper.INSTANCE.map(this.tracks);
 
     final QueueTrack track = tracks.get(1);
     assertEquals(2, tracks.size());

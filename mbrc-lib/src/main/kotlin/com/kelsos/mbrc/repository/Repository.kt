@@ -5,11 +5,11 @@ import rx.Observable
 interface Repository<T> {
   fun getPageObservable(offset: Int, limit: Int): Observable<List<T>>
 
-  val allObservable: Observable<List<T>>
+  fun getAllObservable(): Observable<List<T>>
 
   fun getPage(offset: Int, limit: Int): List<T>
 
-  val all: List<T>
+  fun getAll(): List<T>
 
   fun getById(id: Long): T
 

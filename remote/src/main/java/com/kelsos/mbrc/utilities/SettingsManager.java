@@ -91,7 +91,7 @@ import timber.log.Timber;
     try {
       long lastVersionCode = preferences.getLong(context.
           getString(R.string.settings_key_last_version_run), 0);
-      long currentVersion = RemoteUtils.getVersionCode(context);
+      long currentVersion = RemoteUtils.INSTANCE.getVersionCode(context);
 
       if (lastVersionCode < currentVersion) {
         isFirstRun = true;

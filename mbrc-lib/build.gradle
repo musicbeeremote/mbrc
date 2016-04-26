@@ -25,6 +25,8 @@ android {
 ext {
   dbflow_version = '3.0.0-beta5'
   jackson_version = '2.7.3'
+  okhttpVersion = '3.2.0'
+  retrofitVersion = '2.0.2'
 }
 
 
@@ -42,6 +44,20 @@ dependencies {
 
   compile 'io.reactivex:rxandroid:1.1.0'
   compile 'io.reactivex:rxjava:1.1.3'
+
+  compile "com.squareup.okhttp3:okhttp-urlconnection:${okhttpVersion}"
+  compile "com.squareup.okhttp3:okhttp:${okhttpVersion}"
+  compile "com.squareup.okhttp3:okhttp-ws:${okhttpVersion}"
+  compile "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
+
+  compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+  compile "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
+  compile "com.squareup.retrofit2:converter-jackson:${retrofitVersion}"
+
+  compile 'com.jakewharton.timber:timber:4.1.1'
+
+  compile "org.roboguice:roboguice:4.0.0"
+  kapt 'org.roboguice:roboblender:4.0.0'
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 

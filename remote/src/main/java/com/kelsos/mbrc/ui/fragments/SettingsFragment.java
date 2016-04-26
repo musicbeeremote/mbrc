@@ -55,7 +55,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     if (mVersion != null) {
       try {
         mVersion.setSummary(String.format(getResources().getString(R.string.settings_version_number),
-            RemoteUtils.getVersion(mContext)));
+            RemoteUtils.INSTANCE.getVersion(mContext)));
       } catch (PackageManager.NameNotFoundException e) {
         Timber.d(e, "Name not found");
       }

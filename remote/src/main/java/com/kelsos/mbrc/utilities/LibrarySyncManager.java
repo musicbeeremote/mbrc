@@ -164,7 +164,7 @@ public class LibrarySyncManager {
         .subscribeOn(Schedulers.immediate())
         .takeWhile(this::canGetNext)
         .subscribe(tracks -> {
-          playlistRepository.savePlaylists(PlaylistMapper.mapDto(tracks.getData()));
+          playlistRepository.savePlaylists(PlaylistMapper.INSTANCE.mapDto(tracks.getData()));
         }, this::handlerError);
   }
 

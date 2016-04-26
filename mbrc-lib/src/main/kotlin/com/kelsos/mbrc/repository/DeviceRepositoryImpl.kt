@@ -12,22 +12,33 @@ class DeviceRepositoryImpl : DeviceRepository {
     return Observable.defer { Observable.just(getPage(offset, limit)) }
   }
 
-  override val allObservable: Observable<List<DeviceSettings>>
-    get() = Observable.defer { Observable.just(all) }
-
-  override fun getPage(offset: Int, limit: Int): List<DeviceSettings> {
-    return SQLite.select().from(DeviceSettings::class.java).limit(limit).offset(offset).queryList()
+  override fun getAllObservable(): Observable<List<DeviceSettings>> = Observable.defer {
+    Observable.just(getAll())
   }
 
-  override val all: List<DeviceSettings>
-    get() = SQLite.select().from(DeviceSettings::class.java).queryList()
+  override fun getPage(offset: Int, limit: Int): List<DeviceSettings> {
+    return SQLite.select()
+            .from(DeviceSettings::class.java)
+            .limit(limit)
+            .offset(offset)
+            .queryList()
+  }
+
+  override fun getAll(): List<DeviceSettings> = SQLite.select()
+          .from(DeviceSettings::class.java)
+          .queryList()
 
   override fun getById(id: Long): DeviceSettings {
-    return SQLite.select().from(DeviceSettings::class.java).where(DeviceSettings_Table.id.eq(id)).querySingle()
+    return SQLite.select()
+            .from(DeviceSettings::class.java)
+            .where(DeviceSettings_Table.id.eq(id))
+            .querySingle()
   }
 
   override fun save(items: List<DeviceSettings>) {
-    TransactionManager.transact(SettingsDatabase.NAME) { Observable.from(items).forEach({ it.save() }) }
+    TransactionManager.transact(SettingsDatabase.NAME) {
+      Observable.from(items).forEach({ it.save() })
+    }
   }
 
   override fun save(item: DeviceSettings) {
