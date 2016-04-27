@@ -9,21 +9,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 @JsonPropertyOrder("position")
 class PositionRequest {
 
-    @JsonProperty("position") private var position: Int = 0
-
-    /**
-     * @return The position
-     */
-    @JsonProperty("position") fun getPosition(): Int {
-        return position
-    }
-
-    /**
-     * @param position The position
-     */
-    @JsonProperty("position") fun setPosition(position: Int): PositionRequest {
-        this.position = position
-        return this
-    }
+    @JsonProperty("position") var position: Int = 0
 
 }

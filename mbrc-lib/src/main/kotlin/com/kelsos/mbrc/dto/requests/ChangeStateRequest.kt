@@ -9,27 +9,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 class ChangeStateRequest {
 
     @JsonProperty("enabled")
-    private var enabled: Boolean? = null
-
-    /**
-
-     * @return
-     * * The enabled
-     */
-    @JsonProperty("enabled")
-    fun isEnabled(): Boolean? {
-        return enabled
-    }
-
-    /**
-
-     * @param enabled
-     * * The enabled
-     */
-    @JsonProperty("enabled")
-    fun setEnabled(enabled: Boolean?): ChangeStateRequest {
-        this.enabled = enabled
-        return this
-    }
+    var enabled: Boolean = false
 
 }

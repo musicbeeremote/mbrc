@@ -24,7 +24,7 @@ interface NowPlayingService {
                           @Query("limit") limit: Int): Observable<PaginatedResponse<NowPlayingTrack>>
 
     @DELETE("/nowplaying/{id}")
-    fun nowPlayingRemoveTrack(@Path("id") id: Int): Observable<BaseResponse>
+    fun nowPlayingRemoveTrack(@Path("id") id: Long): Observable<BaseResponse>
 
     @PUT("/nowplaying/play")
     fun nowPlayingPlayTrack(@Body body: PlayPathRequest): Observable<BaseResponse>

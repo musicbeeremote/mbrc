@@ -64,6 +64,12 @@ dependencies {
 kapt {
   generateStubs = true
 }
+
+
+project.tasks.withType(JavaCompile) {
+  task -> options.compilerArgs << "-AguiceAnnotationDatabasePackageName=net.kelsos.mbrc_lib"
+}
+
 repositories {
   maven {
     url 'http://dl.bintray.com/kotlin/kotlin-eap'

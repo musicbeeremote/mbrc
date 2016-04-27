@@ -134,7 +134,7 @@
         android:value="com.kelsos.mbrc.di.modules.RemoteModule" />
     <meta-data
         android:name="roboguice.annotations.packages"
-        android:value="roboguice,com.kelsos.mbrc" />
+        android:value="roboguice,com.kelsos.mbrc,net.kelsos.mbrc_lib" />
 
     <activity
         android:name=".ui.activities.SettingsActivity"

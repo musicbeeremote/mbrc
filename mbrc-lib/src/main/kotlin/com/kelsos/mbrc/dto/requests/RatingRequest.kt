@@ -9,21 +9,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 @JsonPropertyOrder("rating")
 class RatingRequest {
 
-    @JsonProperty("rating") private var rating: Float = 0.toFloat()
+    @JsonProperty("rating") var rating: Float = 0.toFloat()
 
-    /**
-     * @return The rating
-     */
-    @JsonProperty("rating") fun getRating(): Float {
-        return rating
-    }
-
-    /**
-     * @param rating The rating
-     */
-    @JsonProperty("rating") fun setRating(rating: Float): RatingRequest {
-        this.rating = rating
-        return this
-    }
 
 }

@@ -65,11 +65,4 @@ class PlaylistDto {
      */
     @JsonProperty("date_deleted") var dateDeleted: Long = 0
 
-    /**
-     * @param readOnly The read_only
-     */
-    @JsonProperty("read_only") fun setReadOnly(readOnly: Boolean?) {
-        this.readOnly = readOnly!!
-    }
-
 }

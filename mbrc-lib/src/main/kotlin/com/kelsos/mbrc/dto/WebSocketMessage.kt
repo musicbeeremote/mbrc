@@ -3,6 +3,7 @@ package com.kelsos.mbrc.dto
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.kelsos.mbrc.empty
 
 import org.apache.commons.lang.builder.EqualsBuilder
 import org.apache.commons.lang.builder.HashCodeBuilder
@@ -20,7 +21,7 @@ class WebSocketMessage : IMessage {
      * @param message The message
      */
     @JsonProperty("message")
-    override var message: String? = null
+    override var message: String = String.empty
 
     /**
      * No args constructor for use in serialization.
@@ -35,24 +36,6 @@ class WebSocketMessage : IMessage {
      */
     constructor(message: String) {
         this.message = message
-    }
-
-    override fun toString(): String {
-        return ToStringBuilder.reflectionToString(this)
-    }
-
-    override fun hashCode(): Int {
-        return HashCodeBuilder().append(message).toHashCode()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (other === this) {
-            return true
-        }
-        if (other !is WebSocketMessage) {
-            return false
-        }
-        return EqualsBuilder().append(message, other.message).isEquals
     }
 
 }

@@ -18,9 +18,9 @@ class NowPlayingRepositoryImpl : NowPlayingRepository {
                 service.getNowPlayingList(LIMIT * it, LIMIT)
                         .subscribeOn(Schedulers.io())
             })
-            .takeWhile { page -> page.getOffset() < page.getTotal() }
+            .takeWhile { page -> page.offset < page.total }
             .flatMap({
-                Observable.just<List<QueueTrack>>(QueueTrackMapper.map(it.getData()))
+                Observable.just<List<QueueTrack>>(QueueTrackMapper.map(it.data))
             })
 
     companion object {

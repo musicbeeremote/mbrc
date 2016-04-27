@@ -8,27 +8,5 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 @JsonPropertyOrder("value")
 class VolumeRequest {
 
-    @JsonProperty("value")
-    private var value: Int = 0
-
-    /**
-
-     * @return
-     * * The value
-     */
-    @JsonProperty("value")
-    fun getValue(): Int {
-        return value
-    }
-
-    /**
-
-     * @param value
-     * * The value
-     */
-    @JsonProperty("value")
-    fun setValue(value: Int): VolumeRequest {
-        this.value = value
-        return this
-    }
+    @JsonProperty("value") var value: Int = 0
 }
