@@ -21,7 +21,9 @@ class TrackPositionInteractorImpl : TrackPositionInteractor {
     }
 
     override fun setPosition(position: Int): Observable<TrackPosition> {
-        return service.updatePosition(PositionRequest().setPosition(position))
+        val request = PositionRequest()
+        request.position = position
+        return service.updatePosition(request)
                 .subscribeOn(Schedulers.io())
                 .flatMap<TrackPosition>(Func1{
                     Observable.just(TrackPosition(it.position, it.duration))

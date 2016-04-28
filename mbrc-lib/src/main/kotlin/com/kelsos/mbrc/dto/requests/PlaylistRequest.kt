@@ -12,8 +12,8 @@ import java.util.*
 class PlaylistRequest {
 
     @JsonProperty("name")
-    val name: String = String.empty
+    var name: String = String.empty
 
     @JsonProperty("list")
-    val list: List<String> = ArrayList()
+    var list: List<String> = ArrayList()
 }

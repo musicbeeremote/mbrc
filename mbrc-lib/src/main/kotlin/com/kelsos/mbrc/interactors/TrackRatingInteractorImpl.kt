@@ -15,7 +15,9 @@ class TrackRatingInteractorImpl : TrackRatingInteractor {
     }
 
     override fun updateRating(rating: Float): Observable<Float> {
-        return service.updateRating(RatingRequest().setRating(rating))
+        val request = RatingRequest()
+        request.rating = rating
+        return service.updateRating(request)
                 .flatMap<Float>(Func1 {
                     Observable.just(rating)
                 })

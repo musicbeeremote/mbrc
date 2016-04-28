@@ -17,8 +17,10 @@ public class ShuffleInteractorImpl implements ShuffleInteractor {
         .flatMap(shuffle -> Observable.just(shuffle.getState()));
   }
 
-  @Override public Observable<String> updateShuffle(@com.kelsos.mbrc.annotations.Shuffle.State String state) {
-    return api.updateShuffleState(new ShuffleRequest().setStatus(state))
+  @Override public Observable<String> updateShuffle(@com.kelsos.mbrc.annotations.Shuffle.State String status) {
+      ShuffleRequest request = new ShuffleRequest();
+      request.setStatus(status);
+      return api.updateShuffleState(request)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .flatMap(shuffle -> Observable.just(shuffle.getState()));

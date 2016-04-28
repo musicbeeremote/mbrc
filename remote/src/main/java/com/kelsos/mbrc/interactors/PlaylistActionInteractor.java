@@ -12,7 +12,9 @@ public class PlaylistActionInteractor {
   @Inject private PlaylistService service;
 
   public Observable<Boolean> play(String path) {
-    return service.playPlaylist(new PlayPathRequest().setPath(path))
+      PlayPathRequest request = new PlayPathRequest();
+      request.setPath(path);
+      return service.playPlaylist(request)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .flatMap(baseResponse -> Observable.just(baseResponse.getCode() == Code.SUCCESS));

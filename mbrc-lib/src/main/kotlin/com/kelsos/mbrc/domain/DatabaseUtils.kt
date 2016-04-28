@@ -18,13 +18,13 @@ object DatabaseUtils {
     }
 
     fun createDatabaseTrigger(db: SQLiteDatabase) {
-        val query = "CREATE TRIGGER IF NOT EXISTS update_position AFTER DELETE\n"
-        +"ON QUEUE_TRACK\n"
-        +"BEGIN\n"
-        +"  UPDATE QUEUE_TRACK SET POSITION = POSITION - 1\n"
-        +"  WHERE POSITION > OLD.POSITION;\n"
-        +"END; "
-        db.execSQL(query)
+//        val query = "CREATE TRIGGER IF NOT EXISTS update_position AFTER DELETE\n"
+//        +"ON QUEUE_TRACK\n"
+//        +"BEGIN\n"
+//        +"  UPDATE QUEUE_TRACK SET POSITION = POSITION - 1\n"
+//        +"  WHERE POSITION > OLD.POSITION;\n"
+//        +"END; "
+//        db.execSQL(query)
     }
 
     fun updatePosition(fromPosition: Int, toPosition: Int) {

@@ -11,6 +11,6 @@ class RepeatRequest {
 
     @Repeat.Mode
     @JsonProperty("mode")
-    val mode: String = Repeat.UNDEFINED
+    var mode: String = Repeat.UNDEFINED
 
 }

@@ -11,6 +11,6 @@ import com.kelsos.mbrc.empty
 class PlayPathRequest {
 
     @JsonProperty("path")
-    val path: String = String.empty
+    var path: String = String.empty
 
 }

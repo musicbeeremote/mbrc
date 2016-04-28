@@ -30,7 +30,9 @@ public class RepeatInteractorImpl implements RepeatInteractor {
   }
 
   @Override public Observable<String> setRepeat(@Mode String mode) {
-    return service.updateRepeatState(new RepeatRequest().setMode(mode))
+      RepeatRequest request = new RepeatRequest();
+      request.setMode(mode);
+      return service.updateRepeatState(request)
         .map(RepeatResponse::getValue)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread());

@@ -11,5 +11,5 @@ class ShuffleRequest {
 
     @JsonProperty("status")
     @Shuffle.State
-    val status: String = Shuffle.UNDEF
+    var status: String = Shuffle.UNDEF
 }

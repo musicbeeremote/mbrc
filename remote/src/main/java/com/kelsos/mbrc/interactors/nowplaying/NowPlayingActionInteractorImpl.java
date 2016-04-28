@@ -11,28 +11,36 @@ import rx.schedulers.Schedulers;
 
 public class NowPlayingActionInteractorImpl implements NowPlayingActionInteractor {
 
-  @Inject private NowPlayingService service;
+    @Inject
+    private NowPlayingService service;
 
-  @Override public Observable<Boolean> play(String path) {
-    return service.nowPlayingPlayTrack(new PlayPathRequest().setPath(path))
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .flatMap(baseResponse -> Observable.just(baseResponse.getCode() == Code.SUCCESS));
-  }
+    @Override
+    public Observable<Boolean> play(String path) {
+        PlayPathRequest request = new PlayPathRequest();
+        request.setPath(path);
+        return service.nowPlayingPlayTrack(request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(baseResponse -> Observable.just(baseResponse.getCode() == Code.SUCCESS));
+    }
 
-  @Override public Observable<Boolean> remove(int position) {
-    return service.nowPlayingRemoveTrack(position)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .flatMap(baseResponse -> Observable.just(baseResponse.getCode() == Code.SUCCESS));
-  }
+    @Override
+    public Observable<Boolean> remove(int position) {
+        return service.nowPlayingRemoveTrack(position)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(baseResponse -> Observable.just(baseResponse.getCode() == Code.SUCCESS));
+    }
 
-  @Override public Observable<Boolean> move(int from, int to) {
-    MoveRequest request = new MoveRequest().setFrom(from).setTo(to);
+    @Override
+    public Observable<Boolean> move(int from, int to) {
+        MoveRequest request = new MoveRequest();
+        request.setFrom(from);
+        request.setTo(to);
 
-    return service.nowPlayingMoveTrack(request)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .flatMap(baseResponse -> Observable.just(baseResponse.getCode() == Code.SUCCESS));
-  }
+        return service.nowPlayingMoveTrack(request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(baseResponse -> Observable.just(baseResponse.getCode() == Code.SUCCESS));
+    }
 }

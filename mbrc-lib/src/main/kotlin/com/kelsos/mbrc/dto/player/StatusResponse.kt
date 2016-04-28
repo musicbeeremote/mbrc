@@ -16,6 +16,6 @@ class StatusResponse : BaseResponse() {
      * @param enabled The enabled
      */
     @JsonProperty("enabled")
-    var enabled: Boolean? = null
+    var enabled: Boolean = false
 }
 

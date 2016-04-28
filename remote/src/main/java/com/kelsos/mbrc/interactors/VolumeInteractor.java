@@ -16,7 +16,9 @@ public class VolumeInteractor {
   }
 
   public Observable<Integer> setVolume(int volume) {
-    return api.updateVolume(new VolumeRequest().setValue(volume))
+      VolumeRequest volumeRequest = new VolumeRequest();
+      volumeRequest.setValue(volume);
+      return api.updateVolume(volumeRequest)
         .map(Volume::getValue)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread());

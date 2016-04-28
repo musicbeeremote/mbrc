@@ -305,13 +305,13 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
 
   private void handleConnectionStatusChange(ConnectionStatusChangeEvent change) {
 
-    int status = change.getStatus();
+    long status = change.getStatus();
     Timber.v("Connection event received %s", status);
     model.setStatus(status);
     updateStatus(status);
   }
 
-  private void updateStatus(@Connection.Status int status) {
+  private void updateStatus(@Connection.Status long status) {
     MenuItem item = navigationView.getMenu().findItem(R.id.drawer_menu_connect);
 
     if (item == null) {

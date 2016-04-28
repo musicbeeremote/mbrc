@@ -29,12 +29,16 @@ public class MuteInteractorImpl implements MuteInteractor {
   @Override public Observable<Boolean> toggle() {
     return Observable.just(cache.getMuteState())
         .map(integer -> integer == Mute.ON)
-        .flatMap(enabled -> service.updateMuteState(new ChangeStateRequest().setEnabled(!enabled))
-            .subscribeOn(Schedulers.io())
-            .flatMap(response -> {
-              cache.setMuteState(response.getEnabled() ? Mute.ON : Mute.OFF);
-              return Observable.just(response.getEnabled());
-            }))
+        .flatMap(enabled -> {
+            ChangeStateRequest stateRequest = new ChangeStateRequest();
+            stateRequest.setEnabled(!enabled);
+            return service.updateMuteState(stateRequest)
+                    .subscribeOn(Schedulers.io())
+                    .flatMap(response -> {
+                        cache.setMuteState(response.getEnabled() ? Mute.ON : Mute.OFF);
+                        return Observable.just(response.getEnabled());
+                    });
+        })
         .subscribeOn(Schedulers.io());
   }
 }
