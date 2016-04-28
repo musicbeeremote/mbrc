@@ -143,7 +143,7 @@ ext {
   supportLibraryVersion = '23.3.0'
   jacksonVersion = '2.7.3'
   okhttpVersion = '3.2.0'
-  dbflowVersion = '3.0.0-beta5'
+  dbflowVersion = '3.0.0-beta6'
   retrofitVersion = '2.0.2'
 }
 
@@ -183,7 +183,7 @@ dependencies {
     transitive = true
   }
 
-  provided 'org.roboguice:roboblender:4.0.0'
+  provided 'org.roboguice:roboblender:4.0.1-SNAPSHOT'
   testCompile 'junit:junit:4.12'
   testCompile 'org.mockito:mockito-core:1.10.19'
   testCompile 'org.powermock:powermock-module-junit4:1.6.3'

@@ -3,12 +3,10 @@ package com.kelsos.mbrc.repository.library
 import com.kelsos.mbrc.RemoteDatabase
 import com.kelsos.mbrc.dao.GenreDao
 import com.kelsos.mbrc.dao.GenreDao_Table
-import com.raizlabs.android.dbflow.runtime.TransactionManager
+import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.sql.language.OrderBy
 import com.raizlabs.android.dbflow.sql.language.SQLite
-import com.raizlabs.android.dbflow.structure.BaseModel
 import rx.Observable
-import rx.functions.Action1
 
 class GenreRepositoryImpl : GenreRepository {
     override fun getPageObservable(offset: Int, limit: Int): Observable<List<GenreDao>> {
@@ -36,7 +34,7 @@ class GenreRepositoryImpl : GenreRepository {
                     .ascending())
             .queryList()
 
-    override fun getById(id: Long): GenreDao {
+    override fun getById(id: Long): GenreDao? {
         return SQLite.select()
                 .from(GenreDao::class.java)
                 .where(GenreDao_Table.id.eq(id))
@@ -44,7 +42,7 @@ class GenreRepositoryImpl : GenreRepository {
     }
 
     override fun save(items: List<GenreDao>) {
-        TransactionManager.transact(RemoteDatabase.NAME) {
+        FlowManager.getDatabase(RemoteDatabase::class.java).executeTransaction {
             Observable.from(items).forEach({ it.save() })
         }
     }

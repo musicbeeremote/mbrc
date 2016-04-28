@@ -5,11 +5,9 @@ import com.kelsos.mbrc.dao.ArtistDao
 import com.kelsos.mbrc.dao.ArtistDao_Table
 import com.kelsos.mbrc.dao.views.GenreArtistView
 import com.kelsos.mbrc.dao.views.GenreArtistView_ViewTable
-import com.raizlabs.android.dbflow.runtime.TransactionManager
+import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.sql.language.SQLite
-import com.raizlabs.android.dbflow.structure.BaseModel
 import rx.Observable
-import rx.functions.Action1
 
 class ArtistRepositoryImpl : ArtistRepository {
     override fun getArtistsByGenreId(id: Long): Observable<List<GenreArtistView>> {
@@ -47,7 +45,7 @@ class ArtistRepositoryImpl : ArtistRepository {
             .orderBy(ArtistDao_Table.name, true)
             .queryList()
 
-    override fun getById(id: Long): ArtistDao {
+    override fun getById(id: Long): ArtistDao? {
         return SQLite.select()
                 .from(ArtistDao::class.java)
                 .where(ArtistDao_Table.id.`is`(id))
@@ -55,7 +53,7 @@ class ArtistRepositoryImpl : ArtistRepository {
     }
 
     override fun save(items: List<ArtistDao>) {
-        TransactionManager.transact(RemoteDatabase.NAME) {
+        FlowManager.getDatabase(RemoteDatabase::class.java).executeTransaction {
             Observable.from(items).forEach({ it.save() })
         }
     }

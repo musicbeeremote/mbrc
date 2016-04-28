@@ -3,7 +3,7 @@ package com.kelsos.mbrc.repository
 import com.kelsos.mbrc.SettingsDatabase
 import com.kelsos.mbrc.domain.DeviceSettings
 import com.kelsos.mbrc.domain.DeviceSettings_Table
-import com.raizlabs.android.dbflow.runtime.TransactionManager
+import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import rx.Observable
 
@@ -28,7 +28,7 @@ class DeviceRepositoryImpl : DeviceRepository {
           .from(DeviceSettings::class.java)
           .queryList()
 
-  override fun getById(id: Long): DeviceSettings {
+  override fun getById(id: Long): DeviceSettings? {
     return SQLite.select()
             .from(DeviceSettings::class.java)
             .where(DeviceSettings_Table.id.eq(id))
@@ -36,7 +36,7 @@ class DeviceRepositoryImpl : DeviceRepository {
   }
 
   override fun save(items: List<DeviceSettings>) {
-    TransactionManager.transact(SettingsDatabase.NAME) {
+    FlowManager.getDatabase(SettingsDatabase::class.java).executeTransaction {
       Observable.from(items).forEach({ it.save() })
     }
   }

@@ -10,11 +10,9 @@ import com.kelsos.mbrc.dao.views.AlbumModelView
 import com.kelsos.mbrc.dao.views.AlbumModelView_ViewTable
 import com.kelsos.mbrc.dao.views.ArtistAlbumView
 import com.kelsos.mbrc.dao.views.ArtistAlbumView_ViewTable
-import com.raizlabs.android.dbflow.runtime.TransactionManager
+import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.sql.language.SQLite
-import com.raizlabs.android.dbflow.structure.BaseModel
 import rx.Observable
-import rx.functions.Action1
 
 class AlbumRepositoryImpl : AlbumRepository {
     override fun getPageObservable(offset: Int, limit: Int): Observable<List<AlbumDao>> {
@@ -31,12 +29,12 @@ class AlbumRepositoryImpl : AlbumRepository {
 
     override fun getAll(): List<AlbumDao> = SQLite.select().from(AlbumDao::class.java).queryList()
 
-    override fun getById(id: Long): AlbumDao {
+    override fun getById(id: Long): AlbumDao? {
         return SQLite.select().from(AlbumDao::class.java).where(AlbumDao_Table.id.eq(id)).querySingle()
     }
 
     override fun save(items: List<AlbumDao>) {
-        TransactionManager.transact(RemoteDatabase.NAME) {
+        FlowManager.getDatabase(RemoteDatabase::class.java).executeTransaction {
             Observable.from(items).forEach({ it.save() })
         }
     }
@@ -49,7 +47,7 @@ class AlbumRepositoryImpl : AlbumRepository {
         return SQLite.selectCountOf().from(AlbumDao::class.java).count()
     }
 
-    override fun getAlbumViewById(albumId: Int): AlbumModelView {
+    override fun getAlbumViewById(albumId: Int): AlbumModelView? {
         return SQLite.select()
                 .from(AlbumModelView::class.java)
                 .where(AlbumModelView_ViewTable.id.`is`(albumId.toLong()))

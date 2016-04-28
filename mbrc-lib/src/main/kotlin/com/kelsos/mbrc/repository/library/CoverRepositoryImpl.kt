@@ -3,11 +3,9 @@ package com.kelsos.mbrc.repository.library
 import com.kelsos.mbrc.RemoteDatabase
 import com.kelsos.mbrc.dao.CoverDao
 import com.kelsos.mbrc.dao.TrackDao_Table
-import com.raizlabs.android.dbflow.runtime.TransactionManager
+import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.sql.language.SQLite
-import com.raizlabs.android.dbflow.structure.BaseModel
 import rx.Observable
-import rx.functions.Action1
 
 class CoverRepositoryImpl : CoverRepository {
     override fun getPageObservable(offset: Int, limit: Int): Observable<List<CoverDao>> {
@@ -30,7 +28,7 @@ class CoverRepositoryImpl : CoverRepository {
             .from(CoverDao::class.java)
             .queryList()
 
-    override fun getById(id: Long): CoverDao {
+    override fun getById(id: Long): CoverDao? {
         return SQLite.select()
                 .from(CoverDao::class.java)
                 .where(TrackDao_Table.id.eq(id))
@@ -49,7 +47,7 @@ class CoverRepositoryImpl : CoverRepository {
     }
 
     override fun save(items: List<CoverDao>) {
-        TransactionManager.transact(RemoteDatabase.NAME) {
+        FlowManager.getDatabase(RemoteDatabase::class.java).executeTransaction {
             Observable.from(items).forEach({ it.save() })
         }
     }

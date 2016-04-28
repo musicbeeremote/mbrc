@@ -13,6 +13,7 @@ import com.kelsos.mbrc.receivers.StateBroadcastReceiver;
 import com.kelsos.mbrc.services.ServiceDiscovery;
 import com.kelsos.mbrc.utilities.RxBus;
 import com.kelsos.mbrc.utilities.SettingsManager;
+import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import roboguice.RoboGuice;
 import rx.Observable;
@@ -38,7 +39,9 @@ import timber.log.Timber;
 
   @Override public void onCreate() {
     super.onCreate();
-    FlowManager.init(getApplicationContext());
+      FlowConfig config = new FlowConfig.Builder(this).openDatabasesOnInit(true).build();
+      FlowManager.init(config);
+
     RoboGuice.getInjector(this).injectMembers(this);
     this.registerReceiver(actionReceiver, actionReceiver.getIntentFilter());
     this.registerReceiver(receiver, receiver.getIntentFilter());

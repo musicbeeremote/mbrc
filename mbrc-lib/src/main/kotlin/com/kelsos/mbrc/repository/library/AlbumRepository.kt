@@ -7,7 +7,7 @@ import com.kelsos.mbrc.repository.Repository
 import rx.Observable
 
 interface AlbumRepository : Repository<AlbumDao> {
-    fun getAlbumViewById(albumId: Int): AlbumModelView
+    fun getAlbumViewById(albumId: Int): AlbumModelView?
 
     fun getAlbumViews(offset: Int, limit: Int): Observable<List<AlbumModelView>>
 

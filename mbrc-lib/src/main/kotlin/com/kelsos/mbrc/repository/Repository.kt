@@ -11,7 +11,7 @@ interface Repository<T> {
 
   fun getAll(): List<T>
 
-  fun getById(id: Long): T
+  fun getById(id: Long): T?
 
   fun save(items: List<T>)
 

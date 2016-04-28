@@ -5,11 +5,9 @@ import com.kelsos.mbrc.dao.TrackDao
 import com.kelsos.mbrc.dao.TrackDao_Table
 import com.kelsos.mbrc.dao.views.TrackModelView
 import com.kelsos.mbrc.dao.views.TrackModelView_ViewTable
-import com.raizlabs.android.dbflow.runtime.TransactionManager
+import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.sql.language.SQLite
-import com.raizlabs.android.dbflow.structure.BaseModel
 import rx.Observable
-import rx.functions.Action1
 
 class TrackRepositoryImpl : TrackRepository {
     override fun getPageObservable(offset: Int, limit: Int): Observable<List<TrackDao>> {
@@ -30,7 +28,7 @@ class TrackRepositoryImpl : TrackRepository {
             .from(TrackDao::class.java)
             .queryList()
 
-    override fun getById(id: Long): TrackDao {
+    override fun getById(id: Long): TrackDao? {
         return SQLite.select()
                 .from(TrackDao::class.java)
                 .where(TrackDao_Table.id.eq(id))
@@ -38,7 +36,7 @@ class TrackRepositoryImpl : TrackRepository {
     }
 
     override fun save(items: List<TrackDao>) {
-        TransactionManager.transact(RemoteDatabase.NAME) {
+        FlowManager.getDatabase(RemoteDatabase::class.java).executeTransaction {
             Observable.from(items).forEach({ it.save() })
         }
     }

@@ -318,16 +318,16 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
       Timber.v("Connection event received but view item null");
       return;
     }
-    switch (status) {
-      case Connection.OFF:
-        item.setTitle(R.string.drawer_connection_status_off);
-        break;
-      case Connection.ON:
-        item.setTitle(R.string.drawer_connection_status_active);
-        break;
-      default:
-        item.setTitle(R.string.drawer_connection_status_off);
-        break;
-    }
+//    switch (status) {
+//      case Connection.OFF:
+//        item.setTitle(R.string.drawer_connection_status_off);
+//        break;
+//      case Connection.ON:
+//        item.setTitle(R.string.drawer_connection_status_active);
+//        break;
+//      default:
+//        item.setTitle(R.string.drawer_connection_status_off);
+//        break;
+//    }
   }
 }

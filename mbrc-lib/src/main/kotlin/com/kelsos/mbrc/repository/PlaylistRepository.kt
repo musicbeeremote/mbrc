@@ -23,7 +23,7 @@ interface PlaylistRepository {
 
     fun savePlaylistTracks(data: List<PlaylistTrackDao>)
 
-    fun getPlaylistById(id: Long): PlaylistDao
+    fun getPlaylistById(id: Long): PlaylistDao?
 
-    fun getTrackInfoById(id: Long): PlaylistTrackInfoDao
+    fun getTrackInfoById(id: Long): PlaylistTrackInfoDao?
 }

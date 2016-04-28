@@ -7,7 +7,7 @@ import com.kelsos.mbrc.dao.views.PlaylistTrackView_ViewTable
 import com.kelsos.mbrc.domain.Playlist
 import com.kelsos.mbrc.dto.playlist.PlaylistTrackInfo
 import com.kelsos.mbrc.mappers.PlaylistMapper
-import com.raizlabs.android.dbflow.runtime.TransactionManager
+import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.sql.language.Select
 import rx.Observable
@@ -30,7 +30,8 @@ class PlaylistRepositoryImpl : PlaylistRepository {
     }.subscribeOn(Schedulers.io())
 
     override fun savePlaylists(playlists: List<PlaylistDao>) {
-        TransactionManager.transact(RemoteDatabase.NAME) {
+        FlowManager.getDatabase(RemoteDatabase::class.java)
+        .executeTransaction {
             Observable.from(playlists).forEach { value ->
                 if (value.dateDeleted > 0) {
                     value.delete()
@@ -50,40 +51,42 @@ class PlaylistRepositoryImpl : PlaylistRepository {
     override fun getTrackInfo(): Observable<List<PlaylistTrackInfo>> = Observable.empty()
 
     override fun savePlaylistTrackInfo(data: List<PlaylistTrackInfoDao>) {
-        TransactionManager.transact(RemoteDatabase.NAME) {
-            Observable.from(data).subscribeOn(Schedulers.immediate()).observeOn(Schedulers.immediate()).subscribe({ info ->
-                if (info.dateDeleted > 0) {
-                    info.delete()
-                } else {
-                    info.save()
+        FlowManager.getDatabase(RemoteDatabase::class.java)
+                .executeTransaction {
+                    Observable.from(data).subscribeOn(Schedulers.immediate()).observeOn(Schedulers.immediate()).subscribe({ info ->
+                        if (info.dateDeleted > 0) {
+                            info.delete()
+                        } else {
+                            info.save()
+                        }
+
+                    }) {
+
+                    }
                 }
-
-            }) {
-
-            }
-        }
     }
 
     override fun savePlaylistTracks(data: List<PlaylistTrackDao>) {
-        TransactionManager.transact(RemoteDatabase.NAME) {
-            Observable.from(data).subscribeOn(Schedulers.immediate())
-                    .observeOn(Schedulers.immediate())
-                    .subscribe({
-                        if (it.dateDeleted > 0) {
-                            it.delete()
-                        } else {
-                            it.save()
-                        }
+        FlowManager.getDatabase(RemoteDatabase::class.java)
+                .executeTransaction {
+                    Observable.from(data).subscribeOn(Schedulers.immediate())
+                            .observeOn(Schedulers.immediate())
+                            .subscribe({
+                                if (it.dateDeleted > 0) {
+                                    it.delete()
+                                } else {
+                                    it.save()
+                                }
 
-                    }) { Timber.e(it, "Failed to save playlist tracks") }
-        }
+                            }) { Timber.e(it, "Failed to save playlist tracks") }
+                }
     }
 
-    override fun getPlaylistById(id: Long): PlaylistDao {
+    override fun getPlaylistById(id: Long): PlaylistDao? {
         return SQLite.select().from(PlaylistDao::class.java).where(PlaylistDao_Table.id.`is`(id)).querySingle()
     }
 
-    override fun getTrackInfoById(id: Long): PlaylistTrackInfoDao {
+    override fun getTrackInfoById(id: Long): PlaylistTrackInfoDao? {
         return SQLite.select().from(PlaylistTrackInfoDao::class.java).where(PlaylistTrackInfoDao_Table.id.`is`(id)).querySingle()
     }
 }
