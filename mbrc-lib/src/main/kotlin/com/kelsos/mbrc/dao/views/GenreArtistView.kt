@@ -5,6 +5,7 @@ import com.kelsos.mbrc.dao.ArtistDao
 import com.kelsos.mbrc.dao.ArtistDao_Table
 import com.kelsos.mbrc.dao.TrackDao
 import com.kelsos.mbrc.dao.TrackDao_Table
+import com.kelsos.mbrc.empty
 import com.raizlabs.android.dbflow.annotation.Column
 import com.raizlabs.android.dbflow.annotation.ModelView
 import com.raizlabs.android.dbflow.annotation.ModelViewQuery
@@ -19,7 +20,7 @@ import com.raizlabs.android.dbflow.structure.BaseModelView
     name = "genre_artist_view") class GenreArtistView : BaseModelView<TrackDao>() {
 
   @Column var id: Long = 0
-  @Column var name: String? = null
+  @Column var name: String = String.empty
   @Column(name = "genre_id") var genreId: Long = 0
 
   companion object {

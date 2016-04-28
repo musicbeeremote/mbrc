@@ -2,6 +2,7 @@ package com.kelsos.mbrc.dao.views
 
 import com.kelsos.mbrc.RemoteDatabase
 import com.kelsos.mbrc.dao.*
+import com.kelsos.mbrc.empty
 import com.raizlabs.android.dbflow.annotation.Column
 import com.raizlabs.android.dbflow.annotation.ModelView
 import com.raizlabs.android.dbflow.annotation.ModelViewQuery
@@ -15,13 +16,13 @@ import com.raizlabs.android.dbflow.structure.BaseModelView
 @ModelView(database = RemoteDatabase::class, name = "track_view") class TrackModelView : BaseModelView<TrackDao>() {
 
   @Column(name = "id") var id: Long = 0
-  @Column(name = "disc") var disc: Int = 0
-  @Column(name = "position") var position: Int = 0
-  @Column(name = "title") var title: String? = null
-  @Column(name = "album") var album: String? = null
+  @Column(name = "disc") var disc: Long = 0
+  @Column(name = "position") var position: Long = 0
+  @Column(name = "title") var title: String = String.empty
+  @Column(name = "album") var album: String = String.empty
   @Column(name = "album_id") var albumId: Long = 0
-  @Column(name = "artist") var artist: String? = null
-  @Column(name = "cover") var cover: String? = null
+  @Column(name = "artist") var artist: String = String.empty
+  @Column(name = "cover") var cover: String = String.empty
 
   companion object {
     @JvmField

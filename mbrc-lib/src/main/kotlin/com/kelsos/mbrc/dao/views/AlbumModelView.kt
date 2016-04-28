@@ -2,6 +2,7 @@ package com.kelsos.mbrc.dao.views
 
 import com.kelsos.mbrc.RemoteDatabase
 import com.kelsos.mbrc.dao.*
+import com.kelsos.mbrc.empty
 import com.raizlabs.android.dbflow.annotation.Column
 import com.raizlabs.android.dbflow.annotation.ModelView
 import com.raizlabs.android.dbflow.annotation.ModelViewQuery
@@ -16,9 +17,9 @@ import com.raizlabs.android.dbflow.structure.BaseModelView
 
   @Column var id: Long = 0
   @Column(name = "artist_id") var artistId: Long = 0
-  @Column var name: String? = null
-  @Column var artist: String? = null
-  @Column var cover: String? = null
+  @Column var name: String = String.empty
+  @Column var artist: String = String.empty
+  @Column var cover: String = String.empty
 
   companion object {
     @JvmField

@@ -100,7 +100,7 @@ public class LibrarySyncManager {
         .subscribeOn(Schedulers.immediate())
         .takeWhile(this::canGetNext)
         .subscribe(tracks -> {
-          List<TrackDao> daos = TrackMapper.mapDtos(tracks.getData(), artists, genres, albums);
+          List<TrackDao> daos = TrackMapper.INSTANCE.mapDtos(tracks.getData(), artists, genres, albums);
           trackRepository.save(daos);
         }, this::handlerError, () -> {
         });
@@ -112,7 +112,7 @@ public class LibrarySyncManager {
         .subscribeOn(Schedulers.immediate())
         .takeWhile(this::canGetNext)
         .subscribe(genres -> {
-          genreRepository.save(GenreMapper.map(genres.getData()));
+          genreRepository.save(GenreMapper.INSTANCE.map(genres.getData()));
         },this::handlerError);
   }
 
@@ -121,7 +121,7 @@ public class LibrarySyncManager {
         .concatMap(integer -> service.getLibraryArtists(LIMIT * integer, LIMIT, after))
         .subscribeOn(Schedulers.immediate())
         .takeWhile(this::canGetNext)
-        .subscribe(artists -> artistRepository.save(ArtistMapper.map(artists.getData())), this::handlerError, () -> {
+        .subscribe(artists -> artistRepository.save(ArtistMapper.INSTANCE.map(artists.getData())), this::handlerError, () -> {
 
         });
   }
@@ -141,7 +141,7 @@ public class LibrarySyncManager {
         .subscribeOn(Schedulers.immediate())
         .takeWhile(this::canGetNext)
         .subscribe(albums -> {
-          List<AlbumDao> daos = AlbumMapper.mapDtos(albums.getData(), cachedCovers, cachedArtists);
+          List<AlbumDao> daos = AlbumMapper.INSTANCE.mapDtos(albums.getData(), cachedCovers, cachedArtists);
           albumRepository.save(daos);
         }, this::handlerError, () -> {
         });
@@ -153,7 +153,7 @@ public class LibrarySyncManager {
         .subscribeOn(Schedulers.immediate())
         .takeWhile(this::canGetNext)
         .subscribe(covers -> {
-          coverRepository.save(CoverMapper.map(covers.getData()));
+          coverRepository.save(CoverMapper.INSTANCE.map(covers.getData()));
         }, this::handlerError, () -> {
         });
   }
@@ -174,7 +174,7 @@ public class LibrarySyncManager {
         .subscribeOn(Schedulers.immediate())
         .takeWhile(this::canGetNext)
         .subscribe(tracks -> {
-          playlistRepository.savePlaylistTracks(PlaylistTrackMapper.map(tracks.getData(),
+          playlistRepository.savePlaylistTracks(PlaylistTrackMapper.INSTANCE.map(tracks.getData(),
               playlistRepository::getPlaylistById,
               playlistRepository::getTrackInfoById));
         }, this::handlerError);
@@ -186,7 +186,7 @@ public class LibrarySyncManager {
         .subscribeOn(Schedulers.immediate())
         .takeWhile(this::canGetNext)
         .subscribe(info -> {
-          playlistRepository.savePlaylistTrackInfo(PlaylistTrackInfoMapper.map(info.getData()));
+          playlistRepository.savePlaylistTrackInfo(PlaylistTrackInfoMapper.INSTANCE.map(info.getData()));
         }, this::handlerError);
   }
 }

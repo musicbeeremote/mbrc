@@ -148,7 +148,7 @@ public class ServiceDiscovery {
 
           DiscoveryResponse node = mapper.readValue(incoming, DiscoveryResponse.class);
           if (NOTIFY.equals(node.getContext())) {
-            subscriber.onNext(DeviceSettingsMapper.fromResponse(node));
+            subscriber.onNext(DeviceSettingsMapper.INSTANCE.fromResponse(node));
             subscriber.onCompleted();
             break;
           }
