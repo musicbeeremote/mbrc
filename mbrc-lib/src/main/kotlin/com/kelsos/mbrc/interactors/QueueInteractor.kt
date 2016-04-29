@@ -13,7 +13,7 @@ import rx.schedulers.Schedulers
 class QueueInteractor {
     @Inject private lateinit var service: NowPlayingService
 
-    fun execute(@MetaDataType.Type type: String, @Queue.Action action: String, id: Int): Observable<Boolean> {
+    fun execute(@MetaDataType.Type type: String, @Queue.Action action: String, id: Long): Observable<Boolean> {
         val body = NowPlayingQueueRequest()
         body.action = action
         body.id = id

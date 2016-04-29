@@ -126,6 +126,10 @@ android {
     preDexLibraries false
     javaMaxHeapSize "2g"
   }
+
+  sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+  }
 }
 
 idea {

@@ -13,7 +13,7 @@ class NowPlayingQueueRequest {
 
     @MetaDataType.Type @JsonProperty("type") var type: String = MetaDataType.UNDEF
     @Queue.Action @JsonProperty("action") var action: String = Queue.UNDEF
-    @JsonProperty("id") var id: Int = 0
+    @JsonProperty("id") var id: Long = 0
     @JsonProperty("path") var path: String = String.empty
 }
 
