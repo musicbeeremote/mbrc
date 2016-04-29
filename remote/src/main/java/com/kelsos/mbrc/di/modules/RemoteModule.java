@@ -184,5 +184,6 @@ import roboguice.inject.fragment.SupportFragmentManagerProvider;
 
     bind(NotificationManagerCompat.class).toProvider(NotificationManagerCompatProvider.class).in(Singleton.class);
     bind(FragmentManager.class).toProvider(SupportFragmentManagerProvider.class).in(ContextSingleton.class);
+    bind(com.kelsos.mbrc.utilities.KeyProvider.class).to(com.kelsos.mbrc.utilities.KeyProviderImpl.class);
   }
 }
