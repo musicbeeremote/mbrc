@@ -37,7 +37,7 @@ public class StateBroadcastReceiver extends BroadcastReceiver {
     NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
     if (networkInfo.getState().equals(NetworkInfo.State.CONNECTED)) {
 
-      bus.post(MessageEvent.newInstance(UserInputEventType.StartConnection));
+      bus.post(MessageEvent.Companion.newInstance(UserInputEventType.StartConnection));
     } else //noinspection StatementWithEmptyBody
       if (NetworkInfo.State.DISCONNECTING.equals(networkInfo.getState())) {
 

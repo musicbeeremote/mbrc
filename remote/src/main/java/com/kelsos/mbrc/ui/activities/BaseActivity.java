@@ -242,10 +242,10 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
     switch (keyCode) {
       case KeyEvent.KEYCODE_VOLUME_UP:
-        rxBus.post(MessageEvent.newInstance(UserInputEventType.KeyVolumeUp));
+        rxBus.post(MessageEvent.Companion.newInstance(UserInputEventType.KeyVolumeUp));
         return true;
       case KeyEvent.KEYCODE_VOLUME_DOWN:
-        rxBus.post(MessageEvent.newInstance(UserInputEventType.KeyVolumeDown));
+        rxBus.post(MessageEvent.Companion.newInstance(UserInputEventType.KeyVolumeDown));
         return true;
       default:
         return super.onKeyDown(keyCode, event);
@@ -294,7 +294,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
   }
 
   private void onConnectClick() {
-    rxBus.post(ChangeWebSocketStatusEvent.newInstance(ChangeWebSocketStatusEvent.CONNECT));
+    rxBus.post(ChangeWebSocketStatusEvent.Companion.newInstance(ChangeWebSocketStatusEvent.CONNECT));
   }
 
   private void onExitClicked() {

@@ -56,7 +56,7 @@ public class DeviceManagerActivity extends AppCompatActivity
     mBuilder.content(R.string.progress_scanning_message);
     mBuilder.progress(true, 0);
     progressDialog = mBuilder.show();
-    bus.post(MessageEvent.newInstance(UserInputEventType.StartDiscovery));
+    bus.post(MessageEvent.Companion.newInstance(UserInputEventType.StartDiscovery));
   }
 
   @Override protected void onCreate(Bundle savedInstanceState) {

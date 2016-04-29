@@ -93,7 +93,7 @@ import timber.log.Timber;
   @Override public void onOpen(WebSocket webSocket, Response response) {
     this.webSocket = webSocket;
     this.connected = true;
-    rxBus.post(ConnectionStatusChangeEvent.create(Connection.ON));
+    rxBus.post(ConnectionStatusChangeEvent.Companion.create(Connection.ON));
     String message = "{\"message\":\"connected\"}";
     Send(webSocket, message);
 
@@ -132,7 +132,7 @@ import timber.log.Timber;
     stopPing();
     this.connected = false;
     Timber.e(e, "[Websocket] io ex");
-    rxBus.post(ConnectionStatusChangeEvent.create(Connection.OFF));
+    rxBus.post(ConnectionStatusChangeEvent.Companion.create(Connection.OFF));
   }
 
   @Override public void onMessage(ResponseBody responseBody) throws IOException {
@@ -148,7 +148,7 @@ import timber.log.Timber;
     subscription.unsubscribe();
     webSocket = null;
     Timber.v("[Websocket] closing (%d) %s", code, reason);
-    rxBus.post(ConnectionStatusChangeEvent.create(Connection.OFF));
+    rxBus.post(ConnectionStatusChangeEvent.Companion.create(Connection.OFF));
   }
 
   public void disconnect() {

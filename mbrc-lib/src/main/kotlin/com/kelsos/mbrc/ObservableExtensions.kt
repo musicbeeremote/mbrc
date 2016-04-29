@@ -11,3 +11,8 @@ import rx.schedulers.Schedulers
 fun<T> Observable<T>.task() : Observable<T> {
   return this.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 }
+
+fun<T> Observable<T>.io() : Observable<T> {
+  return this.subscribeOn(Schedulers.io())
+}
+
