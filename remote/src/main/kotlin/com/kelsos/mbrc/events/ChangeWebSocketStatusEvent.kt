@@ -5,7 +5,7 @@ import android.support.annotation.IntDef
 class ChangeWebSocketStatusEvent private constructor()//no instance
 {
 
-  @Action var action: Int = 0
+  @Action var action: Long = 0
     private set
 
   @IntDef(CONNECT , DISCONNECT)
@@ -16,7 +16,7 @@ class ChangeWebSocketStatusEvent private constructor()//no instance
     const val CONNECT = 1L
     const val DISCONNECT = 2L
 
-    fun newInstance(@Action action: Int): ChangeWebSocketStatusEvent {
+    fun newInstance(@Action action: Long): ChangeWebSocketStatusEvent {
       val event = ChangeWebSocketStatusEvent()
       event.action = action
       return event
