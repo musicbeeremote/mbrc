@@ -5,7 +5,7 @@ import com.kelsos.mbrc.dao.ArtistDao
 import com.kelsos.mbrc.dao.ArtistDao_Table
 import com.kelsos.mbrc.dao.TrackDao
 import com.kelsos.mbrc.dao.TrackDao_Table
-import com.kelsos.mbrc.empty
+import com.kelsos.mbrc.extensions.empty
 import com.raizlabs.android.dbflow.annotation.Column
 import com.raizlabs.android.dbflow.annotation.ModelView
 import com.raizlabs.android.dbflow.annotation.ModelViewQuery

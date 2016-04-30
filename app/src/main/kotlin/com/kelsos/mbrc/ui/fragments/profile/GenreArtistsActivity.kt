@@ -14,7 +14,7 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.ArtistAdapter
 import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.domain.Artist
-import com.kelsos.mbrc.empty
+import com.kelsos.mbrc.extensions.empty
 import com.kelsos.mbrc.presenters.GenreArtistsPresenter
 import com.kelsos.mbrc.ui.views.GenreArtistView
 import roboguice.RoboGuice

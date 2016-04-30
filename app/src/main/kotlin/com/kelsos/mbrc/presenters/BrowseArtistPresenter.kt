@@ -7,7 +7,7 @@ import com.kelsos.mbrc.constants.Constants
 import com.kelsos.mbrc.domain.Artist
 import com.kelsos.mbrc.interactors.LibraryArtistInteractor
 import com.kelsos.mbrc.interactors.QueueInteractor
-import com.kelsos.mbrc.task
+import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.ui.views.BrowseArtistView
 import roboguice.util.Ln
 import rx.android.schedulers.AndroidSchedulers

@@ -2,7 +2,7 @@ package com.kelsos.mbrc.dao.views
 
 import com.kelsos.mbrc.RemoteDatabase
 import com.kelsos.mbrc.dao.*
-import com.kelsos.mbrc.empty
+import com.kelsos.mbrc.extensions.empty
 import com.raizlabs.android.dbflow.annotation.Column
 import com.raizlabs.android.dbflow.annotation.ModelView
 import com.raizlabs.android.dbflow.annotation.ModelViewQuery

@@ -6,7 +6,7 @@ import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.domain.Track
 import com.kelsos.mbrc.interactors.LibraryTrackInteractor
 import com.kelsos.mbrc.interactors.QueueInteractor
-import com.kelsos.mbrc.task
+import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.ui.views.BrowseTrackView
 import roboguice.util.Ln
 

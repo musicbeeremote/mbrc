@@ -2,7 +2,7 @@ package com.kelsos.mbrc.viewmodels
 
 import android.graphics.Bitmap
 import com.kelsos.mbrc.annotations.PlayerState
-import com.kelsos.mbrc.empty
+import com.kelsos.mbrc.extensions.empty
 
 class MiniControlModel {
   private var cover: Bitmap? = null

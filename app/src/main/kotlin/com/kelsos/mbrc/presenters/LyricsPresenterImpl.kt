@@ -3,7 +3,7 @@ package com.kelsos.mbrc.presenters
 import com.google.inject.Inject
 import com.kelsos.mbrc.events.ui.LyricsChangedEvent
 import com.kelsos.mbrc.interactors.TrackLyricsInteractor
-import com.kelsos.mbrc.task
+import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.ui.views.LyricsView
 import com.kelsos.mbrc.utilities.RxBus
 import roboguice.util.Ln

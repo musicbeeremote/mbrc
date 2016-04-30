@@ -21,7 +21,7 @@ import com.kelsos.mbrc.interactors.TrackCoverInteractor
 import com.kelsos.mbrc.interactors.TrackInfoInteractor
 import com.kelsos.mbrc.interactors.TrackPositionInteractor
 import com.kelsos.mbrc.interactors.VolumeInteractor
-import com.kelsos.mbrc.task
+import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.ui.views.MainView
 import com.kelsos.mbrc.utilities.ErrorHandler
 import com.kelsos.mbrc.utilities.RxBus

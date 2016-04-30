@@ -19,7 +19,7 @@ import com.kelsos.mbrc.interactors.TrackCoverInteractor
 import com.kelsos.mbrc.interactors.TrackInfoInteractor
 import com.kelsos.mbrc.interactors.TrackLyricsInteractor
 import com.kelsos.mbrc.interactors.VolumeInteractor
-import com.kelsos.mbrc.io
+import com.kelsos.mbrc.extensions.io
 import com.kelsos.mbrc.repository.TrackRepository
 import com.kelsos.mbrc.utilities.RxBus
 import rx.Subscription

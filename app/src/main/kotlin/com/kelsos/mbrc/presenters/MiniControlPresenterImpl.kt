@@ -9,7 +9,7 @@ import com.kelsos.mbrc.interactors.PlayerInteractor
 import com.kelsos.mbrc.interactors.PlayerStateInteractor
 import com.kelsos.mbrc.interactors.TrackCoverInteractor
 import com.kelsos.mbrc.interactors.TrackInfoInteractor
-import com.kelsos.mbrc.task
+import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.ui.views.MiniControlView
 import com.kelsos.mbrc.utilities.ErrorHandler
 import com.kelsos.mbrc.utilities.RxBus

@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.dao
 
 import com.kelsos.mbrc.RemoteDatabase
-import com.kelsos.mbrc.empty
+import com.kelsos.mbrc.extensions.empty
 import com.raizlabs.android.dbflow.annotation.*
 import com.raizlabs.android.dbflow.structure.BaseModel
 

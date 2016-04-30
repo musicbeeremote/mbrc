@@ -7,7 +7,7 @@ import com.kelsos.mbrc.constants.Constants.PAGE_SIZE
 import com.kelsos.mbrc.domain.Album
 import com.kelsos.mbrc.interactors.LibraryAlbumInteractor
 import com.kelsos.mbrc.interactors.QueueInteractor
-import com.kelsos.mbrc.task
+import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.ui.views.BrowseAlbumView
 import roboguice.util.Ln
 

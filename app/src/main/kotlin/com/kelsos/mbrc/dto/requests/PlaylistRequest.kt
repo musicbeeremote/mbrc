@@ -3,7 +3,7 @@ package com.kelsos.mbrc.dto.requests
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.kelsos.mbrc.empty
+import com.kelsos.mbrc.extensions.empty
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

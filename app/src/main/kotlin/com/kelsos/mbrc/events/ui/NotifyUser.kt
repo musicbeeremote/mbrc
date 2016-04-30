@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.events.ui
 
-import com.kelsos.mbrc.empty
+import com.kelsos.mbrc.extensions.empty
 
 class NotifyUser {
   val message: String

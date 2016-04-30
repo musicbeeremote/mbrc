@@ -1,4 +1,4 @@
-package com.kelsos.mbrc
+package com.kelsos.mbrc.extensions
 
 val String.Companion.empty: String
     get() = "";

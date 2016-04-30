@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.utilities
 
-import com.kelsos.mbrc.main
+import com.kelsos.mbrc.extensions.main
 import rx.Observable
 import rx.Subscription
 import rx.functions.Func1

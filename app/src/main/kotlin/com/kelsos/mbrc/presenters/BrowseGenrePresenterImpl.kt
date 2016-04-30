@@ -8,7 +8,7 @@ import com.kelsos.mbrc.domain.Genre
 import com.kelsos.mbrc.interactors.QueueInteractor
 import com.kelsos.mbrc.interactors.library.LibraryGenreInteractor
 import com.kelsos.mbrc.interactors.playlists.PlaylistAddInteractor
-import com.kelsos.mbrc.task
+import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.ui.views.BrowseGenreView
 import roboguice.util.Ln
 import timber.log.Timber

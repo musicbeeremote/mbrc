@@ -7,7 +7,7 @@ import android.content.IntentFilter
 import com.google.inject.Inject
 import com.kelsos.mbrc.annotations.PlayerAction
 import com.kelsos.mbrc.interactors.PlayerInteractor
-import com.kelsos.mbrc.io
+import com.kelsos.mbrc.extensions.io
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder
 import roboguice.RoboGuice
 import timber.log.Timber

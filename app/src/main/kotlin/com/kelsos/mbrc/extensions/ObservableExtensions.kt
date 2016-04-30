@@ -1,4 +1,4 @@
-package com.kelsos.mbrc
+package com.kelsos.mbrc.extensions
 
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
