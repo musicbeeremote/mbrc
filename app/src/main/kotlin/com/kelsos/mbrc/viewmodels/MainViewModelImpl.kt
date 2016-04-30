@@ -19,9 +19,7 @@ class MainViewModelImpl : MainViewModel {
   override var isMuted: Boolean = false
   @IntRange(from = -1, to = 100) override var volume: Int = 0
   override var isLoaded: Boolean = false
-    private set(value: Boolean) {
-      isLoaded = value
-    }
+    private set
 
   init {
     trackInfo = TrackInfo()

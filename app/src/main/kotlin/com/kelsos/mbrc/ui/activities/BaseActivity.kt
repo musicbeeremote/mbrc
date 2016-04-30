@@ -37,11 +37,7 @@ import com.kelsos.mbrc.events.ui.DisplayDialog
 import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment
-import com.kelsos.mbrc.ui.navigation.LibraryActivity
-import com.kelsos.mbrc.ui.navigation.LyricsActivity
-import com.kelsos.mbrc.ui.navigation.MainActivity
-import com.kelsos.mbrc.ui.navigation.NowPlayingActivity
-import com.kelsos.mbrc.ui.navigation.PlaylistListActivity
+import com.kelsos.mbrc.ui.navigation.*
 import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.viewmodels.ConnectionStatusModel
 import roboguice.RoboGuice
@@ -101,11 +97,9 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     toggle = ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close)
     toggle!!.syncState()
 
-    val actionBar = supportActionBar
-    if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(true)
-      supportActionBar!!.setHomeButtonEnabled(true)
-    }
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    supportActionBar?.setHomeButtonEnabled(true)
+
   }
 
   override fun onResume() {

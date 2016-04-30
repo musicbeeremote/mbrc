@@ -123,8 +123,9 @@ import roboguice.RoboGuice
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
     RoboGuice.getInjector(this).injectMembers(this)
-    initialize(toolbar,drawer,navigationView)
     ButterKnife.bind(this)
+    initialize(toolbar,drawer,navigationView)
+
     setCurrentSelection(R.id.drawer_menu_home)
     presenter.bind(this)
 
