@@ -30,9 +30,10 @@ class LyricsActivity : BaseActivity(), LyricsView {
     super.onCreate(savedInstanceState)
     RoboGuice.getInjector(this).injectMembers(this)
     setContentView(R.layout.activity_lyrics)
+    ButterKnife.bind(this)
     initialize(toolbar,drawer,navigationView)
     setCurrentSelection(R.id.drawer_menu_lyrics)
-    ButterKnife.bind(this)
+
     presenter.bind(this)
     recyclerView.setHasFixedSize(true)
     val layoutManager = LinearLayoutManager(baseContext)

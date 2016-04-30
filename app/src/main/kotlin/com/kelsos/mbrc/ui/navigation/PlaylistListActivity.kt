@@ -33,9 +33,10 @@ class PlaylistListActivity : BaseActivity(), PlaylistListView, OnPlaylistPlayPre
     super.onCreate(savedInstanceState)
     RoboGuice.getInjector(this).injectMembers(this)
     setContentView(R.layout.activity_playlist_list)
+    ButterKnife.bind(this)
     initialize(toolbar,drawer,navigationView)
     setCurrentSelection(R.id.drawer_menu_playlist)
-    ButterKnife.bind(this)
+
     presenter.bind(this)
     adapter.setOnPlaylistPlayPressedListener(this)
 

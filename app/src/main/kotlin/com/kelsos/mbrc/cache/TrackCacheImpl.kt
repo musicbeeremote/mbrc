@@ -10,7 +10,6 @@ import java.util.*
 @Singleton class TrackCacheImpl : TrackCache {
     override var trackinfo: TrackInfo = TrackInfo()
     override var lyrics: List<String> = ArrayList()
-        get() = lyrics
     override var cover: Bitmap? = null
     override var position: TrackPosition = TrackPosition()
     override var rating: TrackRating = TrackRating()

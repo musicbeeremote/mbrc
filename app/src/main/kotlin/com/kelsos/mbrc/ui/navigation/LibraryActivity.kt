@@ -37,9 +37,10 @@ class LibraryActivity : BaseActivity(), LibraryActivityView {
     setContentView(R.layout.activity_library)
     RoboGuice.getInjector(this).injectMembers(this)
     presenter.bind(this)
+    ButterKnife.bind(this)
     initialize(toolbar,drawer,navigationView)
     setCurrentSelection(R.id.drawer_menu_library)
-    ButterKnife.bind(this)
+
     pager.adapter = adapter
     tabLayout.setupWithViewPager(pager)
     presenter.checkLibrary()
