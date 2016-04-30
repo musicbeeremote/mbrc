@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -16,7 +16,7 @@ import roboguice.RoboGuice
 
 class LyricsActivity : BaseActivity(), LyricsView {
 
-  @Bind(R.id.lyrics_recycler_view) lateinit var recyclerView: RecyclerView
+  @BindView(R.id.lyrics_recycler_view) lateinit var recyclerView: RecyclerView
   @Inject private lateinit var adapter: LyricsAdapter
   @Inject private lateinit var presenter: LyricsPresenter
 

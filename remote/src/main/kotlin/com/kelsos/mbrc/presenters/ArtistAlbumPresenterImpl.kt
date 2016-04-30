@@ -18,7 +18,7 @@ class ArtistAlbumPresenterImpl : ArtistAlbumPresenter {
 
   override fun load(artistId: Long) {
     artistAlbumInteractor.getArtistAlbums(artistId)
-        .subscribe({ model -> view!!.update(model) }) { t -> view!!.showLoadFailed() }
+        .subscribe({ view?.update(it) }) { view?.showLoadFailed() }
   }
 
   override fun bind(view: ArtistAlbumsView) {
@@ -27,7 +27,7 @@ class ArtistAlbumPresenterImpl : ArtistAlbumPresenter {
   }
 
   override fun queue(@Queue.Action action: String, album: Album) {
-    queueInteractor.execute(MetaDataType.ALBUM, action, album.id.toInt()).subscribe({
+    queueInteractor.execute(MetaDataType.ALBUM, action, album.id).subscribe({
       if (it!!) {
         view?.queueSuccess()
       }

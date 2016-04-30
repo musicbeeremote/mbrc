@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.TextView
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -84,8 +84,8 @@ class AlbumProfileAdapter
   }
 
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    @Bind(R.id.line_one) lateinit internal var lineOne: TextView
-    @Bind(R.id.ui_item_context_indicator) lateinit internal var overflow: View
+    @BindView(R.id.line_one) lateinit internal var lineOne: TextView
+    @BindView(R.id.ui_item_context_indicator) lateinit internal var overflow: View
 
     init {
       ButterKnife.bind(this, itemView)

@@ -7,7 +7,7 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -19,8 +19,8 @@ import com.kelsos.mbrc.ui.views.ArtistAlbumsView
 import roboguice.RoboGuice
 
 class ArtistAlbumsActivity : AppCompatActivity(), ArtistAlbumsView, AlbumAdapter.MenuItemSelectedListener {
-  @Bind(R.id.album_recycler) lateinit internal var recyclerView: RecyclerView
-  @Bind(R.id.toolbar) lateinit internal var toolbar: Toolbar
+  @BindView(R.id.album_recycler) lateinit internal var recyclerView: RecyclerView
+  @BindView(R.id.toolbar) lateinit internal var toolbar: Toolbar
   @Inject private lateinit var adapter: AlbumAdapter
   @Inject private lateinit var presenter: ArtistAlbumPresenter
 

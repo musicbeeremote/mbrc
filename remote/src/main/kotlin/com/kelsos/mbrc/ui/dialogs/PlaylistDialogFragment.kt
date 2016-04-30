@@ -11,7 +11,7 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.EditText
 import android.widget.RelativeLayout
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
@@ -26,10 +26,10 @@ import timber.log.Timber
 
 class PlaylistDialogFragment : DialogFragment(), PlaylistDialogView {
 
-  @Bind(R.id.playlist_dialog_playlists) internal lateinit var playlistsRecycler: RecyclerView
-  @Bind(R.id.playlist_name_wrapper) internal lateinit var nameWrapper: RelativeLayout
-  @Bind(R.id.playlist_name_text) internal lateinit var name: EditText
-  @Bind(R.id.playlist_name_til) internal lateinit var textInputLayout: TextInputLayout
+  @BindView(R.id.playlist_dialog_playlists) internal lateinit var playlistsRecycler: RecyclerView
+  @BindView(R.id.playlist_name_wrapper) internal lateinit var nameWrapper: RelativeLayout
+  @BindView(R.id.playlist_name_text) internal lateinit var name: EditText
+  @BindView(R.id.playlist_name_til) internal lateinit var textInputLayout: TextInputLayout
 
   @Inject private lateinit var adapter: PlaylistDialogAdapter
   @Inject private lateinit var presenter: PlaylistDialogPresenter
@@ -94,7 +94,7 @@ class PlaylistDialogFragment : DialogFragment(), PlaylistDialogView {
     val dialog = builder.build()
 
     val view = dialog.customView
-    ButterKnife.bind(this, view)
+    ButterKnife.bind(this, view!!)
     playlistsRecycler.layoutManager = LinearLayoutManager(context)
     playlistsRecycler.adapter = adapter
     presenter.bind(this)

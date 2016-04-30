@@ -4,7 +4,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.widget.RatingBar
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.inject.Inject
@@ -13,12 +13,11 @@ import com.kelsos.mbrc.events.ui.RatingChanged
 import com.kelsos.mbrc.interactors.TrackRatingInteractor
 import com.kelsos.mbrc.utilities.RxBus
 import roboguice.RoboGuice
-import rx.functions.Action1
 import timber.log.Timber
 
 class RatingDialogFragment : DialogFragment() {
 
-  @Bind(R.id.ratingBar) internal lateinit var ratingBar: RatingBar
+  @BindView(R.id.ratingBar) internal lateinit var ratingBar: RatingBar
   @Inject private lateinit var bus: RxBus
   @Inject private lateinit var ratingInteractor: TrackRatingInteractor
   private var mRating: Float = 0.toFloat()
@@ -26,7 +25,7 @@ class RatingDialogFragment : DialogFragment() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     RoboGuice.getInjector(context).injectMembers(this)
-    bus.registerOnMain(this, RatingChanged::class.java, Action1<RatingChanged> { this.handleRatingChange(it) })
+    bus.registerOnMain(this, RatingChanged::class.java, { this.handleRatingChange(it) })
   }
 
   override fun onDestroy() {
@@ -43,7 +42,7 @@ class RatingDialogFragment : DialogFragment() {
     builder.customView(R.layout.ui_dialog_rating, false)
 
     val dialog = builder.build()
-    ButterKnife.bind(this, dialog.customView)
+    ButterKnife.bind(this, dialog.customView!!)
 
     ratingBar.setOnRatingBarChangeListener { ratingBar, ratingValue, isUserInitiated ->
       if (isUserInitiated) {

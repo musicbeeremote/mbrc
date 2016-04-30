@@ -10,13 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.domain.Artist
 import com.kelsos.mbrc.utilities.FontUtils
-import java.util.ArrayList
+import java.util.*
 
 class ArtistAdapter
 @Inject
@@ -51,10 +51,10 @@ constructor(context: Context) : RecyclerView.Adapter<ArtistAdapter.ViewHolder>()
     holder.indicator.setOnClickListener { v ->
       val popupMenu = PopupMenu(v.context, v)
       popupMenu.inflate(R.menu.popup_artist)
-      popupMenu.setOnMenuItemClickListener { menuItem ->
+      popupMenu.setOnMenuItemClickListener listener@{ menuItem ->
         if (mListener != null) {
           mListener!!.onMenuItemSelected(menuItem, entry)
-          return@popupMenu.setOnMenuItemClickListener true
+          return@listener true
         }
         false
       }
@@ -88,8 +88,8 @@ constructor(context: Context) : RecyclerView.Adapter<ArtistAdapter.ViewHolder>()
   }
 
   class ViewHolder(itemView: View, typeface: Typeface) : RecyclerView.ViewHolder(itemView) {
-    @Bind(R.id.line_one) internal var title: TextView
-    @Bind(R.id.ui_item_context_indicator) internal var indicator: LinearLayout
+    @BindView(R.id.line_one) internal lateinit var title: TextView
+    @BindView(R.id.ui_item_context_indicator) internal lateinit var indicator: LinearLayout
 
     init {
       ButterKnife.bind(this, itemView)

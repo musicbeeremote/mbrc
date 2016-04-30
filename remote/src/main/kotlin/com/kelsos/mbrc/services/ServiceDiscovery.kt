@@ -16,7 +16,6 @@ import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.utilities.SettingsManager
 import roboguice.util.Ln
 import rx.Observable
-import rx.functions.Action1
 import rx.schedulers.Schedulers
 import timber.log.Timber
 import java.io.IOException
@@ -35,7 +34,7 @@ constructor(private val manager: WifiManager,
   private var multicastLock: WifiManager.MulticastLock? = null
 
   init {
-    bus.register(this, MessageEvent::class.java, Action1<MessageEvent> { this.onDiscoveryMessage(it) })
+    bus.register(this, MessageEvent::class.java, { this.onDiscoveryMessage(it) })
   }
 
   fun onDiscoveryMessage(messageEvent: MessageEvent) {

@@ -16,7 +16,6 @@ import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder
 import com.kelsos.mbrc.utilities.RxBus
 import roboguice.RoboGuice
-import rx.functions.Action1
 import timber.log.Timber
 import java.util.*
 
@@ -35,9 +34,9 @@ class WidgetSmall : AppWidgetProvider() {
     widgetsIds = appWidgetIds
 
     try {
-      bus!!.register(this, PlayStateChange::class.java, Action1<PlayStateChange> { this.updatePlayState(it) })
-      bus.register(this, CoverChangedEvent::class.java, Action1<CoverChangedEvent> { this.updateCover(it) })
-      bus.register(this, TrackInfoChangeEvent::class.java, Action1<TrackInfoChangeEvent> { this.updateDisplay(it) })
+      bus.register(this, PlayStateChange::class.java, { this.updatePlayState(it) })
+      bus.register(this, CoverChangedEvent::class.java, { this.updateCover(it) })
+      bus.register(this, TrackInfoChangeEvent::class.java,  { this.updateDisplay(it) })
     } catch (ignore: Exception) {
       // It was already registered so ignore
     }

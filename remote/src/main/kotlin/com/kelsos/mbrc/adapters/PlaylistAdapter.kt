@@ -8,7 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -76,9 +76,9 @@ constructor(context: Context) : RecyclerView.Adapter<PlaylistAdapter.PlaylistTra
   }
 
   class PlaylistTrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    @Bind(R.id.line_one) lateinit var lineOne: TextView
-    @Bind(R.id.line_two) lateinit var lineTwo: TextView
-    @Bind(R.id.ui_item_context_indicator) lateinit  var overflow: View
+    @BindView(R.id.line_one) lateinit var lineOne: TextView
+    @BindView(R.id.line_two) lateinit var lineTwo: TextView
+    @BindView(R.id.ui_item_context_indicator) lateinit  var overflow: View
 
     init {
       ButterKnife.bind(this, itemView)

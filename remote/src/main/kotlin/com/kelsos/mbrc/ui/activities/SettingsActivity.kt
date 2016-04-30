@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -13,7 +13,7 @@ import com.kelsos.mbrc.utilities.RxBus
 
 class SettingsActivity : AppCompatActivity() {
 
-  @Bind(R.id.toolbar) internal lateinit var toolbar: Toolbar
+  @BindView(R.id.toolbar) internal lateinit var toolbar: Toolbar
   @Inject private lateinit var bus: RxBus
 
   override fun onCreate(savedInstanceState: Bundle?) {

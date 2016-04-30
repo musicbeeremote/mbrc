@@ -9,13 +9,11 @@ import android.support.v7.widget.ShareActionProvider
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
-import butterknife.Bind
-import butterknife.ButterKnife
+import butterknife.BindView
 import butterknife.OnClick
 import butterknife.OnLongClick
 import com.google.inject.Inject
@@ -36,18 +34,18 @@ import roboguice.RoboGuice
 
 @Singleton class MainActivity : BaseActivity(), MainView {
   // Inject elements of the view
-  @Bind(R.id.main_artist_label) lateinit var artistLabel: TextView
-  @Bind(R.id.main_title_label) lateinit var titleLabel: TextView
-  @Bind(R.id.main_label_album) lateinit var albumLabel: TextView
-  @Bind(R.id.main_track_progress_current) lateinit var trackProgressCurrent: TextView
-  @Bind(R.id.main_track_duration_total) lateinit var trackDuration: TextView
-  @Bind(R.id.main_button_play_pause) lateinit var playPauseButton: ImageButton
-  @Bind(R.id.main_volume_seeker) lateinit var volumeBar: SeekBar
-  @Bind(R.id.main_track_progress_seeker) lateinit var progressBar: SeekBar
-  @Bind(R.id.main_mute_button) lateinit var muteButton: ImageButton
-  @Bind(R.id.main_shuffle_button) lateinit var shuffleButton: ImageButton
-  @Bind(R.id.main_repeat_button) lateinit var repeatButton: ImageButton
-  @Bind(R.id.main_album_cover_image_view) lateinit var albumCover: ImageView
+  @BindView(R.id.main_artist_label) lateinit var artistLabel: TextView
+  @BindView(R.id.main_title_label) lateinit var titleLabel: TextView
+  @BindView(R.id.main_label_album) lateinit var albumLabel: TextView
+  @BindView(R.id.main_track_progress_current) lateinit var trackProgressCurrent: TextView
+  @BindView(R.id.main_track_duration_total) lateinit var trackDuration: TextView
+  @BindView(R.id.main_button_play_pause) lateinit var playPauseButton: ImageButton
+  @BindView(R.id.main_volume_seeker) lateinit var volumeBar: SeekBar
+  @BindView(R.id.main_track_progress_seeker) lateinit var progressBar: SeekBar
+  @BindView(R.id.main_mute_button) lateinit var muteButton: ImageButton
+  @BindView(R.id.main_shuffle_button) lateinit var shuffleButton: ImageButton
+  @BindView(R.id.main_repeat_button) lateinit var repeatButton: ImageButton
+  @BindView(R.id.main_album_cover_image_view) lateinit var albumCover: ImageView
 
   @Inject private lateinit var presenter: MainViewPresenter
 
@@ -84,11 +82,11 @@ import roboguice.RoboGuice
     }
   }
 
-  @OnClick(R.id.main_button_play_pause) fun playButtonPressed(v: View) {
+  @OnClick(R.id.main_button_play_pause) fun playButtonPressed() {
     presenter.onPlayPausePressed()
   }
 
-  @OnClick(R.id.main_button_previous) fun onPreviousButtonPressed(v: View) {
+  @OnClick(R.id.main_button_previous) fun onPreviousButtonPressed() {
     presenter.onPreviousPressed()
   }
 
@@ -101,15 +99,15 @@ import roboguice.RoboGuice
     return true
   }
 
-  @OnClick(R.id.main_mute_button) fun onMuteButtonPressed(v: View) {
+  @OnClick(R.id.main_mute_button) fun onMuteButtonPressed() {
     presenter.onMutePressed()
   }
 
-  @OnClick(R.id.main_shuffle_button) fun onShuffleButtonClicked(v: View) {
+  @OnClick(R.id.main_shuffle_button) fun onShuffleButtonClicked() {
     presenter.onShufflePressed()
   }
 
-  @OnClick(R.id.main_repeat_button) fun onRepeatButtonPressed(v: View) {
+  @OnClick(R.id.main_repeat_button) fun onRepeatButtonPressed() {
     presenter.onRepeatPressed()
   }
 
@@ -119,7 +117,6 @@ import roboguice.RoboGuice
     RoboGuice.getInjector(this).injectMembers(this)
     initialize()
     setCurrentSelection(R.id.drawer_menu_home)
-    ButterKnife.bind(this)
     presenter.bind(this)
 
     artistLabel.isSelected = true

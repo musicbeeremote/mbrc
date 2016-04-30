@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -52,7 +52,7 @@ class PlaylistDialogAdapter
   }
 
   class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    @Bind(R.id.line_one) lateinit var text: TextView
+    @BindView(R.id.line_one) lateinit var text: TextView
 
     init {
       ButterKnife.bind(this, view)

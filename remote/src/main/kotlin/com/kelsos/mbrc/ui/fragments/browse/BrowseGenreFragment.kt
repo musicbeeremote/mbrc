@@ -12,7 +12,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -28,7 +28,7 @@ import roboguice.RoboGuice
 
 class BrowseGenreFragment : Fragment(), BrowseGenreView, GenreAdapter.MenuItemSelectedListener, PlaylistDialogFragment.PlaylistActionListener {
 
-  @Bind(R.id.library_recycler) internal var recyclerView: RecyclerView
+  @BindView(R.id.library_recycler) internal lateinit var recyclerView: RecyclerView
   @Inject private lateinit var adapter: GenreAdapter
   @Inject private lateinit var presenter: BrowseGenrePresenter
   private var scrollListener: EndlessRecyclerViewScrollListener? = null
@@ -48,7 +48,7 @@ class BrowseGenreFragment : Fragment(), BrowseGenreView, GenreAdapter.MenuItemSe
                             savedInstanceState: Bundle?): View? {
     val view = inflater.inflate(R.layout.fragment_library, container, false)
     ButterKnife.bind(this, view)
-    presenter!!.bind(this)
+    presenter.bind(this)
     val layoutManager = LinearLayoutManager(context)
     recyclerView.layoutManager = layoutManager
     recyclerView.adapter = adapter
@@ -57,13 +57,13 @@ class BrowseGenreFragment : Fragment(), BrowseGenreView, GenreAdapter.MenuItemSe
         presenter.load(page)
       }
     }
-    adapter!!.setMenuItemSelectedListener(this)
+    adapter.setMenuItemSelectedListener(this)
     presenter.load()
     return view
   }
 
   override fun update(data: List<Genre>) {
-    adapter!!.updateData(data)
+    adapter.updateData(data)
   }
 
   override fun showEnqueueFailure() {
@@ -75,16 +75,16 @@ class BrowseGenreFragment : Fragment(), BrowseGenreView, GenreAdapter.MenuItemSe
   }
 
   override fun clear() {
-    adapter!!.clear()
+    adapter.clear()
   }
 
-  override fun onMenuItemSelected(item: MenuItem, genre: Genre) {
-    when (item.itemId) {
-      R.id.popup_genre_play -> presenter!!.queue(genre, Queue.NOW)
-      R.id.popup_genre_queue_last -> presenter!!.queue(genre, Queue.LAST)
-      R.id.popup_genre_queue_next -> presenter!!.queue(genre, Queue.NEXT)
-      R.id.popup_genre_playlist -> showPlaylistDialog(genre.id)
-      R.id.popup_genre_artists -> openProfile(genre)
+  override fun onMenuItemSelected(menuItem: MenuItem, entry: Genre) {
+    when (menuItem.itemId) {
+      R.id.popup_genre_play -> presenter.queue(entry, Queue.NOW)
+      R.id.popup_genre_queue_last -> presenter.queue(entry, Queue.LAST)
+      R.id.popup_genre_queue_next -> presenter.queue(entry, Queue.NEXT)
+      R.id.popup_genre_playlist -> showPlaylistDialog(entry.id)
+      R.id.popup_genre_artists -> openProfile(entry)
       else -> {
       }
     }
@@ -118,11 +118,11 @@ class BrowseGenreFragment : Fragment(), BrowseGenreView, GenreAdapter.MenuItemSe
   }
 
   override fun onExistingSelected(selectionId: Long, playlistId: Long) {
-    presenter!!.playlistAdd(selectionId, playlistId)
+    presenter.playlistAdd(selectionId, playlistId)
   }
 
   override fun onNewSelected(selectionId: Long, name: String) {
-    presenter!!.createPlaylist(selectionId, name)
+    presenter.createPlaylist(selectionId, name)
   }
 
   companion object {

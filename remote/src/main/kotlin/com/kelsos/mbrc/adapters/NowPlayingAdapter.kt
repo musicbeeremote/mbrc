@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -137,11 +137,11 @@ class NowPlayingAdapter
   }
 
   class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    @Bind(R.id.drag_handle) lateinit var dragHandle: View
-    @Bind(R.id.track_title) lateinit var title: TextView
-    @Bind(R.id.track_artist) lateinit var artist: TextView
-    @Bind(R.id.track_indicator_view) lateinit var trackPlaying: ImageView
-    @Bind(R.id.container) lateinit var container: FrameLayout
+    @BindView(R.id.drag_handle) lateinit var dragHandle: View
+    @BindView(R.id.track_title) lateinit var title: TextView
+    @BindView(R.id.track_artist) lateinit var artist: TextView
+    @BindView(R.id.track_indicator_view) lateinit var trackPlaying: ImageView
+    @BindView(R.id.container) lateinit var container: FrameLayout
 
     init {
       ButterKnife.bind(this, itemView)

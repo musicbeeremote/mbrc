@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.google.inject.Inject
@@ -22,10 +22,10 @@ import roboguice.RoboGuice
 
 class MiniControlFragment : Fragment(), MiniControlView {
 
-  @Bind(R.id.mc_track_cover) internal lateinit var trackCover: ImageView
-  @Bind(R.id.mc_track_artist) internal lateinit var trackArtist: TextView
-  @Bind(R.id.mc_track_title) internal lateinit var trackTitle: TextView
-  @Bind(R.id.mc_play_pause) internal lateinit var playPause: ImageButton
+  @BindView(R.id.mc_track_cover) internal lateinit var trackCover: ImageView
+  @BindView(R.id.mc_track_artist) internal lateinit var trackArtist: TextView
+  @BindView(R.id.mc_track_title) internal lateinit var trackTitle: TextView
+  @BindView(R.id.mc_play_pause) internal lateinit var playPause: ImageButton
 
   @Inject private lateinit var presenter: MiniControlPresenter
 

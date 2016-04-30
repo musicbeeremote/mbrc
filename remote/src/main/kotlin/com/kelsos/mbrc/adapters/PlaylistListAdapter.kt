@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.TextView
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -94,8 +94,8 @@ class PlaylistListAdapter
   }
 
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    @Bind(R.id.line_one) lateinit var lineOne: TextView
-    @Bind(R.id.ui_item_context_indicator) lateinit var overflow: LinearLayout
+    @BindView(R.id.line_one) lateinit var lineOne: TextView
+    @BindView(R.id.ui_item_context_indicator) lateinit var overflow: LinearLayout
 
     init {
       ButterKnife.bind(this, itemView)

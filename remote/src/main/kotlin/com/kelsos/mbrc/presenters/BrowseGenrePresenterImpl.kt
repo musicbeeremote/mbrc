@@ -33,7 +33,7 @@ class BrowseGenrePresenterImpl : BrowseGenrePresenter {
   override fun queue(genre: Genre, @Queue.Action action: String) {
     queue.execute(MetaDataType.GENRE,
         action,
-        genre.id.toInt()).task().subscribe({
+        genre.id).task().subscribe({
       if (it!!) {
         view?.showEnqueueSuccess()
       } else {

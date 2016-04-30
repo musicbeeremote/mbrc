@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -24,7 +24,7 @@ import roboguice.RoboGuice
 
 class BrowseAlbumFragment : Fragment(), AlbumAdapter.MenuItemSelectedListener, BrowseAlbumView {
 
-  @Bind(R.id.album_recycler) internal lateinit var recyclerView: RecyclerView
+  @BindView(R.id.album_recycler) internal lateinit var recyclerView: RecyclerView
   @Inject private lateinit var adapter: AlbumAdapter
   @Inject private lateinit var presenter: BrowseAlbumPresenter
   private var scrollListener: EndlessGridRecyclerViewScrollListener? = null

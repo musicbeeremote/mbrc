@@ -71,13 +71,9 @@ import java.util.concurrent.TimeUnit
   }
 
   private fun subscribe() {
-    bus.registerOnMain(this,
-        VolumeChangeEvent::class.java,
-        { this.onVolumeChangedEvent(it) })
+    bus.registerOnMain(this, VolumeChangeEvent::class.java, { this.onVolumeChangedEvent(it) })
     bus.registerOnMain(this, RepeatChange::class.java, { this.onRepeatChangedEvent(it) })
-    bus.registerOnMain(this,
-        TrackInfoChangeEvent::class.java,
-        { this.onTrackInfoChangedEvent(it) })
+    bus.registerOnMain(this, TrackInfoChangeEvent::class.java, { this.onTrackInfoChangedEvent(it) })
     bus.registerOnMain(this, CoverChangedEvent::class.java, { this.onCoverChangedEvent(it) })
     bus.registerOnMain(this, PlayStateChange::class.java, { this.onPlayStateChanged(it) })
     bus.registerOnMain(this, MuteChangeEvent::class.java, { this.onMuteChanged(it) })

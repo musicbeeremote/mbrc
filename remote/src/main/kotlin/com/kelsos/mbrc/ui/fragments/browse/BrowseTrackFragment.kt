@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -22,20 +22,20 @@ import roboguice.RoboGuice
 
 class BrowseTrackFragment : Fragment(), BrowseTrackView, TrackAdapter.MenuItemSelectedListener {
 
-  @Bind(R.id.library_recycler) internal var recyclerView: RecyclerView
+  @BindView(R.id.library_recycler) internal lateinit var recyclerView: RecyclerView
   @Inject private lateinit var adapter: TrackAdapter
   @Inject private lateinit var presenter: BrowseTrackPresenter
-  private var manager: LinearLayoutManager? = null
+  private lateinit var manager: LinearLayoutManager
   private var scrollListener: EndlessRecyclerViewScrollListener? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     RoboGuice.getInjector(context).injectMembers(this)
     manager = LinearLayoutManager(context)
-    adapter!!.setMenuItemSelectedListener(this)
+    adapter.setMenuItemSelectedListener(this)
     scrollListener = object : EndlessRecyclerViewScrollListener(manager) {
       override fun onLoadMore(page: Int, totalItemsCount: Int) {
-        presenter!!.load(page, totalItemsCount)
+        presenter.load(page, totalItemsCount)
       }
     }
   }
@@ -43,7 +43,7 @@ class BrowseTrackFragment : Fragment(), BrowseTrackView, TrackAdapter.MenuItemSe
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     val view = inflater.inflate(R.layout.fragment_library, container, false)
     ButterKnife.bind(this, view)
-    presenter!!.bind(this)
+    presenter.bind(this)
     recyclerView.layoutManager = manager
     recyclerView.adapter = adapter
     presenter.load()
@@ -62,26 +62,26 @@ class BrowseTrackFragment : Fragment(), BrowseTrackView, TrackAdapter.MenuItemSe
 
   override fun onMenuItemSelected(item: MenuItem, track: Track) {
     when (item.itemId) {
-      R.id.popup_track_play -> presenter!!.queue(track, Queue.NOW)
+      R.id.popup_track_play -> presenter.queue(track, Queue.NOW)
       R.id.popup_track_playlist -> {
       }
-      R.id.popup_track_queue_next -> presenter!!.queue(track, Queue.NEXT)
-      R.id.popup_track_queue_last -> presenter!!.queue(track, Queue.LAST)
+      R.id.popup_track_queue_next -> presenter.queue(track, Queue.NEXT)
+      R.id.popup_track_queue_last -> presenter.queue(track, Queue.LAST)
       else -> {
       }
     }
   }
 
   override fun onItemClicked(track: Track) {
-    presenter!!.queue(track, Queue.NOW)
+    presenter.queue(track, Queue.NOW)
   }
 
   override fun clearData() {
-    adapter!!.clearData()
+    adapter.clearData()
   }
 
   override fun appendPage(tracks: List<Track>) {
-    adapter!!.appendData(tracks)
+    adapter.appendData(tracks)
   }
 
   companion object {

@@ -7,7 +7,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -20,8 +20,8 @@ import com.kelsos.mbrc.ui.views.GenreArtistView
 import roboguice.RoboGuice
 
 class GenreArtistsActivity : AppCompatActivity(), GenreArtistView, ArtistAdapter.MenuItemSelectedListener {
-  @Bind(R.id.genre_artists_recycler) internal lateinit var recyclerView: RecyclerView
-  @Bind(R.id.toolbar) internal lateinit var toolbar: Toolbar
+  @BindView(R.id.genre_artists_recycler) internal lateinit var recyclerView: RecyclerView
+  @BindView(R.id.toolbar) internal lateinit var toolbar: Toolbar
 
   @Inject private lateinit var adapter: ArtistAdapter
   @Inject private lateinit var presenter: GenreArtistsPresenter

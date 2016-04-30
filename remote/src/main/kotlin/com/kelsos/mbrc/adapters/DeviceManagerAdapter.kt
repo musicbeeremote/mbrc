@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -107,11 +107,11 @@ class DeviceManagerAdapter
 
   inner class ConnectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    @Bind(R.id.cs_list_host) lateinit internal var hostname: TextView
-    @Bind(R.id.cs_list_port) lateinit internal var portNum: TextView
-    @Bind(R.id.cs_list_name) lateinit internal var computerName: TextView
-    @Bind(R.id.cs_list_default) lateinit internal var defaultSettings: ImageView
-    @Bind(R.id.cs_list_overflow) lateinit internal var overflow: View
+    @BindView(R.id.cs_list_host) lateinit internal var hostname: TextView
+    @BindView(R.id.cs_list_port) lateinit internal var portNum: TextView
+    @BindView(R.id.cs_list_name) lateinit internal var computerName: TextView
+    @BindView(R.id.cs_list_default) lateinit internal var defaultSettings: ImageView
+    @BindView(R.id.cs_list_overflow) lateinit internal var overflow: View
 
     init {
       ButterKnife.bind(this, itemView)

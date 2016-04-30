@@ -9,7 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.kelsos.mbrc.R
@@ -17,8 +17,8 @@ import roboguice.RoboGuice
 
 class HelpActivity : AppCompatActivity() {
 
-  @Bind(R.id.toolbar) internal lateinit  var mToolbar: Toolbar
-  @Bind(R.id.feedback_content) internal lateinit  var feedbackEditText: EditText
+  @BindView(R.id.toolbar) internal lateinit  var mToolbar: Toolbar
+  @BindView(R.id.feedback_content) internal lateinit  var feedbackEditText: EditText
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

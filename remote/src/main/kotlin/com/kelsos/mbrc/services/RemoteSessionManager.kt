@@ -42,12 +42,13 @@ constructor(context: Context, private val bus: RxBus, private val manager: Audio
 
     mMediaSession = MediaSessionCompat(context, "Session", myEventReceiver, mediaPendingIntent)
 
-    mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
+    mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or
+        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       mMediaSession.setCallback(object : MediaSessionCompat.Callback() {
         override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
-          val success = handler!!.handleMediaIntent(mediaButtonEvent)
+          val success = handler!!.handleMediaIntent(mediaButtonEvent!!)
           return success || super.onMediaButtonEvent(mediaButtonEvent)
         }
 

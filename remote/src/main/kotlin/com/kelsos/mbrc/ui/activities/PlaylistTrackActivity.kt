@@ -6,7 +6,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -19,8 +19,8 @@ import roboguice.RoboGuice
 
 class PlaylistTrackActivity : AppCompatActivity(), PlaylistTrackView, PlaylistAdapter.MenuItemSelectedListener {
 
-  @Bind(R.id.playlist_recycler) internal lateinit var playlist: RecyclerView
-  @Bind(R.id.toolbar) internal lateinit var toolbar: Toolbar
+  @BindView(R.id.playlist_recycler) internal lateinit var playlist: RecyclerView
+  @BindView(R.id.toolbar) internal lateinit var toolbar: Toolbar
 
   @Inject private lateinit var adapter: PlaylistAdapter
   @Inject private lateinit var presenter: PlaylistTrackPresenter

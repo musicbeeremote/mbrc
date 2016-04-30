@@ -9,7 +9,7 @@ import android.support.v7.widget.SearchView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.Menu
 import android.view.MenuItem
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -26,7 +26,7 @@ import roboguice.RoboGuice
 
 class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPlayingAdapter.OnUserActionListener, NowPlayingView {
 
-  @Bind(R.id.now_playing_recycler) lateinit  var recyclerView: RecyclerView
+  @BindView(R.id.now_playing_recycler) lateinit  var recyclerView: RecyclerView
   @Inject private lateinit var adapter: NowPlayingAdapter
   @Inject private lateinit var presenter: NowPlayingPresenter
   private var layoutManager: LinearLayoutManager? = null

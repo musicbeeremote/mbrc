@@ -32,8 +32,8 @@ class BrowseArtistPresenter {
   fun queue(artist: Artist, @Queue.Action action: String) {
     queueInteractor.execute(MetaDataType.ARTIST,
         action,
-        artist.id.toInt()).observeOn(AndroidSchedulers.mainThread()).subscribe({ success ->
-      if (success!!) {
+        artist.id).observeOn(AndroidSchedulers.mainThread()).subscribe({
+      if (it!!) {
         view!!.showEnqueueSuccess()
       } else {
         view!!.showEnqueueFailure()

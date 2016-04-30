@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -24,17 +24,17 @@ import roboguice.RoboGuice
 
 class BrowseArtistFragment : Fragment(), BrowseArtistView, ArtistAdapter.MenuItemSelectedListener {
 
-  @Bind(R.id.library_recycler) internal var recyclerView: RecyclerView
+  @BindView(R.id.library_recycler) internal lateinit  var recyclerView: RecyclerView
   @Inject private lateinit var adapter: ArtistAdapter
   @Inject private lateinit var presenter: BrowseArtistPresenter
-  private var layoutManager: LinearLayoutManager? = null
+  private lateinit var layoutManager: LinearLayoutManager
   private var scrollListener: EndlessRecyclerViewScrollListener? = null
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     val view = inflater.inflate(R.layout.fragment_library, container, false)
     ButterKnife.bind(this, view)
     RoboGuice.getInjector(context).injectMembers(this)
-    presenter!!.bind(this)
+    presenter.bind(this)
     layoutManager = LinearLayoutManager(context)
     recyclerView.layoutManager = layoutManager
     recyclerView.adapter = adapter
@@ -43,7 +43,7 @@ class BrowseArtistFragment : Fragment(), BrowseArtistView, ArtistAdapter.MenuIte
         presenter.load(page)
       }
     }
-    adapter!!.setMenuItemSelectedListener(this)
+    adapter.setMenuItemSelectedListener(this)
     presenter.load()
     return view
   }
@@ -62,12 +62,12 @@ class BrowseArtistFragment : Fragment(), BrowseArtistView, ArtistAdapter.MenuIte
     super.onCreate(savedInstanceState)
   }
 
-  override fun onMenuItemSelected(item: MenuItem, artist: Artist) {
-    when (item.itemId) {
-      R.id.popup_artist_queue_next -> presenter!!.queue(artist, Queue.NEXT)
-      R.id.popup_artist_queue_last -> presenter!!.queue(artist, Queue.LAST)
-      R.id.popup_artist_play -> presenter!!.queue(artist, Queue.NOW)
-      R.id.popup_artist_album -> openProfile(artist)
+  override fun onMenuItemSelected(menuItem: MenuItem, entry: Artist) {
+    when (menuItem.itemId) {
+      R.id.popup_artist_queue_next -> presenter.queue(entry, Queue.NEXT)
+      R.id.popup_artist_queue_last -> presenter.queue(entry, Queue.LAST)
+      R.id.popup_artist_play -> presenter.queue(entry, Queue.NOW)
+      R.id.popup_artist_album -> openProfile(entry)
       R.id.popup_artist_playlist -> {
       }
       else -> {
@@ -95,11 +95,11 @@ class BrowseArtistFragment : Fragment(), BrowseArtistView, ArtistAdapter.MenuIte
   }
 
   override fun load(artists: List<Artist>) {
-    adapter!!.updateData(artists)
+    adapter.updateData(artists)
   }
 
   override fun clear() {
-    adapter!!.clear()
+    adapter.clear()
   }
 
   companion object {

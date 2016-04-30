@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -106,10 +106,10 @@ class TrackAdapter
   }
 
   class ViewHolder(itemView: View, typeface: Typeface) : RecyclerView.ViewHolder(itemView) {
-    @Bind(R.id.track_cover) lateinit var cover: SquareImageView
-    @Bind(R.id.line_one) lateinit var artist: TextView
-    @Bind(R.id.line_two) lateinit var title: TextView
-    @Bind(R.id.ui_item_context_indicator) lateinit var indicator: LinearLayout
+    @BindView(R.id.track_cover) lateinit var cover: SquareImageView
+    @BindView(R.id.line_one) lateinit var artist: TextView
+    @BindView(R.id.line_two) lateinit var title: TextView
+    @BindView(R.id.ui_item_context_indicator) lateinit var indicator: LinearLayout
 
     init {
       ButterKnife.bind(this, itemView)

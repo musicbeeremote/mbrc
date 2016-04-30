@@ -14,7 +14,7 @@ class RxBusImpl : RxBus {
   private val mBusSubject = SerializedSubject(PublishSubject.create<Any>())
   private val activeSubscriptions = HashMap<Any, MutableList<Subscription>>()
 
-  override fun <T> register(receiver: Any, eventClass: Class<T>, onNext: Action1<T>) {
+  override fun <T> register(receiver: Any, eventClass: Class<T>, onNext: (T) -> Unit) {
     val subscription = mBusSubject.filter {
       it.javaClass == eventClass
     }.map<T>(Func1{ it as T }).subscribe(onNext)
@@ -33,7 +33,7 @@ class RxBusImpl : RxBus {
     activeSubscriptions.put(item, subscriptions)
   }
 
-  override fun <T> registerOnMain(receiver: Any, eventClass: Class<T>, onNext: Action1<T>) {
+  override fun <T> registerOnMain(receiver: Any, eventClass: Class<T>, onNext: (T) -> Unit) {
     val subscription = mBusSubject.filter { it.javaClass == eventClass }
         .map<T>(Func1{ it as T })
         .main()
@@ -50,7 +50,7 @@ class RxBusImpl : RxBus {
     }
   }
 
-  override fun <T> register(eventClass: Class<T>, onNext: Action1<T>, main: Boolean): Subscription {
+  override fun <T> register(eventClass: Class<T>, onNext: (T) -> Unit, main: Boolean): Subscription {
     //noinspection unchecked
     val observable = mBusSubject.filter { it.javaClass == eventClass }
         .map<T>(Func1{ it as T })

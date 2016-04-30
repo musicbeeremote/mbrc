@@ -24,7 +24,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.KeyEvent
 import android.view.MenuItem
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.BuildConfig
@@ -48,14 +48,13 @@ import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.viewmodels.ConnectionStatusModel
 import roboguice.RoboGuice
 import rx.Subscription
-import rx.functions.Action1
 import timber.log.Timber
 
 open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-  @Bind(R.id.toolbar) lateinit var toolbar: Toolbar
-  @Bind(R.id.drawer_layout) lateinit  var drawer: DrawerLayout
-  @Bind(R.id.navigation_view) lateinit  var navigationView: NavigationView
+  @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+  @BindView(R.id.drawer_layout) lateinit  var drawer: DrawerLayout
+  @BindView(R.id.navigation_view) lateinit  var navigationView: NavigationView
   @Inject private lateinit var rxBus: RxBus
   @Inject private lateinit var handler: Handler
   @Inject private lateinit var model: ConnectionStatusModel
@@ -109,11 +108,9 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
   override fun onResume() {
     super.onResume()
-    rxBus.registerOnMain(this,
-        ConnectionStatusChangeEvent::class.java,
-        Action1<ConnectionStatusChangeEvent> { this.handleConnectionStatusChange(it) })
-    rxBus.registerOnMain(this, DisplayDialog::class.java, Action1<DisplayDialog> { this.showSetupDialog(it) })
-    rxBus.registerOnMain(this, NotifyUser::class.java, Action1<NotifyUser> { this.handleUserNotification(it) })
+    rxBus.registerOnMain(this, ConnectionStatusChangeEvent::class.java,  { this.handleConnectionStatusChange(it) })
+    rxBus.registerOnMain(this, DisplayDialog::class.java, { this.showSetupDialog(it) })
+    rxBus.registerOnMain(this, NotifyUser::class.java, { this.handleUserNotification(it) })
 
     updateStatus(model.status)
   }

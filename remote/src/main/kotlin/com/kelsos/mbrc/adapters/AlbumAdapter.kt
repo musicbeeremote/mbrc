@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -98,10 +98,10 @@ class AlbumAdapter
   }
 
   class ViewHolder(itemView: View, typeface: Typeface) : RecyclerView.ViewHolder(itemView) {
-    @Bind(R.id.line_two) lateinit internal var artist: TextView
-    @Bind(R.id.line_one) lateinit internal var album: TextView
-    @Bind(R.id.ui_grid_image) lateinit internal var image: ImageView
-    @Bind(R.id.ui_item_context_indicator) lateinit internal var indicator: LinearLayout
+    @BindView(R.id.line_two) lateinit internal var artist: TextView
+    @BindView(R.id.line_one) lateinit internal var album: TextView
+    @BindView(R.id.ui_grid_image) lateinit internal var image: ImageView
+    @BindView(R.id.ui_item_context_indicator) lateinit internal var indicator: LinearLayout
 
     init {
       ButterKnife.bind(this, itemView)

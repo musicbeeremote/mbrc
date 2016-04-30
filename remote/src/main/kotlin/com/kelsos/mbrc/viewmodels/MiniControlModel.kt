@@ -10,7 +10,7 @@ class MiniControlModel {
   private var artist: String = String.empty
   @PlayerState.State private var playerState: String = PlayerState.UNDEFINED
 
-  fun setCover(cover: Bitmap) {
+  fun setCover(cover: Bitmap?) {
     this.cover = cover
   }
 

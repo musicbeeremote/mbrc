@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -18,7 +18,7 @@ import roboguice.RoboGuice
 
 class PlaylistListActivity : BaseActivity(), PlaylistListView, OnPlaylistPlayPressedListener {
 
-  @Bind(R.id.playlist_recycler) lateinit  var recyclerView: RecyclerView
+  @BindView(R.id.playlist_recycler) lateinit  var recyclerView: RecyclerView
 
   @Inject private lateinit var adapter: PlaylistListAdapter
   @Inject private lateinit var presenter: PlaylistPresenter

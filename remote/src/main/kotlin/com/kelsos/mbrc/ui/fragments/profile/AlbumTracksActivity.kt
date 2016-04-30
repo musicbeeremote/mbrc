@@ -13,7 +13,7 @@ import android.text.TextUtils
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.google.inject.Inject
@@ -29,14 +29,14 @@ import roboguice.RoboGuice
 import java.io.File
 
 class AlbumTracksActivity : AppCompatActivity(), AlbumTrackView, AlbumProfileAdapter.MenuItemSelectedListener {
-  @Bind(R.id.imageView_list) internal lateinit var imageViewList: ImageView
-  @Bind(R.id.toolbar) internal lateinit var toolbar: Toolbar
-  @Bind(R.id.collapsing_toolbar) internal lateinit var collapsingToolbar: CollapsingToolbarLayout
-  @Bind(R.id.app_bar_layout) internal lateinit var appBarLayout: AppBarLayout
-  @Bind(R.id.list_tracks) internal lateinit var listTracks: RecyclerView
-  @Bind(R.id.album_title) internal lateinit var albumTitle: TextView
-  @Bind(R.id.album_year) internal lateinit var albumYear: TextView
-  @Bind(R.id.album_tracks) internal lateinit var albumTracks: TextView
+  @BindView(R.id.imageView_list) internal lateinit var imageViewList: ImageView
+  @BindView(R.id.toolbar) internal lateinit var toolbar: Toolbar
+  @BindView(R.id.collapsing_toolbar) internal lateinit var collapsingToolbar: CollapsingToolbarLayout
+  @BindView(R.id.app_bar_layout) internal lateinit var appBarLayout: AppBarLayout
+  @BindView(R.id.list_tracks) internal lateinit var listTracks: RecyclerView
+  @BindView(R.id.album_title) internal lateinit var albumTitle: TextView
+  @BindView(R.id.album_year) internal lateinit var albumYear: TextView
+  @BindView(R.id.album_tracks) internal lateinit var albumTracks: TextView
 
   @Inject private lateinit var adapter: AlbumProfileAdapter
   @Inject private lateinit var presenter: AlbumTracksPresenter

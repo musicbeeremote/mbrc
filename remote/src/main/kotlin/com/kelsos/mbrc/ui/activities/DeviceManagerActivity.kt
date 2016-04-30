@@ -9,7 +9,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.afollestad.materialdialogs.MaterialDialog
@@ -31,8 +31,8 @@ import roboguice.RoboGuice
 
 class DeviceManagerActivity : AppCompatActivity(), DeviceManagerView, SettingsDialogListener, DeviceActionListener {
 
-  @Bind(R.id.connection_list) internal lateinit var mRecyclerView: RecyclerView
-  @Bind(R.id.toolbar) internal lateinit var mToolbar: Toolbar
+  @BindView(R.id.connection_list) internal lateinit var mRecyclerView: RecyclerView
+  @BindView(R.id.toolbar) internal lateinit var mToolbar: Toolbar
   @Inject private lateinit var bus: RxBus
   @Inject private lateinit var presenter: DeviceManagerPresenter
   @Inject private lateinit var adapter: DeviceManagerAdapter

@@ -29,7 +29,7 @@ class AlbumTracksPresenterImpl : AlbumTracksPresenter {
   }
 
   override fun play(albumId: Long) {
-    interactor.execute(MetaDataType.ALBUM, Queue.NOW, albumId.toInt()).subscribe({ aBoolean ->
+    interactor.execute(MetaDataType.ALBUM, Queue.NOW, albumId).subscribe({ aBoolean ->
       if (aBoolean!!) {
         view?.showPlaySuccess()
       } else {
@@ -43,7 +43,7 @@ class AlbumTracksPresenterImpl : AlbumTracksPresenter {
 
   override fun queue(entry: Track, @Queue.Action action: String) {
     val id = entry.id
-    interactor.execute(MetaDataType.TRACK, action, id.toInt()).subscribe({ aBoolean ->
+    interactor.execute(MetaDataType.TRACK, action, id).subscribe({ aBoolean ->
       if (aBoolean!!) {
         view?.showTrackSuccess()
       } else {

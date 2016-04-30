@@ -5,7 +5,7 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.ActivityCompat
 import android.support.v4.view.ViewPager
 import android.view.MenuItem
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
@@ -16,8 +16,8 @@ import com.kelsos.mbrc.ui.views.LibraryActivityView
 import roboguice.RoboGuice
 
 class LibraryActivity : BaseActivity(), LibraryActivityView {
-  @Bind(R.id.library_pager) lateinit var pager: ViewPager
-  @Bind(R.id.library_pager_tabs) lateinit var tabLayout: TabLayout
+  @BindView(R.id.library_pager) lateinit var pager: ViewPager
+  @BindView(R.id.library_pager_tabs) lateinit var tabLayout: TabLayout
 
   @Inject private lateinit var adapter: BrowsePagerAdapter
   @Inject private lateinit var presenter: LibraryActivityPresenter
