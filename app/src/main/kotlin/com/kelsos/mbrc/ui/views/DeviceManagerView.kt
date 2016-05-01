@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.views
 
-import com.kelsos.mbrc.domain.DeviceSettings
+import com.kelsos.mbrc.dao.DeviceSettings
 import com.kelsos.mbrc.events.ui.DiscoveryStopped
 import com.kelsos.mbrc.events.ui.NotifyUser
 

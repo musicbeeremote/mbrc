@@ -7,7 +7,8 @@ import android.content.pm.PackageManager
 import android.text.TextUtils
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import com.kelsos.mbrc.domain.DeviceSettings
+import com.kelsos.mbrc.dao.DeviceSettings
+import com.kelsos.mbrc.extensions.versionCode
 import com.kelsos.mbrc.repository.DeviceRepository
 import rx.Observable
 import rx.functions.Func1
@@ -64,7 +65,7 @@ import java.util.*
   @SuppressLint("NewApi") private fun checkForFirstRunAfterUpdate() {
     try {
       val lastVersionCode = preferences.getLong(keyProvider.lastVersionKey, 0)
-      val currentVersion = RemoteUtils.getVersionCode(context)
+      val currentVersion = context.versionCode
 
       if (lastVersionCode < currentVersion) {
         isFirstRun = true

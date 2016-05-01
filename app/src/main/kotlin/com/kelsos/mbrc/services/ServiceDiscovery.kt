@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import com.kelsos.mbrc.constants.UserInputEventType
-import com.kelsos.mbrc.domain.DeviceSettings
+import com.kelsos.mbrc.dao.DeviceSettings
 import com.kelsos.mbrc.dto.DiscoveryResponse
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.ui.DiscoveryStopped

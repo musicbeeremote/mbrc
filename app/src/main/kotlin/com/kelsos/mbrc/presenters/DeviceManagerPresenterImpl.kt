@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.presenters
 
 import com.google.inject.Inject
-import com.kelsos.mbrc.domain.DeviceSettings
+import com.kelsos.mbrc.dao.DeviceSettings
 import com.kelsos.mbrc.events.ui.DiscoveryStopped
 import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.repository.DeviceRepository

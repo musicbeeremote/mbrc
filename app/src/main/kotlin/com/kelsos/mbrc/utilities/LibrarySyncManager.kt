@@ -18,6 +18,7 @@ import com.kelsos.mbrc.dto.library.TrackDto
 import com.kelsos.mbrc.dto.playlist.PlaylistDto
 import com.kelsos.mbrc.dto.playlist.PlaylistTrack
 import com.kelsos.mbrc.dto.playlist.PlaylistTrackInfo
+import com.kelsos.mbrc.extensions.io
 import com.kelsos.mbrc.mappers.AlbumMapper
 import com.kelsos.mbrc.mappers.ArtistMapper
 import com.kelsos.mbrc.mappers.CoverMapper
@@ -82,7 +83,7 @@ class LibrarySyncManager {
           .subscribe({ syncPlaylistTracks(it.id, after) }, { Ln.v(it) })
 
       subscriber.onCompleted()
-    }.subscribeOn(Schedulers.io())
+    }.io()
         .subscribe({ }, { this.handlerError(it) },
             {
               preferences.edit().putLong(LAST_SYNC, System.currentTimeMillis() / 1000).apply()

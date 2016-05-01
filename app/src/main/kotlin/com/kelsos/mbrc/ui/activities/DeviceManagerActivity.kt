@@ -17,7 +17,7 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.DeviceManagerAdapter
 import com.kelsos.mbrc.adapters.DeviceManagerAdapter.DeviceActionListener
 import com.kelsos.mbrc.constants.UserInputEventType
-import com.kelsos.mbrc.domain.DeviceSettings
+import com.kelsos.mbrc.dao.DeviceSettings
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.ui.DiscoveryStopped
 import com.kelsos.mbrc.events.ui.NotifyUser

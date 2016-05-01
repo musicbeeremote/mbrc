@@ -13,7 +13,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.inject.Inject
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.domain.DeviceSettings
+import com.kelsos.mbrc.dao.DeviceSettings
 import java.util.*
 
 class DeviceManagerAdapter

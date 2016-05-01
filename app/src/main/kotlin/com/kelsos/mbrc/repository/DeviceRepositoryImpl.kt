@@ -1,43 +1,44 @@
 package com.kelsos.mbrc.repository
 
 import com.kelsos.mbrc.SettingsDatabase
-import com.kelsos.mbrc.domain.DeviceSettings
-import com.kelsos.mbrc.domain.DeviceSettings_Table
+import com.kelsos.mbrc.dao.DeviceSettings
+import com.kelsos.mbrc.dao.DeviceSettings_Table
+import rx.Observable
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.sql.language.SQLite
-import rx.Observable
+import com.raizlabs.android.dbflow.sql.language.Select
+import rx.lang.kotlin.toSingletonObservable
 
 class DeviceRepositoryImpl : DeviceRepository {
   override fun getPageObservable(offset: Int, limit: Int): Observable<List<DeviceSettings>> {
-    return Observable.defer { Observable.just(getPage(offset, limit)) }
+    return getPage(offset, limit).toSingletonObservable()
   }
 
-  override fun getAllObservable(): Observable<List<DeviceSettings>> = Observable.defer {
-    Observable.just(getAll())
-  }
+  override fun getAllObservable(): Observable<List<DeviceSettings>> = getAll().toSingletonObservable()
+
 
   override fun getPage(offset: Int, limit: Int): List<DeviceSettings> {
     return SQLite.select()
-            .from(DeviceSettings::class.java)
-            .limit(limit)
-            .offset(offset)
-            .queryList()
+        .from(DeviceSettings::class.java)
+        .limit(limit)
+        .offset(offset)
+        .queryList()
   }
 
   override fun getAll(): List<DeviceSettings> = SQLite.select()
-          .from(DeviceSettings::class.java)
-          .queryList()
+      .from(DeviceSettings::class.java)
+      .queryList()
 
   override fun getById(id: Long): DeviceSettings? {
     return SQLite.select()
-            .from(DeviceSettings::class.java)
-            .where(DeviceSettings_Table.id.eq(id))
-            .querySingle()
+        .from(DeviceSettings::class.java)
+        .where(DeviceSettings_Table.id.eq(id))
+        .querySingle()
   }
 
   override fun save(items: List<DeviceSettings>) {
     FlowManager.getDatabase(SettingsDatabase::class.java).executeTransaction {
-      Observable.from(items).forEach({ it.save() })
+      items.forEach { it.save() }
     }
   }
 

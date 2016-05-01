@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.presenters
 
-import com.kelsos.mbrc.domain.DeviceSettings
+import com.kelsos.mbrc.dao.DeviceSettings
 import com.kelsos.mbrc.ui.views.DeviceManagerView
 
 interface DeviceManagerPresenter {

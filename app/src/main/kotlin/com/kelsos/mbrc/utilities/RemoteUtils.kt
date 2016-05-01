@@ -1,7 +1,5 @@
 package com.kelsos.mbrc.utilities
 
-import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Environment
 import com.kelsos.mbrc.BuildConfig
 import java.io.File
@@ -15,18 +13,6 @@ object RemoteUtils {
     fun getStorage() = File(
             String.format("%s/Android/data/%s/cache", SD_CARD.absolutePath,
                     BuildConfig.APPLICATION_ID))
-
-    @Throws(PackageManager.NameNotFoundException::class)
-    fun getVersion(mContext: Context): String {
-        val mInfo = mContext.packageManager.getPackageInfo(mContext.packageName, 0)
-        return mInfo.versionName
-    }
-
-    @Throws(PackageManager.NameNotFoundException::class)
-    fun getVersionCode(mContext: Context): Long {
-        val mInfo = mContext.packageManager.getPackageInfo(mContext.packageName, 0)
-        return mInfo.versionCode.toLong()
-    }
 
     /**
      * Retrieves the current ISO formatted DateTime.

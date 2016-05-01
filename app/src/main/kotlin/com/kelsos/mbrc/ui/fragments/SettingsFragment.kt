@@ -11,9 +11,9 @@ import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.events.MessageEvent
+import com.kelsos.mbrc.extensions.version
 import com.kelsos.mbrc.ui.activities.DeviceManagerActivity
 import com.kelsos.mbrc.ui.dialogs.WebViewDialog
-import com.kelsos.mbrc.utilities.RemoteUtils
 import com.kelsos.mbrc.utilities.RxBus
 import roboguice.RoboGuice
 import timber.log.Timber
@@ -44,7 +44,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     if (mVersion != null) {
       try {
         mVersion.summary = String.format(resources.getString(R.string.settings_version_number),
-            RemoteUtils.getVersion(activity))
+            context.version)
       } catch (e: PackageManager.NameNotFoundException) {
         Timber.d(e, "Name not found")
       }
