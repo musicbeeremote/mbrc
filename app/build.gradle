@@ -92,8 +92,6 @@ android {
     exclude 'META-INF/services/javax.annotation.processing.Processor'
   }
 
-
-
   lintOptions {
     abortOnError false
     lintConfig file("lint.xml")
@@ -144,6 +142,7 @@ ext {
   jacksonVersion = '2.7.3'
   okhttpVersion = '3.2.0'
   retrofitVersion = '2.0.2'
+  dbflow_version = "3.0.0-beta6"
 }
 
 dependencies {
@@ -185,6 +184,13 @@ dependencies {
   kapt 'org.roboguice:roboblender:4.0.1-SNAPSHOT'
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
+  kapt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
+
+  // kapt for kotlin apt
+  compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
+  compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
+  compile "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}"
+
   compile('com.afollestad.material-dialogs:core:0.8.5.6@aar') {
     transitive = true
   }
@@ -196,8 +202,6 @@ dependencies {
   testCompile 'org.powermock:powermock-api-mockito:1.6.3'
   testCompile 'org.robolectric:robolectric:2.4'
   testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
-
-  compile project(':data')
 }
 
 allprojects {
