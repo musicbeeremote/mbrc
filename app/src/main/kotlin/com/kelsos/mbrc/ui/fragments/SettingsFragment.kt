@@ -2,7 +2,6 @@ package com.kelsos.mbrc.ui.fragments
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.MenuItem
@@ -22,7 +21,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
   @Inject private lateinit var bus: RxBus
 
-  override fun onCreatePreferences(bundle: Bundle, s: String) {
+  override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
     addPreferencesFromResource(R.xml.application_settings)
     RoboGuice.getInjector(activity).injectMembers(this)
 
@@ -31,49 +30,42 @@ class SettingsFragment : PreferenceFragmentCompat() {
     val mVersion = findPreference(resources.getString(R.string.settings_version))
     val mBuild = findPreference(resources.getString(R.string.pref_key_build_time))
     val mRevision = findPreference(resources.getString(R.string.pref_key_revision))
-    mOpenSource?.setOnPreferenceClickListener { preference ->
+
+    mOpenSource?.setOnPreferenceClickListener {
       showOpenSourceLicenseDialog()
       false
     }
 
-    mManager?.setOnPreferenceClickListener { preference ->
+    mManager?.setOnPreferenceClickListener {
       startActivity(Intent(activity, DeviceManagerActivity::class.java))
       false
     }
 
-    if (mVersion != null) {
-      try {
-        mVersion.summary = String.format(resources.getString(R.string.settings_version_number),
-            context.version)
-      } catch (e: PackageManager.NameNotFoundException) {
-        Timber.d(e, "Name not found")
-      }
-
+    try {
+      mVersion?.summary = String.format(resources.getString(R.string.settings_version_number),
+          context.version)
+    } catch (e: PackageManager.NameNotFoundException) {
+      Timber.d(e, "Name not found")
     }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-      val mShowNotification = findPreference(resources.getString(R.string.settings_key_notification_control))
-      mShowNotification?.setOnPreferenceChangeListener { preference, newValue ->
-        val value = newValue as Boolean
-        if (!value) {
-          bus.post(MessageEvent.newInstance(UserInputEventType.CancelNotification))
-        }
-        true
+    val mShowNotification = findPreference(resources.getString(R.string.settings_key_notification_control))
+    mShowNotification?.setOnPreferenceChangeListener { preference, newValue ->
+      val value = newValue as Boolean
+      if (!value) {
+        bus.post(MessageEvent.newInstance(UserInputEventType.CancelNotification))
       }
+      true
     }
 
     val mLicense = findPreference(resources.getString(R.string.settings_key_license))
-    mLicense?.setOnPreferenceClickListener { preference ->
+    mLicense?.setOnPreferenceClickListener {
       showLicenseDialog()
       false
     }
 
-    if (mBuild != null) {
-      mBuild.summary = BuildConfig.BUILD_TIME
-    }
-    if (mRevision != null) {
-      mRevision.summary = BuildConfig.GIT_SHA
-    }
+    mBuild?.summary = BuildConfig.BUILD_TIME
+    mRevision?.summary = BuildConfig.GIT_SHA
+
   }
 
   private fun showLicenseDialog() {
@@ -104,15 +96,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
   }
 
-  fun setBus(bus: RxBus) {
-    this.bus = bus
-  }
-
   companion object {
 
-    fun newInstance(bus: RxBus): SettingsFragment {
-      val fragment = SettingsFragment()
-      fragment.setBus(bus)
+    fun newInstance(): SettingsFragment {
+      val fragment: SettingsFragment = SettingsFragment()
       return fragment
     }
   }
