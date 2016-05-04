@@ -18,7 +18,7 @@ class PlaylistPresenterImpl : PlaylistPresenter {
   }
 
   override fun load() {
-    playlistInteractor.allPlaylists.task().subscribe({
+    playlistInteractor.getAllPlaylists().task().subscribe({
       view?.update(it)
     }, { Ln.v(it) })
   }

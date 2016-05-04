@@ -53,15 +53,11 @@ class AlbumAdapter
     holder.album.text = album.name
     holder.artist.text = album.artist
 
-    holder.indicator.setOnClickListener { v ->
-      val popupMenu = PopupMenu(v.context, v)
+    holder.indicator.setOnClickListener {
+      val popupMenu = PopupMenu(it.context, it)
       popupMenu.inflate(R.menu.popup_album)
       popupMenu.setOnMenuItemClickListener listener@{
-        if (mListener != null) {
-          mListener!!.onMenuItemSelected(it, album)
-          return@listener true
-        }
-        false
+        return@listener mListener?.onMenuItemSelected(it, album) ?: false
       }
       popupMenu.show()
     }
@@ -97,7 +93,7 @@ class AlbumAdapter
   }
 
   interface MenuItemSelectedListener {
-    fun onMenuItemSelected(menuItem: MenuItem, album: Album)
+    fun onMenuItemSelected(menuItem: MenuItem, album: Album): Boolean
 
     fun onItemClicked(album: Album)
   }

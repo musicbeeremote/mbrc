@@ -12,7 +12,7 @@ class PlaylistDialogPresenterImpl : PlaylistDialogPresenter {
   @Inject private lateinit var playlistInteractor: PlaylistInteractor
 
   override fun load() {
-    playlistInteractor.userPlaylists
+    playlistInteractor.getUserPlaylists()
         .task()
         .subscribe({ view?.update(it) }, { Timber.v(it, "Failed to load playlists") })
   }

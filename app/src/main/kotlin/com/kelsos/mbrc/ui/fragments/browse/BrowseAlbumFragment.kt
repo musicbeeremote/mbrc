@@ -62,7 +62,7 @@ class BrowseAlbumFragment : Fragment(), AlbumAdapter.MenuItemSelectedListener, B
     super.onCreate(savedInstanceState)
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, album: Album) {
+  override fun onMenuItemSelected(menuItem: MenuItem, album: Album): Boolean {
     when (menuItem.itemId) {
       R.id.popup_album_tracks -> openProfile(album)
       R.id.popup_album_play -> presenter.queue(album, Queue.NOW)
@@ -71,8 +71,11 @@ class BrowseAlbumFragment : Fragment(), AlbumAdapter.MenuItemSelectedListener, B
       R.id.popup_album_playlist -> {
       }
       else -> {
+        return false
       }
     }
+
+    return true
   }
 
   override fun onItemClicked(album: Album) {

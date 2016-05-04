@@ -4,28 +4,25 @@ import android.text.TextUtils
 import com.google.inject.Inject
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.cache.PlayerStateCache
-import com.kelsos.mbrc.dto.player.PlayState
+import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.services.api.PlayerService
 import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
-import rx.functions.Func1
-import rx.schedulers.Schedulers
+import rx.lang.kotlin.toSingletonObservable
 
 class PlayerStateInteractorImpl : PlayerStateInteractor {
-    @Inject private lateinit var cache: PlayerStateCache
-    @Inject private lateinit var service: PlayerService
+  @Inject private lateinit var cache: PlayerStateCache
+  @Inject private lateinit var service: PlayerService
 
-    override val state: Observable<String>
-        get() {
-            val networkRequest = service.getPlayState()
-                    .map<String>(Func1<PlayState, String> { it.value }).doOnNext({ cache.playState = it })
-            val cached = Observable.just(cache.playState)
+  override fun getState(): Observable<String> {
+    val networkRequest = service.getPlayState()
+        .map { it.value }
+        .doOnNext { cache.playState = it }
 
-            return Observable.concat(networkRequest, cached).filter {
-                !TextUtils.isEmpty(it) && PlayerState.UNDEFINED != it
-            }.doOnError {
-                Observable.just(PlayerState.STOPPED)
-            }.subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-        }
+    val cached = cache.playState.toSingletonObservable()
+
+    return Observable.concat(networkRequest, cached)
+        .filter { !TextUtils.isEmpty(it) && PlayerState.UNDEFINED != it }
+        .doOnError { PlayerState.STOPPED.toSingletonObservable() }
+        .task()
+  }
 }

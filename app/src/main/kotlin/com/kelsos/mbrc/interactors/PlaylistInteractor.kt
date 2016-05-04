@@ -4,7 +4,7 @@ import com.kelsos.mbrc.domain.Playlist
 import rx.Observable
 
 interface PlaylistInteractor {
-    val allPlaylists: Observable<List<Playlist>>
+    fun getAllPlaylists(): Observable<List<Playlist>>
 
-    val userPlaylists: Observable<List<Playlist>>
+    fun getUserPlaylists(): Observable<List<Playlist>>
 }

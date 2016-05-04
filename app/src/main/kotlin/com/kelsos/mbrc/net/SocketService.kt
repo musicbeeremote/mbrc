@@ -6,22 +6,16 @@ import com.google.inject.Singleton
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.dto.WebSocketMessage
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
+import com.kelsos.mbrc.extensions.io
 import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.utilities.SettingsManager
-import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.Response
-import okhttp3.ResponseBody
+import okhttp3.*
 import okhttp3.ws.WebSocket
 import okhttp3.ws.WebSocketCall
 import okhttp3.ws.WebSocketListener
 import okio.Buffer
 import rx.Observable
 import rx.Subscription
-import rx.functions.Func1
-import rx.schedulers.Schedulers
 import rx.subjects.PublishSubject
 import timber.log.Timber
 import java.io.IOException
@@ -46,11 +40,11 @@ constructor(private val settingsManager: SettingsManager, private val mapper: Ob
     this.client = newBuilder.build()
 
     messagePublisher = PublishSubject.create<String>()
-    messagePublisher.subscribeOn(Schedulers.io()).subscribe { incoming ->
+    messagePublisher.io().subscribe {
       try {
-        processIncoming(incoming)
+        processIncoming(it)
       } catch (e: IOException) {
-        e.printStackTrace()
+        Timber.v(e, "Failed with incoming message");
       }
     }
   }
@@ -61,18 +55,18 @@ constructor(private val settingsManager: SettingsManager, private val mapper: Ob
     }
 
     settingsManager.default.filter { !it.address.isNullOrEmpty() || it.port == 0 }
-        .map<HttpUrl>(Func1 {
+        .map {
           HttpUrl.Builder()
               .scheme("http")
               .host(it.address)
               .port(it.port)
               .build()
-        }).subscribe({
+        }.subscribe({
       val request = Request.Builder().url(it).build()
 
       Timber.v("[WebSocket] attempting to connect to [%s]", it)
       WebSocketCall.create(client, request).enqueue(this)
-    }) { t -> Timber.e(t, "While connecting to the websocket") }
+    }) { Timber.e(it, "While connecting to the websocket") }
   }
 
   @Throws(IOException::class)
@@ -110,9 +104,7 @@ constructor(private val settingsManager: SettingsManager, private val mapper: Ob
   }
 
   fun stopPing() {
-    if (subscription != null && !subscription!!.isUnsubscribed) {
-      subscription!!.unsubscribe()
-    }
+    subscription?.unsubscribe()
   }
 
   private fun Send(webSocket: WebSocket, message: String) {
@@ -125,7 +117,7 @@ constructor(private val settingsManager: SettingsManager, private val mapper: Ob
     }
   }
 
-  override fun onFailure(e: IOException, response: Response) {
+  override fun onFailure(e: IOException, response: Response?) {
     stopPing()
     this.connected = false
     Timber.e(e, "[Websocket] io ex")
@@ -137,13 +129,13 @@ constructor(private val settingsManager: SettingsManager, private val mapper: Ob
     messagePublisher.onNext(responseBody.string())
   }
 
-  override fun onPong(payload: Buffer) {
+  override fun onPong(payload: Buffer?) {
     Timber.v("pong")
   }
 
   override fun onClose(code: Int, reason: String) {
     this.connected = false
-    subscription!!.unsubscribe()
+    subscription?.unsubscribe()
     webSocket = null
     Timber.v("[Websocket] closing (%d) %s", code, reason)
     rxBus.post(ConnectionStatusChangeEvent(Connection.OFF))
@@ -152,15 +144,10 @@ constructor(private val settingsManager: SettingsManager, private val mapper: Ob
   fun disconnect() {
     stopPing()
 
-    if (webSocket == null) {
-      Timber.v("No WebSocket available nothing to do here")
-      return
-    }
     try {
-      webSocket!!.close(1000, "Disconnecting")
+      webSocket?.close(1000, "Disconnecting")
     } catch (e: IOException) {
       Timber.v(e, "While closing the websocket")
     }
-
   }
 }

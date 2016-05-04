@@ -48,7 +48,7 @@ import timber.log.Timber
     bus.register(this, ChangeWebSocketStatusEvent::class.java, { this.onWebSocketActionRequest(it) })
   }
 
-  override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+  override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     Timber.v("[Service] start command received")
     Observable.merge(discovery.startDiscovery(), settingsManager.default)
         .first()
@@ -57,7 +57,7 @@ import timber.log.Timber
             socket.startWebSocket()
           }
 
-        }) { t -> Timber.v(t, "Discovery failed") }
+        }) { Timber.v(it, "Discovery failed") }
 
     return super.onStartCommand(intent, flags, startId)
   }

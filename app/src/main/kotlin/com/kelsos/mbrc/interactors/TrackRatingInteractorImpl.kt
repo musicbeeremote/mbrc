@@ -5,21 +5,19 @@ import com.kelsos.mbrc.dto.requests.RatingRequest
 import com.kelsos.mbrc.dto.track.Rating
 import com.kelsos.mbrc.services.api.TrackService
 import rx.Observable
-import rx.functions.Func1
+import rx.lang.kotlin.toSingletonObservable
 
 class TrackRatingInteractorImpl : TrackRatingInteractor {
-    @Inject private lateinit var service: TrackService
+  @Inject private lateinit var service: TrackService
 
-    override fun getRating(): Observable<Rating> {
-        return service.getTrackRating()
-    }
+  override fun getRating(): Observable<Rating> {
+    return service.getTrackRating()
+  }
 
-    override fun updateRating(rating: Float): Observable<Float> {
-        val request = RatingRequest()
-        request.rating = rating
-        return service.updateRating(request)
-                .flatMap<Float>(Func1 {
-                    Observable.just(rating)
-                })
-    }
+  override fun updateRating(rating: Float): Observable<Float> {
+    val request = RatingRequest()
+    request.rating = rating
+    return service.updateRating(request)
+        .flatMap { rating.toSingletonObservable() }
+  }
 }

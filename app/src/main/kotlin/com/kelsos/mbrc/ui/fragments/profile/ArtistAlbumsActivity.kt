@@ -73,7 +73,7 @@ class ArtistAlbumsActivity : AppCompatActivity(), ArtistAlbumsView, AlbumAdapter
 
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, album: Album) {
+  override fun onMenuItemSelected(menuItem: MenuItem, album: Album): Boolean {
 
     when (menuItem.itemId) {
       R.id.popup_album_play -> presenter.queue(Queue.NOW, album)
@@ -83,6 +83,8 @@ class ArtistAlbumsActivity : AppCompatActivity(), ArtistAlbumsView, AlbumAdapter
       R.id.popup_album_playlist -> {
       }
     }
+
+    return true
   }
 
   override fun onItemClicked(album: Album) {

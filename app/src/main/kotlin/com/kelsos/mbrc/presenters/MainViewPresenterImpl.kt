@@ -83,7 +83,7 @@ import java.util.concurrent.TimeUnit
     if (model.isLoaded) {
       mainView?.updatePlayState(model.playState)
     } else {
-      playerStateInteractor.state.doOnNext({ model.playState = it }).subscribe({
+      playerStateInteractor.getState().doOnNext({ model.playState = it }).subscribe({
         mainView?.updatePlayState(it)
         updatePlaystate(it)
       }, { errorHandler.handleThrowable(it) })

@@ -94,7 +94,7 @@ constructor(private val manager: WifiManager,
     }
 
   fun discover(): Observable<DeviceSettings> {
-    return Observable.create<DeviceSettings> { subscriber ->
+    return Observable.create<DeviceSettings> {
       try {
         multicastLock = manager.createMulticastLock("locked")
         multicastLock!!.setReferenceCounted(true)
@@ -121,8 +121,8 @@ constructor(private val manager: WifiManager,
 
           val node = mapper.readValue(incoming, DiscoveryResponse::class.java)
           if (NOTIFY == node.context) {
-            subscriber.onNext(DeviceSettingsMapper.fromResponse(node))
-            subscriber.onCompleted()
+            it.onNext(DeviceSettingsMapper.fromResponse(node))
+            it.onCompleted()
             break
           }
         }
@@ -130,7 +130,7 @@ constructor(private val manager: WifiManager,
         mSocket.leaveGroup(group)
         mSocket.close()
       } catch (e: IOException) {
-        subscriber.onError(e)
+        it.onError(e)
       }
     }
   }

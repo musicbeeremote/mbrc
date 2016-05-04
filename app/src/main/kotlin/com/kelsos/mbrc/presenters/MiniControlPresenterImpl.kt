@@ -70,7 +70,7 @@ import roboguice.inject.ContextSingleton
       model.setTitle(it.title)
     }, { handler.handleThrowable(it) })
 
-    playerStateInteractor.state.task()
+    playerStateInteractor.getState().task()
         .doOnNext( { model.setPlayerState(it) })
         .subscribe({ view?.updatePlayerState(it) },
         { handler.handleThrowable(it) })

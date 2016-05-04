@@ -73,7 +73,7 @@ import java.util.concurrent.TimeUnit
   }
 
   fun getPlayStatusAction(bus: RxBus): () -> Subscription = {
-    playerStateInteractor.state.io().subscribe {
+    playerStateInteractor.getState().io().subscribe {
       bus.post(PlayStateChange(it))
     }
   }
