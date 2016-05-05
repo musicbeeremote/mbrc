@@ -2,7 +2,7 @@ package com.kelsos.mbrc.services.api
 
 import com.kelsos.mbrc.dto.BaseResponse
 import com.kelsos.mbrc.dto.NowPlayingTrack
-import com.kelsos.mbrc.dto.PaginatedResponse
+import com.kelsos.mbrc.dto.PageResponse
 import com.kelsos.mbrc.dto.requests.MoveRequest
 import com.kelsos.mbrc.dto.requests.NowPlayingQueueRequest
 import com.kelsos.mbrc.dto.requests.PlayPathRequest
@@ -21,7 +21,7 @@ interface NowPlayingService {
 
     @GET("/nowplaying")
     fun getNowPlayingList(@Query("offset") offset: Int,
-                          @Query("limit") limit: Int): Observable<PaginatedResponse<NowPlayingTrack>>
+                          @Query("limit") limit: Int): Observable<PageResponse<NowPlayingTrack>>
 
     @DELETE("/nowplaying/{id}")
     fun nowPlayingRemoveTrack(@Path("id") id: Long): Observable<BaseResponse>

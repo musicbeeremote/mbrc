@@ -3,7 +3,7 @@ package com.kelsos.mbrc.repository
 import com.google.inject.Inject
 import com.kelsos.mbrc.domain.QueueTrack
 import com.kelsos.mbrc.dto.NowPlayingTrack
-import com.kelsos.mbrc.dto.PaginatedResponse
+import com.kelsos.mbrc.dto.PageResponse
 import com.kelsos.mbrc.mappers.QueueTrackMapper
 import com.kelsos.mbrc.services.api.NowPlayingService
 import rx.Observable
@@ -14,7 +14,7 @@ class NowPlayingRepositoryImpl : NowPlayingRepository {
     @Inject private lateinit var service: NowPlayingService
 
     override fun getNowPlayingList(): Observable<List<QueueTrack>> = Observable.range(0, Integer.MAX_VALUE - 1)
-            .concatMap<PaginatedResponse<NowPlayingTrack>>(Func1 {
+            .concatMap<PageResponse<NowPlayingTrack>>(Func1 {
                 service.getNowPlayingList(LIMIT * it, LIMIT)
                         .subscribeOn(Schedulers.io())
             })
