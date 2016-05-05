@@ -9,7 +9,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 @JsonPropertyOrder("from", "to")
 class MoveRequest {
 
-    @JsonProperty("from") var from: Int = 0
-    @JsonProperty("to") var to: Int = 0
+  constructor()
+
+  constructor(from: Int, to: Int) {
+    this.from = from
+    this.to = to
+  }
+
+  @JsonProperty("from") var from: Int = 0
+  @JsonProperty("to") var to: Int = 0
 
 }

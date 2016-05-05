@@ -3,41 +3,21 @@ package com.kelsos.mbrc.utilities
 import android.content.SharedPreferences
 import com.google.inject.Inject
 import com.kelsos.mbrc.constants.Code
-import com.kelsos.mbrc.dao.AlbumDao_Table
-import com.kelsos.mbrc.dao.ArtistDao_Table
-import com.kelsos.mbrc.dao.GenreDao_Table
-import com.kelsos.mbrc.dao.PlaylistDao_Table
-import com.kelsos.mbrc.dao.TrackDao_Table
-import com.kelsos.mbrc.domain.Playlist
+import com.kelsos.mbrc.dao.*
 import com.kelsos.mbrc.dto.PaginatedResponse
-import com.kelsos.mbrc.dto.library.AlbumDto
-import com.kelsos.mbrc.dto.library.ArtistDto
 import com.kelsos.mbrc.dto.library.CoverDto
-import com.kelsos.mbrc.dto.library.GenreDto
-import com.kelsos.mbrc.dto.library.TrackDto
 import com.kelsos.mbrc.dto.playlist.PlaylistDto
 import com.kelsos.mbrc.dto.playlist.PlaylistTrack
 import com.kelsos.mbrc.dto.playlist.PlaylistTrackInfo
 import com.kelsos.mbrc.extensions.io
-import com.kelsos.mbrc.mappers.AlbumMapper
-import com.kelsos.mbrc.mappers.ArtistMapper
-import com.kelsos.mbrc.mappers.CoverMapper
-import com.kelsos.mbrc.mappers.GenreMapper
-import com.kelsos.mbrc.mappers.PlaylistMapper
-import com.kelsos.mbrc.mappers.PlaylistTrackInfoMapper
-import com.kelsos.mbrc.mappers.PlaylistTrackMapper
-import com.kelsos.mbrc.mappers.TrackMapper
+import com.kelsos.mbrc.mappers.*
 import com.kelsos.mbrc.repository.PlaylistRepository
-import com.kelsos.mbrc.repository.library.AlbumRepository
-import com.kelsos.mbrc.repository.library.ArtistRepository
-import com.kelsos.mbrc.repository.library.CoverRepository
-import com.kelsos.mbrc.repository.library.GenreRepository
-import com.kelsos.mbrc.repository.library.TrackRepository
+import com.kelsos.mbrc.repository.library.*
 import com.kelsos.mbrc.services.api.LibraryService
 import com.kelsos.mbrc.services.api.PlaylistService
-import roboguice.util.Ln
 import rx.Observable
 import rx.functions.Func1
+import rx.lang.kotlin.toObservable
 import rx.schedulers.Schedulers
 import timber.log.Timber
 
@@ -62,7 +42,7 @@ class LibrarySyncManager {
 
 
     val after = preferences.getLong(LAST_SYNC, 0)
-    Observable.create<Any> { subscriber ->
+    Observable.create<Any> {
       syncGenres(after)
       syncArtists(after)
       syncCovers(after)
@@ -79,10 +59,10 @@ class LibrarySyncManager {
       playlistRepository.getPlaylists()
           .subscribeOn(Schedulers.immediate())
           .observeOn(Schedulers.immediate())
-          .concatMap<Playlist>(Func1<List<Playlist>, Observable<out Playlist>> { Observable.from(it) })
-          .subscribe({ syncPlaylistTracks(it.id, after) }, { Ln.v(it) })
+          .concatMap { it.toObservable() }
+          .subscribe({ syncPlaylistTracks(it.id, after) }, { Timber.v(it, "Failed") })
 
-      subscriber.onCompleted()
+      it.onCompleted()
     }.io()
         .subscribe({ }, { this.handlerError(it) },
             {
@@ -100,37 +80,31 @@ class LibrarySyncManager {
     val genres = genreRepository.getAll()
     val albums = albumRepository.getAll()
     Observable.range(0, Integer.MAX_VALUE - 1)
-        .concatMap<PaginatedResponse<TrackDto>>(Func1 {
+        .concatMap {
           service.getLibraryTracks(LIMIT * it!!, LIMIT, after)
-        }).subscribeOn(Schedulers.immediate())
+        }.subscribeOn(Schedulers.immediate())
         .takeWhile({ this.canGetNext(it) })
         .subscribe(
-            { tracks ->
-              val daos = TrackMapper.mapDtos(tracks.data, artists, genres, albums)
+            {
+              val daos = TrackMapper.mapDtos(it.data, artists, genres, albums)
               trackRepository.save(daos)
             }, { this.handlerError(it) }, { })
   }
 
   private fun syncGenres(after: Long) {
-    Observable.range(0,
-        Integer.MAX_VALUE - 1).concatMap<PaginatedResponse<GenreDto>>(Func1 {
-      service.getLibraryGenres(LIMIT * it!!,
-          LIMIT,
-          after)
-    }).subscribeOn(Schedulers.immediate()).takeWhile({ this.canGetNext(it) }).subscribe(
-        { genres -> genreRepository.save(GenreMapper.map(genres.data)) },
-        { this.handlerError(it) })
+    Observable.range(0, Integer.MAX_VALUE - 1)
+        .concatMap { service.getLibraryGenres(LIMIT * it!!, LIMIT, after) }
+        .subscribeOn(Schedulers.immediate())
+        .takeWhile({ this.canGetNext(it) })
+        .subscribe({ genreRepository.save(GenreMapper.map(it.data)) }) { this.handlerError(it) }
   }
 
   private fun syncArtists(after: Long) {
-    Observable.range(0,
-        Integer.MAX_VALUE - 1).concatMap<PaginatedResponse<ArtistDto>>(Func1 {
-      service.getLibraryArtists(LIMIT * it!!,
-          LIMIT,
-          after)
-    }).subscribeOn(Schedulers.immediate()).takeWhile({ this.canGetNext(it) }).subscribe(
-        { artists -> artistRepository.save(ArtistMapper.map(artists.data)) },
-        { this.handlerError(it) })
+    Observable.range(0, Integer.MAX_VALUE - 1)
+        .concatMap { service.getLibraryArtists(LIMIT * it!!, LIMIT, after) }
+        .subscribeOn(Schedulers.immediate())
+        .takeWhile({ this.canGetNext(it) })
+        .subscribe({ artistRepository.save(ArtistMapper.map(it.data)) }) { this.handlerError(it) }
   }
 
   private fun canGetNext(page: PaginatedResponse<*>): Boolean {
@@ -143,19 +117,15 @@ class LibrarySyncManager {
   private fun syncAlbums(after: Long) {
     val cachedCovers = coverRepository.getAll()
     val cachedArtists = artistRepository.getAll()
-    Observable.range(0,
-        Integer.MAX_VALUE - 1).concatMap<PaginatedResponse<AlbumDto>>(Func1 {
-      service.getLibraryAlbums(LIMIT * it!!,
-          LIMIT,
-          after)
-    }).subscribeOn(Schedulers.immediate())
+    Observable.range(0, Integer.MAX_VALUE - 1)
+        .concatMap { service.getLibraryAlbums(LIMIT * it!!, LIMIT, after) }
+        .subscribeOn(Schedulers.immediate())
         .takeWhile({ this.canGetNext(it) })
         .subscribe(
-        {
-          val daos = AlbumMapper.mapDtos(it.data, cachedCovers, cachedArtists)
-          albumRepository.save(daos)
-        },
-        { this.handlerError(it) })
+            {
+              val daos = AlbumMapper.mapDtos(it.data, cachedCovers, cachedArtists)
+              albumRepository.save(daos)
+            }) { this.handlerError(it) }
   }
 
   private fun syncCovers(after: Long) {
@@ -191,8 +161,8 @@ class LibrarySyncManager {
       this.canGetNext(it)
     }).subscribe({
       val data = PlaylistTrackMapper.map(it.data,
-          { id:Long -> playlistRepository.getPlaylistById(id)},
-          { id:Long -> playlistRepository.getTrackInfoById(id)})
+          { id: Long -> playlistRepository.getPlaylistById(id) },
+          { id: Long -> playlistRepository.getTrackInfoById(id) })
       playlistRepository.savePlaylistTracks(data)
     }, { this.handlerError(it) })
   }

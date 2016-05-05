@@ -3,9 +3,9 @@ package com.kelsos.mbrc.presenters
 import com.google.inject.Inject
 import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.domain.PlaylistTrack
+import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.interactors.QueueInteractor
 import com.kelsos.mbrc.interactors.playlists.PlaylistTrackInteractor
-import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.ui.views.PlaylistTrackView
 import timber.log.Timber
 
@@ -34,7 +34,7 @@ class PlaylistTrackPresenterImpl : PlaylistTrackPresenter {
       return
     }
 
-    queueInteractor.execute(action, track.path!!).subscribe({
+    queueInteractor.execute(action, track.path).subscribe({
 
     }) { Timber.e(it, "Queueing failed") }
   }

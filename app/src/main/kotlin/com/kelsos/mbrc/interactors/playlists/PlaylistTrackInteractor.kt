@@ -4,5 +4,5 @@ import com.kelsos.mbrc.domain.PlaylistTrack
 import rx.Observable
 
 interface PlaylistTrackInteractor {
-    fun execute(playlistId: Long): Observable<List<PlaylistTrack>>
+  fun execute(playlistId: Long): Observable<List<PlaylistTrack>>
 }

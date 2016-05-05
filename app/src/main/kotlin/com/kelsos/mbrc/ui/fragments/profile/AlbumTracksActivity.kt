@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
@@ -48,19 +47,12 @@ class AlbumTracksActivity : AppCompatActivity(), AlbumTrackView, AlbumProfileAda
     RoboGuice.getInjector(this).injectMembers(this)
     ButterKnife.bind(this)
     presenter.bind(this)
-    val extras = intent.extras
+    albumId = intent?.extras?.getLong(ALBUM_ID, 0) ?: 0
 
-    if (extras != null) {
-      albumId = extras.getLong(ALBUM_ID, 0)
-    }
 
     setSupportActionBar(toolbar)
-    val actionBar = supportActionBar
-
-    if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(true)
-      actionBar.setDisplayShowHomeEnabled(true)
-    }
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    supportActionBar?.setDisplayShowHomeEnabled(true)
 
     collapsingToolbar.isTitleEnabled = true
     listTracks.layoutManager = LinearLayoutManager(baseContext)
@@ -81,12 +73,16 @@ class AlbumTracksActivity : AppCompatActivity(), AlbumTrackView, AlbumProfileAda
     albumYear.text = album.year
     collapsingToolbar.title = album.artist
 
-    if (!TextUtils.isEmpty(cover)) {
+    if (!cover.isNullOrEmpty()) {
 
       val image = File(File(filesDir, "covers"), cover)
 
-      Picasso.with(baseContext).load(image).placeholder(R.drawable.ic_image_no_cover).fit().centerCrop().into(
-          imageViewList)
+      Picasso.with(baseContext)
+          .load(image)
+          .placeholder(R.drawable.ic_image_no_cover)
+          .fit()
+          .centerCrop()
+          .into(imageViewList)
     }
   }
 
@@ -151,7 +147,3 @@ class AlbumTracksActivity : AppCompatActivity(), AlbumTrackView, AlbumProfileAda
     const val ALBUM_ID = "albumId"
   }
 }
-/**
- * Mandatory empty constructor for the fragment manager to instantiate the
- * fragment (e.g. upon screen orientation changes).
- */

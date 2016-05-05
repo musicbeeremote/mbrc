@@ -5,7 +5,6 @@ import com.kelsos.mbrc.constants.Code
 import com.kelsos.mbrc.dto.requests.PlaylistRequest
 import com.kelsos.mbrc.services.api.PlaylistService
 import rx.Observable
-import rx.functions.Func1
 
 class PlaylistAddInteractorImpl : PlaylistAddInteractor {
 
@@ -24,7 +23,7 @@ class PlaylistAddInteractorImpl : PlaylistAddInteractor {
         val request = PlaylistRequest()
         request.name = name
         request.list = tracks
-        return service.createPlaylist(request).map<Boolean>(Func1{ it.code == Code.SUCCESS })
+        return service.createPlaylist(request).map { it.code == Code.SUCCESS }
     }
 
     /**
@@ -39,6 +38,7 @@ class PlaylistAddInteractorImpl : PlaylistAddInteractor {
     override fun addToPlaylist(id: Long, tracks: List<String>): Observable<Boolean> {
         val request = PlaylistRequest()
         request.list = tracks
-        return service.addTracksToPlaylist(id.toInt(), request).map<Boolean>(Func1{ it.code == Code.SUCCESS })
+        return service.addTracksToPlaylist(id.toInt(), request)
+            .map { it.code == Code.SUCCESS }
     }
 }

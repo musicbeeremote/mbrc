@@ -7,13 +7,10 @@ import com.google.inject.Inject
 import roboguice.RoboGuice
 
 class MediaButtonReceiver : BroadcastReceiver() {
-  @Inject private val handler: MediaIntentHandler? = null
+  @Inject private lateinit var handler: MediaIntentHandler
 
   override fun onReceive(context: Context, intent: Intent) {
-    if (handler == null) {
-      RoboGuice.getInjector(context).injectMembers(this)
-    }
-
-    handler!!.handleMediaIntent(intent)
+    RoboGuice.getInjector(context).injectMembers(this)
+    handler.handleMediaIntent(intent)
   }
 }

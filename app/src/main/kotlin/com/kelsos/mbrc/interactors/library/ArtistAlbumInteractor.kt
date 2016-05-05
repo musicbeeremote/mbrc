@@ -4,5 +4,5 @@ import com.kelsos.mbrc.domain.Album
 import rx.Observable
 
 interface ArtistAlbumInteractor {
-    fun getArtistAlbums(artistId: Long): Observable<List<Album>>
+  fun getArtistAlbums(artistId: Long): Observable<List<Album>>
 }

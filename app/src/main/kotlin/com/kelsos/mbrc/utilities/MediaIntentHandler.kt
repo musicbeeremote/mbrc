@@ -4,9 +4,12 @@ import android.content.Intent
 import android.view.KeyEvent
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import com.kelsos.mbrc.annotations.PlayerAction
+import com.kelsos.mbrc.interactors.PlayerInteractor
+import timber.log.Timber
 
 @Singleton class MediaIntentHandler
-@Inject constructor(private val bus: RxBus) {
+@Inject constructor(private val playerInteractor: PlayerInteractor) {
   private var previousClick: Long = 0
 
   init {
@@ -27,6 +30,7 @@ import com.google.inject.Singleton
         return false
       }
 
+
       when (keyEvent?.keyCode) {
         KeyEvent.KEYCODE_HEADSETHOOK -> {
           val currentClick = System.currentTimeMillis()
@@ -35,27 +39,30 @@ import com.google.inject.Singleton
           }
           previousClick = currentClick
         }
-        KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> {
-        }
-        KeyEvent.KEYCODE_MEDIA_PLAY -> {
-        }
-        KeyEvent.KEYCODE_MEDIA_PAUSE -> {
-        }
-        KeyEvent.KEYCODE_MEDIA_STOP -> {
-        }
-        KeyEvent.KEYCODE_MEDIA_NEXT -> {
-        }
-        KeyEvent.KEYCODE_MEDIA_PREVIOUS -> {
-        }
+        KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> perform(PlayerAction.PLAY_PLAUSE)
+        KeyEvent.KEYCODE_MEDIA_PLAY -> perform(PlayerAction.PLAY)
+        KeyEvent.KEYCODE_MEDIA_PAUSE -> perform(PlayerAction.PAUSE)
+        KeyEvent.KEYCODE_MEDIA_STOP -> perform(PlayerAction.STOP)
+        KeyEvent.KEYCODE_MEDIA_NEXT -> perform(PlayerAction.NEXT)
+        KeyEvent.KEYCODE_MEDIA_PREVIOUS -> perform(PlayerAction.PREVIOUS)
         else -> {
         }
       }
+
+
     }
     return result
   }
 
-  companion object {
+  private fun perform(@PlayerAction.Action action: String) {
+    playerInteractor.performAction(action).subscribe({
 
+    }) {
+      Timber.v(it, "Failed to perform action")
+    }
+  }
+
+  companion object {
     const val DOUBLE_CLICK_INTERVAL = 350
   }
 

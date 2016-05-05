@@ -3,7 +3,6 @@ package com.kelsos.mbrc.utilities
 import com.kelsos.mbrc.extensions.main
 import rx.Observable
 import rx.Subscription
-import rx.functions.Func1
 import rx.subjects.PublishSubject
 import rx.subjects.SerializedSubject
 import java.util.*
@@ -17,7 +16,7 @@ class RxBusImpl : RxBus {
   override fun <T> register(receiver: Any, eventClass: Class<T>, onNext: (T) -> Unit) {
     val subscription = mBusSubject.filter {
       it.javaClass == eventClass
-    }.map<T>(Func1{ it as T }).subscribe(onNext)
+    }.map { it as T }.subscribe(onNext)
 
     updateSubscriptions(receiver, subscription)
   }
@@ -35,7 +34,7 @@ class RxBusImpl : RxBus {
 
   override fun <T> registerOnMain(receiver: Any, eventClass: Class<T>, onNext: (T) -> Unit) {
     val subscription = mBusSubject.filter { it.javaClass == eventClass }
-        .map<T>(Func1{ it as T })
+        .map { it as T }
         .main()
         .subscribe(onNext)
 
@@ -53,7 +52,7 @@ class RxBusImpl : RxBus {
   override fun <T> register(eventClass: Class<T>, onNext: (T) -> Unit, main: Boolean): Subscription {
     //noinspection unchecked
     val observable = mBusSubject.filter { it.javaClass == eventClass }
-        .map<T>(Func1{ it as T })
+        .map { it as T }
 
     return if (main) observable.main().subscribe(onNext) else observable.subscribe(onNext)
   }

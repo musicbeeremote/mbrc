@@ -43,7 +43,7 @@ object RemoteViewIntentBuilder {
     }
   }
 
-  @IntDef(OPEN.toLong(), PLAY.toLong(), CLOSE.toLong(), PREVIOUS.toLong(), NEXT.toLong())
+  @IntDef(OPEN, PLAY, CLOSE, PREVIOUS, NEXT)
   @Retention(AnnotationRetention.SOURCE)
   annotation class ButtonAction
 }

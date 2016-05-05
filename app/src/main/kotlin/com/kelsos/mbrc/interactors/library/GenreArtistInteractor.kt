@@ -4,5 +4,5 @@ import com.kelsos.mbrc.domain.Artist
 import rx.Observable
 
 interface GenreArtistInteractor {
-    fun getGenreArtists(genreId: Long): Observable<List<Artist>>
+  fun getGenreArtists(genreId: Long): Observable<List<Artist>>
 }
