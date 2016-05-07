@@ -1,3 +1,3 @@
 package com.kelsos.mbrc.domain
 
-class Artist(val id: Long, val name: String)
+data class Artist(val id: Long, val name: String)

@@ -24,13 +24,8 @@ class HelpActivity : AppCompatActivity() {
     ButterKnife.bind(this)
     RoboGuice.getInjector(this).injectMembers(this)
     setSupportActionBar(mToolbar)
-    val actionBar = supportActionBar
-
-    if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(true)
-      actionBar.setHomeButtonEnabled(true)
-    }
-
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    supportActionBar?.setHomeButtonEnabled(true)
   }
 
   @OnClick(R.id.feedback_button) fun onFeedbackButtonClicked() {

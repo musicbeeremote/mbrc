@@ -37,7 +37,11 @@ import com.kelsos.mbrc.events.ui.DisplayDialog
 import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment
-import com.kelsos.mbrc.ui.navigation.*
+import com.kelsos.mbrc.ui.navigation.LibraryActivity
+import com.kelsos.mbrc.ui.navigation.LyricsActivity
+import com.kelsos.mbrc.ui.navigation.MainActivity
+import com.kelsos.mbrc.ui.navigation.NowPlayingActivity
+import com.kelsos.mbrc.ui.navigation.PlaylistListActivity
 import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.viewmodels.ConnectionStatusModel
 import roboguice.RoboGuice
@@ -47,8 +51,8 @@ import timber.log.Timber
 open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
   private lateinit var toolbar: Toolbar
-  private lateinit  var drawer: DrawerLayout
-  private lateinit  var navigationView: NavigationView
+  private lateinit var drawer: DrawerLayout
+  private lateinit var navigationView: NavigationView
   @Inject private lateinit var rxBus: RxBus
   @Inject private lateinit var handler: Handler
   @Inject private lateinit var model: ConnectionStatusModel
@@ -94,7 +98,11 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
       startService(Intent(this, Controller::class.java))
     }
 
-    toggle = ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close)
+    toggle = ActionBarDrawerToggle(this,
+        drawer,
+        toolbar,
+        R.string.drawer_open,
+        R.string.drawer_close)
     toggle!!.syncState()
 
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -104,7 +112,9 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
   override fun onResume() {
     super.onResume()
-    rxBus.registerOnMain(this, ConnectionStatusChangeEvent::class.java,  { this.handleConnectionStatusChange(it) })
+    rxBus.registerOnMain(this,
+        ConnectionStatusChangeEvent::class.java,
+        { this.handleConnectionStatusChange(it) })
     rxBus.registerOnMain(this, DisplayDialog::class.java, { this.showSetupDialog(it) })
     rxBus.registerOnMain(this, NotifyUser::class.java, { this.handleUserNotification(it) })
 
@@ -257,8 +267,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     if (status == Connection.ON) {
       item.setTitle(R.string.drawer_connection_status_active)
-    }
-    else {
+    } else {
       item.setTitle(R.string.drawer_connection_status_off)
     }
   }

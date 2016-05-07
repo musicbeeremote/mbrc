@@ -54,6 +54,7 @@ import com.kelsos.mbrc.interactors.playlists.PlaylistAddInteractor
 import com.kelsos.mbrc.interactors.playlists.PlaylistAddInteractorImpl
 import com.kelsos.mbrc.interactors.playlists.PlaylistTrackInteractor
 import com.kelsos.mbrc.interactors.playlists.PlaylistTrackInteractorImpl
+import com.kelsos.mbrc.messaging.SocketMessageHandler
 import com.kelsos.mbrc.presenters.AlbumTracksPresenter
 import com.kelsos.mbrc.presenters.AlbumTracksPresenterImpl
 import com.kelsos.mbrc.presenters.ArtistAlbumPresenter
@@ -184,5 +185,6 @@ import roboguice.inject.fragment.SupportFragmentManagerProvider
     bind(NotificationManagerCompat::class.java).toProvider(NotificationManagerCompatProvider::class.java).`in`(Singleton::class.java)
     bind(FragmentManager::class.java).toProvider(SupportFragmentManagerProvider::class.java).`in`(ContextSingleton::class.java)
     bind(com.kelsos.mbrc.utilities.KeyProvider::class.java).to(com.kelsos.mbrc.utilities.KeyProviderImpl::class.java)
+    bind(SocketMessageHandler::class.java).asEagerSingleton()
   }
 }

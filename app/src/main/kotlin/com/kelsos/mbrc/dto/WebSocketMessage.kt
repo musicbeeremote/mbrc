@@ -10,28 +10,19 @@ import com.kelsos.mbrc.extensions.empty
 @JsonPropertyOrder("message")
 class WebSocketMessage : IMessage {
 
-    /**
-     * @return The message
-     */
-    /**
-     * @param message The message
-     */
-    @JsonProperty("message")
-    override var message: String = String.empty
+  @JsonProperty("message")
+  override var message: String = String.empty
 
-    /**
-     * No args constructor for use in serialization.
-     * Creates a new [WebSocketMessage]
-     */
-    constructor() {
+  constructor() {
 
-    }
+  }
 
-    /**
-     * @param message
-     */
-    constructor(message: String) {
-        this.message = message
-    }
+  constructor(message: String) {
+    this.message = message
+  }
+
+  override fun toString(): String {
+    return "WebSocketMessage(message='$message')"
+  }
 
 }

@@ -7,6 +7,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import com.kelsos.mbrc.events.ChangeWebSocketStatusEvent
 import com.kelsos.mbrc.messaging.NotificationService
+import com.kelsos.mbrc.messaging.SocketMessageHandler
 import com.kelsos.mbrc.net.SocketService
 import com.kelsos.mbrc.receivers.PlayerActionReceiver
 import com.kelsos.mbrc.receivers.StateBroadcastReceiver
@@ -22,6 +23,7 @@ import timber.log.Timber
 @Singleton class Controller : Service() {
 
   @Inject private lateinit var socket: SocketService
+  @Inject private lateinit var handler: SocketMessageHandler
   @Inject private lateinit var receiver: StateBroadcastReceiver
   @Inject private lateinit var actionReceiver: PlayerActionReceiver
   @Inject private lateinit var notificationService: NotificationService

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.dao;
 
-import com.kelsos.mbrc.RemoteDatabase;
+import com.kelsos.mbrc.SettingsDatabase;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ConflictAction;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
@@ -9,7 +9,7 @@ import com.raizlabs.android.dbflow.annotation.Unique;
 import com.raizlabs.android.dbflow.annotation.UniqueGroup;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-@Table(database = RemoteDatabase.class, name = "settings",
+@Table(database = SettingsDatabase.class, name = "settings",
     uniqueColumnGroups = {
         @UniqueGroup(groupNumber = 1, uniqueConflict = ConflictAction.IGNORE)
     }) public class DeviceSettings extends BaseModel {

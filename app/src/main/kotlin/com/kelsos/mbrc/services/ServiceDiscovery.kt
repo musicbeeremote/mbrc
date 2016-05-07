@@ -145,7 +145,7 @@ constructor(private val manager: WifiManager,
     const val DISCOVERY_ADDRESS = "239.1.5.10" //NOPMD
     const val PORT = 45345
     const val BUFFER = 512
-    const val DISCOVERY_TIMEOUT = 5000
+    const val DISCOVERY_TIMEOUT = 8000
     const val MULTICAST_PORT = 45345
   }
 }

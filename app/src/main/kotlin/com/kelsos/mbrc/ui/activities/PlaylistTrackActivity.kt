@@ -32,16 +32,10 @@ class PlaylistTrackActivity : AppCompatActivity(), PlaylistTrackView, PlaylistAd
     RoboGuice.getInjector(this).injectMembers(this)
     presenter.bind(this)
     setSupportActionBar(toolbar)
-    val actionBar = supportActionBar
-    val intent = intent
 
-    if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(true)
-      actionBar.setDisplayShowHomeEnabled(true)
-
-      val name = intent.getStringExtra(NAME)
-      actionBar.title = name
-    }
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    supportActionBar?.setDisplayShowHomeEnabled(true)
+    supportActionBar?.title = intent.getStringExtra(NAME)
 
     playlist.layoutManager = LinearLayoutManager(this)
     playlist.adapter = adapter

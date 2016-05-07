@@ -12,6 +12,7 @@ import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.RepeatChange
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
 import com.kelsos.mbrc.events.ui.VolumeChangeEvent
+import com.kelsos.mbrc.extensions.io
 import com.kelsos.mbrc.interactors.MuteInteractor
 import com.kelsos.mbrc.interactors.PlayerStateInteractor
 import com.kelsos.mbrc.interactors.RepeatInteractor
@@ -19,7 +20,6 @@ import com.kelsos.mbrc.interactors.TrackCoverInteractor
 import com.kelsos.mbrc.interactors.TrackInfoInteractor
 import com.kelsos.mbrc.interactors.TrackLyricsInteractor
 import com.kelsos.mbrc.interactors.VolumeInteractor
-import com.kelsos.mbrc.extensions.io
 import com.kelsos.mbrc.repository.TrackRepository
 import com.kelsos.mbrc.utilities.RxBus
 import rx.Subscription
@@ -46,7 +46,9 @@ import java.util.concurrent.TimeUnit
   private val volumeDebouncer = PublishSubject.create<WebSocketMessage>()
 
   init {
+    Timber.v("Initializing Socket Handler")
     bus.register(WebSocketMessage::class.java, { this.onWebSocketMessage(it) }, false)
+
     volumeDebouncer.debounce(1, TimeUnit.SECONDS).subscribe({ this.handleVolume(it) })
 
     actions = HashMap<String, () -> Subscription>()

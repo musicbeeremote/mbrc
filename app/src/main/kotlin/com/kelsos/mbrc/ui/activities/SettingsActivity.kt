@@ -24,7 +24,6 @@ class SettingsActivity : AppCompatActivity() {
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     supportActionBar?.setTitle(R.string.menu_settings)
 
-
     val fragment = SettingsFragment.newInstance()
     supportFragmentManager.beginTransaction()
         .replace(R.id.content_wrapper, fragment)

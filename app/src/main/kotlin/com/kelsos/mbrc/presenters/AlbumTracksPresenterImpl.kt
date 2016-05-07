@@ -22,9 +22,9 @@ class AlbumTracksPresenterImpl : AlbumTracksPresenter {
   }
 
   override fun load(albumId: Long) {
-    albumTrackInteractor.execute(albumId).observeOn(AndroidSchedulers.mainThread()).subscribe({ albumTrackModel ->
-      view!!.updateTracks(albumTrackModel.tracks)
-      view!!.updateAlbum(albumTrackModel.album)
+    albumTrackInteractor.execute(albumId).observeOn(AndroidSchedulers.mainThread()).subscribe({
+      view?.updateTracks(it.tracks)
+      view?.updateAlbum(it.album)
     }, { Ln.v(it) })
   }
 
@@ -43,8 +43,8 @@ class AlbumTracksPresenterImpl : AlbumTracksPresenter {
 
   override fun queue(entry: Track, @Queue.Action action: String) {
     val id = entry.id
-    interactor.execute(MetaDataType.TRACK, action, id).subscribe({ aBoolean ->
-      if (aBoolean!!) {
+    interactor.execute(MetaDataType.TRACK, action, id).subscribe({
+      if (it!!) {
         view?.showTrackSuccess()
       } else {
         view?.showTrackFailed()

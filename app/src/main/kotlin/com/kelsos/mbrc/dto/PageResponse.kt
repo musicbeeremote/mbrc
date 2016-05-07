@@ -10,7 +10,10 @@ import java.util.*
 class PageResponse<T> : BaseResponse() {
 
     @JsonProperty("data") var data: List<T> = ArrayList()
+
     @JsonProperty("total") var total: Int = 0
+
     @JsonProperty("limit") var limit: Int = 0
+
     @JsonProperty("offset") var offset: Int = 0
 }
