@@ -9,7 +9,12 @@ import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.extensions.io
 import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.utilities.SettingsManager
-import okhttp3.*
+import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
+import okhttp3.ResponseBody
 import okhttp3.ws.WebSocket
 import okhttp3.ws.WebSocketCall
 import okhttp3.ws.WebSocketListener
@@ -54,7 +59,7 @@ constructor(private val settingsManager: SettingsManager, private val mapper: Ob
       return
     }
 
-    settingsManager.default.filter { !it.address.isNullOrEmpty() || it.port == 0 }
+    settingsManager.observableDefault.filter { !it.address.isNullOrEmpty() || it.port == 0 }
         .map {
           HttpUrl.Builder()
               .scheme("http")

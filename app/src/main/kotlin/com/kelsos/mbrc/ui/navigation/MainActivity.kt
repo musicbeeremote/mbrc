@@ -127,7 +127,7 @@ import roboguice.RoboGuice
     initialize(toolbar,drawer,navigationView)
 
     setCurrentSelection(R.id.drawer_menu_home)
-    presenter.bind(this)
+
 
     artistLabel.isSelected = true
     titleLabel.isSelected = true
@@ -148,12 +148,12 @@ import roboguice.RoboGuice
 
   public override fun onPause() {
     super.onPause()
-    presenter.onPause()
+    presenter.detachView()
   }
 
   public override fun onResume() {
     super.onResume()
-    presenter.onResume()
+    presenter.attachView(this)
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -269,7 +269,7 @@ import roboguice.RoboGuice
   }
 
   override fun updateTrackInfo(info: TrackInfo) {
-    if (info == null) {
+    if (info.isEmpty()) {
       return
     }
 

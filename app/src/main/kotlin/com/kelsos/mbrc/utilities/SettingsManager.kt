@@ -11,7 +11,8 @@ import com.kelsos.mbrc.dao.DeviceSettings
 import com.kelsos.mbrc.extensions.versionCode
 import com.kelsos.mbrc.repository.DeviceRepository
 import rx.Observable
-import rx.functions.Func1
+import rx.lang.kotlin.observable
+import rx.lang.kotlin.toSingletonObservable
 import timber.log.Timber
 import java.util.*
 
@@ -54,13 +55,11 @@ import java.util.*
 
   var lastUpdated: Date
     get() = Date(preferences.getLong(keyProvider.lastUpdateKey, 0))
-
     @SuppressLint("NewApi") set(lastChecked) {
       val editor = preferences.edit()
       editor.putLong(keyProvider.lastUpdateKey, lastChecked.time)
       editor.apply()
     }
-
 
   @SuppressLint("NewApi") private fun checkForFirstRunAfterUpdate() {
     try {
@@ -85,15 +84,27 @@ import java.util.*
 
   }
 
-  val default: Observable<DeviceSettings>
-    get() = Observable.just(preferences.getLong(DEFAULT_ID, -1)).flatMap<DeviceSettings>(Func1 { id ->
-      Observable.create<DeviceSettings> { subscriber ->
-        if (id > 0) {
-          subscriber.onNext(repository.getById(id!!))
+  val observableDefault: Observable<DeviceSettings>
+    get() = preferences.getLong(DEFAULT_ID, -1)
+        .toSingletonObservable()
+        .flatMap { id ->
+          observable<DeviceSettings> {
+            if (id > 0) {
+              it.onNext(repository.getById(id))
+            }
+            it.onCompleted()
+          }
         }
-        subscriber.onCompleted()
+
+  val default: DeviceSettings?
+    get() {
+      val selection = preferences.getLong(DEFAULT_ID, -1)
+      if (selection < 0) {
+        return null
+      } else {
+        return repository.getById(selection)
       }
-    })
+    }
 
   fun setDefault(id: Long) {
     preferences.edit().putLong(DEFAULT_ID, id).apply()

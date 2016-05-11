@@ -12,6 +12,7 @@ import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.RepeatChange
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
 import com.kelsos.mbrc.events.ui.VolumeChangeEvent
+import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.interactors.MuteInteractor
 import com.kelsos.mbrc.interactors.PlayerInteractor
 import com.kelsos.mbrc.interactors.PlayerStateInteractor
@@ -21,7 +22,6 @@ import com.kelsos.mbrc.interactors.TrackCoverInteractor
 import com.kelsos.mbrc.interactors.TrackInfoInteractor
 import com.kelsos.mbrc.interactors.TrackPositionInteractor
 import com.kelsos.mbrc.interactors.VolumeInteractor
-import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.ui.views.MainView
 import com.kelsos.mbrc.utilities.ErrorHandler
 import com.kelsos.mbrc.utilities.RxBus
@@ -29,10 +29,30 @@ import com.kelsos.mbrc.viewmodels.MainViewModel
 import roboguice.inject.ContextSingleton
 import rx.Observable
 import rx.Subscription
+import rx.subjects.PublishSubject
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 @ContextSingleton class MainViewPresenterImpl : MainViewPresenter {
+  override fun attachView(view: MainView) {
+    this.mainView = view
+
+    loadTrackInfo()
+    loadCover()
+    loadShuffle()
+    loadRepeat()
+    loadVolume()
+    loadPosition()
+    loadPlayerState()
+    model.loadComplete()
+    subscribe()
+  }
+
+  override fun detachView() {
+    this.mainView = null
+    bus.unregister(this)
+  }
+
   @Inject private lateinit var errorHandler: ErrorHandler
   @Inject private lateinit var model: MainViewModel
   @Inject private lateinit var playerInteractor: PlayerInteractor
@@ -49,25 +69,11 @@ import java.util.concurrent.TimeUnit
 
   private var mainView: MainView? = null
   private var positionUpdate: Subscription? = null
+  private var volumeThrottler: PublishSubject<Int> = PublishSubject.create()
 
-  override fun bind(mainView: MainView) {
-    this.mainView = mainView
-  }
-
-  override fun onPause() {
-    bus.unregister(this)
-  }
-
-  override fun onResume() {
-    loadTrackInfo()
-    loadCover()
-    loadShuffle()
-    loadRepeat()
-    loadVolume()
-    loadPosition()
-    loadPlayerState()
-    model.loadComplete()
-    subscribe()
+  init {
+    volumeThrottler.throttleLast(500, TimeUnit.MILLISECONDS)
+        .subscribe { changeVolume(it) }
   }
 
   private fun subscribe() {
@@ -198,15 +204,22 @@ import java.util.concurrent.TimeUnit
   }
 
   override fun onRepeatPressed() {
-    repeatInteractor.setRepeat(Repeat.CHANGE).task()
+    repeatInteractor.setRepeat(Repeat.CHANGE)
+        .task()
         .subscribe({ mainView?.updateRepeat(it) })
         { errorHandler.handleThrowable(it) }
   }
 
   override fun onVolumeChange(volume: Int) {
-    volumeInteractor.setVolume(volume).task().subscribe(
-        { model.volume = it },
-        { errorHandler.handleThrowable(it) })
+    volumeThrottler.onNext(volume)
+  }
+
+  private fun changeVolume(volume: Int) {
+    volumeInteractor.setVolume(volume)
+        .task()
+        .subscribe({ model.volume = it }) {
+          errorHandler.handleThrowable(it)
+        }
   }
 
   override fun onPositionChange(position: Int) {
@@ -241,19 +254,19 @@ import java.util.concurrent.TimeUnit
   fun onTrackInfoChangedEvent(event: TrackInfoChangeEvent) {
     Timber.v("Received change event")
     model.trackInfo = event.trackInfo
-    mainView!!.updateTrackInfo(event.trackInfo)
+    mainView?.updateTrackInfo(event.trackInfo)
     startPositionUpdate()
     updatePosition(positionInteractor.getPosition())
   }
 
   fun onCoverChangedEvent(event: CoverChangedEvent) {
     model.trackCover = event.cover
-    mainView!!.updateCover(event.cover)
+    mainView?.updateCover(event.cover)
   }
 
   fun onPlayStateChanged(event: PlayStateChange) {
     model.playState = event.state
-    mainView!!.updatePlayState(event.state)
+    mainView?.updatePlayState(event.state)
     updatePlaystate(event.state)
   }
 

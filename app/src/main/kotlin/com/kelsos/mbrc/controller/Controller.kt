@@ -6,6 +6,7 @@ import android.os.IBinder
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import com.kelsos.mbrc.events.ChangeWebSocketStatusEvent
+import com.kelsos.mbrc.interactors.LibrarySyncInteractor
 import com.kelsos.mbrc.messaging.NotificationService
 import com.kelsos.mbrc.messaging.SocketMessageHandler
 import com.kelsos.mbrc.net.SocketService
@@ -30,6 +31,7 @@ import timber.log.Timber
   @Inject private lateinit var discovery: ServiceDiscovery
   @Inject private lateinit var settingsManager: SettingsManager
   @Inject private lateinit var bus: RxBus
+  @Inject private lateinit var sync: LibrarySyncInteractor
 
   init {
     Timber.d("Application Controller Initialized")
@@ -41,18 +43,23 @@ import timber.log.Timber
 
   override fun onCreate() {
     super.onCreate()
-    val config = FlowConfig.Builder(this).openDatabasesOnInit(true).build()
+    val config = FlowConfig.Builder(this)
+        .openDatabasesOnInit(true)
+        .build()
+
     FlowManager.init(config)
 
     RoboGuice.getInjector(this).injectMembers(this)
     this.registerReceiver(actionReceiver, actionReceiver.intentFilter)
     this.registerReceiver(receiver, receiver.intentFilter)
-    bus.register(this, ChangeWebSocketStatusEvent::class.java, { this.onWebSocketActionRequest(it) })
+    bus.register(this,
+        ChangeWebSocketStatusEvent::class.java,
+        { this.onWebSocketActionRequest(it) })
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     Timber.v("[Service] start command received")
-    Observable.merge(discovery.startDiscovery(), settingsManager.default)
+    Observable.merge(discovery.startDiscovery(), settingsManager.observableDefault)
         .first()
         .subscribe({
           if (it != null) {
@@ -61,6 +68,7 @@ import timber.log.Timber
 
         }) { Timber.v(it, "Discovery failed") }
 
+    sync.sync()
     return super.onStartCommand(intent, flags, startId)
   }
 
@@ -87,6 +95,5 @@ import timber.log.Timber
       }
     }
   }
-
 
 }

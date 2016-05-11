@@ -18,10 +18,8 @@ class DiscoveryResponse {
 
   @JsonProperty("port") var port: Int = 0
 
-  @JsonProperty("http") var http: Int = 0
-
   override fun toString(): String {
-    return "DiscoveryResponse{address='$address\', name='$name\', port=$port, http=$http}"
+    return "DiscoveryResponse{address='$address\', name='$name\', port=$port}"
   }
 
 }

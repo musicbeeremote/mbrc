@@ -1,13 +1,9 @@
 package com.kelsos.mbrc.presenters
 
+import com.kelsos.mbrc.mvp.IPresenter
 import com.kelsos.mbrc.ui.views.MainView
 
-interface MainViewPresenter {
-  fun bind(mainView: MainView)
-
-  fun onPause()
-
-  fun onResume()
+interface MainViewPresenter : IPresenter<MainView> {
 
   fun onPlayPausePressed()
 

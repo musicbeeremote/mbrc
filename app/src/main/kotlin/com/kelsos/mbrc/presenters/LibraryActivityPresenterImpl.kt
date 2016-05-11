@@ -1,13 +1,13 @@
 package com.kelsos.mbrc.presenters
 
 import com.google.inject.Inject
-import com.kelsos.mbrc.interactors.LibraryStatusInteractor
+import com.kelsos.mbrc.interactors.LibrarySyncInteractor
 import com.kelsos.mbrc.ui.views.LibraryActivityView
 
 class LibraryActivityPresenterImpl : LibraryActivityPresenter {
   private var view: LibraryActivityView? = null
 
-  @Inject private lateinit var libraryStatusInteractor: LibraryStatusInteractor
+  @Inject private lateinit var librarySyncInteractor: LibrarySyncInteractor
 
   override fun bind(view: LibraryActivityView) {
 

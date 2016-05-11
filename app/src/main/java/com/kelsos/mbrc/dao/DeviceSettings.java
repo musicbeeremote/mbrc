@@ -17,7 +17,6 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
   @Column(name = "address") @Unique(uniqueGroups = 1, unique = false) private String address;
   @Column(name = "name") private String name;
   @Column(name = "port") @Unique(uniqueGroups = 1, unique = false) private int port;
-  @Column(name = "http") @Unique(uniqueGroups = 1, unique = false) private int http;
 
   public long getId() {
     return id;
@@ -49,14 +48,6 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 
   public void setPort(int port) {
     this.port = port;
-  }
-
-  public int getHttp() {
-    return this.http;
-  }
-
-  public void setHttp(int http) {
-    this.http = http;
   }
 
   @Override public boolean equals(Object o) {

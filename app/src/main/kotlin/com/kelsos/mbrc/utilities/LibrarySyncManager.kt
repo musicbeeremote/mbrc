@@ -62,7 +62,7 @@ class LibrarySyncManager {
 
       coverRepository.getAllObservable()
           .subscribeOn(Schedulers.immediate())
-          .subscribe({ downloader.download(it) }, { Timber.v(it, "Failed") })
+          .subscribe({ downloader.download(it) }) { Timber.v(it, "Failed") }
 
       syncPlaylistTrackInfo(after)
       syncPlaylists(after)
@@ -75,11 +75,9 @@ class LibrarySyncManager {
 
       it.onCompleted()
     }.io()
-        .subscribe({ }, { this.handlerError(it) },
-            {
-              preferences.edit().putLong(LAST_SYNC, System.currentTimeMillis() / 1000).apply()
-            }
-        )
+        .subscribe({ }, { this.handlerError(it) }) {
+          preferences.edit().putLong(LAST_SYNC, System.currentTimeMillis() / 1000).apply()
+        }
   }
 
   private fun handlerError(throwable: Throwable) {

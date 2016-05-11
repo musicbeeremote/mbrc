@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.di.providers
 
-import android.text.TextUtils
 import com.google.inject.Inject
 import com.google.inject.Provider
 import com.kelsos.mbrc.utilities.SettingsManager
@@ -19,12 +18,16 @@ class OkHttpClientProvider : Provider<OkHttpClient> {
     loggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
 
     val accept = Interceptor {
-      val settings = manager.default.toBlocking().first()
+      val settings = manager.default
       val request = it.request()
       val builder = request.newBuilder().header("Accept", "application/json")
 
-      if (settings != null && !TextUtils.isEmpty(settings.address)) {
-        val url = request.url().newBuilder().host(settings.address).port(settings.http).build()
+      if (settings != null && settings.address.isNullOrBlank().not()) {
+        val url = request.url()
+            .newBuilder()
+            .host(settings.address)
+            .port(settings.port)
+            .build()
         builder.url(url)
       }
 

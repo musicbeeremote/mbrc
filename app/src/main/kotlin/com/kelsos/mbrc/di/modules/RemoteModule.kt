@@ -16,8 +16,8 @@ import com.kelsos.mbrc.di.providers.OkHttpClientProvider
 import com.kelsos.mbrc.di.providers.RetrofitProvider
 import com.kelsos.mbrc.interactors.LibraryAlbumInteractor
 import com.kelsos.mbrc.interactors.LibraryAlbumInteractorImpl
-import com.kelsos.mbrc.interactors.LibraryStatusInteractor
-import com.kelsos.mbrc.interactors.LibraryStatusInteractorImpl
+import com.kelsos.mbrc.interactors.LibrarySyncInteractor
+import com.kelsos.mbrc.interactors.LibrarySyncInteractorImpl
 import com.kelsos.mbrc.interactors.LibraryTrackInteractor
 import com.kelsos.mbrc.interactors.LibraryTrackInteractorImpl
 import com.kelsos.mbrc.interactors.MuteInteractor
@@ -156,7 +156,7 @@ import roboguice.inject.fragment.SupportFragmentManagerProvider
     bind(PlaylistTrackInteractor::class.java).to(PlaylistTrackInteractorImpl::class.java)
 
     bind(LibraryAlbumInteractor::class.java).to(LibraryAlbumInteractorImpl::class.java)
-    bind(LibraryStatusInteractor::class.java).to(LibraryStatusInteractorImpl::class.java)
+    bind(LibrarySyncInteractor::class.java).to(LibrarySyncInteractorImpl::class.java)
 
     bind(TrackRepository::class.java).to(TrackRepositoryImpl::class.java).`in`(Singleton::class.java)
 

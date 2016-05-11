@@ -74,7 +74,7 @@ class DeviceManagerAdapter
     val settings = data[position]
     holder.computerName.text = settings.name
     holder.hostname.text = settings.address
-    holder.portNum.text = String.format("%d / %d", settings.port, settings.http)
+    holder.portNum.text = settings.port.toString()
 
     if (position == defaultIndex) {
       holder.defaultSettings.setImageResource(R.drawable.ic_check_black_24dp)

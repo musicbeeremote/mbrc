@@ -25,11 +25,12 @@ class CoverDownloader {
     val mkdirs = coverDirectory!!.mkdirs()
     Timber.v("[Cover] directory created [%s] [%s]", coverDirectory!!.absolutePath, mkdirs)
 
-    val settings = manager.default.toBlocking().first()
+    val settings = manager.default ?: return
+
     baseUrl = HttpUrl.Builder()
         .host(settings.address)
         .scheme("http")
-        .port(settings.http)
+        .port(settings.port)
         .addPathSegment("library")
         .addPathSegment("covers")
         .build()

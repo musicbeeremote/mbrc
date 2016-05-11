@@ -9,7 +9,6 @@ object DeviceSettingsMapper {
     settings.address = response.address
     settings.name = response.name
     settings.port = response.port
-    settings.http = response.http
     return settings
   }
 }

@@ -41,18 +41,15 @@ class SettingsDialogFragment : DialogFragment() {
       }
 
       val portText = portEdit.text.toString()
-      val httpText = httpEdit.text.toString()
 
       val portNum = if (TextUtils.isEmpty(portText)) 0 else Integer.parseInt(portText)
-      val httpNum = if (TextUtils.isEmpty(httpText)) 0 else Integer.parseInt(httpText)
 
-      if (isValid(portNum) && isValid(httpNum) && shouldIClose) {
+      if (isValid(portNum) && shouldIClose) {
 
         val settings = DeviceSettings()
         settings.address = hostname
         settings.name = computerName
         settings.port = portNum
-        settings.http = httpNum
 
         mListener?.onDialogPositiveClick(this@SettingsDialogFragment, settings)
         dialog.dismiss()
