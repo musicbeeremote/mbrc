@@ -9,7 +9,7 @@ import rx.Observable
 
 class TrackCoverInteractorImpl : TrackCoverInteractor {
     @Inject private lateinit var repository: TrackRepository
-    override fun execute(b: Boolean): Observable<Bitmap?> {
-        return repository.getTrackCover(b)
+    override fun load(reload: Boolean): Observable<Bitmap?> {
+        return repository.getTrackCover(reload)
     }
 }

@@ -81,7 +81,7 @@ import java.util.concurrent.TimeUnit
   }
 
   fun getTrackAction(bus: RxBus): () -> Subscription = {
-    trackInfoInteractor.execute(true).io().subscribe {
+    trackInfoInteractor.load(true).io().subscribe {
       bus.post(TrackInfoChangeEvent(it))
     }
   }
@@ -93,7 +93,7 @@ import java.util.concurrent.TimeUnit
   }
 
   fun getCoverAction(bus: RxBus): () -> Subscription = {
-    coverInteractor.execute(true).io().subscribe {
+    coverInteractor.load(true).io().subscribe {
       bus.post(CoverChangedEvent(it))
     }
   }

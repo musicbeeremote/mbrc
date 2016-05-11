@@ -97,24 +97,24 @@ import java.util.concurrent.TimeUnit
   }
 
   private fun loadTrackInfo() {
-    if (model.trackInfo.isEmpty()) {
-      trackInfoInteractor.execute(false).subscribe({
+    if (model.isLoaded) {
+      mainView?.updateTrackInfo(model.trackInfo)
+    } else {
+      trackInfoInteractor.load().subscribe({
         model.trackInfo = it
         mainView?.updateTrackInfo(it)
       }, { errorHandler.handleThrowable(it) })
-    } else {
-      mainView?.updateTrackInfo(model.trackInfo)
     }
   }
 
   private fun loadCover() {
-    if (model.trackCover == null) {
-      coverInteractor.execute(false).subscribe({
+    if (model.isLoaded) {
+      mainView?.updateCover(model.trackCover)
+    } else {
+      coverInteractor.load().subscribe({
         model.trackCover = it
         mainView?.updateCover(it)
       }, { errorHandler.handleThrowable(it) })
-    } else {
-      mainView?.updateCover(model.trackCover)
     }
   }
 

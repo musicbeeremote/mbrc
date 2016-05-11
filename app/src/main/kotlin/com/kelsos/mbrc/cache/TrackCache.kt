@@ -6,13 +6,13 @@ import com.kelsos.mbrc.domain.TrackPosition
 import com.kelsos.mbrc.domain.TrackRating
 
 interface TrackCache {
-    var trackinfo: TrackInfo
+  var trackinfo: TrackInfo
 
-    var lyrics: List<String>
+  var lyrics: List<String>
 
-    var cover: Bitmap?
+  var cover: Bitmap?
 
-    var position: TrackPosition
+  var position: TrackPosition
 
-    var rating: TrackRating
+  var rating: TrackRating
 }

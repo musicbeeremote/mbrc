@@ -5,5 +5,5 @@ import android.graphics.Bitmap
 import rx.Observable
 
 interface TrackCoverInteractor {
-    fun execute(b: Boolean): Observable<Bitmap?>
+  fun load(reload: Boolean = false): Observable<Bitmap?>
 }

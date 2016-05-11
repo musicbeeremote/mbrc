@@ -125,7 +125,7 @@ constructor(private val settingsManager: SettingsManager, private val mapper: Ob
   override fun onFailure(e: IOException, response: Response?) {
     stopPing()
     this.connected = false
-    Timber.e(e, "[Websocket] io ex")
+    Timber.e("Socket failed with message: ${e.message}")
     rxBus.post(ConnectionStatusChangeEvent(Connection.OFF))
   }
 

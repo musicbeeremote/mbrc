@@ -5,11 +5,11 @@ import com.kelsos.mbrc.annotations.PlayerAction
 import com.kelsos.mbrc.events.ui.CoverChangedEvent
 import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
+import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.interactors.PlayerInteractor
 import com.kelsos.mbrc.interactors.PlayerStateInteractor
 import com.kelsos.mbrc.interactors.TrackCoverInteractor
 import com.kelsos.mbrc.interactors.TrackInfoInteractor
-import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.ui.views.MiniControlView
 import com.kelsos.mbrc.utilities.ErrorHandler
 import com.kelsos.mbrc.utilities.RxBus
@@ -59,12 +59,12 @@ import roboguice.inject.ContextSingleton
   }
 
   override fun load() {
-    coverInteractor.execute(false).task().subscribe({
+    coverInteractor.load(false).task().subscribe({
       view?.updateCover(it)
       model.setCover(it)
     }, { handler.handleThrowable(it) })
 
-    infoInteractor.execute(false).task().subscribe({
+    infoInteractor.load(false).task().subscribe({
       view?.updateTrack(it.artist, it.title)
       model.setArtist(it.artist)
       model.setTitle(it.title)
