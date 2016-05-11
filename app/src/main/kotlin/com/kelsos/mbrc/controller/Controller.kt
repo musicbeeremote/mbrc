@@ -64,11 +64,11 @@ import timber.log.Timber
         .subscribe({
           if (it != null) {
             socket.startWebSocket()
+            sync.sync()
           }
 
         }) { Timber.v(it, "Discovery failed") }
 
-    sync.sync()
     return super.onStartCommand(intent, flags, startId)
   }
 

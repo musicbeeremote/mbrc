@@ -10,13 +10,13 @@ import com.kelsos.mbrc.dao.DeviceSettings
 import com.kelsos.mbrc.dto.DiscoveryResponse
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.ui.DiscoveryStopped
+import com.kelsos.mbrc.extensions.io
 import com.kelsos.mbrc.mappers.DeviceSettingsMapper
 import com.kelsos.mbrc.repository.DeviceRepository
 import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.utilities.SettingsManager
 import roboguice.util.Ln
 import rx.Observable
-import rx.schedulers.Schedulers
 import timber.log.Timber
 import java.io.IOException
 import java.net.DatagramPacket
@@ -53,18 +53,18 @@ constructor(private val manager: WifiManager,
       return Observable.empty<DeviceSettings>()
     }
 
-    return discover().subscribeOn(Schedulers.io()).doOnTerminate({ this.stopDiscovery() }).doOnNext { connectionSettings ->
-      repository.save(connectionSettings)
+    return discover().io().doOnTerminate({ this.stopDiscovery() }).doOnNext {
+      repository.save(it)
 
       if (repository.count() == 1L) {
         Timber.v("Only one entry found, setting it as default")
         settingsManager.setDefault(1)
       }
 
-      bus.post(DiscoveryStopped(DiscoveryStopped.SUCCESS, connectionSettings))
-    }.doOnError { t ->
+      bus.post(DiscoveryStopped(DiscoveryStopped.SUCCESS, it))
+    }.doOnError {
       bus.post(DiscoveryStopped(DiscoveryStopped.NOT_FOUND, null))
-      Timber.e(t, "During service discovery")
+      Timber.e(it, "During service discovery")
     }
   }
 

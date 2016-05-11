@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.kelsos.mbrc.di.modules
 
 import android.support.v4.app.FragmentManager
@@ -99,6 +101,7 @@ import com.kelsos.mbrc.repository.library.CoverRepository
 import com.kelsos.mbrc.repository.library.CoverRepositoryImpl
 import com.kelsos.mbrc.repository.library.GenreRepository
 import com.kelsos.mbrc.repository.library.GenreRepositoryImpl
+import com.kelsos.mbrc.services.api.ApiService
 import com.kelsos.mbrc.services.api.LibraryService
 import com.kelsos.mbrc.services.api.NowPlayingService
 import com.kelsos.mbrc.services.api.PlayerService
@@ -180,6 +183,7 @@ import roboguice.inject.fragment.SupportFragmentManagerProvider
     bind(LibraryService::class.java).toProvider(ApiServiceProvider(LibraryService::class.java)).`in`(Singleton::class.java)
     bind(NowPlayingService::class.java).toProvider(ApiServiceProvider(NowPlayingService::class.java)).`in`(Singleton::class.java)
     bind(PlaylistService::class.java).toProvider(ApiServiceProvider(PlaylistService::class.java)).`in`(Singleton::class.java)
+    bind(ApiService::class.java).toProvider(ApiServiceProvider(ApiService::class.java)).`in`(Singleton::class.java)
     bind(RxBus::class.java).to(RxBusImpl::class.java).`in`(Singleton::class.java)
 
     bind(NotificationManagerCompat::class.java).toProvider(NotificationManagerCompatProvider::class.java).`in`(Singleton::class.java)

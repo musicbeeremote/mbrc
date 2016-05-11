@@ -11,7 +11,7 @@ import rx.lang.kotlin.toSingletonObservable
 class LibraryAlbumInteractorImpl : LibraryAlbumInteractor {
   @Inject private lateinit var repository: AlbumRepository
 
-  override fun execute(offset: Int, limit: Int): Observable<List<Album>> {
+  override fun getPage(offset: Int, limit: Int): Observable<List<Album>> {
     return repository.getAlbumViews(offset, limit)
         .flatMap { AlbumMapper.map(it).toSingletonObservable() }
         .io()

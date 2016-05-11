@@ -9,7 +9,11 @@ import com.kelsos.mbrc.dto.track.Position
 import com.kelsos.mbrc.dto.track.Rating
 import com.kelsos.mbrc.dto.track.TrackInfoResponse
 import com.kelsos.mbrc.utilities.RemoteUtils
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.PUT
+import retrofit2.http.Query
+import retrofit2.http.Streaming
 import rx.Observable
 
 interface TrackService {
@@ -34,6 +38,5 @@ interface TrackService {
 
     @GET("/track")
     fun getTrackInfo(): Observable<TrackInfoResponse>
-
 
 }

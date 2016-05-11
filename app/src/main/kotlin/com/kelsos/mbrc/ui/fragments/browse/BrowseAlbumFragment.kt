@@ -34,7 +34,7 @@ class BrowseAlbumFragment : Fragment(), AlbumAdapter.MenuItemSelectedListener, B
     val view = inflater!!.inflate(R.layout.ui_library_grid, container, false)
     ButterKnife.bind(this, view)
     RoboGuice.getInjector(context).injectMembers(this)
-    presenter.bind(this)
+    presenter.attachView(this)
     val layoutManager = GridLayoutManager(context, 2)
     scrollListener = object : EndlessGridRecyclerViewScrollListener(layoutManager) {
       override fun onLoadMore(page: Int, totalItemsCount: Int) {
@@ -56,6 +56,7 @@ class BrowseAlbumFragment : Fragment(), AlbumAdapter.MenuItemSelectedListener, B
   override fun onPause() {
     super.onPause()
     recyclerView.removeOnScrollListener(scrollListener)
+    presenter.detachView()
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
