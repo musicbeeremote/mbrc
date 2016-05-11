@@ -7,9 +7,13 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okio.Okio
+import rx.lang.kotlin.toObservable
+import rx.schedulers.Schedulers
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
 class CoverDownloader {
   @Inject private lateinit var client: OkHttpClient
@@ -18,6 +22,15 @@ class CoverDownloader {
 
   private var baseUrl: HttpUrl? = null
   private var coverDirectory: File? = null
+  private val executor: Executor
+
+  private val cores: Int
+    get() = Runtime.getRuntime().availableProcessors()
+
+  init {
+    Timber.v("Creating a new executor with $cores threads")
+    executor = Executors.newFixedThreadPool(cores)
+  }
 
   fun download(covers: List<CoverDao>) {
     val filesDir = context.filesDir
@@ -35,20 +48,22 @@ class CoverDownloader {
         .addPathSegment("covers")
         .build()
 
-    rx.Observable.from(covers).window(5).subscribe {
-      it.subscribe loop@{
-        val file = File(coverDirectory, it.hash)
-        if (file.exists()) {
-          return@loop
-        }
+    covers.toObservable().window(cores).subscribe {
+      it.observeOn(Schedulers.from(executor))
+          .subscribe loop@{
+            val file = File(coverDirectory, it.hash)
+            if (file.exists()) {
+              return@loop
+            }
 
-        try {
-          download(it, file)
-        } catch (e: IOException) {
-          Timber.e(e, "On file download")
-        }
-      }
+            try {
+              download(it, file)
+            } catch (e: IOException) {
+              Timber.e(e, "On file download")
+            }
+          }
     }
+
   }
 
   @Throws(IOException::class)
@@ -65,7 +80,9 @@ class CoverDownloader {
     if (response.isSuccessful) {
       val sink = Okio.buffer(Okio.sink(file))
       sink.writeAll(response.body().source())
+      sink.flush()
       sink.close()
+      response.body().close()
       Timber.v("[Cover] downloaded [%s]", file.absolutePath)
     }
   }
