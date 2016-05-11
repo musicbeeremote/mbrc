@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Intent
 import android.support.multidex.MultiDex
 import com.kelsos.mbrc.controller.Controller
+import com.kelsos.mbrc.extensions.initDBFlow
 import roboguice.RoboGuice
 import timber.log.Timber
 
@@ -13,6 +14,7 @@ class RemoteApplication : Application() {
     super.onCreate()
     MultiDex.install(this)
     RoboGuice.setupBaseApplicationInjector(this)
+    this.initDBFlow()
     startService(Intent(this, Controller::class.java))
 
     if (BuildConfig.DEBUG) {

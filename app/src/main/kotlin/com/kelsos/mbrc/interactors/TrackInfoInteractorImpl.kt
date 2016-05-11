@@ -7,7 +7,7 @@ import rx.Observable
 
 class TrackInfoInteractorImpl : TrackInfoInteractor {
     @Inject private lateinit var repository: TrackRepository
-    override fun execute(reload: Boolean): Observable<TrackInfo> {
+    override fun load(reload: Boolean): Observable<TrackInfo> {
         return repository.getTrackInfo(reload)
     }
 }
