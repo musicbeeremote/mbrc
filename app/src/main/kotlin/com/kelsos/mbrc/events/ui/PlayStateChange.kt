@@ -1,5 +1,5 @@
 package com.kelsos.mbrc.events.ui
 
-import com.kelsos.mbrc.annotations.PlayerState
+import com.kelsos.mbrc.annotations.PlayerState.State
 
-class PlayStateChange(@PlayerState.State val state: String)
+class PlayStateChange(@State val state: String)

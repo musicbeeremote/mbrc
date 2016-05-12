@@ -6,8 +6,8 @@ import com.kelsos.mbrc.repository.TrackRepository
 import rx.Observable
 
 class TrackInfoInteractorImpl : TrackInfoInteractor {
-    @Inject private lateinit var repository: TrackRepository
-    override fun load(reload: Boolean): Observable<TrackInfo> {
-        return repository.getTrackInfo(reload)
-    }
+  @Inject private lateinit var repository: TrackRepository
+  override fun load(reload: Boolean): Observable<TrackInfo> {
+    return repository.getTrackInfo(reload)
+  }
 }

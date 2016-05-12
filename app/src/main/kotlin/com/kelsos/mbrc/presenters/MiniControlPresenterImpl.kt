@@ -64,7 +64,7 @@ import roboguice.inject.ContextSingleton
       model.setCover(it)
     }, { handler.handleThrowable(it) })
 
-    infoInteractor.load(false).task().subscribe({
+    infoInteractor.load().task().subscribe({
       view?.updateTrack(it.artist, it.title)
       model.setArtist(it.artist)
       model.setTitle(it.title)

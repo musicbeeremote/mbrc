@@ -24,6 +24,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.PlayerState
+import com.kelsos.mbrc.annotations.PlayerState.State
 import com.kelsos.mbrc.annotations.Repeat
 import com.kelsos.mbrc.annotations.Shuffle
 import com.kelsos.mbrc.domain.TrackInfo
@@ -124,7 +125,7 @@ import roboguice.RoboGuice
     setContentView(R.layout.activity_main)
     RoboGuice.getInjector(this).injectMembers(this)
     ButterKnife.bind(this)
-    initialize(toolbar,drawer,navigationView)
+    initialize(toolbar, drawer, navigationView)
 
     setCurrentSelection(R.id.drawer_menu_home)
 
@@ -202,14 +203,18 @@ import roboguice.RoboGuice
   }
 
   override fun updateShuffle(@Shuffle.State state: String) {
-    val color = ContextCompat.getColor(baseContext,
-        if (Shuffle.OFF != state) R.color.accent else R.color.button_dark)
+    val resource = if (Shuffle.OFF != state) R.color.accent else R.color.button_dark
+    val color = ContextCompat.getColor(baseContext, resource)
+
     shuffleButton.setColorFilter(color)
 
-    shuffleButton.setImageResource(if (Shuffle.AUTODJ == state)
+    val imageResource = if (Shuffle.AUTODJ == state) {
       R.drawable.ic_headset_black_24dp
-    else
-      R.drawable.ic_shuffle_black_24dp)
+    } else {
+      R.drawable.ic_shuffle_black_24dp
+    }
+
+    shuffleButton.setImageResource(imageResource)
   }
 
   override fun updateRepeat(@Repeat.Mode mode: String) {
@@ -235,8 +240,8 @@ import roboguice.RoboGuice
     volumeBar.progress = volume
   }
 
-  override fun updatePlayState(@PlayerState.State state: String) {
-    when (state) {
+  override fun updatePlayState(@State playstate: String) {
+    when (playstate) {
       PlayerState.PLAYING -> playPauseButton.setImageResource(R.drawable.ic_pause_circle_fill)
       PlayerState.PAUSED -> playPauseButton.setImageResource(R.drawable.ic_play_circle_fill)
       PlayerState.STOPPED -> playPauseButton.setImageResource(R.drawable.ic_play_circle_fill)
@@ -275,10 +280,8 @@ import roboguice.RoboGuice
 
     artistLabel.text = info.artist
     titleLabel.text = info.title
-    albumLabel.text = if (TextUtils.isEmpty(info.year))
-      info.album
-    else
-      String.format("%s [%s]", info.album, info.year)
+    albumLabel.text = if (TextUtils.isEmpty(info.year)) info.album
+    else String.format("%s [%s]", info.album, info.year)
 
     if (mShareActionProvider != null) {
       mShareActionProvider!!.setShareIntent(shareIntent)

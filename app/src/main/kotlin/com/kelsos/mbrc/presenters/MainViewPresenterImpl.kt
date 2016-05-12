@@ -100,7 +100,7 @@ import java.util.concurrent.TimeUnit
     if (model.isLoaded) {
       mainView?.updateTrackInfo(model.trackInfo)
     } else {
-      trackInfoInteractor.load().subscribe({
+      trackInfoInteractor.load().task().subscribe({
         model.trackInfo = it
         mainView?.updateTrackInfo(it)
       }, { errorHandler.handleThrowable(it) })
@@ -196,18 +196,25 @@ import java.util.concurrent.TimeUnit
   }
 
   override fun onShufflePressed() {
-    shuffleInteractor.updateShuffle(Shuffle.TOGGLE)
-        .subscribe({
-          model.shuffle = it
-          mainView!!.updateShuffle(it)
-        }, { errorHandler.handleThrowable(it) })
+    shuffleInteractor.updateShuffle(Shuffle.TOGGLE).subscribe({
+      model.shuffle = it
+      mainView?.updateShuffle(it)
+    }) {
+      errorHandler.handleThrowable(it)
+    }
   }
 
   override fun onRepeatPressed() {
-    repeatInteractor.setRepeat(Repeat.CHANGE)
-        .task()
-        .subscribe({ mainView?.updateRepeat(it) })
-        { errorHandler.handleThrowable(it) }
+    repeatInteractor.setRepeat(Repeat.CHANGE).task()
+        .doOnNext {
+          model.repeat = it
+        }
+        .subscribe({
+          mainView?.updateRepeat(it)
+        })
+        {
+          errorHandler.handleThrowable(it)
+        }
   }
 
   override fun onVolumeChange(volume: Int) {
@@ -271,7 +278,9 @@ import java.util.concurrent.TimeUnit
   }
 
   private fun updatePlaystate(state: String) {
+    Timber.v("New State $state")
     if (PlayerState.PLAYING == state) {
+      loadPosition()
       startPositionUpdate()
     } else {
       stopPositionUpdate()
@@ -279,7 +288,7 @@ import java.util.concurrent.TimeUnit
   }
 
   private fun stopPositionUpdate() {
-    Timber.v("Track now is either paused or stoped")
+    Timber.v("Track is not playing")
     positionUpdate?.unsubscribe()
     positionUpdate = null
   }
@@ -289,7 +298,7 @@ import java.util.concurrent.TimeUnit
       return
     }
 
-    Timber.v("Track is now playing")
+    Timber.v("Track is playing")
     positionUpdate = Observable.interval(0, 1, TimeUnit.SECONDS).task().takeWhile {
       val position = model.position
       position.current < position.total

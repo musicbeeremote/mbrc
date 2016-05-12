@@ -3,7 +3,7 @@ package com.kelsos.mbrc.ui.views
 import android.graphics.Bitmap
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.Repeat
-import com.kelsos.mbrc.annotations.Shuffle
+import com.kelsos.mbrc.annotations.Shuffle.State
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.domain.TrackPosition
 import com.kelsos.mbrc.enums.LfmStatus
@@ -12,7 +12,7 @@ import com.kelsos.mbrc.mvp.IView
 interface MainView : IView {
   fun updateCover(bitmap: Bitmap?)
 
-  fun updateShuffle(@Shuffle.State state: String)
+  fun updateShuffle(@State state: String)
 
   fun updateRepeat(@Repeat.Mode mode: String)
 

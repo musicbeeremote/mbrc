@@ -1,16 +1,14 @@
 package com.kelsos.mbrc.interactors
 
-import android.text.TextUtils
 import com.google.inject.Inject
 import com.kelsos.mbrc.annotations.Repeat.Mode
 import com.kelsos.mbrc.annotations.Shuffle
 import com.kelsos.mbrc.cache.PlayerStateCache
-import com.kelsos.mbrc.dto.player.Repeat
 import com.kelsos.mbrc.dto.requests.RepeatRequest
 import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.services.api.PlayerService
 import rx.Observable
-import rx.functions.Func1
+import rx.lang.kotlin.toSingletonObservable
 
 class RepeatInteractorImpl : RepeatInteractor {
   @Inject private lateinit var cache: PlayerStateCache
@@ -20,12 +18,12 @@ class RepeatInteractorImpl : RepeatInteractor {
     val networkRequest = service.getRepeatMode()
         .map { it.value }
         .doOnNext { cache.repeat = it }
-    val cached = Observable.just(cache.repeat)
+    val cached = cache.repeat.toSingletonObservable()
 
     return Observable.concat(cached, networkRequest)
-        .filter { !TextUtils.isEmpty(it) && Shuffle.UNDEF != it }
-        .doOnError { Observable.just(Shuffle.OFF) }
-        .first()
+        .filter { !Shuffle.UNDEF.equals(it) }
+        .doOnError { Shuffle.OFF.toSingletonObservable() }
+        .firstOrDefault(Shuffle.OFF)
         .task()
   }
 

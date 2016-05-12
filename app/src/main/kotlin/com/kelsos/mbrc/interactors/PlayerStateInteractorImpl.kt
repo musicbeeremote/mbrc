@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.interactors
 
-import android.text.TextUtils
 import com.google.inject.Inject
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.cache.PlayerStateCache
@@ -21,8 +20,9 @@ class PlayerStateInteractorImpl : PlayerStateInteractor {
     val cached = cache.playState.toSingletonObservable()
 
     return Observable.concat(networkRequest, cached)
-        .filter { !TextUtils.isEmpty(it) && PlayerState.UNDEFINED != it }
+        .filter { !PlayerState.UNDEFINED.equals(it) }
         .doOnError { PlayerState.STOPPED.toSingletonObservable() }
+        .firstOrDefault(PlayerState.STOPPED)
         .task()
   }
 }
