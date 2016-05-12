@@ -2,6 +2,7 @@ import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'idea'
 
 
@@ -139,7 +140,7 @@ task wrapper(type: Wrapper) {
 
 ext {
   supportLibraryVersion = '23.3.0'
-  jacksonVersion = '2.7.3'
+  jacksonVersion = '2.7.4'
   okhttpVersion = '3.2.0'
   retrofitVersion = '2.0.2'
   dbflow_version = "3.0.0-beta6"
@@ -170,14 +171,14 @@ dependencies {
   compile "com.squareup.okhttp3:okhttp-ws:${okhttpVersion}"
   compile "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
 
-  compile 'io.reactivex:rxandroid:1.1.0'
-  compile 'io.reactivex:rxjava:1.1.3'
+  compile 'io.reactivex:rxandroid:1.2.0'
+  compile 'io.reactivex:rxjava:1.1.5'
   compile 'io.reactivex:rxkotlin:0.55.0'
 
   compile 'com.jakewharton:butterknife:8.0.1'
   kapt 'com.jakewharton:butterknife-compiler:8.0.1'
 
-  compile 'com.jakewharton.timber:timber:4.1.1'
+  compile 'com.jakewharton.timber:timber:4.1.2'
   compile 'com.android.support:multidex:1.0.1'
 
   compile "org.roboguice:roboguice:4.0.0"
@@ -191,17 +192,19 @@ dependencies {
   compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
   compile "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}"
 
-  compile('com.afollestad.material-dialogs:core:0.8.5.6@aar') {
+  compile('com.afollestad.material-dialogs:core:0.8.5.8@aar') {
     transitive = true
   }
 
   kapt 'org.roboguice:roboblender:4.0.1-SNAPSHOT'
   testCompile 'junit:junit:4.12'
-  testCompile 'org.mockito:mockito-core:1.10.19'
-  testCompile 'org.powermock:powermock-module-junit4:1.6.3'
-  testCompile 'org.powermock:powermock-api-mockito:1.6.3'
-  testCompile 'org.robolectric:robolectric:2.4'
+  testCompile 'org.mockito:mockito-core:2.0.52-beta'
+  testCompile 'org.powermock:powermock-module-junit4:1.6.5'
+  testCompile 'org.powermock:powermock-api-mockito:1.6.5'
+  testCompile 'org.robolectric:robolectric:3.1-rc1'
   testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+
+  compile 'nl.littlerobots.rxlint:rxlint:1.0'
 }
 
 allprojects {
