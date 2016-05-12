@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit
 class OkHttpClientProvider : Provider<OkHttpClient> {
 
   @Inject private lateinit var manager: SettingsManager
+  @Inject(optional = true) private var interceptor: Interceptor? = null
 
   override fun get(): OkHttpClient {
     val loggingInterceptor = HttpLoggingInterceptor { Timber.tag("OkHttp").d(it) }
@@ -33,7 +34,11 @@ class OkHttpClientProvider : Provider<OkHttpClient> {
 
       it.proceed(builder.build())
     }
-    return OkHttpClient.Builder()
+    val builder = OkHttpClient.Builder()
+
+    interceptor?.let { builder.addNetworkInterceptor(it) }
+
+    return builder
         .addInterceptor(accept)
         .addInterceptor(loggingInterceptor)
         .readTimeout(40, TimeUnit.SECONDS)

@@ -8,7 +8,7 @@ import com.kelsos.mbrc.extensions.initDBFlow
 import roboguice.RoboGuice
 import timber.log.Timber
 
-class RemoteApplication : Application() {
+open class RemoteApplication : Application() {
 
   override fun onCreate() {
     super.onCreate()

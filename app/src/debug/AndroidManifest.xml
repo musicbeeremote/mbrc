@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    package="com.kelsos.mbrc"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:installLocation="auto">
+
+  <application
+      android:name=".DebugApplication"
+      tools:replace="android:name">
+    <meta-data
+        android:name="roboguice.modules"
+        android:value="com.kelsos.mbrc.di.modules.RemoteModule,com.kelsos.mbrc.di.modules.DebugModule"
+        tools:replace="android:value" />
+  </application>
+</manifest>
