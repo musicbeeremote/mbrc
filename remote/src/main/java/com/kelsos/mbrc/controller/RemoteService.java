@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.controller;
 
+import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
@@ -8,23 +9,40 @@ import com.google.inject.Singleton;
 import com.kelsos.mbrc.configuration.CommandRegistration;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.messaging.NotificationService;
+import com.kelsos.mbrc.model.MainDataModel;
+import com.kelsos.mbrc.services.ProtocolHandler;
+import com.kelsos.mbrc.services.SocketService;
+import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver;
 import com.squareup.otto.Subscribe;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import roboguice.service.RoboService;
+import roboguice.RoboGuice;
 import roboguice.util.Ln;
 
-@Singleton public class RemoteService extends RoboService {
+@Singleton public class RemoteService extends Service {
 
   private final IBinder mBinder = new ControllerBinder();
   @Inject
   private RemoteController remoteController;
+
+  @Inject private MainDataModel mainDataModel;
+  @Inject private ProtocolHandler protocolHandler;
+  @Inject private SocketService socketService;
+  @Inject private RemoteBroadcastReceiver remoteBroadcastReceiver;
+  @Inject private NotificationService notificationService;
+
   private ExecutorService threadPoolExecutor;
 
   public RemoteService() { }
 
   @Override public IBinder onBind(Intent intent) {
     return mBinder;
+  }
+
+  @Override public void onCreate() {
+    super.onCreate();
+    RoboGuice.getInjector(this).injectMembers(this);
   }
 
   /**
@@ -53,6 +71,7 @@ import roboguice.util.Ln;
       threadPoolExecutor.shutdownNow();
     }
     Ln.d("Background Service::Destroyed");
+    RoboGuice.destroyInjector(this);
     super.onDestroy();
   }
 

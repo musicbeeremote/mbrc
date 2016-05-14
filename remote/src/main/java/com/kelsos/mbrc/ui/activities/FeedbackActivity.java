@@ -2,19 +2,20 @@ package com.kelsos.mbrc.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Bind;
 import butterknife.OnClick;
 import com.kelsos.mbrc.R;
 
-public class FeedbackActivity extends RoboAppCompatActivity {
+public class FeedbackActivity extends AppCompatActivity {
 
-  @Bind(R.id.toolbar) Toolbar mToolbar;
-  @Bind(R.id.feedback_content) EditText feedbackEditText;
+  @BindView(R.id.toolbar) Toolbar mToolbar;
+  @BindView(R.id.feedback_content) EditText feedbackEditText;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
