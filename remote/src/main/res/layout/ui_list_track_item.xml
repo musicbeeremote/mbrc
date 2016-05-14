@@ -33,7 +33,7 @@
       android:orientation="vertical">
 
     <TextView
-        android:id="@+id/trackTitle"
+        android:id="@+id/track_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
@@ -43,7 +43,7 @@
         tools:text="Track title" />
 
     <TextView
-        android:id="@+id/trackArtist"
+        android:id="@+id/track_artist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
