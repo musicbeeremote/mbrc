@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.fragments;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
@@ -17,8 +18,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Bind;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 import com.google.inject.Inject;
@@ -50,26 +51,26 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import roboguice.fragment.RoboFragment;
+import roboguice.RoboGuice;
 import roboguice.util.Ln;
 
-@Singleton public class MainFragment extends RoboFragment {
+@Singleton public class MainFragment extends Fragment {
   private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
   // Injects
   @Inject protected Bus bus;
   // Inject elements of the view
-  @Bind(R.id.main_artist_label) TextView artistLabel;
-  @Bind(R.id.main_title_label) TextView titleLabel;
-  @Bind(R.id.main_label_album) TextView albumLabel;
-  @Bind(R.id.main_track_progress_current) TextView trackProgressCurrent;
-  @Bind(R.id.main_track_duration_total) TextView trackDuration;
-  @Bind(R.id.main_button_play_pause) ImageButton playPauseButton;
-  @Bind(R.id.main_volume_seeker) SeekBar volumeBar;
-  @Bind(R.id.main_track_progress_seeker) SeekBar progressBar;
-  @Bind(R.id.main_mute_button) ImageButton muteButton;
-  @Bind(R.id.main_shuffle_button) ImageButton shuffleButton;
-  @Bind(R.id.main_repeat_button) ImageButton repeatButton;
-  @Bind(R.id.main_album_cover_image_view) ImageView albumCover;
+  @BindView(R.id.main_artist_label) TextView artistLabel;
+  @BindView(R.id.main_title_label) TextView titleLabel;
+  @BindView(R.id.main_label_album) TextView albumLabel;
+  @BindView(R.id.main_track_progress_current) TextView trackProgressCurrent;
+  @BindView(R.id.main_track_duration_total) TextView trackDuration;
+  @BindView(R.id.main_button_play_pause) ImageButton playPauseButton;
+  @BindView(R.id.main_volume_seeker) SeekBar volumeBar;
+  @BindView(R.id.main_track_progress_seeker) SeekBar progressBar;
+  @BindView(R.id.main_mute_button) ImageButton muteButton;
+  @BindView(R.id.main_shuffle_button) ImageButton shuffleButton;
+  @BindView(R.id.main_repeat_button) ImageButton repeatButton;
+  @BindView(R.id.main_album_cover_image_view) ImageView albumCover;
   private ShareActionProvider mShareActionProvider;
   private boolean userChangingVolume;
   private int previousVol;
@@ -161,6 +162,7 @@ import roboguice.util.Ln;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    RoboGuice.getInjector(getContext()).injectMembers(this);
     setHasOptionsMenu(true);
     userChangingVolume = false;
   }

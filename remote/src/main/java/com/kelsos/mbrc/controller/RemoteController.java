@@ -28,7 +28,7 @@ public class RemoteController implements Runnable {
     this.injector = injector;
     eventQueue = new LinkedBlockingQueue<>();
     bus.register(this);
-    scope = RoboGuice.getOrCreateBaseApplicationInjector(app).getInstance(ContextScope.class);
+    scope = RoboGuice.getInjector(app).getInstance(ContextScope.class);
     context = app.getApplicationContext();
   }
 
@@ -63,7 +63,7 @@ public class RemoteController implements Runnable {
     }
     ICommand commandInstance;
     try {
-      scope.enter(context);
+      scope.enter(context, new HashMap<>());
       commandInstance = injector.getInstance(commandClass);
       scope.exit(context);
       if (commandInstance == null) {

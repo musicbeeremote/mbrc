@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.ui.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,7 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
@@ -25,12 +27,12 @@ import com.kelsos.mbrc.events.ui.AlbumSearchResults;
 import com.kelsos.mbrc.utilities.ScrollListener;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import roboguice.fragment.RoboFragment;
+import roboguice.RoboGuice;
 
-public class SearchAlbumFragment extends RoboFragment implements AlbumEntryAdapter.MenuItemSelectedListener {
+public class SearchAlbumFragment extends Fragment implements AlbumEntryAdapter.MenuItemSelectedListener {
   @Inject Bus bus;
-  @Bind(R.id.search_recycler_view) RecyclerView recycler;
-  @Bind(R.id.empty_view) LinearLayout emptyView;
+  @BindView(R.id.search_recycler_view) RecyclerView recycler;
+  @BindView(R.id.empty_view) LinearLayout emptyView;
   @Inject private ScrollListener scrollListener;
   private String mDefault;
   @Inject private AlbumEntryAdapter adapter;
@@ -55,6 +57,11 @@ public class SearchAlbumFragment extends RoboFragment implements AlbumEntryAdapt
     super.onPause();
     bus.unregister(this);
     recycler.removeOnScrollListener(scrollListener);
+  }
+
+  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    RoboGuice.getInjector(getContext()).injectMembers(this);
   }
 
   @Override public void onViewCreated(View view, Bundle savedInstanceState) {

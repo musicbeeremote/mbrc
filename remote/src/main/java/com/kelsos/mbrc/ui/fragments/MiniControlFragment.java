@@ -2,13 +2,14 @@ package com.kelsos.mbrc.ui.fragments;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.google.inject.Inject;
@@ -24,15 +25,15 @@ import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import roboguice.fragment.RoboFragment;
+import roboguice.RoboGuice;
 
-public class MiniControlFragment extends RoboFragment {
+public class MiniControlFragment extends Fragment {
 
   @Inject Bus bus;
-  @Bind(R.id.mc_track_cover) ImageView trackCover;
-  @Bind(R.id.mc_track_artist) TextView trackArtist;
-  @Bind(R.id.mc_track_title) TextView trackTitle;
-  @Bind(R.id.mc_play_pause) ImageButton playPause;
+  @BindView(R.id.mc_track_cover) ImageView trackCover;
+  @BindView(R.id.mc_track_artist) TextView trackArtist;
+  @BindView(R.id.mc_track_title) TextView trackTitle;
+  @BindView(R.id.mc_play_pause) ImageButton playPause;
 
   @OnClick(R.id.mini_control) public void onControlClick() {
     bus.post(new DrawerEvent(DisplayFragment.HOME, true));
@@ -55,6 +56,7 @@ public class MiniControlFragment extends RoboFragment {
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    RoboGuice.getInjector(getContext()).injectMembers(this);
   }
 
   @Override

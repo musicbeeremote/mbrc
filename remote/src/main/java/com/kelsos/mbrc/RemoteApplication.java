@@ -5,29 +5,16 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.ViewConfiguration;
 import com.kelsos.mbrc.controller.RemoteService;
-import com.kelsos.mbrc.messaging.NotificationService;
-import com.kelsos.mbrc.model.MainDataModel;
-import com.kelsos.mbrc.services.ProtocolHandler;
-import com.kelsos.mbrc.services.SocketService;
-import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver;
 import java.lang.reflect.Field;
 import roboguice.RoboGuice;
-import roboguice.inject.RoboInjector;
 
 public class RemoteApplication extends Application {
 
   public void onCreate() {
     super.onCreate();
-    final RoboInjector injector = RoboGuice.getInjector(this);
+    RoboGuice.setupBaseApplicationInjector(this);
 
     startService(new Intent(this, RemoteService.class));
-
-    //Initialization of the background service
-    injector.getInstance(MainDataModel.class);
-    injector.getInstance(ProtocolHandler.class);
-    injector.getInstance(SocketService.class);
-    injector.getInstance(RemoteBroadcastReceiver.class);
-    injector.getInstance(NotificationService.class);
 
     //HACK: Force overflow code courtesy of Timo Ohr http://stackoverflow.com/a/11438245
     try {

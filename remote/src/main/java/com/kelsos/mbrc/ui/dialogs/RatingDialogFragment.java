@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.dialogs;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.widget.RatingBar;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.inject.Inject;
@@ -14,9 +15,9 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.RatingChanged;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.squareup.otto.Subscribe;
-import roboguice.fragment.RoboDialogFragment;
+import roboguice.RoboGuice;
 
-public class RatingDialogFragment extends RoboDialogFragment {
+public class RatingDialogFragment extends DialogFragment {
 
   @Inject private MainThreadBusWrapper bus;
   private RatingBar mRatingBar;
@@ -24,6 +25,7 @@ public class RatingDialogFragment extends RoboDialogFragment {
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    RoboGuice.getInjector(getContext()).injectMembers(this);
     bus.register(this);
   }
 

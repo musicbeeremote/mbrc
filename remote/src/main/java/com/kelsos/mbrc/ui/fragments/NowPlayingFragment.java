@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.ui.fragments;
 
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
@@ -29,9 +30,9 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import java.util.HashMap;
 import java.util.Map;
-import roboguice.fragment.RoboListFragment;
+import roboguice.RoboGuice;
 
-public class NowPlayingFragment extends RoboListFragment implements SearchView.OnQueryTextListener {
+public class NowPlayingFragment extends ListFragment implements SearchView.OnQueryTextListener {
   public int dragStartMode = DragSortController.ON_DOWN;
   public boolean removeEnabled = true;
   public int removeMode = DragSortController.FLING_REMOVE;
@@ -125,6 +126,7 @@ public class NowPlayingFragment extends RoboListFragment implements SearchView.O
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    RoboGuice.getInjector(getContext()).injectMembers(this);
     setHasOptionsMenu(true);
   }
 

@@ -2,6 +2,8 @@ import java.text.SimpleDateFormat
 
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'checkstyle'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
@@ -25,8 +27,8 @@ android {
     applicationId "com.kelsos.mbrc"
     minSdkVersion 9
     targetSdkVersion 23
-    versionCode 105
-    versionName "0.11.2"
+    versionCode 106
+    versionName "0.12.0"
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
     buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
   }
@@ -111,7 +113,7 @@ task wrapper(type: Wrapper) {
 }
 
 ext {
-  supportLibraryVersion = "23.1.1"
+  supportLibraryVersion = "23.4.0"
 }
 
 dependencies {
@@ -120,21 +122,29 @@ dependencies {
   compile "com.android.support:support-annotations:${supportLibraryVersion}"
   compile "com.android.support:recyclerview-v7:${supportLibraryVersion}"
   compile "com.android.support:design:${supportLibraryVersion}"
-  compile 'org.roboguice:roboguice:3.0.1'
+
   compile 'com.squareup:otto:1.3.8'
-  compile 'com.fasterxml.jackson.core:jackson-core:2.6.4'
-  compile 'com.fasterxml.jackson.core:jackson-databind:2.6.4'
+
+  compile 'com.fasterxml.jackson.core:jackson-core:2.7.4'
+  compile 'com.fasterxml.jackson.core:jackson-databind:2.7.4'
+
   compile 'com.mobeta.android.dslv:drag-sort-listview:0.6.1.1@aar'
   compile 'com.github.machinarius:preferencefragment:0.1.2'
-  compile 'com.jakewharton:butterknife:7.0.1'
-  compile 'io.reactivex:rxandroid:1.1.0'
-  provided 'org.roboguice:roboblender:3.0.1'
-  compile('com.github.afollestad.material-dialogs:core:0.8.5.3@aar') {
-    transitive = true
-  }
-  compile('com.github.afollestad.material-dialogs:commons:0.8.5.3@aar') {
-    transitive = true
-  }
+
+  compile 'com.jakewharton:butterknife:8.0.1'
+  apt 'com.jakewharton:butterknife-compiler:8.0.1'
+
+  compile 'io.reactivex:rxandroid:1.2.0'
+  compile 'io.reactivex:rxjava:1.1.5'
+
+  compile 'org.roboguice:roboguice:4.0.0'
+  provided 'org.roboguice:roboblender:4.0.0'
+
+  compile 'com.github.afollestad.material-dialogs:core:0.8.5.8'
+  compile 'com.github.afollestad.material-dialogs:commons:0.8.5.8'
+
+  retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
+
 }
 
 allprojects {

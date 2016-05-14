@@ -15,6 +15,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -36,8 +37,9 @@ import com.kelsos.mbrc.ui.fragments.NowPlayingFragment;
 import com.kelsos.mbrc.ui.fragments.SearchFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+import roboguice.RoboGuice;
 
-public class MainFragmentActivity extends RoboAppCompatActivity {
+public class MainFragmentActivity extends AppCompatActivity {
   @Inject Bus bus;
   private ActionBarDrawerToggle mDrawerToggle;
   private DrawerLayout mDrawerLayout;
@@ -60,6 +62,7 @@ public class MainFragmentActivity extends RoboAppCompatActivity {
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.ui_main_container);
+    RoboGuice.getInjector(this).injectMembers(this);
 
     if (!isMyServiceRunning(RemoteService.class)) {
       startService(new Intent(this, RemoteService.class));
@@ -108,6 +111,11 @@ public class MainFragmentActivity extends RoboAppCompatActivity {
     FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
     fragmentTransaction.replace(R.id.fragment_container, mFragment, "main_fragment");
     fragmentTransaction.commit();
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    RoboGuice.destroyInjector(this);
   }
 
   @Override protected void onResume() {
