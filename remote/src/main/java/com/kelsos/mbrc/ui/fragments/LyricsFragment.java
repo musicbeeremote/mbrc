@@ -17,6 +17,7 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.Arrays;
+import roboguice.RoboGuice;
 
 public class LyricsFragment extends Fragment {
   public static final String NEWLINE = "\r\n";
@@ -25,6 +26,7 @@ public class LyricsFragment extends Fragment {
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    RoboGuice.getInjector(getContext()).injectMembers(this);
   }
 
   @Override public void onViewCreated(View view, Bundle savedInstanceState) {
