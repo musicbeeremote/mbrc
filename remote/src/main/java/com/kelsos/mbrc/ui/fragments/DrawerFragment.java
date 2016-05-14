@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.ListFragment;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +15,8 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Bind;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 import com.google.inject.Inject;
@@ -33,18 +34,18 @@ import com.kelsos.mbrc.ui.activities.SettingsActivity;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
-import roboguice.fragment.RoboListFragment;
+import roboguice.RoboGuice;
 
-public class DrawerFragment extends RoboListFragment
+public class DrawerFragment extends ListFragment
     implements FragmentManager.OnBackStackChangedListener {
 
   private final ArrayList<NavigationEntry> mNavigation;
   @Inject Bus bus;
-  @Bind(R.id.menu_connect) TextView connectText;
-  @Bind(R.id.menu_exit) TextView exitText;
-  @Bind(R.id.menu_help) TextView helpText;
-  @Bind(R.id.menu_settings) TextView settingsText;
-  @Bind(R.id.menu_feedback) TextView feedbackText;
+  @BindView(R.id.menu_connect) TextView connectText;
+  @BindView(R.id.menu_exit) TextView exitText;
+  @BindView(R.id.menu_help) TextView helpText;
+  @BindView(R.id.menu_settings) TextView settingsText;
+  @BindView(R.id.menu_feedback) TextView feedbackText;
 
   private Typeface robotoMedium;
   private DrawerLayout mDrawerLayout;
@@ -61,6 +62,7 @@ public class DrawerFragment extends RoboListFragment
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    RoboGuice.getInjector(getContext()).injectMembers(this);
     robotoMedium = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_medium.ttf");
     mSelection = 0;
     mBackstackChanging = false;

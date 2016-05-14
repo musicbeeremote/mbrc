@@ -1,11 +1,14 @@
 package com.kelsos.mbrc.ui.fragments;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.LyricsAdapter;
@@ -14,13 +17,11 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.Arrays;
-import roboguice.fragment.RoboFragment;
-import roboguice.inject.InjectView;
 
-public class LyricsFragment extends RoboFragment {
+public class LyricsFragment extends Fragment {
   public static final String NEWLINE = "\r\n";
   @Inject Bus bus;
-  @InjectView(R.id.lyrics_recycler_view) private RecyclerView mRecyclerView;
+  @BindView(R.id.lyrics_recycler_view) RecyclerView lyricsRecycler;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -28,9 +29,10 @@ public class LyricsFragment extends RoboFragment {
 
   @Override public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    mRecyclerView.setHasFixedSize(true);
+    ButterKnife.bind(this, view);
+    lyricsRecycler.setHasFixedSize(true);
     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-    mRecyclerView.setLayoutManager(layoutManager);
+    lyricsRecycler.setLayoutManager(layoutManager);
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,6 +54,6 @@ public class LyricsFragment extends RoboFragment {
     final ArrayList<String> lyrics =
         new ArrayList<>(Arrays.asList(update.getLyrics().split(NEWLINE)));
     LyricsAdapter adapter = new LyricsAdapter(getActivity(), lyrics);
-    mRecyclerView.setAdapter(adapter);
+    lyricsRecycler.setAdapter(adapter);
   }
 }

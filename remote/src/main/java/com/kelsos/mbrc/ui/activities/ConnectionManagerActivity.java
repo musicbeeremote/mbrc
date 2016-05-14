@@ -3,13 +3,14 @@ package com.kelsos.mbrc.ui.activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Bind;
 import butterknife.OnClick;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.inject.Inject;
@@ -24,12 +25,13 @@ import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+import roboguice.RoboGuice;
 
-public class ConnectionManagerActivity extends RoboAppCompatActivity
+public class ConnectionManagerActivity extends AppCompatActivity
     implements SettingsDialogFragment.SettingsDialogListener {
   @Inject Bus bus;
-  @Bind(R.id.connection_list) RecyclerView mRecyclerView;
-  @Bind(R.id.toolbar) Toolbar mToolbar;
+  @BindView(R.id.connection_list) RecyclerView mRecyclerView;
+  @BindView(R.id.toolbar) Toolbar mToolbar;
   private MaterialDialog mProgress;
   private Context mContext;
 
@@ -52,12 +54,18 @@ public class ConnectionManagerActivity extends RoboAppCompatActivity
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    RoboGuice.getInjector(this).injectMembers(this);
     setContentView(R.layout.ui_activity_connection_manager);
     ButterKnife.bind(this);
     setSupportActionBar(mToolbar);
     mRecyclerView.setHasFixedSize(true);
     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
     mRecyclerView.setLayoutManager(mLayoutManager);
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    RoboGuice.destroyInjector(this);
   }
 
   @Override protected void onStart() {
@@ -121,13 +129,13 @@ public class ConnectionManagerActivity extends RoboAppCompatActivity
         break;
     }
 
-    Snackbar.make(getCurrentFocus(), message, Snackbar.LENGTH_SHORT).show();
+    Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show();
   }
 
   @Subscribe public void handleUserNotification(NotifyUser event) {
     final String message =
         event.isFromResource() ? getString(event.getResId()) : event.getMessage();
 
-    Snackbar.make(getCurrentFocus(), message, Snackbar.LENGTH_SHORT).show();
+    Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show();
   }
 }

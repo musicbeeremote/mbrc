@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.fragments;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
@@ -12,7 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.google.inject.Inject;
@@ -32,15 +33,15 @@ import com.kelsos.mbrc.events.ui.TrackSearchResults;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
-import roboguice.fragment.RoboFragment;
+import roboguice.RoboGuice;
 
-public class SearchFragment extends RoboFragment implements SearchView.OnQueryTextListener,
+public class SearchFragment extends Fragment implements SearchView.OnQueryTextListener,
     ViewPager.OnPageChangeListener {
 
   @Inject Bus bus;
-  @Bind(R.id.search_pager) ViewPager mPager;
-  @Bind(R.id.pager_tab_strip) TabLayout tabs;
-  @Bind(R.id.search_clear_fab) FloatingActionButton fab;
+  @BindView(R.id.search_pager) ViewPager mPager;
+  @BindView(R.id.pager_tab_strip) TabLayout tabs;
+  @BindView(R.id.search_clear_fab) FloatingActionButton fab;
 
   private SearchView mSearchView;
   private MenuItem mSearchItem;
@@ -124,6 +125,7 @@ public class SearchFragment extends RoboFragment implements SearchView.OnQueryTe
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    RoboGuice.getInjector(getContext()).injectMembers(this);
     setHasOptionsMenu(true);
     mAdapter = new SearchPagerAdapter(getActivity());
   }

@@ -2,6 +2,7 @@ package com.kelsos.mbrc.widgets;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
@@ -15,17 +16,21 @@ import com.kelsos.mbrc.ui.activities.MainFragmentActivity;
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import roboguice.receiver.RoboAppWidgetProvider;
+import roboguice.RoboGuice;
 
-public class WidgetSmall extends RoboAppWidgetProvider {
+public class WidgetSmall extends AppWidgetProvider {
 
   @Inject private Context context;
   @Inject private Bus bus;
 
   private int[] widgetsIds;
 
-  @Override public void onHandleUpdate(Context context, AppWidgetManager appWidgetManager,
-      int[] appWidgetIds) {
+  @Override public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+    super.onUpdate(context, appWidgetManager, appWidgetIds);
+
+    if (this.context == null) {
+      RoboGuice.getInjector(context).injectMembers(this);
+    }
 
     widgetsIds = appWidgetIds;
 

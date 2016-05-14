@@ -4,12 +4,12 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.ui.activities.SettingsActivity;
-import roboguice.fragment.RoboDialogFragment;
 
-public class SetupDialogFragment extends RoboDialogFragment {
+public class SetupDialogFragment extends DialogFragment {
 
   @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
     MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
@@ -17,16 +17,11 @@ public class SetupDialogFragment extends RoboDialogFragment {
     builder.title(R.string.dialog_application_setup_title);
     builder.positiveText(R.string.dialog_application_setup_positive);
     builder.negativeText(R.string.dialog_application_setup_negative);
-    builder.callback(new MaterialDialog.ButtonCallback() {
-      @Override public void onPositive(MaterialDialog dialog) {
-        SetupDialogFragment.this.dismiss();
-        startActivity(new Intent(getActivity(), SettingsActivity.class));
-      }
-
-      @Override public void onNegative(MaterialDialog dialog) {
-        SetupDialogFragment.this.dismiss();
-      }
+    builder.onPositive((dialog, which) -> {
+      SetupDialogFragment.this.dismiss();
+      startActivity(new Intent(getActivity(), SettingsActivity.class));
     });
+    builder.onNegative((dialog, which) -> dialog.dismiss());
     return builder.build();
   }
 }
