@@ -13,4 +13,18 @@
     <item>now</item>
     <item>sub</item>
   </string-array>
+
+  <string-array name="incoming_action_options">
+    <item>None</item>
+    <item>Pause</item>
+    <item>Stop</item>
+    <item>Reduce Volume</item>
+  </string-array>
+
+  <string-array name="incoming_action_options_values">
+    <item>none</item>
+    <item>pause</item>
+    <item>stop</item>
+    <item>reduce</item>
+  </string-array>
 </resources>

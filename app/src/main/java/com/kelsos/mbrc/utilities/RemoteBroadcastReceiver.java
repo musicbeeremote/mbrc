@@ -20,8 +20,7 @@ public class RemoteBroadcastReceiver extends BroadcastReceiver {
   private SettingsManager settingsManager;
   private Bus bus;
 
-  @Inject
-  public RemoteBroadcastReceiver(SettingsManager settingsManager, Bus bus) {
+  @Inject public RemoteBroadcastReceiver(SettingsManager settingsManager, Bus bus) {
     this.settingsManager = settingsManager;
     this.bus = bus;
   }
@@ -49,9 +48,23 @@ public class RemoteBroadcastReceiver extends BroadcastReceiver {
         return;
       }
       String state = bundle.getString(TelephonyManager.EXTRA_STATE);
-      if (TelephonyManager.EXTRA_STATE_RINGING.equalsIgnoreCase(state)
-          && settingsManager.isVolumeReducedOnRinging()) {
-        bus.post(new MessageEvent(ProtocolEventType.ReduceVolume));
+      if (TelephonyManager.EXTRA_STATE_RINGING.equalsIgnoreCase(state)) {
+
+        switch (settingsManager.getCallAction()) {
+          case SettingsManager.PAUSE:
+            postAction(new UserAction(Protocol.PlayerPause, true));
+            break;
+          case SettingsManager.STOP:
+            postAction(new UserAction(Protocol.PlayerStop, true));
+            break;
+          case SettingsManager.NONE:
+            break;
+          case SettingsManager.REDUCE:
+            bus.post(new MessageEvent(ProtocolEventType.ReduceVolume));
+            break;
+          default:
+            break;
+        }
       }
     } else if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction())) {
       NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
@@ -61,16 +74,17 @@ public class RemoteBroadcastReceiver extends BroadcastReceiver {
         if (NetworkInfo.State.DISCONNECTING.equals(networkInfo.getState())) {
         }
     } else if (RemoteViewIntentBuilder.REMOTE_PLAY_PRESSED.equals(intent.getAction())) {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.PlayerPlayPause, true)));
+      postAction(new UserAction(Protocol.PlayerPlayPause, true));
     } else if (RemoteViewIntentBuilder.REMOTE_NEXT_PRESSED.equals(intent.getAction())) {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.PlayerNext, true)));
+      postAction(new UserAction(Protocol.PlayerNext, true));
     } else if (RemoteViewIntentBuilder.REMOTE_CLOSE_PRESSED.equals(intent.getAction())) {
       bus.post(new MessageEvent(UserInputEventType.CancelNotification));
     } else if (RemoteViewIntentBuilder.REMOTE_PREVIOUS_PRESSED.equals(intent.getAction())) {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.PlayerPrevious, true)));
+      postAction(new UserAction(Protocol.PlayerPrevious, true));
     }
+  }
+
+  private void postAction(UserAction data) {
+    bus.post(new MessageEvent(ProtocolEventType.UserAction, data));
   }
 }
