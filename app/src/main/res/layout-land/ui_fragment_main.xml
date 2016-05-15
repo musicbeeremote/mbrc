@@ -42,7 +42,7 @@
           android:shadowDy="1"
           android:shadowRadius="1.5"
           android:text="@string/main_label_duration_current"
-          android:textColor="@color/remoteText"
+          android:textColor="@color/primary_text"
           android:textSize="12sp" />
 
       <TextView
@@ -59,7 +59,7 @@
           android:shadowDy="1"
           android:shadowRadius="1.5"
           android:text="@string/main_label_duration_total"
-          android:textColor="@color/remoteText"
+          android:textColor="@color/primary_text"
           android:textSize="12sp"
           tools:ignore="RelativeOverlap" />
     </RelativeLayout>
@@ -90,7 +90,7 @@
           android:marqueeRepeatLimit="marquee_forever"
           android:scrollHorizontally="true"
           android:singleLine="true"
-          android:textColor="@color/remoteText"
+          android:textColor="@color/primary_text"
           android:textSize="@dimen/text_title_size"
           tools:text="Rock it for me" />
 
@@ -105,7 +105,7 @@
           android:marqueeRepeatLimit="marquee_forever"
           android:scrollHorizontally="true"
           android:singleLine="true"
-          android:textColor="@color/remoteText"
+          android:textColor="@color/primary_text"
           android:textSize="@dimen/text_subhead_size"
           tools:text="Caravan Palace" />
 
@@ -120,7 +120,7 @@
           android:marqueeRepeatLimit="marquee_forever"
           android:scrollHorizontally="true"
           android:singleLine="true"
-          android:textColor="@color/remoteText"
+          android:textColor="@color/primary_text"
           android:textSize="@dimen/text_body_size"
           tools:text="Panic [2012]" />
 

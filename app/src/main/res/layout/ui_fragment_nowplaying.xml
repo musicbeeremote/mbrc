@@ -16,8 +16,8 @@
 
   <View
       android:layout_width="fill_parent"
-      android:layout_height="4dip"
-      android:background="@drawable/drop_shadow" />
+      android:layout_height="1dp"
+      android:background="@color/primary_dark" />
 
   <fragment
       android:id="@+id/now_playing_mini_control"

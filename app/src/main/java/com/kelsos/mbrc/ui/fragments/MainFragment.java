@@ -272,7 +272,7 @@ import roboguice.util.Ln;
     }
 
     int color = getResources().getColor(
-        !ShuffleChange.OFF.equals(change.getShuffleState()) ? R.color.colorAccent
+        !ShuffleChange.OFF.equals(change.getShuffleState()) ? R.color.accent
             : R.color.button_material_dark);
     shuffleButton.setColorFilter(color);
 
@@ -287,7 +287,7 @@ import roboguice.util.Ln;
     }
 
     int color = getResources().getColor(
-        change.isActive() ? R.color.colorAccent : R.color.button_material_dark);
+        change.isActive() ? R.color.accent : R.color.button_material_dark);
     repeatButton.setColorFilter(color);
   }
 
