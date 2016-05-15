@@ -43,9 +43,9 @@ import com.kelsos.mbrc.ui.fragments.SearchFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.RoboGuice;
+import roboguice.util.Ln;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-  public static final String FRAGMENT_KEY = "fragment_key";
   @Inject Bus bus;
 
   @BindView(R.id.toolbar) Toolbar toolbar;
@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   @Override public void onBackPressed() {
     if (drawer.isDrawerOpen(GravityCompat.START)) {
       drawer.closeDrawer(GravityCompat.START);
-    } else if (selection != R.id.nav_home) {
+    } else if (selection != R.string.nav_home) {
       home();
     } else {
       super.onBackPressed();
@@ -279,6 +279,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   private void updateTitle(int selection) {
     this.selection = selection;
+    Ln.v("Current selection %d", selection);
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
       actionBar.setTitle(selection);
