@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="@string/connection_manager_scan"
-        android:textColor="@color/colorAccent" />
+        android:textColor="@color/accent" />
 
     <Button
         android:id="@+id/connection_add"
@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="@string/connection_manager_add"
-        android:textColor="@color/colorAccent" />
+        android:textColor="@color/accent" />
 
   </LinearLayout>
 

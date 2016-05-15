@@ -10,7 +10,7 @@
       android:layout_height="1dp"
       android:layout_marginBottom="@dimen/small_margin"
       android:layout_marginTop="@dimen/small_margin"
-      android:background="@color/color_divider" />
+      android:background="@color/divider" />
 
   <LinearLayout
       android:id="@+id/settings_layout"

@@ -142,5 +142,6 @@
   <string name="settings_key_plugin_check">plugin_update_check</string>
   <string name="dash">-</string>
   <string name="search_for_results_to_appear">Use the search function to get results</string>
+  <string name="menu_overflow_description">More options</string>
 
 </resources>

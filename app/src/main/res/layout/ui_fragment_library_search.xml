@@ -29,7 +29,7 @@
         android:paddingEnd="@dimen/small_margin"
         android:paddingRight="@dimen/small_margin"
         android:src="@drawable/ic_error_outline_black_24dp"
-        android:tint="@color/color_white"
+        android:tint="@color/white"
         tools:ignore="RtlSymmetry" />
 
     <TextView
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
         android:text="@string/search_for_results_to_appear"
-        android:textColor="@color/remoteText"
+        android:textColor="@color/primary_text"
         tools:ignore="UnusedAttribute" />
 
   </LinearLayout>

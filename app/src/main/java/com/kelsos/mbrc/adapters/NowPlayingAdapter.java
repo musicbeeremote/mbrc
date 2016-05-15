@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.BindView;
@@ -62,16 +63,19 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
   @Override public TrackHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = inflater.inflate(R.layout.ui_list_track_item, parent, false);
     TrackHolder holder = new TrackHolder(view, robotoRegular);
-    holder.itemView.setOnClickListener(v -> {
-      if (listener == null) {
-        return;
-      }
-
-      int position = holder.getAdapterPosition();
-      setPlayingTrackIndex(position);
-      listener.onPress(position);
-    });
+    holder.itemView.setOnClickListener(v -> onClick(holder));
+    holder.container.setOnClickListener(v -> onClick(holder));
     return holder;
+  }
+
+  private void onClick(TrackHolder holder) {
+    if (listener == null) {
+      return;
+    }
+
+    int position = holder.getAdapterPosition();
+    setPlayingTrackIndex(position);
+    listener.onPress(position);
   }
 
   @Override public void onBindViewHolder(TrackHolder holder, int position) {
@@ -133,6 +137,7 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
     @BindView(R.id.track_title) TextView title;
     @BindView(R.id.track_artist) TextView artist;
     @BindView(R.id.track_indicator_view) ImageView trackPlaying;
+    @BindView(R.id.track_container) FrameLayout container;
 
     public TrackHolder(View itemView, Typeface typeface) {
       super(itemView);
