@@ -22,9 +22,10 @@
   <string name="settings_key_hostname">server_hostname</string>
   <string name="settings_key_port">server_port</string>
   <string name="settings_miscellaneous">Miscellaneous</string>
-  <string name="settings_key_reduce_volume">reduce_volume_on_ring</string>
-  <string name="settings_miscellaneous_reduce_volume">Reduce on Incoming</string>
-  <string name="settings_miscellaneous_reduce_volume_description">Reduce the player volume on incoming call \n\nPermission to read phone state is required to detect the incoming call</string>
+  <string name="settings_legacy_key_reduce_volume">reduce_volume_on_ring</string>
+  <string name="settings_key_incoming_call_action">incoming_call_action</string>
+  <string name="settings_miscellaneous_incoming_call_action">Incoming call action</string>
+  <string name="settings_miscellaneous_incoming_call_description">Default action on incoming call \n\nRequires permission to read the Phone State.</string>
   <string name="main_label_track_title">MusicBee Remote Control</string>
   <string name="main_label_artist">Konstantinos Paparas</string>
   <string name="main_label_duration_current">01:03</string>
@@ -144,5 +145,6 @@
   <string name="search_for_results_to_appear">Use the search function to get results</string>
   <string name="menu_overflow_description">More options</string>
   <string name="nav_option_title">Options</string>
+  <string name="incoming_action_default_value">none</string>
 
 </resources>
