@@ -143,7 +143,6 @@ dependencies {
   compile 'com.github.afollestad.material-dialogs:commons:0.8.5.8'
 
   retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
-
 }
 
 allprojects {
