@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   @BindView(R.id.nav_view) NavigationView navigationView;
 
   private TextView connectText;
-  private LinearLayout navConnect;
   private ActionBarDrawerToggle toggle;
   private DialogFragment mDialog;
   private int selection;
@@ -69,11 +68,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   }
 
   public boolean onConnectLongClick(View view) {
+    ifNotRunningStartService();
     bus.post(new MessageEvent(UserInputEventType.ResetConnection));
     return true;
   }
 
   public void onConnectClick(View view) {
+    ifNotRunningStartService();
     bus.post(new MessageEvent(UserInputEventType.StartConnection));
   }
 
@@ -83,10 +84,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ButterKnife.bind(this);
     RoboGuice.getInjector(this).injectMembers(this);
 
-    if (!isMyServiceRunning(RemoteService.class)) {
-      startService(new Intent(this, RemoteService.class));
-    }
-
+    ifNotRunningStartService();
     setSupportActionBar(toolbar);
 
     toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close);
@@ -97,8 +95,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     View header = navigationView.getHeaderView(0);
     connectText = ButterKnife.findById(header, R.id.nav_connect_text);
-    navConnect = ButterKnife.findById(header, R.id.nav_connect);
 
+    LinearLayout navConnect = ButterKnife.findById(header, R.id.nav_connect);
     navConnect.setOnClickListener(this::onConnectClick);
     navConnect.setOnLongClickListener(this::onConnectLongClick);
 
@@ -113,6 +111,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     home();
+  }
+
+  private void ifNotRunningStartService() {
+    if (!isMyServiceRunning(RemoteService.class)) {
+      startService(new Intent(this, RemoteService.class));
+    }
   }
 
   private void home() {
