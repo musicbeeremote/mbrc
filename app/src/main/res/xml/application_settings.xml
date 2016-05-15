@@ -7,11 +7,13 @@
         android:title="@string/settings_manage_connections" />
   </PreferenceCategory>
   <PreferenceCategory android:title="@string/settings_miscellaneous">
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="@string/settings_key_reduce_volume"
-        android:summary="@string/settings_miscellaneous_reduce_volume_description"
-        android:title="@string/settings_miscellaneous_reduce_volume" />
+    <com.afollestad.materialdialogs.prefs.MaterialListPreference
+        android:defaultValue="@string/incoming_action_default_value"
+        android:entries="@array/incoming_action_options"
+        android:entryValues="@array/incoming_action_options_values"
+        android:key="@string/settings_key_incoming_call_action"
+        android:summary="@string/settings_miscellaneous_incoming_call_description"
+        android:title="@string/settings_miscellaneous_incoming_call_action" />
 
     <CheckBoxPreference
         android:defaultValue="false"

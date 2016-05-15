@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.Build;
+import android.support.annotation.StringDef;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -24,6 +24,8 @@ import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 import java.io.IOException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
@@ -32,8 +34,14 @@ import java.util.Date;
 import roboguice.util.Ln;
 
 @Singleton public class SettingsManager {
-  private SharedPreferences mPreferences;
-  private Context mContext;
+
+  public static final String NONE = "none";
+  public static final String PAUSE = "pause";
+  public static final String STOP = "stop";
+  public static final String REDUCE = "reduce";
+
+  private SharedPreferences preferences;
+  private Context context;
   private MainThreadBusWrapper bus;
   private ArrayList<ConnectionSettings> mSettings;
   private ObjectMapper mMapper;
@@ -41,13 +49,17 @@ import roboguice.util.Ln;
   private boolean isFirstRun;
 
   @Inject
-  public SettingsManager(Context context, SharedPreferences preferences, MainThreadBusWrapper bus,
+  public SettingsManager(Context context,
+      SharedPreferences preferences,
+      MainThreadBusWrapper bus,
       ObjectMapper mapper) {
-    this.mPreferences = preferences;
-    this.mContext = context;
+    this.preferences = preferences;
+    this.context = context;
     this.bus = bus;
     this.mMapper = mapper;
     bus.register(this);
+
+    updatePreferences();
 
     String sVal = preferences.getString(context.getString(R.string.settings_key_array), null);
     mSettings = new ArrayList<>();
@@ -68,7 +80,7 @@ import roboguice.util.Ln;
         }
       }
     }
-    defaultIndex = mPreferences.getInt(mContext.getString(R.string.settings_key_default_index), 0);
+    defaultIndex = this.preferences.getInt(this.context.getString(R.string.settings_key_default_index), 0);
     checkForFirstRunAfterUpdate();
   }
 
@@ -77,15 +89,13 @@ import roboguice.util.Ln;
   }
 
   public SocketAddress getSocketAddress() {
-    String serverAddress =
-        mPreferences.getString(mContext.getString(R.string.settings_key_hostname), null);
+    String serverAddress = preferences.getString(context.getString(R.string.settings_key_hostname), null);
     int serverPort;
 
     try {
-      serverPort = mPreferences.getInt(mContext.getString(R.string.settings_key_port), 0);
+      serverPort = preferences.getInt(context.getString(R.string.settings_key_port), 0);
     } catch (ClassCastException castException) {
-      serverPort = Integer.parseInt(
-          mPreferences.getString(mContext.getString(R.string.settings_key_port), "0"));
+      serverPort = Integer.parseInt(preferences.getString(context.getString(R.string.settings_key_port), "0"));
     }
 
     if (nullOrEmpty(serverAddress) || serverPort == 0) {
@@ -97,45 +107,42 @@ import roboguice.util.Ln;
   }
 
   private boolean checkIfRemoteSettingsExist() {
-    String serverAddress =
-        mPreferences.getString(mContext.getString(R.string.settings_key_hostname), null);
+    String serverAddress = preferences.getString(context.getString(R.string.settings_key_hostname), null);
     int serverPort;
 
     try {
-      serverPort = mPreferences.getInt(mContext.getString(R.string.settings_key_port), 0);
+      serverPort = preferences.getInt(context.getString(R.string.settings_key_port), 0);
     } catch (ClassCastException castException) {
-      serverPort = Integer.parseInt(
-          mPreferences.getString(mContext.getString(R.string.settings_key_port), "0"));
+      serverPort = Integer.parseInt(preferences.getString(context.getString(R.string.settings_key_port), "0"));
     }
 
     return !(nullOrEmpty(serverAddress) || serverPort == 0);
   }
 
-  public boolean isVolumeReducedOnRinging() {
-    return mPreferences.getBoolean(mContext.getString(R.string.settings_key_reduce_volume), false);
+  public void updatePreferences() {
+    boolean enabled = preferences.getBoolean(context.getString(R.string.settings_legacy_key_reduce_volume), false);
+    if (enabled) {
+      preferences.edit().putString(context.getString(R.string.settings_key_incoming_call_action), REDUCE).apply();
+    }
   }
 
   public boolean isNotificationControlEnabled() {
-    return mPreferences.getBoolean(mContext.getString(R.string.settings_key_notification_control),
-        true);
+    return preferences.getBoolean(context.getString(R.string.settings_key_notification_control), true);
+  }
+
+  @SuppressWarnings("WrongConstant")
+  @SettingsManager.CallAction public String getCallAction() {
+    return preferences.getString(context.getString(R.string.settings_key_incoming_call_action), NONE);
   }
 
   public boolean isPluginUpdateCheckEnabled() {
-    return mPreferences.getBoolean(mContext.getString(R.string.settings_key_plugin_check), false);
+    return preferences.getBoolean(context.getString(R.string.settings_key_plugin_check), false);
   }
 
-  @SuppressLint("NewApi") private void storeSettings() { //NOPMD
-    SharedPreferences.Editor editor = mPreferences.edit();
+  private void storeSettings() { //NOPMD
+    SharedPreferences.Editor editor = preferences.edit();
     try {
-      editor.putString(mContext.getString(R.string.settings_key_array),
-          mMapper.writeValueAsString(mSettings));
-
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-        editor.apply();
-      } else {
-        editor.commit();
-      }
-
+      editor.putString(context.getString(R.string.settings_key_array), mMapper.writeValueAsString(mSettings)).apply();
       bus.post(new ConnectionSettingsChanged(mSettings, 0));
     } catch (IOException e) {
       if (BuildConfig.DEBUG) {
@@ -173,33 +180,23 @@ import roboguice.util.Ln;
     }
   }
 
-  @SuppressLint("NewApi") private void updateDefault(int index, ConnectionSettings settings) {
-    SharedPreferences.Editor editor = mPreferences.edit();
-    editor.putString(mContext.getString(R.string.settings_key_hostname), settings.getAddress());
-    editor.putInt(mContext.getString(R.string.settings_key_port), settings.getPort());
-    editor.putInt(mContext.getString(R.string.settings_key_default_index), index);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-      editor.apply();
-    } else {
-      editor.commit();
-    }
+  private void updateDefault(int index, ConnectionSettings settings) {
+    SharedPreferences.Editor editor = preferences.edit();
+    editor.putString(context.getString(R.string.settings_key_hostname), settings.getAddress());
+    editor.putInt(context.getString(R.string.settings_key_port), settings.getPort());
+    editor.putInt(context.getString(R.string.settings_key_default_index), index);
+    editor.apply();
     defaultIndex = index;
   }
 
   public Date getLastUpdated() {
-    return new Date(
-        mPreferences.getLong(mContext.getString(R.string.settings_key_last_update_check), 0));
+    return new Date(preferences.getLong(context.getString(R.string.settings_key_last_update_check), 0));
   }
 
-  @SuppressLint("NewApi") public void setLastUpdated(Date lastChecked) {
-    SharedPreferences.Editor editor = mPreferences.edit();
-    editor.putLong(mContext.getString(R.string.settings_key_last_update_check),
-        lastChecked.getTime());
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-      editor.apply();
-    } else {
-      editor.commit();
-    }
+  public void setLastUpdated(Date lastChecked) {
+    SharedPreferences.Editor editor = preferences.edit();
+    editor.putLong(context.getString(R.string.settings_key_last_update_check), lastChecked.getTime());
+    editor.apply();
   }
 
   @Produce public ConnectionSettingsChanged produceConnectionSettings() {
@@ -234,9 +231,8 @@ import roboguice.util.Ln;
   }
 
   @Produce public SearchDefaultAction produceAction() {
-    return new SearchDefaultAction(
-        mPreferences.getString(mContext.getString(R.string.settings_search_default_key),
-            mContext.getString(R.string.search_click_default_value)));
+    return new SearchDefaultAction(preferences.getString(context.getString(R.string.settings_search_default_key),
+        context.getString(R.string.search_click_default_value)));
   }
 
   @Produce public DisplayDialog produceDisplayDialog() {
@@ -252,21 +248,16 @@ import roboguice.util.Ln;
 
   @SuppressLint("NewApi") private void checkForFirstRunAfterUpdate() {
     try {
-      long lastVersionCode = mPreferences.getLong(mContext.
+      long lastVersionCode = preferences.getLong(context.
           getString(R.string.settings_key_last_version_run), 0);
-      long currentVersion = RemoteUtils.getVersionCode(mContext);
+      long currentVersion = RemoteUtils.getVersionCode(context);
 
       if (lastVersionCode < currentVersion) {
         isFirstRun = true;
 
-        SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putLong(mContext.getString(R.string.settings_key_last_version_run), currentVersion);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-          editor.apply();
-        } else {
-          editor.commit();
-        }
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong(context.getString(R.string.settings_key_last_version_run), currentVersion);
+        editor.apply();
 
         if (BuildConfig.DEBUG) {
           Ln.d("update or fresh install");
@@ -277,5 +268,13 @@ import roboguice.util.Ln;
         Ln.d(e, "check for first run");
       }
     }
+  }
+
+  @StringDef({
+      NONE,
+      PAUSE,
+      STOP
+  }) @Retention(RetentionPolicy.SOURCE) public @interface CallAction {
+
   }
 }

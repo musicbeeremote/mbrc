@@ -37,7 +37,7 @@ public class SettingsFragment extends PreferenceFragment {
     addPreferencesFromResource(R.xml.application_settings);
     mContext = getActivity();
 
-    final Preference reduceOnIncoming = findPreference(getString(R.string.settings_key_reduce_volume));
+    final Preference reduceOnIncoming = findPreference(getString(R.string.settings_key_incoming_call_action));
     final Preference mOpenSource = findPreference(getString(R.string.preferences_open_source));
     final Preference mManager = findPreference(getResources().getString(R.string.preferences_key_connection_manager));
     final Preference mVersion = findPreference(getResources().getString(R.string.settings_version));
