@@ -35,13 +35,15 @@ import com.squareup.otto.Subscribe;
   private Context mContext;
   private SettingsManager mSettings;
 
-  @Inject public NotificationService(Context context, MainThreadBusWrapper bus,
-      RemoteSessionManager sessionManager, SettingsManager mSettings) {
+  @Inject
+  public NotificationService(Context context,
+      MainThreadBusWrapper bus,
+      RemoteSessionManager sessionManager,
+      SettingsManager mSettings) {
     this.mContext = context;
     this.sessionManager = sessionManager;
     this.mSettings = mSettings;
-    mNotificationManager =
-        (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+    mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
     bus.register(this);
   }
 
@@ -50,8 +52,7 @@ import com.squareup.otto.Subscribe;
       return;
     }
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-      notificationBuilder(event.getTitle(), event.getArtist(), event.getAlbum(), event.getCover(),
-          event.getState());
+      notificationBuilder(event.getTitle(), event.getArtist(), event.getAlbum(), event.getCover(), event.getState());
     } else {
       buildLollipopNotification(event);
     }
@@ -67,8 +68,11 @@ import com.squareup.otto.Subscribe;
    * @param cover The cover Bitmap.
    * @param state The current play state is used to display the proper play or pause icon.
    */
-  @SuppressLint("NewApi") private void notificationBuilder(final String title, final String artist,
-      final String album, final Bitmap cover, final PlayState state) {
+  @SuppressLint("NewApi") private void notificationBuilder(final String title,
+      final String artist,
+      final String album,
+      final Bitmap cover,
+      final PlayState state) {
 
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
       return;
@@ -78,8 +82,7 @@ import com.squareup.otto.Subscribe;
     mNormalView = new RemoteViews(mContext.getPackageName(), R.layout.ui_notification_control);
     updateNormalNotification(artist, title, cover);
 
-    mBuilder.setContentIntent(
-        RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.OPEN, mContext));
+    mBuilder.setContentIntent(RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.OPEN, mContext));
     mNormalView.setOnClickPendingIntent(R.id.notification_play,
         RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PLAY, mContext));
     mNormalView.setOnClickPendingIntent(R.id.notification_next,
@@ -90,8 +93,7 @@ import com.squareup.otto.Subscribe;
     mNotification = mBuilder.build();
 
     if (isJellyBean()) {
-      mExpandedView =
-          new RemoteViews(mContext.getPackageName(), R.layout.ui_notification_control_expanded);
+      mExpandedView = new RemoteViews(mContext.getPackageName(), R.layout.ui_notification_control_expanded);
       updateExpandedNotification(artist, title, album, cover);
       mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_playpause,
           RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PLAY, mContext));
@@ -119,37 +121,35 @@ import com.squareup.otto.Subscribe;
    * @param event A notification event that the notification service received
    */
   @SuppressLint("NewApi") private void buildLollipopNotification(NotificationDataAvailable event) {
-    int playStateIcon = event.getState() == PlayState.Playing ? R.drawable.ic_action_pause
-        : R.drawable.ic_action_play;
+    int playStateIcon = event.getState() == PlayState.Playing ? R.drawable.ic_action_pause : R.drawable.ic_action_play;
 
     final Notification.MediaStyle mediaStyle = new Notification.MediaStyle();
 
-    mediaStyle.setMediaSession(
-        (MediaSession.Token) sessionManager.getMediaSessionToken().getToken());
+    mediaStyle.setMediaSession((MediaSession.Token) sessionManager.getMediaSessionToken().getToken());
 
-    Notification.Builder builder =
-        new Notification.Builder(mContext).setVisibility(Notification.VISIBILITY_PUBLIC)
-            .setSmallIcon(R.drawable.ic_mbrc_status)
-            .addAction(R.drawable.ic_action_previous, "Previous",
-                RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PREVIOUS,
-                    mContext))
-            .addAction(playStateIcon, "Play/Pause",
-                RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PLAY, mContext))
-            .addAction(R.drawable.ic_action_next, "Next",
-                RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.NEXT, mContext))
-            .setStyle(mediaStyle.setShowActionsInCompactView(1, 2))
-            .setContentTitle(event.getTitle())
-            .setContentText(event.getArtist())
-            .setSubText(event.getAlbum());
+    Notification.Builder builder = new Notification.Builder(mContext).setVisibility(Notification.VISIBILITY_PUBLIC)
+        .setSmallIcon(R.drawable.ic_mbrc_status)
+        .addAction(R.drawable.ic_action_previous,
+            "Previous",
+            RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PREVIOUS, mContext))
+        .addAction(playStateIcon,
+            "Play/Pause",
+            RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PLAY, mContext))
+        .addAction(R.drawable.ic_action_next,
+            "Next",
+            RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.NEXT, mContext))
+        .setStyle(mediaStyle.setShowActionsInCompactView(1, 2))
+        .setContentTitle(event.getTitle())
+        .setContentText(event.getArtist())
+        .setDeleteIntent(RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.CANCEL, mContext))
+        .setSubText(event.getAlbum());
 
-    builder.setContentIntent(
-        RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.OPEN, mContext));
+    builder.setContentIntent(RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.OPEN, mContext));
 
     if (event.getCover() != null) {
       builder.setLargeIcon(event.getCover());
     } else {
-      Bitmap icon =
-          BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_image_no_cover);
+      Bitmap icon = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_image_no_cover);
       builder.setLargeIcon(icon);
     }
 
@@ -158,8 +158,7 @@ import com.squareup.otto.Subscribe;
     mNotificationManager.notify(NOW_PLAYING_PLACEHOLDER, mNotification);
   }
 
-  private void updateNormalNotification(final String artist, final String title,
-      final Bitmap cover) {
+  private void updateNormalNotification(final String artist, final String title, final Bitmap cover) {
     mNormalView.setTextViewText(R.id.notification_artist, artist);
     mNormalView.setTextViewText(R.id.notification_title, title);
     if (cover != null) {
@@ -173,8 +172,10 @@ import com.squareup.otto.Subscribe;
     return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
   }
 
-  private void updateExpandedNotification(final String artist, final String title,
-      final String album, final Bitmap cover) {
+  private void updateExpandedNotification(final String artist,
+      final String title,
+      final String album,
+      final Bitmap cover) {
     mExpandedView.setTextViewText(R.id.expanded_notification_line_one, title);
     mExpandedView.setTextViewText(R.id.expanded_notification_line_two, artist);
     mExpandedView.setTextViewText(R.id.expanded_notification_line_three, album);
@@ -182,8 +183,7 @@ import com.squareup.otto.Subscribe;
     if (cover != null) {
       mExpandedView.setImageViewBitmap(R.id.expanded_notification_cover, cover);
     } else {
-      mExpandedView.setImageViewResource(R.id.expanded_notification_cover,
-          R.drawable.ic_image_no_cover);
+      mExpandedView.setImageViewResource(R.id.expanded_notification_cover, R.drawable.ic_image_no_cover);
     }
   }
 
@@ -207,10 +207,11 @@ import com.squareup.otto.Subscribe;
   }
 
   @SuppressLint("NewApi") public void updateAvailableNotificationBuilder() {
-    NotificationCompat.Builder mBuilder =
-        new NotificationCompat.Builder(mContext).setSmallIcon(R.drawable.ic_mbrc_status)
-            .setContentTitle(mContext.getString(R.string.application_name))
-            .setContentText(mContext.getString(R.string.notification_plugin_out_of_date));
+    NotificationCompat.Builder
+        mBuilder
+        = new NotificationCompat.Builder(mContext).setSmallIcon(R.drawable.ic_mbrc_status)
+        .setContentTitle(mContext.getString(R.string.application_name))
+        .setContentText(mContext.getString(R.string.notification_plugin_out_of_date));
 
     Intent resultIntent = new Intent(Intent.ACTION_VIEW);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -221,8 +222,10 @@ import com.squareup.otto.Subscribe;
 
     resultIntent.setData(Uri.parse("http://kelsos.net/musicbeeremote/download/"));
 
-    PendingIntent resultPendingIntent =
-        PendingIntent.getActivity(mContext, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext,
+        0,
+        resultIntent,
+        PendingIntent.FLAG_UPDATE_CURRENT);
     mBuilder.setContentIntent(resultPendingIntent);
     final Notification notification = mBuilder.build();
     notification.flags = Notification.FLAG_AUTO_CANCEL;

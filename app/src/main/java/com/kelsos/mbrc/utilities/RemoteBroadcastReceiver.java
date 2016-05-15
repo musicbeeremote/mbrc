@@ -12,6 +12,7 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
+import com.kelsos.mbrc.controller.RemoteService;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.squareup.otto.Bus;
@@ -38,6 +39,7 @@ public class RemoteBroadcastReceiver extends BroadcastReceiver {
     filter.addAction(RemoteViewIntentBuilder.REMOTE_NEXT_PRESSED);
     filter.addAction(RemoteViewIntentBuilder.REMOTE_CLOSE_PRESSED);
     filter.addAction(RemoteViewIntentBuilder.REMOTE_PREVIOUS_PRESSED);
+    filter.addAction(RemoteViewIntentBuilder.CANCELLED_NOTIFICATION);
     return filter;
   }
 
@@ -81,6 +83,8 @@ public class RemoteBroadcastReceiver extends BroadcastReceiver {
       bus.post(new MessageEvent(UserInputEventType.CancelNotification));
     } else if (RemoteViewIntentBuilder.REMOTE_PREVIOUS_PRESSED.equals(intent.getAction())) {
       postAction(new UserAction(Protocol.PlayerPrevious, true));
+    } else if (RemoteViewIntentBuilder.CANCELLED_NOTIFICATION.equals(intent.getAction())) {
+      context.stopService(new Intent(context, RemoteService.class));
     }
   }
 
