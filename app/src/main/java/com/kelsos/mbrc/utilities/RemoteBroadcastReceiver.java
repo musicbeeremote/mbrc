@@ -19,14 +19,11 @@ import com.squareup.otto.Bus;
 public class RemoteBroadcastReceiver extends BroadcastReceiver {
   private SettingsManager settingsManager;
   private Bus bus;
-  private Context context;
 
   @Inject
-  public RemoteBroadcastReceiver(SettingsManager settingsManager, Bus bus, Context context) {
+  public RemoteBroadcastReceiver(SettingsManager settingsManager, Bus bus) {
     this.settingsManager = settingsManager;
     this.bus = bus;
-    this.context = context;
-    this.installFilter();
   }
 
   /**
@@ -34,7 +31,7 @@ public class RemoteBroadcastReceiver extends BroadcastReceiver {
    * intent fired by the ReplyHandler or the PHONE_STATE intent fired by the
    * Android operating system.
    */
-  private void installFilter() {
+  public IntentFilter filter() {
     IntentFilter filter = new IntentFilter();
     filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
     filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
@@ -42,7 +39,7 @@ public class RemoteBroadcastReceiver extends BroadcastReceiver {
     filter.addAction(RemoteViewIntentBuilder.REMOTE_NEXT_PRESSED);
     filter.addAction(RemoteViewIntentBuilder.REMOTE_CLOSE_PRESSED);
     filter.addAction(RemoteViewIntentBuilder.REMOTE_PREVIOUS_PRESSED);
-    context.registerReceiver(this, filter);
+    return filter;
   }
 
   @Override public void onReceive(Context context, Intent intent) {
