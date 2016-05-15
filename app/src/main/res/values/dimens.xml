@@ -59,4 +59,6 @@
   <dimen name="mini_control_title_text_size">16sp</dimen>
   <dimen name="mini_control_subtitle_text_size">14sp</dimen>
   <dimen name="playlist_name_action_button_size">34dp</dimen>
+  <dimen name="nav_header_vertical_spacing">16dp</dimen>
+  <dimen name="nav_header_height">160dp</dimen>
 </resources>

@@ -24,7 +24,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     getSupportActionBar().setHomeButtonEnabled(true);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    getSupportActionBar().setTitle(R.string.main_menu_settings);
+    getSupportActionBar().setTitle(R.string.nav_settings);
 
     final SettingsFragment fragment = SettingsFragment.newInstance(bus);
     getSupportFragmentManager().beginTransaction().replace(R.id.content_wrapper, fragment).commit();

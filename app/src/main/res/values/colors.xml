@@ -17,4 +17,5 @@
   <color name="divider">#1fffffff</color>
   <color name="button_dark">#ff5a595b</color>
   <color name="white">#fff</color>
+  <color name="black">#000</color>
 </resources>

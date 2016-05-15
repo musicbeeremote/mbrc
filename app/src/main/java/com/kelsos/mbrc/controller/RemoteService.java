@@ -29,7 +29,7 @@ import roboguice.util.Ln;
   @Inject private MainDataModel mainDataModel;
   @Inject private ProtocolHandler protocolHandler;
   @Inject private SocketService socketService;
-  @Inject private RemoteBroadcastReceiver remoteBroadcastReceiver;
+  @Inject private RemoteBroadcastReceiver receiver;
   @Inject private NotificationService notificationService;
 
   private ExecutorService threadPoolExecutor;
@@ -43,6 +43,7 @@ import roboguice.util.Ln;
   @Override public void onCreate() {
     super.onCreate();
     RoboGuice.getInjector(this).injectMembers(this);
+    this.registerReceiver(receiver, receiver.filter());
   }
 
   /**
@@ -71,6 +72,7 @@ import roboguice.util.Ln;
       threadPoolExecutor.shutdownNow();
     }
     Ln.d("Background Service::Destroyed");
+    this.unregisterReceiver(receiver);
     RoboGuice.destroyInjector(this);
     super.onDestroy();
   }
