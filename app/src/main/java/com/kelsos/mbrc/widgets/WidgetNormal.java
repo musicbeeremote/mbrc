@@ -12,7 +12,7 @@ import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.ui.CoverAvailable;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
-import com.kelsos.mbrc.ui.activities.MainFragmentActivity;
+import com.kelsos.mbrc.ui.activities.MainActivity;
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -40,7 +40,7 @@ public class WidgetNormal extends AppWidgetProvider {
 
     for (int appWidgetId : appWidgetIds) {
       // Create an Intent to launch ExampleActivity
-      Intent intent = new Intent(context, MainFragmentActivity.class);
+      Intent intent = new Intent(context, MainActivity.class);
       PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
       // Get the layout for the App Widget and attach an on-click listener

@@ -22,7 +22,7 @@
       tools:ignore="UnusedAttribute">
 
     <activity
-        android:name=".ui.activities.MainFragmentActivity"
+        android:name=".ui.activities.MainActivity"
         android:launchMode="singleTop"
         android:windowSoftInputMode="adjustNothing">
       <intent-filter>
@@ -33,11 +33,11 @@
 
     <activity
         android:name=".ui.activities.SettingsActivity"
-        android:parentActivityName=".ui.activities.MainFragmentActivity">
+        android:parentActivityName=".ui.activities.MainActivity">
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.activities.MainFragmentActivity" />
+          android:value=".ui.activities.MainActivity" />
     </activity>
 
     <activity
@@ -54,11 +54,11 @@
     <activity
         android:name=".ui.activities.FeedbackActivity"
         android:label="@string/title_activity_feedback"
-        android:parentActivityName=".ui.activities.MainFragmentActivity">
+        android:parentActivityName=".ui.activities.MainActivity">
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value="com.kelsos.mbrc.ui.activities.MainFragmentActivity" />
+          android:value=".ui.activities.MainActivity" />
     </activity>
 
     <service
