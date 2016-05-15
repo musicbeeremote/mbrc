@@ -18,10 +18,9 @@
       android:layout_weight="1"
       android:ellipsize="end"
       android:focusableInTouchMode="false"
-      android:paddingLeft="@dimen/normal_margin"
       android:singleLine="true"
       android:text="@string/artist_placeholder"
-      android:textColor="@color/remoteText"
+      android:textColor="@color/primary_text"
       android:textSize="@dimen/list_item_one"
       android:textStyle="normal"
       tools:ignore="RtlHardcoded,RtlSymmetry" />
@@ -42,8 +41,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:contentDescription="@string/abc_action_menu_overflow_description"
-        android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+        android:contentDescription="@string/menu_overflow_description"
+        android:src="@drawable/ic_more_vert_black_24dp"
         android:tint="@android:color/white" />
   </LinearLayout>
 </LinearLayout>

@@ -10,7 +10,7 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="top"
-      android:background="@color/colorPrimary"
+      android:background="@color/primary"
       android:textColor="@color/primary_text_default_material_light">
 
   </android.support.design.widget.TabLayout>
@@ -38,9 +38,9 @@
 
   <View
       android:layout_width="fill_parent"
-      android:layout_height="4dip"
+      android:layout_height="1dp"
       android:layout_above="@+id/search_mini_control"
-      android:background="@drawable/drop_shadow" />
+      android:background="@color/primary_dark" />
 
   <fragment
       android:id="@+id/search_mini_control"

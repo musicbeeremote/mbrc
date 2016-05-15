@@ -40,7 +40,7 @@
           android:shadowDy="1"
           android:shadowRadius="1.5"
           android:text="@string/main_label_duration_current"
-          android:textColor="@color/remoteText"
+          android:textColor="@color/primary_text"
           android:textSize="12sp" />
 
       <TextView
@@ -57,7 +57,7 @@
           android:shadowDy="1"
           android:shadowRadius="1.5"
           android:text="@string/main_label_duration_total"
-          android:textColor="@color/remoteText"
+          android:textColor="@color/primary_text"
           android:textSize="12sp"
           tools:ignore="RelativeOverlap" />
 
@@ -104,7 +104,7 @@
         android:scrollHorizontally="true"
         android:singleLine="true"
         android:text="@string/main_label_track_title"
-        android:textColor="@color/remoteText"
+        android:textColor="@color/primary_text"
         android:textSize="@dimen/text_title_size" />
 
     <TextView
@@ -120,7 +120,7 @@
         android:scrollHorizontally="true"
         android:singleLine="true"
         android:text="@string/main_label_artist"
-        android:textColor="@color/remoteText"
+        android:textColor="@color/primary_text"
         android:textSize="@dimen/text_subhead_size" />
 
     <TextView
@@ -136,7 +136,7 @@
         android:scrollHorizontally="true"
         android:singleLine="true"
         android:text="@string/main_label_album"
-        android:textColor="@color/remoteText"
+        android:textColor="@color/primary_text"
         android:textSize="@dimen/text_body_size" />
 
   </RelativeLayout>
