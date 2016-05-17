@@ -160,9 +160,9 @@
         android:paddingLeft="@dimen/normal_margin"
         android:paddingRight="@dimen/normal_margin"
         android:scaleType="fitCenter"
-        android:background="@drawable/md_transparent"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_volume_off_grey600_24dp"
-        android:tint="@color/button_material_dark" />
+        android:tint="@color/button_dark" />
 
     <SeekBar
         android:id="@+id/main_volume_seeker"
@@ -202,27 +202,27 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="0.7"
-        android:background="@drawable/md_transparent"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/main_button_repeat_description"
         android:src="@drawable/ic_repeat_grey600_24dp"
-        android:tint="@color/button_material_dark" />
+        android:tint="@color/button_dark" />
 
     <ImageButton
         android:id="@+id/main_button_previous"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.8"
-        android:background="@drawable/md_transparent"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/main_button_previous_description"
         android:src="@drawable/ic_skip_previous_black_36dp"
-        android:tint="@color/button_material_dark" />
+        android:tint="@color/button_dark" />
 
     <ImageButton
         android:id="@+id/main_button_play_pause"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:background="@drawable/md_transparent"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:contentDescription="@string/main_button_play_pause_description"
         android:scaleType="fitCenter"
@@ -233,11 +233,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.8"
-        android:background="@drawable/md_transparent"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/main_button_next_description"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_skip_next_black_36dp"
-        android:tint="@color/button_material_dark" />
+        android:tint="@color/button_dark" />
 
     <ImageButton
         android:id="@+id/main_shuffle_button"
@@ -245,10 +245,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="0.7"
-        android:background="@drawable/md_transparent"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/main_button_shuffle_description"
         android:src="@drawable/ic_shuffle_grey600_24dp"
-        android:tint="@color/button_material_dark" />
+        android:tint="@color/button_dark" />
   </LinearLayout>
 
 </LinearLayout>
