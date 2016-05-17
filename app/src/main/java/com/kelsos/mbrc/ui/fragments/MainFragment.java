@@ -221,8 +221,10 @@ import roboguice.util.Ln;
           Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
       Typeface robotoMedium =
           Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_medium.ttf");
+      Typeface robotoLight =
+          Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
       artistLabel.setTypeface(robotoRegular);
-      titleLabel.setTypeface(robotoMedium);
+      titleLabel.setTypeface(robotoLight);
       albumLabel.setTypeface(robotoMedium);
       trackProgressCurrent.setTypeface(robotoMedium);
       trackDuration.setTypeface(robotoMedium);
