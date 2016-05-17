@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
@@ -12,7 +11,7 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.model.MainDataModel;
 import com.squareup.otto.Bus;
 import java.io.IOException;
-import roboguice.util.Ln;
+import timber.log.Timber;
 
 @Singleton public class ProtocolHandler {
   private Bus bus;
@@ -66,10 +65,8 @@ import roboguice.util.Ln;
         bus.post(new MessageEvent(context, node.path(Const.DATA)));
       }
     } catch (IOException e) {
-      if (BuildConfig.DEBUG) {
-        Ln.d("Incoming preprocessor", e);
-        Ln.d("While processing: %s", incoming);
-      }
+      Timber.d(e, "Incoming preprocessor");
+      Timber.d("While processing: %s", incoming);
     }
   }
 }
