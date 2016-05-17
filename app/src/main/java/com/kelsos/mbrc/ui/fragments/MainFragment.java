@@ -4,10 +4,10 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,7 +24,6 @@ import butterknife.OnClick;
 import butterknife.OnLongClick;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
@@ -52,7 +51,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import roboguice.RoboGuice;
-import roboguice.util.Ln;
+import timber.log.Timber;
 
 @Singleton public class MainFragment extends Fragment {
   private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
@@ -229,7 +228,7 @@ import roboguice.util.Ln;
       trackProgressCurrent.setTypeface(robotoMedium);
       trackDuration.setTypeface(robotoMedium);
     } catch (Exception ignore) {
-      Ln.d(ignore);
+      Timber.d(ignore, "Failed");
     }
   }
 
@@ -273,14 +272,14 @@ import roboguice.util.Ln;
       return;
     }
 
-    int color = getResources().getColor(
-        !ShuffleChange.OFF.equals(change.getShuffleState()) ? R.color.accent
-            : R.color.button_material_dark);
+    final boolean shuffle = !ShuffleChange.OFF.equals(change.getShuffleState());
+    final boolean autoDj = ShuffleChange.AUTODJ.equals(change.getShuffleState());
+
+    int color = ContextCompat.getColor(getContext(), shuffle ? R.color.accent : R.color.button_dark);
     shuffleButton.setColorFilter(color);
 
     shuffleButton.setImageResource(
-        ShuffleChange.AUTODJ.equals(change.getShuffleState()) ? R.drawable.ic_headset_grey600_24dp
-            : R.drawable.ic_shuffle_grey600_24dp);
+        autoDj ? R.drawable.ic_headset_grey600_24dp : R.drawable.ic_shuffle_grey600_24dp);
   }
 
   @Subscribe public void updateRepeatButtonState(RepeatChange change) {
@@ -288,8 +287,8 @@ import roboguice.util.Ln;
       return;
     }
 
-    int color = getResources().getColor(
-        change.isActive() ? R.color.accent : R.color.button_material_dark);
+    int color =
+        getResources().getColor(change.isActive() ? R.color.accent : R.color.button_material_dark);
     repeatButton.setColorFilter(color);
   }
 
@@ -382,9 +381,7 @@ import roboguice.util.Ln;
           progressBar.setProgress(progressBar.getProgress() + 1000);
           trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
         } catch (Exception ex) {
-          if (BuildConfig.DEBUG) {
-            Log.d("mbrc-log:", "animation timer", ex);
-          }
+          Timber.d(ex, "animation timer");
         }
       });
     };

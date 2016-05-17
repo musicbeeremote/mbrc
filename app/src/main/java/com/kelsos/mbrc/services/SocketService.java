@@ -3,7 +3,6 @@ package com.kelsos.mbrc.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.SocketEventType;
@@ -24,7 +23,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import roboguice.util.Ln;
+import timber.log.Timber;
 
 @Singleton public class SocketService {
   public static final int MAX_RETRIES = 3;
@@ -160,9 +159,7 @@ import roboguice.util.Ln;
         }
       }
     } catch (Exception ignored) {
-      if (BuildConfig.DEBUG) {
-        Ln.d(ignored, "Trying to send a message");
-      }
+      Timber.d(ignored, "Trying to send a message");
     }
   }
 
@@ -209,7 +206,7 @@ import roboguice.util.Ln;
         bus.post(new NotifyUser(e.toString().substring(26)));
       } catch (IOException ignored) {
       } catch (NullPointerException npe) {
-        Ln.d(npe);
+        Timber.d(npe, "NPE");
       } finally {
         if (output != null) {
           output.close();
@@ -219,12 +216,10 @@ import roboguice.util.Ln;
 
         bus.post(new MessageEvent(SocketEventType.SocketStatusChanged, false));
         if (numOfRetries < MAX_RETRIES) {
-          Ln.d("Trying to reconnect. Try %d of %d", numOfRetries, MAX_RETRIES);
+          Timber.d("Trying to reconnect. Try %d of %d", numOfRetries, MAX_RETRIES);
           socketManager(SocketAction.RETRY);
         }
-        if (BuildConfig.DEBUG) {
-          Ln.d("socket closed");
-        }
+        Timber.d("Socket closed");
       }
     }
   }

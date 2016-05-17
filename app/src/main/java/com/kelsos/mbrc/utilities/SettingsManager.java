@@ -31,7 +31,7 @@ import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import roboguice.util.Ln;
+import timber.log.Timber;
 
 @Singleton public class SettingsManager {
 
@@ -76,7 +76,7 @@ import roboguice.util.Ln;
         }
       } catch (IOException e) {
         if (BuildConfig.DEBUG) {
-          Ln.d(e, "Loading settings.");
+          Timber.d(e, "Loading settings.");
         }
       }
     }
@@ -146,7 +146,7 @@ import roboguice.util.Ln;
       bus.post(new ConnectionSettingsChanged(mSettings, 0));
     } catch (IOException e) {
       if (BuildConfig.DEBUG) {
-        Ln.d(e, "Settings store");
+        Timber.d(e, "Settings store");
       }
     }
   }
@@ -260,12 +260,12 @@ import roboguice.util.Ln;
         editor.apply();
 
         if (BuildConfig.DEBUG) {
-          Ln.d("update or fresh install");
+          Timber.d("update or fresh install");
         }
       }
     } catch (PackageManager.NameNotFoundException e) {
       if (BuildConfig.DEBUG) {
-        Ln.d(e, "check for first run");
+        Timber.d(e, "check for first run");
       }
     }
   }

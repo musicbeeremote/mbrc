@@ -18,7 +18,7 @@ import com.squareup.otto.Subscribe;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import roboguice.RoboGuice;
-import roboguice.util.Ln;
+import timber.log.Timber;
 
 @Singleton public class RemoteService extends Service {
 
@@ -56,7 +56,7 @@ import roboguice.util.Ln;
   }
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
-    Ln.d("Background Service::Started");
+    Timber.d("Background Service::Started");
     CommandRegistration.register(remoteController);
     threadPoolExecutor = Executors.newSingleThreadExecutor();
     threadPoolExecutor.execute(remoteController);
@@ -71,7 +71,7 @@ import roboguice.util.Ln;
     if (threadPoolExecutor != null) {
       threadPoolExecutor.shutdownNow();
     }
-    Ln.d("Background Service::Destroyed");
+    Timber.d("Background Service::Destroyed");
     this.unregisterReceiver(receiver);
     RoboGuice.destroyInjector(this);
     super.onDestroy();

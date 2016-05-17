@@ -18,7 +18,7 @@ import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity;
 import com.kelsos.mbrc.ui.dialogs.WebViewDialog;
 import com.kelsos.mbrc.utilities.RemoteUtils;
 import com.squareup.otto.Bus;
-import roboguice.util.Ln;
+import timber.log.Timber;
 
 public class SettingsFragment extends PreferenceFragment {
 
@@ -71,9 +71,7 @@ public class SettingsFragment extends PreferenceFragment {
         mVersion.setSummary(String.format(getResources().getString(R.string.settings_version_number),
             RemoteUtils.getVersion(mContext)));
       } catch (PackageManager.NameNotFoundException e) {
-        if (BuildConfig.DEBUG) {
-          Ln.d(e);
-        }
+        Timber.d(e, "failed");
       }
     }
 
