@@ -8,13 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.kelsos.mbrc.R;
-import java.util.ArrayList;
+import java.util.List;
 
 public class LyricsAdapter extends RecyclerView.Adapter<LyricsAdapter.ViewHolder> {
-  private ArrayList<String> mData;
+  private List<String> mData;
   private Typeface robotoLight;
 
-  public LyricsAdapter(Context context, ArrayList<String> objects) {
+  public LyricsAdapter(Context context, List<String> objects) {
     this.mData = objects;
     robotoLight = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_light.ttf");
   }

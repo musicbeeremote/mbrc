@@ -18,6 +18,33 @@
     android:scrollbars="vertical"
     tools:listitem="@layout/ui_list_lyrics_item" />
 
+  <LinearLayout
+      android:id="@+id/empty_view"
+      android:layout_width="match_parent"
+      android:layout_height="0dip"
+      android:layout_weight="1"
+      android:gravity="center"
+      android:orientation="horizontal"
+      android:visibility="gone">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="@dimen/small_margin"
+        android:paddingRight="@dimen/small_margin"
+        android:src="@drawable/ic_error_outline_black_24dp"
+        android:tint="@color/white"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/empty_view_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:textColor="@color/primary_text"
+        tools:ignore="UnusedAttribute" />
+    </LinearLayout>
+
   <View
     android:layout_width="fill_parent"
     android:layout_height="1dp"
