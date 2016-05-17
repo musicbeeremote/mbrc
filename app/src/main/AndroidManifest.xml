@@ -11,6 +11,8 @@
   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
   <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
 
+  <uses-sdk tools:overrideLibrary="timber.log" />
+
   <application
       android:name=".RemoteApplication"
       android:allowBackup="true"

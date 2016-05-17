@@ -1,11 +1,10 @@
 package com.kelsos.mbrc.utilities;
 
-import com.kelsos.mbrc.BuildConfig;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import roboguice.util.Ln;
+import timber.log.Timber;
 
 public class DelayTimer {
   private final ScheduledExecutorService mScheduler = Executors.newScheduledThreadPool(1);
@@ -51,9 +50,7 @@ public class DelayTimer {
   public void stop() {
     if (mFuture != null) {
       mFuture.cancel(true);
-      if (BuildConfig.DEBUG) {
-        Ln.d("stopping delay timer");
-      }
+      Timber.d("stopping delay timer");
     }
     running = false;
   }
@@ -94,9 +91,7 @@ public class DelayTimer {
     @Override public void run() {
       stop();
       onTimerFinish();
-      if (BuildConfig.DEBUG) {
-        Ln.d("delay timer tick");
-      }
+      Timber.d("delay timer tick");
     }
   }
 }

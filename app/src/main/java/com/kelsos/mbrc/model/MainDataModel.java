@@ -42,10 +42,10 @@ import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
-import roboguice.util.Ln;
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 import static com.kelsos.mbrc.events.ui.ShuffleChange.OFF;
 import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
@@ -172,7 +172,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
   }
 
   public void setSearchGenres(ArrayList<GenreEntry> searchGenres) {
-    Ln.d(searchGenres.toString());
+    Timber.d(searchGenres.toString());
     this.searchGenres = searchGenres;
     bus.post(new GenreSearchResults(searchGenres, false));
   }

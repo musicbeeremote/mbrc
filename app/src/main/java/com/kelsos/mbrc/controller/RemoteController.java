@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
@@ -15,7 +14,7 @@ import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import roboguice.RoboGuice;
 import roboguice.inject.ContextScope;
-import roboguice.util.Ln;
+import timber.log.Timber;
 
 public class RemoteController implements Runnable {
   private Injector injector;
@@ -71,10 +70,8 @@ public class RemoteController implements Runnable {
       }
       commandInstance.execute(event);
     } catch (Exception ex) {
-      if (BuildConfig.DEBUG) {
-        Ln.d(ex, String.format("executing command for type: \t%s", event.getType()));
-        Ln.d(String.format("command data: \t%s", event.getData()));
-      }
+      Timber.d(ex, "executing command for type: \t%s", event.getType());
+      Timber.d("command data: \t%s", event.getData());
     }
   }
 
@@ -85,7 +82,7 @@ public class RemoteController implements Runnable {
         executeCommand(eventQueue.take());
       }
     } catch (InterruptedException e) {
-      Ln.d(e);
+      Timber.d(e, "Failed to execute command");
     }
   }
 }

@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.events.MessageEvent;
@@ -20,7 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
-import roboguice.util.Ln;
+import timber.log.Timber;
 
 public class VersionCheckCommand implements ICommand {
   public static final String CHECK_URL = "http://kelsos.net/musicbeeremote/versions.json";
@@ -54,9 +53,7 @@ public class VersionCheckCommand implements ICommand {
     Date now = new Date();
 
     if (nextCheck.after(now)) {
-      if (BuildConfig.DEBUG) {
-        Ln.d(String.format("waiting for next check: %s", Long.toString(nextCheck.getTime())));
-      }
+      Timber.d("waiting for next check: %s", Long.toString(nextCheck.getTime()));
       return;
     }
 
@@ -64,18 +61,14 @@ public class VersionCheckCommand implements ICommand {
     try {
       jsonNode = mapper.readValue(new URL(CHECK_URL), JsonNode.class);
     } catch (IOException e1) {
-      if (BuildConfig.DEBUG) {
-        Ln.d(e1, "While reading json node");
-      }
+      Timber.d(e1, "While reading json node");
       return;
     }
     String version = null;
     try {
       version = RemoteUtils.getVersion(context);
     } catch (PackageManager.NameNotFoundException e1) {
-      if (BuildConfig.DEBUG) {
-        Ln.d(e1, "While reading the current version");
-      }
+      Timber.d(e1, "While reading the current version");
     }
     JsonNode vNode = jsonNode.path(Const.VERSIONS).path(version);
 
@@ -105,10 +98,8 @@ public class VersionCheckCommand implements ICommand {
     }
 
     manager.setLastUpdated(now);
-    if (BuildConfig.DEBUG) {
-      Ln.d(String.format("last check on: %s", Long.toString(now.getTime())));
-      Ln.d(String.format("plugin reported version: %s", model.getPluginVersion()));
-      Ln.d(String.format("plugin suggested version: %s", suggestedVersion));
-    }
+    Timber.d("last check on: %s", Long.toString(now.getTime()));
+    Timber.d("plugin reported version: %s", model.getPluginVersion());
+    Timber.d("plugin suggested version: %s", suggestedVersion);
   }
 }
