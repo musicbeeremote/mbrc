@@ -13,6 +13,7 @@ import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.utilities.DelayTimer;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.kelsos.mbrc.utilities.SettingsManager;
+import com.kelsos.mbrc.utilities.SocketActivityChecker;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -25,7 +26,9 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import timber.log.Timber;
 
-@Singleton public class SocketService {
+@Singleton public class SocketService implements SocketActivityChecker.PingTimeoutListener {
+  @Inject private SocketActivityChecker activityChecker;
+
   public static final int MAX_RETRIES = 3;
   public static final int SOCKET_BUFFER = 4096;
   private int numOfRetries;
@@ -163,6 +166,11 @@ import timber.log.Timber;
     }
   }
 
+  @Override public void onTimeout() {
+    Timber.v("Timeout received resetting socket");
+    socketManager(SocketAction.RESET);
+  }
+
   private class SocketConnection implements Runnable {
     public void run() {
       SocketAddress socketAddress = settingsManager.getSocketAddress();
@@ -183,6 +191,8 @@ import timber.log.Timber;
         String socketStatus = String.valueOf(socket.isConnected());
 
         bus.post(new MessageEvent(SocketEventType.SocketStatusChanged, socketStatus));
+        activityChecker.start();
+        activityChecker.setPingTimeoutListener(SocketService.this);
         while (socket.isConnected()) {
           try {
             final String incoming = input.readLine();
@@ -211,6 +221,9 @@ import timber.log.Timber;
         if (output != null) {
           output.close();
         }
+
+        activityChecker.stop();
+        activityChecker.setPingTimeoutListener(null);
 
         socket = null;
 

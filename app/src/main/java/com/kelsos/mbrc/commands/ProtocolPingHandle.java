@@ -6,17 +6,18 @@ import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.services.SocketService;
-import timber.log.Timber;
+import com.kelsos.mbrc.utilities.SocketActivityChecker;
 
 public class ProtocolPingHandle implements ICommand {
   private final SocketService service;
+  @Inject private SocketActivityChecker activityChecker;
 
   @Inject public ProtocolPingHandle(SocketService service) {
     this.service = service;
   }
 
   @Override public void execute(IEvent e) {
-    Timber.v("Ping received");
+    activityChecker.ping();
     service.sendData(new SocketMessage(Protocol.PONG, ""));
   }
 }
