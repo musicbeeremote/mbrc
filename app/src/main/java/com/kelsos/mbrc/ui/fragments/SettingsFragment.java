@@ -52,7 +52,7 @@ public class SettingsFragment extends PreferenceFragment {
 
     if (reduceOnIncoming != null) {
       reduceOnIncoming.setOnPreferenceChangeListener((preference, newValue) -> {
-        if (!hasPhonePermission() && (boolean) newValue) {
+        if (!hasPhonePermission()) {
           requestPhoneStatePermission();
         }
         return true;
