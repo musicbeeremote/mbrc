@@ -60,4 +60,7 @@ public class Protocol {
 
   public static final String PlayerPlay = "playerplay";
   public static final String PlayerPause = "playerpause";
+
+  public static final String PlaylistList = "playlistlist";
+  public static final String PlaylistPlay = "playlistplay";
 }

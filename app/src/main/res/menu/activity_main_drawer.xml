@@ -18,6 +18,12 @@
         android:title="@string/nav_now_playing" />
 
     <item
+        android:id="@+id/nav_playlists"
+        android:icon="@drawable/ic_queue_music_black_24dp"
+        android:title="@string/nav_playlists"
+        />
+
+    <item
         android:id="@+id/nav_lyrics"
         android:icon="@drawable/ic_view_headline_black_24dp"
         android:title="@string/nav_lyrics" />

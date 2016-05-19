@@ -13,11 +13,13 @@ import com.kelsos.mbrc.data.AlbumEntry;
 import com.kelsos.mbrc.data.ArtistEntry;
 import com.kelsos.mbrc.data.GenreEntry;
 import com.kelsos.mbrc.data.MusicTrack;
+import com.kelsos.mbrc.data.Playlist;
 import com.kelsos.mbrc.data.TrackEntry;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.ui.PlaylistAvailable;
 import com.kelsos.mbrc.events.general.ClearCachedSearchResults;
 import com.kelsos.mbrc.events.ui.AlbumSearchResults;
 import com.kelsos.mbrc.events.ui.ArtistSearchResults;
@@ -42,6 +44,7 @@ import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
+import java.util.List;
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
@@ -76,6 +79,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
   private LfmStatus lfmRating;
   private String pluginVersion;
   private double pluginProtocol;
+  private List<Playlist> playlists;
 
   @Inject public MainDataModel(MainThreadBusWrapper bus) {
     this.bus = bus;
@@ -409,5 +413,15 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
         break;
     }
   }
+
+  public void setPlaylists(List<Playlist> playlists) {
+    this.playlists = playlists;
+    bus.post(PlaylistAvailable.create(playlists));
+  }
+
+  @Produce public PlaylistAvailable producePlaylistAvailable() {
+    return PlaylistAvailable.create(playlists);
+  }
+
 }
 

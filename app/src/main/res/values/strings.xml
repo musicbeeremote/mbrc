@@ -147,4 +147,8 @@
   <string name="nav_option_title">Options</string>
   <string name="incoming_action_default_value">none</string>
 
+  <!-- TODO: Remove or change this placeholder text -->
+  <string name="hello_blank_fragment">Hello blank fragment</string>
+  <string name="nav_playlists">Playlists</string>
+
 </resources>
