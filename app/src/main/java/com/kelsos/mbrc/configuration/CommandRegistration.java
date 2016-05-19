@@ -30,6 +30,7 @@ import com.kelsos.mbrc.commands.model.UpdateNowPlayingList;
 import com.kelsos.mbrc.commands.model.UpdateNowPlayingTrack;
 import com.kelsos.mbrc.commands.model.UpdatePlayState;
 import com.kelsos.mbrc.commands.model.UpdatePlayerStatus;
+import com.kelsos.mbrc.commands.model.UpdatePlaylistList;
 import com.kelsos.mbrc.commands.model.UpdatePluginVersionCommand;
 import com.kelsos.mbrc.commands.model.UpdateRating;
 import com.kelsos.mbrc.commands.model.UpdateRepeat;
@@ -83,6 +84,8 @@ public class CommandRegistration {
     controller.register(Protocol.PluginVersion, UpdatePluginVersionCommand.class);
     controller.register(Protocol.PING, ProtocolPingHandle.class);
     controller.register(Protocol.PONG, ProtocolPongHandle.class);
+    controller.register(Protocol.PlaylistList, UpdatePlaylistList.class);
+
     controller.register(UserInputEventType.SettingsChanged, RestartConnectionCommand.class);
     controller.register(UserInputEventType.CancelNotification, CancelNotificationCommand.class);
     controller.register(UserInputEventType.StartConnection, InitiateConnectionCommand.class);
@@ -131,6 +134,8 @@ public class CommandRegistration {
     controller.unregister(Protocol.PluginVersion, UpdatePluginVersionCommand.class);
     controller.unregister(Protocol.PING, ProtocolPingHandle.class);
     controller.unregister(Protocol.PONG, ProtocolPongHandle.class);
+
+
     controller.unregister(UserInputEventType.SettingsChanged, RestartConnectionCommand.class);
     controller.unregister(UserInputEventType.CancelNotification, CancelNotificationCommand.class);
     controller.unregister(UserInputEventType.StartConnection, InitiateConnectionCommand.class);
