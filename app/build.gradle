@@ -1,9 +1,8 @@
 import java.text.SimpleDateFormat
 
-apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.neenbedankt.android-apt'
-apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'checkstyle'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
@@ -123,27 +122,28 @@ dependencies {
   compile "com.android.support:recyclerview-v7:${supportLibraryVersion}"
   compile "com.android.support:design:${supportLibraryVersion}"
 
-  compile 'com.squareup:otto:1.3.8'
 
+
+
+
+
+
+
+
+  compile 'com.squareup:otto:1.3.8'
   compile 'com.fasterxml.jackson.core:jackson-core:2.7.4'
   compile 'com.fasterxml.jackson.core:jackson-databind:2.7.4'
-
   compile 'com.github.machinarius:preferencefragment:0.1.2'
-
   compile 'com.jakewharton:butterknife:8.0.1'
-  apt 'com.jakewharton:butterknife-compiler:8.0.1'
-
   compile 'io.reactivex:rxandroid:1.2.0'
   compile 'io.reactivex:rxjava:1.1.5'
-
   compile 'org.roboguice:roboguice:4.0.0'
-  provided 'org.roboguice:roboblender:4.0.0'
-
   compile 'com.github.afollestad.material-dialogs:core:0.8.5.8'
   compile 'com.github.afollestad.material-dialogs:commons:0.8.5.8'
-
   compile 'com.jakewharton.timber:timber:4.1.2'
-
+  compile 'com.android.support:support-v4:23.4.0'
+  apt 'com.jakewharton:butterknife-compiler:8.0.1'
+  provided 'org.roboguice:roboblender:4.0.0'
   retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
 }
 
@@ -170,8 +170,7 @@ allprojects {
   }
 }
 
-project.tasks.withType(JavaCompile) {
-  task -> options.compilerArgs << "-AguiceAnnotationDatabasePackageName=mbrc"
+project.tasks.withType(JavaCompile) { task -> options.compilerArgs << "-AguiceAnnotationDatabasePackageName=mbrc"
 }
 
 task findbugs(type: FindBugs) {
@@ -204,11 +203,11 @@ task checkstyle(type: Checkstyle) {
 
   configFile file("${project.rootDir}/config/quality/checkstyle/checkstyle.xml")
   showViolations true
-  configProperties = [
-      'checkstyle.cache.file': rootProject.file('build/checkstyle.cache'),
-      'checkstyle.config.dir': rootProject.file('config/quality/checkstyle/')
-  ]
-  configProperties.checkstyleSuppressionsPath = file("${project.rootDir}/config/quality/checkstyle/suppressions.xml").absolutePath // Where is my suppressions file for checkstyle is...
+  configProperties = ['checkstyle.cache.file': rootProject.file('build/checkstyle.cache'),
+                      'checkstyle.config.dir': rootProject.file('config/quality/checkstyle/')]
+  configProperties.checkstyleSuppressionsPath =
+      file("${project.rootDir}/config/quality/checkstyle/suppressions.xml").absolutePath
+  // Where is my suppressions file for checkstyle is...
   source 'src'
   include '**/*.java'
   exclude '**/gen/**'

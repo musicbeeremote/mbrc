@@ -39,6 +39,7 @@ import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.kelsos.mbrc.ui.fragments.LyricsFragment;
 import com.kelsos.mbrc.ui.fragments.MainFragment;
 import com.kelsos.mbrc.ui.fragments.NowPlayingFragment;
+import com.kelsos.mbrc.ui.fragments.PlaylistsFragment;
 import com.kelsos.mbrc.ui.fragments.SearchFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -264,6 +265,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     } else if (itemId == R.id.nav_now_playing) {
       replace(new NowPlayingFragment());
       updateTitle(R.string.nav_now_playing);
+    } else if (itemId == R.id.nav_playlists){
+      replace(PlaylistsFragment.newInstance());
+      updateTitle(R.string.nav_playlists);
     } else if (itemId == R.id.nav_lyrics) {
       replace(new LyricsFragment());
       updateTitle(R.string.nav_lyrics);
