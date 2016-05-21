@@ -13,6 +13,11 @@
         android:title="@string/nav_search" />
 
     <item
+      android:id="@+id/nav_library"
+      android:icon="@drawable/ic_library_music_black_24dp"
+      android:title="@string/nav_library" />
+
+    <item
         android:id="@+id/nav_now_playing"
         android:icon="@drawable/ic_view_list_black_24dp"
         android:title="@string/nav_now_playing" />

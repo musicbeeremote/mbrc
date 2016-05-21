@@ -1,18 +1,18 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.data.TrackEntry;
+import com.kelsos.mbrc.data.Track;
 import java.util.ArrayList;
 
 public class TrackSearchResults {
-  private ArrayList<TrackEntry> list;
+  private ArrayList<Track> list;
   private boolean stored;
 
-  public TrackSearchResults(ArrayList<TrackEntry> list, boolean stored) {
+  public TrackSearchResults(ArrayList<Track> list, boolean stored) {
     this.list = list;
     this.stored = stored;
   }
 
-  public ArrayList<TrackEntry> getList() {
+  public ArrayList<Track> getList() {
     return this.list;
   }
 

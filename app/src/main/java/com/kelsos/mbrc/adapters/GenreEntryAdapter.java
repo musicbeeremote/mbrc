@@ -12,12 +12,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.GenreEntry;
+import com.kelsos.mbrc.data.Genre;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GenreEntryAdapter extends RecyclerView.Adapter<GenreEntryAdapter.ViewHolder> {
-  private List<GenreEntry> mData;
+  private List<Genre> mData;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
   private LayoutInflater inflater;
@@ -75,8 +75,8 @@ public class GenreEntryAdapter extends RecyclerView.Adapter<GenreEntryAdapter.Vi
    * @param position The position of the item within the adapter's data set.
    */
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
-    final GenreEntry entry = mData.get(position);
-    holder.title.setText(entry.getName());
+    final Genre entry = mData.get(position);
+    holder.title.setText(entry.getGenre());
 
     holder.indicator.setOnClickListener(v -> {
       PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
@@ -107,16 +107,16 @@ public class GenreEntryAdapter extends RecyclerView.Adapter<GenreEntryAdapter.Vi
     return mData == null ? 0 : mData.size();
   }
 
-  public void update(List<GenreEntry> list) {
+  public void update(List<Genre> list) {
     this.mData.clear();
     this.mData.addAll(list);
     notifyDataSetChanged();
   }
 
   public interface MenuItemSelectedListener {
-    void onMenuItemSelected(MenuItem menuItem, GenreEntry entry);
+    void onMenuItemSelected(MenuItem menuItem, Genre entry);
 
-    void onItemClicked(GenreEntry genre);
+    void onItemClicked(Genre genre);
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {

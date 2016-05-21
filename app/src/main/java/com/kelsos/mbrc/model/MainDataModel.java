@@ -9,12 +9,12 @@ import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
-import com.kelsos.mbrc.data.AlbumEntry;
-import com.kelsos.mbrc.data.ArtistEntry;
-import com.kelsos.mbrc.data.GenreEntry;
+import com.kelsos.mbrc.data.Album;
+import com.kelsos.mbrc.data.Artist;
+import com.kelsos.mbrc.data.Genre;
 import com.kelsos.mbrc.data.MusicTrack;
 import com.kelsos.mbrc.data.Playlist;
-import com.kelsos.mbrc.data.TrackEntry;
+import com.kelsos.mbrc.data.Track;
 import com.kelsos.mbrc.enums.ConnectionStatus;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.enums.PlayState;
@@ -71,10 +71,10 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
   private boolean isScrobblingActive;
   private boolean isMuteActive;
   private PlayState playState;
-  private ArrayList<TrackEntry> searchTracks;
-  private ArrayList<AlbumEntry> searchAlbums;
-  private ArrayList<GenreEntry> searchGenres;
-  private ArrayList<ArtistEntry> searchArtists;
+  private ArrayList<Track> searchTracks;
+  private ArrayList<Album> searchAlbums;
+  private ArrayList<Genre> searchGenres;
+  private ArrayList<Artist> searchArtists;
   private ArrayList<MusicTrack> nowPlayingList;
   private LfmStatus lfmRating;
   private String pluginVersion;
@@ -148,7 +148,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
     return new NowPlayingListAvailable(nowPlayingList, index);
   }
 
-  public void setSearchArtists(ArrayList<ArtistEntry> searchArtists) {
+  public void setSearchArtists(ArrayList<Artist> searchArtists) {
     this.searchArtists = searchArtists;
     bus.post(new ArtistSearchResults(this.searchArtists, false));
   }
@@ -157,7 +157,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
     return new ArtistSearchResults(searchArtists, true);
   }
 
-  public void setSearchTracks(ArrayList<TrackEntry> searchTracks) {
+  public void setSearchTracks(ArrayList<Track> searchTracks) {
     this.searchTracks = searchTracks;
     bus.post(new TrackSearchResults(searchTracks, false));
   }
@@ -166,7 +166,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
     return new TrackSearchResults(searchTracks, true);
   }
 
-  public void setSearchAlbums(ArrayList<AlbumEntry> searchAlbums) {
+  public void setSearchAlbums(ArrayList<Album> searchAlbums) {
     this.searchAlbums = searchAlbums;
     bus.post(new AlbumSearchResults(searchAlbums, false));
   }
@@ -175,7 +175,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
     return new AlbumSearchResults(searchAlbums, true);
   }
 
-  public void setSearchGenres(ArrayList<GenreEntry> searchGenres) {
+  public void setSearchGenres(ArrayList<Genre> searchGenres) {
     Timber.d(searchGenres.toString());
     this.searchGenres = searchGenres;
     bus.post(new GenreSearchResults(searchGenres, false));
