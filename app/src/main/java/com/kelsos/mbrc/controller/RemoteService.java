@@ -11,6 +11,7 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.model.MainDataModel;
+import com.kelsos.mbrc.services.AuxiliarySocket;
 import com.kelsos.mbrc.services.ProtocolHandler;
 import com.kelsos.mbrc.services.SocketService;
 import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver;
@@ -31,6 +32,7 @@ import timber.log.Timber;
   @Inject private SocketService socketService;
   @Inject private RemoteBroadcastReceiver receiver;
   @Inject private NotificationService notificationService;
+  @Inject private AuxiliarySocket socket;
 
   private ExecutorService threadPoolExecutor;
 
@@ -61,6 +63,12 @@ import timber.log.Timber;
     threadPoolExecutor = Executors.newSingleThreadExecutor();
     threadPoolExecutor.execute(remoteController);
     remoteController.executeCommand(new MessageEvent(UserInputEventType.StartConnection));
+
+
+    socket.getTracks(0,500).subscribe(genrePage -> {
+      Timber.v("Total %d ", genrePage.getData().size());
+    });
+
     return super.onStartCommand(intent, flags, startId);
   }
 

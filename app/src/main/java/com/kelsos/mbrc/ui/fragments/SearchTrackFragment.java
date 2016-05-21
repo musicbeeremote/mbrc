@@ -19,7 +19,7 @@ import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.Queue;
-import com.kelsos.mbrc.data.TrackEntry;
+import com.kelsos.mbrc.data.Track;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
@@ -80,7 +80,7 @@ public class SearchTrackFragment extends Fragment implements TrackEntryAdapter.M
     adapter.update(results.getList());
   }
 
-  @Override public void onMenuItemSelected(MenuItem menuItem, TrackEntry entry) {
+  @Override public void onMenuItemSelected(MenuItem menuItem, Track entry) {
     final String qContext = Protocol.LibraryQueueTrack;
     final String query = entry.getSrc();
 
@@ -104,7 +104,7 @@ public class SearchTrackFragment extends Fragment implements TrackEntryAdapter.M
     }
   }
 
-  @Override public void onItemClicked(TrackEntry track) {
+  @Override public void onItemClicked(Track track) {
     if (mDefault.equals(Const.SUB)) {
       mDefault = Queue.NOW;
     }

@@ -3,7 +3,7 @@ package com.kelsos.mbrc.commands.model;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.data.GenreEntry;
+import com.kelsos.mbrc.data.Genre;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
@@ -21,13 +21,13 @@ public class UpdateGenreSearchResults implements ICommand {
   }
 
   @Override public void execute(IEvent e) {
-    Observable.create((Subscriber<? super ArrayList<GenreEntry>> subscriber) -> {
-      ArrayList<GenreEntry> genres = new ArrayList<>();
+    Observable.create((Subscriber<? super ArrayList<Genre>> subscriber) -> {
+      ArrayList<Genre> genres = new ArrayList<>();
       ArrayNode node = (ArrayNode) e.getData();
       for (int i = 0; i < node.size(); i++) {
         JsonNode jNode = node.get(i);
-        GenreEntry entry = new GenreEntry(jNode);
-        genres.add(entry);
+        //Genre entry = new Genre(jNode);
+        //genres.add(entry);
       }
       subscriber.onNext(genres);
       subscriber.onCompleted();

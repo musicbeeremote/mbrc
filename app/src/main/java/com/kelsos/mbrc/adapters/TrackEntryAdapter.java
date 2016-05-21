@@ -12,12 +12,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.TrackEntry;
+import com.kelsos.mbrc.data.Track;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.ViewHolder> {
-  private ArrayList<TrackEntry> mData;
+  private ArrayList<Track> mData;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
   private LayoutInflater inflater;
@@ -75,7 +75,7 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
    * @param position The position of the item within the adapter's data set.
    */
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
-    final TrackEntry entry = mData.get(position);
+    final Track entry = mData.get(position);
     holder.title.setText(entry.getTitle());
     holder.artist.setText(entry.getArtist());
 
@@ -108,16 +108,16 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
     return mData == null ? 0 : mData.size();
   }
 
-  public void update(List<TrackEntry> list) {
+  public void update(List<Track> list) {
     this.mData.clear();
     this.mData.addAll(list);
     notifyDataSetChanged();
   }
 
   public interface MenuItemSelectedListener {
-    void onMenuItemSelected(MenuItem menuItem, TrackEntry entry);
+    void onMenuItemSelected(MenuItem menuItem, Track entry);
 
-    void onItemClicked(TrackEntry track);
+    void onItemClicked(Track track);
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {

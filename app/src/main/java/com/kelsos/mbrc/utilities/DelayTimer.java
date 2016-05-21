@@ -35,7 +35,7 @@ public class DelayTimer {
   }
 
   /**
-   * The method is used to start the timer
+   * The method is used to request the timer
    */
   public void start() {
     stop();

@@ -12,13 +12,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.AlbumEntry;
+import com.kelsos.mbrc.data.Album;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.ViewHolder> {
   private final LayoutInflater inflater;
-  private List<AlbumEntry> mData;
+  private List<Album> mData;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
 
@@ -35,7 +35,7 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.Vi
   }
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
-    final AlbumEntry entry = mData.get(position);
+    final Album entry = mData.get(position);
     holder.album.setText(entry.getAlbum());
     holder.artist.setText(entry.getArtist());
 
@@ -67,16 +67,16 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.Vi
     mListener = listener;
   }
 
-  public void update(List<AlbumEntry> list) {
+  public void update(List<Album> list) {
     mData.clear();
     mData.addAll(list);
     notifyDataSetChanged();
   }
 
   public interface MenuItemSelectedListener {
-    void onMenuItemSelected(MenuItem menuItem, AlbumEntry entry);
+    void onMenuItemSelected(MenuItem menuItem, Album entry);
 
-    void onItemClicked(AlbumEntry album);
+    void onItemClicked(Album album);
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {

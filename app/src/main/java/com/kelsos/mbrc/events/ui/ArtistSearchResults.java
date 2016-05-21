@@ -1,18 +1,18 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.data.ArtistEntry;
+import com.kelsos.mbrc.data.Artist;
 import java.util.ArrayList;
 
 public class ArtistSearchResults {
-  private ArrayList<ArtistEntry> list;
+  private ArrayList<Artist> list;
   private boolean stored;
 
-  public ArtistSearchResults(ArrayList<ArtistEntry> list, boolean stored) {
+  public ArtistSearchResults(ArrayList<Artist> list, boolean stored) {
     this.list = list;
     this.stored = stored;
   }
 
-  public ArrayList<ArtistEntry> getList() {
+  public ArrayList<Artist> getList() {
     return this.list;
   }
 

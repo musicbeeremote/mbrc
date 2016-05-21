@@ -18,7 +18,7 @@ import com.kelsos.mbrc.adapters.GenreEntryAdapter;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.GenreEntry;
+import com.kelsos.mbrc.data.Genre;
 import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
@@ -79,10 +79,10 @@ public class SearchGenreFragment extends Fragment implements GenreEntryAdapter.M
     adapter.update(results.getList());
   }
 
-  @Override public void onMenuItemSelected(MenuItem menuItem, GenreEntry entry) {
+  @Override public void onMenuItemSelected(MenuItem menuItem, Genre entry) {
     final String qContext = Protocol.LibraryQueueGenre;
     final String gSub = Protocol.LibraryGenreArtists;
-    String query = entry.getName();
+    String query = entry.getGenre();
 
     UserAction ua = null;
     switch (menuItem.getItemId()) {
@@ -107,13 +107,13 @@ public class SearchGenreFragment extends Fragment implements GenreEntryAdapter.M
     }
   }
 
-  @Override public void onItemClicked(GenreEntry genre) {
+  @Override public void onItemClicked(Genre genre) {
     if (!mDefault.equals(Const.SUB)) {
       bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.LibraryQueueGenre, new Queue(mDefault, genre.getName()))));
+          new UserAction(Protocol.LibraryQueueGenre, new Queue(mDefault, genre.getGenre()))));
     } else {
       bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.LibraryGenreArtists, genre.getName())));
+          new UserAction(Protocol.LibraryGenreArtists, genre.getGenre())));
     }
   }
 

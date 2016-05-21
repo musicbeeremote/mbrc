@@ -3,7 +3,7 @@ package com.kelsos.mbrc.commands.model;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.data.AlbumEntry;
+import com.kelsos.mbrc.data.Album;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
@@ -22,12 +22,12 @@ public class UpdateAlbumSearchResults implements ICommand {
 
   @Override public void execute(IEvent e) {
 
-    Observable.create((Subscriber<? super ArrayList<AlbumEntry>> subscriber) -> {
-      ArrayList<AlbumEntry> albums = new ArrayList<>();
+    Observable.create((Subscriber<? super ArrayList<Album>> subscriber) -> {
+      ArrayList<Album> albums = new ArrayList<>();
       ArrayNode node = (ArrayNode) e.getData();
       for (int i = 0; i < node.size(); i++) {
         JsonNode jNode = node.get(i);
-        AlbumEntry entry = new AlbumEntry(jNode);
+        Album entry = new Album(jNode);
         albums.add(entry);
       }
       subscriber.onNext(albums);

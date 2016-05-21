@@ -18,6 +18,6 @@ public class ProtocolPingHandle implements ICommand {
 
   @Override public void execute(IEvent e) {
     activityChecker.ping();
-    service.sendData(new SocketMessage(Protocol.PONG, ""));
+    service.sendData(SocketMessage.create(Protocol.PONG, ""));
   }
 }
