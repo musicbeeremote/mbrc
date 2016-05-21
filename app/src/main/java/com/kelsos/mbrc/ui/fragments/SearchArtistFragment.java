@@ -18,7 +18,7 @@ import com.kelsos.mbrc.adapters.ArtistEntryAdapter;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.ArtistEntry;
+import com.kelsos.mbrc.data.Artist;
 import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
@@ -80,7 +80,7 @@ public class SearchArtistFragment extends Fragment implements ArtistEntryAdapter
     adapter.update(results.getList());
   }
 
-  @Override public void onMenuItemSelected(MenuItem menuItem, ArtistEntry entry) {
+  @Override public void onMenuItemSelected(MenuItem menuItem, Artist entry) {
     final String qContext = Protocol.LibraryQueueArtist;
     final String gSub = Protocol.LibraryArtistAlbums;
     String query = entry.getArtist();
@@ -118,7 +118,7 @@ public class SearchArtistFragment extends Fragment implements ArtistEntryAdapter
     }
   }
 
-  @Override public void onItemClicked(ArtistEntry artist) {
+  @Override public void onItemClicked(Artist artist) {
     if (!mDefault.equals(Const.SUB)) {
       bus.post(new MessageEvent(ProtocolEventType.UserAction,
           new UserAction(Protocol.LibraryQueueArtist, new Queue(mDefault, artist.getArtist()))));

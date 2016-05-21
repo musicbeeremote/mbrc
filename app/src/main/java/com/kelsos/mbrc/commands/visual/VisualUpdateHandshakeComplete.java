@@ -30,19 +30,19 @@ public class VisualUpdateHandshakeComplete implements ICommand {
         return;
       }
       ArrayList<SocketMessage> messages = new ArrayList<>();
-      messages.add(new SocketMessage(Protocol.NowPlayingCover, EMPTY));
-      messages.add(new SocketMessage(Protocol.PlayerStatus, EMPTY));
-      messages.add(new SocketMessage(Protocol.NowPlayingTrack, EMPTY));
-      messages.add(new SocketMessage(Protocol.NowPlayingLyrics, EMPTY));
-      messages.add(new SocketMessage(Protocol.NowPlayingPosition, EMPTY));
-      messages.add(new SocketMessage(Protocol.PluginVersion, EMPTY));
+      messages.add(SocketMessage.create(Protocol.NowPlayingCover, EMPTY));
+      messages.add(SocketMessage.create(Protocol.PlayerStatus, EMPTY));
+      messages.add(SocketMessage.create(Protocol.NowPlayingTrack, EMPTY));
+      messages.add(SocketMessage.create(Protocol.NowPlayingLyrics, EMPTY));
+      messages.add(SocketMessage.create(Protocol.NowPlayingPosition, EMPTY));
+      messages.add(SocketMessage.create(Protocol.PluginVersion, EMPTY));
 
       int totalMessages = messages.size();
       Observable.interval(150, TimeUnit.MILLISECONDS)
           .take(totalMessages)
           .subscribe(tick -> service.sendData(messages.remove(0)));
     } else {
-      service.sendData(new SocketMessage(Protocol.INIT, EMPTY));
+      service.sendData(SocketMessage.create(Protocol.INIT, EMPTY));
     }
   }
 }

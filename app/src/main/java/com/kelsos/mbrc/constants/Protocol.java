@@ -63,4 +63,10 @@ public class Protocol {
 
   public static final String PlaylistList = "playlistlist";
   public static final String PlaylistPlay = "playlistplay";
+  public static final String NoBroadcast = "nobroadcast";
+
+  public static final String LibraryBrowseGenres  = "browsegenres";
+  public static final String LibraryBrowseArtists  = "browseartists";
+  public static final String LibraryBrowseAlbums  = "browsealbums";
+  public static final String LibraryBrowseTracks = "browsetracks";
 }

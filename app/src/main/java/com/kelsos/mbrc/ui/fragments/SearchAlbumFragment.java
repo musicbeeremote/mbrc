@@ -18,7 +18,7 @@ import com.kelsos.mbrc.adapters.AlbumEntryAdapter;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.AlbumEntry;
+import com.kelsos.mbrc.data.Album;
 import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
@@ -90,7 +90,7 @@ public class SearchAlbumFragment extends Fragment implements AlbumEntryAdapter.M
     }
   }
 
-  @Override public void onMenuItemSelected(MenuItem menuItem, AlbumEntry entry) {
+  @Override public void onMenuItemSelected(MenuItem menuItem, Album entry) {
 
     final String qContext = Protocol.LibraryQueueAlbum;
     final String gSub = Protocol.LibraryAlbumTracks;
@@ -119,7 +119,7 @@ public class SearchAlbumFragment extends Fragment implements AlbumEntryAdapter.M
     }
   }
 
-  @Override public void onItemClicked(AlbumEntry album) {
+  @Override public void onItemClicked(Album album) {
     if (!mDefault.equals(Const.SUB)) {
       bus.post(new MessageEvent(ProtocolEventType.UserAction,
           new UserAction(Protocol.LibraryQueueAlbum, new Queue(mDefault, album.getAlbum()))));

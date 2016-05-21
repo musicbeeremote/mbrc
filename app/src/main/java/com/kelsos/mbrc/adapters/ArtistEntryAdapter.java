@@ -12,13 +12,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.ArtistEntry;
+import com.kelsos.mbrc.data.Artist;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.ViewHolder> {
   private final LayoutInflater inflater;
-  private List<ArtistEntry> mData;
+  private List<Artist> mData;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
 
@@ -75,7 +75,7 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
    * @param position The position of the item within the adapter's data set.
    */
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
-    final ArtistEntry entry = mData.get(position);
+    final Artist entry = mData.get(position);
     holder.title.setText(entry.getArtist());
 
     holder.indicator.setOnClickListener(v -> {
@@ -107,16 +107,16 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
     return mData == null ? 0 : mData.size();
   }
 
-  public void update(List<ArtistEntry> data) {
+  public void update(List<Artist> data) {
     this.mData.clear();
     this.mData.addAll(data);
     notifyDataSetChanged();
   }
 
   public interface MenuItemSelectedListener {
-    void onMenuItemSelected(MenuItem menuItem, ArtistEntry entry);
+    void onMenuItemSelected(MenuItem menuItem, Artist entry);
 
-    void onItemClicked(ArtistEntry artist);
+    void onItemClicked(Artist artist);
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
