@@ -8,13 +8,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
-import com.kelsos.mbrc.data.Album;
-import com.kelsos.mbrc.data.Artist;
-import com.kelsos.mbrc.data.Genre;
 import com.kelsos.mbrc.data.Page;
 import com.kelsos.mbrc.data.PageRange;
 import com.kelsos.mbrc.data.SocketMessage;
-import com.kelsos.mbrc.data.Track;
+import com.kelsos.mbrc.data.library.Album;
+import com.kelsos.mbrc.data.library.Artist;
+import com.kelsos.mbrc.data.library.Genre;
+import com.kelsos.mbrc.data.library.Track;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,10 +23,9 @@ import java.net.Socket;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class AuxiliarySocket {
+public class LibraryServiceImpl implements LibraryService {
   @Inject private SettingsManager settings;
   @Inject private ObjectMapper mapper;
 
@@ -37,6 +36,7 @@ public class AuxiliarySocket {
     return (mapper.writeValueAsString(message) + "\r\n").getBytes();
   }
 
+  @Override
   public Observable<Page<Genre>> getGenres(int offset, int limit) {
     PageRange range = getPageRange(offset, limit);
 
@@ -53,14 +53,15 @@ public class AuxiliarySocket {
     }));
   }
 
-  public Observable<Page<Genre>> getArtists(int offset, int limit) {
+  @Override
+  public Observable<Page<Artist>> getArtists(int offset, int limit) {
     PageRange range = getPageRange(offset, limit);
 
     return request(Protocol.LibraryBrowseArtists, range == null ? "" : range).flatMap(socketMessage -> Observable.create(subscriber -> {
       try {
         TypeReference<Page<Artist>> typeReference = new TypeReference<Page<Artist>>() {
         };
-        Page<Genre> page = mapper.readValue((String) socketMessage.getData(), typeReference);
+        Page<Artist> page = mapper.readValue((String) socketMessage.getData(), typeReference);
         subscriber.onNext(page);
         subscriber.onCompleted();
       } catch (IOException e) {
@@ -69,6 +70,7 @@ public class AuxiliarySocket {
     }));
   }
 
+  @Override
   public Observable<Page<Album>> getAlbums(int offset, int limit) {
     PageRange range = getPageRange(offset, limit);
 
@@ -85,6 +87,7 @@ public class AuxiliarySocket {
     }));
   }
 
+  @Override
   public Observable<Page<Track>> getTracks(int offset, int limit) {
     PageRange range = getPageRange(offset, limit);
 
@@ -114,8 +117,6 @@ public class AuxiliarySocket {
 
   @NonNull private Observable<SocketMessage> request(String request, Object data) {
     return Observable.using(this::getSocket, this::getObservable, this::cleanup)
-        .subscribeOn(Schedulers.io())
-        .unsubscribeOn(Schedulers.io())
         .flatMap(s -> getSocketMessageObservable(request, data, s))
         .skipWhile(this::shouldSkip);
   }
@@ -175,6 +176,7 @@ public class AuxiliarySocket {
     try {
       Timber.v("Creating new socket");
       socket = new Socket();
+      socket.setSoTimeout(40 * 1000);
       socket.connect(settings.getSocketAddress());
       sendMessage(SocketMessage.create(Protocol.Player, "Android"));
       return socket;

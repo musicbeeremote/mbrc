@@ -1,8 +1,13 @@
-package com.kelsos.mbrc.data;
+package com.kelsos.mbrc.data.library;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -13,11 +18,20 @@ import org.apache.commons.lang.builder.ToStringBuilder;
     "genre",
     "count"
 })
-public class Genre {
+@Table(name = "genre", database = Cache.class)
+public class Genre extends BaseModel {
+
+  @JsonIgnore
+  @Column
+  @PrimaryKey(autoincrement = true)
+  private long id;
 
   @JsonProperty("genre")
+  @Column
   private String genre;
+
   @JsonProperty("count")
+  @Column
   private int count;
 
   @JsonProperty("genre")
@@ -62,5 +76,12 @@ public class Genre {
     return new EqualsBuilder().append(genre, rhs.genre).append(count, rhs.count).isEquals();
   }
 
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
 }
 

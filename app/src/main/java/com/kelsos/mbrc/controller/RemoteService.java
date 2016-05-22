@@ -11,10 +11,12 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.model.MainDataModel;
-import com.kelsos.mbrc.services.AuxiliarySocket;
+import com.kelsos.mbrc.services.BrowseSync;
 import com.kelsos.mbrc.services.ProtocolHandler;
 import com.kelsos.mbrc.services.SocketService;
 import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver;
+import com.raizlabs.android.dbflow.config.FlowConfig;
+import com.raizlabs.android.dbflow.config.FlowManager;
 import com.squareup.otto.Subscribe;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,7 +34,7 @@ import timber.log.Timber;
   @Inject private SocketService socketService;
   @Inject private RemoteBroadcastReceiver receiver;
   @Inject private NotificationService notificationService;
-  @Inject private AuxiliarySocket socket;
+  @Inject private BrowseSync browseSync;
 
   private ExecutorService threadPoolExecutor;
 
@@ -45,6 +47,7 @@ import timber.log.Timber;
   @Override public void onCreate() {
     super.onCreate();
     RoboGuice.getInjector(this).injectMembers(this);
+    FlowManager.init(new FlowConfig.Builder(this).openDatabasesOnInit(true).build());
     this.registerReceiver(receiver, receiver.filter());
   }
 
@@ -64,10 +67,7 @@ import timber.log.Timber;
     threadPoolExecutor.execute(remoteController);
     remoteController.executeCommand(new MessageEvent(UserInputEventType.StartConnection));
 
-
-    socket.getTracks(0,500).subscribe(genrePage -> {
-      Timber.v("Total %d ", genrePage.getData().size());
-    });
+    browseSync.sync();
 
     return super.onStartCommand(intent, flags, startId);
   }

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.data.Track;
+import com.kelsos.mbrc.data.library.Track;
 import java.util.ArrayList;
 
 public class TrackSearchResults {

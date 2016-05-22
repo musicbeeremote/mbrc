@@ -3,7 +3,7 @@ package com.kelsos.mbrc.commands.model;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.inject.Inject;
-import com.kelsos.mbrc.data.Artist;
+import com.kelsos.mbrc.data.library.Artist;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;

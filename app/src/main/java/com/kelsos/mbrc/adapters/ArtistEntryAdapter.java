@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.Artist;
+import com.kelsos.mbrc.data.library.Artist;
 import java.util.ArrayList;
 import java.util.List;
 
