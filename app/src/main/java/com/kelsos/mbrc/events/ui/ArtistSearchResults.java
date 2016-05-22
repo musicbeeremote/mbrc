@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.data.Artist;
+import com.kelsos.mbrc.data.library.Artist;
 import java.util.ArrayList;
 
 public class ArtistSearchResults {
