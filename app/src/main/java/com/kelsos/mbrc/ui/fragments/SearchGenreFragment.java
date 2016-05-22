@@ -18,7 +18,7 @@ import com.kelsos.mbrc.adapters.GenreEntryAdapter;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.Genre;
+import com.kelsos.mbrc.data.library.Genre;
 import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;

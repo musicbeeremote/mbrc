@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.data.Album;
+import com.kelsos.mbrc.data.library.Album;
 import java.util.ArrayList;
 
 public class AlbumSearchResults {

@@ -18,7 +18,7 @@ import com.kelsos.mbrc.adapters.ArtistEntryAdapter;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.Artist;
+import com.kelsos.mbrc.data.library.Artist;
 import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
