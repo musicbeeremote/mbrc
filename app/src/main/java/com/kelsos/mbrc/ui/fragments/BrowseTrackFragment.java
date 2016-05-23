@@ -19,68 +19,75 @@ import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.Queue;
-import com.kelsos.mbrc.data.library.Track;
 import com.kelsos.mbrc.data.UserAction;
+import com.kelsos.mbrc.data.library.Track;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
-import com.kelsos.mbrc.events.ui.TrackSearchResults;
+import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView;
 import com.kelsos.mbrc.utilities.ScrollListener;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.RoboGuice;
 
-public class SearchTrackFragment extends Fragment implements TrackEntryAdapter.MenuItemSelectedListener {
+public class BrowseTrackFragment extends Fragment implements TrackEntryAdapter.MenuItemSelectedListener {
 
-  @Inject Bus bus;
-  @BindView(R.id.search_recycler_view) RecyclerView recycler;
-  @BindView(R.id.empty_view) LinearLayout emptyView;
-  @Inject private ScrollListener scrollListener;
+  @Inject
+  Bus bus;
+  @BindView(R.id.search_recycler_view)
+  EmptyRecyclerView recycler;
+  @BindView(R.id.empty_view)
+  LinearLayout emptyView;
+  @Inject
+  private ScrollListener scrollListener;
   private String mDefault;
-  @Inject private TrackEntryAdapter adapter;
+  @Inject
+  private TrackEntryAdapter adapter;
 
-  @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
+  @Subscribe
+  public void handleSearchDefaultAction(SearchDefaultAction action) {
     mDefault = action.getAction();
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.ui_fragment_library_search, container, false);
     ButterKnife.bind(this, view);
     return view;
   }
 
-  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     RoboGuice.getInjector(getContext()).injectMembers(this);
   }
 
-  @Override public void onResume() {
+  @Override
+  public void onResume() {
     super.onResume();
     bus.register(this);
     recycler.addOnScrollListener(scrollListener);
   }
 
-  @Override public void onPause() {
+  @Override
+  public void onPause() {
     super.onPause();
     bus.unregister(this);
     recycler.removeOnScrollListener(scrollListener);
   }
 
-  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
+  @Override
+  public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
     recycler.setHasFixedSize(true);
     recycler.setLayoutManager(layoutManager);
     adapter.setMenuItemSelectedListener(this);
     recycler.setAdapter(adapter);
-    displayProperView(false);
+    recycler.setEmptyView(emptyView);
   }
 
-  @Subscribe public void handleTrackResults(TrackSearchResults results) {
-    displayProperView(results.getList().isEmpty());
-    adapter.update(results.getList());
-  }
-
-  @Override public void onMenuItemSelected(MenuItem menuItem, Track entry) {
+  @Override
+  public void onMenuItemSelected(MenuItem menuItem, Track entry) {
     final String qContext = Protocol.LibraryQueueTrack;
     final String query = entry.getSrc();
 
@@ -104,22 +111,13 @@ public class SearchTrackFragment extends Fragment implements TrackEntryAdapter.M
     }
   }
 
-  @Override public void onItemClicked(Track track) {
+  @Override
+  public void onItemClicked(Track track) {
     if (mDefault.equals(Const.SUB)) {
       mDefault = Queue.NOW;
     }
 
     bus.post(new MessageEvent(ProtocolEventType.UserAction,
         new UserAction(Protocol.LibraryQueueTrack, new Queue(mDefault, track.getSrc()))));
-  }
-
-  public void displayProperView(boolean noData) {
-    if (noData) {
-      emptyView.setVisibility(View.VISIBLE);
-      recycler.setVisibility(View.GONE);
-    } else {
-      emptyView.setVisibility(View.GONE);
-      recycler.setVisibility(View.VISIBLE);
-    }
   }
 }
