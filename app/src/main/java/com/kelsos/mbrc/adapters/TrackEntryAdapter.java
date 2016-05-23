@@ -13,18 +13,22 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.library.Track;
-import java.util.ArrayList;
-import java.util.List;
+import com.kelsos.mbrc.data.library.Track_Table;
+import com.raizlabs.android.dbflow.list.FlowQueryList;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.ViewHolder> {
-  private ArrayList<Track> mData;
+  private FlowQueryList<Track> mData;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
   private LayoutInflater inflater;
 
   @Inject public TrackEntryAdapter(Context context) {
     inflater = LayoutInflater.from(context);
-    this.mData = new ArrayList<>();
+    this.mData = new FlowQueryList<>(SQLite.select().from(Track.class)
+        .orderBy(Track_Table.album, true)
+        .orderBy(Track_Table.disc, true)
+        .orderBy(Track_Table.trackno, true));
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
   }
 
@@ -54,7 +58,27 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
    */
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = inflater.inflate(R.layout.ui_list_dual, parent, false);
-    return new ViewHolder(view, robotoRegular);
+    ViewHolder holder = new ViewHolder(view, robotoRegular);
+    holder.indicator.setOnClickListener(v -> {
+      PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
+      popupMenu.inflate(R.menu.popup_track);
+      popupMenu.setOnMenuItemClickListener(menuItem -> {
+        if (mListener == null) {
+          return false;
+        }
+        mListener.onMenuItemSelected(menuItem, mData.get(holder.getAdapterPosition()));
+        return true;
+      });
+      popupMenu.show();
+    });
+
+    holder.itemView.setOnClickListener(v -> {
+      if (mListener == null) {
+        return;
+      }
+      mListener.onItemClicked(mData.get(holder.getAdapterPosition()));
+    });
+    return holder;
   }
 
   /**
@@ -78,25 +102,6 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
     final Track entry = mData.get(position);
     holder.title.setText(entry.getTitle());
     holder.artist.setText(entry.getArtist());
-
-    holder.indicator.setOnClickListener(v -> {
-      PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
-      popupMenu.inflate(R.menu.popup_track);
-      popupMenu.setOnMenuItemClickListener(menuItem -> {
-        if (mListener != null) {
-          mListener.onMenuItemSelected(menuItem, entry);
-          return true;
-        }
-        return false;
-      });
-      popupMenu.show();
-    });
-
-    holder.itemView.setOnClickListener(v -> {
-      if (mListener != null) {
-        mListener.onItemClicked(entry);
-      }
-    });
   }
 
   /**
@@ -106,12 +111,6 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
    */
   @Override public int getItemCount() {
     return mData == null ? 0 : mData.size();
-  }
-
-  public void update(List<Track> list) {
-    this.mData.clear();
-    this.mData.addAll(list);
-    notifyDataSetChanged();
   }
 
   public interface MenuItemSelectedListener {
