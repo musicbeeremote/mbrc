@@ -29,11 +29,11 @@ public class BrowseSync {
   }
 
   private void syncTracks() {
-    long count = SQLite.delete().from(Track.class).count();
-    Timber.v("Deleted %d previous cached Tracks", count);
-
     Completable.create(subscriber -> {
       FlowManager.getDatabase(Cache.class).executeTransaction(dbw -> {
+        long count = SQLite.delete().from(Track.class).count();
+        Timber.v("Deleted %d previous cached Tracks", count);
+
         Observable.range(0, Integer.MAX_VALUE)
             .flatMap(page -> service.getTracks(page * LIMIT, LIMIT))
             .subscribeOn(Schedulers.immediate())
@@ -50,11 +50,11 @@ public class BrowseSync {
   }
 
   private void syncAlbums() {
-    long count = SQLite.delete().from(Album.class).count();
-    Timber.v("Deleted %d previous cached Albums", count);
-
     Completable.create(subscriber -> {
       FlowManager.getDatabase(Cache.class).executeTransaction(dbw -> {
+        long count = SQLite.delete().from(Album.class).count();
+        Timber.v("Deleted %d previous cached Albums", count);
+
         Observable.range(0, Integer.MAX_VALUE)
             .flatMap(page -> service.getAlbums(page * LIMIT, LIMIT))
             .subscribeOn(Schedulers.immediate())
@@ -71,11 +71,11 @@ public class BrowseSync {
   }
 
   private void syncArtists() {
-    long count = SQLite.delete().from(Artist.class).count();
-    Timber.v("Deleted %d previous cached Artists", count);
-
     Completable.create(subscriber -> {
       FlowManager.getDatabase(Cache.class).executeTransaction(dbw -> {
+        long count = SQLite.delete().from(Artist.class).count();
+        Timber.v("Deleted %d previous cached Artists", count);
+
         Observable.range(0, Integer.MAX_VALUE)
             .flatMap(page -> service.getArtists(page * LIMIT, LIMIT))
             .subscribeOn(Schedulers.immediate())
@@ -92,11 +92,12 @@ public class BrowseSync {
   }
 
   private void syncGenres() {
-    long count = SQLite.delete().from(Genre.class).count();
-    Timber.v("Deleted %d previous cached genres", count);
 
     Completable.create(subscriber -> {
       FlowManager.getDatabase(Cache.class).executeTransaction(dbw -> {
+        long count = SQLite.delete().from(Genre.class).count();
+        Timber.v("Deleted %d previous cached genres", count);
+
         Observable.range(0, Integer.MAX_VALUE)
             .flatMap(page -> service.getGenres(page * LIMIT, LIMIT))
             .subscribeOn(Schedulers.immediate())

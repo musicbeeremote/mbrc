@@ -18,23 +18,25 @@ import com.kelsos.mbrc.adapters.GenreEntryAdapter;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.library.Genre;
 import com.kelsos.mbrc.data.Queue;
 import com.kelsos.mbrc.data.UserAction;
+import com.kelsos.mbrc.data.library.Genre;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
-import com.kelsos.mbrc.events.ui.GenreSearchResults;
+import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView;
 import com.kelsos.mbrc.utilities.ScrollListener;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.RoboGuice;
 
-public class SearchGenreFragment extends Fragment implements GenreEntryAdapter.MenuItemSelectedListener {
+public class BrowseGenreFragment extends Fragment implements GenreEntryAdapter.MenuItemSelectedListener {
   @Inject Bus bus;
-  @BindView(R.id.search_recycler_view) RecyclerView recycler;
+  @BindView(R.id.search_recycler_view) EmptyRecyclerView recycler;
   @BindView(R.id.empty_view) LinearLayout emptyView;
   @Inject private ScrollListener scrollListener;
+
   private String mDefault;
+
   @Inject private GenreEntryAdapter adapter;
 
   @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
@@ -71,12 +73,7 @@ public class SearchGenreFragment extends Fragment implements GenreEntryAdapter.M
     recycler.setHasFixedSize(true);
     adapter.setMenuItemSelectedListener(this);
     recycler.setAdapter(adapter);
-    displayProperView(false);
-  }
-
-  @Subscribe public void handleGenreSearchResults(GenreSearchResults results) {
-    displayProperView(results.getList().isEmpty());
-    adapter.update(results.getList());
+    recycler.setEmptyView(emptyView);
   }
 
   @Override public void onMenuItemSelected(MenuItem menuItem, Genre entry) {
@@ -114,16 +111,6 @@ public class SearchGenreFragment extends Fragment implements GenreEntryAdapter.M
     } else {
       bus.post(new MessageEvent(ProtocolEventType.UserAction,
           new UserAction(Protocol.LibraryGenreArtists, genre.getGenre())));
-    }
-  }
-
-  public void displayProperView(boolean noData) {
-    if (noData) {
-      emptyView.setVisibility(View.VISIBLE);
-      recycler.setVisibility(View.GONE);
-    } else {
-      emptyView.setVisibility(View.GONE);
-      recycler.setVisibility(View.VISIBLE);
     }
   }
 }

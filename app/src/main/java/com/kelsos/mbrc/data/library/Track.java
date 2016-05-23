@@ -41,6 +41,12 @@ public class Track extends BaseModel {
   @JsonProperty("disc")
   @Column
   private int disc;
+  @JsonProperty("album_id")
+  @Column(name = "album_id")
+  private long albumId;
+  @JsonProperty("album")
+  @Column
+  private String album;
 
   public Track(JsonNode jNode) {
     this.artist = jNode.path("artist").textValue();
@@ -50,6 +56,16 @@ public class Track extends BaseModel {
 
   public Track() {
 
+  }
+
+  @JsonProperty("album_id")
+  public long getAlbumId() {
+    return albumId;
+  }
+
+  @JsonProperty("album_id")
+  public void setAlbumId(long albumId) {
+    this.albumId = albumId;
   }
 
   public long getId() {
@@ -108,5 +124,15 @@ public class Track extends BaseModel {
   @JsonProperty("disc")
   public void setDisc(int disc) {
     this.disc = disc;
+  }
+
+  @JsonProperty("album")
+  public String getAlbum() {
+    return album;
+  }
+
+  @JsonProperty("album")
+  public void setAlbum(String album) {
+    this.album = album;
   }
 }
