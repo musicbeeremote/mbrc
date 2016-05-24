@@ -2,7 +2,6 @@ package com.kelsos.mbrc.data;
 
 import android.support.annotation.NonNull;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.JsonNode;
 
 @JsonIgnoreProperties({ "index" }) public class ConnectionSettings
     implements Comparable<ConnectionSettings> {
@@ -11,10 +10,10 @@ import com.fasterxml.jackson.databind.JsonNode;
   private int port;
   private int index;
 
-  public ConnectionSettings(JsonNode node) {
-    this.address = node.path("address").asText();
-    this.name = node.path("name").asText();
-    this.port = node.path("port").asInt();
+  public ConnectionSettings(DiscoveryMessage node) {
+    this.address = node.getAddress();
+    this.name = node.getName();
+    this.port = node.getPort();
     this.index = -1;
   }
 

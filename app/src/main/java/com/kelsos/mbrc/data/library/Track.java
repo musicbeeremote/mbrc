@@ -41,9 +41,9 @@ public class Track extends BaseModel {
   @JsonProperty("disc")
   @Column
   private int disc;
-  @JsonProperty("album_id")
-  @Column(name = "album_id")
-  private long albumId;
+  @JsonProperty("album_artist")
+  @Column(name = "album_artist")
+  private String albumArtist;
   @JsonProperty("album")
   @Column
   private String album;
@@ -58,14 +58,14 @@ public class Track extends BaseModel {
 
   }
 
-  @JsonProperty("album_id")
-  public long getAlbumId() {
-    return albumId;
+  @JsonProperty("album_artist")
+  public String getAlbumArtist() {
+    return albumArtist;
   }
 
-  @JsonProperty("album_id")
-  public void setAlbumId(long albumId) {
-    this.albumId = albumId;
+  @JsonProperty("album_artist")
+  public void setAlbumArtist(String albumArtist) {
+    this.albumArtist = albumArtist;
   }
 
   public long getId() {
