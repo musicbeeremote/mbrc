@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.StringDef;
-import com.fasterxml.jackson.databind.JsonNode;
+import android.text.TextUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
@@ -31,6 +31,7 @@ import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import timber.log.Timber;
 
 @Singleton public class SettingsManager {
@@ -43,7 +44,7 @@ import timber.log.Timber;
   private SharedPreferences preferences;
   private Context context;
   private MainThreadBusWrapper bus;
-  private ArrayList<ConnectionSettings> mSettings;
+  private List<ConnectionSettings> mSettings;
   private ObjectMapper mMapper;
   private int defaultIndex;
   private boolean isFirstRun;
@@ -61,19 +62,18 @@ import timber.log.Timber;
 
     updatePreferences();
 
-    String sVal = preferences.getString(context.getString(R.string.settings_key_array), null);
+    String savedSettings = preferences.getString(context.getString(R.string.settings_key_array), null);
     mSettings = new ArrayList<>();
 
-    if (sVal != null && !Const.EMPTY.equals(sVal)) {
-      ArrayNode node;
+    if (!TextUtils.isEmpty(savedSettings)) {
+
       try {
-        node = mMapper.readValue(sVal, ArrayNode.class);
-        for (int i = 0; i < node.size(); i++) {
-          JsonNode jNode = node.get(i);
-          ConnectionSettings settings = new ConnectionSettings(jNode);
-          settings.updateIndex(i);
-          mSettings.add(settings);
+        List<ConnectionSettings> settingsList = mMapper.readValue(savedSettings, new TypeReference<List<ConnectionSettings>>() {});
+        for (int i = 0; i < settingsList.size(); i++) {
+          settingsList.get(i).updateIndex(i);
         }
+        mSettings.clear();
+        mSettings.addAll(settingsList);
       } catch (IOException e) {
         if (BuildConfig.DEBUG) {
           Timber.d(e, "Loading settings.");

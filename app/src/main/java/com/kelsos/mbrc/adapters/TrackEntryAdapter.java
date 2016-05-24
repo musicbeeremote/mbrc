@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.library.Track;
@@ -26,6 +28,7 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
   @Inject public TrackEntryAdapter(Context context) {
     inflater = LayoutInflater.from(context);
     this.mData = new FlowQueryList<>(SQLite.select().from(Track.class)
+        .orderBy(Track_Table.album_artist, true)
         .orderBy(Track_Table.album, true)
         .orderBy(Track_Table.disc, true)
         .orderBy(Track_Table.trackno, true));
@@ -120,17 +123,15 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
-    TextView artist;
-    TextView title;
-    LinearLayout indicator;
+    @BindView(R.id.line_two) TextView artist;
+    @BindView(R.id.line_one) TextView title;
+    @BindView(R.id.ui_item_context_indicator) LinearLayout indicator;
 
     public ViewHolder(View itemView, Typeface typeface) {
       super(itemView);
-      title = (TextView) itemView.findViewById(R.id.line_one);
+      ButterKnife.bind(this, itemView);
       title.setTypeface(typeface);
-      artist = (TextView) itemView.findViewById(R.id.line_two);
       artist.setTypeface(typeface);
-      indicator = (LinearLayout) itemView.findViewById(R.id.ui_item_context_indicator);
     }
   }
 }
