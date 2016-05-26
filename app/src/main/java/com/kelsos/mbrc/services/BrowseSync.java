@@ -23,7 +23,6 @@ public class BrowseSync {
   private LibraryService service;
 
   public void sync() {
-
     Completable.concat(syncGenres(), syncArtists(), syncAlbums(), syncTracks())
         .subscribeOn(Schedulers.io())
         .unsubscribeOn(Schedulers.io())

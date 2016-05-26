@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    package="com.kelsos.mbrc"
+<manifest package="com.kelsos.mbrc"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto">
+
+  <uses-sdk tools:overrideLibrary="timber.log" />
 
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.READ_PHONE_STATE" />
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
   <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-
-  <uses-sdk tools:overrideLibrary="timber.log" />
 
   <application
       android:name=".RemoteApplication"
@@ -22,45 +21,84 @@
       android:logo="@mipmap/ic_launcher"
       android:theme="@style/AppTheme"
       tools:ignore="UnusedAttribute">
-
     <activity
-        android:name=".ui.activities.MainActivity"
+        android:name=".ui.activities.nav.MainActivity"
         android:launchMode="singleTop"
         android:windowSoftInputMode="adjustNothing">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
+
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
-
     <activity
-        android:name=".ui.activities.SettingsActivity"
-        android:parentActivityName=".ui.activities.MainActivity">
+        android:name=".ui.activities.nav.LibraryActivity"
+        android:label="@string/nav_library"
+        android:parentActivityName=".ui.activities.nav.MainActivity">
+
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.activities.MainActivity" />
+          android:value=".ui.activities.nav.MainActivity" />
     </activity>
+    <activity
+        android:name=".ui.activities.nav.LyricsActivity"
+        android:label="@string/nav_lyrics"
+        android:parentActivityName=".ui.activities.nav.MainActivity">
 
+      <!-- Parent activity meta-data to support 4.0 and lower -->
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.activities.nav.MainActivity" />
+    </activity>
+    <activity
+        android:name=".ui.activities.nav.NowPlayingActivity"
+        android:label="@string/nav_now_playing"
+        android:parentActivityName=".ui.activities.nav.MainActivity">
+
+      <!-- Parent activity meta-data to support 4.0 and lower -->
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.activities.nav.MainActivity" />
+    </activity>
+    <activity
+        android:name=".ui.activities.nav.PlaylistActivity"
+        android:label="@string/nav_playlists"
+        android:parentActivityName=".ui.activities.nav.MainActivity">
+
+      <!-- Parent activity meta-data to support 4.0 and lower -->
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.activities.nav.MainActivity" />
+    </activity>
+    <activity
+        android:name=".ui.activities.SettingsActivity"
+        android:parentActivityName=".ui.activities.nav.MainActivity">
+
+      <!-- Parent activity meta-data to support 4.0 and lower -->
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.activities.nav.MainActivity" />
+    </activity>
     <activity
         android:name=".ui.activities.ConnectionManagerActivity"
         android:parentActivityName=".ui.activities.SettingsActivity"
         android:windowSoftInputMode="adjustNothing">
+
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
           android:value=".ui.activities.SettingsActivity" />
-
     </activity>
-
     <activity
         android:name=".ui.activities.FeedbackActivity"
         android:label="@string/title_activity_feedback"
-        android:parentActivityName=".ui.activities.MainActivity">
+        android:parentActivityName=".ui.activities.nav.MainActivity">
+
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.activities.MainActivity" />
+          android:value=".ui.activities.nav.MainActivity" />
     </activity>
 
     <service
@@ -97,19 +135,21 @@
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
+
       <meta-data
           android:name="android.appwidget.provider"
           android:resource="@xml/remote_widget_small" />
     </receiver>
-
     <receiver android:name=".widgets.WidgetNormal">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
+
       <meta-data
           android:name="android.appwidget.provider"
           android:resource="@xml/remote_widget_normal" />
     </receiver>
 
   </application>
+
 </manifest>

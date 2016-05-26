@@ -8,11 +8,6 @@
         android:title="@string/nav_home" />
 
     <item
-        android:id="@+id/nav_search"
-        android:icon="@drawable/ic_search_black_24dp"
-        android:title="@string/nav_search" />
-
-    <item
       android:id="@+id/nav_library"
       android:icon="@drawable/ic_library_music_black_24dp"
       android:title="@string/nav_library" />

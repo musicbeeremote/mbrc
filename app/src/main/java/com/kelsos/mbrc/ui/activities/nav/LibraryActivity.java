@@ -1,24 +1,20 @@
-package com.kelsos.mbrc.ui.fragments;
+package com.kelsos.mbrc.ui.activities.nav;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.adapters.SearchPagerAdapter;
+import com.kelsos.mbrc.adapters.BrowsePagerAdapter;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
@@ -30,26 +26,27 @@ import com.kelsos.mbrc.events.ui.GenreSearchResults;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.events.ui.SearchScrollChanged;
 import com.kelsos.mbrc.events.ui.TrackSearchResults;
+import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import roboguice.RoboGuice;
 
-public class SearchFragment extends Fragment implements SearchView.OnQueryTextListener,
+public class LibraryActivity extends BaseActivity implements SearchView.OnQueryTextListener,
     ViewPager.OnPageChangeListener {
 
   @Inject Bus bus;
-  @BindView(R.id.search_pager) ViewPager mPager;
+  @BindView(R.id.search_pager) ViewPager pager;
   @BindView(R.id.pager_tab_strip) TabLayout tabs;
-  @BindView(R.id.search_clear_fab) FloatingActionButton fab;
+
 
   private SearchView mSearchView;
   private MenuItem mSearchItem;
-  private SearchPagerAdapter mAdapter;
+  private BrowsePagerAdapter pagerAdapter;
 
   @Override public boolean onQueryTextSubmit(String query) {
     String pContext = "";
-    int current = mPager.getCurrentItem();
+    int current = pager.getCurrentItem();
 
     switch (current) {
       case 0:
@@ -76,8 +73,8 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
     return false;
   }
 
-  @OnClick(R.id.search_clear_fab) public void onFabClick(View view) {
-    int current = mPager.getCurrentItem();
+  public void onFabClick(View view) {
+    int current = pager.getCurrentItem();
     // Not the most elegant but the fastest way to do it at this point
     //noinspection ResourceType
     bus.post(new ClearCachedSearchResults(current));
@@ -103,15 +100,6 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
     return false;
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
-    final View view = inflater.inflate(R.layout.ui_fragment_search, container, false);
-    ButterKnife.bind(this, view);
-    mPager.setAdapter(mAdapter);
-    tabs.setupWithViewPager(mPager);
-    mPager.addOnPageChangeListener(this);
-    return view;
-  }
 
   @Override public void onResume() {
     super.onResume();
@@ -125,23 +113,31 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    RoboGuice.getInjector(getContext()).injectMembers(this);
-    setHasOptionsMenu(true);
-    mAdapter = new SearchPagerAdapter(getActivity());
+    setContentView(R.layout.activity_browse);
+    ButterKnife.bind(this);
+    RoboGuice.getInjector(this).injectMembers(this);
+    super.setup();
+    pagerAdapter = new BrowsePagerAdapter(this);
+    pager.setAdapter(pagerAdapter);
+    tabs.setupWithViewPager(pager);
+    pager.addOnPageChangeListener(this);
   }
 
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    inflater.inflate(R.menu.menu_now_playing, menu);
-    mSearchItem = menu.findItem(R.id.now_playing_search_item);
-    mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
-    //mSearchView.setQueryHint("Search for " );
-    mSearchView.setIconifiedByDefault(true);
-    mSearchView.setOnQueryTextListener(this);
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    //inflater.inflate(R.menu.menu_now_playing, menu);
+    //mSearchItem = menu.findItem(R.id.now_playing_search_item);
+    //mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
+    ////mSearchView.setQueryHint("Search for " );
+    //mSearchView.setIconifiedByDefault(true);
+    //mSearchView.setOnQueryTextListener(this);
+    return super.onCreateOptionsMenu(menu);
   }
 
   @Subscribe public void handleGenreSearchResults(GenreSearchResults results) {
     if (!results.isStored()) {
-      mPager.setCurrentItem(0);
+      pager.setCurrentItem(0);
       if (results.getList().size() == 0) {
         bus.post(new NotifyUser(getString(R.string.search_msg_genre_not_found)));
       }
@@ -150,7 +146,7 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 
   @Subscribe public void handleArtistSearchResults(ArtistSearchResults results) {
     if (!results.isStored()) {
-      mPager.setCurrentItem(1);
+      pager.setCurrentItem(1);
       if (results.getList().size() == 0) {
         bus.post(new NotifyUser(getString(R.string.search_msg_artist_not_found)));
       }
@@ -159,7 +155,7 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 
   @Subscribe public void handleAlbumResults(AlbumSearchResults results) {
     if (!results.isStored()) {
-      mPager.setCurrentItem(2);
+      pager.setCurrentItem(2);
       if (results.getList().size() == 0) {
         bus.post(new NotifyUser(getString(R.string.search_msg_album_not_found)));
       }
@@ -168,7 +164,7 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 
   @Subscribe public void handleTrackResults(TrackSearchResults results) {
     if (!results.isStored()) {
-      mPager.setCurrentItem(3);
+      pager.setCurrentItem(3);
       if (results.getList().size() == 0) {
         bus.post(new NotifyUser(getString(R.string.search_msg_track_not_found)));
       }
@@ -176,18 +172,14 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
   }
 
   @Subscribe public void handleScrollChange(SearchScrollChanged event) {
-    if (event.isScrollingUpwards()) {
-      fab.hide();
-    } else {
-      fab.show();
-    }
+
   }
 
 
 
   @Override public void onDestroy() {
     super.onDestroy();
-    mAdapter = null;
+    pagerAdapter = null;
   }
 
   @Override
@@ -196,9 +188,7 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
   }
 
   @Override public void onPageSelected(int position) {
-    if (!fab.isShown()) {
-      fab.show();
-    }
+
   }
 
   @Override public void onPageScrollStateChanged(int state) {

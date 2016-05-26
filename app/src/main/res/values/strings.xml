@@ -111,8 +111,7 @@
   <string name="drag_n_drop_description">Used as an anchor for drag and drop</string>
   <string name="now_playing_indicator">Should be shown if the track is currently playing</string>
   <string name="nav_home">Home</string>
-  <string name="nav_search">Search</string>
-  <string name="nav_now_playing">Now playing List</string>
+  <string name="nav_now_playing">Now playing</string>
   <string name="nav_lyrics">Lyrics</string>
   <string name="menu_queue_last">Queue Last</string>
   <string name="menu_queue_next">Queue Next</string>
@@ -147,8 +146,6 @@
   <string name="nav_option_title">Options</string>
   <string name="incoming_action_default_value">none</string>
 
-  <!-- TODO: Remove or change this placeholder text -->
-  <string name="hello_blank_fragment">Hello blank fragment</string>
   <string name="nav_playlists">Playlists</string>
   <string name="nav_library">Library</string>
   <string name="empty">[Empty]</string>
