@@ -492,4 +492,9 @@ public class MainActivity extends BaseActivity {
         break;
     }
   }
+
+  @Override
+  protected int active() {
+    return R.id.nav_home;
+  }
 }

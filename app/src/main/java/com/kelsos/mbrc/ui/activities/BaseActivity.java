@@ -42,9 +42,8 @@ import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.RoboGuice;
-import timber.log.Timber;
 
-public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
   @Inject Bus bus;
 
   @BindView(R.id.toolbar) Toolbar toolbar;
@@ -54,7 +53,6 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
   private TextView connectText;
   private ActionBarDrawerToggle toggle;
   private DialogFragment mDialog;
-  private int selection;
 
   private boolean isMyServiceRunning(Class<?> serviceClass) {
     ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -65,6 +63,8 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
     }
     return false;
   }
+
+  protected abstract int active();
 
   private boolean onConnectLongClick(View view) {
     ifNotRunningStartService();
@@ -83,12 +83,6 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
     }
   }
 
-  private void home() {
-
-    updateTitle(R.string.nav_home);
-    navigationView.setCheckedItem(R.id.nav_home);
-  }
-
   @Override protected void onDestroy() {
     super.onDestroy();
     drawer.removeDrawerListener(toggle);
@@ -98,8 +92,6 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
   @Override public void onBackPressed() {
     if (drawer.isDrawerOpen(GravityCompat.START)) {
       drawer.closeDrawer(GravityCompat.START);
-    } else if (selection != R.string.nav_home) {
-      home();
     } else {
       super.onBackPressed();
     }
@@ -188,30 +180,26 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
   @Override public boolean onNavigationItemSelected(MenuItem item) {
     int itemId = item.getItemId();
     drawer.closeDrawer(GravityCompat.START);
-
-    if (itemId != selection) {
-      navigate(itemId);
-    }
-
+    navigate(itemId);
     return true;
   }
 
   private void navigate(int itemId) {
+
+    if (active() == itemId) {
+      return;
+    }
+
     if (itemId == R.id.nav_home) {
       createBackStack(new Intent(this, MainActivity.class));
-      updateTitle(R.string.nav_home);
     } else if (itemId == R.id.nav_library) {
       createBackStack(new Intent(this, LibraryActivity.class));
-      updateTitle(R.string.nav_library);
     } else if (itemId == R.id.nav_now_playing) {
       createBackStack(new Intent(this, NowPlayingActivity.class));
-      updateTitle(R.string.nav_now_playing);
     } else if (itemId == R.id.nav_playlists){
       createBackStack(new Intent(this, PlaylistActivity.class));
-      updateTitle(R.string.nav_playlists);
     } else if (itemId == R.id.nav_lyrics) {
       createBackStack(new Intent(this, LyricsActivity.class));
-      updateTitle(R.string.nav_lyrics);
     } else if (itemId == R.id.nav_settings) {
       startActivity(new Intent(this, SettingsActivity.class));
     } else if (itemId == R.id.nav_help) {
@@ -230,15 +218,6 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
     TaskStackBuilder builder = TaskStackBuilder.create(this);
     builder.addNextIntentWithParentStack(intent);
     builder.startActivities();
-  }
-
-  private void updateTitle(int selection) {
-    this.selection = selection;
-    Timber.v("Current selection %d", selection);
-    ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      actionBar.setTitle(selection);
-    }
   }
 
   /**
@@ -266,6 +245,8 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
       actionBar.setDisplayHomeAsUpEnabled(true);
       actionBar.setHomeButtonEnabled(true);
     }
+
+    navigationView.setCheckedItem(active());
   }
 }
 
