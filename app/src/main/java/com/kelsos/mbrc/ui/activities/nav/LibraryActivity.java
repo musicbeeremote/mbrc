@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.ui.activities.nav;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -11,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.BrowsePagerAdapter;
@@ -193,5 +191,10 @@ public class LibraryActivity extends BaseActivity implements SearchView.OnQueryT
 
   @Override public void onPageScrollStateChanged(int state) {
 
+  }
+
+  @Override
+  protected int active() {
+    return R.id.nav_library;
   }
 }

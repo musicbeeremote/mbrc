@@ -73,4 +73,9 @@ public class LyricsActivity extends BaseActivity {
       lyricsRecycler.setAdapter(adapter);
     }
   }
+
+  @Override
+  protected int active() {
+    return R.id.nav_lyrics;
+  }
 }

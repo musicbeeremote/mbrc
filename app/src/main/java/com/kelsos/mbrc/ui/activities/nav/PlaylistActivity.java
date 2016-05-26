@@ -58,4 +58,9 @@ public class PlaylistActivity extends BaseActivity implements PlaylistAdapter.On
   @Override public void playlistPressed(String path) {
     bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlaylistPlay, path)));
   }
+
+  @Override
+  protected int active() {
+    return R.id.nav_playlists;
+  }
 }

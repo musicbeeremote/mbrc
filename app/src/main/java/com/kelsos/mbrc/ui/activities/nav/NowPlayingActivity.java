@@ -152,4 +152,9 @@ public class NowPlayingActivity extends BaseActivity
   @Override public void onDismiss(int position) {
     bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingListRemove, position)));
   }
+
+  @Override
+  protected int active() {
+    return R.id.nav_now_playing;
+  }
 }
