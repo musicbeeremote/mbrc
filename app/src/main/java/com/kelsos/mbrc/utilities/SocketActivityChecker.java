@@ -46,6 +46,7 @@ import timber.log.Timber;
     lastPing.set(millis);
 
     if (subscription != null && !subscription.isUnsubscribed()) {
+      Timber.v("Unsubscribing");
       subscription.unsubscribe();
     }
 

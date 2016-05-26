@@ -24,6 +24,8 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import timber.log.Timber;
 
 @Singleton public class SocketService implements SocketActivityChecker.PingTimeoutListener {
@@ -38,12 +40,12 @@ import timber.log.Timber;
   private boolean shouldStop;
   private Socket socket;
   private PrintWriter output;
-  private Thread cThread;
   private DelayTimer cTimer;
+  private ExecutorService executor = Executors.newSingleThreadExecutor();
+
   private DelayTimer.TimerFinishEvent timerFinishEvent = new DelayTimer.TimerFinishEvent() {
     public void onTimerFinish() {
-      cThread = new Thread(new SocketConnection());
-      cThread.start();
+      executor.execute(new SocketConnection());
       numOfRetries++;
     }
   };
@@ -71,31 +73,21 @@ import timber.log.Timber;
       case RESET:
         initDelayTimer();
         cleanupSocket();
-        if (cThread != null) {
-          cThread.interrupt();
-        }
-        cThread = null;
         shouldStop = false;
         numOfRetries = 0;
         cTimer.start();
         break;
       case START:
         initDelayTimer();
-        if (sIsConnected() || cThreadIsAlive()) {
+        if (sIsConnected()) {
           return;
-        } else if (!sIsConnected() && cThreadIsAlive()) {
-          cThread.interrupt();
-          cThread = null;
         }
         cTimer.start();
         break;
       case RETRY:
         initDelayTimer();
         cleanupSocket();
-        if (cThread != null) {
-          cThread.interrupt();
-        }
-        cThread = null;
+
         if (shouldStop) {
           shouldStop = false;
           numOfRetries = 0;
@@ -113,10 +105,6 @@ import timber.log.Timber;
         }
         shouldStop = true;
         cleanupSocket();
-        if (cThreadIsAlive()) {
-          cThread.interrupt();
-          cThread = null;
-        }
         break;
       default:
         break;
@@ -147,10 +135,6 @@ import timber.log.Timber;
     } catch (IOException ignore) {
 
     }
-  }
-
-  private boolean cThreadIsAlive() {
-    return cThread != null && cThread.isAlive();
   }
 
   public synchronized void sendData(SocketMessage message) {
