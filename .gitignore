@@ -1,3 +1,5 @@
+/annotations
+/captures
 # built application files
 *.apk
 *.ap_
@@ -33,6 +35,9 @@ proguard/
 .idea/
 .gradle
 build
+
+# Database files possibly pulled from the actual device
+*.db
 
 # Maven created directories
 target/
