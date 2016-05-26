@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.services;
 
+import android.support.annotation.NonNull;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.Page;
 import com.kelsos.mbrc.data.library.Album;
@@ -22,14 +23,20 @@ public class BrowseSync {
   private LibraryService service;
 
   public void sync() {
-    syncGenres();
-    syncArtists();
-    syncAlbums();
-    syncTracks();
+
+    Completable.concat(syncGenres(), syncArtists(), syncAlbums(), syncTracks())
+        .subscribeOn(Schedulers.io())
+        .unsubscribeOn(Schedulers.io())
+        .subscribe(t -> {
+          Timber.v(t, "Sync failed due to reasons");
+        }, () -> {
+          Timber.v("Sync complete successfully");
+        });
   }
 
-  private void syncTracks() {
-    Completable.create(subscriber -> {
+  @NonNull
+  private Completable syncTracks() {
+    return Completable.create(subscriber -> {
       FlowManager.getDatabase(Cache.class).executeTransaction(dbw -> {
         long count = SQLite.delete().from(Track.class).count();
         Timber.v("Deleted %d previous cached Tracks", count);
@@ -42,15 +49,12 @@ public class BrowseSync {
             .flatMap(Observable::from)
             .subscribe(BaseModel::save, subscriber::onError, subscriber::onCompleted);
       });
-    }).subscribeOn(Schedulers.io()).subscribe(throwable -> {
-      Timber.v(throwable, "Error during Track sync");
-    }, () -> {
-      Timber.v("Track sync Complete");
     });
   }
 
-  private void syncAlbums() {
-    Completable.create(subscriber -> {
+  @NonNull
+  private Completable syncAlbums() {
+    return Completable.create(subscriber -> {
       FlowManager.getDatabase(Cache.class).executeTransaction(dbw -> {
         long count = SQLite.delete().from(Album.class).count();
         Timber.v("Deleted %d previous cached Albums", count);
@@ -63,15 +67,12 @@ public class BrowseSync {
             .flatMap(Observable::from)
             .subscribe(BaseModel::save, subscriber::onError, subscriber::onCompleted);
       });
-    }).subscribeOn(Schedulers.io()).subscribe(throwable -> {
-      Timber.v(throwable, "Error during Album sync");
-    }, () -> {
-      Timber.v("Album sync Complete");
     });
   }
 
-  private void syncArtists() {
-    Completable.create(subscriber -> {
+  @NonNull
+  private Completable syncArtists() {
+    return Completable.create(subscriber -> {
       FlowManager.getDatabase(Cache.class).executeTransaction(dbw -> {
         long count = SQLite.delete().from(Artist.class).count();
         Timber.v("Deleted %d previous cached Artists", count);
@@ -84,16 +85,13 @@ public class BrowseSync {
             .flatMap(Observable::from)
             .subscribe(BaseModel::save, subscriber::onError, subscriber::onCompleted);
       });
-    }).subscribeOn(Schedulers.io()).subscribe(throwable -> {
-      Timber.v(throwable, "Error during Artist sync");
-    }, () -> {
-      Timber.v("Artist sync Complete");
     });
   }
 
-  private void syncGenres() {
+  @NonNull
+  private Completable syncGenres() {
 
-    Completable.create(subscriber -> {
+    return Completable.create(subscriber -> {
       FlowManager.getDatabase(Cache.class).executeTransaction(dbw -> {
         long count = SQLite.delete().from(Genre.class).count();
         Timber.v("Deleted %d previous cached genres", count);
@@ -106,10 +104,6 @@ public class BrowseSync {
             .flatMap(Observable::from)
             .subscribe(BaseModel::save, subscriber::onError, subscriber::onCompleted);
       });
-    }).subscribeOn(Schedulers.io()).subscribe(throwable -> {
-      Timber.v(throwable, "Error during genre sync");
-    }, () -> {
-      Timber.v("Genre sync Complete");
     });
   }
 }
