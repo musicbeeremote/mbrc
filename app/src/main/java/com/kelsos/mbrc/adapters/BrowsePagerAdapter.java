@@ -8,12 +8,12 @@ import com.kelsos.mbrc.ui.fragments.BrowseArtistFragment;
 import com.kelsos.mbrc.ui.fragments.BrowseGenreFragment;
 import com.kelsos.mbrc.ui.fragments.BrowseTrackFragment;
 
-public class SearchPagerAdapter extends FragmentStatePagerAdapter {
+public class BrowsePagerAdapter extends FragmentStatePagerAdapter {
   private static final int mCount = 4;
   private final CharSequence pageTitles[] =
       new CharSequence[] {"Genre", "Artist", "Album", "Track"};
 
-  public SearchPagerAdapter(FragmentActivity activity) {
+  public BrowsePagerAdapter(FragmentActivity activity) {
     super(activity.getSupportFragmentManager());
   }
 

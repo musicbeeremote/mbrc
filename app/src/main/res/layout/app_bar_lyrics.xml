@@ -20,11 +20,11 @@
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ActionBarStyle"
         app:popupTheme="@style/Theme.AppCompat"
-        tools:showIn="@layout/activity_main" />
+        tools:showIn="@layout/activity_lyrics" />
 
   </android.support.design.widget.AppBarLayout>
 
-  <include layout="@layout/content_main" />
+  <include layout="@layout/content_lyrics" />
 
 </android.support.design.widget.CoordinatorLayout>
 

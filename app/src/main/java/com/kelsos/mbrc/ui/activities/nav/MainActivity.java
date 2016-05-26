@@ -1,19 +1,14 @@
-package com.kelsos.mbrc.ui.fragments;
+package com.kelsos.mbrc.ui.activities.nav;
 
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -43,6 +38,7 @@ import com.kelsos.mbrc.events.ui.ShuffleChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.events.ui.UpdatePosition;
 import com.kelsos.mbrc.events.ui.VolumeChange;
+import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -53,98 +49,115 @@ import java.util.concurrent.TimeUnit;
 import roboguice.RoboGuice;
 import timber.log.Timber;
 
-@Singleton public class MainFragment extends Fragment {
+@Singleton
+public class MainActivity extends BaseActivity {
   private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
   // Injects
-  @Inject protected Bus bus;
+  @Inject
+  protected Bus bus;
   // Inject elements of the view
-  @BindView(R.id.main_artist_label) TextView artistLabel;
-  @BindView(R.id.main_title_label) TextView titleLabel;
-  @BindView(R.id.main_label_album) TextView albumLabel;
-  @BindView(R.id.main_track_progress_current) TextView trackProgressCurrent;
-  @BindView(R.id.main_track_duration_total) TextView trackDuration;
-  @BindView(R.id.main_button_play_pause) ImageButton playPauseButton;
-  @BindView(R.id.main_volume_seeker) SeekBar volumeBar;
-  @BindView(R.id.main_track_progress_seeker) SeekBar progressBar;
-  @BindView(R.id.main_mute_button) ImageButton muteButton;
-  @BindView(R.id.main_shuffle_button) ImageButton shuffleButton;
-  @BindView(R.id.main_repeat_button) ImageButton repeatButton;
-  @BindView(R.id.main_album_cover_image_view) ImageView albumCover;
+  @BindView(R.id.main_artist_label)
+  TextView artistLabel;
+  @BindView(R.id.main_title_label)
+  TextView titleLabel;
+  @BindView(R.id.main_label_album)
+  TextView albumLabel;
+  @BindView(R.id.main_track_progress_current)
+  TextView trackProgressCurrent;
+  @BindView(R.id.main_track_duration_total)
+  TextView trackDuration;
+  @BindView(R.id.main_button_play_pause)
+  ImageButton playPauseButton;
+  @BindView(R.id.main_volume_seeker)
+  SeekBar volumeBar;
+  @BindView(R.id.main_track_progress_seeker)
+  SeekBar progressBar;
+  @BindView(R.id.main_mute_button)
+  ImageButton muteButton;
+  @BindView(R.id.main_shuffle_button)
+  ImageButton shuffleButton;
+  @BindView(R.id.main_repeat_button)
+  ImageButton repeatButton;
+  @BindView(R.id.main_album_cover_image_view)
+  ImageView albumCover;
   private ShareActionProvider mShareActionProvider;
   private boolean userChangingVolume;
   private int previousVol;
   private ScheduledFuture mProgressUpdateHandler;
   private Menu menu;
-  private SeekBar.OnSeekBarChangeListener volumeBarChangeListener =
-      new SeekBar.OnSeekBarChangeListener() {
+  private SeekBar.OnSeekBarChangeListener volumeBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
 
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-          if (fromUser) {
-            final UserAction action =
-                new UserAction(Protocol.PlayerVolume, String.valueOf(seekBar.getProgress()));
-            postAction(action);
-          }
-        }
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+      if (fromUser) {
+        final UserAction action = new UserAction(Protocol.PlayerVolume, String.valueOf(seekBar.getProgress()));
+        postAction(action);
+      }
+    }
 
-        public void onStopTrackingTouch(SeekBar seekBar) {
-          userChangingVolume = false;
-        }
+    public void onStopTrackingTouch(SeekBar seekBar) {
+      userChangingVolume = false;
+    }
 
-        public void onStartTrackingTouch(SeekBar seekBar) {
-          userChangingVolume = true;
-        }
-      };
+    public void onStartTrackingTouch(SeekBar seekBar) {
+      userChangingVolume = true;
+    }
+  };
 
-  private SeekBar.OnSeekBarChangeListener progressBarChangeListener =
-      new SeekBar.OnSeekBarChangeListener() {
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-          if (fromUser && progress != previousVol) {
-            final UserAction action =
-                new UserAction(Protocol.NowPlayingPosition, String.valueOf(progress));
-            postAction(action);
-            previousVol = progress;
-          }
-        }
+  private SeekBar.OnSeekBarChangeListener progressBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+      if (fromUser && progress != previousVol) {
+        final UserAction action = new UserAction(Protocol.NowPlayingPosition, String.valueOf(progress));
+        postAction(action);
+        previousVol = progress;
+      }
+    }
 
-        public void onStartTrackingTouch(SeekBar seekBar) {
-        }
+    public void onStartTrackingTouch(SeekBar seekBar) {
+    }
 
-        public void onStopTrackingTouch(SeekBar seekBar) {
-        }
-      };
+    public void onStopTrackingTouch(SeekBar seekBar) {
+    }
+  };
 
-  @OnClick(R.id.main_button_play_pause) public void playButtonPressed(View v) {
+  @OnClick(R.id.main_button_play_pause)
+  void playButtonPressed() {
     final UserAction action = new UserAction(Protocol.PlayerPlayPause, true);
     postAction(action);
   }
 
-  @OnClick(R.id.main_button_previous) public void onPreviousButtonPressed(View v) {
+  @OnClick(R.id.main_button_previous)
+  void onPreviousButtonPressed() {
     final UserAction action = new UserAction(Protocol.PlayerPrevious, true);
     postAction(action);
   }
 
-  @OnClick(R.id.main_button_next) public void onNextButtonPressed() {
+  @OnClick(R.id.main_button_next)
+  void onNextButtonPressed() {
     final UserAction action = new UserAction(Protocol.PlayerNext, true);
     postAction(action);
   }
 
-  @OnLongClick(R.id.main_button_play_pause) public boolean onPlayerStopPressed() {
+  @OnLongClick(R.id.main_button_play_pause)
+  boolean onPlayerStopPressed() {
     final UserAction action = new UserAction(Protocol.PlayerStop, true);
     postAction(action);
     return true;
   }
 
-  @OnClick(R.id.main_mute_button) public void onMuteButtonPressed(View v) {
+  @OnClick(R.id.main_mute_button)
+  void onMuteButtonPressed() {
     final UserAction action = new UserAction(Protocol.PlayerMute, Const.TOGGLE);
     postAction(action);
   }
 
-  @OnClick(R.id.main_shuffle_button) public void onShuffleButtonClicked(View v) {
+  @OnClick(R.id.main_shuffle_button)
+  void onShuffleButtonClicked() {
     final UserAction action = new UserAction(Protocol.PlayerShuffle, Const.TOGGLE);
     postAction(action);
   }
 
-  @OnClick(R.id.main_repeat_button) public void onRepeatButtonPressed(View v) {
+  @OnClick(R.id.main_repeat_button)
+  void onRepeatButtonPressed() {
     final UserAction action = new UserAction(Protocol.PlayerRepeat, Const.TOGGLE);
     postAction(action);
   }
@@ -159,43 +172,41 @@ import timber.log.Timber;
     bus.post(new MessageEvent(ProtocolEventType.UserAction, action));
   }
 
-  @Override public void onCreate(Bundle savedInstanceState) {
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    RoboGuice.getInjector(getContext()).injectMembers(this);
-    setHasOptionsMenu(true);
+    setContentView(R.layout.activity_main);
+    RoboGuice.getInjector(this).injectMembers(this);
+    ButterKnife.bind(this);
+    super.setup();
+    progressBar.setOnSeekBarChangeListener(progressBarChangeListener);
+    volumeBar.setOnSeekBarChangeListener(volumeBarChangeListener);
     userChangingVolume = false;
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
-    final View view = inflater.inflate(R.layout.ui_fragment_main, container, false);
-    ButterKnife.bind(this, view);
-    progressBar.setOnSeekBarChangeListener(progressBarChangeListener);
-    volumeBar.setOnSeekBarChangeListener(volumeBarChangeListener);
-    return view;
-  }
-
-  @Override public void onStart() {
+  @Override
+  public void onStart() {
     super.onStart();
     setTextViewTypeface();
     bus.register(this);
   }
 
-  @Override public void onResume() {
+  @Override
+  public void onResume() {
     super.onResume();
     final UserAction action = new UserAction(Protocol.NowPlayingPosition, true);
     bus.post(new MessageEvent(ProtocolEventType.UserAction, action));
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_lastfm_scrobble:
-        bus.post(new MessageEvent(ProtocolEventType.UserAction,
-            new UserAction(Protocol.PlayerScrobble, Const.TOGGLE)));
+        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerScrobble, Const.TOGGLE)));
         return true;
       case R.id.menu_rating_dialog:
         final RatingDialogFragment ratingDialog = new RatingDialogFragment();
-        ratingDialog.show(getActivity().getSupportFragmentManager(), "RatingDialog");
+        ratingDialog.show(getSupportFragmentManager(), "RatingDialog");
         return true;
       case R.id.menu_lastfm_love:
         bus.post(new MessageEvent(ProtocolEventType.UserAction,
@@ -216,12 +227,9 @@ import timber.log.Timber;
       titleLabel.setSelected(true);
       albumLabel.setSelected(true);
 
-      Typeface robotoRegular =
-          Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
-      Typeface robotoMedium =
-          Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_medium.ttf");
-      Typeface robotoLight =
-          Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_light.ttf");
+      Typeface robotoRegular = Typeface.createFromAsset(getAssets(), "fonts/roboto_regular.ttf");
+      Typeface robotoMedium = Typeface.createFromAsset(getAssets(), "fonts/roboto_medium.ttf");
+      Typeface robotoLight = Typeface.createFromAsset(getAssets(), "fonts/roboto_light.ttf");
       artistLabel.setTypeface(robotoRegular);
       titleLabel.setTypeface(robotoLight);
       albumLabel.setTypeface(robotoMedium);
@@ -232,31 +240,33 @@ import timber.log.Timber;
     }
   }
 
-  @Override public void onStop() {
+  @Override
+  public void onStop() {
     super.onStop();
     bus.unregister(this);
   }
 
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    super.onCreateOptionsMenu(menu, inflater);
-    inflater.inflate(R.menu.menu, menu);
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu, menu);
     this.menu = menu;
     MenuItem shareItem = menu.findItem(R.id.actionbar_share);
     mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
     mShareActionProvider.setShareIntent(getShareIntent());
     bus.post(new OnMainFragmentOptionsInflated());
+    return super.onCreateOptionsMenu(menu);
   }
 
   private Intent getShareIntent() {
     Intent shareIntent = new Intent(Intent.ACTION_SEND);
     shareIntent.setType("text/plain");
-    final String payload =
-        String.format("Now Playing: %s - %s", artistLabel.getText(), titleLabel.getText());
+    final String payload = String.format("Now Playing: %s - %s", artistLabel.getText(), titleLabel.getText());
     shareIntent.putExtra(Intent.EXTRA_TEXT, payload);
     return shareIntent;
   }
 
-  @Subscribe public void handleCoverEvent(final CoverAvailable cevent) {
+  @Subscribe
+  public void handleCoverEvent(final CoverAvailable cevent) {
     if (albumCover == null) {
       return;
     }
@@ -267,7 +277,8 @@ import timber.log.Timber;
     }
   }
 
-  @Subscribe public void handleShuffleChange(ShuffleChange change) {
+  @Subscribe
+  public void handleShuffleChange(ShuffleChange change) {
     if (shuffleButton == null) {
       return;
     }
@@ -275,24 +286,24 @@ import timber.log.Timber;
     final boolean shuffle = !ShuffleChange.OFF.equals(change.getShuffleState());
     final boolean autoDj = ShuffleChange.AUTODJ.equals(change.getShuffleState());
 
-    int color = ContextCompat.getColor(getContext(), shuffle ? R.color.accent : R.color.button_dark);
+    int color = ContextCompat.getColor(this, shuffle ? R.color.accent : R.color.button_dark);
     shuffleButton.setColorFilter(color);
 
-    shuffleButton.setImageResource(
-        autoDj ? R.drawable.ic_headset_grey600_24dp : R.drawable.ic_shuffle_grey600_24dp);
+    shuffleButton.setImageResource(autoDj ? R.drawable.ic_headset_grey600_24dp : R.drawable.ic_shuffle_grey600_24dp);
   }
 
-  @Subscribe public void updateRepeatButtonState(RepeatChange change) {
+  @Subscribe
+  public void updateRepeatButtonState(RepeatChange change) {
     if (repeatButton == null) {
       return;
     }
 
-    int color =
-        getResources().getColor(change.isActive() ? R.color.accent : R.color.button_material_dark);
+    int color = getResources().getColor(change.isActive() ? R.color.accent : R.color.button_material_dark);
     repeatButton.setColorFilter(color);
   }
 
-  @Subscribe public void updateVolumeData(VolumeChange change) {
+  @Subscribe
+  public void updateVolumeData(VolumeChange change) {
     if (volumeBar == null) {
       return;
     }
@@ -302,11 +313,13 @@ import timber.log.Timber;
     if (muteButton == null) {
       return;
     }
-    muteButton.setImageResource(change.isMute() ? R.drawable.ic_volume_off_grey600_24dp
-        : R.drawable.ic_volume_up_grey600_24dp);
+    muteButton.setImageResource(change.isMute()
+                                ? R.drawable.ic_volume_off_grey600_24dp
+                                : R.drawable.ic_volume_up_grey600_24dp);
   }
 
-  @Subscribe public void handlePlayStateChange(final PlayStateChange change) {
+  @Subscribe
+  public void handlePlayStateChange(final PlayStateChange change) {
     if (playPauseButton == null) {
       return;
     }
@@ -316,8 +329,7 @@ import timber.log.Timber;
         playPauseButton.setTag("Playing");
 
                 /* Start the animation if the track is playing*/
-        bus.post(new MessageEvent(ProtocolEventType.UserAction,
-            new UserAction(Protocol.NowPlayingPosition, true)));
+        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingPosition, true)));
         trackProgressAnimation();
         break;
       case Paused:
@@ -352,9 +364,6 @@ import timber.log.Timber;
    * Starts the progress animation when called. If It was previously running then it restarts it.
    */
   private void trackProgressAnimation() {
-    if (!isVisible()) {
-      return;
-    }
     /* If the scheduled tasks is not null then cancel it and clear it along with the
     timer to create them anew */
     final int timePeriod = 1;
@@ -369,11 +378,7 @@ import timber.log.Timber;
       final int currentMinutes = currentProgress / 60;
       final int currentSeconds = currentProgress % 60;
 
-      if (getActivity() == null) {
-        return;
-      }
-
-      getActivity().runOnUiThread(() -> {
+      runOnUiThread(() -> {
         try {
           if (progressBar == null) {
             return;
@@ -386,8 +391,7 @@ import timber.log.Timber;
       });
     };
 
-    mProgressUpdateHandler =
-        progressScheduler.scheduleAtFixedRate(updateProgress, 0, timePeriod, TimeUnit.SECONDS);
+    mProgressUpdateHandler = progressScheduler.scheduleAtFixedRate(updateProgress, 0, timePeriod, TimeUnit.SECONDS);
   }
 
   private void activateStoppedState() {
@@ -398,21 +402,24 @@ import timber.log.Timber;
     trackProgressCurrent.setText("00:00");
   }
 
-  @Subscribe public void handleTrackInfoChange(final TrackInfoChange change) {
+  @Subscribe
+  public void handleTrackInfoChange(final TrackInfoChange change) {
     if (artistLabel == null) {
       return;
     }
     artistLabel.setText(change.getArtist());
     titleLabel.setText(change.getTitle());
-    albumLabel.setText(TextUtils.isEmpty(change.getYear()) ? change.getAlbum()
-        : String.format("%s [%s]", change.getAlbum(), change.getYear()));
+    albumLabel.setText(TextUtils.isEmpty(change.getYear())
+                       ? change.getAlbum()
+                       : String.format("%s [%s]", change.getAlbum(), change.getYear()));
 
     if (mShareActionProvider != null) {
       mShareActionProvider.setShareIntent(getShareIntent());
     }
   }
 
-  @Subscribe public void handleConnectionStatusChange(final ConnectionStatusChange change) {
+  @Subscribe
+  public void handleConnectionStatusChange(final ConnectionStatusChange change) {
     if (change.getStatus() == ConnectionStatus.CONNECTION_OFF) {
       stopTrackProgressAnimation();
       activateStoppedState();
@@ -424,7 +431,8 @@ import timber.log.Timber;
    * duration and the
    * current progress of playback
    */
-  @Subscribe public void handlePositionUpdate(UpdatePosition position) {
+  @Subscribe
+  public void handlePositionUpdate(UpdatePosition position) {
     final int total = position.getTotal();
     final int current = position.getCurrent();
     if (trackProgressCurrent == null || progressBar == null || trackDuration == null) {
@@ -454,7 +462,8 @@ import timber.log.Timber;
     trackProgressAnimation();
   }
 
-  @Subscribe public void handleScrobbleChange(ScrobbleChange event) {
+  @Subscribe
+  public void handleScrobbleChange(ScrobbleChange event) {
     if (menu == null) {
       return;
     }
@@ -465,7 +474,8 @@ import timber.log.Timber;
     scrobbleMenuItem.setChecked(event.isActive());
   }
 
-  @Subscribe public void handleLfmLoveChange(LfmRatingChanged event) {
+  @Subscribe
+  public void handleLfmLoveChange(LfmRatingChanged event) {
     if (menu == null) {
       return;
     }

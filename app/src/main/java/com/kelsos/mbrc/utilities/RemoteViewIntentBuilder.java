@@ -4,7 +4,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.IntDef;
-import com.kelsos.mbrc.ui.activities.MainActivity;
+import com.kelsos.mbrc.ui.activities.BaseActivity;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -24,7 +24,7 @@ public class RemoteViewIntentBuilder {
   public static PendingIntent getPendingIntent(@ButtonAction int id, Context mContext) {
     switch (id) {
       case OPEN:
-        Intent notificationIntent = new Intent(mContext, MainActivity.class);
+        Intent notificationIntent = new Intent(mContext, BaseActivity.class);
         return PendingIntent.getActivity(mContext, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
       case PLAY:
         Intent playPressedIntent = new Intent(REMOTE_PLAY_PRESSED);

@@ -1,18 +1,13 @@
-package com.kelsos.mbrc.ui.fragments;
+package com.kelsos.mbrc.ui.activities.nav;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
@@ -27,6 +22,7 @@ import com.kelsos.mbrc.events.ui.NowPlayingListAvailable;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.events.ui.TrackMoved;
 import com.kelsos.mbrc.events.ui.TrackRemoval;
+import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.drag.SimpleItenTouchHelper;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -34,7 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 import roboguice.RoboGuice;
 
-public class NowPlayingFragment extends Fragment
+public class NowPlayingActivity extends BaseActivity
     implements SearchView.OnQueryTextListener, NowPlayingAdapter.NowPlayingListener {
 
   @BindView(R.id.now_playing_list) RecyclerView nowPlayingList;
@@ -68,19 +64,31 @@ public class NowPlayingFragment extends Fragment
     return true;
   }
 
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    inflater.inflate(R.menu.menu_now_playing, menu);
-    mSearchItem = menu.findItem(R.id.now_playing_search_item);
-    mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
-    mSearchView.setQueryHint(getString(R.string.now_playing_search_hint));
-    mSearchView.setIconifiedByDefault(true);
-    mSearchView.setOnQueryTextListener(this);
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    //inflater.inflate(R.menu.menu_now_playing, menu);
+    //mSearchItem = menu.findItem(R.id.now_playing_search_item);
+    //mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
+    //mSearchView.setQueryHint(getString(R.string.now_playing_search_hint));
+    //mSearchView.setIconifiedByDefault(true);
+    //mSearchView.setOnQueryTextListener(this);
+    return super.onCreateOptionsMenu(menu);
   }
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    RoboGuice.getInjector(getContext()).injectMembers(this);
-    setHasOptionsMenu(true);
+    setContentView(R.layout.activity_nowplaying);
+    RoboGuice.getInjector(this).injectMembers(this);
+    ButterKnife.bind(this);
+    super.setup();
+    RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
+    nowPlayingList.setLayoutManager(manager);
+    nowPlayingList.setAdapter(adapter);
+    ItemTouchHelper.Callback callback = new SimpleItenTouchHelper(adapter);
+    ItemTouchHelper helper = new ItemTouchHelper(callback);
+    helper.attachToRecyclerView(nowPlayingList);
+    adapter.setListener(this);
   }
 
   @Override public void onStart() {
@@ -96,19 +104,6 @@ public class NowPlayingFragment extends Fragment
   @Override public void onPause() {
     super.onPause();
     bus.unregister(this);
-  }
-
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.ui_fragment_nowplaying, container, false);
-    ButterKnife.bind(this, view);
-    RecyclerView.LayoutManager manager = new LinearLayoutManager(getContext());
-    nowPlayingList.setLayoutManager(manager);
-    nowPlayingList.setAdapter(adapter);
-    ItemTouchHelper.Callback callback = new SimpleItenTouchHelper(adapter);
-    ItemTouchHelper helper = new ItemTouchHelper(callback);
-    helper.attachToRecyclerView(nowPlayingList);
-    adapter.setListener(this);
-    return view;
   }
 
   private int calculateNewIndex(int from, int to, int index) {
