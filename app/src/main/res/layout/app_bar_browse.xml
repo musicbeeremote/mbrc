@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".ui.activities.nav.MainActivity">
+    tools:context=".ui.activities.nav.LibraryActivity">
 
   <android.support.design.widget.AppBarLayout
       android:layout_width="match_parent"
@@ -20,11 +20,21 @@
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ActionBarStyle"
         app:popupTheme="@style/Theme.AppCompat"
-        tools:showIn="@layout/activity_main" />
+        tools:showIn="@layout/activity_browse" />
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/pager_tab_strip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="@color/primary"
+        android:textColor="@color/primary_text_default_material_light">
+
+    </android.support.design.widget.TabLayout>
 
   </android.support.design.widget.AppBarLayout>
 
-  <include layout="@layout/content_main" />
+  <include layout="@layout/content_browse" />
 
 </android.support.design.widget.CoordinatorLayout>
 

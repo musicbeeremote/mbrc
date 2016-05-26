@@ -10,9 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -34,19 +32,19 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
 import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.NotifyUser;
+import com.kelsos.mbrc.ui.activities.nav.LibraryActivity;
+import com.kelsos.mbrc.ui.activities.nav.LyricsActivity;
+import com.kelsos.mbrc.ui.activities.nav.MainActivity;
+import com.kelsos.mbrc.ui.activities.nav.NowPlayingActivity;
+import com.kelsos.mbrc.ui.activities.nav.PlaylistActivity;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
-import com.kelsos.mbrc.ui.fragments.LyricsFragment;
-import com.kelsos.mbrc.ui.fragments.MainFragment;
-import com.kelsos.mbrc.ui.fragments.NowPlayingFragment;
-import com.kelsos.mbrc.ui.fragments.PlaylistsFragment;
-import com.kelsos.mbrc.ui.fragments.SearchFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.RoboGuice;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
   @Inject Bus bus;
 
   @BindView(R.id.toolbar) Toolbar toolbar;
@@ -68,50 +66,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     return false;
   }
 
-  public boolean onConnectLongClick(View view) {
+  private boolean onConnectLongClick(View view) {
     ifNotRunningStartService();
     bus.post(new MessageEvent(UserInputEventType.ResetConnection));
     return true;
   }
 
-  public void onConnectClick(View view) {
+  private void onConnectClick(View view) {
     ifNotRunningStartService();
     bus.post(new MessageEvent(UserInputEventType.StartConnection));
-  }
-
-  @Override public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.ui_main_container);
-    ButterKnife.bind(this);
-    RoboGuice.getInjector(this).injectMembers(this);
-
-    ifNotRunningStartService();
-    setSupportActionBar(toolbar);
-
-    toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close);
-    drawer.addDrawerListener(toggle);
-    drawer.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-    toggle.syncState();
-    navigationView.setNavigationItemSelectedListener(this);
-
-    View header = navigationView.getHeaderView(0);
-    connectText = ButterKnife.findById(header, R.id.nav_connect_text);
-
-    LinearLayout navConnect = ButterKnife.findById(header, R.id.nav_connect);
-    navConnect.setOnClickListener(this::onConnectClick);
-    navConnect.setOnLongClickListener(this::onConnectLongClick);
-
-    ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(true);
-      actionBar.setHomeButtonEnabled(true);
-    }
-
-    if (savedInstanceState != null) {
-      return;
-    }
-
-    home();
   }
 
   private void ifNotRunningStartService() {
@@ -121,9 +84,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   }
 
   private void home() {
-    MainFragment mFragment = new MainFragment();
-    mFragment.setArguments(getIntent().getExtras());
-    replace(mFragment);
+
     updateTitle(R.string.nav_home);
     navigationView.setCheckedItem(R.id.nav_home);
   }
@@ -132,16 +93,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     super.onDestroy();
     drawer.removeDrawerListener(toggle);
     RoboGuice.destroyInjector(this);
-  }
-
-  @Override protected void onResume() {
-    super.onResume();
-    bus.register(this);
-  }
-
-  @Override protected void onPause() {
-    super.onPause();
-    bus.unregister(this);
   }
 
   @Override public void onBackPressed() {
@@ -157,16 +108,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   @Override public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
     toggle.onConfigurationChanged(newConfig);
-  }
-
-  private void replace(Fragment fragment) {
-
-    FragmentManager fragmentManager = getSupportFragmentManager();
-
-    fragmentManager.beginTransaction()
-        .replace(R.id.fragment_container, fragment)
-        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-        .commit();
   }
 
   @Override protected void onPostCreate(Bundle savedInstanceState) {
@@ -246,30 +187,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   @Override public boolean onNavigationItemSelected(MenuItem item) {
     int itemId = item.getItemId();
+    drawer.closeDrawer(GravityCompat.START);
 
     if (itemId != selection) {
       navigate(itemId);
     }
 
-    drawer.closeDrawer(GravityCompat.START);
     return true;
   }
 
   private void navigate(int itemId) {
     if (itemId == R.id.nav_home) {
-      replace(new MainFragment());
+      createBackStack(new Intent(this, MainActivity.class));
       updateTitle(R.string.nav_home);
-    } else if (itemId == R.id.nav_search) {
-      replace(new SearchFragment());
-      updateTitle(R.string.nav_search);
+    } else if (itemId == R.id.nav_library) {
+      createBackStack(new Intent(this, LibraryActivity.class));
+      updateTitle(R.string.nav_library);
     } else if (itemId == R.id.nav_now_playing) {
-      replace(new NowPlayingFragment());
+      createBackStack(new Intent(this, NowPlayingActivity.class));
       updateTitle(R.string.nav_now_playing);
     } else if (itemId == R.id.nav_playlists){
-      replace(PlaylistsFragment.newInstance());
+      createBackStack(new Intent(this, PlaylistActivity.class));
       updateTitle(R.string.nav_playlists);
     } else if (itemId == R.id.nav_lyrics) {
-      replace(new LyricsFragment());
+      createBackStack(new Intent(this, LyricsActivity.class));
       updateTitle(R.string.nav_lyrics);
     } else if (itemId == R.id.nav_settings) {
       startActivity(new Intent(this, SettingsActivity.class));
@@ -285,12 +226,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
   }
 
+  private void createBackStack(Intent intent) {
+    TaskStackBuilder builder = TaskStackBuilder.create(this);
+    builder.addNextIntentWithParentStack(intent);
+    builder.startActivities();
+  }
+
   private void updateTitle(int selection) {
     this.selection = selection;
     Timber.v("Current selection %d", selection);
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
       actionBar.setTitle(selection);
+    }
+  }
+
+  /**
+   * Should be called after RoboGuice injections and Butterknife bindings.
+   */
+  public void setup() {
+    ifNotRunningStartService();
+    setSupportActionBar(toolbar);
+
+    toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close);
+    drawer.addDrawerListener(toggle);
+    drawer.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+    toggle.syncState();
+    navigationView.setNavigationItemSelectedListener(this);
+
+    View header = navigationView.getHeaderView(0);
+    connectText = ButterKnife.findById(header, R.id.nav_connect_text);
+
+    LinearLayout navConnect = ButterKnife.findById(header, R.id.nav_connect);
+    navConnect.setOnClickListener(this::onConnectClick);
+    navConnect.setOnLongClickListener(this::onConnectLongClick);
+
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setHomeButtonEnabled(true);
     }
   }
 }

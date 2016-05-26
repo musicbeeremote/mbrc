@@ -25,7 +25,7 @@ import timber.log.Timber;
   }
 
   @NonNull private Subscription getSubscribe() {
-    return Completable.timer(20, TimeUnit.SECONDS).subscribe(throwable -> {
+    return Completable.timer(40, TimeUnit.SECONDS).subscribe(throwable -> {
       Timber.v("failed");
     }, () -> {
       Timber.v("Ping was more than 20 seconds ago");
