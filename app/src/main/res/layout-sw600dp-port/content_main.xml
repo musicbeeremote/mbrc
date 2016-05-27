@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout android:id="@+id/mainRelativeLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mainRelativeLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
   <FrameLayout
       android:id="@+id/album_cover_area"
       android:layout_width="match_parent"
-      android:layout_weight="1"
-      android:layout_height="0dp">
+      android:layout_height="0dp"
+      android:layout_weight="1">
 
     <ImageView
         android:id="@id/main_album_cover_image_view"
@@ -86,9 +88,9 @@
       android:id="@+id/main_track_info_one"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="horizontal"
       android:layout_marginBottom="@dimen/small_margin"
       android:layout_marginTop="@dimen/small_margin"
+      android:orientation="horizontal"
       android:paddingLeft="@dimen/normal_margin"
       android:paddingRight="@dimen/normal_margin">
 
