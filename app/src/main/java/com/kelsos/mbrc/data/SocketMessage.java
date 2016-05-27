@@ -13,12 +13,12 @@ public class SocketMessage {
     this.data = data;
   }
 
-  public SocketMessage() {
-
-  }
-
   @NonNull public static SocketMessage create(String context, Object data) {
     return new SocketMessage(context, data);
+  }
+
+  @NonNull public static SocketMessage create(String context) {
+    return new SocketMessage(context, "");
   }
 
   public String getContext() {

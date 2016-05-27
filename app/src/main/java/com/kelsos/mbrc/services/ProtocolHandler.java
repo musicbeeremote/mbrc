@@ -34,6 +34,8 @@ import timber.log.Timber;
       final String[] replies = incoming.split("\r\n");
       for (String reply : replies) {
 
+        Timber.v("message -> %s", reply);
+
         JsonNode node = mapper.readValue(reply, JsonNode.class);
         String context = node.path("context").textValue();
 
