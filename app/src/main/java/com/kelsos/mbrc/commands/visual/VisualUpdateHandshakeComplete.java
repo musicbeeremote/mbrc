@@ -10,9 +10,9 @@ import com.kelsos.mbrc.services.SocketService;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import rx.Observable;
+import timber.log.Timber;
 
 public class VisualUpdateHandshakeComplete implements ICommand {
-  public static final String EMPTY = "";
   private SocketService service;
   private MainDataModel model;
 
@@ -25,24 +25,29 @@ public class VisualUpdateHandshakeComplete implements ICommand {
     boolean isComplete = (Boolean) e.getData();
     model.setHandShakeDone(isComplete);
 
+    if (!isComplete) {
+      return;
+    }
+
     if (model.getPluginProtocol() < 2.1) {
-      if (!isComplete) {
-        return;
-      }
+
+      Timber.v("Preparing to send requests for state");
+
       ArrayList<SocketMessage> messages = new ArrayList<>();
-      messages.add(SocketMessage.create(Protocol.NowPlayingCover, EMPTY));
-      messages.add(SocketMessage.create(Protocol.PlayerStatus, EMPTY));
-      messages.add(SocketMessage.create(Protocol.NowPlayingTrack, EMPTY));
-      messages.add(SocketMessage.create(Protocol.NowPlayingLyrics, EMPTY));
-      messages.add(SocketMessage.create(Protocol.NowPlayingPosition, EMPTY));
-      messages.add(SocketMessage.create(Protocol.PluginVersion, EMPTY));
+      messages.add(SocketMessage.create(Protocol.NowPlayingCover));
+      messages.add(SocketMessage.create(Protocol.PlayerStatus));
+      messages.add(SocketMessage.create(Protocol.NowPlayingTrack));
+      messages.add(SocketMessage.create(Protocol.NowPlayingLyrics));
+      messages.add(SocketMessage.create(Protocol.NowPlayingPosition));
+      messages.add(SocketMessage.create(Protocol.PluginVersion));
 
       int totalMessages = messages.size();
       Observable.interval(150, TimeUnit.MILLISECONDS)
           .take(totalMessages)
           .subscribe(tick -> service.sendData(messages.remove(0)));
     } else {
-      service.sendData(SocketMessage.create(Protocol.INIT, EMPTY));
+      Timber.v("Sending init request");
+      service.sendData(SocketMessage.create(Protocol.INIT));
     }
   }
 }
