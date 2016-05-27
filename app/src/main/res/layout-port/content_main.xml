@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout android:id="@+id/content_wrapper"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mainLinearLayout"
     android:layout_width="match_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
   <FrameLayout
       android:id="@+id/album_cover_area"
       android:layout_width="match_parent"
-      android:layout_weight="1"
-      android:layout_height="0dp">
+      android:layout_height="match_parent"
+      android:layout_above="@+id/main_track_progress_seeker">
 
     <ImageView
         android:id="@+id/main_album_cover_image_view"
@@ -68,8 +70,10 @@
       android:id="@+id/main_track_progress_seeker"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:layout_above="@+id/main_track_info_one"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentStart="true"
       android:layout_gravity="top"
-      android:layout_marginTop="-1dp"
       android:gravity="center"
       android:maxHeight="4dp"
       android:minHeight="4dp"
@@ -85,10 +89,13 @@
       android:id="@+id/main_track_info_one"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:layout_above="@+id/main_volume_area"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentStart="true"
       android:orientation="horizontal"
+      android:paddingBottom="@dimen/small_margin"
       android:paddingLeft="@dimen/normal_margin"
       android:paddingRight="@dimen/normal_margin"
-      android:paddingBottom="@dimen/small_margin"
       android:paddingTop="@dimen/small_margin">
 
     <TextView
@@ -100,8 +107,8 @@
         android:focusableInTouchMode="true"
         android:freezesText="true"
         android:marqueeRepeatLimit="marquee_forever"
+        android:maxLines="1"
         android:scrollHorizontally="true"
-        android:singleLine="true"
         android:textColor="@color/primary_text"
         android:textSize="@dimen/text_title_size"
         tools:text="Rock it for me" />
@@ -116,8 +123,8 @@
         android:focusableInTouchMode="true"
         android:freezesText="true"
         android:marqueeRepeatLimit="marquee_forever"
+        android:maxLines="1"
         android:scrollHorizontally="true"
-        android:singleLine="true"
         android:textColor="@color/primary_text"
         android:textSize="@dimen/text_subhead_size"
         tools:text="Caravan Palace" />
@@ -132,8 +139,8 @@
         android:focusableInTouchMode="true"
         android:lines="1"
         android:marqueeRepeatLimit="marquee_forever"
+        android:maxLines="1"
         android:scrollHorizontally="true"
-        android:singleLine="true"
         android:textColor="@color/primary_text"
         android:textSize="@dimen/text_body_size"
         tools:text="Panic [2012]" />
@@ -143,7 +150,10 @@
   <RelativeLayout
       android:id="@+id/main_volume_area"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content">
+      android:layout_height="wrap_content"
+      android:layout_above="@+id/main_media_button_group"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentStart="true">
 
     <ImageButton
         android:id="@+id/main_mute_button"
@@ -188,10 +198,11 @@
       android:id="@+id/main_media_button_group"
       android:layout_width="match_parent"
       android:layout_height="@dimen/mbrc_info_tab_height"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentStart="true"
       android:gravity="center_vertical|center_horizontal"
       android:orientation="horizontal"
-      android:layout_marginTop="@dimen/small_margin"
-      android:layout_marginBottom="@dimen/small_margin"
       android:paddingLeft="@dimen/normal_margin"
       android:paddingRight="@dimen/normal_margin">
 
@@ -249,4 +260,4 @@
   </LinearLayout>
 
 
-</LinearLayout>
+</RelativeLayout>
