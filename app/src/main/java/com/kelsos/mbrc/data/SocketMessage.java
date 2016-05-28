@@ -8,6 +8,11 @@ public class SocketMessage {
 
   @JsonProperty private Object data;
 
+  @SuppressWarnings("unused")
+  public SocketMessage() {
+
+  }
+
   private SocketMessage(String context, Object data) {
     this.context = context;
     this.data = data;

@@ -32,6 +32,8 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.Vi
         .from(Album.class)
         .orderBy(Album_Table.artist, true)
         .orderBy(Album_Table.album, true));
+
+    data.setTransact(true);
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
     inflater = LayoutInflater.from(context);
   }
@@ -67,8 +69,13 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.Vi
     holder.artist.setText(TextUtils.isEmpty(entry.getArtist()) ? holder.unknownArtist : entry.getArtist());
   }
 
+  public void refresh() {
+    data.refresh();
+    notifyDataSetChanged();
+  }
+
   @Override public int getItemCount() {
-    return data == null ? 0 : data.size();
+    return data.size();
   }
 
   public void setMenuItemSelectedListener(MenuItemSelectedListener listener) {

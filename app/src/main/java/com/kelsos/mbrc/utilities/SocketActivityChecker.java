@@ -35,15 +35,19 @@ public class SocketActivityChecker {
 
   public void stop() {
     Timber.v("Stopping activity checker");
+    unsubscribe();
   }
 
   public void ping() {
     Timber.v("Received ping");
+    unsubscribe();
+    subscription = getSubscribe();
+  }
+
+  private void unsubscribe() {
     if (subscription != null && !subscription.isUnsubscribed()) {
       subscription.unsubscribe();
     }
-
-    subscription = getSubscribe();
   }
 
   public void setPingTimeoutListener(PingTimeoutListener pingTimeoutListener) {

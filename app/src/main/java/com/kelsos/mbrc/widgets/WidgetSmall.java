@@ -17,17 +17,21 @@ import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.RoboGuice;
+import timber.log.Timber;
 
 public class WidgetSmall extends AppWidgetProvider {
 
-  @Inject private Context context;
-  @Inject private Bus bus;
+  @Inject
+  private Context context;
+  @Inject
+  private Bus bus;
 
   private int[] widgetsIds;
 
-  @Override public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+  @Override
+  public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
     super.onUpdate(context, appWidgetManager, appWidgetIds);
-
+    Timber.v("Update widget received");
     if (this.context == null) {
       RoboGuice.getInjector(context).injectMembers(this);
     }
@@ -65,21 +69,21 @@ public class WidgetSmall extends AppWidgetProvider {
     }
   }
 
-  @Subscribe public void updateDisplay(TrackInfoChange info) {
+  @Subscribe
+  public void updateDisplay(TrackInfoChange info) {
 
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
-    final RemoteViews smallWidget =
-        new RemoteViews(context.getPackageName(), R.layout.widget_small);
+    final RemoteViews smallWidget = new RemoteViews(context.getPackageName(), R.layout.widget_small);
 
     smallWidget.setTextViewText(R.id.widget_small_line_one, info.title);
     smallWidget.setTextViewText(R.id.widget_small_line_two, info.artist);
     manager.updateAppWidget(widgetsIds, smallWidget);
   }
 
-  @Subscribe public void updateCover(CoverAvailable coverAvailable) {
+  @Subscribe
+  public void updateCover(CoverAvailable coverAvailable) {
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
-    final RemoteViews smallWidget =
-        new RemoteViews(context.getPackageName(), R.layout.widget_small);
+    final RemoteViews smallWidget = new RemoteViews(context.getPackageName(), R.layout.widget_small);
     if (coverAvailable.isAvailable()) {
       smallWidget.setImageViewBitmap(R.id.widget_small_image, coverAvailable.getCover());
     } else {
@@ -88,14 +92,13 @@ public class WidgetSmall extends AppWidgetProvider {
     manager.updateAppWidget(widgetsIds, smallWidget);
   }
 
-  @Subscribe public void updatePlayState(PlayStateChange state) {
+  @Subscribe
+  public void updatePlayState(PlayStateChange state) {
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
-    final RemoteViews smallWidget =
-        new RemoteViews(context.getPackageName(), R.layout.widget_small);
+    final RemoteViews smallWidget = new RemoteViews(context.getPackageName(), R.layout.widget_small);
 
     smallWidget.setImageViewResource(R.id.widget_small_play,
-        state.getState() == PlayState.Playing ? R.drawable.ic_action_pause
-            : R.drawable.ic_action_play);
+        state.getState() == PlayState.Playing ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
     manager.updateAppWidget(widgetsIds, smallWidget);
   }
 }

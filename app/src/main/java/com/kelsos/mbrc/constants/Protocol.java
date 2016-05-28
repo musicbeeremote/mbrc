@@ -50,13 +50,12 @@ public class Protocol {
   public static final String LibraryQueueAlbum = "libraryqueuealbum";
   public static final String LibraryQueueTrack = "libraryqueuetrack";
 
-  public static final String CONTEXT = "context";
   public static final String ALL = "All";
   public static final String DISCOVERY = "discovery";
-  public static final String ADDRESS = "address";
+
   public static final String PING = "ping";
   public static final String PONG = "pong";
-  public static final String INIT = "setup";
+  public static final String INIT = "init";
 
   public static final String PlayerPlay = "playerplay";
   public static final String PlayerPause = "playerpause";

@@ -30,6 +30,7 @@ public class GenreEntryAdapter extends RecyclerView.Adapter<GenreEntryAdapter.Vi
   @Inject public GenreEntryAdapter(Context context) {
     inflater = LayoutInflater.from(context);
     this.mData = new FlowQueryList<>(SQLite.select().from(Genre.class).orderBy(Genre_Table.genre, true));
+    mData.setTransact(true);
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
   }
 

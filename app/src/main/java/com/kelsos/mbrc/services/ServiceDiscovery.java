@@ -26,10 +26,10 @@ import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class ServiceDiscovery {
-  public static final String NOTIFY = "notify";
-  public static final int SO_TIMEOUT = 6 * 1000;
-  public static final int MULTICASTPORT = 45345;
-  public static final String DISCOVERY_ADDRESS = "239.1.5.10"; //NOPMD
+  private static final String NOTIFY = "notify";
+  private static final int SO_TIMEOUT = 6 * 1000;
+  private static final int MULTICASTPORT = 45345;
+  private static final String DISCOVERY_ADDRESS = "239.1.5.10"; //NOPMD
 
   private WifiManager manager;
   private WifiManager.MulticastLock mLock;
@@ -50,6 +50,10 @@ public class ServiceDiscovery {
   }
 
   public void startDiscovery() {
+    startDiscovery(null);
+  }
+
+  public void startDiscovery(OnDiscoveryComplete callback) {
     if (!isWifiConnected()) {
       bus.post(new DiscoveryStopped(DiscoveryStop.NO_WIFI));
       return;
@@ -66,6 +70,13 @@ public class ServiceDiscovery {
           ConnectionSettings settings = new ConnectionSettings(message);
           bus.post(settings);
           bus.post(new DiscoveryStopped(DiscoveryStop.COMPLETE));
+
+          if (callback == null) {
+            return;
+          }
+
+          callback.complete();
+
         }, throwable -> {
           bus.post(new DiscoveryStopped(DiscoveryStop.NOT_FOUND));
         });
@@ -146,5 +157,9 @@ public class ServiceDiscovery {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public interface OnDiscoveryComplete {
+    void complete();
   }
 }
