@@ -24,7 +24,6 @@ import com.kelsos.mbrc.data.library.Genre;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView;
-import com.kelsos.mbrc.utilities.ScrollListener;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.RoboGuice;
@@ -33,7 +32,6 @@ public class BrowseGenreFragment extends Fragment implements GenreEntryAdapter.M
   @Inject Bus bus;
   @BindView(R.id.search_recycler_view) EmptyRecyclerView recycler;
   @BindView(R.id.empty_view) LinearLayout emptyView;
-  @Inject private ScrollListener scrollListener;
 
   private String mDefault;
 
@@ -57,13 +55,11 @@ public class BrowseGenreFragment extends Fragment implements GenreEntryAdapter.M
   @Override public void onResume() {
     super.onResume();
     bus.register(this);
-    recycler.addOnScrollListener(scrollListener);
   }
 
   @Override public void onPause() {
     super.onPause();
     bus.unregister(this);
-    recycler.removeOnScrollListener(scrollListener);
   }
 
   @Override public void onViewCreated(View view, Bundle savedInstanceState) {

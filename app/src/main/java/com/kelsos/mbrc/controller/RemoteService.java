@@ -13,6 +13,7 @@ import com.kelsos.mbrc.messaging.NotificationService;
 import com.kelsos.mbrc.model.MainDataModel;
 import com.kelsos.mbrc.services.BrowseSync;
 import com.kelsos.mbrc.services.ProtocolHandler;
+import com.kelsos.mbrc.services.ServiceDiscovery;
 import com.kelsos.mbrc.services.SocketService;
 import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver;
 import com.raizlabs.android.dbflow.config.FlowConfig;
@@ -32,6 +33,7 @@ import timber.log.Timber;
   @Inject private MainDataModel mainDataModel;
   @Inject private ProtocolHandler protocolHandler;
   @Inject private SocketService socketService;
+  @Inject private ServiceDiscovery discovery;
   @Inject private RemoteBroadcastReceiver receiver;
   @Inject private NotificationService notificationService;
   @Inject private BrowseSync browseSync;
@@ -66,8 +68,7 @@ import timber.log.Timber;
     threadPoolExecutor = Executors.newSingleThreadExecutor();
     threadPoolExecutor.execute(remoteController);
     remoteController.executeCommand(new MessageEvent(UserInputEventType.StartConnection));
-
-    browseSync.sync();
+    discovery.startDiscovery(() -> browseSync.sync());
 
     return super.onStartCommand(intent, flags, startId);
   }

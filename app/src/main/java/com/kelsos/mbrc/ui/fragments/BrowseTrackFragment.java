@@ -24,7 +24,6 @@ import com.kelsos.mbrc.data.library.Track;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView;
-import com.kelsos.mbrc.utilities.ScrollListener;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.RoboGuice;
@@ -32,13 +31,12 @@ import roboguice.RoboGuice;
 public class BrowseTrackFragment extends Fragment implements TrackEntryAdapter.MenuItemSelectedListener {
 
   @Inject
-  Bus bus;
+  private Bus bus;
   @BindView(R.id.search_recycler_view)
   EmptyRecyclerView recycler;
   @BindView(R.id.empty_view)
   LinearLayout emptyView;
-  @Inject
-  private ScrollListener scrollListener;
+
   private String mDefault;
   @Inject
   private TrackEntryAdapter adapter;
@@ -65,14 +63,12 @@ public class BrowseTrackFragment extends Fragment implements TrackEntryAdapter.M
   public void onResume() {
     super.onResume();
     bus.register(this);
-    recycler.addOnScrollListener(scrollListener);
   }
 
   @Override
   public void onPause() {
     super.onPause();
     bus.unregister(this);
-    recycler.removeOnScrollListener(scrollListener);
   }
 
   @Override

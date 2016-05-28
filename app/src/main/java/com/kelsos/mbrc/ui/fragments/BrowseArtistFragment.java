@@ -24,7 +24,6 @@ import com.kelsos.mbrc.data.library.Artist;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.general.SearchDefaultAction;
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView;
-import com.kelsos.mbrc.utilities.ScrollListener;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.RoboGuice;
@@ -36,8 +35,6 @@ public class BrowseArtistFragment extends Fragment implements ArtistEntryAdapter
   EmptyRecyclerView recycler;
   @BindView(R.id.empty_view)
   LinearLayout emptyView;
-  @Inject
-  private ScrollListener scrollListener;
   @Inject
   private ArtistEntryAdapter adapter;
 
@@ -65,14 +62,12 @@ public class BrowseArtistFragment extends Fragment implements ArtistEntryAdapter
   public void onResume() {
     super.onResume();
     bus.register(this);
-    recycler.addOnScrollListener(scrollListener);
   }
 
   @Override
   public void onPause() {
     super.onPause();
     bus.unregister(this);
-    recycler.removeOnScrollListener(scrollListener);
   }
 
   @Override

@@ -1,5 +1,8 @@
 package com.kelsos.mbrc.commands;
 
+import android.appwidget.AppWidgetManager;
+import android.content.Context;
+import android.content.Intent;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.data.SocketMessage;
@@ -13,18 +16,21 @@ public class ConnectionStatusChangedCommand implements ICommand {
   private MainDataModel model;
   private SocketService service;
   private NotificationService notificationService;
+  private Context context;
 
   @Inject public ConnectionStatusChangedCommand(MainDataModel model, SocketService service,
-      NotificationService notificationService) {
+      NotificationService notificationService, Context context) {
     this.model = model;
     this.service = service;
     this.notificationService = notificationService;
+    this.context = context;
   }
 
   public void execute(IEvent e) {
     model.setConnectionState(e.getDataString());
     if (model.isConnectionActive()) {
       service.sendData(SocketMessage.create(Protocol.Player, "Android"));
+      context.sendBroadcast(new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE));
     } else {
       notificationService.cancelNotification(NotificationService.NOW_PLAYING_PLACEHOLDER);
     }

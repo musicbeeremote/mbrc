@@ -32,6 +32,7 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
         .orderBy(Track_Table.album, true)
         .orderBy(Track_Table.disc, true)
         .orderBy(Track_Table.trackno, true));
+    mData.setTransact(true);
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
   }
 
