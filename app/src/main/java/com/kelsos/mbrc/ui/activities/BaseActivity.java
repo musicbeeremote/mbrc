@@ -42,6 +42,7 @@ import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import roboguice.RoboGuice;
+import timber.log.Timber;
 
 public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
   @Inject Bus bus;
@@ -224,6 +225,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
    * Should be called after RoboGuice injections and Butterknife bindings.
    */
   public void setup() {
+    Timber.v("Initializing base activity");
     ifNotRunningStartService();
     setSupportActionBar(toolbar);
 

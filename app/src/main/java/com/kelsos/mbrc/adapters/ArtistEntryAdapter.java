@@ -29,6 +29,7 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
 
   @Inject public ArtistEntryAdapter(Context context) {
     this.data = new FlowQueryList<>(SQLite.select().from(Artist.class).orderBy(Artist_Table.artist, true));
+    data.setTransact(true);
     inflater = LayoutInflater.from(context);
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
   }
