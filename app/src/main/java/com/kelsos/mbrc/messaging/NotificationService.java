@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,9 +24,12 @@ import com.kelsos.mbrc.services.RemoteSessionManager;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder;
 import com.kelsos.mbrc.utilities.SettingsManager;
+import com.kelsos.mbrc.widgets.WidgetNormal;
+import com.kelsos.mbrc.widgets.WidgetSmall;
 import com.squareup.otto.Subscribe;
 
-@Singleton public class  NotificationService {
+@Singleton
+public class NotificationService {
   public static final int PLUGIN_OUT_OF_DATE = 15612;
   public static final int NOW_PLAYING_PLACEHOLDER = 15613;
   private final RemoteSessionManager sessionManager;
@@ -47,7 +52,26 @@ import com.squareup.otto.Subscribe;
     bus.register(this);
   }
 
-  @Subscribe public void handleNotificationData(final NotificationDataAvailable event) {
+  private void updateWidgets() {
+    AppWidgetManager widgetManager = AppWidgetManager.getInstance(mContext);
+
+    int[] normalWidgetIds = widgetManager.getAppWidgetIds(new ComponentName(mContext, WidgetNormal.class));
+    int[] smallWidgetIds = widgetManager.getAppWidgetIds(new ComponentName(mContext, WidgetSmall.class));
+
+    if (normalWidgetIds.length > 0) {
+      WidgetNormal normalWidget = new WidgetNormal();
+      normalWidget.onUpdate(mContext, AppWidgetManager.getInstance(mContext), normalWidgetIds);
+    }
+
+    if (smallWidgetIds.length > 0) {
+      WidgetSmall small = new WidgetSmall();
+      small.onUpdate(mContext, AppWidgetManager.getInstance(mContext), smallWidgetIds);
+    }
+  }
+
+  @Subscribe
+  public void handleNotificationData(final NotificationDataAvailable event) {
+    updateWidgets();
     if (!mSettings.isNotificationControlEnabled()) {
       return;
     }
@@ -68,7 +92,8 @@ import com.squareup.otto.Subscribe;
    * @param cover The cover Bitmap.
    * @param state The current play state is used to display the proper play or pause icon.
    */
-  @SuppressLint("NewApi") private void notificationBuilder(final String title,
+  @SuppressLint("NewApi")
+  private void notificationBuilder(final String title,
       final String artist,
       final String album,
       final Bitmap cover,
@@ -120,7 +145,8 @@ import com.squareup.otto.Subscribe;
    *
    * @param event A notification event that the notification service received
    */
-  @SuppressLint("NewApi") private void buildLollipopNotification(NotificationDataAvailable event) {
+  @SuppressLint("NewApi")
+  private void buildLollipopNotification(NotificationDataAvailable event) {
     int playStateIcon = event.getState() == PlayState.Playing ? R.drawable.ic_action_pause : R.drawable.ic_action_play;
 
     final Notification.MediaStyle mediaStyle = new Notification.MediaStyle();
@@ -206,7 +232,8 @@ import com.squareup.otto.Subscribe;
     mNotificationManager.cancel(notificationId);
   }
 
-  @SuppressLint("NewApi") public void updateAvailableNotificationBuilder() {
+  @SuppressLint("NewApi")
+  public void updateAvailableNotificationBuilder() {
     NotificationCompat.Builder
         mBuilder
         = new NotificationCompat.Builder(mContext).setSmallIcon(R.drawable.ic_mbrc_status)
