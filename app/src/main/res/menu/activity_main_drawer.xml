@@ -43,10 +43,6 @@
           android:title="@string/nav_help" />
 
       <item
-          android:id="@+id/nav_feedback"
-          android:icon="@drawable/ic_chat_black_24dp"
-          android:title="@string/nav_feedback" />
-      <item
           android:id="@+id/nav_exit"
           android:icon="@drawable/ic_close_black_24dp"
           android:title="@string/nav_exit" />
