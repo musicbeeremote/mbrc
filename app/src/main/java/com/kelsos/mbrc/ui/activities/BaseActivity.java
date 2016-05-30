@@ -4,7 +4,6 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -202,13 +201,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     } else if (itemId == R.id.nav_lyrics) {
       createBackStack(new Intent(this, LyricsActivity.class));
     } else if (itemId == R.id.nav_settings) {
-      startActivity(new Intent(this, SettingsActivity.class));
+      createBackStack(new Intent(this, SettingsActivity.class));
     } else if (itemId == R.id.nav_help) {
-      Intent openHelp = new Intent(Intent.ACTION_VIEW);
-      openHelp.setData(Uri.parse("http://kelsos.net/musicbeeremote/help/"));
-      startActivity(openHelp);
-    } else if (itemId == R.id.nav_feedback) {
-      startActivity(new Intent(this, FeedbackActivity.class));
+      createBackStack(new Intent(this, HelpFeedbackActivity.class));
     } else if (itemId == R.id.nav_exit) {
       stopService(new Intent(this, RemoteService.class));
       finish();

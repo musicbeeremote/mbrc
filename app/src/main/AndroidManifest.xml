@@ -90,16 +90,6 @@
           android:name="android.support.PARENT_ACTIVITY"
           android:value=".ui.activities.SettingsActivity" />
     </activity>
-    <activity
-        android:name=".ui.activities.FeedbackActivity"
-        android:label="@string/title_activity_feedback"
-        android:parentActivityName=".ui.activities.nav.MainActivity">
-
-      <!-- Parent activity meta-data to support 4.0 and lower -->
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.activities.nav.MainActivity" />
-    </activity>
 
     <service
         android:name=".controller.RemoteService"
@@ -150,6 +140,14 @@
           android:resource="@xml/remote_widget_normal" />
     </receiver>
 
+    <activity
+        android:name=".ui.activities.HelpFeedbackActivity"
+        android:label="@string/title_activity_help_feedback"
+        android:parentActivityName=".ui.activities.nav.MainActivity">
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value="com.kelsos.mbrc.ui.activities.nav.MainActivity" />
+    </activity>
   </application>
 
 </manifest>
