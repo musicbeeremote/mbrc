@@ -3,9 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.kelsos.mbrc.ui.activities.FeedbackActivity">
-
-  <include layout="@layout/toolbar" />
+    tools:context="com.kelsos.mbrc.ui.activities.HelpFeedbackActivity">
 
   <RelativeLayout
       android:layout_width="match_parent"
