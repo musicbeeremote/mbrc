@@ -7,9 +7,24 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-  <include layout="@layout/app_bar_lyrics" />
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
 
-  <include layout="@layout/mini_control_layout" />
+    <include
+        layout="@layout/app_bar_lyrics"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/lyrics_control" />
+
+    <include
+        android:id="@+id/lyrics_control"
+        layout="@layout/mini_control_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+
+  </RelativeLayout>
 
   <android.support.design.widget.NavigationView
       android:id="@+id/nav_view"

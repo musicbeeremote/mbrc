@@ -113,7 +113,7 @@ task wrapper(type: Wrapper) {
 
 ext {
   supportLibraryVersion = "23.4.0"
-  dbflow_version = "3.0.0-beta6"
+  dbflow_version = "3.0.1"
 }
 
 dependencies {

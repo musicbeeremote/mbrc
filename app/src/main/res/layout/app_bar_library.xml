@@ -20,7 +20,7 @@
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ActionBarStyle"
         app:popupTheme="@style/Theme.AppCompat"
-        tools:showIn="@layout/activity_browse" />
+        tools:showIn="@layout/activity_library" />
 
     <android.support.design.widget.TabLayout
         android:id="@+id/pager_tab_strip"
@@ -34,7 +34,7 @@
 
   </android.support.design.widget.AppBarLayout>
 
-  <include layout="@layout/content_browse" />
+  <include layout="@layout/content_library" />
 
 </android.support.design.widget.CoordinatorLayout>
 

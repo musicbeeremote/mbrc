@@ -24,7 +24,7 @@ import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.squareup.otto.Subscribe;
 
-@Singleton public class NotificationService {
+@Singleton public class  NotificationService {
   public static final int PLUGIN_OUT_OF_DATE = 15612;
   public static final int NOW_PLAYING_PLACEHOLDER = 15613;
   private final RemoteSessionManager sessionManager;
