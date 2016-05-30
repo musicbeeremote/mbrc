@@ -7,9 +7,24 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-  <include layout="@layout/app_bar_nowplaying" />
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
 
-  <include layout="@layout/mini_control_layout" />
+    <include
+        layout="@layout/app_bar_nowplaying"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/now_playing_control" />
+
+    <include
+        android:id="@+id/now_playing_control"
+        layout="@layout/mini_control_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+  </RelativeLayout>
+
 
   <android.support.design.widget.NavigationView
       android:id="@+id/nav_view"

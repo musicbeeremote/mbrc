@@ -111,7 +111,7 @@ public class LibraryActivity extends BaseActivity implements SearchView.OnQueryT
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_browse);
+    setContentView(R.layout.activity_library);
     ButterKnife.bind(this);
     RoboGuice.getInjector(this).injectMembers(this);
     super.setup();

@@ -219,6 +219,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     TaskStackBuilder builder = TaskStackBuilder.create(this);
     builder.addNextIntentWithParentStack(intent);
     builder.startActivities();
+    overridePendingTransition(0, 0);
   }
 
   /**
