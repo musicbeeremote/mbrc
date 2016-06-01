@@ -148,6 +148,8 @@
           android:name="android.support.PARENT_ACTIVITY"
           android:value="com.kelsos.mbrc.ui.activities.nav.MainActivity" />
     </activity>
+    <activity android:name=".ui.activities.SearchResultsActivity">
+    </activity>
   </application>
 
 </manifest>
