@@ -152,5 +152,12 @@
   <string name="empty">[Empty]</string>
   <string name="unknown_artist">Unknown artist</string>
   <string name="title_activity_help_feedback">Help &amp; Feedback</string>
+  <string name="library_search_hint">Search your library</string>
+
+  <string name="label_genres">Genres</string>
+  <string name="label_artists">Artists</string>
+  <string name="label_albums">Albums</string>
+  <string name="label_tracks">Tracks</string>
+  <string name="no_results_found">Sorry could not find any results for your search!</string>
 
 </resources>

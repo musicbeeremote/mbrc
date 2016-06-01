@@ -1,23 +1,19 @@
 package com.kelsos.mbrc.ui.activities.nav;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.adapters.BrowsePagerAdapter;
-import com.kelsos.mbrc.constants.Protocol;
-import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.UserAction;
-import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.general.ClearCachedSearchResults;
+import com.kelsos.mbrc.adapters.LibraryPagerAdapter;
 import com.kelsos.mbrc.events.ui.AlbumSearchResults;
 import com.kelsos.mbrc.events.ui.ArtistSearchResults;
 import com.kelsos.mbrc.events.ui.GenreSearchResults;
@@ -25,9 +21,9 @@ import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.events.ui.SearchScrollChanged;
 import com.kelsos.mbrc.events.ui.TrackSearchResults;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
+import com.kelsos.mbrc.ui.activities.SearchResultsActivity;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import java.util.ArrayList;
 import roboguice.RoboGuice;
 
 public class LibraryActivity extends BaseActivity implements SearchView.OnQueryTextListener,
@@ -39,59 +35,18 @@ public class LibraryActivity extends BaseActivity implements SearchView.OnQueryT
 
 
   private SearchView mSearchView;
-  private MenuItem mSearchItem;
-  private BrowsePagerAdapter pagerAdapter;
+  private MenuItem searchView;
+  private LibraryPagerAdapter pagerAdapter;
 
   @Override public boolean onQueryTextSubmit(String query) {
-    String pContext = "";
-    int current = pager.getCurrentItem();
-
-    switch (current) {
-      case 0:
-        pContext = Protocol.LibrarySearchGenre;
-        break;
-      case 1:
-        pContext = Protocol.LibrarySearchArtist;
-        break;
-      case 2:
-        pContext = Protocol.LibrarySearchAlbum;
-        break;
-      case 3:
-        pContext = Protocol.LibrarySearchTitle;
-        break;
-      default:
-        break;
+    if (!TextUtils.isEmpty(query) && query.trim().length() > 0) {
+      Intent searchIntent = new Intent(this, SearchResultsActivity.class);
+      searchIntent.putExtra(SearchResultsActivity.QUERY, query.trim());
+      startActivity(searchIntent);
     }
-
     mSearchView.setIconified(true);
-    MenuItemCompat.collapseActionView(mSearchItem);
-    bus.post(
-        new MessageEvent(ProtocolEventType.UserAction, new UserAction(pContext, query.trim())));
-
-    return false;
-  }
-
-  public void onFabClick(View view) {
-    int current = pager.getCurrentItem();
-    // Not the most elegant but the fastest way to do it at this point
-    //noinspection ResourceType
-    bus.post(new ClearCachedSearchResults(current));
-    switch (current) {
-      case 0:
-        bus.post(new GenreSearchResults(new ArrayList<>(), true));
-        break;
-      case 1:
-        bus.post(new ArtistSearchResults(new ArrayList<>(), true));
-        break;
-      case 2:
-        bus.post(new AlbumSearchResults(new ArrayList<>(), true));
-        break;
-      case 3:
-        bus.post(new TrackSearchResults(new ArrayList<>(), true));
-        break;
-      default:
-        break;
-    }
+    MenuItemCompat.collapseActionView(searchView);
+    return true;
   }
 
   @Override public boolean onQueryTextChange(String newText) {
@@ -115,7 +70,7 @@ public class LibraryActivity extends BaseActivity implements SearchView.OnQueryT
     ButterKnife.bind(this);
     RoboGuice.getInjector(this).injectMembers(this);
     super.setup();
-    pagerAdapter = new BrowsePagerAdapter(this);
+    pagerAdapter = new LibraryPagerAdapter(this);
     pager.setAdapter(pagerAdapter);
     tabs.setupWithViewPager(pager);
     pager.addOnPageChangeListener(this);
@@ -124,12 +79,12 @@ public class LibraryActivity extends BaseActivity implements SearchView.OnQueryT
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    //inflater.inflate(R.menu.menu_now_playing, menu);
-    //mSearchItem = menu.findItem(R.id.now_playing_search_item);
-    //mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
-    ////mSearchView.setQueryHint("Search for " );
-    //mSearchView.setIconifiedByDefault(true);
-    //mSearchView.setOnQueryTextListener(this);
+    getMenuInflater().inflate(R.menu.menu_now_playing, menu);
+    searchView = menu.findItem(R.id.now_playing_search_item);
+    mSearchView = (SearchView) MenuItemCompat.getActionView(searchView);
+    mSearchView.setQueryHint(getString(R.string.library_search_hint));
+    mSearchView.setIconifiedByDefault(true);
+    mSearchView.setOnQueryTextListener(this);
     return super.onCreateOptionsMenu(menu);
   }
 
