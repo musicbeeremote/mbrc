@@ -4,12 +4,14 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.inject.Inject;
@@ -105,7 +107,8 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
     final Track entry = mData.get(position);
     holder.title.setText(entry.getTitle());
-    holder.artist.setText(entry.getArtist());
+    String artist = entry.getArtist();
+    holder.artist.setText(TextUtils.isEmpty(artist)? holder.unknownArtist : artist);
   }
 
   /**
@@ -127,6 +130,7 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
     @BindView(R.id.line_two) TextView artist;
     @BindView(R.id.line_one) TextView title;
     @BindView(R.id.ui_item_context_indicator) LinearLayout indicator;
+    @BindString(R.string.unknown_artist) String unknownArtist;
 
     public ViewHolder(View itemView, Typeface typeface) {
       super(itemView);
