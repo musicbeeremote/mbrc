@@ -18,27 +18,47 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.library.Album;
 import com.kelsos.mbrc.data.library.Album_Table;
-import com.raizlabs.android.dbflow.list.FlowQueryList;
+import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import rx.Single;
+import rx.SingleSubscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.ViewHolder> {
   private final LayoutInflater inflater;
-  private FlowQueryList<Album> data;
+  private FlowCursorList<Album> data;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
 
-  @Inject public AlbumEntryAdapter(Context context) {
-    this.data = new FlowQueryList<>(SQLite.select()
-        .from(Album.class)
-        .orderBy(Album_Table.artist, true)
-        .orderBy(Album_Table.album, true));
-
-    data.setTransact(true);
+  @Inject
+  public AlbumEntryAdapter(Context context) {
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
     inflater = LayoutInflater.from(context);
   }
 
-  @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  public void init() {
+    if (data != null) {
+      return;
+    }
+
+    Single.create((SingleSubscriber<? super FlowCursorList<Album>> subscriber) -> {
+      FlowCursorList<Album> list = new FlowCursorList<>(SQLite.select()
+          .from(Album.class)
+          .orderBy(Album_Table.artist, true)
+          .orderBy(Album_Table.album, true));
+      subscriber.onSuccess(list);
+    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(albums -> {
+      data = albums;
+      notifyDataSetChanged();
+    }, throwable -> {
+      Timber.v(throwable, "failed to load the data");
+    });
+  }
+
+  @Override
+  public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = inflater.inflate(R.layout.ui_list_dual, parent, false);
     ViewHolder holder = new ViewHolder(view, robotoRegular);
     holder.indicator.setOnClickListener(v -> {
@@ -48,7 +68,7 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.Vi
         if (mListener == null) {
           return false;
         }
-        mListener.onMenuItemSelected(menuItem, data.get(holder.getAdapterPosition()));
+        mListener.onMenuItemSelected(menuItem, data.getItem(holder.getAdapterPosition()));
         return true;
       });
       popupMenu.show();
@@ -58,24 +78,30 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.Vi
       if (mListener == null) {
         return;
       }
-      mListener.onItemClicked(data.get(holder.getAdapterPosition()));
+      mListener.onItemClicked(data.getItem(holder.getAdapterPosition()));
     });
     return holder;
   }
 
-  @Override public void onBindViewHolder(ViewHolder holder, int position) {
-    final Album entry = data.get(position);
+  @Override
+  public void onBindViewHolder(ViewHolder holder, int position) {
+    final Album entry = data.getItem(position);
     holder.album.setText(entry.getAlbum());
     holder.artist.setText(TextUtils.isEmpty(entry.getArtist()) ? holder.unknownArtist : entry.getArtist());
   }
 
   public void refresh() {
+    if (data == null) {
+      return;
+    }
+
     data.refresh();
     notifyDataSetChanged();
   }
 
-  @Override public int getItemCount() {
-    return data.size();
+  @Override
+  public int getItemCount() {
+    return data != null ? data.getCount() : 0;
   }
 
   public void setMenuItemSelectedListener(MenuItemSelectedListener listener) {
@@ -89,10 +115,14 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.Vi
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
-    @BindView(R.id.line_two) TextView artist;
-    @BindView(R.id.line_one) TextView album;
-    @BindView(R.id.ui_item_context_indicator) LinearLayout indicator;
-    @BindString(R.string.unknown_artist) String unknownArtist;
+    @BindView(R.id.line_two)
+    TextView artist;
+    @BindView(R.id.line_one)
+    TextView album;
+    @BindView(R.id.ui_item_context_indicator)
+    LinearLayout indicator;
+    @BindString(R.string.unknown_artist)
+    String unknownArtist;
 
     public ViewHolder(View itemView, Typeface typeface) {
       super(itemView);

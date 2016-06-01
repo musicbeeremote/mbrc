@@ -52,6 +52,12 @@ public class BrowseAlbumFragment extends Fragment implements AlbumEntryAdapter.M
   }
 
   @Override
+  public void onStart() {
+    super.onStart();
+    adapter.init();
+  }
+
+  @Override
   public void onResume() {
     super.onResume();
     bus.register(this);

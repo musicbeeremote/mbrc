@@ -18,24 +18,46 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.library.Track;
 import com.kelsos.mbrc.data.library.Track_Table;
-import com.raizlabs.android.dbflow.list.FlowQueryList;
+import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import rx.Single;
+import rx.SingleSubscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.ViewHolder> {
-  private FlowQueryList<Track> mData;
+  private FlowCursorList<Track> data;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
   private LayoutInflater inflater;
 
-  @Inject public TrackEntryAdapter(Context context) {
+  @Inject
+  public TrackEntryAdapter(Context context) {
     inflater = LayoutInflater.from(context);
-    this.mData = new FlowQueryList<>(SQLite.select().from(Track.class)
-        .orderBy(Track_Table.album_artist, true)
-        .orderBy(Track_Table.album, true)
-        .orderBy(Track_Table.disc, true)
-        .orderBy(Track_Table.trackno, true));
-    mData.setTransact(true);
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
+  }
+
+  public void init() {
+    if (data != null) {
+      return;
+    }
+
+    Single.create((SingleSubscriber<? super FlowCursorList<Track>> subscriber) -> {
+      FlowCursorList<Track> list = new FlowCursorList<>(SQLite.select()
+          .from(Track.class)
+          .orderBy(Track_Table.album_artist, true)
+          .orderBy(Track_Table.album, true)
+          .orderBy(Track_Table.disc, true)
+          .orderBy(Track_Table.trackno, true));
+
+      subscriber.onSuccess(list);
+    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(genres -> {
+      data = genres;
+      notifyDataSetChanged();
+    }, throwable -> {
+      Timber.v(throwable, "failed to load the data");
+    });
   }
 
   public void setMenuItemSelectedListener(MenuItemSelectedListener listener) {
@@ -62,7 +84,8 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
    * @see #getItemViewType(int)
    * @see #onBindViewHolder(ViewHolder, int)
    */
-  @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override
+  public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = inflater.inflate(R.layout.ui_list_dual, parent, false);
     ViewHolder holder = new ViewHolder(view, robotoRegular);
     holder.indicator.setOnClickListener(v -> {
@@ -72,7 +95,7 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
         if (mListener == null) {
           return false;
         }
-        mListener.onMenuItemSelected(menuItem, mData.get(holder.getAdapterPosition()));
+        mListener.onMenuItemSelected(menuItem, data.getItem(holder.getAdapterPosition()));
         return true;
       });
       popupMenu.show();
@@ -82,7 +105,7 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
       if (mListener == null) {
         return;
       }
-      mListener.onItemClicked(mData.get(holder.getAdapterPosition()));
+      mListener.onItemClicked(data.getItem(holder.getAdapterPosition()));
     });
     return holder;
   }
@@ -104,11 +127,12 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
    * item at the given position in the data set.
    * @param position The position of the item within the adapter's data set.
    */
-  @Override public void onBindViewHolder(ViewHolder holder, int position) {
-    final Track entry = mData.get(position);
+  @Override
+  public void onBindViewHolder(ViewHolder holder, int position) {
+    final Track entry = data.getItem(position);
     holder.title.setText(entry.getTitle());
     String artist = entry.getArtist();
-    holder.artist.setText(TextUtils.isEmpty(artist)? holder.unknownArtist : artist);
+    holder.artist.setText(TextUtils.isEmpty(artist) ? holder.unknownArtist : artist);
   }
 
   /**
@@ -116,8 +140,9 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
    *
    * @return The total number of items in this adapter.
    */
-  @Override public int getItemCount() {
-    return mData == null ? 0 : mData.size();
+  @Override
+  public int getItemCount() {
+    return data != null ? data.getCount() : 0;
   }
 
   public interface MenuItemSelectedListener {
@@ -127,10 +152,14 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
-    @BindView(R.id.line_two) TextView artist;
-    @BindView(R.id.line_one) TextView title;
-    @BindView(R.id.ui_item_context_indicator) LinearLayout indicator;
-    @BindString(R.string.unknown_artist) String unknownArtist;
+    @BindView(R.id.line_two)
+    TextView artist;
+    @BindView(R.id.line_one)
+    TextView title;
+    @BindView(R.id.ui_item_context_indicator)
+    LinearLayout indicator;
+    @BindString(R.string.unknown_artist)
+    String unknownArtist;
 
     public ViewHolder(View itemView, Typeface typeface) {
       super(itemView);

@@ -18,20 +18,42 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.library.Genre;
 import com.kelsos.mbrc.data.library.Genre_Table;
-import com.raizlabs.android.dbflow.list.FlowQueryList;
+import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import rx.Single;
+import rx.SingleSubscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class GenreEntryAdapter extends RecyclerView.Adapter<GenreEntryAdapter.ViewHolder> {
-  private FlowQueryList<Genre> mData;
+  private FlowCursorList<Genre> data;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
   private LayoutInflater inflater;
 
-  @Inject public GenreEntryAdapter(Context context) {
+  @Inject
+  public GenreEntryAdapter(Context context) {
     inflater = LayoutInflater.from(context);
-    this.mData = new FlowQueryList<>(SQLite.select().from(Genre.class).orderBy(Genre_Table.genre, true));
-    mData.setTransact(true);
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
+  }
+
+  public void init() {
+    if (data != null) {
+      return;
+    }
+
+    Single.create((SingleSubscriber<? super FlowCursorList<Genre>> subscriber) -> {
+      FlowCursorList<Genre> list = new FlowCursorList<>(SQLite.select()
+          .from(Genre.class)
+          .orderBy(Genre_Table.genre, true));
+      subscriber.onSuccess(list);
+    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(genres -> {
+      data = genres;
+      notifyDataSetChanged();
+    }, throwable -> {
+      Timber.v(throwable, "failed to load the data");
+    });
   }
 
   public void setMenuItemSelectedListener(MenuItemSelectedListener listener) {
@@ -58,7 +80,8 @@ public class GenreEntryAdapter extends RecyclerView.Adapter<GenreEntryAdapter.Vi
    * @see #getItemViewType(int)
    * @see #onBindViewHolder(ViewHolder, int)
    */
-  @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override
+  public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = inflater.inflate(R.layout.ui_list_single, parent, false);
     return new ViewHolder(view, robotoRegular);
   }
@@ -80,8 +103,9 @@ public class GenreEntryAdapter extends RecyclerView.Adapter<GenreEntryAdapter.Vi
    * item at the given position in the data set.
    * @param position The position of the item within the adapter's data set.
    */
-  @Override public void onBindViewHolder(ViewHolder holder, int position) {
-    final Genre entry = mData.get(position);
+  @Override
+  public void onBindViewHolder(ViewHolder holder, int position) {
+    final Genre entry = data.getItem(position);
     holder.title.setText(TextUtils.isEmpty(entry.getGenre()) ? holder.empty : entry.getGenre());
 
     holder.indicator.setOnClickListener(v -> {
@@ -109,8 +133,9 @@ public class GenreEntryAdapter extends RecyclerView.Adapter<GenreEntryAdapter.Vi
    *
    * @return The total number of items in this adapter.
    */
-  @Override public int getItemCount() {
-    return mData.size();
+  @Override
+  public int getItemCount() {
+    return data != null ? data.getCount() : 0;
   }
 
   public interface MenuItemSelectedListener {
@@ -120,9 +145,12 @@ public class GenreEntryAdapter extends RecyclerView.Adapter<GenreEntryAdapter.Vi
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
-    @BindView(R.id.line_one) TextView title;
-    @BindView(R.id.ui_item_context_indicator) LinearLayout indicator;
-    @BindString(R.string.empty) String empty;
+    @BindView(R.id.line_one)
+    TextView title;
+    @BindView(R.id.ui_item_context_indicator)
+    LinearLayout indicator;
+    @BindString(R.string.empty)
+    String empty;
 
     public ViewHolder(View itemView, Typeface typeface) {
       super(itemView);
