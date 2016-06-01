@@ -178,9 +178,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
   }
 
   @Override public boolean onNavigationItemSelected(MenuItem item) {
-    int itemId = item.getItemId();
+    final int itemId = item.getItemId();
     drawer.closeDrawer(GravityCompat.START);
-    navigate(itemId);
+    drawer.postDelayed(() -> navigate(itemId), 250);
     return true;
   }
 
