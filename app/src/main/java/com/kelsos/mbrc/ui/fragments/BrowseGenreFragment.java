@@ -52,6 +52,12 @@ public class BrowseGenreFragment extends Fragment implements GenreEntryAdapter.M
     RoboGuice.getInjector(getContext()).injectMembers(this);
   }
 
+  @Override
+  public void onStart() {
+    super.onStart();
+    adapter.init();
+  }
+
   @Override public void onResume() {
     super.onResume();
     bus.register(this);

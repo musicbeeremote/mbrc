@@ -60,6 +60,12 @@ public class BrowseTrackFragment extends Fragment implements TrackEntryAdapter.M
   }
 
   @Override
+  public void onStart() {
+    super.onStart();
+    adapter.init();
+  }
+
+  @Override
   public void onResume() {
     super.onResume();
     bus.register(this);

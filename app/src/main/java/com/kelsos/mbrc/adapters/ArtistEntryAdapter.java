@@ -18,20 +18,43 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.library.Artist;
 import com.kelsos.mbrc.data.library.Artist_Table;
-import com.raizlabs.android.dbflow.list.FlowQueryList;
+import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import rx.Single;
+import rx.SingleSubscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.ViewHolder> {
   private final LayoutInflater inflater;
-  private FlowQueryList<Artist> data;
+  private FlowCursorList<Artist> data;
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
 
-  @Inject public ArtistEntryAdapter(Context context) {
-    this.data = new FlowQueryList<>(SQLite.select().from(Artist.class).orderBy(Artist_Table.artist, true));
-    data.setTransact(true);
+  @Inject
+  public ArtistEntryAdapter(Context context) {
     inflater = LayoutInflater.from(context);
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
+  }
+
+  public void init() {
+    if (data != null) {
+      return;
+    }
+
+    Single.create((SingleSubscriber<? super FlowCursorList<Artist>> subscriber) -> {
+      FlowCursorList<Artist> list = new FlowCursorList<>(SQLite.select()
+          .from(Artist.class)
+          .orderBy(Artist_Table.artist, true));
+
+      subscriber.onSuccess(list);
+    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(artists -> {
+      data = artists;
+      notifyDataSetChanged();
+    }, throwable -> {
+      Timber.v(throwable, "failed to load the data");
+    });
   }
 
   public void setMenuItemSelectedListener(MenuItemSelectedListener listener) {
@@ -58,7 +81,8 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
    * @see #getItemViewType(int)
    * @see #onBindViewHolder(ViewHolder, int)
    */
-  @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override
+  public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     final View view = inflater.inflate(R.layout.ui_list_single, parent, false);
     ViewHolder holder = new ViewHolder(view, robotoRegular);
 
@@ -70,7 +94,7 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
           return false;
         }
 
-        mListener.onMenuItemSelected(menuItem, data.get(holder.getAdapterPosition()));
+        mListener.onMenuItemSelected(menuItem, data.getItem(holder.getAdapterPosition()));
         return true;
       });
       popupMenu.show();
@@ -81,7 +105,7 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
         return;
       }
 
-      mListener.onItemClicked(data.get(holder.getAdapterPosition()));
+      mListener.onItemClicked(data.getItem(holder.getAdapterPosition()));
     });
     return holder;
   }
@@ -103,8 +127,9 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
    * item at the given position in the data set.
    * @param position The position of the item within the adapter's data set.
    */
-  @Override public void onBindViewHolder(ViewHolder holder, int position) {
-    final Artist entry = data.get(position);
+  @Override
+  public void onBindViewHolder(ViewHolder holder, int position) {
+    final Artist entry = data.getItem(position);
     holder.title.setText(TextUtils.isEmpty(entry.getArtist()) ? holder.empty : entry.getArtist());
   }
 
@@ -113,8 +138,9 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
    *
    * @return The total number of items in this adapter.
    */
-  @Override public int getItemCount() {
-    return data.size();
+  @Override
+  public int getItemCount() {
+    return data != null ? data.getCount() : 0;
   }
 
   public interface MenuItemSelectedListener {
@@ -124,9 +150,12 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
-    @BindView(R.id.line_one) TextView title;
-    @BindView(R.id.ui_item_context_indicator) LinearLayout indicator;
-    @BindString(R.string.empty) String empty;
+    @BindView(R.id.line_one)
+    TextView title;
+    @BindView(R.id.ui_item_context_indicator)
+    LinearLayout indicator;
+    @BindString(R.string.empty)
+    String empty;
 
     public ViewHolder(View itemView, Typeface typeface) {
       super(itemView);

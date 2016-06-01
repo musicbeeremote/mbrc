@@ -52,6 +52,12 @@ public class BrowseArtistFragment extends Fragment implements ArtistEntryAdapter
   }
 
   @Override
+  public void onStart() {
+    super.onStart();
+    adapter.init();
+  }
+
+  @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.ui_fragment_library_search, container, false);
     ButterKnife.bind(this, view);
