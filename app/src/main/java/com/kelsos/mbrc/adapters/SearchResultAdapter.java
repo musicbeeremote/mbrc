@@ -232,10 +232,10 @@ public class SearchResultAdapter extends SectionedRecyclerViewAdapter<SearchResu
         layout = R.layout.ui_list_dual;
         break;
       case VIEW_TYPE_SINGLE:
-        layout = R.layout.ui_list_single;
+        layout = R.layout.listitem_single;
         break;
       default:
-        layout = R.layout.ui_list_single;
+        layout = R.layout.listitem_single;
         break;
     }
     final View view = inflater.inflate(layout, parent, false);

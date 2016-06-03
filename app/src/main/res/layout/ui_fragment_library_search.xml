@@ -13,7 +13,7 @@
       android:paddingBottom="@dimen/small_margin"
       android:paddingTop="@dimen/small_margin"
       android:scrollbars="vertical"
-      tools:listitem="@layout/ui_list_single" />
+      tools:listitem="@layout/listitem_single" />
 
   <LinearLayout
       android:id="@+id/empty_view"

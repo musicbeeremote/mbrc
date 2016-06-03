@@ -27,7 +27,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View view = inflater.inflate(R.layout.ui_list_single, parent, false);
+    View view = inflater.inflate(R.layout.listitem_single, parent, false);
     ViewHolder viewHolder = new ViewHolder(view);
     viewHolder.context.setVisibility(View.GONE);
     viewHolder.itemView.setOnClickListener(v -> {

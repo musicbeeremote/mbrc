@@ -2,6 +2,7 @@ package com.kelsos.mbrc.adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -20,6 +21,7 @@ import com.kelsos.mbrc.data.library.Artist;
 import com.kelsos.mbrc.data.library.Artist_Table;
 import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.sql.language.Where;
 import rx.Single;
 import rx.SingleSubscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -32,21 +34,27 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
   private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
 
-  @Inject
-  public ArtistEntryAdapter(Context context) {
+  @Inject public ArtistEntryAdapter(Context context) {
     inflater = LayoutInflater.from(context);
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
   }
 
-  public void init() {
+  public void init(@Nullable String filter) {
     if (data != null) {
       return;
     }
 
+    final Where<Artist> query;
+
+    if (TextUtils.isEmpty(filter)) {
+      query = SQLite.select().from(Artist.class).orderBy(Artist_Table.artist, true);
+    } else {
+      query = SQLite.select().from(Artist.class).where();
+    }
+
     Single.create((SingleSubscriber<? super FlowCursorList<Artist>> subscriber) -> {
-      FlowCursorList<Artist> list = new FlowCursorList<>(SQLite.select()
-          .from(Artist.class)
-          .orderBy(Artist_Table.artist, true));
+
+      FlowCursorList<Artist> list = new FlowCursorList<>(query);
 
       subscriber.onSuccess(list);
     }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(artists -> {
@@ -81,9 +89,8 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
    * @see #getItemViewType(int)
    * @see #onBindViewHolder(ViewHolder, int)
    */
-  @Override
-  public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    final View view = inflater.inflate(R.layout.ui_list_single, parent, false);
+  @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    final View view = inflater.inflate(R.layout.listitem_single, parent, false);
     ViewHolder holder = new ViewHolder(view, robotoRegular);
 
     holder.indicator.setOnClickListener(v -> {
@@ -127,8 +134,7 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
    * item at the given position in the data set.
    * @param position The position of the item within the adapter's data set.
    */
-  @Override
-  public void onBindViewHolder(ViewHolder holder, int position) {
+  @Override public void onBindViewHolder(ViewHolder holder, int position) {
     final Artist entry = data.getItem(position);
     holder.title.setText(TextUtils.isEmpty(entry.getArtist()) ? holder.empty : entry.getArtist());
   }
@@ -138,8 +144,7 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
    *
    * @return The total number of items in this adapter.
    */
-  @Override
-  public int getItemCount() {
+  @Override public int getItemCount() {
     return data != null ? data.getCount() : 0;
   }
 
@@ -150,12 +155,9 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
-    @BindView(R.id.line_one)
-    TextView title;
-    @BindView(R.id.ui_item_context_indicator)
-    LinearLayout indicator;
-    @BindString(R.string.empty)
-    String empty;
+    @BindView(R.id.line_one) TextView title;
+    @BindView(R.id.ui_item_context_indicator) LinearLayout indicator;
+    @BindString(R.string.empty) String empty;
 
     public ViewHolder(View itemView, Typeface typeface) {
       super(itemView);
