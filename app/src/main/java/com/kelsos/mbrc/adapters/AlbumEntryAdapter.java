@@ -2,6 +2,7 @@ package com.kelsos.mbrc.adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -20,6 +21,7 @@ import com.kelsos.mbrc.data.library.Album;
 import com.kelsos.mbrc.data.library.Album_Table;
 import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.sql.language.Where;
 import rx.Single;
 import rx.SingleSubscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -38,16 +40,27 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.Vi
     inflater = LayoutInflater.from(context);
   }
 
-  public void init() {
+  public void init(@Nullable String filter) {
     if (data != null) {
       return;
     }
 
-    Single.create((SingleSubscriber<? super FlowCursorList<Album>> subscriber) -> {
-      FlowCursorList<Album> list = new FlowCursorList<>(SQLite.select()
+    final Where<Album> query;
+    if (TextUtils.isEmpty(filter)) {
+      query = SQLite.select()
           .from(Album.class)
           .orderBy(Album_Table.artist, true)
-          .orderBy(Album_Table.album, true));
+          .orderBy(Album_Table.album, true);
+    } else {
+      query = SQLite.select()
+          .from(Album.class)
+          .where(Album_Table.artist.like('%'+filter+'%'))
+          .orderBy(Album_Table.artist, true)
+          .orderBy(Album_Table.album, true);
+    }
+
+    Single.create((SingleSubscriber<? super FlowCursorList<Album>> subscriber) -> {
+      FlowCursorList<Album> list = new FlowCursorList<>(query);
       subscriber.onSuccess(list);
     }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(albums -> {
       data = albums;

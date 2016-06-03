@@ -18,7 +18,6 @@ import com.kelsos.mbrc.events.ui.AlbumSearchResults;
 import com.kelsos.mbrc.events.ui.ArtistSearchResults;
 import com.kelsos.mbrc.events.ui.GenreSearchResults;
 import com.kelsos.mbrc.events.ui.NotifyUser;
-import com.kelsos.mbrc.events.ui.SearchScrollChanged;
 import com.kelsos.mbrc.events.ui.TrackSearchResults;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.activities.SearchResultsActivity;
@@ -52,7 +51,6 @@ public class LibraryActivity extends BaseActivity implements SearchView.OnQueryT
   @Override public boolean onQueryTextChange(String newText) {
     return false;
   }
-
 
   @Override public void onResume() {
     super.onResume();
@@ -123,12 +121,6 @@ public class LibraryActivity extends BaseActivity implements SearchView.OnQueryT
       }
     }
   }
-
-  @Subscribe public void handleScrollChange(SearchScrollChanged event) {
-
-  }
-
-
 
   @Override public void onDestroy() {
     super.onDestroy();

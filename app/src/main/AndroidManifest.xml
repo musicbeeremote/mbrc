@@ -42,6 +42,36 @@
           android:value=".ui.activities.nav.MainActivity" />
     </activity>
     <activity
+        android:name=".ui.activities.profile.AlbumTracksActivity"
+        android:label="@string/nav_library"
+        android:parentActivityName=".ui.activities.nav.LibraryActivity">
+
+      <!-- Parent activity meta-data to support 4.0 and lower -->
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.activities.nav.LibraryActivity" />
+    </activity>
+    <activity
+        android:name=".ui.activities.profile.ArtistAlbumsActivity"
+        android:label="@string/nav_library"
+        android:parentActivityName=".ui.activities.nav.LibraryActivity">
+
+      <!-- Parent activity meta-data to support 4.0 and lower -->
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.activities.nav.LibraryActivity" />
+    </activity>
+    <activity
+        android:name=".ui.activities.profile.GenreArtistsActivity"
+        android:label="@string/nav_library"
+        android:parentActivityName=".ui.activities.nav.LibraryActivity">
+
+      <!-- Parent activity meta-data to support 4.0 and lower -->
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.activities.nav.LibraryActivity" />
+    </activity>
+    <activity
         android:name=".ui.activities.nav.LyricsActivity"
         android:label="@string/nav_lyrics"
         android:parentActivityName=".ui.activities.nav.MainActivity">

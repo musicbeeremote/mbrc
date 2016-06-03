@@ -15,17 +15,10 @@ import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.GenreEntryAdapter;
-import com.kelsos.mbrc.constants.Const;
-import com.kelsos.mbrc.constants.Protocol;
-import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.Queue;
-import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.data.library.Genre;
-import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.general.SearchDefaultAction;
+import com.kelsos.mbrc.helper.PopupActionHandler;
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView;
 import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 import roboguice.RoboGuice;
 
 public class BrowseGenreFragment extends Fragment implements GenreEntryAdapter.MenuItemSelectedListener {
@@ -33,13 +26,11 @@ public class BrowseGenreFragment extends Fragment implements GenreEntryAdapter.M
   @BindView(R.id.search_recycler_view) EmptyRecyclerView recycler;
   @BindView(R.id.empty_view) LinearLayout emptyView;
 
-  private String mDefault;
 
   @Inject private GenreEntryAdapter adapter;
 
-  @Subscribe public void handleSearchDefaultAction(SearchDefaultAction action) {
-    mDefault = action.getAction();
-  }
+  @Inject
+  private PopupActionHandler actionHandler;
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.ui_fragment_library_search, container, false);
@@ -79,40 +70,10 @@ public class BrowseGenreFragment extends Fragment implements GenreEntryAdapter.M
   }
 
   @Override public void onMenuItemSelected(MenuItem menuItem, Genre entry) {
-    final String qContext = Protocol.LibraryQueueGenre;
-    final String gSub = Protocol.LibraryGenreArtists;
-    String query = entry.getGenre();
-
-    UserAction ua = null;
-    switch (menuItem.getItemId()) {
-      case R.id.popup_genre_queue_next:
-        ua = new UserAction(qContext, new Queue(Queue.NEXT, query));
-        break;
-      case R.id.popup_genre_queue_last:
-        ua = new UserAction(qContext, new Queue(Queue.LAST, query));
-        break;
-      case R.id.popup_genre_play:
-        ua = new UserAction(qContext, new Queue(Queue.NOW, query));
-        break;
-      case R.id.popup_genre_artists:
-        ua = new UserAction(gSub, query);
-        break;
-      default:
-        break;
-    }
-
-    if (ua != null) {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
-    }
+    actionHandler.genreSelected(menuItem, entry);
   }
 
   @Override public void onItemClicked(Genre genre) {
-    if (!mDefault.equals(Const.SUB)) {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.LibraryQueueGenre, new Queue(mDefault, genre.getGenre()))));
-    } else {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.LibraryGenreArtists, genre.getGenre())));
-    }
+    actionHandler.genreSelected(genre);
   }
 }
