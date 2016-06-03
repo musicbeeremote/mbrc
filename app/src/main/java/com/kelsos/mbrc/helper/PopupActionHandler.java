@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.helper;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.MenuItem;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -14,6 +16,9 @@ import com.kelsos.mbrc.data.library.Artist;
 import com.kelsos.mbrc.data.library.Genre;
 import com.kelsos.mbrc.data.library.Track;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.ui.activities.profile.AlbumTracksActivity;
+import com.kelsos.mbrc.ui.activities.profile.ArtistAlbumsActivity;
+import com.kelsos.mbrc.ui.activities.profile.GenreArtistsActivity;
 import com.squareup.otto.Bus;
 
 @Singleton
@@ -22,27 +27,28 @@ public class PopupActionHandler {
   private Bus bus;
 
   @Inject
+  private Context context;
+
+  @Inject
   private BasicSettingsHelper settings;
 
   public void albumSelected(MenuItem menuItem, Album entry) {
 
-    final String qContext = Protocol.LibraryQueueAlbum;
-    final String gSub = Protocol.LibraryAlbumTracks;
     String query = entry.getAlbum();
 
     UserAction ua = null;
     switch (menuItem.getItemId()) {
       case R.id.popup_album_queue_next:
-        ua = new UserAction(qContext, new Queue(Queue.NEXT, query));
+        ua = new UserAction(Protocol.LibraryQueueAlbum, new Queue(Queue.NEXT, query));
         break;
       case R.id.popup_album_queue_last:
-        ua = new UserAction(qContext, new Queue(Queue.LAST, query));
+        ua = new UserAction(Protocol.LibraryQueueAlbum, new Queue(Queue.LAST, query));
         break;
       case R.id.popup_album_play:
-        ua = new UserAction(qContext, new Queue(Queue.NOW, query));
+        ua = new UserAction(Protocol.LibraryQueueAlbum, new Queue(Queue.NOW, query));
         break;
       case R.id.popup_album_tracks:
-        ua = new UserAction(gSub, query);
+        ua = new UserAction(Protocol.LibraryAlbumTracks, query);
         break;
       default:
         break;
@@ -54,23 +60,21 @@ public class PopupActionHandler {
   }
 
   public void artistSelected(MenuItem menuItem, Artist entry) {
-    final String qContext = Protocol.LibraryQueueArtist;
-    final String gSub = Protocol.LibraryArtistAlbums;
     String query = entry.getArtist();
 
     UserAction ua = null;
     switch (menuItem.getItemId()) {
       case R.id.popup_artist_queue_next:
-        ua = new UserAction(qContext, new Queue(Queue.NEXT, query));
+        ua = new UserAction(Protocol.LibraryQueueArtist, new Queue(Queue.NEXT, query));
         break;
       case R.id.popup_artist_queue_last:
-        ua = new UserAction(qContext, new Queue(Queue.LAST, query));
+        ua = new UserAction(Protocol.LibraryQueueArtist, new Queue(Queue.LAST, query));
         break;
       case R.id.popup_artist_play:
-        ua = new UserAction(qContext, new Queue(Queue.NOW, query));
+        ua = new UserAction(Protocol.LibraryQueueArtist, new Queue(Queue.NOW, query));
         break;
       case R.id.popup_artist_album:
-        ua = new UserAction(gSub, query);
+        ua = new UserAction(Protocol.LibraryArtistAlbums, query);
         break;
       default:
         break;
@@ -82,23 +86,21 @@ public class PopupActionHandler {
   }
 
   public void genreSelected(MenuItem menuItem, Genre entry) {
-    final String qContext = Protocol.LibraryQueueGenre;
-    final String gSub = Protocol.LibraryGenreArtists;
     String query = entry.getGenre();
 
     UserAction ua = null;
     switch (menuItem.getItemId()) {
       case R.id.popup_genre_queue_next:
-        ua = new UserAction(qContext, new Queue(Queue.NEXT, query));
+        ua = new UserAction(Protocol.LibraryQueueGenre, new Queue(Queue.NEXT, query));
         break;
       case R.id.popup_genre_queue_last:
-        ua = new UserAction(qContext, new Queue(Queue.LAST, query));
+        ua = new UserAction(Protocol.LibraryQueueGenre, new Queue(Queue.LAST, query));
         break;
       case R.id.popup_genre_play:
-        ua = new UserAction(qContext, new Queue(Queue.NOW, query));
+        ua = new UserAction(Protocol.LibraryQueueGenre, new Queue(Queue.NOW, query));
         break;
       case R.id.popup_genre_artists:
-        ua = new UserAction(gSub, query);
+        ua = new UserAction(Protocol.LibraryGenreArtists, query);
         break;
       default:
         break;
@@ -110,19 +112,18 @@ public class PopupActionHandler {
   }
 
   public void trackSelected(MenuItem menuItem, Track entry) {
-    final String qContext = Protocol.LibraryQueueTrack;
     final String query = entry.getSrc();
 
     UserAction ua = null;
     switch (menuItem.getItemId()) {
       case R.id.popup_track_queue_next:
-        ua = new UserAction(qContext, new Queue(Queue.NEXT, query));
+        ua = new UserAction(Protocol.LibraryQueueTrack, new Queue(Queue.NEXT, query));
         break;
       case R.id.popup_track_queue_last:
-        ua = new UserAction(qContext, new Queue(Queue.LAST, query));
+        ua = new UserAction(Protocol.LibraryQueueTrack, new Queue(Queue.LAST, query));
         break;
       case R.id.popup_track_play:
-        ua = new UserAction(qContext, new Queue(Queue.NOW, query));
+        ua = new UserAction(Protocol.LibraryQueueTrack, new Queue(Queue.NOW, query));
         break;
       default:
         break;
@@ -142,9 +143,7 @@ public class PopupActionHandler {
       MessageEvent event = new MessageEvent(ProtocolEventType.UserAction, data);
       bus.post(event);
     } else {
-      UserAction data = new UserAction(Protocol.LibraryAlbumTracks, album.getAlbum());
-      MessageEvent event = new MessageEvent(ProtocolEventType.UserAction, data);
-      bus.post(event);
+      openProfile(album);
     }
   }
 
@@ -157,9 +156,7 @@ public class PopupActionHandler {
       MessageEvent event = new MessageEvent(ProtocolEventType.UserAction, data);
       bus.post(event);
     } else {
-      UserAction data = new UserAction(Protocol.LibraryArtistAlbums, artist.getArtist());
-      MessageEvent event = new MessageEvent(ProtocolEventType.UserAction, data);
-      bus.post(event);
+      openProfile(artist);
     }
   }
 
@@ -172,9 +169,7 @@ public class PopupActionHandler {
       MessageEvent event = new MessageEvent(ProtocolEventType.UserAction, action);
       bus.post(event);
     } else {
-      UserAction action = new UserAction(Protocol.LibraryGenreArtists, genre.getGenre());
-      MessageEvent event = new MessageEvent(ProtocolEventType.UserAction, action);
-      bus.post(event);
+      openProfile(genre);
     }
   }
 
@@ -188,5 +183,23 @@ public class PopupActionHandler {
     UserAction action = new UserAction(Protocol.LibraryQueueTrack, queue);
     MessageEvent event = new MessageEvent(ProtocolEventType.UserAction, action);
     bus.post(event);
+  }
+
+  private void openProfile(Artist artist) {
+    Intent intent = new Intent(context, ArtistAlbumsActivity.class);
+    intent.putExtra(ArtistAlbumsActivity.ARTIST_NAME, artist.getArtist());
+    context.startActivity(intent);
+  }
+
+  private void openProfile(Album album) {
+    Intent intent = new Intent(context, AlbumTracksActivity.class);
+    intent.putExtra(AlbumTracksActivity.ALBUM_NAME, album.getAlbum());
+    context.startActivity(intent);
+  }
+
+  private void openProfile(Genre genre) {
+    Intent intent = new Intent(context, AlbumTracksActivity.class);
+    intent.putExtra(GenreArtistsActivity.GENRE_NAME, genre.getGenre());
+    context.startActivity(intent);
   }
 }

@@ -2,6 +2,7 @@ package com.kelsos.mbrc.adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -20,6 +21,7 @@ import com.kelsos.mbrc.data.library.Track;
 import com.kelsos.mbrc.data.library.Track_Table;
 import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.sql.language.Where;
 import rx.Single;
 import rx.SingleSubscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -38,19 +40,32 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
   }
 
-  public void init() {
+  public void init(@Nullable String filter) {
     if (data != null) {
       return;
     }
 
-    Single.create((SingleSubscriber<? super FlowCursorList<Track>> subscriber) -> {
-      FlowCursorList<Track> list = new FlowCursorList<>(SQLite.select()
+    final Where<Track> query;
+
+    if (TextUtils.isEmpty(filter)) {
+      query = SQLite.select()
           .from(Track.class)
           .orderBy(Track_Table.album_artist, true)
           .orderBy(Track_Table.album, true)
           .orderBy(Track_Table.disc, true)
-          .orderBy(Track_Table.trackno, true));
+          .orderBy(Track_Table.trackno, true);
+    } else {
+      query = SQLite.select()
+          .from(Track.class)
+          .where(Track_Table.album.like('%' + filter + '%'))
+          .orderBy(Track_Table.album_artist, true)
+          .orderBy(Track_Table.album, true)
+          .orderBy(Track_Table.disc, true)
+          .orderBy(Track_Table.trackno, true);
+    }
 
+    Single.create((SingleSubscriber<? super FlowCursorList<Track>> subscriber) -> {
+      FlowCursorList<Track> list = new FlowCursorList<>(query);
       subscriber.onSuccess(list);
     }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(genres -> {
       data = genres;

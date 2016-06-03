@@ -82,7 +82,7 @@ public class GenreEntryAdapter extends RecyclerView.Adapter<GenreEntryAdapter.Vi
    */
   @Override
   public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View view = inflater.inflate(R.layout.ui_list_single, parent, false);
+    View view = inflater.inflate(R.layout.listitem_single, parent, false);
     return new ViewHolder(view, robotoRegular);
   }
 

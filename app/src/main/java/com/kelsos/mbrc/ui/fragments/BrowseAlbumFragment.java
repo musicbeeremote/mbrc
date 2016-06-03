@@ -15,17 +15,10 @@ import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumEntryAdapter;
-import com.kelsos.mbrc.constants.Const;
-import com.kelsos.mbrc.constants.Protocol;
-import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.Queue;
-import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.data.library.Album;
-import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.general.SearchDefaultAction;
+import com.kelsos.mbrc.helper.PopupActionHandler;
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView;
 import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 import roboguice.RoboGuice;
 
 public class BrowseAlbumFragment extends Fragment implements AlbumEntryAdapter.MenuItemSelectedListener {
@@ -35,14 +28,13 @@ public class BrowseAlbumFragment extends Fragment implements AlbumEntryAdapter.M
   EmptyRecyclerView recycler;
   @BindView(R.id.empty_view)
   LinearLayout emptyView;
-  private String mDefault;
+
   @Inject
   private AlbumEntryAdapter adapter;
 
-  @Subscribe
-  public void handleSearchDefaultAction(SearchDefaultAction action) {
-    mDefault = action.getAction();
-  }
+  @Inject
+  private PopupActionHandler actionHandler;
+
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,7 +46,7 @@ public class BrowseAlbumFragment extends Fragment implements AlbumEntryAdapter.M
   @Override
   public void onStart() {
     super.onStart();
-    adapter.init();
+    adapter.init(null);
   }
 
   @Override
@@ -89,42 +81,11 @@ public class BrowseAlbumFragment extends Fragment implements AlbumEntryAdapter.M
 
   @Override
   public void onMenuItemSelected(MenuItem menuItem, Album entry) {
-
-    final String qContext = Protocol.LibraryQueueAlbum;
-    final String gSub = Protocol.LibraryAlbumTracks;
-    String query = entry.getAlbum();
-
-    UserAction ua = null;
-    switch (menuItem.getItemId()) {
-      case R.id.popup_album_queue_next:
-        ua = new UserAction(qContext, new Queue(Queue.NEXT, query));
-        break;
-      case R.id.popup_album_queue_last:
-        ua = new UserAction(qContext, new Queue(Queue.LAST, query));
-        break;
-      case R.id.popup_album_play:
-        ua = new UserAction(qContext, new Queue(Queue.NOW, query));
-        break;
-      case R.id.popup_album_tracks:
-        ua = new UserAction(gSub, query);
-        break;
-      default:
-        break;
-    }
-
-    if (ua != null) {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction, ua));
-    }
+    actionHandler.albumSelected(menuItem, entry);
   }
 
   @Override
   public void onItemClicked(Album album) {
-    if (!mDefault.equals(Const.SUB)) {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.LibraryQueueAlbum, new Queue(mDefault, album.getAlbum()))));
-    } else {
-      bus.post(new MessageEvent(ProtocolEventType.UserAction,
-          new UserAction(Protocol.LibraryAlbumTracks, album.getAlbum())));
-    }
+    actionHandler.albumSelected(album);
   }
 }
