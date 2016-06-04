@@ -19,6 +19,8 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.library.Album;
 import com.kelsos.mbrc.data.library.Album_Table;
+import com.kelsos.mbrc.data.library.Track;
+import com.kelsos.mbrc.data.library.Track_Table;
 import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.language.Where;
@@ -54,9 +56,11 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.Vi
     } else {
       query = SQLite.select()
           .from(Album.class)
-          .where(Album_Table.artist.like('%'+filter+'%'))
-          .orderBy(Album_Table.artist, true)
-          .orderBy(Album_Table.album, true);
+          .leftOuterJoin(Track.class)
+          .on(Track_Table.album.withTable().eq(Album_Table.album.withTable()))
+          .where(Track_Table.artist.withTable().like('%'+filter+'%'))
+          .orderBy(Album_Table.artist.withTable(), true)
+          .orderBy(Album_Table.album.withTable(), true);
     }
 
     Single.create((SingleSubscriber<? super FlowCursorList<Album>> subscriber) -> {

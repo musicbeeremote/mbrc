@@ -20,11 +20,19 @@
 
   </android.support.design.widget.AppBarLayout>
 
-  <android.support.v7.widget.RecyclerView
-      android:id="@+id/album_recycler"
+  <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      tools:listitem="@layout/ui_list_dual" />
+      app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
+        android:id="@+id/album_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/ui_list_dual" />
+
+    <include layout="@layout/empty_list" />
+  </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>
 

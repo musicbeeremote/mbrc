@@ -25,15 +25,15 @@
       android:layout_height="wrap_content"
       app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <android.support.v7.widget.RecyclerView
+    <com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
         android:id="@+id/list_tracks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/small_margin"
         android:layout_marginTop="@dimen/small_margin"
-
         tools:listitem="@layout/listitem_single" />
 
+    <include layout="@layout/empty_list" />
   </RelativeLayout>
 
 
@@ -46,7 +46,6 @@
       android:src="@drawable/ic_action_play"
       app:layout_anchor="@+id/app_bar_layout"
       app:layout_anchorGravity="bottom|right|end" />
-
 
 </android.support.design.widget.CoordinatorLayout>
 

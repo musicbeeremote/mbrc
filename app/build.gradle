@@ -87,6 +87,10 @@ android {
     xmlOutput file("$project.buildDir/reports/lint/lint-result.xml")
   }
 
+  dexOptions {
+    javaMaxHeapSize "4G"
+  }
+
   applicationVariants.all { variant ->
     variant.outputs.each { output ->
       def originalFilename = output.outputFile
@@ -108,7 +112,7 @@ idea {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.10'
+  gradleVersion = '2.13'
 }
 
 ext {
