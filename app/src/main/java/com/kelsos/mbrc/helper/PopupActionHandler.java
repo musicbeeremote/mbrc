@@ -198,7 +198,7 @@ public class PopupActionHandler {
   }
 
   private void openProfile(Genre genre) {
-    Intent intent = new Intent(context, AlbumTracksActivity.class);
+    Intent intent = new Intent(context, GenreArtistsActivity.class);
     intent.putExtra(GenreArtistsActivity.GENRE_NAME, genre.getGenre());
     context.startActivity(intent);
   }

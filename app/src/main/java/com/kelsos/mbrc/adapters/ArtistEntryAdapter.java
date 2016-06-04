@@ -19,6 +19,8 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.library.Artist;
 import com.kelsos.mbrc.data.library.Artist_Table;
+import com.kelsos.mbrc.data.library.Track;
+import com.kelsos.mbrc.data.library.Track_Table;
 import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.language.Where;
@@ -49,7 +51,11 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
     if (TextUtils.isEmpty(filter)) {
       query = SQLite.select().from(Artist.class).orderBy(Artist_Table.artist, true);
     } else {
-      query = SQLite.select().from(Artist.class).where();
+      query = SQLite.select()
+          .from(Artist.class)
+          .leftOuterJoin(Track.class)
+          .on(Artist_Table.artist.withTable().eq(Track_Table.artist.withTable()))
+          .where(Track_Table.genre.like('%' + filter + '%'));
     }
 
     Single.create((SingleSubscriber<? super FlowCursorList<Artist>> subscriber) -> {
@@ -155,9 +161,12 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
-    @BindView(R.id.line_one) TextView title;
-    @BindView(R.id.ui_item_context_indicator) LinearLayout indicator;
-    @BindString(R.string.empty) String empty;
+    @BindView(R.id.line_one)
+    TextView title;
+    @BindView(R.id.ui_item_context_indicator)
+    LinearLayout indicator;
+    @BindString(R.string.empty)
+    String empty;
 
     public ViewHolder(View itemView, Typeface typeface) {
       super(itemView);

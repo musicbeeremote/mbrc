@@ -4,9 +4,9 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -15,6 +15,7 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.TrackEntryAdapter;
 import com.kelsos.mbrc.data.library.Track;
 import com.kelsos.mbrc.helper.PopupActionHandler;
+import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView;
 import roboguice.RoboGuice;
 
 public class AlbumTracksActivity extends AppCompatActivity
@@ -26,7 +27,10 @@ public class AlbumTracksActivity extends AppCompatActivity
   Toolbar toolbar;
 
   @BindView(R.id.list_tracks)
-  RecyclerView listTracks;
+  EmptyRecyclerView listTracks;
+
+  @BindView(R.id.empty_view)
+  LinearLayout emptyView;
 
   @Inject
   private TrackEntryAdapter adapter;
@@ -63,8 +67,12 @@ public class AlbumTracksActivity extends AppCompatActivity
       actionBar.setTitle(album);
     }
 
+    adapter.init(album);
+    adapter.setMenuItemSelectedListener(this);
     listTracks.setLayoutManager(new LinearLayoutManager(getBaseContext()));
     listTracks.setAdapter(adapter);
+    listTracks.setEmptyView(emptyView);
+
   }
 
   @Override public boolean onOptionsItemSelected(final MenuItem item) {
@@ -76,11 +84,6 @@ public class AlbumTracksActivity extends AppCompatActivity
     }
 
     return super.onOptionsItemSelected(item);
-  }
-
-  @Override protected void onStart() {
-    super.onStart();
-    adapter.init(album);
   }
 
   @OnClick(R.id.play_album) public void onPlayClicked() {
