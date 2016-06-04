@@ -47,6 +47,9 @@ public class Track extends BaseModel {
   @JsonProperty("album")
   @Column
   private String album;
+  @JsonProperty("genre")
+  @Column
+  private String genre;
 
   public Track(JsonNode jNode) {
     this.artist = jNode.path("artist").textValue();
@@ -134,5 +137,13 @@ public class Track extends BaseModel {
   @JsonProperty("album")
   public void setAlbum(String album) {
     this.album = album;
+  }
+
+  public String getGenre() {
+    return genre;
+  }
+
+  public void setGenre(String genre) {
+    this.genre = genre;
   }
 }
