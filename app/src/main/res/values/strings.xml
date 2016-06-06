@@ -159,5 +159,6 @@
   <string name="label_albums">Albums</string>
   <string name="label_tracks">Tracks</string>
   <string name="no_results_found">Sorry could not find any results for your search!</string>
+  <string name="refresh_failed">Refresh failed</string>
 
 </resources>

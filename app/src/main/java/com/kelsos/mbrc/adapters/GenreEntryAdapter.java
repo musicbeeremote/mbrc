@@ -138,6 +138,11 @@ public class GenreEntryAdapter extends RecyclerView.Adapter<GenreEntryAdapter.Vi
     return data != null ? data.getCount() : 0;
   }
 
+  public void refresh() {
+    data.refresh();
+    notifyDataSetChanged();
+  }
+
   public interface MenuItemSelectedListener {
     void onMenuItemSelected(MenuItem menuItem, Genre entry);
 
