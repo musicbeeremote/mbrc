@@ -6,14 +6,21 @@
     android:gravity="center_vertical"
     android:orientation="vertical">
 
-  <com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
-      android:id="@+id/search_recycler_view"
+  <android.support.v4.widget.SwipeRefreshLayout
+      android:id="@+id/swipe_layout"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:paddingBottom="@dimen/small_margin"
-      android:paddingTop="@dimen/small_margin"
-      android:scrollbars="vertical"
-      tools:listitem="@layout/listitem_single" />
+      android:layout_height="match_parent">
+
+    <com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
+        android:id="@+id/search_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/small_margin"
+        android:paddingTop="@dimen/small_margin"
+        android:scrollbars="vertical"
+        tools:listitem="@layout/listitem_single" />
+
+  </android.support.v4.widget.SwipeRefreshLayout>
 
   <LinearLayout
       android:id="@+id/empty_view"

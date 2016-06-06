@@ -48,7 +48,7 @@ public class PopupActionHandler {
         ua = new UserAction(Protocol.LibraryQueueAlbum, new Queue(Queue.NOW, query));
         break;
       case R.id.popup_album_tracks:
-        ua = new UserAction(Protocol.LibraryAlbumTracks, query);
+        openProfile(entry);
         break;
       default:
         break;
@@ -74,7 +74,7 @@ public class PopupActionHandler {
         ua = new UserAction(Protocol.LibraryQueueArtist, new Queue(Queue.NOW, query));
         break;
       case R.id.popup_artist_album:
-        ua = new UserAction(Protocol.LibraryArtistAlbums, query);
+        openProfile(entry);
         break;
       default:
         break;
@@ -100,7 +100,7 @@ public class PopupActionHandler {
         ua = new UserAction(Protocol.LibraryQueueGenre, new Queue(Queue.NOW, query));
         break;
       case R.id.popup_genre_artists:
-        ua = new UserAction(Protocol.LibraryGenreArtists, query);
+        openProfile(entry);
         break;
       default:
         break;
