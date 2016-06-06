@@ -47,6 +47,7 @@ public class Track extends BaseModel {
   @JsonProperty("album")
   @Column
   private String album;
+
   @JsonProperty("genre")
   @Column
   private String genre;
@@ -139,11 +140,11 @@ public class Track extends BaseModel {
     this.album = album;
   }
 
-  public String getGenre() {
+  @JsonProperty("genre") public String getGenre() {
     return genre;
   }
 
-  public void setGenre(String genre) {
+  @JsonProperty("genre") public void setGenre(String genre) {
     this.genre = genre;
   }
 }

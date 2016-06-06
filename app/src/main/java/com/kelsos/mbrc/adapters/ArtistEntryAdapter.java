@@ -52,10 +52,13 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
       query = SQLite.select().from(Artist.class).orderBy(Artist_Table.artist, true);
     } else {
       query = SQLite.select()
+          .distinct()
           .from(Artist.class)
-          .leftOuterJoin(Track.class)
+          .innerJoin(Track.class)
           .on(Artist_Table.artist.withTable().eq(Track_Table.artist.withTable()))
-          .where(Track_Table.genre.like('%' + filter + '%'));
+          .where(Track_Table.genre.is(filter))
+          .orderBy(Artist_Table.artist.withTable(), true)
+          .groupBy(Artist_Table.artist);
     }
 
     Single.create((SingleSubscriber<? super FlowCursorList<Artist>> subscriber) -> {
@@ -152,6 +155,11 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
    */
   @Override public int getItemCount() {
     return data != null ? data.getCount() : 0;
+  }
+
+  public void refresh() {
+    data.refresh();
+    notifyDataSetChanged();
   }
 
   public interface MenuItemSelectedListener {
