@@ -17,14 +17,17 @@ import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
 import com.squareup.otto.Bus;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class ConnectionSettingsAdapter
     extends RecyclerView.Adapter<ConnectionSettingsAdapter.ConnectionViewHolder> {
-  private List<ConnectionSettings> mData;
+  private List<ConnectionSettings> data;
   private Bus bus;
   private int defaultIndex;
 
   public ConnectionSettingsAdapter(List<ConnectionSettings> objects, Bus bus) {
-    this.mData = objects;
+    this.data = objects;
     this.bus = bus;
   }
 
@@ -40,10 +43,10 @@ public class ConnectionSettingsAdapter
 
   @Override
   public void onBindViewHolder(ConnectionViewHolder connectionViewHolder, final int position) {
-    final ConnectionSettings settings = mData.get(position);
+    final ConnectionSettings settings = data.get(position);
     connectionViewHolder.computerName.setText(settings.getName());
     connectionViewHolder.hostname.setText(settings.getAddress());
-    connectionViewHolder.portNum.setText(String.format("%d", settings.getPort()));
+    connectionViewHolder.portNum.setText(String.valueOf(settings.getPort()));
 
     if (settings.getIndex() == defaultIndex) {
       connectionViewHolder.defaultSettings.setImageResource(R.drawable.ic_selection_default);
@@ -75,27 +78,23 @@ public class ConnectionSettingsAdapter
     });
 
     connectionViewHolder.itemView.setOnClickListener(
-        v -> bus.post(new ChangeSettings(SettingsAction.DEFAULT, mData.get(position))));
+        v -> bus.post(new ChangeSettings(SettingsAction.DEFAULT, data.get(position))));
   }
 
   @Override public int getItemCount() {
-    return mData.size();
+    return data.size();
   }
 
-  public class ConnectionViewHolder extends RecyclerView.ViewHolder {
-    TextView hostname;
-    TextView portNum;
-    TextView computerName;
-    ImageView defaultSettings;
-    View overflow;
+  class ConnectionViewHolder extends RecyclerView.ViewHolder {
+    @BindView(R.id.cs_list_host) TextView hostname;
+    @BindView(R.id.cs_list_port) TextView portNum;
+    @BindView(R.id.cs_list_name) TextView computerName;
+    @BindView(R.id.cs_list_default) ImageView defaultSettings;
+    @BindView(R.id.cs_list_overflow) View overflow;
 
-    public ConnectionViewHolder(View itemView) {
+    ConnectionViewHolder(View itemView) {
       super(itemView);
-      hostname = (TextView) itemView.findViewById(R.id.cs_list_host);
-      portNum = (TextView) itemView.findViewById(R.id.cs_list_port);
-      computerName = (TextView) itemView.findViewById(R.id.cs_list_name);
-      defaultSettings = (ImageView) itemView.findViewById(R.id.cs_list_default);
-      overflow = itemView.findViewById(R.id.cs_list_overflow);
+      ButterKnife.bind(this, itemView);
     }
   }
 }

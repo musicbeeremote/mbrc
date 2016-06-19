@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/mini_control_height"
-    android:background="@color/background_material_dark">
+    android:background="@color/background_dark">
 
   <ImageView
       android:id="@+id/mc_track_cover"
@@ -16,8 +16,7 @@
       android:src="@drawable/ic_image_no_cover" />
 
   <LinearLayout
-      android:id="@+id/relativeLayout"
-      android:layout_width="match_parent"
+    android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:layout_gravity="start"
       android:layout_toEndOf="@+id/mc_track_cover"
@@ -36,7 +35,7 @@
         android:layout_gravity="start|center_vertical"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
-        android:singleLine="true"
+        android:maxLines="1"
         android:textColor="@color/primary_text"
         android:textSize="@dimen/mini_control_title_text_size"
         tools:ignore="UnusedAttribute"
@@ -49,7 +48,7 @@
         android:layout_gravity="start|center_vertical"
         android:ellipsize="end"
         android:fontFamily="sans-serif"
-        android:singleLine="true"
+        android:maxLines="1"
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/mini_control_subtitle_text_size"
         tools:ignore="UnusedAttribute"

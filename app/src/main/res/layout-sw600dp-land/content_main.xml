@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/mainRelativeLayout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,8 +8,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
   <FrameLayout
-      android:id="@+id/album_cover_area"
-      android:layout_width="match_parent"
+    android:layout_width="match_parent"
       android:layout_height="0dp"
       android:layout_weight="1">
 
@@ -84,8 +81,7 @@
       android:thumbOffset="4dp" />
 
   <LinearLayout
-      android:id="@+id/tablet_bottom_bar"
-      android:layout_width="fill_parent"
+    android:layout_width="fill_parent"
       android:layout_height="@dimen/mbrc_info_tab_height"
       android:layout_marginBottom="@dimen/small_margin"
       android:layout_marginTop="@dimen/small_margin"
@@ -114,7 +110,7 @@
           android:freezesText="true"
           android:marqueeRepeatLimit="marquee_forever"
           android:scrollHorizontally="true"
-          android:singleLine="true"
+          android:maxLines="1"
           android:textColor="@color/primary_text"
           android:textSize="@dimen/text_title_size"
           tools:text="Rock it for me" />
@@ -130,7 +126,7 @@
           android:freezesText="true"
           android:marqueeRepeatLimit="marquee_forever"
           android:scrollHorizontally="true"
-          android:singleLine="true"
+          android:maxLines="1"
           android:textColor="@color/primary_text"
           android:textSize="@dimen/text_subhead_size"
           tools:text="Caravan Palace" />
@@ -146,7 +142,7 @@
           android:lines="1"
           android:marqueeRepeatLimit="marquee_forever"
           android:scrollHorizontally="true"
-          android:singleLine="true"
+          android:maxLines="1"
           android:textColor="@color/primary_text"
           android:textSize="@dimen/text_body_size"
           tools:text="Panic [2012]" />

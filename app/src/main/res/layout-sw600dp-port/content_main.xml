@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/mainRelativeLayout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:orientation="vertical"
+              app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
   <FrameLayout
-      android:id="@+id/album_cover_area"
       android:layout_width="match_parent"
       android:layout_height="0dp"
       android:layout_weight="1">
@@ -103,11 +101,11 @@
         android:focusableInTouchMode="true"
         android:freezesText="true"
         android:marqueeRepeatLimit="marquee_forever"
+        android:maxLines="1"
         android:scrollHorizontally="true"
-        android:singleLine="true"
-        android:text="@string/main_label_track_title"
         android:textColor="@color/primary_text"
-        android:textSize="@dimen/text_title_size" />
+        android:textSize="@dimen/text_title_size"
+        tools:text="Rock it for me" />
 
     <TextView
         android:id="@+id/main_artist_label"
@@ -119,11 +117,11 @@
         android:focusableInTouchMode="true"
         android:freezesText="true"
         android:marqueeRepeatLimit="marquee_forever"
+        android:maxLines="1"
         android:scrollHorizontally="true"
-        android:singleLine="true"
-        android:text="@string/main_label_artist"
         android:textColor="@color/primary_text"
-        android:textSize="@dimen/text_subhead_size" />
+        android:textSize="@dimen/text_subhead_size"
+        tools:text="Caravan Palace" />
 
     <TextView
         android:id="@+id/main_label_album"
@@ -135,11 +133,11 @@
         android:focusableInTouchMode="true"
         android:lines="1"
         android:marqueeRepeatLimit="marquee_forever"
+        android:maxLines="1"
         android:scrollHorizontally="true"
-        android:singleLine="true"
-        android:text="@string/main_label_album"
         android:textColor="@color/primary_text"
-        android:textSize="@dimen/text_body_size" />
+        android:textSize="@dimen/text_body_size"
+        tools:text="Panic [2012]" />
 
   </RelativeLayout>
 
