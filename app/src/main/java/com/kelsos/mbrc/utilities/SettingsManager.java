@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.StringDef;
 import android.text.TextUtils;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
@@ -23,6 +24,7 @@ import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
+
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -32,14 +34,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
 import timber.log.Timber;
 
-@Singleton public class SettingsManager {
+@Singleton
+public class SettingsManager {
 
-  public static final String NONE = "none";
-  public static final String PAUSE = "pause";
-  public static final String STOP = "stop";
-  public static final String REDUCE = "reduce";
+  static final String NONE = "none";
+  static final String PAUSE = "pause";
+  static final String STOP = "stop";
+  static final String REDUCE = "reduce";
 
   private SharedPreferences preferences;
   private Context context;
@@ -51,9 +55,9 @@ import timber.log.Timber;
 
   @Inject
   public SettingsManager(Context context,
-      SharedPreferences preferences,
-      MainThreadBusWrapper bus,
-      ObjectMapper mapper) {
+                         SharedPreferences preferences,
+                         MainThreadBusWrapper bus,
+                         ObjectMapper mapper) {
     this.preferences = preferences;
     this.context = context;
     this.bus = bus;
@@ -68,7 +72,8 @@ import timber.log.Timber;
     if (!TextUtils.isEmpty(savedSettings)) {
 
       try {
-        List<ConnectionSettings> settingsList = mMapper.readValue(savedSettings, new TypeReference<List<ConnectionSettings>>() {});
+        List<ConnectionSettings> settingsList = mMapper.readValue(savedSettings, new TypeReference<List<ConnectionSettings>>() {
+        });
         for (int i = 0; i < settingsList.size(); i++) {
           settingsList.get(i).updateIndex(i);
         }
@@ -119,7 +124,7 @@ import timber.log.Timber;
     return !(nullOrEmpty(serverAddress) || serverPort == 0);
   }
 
-  public void updatePreferences() {
+  private void updatePreferences() {
     boolean enabled = preferences.getBoolean(context.getString(R.string.settings_legacy_key_reduce_volume), false);
     if (enabled) {
       preferences.edit().putString(context.getString(R.string.settings_key_incoming_call_action), REDUCE).apply();
@@ -131,7 +136,8 @@ import timber.log.Timber;
   }
 
   @SuppressWarnings("WrongConstant")
-  @SettingsManager.CallAction public String getCallAction() {
+  @SettingsManager.CallAction
+  String getCallAction() {
     return preferences.getString(context.getString(R.string.settings_key_incoming_call_action), NONE);
   }
 
@@ -140,9 +146,11 @@ import timber.log.Timber;
   }
 
   private void storeSettings() { //NOPMD
-    SharedPreferences.Editor editor = preferences.edit();
+
     try {
-      editor.putString(context.getString(R.string.settings_key_array), mMapper.writeValueAsString(mSettings)).apply();
+
+      String value = mMapper.writeValueAsString(mSettings);
+      preferences.edit().putString(context.getString(R.string.settings_key_array), value).apply();
       bus.post(new ConnectionSettingsChanged(mSettings, 0));
     } catch (IOException e) {
       if (BuildConfig.DEBUG) {
@@ -151,7 +159,8 @@ import timber.log.Timber;
     }
   }
 
-  @Subscribe public void handleConnectionSettings(ConnectionSettings settings) {
+  @Subscribe
+  public void handleConnectionSettings(ConnectionSettings settings) {
     if (settings.getIndex() < 0) {
       if (!mSettings.contains(settings)) {
         if (mSettings.size() == 0) {
@@ -199,11 +208,13 @@ import timber.log.Timber;
     editor.apply();
   }
 
-  @Produce public ConnectionSettingsChanged produceConnectionSettings() {
+  @Produce
+  public ConnectionSettingsChanged produceConnectionSettings() {
     return new ConnectionSettingsChanged(mSettings, defaultIndex);
   }
 
-  @Subscribe public void handleSettingsChange(ChangeSettings event) {
+  @Subscribe
+  public void handleSettingsChange(ChangeSettings event) {
     int index = event.getSettings().getIndex();
     switch (event.getAction()) {
       case DELETE:
@@ -230,12 +241,14 @@ import timber.log.Timber;
     }
   }
 
-  @Produce public SearchDefaultAction produceAction() {
+  @Produce
+  public SearchDefaultAction produceAction() {
     return new SearchDefaultAction(preferences.getString(context.getString(R.string.settings_search_default_key),
         context.getString(R.string.search_click_default_value)));
   }
 
-  @Produce public DisplayDialog produceDisplayDialog() {
+  @Produce
+  public DisplayDialog produceDisplayDialog() {
     int run = DisplayDialog.NONE;
     if (isFirstRun && checkIfRemoteSettingsExist()) {
       run = DisplayDialog.UPGRADE;
@@ -246,7 +259,8 @@ import timber.log.Timber;
     return new DisplayDialog(run);
   }
 
-  @SuppressLint("NewApi") private void checkForFirstRunAfterUpdate() {
+  @SuppressLint("NewApi")
+  private void checkForFirstRunAfterUpdate() {
     try {
       long lastVersionCode = preferences.getLong(context.
           getString(R.string.settings_key_last_version_run), 0);
@@ -274,7 +288,9 @@ import timber.log.Timber;
       NONE,
       PAUSE,
       STOP
-  }) @Retention(RetentionPolicy.SOURCE) public @interface CallAction {
+  })
+  @Retention(RetentionPolicy.SOURCE)
+  @interface CallAction {
 
   }
 }

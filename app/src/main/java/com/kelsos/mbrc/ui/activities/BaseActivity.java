@@ -5,11 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -19,10 +22,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
@@ -40,19 +46,25 @@ import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+
 import roboguice.RoboGuice;
 import timber.log.Timber;
 
 public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-  @Inject Bus bus;
+  @Inject
+  private Bus bus;
 
-  @BindView(R.id.toolbar) Toolbar toolbar;
-  @BindView(R.id.drawer_layout) DrawerLayout drawer;
-  @BindView(R.id.nav_view) NavigationView navigationView;
+  @BindView(R.id.toolbar)
+  Toolbar toolbar;
+  @BindView(R.id.drawer_layout)
+  DrawerLayout drawer;
+  @BindView(R.id.nav_view)
+  NavigationView navigationView;
 
   private TextView connectText;
   private ActionBarDrawerToggle toggle;
   private DialogFragment mDialog;
+  private ImageView connect;
 
   private boolean isMyServiceRunning(Class<?> serviceClass) {
     ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -83,13 +95,15 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     }
   }
 
-  @Override protected void onDestroy() {
+  @Override
+  protected void onDestroy() {
     super.onDestroy();
     drawer.removeDrawerListener(toggle);
     RoboGuice.destroyInjector(this);
   }
 
-  @Override public void onBackPressed() {
+  @Override
+  public void onBackPressed() {
     if (drawer.isDrawerOpen(GravityCompat.START)) {
       drawer.closeDrawer(GravityCompat.START);
     } else {
@@ -97,17 +111,20 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     }
   }
 
-  @Override public void onConfigurationChanged(Configuration newConfig) {
+  @Override
+  public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
     toggle.onConfigurationChanged(newConfig);
   }
 
-  @Override protected void onPostCreate(Bundle savedInstanceState) {
+  @Override
+  protected void onPostCreate(Bundle savedInstanceState) {
     super.onPostCreate(savedInstanceState);
     toggle.syncState();
   }
 
-  @Override public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
+  @Override
+  public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
     switch (keyCode) {
       case KeyEvent.KEYCODE_VOLUME_UP:
         return true;
@@ -118,27 +135,35 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     }
   }
 
-  @Subscribe public void onConnection(ConnectionStatusChange event) {
-    int resId;
+  @Subscribe
+  public void onConnection(ConnectionStatusChange event) {
+    @StringRes int resId;
+    @ColorRes int colorId;
     switch (event.getStatus()) {
       case CONNECTION_OFF:
         resId = R.string.drawer_connection_status_off;
+        colorId = R.color.black;
         break;
       case CONNECTION_ON:
         resId = R.string.drawer_connection_status_on;
+        colorId = R.color.accent;
         break;
       case CONNECTION_ACTIVE:
         resId = R.string.drawer_connection_status_active;
+        colorId = R.color.power_on;
         break;
       default:
         resId = R.string.drawer_connection_status_off;
+        colorId = R.color.black;
         break;
     }
 
     connectText.setText(resId);
+    connect.setColorFilter(ContextCompat.getColor(this, colorId));
   }
 
-  @Subscribe public void showSetupDialog(DisplayDialog event) {
+  @Subscribe
+  public void showSetupDialog(DisplayDialog event) {
     if (mDialog != null) {
       return;
     }
@@ -155,7 +180,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     }
   }
 
-  @Subscribe public void handleUserNotification(NotifyUser event) {
+  @Subscribe
+  public void handleUserNotification(NotifyUser event) {
     final String message = event.isFromResource() ? getString(event.getResId()) : event.getMessage();
 
     View focus = getCurrentFocus();
@@ -164,7 +190,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     }
   }
 
-  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
     switch (keyCode) {
       case KeyEvent.KEYCODE_VOLUME_UP:
         bus.post(new MessageEvent(UserInputEventType.KeyVolumeUp));
@@ -177,7 +204,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     }
   }
 
-  @Override public boolean onNavigationItemSelected(MenuItem item) {
+  @Override
+  public boolean onNavigationItemSelected(MenuItem item) {
     final int itemId = item.getItemId();
     drawer.closeDrawer(GravityCompat.START);
     drawer.postDelayed(() -> navigate(itemId), 250);
@@ -196,7 +224,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
       createBackStack(new Intent(this, LibraryActivity.class));
     } else if (itemId == R.id.nav_now_playing) {
       createBackStack(new Intent(this, NowPlayingActivity.class));
-    } else if (itemId == R.id.nav_playlists){
+    } else if (itemId == R.id.nav_playlists) {
       createBackStack(new Intent(this, PlaylistActivity.class));
     } else if (itemId == R.id.nav_lyrics) {
       createBackStack(new Intent(this, LyricsActivity.class));
@@ -233,10 +261,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
     View header = navigationView.getHeaderView(0);
     connectText = ButterKnife.findById(header, R.id.nav_connect_text);
-
-    LinearLayout navConnect = ButterKnife.findById(header, R.id.nav_connect);
-    navConnect.setOnClickListener(this::onConnectClick);
-    navConnect.setOnLongClickListener(this::onConnectLongClick);
+    connect = ButterKnife.findById(header, R.id.connect_button);
+    connect.setOnClickListener(this::onConnectClick);
+    connect.setOnLongClickListener(this::onConnectLongClick);
 
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {

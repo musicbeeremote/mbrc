@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/side_nav_bar"
     android:gravity="bottom"
     android:orientation="vertical"
@@ -13,36 +13,40 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-  <com.kelsos.mbrc.ui.widgets.CircleImageView
-      android:id="@+id/imageView"
+    <com.kelsos.mbrc.ui.widgets.CircleImageView
       android:layout_width="74dp"
-      android:layout_height="74dp"
-      android:paddingTop="@dimen/nav_header_vertical_spacing"
-      android:src="@mipmap/ic_launcher"
-      app:civ_border_color="@color/accent"
-      app:civ_border_width="2dp"
-      app:civ_fill_color="@color/primary_light" />
+        android:layout_height="74dp"
+        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:src="@mipmap/ic_launcher"
+        app:civ_border_color="@color/accent"
+        app:civ_border_width="2dp"
+        app:civ_fill_color="@color/primary_light" />
 
-  <LinearLayout
-      android:paddingTop="@dimen/nav_header_vertical_spacing"
-      android:id="@+id/nav_connect"
+    <LinearLayout
       android:layout_width="match_parent"
-      android:gravity="center_vertical"
-      android:background="?selectableItemBackground"
-      android:layout_height="wrap_content">
-
-    <ImageView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_power_black_24dp" />
+        android:background="?selectableItemBackground"
+        android:gravity="center_vertical"
+        android:paddingTop="@dimen/nav_header_vertical_spacing">
 
-    <TextView
-        android:id="@+id/nav_connect_text"
-        android:textColor="@color/black"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="192.168.100.10:7777" />
-  </LinearLayout>
+        <ImageView
+            android:id="@+id/connect_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/connect_button_description"
+            android:src="@drawable/ic_power_settings_new_black_24dp" />
+
+        <TextView
+            android:id="@+id/nav_connect_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:paddingLeft="@dimen/normal_margin"
+            android:paddingRight="@dimen/normal_margin"
+            android:textColor="@color/black"
+            tools:text="192.168.100.10:7777" />
+    </LinearLayout>
 
 
 </LinearLayout>

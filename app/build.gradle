@@ -19,13 +19,13 @@ def gitHash() {
 }
 
 android {
-  compileSdkVersion 23
-  buildToolsVersion "23.0.3"
+  compileSdkVersion 24
+  buildToolsVersion "24.0.0"
 
   defaultConfig {
     applicationId "com.kelsos.mbrc"
     minSdkVersion 9
-    targetSdkVersion 23
+    targetSdkVersion 24
     versionCode 106
     versionName "0.12.0"
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
@@ -112,11 +112,11 @@ idea {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.13'
+  gradleVersion = '2.14'
 }
 
 ext {
-  supportLibraryVersion = "23.4.0"
+  supportLibraryVersion = "24.0.0"
   dbflow_version = "3.0.1"
 }
 
@@ -126,7 +126,7 @@ dependencies {
   compile "com.android.support:support-annotations:${supportLibraryVersion}"
   compile "com.android.support:recyclerview-v7:${supportLibraryVersion}"
   compile "com.android.support:design:${supportLibraryVersion}"
-
+  compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha1'
 
   apt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
   // use kapt for kotlin apt
@@ -136,16 +136,15 @@ dependencies {
   compile 'com.fasterxml.jackson.core:jackson-core:2.7.4'
   compile 'com.fasterxml.jackson.core:jackson-databind:2.7.4'
   compile 'com.github.machinarius:preferencefragment:0.1.2'
-  compile 'com.jakewharton:butterknife:8.0.1'
-  compile 'io.reactivex:rxandroid:1.2.0'
-  compile 'io.reactivex:rxjava:1.1.5'
+  compile 'com.jakewharton:butterknife:8.1.0'
+  compile 'io.reactivex:rxandroid:1.2.1'
+  compile 'io.reactivex:rxjava:1.1.6'
   compile 'org.roboguice:roboguice:4.0.0'
   compile 'com.github.afollestad.material-dialogs:core:0.8.5.8'
   compile 'com.github.afollestad.material-dialogs:commons:0.8.5.8'
   compile 'com.jakewharton.timber:timber:4.1.2'
-  compile 'com.android.support:support-v4:23.4.0'
-  compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha1'
-  apt 'com.jakewharton:butterknife-compiler:8.0.1'
+
+  apt 'com.jakewharton:butterknife-compiler:8.1.0'
   provided 'org.roboguice:roboblender:4.0.0'
   retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
 }
