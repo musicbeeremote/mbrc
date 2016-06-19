@@ -18,7 +18,7 @@
       android:layout_weight="1"
       android:ellipsize="end"
       android:focusableInTouchMode="false"
-      android:singleLine="true"
+      android:maxLines="1"
       android:text="@string/artist_placeholder"
       android:textColor="@color/primary_text"
       android:textSize="@dimen/list_item_one"
@@ -37,8 +37,7 @@
       android:paddingRight="@dimen/normal_margin">
 
     <ImageView
-        android:id="@+id/list_item_track_overflow"
-        android:layout_width="wrap_content"
+      android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/menu_overflow_description"

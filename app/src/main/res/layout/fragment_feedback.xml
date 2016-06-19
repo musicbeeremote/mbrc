@@ -1,44 +1,41 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.kelsos.mbrc.ui.activities.HelpFeedbackActivity">
 
-  <RelativeLayout
+  <TextView
+      android:id="@+id/feedback_header"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:text="@string/feedback_title"
+      android:textSize="@dimen/text_subhead_size" />
+
+  <EditText
+      android:id="@+id/feedback_content"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:paddingBottom="@dimen/activity_vertical_margin"
-      android:paddingLeft="@dimen/activity_horizontal_margin"
-      android:paddingRight="@dimen/activity_horizontal_margin"
-      android:paddingTop="@dimen/activity_vertical_margin">
+      android:layout_height="wrap_content"
+      android:layout_above="@+id/feedback_button"
+      android:layout_below="@+id/feedback_header"
+      android:gravity="top|start"
+      android:hint="@string/feedback_hint"
+      android:inputType="textMultiLine" />
 
-    <TextView
-        android:id="@+id/feedback_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="@string/feedback_title"
-        android:textSize="@dimen/text_subhead_size" />
+  <Button
+      android:id="@+id/feedback_button"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:text="@string/feedback_button_text" />
 
-    <EditText
-        android:id="@+id/feedback_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/feedback_button"
-        android:layout_below="@+id/feedback_header"
-        android:gravity="top|start"
-        android:hint="@string/feedback_hint"
-        android:inputType="textMultiLine" />
-
-    <Button
-        android:id="@+id/feedback_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="@string/feedback_button_text" />
-
-  </RelativeLayout>
-
-</LinearLayout>
+</RelativeLayout>
 

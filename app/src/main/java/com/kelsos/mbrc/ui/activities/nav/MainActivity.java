@@ -13,10 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnLongClick;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
@@ -42,10 +39,16 @@ import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnLongClick;
 import roboguice.RoboGuice;
 import timber.log.Timber;
 
@@ -298,7 +301,8 @@ public class MainActivity extends BaseActivity {
       return;
     }
 
-    int color = getResources().getColor(change.isActive() ? R.color.accent : R.color.button_material_dark);
+    final int colorId = change.isActive() ? R.color.accent : R.color.button_dark;
+    int color = ContextCompat.getColor(this, colorId);
     repeatButton.setColorFilter(color);
   }
 
@@ -314,8 +318,8 @@ public class MainActivity extends BaseActivity {
       return;
     }
     muteButton.setImageResource(change.isMute()
-                                ? R.drawable.ic_volume_off_grey600_24dp
-                                : R.drawable.ic_volume_up_grey600_24dp);
+        ? R.drawable.ic_volume_off_grey600_24dp
+        : R.drawable.ic_volume_up_grey600_24dp);
   }
 
   @Subscribe
@@ -384,7 +388,7 @@ public class MainActivity extends BaseActivity {
             return;
           }
           progressBar.setProgress(progressBar.getProgress() + 1000);
-          trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, currentSeconds));
+          trackProgressCurrent.setText(getString(R.string.playback_progress, currentMinutes, currentSeconds));
         } catch (Exception ex) {
           Timber.d(ex, "animation timer");
         }
@@ -399,7 +403,7 @@ public class MainActivity extends BaseActivity {
       return;
     }
     progressBar.setProgress(0);
-    trackProgressCurrent.setText("00:00");
+    trackProgressCurrent.setText(getString(R.string.playback_progress, 0, 0));
   }
 
   @Subscribe
@@ -410,8 +414,8 @@ public class MainActivity extends BaseActivity {
     artistLabel.setText(change.getArtist());
     titleLabel.setText(change.getTitle());
     albumLabel.setText(TextUtils.isEmpty(change.getYear())
-                       ? change.getAlbum()
-                       : String.format("%s [%s]", change.getAlbum(), change.getYear()));
+        ? change.getAlbum()
+        : String.format("%s [%s]", change.getAlbum(), change.getYear()));
 
     if (mShareActionProvider != null) {
       mShareActionProvider.setShareIntent(getShareIntent());
@@ -453,8 +457,8 @@ public class MainActivity extends BaseActivity {
     final int finalTotalSeconds = totalSeconds;
     final int finalCurrentSeconds = currentSeconds;
 
-    trackDuration.setText(String.format("%02d:%02d", totalMinutes, finalTotalSeconds));
-    trackProgressCurrent.setText(String.format("%02d:%02d", currentMinutes, finalCurrentSeconds));
+    trackDuration.setText(getString(R.string.playback_progress, totalMinutes, finalTotalSeconds));
+    trackProgressCurrent.setText(getString(R.string.playback_progress, currentMinutes, finalCurrentSeconds));
 
     progressBar.setMax(total);
     progressBar.setProgress(current);

@@ -2,8 +2,6 @@
 <resources>
   <dimen name="normal_margin">16dp</dimen>
   <dimen name="small_margin">8dp</dimen>
-  <dimen name="mbrc_drawer_width">260dp</dimen>
-  <dimen name="mbrc_drawer_item_height">48dp</dimen>
   <dimen name="lyrics_text_size">15sp</dimen>
   <dimen name="list_item_height">60dp</dimen>
   <dimen name="list_item_one">16sp</dimen>
@@ -22,7 +20,6 @@
   <dimen name="medium_button_size">48dp</dimen>
   <dimen name="large_button_size">68dp</dimen>
   <dimen name="small_button_size">30dp</dimen>
-  <dimen name="extra_small_margin">4dp</dimen>
   <dimen name="rating_dialog_height">56dp</dimen>
   <dimen name="rating_bar_height">40dp</dimen>
   <!-- Default screen margins, per the Android Design guidelines. -->
@@ -36,33 +33,18 @@
   <dimen name="widget_normal_min_width">250dp</dimen>
   <dimen name="widget_normal_height">128dp</dimen>
   <dimen name="widget_normal_text">16sp</dimen>
-  <dimen name="dialog_title_height">54dp</dimen>
-  <dimen name="dialog_title_margin">16dip</dimen>
-  <dimen name="mbrc_grid_item_width">150dp</dimen>
-  <dimen name="mbrc_grid_line_one_size">16sp</dimen>
-  <dimen name="mbrc_grid_line_two_size">12sp</dimen>
-  <dimen name="list_item_two">14sp</dimen>
-  <dimen name="playlist_entry_text_size">14sp</dimen>
   <dimen name="mbrc_volume_seekbar_height">8dp</dimen>
   <dimen name="mbrc_volume_seekbar_padding">9dp</dimen>
   <dimen name="mbrc_volume_seekbar_thumb_offset">16dp</dimen>
-  <dimen name="drawer_width">320dp</dimen>
-  <dimen name="playlist_entry_height">48dp</dimen>
-  <dimen name="thumb_size">12dp</dimen>
-  <dimen name="list_item_track_height">60dp</dimen>
-  <dimen name="list_item_track_cover_end_padding">12dp</dimen>
   <dimen name="fab_margin">8dp</dimen>
   <dimen name="dual_list_title">16sp</dimen>
   <dimen name="dual_list_subtitle">14sp</dimen>
   <dimen name="list_item_padding">16dp</dimen>
-  <dimen name="playlist_dialog_item_height">36dp</dimen>
   <dimen name="mini_control_title_text_size">16sp</dimen>
   <dimen name="mini_control_subtitle_text_size">14sp</dimen>
-  <dimen name="playlist_name_action_button_size">34dp</dimen>
   <dimen name="nav_header_vertical_spacing">16dp</dimen>
   <dimen name="nav_header_height">160dp</dimen>
   <dimen name="list_padding_top">8dp</dimen>
-  <dimen name="text_margin">16dp</dimen>
   <dimen name="subheader_height">48dp</dimen>
   <dimen name="section_header_text_size">14sp</dimen>
 </resources>

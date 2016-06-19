@@ -1,26 +1,29 @@
 package com.kelsos.mbrc.ui.dialogs;
 
-import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
 
+import butterknife.ButterKnife;
+
 public class SettingsDialogFragment extends DialogFragment {
 
-  public static final int MAX_PORT = 65535;
-  public static final int MIN_PORT = 1;
+  private static final int MAX_PORT = 65535;
+  private static final int MIN_PORT = 1;
 
-  public static final String INDEX = "index";
-  public static final String PORT = "port";
-  public static final String ADDRESS = "address";
-  public static final String NAME = "name";
+  private static final String INDEX = "index";
+  private static final String PORT = "port";
+  private static final String ADDRESS = "address";
+  private static final String NAME = "name";
 
   private EditText hostEdit;
   private EditText nameEdit;
@@ -52,13 +55,13 @@ public class SettingsDialogFragment extends DialogFragment {
     return fragment;
   }
 
-  @Override public void onAttach(Activity activity) {
-    super.onAttach(activity);
-
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
     try {
-      mListener = (SettingsDialogListener) activity;
+      mListener = (SettingsDialogListener) context;
     } catch (ClassCastException e) {
-      throw new ClassCastException(activity.toString() + " must implement SettingsDialogListener");
+      throw new ClassCastException(context.toString() + " must implement SettingsDialogListener");
     }
   }
 
@@ -68,44 +71,37 @@ public class SettingsDialogFragment extends DialogFragment {
     builder.title(R.string.settings_dialog_add);
     builder.positiveText(R.string.settings_dialog_add);
     builder.negativeText(android.R.string.cancel);
-    builder.callback(new MaterialDialog.ButtonCallback() {
-      @Override public void onPositive(MaterialDialog dialog) {
+    builder.onPositive((dialog, which) -> {
+      boolean shouldIClose = true;
+      String hostname = hostEdit.getText().toString();
+      String computerName = nameEdit.getText().toString();
 
-        boolean shouldIClose = true;
-        String hostname = hostEdit.getText().toString();
-        String computerName = nameEdit.getText().toString();
-
-        if (hostname.length() == 0 || computerName.length() == 0) {
-          shouldIClose = false;
-        }
-
-        String portText = portEdit.getText().toString();
-
-        int portNum = isNullOrEmpty(portText) ? 0 : Integer.parseInt(portText);
-        if (isValid(portNum) && shouldIClose) {
-          ConnectionSettings settings =
-              new ConnectionSettings(hostname, computerName, portNum, currentIndex);
-          mListener.onDialogPositiveClick(SettingsDialogFragment.this, settings);
-          dialog.dismiss();
-        }
+      if (hostname.length() == 0 || computerName.length() == 0) {
+        shouldIClose = false;
       }
 
-      @Override public void onNegative(MaterialDialog dialog) {
-        dialog.cancel();
+      String portText = portEdit.getText().toString();
+
+      int portNum = TextUtils.isEmpty(portText) ? 0 : Integer.parseInt(portText);
+      if (isValid(portNum) && shouldIClose) {
+        ConnectionSettings settings =
+            new ConnectionSettings(hostname, computerName, portNum, currentIndex);
+        mListener.onDialogPositiveClick(SettingsDialogFragment.this, settings);
+        dialog.dismiss();
       }
     });
+    builder.onNegative((dialog, which) -> dialog.dismiss());
 
     final MaterialDialog materialDialog = builder.build();
     final View view = materialDialog.getCustomView();
-    hostEdit = (EditText) view.findViewById(R.id.settings_dialog_host);
-    nameEdit = (EditText) view.findViewById(R.id.settings_dialog_name);
-    portEdit = (EditText) view.findViewById(R.id.settings_dialog_port);
+
+    if (view != null) {
+      hostEdit = ButterKnife.findById(view, R.id.settings_dialog_host);
+      nameEdit = ButterKnife.findById(view, R.id.settings_dialog_name);
+      portEdit = ButterKnife.findById(view, R.id.settings_dialog_port);
+    }
 
     return materialDialog;
-  }
-
-  private boolean isNullOrEmpty(String portText) {
-    return portText == null || TextUtils.isEmpty(portText);
   }
 
   @Override public void onStart() {
@@ -114,7 +110,7 @@ public class SettingsDialogFragment extends DialogFragment {
     hostEdit.setText(currentAddress);
 
     if (currentPort > 0) {
-      portEdit.setText(String.format("%d", currentPort));
+      portEdit.setText(String.valueOf(currentPort));
     }
   }
 

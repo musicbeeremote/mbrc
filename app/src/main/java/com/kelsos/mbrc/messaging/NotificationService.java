@@ -30,7 +30,7 @@ import com.squareup.otto.Subscribe;
 
 @Singleton
 public class NotificationService {
-  public static final int PLUGIN_OUT_OF_DATE = 15612;
+  private static final int PLUGIN_OUT_OF_DATE = 15612;
   public static final int NOW_PLAYING_PLACEHOLDER = 15613;
   private final RemoteSessionManager sessionManager;
   private RemoteViews mNormalView;
