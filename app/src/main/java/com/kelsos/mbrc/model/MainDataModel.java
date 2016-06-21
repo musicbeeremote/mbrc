@@ -5,6 +5,8 @@ import android.graphics.BitmapFactory;
 import android.util.Base64;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.annotations.Repeat;
+import com.kelsos.mbrc.annotations.Repeat.Mode;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
@@ -81,9 +83,12 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
   private double pluginProtocol;
   private List<Playlist> playlists;
 
+  @Mode private String repeatMode;
+
   @Inject public MainDataModel(MainThreadBusWrapper bus) {
     this.bus = bus;
     bus.register(this);
+    repeatMode = Repeat.NONE;
 
     title = artist = album = year = Const.EMPTY;
     volume = 100;
@@ -258,7 +263,7 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
     }
   }
 
-  public void setAlbumCover(Bitmap cover) {
+  private void setAlbumCover(Bitmap cover) {
     this.cover = cover;
     bus.post(new CoverAvailable(cover));
     updateNotification();
@@ -296,13 +301,20 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
     return connectionActive;
   }
 
-  public void setRepeatState(String repeatButtonActive) {
-    isRepeatActive = (Protocol.ALL.equals(repeatButtonActive));
-    bus.post(new RepeatChange(this.isRepeatActive));
+  public void setRepeatState(String repeat) {
+    if (Protocol.ALL.equalsIgnoreCase(repeat)) {
+      repeatMode = Repeat.ALL;
+    } else if (Protocol.ONE.equalsIgnoreCase(repeat)) {
+      repeatMode = Repeat.ONE;
+    } else {
+      repeatMode = Repeat.NONE;
+    }
+
+    bus.post(new RepeatChange(repeatMode));
   }
 
   @Produce public RepeatChange produceRepeatChange() {
-    return new RepeatChange(this.isRepeatActive);
+    return new RepeatChange(this.repeatMode);
   }
 
   public void setShuffleState(@ShuffleState String shuffleState) {
@@ -423,5 +435,12 @@ import static com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
     return PlaylistAvailable.create(playlists);
   }
 
+  @Mode public String getRepeatMode() {
+    return repeatMode;
+  }
+
+  public void setRepeatMode(@Mode String repeatMode) {
+    this.repeatMode = repeatMode;
+  }
 }
 

@@ -1,13 +1,17 @@
 package com.kelsos.mbrc.events.ui;
 
-public class RepeatChange {
-  private boolean active;
+import com.kelsos.mbrc.annotations.Repeat.Mode;
 
-  public RepeatChange(boolean active) {
-    this.active = active;
+public class RepeatChange {
+  @Mode
+  private String mode;
+
+  public RepeatChange(@Mode String mode) {
+    this.mode = mode;
   }
 
-  public boolean isActive() {
-    return this.active;
+  @Mode
+  public String getMode() {
+    return this.mode;
   }
 }

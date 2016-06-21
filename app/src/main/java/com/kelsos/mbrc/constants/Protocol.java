@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.constants;
 
+import android.support.annotation.StringRes;
+
 public class Protocol {
 
   @SuppressWarnings("unused") public static final String Error = "error";
@@ -68,4 +70,5 @@ public class Protocol {
   public static final String LibraryBrowseArtists  = "browseartists";
   public static final String LibraryBrowseAlbums  = "browsealbums";
   public static final String LibraryBrowseTracks = "browsetracks";
+  public static final String ONE = "one";
 }
