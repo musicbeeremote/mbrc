@@ -8,27 +8,32 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.NowPlayingAdapter;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.data.MusicTrack;
+import com.kelsos.mbrc.data.NowPlaying;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.NowPlayingListAvailable;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.events.ui.TrackMoved;
 import com.kelsos.mbrc.events.ui.TrackRemoval;
+import com.kelsos.mbrc.services.NowPlayingSync;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.drag.SimpleItenTouchHelper;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import roboguice.RoboGuice;
+import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class NowPlayingActivity extends BaseActivity
     implements SearchView.OnQueryTextListener, NowPlayingAdapter.NowPlayingListener {
@@ -36,19 +41,16 @@ public class NowPlayingActivity extends BaseActivity
   @BindView(R.id.now_playing_list) RecyclerView nowPlayingList;
   @Inject private Bus bus;
   @Inject private NowPlayingAdapter adapter;
+  @Inject private NowPlayingSync sync;
   private SearchView mSearchView;
   private MenuItem mSearchItem;
 
-  @Subscribe public void handleNowPlayingListAvailable(NowPlayingListAvailable event) {
-    adapter.update(event.getList());
-    adapter.setPlayingTrackIndex(event.getIndex());
-  }
 
   @Subscribe public void handlePlayingTrackChange(TrackInfoChange event) {
     if (adapter == null || !adapter.getClass().equals(NowPlayingAdapter.class)) {
       return;
     }
-    adapter.setPlayingTrackIndex(new MusicTrack(event.getArtist(), event.getTitle()));
+    adapter.setPlayingTrackIndex(new NowPlaying(event.getArtist(), event.getTitle()));
     adapter.notifyDataSetChanged();
   }
 
@@ -89,6 +91,11 @@ public class NowPlayingActivity extends BaseActivity
     ItemTouchHelper helper = new ItemTouchHelper(callback);
     helper.attachToRecyclerView(nowPlayingList);
     adapter.setListener(this);
+    sync.syncNowPlaying(Schedulers.io()).subscribe(throwable ->  {
+      Timber.v( throwable, "Failed");
+    }, () -> {
+
+    });
   }
 
   @Override public void onStart() {
