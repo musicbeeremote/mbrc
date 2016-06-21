@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="wrap_content"
-  android:layout_height="@dimen/rating_dialog_height"
-  android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/rating_dialog_height"
+                android:layout_gravity="center"
+                android:background="@color/background_dark">
 
   <RatingBar
-    android:id="@+id/ratingBar"
-    style="@style/RatingBar"
-    android:layout_width="wrap_content"
-    android:layout_height="@dimen/rating_bar_height"
-    android:layout_gravity="center"
-    android:layout_marginBottom="@dimen/small_margin" />
-</LinearLayout>
+      android:id="@+id/ratingBar"
+      style="@style/RatingBar"
+      android:layout_width="wrap_content"
+      android:layout_height="@dimen/rating_bar_height"
+      android:layout_centerInParent="true"
+      android:layout_marginBottom="@dimen/small_margin"/>
+</RelativeLayout>

@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.adapters;
 
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -49,8 +50,11 @@ public class ConnectionSettingsAdapter
     connectionViewHolder.portNum.setText(String.valueOf(settings.getPort()));
 
     if (settings.getIndex() == defaultIndex) {
-      connectionViewHolder.defaultSettings.setImageResource(R.drawable.ic_selection_default);
+      int grey = ContextCompat.getColor(connectionViewHolder.itemView.getContext(), R.color.button_dark);
+      connectionViewHolder.defaultSettings.setImageResource(R.drawable.ic_check_black_24dp);
+      connectionViewHolder.defaultSettings.setColorFilter(grey);
     }
+
     connectionViewHolder.overflow.setOnClickListener(v -> {
       final PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
       popupMenu.getMenuInflater().inflate(R.menu.connection_popup, popupMenu.getMenu());
