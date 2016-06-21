@@ -73,7 +73,7 @@
         android:baselineAlignBottom="false"
         android:contentDescription="@string/main_button_previous_description"
         android:tint="@color/white"
-        android:src="@drawable/ic_skip_previous_black_36dp" />
+        android:src="@drawable/ic_skip_previous_black_24dp" />
 
     <ImageButton
         android:id="@+id/mc_play_pause"
@@ -93,7 +93,7 @@
         android:baselineAlignBottom="false"
         android:contentDescription="@string/main_button_next_description"
         android:tint="@color/white"
-        android:src="@drawable/ic_skip_next_black_36dp" />
+        android:src="@drawable/ic_skip_next_black_24dp" />
 
   </LinearLayout>
 

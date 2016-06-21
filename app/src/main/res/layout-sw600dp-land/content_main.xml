@@ -165,7 +165,7 @@
           android:layout_gravity="center_vertical"
           android:background="?attr/selectableItemBackgroundBorderless"
           android:contentDescription="@string/main_button_repeat_description"
-          android:src="@drawable/ic_repeat_grey600_24dp"
+          android:src="@drawable/ic_repeat_black_24dp"
           android:tint="@color/button_dark" />
 
       <ImageButton
@@ -177,7 +177,7 @@
           android:background="?attr/selectableItemBackgroundBorderless"
           android:contentDescription="@string/main_button_previous_description"
           android:scaleType="fitCenter"
-          android:src="@drawable/ic_skip_previous_black_36dp"
+          android:src="@drawable/ic_skip_previous_black_24dp"
           android:tint="@color/button_dark" />
 
       <ImageButton
@@ -190,7 +190,8 @@
           android:clickable="true"
           android:contentDescription="@string/main_button_play_pause_description"
           android:scaleType="fitCenter"
-          android:src="@drawable/ic_play_circle_fill" />
+          android:tint="@color/accent"
+          android:src="@drawable/ic_play_circle_filled_black_24dp" />
 
       <ImageButton
           android:id="@+id/main_button_next"
@@ -201,7 +202,7 @@
           android:background="?attr/selectableItemBackgroundBorderless"
           android:contentDescription="@string/main_button_next_description"
           android:scaleType="fitCenter"
-          android:src="@drawable/ic_skip_next_black_36dp"
+          android:src="@drawable/ic_skip_next_black_24dp"
           android:tint="@color/button_dark" />
 
       <ImageButton
@@ -211,7 +212,7 @@
           android:layout_gravity="center_vertical"
           android:background="?attr/selectableItemBackgroundBorderless"
           android:contentDescription="@string/main_button_shuffle_description"
-          android:src="@drawable/ic_shuffle_grey600_24dp"
+          android:src="@drawable/ic_shuffle_black_24dp"
           android:tint="@color/button_dark" />
     </LinearLayout>
 
@@ -233,7 +234,7 @@
           android:contentDescription="@string/main_button_mute_description"
           android:paddingLeft="@dimen/small_margin"
           android:paddingRight="@dimen/small_margin"
-          android:src="@drawable/ic_volume_off_grey600_24dp"
+          android:src="@drawable/ic_volume_off_black_24dp"
           android:tint="@color/button_dark" />
 
       <SeekBar

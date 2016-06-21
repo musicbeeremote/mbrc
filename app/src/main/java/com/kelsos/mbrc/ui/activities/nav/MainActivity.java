@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.activities.nav;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
@@ -292,7 +293,7 @@ public class MainActivity extends BaseActivity {
     int color = ContextCompat.getColor(this, shuffle ? R.color.accent : R.color.button_dark);
     shuffleButton.setColorFilter(color);
 
-    shuffleButton.setImageResource(autoDj ? R.drawable.ic_headset_grey600_24dp : R.drawable.ic_shuffle_grey600_24dp);
+    shuffleButton.setImageResource(autoDj ? R.drawable.ic_headset_black_24dp : R.drawable.ic_shuffle_black_24dp);
   }
 
   @Subscribe
@@ -317,9 +318,12 @@ public class MainActivity extends BaseActivity {
     if (muteButton == null) {
       return;
     }
+
+    int color = ContextCompat.getColor(this, R.color.button_dark);
+    muteButton.setColorFilter(color);
     muteButton.setImageResource(change.isMute()
-        ? R.drawable.ic_volume_off_grey600_24dp
-        : R.drawable.ic_volume_up_grey600_24dp);
+        ? R.drawable.ic_volume_off_black_24dp
+        : R.drawable.ic_volume_up_black_24dp);
   }
 
   @Subscribe
@@ -327,32 +331,40 @@ public class MainActivity extends BaseActivity {
     if (playPauseButton == null) {
       return;
     }
+    int accentColor = ContextCompat.getColor(this, R.color.accent);
+    @DrawableRes int resId;
+    String tag;
+
     switch (change.getState()) {
       case Playing:
-        playPauseButton.setImageResource(R.drawable.ic_pause_circle_fill);
-        playPauseButton.setTag("Playing");
-
-                /* Start the animation if the track is playing*/
+        resId = R.drawable.ic_pause_circle_filled_black_24dp;
+        tag = "Playing";
+        /* Start the animation if the track is playing*/
         bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingPosition, true)));
         trackProgressAnimation();
         break;
       case Paused:
-        playPauseButton.setImageResource(R.drawable.ic_play_circle_fill);
-        playPauseButton.setTag("Paused");
+        resId = R.drawable.ic_play_circle_filled_black_24dp;
+        tag = "Paused";
         /* Stop the animation if the track is paused*/
         stopTrackProgressAnimation();
         break;
       case Stopped:
-        playPauseButton.setImageResource(R.drawable.ic_play_circle_fill);
-        playPauseButton.setTag("Stopped");
+        resId = R.drawable.ic_play_circle_filled_black_24dp;
+        tag = "Stopped";
         /* Stop the animation if the track is paused*/
         stopTrackProgressAnimation();
         activateStoppedState();
         break;
       default:
-        playPauseButton.setImageResource(R.drawable.ic_play_circle_fill);
+        resId = R.drawable.ic_play_circle_filled_black_24dp;
+        tag = "Stopped";
         break;
     }
+
+    playPauseButton.setColorFilter(accentColor);
+    playPauseButton.setImageResource(resId);
+    playPauseButton.setTag(tag);
   }
 
   /**
@@ -489,10 +501,10 @@ public class MainActivity extends BaseActivity {
     }
     switch (event.getStatus()) {
       case LOVED:
-        favoriteMenuItem.setIcon(R.drawable.ic_action_favorite);
+        favoriteMenuItem.setIcon(R.drawable.ic_favorite_black_24dp);
         break;
       default:
-        favoriteMenuItem.setIcon(R.drawable.ic_action_favorite_outline);
+        favoriteMenuItem.setIcon(R.drawable.ic_favorite_border_black_24dp);
         break;
     }
   }
