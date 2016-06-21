@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.activities.nav;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.annotations.Repeat;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
@@ -55,6 +57,8 @@ import timber.log.Timber;
 
 @Singleton
 public class MainActivity extends BaseActivity {
+  private static final String PAUSED = "Paused";
+  private static final String STOPPED = "Stopped";
   private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
   // Injects
   @Inject
@@ -302,8 +306,21 @@ public class MainActivity extends BaseActivity {
       return;
     }
 
-    final int colorId = change.isActive() ? R.color.accent : R.color.button_dark;
+    final String mode = change.getMode();
+    @ColorRes int colorId = R.color.accent;
+    @DrawableRes int resId = R.drawable.ic_repeat_black_24dp;
+
+    //noinspection StatementWithEmptyBody
+    if (Repeat.ALL.equalsIgnoreCase(mode)) {
+      // Do nothing already set above
+    } else if (Repeat.ONE.equalsIgnoreCase(mode)) {
+      resId = R.drawable.ic_repeat_one_black_24dp;
+    } else {
+      colorId = R.color.button_dark;
+    }
+
     int color = ContextCompat.getColor(this, colorId);
+    repeatButton.setImageResource(resId);
     repeatButton.setColorFilter(color);
   }
 
@@ -345,20 +362,20 @@ public class MainActivity extends BaseActivity {
         break;
       case Paused:
         resId = R.drawable.ic_play_circle_filled_black_24dp;
-        tag = "Paused";
+        tag = PAUSED;
         /* Stop the animation if the track is paused*/
         stopTrackProgressAnimation();
         break;
       case Stopped:
         resId = R.drawable.ic_play_circle_filled_black_24dp;
-        tag = "Stopped";
+        tag = STOPPED;
         /* Stop the animation if the track is paused*/
         stopTrackProgressAnimation();
         activateStoppedState();
         break;
       default:
         resId = R.drawable.ic_play_circle_filled_black_24dp;
-        tag = "Stopped";
+        tag = STOPPED;
         break;
     }
 
@@ -384,7 +401,8 @@ public class MainActivity extends BaseActivity {
     timer to create them anew */
     final int timePeriod = 1;
     stopTrackProgressAnimation();
-    if (playPauseButton.getTag().equals("Stopped") || playPauseButton.getTag().equals("Paused")) {
+    Object tag = playPauseButton.getTag();
+    if (STOPPED.equals(tag) || PAUSED.equals(tag)) {
       return;
     }
 
