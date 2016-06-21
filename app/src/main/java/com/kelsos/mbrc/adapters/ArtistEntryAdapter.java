@@ -58,7 +58,7 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
           .on(Artist_Table.artist.withTable().eq(Track_Table.artist.withTable()))
           .where(Track_Table.genre.is(filter))
           .orderBy(Artist_Table.artist.withTable(), true)
-          .groupBy(Artist_Table.artist);
+          .groupBy(Artist_Table.artist.withTable());
     }
 
     Single.create((SingleSubscriber<? super FlowCursorList<Artist>> subscriber) -> {
