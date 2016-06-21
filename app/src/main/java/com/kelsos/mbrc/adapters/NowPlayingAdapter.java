@@ -9,24 +9,27 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.MusicTrack;
+import com.kelsos.mbrc.data.NowPlaying;
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.TrackHolder>
     implements ItemTouchHelperAdapter {
 
-  private List<MusicTrack> nowPlayingList;
+  private List<NowPlaying> nowPlayingList;
   private int playingTrackIndex;
   private Typeface robotoRegular;
   private LayoutInflater inflater;
-  private MusicTrack temporary;
+  private NowPlaying temporary;
   private NowPlayingListener listener;
 
   @Inject public NowPlayingAdapter(Context context) {
@@ -45,11 +48,11 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
     notifyItemChanged(index);
   }
 
-  public void setPlayingTrackIndex(MusicTrack track) {
+  public void setPlayingTrackIndex(NowPlaying track) {
     setPlayingTrackIndex(nowPlayingList.indexOf(track));
   }
 
-  public void update(List<MusicTrack> nowPlayingList) {
+  public void update(List<NowPlaying> nowPlayingList) {
     this.nowPlayingList.clear();
     if (nowPlayingList == null) {
       notifyDataSetChanged();
@@ -79,7 +82,7 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
   }
 
   @Override public void onBindViewHolder(TrackHolder holder, int position) {
-    MusicTrack track = nowPlayingList.get(position);
+    NowPlaying track = nowPlayingList.get(position);
     holder.title.setText(track.getTitle());
     holder.artist.setText(track.getArtist());
     if (position == playingTrackIndex) {
@@ -139,7 +142,7 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
     @BindView(R.id.track_indicator_view) ImageView trackPlaying;
     @BindView(R.id.track_container) FrameLayout container;
 
-    public TrackHolder(View itemView, Typeface typeface) {
+    TrackHolder(View itemView, Typeface typeface) {
       super(itemView);
       ButterKnife.bind(this, itemView);
       title.setTypeface(typeface);
