@@ -9,23 +9,25 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.NowPlaying;
+import com.kelsos.mbrc.data.NowPlaying_Table;
+import com.kelsos.mbrc.rx.MapWithIndex;
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter;
-
-import java.util.ArrayList;
+import com.raizlabs.android.dbflow.list.FlowCursorList;
+import com.raizlabs.android.dbflow.list.FlowQueryList;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import java.util.Collections;
-import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import rx.Observable;
+import timber.log.Timber;
 
 public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.TrackHolder>
-    implements ItemTouchHelperAdapter {
+    implements ItemTouchHelperAdapter, FlowCursorList.OnCursorRefreshListener<NowPlaying> {
 
-  private List<NowPlaying> nowPlayingList;
+  private FlowQueryList<NowPlaying> data;
   private int playingTrackIndex;
   private Typeface robotoRegular;
   private LayoutInflater inflater;
@@ -33,7 +35,12 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
   private NowPlayingListener listener;
 
   @Inject public NowPlayingAdapter(Context context) {
-    nowPlayingList = new ArrayList<>();
+    data = SQLite.select()
+        .from(NowPlaying.class)
+        .orderBy(NowPlaying_Table.position, true)
+        .flowQueryList();
+    data.setTransact(true);
+    data.addOnCursorRefreshListener(this);
     inflater = LayoutInflater.from(context);
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
   }
@@ -42,25 +49,19 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
     return this.playingTrackIndex;
   }
 
+  public void setPlayingTrackIndex(NowPlaying track) {
+    Observable.from(data).compose(MapWithIndex.instance()).filter(indexed -> {
+      final NowPlaying info = indexed.value();
+      return info.equals(track);
+    }).subscribe(indexed -> setPlayingTrackIndex((int) indexed.index()), throwable -> {
+      Timber.v(throwable, "Failed");
+    });
+  }
+
   public void setPlayingTrackIndex(int index) {
     notifyItemChanged(playingTrackIndex);
     this.playingTrackIndex = index;
     notifyItemChanged(index);
-  }
-
-  public void setPlayingTrackIndex(NowPlaying track) {
-    setPlayingTrackIndex(nowPlayingList.indexOf(track));
-  }
-
-  public void update(List<NowPlaying> nowPlayingList) {
-    this.nowPlayingList.clear();
-    if (nowPlayingList == null) {
-      notifyDataSetChanged();
-      return;
-    }
-
-    this.nowPlayingList = nowPlayingList;
-    notifyDataSetChanged();
   }
 
   @Override public TrackHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -82,7 +83,7 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
   }
 
   @Override public void onBindViewHolder(TrackHolder holder, int position) {
-    NowPlaying track = nowPlayingList.get(position);
+    NowPlaying track = data.get(position);
     holder.title.setText(track.getTitle());
     holder.artist.setText(track.getArtist());
     if (position == playingTrackIndex) {
@@ -93,17 +94,19 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
   }
 
   @Override public int getItemCount() {
-    return nowPlayingList.size();
+    return data.size();
   }
 
   @Override public boolean onItemMove(int from, int to) {
     if (from < to) {
       for (int i = from; i < to; i++) {
-        Collections.swap(nowPlayingList, i, i + 1);
+        Collections.swap(data, i, i + 1);
+        swapPositions(i, i + 1);
       }
     } else {
       for (int i = from; i > to; i--) {
-        Collections.swap(nowPlayingList, i, i - 1);
+        Collections.swap(data, i, i - 1);
+        swapPositions(i, i - 1);
       }
     }
 
@@ -116,16 +119,39 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
     return true;
   }
 
+  private void swapPositions(int from, int to) {
+    final NowPlaying fromTrack = data.get(from);
+    final NowPlaying toTrack = data.get(to);
+    final Integer position = toTrack.getPosition();
+    toTrack.setPosition(fromTrack.getPosition());
+    fromTrack.setPosition(position);
+    toTrack.save();
+    fromTrack.save();
+  }
+
   @Override public void onItemDismiss(int position) {
-    nowPlayingList.remove(position);
+    data.remove(position);
     notifyItemRemoved(position);
     if (listener != null) {
       listener.onDismiss(position);
     }
   }
 
+  public void refresh() {
+    data.refreshAsync();
+  }
+
   public void setListener(NowPlayingListener listener) {
     this.listener = listener;
+  }
+
+  /**
+   * Callback when cursor refreshes.
+   *
+   * @param cursorList The object that changed.
+   */
+  @Override public void onCursorRefreshed(FlowCursorList<NowPlaying> cursorList) {
+    notifyDataSetChanged();
   }
 
   public interface NowPlayingListener {
@@ -137,10 +163,14 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
   }
 
   static class TrackHolder extends RecyclerView.ViewHolder {
-    @BindView(R.id.track_title) TextView title;
-    @BindView(R.id.track_artist) TextView artist;
-    @BindView(R.id.track_indicator_view) ImageView trackPlaying;
-    @BindView(R.id.track_container) FrameLayout container;
+    @BindView(R.id.track_title)
+    TextView title;
+    @BindView(R.id.track_artist)
+    TextView artist;
+    @BindView(R.id.track_indicator_view)
+    ImageView trackPlaying;
+    @BindView(R.id.track_container)
+    FrameLayout container;
 
     TrackHolder(View itemView, Typeface typeface) {
       super(itemView);
