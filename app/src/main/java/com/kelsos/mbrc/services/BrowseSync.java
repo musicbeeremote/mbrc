@@ -3,9 +3,9 @@ package com.kelsos.mbrc.services;
 import android.support.annotation.NonNull;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.Page;
+import com.kelsos.mbrc.data.db.CacheDatabase;
 import com.kelsos.mbrc.data.library.Album;
 import com.kelsos.mbrc.data.library.Artist;
-import com.kelsos.mbrc.data.library.Cache;
 import com.kelsos.mbrc.data.library.Genre;
 import com.kelsos.mbrc.data.library.Track;
 import com.raizlabs.android.dbflow.config.FlowManager;
@@ -51,25 +51,25 @@ public class BrowseSync {
   }
 
   private void saveTracks(List<Track> tracks) {
-    FlowManager.getDatabase(Cache.class).executeTransaction(dbw -> {
+    FlowManager.getDatabase(CacheDatabase.class).executeTransaction(dbw -> {
       Observable.from(tracks).forEach(BaseModel::save);
     });
   }
 
   private void saveAlbums(List<Album> albums) {
-    FlowManager.getDatabase(Cache.class).executeTransaction(dbw -> {
+    FlowManager.getDatabase(CacheDatabase.class).executeTransaction(dbw -> {
       Observable.from(albums).forEach(BaseModel::save);
     });
   }
 
   private void saveArtists(List<Artist> artists) {
-    FlowManager.getDatabase(Cache.class).executeTransaction(dbw -> {
+    FlowManager.getDatabase(CacheDatabase.class).executeTransaction(dbw -> {
       Observable.from(artists).forEach(BaseModel::save);
     });
   }
 
   private void saveGenres(List<Genre> genres) {
-    FlowManager.getDatabase(Cache.class).executeTransaction(dbw -> {
+    FlowManager.getDatabase(CacheDatabase.class).executeTransaction(dbw -> {
       Observable.from(genres).forEach(BaseModel::save);
     });
   }

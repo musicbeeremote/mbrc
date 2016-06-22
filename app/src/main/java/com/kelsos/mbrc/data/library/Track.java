@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.kelsos.mbrc.data.db.CacheDatabase;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
@@ -19,7 +20,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
     "trackno",
     "disc"
 })
-@Table(name = "track", database = Cache.class)
+@Table(name = "track", database = CacheDatabase.class)
 public class Track extends BaseModel {
 
   @JsonIgnore

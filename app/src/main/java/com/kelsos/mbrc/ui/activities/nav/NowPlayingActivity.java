@@ -94,13 +94,12 @@ public class NowPlayingActivity extends BaseActivity
     sync.syncNowPlaying(Schedulers.io()).subscribe(throwable ->  {
       Timber.v( throwable, "Failed");
     }, () -> {
-
+      adapter.refresh();
     });
   }
 
   @Override public void onStart() {
     super.onStart();
-    bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingList, true)));
   }
 
   @Override public void onResume() {
