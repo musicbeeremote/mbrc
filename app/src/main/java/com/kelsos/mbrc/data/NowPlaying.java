@@ -1,4 +1,3 @@
-
 package com.kelsos.mbrc.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -6,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.kelsos.mbrc.data.library.Cache;
+import com.kelsos.mbrc.data.db.NowPlayingDatabase;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
@@ -21,7 +20,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
     "path",
     "position"
 })
-@Table(database = Cache.class, name = "now_playing")
+@Table(database = NowPlayingDatabase.class, name = "now_playing")
 public class NowPlaying extends BaseModel {
 
   @JsonIgnore
@@ -53,43 +52,35 @@ public class NowPlaying extends BaseModel {
 
   }
 
-  @JsonProperty("artist")
-  public String getArtist() {
+  @JsonProperty("artist") public String getArtist() {
     return artist;
   }
 
-  @JsonProperty("artist")
-  public void setArtist(String artist) {
+  @JsonProperty("artist") public void setArtist(String artist) {
     this.artist = artist;
   }
 
-  @JsonProperty("title")
-  public String getTitle() {
+  @JsonProperty("title") public String getTitle() {
     return title;
   }
 
-  @JsonProperty("title")
-  public void setTitle(String title) {
+  @JsonProperty("title") public void setTitle(String title) {
     this.title = title;
   }
 
-  @JsonProperty("path")
-  public String getPath() {
+  @JsonProperty("path") public String getPath() {
     return path;
   }
 
-  @JsonProperty("path")
-  public void setPath(String path) {
+  @JsonProperty("path") public void setPath(String path) {
     this.path = path;
   }
 
-  @JsonProperty("position")
-  public Integer getPosition() {
+  @JsonProperty("position") public Integer getPosition() {
     return position;
   }
 
-  @JsonProperty("position")
-  public void setPosition(Integer position) {
+  @JsonProperty("position") public void setPosition(Integer position) {
     this.position = position;
   }
 
@@ -99,5 +90,33 @@ public class NowPlaying extends BaseModel {
 
   public void setId(long id) {
     this.id = id;
+  }
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    NowPlaying that = (NowPlaying) o;
+
+    return artist.equals(that.artist) && title.equals(that.title);
+  }
+
+  @Override public int hashCode() {
+    int result = artist.hashCode();
+    result = 31 * result + title.hashCode();
+    return result;
+  }
+
+  @Override public String toString() {
+    return "NowPlaying{"
+        + "artist='"
+        + artist
+        + '\''
+        + ", title='"
+        + title
+        + '\''
+        + ", position="
+        + position
+        + '}';
   }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.kelsos.mbrc.data.db.CacheDatabase;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
@@ -18,7 +19,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
     "genre",
     "count"
 })
-@Table(name = "genre", database = Cache.class)
+@Table(name = "genre", database = CacheDatabase.class)
 public class Genre extends BaseModel {
 
   @JsonIgnore

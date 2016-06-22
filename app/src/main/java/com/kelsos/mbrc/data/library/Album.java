@@ -3,12 +3,13 @@ package com.kelsos.mbrc.data.library;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.kelsos.mbrc.data.db.CacheDatabase;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-@Table(name = "album", database = Cache.class)
+@Table(name = "album", database = CacheDatabase.class)
 public class Album extends BaseModel {
   @JsonIgnore
   @Column
