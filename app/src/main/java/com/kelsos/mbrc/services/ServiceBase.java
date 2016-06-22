@@ -2,28 +2,24 @@ package com.kelsos.mbrc.services;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.data.PageRange;
+import com.kelsos.mbrc.data.ProtocolPayload;
 import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.utilities.SettingsManager;
+import rx.Observable;
+import rx.Subscriber;
+import timber.log.Timber;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-import rx.Observable;
-import rx.Subscriber;
-import timber.log.Timber;
-
-/**
- * Created by kelsos on 6/21/16.
- */
 public class ServiceBase {
   @Inject
   protected ObjectMapper mapper;
@@ -50,7 +46,10 @@ public class ServiceBase {
         String context = message.getContext();
 
         if (Protocol.Player.equals(context)) {
-          sendMessage(SocketMessage.create(Protocol.ProtocolTag, Protocol.NoBroadcast));
+          final ProtocolPayload payload = new ProtocolPayload();
+          payload.setNoBroadcast(true);
+          payload.setProtocolVersion(Protocol.ProtocolVersionNumber);
+          sendMessage(SocketMessage.create(Protocol.ProtocolTag, payload));
         } else if (Protocol.ProtocolTag.equals(context)) {
           sendMessage(SocketMessage.create(request, data));
         }
