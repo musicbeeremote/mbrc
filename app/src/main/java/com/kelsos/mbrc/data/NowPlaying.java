@@ -28,19 +28,19 @@ public class NowPlaying extends BaseModel {
   private long id;
 
   @JsonProperty("artist")
-  @Column
+  @Column(name = "artist")
   private String artist;
 
   @JsonProperty("title")
-  @Column
+  @Column(name = "title")
   private String title;
 
   @JsonProperty("path")
-  @Column
+  @Column(name = "path")
   private String path;
 
   @JsonProperty("position")
-  @Column
+  @Column(name = "position")
   private Integer position;
 
   public NowPlaying(String artist, String title) {

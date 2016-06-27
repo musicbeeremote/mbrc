@@ -126,7 +126,7 @@ dependencies {
   compile "com.android.support:support-annotations:${supportLibraryVersion}"
   compile "com.android.support:recyclerview-v7:${supportLibraryVersion}"
   compile "com.android.support:design:${supportLibraryVersion}"
-  compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha1'
+  compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha3'
 
   apt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
   // use kapt for kotlin apt
@@ -140,8 +140,8 @@ dependencies {
   compile 'io.reactivex:rxandroid:1.2.1'
   compile 'io.reactivex:rxjava:1.1.6'
   compile 'org.roboguice:roboguice:4.0.0'
-  compile 'com.github.afollestad.material-dialogs:core:0.8.5.8'
-  compile 'com.github.afollestad.material-dialogs:commons:0.8.5.8'
+  compile 'com.github.afollestad.material-dialogs:core:0.8.6.1'
+  compile 'com.github.afollestad.material-dialogs:commons:0.8.6.1'
   compile 'com.jakewharton.timber:timber:4.1.2'
 
   apt 'com.jakewharton:butterknife-compiler:8.1.0'

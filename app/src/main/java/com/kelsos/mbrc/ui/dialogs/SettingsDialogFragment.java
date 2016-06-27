@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
 
@@ -67,6 +68,7 @@ public class SettingsDialogFragment extends DialogFragment {
 
   @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
     MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
+    builder.theme(Theme.DARK);
     builder.customView(R.layout.ui_dialog_settings, false);
     builder.title(R.string.settings_dialog_add);
     builder.positiveText(R.string.settings_dialog_add);
