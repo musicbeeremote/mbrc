@@ -9,8 +9,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.NowPlaying;
@@ -20,7 +19,9 @@ import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter;
 import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.list.FlowQueryList;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
-import java.util.Collections;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import rx.Observable;
 import timber.log.Timber;
 
@@ -98,17 +99,7 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
   }
 
   @Override public boolean onItemMove(int from, int to) {
-    if (from < to) {
-      for (int i = from; i < to; i++) {
-        Collections.swap(data, i, i + 1);
-        swapPositions(i, i + 1);
-      }
-    } else {
-      for (int i = from; i > to; i--) {
-        Collections.swap(data, i, i - 1);
-        swapPositions(i, i - 1);
-      }
-    }
+    swapPositions(from, to);
 
     if (listener != null) {
       listener.onMove(from, to);
@@ -120,13 +111,16 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
   }
 
   private void swapPositions(int from, int to) {
+    Timber.v("Swapping %d => %d", from, to);
     final NowPlaying fromTrack = data.get(from);
     final NowPlaying toTrack = data.get(to);
+    Timber.v("from => %s to => %s", fromTrack, toTrack);
     final Integer position = toTrack.getPosition();
     toTrack.setPosition(fromTrack.getPosition());
     fromTrack.setPosition(position);
     toTrack.save();
     fromTrack.save();
+    Timber.v("after swap => from => %s to => %s", fromTrack, toTrack);
   }
 
   @Override public void onItemDismiss(int position) {

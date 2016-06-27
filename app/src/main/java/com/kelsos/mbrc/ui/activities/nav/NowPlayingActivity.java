@@ -2,6 +2,7 @@ package com.kelsos.mbrc.ui.activities.nav;
 
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -38,15 +39,22 @@ import timber.log.Timber;
 public class NowPlayingActivity extends BaseActivity
     implements SearchView.OnQueryTextListener, NowPlayingAdapter.NowPlayingListener {
 
-  @BindView(R.id.now_playing_list) RecyclerView nowPlayingList;
-  @Inject private Bus bus;
-  @Inject private NowPlayingAdapter adapter;
-  @Inject private NowPlayingSync sync;
+  @BindView(R.id.now_playing_list)
+  RecyclerView nowPlayingList;
+  @BindView(R.id.swipe_layout)
+  SwipeRefreshLayout swipeRefreshLayout;
+  @Inject
+  private Bus bus;
+  @Inject
+  private NowPlayingAdapter adapter;
+  @Inject
+  private NowPlayingSync sync;
   private SearchView mSearchView;
   private MenuItem mSearchItem;
 
 
-  @Subscribe public void handlePlayingTrackChange(TrackInfoChange event) {
+  @Subscribe
+  public void handlePlayingTrackChange(TrackInfoChange event) {
     if (adapter == null || !adapter.getClass().equals(NowPlayingAdapter.class)) {
       return;
     }
@@ -61,6 +69,7 @@ public class NowPlayingActivity extends BaseActivity
     MenuItemCompat.collapseActionView(mSearchItem);
     return false;
   }
+
 
   public boolean onQueryTextChange(String newText) {
     return true;
@@ -78,7 +87,8 @@ public class NowPlayingActivity extends BaseActivity
     return super.onCreateOptionsMenu(menu);
   }
 
-  @Override public void onCreate(Bundle savedInstanceState) {
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_nowplaying);
     RoboGuice.getInjector(this).injectMembers(this);
@@ -91,23 +101,26 @@ public class NowPlayingActivity extends BaseActivity
     ItemTouchHelper helper = new ItemTouchHelper(callback);
     helper.attachToRecyclerView(nowPlayingList);
     adapter.setListener(this);
-    sync.syncNowPlaying(Schedulers.io()).subscribe(throwable ->  {
-      Timber.v( throwable, "Failed");
+    sync.syncNowPlaying(Schedulers.io()).subscribe(throwable -> {
+      Timber.v(throwable, "Failed");
     }, () -> {
       adapter.refresh();
     });
   }
 
-  @Override public void onStart() {
+  @Override
+  public void onStart() {
     super.onStart();
   }
 
-  @Override public void onResume() {
+  @Override
+  public void onResume() {
     super.onResume();
     bus.register(this);
   }
 
-  @Override public void onPause() {
+  @Override
+  public void onPause() {
     super.onPause();
     bus.unregister(this);
   }
@@ -128,25 +141,29 @@ public class NowPlayingActivity extends BaseActivity
     return index;
   }
 
-  @Subscribe public void handleTrackMoved(TrackMoved event) {
+  @Subscribe
+  public void handleTrackMoved(TrackMoved event) {
     // In case the action failed revert the change
     if (!event.isSuccess()) {
       //Revert
     }
   }
 
-  @Subscribe public void handleTrackRemoval(TrackRemoval event) {
+  @Subscribe
+  public void handleTrackRemoval(TrackRemoval event) {
     // In case the action failed revert the change
     if (!event.isSuccess()) {
       ///Revert
     }
   }
 
-  @Override public void onPress(int position) {
+  @Override
+  public void onPress(int position) {
     bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingListPlay, position + 1)));
   }
 
-  @Override public void onMove(int from, int to) {
+  @Override
+  public void onMove(int from, int to) {
     adapter.setPlayingTrackIndex(calculateNewIndex(from, to, adapter.getPlayingTrackIndex()));
 
     Map<String, Integer> move = new HashMap<>();
@@ -155,7 +172,8 @@ public class NowPlayingActivity extends BaseActivity
     bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingListMove, move)));
   }
 
-  @Override public void onDismiss(int position) {
+  @Override
+  public void onDismiss(int position) {
     bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingListRemove, position)));
   }
 
