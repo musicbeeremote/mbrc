@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.data.NowPlaying;
 import com.kelsos.mbrc.data.Page;
-import com.kelsos.mbrc.data.db.CacheDatabase;
+import com.kelsos.mbrc.data.db.NowPlayingDatabase;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction;
@@ -42,6 +42,6 @@ public class NowPlayingSync {
         .addAll(nowPlayings)
         .build();
 
-    FlowManager.getDatabase(CacheDatabase.class).executeTransaction(transaction);
+    FlowManager.getDatabase(NowPlayingDatabase.class).executeTransaction(transaction);
   }
 }
