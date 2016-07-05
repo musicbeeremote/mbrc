@@ -21,6 +21,7 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.events.ui.TrackMoved;
 import com.kelsos.mbrc.events.ui.TrackRemoval;
+import com.kelsos.mbrc.rx.RxUtils;
 import com.kelsos.mbrc.services.NowPlayingSync;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.drag.SimpleItenTouchHelper;
@@ -101,10 +102,20 @@ public class NowPlayingActivity extends BaseActivity
     ItemTouchHelper helper = new ItemTouchHelper(callback);
     helper.attachToRecyclerView(nowPlayingList);
     adapter.setListener(this);
-    sync.syncNowPlaying(Schedulers.io()).subscribe(throwable -> {
+    swipeRefreshLayout.setOnRefreshListener(this::refresh);
+    refresh();
+  }
+
+  private void refresh() {
+    if (!swipeRefreshLayout.isRefreshing()) {
+      swipeRefreshLayout.setRefreshing(true);
+    }
+
+    sync.syncNowPlaying(Schedulers.io()).compose(RxUtils.uiTask()).subscribe(throwable -> {
       Timber.v(throwable, "Failed");
     }, () -> {
       adapter.refresh();
+      swipeRefreshLayout.setRefreshing(false);
     });
   }
 

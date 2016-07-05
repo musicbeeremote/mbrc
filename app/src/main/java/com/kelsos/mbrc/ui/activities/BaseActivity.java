@@ -137,6 +137,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
   @Subscribe
   public void onConnection(ConnectionStatusChange event) {
+    Timber.v("Handling new connection status %s", event.getStatus());
     @StringRes int resId;
     @ColorRes int colorId;
     switch (event.getStatus()) {
