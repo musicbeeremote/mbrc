@@ -10,10 +10,10 @@ import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.ui.NotifyUser;
-import com.kelsos.mbrc.utilities.DelayTimer;
 import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.kelsos.mbrc.utilities.SocketActivityChecker;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -26,13 +26,18 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import rx.Completable;
+import rx.Subscription;
 import timber.log.Timber;
 
 @Singleton public class SocketService implements SocketActivityChecker.PingTimeoutListener {
+  private static final int DELAY = 3;
   @Inject private SocketActivityChecker activityChecker;
 
-  public static final int MAX_RETRIES = 3;
-  public static final int SOCKET_BUFFER = 4096;
+  private static final int MAX_RETRIES = 3;
+  private static final int SOCKET_BUFFER = 4096;
   private int numOfRetries;
   private MainThreadBusWrapper bus;
   private SettingsManager settingsManager;
@@ -40,15 +45,9 @@ import timber.log.Timber;
   private boolean shouldStop;
   private Socket socket;
   private PrintWriter output;
-  private DelayTimer cTimer;
   private ExecutorService executor = Executors.newSingleThreadExecutor();
 
-  private DelayTimer.TimerFinishEvent timerFinishEvent = new DelayTimer.TimerFinishEvent() {
-    public void onTimerFinish() {
-      executor.execute(new SocketConnection());
-      numOfRetries++;
-    }
-  };
+  private Subscription subscription;
 
   @Inject public SocketService(SettingsManager settingsManager, MainThreadBusWrapper bus,
       ObjectMapper mapper) {
@@ -56,36 +55,42 @@ import timber.log.Timber;
     this.settingsManager = settingsManager;
     this.mapper = mapper;
 
-    initDelayTimer();
+    startSocket();
     numOfRetries = 0;
     shouldStop = false;
     socketManager(SocketAction.START);
   }
 
-  private void initDelayTimer() {
-    if (cTimer == null) {
-      cTimer = new DelayTimer(3, timerFinishEvent);
+  private void startSocket() {
+    if (subscription != null && !subscription.isUnsubscribed()) {
+      Timber.v("A subscription is already active");
+      return;
     }
+
+    subscription = Completable.timer(DELAY, TimeUnit.SECONDS).subscribe(throwable -> {
+      Timber.v(throwable, "Failed");
+    }, () -> {
+      executor.execute(new SocketConnection());
+      numOfRetries++;
+    });
   }
 
   public void socketManager(SocketAction action) {
     switch (action) {
       case RESET:
-        initDelayTimer();
+        startSocket();
         cleanupSocket();
         shouldStop = false;
         numOfRetries = 0;
-        cTimer.start();
         break;
       case START:
-        initDelayTimer();
+        startSocket();
         if (sIsConnected()) {
           return;
         }
-        cTimer.start();
         break;
       case RETRY:
-        initDelayTimer();
+        startSocket();
         cleanupSocket();
 
         if (shouldStop) {
@@ -93,15 +98,13 @@ import timber.log.Timber;
           numOfRetries = 0;
           return;
         }
-        cTimer.start();
         break;
       case STOP:
         shouldStop = true;
         break;
       case TERMINATE:
-        if (cTimer != null) {
-          cTimer.stop();
-          cTimer = null;
+        if (subscription != null && !subscription.isUnsubscribed()) {
+          subscription.unsubscribe();
         }
         shouldStop = true;
         cleanupSocket();
