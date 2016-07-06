@@ -6,13 +6,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.ui.fragments.SettingsFragment;
-import com.squareup.otto.Bus;
+
 import roboguice.RoboGuice;
 
 public class SettingsActivity extends AppCompatActivity {
 
-  @Inject private Bus bus;
+  @Inject private RxBus bus;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

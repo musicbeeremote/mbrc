@@ -17,16 +17,14 @@ import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.NowPlaying;
 import com.kelsos.mbrc.data.UserAction;
+import com.kelsos.mbrc.domain.TrackInfo;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.TrackInfoChange;
-import com.kelsos.mbrc.events.ui.TrackMoved;
-import com.kelsos.mbrc.events.ui.TrackRemoval;
+import com.kelsos.mbrc.events.bus.RxBus;
+import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.rx.RxUtils;
 import com.kelsos.mbrc.services.NowPlayingSync;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.drag.SimpleItenTouchHelper;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +43,7 @@ public class NowPlayingActivity extends BaseActivity
   @BindView(R.id.swipe_layout)
   SwipeRefreshLayout swipeRefreshLayout;
   @Inject
-  private Bus bus;
+  private RxBus bus;
   @Inject
   private NowPlayingAdapter adapter;
   @Inject
@@ -53,9 +51,7 @@ public class NowPlayingActivity extends BaseActivity
   private SearchView mSearchView;
   private MenuItem mSearchItem;
 
-
-  @Subscribe
-  public void handlePlayingTrackChange(TrackInfoChange event) {
+  private void handlePlayingTrackChange(TrackInfo event) {
     if (adapter == null || !adapter.getClass().equals(NowPlayingAdapter.class)) {
       return;
     }
@@ -127,7 +123,7 @@ public class NowPlayingActivity extends BaseActivity
   @Override
   public void onResume() {
     super.onResume();
-    bus.register(this);
+    bus.register(this, TrackInfoChangeEvent.class, trackInfoChangeEvent -> handlePlayingTrackChange(trackInfoChangeEvent.getTrackInfo()));
   }
 
   @Override
@@ -150,22 +146,6 @@ public class NowPlayingActivity extends BaseActivity
       index -= 1;
     }
     return index;
-  }
-
-  @Subscribe
-  public void handleTrackMoved(TrackMoved event) {
-    // In case the action failed revert the change
-    if (!event.isSuccess()) {
-      //Revert
-    }
-  }
-
-  @Subscribe
-  public void handleTrackRemoval(TrackRemoval event) {
-    // In case the action failed revert the change
-    if (!event.isSuccess()) {
-      ///Revert
-    }
   }
 
   @Override

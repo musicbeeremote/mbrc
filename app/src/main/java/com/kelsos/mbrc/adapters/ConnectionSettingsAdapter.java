@@ -12,10 +12,10 @@ import android.widget.TextView;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.enums.SettingsAction;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
-import com.squareup.otto.Bus;
 import java.util.List;
 
 import butterknife.BindView;
@@ -24,10 +24,10 @@ import butterknife.ButterKnife;
 public class ConnectionSettingsAdapter
     extends RecyclerView.Adapter<ConnectionSettingsAdapter.ConnectionViewHolder> {
   private List<ConnectionSettings> data;
-  private Bus bus;
+  private RxBus bus;
   private int defaultIndex;
 
-  public ConnectionSettingsAdapter(List<ConnectionSettings> objects, Bus bus) {
+  public ConnectionSettingsAdapter(List<ConnectionSettings> objects, RxBus bus) {
     this.data = objects;
     this.bus = bus;
   }

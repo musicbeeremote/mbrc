@@ -17,11 +17,11 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.TrackEntryAdapter;
 import com.kelsos.mbrc.data.library.Track;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.helper.PopupActionHandler;
 import com.kelsos.mbrc.services.BrowseSync;
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView;
-import com.squareup.otto.Bus;
 import roboguice.RoboGuice;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -38,7 +38,7 @@ public class BrowseTrackFragment extends Fragment
   @BindView(R.id.empty_view)
   LinearLayout emptyView;
   @Inject
-  private Bus bus;
+  private RxBus bus;
   @Inject
   private TrackEntryAdapter adapter;
 
@@ -64,16 +64,6 @@ public class BrowseTrackFragment extends Fragment
   @Override public void onStart() {
     super.onStart();
     adapter.init(null);
-  }
-
-  @Override public void onResume() {
-    super.onResume();
-    bus.register(this);
-  }
-
-  @Override public void onPause() {
-    super.onPause();
-    bus.unregister(this);
   }
 
   @Override public void onViewCreated(View view, Bundle savedInstanceState) {

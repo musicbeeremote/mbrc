@@ -9,12 +9,12 @@ import com.google.inject.Provider;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
 import com.kelsos.mbrc.utilities.RemoteUtils;
 import com.kelsos.mbrc.utilities.SettingsManager;
-import com.squareup.otto.Bus;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Calendar;
@@ -22,17 +22,17 @@ import java.util.Date;
 import timber.log.Timber;
 
 public class VersionCheckCommand implements ICommand {
-  public static final String CHECK_URL = "http://kelsos.net/musicbeeremote/versions.json";
+  private static final String CHECK_URL = "http://kelsos.net/musicbeeremote/versions.json";
 
   private MainDataModel model;
   private ObjectMapper mapper;
 
   private Context context;
   private SettingsManager manager;
-  private Bus bus;
+  private RxBus bus;
 
   @Inject public VersionCheckCommand(MainDataModel model, ObjectMapper mapper,
-      Provider<Context> context, SettingsManager manager, Bus bus) {
+      Provider<Context> context, SettingsManager manager, RxBus bus) {
     this.model = model;
     this.mapper = mapper;
     this.context = context.get();

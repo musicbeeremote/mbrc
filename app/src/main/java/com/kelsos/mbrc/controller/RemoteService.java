@@ -18,7 +18,6 @@ import com.kelsos.mbrc.services.SocketService;
 import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
-import com.squareup.otto.Subscribe;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import roboguice.RoboGuice;
@@ -51,6 +50,7 @@ import timber.log.Timber;
     RoboGuice.getInjector(this).injectMembers(this);
     FlowManager.init(new FlowConfig.Builder(this).openDatabasesOnInit(true).build());
     this.registerReceiver(receiver, receiver.filter());
+
   }
 
   /**
@@ -58,7 +58,7 @@ import timber.log.Timber;
    *
    * @param event The message received.
    */
-  @Subscribe public void handleUserActionEvents(MessageEvent event) {
+  public void handleUserActionEvents(MessageEvent event) {
     remoteController.handleUserActionEvents(event);
   }
 
@@ -86,7 +86,7 @@ import timber.log.Timber;
     super.onDestroy();
   }
 
-  public class ControllerBinder extends Binder {
+  private class ControllerBinder extends Binder {
     @SuppressWarnings("unused") ControllerBinder getService() {
       return ControllerBinder.this;
     }

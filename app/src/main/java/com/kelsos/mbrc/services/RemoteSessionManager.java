@@ -13,17 +13,19 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kelsos.mbrc.annotations.PlayerState;
+import com.kelsos.mbrc.annotations.PlayerState.State;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RemoteClientMetaData;
 import com.kelsos.mbrc.utilities.MediaButtonReceiver;
 import com.kelsos.mbrc.utilities.MediaIntentHandler;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
+
 import timber.log.Timber;
 
 @Singleton public class RemoteSessionManager implements AudioManager.OnAudioFocusChangeListener {
@@ -34,15 +36,20 @@ import timber.log.Timber;
       | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
       | PlaybackStateCompat.ACTION_STOP;
   private final AudioManager manager;
-  private final Bus bus;
+  private final RxBus bus;
   private MediaSessionCompat mMediaSession;
   @Inject private MediaIntentHandler handler;
 
-  @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH) @Inject
-  public RemoteSessionManager(final Context context, final Bus bus, final AudioManager manager) {
+  @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+  @Inject
+  public RemoteSessionManager(final Context context, final RxBus bus, final AudioManager manager) {
     this.manager = manager;
     this.bus = bus;
-    bus.register(this);
+
+    bus.register(this, RemoteClientMetaData.class, this::metadataUpdate);
+    bus.register(this, PlayStateChange.class, this::updateState);
+    bus.register(this, PlayStateChange.class, this::onPlayStateChange);
+
     ComponentName myEventReceiver =
         new ComponentName(context.getPackageName(), MediaButtonReceiver.class.getName());
     Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
@@ -94,7 +101,7 @@ import timber.log.Timber;
     return mMediaSession.getSessionToken();
   }
 
-  @Subscribe public void metadataUpdate(RemoteClientMetaData data) {
+  private void metadataUpdate(RemoteClientMetaData data) {
     if (mMediaSession == null) {
       return;
     }
@@ -107,43 +114,41 @@ import timber.log.Timber;
     mMediaSession.setMetadata(builder.build());
   }
 
-  @Subscribe public void updateState(PlayStateChange stateChange) {
+
+  private void updateState(PlayStateChange stateChange) {
     if (mMediaSession == null) {
       return;
     }
 
     PlaybackStateCompat.Builder builder = new PlaybackStateCompat.Builder();
     builder.setActions(PLAYBACK_ACTIONS);
-    PlayState state = stateChange.getState();
-    switch (state) {
-      case Playing:
-        builder.setState(PlaybackStateCompat.STATE_PLAYING, -1, 1);
-        mMediaSession.setActive(true);
-        break;
-      case Paused:
-        builder.setState(PlaybackStateCompat.STATE_PAUSED, -1, 0);
-        mMediaSession.setActive(true);
-        break;
-      default:
-        builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0);
-        mMediaSession.setActive(false);
-        break;
+    @State String state = stateChange.getState();
+    if (PlayerState.PLAYING.equals(state)) {
+      builder.setState(PlaybackStateCompat.STATE_PLAYING, -1, 1);
+      mMediaSession.setActive(true);
+
+    } else if (PlayerState.PAUSED.equals(state)) {
+      builder.setState(PlaybackStateCompat.STATE_PAUSED, -1, 0);
+      mMediaSession.setActive(true);
+
+    } else {
+      builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0);
+      mMediaSession.setActive(false);
+
     }
     PlaybackStateCompat playbackState = builder.build();
     mMediaSession.setPlaybackState(playbackState);
     ensureTransportControls(playbackState);
   }
 
-  @Subscribe public void onPlayStateChange(PlayStateChange change) {
-    switch (change.getState()) {
-      case Playing:
-        requestFocus();
-        break;
-      case Paused:
-        break;
-      default:
-        abandonFocus();
-        break;
+  private void onPlayStateChange(PlayStateChange change) {
+    if (PlayerState.PLAYING.equals(change.getState())) {
+      requestFocus();
+    } else if (change.getState().equals(PlayerState.PAUSED)) {
+      // Do nothing
+    } else {
+      abandonFocus();
+
     }
   }
 

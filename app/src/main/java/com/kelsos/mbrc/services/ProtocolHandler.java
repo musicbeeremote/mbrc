@@ -8,18 +8,18 @@ import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.model.MainDataModel;
-import com.squareup.otto.Bus;
 import java.io.IOException;
 import timber.log.Timber;
 
 @Singleton public class ProtocolHandler {
-  private Bus bus;
+  private RxBus bus;
   private boolean isHandshakeComplete;
   private ObjectMapper mapper;
   private MainDataModel model;
 
-  @Inject public ProtocolHandler(Bus bus, ObjectMapper mapper, MainDataModel model) {
+  @Inject public ProtocolHandler(RxBus bus, ObjectMapper mapper, MainDataModel model) {
     this.bus = bus;
     this.mapper = mapper;
     this.model = model;

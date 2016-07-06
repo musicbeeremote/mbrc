@@ -14,19 +14,19 @@ import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity;
 import com.kelsos.mbrc.ui.dialogs.WebViewDialog;
 import com.kelsos.mbrc.utilities.RemoteUtils;
-import com.squareup.otto.Bus;
 import timber.log.Timber;
 
 public class SettingsFragment extends PreferenceFragment {
 
-  public static final int REQUEST_CODE = 15;
-  private Bus bus;
+  private static final int REQUEST_CODE = 15;
+  private RxBus bus;
   private Context mContext;
 
-  public static SettingsFragment newInstance(Bus bus) {
+  public static SettingsFragment newInstance(RxBus bus) {
     final SettingsFragment fragment = new SettingsFragment();
     fragment.setBus(bus);
     return fragment;
@@ -144,7 +144,7 @@ public class SettingsFragment extends PreferenceFragment {
     }
   }
 
-  public void setBus(Bus bus) {
+  public void setBus(RxBus bus) {
     this.bus = bus;
   }
 }

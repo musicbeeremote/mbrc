@@ -19,29 +19,30 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.annotations.Connection;
+import com.kelsos.mbrc.annotations.PlayerState;
+import com.kelsos.mbrc.annotations.PlayerState.State;
 import com.kelsos.mbrc.annotations.Repeat;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.UserAction;
-import com.kelsos.mbrc.enums.ConnectionStatus;
+import com.kelsos.mbrc.domain.TrackInfo;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
-import com.kelsos.mbrc.events.ui.CoverAvailable;
+import com.kelsos.mbrc.events.bus.RxBus;
+import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
+import com.kelsos.mbrc.events.ui.CoverChangedEvent;
 import com.kelsos.mbrc.events.ui.LfmRatingChanged;
 import com.kelsos.mbrc.events.ui.OnMainFragmentOptionsInflated;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RepeatChange;
 import com.kelsos.mbrc.events.ui.ScrobbleChange;
 import com.kelsos.mbrc.events.ui.ShuffleChange;
-import com.kelsos.mbrc.events.ui.TrackInfoChange;
 import com.kelsos.mbrc.events.ui.UpdatePosition;
 import com.kelsos.mbrc.events.ui.VolumeChange;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -62,7 +63,7 @@ public class MainActivity extends BaseActivity {
   private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
   // Injects
   @Inject
-  protected Bus bus;
+  protected RxBus bus;
   // Inject elements of the view
   @BindView(R.id.main_artist_label)
   TextView artistLabel;
@@ -196,7 +197,7 @@ public class MainActivity extends BaseActivity {
   public void onStart() {
     super.onStart();
     setTextViewTypeface();
-    bus.register(this);
+
   }
 
   @Override
@@ -273,8 +274,8 @@ public class MainActivity extends BaseActivity {
     return shareIntent;
   }
 
-  @Subscribe
-  public void handleCoverEvent(final CoverAvailable cevent) {
+
+  public void handleCoverEvent(final CoverChangedEvent cevent) {
     if (albumCover == null) {
       return;
     }
@@ -285,7 +286,7 @@ public class MainActivity extends BaseActivity {
     }
   }
 
-  @Subscribe
+
   public void handleShuffleChange(ShuffleChange change) {
     if (shuffleButton == null) {
       return;
@@ -300,7 +301,7 @@ public class MainActivity extends BaseActivity {
     shuffleButton.setImageResource(autoDj ? R.drawable.ic_headset_black_24dp : R.drawable.ic_shuffle_black_24dp);
   }
 
-  @Subscribe
+
   public void updateRepeatButtonState(RepeatChange change) {
     if (repeatButton == null) {
       return;
@@ -324,7 +325,7 @@ public class MainActivity extends BaseActivity {
     repeatButton.setColorFilter(color);
   }
 
-  @Subscribe
+
   public void updateVolumeData(VolumeChange change) {
     if (volumeBar == null) {
       return;
@@ -343,7 +344,7 @@ public class MainActivity extends BaseActivity {
         : R.drawable.ic_volume_up_black_24dp);
   }
 
-  @Subscribe
+
   public void handlePlayStateChange(final PlayStateChange change) {
     if (playPauseButton == null) {
       return;
@@ -352,31 +353,31 @@ public class MainActivity extends BaseActivity {
     @DrawableRes int resId;
     String tag;
 
-    switch (change.getState()) {
-      case Playing:
-        resId = R.drawable.ic_pause_circle_filled_black_24dp;
-        tag = "Playing";
+    @State String state = change.getState();
+    if (PlayerState.PLAYING.equals(state)) {
+      resId = R.drawable.ic_pause_circle_filled_black_24dp;
+      tag = "Playing";
         /* Start the animation if the track is playing*/
-        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingPosition, true)));
-        trackProgressAnimation();
-        break;
-      case Paused:
-        resId = R.drawable.ic_play_circle_filled_black_24dp;
-        tag = PAUSED;
+      bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingPosition, true)));
+      trackProgressAnimation();
+
+    } else if (PlayerState.PAUSED.equals(state)) {
+      resId = R.drawable.ic_play_circle_filled_black_24dp;
+      tag = PAUSED;
         /* Stop the animation if the track is paused*/
-        stopTrackProgressAnimation();
-        break;
-      case Stopped:
-        resId = R.drawable.ic_play_circle_filled_black_24dp;
-        tag = STOPPED;
+      stopTrackProgressAnimation();
+
+    } else if (PlayerState.STOPPED.equals(state)) {
+      resId = R.drawable.ic_play_circle_filled_black_24dp;
+      tag = STOPPED;
         /* Stop the animation if the track is paused*/
-        stopTrackProgressAnimation();
-        activateStoppedState();
-        break;
-      default:
-        resId = R.drawable.ic_play_circle_filled_black_24dp;
-        tag = STOPPED;
-        break;
+      stopTrackProgressAnimation();
+      activateStoppedState();
+
+    } else {
+      resId = R.drawable.ic_play_circle_filled_black_24dp;
+      tag = STOPPED;
+
     }
 
     playPauseButton.setColorFilter(accentColor);
@@ -436,8 +437,8 @@ public class MainActivity extends BaseActivity {
     trackProgressCurrent.setText(getString(R.string.playback_progress, 0, 0));
   }
 
-  @Subscribe
-  public void handleTrackInfoChange(final TrackInfoChange change) {
+
+  public void handleTrackInfoChange(final TrackInfo change) {
     if (artistLabel == null) {
       return;
     }
@@ -452,9 +453,9 @@ public class MainActivity extends BaseActivity {
     }
   }
 
-  @Subscribe
-  public void handleConnectionStatusChange(final ConnectionStatusChange change) {
-    if (change.getStatus() == ConnectionStatus.CONNECTION_OFF) {
+
+  public void handleConnectionStatusChange(final ConnectionStatusChangeEvent change) {
+    if (change.getStatus() == Connection.OFF) {
       stopTrackProgressAnimation();
       activateStoppedState();
     }
@@ -465,7 +466,7 @@ public class MainActivity extends BaseActivity {
    * duration and the
    * current progress of playback
    */
-  @Subscribe
+
   public void handlePositionUpdate(UpdatePosition position) {
     final int total = position.getTotal();
     final int current = position.getCurrent();
@@ -496,7 +497,7 @@ public class MainActivity extends BaseActivity {
     trackProgressAnimation();
   }
 
-  @Subscribe
+
   public void handleScrobbleChange(ScrobbleChange event) {
     if (menu == null) {
       return;
@@ -508,7 +509,7 @@ public class MainActivity extends BaseActivity {
     scrobbleMenuItem.setChecked(event.isActive());
   }
 
-  @Subscribe
+
   public void handleLfmLoveChange(LfmRatingChanged event) {
     if (menu == null) {
       return;

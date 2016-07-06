@@ -12,8 +12,9 @@ import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.data.DiscoveryMessage;
 import com.kelsos.mbrc.enums.DiscoveryStop;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
-import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -35,14 +36,14 @@ public class ServiceDiscovery {
   private WifiManager.MulticastLock mLock;
   private ConnectivityManager connectivityManager;
   private ObjectMapper mapper;
-  private MainThreadBusWrapper bus;
+  private RxBus bus;
   private InetAddress group;
 
   @Inject
   public ServiceDiscovery(WifiManager manager,
       ConnectivityManager connectivityManager,
       ObjectMapper mapper,
-      MainThreadBusWrapper bus) {
+      RxBus bus) {
     this.manager = manager;
     this.connectivityManager = connectivityManager;
     this.mapper = mapper;
@@ -82,7 +83,7 @@ public class ServiceDiscovery {
         });
   }
 
-  public void stopDiscovery() {
+  private void stopDiscovery() {
     if (mLock != null) {
       mLock.release();
       mLock = null;

@@ -13,16 +13,16 @@ import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.CoverAvailable;
+import com.kelsos.mbrc.events.bus.RxBus;
+import com.kelsos.mbrc.events.ui.CoverChangedEvent;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
-import com.kelsos.mbrc.events.ui.TrackInfoChange;
+import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.ui.activities.nav.MainActivity;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,7 +32,7 @@ import roboguice.RoboGuice;
 public class MiniControlFragment extends Fragment {
 
   @Inject
-  Bus bus;
+  private RxBus bus;
   @BindView(R.id.mc_track_cover)
   ImageView trackCover;
   @BindView(R.id.mc_track_artist)
@@ -82,7 +82,9 @@ public class MiniControlFragment extends Fragment {
   @Override
   public void onStart() {
     super.onStart();
-    bus.register(this);
+    bus.register(this, CoverChangedEvent.class, this::handleCoverChange);
+    bus.register(this, TrackInfoChangeEvent.class, this::handleTrackInfoChange);
+    bus.register(this, PlayStateChange.class, this::handlePlayStateChange);
     Typeface robotoRegular =
         Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
     Typeface robotoMedium =
@@ -97,8 +99,7 @@ public class MiniControlFragment extends Fragment {
     bus.unregister(this);
   }
 
-  @Subscribe
-  public void handleCoverChange(CoverAvailable event) {
+  private void handleCoverChange(CoverChangedEvent event) {
     if (trackCover == null) {
       return;
     }
@@ -109,16 +110,14 @@ public class MiniControlFragment extends Fragment {
     }
   }
 
-  @Subscribe
-  public void handleTrackInfoChange(TrackInfoChange event) {
-    trackArtist.setText(event.getArtist());
-    trackTitle.setText(event.getTitle());
+  private void handleTrackInfoChange(TrackInfoChangeEvent event) {
+    trackArtist.setText(event.getTrackInfo().artist);
+    trackTitle.setText(event.getTrackInfo().title);
   }
 
-  @Subscribe
-  public void handlePlayStateChange(PlayStateChange event) {
+  private void handlePlayStateChange(PlayStateChange event) {
     switch (event.getState()) {
-      case Playing:
+      case PlayerState.PLAYING:
         playPause.setImageResource(R.drawable.ic_action_pause);
         break;
       default:

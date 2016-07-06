@@ -9,15 +9,15 @@ import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.squareup.otto.Bus;
+import com.kelsos.mbrc.events.bus.RxBus;
 
 @Singleton public class MediaIntentHandler {
 
-  public static final int DOUBLE_CLICK_INTERVAL = 350;
-  private final Bus bus;
+  private static final int DOUBLE_CLICK_INTERVAL = 350;
+  private final RxBus bus;
   private long previousClick;
 
-  @Inject public MediaIntentHandler(Bus bus) {
+  @Inject public MediaIntentHandler(RxBus bus) {
     this.bus = bus;
     previousClick = 0;
   }

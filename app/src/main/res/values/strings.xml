@@ -142,4 +142,7 @@
   <string name="refresh_failed">Refresh failed</string>
   <string name="connect_button_description">Connect Button</string>
   <string name="playback_progress">%1$02d:%2$02d</string>
+  <string name="notification_action_previous">Previous</string>
+  <string name="notification_action_play">Play/Pause</string>
+  <string name="notification_action_next">Next</string>
 </resources>
