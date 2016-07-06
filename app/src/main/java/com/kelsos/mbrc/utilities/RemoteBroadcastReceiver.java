@@ -15,13 +15,13 @@ import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.controller.RemoteService;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.squareup.otto.Bus;
+import com.kelsos.mbrc.events.bus.RxBus;
 
 public class RemoteBroadcastReceiver extends BroadcastReceiver {
   private SettingsManager settingsManager;
-  private Bus bus;
+  private RxBus bus;
 
-  @Inject public RemoteBroadcastReceiver(SettingsManager settingsManager, Bus bus) {
+  @Inject public RemoteBroadcastReceiver(SettingsManager settingsManager, RxBus bus) {
     this.settingsManager = settingsManager;
     this.bus = bus;
   }

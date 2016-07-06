@@ -9,8 +9,8 @@ import com.kelsos.mbrc.constants.SocketEventType;
 import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.NotifyUser;
-import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.kelsos.mbrc.utilities.SocketActivityChecker;
 
@@ -39,7 +39,7 @@ import timber.log.Timber;
   private static final int MAX_RETRIES = 3;
   private static final int SOCKET_BUFFER = 4096;
   private int numOfRetries;
-  private MainThreadBusWrapper bus;
+  private RxBus bus;
   private SettingsManager settingsManager;
   private ObjectMapper mapper;
   private boolean shouldStop;
@@ -49,7 +49,7 @@ import timber.log.Timber;
 
   private Subscription subscription;
 
-  @Inject public SocketService(SettingsManager settingsManager, MainThreadBusWrapper bus,
+  @Inject public SocketService(SettingsManager settingsManager, RxBus bus,
       ObjectMapper mapper) {
     this.bus = bus;
     this.settingsManager = settingsManager;

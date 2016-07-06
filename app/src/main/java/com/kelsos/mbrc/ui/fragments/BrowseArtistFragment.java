@@ -17,11 +17,11 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter;
 import com.kelsos.mbrc.data.library.Artist;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.helper.PopupActionHandler;
 import com.kelsos.mbrc.services.BrowseSync;
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView;
-import com.squareup.otto.Bus;
 import roboguice.RoboGuice;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -31,7 +31,7 @@ import timber.log.Timber;
 public class BrowseArtistFragment extends Fragment
     implements ArtistEntryAdapter.MenuItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
   @Inject
-  Bus bus;
+  private RxBus bus;
   @BindView(R.id.search_recycler_view)
   EmptyRecyclerView recycler;
   @BindView(R.id.empty_view)
@@ -64,16 +64,6 @@ public class BrowseArtistFragment extends Fragment
     ButterKnife.bind(this, view);
     swipeLayout.setOnRefreshListener(this);
     return view;
-  }
-
-  @Override public void onResume() {
-    super.onResume();
-    bus.register(this);
-  }
-
-  @Override public void onPause() {
-    super.onPause();
-    bus.unregister(this);
   }
 
   @Override public void onViewCreated(View view, Bundle savedInstanceState) {

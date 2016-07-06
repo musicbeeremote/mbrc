@@ -8,14 +8,15 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.enums.PlayState;
-import com.kelsos.mbrc.events.ui.CoverAvailable;
+import com.kelsos.mbrc.events.bus.RxBus;
+import com.kelsos.mbrc.events.ui.CoverChangedEvent;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
-import com.kelsos.mbrc.events.ui.TrackInfoChange;
+import com.kelsos.mbrc.domain.TrackInfo;
+import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.ui.activities.nav.MainActivity;
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 import roboguice.RoboGuice;
 import timber.log.Timber;
 
@@ -24,7 +25,7 @@ public class WidgetSmall extends AppWidgetProvider {
   @Inject
   private Context context;
   @Inject
-  private Bus bus;
+  private RxBus bus;
 
   private int[] widgetsIds;
 
@@ -39,7 +40,9 @@ public class WidgetSmall extends AppWidgetProvider {
     widgetsIds = appWidgetIds;
 
     try {
-      bus.register(this);
+      bus.register(this,TrackInfoChangeEvent.class, this::updateDisplay);
+      bus.register(this,CoverChangedEvent.class, this::updateCover);
+      bus.register(this,PlayStateChange.class, this::updatePlayState);
     } catch (Exception ignore) {
       // It was already registered so ignore
     }
@@ -69,19 +72,16 @@ public class WidgetSmall extends AppWidgetProvider {
     }
   }
 
-  @Subscribe
-  public void updateDisplay(TrackInfoChange info) {
-
+  private void updateDisplay(TrackInfoChangeEvent event) {
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
     final RemoteViews smallWidget = new RemoteViews(context.getPackageName(), R.layout.widget_small);
-
+    TrackInfo info = event.getTrackInfo();
     smallWidget.setTextViewText(R.id.widget_small_line_one, info.title);
     smallWidget.setTextViewText(R.id.widget_small_line_two, info.artist);
     manager.updateAppWidget(widgetsIds, smallWidget);
   }
 
-  @Subscribe
-  public void updateCover(CoverAvailable coverAvailable) {
+  private void updateCover(CoverChangedEvent coverAvailable) {
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
     final RemoteViews smallWidget = new RemoteViews(context.getPackageName(), R.layout.widget_small);
     if (coverAvailable.isAvailable()) {
@@ -92,13 +92,12 @@ public class WidgetSmall extends AppWidgetProvider {
     manager.updateAppWidget(widgetsIds, smallWidget);
   }
 
-  @Subscribe
-  public void updatePlayState(PlayStateChange state) {
+  private void updatePlayState(PlayStateChange state) {
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
     final RemoteViews smallWidget = new RemoteViews(context.getPackageName(), R.layout.widget_small);
 
     smallWidget.setImageViewResource(R.id.widget_small_play,
-        state.getState() == PlayState.Playing ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
+        PlayerState.PLAYING.equals(state.getState()) ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
     manager.updateAppWidget(widgetsIds, smallWidget);
   }
 }

@@ -23,7 +23,6 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -31,10 +30,12 @@ import butterknife.ButterKnife;
 
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.annotations.Connection;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.controller.RemoteService;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
+import com.kelsos.mbrc.events.bus.RxBus;
+import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
 import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.activities.nav.LibraryActivity;
@@ -44,16 +45,13 @@ import com.kelsos.mbrc.ui.activities.nav.NowPlayingActivity;
 import com.kelsos.mbrc.ui.activities.nav.PlaylistActivity;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 
 import roboguice.RoboGuice;
 import timber.log.Timber;
 
 public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
   @Inject
-  private Bus bus;
-
+  private RxBus bus;
   @BindView(R.id.toolbar)
   Toolbar toolbar;
   @BindView(R.id.drawer_layout)
@@ -135,35 +133,31 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     }
   }
 
-  @Subscribe
-  public void onConnection(ConnectionStatusChange event) {
+  public void onConnection(ConnectionStatusChangeEvent event) {
     Timber.v("Handling new connection status %s", event.getStatus());
     @StringRes int resId;
     @ColorRes int colorId;
-    switch (event.getStatus()) {
-      case CONNECTION_OFF:
-        resId = R.string.drawer_connection_status_off;
-        colorId = R.color.black;
-        break;
-      case CONNECTION_ON:
-        resId = R.string.drawer_connection_status_on;
-        colorId = R.color.accent;
-        break;
-      case CONNECTION_ACTIVE:
-        resId = R.string.drawer_connection_status_active;
-        colorId = R.color.power_on;
-        break;
-      default:
-        resId = R.string.drawer_connection_status_off;
-        colorId = R.color.black;
-        break;
+    if (event.getStatus() == Connection.OFF) {
+      resId = R.string.drawer_connection_status_off;
+      colorId = R.color.black;
+
+    } else if (event.getStatus() == Connection.ON) {
+      resId = R.string.drawer_connection_status_on;
+      colorId = R.color.accent;
+
+    } else if (event.getStatus() == Connection.ACTIVE) {
+      resId = R.string.drawer_connection_status_active;
+      colorId = R.color.power_on;
+    } else {
+      resId = R.string.drawer_connection_status_off;
+      colorId = R.color.black;
+
     }
 
     connectText.setText(resId);
     connect.setColorFilter(ContextCompat.getColor(this, colorId));
   }
 
-  @Subscribe
   public void showSetupDialog(DisplayDialog event) {
     if (mDialog != null) {
       return;
@@ -181,7 +175,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     }
   }
 
-  @Subscribe
   public void handleUserNotification(NotifyUser event) {
     final String message = event.isFromResource() ? getString(event.getResId()) : event.getMessage();
 

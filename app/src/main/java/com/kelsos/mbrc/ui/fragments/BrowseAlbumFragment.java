@@ -17,11 +17,11 @@ import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumEntryAdapter;
 import com.kelsos.mbrc.data.library.Album;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.helper.PopupActionHandler;
 import com.kelsos.mbrc.services.BrowseSync;
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView;
-import com.squareup.otto.Bus;
 import roboguice.RoboGuice;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -31,7 +31,7 @@ import timber.log.Timber;
 public class BrowseAlbumFragment extends Fragment
     implements AlbumEntryAdapter.MenuItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
   @Inject
-  Bus bus;
+  private RxBus bus;
 
   @BindView(R.id.search_recycler_view)
   EmptyRecyclerView recycler;
@@ -67,13 +67,7 @@ public class BrowseAlbumFragment extends Fragment
 
   @Override public void onResume() {
     super.onResume();
-    bus.register(this);
     adapter.refresh();
-  }
-
-  @Override public void onPause() {
-    super.onPause();
-    bus.unregister(this);
   }
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {

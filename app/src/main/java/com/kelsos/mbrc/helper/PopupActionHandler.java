@@ -3,6 +3,7 @@ package com.kelsos.mbrc.helper;
 import android.content.Context;
 import android.content.Intent;
 import android.view.MenuItem;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
@@ -16,15 +17,15 @@ import com.kelsos.mbrc.data.library.Artist;
 import com.kelsos.mbrc.data.library.Genre;
 import com.kelsos.mbrc.data.library.Track;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.ui.activities.profile.AlbumTracksActivity;
 import com.kelsos.mbrc.ui.activities.profile.ArtistAlbumsActivity;
 import com.kelsos.mbrc.ui.activities.profile.GenreArtistsActivity;
-import com.squareup.otto.Bus;
 
 @Singleton
 public class PopupActionHandler {
   @Inject
-  private Bus bus;
+  private RxBus bus;
 
   @Inject
   private Context context;
