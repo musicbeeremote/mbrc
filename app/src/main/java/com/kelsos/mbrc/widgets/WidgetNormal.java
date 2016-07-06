@@ -6,16 +6,18 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
+
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.enums.PlayState;
-import com.kelsos.mbrc.events.ui.CoverAvailable;
+import com.kelsos.mbrc.annotations.PlayerState;
+import com.kelsos.mbrc.domain.TrackInfo;
+import com.kelsos.mbrc.events.bus.RxBus;
+import com.kelsos.mbrc.events.ui.CoverChangedEvent;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
-import com.kelsos.mbrc.events.ui.TrackInfoChange;
+import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.ui.activities.nav.MainActivity;
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
+
 import roboguice.RoboGuice;
 import timber.log.Timber;
 
@@ -24,7 +26,7 @@ public class WidgetNormal extends AppWidgetProvider {
   @Inject
   private Context context;
   @Inject
-  private Bus bus;
+  private RxBus bus;
 
   private int[] widgetsIds;
 
@@ -38,7 +40,9 @@ public class WidgetNormal extends AppWidgetProvider {
     widgetsIds = appWidgetIds;
 
     try {
-      bus.register(this);
+      bus.register(this,TrackInfoChangeEvent.class, this::updateDisplay);
+      bus.register(this,CoverChangedEvent.class, this::updateCover);
+      bus.register(this,PlayStateChange.class, this::updatePlayState);
     } catch (Exception ignore) {
       // It was already registered so ignore
     }
@@ -68,20 +72,17 @@ public class WidgetNormal extends AppWidgetProvider {
     }
   }
 
-  @Subscribe
-  public void updateDisplay(TrackInfoChange info) {
-
+  private void updateDisplay(TrackInfoChangeEvent event) {
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
     final RemoteViews widget = new RemoteViews(context.getPackageName(), R.layout.widget_normal);
-
+    TrackInfo info = event.getTrackInfo();
     widget.setTextViewText(R.id.widget_normal_line_one, info.title);
     widget.setTextViewText(R.id.widget_normal_line_two, info.artist);
     widget.setTextViewText(R.id.widget_normal_line_three, info.album);
     manager.updateAppWidget(widgetsIds, widget);
   }
 
-  @Subscribe
-  public void updateCover(CoverAvailable coverAvailable) {
+  private void updateCover(CoverChangedEvent coverAvailable) {
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
     final RemoteViews widget = new RemoteViews(context.getPackageName(), R.layout.widget_normal);
     if (coverAvailable.isAvailable()) {
@@ -92,13 +93,12 @@ public class WidgetNormal extends AppWidgetProvider {
     manager.updateAppWidget(widgetsIds, widget);
   }
 
-  @Subscribe
-  public void updatePlayState(PlayStateChange state) {
+  private void updatePlayState(PlayStateChange state) {
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
     final RemoteViews widget = new RemoteViews(context.getPackageName(), R.layout.widget_normal);
 
     widget.setImageViewResource(R.id.widget_normal_play,
-        state.getState() == PlayState.Playing ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
+        PlayerState.PLAYING.equals(state.getState()) ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
     manager.updateAppWidget(widgetsIds, widget);
   }
 }

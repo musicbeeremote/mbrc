@@ -14,16 +14,16 @@ import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.LibraryPagerAdapter;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.activities.SearchResultsActivity;
-import com.squareup.otto.Bus;
 import roboguice.RoboGuice;
 
 public class LibraryActivity extends BaseActivity
     implements SearchView.OnQueryTextListener, ViewPager.OnPageChangeListener {
 
   @Inject
-  Bus bus;
+  private RxBus bus;
   @BindView(R.id.search_pager)
   ViewPager pager;
   @BindView(R.id.pager_tab_strip)
@@ -48,18 +48,6 @@ public class LibraryActivity extends BaseActivity
   @Override
   public boolean onQueryTextChange(String newText) {
     return false;
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    bus.register(this);
-  }
-
-  @Override
-  public void onPause() {
-    super.onPause();
-    bus.unregister(this);
   }
 
   @Override

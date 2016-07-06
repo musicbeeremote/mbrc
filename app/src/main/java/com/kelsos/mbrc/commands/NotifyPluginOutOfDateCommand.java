@@ -13,6 +13,6 @@ public class NotifyPluginOutOfDateCommand implements ICommand {
   }
 
   @Override public void execute(IEvent e) {
-    notificationService.updateAvailableNotificationBuilder();
+    //notificationService.updateAvailableNotificationBuilder();
   }
 }

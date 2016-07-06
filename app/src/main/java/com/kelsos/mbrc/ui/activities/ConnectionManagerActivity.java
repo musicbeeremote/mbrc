@@ -19,17 +19,17 @@ import com.kelsos.mbrc.adapters.ConnectionSettingsAdapter;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 import roboguice.RoboGuice;
 
 public class ConnectionManagerActivity extends AppCompatActivity
     implements SettingsDialogFragment.SettingsDialogListener {
-  @Inject Bus bus;
+  @Inject
+  RxBus bus;
   @BindView(R.id.connection_list) RecyclerView mRecyclerView;
   @BindView(R.id.toolbar) Toolbar mToolbar;
   private MaterialDialog mProgress;
@@ -77,7 +77,7 @@ public class ConnectionManagerActivity extends AppCompatActivity
 
   @Override protected void onResume() {
     super.onResume();
-    bus.register(this);
+//    bus.register(this);
   }
 
   @Override protected void onPause() {
@@ -101,13 +101,13 @@ public class ConnectionManagerActivity extends AppCompatActivity
     bus.post(settings);
   }
 
-  @Subscribe public void handleConnectionSettingsChange(ConnectionSettingsChanged event) {
+  public void handleConnectionSettingsChange(ConnectionSettingsChanged event) {
     ConnectionSettingsAdapter mAdapter = new ConnectionSettingsAdapter(event.getSettings(), bus);
     mAdapter.setDefaultIndex(event.getDefaultIndex());
     mRecyclerView.setAdapter(mAdapter);
   }
 
-  @Subscribe public void handleDiscoveryStopped(DiscoveryStopped event) {
+  public void handleDiscoveryStopped(DiscoveryStopped event) {
 
     if (mProgress != null) {
       mProgress.dismiss();
@@ -132,7 +132,7 @@ public class ConnectionManagerActivity extends AppCompatActivity
     Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show();
   }
 
-  @Subscribe public void handleUserNotification(NotifyUser event) {
+  public void handleUserNotification(NotifyUser event) {
     final String message =
         event.isFromResource() ? getString(event.getResId()) : event.getMessage();
 

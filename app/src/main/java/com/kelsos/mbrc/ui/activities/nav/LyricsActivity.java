@@ -11,10 +11,9 @@ import butterknife.ButterKnife;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.LyricsAdapter;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.LyricsUpdated;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +22,7 @@ import roboguice.RoboGuice;
 public class LyricsActivity extends BaseActivity {
   private static final String NEWLINE = "\r\n|\n";
   @Inject
-  Bus bus;
+  private RxBus bus;
   @BindView(R.id.lyrics_recycler_view)
   RecyclerView lyricsRecycler;
   @BindView(R.id.empty_view)
@@ -47,7 +46,7 @@ public class LyricsActivity extends BaseActivity {
   @Override
   public void onStart() {
     super.onStart();
-    bus.register(this);
+    bus.register(this, LyricsUpdated.class, this::updateLyricsData);
   }
 
   @Override
@@ -56,8 +55,7 @@ public class LyricsActivity extends BaseActivity {
     bus.unregister(this);
   }
 
-  @Subscribe
-  public void updateLyricsData(LyricsUpdated update) {
+  private void updateLyricsData(LyricsUpdated update) {
     final String text = update.getLyrics();
 
     final List<String> lyrics = new ArrayList<>(Arrays.asList(text.split(NEWLINE)));
