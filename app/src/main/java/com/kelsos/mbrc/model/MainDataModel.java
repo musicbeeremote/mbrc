@@ -7,6 +7,7 @@ import android.util.Base64;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.annotations.Connection;
+import com.kelsos.mbrc.annotations.Connection.Status;
 import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.annotations.PlayerState.State;
 import com.kelsos.mbrc.annotations.Repeat;
@@ -35,6 +36,7 @@ import com.kelsos.mbrc.events.ui.RemoteClientMetaData;
 import com.kelsos.mbrc.events.ui.RepeatChange;
 import com.kelsos.mbrc.events.ui.ScrobbleChange;
 import com.kelsos.mbrc.events.ui.ShuffleChange;
+import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.events.ui.VolumeChange;
 
 import java.util.ArrayList;
@@ -143,7 +145,10 @@ public class MainDataModel {
     this.album = album;
     this.year = year;
     this.title = title;
-    bus.post(new TrackInfo(artist, title, album, year));
+    TrackInfoChangeEvent event = TrackInfoChangeEvent.builder()
+        .trackInfo(getTrackInfo())
+        .build();
+    bus.post(event);
     updateNotification();
     updateRemoteClient();
   }
@@ -292,14 +297,46 @@ public class MainDataModel {
     return this.pluginProtocol;
   }
 
-
-  public void resendOnInflate(OnMainFragmentOptionsInflated inflated) {
-    bus.post(new ScrobbleChange(isScrobblingActive));
-    bus.post(new LfmRatingChanged(lfmRating));
-  }
-
   public void setPlaylists(List<Playlist> playlists) {
     bus.post(PlaylistAvailable.create(playlists));
+  }
+
+  public LfmStatus getLfmStatus() {
+    return lfmRating;
+  }
+
+  public boolean isScrobblingEnabled() {
+    return isScrobblingActive;
+  }
+
+  public Bitmap getCover() {
+    return cover;
+  }
+
+  @Mode public String getRepeat() {
+    return repeatMode;
+  }
+
+  @ShuffleState public String getShuffle() {
+    return mShuffleState;
+  }
+
+  @State public String getPlayState() {
+    return playState;
+  }
+
+  public TrackInfo getTrackInfo() {
+    return new TrackInfo(artist, title, album, year);
+  }
+
+  @Status public int getConnection() {
+    if (isConnectionActive() && isHandShakeDone) {
+      return Connection.ACTIVE;
+    } else if (isConnectionActive() && !isHandShakeDone) {
+      return Connection.ON;
+    }
+
+    return Connection.OFF;
   }
 }
 

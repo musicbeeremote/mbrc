@@ -11,11 +11,11 @@ public class TrackInfoChangeEvent {
     trackInfo = builder.trackInfo;
   }
 
-  public static Builder newBuilder() {
+  public static Builder builder() {
     return new Builder();
   }
 
-  public static Builder newBuilder(@NonNull TrackInfoChangeEvent copy) {
+  public static Builder builder(@NonNull TrackInfoChangeEvent copy) {
     Builder builder = new Builder();
     builder.trackInfo = copy.trackInfo;
     return builder;
@@ -40,7 +40,7 @@ public class TrackInfoChangeEvent {
      * @param val the {@code trackInfo} to set
      * @return a reference to this Builder
      */
-    @NonNull public Builder withTrackInfo(@NonNull TrackInfo val) {
+    @NonNull public Builder trackInfo(@NonNull TrackInfo val) {
       trackInfo = val;
       return this;
     }

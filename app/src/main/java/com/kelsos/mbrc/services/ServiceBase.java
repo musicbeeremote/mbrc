@@ -33,7 +33,7 @@ public class ServiceBase {
   }
 
   @NonNull
-  protected Observable<SocketMessage> request(String request, Object data) {
+  Observable<SocketMessage> request(String request, Object data) {
     return Observable.using(this::getSocket, this::getObservable, this::cleanup)
         .flatMap(s -> getSocketMessageObservable(request, data, s))
         .skipWhile(this::shouldSkip);
@@ -107,7 +107,7 @@ public class ServiceBase {
   }
 
   @Nullable
-  protected PageRange getPageRange(int offset, int limit) {
+  PageRange getPageRange(int offset, int limit) {
     PageRange range = null;
 
     if (limit > 0) {
