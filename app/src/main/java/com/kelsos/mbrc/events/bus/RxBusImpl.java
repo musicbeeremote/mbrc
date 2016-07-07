@@ -26,6 +26,12 @@ public class RxBusImpl implements RxBus {
     updateSubscriptions(object, subscription);
   }
 
+  @Override
+  public <T> void register(Object object, Class<T> eventClass, Action1<T> onNext, boolean main) {
+    Subscription subscription = register(eventClass, onNext, true);
+    updateSubscriptions(object, subscription);
+  }
+
   private void updateSubscriptions(Object object, Subscription subscription) {
     List<Subscription> subscriptions = activeSubscriptions.get(object);
     if (subscriptions == null) {
