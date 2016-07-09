@@ -1,12 +1,12 @@
-package com.kelsos.mbrc.events.ui;
+package com.kelsos.mbrc.domain;
 
-public class TrackInfoChange {
+public class TrackInfo {
   public String artist;
   public String title;
   public String album;
   public String year;
 
-  public TrackInfoChange(String artist, String title, String album, String year) {
+  public TrackInfo(String artist, String title, String album, String year) {
     this.artist = artist;
     this.title = title;
     this.album = album;

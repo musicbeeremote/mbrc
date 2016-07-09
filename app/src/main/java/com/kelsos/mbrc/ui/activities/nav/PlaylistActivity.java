@@ -12,10 +12,9 @@ import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.PlaylistAvailable;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 import roboguice.RoboGuice;
 
 public class PlaylistActivity extends BaseActivity implements PlaylistAdapter.OnPlaylistPressedListener {
@@ -23,7 +22,7 @@ public class PlaylistActivity extends BaseActivity implements PlaylistAdapter.On
   @BindView(R.id.playlist_list) RecyclerView playlistList;
 
   @Inject private PlaylistAdapter adapter;
-  @Inject private Bus bus;
+  @Inject private RxBus bus;
 
   public PlaylistActivity() {
     // Required empty public constructor
@@ -42,7 +41,7 @@ public class PlaylistActivity extends BaseActivity implements PlaylistAdapter.On
 
   @Override public void onStart() {
     super.onStart();
-    bus.register(this);
+    bus.register(this, PlaylistAvailable.class, this::onPlaylistAvailable);
     bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlaylistList, true)));
   }
 
@@ -51,7 +50,7 @@ public class PlaylistActivity extends BaseActivity implements PlaylistAdapter.On
     bus.unregister(this);
   }
 
-  @Subscribe public void onPlaylistAvailable(PlaylistAvailable event) {
+  private void onPlaylistAvailable(PlaylistAvailable event) {
     adapter.update(event.getPlaylist());
   }
 

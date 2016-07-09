@@ -2,16 +2,18 @@ package com.kelsos.mbrc.controller;
 
 import android.app.Application;
 import android.content.Context;
+
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
+
 import roboguice.RoboGuice;
 import roboguice.inject.ContextScope;
 import timber.log.Timber;
@@ -23,10 +25,11 @@ public class RemoteController implements Runnable {
   private ContextScope scope;
   private final Context context;
 
-  @Inject public RemoteController(Bus bus, Injector injector, Application app) {
+  @Inject
+  public RemoteController(RxBus bus, Injector injector, Application app) {
     this.injector = injector;
     eventQueue = new LinkedBlockingQueue<>();
-    bus.register(this);
+    bus.register(this, MessageEvent.class, this::handleUserActionEvents);
     scope = RoboGuice.getInjector(app).getInstance(ContextScope.class);
     context = app.getApplicationContext();
   }
@@ -51,11 +54,12 @@ public class RemoteController implements Runnable {
    *
    * @param event The message received.
    */
-  @Subscribe public void handleUserActionEvents(MessageEvent event) {
+
+  void handleUserActionEvents(MessageEvent event) {
     eventQueue.add(event);
   }
 
-  public synchronized void executeCommand(IEvent event) {
+  synchronized void executeCommand(IEvent event) {
     final Class<? extends ICommand> commandClass = commandMap.get(event.getType());
     if (commandClass == null) {
       return;
@@ -75,7 +79,8 @@ public class RemoteController implements Runnable {
     }
   }
 
-  @Override public void run() {
+  @Override
+  public void run() {
     try {
       //noinspection InfiniteLoopStatement
       while (true) {

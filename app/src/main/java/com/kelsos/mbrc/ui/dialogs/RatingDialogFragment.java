@@ -12,21 +12,20 @@ import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.RatingChanged;
-import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
-import com.squareup.otto.Subscribe;
 import roboguice.RoboGuice;
 
 public class RatingDialogFragment extends DialogFragment {
 
-  @Inject private MainThreadBusWrapper bus;
+  @Inject private RxBus bus;
   private RatingBar mRatingBar;
   private float mRating;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     RoboGuice.getInjector(getContext()).injectMembers(this);
-    bus.register(this);
+    bus.register(this, RatingChanged.class, this::handleRatingChange);
   }
 
   @Override public void onDestroy() {
@@ -34,7 +33,7 @@ public class RatingDialogFragment extends DialogFragment {
     super.onDestroy();
   }
 
-  @Subscribe public void handleRatingChange(RatingChanged event) {
+  private void handleRatingChange(RatingChanged event) {
     mRating = event.getRating();
   }
 

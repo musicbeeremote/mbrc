@@ -17,13 +17,11 @@ import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.general.SearchDefaultAction;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.NotifyUser;
-import com.squareup.otto.Produce;
-import com.squareup.otto.Subscribe;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
@@ -47,7 +45,7 @@ public class SettingsManager {
 
   private SharedPreferences preferences;
   private Context context;
-  private MainThreadBusWrapper bus;
+  private RxBus bus;
   private List<ConnectionSettings> mSettings;
   private ObjectMapper mMapper;
   private int defaultIndex;
@@ -56,13 +54,14 @@ public class SettingsManager {
   @Inject
   public SettingsManager(Context context,
                          SharedPreferences preferences,
-                         MainThreadBusWrapper bus,
+                         RxBus bus,
                          ObjectMapper mapper) {
     this.preferences = preferences;
     this.context = context;
     this.bus = bus;
     this.mMapper = mapper;
-    bus.register(this);
+    bus.register(this, ConnectionSettings.class, this::handleConnectionSettings);
+    bus.register(this, ChangeSettings.class, this::handleSettingsChange);
 
     updatePreferences();
 
@@ -159,8 +158,7 @@ public class SettingsManager {
     }
   }
 
-  @Subscribe
-  public void handleConnectionSettings(ConnectionSettings settings) {
+  private void handleConnectionSettings(ConnectionSettings settings) {
     if (settings.getIndex() < 0) {
       if (!mSettings.contains(settings)) {
         if (mSettings.size() == 0) {
@@ -208,13 +206,7 @@ public class SettingsManager {
     editor.apply();
   }
 
-  @Produce
-  public ConnectionSettingsChanged produceConnectionSettings() {
-    return new ConnectionSettingsChanged(mSettings, defaultIndex);
-  }
-
-  @Subscribe
-  public void handleSettingsChange(ChangeSettings event) {
+  private void handleSettingsChange(ChangeSettings event) {
     int index = event.getSettings().getIndex();
     switch (event.getAction()) {
       case DELETE:
@@ -241,13 +233,6 @@ public class SettingsManager {
     }
   }
 
-  @Produce
-  public SearchDefaultAction produceAction() {
-    return new SearchDefaultAction(preferences.getString(context.getString(R.string.settings_search_default_key),
-        context.getString(R.string.search_click_default_value)));
-  }
-
-  @Produce
   public DisplayDialog produceDisplayDialog() {
     int run = DisplayDialog.NONE;
     if (isFirstRun && checkIfRemoteSettingsExist()) {

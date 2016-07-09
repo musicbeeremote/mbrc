@@ -1,10 +1,12 @@
 package com.kelsos.mbrc.ui.activities.nav;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
@@ -19,29 +21,36 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
+import com.kelsos.mbrc.annotations.Connection;
+import com.kelsos.mbrc.annotations.PlayerState;
+import com.kelsos.mbrc.annotations.PlayerState.State;
 import com.kelsos.mbrc.annotations.Repeat;
+import com.kelsos.mbrc.annotations.Repeat.Mode;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.UserAction;
-import com.kelsos.mbrc.enums.ConnectionStatus;
+import com.kelsos.mbrc.domain.TrackInfo;
+import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.events.MessageEvent;
-import com.kelsos.mbrc.events.ui.ConnectionStatusChange;
-import com.kelsos.mbrc.events.ui.CoverAvailable;
+import com.kelsos.mbrc.events.bus.RxBus;
+import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
+import com.kelsos.mbrc.events.ui.CoverChangedEvent;
 import com.kelsos.mbrc.events.ui.LfmRatingChanged;
 import com.kelsos.mbrc.events.ui.OnMainFragmentOptionsInflated;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RepeatChange;
 import com.kelsos.mbrc.events.ui.ScrobbleChange;
 import com.kelsos.mbrc.events.ui.ShuffleChange;
-import com.kelsos.mbrc.events.ui.TrackInfoChange;
+import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
+import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.events.ui.UpdatePosition;
 import com.kelsos.mbrc.events.ui.VolumeChange;
+import com.kelsos.mbrc.presenters.MainViewPresenter;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
+import com.kelsos.mbrc.views.MainView;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -56,13 +65,15 @@ import roboguice.RoboGuice;
 import timber.log.Timber;
 
 @Singleton
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements MainView {
   private static final String PAUSED = "Paused";
   private static final String STOPPED = "Stopped";
   private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
   // Injects
   @Inject
-  protected Bus bus;
+  protected RxBus bus;
+  @Inject
+  private MainViewPresenter presenter;
   // Inject elements of the view
   @BindView(R.id.main_artist_label)
   TextView artistLabel;
@@ -126,6 +137,19 @@ public class MainActivity extends BaseActivity {
     public void onStopTrackingTouch(SeekBar seekBar) {
     }
   };
+
+  private void register() {
+    this.bus.register(this, CoverChangedEvent.class, this::handleCoverEvent, true);
+    this.bus.register(this, ShuffleChange.class, this::handleShuffleChange, true);
+    this.bus.register(this, RepeatChange.class, this::updateRepeatButtonState, true);
+    this.bus.register(this, VolumeChange.class, this::updateVolumeData, true);
+    this.bus.register(this, PlayStateChange.class, this::handlePlayStateChange, true);
+    this.bus.register(this, TrackInfoChangeEvent.class, this::handleTrackInfoChange, true);
+    this.bus.register(this, ConnectionStatusChangeEvent.class, this::handleConnectionStatusChange, true);
+    this.bus.register(this, UpdatePosition.class, this::handlePositionUpdate, true);
+    this.bus.register(this, ScrobbleChange.class, this::handleScrobbleChange, true);
+    this.bus.register(this, LfmRatingChanged.class, this::handleLfmLoveChange, true);
+  }
 
   @OnClick(R.id.main_button_play_pause)
   void playButtonPressed() {
@@ -196,21 +220,29 @@ public class MainActivity extends BaseActivity {
   public void onStart() {
     super.onStart();
     setTextViewTypeface();
-    bus.register(this);
+
   }
 
   @Override
   public void onResume() {
     super.onResume();
-    final UserAction action = new UserAction(Protocol.NowPlayingPosition, true);
-    bus.post(new MessageEvent(ProtocolEventType.UserAction, action));
+    register();
+    presenter.attach(this);
+    presenter.requestNowPlayingPosition();
+    presenter.load();
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    presenter.detach();
   }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_lastfm_scrobble:
-        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlayerScrobble, Const.TOGGLE)));
+        presenter.toggleScrobbling();
         return true;
       case R.id.menu_rating_dialog:
         final RatingDialogFragment ratingDialog = new RatingDialogFragment();
@@ -265,6 +297,7 @@ public class MainActivity extends BaseActivity {
     return super.onCreateOptionsMenu(menu);
   }
 
+
   private Intent getShareIntent() {
     Intent shareIntent = new Intent(Intent.ACTION_SEND);
     shareIntent.setType("text/plain");
@@ -273,26 +306,35 @@ public class MainActivity extends BaseActivity {
     return shareIntent;
   }
 
-  @Subscribe
-  public void handleCoverEvent(final CoverAvailable cevent) {
+
+  private void handleCoverEvent(final CoverChangedEvent cevent) {
+    updateCover(cevent.getCover());
+  }
+
+  @Override
+  public void updateCover(@Nullable Bitmap cover) {
     if (albumCover == null) {
       return;
     }
-    if (cevent.isAvailable()) {
-      albumCover.setImageBitmap(cevent.getCover());
+    if (cover != null) {
+      albumCover.setImageBitmap(cover);
     } else {
       albumCover.setImageResource(R.drawable.ic_image_no_cover);
     }
   }
 
-  @Subscribe
-  public void handleShuffleChange(ShuffleChange change) {
+  private void handleShuffleChange(ShuffleChange change) {
+    updateShuffleState(change.getShuffleState());
+  }
+
+  @Override
+  public void updateShuffleState(@ShuffleState String shuffleState) {
     if (shuffleButton == null) {
       return;
     }
 
-    final boolean shuffle = !ShuffleChange.OFF.equals(change.getShuffleState());
-    final boolean autoDj = ShuffleChange.AUTODJ.equals(change.getShuffleState());
+    final boolean shuffle = !ShuffleChange.OFF.equals(shuffleState);
+    final boolean autoDj = ShuffleChange.AUTODJ.equals(shuffleState);
 
     int color = ContextCompat.getColor(this, shuffle ? R.color.accent : R.color.button_dark);
     shuffleButton.setColorFilter(color);
@@ -300,13 +342,17 @@ public class MainActivity extends BaseActivity {
     shuffleButton.setImageResource(autoDj ? R.drawable.ic_headset_black_24dp : R.drawable.ic_shuffle_black_24dp);
   }
 
-  @Subscribe
-  public void updateRepeatButtonState(RepeatChange change) {
+
+  private void updateRepeatButtonState(RepeatChange change) {
+    updateRepeat(change.getMode());
+  }
+
+  @Override
+  public void updateRepeat(@Mode String mode) {
     if (repeatButton == null) {
       return;
     }
 
-    final String mode = change.getMode();
     @ColorRes int colorId = R.color.accent;
     @DrawableRes int resId = R.drawable.ic_repeat_black_24dp;
 
@@ -324,27 +370,39 @@ public class MainActivity extends BaseActivity {
     repeatButton.setColorFilter(color);
   }
 
-  @Subscribe
-  public void updateVolumeData(VolumeChange change) {
+
+  private void updateVolumeData(VolumeChange change) {
+    updateVolume(change.getVolume(), change.isMute());
+  }
+
+  @Override
+  public void updateVolume(int volume, boolean mute) {
     if (volumeBar == null) {
       return;
     }
+
     if (!userChangingVolume) {
-      volumeBar.setProgress(change.getVolume());
+      volumeBar.setProgress(volume);
     }
+
     if (muteButton == null) {
       return;
     }
 
     int color = ContextCompat.getColor(this, R.color.button_dark);
     muteButton.setColorFilter(color);
-    muteButton.setImageResource(change.isMute()
+    muteButton.setImageResource(mute
         ? R.drawable.ic_volume_off_black_24dp
         : R.drawable.ic_volume_up_black_24dp);
   }
 
-  @Subscribe
-  public void handlePlayStateChange(final PlayStateChange change) {
+
+  private void handlePlayStateChange(final PlayStateChange change) {
+    updatePlayState(change.getState());
+  }
+
+  @Override
+  public void updatePlayState(@State String state) {
     if (playPauseButton == null) {
       return;
     }
@@ -352,31 +410,31 @@ public class MainActivity extends BaseActivity {
     @DrawableRes int resId;
     String tag;
 
-    switch (change.getState()) {
-      case Playing:
-        resId = R.drawable.ic_pause_circle_filled_black_24dp;
-        tag = "Playing";
+
+    if (PlayerState.PLAYING.equals(state)) {
+      resId = R.drawable.ic_pause_circle_filled_black_24dp;
+      tag = "Playing";
         /* Start the animation if the track is playing*/
-        bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.NowPlayingPosition, true)));
-        trackProgressAnimation();
-        break;
-      case Paused:
-        resId = R.drawable.ic_play_circle_filled_black_24dp;
-        tag = PAUSED;
+     presenter.requestNowPlayingPosition();
+      trackProgressAnimation();
+
+    } else if (PlayerState.PAUSED.equals(state)) {
+      resId = R.drawable.ic_play_circle_filled_black_24dp;
+      tag = PAUSED;
         /* Stop the animation if the track is paused*/
-        stopTrackProgressAnimation();
-        break;
-      case Stopped:
-        resId = R.drawable.ic_play_circle_filled_black_24dp;
-        tag = STOPPED;
+      stopTrackProgressAnimation();
+
+    } else if (PlayerState.STOPPED.equals(state)) {
+      resId = R.drawable.ic_play_circle_filled_black_24dp;
+      tag = STOPPED;
         /* Stop the animation if the track is paused*/
-        stopTrackProgressAnimation();
-        activateStoppedState();
-        break;
-      default:
-        resId = R.drawable.ic_play_circle_filled_black_24dp;
-        tag = STOPPED;
-        break;
+      stopTrackProgressAnimation();
+      activateStoppedState();
+
+    } else {
+      resId = R.drawable.ic_play_circle_filled_black_24dp;
+      tag = STOPPED;
+
     }
 
     playPauseButton.setColorFilter(accentColor);
@@ -428,6 +486,7 @@ public class MainActivity extends BaseActivity {
     mProgressUpdateHandler = progressScheduler.scheduleAtFixedRate(updateProgress, 0, timePeriod, TimeUnit.SECONDS);
   }
 
+
   private void activateStoppedState() {
     if (trackProgressCurrent == null || progressBar == null) {
       return;
@@ -436,25 +495,34 @@ public class MainActivity extends BaseActivity {
     trackProgressCurrent.setText(getString(R.string.playback_progress, 0, 0));
   }
 
-  @Subscribe
-  public void handleTrackInfoChange(final TrackInfoChange change) {
+
+  private void handleTrackInfoChange(final TrackInfoChangeEvent change) {
+    updateTrackInfo(change.getTrackInfo());
+  }
+
+  @Override
+  public void updateTrackInfo(TrackInfo info) {
     if (artistLabel == null) {
       return;
     }
-    artistLabel.setText(change.getArtist());
-    titleLabel.setText(change.getTitle());
-    albumLabel.setText(TextUtils.isEmpty(change.getYear())
-        ? change.getAlbum()
-        : String.format("%s [%s]", change.getAlbum(), change.getYear()));
+    artistLabel.setText(info.getArtist());
+    titleLabel.setText(info.getTitle());
+    albumLabel.setText(TextUtils.isEmpty(info.getYear())
+        ? info.getAlbum()
+        : String.format("%s [%s]", info.getAlbum(), info.getYear()));
 
     if (mShareActionProvider != null) {
       mShareActionProvider.setShareIntent(getShareIntent());
     }
   }
 
-  @Subscribe
-  public void handleConnectionStatusChange(final ConnectionStatusChange change) {
-    if (change.getStatus() == ConnectionStatus.CONNECTION_OFF) {
+  private void handleConnectionStatusChange(final ConnectionStatusChangeEvent change) {
+    updateConnection(change.getStatus());
+  }
+
+  @Override
+  public void updateConnection(int status) {
+    if (status == Connection.OFF) {
       stopTrackProgressAnimation();
       activateStoppedState();
     }
@@ -465,8 +533,8 @@ public class MainActivity extends BaseActivity {
    * duration and the
    * current progress of playback
    */
-  @Subscribe
-  public void handlePositionUpdate(UpdatePosition position) {
+
+  private void handlePositionUpdate(UpdatePosition position) {
     final int total = position.getTotal();
     final int current = position.getCurrent();
     if (trackProgressCurrent == null || progressBar == null || trackDuration == null) {
@@ -496,8 +564,12 @@ public class MainActivity extends BaseActivity {
     trackProgressAnimation();
   }
 
-  @Subscribe
-  public void handleScrobbleChange(ScrobbleChange event) {
+  private void handleScrobbleChange(ScrobbleChange event) {
+    updateScrobbleStatus(event.isActive());
+  }
+
+  @Override
+  public void updateScrobbleStatus(boolean active) {
     if (menu == null) {
       return;
     }
@@ -505,11 +577,16 @@ public class MainActivity extends BaseActivity {
     if (scrobbleMenuItem == null) {
       return;
     }
-    scrobbleMenuItem.setChecked(event.isActive());
+
+    scrobbleMenuItem.setChecked(active);
   }
 
-  @Subscribe
-  public void handleLfmLoveChange(LfmRatingChanged event) {
+  private void handleLfmLoveChange(LfmRatingChanged event) {
+    updateLfmStatus(event.getStatus());
+  }
+
+  @Override
+  public void updateLfmStatus(LfmStatus status) {
     if (menu == null) {
       return;
     }
@@ -517,7 +594,8 @@ public class MainActivity extends BaseActivity {
     if (favoriteMenuItem == null) {
       return;
     }
-    switch (event.getStatus()) {
+
+    switch (status) {
       case LOVED:
         favoriteMenuItem.setIcon(R.drawable.ic_favorite_black_24dp);
         break;

@@ -120,6 +120,10 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
     fromTrack.setPosition(position);
     toTrack.save();
     fromTrack.save();
+    // Before saving remove the listener to avoid interrupting the swapping functionality
+    data.removeOnCursorRefreshListener(this);
+    data.refresh();
+    data.addOnCursorRefreshListener(this);
     Timber.v("after swap => from => %s to => %s", fromTrack, toTrack);
   }
 

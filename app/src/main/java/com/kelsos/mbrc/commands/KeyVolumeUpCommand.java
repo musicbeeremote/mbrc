@@ -5,16 +5,16 @@ import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
+import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
-import com.squareup.otto.Bus;
 
 public class KeyVolumeUpCommand implements ICommand {
   private MainDataModel model;
-  private Bus bus;
+  private RxBus bus;
 
-  @Inject public KeyVolumeUpCommand(final MainDataModel model, final Bus bus) {
+  @Inject public KeyVolumeUpCommand(final MainDataModel model, final RxBus bus) {
     this.model = model;
     this.bus = bus;
   }

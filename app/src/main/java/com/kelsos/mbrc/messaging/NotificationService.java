@@ -1,261 +1,149 @@
 package com.kelsos.mbrc.messaging;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.session.MediaSession;
-import android.net.Uri;
-import android.os.Build;
-import android.support.v4.app.NotificationCompat;
-import android.widget.RemoteViews;
+import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v7.app.NotificationCompat;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.enums.PlayState;
-import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
+import com.kelsos.mbrc.annotations.Connection;
+import com.kelsos.mbrc.annotations.PlayerState;
+import com.kelsos.mbrc.events.bus.RxBus;
+import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
+import com.kelsos.mbrc.events.ui.CoverChangedEvent;
+import com.kelsos.mbrc.events.ui.PlayStateChange;
+import com.kelsos.mbrc.domain.TrackInfo;
+import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
+import com.kelsos.mbrc.model.NotificationModel;
 import com.kelsos.mbrc.services.RemoteSessionManager;
-import com.kelsos.mbrc.utilities.MainThreadBusWrapper;
-import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder;
 import com.kelsos.mbrc.utilities.SettingsManager;
-import com.kelsos.mbrc.widgets.WidgetNormal;
-import com.kelsos.mbrc.widgets.WidgetSmall;
-import com.squareup.otto.Subscribe;
+import timber.log.Timber;
 
-@Singleton
-public class NotificationService {
-  private static final int PLUGIN_OUT_OF_DATE = 15612;
+import static com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.NEXT;
+import static com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.OPEN;
+import static com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PLAY;
+import static com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PREVIOUS;
+import static com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.getPendingIntent;
+
+@Singleton public class NotificationService {
   public static final int NOW_PLAYING_PLACEHOLDER = 15613;
   private final RemoteSessionManager sessionManager;
-  private RemoteViews mNormalView;
-  private RemoteViews mExpandedView;
-  private Notification mNotification;
-  private NotificationManager mNotificationManager;
-  private Context mContext;
-  private SettingsManager mSettings;
+  private Notification notification;
+  @Inject private NotificationManagerCompat notificationManager;
+  @Inject private NotificationModel model;
+  private Context context;
+  private SettingsManager settings;
+  private String previous;
+  private String play;
+  private String next;
 
   @Inject
   public NotificationService(Context context,
-      MainThreadBusWrapper bus,
-      RemoteSessionManager sessionManager,
-      SettingsManager mSettings) {
-    this.mContext = context;
+                             RxBus bus,
+                             RemoteSessionManager sessionManager,
+                             SettingsManager settings) {
+    this.context = context;
     this.sessionManager = sessionManager;
-    this.mSettings = mSettings;
-    mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-    bus.register(this);
+    this.settings = settings;
+    bus.register(this, TrackInfoChangeEvent.class, this::handleTrackInfo);
+    bus.register(this, CoverChangedEvent.class, this::coverChanged);
+    bus.register(this, PlayStateChange.class, this::playStateChanged);
+    bus.register(this, ConnectionStatusChangeEvent.class, this::connectionChanged);
+    previous = context.getString(R.string.notification_action_previous);
+    play = context.getString(R.string.notification_action_play);
+    next = context.getString(R.string.notification_action_next);
   }
 
-  private void updateWidgets() {
-    AppWidgetManager widgetManager = AppWidgetManager.getInstance(mContext);
-
-    int[] normalWidgetIds = widgetManager.getAppWidgetIds(new ComponentName(mContext, WidgetNormal.class));
-    int[] smallWidgetIds = widgetManager.getAppWidgetIds(new ComponentName(mContext, WidgetSmall.class));
-
-    if (normalWidgetIds.length > 0) {
-      WidgetNormal normalWidget = new WidgetNormal();
-      normalWidget.onUpdate(mContext, AppWidgetManager.getInstance(mContext), normalWidgetIds);
-    }
-
-    if (smallWidgetIds.length > 0) {
-      WidgetSmall small = new WidgetSmall();
-      small.onUpdate(mContext, AppWidgetManager.getInstance(mContext), smallWidgetIds);
-    }
+  private void handleTrackInfo(TrackInfoChangeEvent event) {
+    model.setTrackInfo(event.getTrackInfo());
+    notification = createBuilder().build();
+    notificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification);
   }
 
-  @Subscribe
-  public void handleNotificationData(final NotificationDataAvailable event) {
-    updateWidgets();
-    if (!mSettings.isNotificationControlEnabled()) {
-      return;
-    }
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-      notificationBuilder(event.getTitle(), event.getArtist(), event.getAlbum(), event.getCover(), event.getState());
-    } else {
-      buildLollipopNotification(event);
-    }
+  private void coverChanged(CoverChangedEvent event) {
+    model.setCover(event.getCover());
+    notification = createBuilder().build();
+    notificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification);
   }
 
-  /**
-   * Creates an ongoing notification that displays the cover and information about the playing
-   * track,
-   * and also provides controls to skip or play/pause.
-   *
-   * @param title The title of the track playing.
-   * @param artist The artist of the track playing.
-   * @param cover The cover Bitmap.
-   * @param state The current play state is used to display the proper play or pause icon.
-   */
-  @SuppressLint("NewApi")
-  private void notificationBuilder(final String title,
-      final String artist,
-      final String album,
-      final Bitmap cover,
-      final PlayState state) {
+  private void playStateChanged(PlayStateChange event) {
+    model.setPlayState(event.getState());
+    notification = createBuilder().build();
+    notificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification);
+  }
 
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+  private void connectionChanged(ConnectionStatusChangeEvent event) {
+    if (!settings.isNotificationControlEnabled()) {
+      Timber.v("Notification is off doing nothing");
       return;
     }
 
-    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
-    mNormalView = new RemoteViews(mContext.getPackageName(), R.layout.ui_notification_control);
-    updateNormalNotification(artist, title, cover);
-
-    mBuilder.setContentIntent(RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.OPEN, mContext));
-    mNormalView.setOnClickPendingIntent(R.id.notification_play,
-        RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PLAY, mContext));
-    mNormalView.setOnClickPendingIntent(R.id.notification_next,
-        RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.NEXT, mContext));
-    mNormalView.setOnClickPendingIntent(R.id.notification_close,
-        RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.CLOSE, mContext));
-
-    mNotification = mBuilder.build();
-
-    if (isJellyBean()) {
-      mExpandedView = new RemoteViews(mContext.getPackageName(), R.layout.ui_notification_control_expanded);
-      updateExpandedNotification(artist, title, album, cover);
-      mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_playpause,
-          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PLAY, mContext));
-      mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_next,
-          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.NEXT, mContext));
-      mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_previous,
-          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PREVIOUS, mContext));
-      mExpandedView.setOnClickPendingIntent(R.id.expanded_notification_remove,
-          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.CLOSE, mContext));
-      mNotification.bigContentView = mExpandedView;
+    if (event.getStatus() == Connection.OFF) {
+      notificationManager.cancel(NOW_PLAYING_PLACEHOLDER);
     }
 
-    updatePlayState(state);
-
-    mNotification.contentView = mNormalView;
-    mNotification.flags = Notification.FLAG_ONGOING_EVENT;
-    mNotification.icon = R.drawable.ic_mbrc_status;
-    mNotificationManager.notify(NOW_PLAYING_PLACEHOLDER, mNotification);
+    notification = createBuilder().build();
   }
 
-  /**
-   * Builds a {@link Notification.MediaStyle} style Notification to display.
-   * Used only on {@link android.os.Build.VERSION_CODES#LOLLIPOP}.
-   *
-   * @param event A notification event that the notification service received
-   */
-  @SuppressLint("NewApi")
-  private void buildLollipopNotification(NotificationDataAvailable event) {
-    int playStateIcon = event.getState() == PlayState.Playing ? R.drawable.ic_action_pause : R.drawable.ic_action_play;
+  private NotificationCompat.Builder createBuilder() {
+    final NotificationCompat.MediaStyle mediaStyle = new NotificationCompat.MediaStyle();
+    mediaStyle.setMediaSession(sessionManager.getMediaSessionToken());
 
-    final Notification.MediaStyle mediaStyle = new Notification.MediaStyle();
+    NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+    int resId = model.getPlayState().equals(PlayerState.PLAYING)
+        ? R.drawable.ic_action_pause
+        : R.drawable.ic_action_play;
 
-    mediaStyle.setMediaSession((MediaSession.Token) sessionManager.getMediaSessionToken().getToken());
-
-    Notification.Builder builder = new Notification.Builder(mContext).setVisibility(Notification.VISIBILITY_PUBLIC)
+    builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         .setSmallIcon(R.drawable.ic_mbrc_status)
-        .addAction(R.drawable.ic_action_previous,
-            "Previous",
-            RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PREVIOUS, mContext))
-        .addAction(playStateIcon,
-            "Play/Pause",
-            RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PLAY, mContext))
-        .addAction(R.drawable.ic_action_next,
-            "Next",
-            RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.NEXT, mContext))
         .setStyle(mediaStyle.setShowActionsInCompactView(1, 2))
-        .setContentTitle(event.getTitle())
-        .setContentText(event.getArtist())
-        .setDeleteIntent(RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.CANCEL, mContext))
-        .setSubText(event.getAlbum());
+        .addAction(getPreviousAction())
+        .addAction(getPlayAction(resId))
+        .addAction(getNextAction());
 
-    builder.setContentIntent(RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.OPEN, mContext));
-
-    if (event.getCover() != null) {
-      builder.setLargeIcon(event.getCover());
+    if (model.getCover() != null) {
+      builder.setLargeIcon(model.getCover());
     } else {
-      Bitmap icon = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_image_no_cover);
+      Bitmap icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_image_no_cover);
       builder.setLargeIcon(icon);
     }
 
-    mNotification = builder.build();
+    TrackInfo info = model.getTrackInfo();
 
-    mNotificationManager.notify(NOW_PLAYING_PLACEHOLDER, mNotification);
-  }
-
-  private void updateNormalNotification(final String artist, final String title, final Bitmap cover) {
-    mNormalView.setTextViewText(R.id.notification_artist, artist);
-    mNormalView.setTextViewText(R.id.notification_title, title);
-    if (cover != null) {
-      mNormalView.setImageViewBitmap(R.id.notification_album_art, cover);
-    } else {
-      mNormalView.setImageViewResource(R.id.notification_album_art, R.drawable.ic_image_no_cover);
-    }
-  }
-
-  private boolean isJellyBean() {
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
-  }
-
-  private void updateExpandedNotification(final String artist,
-      final String title,
-      final String album,
-      final Bitmap cover) {
-    mExpandedView.setTextViewText(R.id.expanded_notification_line_one, title);
-    mExpandedView.setTextViewText(R.id.expanded_notification_line_two, artist);
-    mExpandedView.setTextViewText(R.id.expanded_notification_line_three, album);
-
-    if (cover != null) {
-      mExpandedView.setImageViewBitmap(R.id.expanded_notification_cover, cover);
-    } else {
-      mExpandedView.setImageViewResource(R.id.expanded_notification_cover, R.drawable.ic_image_no_cover);
-    }
-  }
-
-  private void updatePlayState(final PlayState state) {
-    if (mNormalView == null || mNotification == null) {
-      return;
+    if (info != null) {
+      builder.setContentTitle(info.getTitle()).setContentText(info.getArtist()).setSubText(info.getAlbum());
     }
 
-    mNormalView.setImageViewResource(R.id.notification_play,
-        state == PlayState.Playing ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
+    builder.setContentIntent(getPendingIntent(OPEN, context));
 
-    if (isJellyBean() && mExpandedView != null) {
+    return builder;
+  }
 
-      mExpandedView.setImageViewResource(R.id.expanded_notification_playpause,
-          state == PlayState.Playing ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
-    }
+  @NonNull
+  private NotificationCompat.Action getPreviousAction() {
+    PendingIntent previousIntent = getPendingIntent(PREVIOUS, context);
+    return new NotificationCompat.Action.Builder(R.drawable.ic_action_previous, previous, previousIntent).build();
+  }
+
+  @NonNull
+  private NotificationCompat.Action getPlayAction(int playStateIcon) {
+    PendingIntent playIntent = getPendingIntent(PLAY, context);
+
+    return new NotificationCompat.Action.Builder(playStateIcon, play, playIntent).build();
+  }
+
+  @NonNull
+  private NotificationCompat.Action getNextAction() {
+    PendingIntent nextIntent = getPendingIntent(NEXT, context);
+    return new NotificationCompat.Action.Builder(R.drawable.ic_action_next, next, nextIntent).build();
   }
 
   public void cancelNotification(final int notificationId) {
-    mNotificationManager.cancel(notificationId);
-  }
-
-  @SuppressLint("NewApi")
-  public void updateAvailableNotificationBuilder() {
-    NotificationCompat.Builder
-        mBuilder
-        = new NotificationCompat.Builder(mContext).setSmallIcon(R.drawable.ic_mbrc_status)
-        .setContentTitle(mContext.getString(R.string.application_name))
-        .setContentText(mContext.getString(R.string.notification_plugin_out_of_date));
-
-    Intent resultIntent = new Intent(Intent.ACTION_VIEW);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-      resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-    } else {
-      resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    }
-
-    resultIntent.setData(Uri.parse("http://kelsos.net/musicbeeremote/download/"));
-
-    PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext,
-        0,
-        resultIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT);
-    mBuilder.setContentIntent(resultPendingIntent);
-    final Notification notification = mBuilder.build();
-    notification.flags = Notification.FLAG_AUTO_CANCEL;
-    mNotificationManager.notify(PLUGIN_OUT_OF_DATE, notification);
+    notificationManager.cancel(notificationId);
   }
 }
