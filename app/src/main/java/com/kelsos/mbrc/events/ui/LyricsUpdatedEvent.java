@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.events.ui;
 
-public class LyricsUpdated {
+public class LyricsUpdatedEvent {
 
   private String lyrics;
 
-  public LyricsUpdated(String lyrics) {
+  public LyricsUpdatedEvent(String lyrics) {
     this.lyrics = lyrics;
   }
 
