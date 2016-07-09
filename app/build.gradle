@@ -24,7 +24,7 @@ android {
 
   defaultConfig {
     applicationId "com.kelsos.mbrc"
-    minSdkVersion 9
+    minSdkVersion 16
     targetSdkVersion 24
     versionCode 106
     versionName "0.12.0"
@@ -126,7 +126,6 @@ dependencies {
   compile "com.android.support:support-annotations:${supportLibraryVersion}"
   compile "com.android.support:recyclerview-v7:${supportLibraryVersion}"
   compile "com.android.support:design:${supportLibraryVersion}"
-  compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha3'
 
   apt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
   // use kapt for kotlin apt
