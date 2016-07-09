@@ -22,4 +22,8 @@ public class UserAction {
   @NonNull public static UserAction create(String context) {
     return new UserAction(context, true);
   }
+
+  @NonNull public static UserAction create(String context, Object data) {
+    return new UserAction(context, data);
+  }
 }
