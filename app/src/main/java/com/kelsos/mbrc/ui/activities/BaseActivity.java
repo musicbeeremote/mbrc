@@ -276,5 +276,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     this.bus.register(this, ConnectionStatusChangeEvent.class, this::onConnection, true);
     this.bus.post(RequestConnectionStateEvent.create());
   }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    this.bus.unregister(this);
+  }
 }
 

@@ -47,6 +47,7 @@ import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState;
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.events.ui.UpdatePosition;
 import com.kelsos.mbrc.events.ui.VolumeChange;
+import com.kelsos.mbrc.helper.VolumeChangeHelper;
 import com.kelsos.mbrc.presenters.MainViewPresenter;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
@@ -100,27 +101,9 @@ public class MainActivity extends BaseActivity implements MainView {
   @BindView(R.id.main_album_cover_image_view)
   ImageView albumCover;
   private ShareActionProvider mShareActionProvider;
-  private boolean userChangingVolume;
   private int previousVol;
   private ScheduledFuture mProgressUpdateHandler;
   private Menu menu;
-  private SeekBar.OnSeekBarChangeListener volumeBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
-
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-      if (fromUser) {
-        final UserAction action = new UserAction(Protocol.PlayerVolume, String.valueOf(seekBar.getProgress()));
-        postAction(action);
-      }
-    }
-
-    public void onStopTrackingTouch(SeekBar seekBar) {
-      userChangingVolume = false;
-    }
-
-    public void onStartTrackingTouch(SeekBar seekBar) {
-      userChangingVolume = true;
-    }
-  };
 
   private SeekBar.OnSeekBarChangeListener progressBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -137,6 +120,7 @@ public class MainActivity extends BaseActivity implements MainView {
     public void onStopTrackingTouch(SeekBar seekBar) {
     }
   };
+  private VolumeChangeHelper volumeChangeListener;
 
   private void register() {
     this.bus.register(this, CoverChangedEvent.class, this::handleCoverEvent, true);
@@ -204,6 +188,10 @@ public class MainActivity extends BaseActivity implements MainView {
     bus.post(new MessageEvent(ProtocolEventType.UserAction, action));
   }
 
+  private void changeVolume(int volume) {
+    postAction(UserAction.create(Protocol.PlayerVolume, volume));
+  }
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -211,9 +199,9 @@ public class MainActivity extends BaseActivity implements MainView {
     RoboGuice.getInjector(this).injectMembers(this);
     ButterKnife.bind(this);
     super.setup();
+    volumeChangeListener = new VolumeChangeHelper(this::changeVolume);
+    volumeBar.setOnSeekBarChangeListener(volumeChangeListener);
     progressBar.setOnSeekBarChangeListener(progressBarChangeListener);
-    volumeBar.setOnSeekBarChangeListener(volumeBarChangeListener);
-    userChangingVolume = false;
   }
 
   @Override
@@ -381,7 +369,7 @@ public class MainActivity extends BaseActivity implements MainView {
       return;
     }
 
-    if (!userChangingVolume) {
+    if (!volumeChangeListener.isUserChangingVolume()) {
       volumeBar.setProgress(volume);
     }
 
