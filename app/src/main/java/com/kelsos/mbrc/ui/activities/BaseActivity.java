@@ -45,6 +45,7 @@ import com.kelsos.mbrc.ui.activities.nav.NowPlayingActivity;
 import com.kelsos.mbrc.ui.activities.nav.PlaylistActivity;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
+import com.raizlabs.android.dbflow.annotation.provider.Notify;
 
 import roboguice.RoboGuice;
 import timber.log.Timber;
@@ -133,7 +134,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     }
   }
 
-  public void onConnection(ConnectionStatusChangeEvent event) {
+  private void onConnection(ConnectionStatusChangeEvent event) {
     Timber.v("Handling new connection status %s", event.getStatus());
     @StringRes int resId;
     @ColorRes int colorId;
@@ -158,7 +159,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     connect.setColorFilter(ContextCompat.getColor(this, colorId));
   }
 
-  public void showSetupDialog(DisplayDialog event) {
+  private void showSetupDialog(DisplayDialog event) {
     if (mDialog != null) {
       return;
     }
@@ -175,7 +176,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     }
   }
 
-  public void handleUserNotification(NotifyUser event) {
+  private void handleUserNotification(NotifyUser event) {
     final String message = event.isFromResource() ? getString(event.getResId()) : event.getMessage();
 
     View focus = getCurrentFocus();
@@ -266,6 +267,14 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     }
 
     navigationView.setCheckedItem(active());
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    this.bus.register(this, NotifyUser.class, this::handleUserNotification, true);
+    this.bus.register(this, DisplayDialog.class, this::showSetupDialog, true);
+    this.bus.register(this, ConnectionStatusChangeEvent.class, this::onConnection, true);
   }
 }
 
