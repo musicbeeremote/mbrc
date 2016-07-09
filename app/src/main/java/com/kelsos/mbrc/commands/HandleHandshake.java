@@ -3,14 +3,14 @@ package com.kelsos.mbrc.commands;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
-import com.kelsos.mbrc.model.MainDataModel;
+import com.kelsos.mbrc.model.ConnectionModel;
 import com.kelsos.mbrc.services.ProtocolHandler;
 
 public class HandleHandshake implements ICommand {
   private ProtocolHandler handler;
-  private MainDataModel model;
+  private ConnectionModel model;
 
-  @Inject public HandleHandshake(ProtocolHandler handler, MainDataModel model) {
+  @Inject public HandleHandshake(ProtocolHandler handler, ConnectionModel model) {
     this.handler = handler;
     this.model = model;
   }

@@ -94,6 +94,7 @@ public class NowPlayingActivity extends BaseActivity
     RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
     nowPlayingList.setLayoutManager(manager);
     nowPlayingList.setAdapter(adapter);
+    nowPlayingList.getItemAnimator().setChangeDuration(0);
     ItemTouchHelper.Callback callback = new SimpleItenTouchHelper(adapter);
     ItemTouchHelper helper = new ItemTouchHelper(callback);
     helper.attachToRecyclerView(nowPlayingList);
@@ -123,7 +124,7 @@ public class NowPlayingActivity extends BaseActivity
   @Override
   public void onResume() {
     super.onResume();
-    bus.register(this, TrackInfoChangeEvent.class, trackInfoChangeEvent -> handlePlayingTrackChange(trackInfoChangeEvent.getTrackInfo()));
+    bus.register(this, TrackInfoChangeEvent.class, trackInfoChangeEvent -> handlePlayingTrackChange(trackInfoChangeEvent.getTrackInfo()), true);
   }
 
   @Override
