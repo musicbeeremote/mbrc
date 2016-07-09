@@ -5,6 +5,7 @@ public class Const {
   public static final String PLUGIN = "plugin";
   public static final String VERSIONS = "versions";
   public static final String SUB = "sub";
+  public static final String LYRICS_NEWLINE = "\r\n|\n";
 
   private Const() { }
   public static final String DATA = "data";
