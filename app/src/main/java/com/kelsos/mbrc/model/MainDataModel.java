@@ -21,7 +21,6 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.CoverChangedEvent;
 import com.kelsos.mbrc.events.ui.LfmRatingChanged;
-import com.kelsos.mbrc.events.ui.LyricsUpdated;
 import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
 import com.kelsos.mbrc.events.ui.NowPlayingListAvailable;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
@@ -53,7 +52,7 @@ public class MainDataModel {
   private String artist;
   private String album;
   private String year;
-  private String lyrics;
+
   private int volume;
   private Bitmap cover;
 
@@ -84,7 +83,6 @@ public class MainDataModel {
     playState = PlayerState.UNDEFINED;
     cover = null;
     rating = 0;
-    lyrics = Const.EMPTY;
 
     lfmRating = LfmStatus.NORMAL;
     pluginVersion = Const.EMPTY;
@@ -191,8 +189,6 @@ public class MainDataModel {
     updateRemoteClient();
   }
 
-
-
   public void setRepeatState(String repeat) {
     if (Protocol.ALL.equalsIgnoreCase(repeat)) {
       repeatMode = Repeat.ALL;
@@ -238,23 +234,6 @@ public class MainDataModel {
     updateNotification();
   }
 
-  public void setLyrics(String lyrics) {
-    if (lyrics == null || this.lyrics.equals(lyrics)) {
-      return;
-    }
-    this.lyrics = lyrics.replace("<p>", "\r\n")
-        .replace("<br>", "\n")
-        .replace("&lt;", "<")
-        .replace("&gt;", ">")
-        .replace("&quot;", "\"")
-        .replace("&apos;", "'")
-        .replace("&amp;", "&")
-        .replace("<p>", "\r\n")
-        .replace("<br>", "\n")
-        .trim();
-    bus.post(new LyricsUpdated(this.lyrics));
-  }
-
   public boolean isMute() {
     return isMuteActive;
   }
@@ -283,15 +262,18 @@ public class MainDataModel {
     return cover;
   }
 
-  @Mode public String getRepeat() {
+  @Mode
+  public String getRepeat() {
     return repeatMode;
   }
 
-  @ShuffleState public String getShuffle() {
+  @ShuffleState
+  public String getShuffle() {
     return mShuffleState;
   }
 
-  @State public String getPlayState() {
+  @State
+  public String getPlayState() {
     return playState;
   }
 

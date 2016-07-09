@@ -6,23 +6,28 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.LyricsAdapter;
 import com.kelsos.mbrc.events.bus.RxBus;
-import com.kelsos.mbrc.events.ui.LyricsUpdated;
+import com.kelsos.mbrc.events.ui.LyricsUpdatedEvent;
+import com.kelsos.mbrc.presenters.LyricsPresenter;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
-import java.util.ArrayList;
-import java.util.Arrays;
+import com.kelsos.mbrc.views.LyricsView;
+
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import roboguice.RoboGuice;
 
-public class LyricsActivity extends BaseActivity {
-  private static final String NEWLINE = "\r\n|\n";
+public class LyricsActivity extends BaseActivity implements LyricsView {
   @Inject
   private RxBus bus;
+  @Inject
+  private LyricsPresenter presenter;
+
   @BindView(R.id.lyrics_recycler_view)
   RecyclerView lyricsRecycler;
   @BindView(R.id.empty_view)
@@ -44,22 +49,22 @@ public class LyricsActivity extends BaseActivity {
   }
 
   @Override
-  public void onStart() {
-    super.onStart();
-    bus.register(this, LyricsUpdated.class, this::updateLyricsData);
+  protected void onResume() {
+    super.onResume();
+    presenter.attach(this);
+    bus.register(this, LyricsUpdatedEvent.class, this::onLyricsUpdated, true);
+    presenter.load();
   }
 
   @Override
-  public void onStop() {
-    super.onStop();
+  protected void onPause() {
+    super.onPause();
     bus.unregister(this);
+    presenter.detach();
   }
 
-  private void updateLyricsData(LyricsUpdated update) {
-    final String text = update.getLyrics();
-
-    final List<String> lyrics = new ArrayList<>(Arrays.asList(text.split(NEWLINE)));
-
+  @Override
+  public void updateLyrics(List<String> lyrics) {
     if (lyrics.size() == 1) {
       lyricsRecycler.setVisibility(View.GONE);
       emptyText.setText(lyrics.get(0));
@@ -70,6 +75,10 @@ public class LyricsActivity extends BaseActivity {
       LyricsAdapter adapter = new LyricsAdapter(this, lyrics);
       lyricsRecycler.setAdapter(adapter);
     }
+  }
+
+  private void onLyricsUpdated(LyricsUpdatedEvent update) {
+    presenter.updateLyrics(update.getLyrics());
   }
 
   @Override
