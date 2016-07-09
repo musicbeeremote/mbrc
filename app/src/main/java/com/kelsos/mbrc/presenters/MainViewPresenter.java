@@ -8,23 +8,26 @@ import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.bus.RxBus;
+import com.kelsos.mbrc.model.ConnectionModel;
 import com.kelsos.mbrc.model.MainDataModel;
 import com.kelsos.mbrc.views.MainView;
 
 import timber.log.Timber;
 
-public class MainViewPresenter {
+public class MainViewPresenter implements BasePresenter<MainView> {
   private MainView view;
   @Inject
   private RxBus bus;
   @Inject
   private MainDataModel model;
+  @Inject
+  private ConnectionModel connectionModel;
 
   public void attach(MainView view) {
     this.view = view;
   }
 
-  private boolean isAttached() {
+  public boolean isAttached() {
     return view != null;
   }
 
@@ -42,7 +45,7 @@ public class MainViewPresenter {
     view.updateVolume(model.getVolume(), model.isMute());
     view.updatePlayState(model.getPlayState());
     view.updateTrackInfo(model.getTrackInfo());
-    view.updateConnection(model.getConnection());
+    view.updateConnection(connectionModel.getConnection());
   }
 
   public void detach() {

@@ -9,7 +9,7 @@ import com.kelsos.mbrc.domain.TrackInfo;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.events.ui.ShuffleChange;
 
-public interface MainView {
+public interface MainView extends BaseView {
 
   void updateCover(@Nullable Bitmap cover);
 

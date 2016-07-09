@@ -1,6 +1,9 @@
 package com.kelsos.mbrc.events;
 
+import android.support.annotation.NonNull;
+
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.interfaces.IEvent;
 
 public class MessageEvent implements IEvent {
@@ -33,5 +36,10 @@ public class MessageEvent implements IEvent {
       result = (String) data;
     }
     return result;
+  }
+
+  @NonNull
+  public static MessageEvent action(Object data) {
+    return new MessageEvent(ProtocolEventType.UserAction, data);
   }
 }

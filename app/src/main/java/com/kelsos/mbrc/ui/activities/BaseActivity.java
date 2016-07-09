@@ -25,9 +25,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.annotations.Connection;
@@ -38,6 +35,7 @@ import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
 import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.kelsos.mbrc.events.ui.NotifyUser;
+import com.kelsos.mbrc.events.ui.RequestConnectionStateEvent;
 import com.kelsos.mbrc.ui.activities.nav.LibraryActivity;
 import com.kelsos.mbrc.ui.activities.nav.LyricsActivity;
 import com.kelsos.mbrc.ui.activities.nav.MainActivity;
@@ -45,8 +43,9 @@ import com.kelsos.mbrc.ui.activities.nav.NowPlayingActivity;
 import com.kelsos.mbrc.ui.activities.nav.PlaylistActivity;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
-import com.raizlabs.android.dbflow.annotation.provider.Notify;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import roboguice.RoboGuice;
 import timber.log.Timber;
 
@@ -275,6 +274,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     this.bus.register(this, NotifyUser.class, this::handleUserNotification, true);
     this.bus.register(this, DisplayDialog.class, this::showSetupDialog, true);
     this.bus.register(this, ConnectionStatusChangeEvent.class, this::onConnection, true);
+    this.bus.post(RequestConnectionStateEvent.create());
   }
 }
 
