@@ -3,8 +3,7 @@ package com.kelsos.mbrc.ui.activities.nav;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistAdapter;
@@ -15,6 +14,9 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.PlaylistAvailable;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import roboguice.RoboGuice;
 
 public class PlaylistActivity extends BaseActivity implements PlaylistAdapter.OnPlaylistPressedListener {
@@ -41,7 +43,7 @@ public class PlaylistActivity extends BaseActivity implements PlaylistAdapter.On
 
   @Override public void onStart() {
     super.onStart();
-    bus.register(this, PlaylistAvailable.class, this::onPlaylistAvailable);
+    bus.register(this, PlaylistAvailable.class, this::onPlaylistAvailable, true);
     bus.post(new MessageEvent(ProtocolEventType.UserAction, new UserAction(Protocol.PlaylistList, true)));
   }
 

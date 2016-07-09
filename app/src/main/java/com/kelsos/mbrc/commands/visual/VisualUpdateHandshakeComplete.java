@@ -5,6 +5,7 @@ import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
+import com.kelsos.mbrc.model.ConnectionModel;
 import com.kelsos.mbrc.model.MainDataModel;
 import com.kelsos.mbrc.services.SocketService;
 import java.util.ArrayList;
@@ -15,15 +16,17 @@ import timber.log.Timber;
 public class VisualUpdateHandshakeComplete implements ICommand {
   private SocketService service;
   private MainDataModel model;
+  private ConnectionModel connectionModel;
 
-  @Inject public VisualUpdateHandshakeComplete(SocketService service, MainDataModel model) {
+  @Inject public VisualUpdateHandshakeComplete(SocketService service, MainDataModel model, ConnectionModel connectionModel) {
     this.service = service;
     this.model = model;
+    this.connectionModel = connectionModel;
   }
 
   public void execute(IEvent e) {
     boolean isComplete = (Boolean) e.getData();
-    model.setHandShakeDone(isComplete);
+    connectionModel.setHandShakeDone(isComplete);
 
     if (!isComplete) {
       return;

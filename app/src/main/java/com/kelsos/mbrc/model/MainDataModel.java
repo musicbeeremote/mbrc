@@ -6,8 +6,6 @@ import android.util.Base64;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kelsos.mbrc.annotations.Connection;
-import com.kelsos.mbrc.annotations.Connection.Status;
 import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.annotations.PlayerState.State;
 import com.kelsos.mbrc.annotations.Repeat;
@@ -15,20 +13,17 @@ import com.kelsos.mbrc.annotations.Repeat.Mode;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
-import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.MusicTrack;
 import com.kelsos.mbrc.data.Playlist;
 import com.kelsos.mbrc.domain.TrackInfo;
 import com.kelsos.mbrc.enums.LfmStatus;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.bus.RxBus;
-import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
 import com.kelsos.mbrc.events.ui.CoverChangedEvent;
 import com.kelsos.mbrc.events.ui.LfmRatingChanged;
 import com.kelsos.mbrc.events.ui.LyricsUpdated;
 import com.kelsos.mbrc.events.ui.NotificationDataAvailable;
 import com.kelsos.mbrc.events.ui.NowPlayingListAvailable;
-import com.kelsos.mbrc.events.ui.OnMainFragmentOptionsInflated;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.PlaylistAvailable;
 import com.kelsos.mbrc.events.ui.RatingChanged;
@@ -61,8 +56,7 @@ public class MainDataModel {
   private String lyrics;
   private int volume;
   private Bitmap cover;
-  private boolean connectionActive;
-  private boolean isHandShakeDone;
+
   private String mShuffleState;
   private boolean isScrobblingActive;
   private boolean isMuteActive;
@@ -83,8 +77,7 @@ public class MainDataModel {
     title = artist = album = year = Const.EMPTY;
     volume = 100;
 
-    connectionActive = false;
-    isHandShakeDone = false;
+
     mShuffleState = OFF;
     isScrobblingActive = false;
     isMuteActive = false;
@@ -133,11 +126,7 @@ public class MainDataModel {
   }
 
   private void updateNotification() {
-    if (!connectionActive) {
-      bus.post(new MessageEvent(UserInputEventType.CancelNotification));
-    } else {
-      bus.post(new NotificationDataAvailable(artist, title, album, cover, playState));
-    }
+    bus.post(new NotificationDataAvailable(artist, title, album, cover, playState));
   }
 
   public void setTrackInfo(String artist, String album, String title, String year) {
@@ -202,26 +191,7 @@ public class MainDataModel {
     updateRemoteClient();
   }
 
-  public void setConnectionState(String connectionActive) {
-    this.connectionActive = Boolean.parseBoolean(connectionActive);
-    if (!this.connectionActive) {
-      setPlayState(Const.STOPPED);
-    }
-    bus.post(new ConnectionStatusChangeEvent(
-        this.connectionActive ? (isHandShakeDone ? Connection.ACTIVE
-            : Connection.ON) : Connection.OFF));
-  }
 
-  public void setHandShakeDone(boolean handShakeDone) {
-    this.isHandShakeDone = handShakeDone;
-    bus.post(new ConnectionStatusChangeEvent(
-        this.connectionActive ? (isHandShakeDone ? Connection.ACTIVE
-            : Connection.ON) : Connection.OFF));
-  }
-
-  public boolean isConnectionActive() {
-    return connectionActive;
-  }
 
   public void setRepeatState(String repeat) {
     if (Protocol.ALL.equalsIgnoreCase(repeat)) {
@@ -329,14 +299,6 @@ public class MainDataModel {
     return new TrackInfo(artist, title, album, year);
   }
 
-  @Status public int getConnection() {
-    if (isConnectionActive() && isHandShakeDone) {
-      return Connection.ACTIVE;
-    } else if (isConnectionActive() && !isHandShakeDone) {
-      return Connection.ON;
-    }
 
-    return Connection.OFF;
-  }
 }
 
