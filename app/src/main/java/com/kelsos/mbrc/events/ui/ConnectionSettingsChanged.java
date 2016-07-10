@@ -1,22 +1,20 @@
 package com.kelsos.mbrc.events.ui;
 
-import com.kelsos.mbrc.data.ConnectionSettings;
-import java.util.List;
+import android.support.annotation.NonNull;
 
 public class ConnectionSettingsChanged {
-  private List<ConnectionSettings> mSettings;
-  private int defaultIndex;
+  private long defaultId;
 
-  public ConnectionSettingsChanged(List<ConnectionSettings> mSettings, int defaultIndex) {
-    this.mSettings = mSettings;
-    this.defaultIndex = defaultIndex;
+  private ConnectionSettingsChanged(long defaultId) {
+    this.defaultId = defaultId;
   }
 
-  public List<ConnectionSettings> getSettings() {
-    return mSettings;
+  @NonNull
+  public static ConnectionSettingsChanged newInstance(long defaultId) {
+    return new ConnectionSettingsChanged(defaultId);
   }
 
-  public int getDefaultIndex() {
-    return defaultIndex;
+  public long getDefaultId() {
+    return defaultId;
   }
 }

@@ -3,47 +3,54 @@ package com.kelsos.mbrc.ui.activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ConnectionSettingsAdapter;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.ConnectionSettings;
+import com.kelsos.mbrc.enums.SettingsAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.bus.RxBus;
+import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import roboguice.RoboGuice;
 
 public class ConnectionManagerActivity extends AppCompatActivity
-    implements SettingsDialogFragment.SettingsDialogListener {
+    implements SettingsDialogFragment.SettingsSaveListener, ConnectionSettingsAdapter.ConnectionChangeListener {
   @Inject
   RxBus bus;
-  @BindView(R.id.connection_list) RecyclerView mRecyclerView;
-  @BindView(R.id.toolbar) Toolbar mToolbar;
+  @BindView(R.id.connection_list)
+  RecyclerView mRecyclerView;
+  @BindView(R.id.toolbar)
+  Toolbar mToolbar;
   private MaterialDialog mProgress;
   private Context mContext;
+  private ConnectionSettingsAdapter adapter;
 
-  @OnClick(R.id.connection_add) public void onAddButtonClick(View v) {
+  @OnClick(R.id.connection_add)
+  void onAddButtonClick() {
     SettingsDialogFragment settingsDialog = new SettingsDialogFragment();
-    Bundle args = new Bundle();
-    args.putInt("index", -1);
-    settingsDialog.setArguments(args);
     settingsDialog.show(getSupportFragmentManager(), "settings_dialog");
   }
 
-  @OnClick(R.id.connection_scan) public void onScanButtonClick(View v) {
+  @OnClick(R.id.connection_scan)
+  void onScanButtonClick() {
     MaterialDialog.Builder mBuilder = new MaterialDialog.Builder(mContext);
     mBuilder.title(R.string.progress_scanning);
     mBuilder.content(R.string.progress_scanning_message);
@@ -52,7 +59,8 @@ public class ConnectionManagerActivity extends AppCompatActivity
     bus.post(new MessageEvent(UserInputEventType.StartDiscovery));
   }
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     RoboGuice.getInjector(this).injectMembers(this);
     setContentView(R.layout.ui_activity_connection_manager);
@@ -61,31 +69,45 @@ public class ConnectionManagerActivity extends AppCompatActivity
     mRecyclerView.setHasFixedSize(true);
     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
     mRecyclerView.setLayoutManager(mLayoutManager);
+    adapter = new ConnectionSettingsAdapter();
+    adapter.setChangeListener(this);
+    mRecyclerView.setAdapter(adapter);
   }
 
-  @Override protected void onDestroy() {
+  @Override
+  protected void onDestroy() {
     super.onDestroy();
     RoboGuice.destroyInjector(this);
   }
 
-  @Override protected void onStart() {
+  @Override
+  protected void onStart() {
     super.onStart();
     mContext = this;
-    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    getSupportActionBar().setTitle(R.string.connection_manager_title);
+
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setTitle(R.string.connection_manager_title);
+    }
   }
 
-  @Override protected void onResume() {
+  @Override
+  protected void onResume() {
     super.onResume();
-//    bus.register(this);
+    bus.register(this, ConnectionSettingsChanged.class, this::onConnectionSettingsChange, true);
+    bus.register(this, DiscoveryStopped.class, this::onDiscoveryStopped, true);
+    bus.register(this, NotifyUser.class, this::onUserNotification, true);
   }
 
-  @Override protected void onPause() {
+  @Override
+  protected void onPause() {
     super.onPause();
     bus.unregister(this);
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case android.R.id.home:
         onBackPressed();
@@ -97,17 +119,15 @@ public class ConnectionManagerActivity extends AppCompatActivity
   }
 
   @Override
-  public void onDialogPositiveClick(SettingsDialogFragment dialog, ConnectionSettings settings) {
-    bus.post(settings);
+  public void onSave(ConnectionSettings settings) {
+    bus.post(new ChangeSettings(SettingsAction.EDIT, settings));
   }
 
-  public void handleConnectionSettingsChange(ConnectionSettingsChanged event) {
-    ConnectionSettingsAdapter mAdapter = new ConnectionSettingsAdapter(event.getSettings(), bus);
-    mAdapter.setDefaultIndex(event.getDefaultIndex());
-    mRecyclerView.setAdapter(mAdapter);
+  private void onConnectionSettingsChange(ConnectionSettingsChanged event) {
+    adapter.setSelectionId(event.getDefaultId());
   }
 
-  public void handleDiscoveryStopped(DiscoveryStopped event) {
+  private void onDiscoveryStopped(DiscoveryStopped event) {
 
     if (mProgress != null) {
       mProgress.dismiss();
@@ -130,12 +150,33 @@ public class ConnectionManagerActivity extends AppCompatActivity
     }
 
     Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show();
+    adapter.refresh();
   }
 
-  public void handleUserNotification(NotifyUser event) {
+  private void onUserNotification(NotifyUser event) {
     final String message =
         event.isFromResource() ? getString(event.getResId()) : event.getMessage();
 
     Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show();
+  }
+
+  @Override
+  public void onDelete(ConnectionSettings settings) {
+    bus.post(new ChangeSettings(SettingsAction.DELETE, settings));
+    adapter.refresh();
+  }
+
+  @Override
+  public void onEdit(ConnectionSettings settings) {
+    SettingsDialogFragment settingsDialog = SettingsDialogFragment.newInstance(settings);
+    FragmentManager fragmentManager = getSupportFragmentManager();
+    settingsDialog.show(fragmentManager, "settings_dialog");
+    adapter.refresh();
+  }
+
+  @Override
+  public void onDefault(ConnectionSettings settings) {
+    bus.post(new ChangeSettings(SettingsAction.DEFAULT, settings));
+    adapter.refresh();
   }
 }
