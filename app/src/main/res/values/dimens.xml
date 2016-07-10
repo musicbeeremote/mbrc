@@ -48,4 +48,6 @@
   <dimen name="subheader_height">48dp</dimen>
   <dimen name="section_header_text_size">14sp</dimen>
   <dimen name="play_button_size">52dp</dimen>
+  <dimen name="default_check_icon_size">28dp</dimen>
+  <dimen name="semicolon_padding">2dp</dimen>
 </resources>

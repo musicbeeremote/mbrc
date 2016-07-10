@@ -5,15 +5,17 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.support.annotation.NonNull;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
-import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.data.DiscoveryMessage;
 import com.kelsos.mbrc.enums.DiscoveryStop;
 import com.kelsos.mbrc.events.bus.RxBus;
+import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
+import com.kelsos.mbrc.mappers.ConnectionMapper;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -21,10 +23,10 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
-import timber.log.Timber;
 
 public class ServiceDiscovery {
   private static final String NOTIFY = "notify";
@@ -63,15 +65,15 @@ public class ServiceDiscovery {
     mLock.setReferenceCounted(true);
     mLock.acquire();
 
+    ConnectionMapper mapper = new ConnectionMapper();
     discoveryObservable().subscribeOn(Schedulers.io())
         .unsubscribeOn(Schedulers.io())
         .doOnTerminate(this::stopDiscovery)
-        .subscribe(message -> {
-          Timber.v("Incoming discovery message -> %s", message);
-          ConnectionSettings settings = new ConnectionSettings(message);
-          bus.post(settings);
+        .map(mapper::map)
+        .subscribe(settings -> {
+          settings.save();
           bus.post(new DiscoveryStopped(DiscoveryStop.COMPLETE));
-
+          bus.post(ConnectionSettingsChanged.newInstance(settings.getId()));
           if (callback == null) {
             return;
           }

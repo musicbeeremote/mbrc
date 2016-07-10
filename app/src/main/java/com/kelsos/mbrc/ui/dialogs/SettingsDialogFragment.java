@@ -14,6 +14,7 @@ import com.afollestad.materialdialogs.Theme;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SettingsDialogFragment extends DialogFragment {
@@ -21,57 +22,46 @@ public class SettingsDialogFragment extends DialogFragment {
   private static final int MAX_PORT = 65535;
   private static final int MIN_PORT = 1;
 
-  private static final String INDEX = "index";
-  private static final String PORT = "port";
-  private static final String ADDRESS = "address";
-  private static final String NAME = "name";
+  @BindView(R.id.settings_dialog_host)
+  EditText hostEdit;
+  @BindView(R.id.settings_dialog_name)
+  EditText nameEdit;
+  @BindView(R.id.settings_dialog_port)
+  EditText portEdit;
 
-  private EditText hostEdit;
-  private EditText nameEdit;
-  private EditText portEdit;
-
-  private String currentName;
-  private String currentAddress;
-  private int currentPort;
-  private int currentIndex;
-
-  private SettingsDialogListener mListener;
-
-  public static SettingsDialogFragment newInstance(int index) {
-    SettingsDialogFragment fragment = new SettingsDialogFragment();
-    Bundle args = new Bundle();
-    args.putInt(INDEX, index);
-    fragment.setArguments(args);
-    return fragment;
-  }
+  private SettingsSaveListener mListener;
+  private ConnectionSettings settings;
+  private boolean edit;
 
   public static SettingsDialogFragment newInstance(ConnectionSettings settings) {
     SettingsDialogFragment fragment = new SettingsDialogFragment();
-    Bundle args = new Bundle();
-    args.putInt(INDEX, settings.getIndex());
-    args.putString(NAME, settings.getName());
-    args.putString(ADDRESS, settings.getAddress());
-    args.putInt(PORT, settings.getPort());
-    fragment.setArguments(args);
+    fragment.setConnectionSettings(settings);
+    fragment.edit = true;
     return fragment;
+  }
+
+  private void setConnectionSettings(ConnectionSettings settings) {
+    this.settings = settings;
   }
 
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
     try {
-      mListener = (SettingsDialogListener) context;
+      mListener = (SettingsSaveListener) context;
     } catch (ClassCastException e) {
       throw new ClassCastException(context.toString() + " must implement SettingsDialogListener");
     }
   }
 
-  @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+  @NonNull
+  @Override
+  public Dialog onCreateDialog(Bundle savedInstanceState) {
     MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
     builder.theme(Theme.DARK);
     builder.customView(R.layout.ui_dialog_settings, false);
-    builder.title(R.string.settings_dialog_add);
-    builder.positiveText(R.string.settings_dialog_add);
+    builder.title(edit ? R.string.settings_dialog_edit : R.string.settings_dialog_add);
+    builder.positiveText(edit ? R.string.settings_dialog_save : R.string.settings_dialog_add);
     builder.negativeText(android.R.string.cancel);
     builder.onPositive((dialog, which) -> {
       boolean shouldIClose = true;
@@ -86,33 +76,34 @@ public class SettingsDialogFragment extends DialogFragment {
 
       int portNum = TextUtils.isEmpty(portText) ? 0 : Integer.parseInt(portText);
       if (isValid(portNum) && shouldIClose) {
-        ConnectionSettings settings =
-            new ConnectionSettings(hostname, computerName, portNum, currentIndex);
-        mListener.onDialogPositiveClick(SettingsDialogFragment.this, settings);
+        settings.setName(computerName);
+        settings.setAddress(hostname);
+        settings.setPort(portNum);
+        mListener.onSave(settings);
         dialog.dismiss();
       }
     });
     builder.onNegative((dialog, which) -> dialog.dismiss());
 
-    final MaterialDialog materialDialog = builder.build();
-    final View view = materialDialog.getCustomView();
+    final MaterialDialog settingsDialog = builder.build();
+    final View view = settingsDialog.getCustomView();
 
-    if (view != null) {
-      hostEdit = ButterKnife.findById(view, R.id.settings_dialog_host);
-      nameEdit = ButterKnife.findById(view, R.id.settings_dialog_name);
-      portEdit = ButterKnife.findById(view, R.id.settings_dialog_port);
+    if (view == null) {
+      return settingsDialog;
     }
 
-    return materialDialog;
+    ButterKnife.bind(this, view);
+    return settingsDialog;
   }
 
-  @Override public void onStart() {
+  @Override
+  public void onStart() {
     super.onStart();
-    nameEdit.setText(currentName);
-    hostEdit.setText(currentAddress);
+    nameEdit.setText(settings.getName());
+    hostEdit.setText(settings.getAddress());
 
-    if (currentPort > 0) {
-      portEdit.setText(String.valueOf(currentPort));
+    if (settings.getPort() > 0) {
+      portEdit.setText(String.valueOf(settings.getPort()));
     }
   }
 
@@ -129,18 +120,16 @@ public class SettingsDialogFragment extends DialogFragment {
     }
   }
 
-  @Override public void onCreate(Bundle savedInstanceState) {
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Bundle args = getArguments();
-    if (args != null) {
-      currentIndex = args.getInt(INDEX);
-      currentPort = args.getInt(PORT);
-      currentAddress = args.getString(ADDRESS);
-      currentName = args.getString(NAME);
+    if (settings == null) {
+      settings = new ConnectionSettings();
     }
+
   }
 
-  public interface SettingsDialogListener {
-    void onDialogPositiveClick(SettingsDialogFragment dialog, ConnectionSettings settings);
+  public interface SettingsSaveListener {
+    void onSave(ConnectionSettings settings);
   }
 }
