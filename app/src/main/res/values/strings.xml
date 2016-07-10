@@ -145,4 +145,8 @@
   <string name="notification_action_previous">Previous</string>
   <string name="notification_action_play">Play/Pause</string>
   <string name="notification_action_next">Next</string>
+  <string name="description_computer_icon">Computer icon</string>
+  <string name="settings_dialog_edit">Edit</string>
+  <string name="settings_dialog_save">Save</string>
+  <string name="semicolon" translatable="false">:</string>
 </resources>
