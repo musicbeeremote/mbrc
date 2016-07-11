@@ -1,38 +1,54 @@
 package com.kelsos.mbrc.data;
 
 import android.support.annotation.NonNull;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.kelsos.mbrc.data.db.CacheDatabase;
+import com.kelsos.mbrc.data.db.SettingsDatabase;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.ConflictAction;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.annotation.Unique;
+import com.raizlabs.android.dbflow.annotation.UniqueGroup;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 
-@JsonIgnoreProperties({ "index" }) public class ConnectionSettings
-    implements Comparable<ConnectionSettings> {
+
+@Table(name = "settings", database = SettingsDatabase.class,
+    uniqueColumnGroups = {
+        @UniqueGroup(groupNumber = 1, uniqueConflict = ConflictAction.IGNORE)
+})
+public class ConnectionSettings extends BaseModel {
+  @PrimaryKey(autoincrement = true)
+  @Column(name = "id")
+  private long id;
+  @Column(name = "address")
+  @Unique(unique = false, uniqueGroups = 1)
   private String address;
+  @Column(name = "name")
   private String name;
+  @Unique(unique = false, uniqueGroups = 1)
+  @Column(name = "port")
   private int port;
-  private int index;
 
-  public ConnectionSettings(DiscoveryMessage node) {
-    this.address = node.getAddress();
-    this.name = node.getName();
-    this.port = node.getPort();
-    this.index = -1;
+  public long getId() {
+    return id;
   }
 
-  public ConnectionSettings(String address, String name, int port, int index) {
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public void setAddress(String address) {
     this.address = address;
+  }
+
+  public void setName(String name) {
     this.name = name;
+  }
+
+  public void setPort(int port) {
     this.port = port;
-    this.index = index;
-  }
-
-  public ConnectionSettings() {
-    this.address = "";
-    this.index = -1;
-    this.port = 0;
-    this.name = "";
-  }
-
-  public void updateIndex(int index) {
-    this.index = index;
   }
 
   public String getAddress() {
@@ -47,44 +63,4 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
     return this.port;
   }
 
-  @Override public boolean equals(Object o) {
-    boolean equality = false;
-
-    if (o instanceof ConnectionSettings) {
-      ConnectionSettings other = (ConnectionSettings) o;
-      equality = other.getAddress().equals(address) && other.getPort() == port;
-    }
-    return equality;
-  }
-
-  @Override public int hashCode() {
-    return address.hashCode() + port;
-  }
-
-  public int getIndex() {
-    return index;
-  }
-
-  /**
-   * Compares this object to the specified object to determine their relative
-   * order.
-   *
-   * @param another the object to compare to this instance.
-   * @return a negative integer if this instance is less than {@code another};
-   * a positive integer if this instance is greater than
-   * {@code another}; 0 if this instance has the same order as
-   * {@code another}.
-   * @throws ClassCastException if {@code another} cannot be converted into something
-   * comparable to {@code this} instance.
-   */
-  @Override public int compareTo(@NonNull ConnectionSettings another) {
-    int compare = 0;
-
-    if (index < another.getIndex()) {
-      compare = -1;
-    } else if (index > another.getIndex()) {
-      compare = 1;
-    }
-    return compare;
-  }
 }
