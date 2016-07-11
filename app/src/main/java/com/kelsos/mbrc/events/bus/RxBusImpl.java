@@ -44,13 +44,11 @@ public class RxBusImpl implements RxBus {
   }
 
   @Override public void unregister(Object object) {
-    List<Subscription> subscriptions = activeSubscriptions.get(object);
+    List<Subscription> subscriptions = activeSubscriptions.remove(object);
     if (subscriptions != null) {
       Observable.from(subscriptions)
           .filter(subscription -> !subscription.isUnsubscribed())
           .subscribe(Subscription::unsubscribe);
-
-      activeSubscriptions.remove(subscriptions);
     }
   }
 
