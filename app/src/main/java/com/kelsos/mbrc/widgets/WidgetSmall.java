@@ -6,43 +6,43 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
-import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.annotations.PlayerState;
-import com.kelsos.mbrc.enums.PlayState;
+import com.kelsos.mbrc.domain.TrackInfo;
 import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.CoverChangedEvent;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
-import com.kelsos.mbrc.domain.TrackInfo;
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.ui.activities.nav.MainActivity;
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder;
-import roboguice.RoboGuice;
+import javax.inject.Inject;
 import timber.log.Timber;
+import toothpick.Scope;
+import toothpick.Toothpick;
 
 public class WidgetSmall extends AppWidgetProvider {
 
-  @Inject
-  private Context context;
-  @Inject
-  private RxBus bus;
+  @Inject Context context;
+  @Inject RxBus bus;
 
   private int[] widgetsIds;
+  private Scope scope;
 
   @Override
   public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
     super.onUpdate(context, appWidgetManager, appWidgetIds);
     Timber.v("Update widget received");
-    if (this.context == null) {
-      RoboGuice.getInjector(context).injectMembers(this);
+    if (scope == null) {
+      scope = Toothpick.openScope(context.getApplicationContext());
+      Toothpick.inject(this, scope);
     }
 
     widgetsIds = appWidgetIds;
 
     try {
-      bus.register(this,TrackInfoChangeEvent.class, this::updateDisplay);
-      bus.register(this,CoverChangedEvent.class, this::updateCover);
-      bus.register(this,PlayStateChange.class, this::updatePlayState);
+      bus.register(this, TrackInfoChangeEvent.class, this::updateDisplay);
+      bus.register(this, CoverChangedEvent.class, this::updateCover);
+      bus.register(this, PlayStateChange.class, this::updatePlayState);
     } catch (Exception ignore) {
       // It was already registered so ignore
     }

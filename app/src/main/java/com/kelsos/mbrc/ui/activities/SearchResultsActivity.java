@@ -11,40 +11,39 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.google.inject.Inject;
-import com.kelsos.mbrc.helper.PopupActionHandler;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.SearchResultAdapter;
 import com.kelsos.mbrc.data.library.Album;
 import com.kelsos.mbrc.data.library.Artist;
 import com.kelsos.mbrc.data.library.Genre;
 import com.kelsos.mbrc.data.library.Track;
+import com.kelsos.mbrc.helper.PopupActionHandler;
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView;
-import roboguice.RoboGuice;
+import javax.inject.Inject;
+import toothpick.Scope;
+import toothpick.Toothpick;
+import toothpick.smoothie.module.SmoothieActivityModule;
 
 public class SearchResultsActivity extends AppCompatActivity implements SearchResultAdapter.OnSearchItemSelected {
 
   public static final String QUERY = "com.kelsos.mbrc.extras.QUERY";
-  @BindView(R.id.toolbar)
-  Toolbar toolbar;
-  @BindView(R.id.search_results_recycler)
-  EmptyRecyclerView searchResultsRecycler;
-  @BindView(R.id.empty_view_text)
-  TextView emptyViewText;
-  @BindView(R.id.empty_view)
-  LinearLayout emptyView;
+  @BindView(R.id.toolbar) Toolbar toolbar;
+  @BindView(R.id.search_results_recycler) EmptyRecyclerView searchResultsRecycler;
+  @BindView(R.id.empty_view_text) TextView emptyViewText;
+  @BindView(R.id.empty_view) LinearLayout emptyView;
 
-  @Inject
-  private SearchResultAdapter adapter;
-  @Inject
-  private PopupActionHandler actionHandler;
+  @Inject SearchResultAdapter adapter;
+  @Inject PopupActionHandler actionHandler;
+  private Scope scope;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    scope = Toothpick.openScopes(getApplication(), this);
+    scope.installModules(new SmoothieActivityModule(this));
     super.onCreate(savedInstanceState);
+    Toothpick.inject(this, scope);
     setContentView(R.layout.activity_search_results);
     ButterKnife.bind(this);
-    RoboGuice.getInjector(this).injectMembers(this);
 
     final String query = getIntent().getStringExtra(QUERY);
     if (TextUtils.isEmpty(query)) {
@@ -70,8 +69,8 @@ public class SearchResultsActivity extends AppCompatActivity implements SearchRe
 
   @Override
   protected void onDestroy() {
+    Toothpick.closeScope(this);
     super.onDestroy();
-    RoboGuice.destroyInjector(this);
   }
 
   @Override

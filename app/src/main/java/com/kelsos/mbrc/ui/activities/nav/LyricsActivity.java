@@ -6,8 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.google.inject.Inject;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.LyricsAdapter;
 import com.kelsos.mbrc.events.bus.RxBus;
@@ -15,37 +15,37 @@ import com.kelsos.mbrc.events.ui.LyricsUpdatedEvent;
 import com.kelsos.mbrc.presenters.LyricsPresenter;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.views.LyricsView;
-
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import roboguice.RoboGuice;
+import javax.inject.Inject;
+import toothpick.Scope;
+import toothpick.Toothpick;
 
 public class LyricsActivity extends BaseActivity implements LyricsView {
-  @Inject
-  private RxBus bus;
-  @Inject
-  private LyricsPresenter presenter;
+  @Inject RxBus bus;
+  @Inject LyricsPresenter presenter;
 
-  @BindView(R.id.lyrics_recycler_view)
-  RecyclerView lyricsRecycler;
-  @BindView(R.id.empty_view)
-  LinearLayout emptyView;
-  @BindView(R.id.empty_view_text)
-  TextView emptyText;
+  @BindView(R.id.lyrics_recycler_view) RecyclerView lyricsRecycler;
+  @BindView(R.id.empty_view) LinearLayout emptyView;
+  @BindView(R.id.empty_view_text) TextView emptyText;
+  private Scope scope;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    scope = Toothpick.openScopes(getApplication(), this);
     super.onCreate(savedInstanceState);
+    Toothpick.inject(this, scope);
     setContentView(R.layout.activity_lyrics);
     ButterKnife.bind(this);
-    RoboGuice.getInjector(this).injectMembers(this);
     super.setup();
-
     lyricsRecycler.setHasFixedSize(true);
     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
     lyricsRecycler.setLayoutManager(layoutManager);
+  }
+
+  @Override
+  protected void onDestroy() {
+    Toothpick.closeScope(this);
+    super.onDestroy();
   }
 
   @Override

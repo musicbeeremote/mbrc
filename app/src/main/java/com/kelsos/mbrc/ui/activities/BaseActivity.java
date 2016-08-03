@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -24,8 +25,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.google.inject.Inject;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.annotations.Connection;
 import com.kelsos.mbrc.constants.UserInputEventType;
@@ -43,26 +44,24 @@ import com.kelsos.mbrc.ui.activities.nav.NowPlayingActivity;
 import com.kelsos.mbrc.ui.activities.nav.PlaylistActivity;
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment;
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import roboguice.RoboGuice;
+import javax.inject.Inject;
 import timber.log.Timber;
+import toothpick.Scope;
+import toothpick.Toothpick;
+import toothpick.smoothie.module.SmoothieActivityModule;
 
-public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-  @Inject
-  private RxBus bus;
-  @BindView(R.id.toolbar)
-  Toolbar toolbar;
-  @BindView(R.id.drawer_layout)
-  DrawerLayout drawer;
-  @BindView(R.id.nav_view)
-  NavigationView navigationView;
+public abstract class BaseActivity extends AppCompatActivity
+    implements NavigationView.OnNavigationItemSelectedListener {
+  @Inject RxBus bus;
+  @BindView(R.id.toolbar) Toolbar toolbar;
+  @BindView(R.id.drawer_layout) DrawerLayout drawer;
+  @BindView(R.id.nav_view) NavigationView navigationView;
 
   private TextView connectText;
   private ActionBarDrawerToggle toggle;
   private DialogFragment mDialog;
   private ImageView connect;
+  private Scope scope;
 
   private boolean isMyServiceRunning(Class<?> serviceClass) {
     ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -82,6 +81,14 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     return true;
   }
 
+  @Override
+  protected void onCreate(@Nullable Bundle savedInstanceState) {
+    scope = Toothpick.openScopes(getApplication(), this);
+    scope.installModules(new SmoothieActivityModule(this));
+    super.onCreate(savedInstanceState);
+    Toothpick.inject(this, scope);
+  }
+
   private void onConnectClick(View view) {
     ifNotRunningStartService();
     bus.post(new MessageEvent(UserInputEventType.StartConnection));
@@ -95,9 +102,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
   @Override
   protected void onDestroy() {
+    Toothpick.closeScope(this);
     super.onDestroy();
     drawer.removeDrawerListener(toggle);
-    RoboGuice.destroyInjector(this);
   }
 
   @Override
@@ -140,18 +147,15 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     if (event.getStatus() == Connection.OFF) {
       resId = R.string.drawer_connection_status_off;
       colorId = R.color.black;
-
     } else if (event.getStatus() == Connection.ON) {
       resId = R.string.drawer_connection_status_on;
       colorId = R.color.accent;
-
     } else if (event.getStatus() == Connection.ACTIVE) {
       resId = R.string.drawer_connection_status_active;
       colorId = R.color.power_on;
     } else {
       resId = R.string.drawer_connection_status_off;
       colorId = R.color.black;
-
     }
 
     connectText.setText(resId);

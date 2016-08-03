@@ -4,27 +4,24 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.data.PageRange;
 import com.kelsos.mbrc.data.ProtocolPayload;
 import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.utilities.SettingsManager;
-import rx.Observable;
-import rx.Subscriber;
-import timber.log.Timber;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import javax.inject.Inject;
+import rx.Observable;
+import rx.Subscriber;
+import timber.log.Timber;
 
-public class ServiceBase {
-  @Inject
-  protected ObjectMapper mapper;
-  @Inject
-  private SettingsManager settings;
+class ServiceBase {
+  @Inject ObjectMapper mapper;
+  @Inject SettingsManager settings;
   private Socket socket;
 
   @NonNull
@@ -39,7 +36,8 @@ public class ServiceBase {
         .skipWhile(this::shouldSkip);
   }
 
-  @NonNull private Observable<SocketMessage> getSocketMessageObservable(String request, Object data, String s) {
+  @NonNull
+  private Observable<SocketMessage> getSocketMessageObservable(String request, Object data, String s) {
     return Observable.create((Subscriber<? super SocketMessage> subscriber) -> {
       try {
         SocketMessage message = mapper.readValue(s, SocketMessage.class);
@@ -83,7 +81,8 @@ public class ServiceBase {
     }
   }
 
-  @NonNull private Observable<? extends String> getObservable(Socket socket) {
+  @NonNull
+  private Observable<? extends String> getObservable(Socket socket) {
     try {
       final InputStreamReader in = new InputStreamReader(socket.getInputStream(), Const.UTF_8);
       final BufferedReader bufferedReader = new BufferedReader(in);

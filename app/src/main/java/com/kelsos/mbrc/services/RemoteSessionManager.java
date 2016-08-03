@@ -11,24 +11,23 @@ import android.os.Build;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.annotations.PlayerState.State;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
-import com.kelsos.mbrc.enums.PlayState;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
 import com.kelsos.mbrc.events.ui.RemoteClientMetaData;
 import com.kelsos.mbrc.utilities.MediaButtonReceiver;
 import com.kelsos.mbrc.utilities.MediaIntentHandler;
-
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import timber.log.Timber;
 
-@Singleton public class RemoteSessionManager implements AudioManager.OnAudioFocusChangeListener {
+@Singleton
+public class RemoteSessionManager implements AudioManager.OnAudioFocusChangeListener {
   private static final long PLAYBACK_ACTIONS = PlaybackStateCompat.ACTION_PAUSE
       | PlaybackStateCompat.ACTION_PLAY_PAUSE
       | PlaybackStateCompat.ACTION_PLAY
@@ -38,7 +37,7 @@ import timber.log.Timber;
   private final AudioManager manager;
   private final RxBus bus;
   private MediaSessionCompat mMediaSession;
-  @Inject private MediaIntentHandler handler;
+  @Inject MediaIntentHandler handler;
 
   @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
   @Inject

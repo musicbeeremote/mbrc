@@ -1,7 +1,5 @@
 package com.kelsos.mbrc.presenters;
 
-
-import com.google.inject.Inject;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
@@ -11,17 +9,14 @@ import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.model.ConnectionModel;
 import com.kelsos.mbrc.model.MainDataModel;
 import com.kelsos.mbrc.views.MainView;
-
+import javax.inject.Inject;
 import timber.log.Timber;
 
 public class MainViewPresenter implements BasePresenter<MainView> {
   private MainView view;
-  @Inject
-  private RxBus bus;
-  @Inject
-  private MainDataModel model;
-  @Inject
-  private ConnectionModel connectionModel;
+  @Inject RxBus bus;
+  @Inject MainDataModel model;
+  @Inject ConnectionModel connectionModel;
 
   public void attach(MainView view) {
     this.view = view;

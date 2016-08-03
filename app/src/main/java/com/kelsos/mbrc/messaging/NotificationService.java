@@ -8,20 +8,20 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.NotificationCompat;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.annotations.Connection;
 import com.kelsos.mbrc.annotations.PlayerState;
+import com.kelsos.mbrc.domain.TrackInfo;
 import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
 import com.kelsos.mbrc.events.ui.CoverChangedEvent;
 import com.kelsos.mbrc.events.ui.PlayStateChange;
-import com.kelsos.mbrc.domain.TrackInfo;
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.model.NotificationModel;
 import com.kelsos.mbrc.services.RemoteSessionManager;
 import com.kelsos.mbrc.utilities.SettingsManager;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import timber.log.Timber;
 
 import static com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.NEXT;
@@ -30,12 +30,13 @@ import static com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PLAY;
 import static com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PREVIOUS;
 import static com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.getPendingIntent;
 
-@Singleton public class NotificationService {
+@Singleton
+public class NotificationService {
   public static final int NOW_PLAYING_PLACEHOLDER = 15613;
   private final RemoteSessionManager sessionManager;
   private Notification notification;
-  @Inject private NotificationManagerCompat notificationManager;
-  @Inject private NotificationModel model;
+  @Inject NotificationManagerCompat notificationManager;
+  @Inject NotificationModel model;
   private Context context;
   private SettingsManager settings;
   private String previous;
@@ -44,9 +45,9 @@ import static com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.getPendingIntent
 
   @Inject
   public NotificationService(Context context,
-                             RxBus bus,
-                             RemoteSessionManager sessionManager,
-                             SettingsManager settings) {
+      RxBus bus,
+      RemoteSessionManager sessionManager,
+      SettingsManager settings) {
     this.context = context;
     this.sessionManager = sessionManager;
     this.settings = settings;
@@ -95,9 +96,8 @@ import static com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.getPendingIntent
     mediaStyle.setMediaSession(sessionManager.getMediaSessionToken());
 
     NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-    int resId = model.getPlayState().equals(PlayerState.PLAYING)
-        ? R.drawable.ic_action_pause
-        : R.drawable.ic_action_play;
+    int resId =
+        model.getPlayState().equals(PlayerState.PLAYING) ? R.drawable.ic_action_pause : R.drawable.ic_action_play;
 
     builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         .setSmallIcon(R.drawable.ic_mbrc_status)

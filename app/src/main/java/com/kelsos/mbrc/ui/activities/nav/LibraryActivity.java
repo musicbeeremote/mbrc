@@ -11,27 +11,26 @@ import android.view.Menu;
 import android.view.MenuItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.LibraryPagerAdapter;
 import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.activities.SearchResultsActivity;
-import roboguice.RoboGuice;
+import javax.inject.Inject;
+import toothpick.Scope;
+import toothpick.Toothpick;
 
 public class LibraryActivity extends BaseActivity
     implements SearchView.OnQueryTextListener, ViewPager.OnPageChangeListener {
 
-  @Inject
-  private RxBus bus;
-  @BindView(R.id.search_pager)
-  ViewPager pager;
-  @BindView(R.id.pager_tab_strip)
-  TabLayout tabs;
+  @Inject RxBus bus;
+  @BindView(R.id.search_pager) ViewPager pager;
+  @BindView(R.id.pager_tab_strip) TabLayout tabs;
 
   private SearchView mSearchView;
   private MenuItem searchView;
   private LibraryPagerAdapter pagerAdapter;
+  private Scope scope;
 
   @Override
   public boolean onQueryTextSubmit(String query) {
@@ -52,10 +51,11 @@ public class LibraryActivity extends BaseActivity
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    scope = Toothpick.openScopes(getApplication(), this);
     super.onCreate(savedInstanceState);
+    Toothpick.inject(this, scope);
     setContentView(R.layout.activity_library);
     ButterKnife.bind(this);
-    RoboGuice.getInjector(this).injectMembers(this);
     super.setup();
     pagerAdapter = new LibraryPagerAdapter(this);
     pager.setAdapter(pagerAdapter);
@@ -76,6 +76,7 @@ public class LibraryActivity extends BaseActivity
 
   @Override
   public void onDestroy() {
+    Toothpick.closeScope(this);
     super.onDestroy();
     pagerAdapter = null;
   }

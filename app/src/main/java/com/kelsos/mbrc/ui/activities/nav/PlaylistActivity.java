@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.PlaylistAdapter;
 import com.kelsos.mbrc.constants.Protocol;
@@ -17,24 +17,27 @@ import com.kelsos.mbrc.ui.activities.BaseActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import roboguice.RoboGuice;
+import toothpick.Scope;
+import toothpick.Toothpick;
 
 public class PlaylistActivity extends BaseActivity implements PlaylistAdapter.OnPlaylistPressedListener {
 
   @BindView(R.id.playlist_list) RecyclerView playlistList;
 
-  @Inject private PlaylistAdapter adapter;
-  @Inject private RxBus bus;
+  @Inject PlaylistAdapter adapter;
+  @Inject RxBus bus;
+  private Scope scope;
 
   public PlaylistActivity() {
     // Required empty public constructor
   }
 
   @Override public void onCreate(Bundle savedInstanceState) {
+    scope = Toothpick.openScopes(getApplication(), this);
     super.onCreate(savedInstanceState);
+    Toothpick.inject(this, scope);
     setContentView(R.layout.activity_playlists);
     ButterKnife.bind(this);
-    RoboGuice.getInjector(this).injectMembers(this);
     super.setup();
     adapter.setPlaylistPressedListener(this);
     playlistList.setAdapter(adapter);
@@ -63,5 +66,11 @@ public class PlaylistActivity extends BaseActivity implements PlaylistAdapter.On
   @Override
   protected int active() {
     return R.id.nav_playlists;
+  }
+
+  @Override
+  protected void onDestroy() {
+    Toothpick.closeScope(this);
+    super.onDestroy();
   }
 }

@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.utilities;
 
 import android.support.annotation.NonNull;
-import com.google.inject.Singleton;
 import java.util.concurrent.TimeUnit;
+import javax.inject.Singleton;
 import rx.Completable;
 import rx.Subscription;
 import timber.log.Timber;
@@ -24,13 +24,13 @@ public class SocketActivityChecker {
 
   @NonNull
   private Subscription getSubscribe() {
-    return Completable.timer(DELAY, TimeUnit.SECONDS).subscribe(throwable -> Timber.v("Subscription failed"), () -> {
+    return Completable.timer(DELAY, TimeUnit.SECONDS).subscribe(() -> {
       Timber.v("Ping was more than %d seconds ago", DELAY);
       if (pingTimeoutListener == null) {
         return;
       }
       pingTimeoutListener.onTimeout();
-    });
+    }, throwable -> Timber.v("Subscription failed"));
   }
 
   public void stop() {

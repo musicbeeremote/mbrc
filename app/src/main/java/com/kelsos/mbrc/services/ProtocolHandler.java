@@ -2,8 +2,6 @@ package com.kelsos.mbrc.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
@@ -11,15 +9,19 @@ import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.model.MainDataModel;
 import java.io.IOException;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import timber.log.Timber;
 
-@Singleton public class ProtocolHandler {
+@Singleton
+public class ProtocolHandler {
   private RxBus bus;
   private boolean isHandshakeComplete;
   private ObjectMapper mapper;
   private MainDataModel model;
 
-  @Inject public ProtocolHandler(RxBus bus, ObjectMapper mapper, MainDataModel model) {
+  @Inject
+  public ProtocolHandler(RxBus bus, ObjectMapper mapper, MainDataModel model) {
     this.bus = bus;
     this.mapper = mapper;
     this.model = model;

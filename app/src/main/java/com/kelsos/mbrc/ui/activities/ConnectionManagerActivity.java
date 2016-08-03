@@ -10,9 +10,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ConnectionSettingsAdapter;
 import com.kelsos.mbrc.constants.UserInputEventType;
@@ -25,23 +27,18 @@ import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import roboguice.RoboGuice;
+import toothpick.Scope;
+import toothpick.Toothpick;
 
 public class ConnectionManagerActivity extends AppCompatActivity
     implements SettingsDialogFragment.SettingsSaveListener, ConnectionSettingsAdapter.ConnectionChangeListener {
-  @Inject
-  RxBus bus;
-  @BindView(R.id.connection_list)
-  RecyclerView mRecyclerView;
-  @BindView(R.id.toolbar)
-  Toolbar mToolbar;
+  @Inject RxBus bus;
+  @BindView(R.id.connection_list) RecyclerView mRecyclerView;
+  @BindView(R.id.toolbar) Toolbar mToolbar;
   private MaterialDialog mProgress;
   private Context mContext;
   private ConnectionSettingsAdapter adapter;
+  private Scope scope;
 
   @OnClick(R.id.connection_add)
   void onAddButtonClick() {
@@ -61,8 +58,10 @@ public class ConnectionManagerActivity extends AppCompatActivity
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    scope = Toothpick.openScopes(getApplication(), this);
+    //install modules?
     super.onCreate(savedInstanceState);
-    RoboGuice.getInjector(this).injectMembers(this);
+    Toothpick.inject(this, scope);
     setContentView(R.layout.ui_activity_connection_manager);
     ButterKnife.bind(this);
     setSupportActionBar(mToolbar);
@@ -76,8 +75,8 @@ public class ConnectionManagerActivity extends AppCompatActivity
 
   @Override
   protected void onDestroy() {
+    Toothpick.closeScope(this);
     super.onDestroy();
-    RoboGuice.destroyInjector(this);
   }
 
   @Override
@@ -154,8 +153,7 @@ public class ConnectionManagerActivity extends AppCompatActivity
   }
 
   private void onUserNotification(NotifyUser event) {
-    final String message =
-        event.isFromResource() ? getString(event.getResId()) : event.getMessage();
+    final String message = event.isFromResource() ? getString(event.getResId()) : event.getMessage();
 
     Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show();
   }

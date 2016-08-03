@@ -10,7 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.NowPlaying;
 import com.kelsos.mbrc.data.NowPlaying_Table;
