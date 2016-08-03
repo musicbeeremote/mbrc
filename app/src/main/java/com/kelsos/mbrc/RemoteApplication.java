@@ -1,16 +1,23 @@
 package com.kelsos.mbrc;
 
 import android.app.Application;
-import android.view.ViewConfiguration;
-import java.lang.reflect.Field;
-import roboguice.RoboGuice;
 import timber.log.Timber;
+import toothpick.Configuration;
+import toothpick.Scope;
+import toothpick.Toothpick;
+import toothpick.registries.FactoryRegistryLocator;
+import toothpick.registries.MemberInjectorRegistryLocator;
+import toothpick.smoothie.module.SmoothieApplicationModule;
 
 public class RemoteApplication extends Application {
 
   public void onCreate() {
     super.onCreate();
-    RoboGuice.setupBaseApplicationInjector(this);
+    Configuration.setConfiguration(Configuration.reflectionFree());
+    MemberInjectorRegistryLocator.setRootRegistry(new MemberInjectorRegistry());
+    FactoryRegistryLocator.setRootRegistry(new FactoryRegistry());
+    Scope applicationScope = Toothpick.openScope(this);
+    applicationScope.installModules(new SmoothieApplicationModule(this), new RemoteModule());
 
     if (BuildConfig.DEBUG) {
       Timber.plant(new Timber.DebugTree() {
@@ -22,18 +29,5 @@ public class RemoteApplication extends Application {
       });
     }
 
-    //HACK: Force overflow code courtesy of Timo Ohr http://stackoverflow.com/a/11438245
-    try {
-      ViewConfiguration config = ViewConfiguration.get(this);
-      Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-      if (menuKeyField != null) {
-        menuKeyField.setAccessible(true);
-        menuKeyField.setBoolean(config, false);
-      }
-    } catch (Exception ex) {
-      if (BuildConfig.DEBUG) {
-        Timber.e(ex, "force overflow hack");
-      }
-    }
   }
 }

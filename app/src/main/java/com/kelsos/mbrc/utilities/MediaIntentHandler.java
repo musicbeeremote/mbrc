@@ -3,15 +3,16 @@ package com.kelsos.mbrc.utilities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.bus.RxBus;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-@Singleton public class MediaIntentHandler {
+@Singleton
+public class MediaIntentHandler {
 
   private static final int DOUBLE_CLICK_INTERVAL = 350;
   private final RxBus bus;

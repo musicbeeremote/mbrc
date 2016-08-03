@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.commands;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.data.UserAction;

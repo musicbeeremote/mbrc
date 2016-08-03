@@ -2,16 +2,16 @@ package com.kelsos.mbrc.commands.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.kelsos.mbrc.data.MusicTrack;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
 import com.kelsos.mbrc.model.MainDataModel;
 import java.util.ArrayList;
-import roboguice.util.Ln;
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class UpdateNowPlayingList implements ICommand {
   private MainDataModel model;
@@ -31,6 +31,8 @@ public class UpdateNowPlayingList implements ICommand {
       }
       subscriber.onNext(playList);
       subscriber.onCompleted();
-    }).subscribeOn(Schedulers.io()).subscribe(model::setNowPlayingList, Ln::d);
+    }).subscribeOn(Schedulers.io()).subscribe(model::setNowPlayingList, throwable -> {
+      Timber.e(throwable, "Failure during now playing parsing");
+    });
   }
 }

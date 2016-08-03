@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.services;
 
 import android.support.annotation.NonNull;
-import com.google.inject.Inject;
 import com.kelsos.mbrc.data.Page;
 import com.kelsos.mbrc.data.db.CacheDatabase;
 import com.kelsos.mbrc.data.library.Album;
@@ -12,6 +11,7 @@ import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import java.util.List;
+import javax.inject.Inject;
 import rx.Completable;
 import rx.Observable;
 import rx.Scheduler;
@@ -21,23 +21,22 @@ import timber.log.Timber;
 public class BrowseSync {
   public static final int LIMIT = 400;
 
-  @Inject
-  private LibraryService service;
+  @Inject LibraryService service;
 
   public void sync() {
     final Scheduler scheduler = Schedulers.immediate();
-    Completable.concat(syncGenres(scheduler), syncArtists(scheduler), syncAlbums(scheduler),
-        syncTracks(scheduler))
+    Completable.concat(syncGenres(scheduler), syncArtists(scheduler), syncAlbums(scheduler), syncTracks(scheduler))
         .subscribeOn(Schedulers.io())
         .unsubscribeOn(Schedulers.io())
-        .subscribe(t -> {
-          Timber.v(t, "Sync failed due to reasons");
-        }, () -> {
+        .subscribe(() -> {
           Timber.v("Sync complete successfully");
+        },t -> {
+          Timber.v(t, "Sync failed due to reasons");
         });
   }
 
-  @NonNull public Completable syncTracks(Scheduler scheduler) {
+  @NonNull
+  public Completable syncTracks(Scheduler scheduler) {
     return Completable.create(subscriber -> {
       long count = SQLite.delete().from(Track.class).count();
       Timber.v("Deleted %d previous cached Tracks", count);
@@ -74,7 +73,8 @@ public class BrowseSync {
     });
   }
 
-  @NonNull public Completable syncAlbums(Scheduler scheduler) {
+  @NonNull
+  public Completable syncAlbums(Scheduler scheduler) {
     return Completable.create(subscriber -> {
       long count = SQLite.delete().from(Album.class).count();
       Timber.v("Deleted %d previous cached Albums", count);
@@ -87,7 +87,8 @@ public class BrowseSync {
     });
   }
 
-  @NonNull public Completable syncArtists(Scheduler scheduler) {
+  @NonNull
+  public Completable syncArtists(Scheduler scheduler) {
 
     return Completable.create(subscriber -> {
       long count = SQLite.delete().from(Artist.class).count();
@@ -102,7 +103,8 @@ public class BrowseSync {
     });
   }
 
-  @NonNull public Completable syncGenres(Scheduler scheduler) {
+  @NonNull
+  public Completable syncGenres(Scheduler scheduler) {
 
     return Completable.create(subscriber -> {
       long count = SQLite.delete().from(Genre.class).count();

@@ -4,8 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.kelsos.mbrc.configuration.CommandRegistration;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
@@ -20,37 +18,42 @@ import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import roboguice.RoboGuice;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import timber.log.Timber;
+import toothpick.Scope;
+import toothpick.Toothpick;
 
-@Singleton public class RemoteService extends Service {
+@Singleton
+public class RemoteService extends Service {
 
   private final IBinder mBinder = new ControllerBinder();
-  @Inject
-  private RemoteController remoteController;
-
-  @Inject private MainDataModel mainDataModel;
-  @Inject private ProtocolHandler protocolHandler;
-  @Inject private SocketService socketService;
-  @Inject private ServiceDiscovery discovery;
-  @Inject private RemoteBroadcastReceiver receiver;
-  @Inject private NotificationService notificationService;
-  @Inject private BrowseSync browseSync;
+  @Inject RemoteController remoteController;
+  @Inject MainDataModel mainDataModel;
+  @Inject ProtocolHandler protocolHandler;
+  @Inject SocketService socketService;
+  @Inject ServiceDiscovery discovery;
+  @Inject RemoteBroadcastReceiver receiver;
+  @Inject NotificationService notificationService;
+  @Inject BrowseSync browseSync;
 
   private ExecutorService threadPoolExecutor;
 
-  public RemoteService() { }
+  public RemoteService() {
+  }
 
-  @Override public IBinder onBind(Intent intent) {
+  @Override
+  public IBinder onBind(Intent intent) {
     return mBinder;
   }
 
-  @Override public void onCreate() {
+  @Override
+  public void onCreate() {
+    Scope scope = Toothpick.openScope(getApplication());
     super.onCreate();
-    RoboGuice.getInjector(this).injectMembers(this);
+    Toothpick.inject(this, scope);
     FlowManager.init(new FlowConfig.Builder(this).openDatabasesOnInit(true).build());
     this.registerReceiver(receiver, receiver.filter());
-
   }
 
   /**
@@ -62,7 +65,8 @@ import timber.log.Timber;
     remoteController.handleUserActionEvents(event);
   }
 
-  @Override public int onStartCommand(Intent intent, int flags, int startId) {
+  @Override
+  public int onStartCommand(Intent intent, int flags, int startId) {
     Timber.d("Background Service::Started");
     CommandRegistration.register(remoteController);
     threadPoolExecutor = Executors.newSingleThreadExecutor();
@@ -73,7 +77,8 @@ import timber.log.Timber;
     return super.onStartCommand(intent, flags, startId);
   }
 
-  @Override public void onDestroy() {
+  @Override
+  public void onDestroy() {
     remoteController.executeCommand(new MessageEvent(UserInputEventType.CancelNotification));
     remoteController.executeCommand(new MessageEvent(UserInputEventType.TerminateConnection));
     CommandRegistration.unregister(remoteController);
@@ -82,12 +87,13 @@ import timber.log.Timber;
     }
     Timber.d("Background Service::Destroyed");
     this.unregisterReceiver(receiver);
-    RoboGuice.destroyInjector(this);
+    Toothpick.closeScope(this);
     super.onDestroy();
   }
 
   private class ControllerBinder extends Binder {
-    @SuppressWarnings("unused") ControllerBinder getService() {
+    @SuppressWarnings("unused")
+    ControllerBinder getService() {
       return ControllerBinder.this;
     }
   }

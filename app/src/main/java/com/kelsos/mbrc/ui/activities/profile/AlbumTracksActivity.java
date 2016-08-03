@@ -10,35 +10,29 @@ import android.widget.LinearLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.TrackEntryAdapter;
 import com.kelsos.mbrc.data.library.Track;
 import com.kelsos.mbrc.helper.PopupActionHandler;
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView;
-import roboguice.RoboGuice;
+import javax.inject.Inject;
+import toothpick.Scope;
+import toothpick.Toothpick;
+import toothpick.smoothie.module.SmoothieActivityModule;
 
-public class AlbumTracksActivity extends AppCompatActivity
-    implements TrackEntryAdapter.MenuItemSelectedListener {
+public class AlbumTracksActivity extends AppCompatActivity implements TrackEntryAdapter.MenuItemSelectedListener {
 
   public static final String ALBUM_NAME = "albumName";
 
-  @BindView(R.id.toolbar)
-  Toolbar toolbar;
+  @BindView(R.id.toolbar) Toolbar toolbar;
+  @BindView(R.id.list_tracks) EmptyRecyclerView listTracks;
+  @BindView(R.id.empty_view) LinearLayout emptyView;
 
-  @BindView(R.id.list_tracks)
-  EmptyRecyclerView listTracks;
-
-  @BindView(R.id.empty_view)
-  LinearLayout emptyView;
-
-  @Inject
-  private TrackEntryAdapter adapter;
-
-  @Inject
-  private PopupActionHandler actionHandler;
+  @Inject TrackEntryAdapter adapter;
+  @Inject PopupActionHandler actionHandler;
 
   private String album;
+  private Scope scope;
 
   /**
    * Mandatory empty constructor for the fragment manager to instantiate the
@@ -47,10 +41,13 @@ public class AlbumTracksActivity extends AppCompatActivity
   public AlbumTracksActivity() {
   }
 
-  @Override public void onCreate(Bundle savedInstanceState) {
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    scope = Toothpick.openScopes(getApplication(), this);
+    scope.installModules(new SmoothieActivityModule(this));
     super.onCreate(savedInstanceState);
+    Toothpick.inject(this, scope);
     setContentView(R.layout.activity_album_tracks);
-    RoboGuice.getInjector(this).injectMembers(this);
     ButterKnife.bind(this);
     final Bundle extras = getIntent().getExtras();
 
@@ -72,10 +69,10 @@ public class AlbumTracksActivity extends AppCompatActivity
     listTracks.setLayoutManager(new LinearLayoutManager(getBaseContext()));
     listTracks.setAdapter(adapter);
     listTracks.setEmptyView(emptyView);
-
   }
 
-  @Override public boolean onOptionsItemSelected(final MenuItem item) {
+  @Override
+  public boolean onOptionsItemSelected(final MenuItem item) {
     final int itemId = item.getItemId();
 
     if (itemId == android.R.id.home) {
@@ -86,17 +83,24 @@ public class AlbumTracksActivity extends AppCompatActivity
     return super.onOptionsItemSelected(item);
   }
 
-  @OnClick(R.id.play_album) public void onPlayClicked() {
+  @OnClick(R.id.play_album)
+  public void onPlayClicked() {
 
   }
 
-
-  @Override public void onMenuItemSelected(MenuItem menuItem, Track entry) {
+  @Override
+  public void onMenuItemSelected(MenuItem menuItem, Track entry) {
     actionHandler.trackSelected(menuItem, entry);
-
   }
 
-  @Override public void onItemClicked(Track track) {
+  @Override
+  public void onItemClicked(Track track) {
     actionHandler.trackSelected(track);
+  }
+
+  @Override
+  protected void onDestroy() {
+    Toothpick.closeScope(this);
+    super.onDestroy();
   }
 }

@@ -3,9 +3,6 @@ package com.kelsos.mbrc.helper;
 import android.content.Context;
 import android.content.Intent;
 import android.view.MenuItem;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
@@ -21,17 +18,22 @@ import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.ui.activities.profile.AlbumTracksActivity;
 import com.kelsos.mbrc.ui.activities.profile.ArtistAlbumsActivity;
 import com.kelsos.mbrc.ui.activities.profile.GenreArtistsActivity;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class PopupActionHandler {
-  @Inject
+
   private RxBus bus;
-
-  @Inject
   private Context context;
+  private BasicSettingsHelper settings;
 
   @Inject
-  private BasicSettingsHelper settings;
+  public PopupActionHandler(RxBus bus, Context context, BasicSettingsHelper settings) {
+    this.bus = bus;
+    this.context = context;
+    this.settings = settings;
+  }
 
   public void albumSelected(MenuItem menuItem, Album entry) {
 

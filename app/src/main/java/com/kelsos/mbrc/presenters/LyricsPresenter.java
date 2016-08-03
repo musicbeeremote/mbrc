@@ -1,19 +1,17 @@
 package com.kelsos.mbrc.presenters;
 
-import com.google.inject.Inject;
 import com.kelsos.mbrc.model.LyricsModel;
 import com.kelsos.mbrc.views.LyricsView;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.inject.Inject;
 
 import static com.kelsos.mbrc.constants.Const.LYRICS_NEWLINE;
 
 public class LyricsPresenter implements BasePresenter<LyricsView> {
   private LyricsView view;
-  @Inject
-  private LyricsModel model;
+  @Inject LyricsModel model;
 
   @Override
   public void attach(LyricsView view) {

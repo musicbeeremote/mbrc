@@ -9,8 +9,8 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.google.inject.Inject;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.NowPlayingAdapter;
 import com.kelsos.mbrc.constants.Protocol;
@@ -25,31 +25,25 @@ import com.kelsos.mbrc.rx.RxUtils;
 import com.kelsos.mbrc.services.NowPlayingSync;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.drag.SimpleItenTouchHelper;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import roboguice.RoboGuice;
+import javax.inject.Inject;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
+import toothpick.Scope;
+import toothpick.Toothpick;
 
 public class NowPlayingActivity extends BaseActivity
     implements SearchView.OnQueryTextListener, NowPlayingAdapter.NowPlayingListener {
 
-  @BindView(R.id.now_playing_list)
-  RecyclerView nowPlayingList;
-  @BindView(R.id.swipe_layout)
-  SwipeRefreshLayout swipeRefreshLayout;
-  @Inject
-  private RxBus bus;
-  @Inject
-  private NowPlayingAdapter adapter;
-  @Inject
-  private NowPlayingSync sync;
+  @BindView(R.id.now_playing_list) RecyclerView nowPlayingList;
+  @BindView(R.id.swipe_layout) SwipeRefreshLayout swipeRefreshLayout;
+  @Inject RxBus bus;
+  @Inject NowPlayingAdapter adapter;
+  @Inject NowPlayingSync sync;
   private SearchView mSearchView;
   private MenuItem mSearchItem;
+  private Scope scope;
 
   private void handlePlayingTrackChange(TrackInfo event) {
     if (adapter == null || !adapter.getClass().equals(NowPlayingAdapter.class)) {
@@ -67,11 +61,9 @@ public class NowPlayingActivity extends BaseActivity
     return false;
   }
 
-
   public boolean onQueryTextChange(String newText) {
     return true;
   }
-
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -86,9 +78,10 @@ public class NowPlayingActivity extends BaseActivity
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    scope = Toothpick.openScopes(getApplication(), this);
     super.onCreate(savedInstanceState);
+    Toothpick.inject(this, scope);
     setContentView(R.layout.activity_nowplaying);
-    RoboGuice.getInjector(this).injectMembers(this);
     ButterKnife.bind(this);
     super.setup();
     RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
@@ -108,11 +101,11 @@ public class NowPlayingActivity extends BaseActivity
       swipeRefreshLayout.setRefreshing(true);
     }
 
-    sync.syncNowPlaying(Schedulers.io()).compose(RxUtils.uiTask()).subscribe(throwable -> {
-      Timber.v(throwable, "Failed");
-    }, () -> {
+    sync.syncNowPlaying(Schedulers.io()).compose(RxUtils.uiTask()).subscribe(() -> {
       adapter.refresh();
       swipeRefreshLayout.setRefreshing(false);
+    }, throwable -> {
+      Timber.v(throwable, "Failed");
     });
   }
 
@@ -124,7 +117,10 @@ public class NowPlayingActivity extends BaseActivity
   @Override
   public void onResume() {
     super.onResume();
-    bus.register(this, TrackInfoChangeEvent.class, trackInfoChangeEvent -> handlePlayingTrackChange(trackInfoChangeEvent.getTrackInfo()), true);
+    bus.register(this,
+        TrackInfoChangeEvent.class,
+        trackInfoChangeEvent -> handlePlayingTrackChange(trackInfoChangeEvent.getTrackInfo()),
+        true);
   }
 
   @Override
@@ -172,5 +168,11 @@ public class NowPlayingActivity extends BaseActivity
   @Override
   protected int active() {
     return R.id.nav_now_playing;
+  }
+
+  @Override
+  protected void onDestroy() {
+    Toothpick.closeScope(this);
+    super.onDestroy();
   }
 }

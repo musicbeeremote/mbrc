@@ -20,7 +20,7 @@ def gitHash() {
 
 android {
   compileSdkVersion 24
-  buildToolsVersion "24.0.0"
+  buildToolsVersion "24.0.1"
 
   defaultConfig {
     applicationId "com.kelsos.mbrc"
@@ -116,35 +116,45 @@ task wrapper(type: Wrapper) {
 }
 
 ext {
-  supportLibraryVersion = "24.0.0"
+  support_library_version = "24.1.1"
   dbflow_version = "3.1.1"
+  toothpick_version = "1.0.0-RC6"
+  jackson_version = "2.8.1"
+  butterknife_version = "8.1.0"
+  material_dialogs_version = "0.8.6.2"
 }
 
 dependencies {
-  compile "com.android.support:appcompat-v7:${supportLibraryVersion}"
-  compile "com.android.support:support-v4:${supportLibraryVersion}"
-  compile "com.android.support:support-annotations:${supportLibraryVersion}"
-  compile "com.android.support:recyclerview-v7:${supportLibraryVersion}"
-  compile "com.android.support:design:${supportLibraryVersion}"
+  compile "com.android.support:appcompat-v7:${support_library_version}"
+  compile "com.android.support:support-v4:${support_library_version}"
+  compile "com.android.support:support-annotations:${support_library_version}"
+  compile "com.android.support:recyclerview-v7:${support_library_version}"
+  compile "com.android.support:design:${support_library_version}"
 
   apt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
   // use kapt for kotlin apt
   compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
   compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
-  compile 'com.fasterxml.jackson.core:jackson-core:2.8.0'
-  compile 'com.fasterxml.jackson.core:jackson-databind:2.8.0'
+  compile "com.fasterxml.jackson.core:jackson-core:${jackson_version}"
+  compile "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
   compile 'com.github.machinarius:preferencefragment:0.1.2'
   compile 'com.jakewharton:butterknife:8.1.0'
   compile 'io.reactivex:rxandroid:1.2.1'
-  compile 'io.reactivex:rxjava:1.1.6'
-  compile 'org.roboguice:roboguice:4.0.0'
-  compile 'com.github.afollestad.material-dialogs:core:0.8.6.1'
-  compile 'com.github.afollestad.material-dialogs:commons:0.8.6.1'
+  compile 'io.reactivex:rxjava:1.1.8'
+
+  compile "com.github.stephanenicolas.toothpick:toothpick-runtime:${toothpick_version}"
+  compile "com.github.stephanenicolas.toothpick:smoothie:${toothpick_version}"
+  apt "com.github.stephanenicolas.toothpick:toothpick-compiler:${toothpick_version}"
+
+  //highly recommended
+  testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
+
+  compile "com.github.afollestad.material-dialogs:core:${material_dialogs_version}"
+  compile "com.github.afollestad.material-dialogs:commons:${material_dialogs_version}"
   compile 'com.jakewharton.timber:timber:4.1.2'
   compile 'com.jakewharton.rxrelay:rxrelay:1.1.0'
 
-  apt 'com.jakewharton:butterknife-compiler:8.1.0'
-  provided 'org.roboguice:roboblender:4.0.0'
+  apt "com.jakewharton:butterknife-compiler:${butterknife_version}"
   retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
 }
 
@@ -240,5 +250,12 @@ gradle.taskGraph.afterTask { Task task, TaskState state ->
           style: new File(rootDir, 'config/quality/checkstyle/checkstyle-noframes-sorted.xsl'),
           out: new File("$buildDir/reports/checkstyle/checkstyle.html"))
     }
+  }
+}
+
+apt {
+  arguments {
+    'toothpick_registry_package_name' 'com.kelsos.mbrc'
+    'toothpick_registry_children_package_names' 'toothpick.smoothie'
   }
 }

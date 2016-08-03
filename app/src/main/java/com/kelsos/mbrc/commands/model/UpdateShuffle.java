@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.commands.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.kelsos.mbrc.events.ui.ShuffleChange;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;

@@ -1,37 +1,28 @@
 package com.kelsos.mbrc.controller;
 
 import android.app.Application;
-import android.content.Context;
-
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import roboguice.RoboGuice;
-import roboguice.inject.ContextScope;
+import javax.inject.Inject;
 import timber.log.Timber;
+import toothpick.Scope;
+import toothpick.Toothpick;
 
 public class RemoteController implements Runnable {
-  private Injector injector;
+  private final Scope scope;
   private Map<String, Class<? extends ICommand>> commandMap;
   private LinkedBlockingQueue<IEvent> eventQueue;
-  private ContextScope scope;
-  private final Context context;
 
   @Inject
-  public RemoteController(RxBus bus, Injector injector, Application app) {
-    this.injector = injector;
+  public RemoteController(RxBus bus, Application app) {
     eventQueue = new LinkedBlockingQueue<>();
     bus.register(this, MessageEvent.class, this::handleUserActionEvents);
-    scope = RoboGuice.getInjector(app).getInstance(ContextScope.class);
-    context = app.getApplicationContext();
+    scope = Toothpick.openScope(app);
   }
 
   public void register(String type, Class<? extends ICommand> command) {
@@ -66,9 +57,8 @@ public class RemoteController implements Runnable {
     }
     ICommand commandInstance;
     try {
-      scope.enter(context, new HashMap<>());
-      commandInstance = injector.getInstance(commandClass);
-      scope.exit(context);
+
+      commandInstance = scope.getInstance(commandClass);
       if (commandInstance == null) {
         return;
       }

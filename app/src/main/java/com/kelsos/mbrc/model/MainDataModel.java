@@ -3,9 +3,6 @@ package com.kelsos.mbrc.model;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.annotations.PlayerState.State;
 import com.kelsos.mbrc.annotations.Repeat;
@@ -32,10 +29,10 @@ import com.kelsos.mbrc.events.ui.ScrobbleChange;
 import com.kelsos.mbrc.events.ui.ShuffleChange;
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.events.ui.VolumeChange;
-
 import java.util.ArrayList;
 import java.util.List;
-
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;

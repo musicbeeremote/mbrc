@@ -9,44 +9,41 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.AlbumEntryAdapter;
 import com.kelsos.mbrc.data.library.Album;
 import com.kelsos.mbrc.helper.PopupActionHandler;
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView;
-import roboguice.RoboGuice;
+import javax.inject.Inject;
+import toothpick.Scope;
+import toothpick.Toothpick;
+import toothpick.smoothie.module.SmoothieActivityModule;
 
-public class ArtistAlbumsActivity extends AppCompatActivity
-    implements AlbumEntryAdapter.MenuItemSelectedListener {
+public class ArtistAlbumsActivity extends AppCompatActivity implements AlbumEntryAdapter.MenuItemSelectedListener {
 
   public static final String ARTIST_NAME = "artist_name";
 
-  @BindView(R.id.album_recycler)
-  EmptyRecyclerView recyclerView;
+  @BindView(R.id.album_recycler) EmptyRecyclerView recyclerView;
+  @BindView(R.id.toolbar) Toolbar toolbar;
+  @BindView(R.id.empty_view) LinearLayout emptyView;
 
-  @BindView(R.id.toolbar)
-  Toolbar toolbar;
-
-  @BindView(R.id.empty_view)
-  LinearLayout emptyView;
-
-  @Inject
-  private AlbumEntryAdapter adapter;
-
-  @Inject
-  private PopupActionHandler actionHandler;
+  @Inject PopupActionHandler actionHandler;
+  @Inject AlbumEntryAdapter adapter;
 
   private String artist;
+  private Scope scope;
 
   public ArtistAlbumsActivity() {
     // Required empty public constructor
   }
 
-  @Override public void onCreate(Bundle savedInstanceState) {
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    scope = Toothpick.openScopes(getApplication(), this);
+    scope.installModules(new SmoothieActivityModule(this));
     super.onCreate(savedInstanceState);
+    Toothpick.inject(this, scope);
     setContentView(R.layout.activity_artist_albums);
-    RoboGuice.getInjector(this).injectMembers(this);
     ButterKnife.bind(this);
 
     final Bundle extras = getIntent().getExtras();
@@ -70,12 +67,19 @@ public class ArtistAlbumsActivity extends AppCompatActivity
     recyclerView.setEmptyView(emptyView);
   }
 
-  @Override public void onMenuItemSelected(MenuItem menuItem, Album album) {
+  @Override
+  public void onMenuItemSelected(MenuItem menuItem, Album album) {
     actionHandler.albumSelected(menuItem, album);
   }
 
-  @Override public void onItemClicked(Album album) {
+  @Override
+  public void onItemClicked(Album album) {
     actionHandler.albumSelected(album);
   }
 
+  @Override
+  protected void onDestroy() {
+    Toothpick.closeScope(this);
+    super.onDestroy();
+  }
 }

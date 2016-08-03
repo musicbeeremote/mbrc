@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.ProtocolEventType;
 import com.kelsos.mbrc.events.MessageEvent;
@@ -19,6 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
+import javax.inject.Inject;
 import timber.log.Timber;
 
 public class VersionCheckCommand implements ICommand {
@@ -31,16 +30,17 @@ public class VersionCheckCommand implements ICommand {
   private SettingsManager manager;
   private RxBus bus;
 
-  @Inject public VersionCheckCommand(MainDataModel model, ObjectMapper mapper,
-      Provider<Context> context, SettingsManager manager, RxBus bus) {
+  @Inject
+  VersionCheckCommand(MainDataModel model, ObjectMapper mapper, Context context, SettingsManager manager, RxBus bus) {
     this.model = model;
     this.mapper = mapper;
-    this.context = context.get();
+    this.context = context;
     this.manager = manager;
     this.bus = bus;
   }
 
-  @Override public void execute(IEvent e) {
+  @Override
+  public void execute(IEvent e) {
 
     if (!manager.isPluginUpdateCheckEnabled()) {
       return;
@@ -81,14 +81,12 @@ public class VersionCheckCommand implements ICommand {
       String[] latestVersion = suggestedVersion.split("\\.");
 
       int i = 0;
-      while (i < currentVersion.length && i < latestVersion.length && currentVersion[i].equals(
-          latestVersion[i])) {
+      while (i < currentVersion.length && i < latestVersion.length && currentVersion[i].equals(latestVersion[i])) {
         i++;
       }
 
       if (i < currentVersion.length && i < latestVersion.length) {
-        int diff =
-            Integer.valueOf(currentVersion[i]).compareTo(Integer.valueOf(latestVersion[i]));
+        int diff = Integer.valueOf(currentVersion[i]).compareTo(Integer.valueOf(latestVersion[i]));
         isOutOfDate = diff < 0;
       }
 
