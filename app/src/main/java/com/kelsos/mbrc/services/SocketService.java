@@ -1,8 +1,6 @@
 package com.kelsos.mbrc.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.SocketEventType;
@@ -13,7 +11,6 @@ import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.utilities.SettingsManager;
 import com.kelsos.mbrc.utilities.SocketActivityChecker;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -27,14 +24,16 @@ import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import rx.Completable;
 import rx.Subscription;
 import timber.log.Timber;
 
-@Singleton public class SocketService implements SocketActivityChecker.PingTimeoutListener {
+@Singleton
+public class SocketService implements SocketActivityChecker.PingTimeoutListener {
   private static final int DELAY = 3;
-  @Inject private SocketActivityChecker activityChecker;
+  private SocketActivityChecker activityChecker;
 
   private static final int MAX_RETRIES = 3;
   private static final int SOCKET_BUFFER = 4096;
@@ -49,8 +48,12 @@ import timber.log.Timber;
 
   private Subscription subscription;
 
-  @Inject public SocketService(SettingsManager settingsManager, RxBus bus,
+  @Inject
+  public SocketService(SocketActivityChecker activityChecker,
+      SettingsManager settingsManager,
+      RxBus bus,
       ObjectMapper mapper) {
+    this.activityChecker = activityChecker;
     this.bus = bus;
     this.settingsManager = settingsManager;
     this.mapper = mapper;
@@ -67,12 +70,10 @@ import timber.log.Timber;
       return;
     }
 
-    subscription = Completable.timer(DELAY, TimeUnit.SECONDS).subscribe(throwable -> {
-      Timber.v(throwable, "Failed");
-    }, () -> {
+    subscription = Completable.timer(DELAY, TimeUnit.SECONDS).subscribe(() -> {
       executor.execute(new SocketConnection());
       numOfRetries++;
-    });
+    }, throwable -> Timber.v(throwable, "Failed"));
   }
 
   public void socketManager(SocketAction action) {
@@ -153,7 +154,8 @@ import timber.log.Timber;
     }
   }
 
-  @Override public void onTimeout() {
+  @Override
+  public void onTimeout() {
     Timber.v("Timeout received resetting socket");
     socketManager(SocketAction.RESET);
   }
@@ -169,8 +171,7 @@ import timber.log.Timber;
       try {
         socket = new Socket();
         socket.connect(socketAddress);
-        final OutputStreamWriter out =
-            new OutputStreamWriter(socket.getOutputStream(), Const.UTF_8);
+        final OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), Const.UTF_8);
         output = new PrintWriter(new BufferedWriter(out, SOCKET_BUFFER), true);
         final InputStreamReader in = new InputStreamReader(socket.getInputStream(), Const.UTF_8);
         input = new BufferedReader(in, SOCKET_BUFFER);

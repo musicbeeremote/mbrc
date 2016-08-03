@@ -3,7 +3,7 @@ package com.kelsos.mbrc.commands.model;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.kelsos.mbrc.data.Playlist;
 import com.kelsos.mbrc.interfaces.ICommand;
 import com.kelsos.mbrc.interfaces.IEvent;

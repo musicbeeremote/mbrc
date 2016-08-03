@@ -9,9 +9,6 @@ import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
@@ -57,24 +54,39 @@ public class Genre extends BaseModel {
 
   @Override
   public String toString() {
-    return ToStringBuilder.reflectionToString(this);
+    return "Genre{" +
+        "id=" + id +
+        ", genre='" + genre + '\'' +
+        ", count=" + count +
+        '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    Genre genre1 = (Genre) o;
+
+    if (id != genre1.id) {
+      return false;
+    }
+    if (count != genre1.count) {
+      return false;
+    }
+    return genre.equals(genre1.genre);
   }
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder().append(genre).append(count).toHashCode();
-  }
-
-  @Override
-  public boolean equals(Object other) {
-    if (other == this) {
-      return true;
-    }
-    if (!(other instanceof Genre)) {
-      return false;
-    }
-    Genre rhs = ((Genre) other);
-    return new EqualsBuilder().append(genre, rhs.genre).append(count, rhs.count).isEquals();
+    int result = (int) (id ^ (id >>> 32));
+    result = 31 * result + genre.hashCode();
+    result = 31 * result + count;
+    return result;
   }
 
   public long getId() {

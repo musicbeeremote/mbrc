@@ -7,17 +7,13 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:2.2.0-alpha5'
+    classpath 'com.android.tools.build:gradle:2.2.0-alpha7'
     classpath 'me.tatarka:gradle-retrolambda:3.3.0-beta4'
     classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-    classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.13.0'
     // NOTE: Do not place your application dependencies here; they belong
     // in the individual module build.gradle files
   }
-
-  // Exclude the version that the android plugin depends on.
-  configurations.classpath.exclude group: 'com.android.tools.external.lombok'
 }
 
 allprojects {

@@ -12,8 +12,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.google.inject.Inject;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.annotations.PlayerState.State;
@@ -28,27 +29,19 @@ import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent;
 import com.kelsos.mbrc.presenters.MiniControlPresenter;
 import com.kelsos.mbrc.ui.activities.nav.MainActivity;
 import com.kelsos.mbrc.views.MiniControlView;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import roboguice.RoboGuice;
+import javax.inject.Inject;
+import toothpick.Scope;
+import toothpick.Toothpick;
 
 public class MiniControlFragment extends Fragment implements MiniControlView {
 
-  @BindView(R.id.mc_track_cover)
-  ImageView trackCover;
-  @BindView(R.id.mc_track_artist)
-  TextView trackArtist;
-  @BindView(R.id.mc_track_title)
-  TextView trackTitle;
-  @BindView(R.id.mc_play_pause)
-  ImageButton playPause;
+  @BindView(R.id.mc_track_cover) ImageView trackCover;
+  @BindView(R.id.mc_track_artist) TextView trackArtist;
+  @BindView(R.id.mc_track_title) TextView trackTitle;
+  @BindView(R.id.mc_play_pause) ImageButton playPause;
 
-  @Inject
-  private RxBus bus;
-  @Inject
-  private MiniControlPresenter presenter;
+  @Inject RxBus bus;
+  @Inject MiniControlPresenter presenter;
 
   private void post(String action) {
     bus.post(MessageEvent.action(UserAction.create(action)));
@@ -77,19 +70,17 @@ public class MiniControlFragment extends Fragment implements MiniControlView {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    Scope scope = Toothpick.openScopes(getActivity().getApplication(), getActivity(), this);
     super.onCreate(savedInstanceState);
-    RoboGuice.getInjector(getContext()).injectMembers(this);
+    Toothpick.inject(this, scope);
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                           Bundle savedInstanceState) {
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.ui_fragment_mini_control, container, false);
     ButterKnife.bind(this, view);
-    Typeface robotoRegular =
-        Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
-    Typeface robotoMedium =
-        Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_medium.ttf");
+    Typeface robotoRegular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
+    Typeface robotoMedium = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_medium.ttf");
     trackTitle.setTypeface(robotoMedium);
     trackArtist.setTypeface(robotoRegular);
     return view;
@@ -110,7 +101,6 @@ public class MiniControlFragment extends Fragment implements MiniControlView {
     presenter.attach(this);
     presenter.load();
   }
-
 
   @Override
   public void updateCover(@Nullable Bitmap cover) {
@@ -152,5 +142,11 @@ public class MiniControlFragment extends Fragment implements MiniControlView {
 
   private void onPlayStateChange(PlayStateChange event) {
     updateState(event.getState());
+  }
+
+  @Override
+  public void onDestroy() {
+    Toothpick.closeScope(this);
+    super.onDestroy();
   }
 }

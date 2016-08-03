@@ -6,9 +6,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringDef;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
@@ -17,14 +14,14 @@ import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DisplayDialog;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Date;
 import java.util.List;
-
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import timber.log.Timber;
 
 import static android.text.TextUtils.isEmpty;

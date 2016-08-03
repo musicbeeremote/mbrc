@@ -1,13 +1,12 @@
 package com.kelsos.mbrc.presenters;
 
-import com.google.inject.Inject;
 import com.kelsos.mbrc.model.MainDataModel;
 import com.kelsos.mbrc.views.MiniControlView;
+import javax.inject.Inject;
 
 public class MiniControlPresenter implements BasePresenter<MiniControlView> {
 
-  @Inject
-  private MainDataModel model;
+  @Inject MainDataModel model;
   private MiniControlView view;
 
   public MiniControlPresenter() {

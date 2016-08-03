@@ -17,9 +17,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnLongClick;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.annotations.Connection;
 import com.kelsos.mbrc.annotations.PlayerState;
@@ -52,18 +53,16 @@ import com.kelsos.mbrc.presenters.MainViewPresenter;
 import com.kelsos.mbrc.ui.activities.BaseActivity;
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment;
 import com.kelsos.mbrc.views.MainView;
-
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnLongClick;
-import roboguice.RoboGuice;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import timber.log.Timber;
+import toothpick.Scope;
+import toothpick.Toothpick;
+import toothpick.smoothie.module.SmoothieActivityModule;
 
 @Singleton
 public class MainActivity extends BaseActivity implements MainView {
@@ -71,35 +70,21 @@ public class MainActivity extends BaseActivity implements MainView {
   private static final String STOPPED = "Stopped";
   private final ScheduledExecutorService progressScheduler = Executors.newScheduledThreadPool(1);
   // Injects
-  @Inject
-  protected RxBus bus;
-  @Inject
-  private MainViewPresenter presenter;
+  @Inject RxBus bus;
+  @Inject MainViewPresenter presenter;
   // Inject elements of the view
-  @BindView(R.id.main_artist_label)
-  TextView artistLabel;
-  @BindView(R.id.main_title_label)
-  TextView titleLabel;
-  @BindView(R.id.main_label_album)
-  TextView albumLabel;
-  @BindView(R.id.main_track_progress_current)
-  TextView trackProgressCurrent;
-  @BindView(R.id.main_track_duration_total)
-  TextView trackDuration;
-  @BindView(R.id.main_button_play_pause)
-  ImageButton playPauseButton;
-  @BindView(R.id.main_volume_seeker)
-  SeekBar volumeBar;
-  @BindView(R.id.main_track_progress_seeker)
-  SeekBar progressBar;
-  @BindView(R.id.main_mute_button)
-  ImageButton muteButton;
-  @BindView(R.id.main_shuffle_button)
-  ImageButton shuffleButton;
-  @BindView(R.id.main_repeat_button)
-  ImageButton repeatButton;
-  @BindView(R.id.main_album_cover_image_view)
-  ImageView albumCover;
+  @BindView(R.id.main_artist_label) TextView artistLabel;
+  @BindView(R.id.main_title_label) TextView titleLabel;
+  @BindView(R.id.main_label_album) TextView albumLabel;
+  @BindView(R.id.main_track_progress_current) TextView trackProgressCurrent;
+  @BindView(R.id.main_track_duration_total) TextView trackDuration;
+  @BindView(R.id.main_button_play_pause) ImageButton playPauseButton;
+  @BindView(R.id.main_volume_seeker) SeekBar volumeBar;
+  @BindView(R.id.main_track_progress_seeker) SeekBar progressBar;
+  @BindView(R.id.main_mute_button) ImageButton muteButton;
+  @BindView(R.id.main_shuffle_button) ImageButton shuffleButton;
+  @BindView(R.id.main_repeat_button) ImageButton repeatButton;
+  @BindView(R.id.main_album_cover_image_view) ImageView albumCover;
   private ShareActionProvider mShareActionProvider;
   private int previousVol;
   private ScheduledFuture mProgressUpdateHandler;
@@ -121,6 +106,7 @@ public class MainActivity extends BaseActivity implements MainView {
     }
   };
   private VolumeChangeHelper volumeChangeListener;
+  private Scope scope;
 
   private void register() {
     this.bus.register(this, CoverChangedEvent.class, this::handleCoverEvent, true);
@@ -194,9 +180,11 @@ public class MainActivity extends BaseActivity implements MainView {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    scope = Toothpick.openScopes(getApplication(), this);
+    scope.installModules(new SmoothieActivityModule(this));
     super.onCreate(savedInstanceState);
+    Toothpick.inject(this, scope);
     setContentView(R.layout.activity_main);
-    RoboGuice.getInjector(this).injectMembers(this);
     ButterKnife.bind(this);
     super.setup();
     volumeChangeListener = new VolumeChangeHelper(this::changeVolume);
@@ -208,7 +196,6 @@ public class MainActivity extends BaseActivity implements MainView {
   public void onStart() {
     super.onStart();
     setTextViewTypeface();
-
   }
 
   @Override
@@ -285,7 +272,6 @@ public class MainActivity extends BaseActivity implements MainView {
     return super.onCreateOptionsMenu(menu);
   }
 
-
   private Intent getShareIntent() {
     Intent shareIntent = new Intent(Intent.ACTION_SEND);
     shareIntent.setType("text/plain");
@@ -293,7 +279,6 @@ public class MainActivity extends BaseActivity implements MainView {
     shareIntent.putExtra(Intent.EXTRA_TEXT, payload);
     return shareIntent;
   }
-
 
   private void handleCoverEvent(final CoverChangedEvent cevent) {
     updateCover(cevent.getCover());
@@ -330,7 +315,6 @@ public class MainActivity extends BaseActivity implements MainView {
     shuffleButton.setImageResource(autoDj ? R.drawable.ic_headset_black_24dp : R.drawable.ic_shuffle_black_24dp);
   }
 
-
   private void updateRepeatButtonState(RepeatChange change) {
     updateRepeat(change.getMode());
   }
@@ -358,7 +342,6 @@ public class MainActivity extends BaseActivity implements MainView {
     repeatButton.setColorFilter(color);
   }
 
-
   private void updateVolumeData(VolumeChange change) {
     updateVolume(change.getVolume(), change.isMute());
   }
@@ -379,11 +362,8 @@ public class MainActivity extends BaseActivity implements MainView {
 
     int color = ContextCompat.getColor(this, R.color.button_dark);
     muteButton.setColorFilter(color);
-    muteButton.setImageResource(mute
-        ? R.drawable.ic_volume_off_black_24dp
-        : R.drawable.ic_volume_up_black_24dp);
+    muteButton.setImageResource(mute ? R.drawable.ic_volume_off_black_24dp : R.drawable.ic_volume_up_black_24dp);
   }
-
 
   private void handlePlayStateChange(final PlayStateChange change) {
     updatePlayState(change.getState());
@@ -398,31 +378,26 @@ public class MainActivity extends BaseActivity implements MainView {
     @DrawableRes int resId;
     String tag;
 
-
     if (PlayerState.PLAYING.equals(state)) {
       resId = R.drawable.ic_pause_circle_filled_black_24dp;
       tag = "Playing";
         /* Start the animation if the track is playing*/
-     presenter.requestNowPlayingPosition();
+      presenter.requestNowPlayingPosition();
       trackProgressAnimation();
-
     } else if (PlayerState.PAUSED.equals(state)) {
       resId = R.drawable.ic_play_circle_filled_black_24dp;
       tag = PAUSED;
         /* Stop the animation if the track is paused*/
       stopTrackProgressAnimation();
-
     } else if (PlayerState.STOPPED.equals(state)) {
       resId = R.drawable.ic_play_circle_filled_black_24dp;
       tag = STOPPED;
         /* Stop the animation if the track is paused*/
       stopTrackProgressAnimation();
       activateStoppedState();
-
     } else {
       resId = R.drawable.ic_play_circle_filled_black_24dp;
       tag = STOPPED;
-
     }
 
     playPauseButton.setColorFilter(accentColor);
@@ -474,7 +449,6 @@ public class MainActivity extends BaseActivity implements MainView {
     mProgressUpdateHandler = progressScheduler.scheduleAtFixedRate(updateProgress, 0, timePeriod, TimeUnit.SECONDS);
   }
 
-
   private void activateStoppedState() {
     if (trackProgressCurrent == null || progressBar == null) {
       return;
@@ -482,7 +456,6 @@ public class MainActivity extends BaseActivity implements MainView {
     progressBar.setProgress(0);
     trackProgressCurrent.setText(getString(R.string.playback_progress, 0, 0));
   }
-
 
   private void handleTrackInfoChange(final TrackInfoChangeEvent change) {
     updateTrackInfo(change.getTrackInfo());
@@ -596,5 +569,11 @@ public class MainActivity extends BaseActivity implements MainView {
   @Override
   protected int active() {
     return R.id.nav_home;
+  }
+
+  @Override
+  protected void onDestroy() {
+    Toothpick.closeScope(this);
+    super.onDestroy();
   }
 }

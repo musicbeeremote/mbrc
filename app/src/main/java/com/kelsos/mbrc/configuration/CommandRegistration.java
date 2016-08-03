@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.configuration;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.kelsos.mbrc.commands.CancelNotificationCommand;
 import com.kelsos.mbrc.commands.ConnectionStatusChangedCommand;
 import com.kelsos.mbrc.commands.HandleHandshake;

@@ -9,44 +9,41 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.google.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter;
 import com.kelsos.mbrc.data.library.Artist;
 import com.kelsos.mbrc.helper.PopupActionHandler;
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView;
-import roboguice.RoboGuice;
+import javax.inject.Inject;
+import toothpick.Scope;
+import toothpick.Toothpick;
+import toothpick.smoothie.module.SmoothieActivityModule;
 
-public class GenreArtistsActivity extends AppCompatActivity
-    implements ArtistEntryAdapter.MenuItemSelectedListener {
+public class GenreArtistsActivity extends AppCompatActivity implements ArtistEntryAdapter.MenuItemSelectedListener {
 
   public static final String GENRE_NAME = "genre_name";
 
-  @BindView(R.id.genre_artists_recycler)
-  EmptyRecyclerView recyclerView;
+  @BindView(R.id.genre_artists_recycler) EmptyRecyclerView recyclerView;
+  @BindView(R.id.toolbar) Toolbar toolbar;
+  @BindView(R.id.empty_view) LinearLayout emptyView;
 
-  @BindView(R.id.toolbar)
-  Toolbar toolbar;
-
-  @BindView(R.id.empty_view)
-  LinearLayout emptyView;
-
-  @Inject
-  private ArtistEntryAdapter adapter;
-
-  @Inject
-  private PopupActionHandler actionHandler;
+  @Inject ArtistEntryAdapter adapter;
+  @Inject PopupActionHandler actionHandler;
 
   private String genre;
+  private Scope scope;
 
   public GenreArtistsActivity() {
     // Required empty public constructor
   }
 
-  @Override public void onCreate(Bundle savedInstanceState) {
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    scope = Toothpick.openScopes(getApplication(), this);
+    scope.installModules(new SmoothieActivityModule(this));
     super.onCreate(savedInstanceState);
+    Toothpick.inject(this, scope);
     setContentView(R.layout.activity_genre_artists);
-    RoboGuice.getInjector(this).injectMembers(this);
     ButterKnife.bind(this);
 
     final Bundle extras = getIntent().getExtras();
@@ -71,11 +68,13 @@ public class GenreArtistsActivity extends AppCompatActivity
     recyclerView.setEmptyView(emptyView);
   }
 
-  @Override public void onMenuItemSelected(MenuItem menuItem, Artist entry) {
+  @Override
+  public void onMenuItemSelected(MenuItem menuItem, Artist entry) {
     actionHandler.artistSelected(menuItem, entry);
   }
 
-  @Override public void onItemClicked(Artist artist) {
+  @Override
+  public void onItemClicked(Artist artist) {
     actionHandler.artistSelected(artist);
   }
 }
