@@ -4,14 +4,13 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.HelpFeedbackPagerAdapter;
 
-public class HelpFeedbackActivity extends AppCompatActivity {
+public class HelpFeedbackActivity extends FontActivity {
 
   @BindView(R.id.toolbar)
   Toolbar toolbar;

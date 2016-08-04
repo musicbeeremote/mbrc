@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.adapters;
 
 import android.app.Activity;
-import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -33,12 +32,10 @@ import timber.log.Timber;
 public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.ViewHolder> {
   private final LayoutInflater inflater;
   private FlowCursorList<Artist> data;
-  private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
 
   @Inject public ArtistEntryAdapter(Activity context) {
     inflater = LayoutInflater.from(context);
-    robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
   }
 
   public void init(@Nullable String filter) {
@@ -100,7 +97,7 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
    */
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     final View view = inflater.inflate(R.layout.listitem_single, parent, false);
-    ViewHolder holder = new ViewHolder(view, robotoRegular);
+    ViewHolder holder = new ViewHolder(view);
 
     holder.indicator.setOnClickListener(v -> {
       PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
@@ -176,10 +173,9 @@ public class ArtistEntryAdapter extends RecyclerView.Adapter<ArtistEntryAdapter.
     @BindString(R.string.empty)
     String empty;
 
-    public ViewHolder(View itemView, Typeface typeface) {
+    public ViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
-      title.setTypeface(typeface);
     }
   }
 }

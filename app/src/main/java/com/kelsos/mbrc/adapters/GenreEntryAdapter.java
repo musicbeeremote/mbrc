@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.adapters;
 
 import android.app.Activity;
-import android.graphics.Typeface;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -28,14 +27,12 @@ import timber.log.Timber;
 
 public class GenreEntryAdapter extends RecyclerView.Adapter<GenreEntryAdapter.ViewHolder> {
   private FlowCursorList<Genre> data;
-  private Typeface robotoRegular;
   private MenuItemSelectedListener mListener;
   private LayoutInflater inflater;
 
   @Inject
   public GenreEntryAdapter(Activity context) {
     inflater = LayoutInflater.from(context);
-    robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
   }
 
   public void init() {
@@ -83,7 +80,7 @@ public class GenreEntryAdapter extends RecyclerView.Adapter<GenreEntryAdapter.Vi
   @Override
   public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = inflater.inflate(R.layout.listitem_single, parent, false);
-    return new ViewHolder(view, robotoRegular);
+    return new ViewHolder(view);
   }
 
   /**
@@ -157,10 +154,9 @@ public class GenreEntryAdapter extends RecyclerView.Adapter<GenreEntryAdapter.Vi
     @BindString(R.string.empty)
     String empty;
 
-    public ViewHolder(View itemView, Typeface typeface) {
+    public ViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
-      title.setTypeface(typeface);
     }
   }
 }

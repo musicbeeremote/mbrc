@@ -2,7 +2,6 @@ package com.kelsos.mbrc.ui.activities.profile;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -13,13 +12,14 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter;
 import com.kelsos.mbrc.data.library.Artist;
 import com.kelsos.mbrc.helper.PopupActionHandler;
+import com.kelsos.mbrc.ui.activities.FontActivity;
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView;
 import javax.inject.Inject;
 import toothpick.Scope;
 import toothpick.Toothpick;
 import toothpick.smoothie.module.SmoothieActivityModule;
 
-public class GenreArtistsActivity extends AppCompatActivity implements ArtistEntryAdapter.MenuItemSelectedListener {
+public class GenreArtistsActivity extends FontActivity implements ArtistEntryAdapter.MenuItemSelectedListener {
 
   public static final String GENRE_NAME = "genre_name";
 

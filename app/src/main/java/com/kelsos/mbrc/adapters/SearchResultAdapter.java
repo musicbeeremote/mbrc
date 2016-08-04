@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.adapters;
 
 import android.app.Activity;
-import android.graphics.Typeface;
 import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -40,7 +39,6 @@ public class SearchResultAdapter extends SectionedRecyclerViewAdapter<SearchResu
   private static final int VIEW_TYPE_SINGLE = 2;
 
   private final LayoutInflater inflater;
-  private final Typeface robotoMedium;
 
   private FlowQueryList<Genre> genreList;
   private FlowQueryList<Artist> artistList;
@@ -52,7 +50,6 @@ public class SearchResultAdapter extends SectionedRecyclerViewAdapter<SearchResu
   @Inject
   public SearchResultAdapter(Activity context) {
     inflater = LayoutInflater.from(context);
-    robotoMedium = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_medium.ttf");
   }
 
   @Override
@@ -239,13 +236,7 @@ public class SearchResultAdapter extends SectionedRecyclerViewAdapter<SearchResu
         break;
     }
     final View view = inflater.inflate(layout, parent, false);
-    SearchViewHolder holder = new SearchViewHolder(view);
-
-    if (viewType == VIEW_TYPE_HEADER) {
-      holder.lineOne.setTypeface(robotoMedium);
-    }
-
-    return holder;
+    return new SearchViewHolder(view);
   }
 
   private void showPopup(@MenuRes int menu, View view, PopupMenu.OnMenuItemClickListener listener) {

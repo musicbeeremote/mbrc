@@ -18,7 +18,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -50,7 +49,7 @@ import toothpick.Scope;
 import toothpick.Toothpick;
 import toothpick.smoothie.module.SmoothieActivityModule;
 
-public abstract class BaseActivity extends AppCompatActivity
+public abstract class BaseActivity extends FontActivity
     implements NavigationView.OnNavigationItemSelectedListener {
   @Inject RxBus bus;
   @BindView(R.id.toolbar) Toolbar toolbar;

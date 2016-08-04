@@ -72,7 +72,7 @@ public class LyricsActivity extends BaseActivity implements LyricsView {
     } else {
       emptyView.setVisibility(View.GONE);
       lyricsRecycler.setVisibility(View.VISIBLE);
-      LyricsAdapter adapter = new LyricsAdapter(this, lyrics);
+      LyricsAdapter adapter = new LyricsAdapter(lyrics);
       lyricsRecycler.setAdapter(adapter);
     }
   }

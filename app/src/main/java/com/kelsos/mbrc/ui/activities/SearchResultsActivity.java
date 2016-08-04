@@ -2,7 +2,6 @@ package com.kelsos.mbrc.ui.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -24,7 +23,7 @@ import toothpick.Scope;
 import toothpick.Toothpick;
 import toothpick.smoothie.module.SmoothieActivityModule;
 
-public class SearchResultsActivity extends AppCompatActivity implements SearchResultAdapter.OnSearchItemSelected {
+public class SearchResultsActivity extends FontActivity implements SearchResultAdapter.OnSearchItemSelected {
 
   public static final String QUERY = "com.kelsos.mbrc.extras.QUERY";
   @BindView(R.id.toolbar) Toolbar toolbar;

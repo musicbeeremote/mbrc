@@ -2,7 +2,6 @@ package com.kelsos.mbrc.ui.fragments;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -79,10 +78,6 @@ public class MiniControlFragment extends Fragment implements MiniControlView {
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.ui_fragment_mini_control, container, false);
     ButterKnife.bind(this, view);
-    Typeface robotoRegular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_regular.ttf");
-    Typeface robotoMedium = Typeface.createFromAsset(getActivity().getAssets(), "fonts/roboto_medium.ttf");
-    trackTitle.setTypeface(robotoMedium);
-    trackArtist.setTypeface(robotoRegular);
     return view;
   }
 

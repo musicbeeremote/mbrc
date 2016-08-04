@@ -1,22 +1,20 @@
 package com.kelsos.mbrc.adapters;
 
-import android.content.Context;
-import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.kelsos.mbrc.R;
 import java.util.List;
 
 public class LyricsAdapter extends RecyclerView.Adapter<LyricsAdapter.ViewHolder> {
   private List<String> mData;
-  private Typeface robotoLight;
 
-  public LyricsAdapter(Context context, List<String> objects) {
+  public LyricsAdapter(List<String> objects) {
     this.mData = objects;
-    robotoLight = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_light.ttf");
   }
 
   /**
@@ -39,10 +37,10 @@ public class LyricsAdapter extends RecyclerView.Adapter<LyricsAdapter.ViewHolder
    * @see #getItemViewType(int)
    * @see #onBindViewHolder(ViewHolder, int)
    */
-  @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View view = LayoutInflater.from(parent.getContext())
-        .inflate(R.layout.ui_list_lyrics_item, parent, false);
-    return new ViewHolder(view, robotoLight);
+  @Override
+  public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ui_list_lyrics_item, parent, false);
+    return new ViewHolder(view);
   }
 
   /**
@@ -62,7 +60,8 @@ public class LyricsAdapter extends RecyclerView.Adapter<LyricsAdapter.ViewHolder
    * item at the given position in the data set.
    * @param position The position of the item within the adapter's data set.
    */
-  @Override public void onBindViewHolder(ViewHolder holder, int position) {
+  @Override
+  public void onBindViewHolder(ViewHolder holder, int position) {
     String str = mData.get(position);
     holder.title.setText(str);
   }
@@ -72,17 +71,17 @@ public class LyricsAdapter extends RecyclerView.Adapter<LyricsAdapter.ViewHolder
    *
    * @return The total number of items in this adapter.
    */
-  @Override public int getItemCount() {
+  @Override
+  public int getItemCount() {
     return mData == null ? 0 : mData.size();
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
-    TextView title;
+    @BindView(android.R.id.text1) TextView title;
 
-    public ViewHolder(View itemView, Typeface typeface) {
+    public ViewHolder(View itemView) {
       super(itemView);
-      title = (TextView) itemView.findViewById(android.R.id.text1);
-      title.setTypeface(typeface);
+      ButterKnife.bind(this, itemView);
     }
   }
 }

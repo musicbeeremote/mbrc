@@ -9,7 +9,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
   <FrameLayout
-    android:layout_width="match_parent"
+      android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:layout_above="@+id/main_track_progress_seeker">
 
@@ -29,6 +29,7 @@
 
       <TextView
           android:id="@+id/main_track_progress_current"
+          fontPath="fonts/roboto_medium.ttf"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_alignParentLeft="true"
@@ -42,10 +43,12 @@
           android:shadowRadius="1.5"
           android:text="@string/main_label_duration_current"
           android:textColor="@color/primary_text"
-          android:textSize="12sp" />
+          android:textSize="12sp"
+          tools:ignore="MissingPrefix" />
 
       <TextView
           android:id="@+id/main_track_duration_total"
+          fontPath="fonts/roboto_medium.ttf"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_alignParentEnd="true"
@@ -60,7 +63,7 @@
           android:text="@string/main_label_duration_total"
           android:textColor="@color/primary_text"
           android:textSize="12sp"
-          tools:ignore="RelativeOverlap" />
+          tools:ignore="MissingPrefix,RelativeOverlap" />
     </RelativeLayout>
 
   </FrameLayout>
@@ -99,6 +102,7 @@
 
     <TextView
         android:id="@+id/main_title_label"
+        fontPath="fonts/roboto_light.ttf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="marquee"
@@ -110,6 +114,7 @@
         android:scrollHorizontally="true"
         android:textColor="@color/primary_text"
         android:textSize="@dimen/text_title_size"
+        tools:ignore="MissingPrefix"
         tools:text="Rock it for me" />
 
     <TextView
@@ -130,6 +135,7 @@
 
     <TextView
         android:id="@+id/main_label_album"
+        fontPath="fonts/roboto_medium.ttf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/main_artist_label"
@@ -142,6 +148,7 @@
         android:scrollHorizontally="true"
         android:textColor="@color/primary_text"
         android:textSize="@dimen/text_body_size"
+        tools:ignore="MissingPrefix"
         tools:text="Panic [2012]" />
 
   </RelativeLayout>
@@ -234,9 +241,9 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:contentDescription="@string/main_button_play_pause_description"
-        android:tint="@color/accent"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_play_circle_filled_black_24dp"
-        android:scaleType="fitCenter"/>
+        android:tint="@color/accent" />
 
     <ImageButton
         android:id="@+id/main_button_next"

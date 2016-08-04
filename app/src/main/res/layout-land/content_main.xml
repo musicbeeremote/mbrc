@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
   <FrameLayout
-    android:layout_width="match_parent"
+      android:layout_width="match_parent"
       android:layout_height="0dp"
       android:layout_weight="1">
 
@@ -30,6 +30,7 @@
 
       <TextView
           android:id="@+id/main_track_progress_current"
+          fontPath="fonts/roboto_medium.ttf"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_alignParentLeft="true"
@@ -43,10 +44,12 @@
           android:shadowRadius="1.5"
           android:text="@string/main_label_duration_current"
           android:textColor="@color/primary_text"
-          android:textSize="12sp" />
+          android:textSize="12sp"
+          tools:ignore="MissingPrefix" />
 
       <TextView
           android:id="@+id/main_track_duration_total"
+          fontPath="fonts/roboto_medium.ttf"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_alignParentEnd="true"
@@ -61,7 +64,7 @@
           android:text="@string/main_label_duration_total"
           android:textColor="@color/primary_text"
           android:textSize="12sp"
-          tools:ignore="RelativeOverlap" />
+          tools:ignore="MissingPrefix,RelativeOverlap" />
     </RelativeLayout>
 
     <LinearLayout
@@ -81,6 +84,7 @@
 
       <TextView
           android:id="@+id/main_title_label"
+          fontPath="fonts/roboto_light.ttf"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:ellipsize="marquee"
@@ -88,10 +92,11 @@
           android:focusableInTouchMode="true"
           android:freezesText="true"
           android:marqueeRepeatLimit="marquee_forever"
-          android:scrollHorizontally="true"
           android:maxLines="1"
+          android:scrollHorizontally="true"
           android:textColor="@color/primary_text"
           android:textSize="@dimen/text_title_size"
+          tools:ignore="MissingPrefix"
           tools:text="Rock it for me" />
 
       <TextView
@@ -103,14 +108,15 @@
           android:focusableInTouchMode="true"
           android:freezesText="true"
           android:marqueeRepeatLimit="marquee_forever"
-          android:scrollHorizontally="true"
           android:maxLines="1"
+          android:scrollHorizontally="true"
           android:textColor="@color/primary_text"
           android:textSize="@dimen/text_subhead_size"
           tools:text="Caravan Palace" />
 
       <TextView
           android:id="@+id/main_label_album"
+          fontPath="fonts/roboto_medium.ttf"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:ellipsize="marquee"
@@ -118,10 +124,11 @@
           android:focusableInTouchMode="true"
           android:lines="1"
           android:marqueeRepeatLimit="marquee_forever"
-          android:scrollHorizontally="true"
           android:maxLines="1"
+          android:scrollHorizontally="true"
           android:textColor="@color/primary_text"
           android:textSize="@dimen/text_body_size"
+          tools:ignore="MissingPrefix"
           tools:text="Panic [2012]" />
 
     </LinearLayout>
@@ -226,8 +233,8 @@
         android:clickable="true"
         android:contentDescription="@string/main_button_play_pause_description"
         android:scaleType="fitCenter"
-        android:tint="@color/accent"
-        android:src="@drawable/ic_play_circle_filled_black_24dp" />
+        android:src="@drawable/ic_play_circle_filled_black_24dp"
+        android:tint="@color/accent" />
 
     <ImageButton
         android:id="@+id/main_button_next"
