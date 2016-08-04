@@ -42,3 +42,6 @@ remote/src-gen/
 
 # Pulled library
 library.db
+
+annotations/
+captures/
