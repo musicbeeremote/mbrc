@@ -2,7 +2,6 @@ package com.kelsos.mbrc.ui.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import com.kelsos.mbrc.R;
@@ -13,7 +12,7 @@ import toothpick.Scope;
 import toothpick.Toothpick;
 import toothpick.smoothie.module.SmoothieActivityModule;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends FontActivity {
 
   @Inject RxBus bus;
   private Scope scope;

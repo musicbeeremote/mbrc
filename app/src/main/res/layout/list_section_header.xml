@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <TextView android:id="@+id/line_one"
-    android:height="@dimen/subheader_height"
+    fontPath="fonts/roboto_medium.ttf"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:height="@dimen/subheader_height"
     android:gravity="center_vertical"
     android:paddingBottom="@dimen/small_margin"
     android:paddingEnd="@dimen/normal_margin"
     android:paddingStart="@dimen/normal_margin"
     android:paddingTop="@dimen/small_margin"
-    android:textStyle="bold"
     android:textColor="@color/primary"
     android:textSize="@dimen/section_header_text_size"
+    android:textStyle="bold"
+    tools:ignore="MissingPrefix"
     tools:targetApi="jelly_bean"
     tools:text="Section" />

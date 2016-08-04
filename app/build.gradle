@@ -149,6 +149,8 @@ dependencies {
   //highly recommended
   testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
 
+  compile 'uk.co.chrisjenx:calligraphy:2.2.0'
+
   compile "com.github.afollestad.material-dialogs:core:${material_dialogs_version}"
   compile "com.github.afollestad.material-dialogs:commons:${material_dialogs_version}"
   compile 'com.jakewharton.timber:timber:4.1.2'

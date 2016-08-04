@@ -2,7 +2,6 @@ package com.kelsos.mbrc.ui.activities.nav;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
@@ -195,7 +194,9 @@ public class MainActivity extends BaseActivity implements MainView {
   @Override
   public void onStart() {
     super.onStart();
-    setTextViewTypeface();
+    artistLabel.setSelected(true);
+    titleLabel.setSelected(true);
+    albumLabel.setSelected(true);
   }
 
   @Override
@@ -229,29 +230,6 @@ public class MainActivity extends BaseActivity implements MainView {
         return true;
       default:
         return false;
-    }
-  }
-
-  /**
-   * Sets the typeface of the text views in the main activity to roboto.
-   */
-  private void setTextViewTypeface() {
-    try {
-      /* Marquee Hack */
-      artistLabel.setSelected(true);
-      titleLabel.setSelected(true);
-      albumLabel.setSelected(true);
-
-      Typeface robotoRegular = Typeface.createFromAsset(getAssets(), "fonts/roboto_regular.ttf");
-      Typeface robotoMedium = Typeface.createFromAsset(getAssets(), "fonts/roboto_medium.ttf");
-      Typeface robotoLight = Typeface.createFromAsset(getAssets(), "fonts/roboto_light.ttf");
-      artistLabel.setTypeface(robotoRegular);
-      titleLabel.setTypeface(robotoLight);
-      albumLabel.setTypeface(robotoMedium);
-      trackProgressCurrent.setTypeface(robotoMedium);
-      trackDuration.setTypeface(robotoMedium);
-    } catch (Exception ignore) {
-      Timber.d(ignore, "Failed");
     }
   }
 
