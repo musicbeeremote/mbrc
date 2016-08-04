@@ -11,9 +11,14 @@ import com.kelsos.mbrc.data.library.Track;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
 import rx.Observable;
 
 public class LibraryServiceImpl extends ServiceBase implements LibraryService {
+
+  @Inject
+  public LibraryServiceImpl() {
+  }
 
   @Override
   public Observable<Page<Genre>> getGenres(int offset, int limit) {

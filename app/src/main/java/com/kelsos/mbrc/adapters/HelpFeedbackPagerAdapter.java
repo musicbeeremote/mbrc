@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,7 +20,7 @@ public class HelpFeedbackPagerAdapter extends FragmentStatePagerAdapter {
       R.string.tab_feedback
   };
 
-  public HelpFeedbackPagerAdapter(FragmentManager fm, Context context) {
+  public HelpFeedbackPagerAdapter(FragmentManager fm, Activity context) {
     super(fm);
     this.context = context;
   }

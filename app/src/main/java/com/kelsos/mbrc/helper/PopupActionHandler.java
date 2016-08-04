@@ -25,17 +25,15 @@ import javax.inject.Singleton;
 public class PopupActionHandler {
 
   private RxBus bus;
-  private Context context;
   private BasicSettingsHelper settings;
 
   @Inject
-  public PopupActionHandler(RxBus bus, Context context, BasicSettingsHelper settings) {
+  public PopupActionHandler(RxBus bus, BasicSettingsHelper settings) {
     this.bus = bus;
-    this.context = context;
     this.settings = settings;
   }
 
-  public void albumSelected(MenuItem menuItem, Album entry) {
+  public void albumSelected(MenuItem menuItem, Album entry, Context context) {
 
     String query = entry.getAlbum();
 
@@ -51,7 +49,7 @@ public class PopupActionHandler {
         ua = new UserAction(Protocol.LibraryQueueAlbum, new Queue(Queue.NOW, query));
         break;
       case R.id.popup_album_tracks:
-        openProfile(entry);
+        openProfile(entry, context);
         break;
       default:
         break;
@@ -62,7 +60,7 @@ public class PopupActionHandler {
     }
   }
 
-  public void artistSelected(MenuItem menuItem, Artist entry) {
+  public void artistSelected(MenuItem menuItem, Artist entry, Context context) {
     String query = entry.getArtist();
 
     UserAction ua = null;
@@ -77,7 +75,7 @@ public class PopupActionHandler {
         ua = new UserAction(Protocol.LibraryQueueArtist, new Queue(Queue.NOW, query));
         break;
       case R.id.popup_artist_album:
-        openProfile(entry);
+        openProfile(entry, context);
         break;
       default:
         break;
@@ -88,7 +86,7 @@ public class PopupActionHandler {
     }
   }
 
-  public void genreSelected(MenuItem menuItem, Genre entry) {
+  public void genreSelected(MenuItem menuItem, Genre entry, Context context) {
     String query = entry.getGenre();
 
     UserAction ua = null;
@@ -103,7 +101,7 @@ public class PopupActionHandler {
         ua = new UserAction(Protocol.LibraryQueueGenre, new Queue(Queue.NOW, query));
         break;
       case R.id.popup_genre_artists:
-        openProfile(entry);
+        openProfile(entry, context);
         break;
       default:
         break;
@@ -137,7 +135,7 @@ public class PopupActionHandler {
     }
   }
 
-  public void albumSelected(Album album) {
+  public void albumSelected(Album album, Context context) {
     String defaultAction = settings.getDefaultAction();
     if (!defaultAction.equals(Const.SUB)) {
       //noinspection WrongConstant
@@ -146,11 +144,11 @@ public class PopupActionHandler {
       MessageEvent event = new MessageEvent(ProtocolEventType.UserAction, data);
       bus.post(event);
     } else {
-      openProfile(album);
+      openProfile(album, context);
     }
   }
 
-  public void artistSelected(Artist artist) {
+  public void artistSelected(Artist artist, Context context) {
     String defaultAction = settings.getDefaultAction();
     if (!defaultAction.equals(Const.SUB)) {
       //noinspection WrongConstant
@@ -159,11 +157,11 @@ public class PopupActionHandler {
       MessageEvent event = new MessageEvent(ProtocolEventType.UserAction, data);
       bus.post(event);
     } else {
-      openProfile(artist);
+      openProfile(artist, context);
     }
   }
 
-  public void genreSelected(Genre genre) {
+  public void genreSelected(Genre genre, Context context) {
     String defaultAction = settings.getDefaultAction();
     if (!defaultAction.equals(Const.SUB)) {
       //noinspection WrongConstant
@@ -172,7 +170,7 @@ public class PopupActionHandler {
       MessageEvent event = new MessageEvent(ProtocolEventType.UserAction, action);
       bus.post(event);
     } else {
-      openProfile(genre);
+      openProfile(genre, context);
     }
   }
 
@@ -188,19 +186,19 @@ public class PopupActionHandler {
     bus.post(event);
   }
 
-  private void openProfile(Artist artist) {
+  private void openProfile(Artist artist, Context context) {
     Intent intent = new Intent(context, ArtistAlbumsActivity.class);
     intent.putExtra(ArtistAlbumsActivity.ARTIST_NAME, artist.getArtist());
     context.startActivity(intent);
   }
 
-  private void openProfile(Album album) {
+  private void openProfile(Album album, Context context) {
     Intent intent = new Intent(context, AlbumTracksActivity.class);
     intent.putExtra(AlbumTracksActivity.ALBUM_NAME, album.getAlbum());
     context.startActivity(intent);
   }
 
-  private void openProfile(Genre genre) {
+  private void openProfile(Genre genre, Context context) {
     Intent intent = new Intent(context, GenreArtistsActivity.class);
     intent.putExtra(GenreArtistsActivity.GENRE_NAME, genre.getGenre());
     context.startActivity(intent);

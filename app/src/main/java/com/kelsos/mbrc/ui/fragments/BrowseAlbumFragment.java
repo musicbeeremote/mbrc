@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,6 +29,7 @@ import rx.schedulers.Schedulers;
 import timber.log.Timber;
 import toothpick.Scope;
 import toothpick.Toothpick;
+import toothpick.smoothie.module.SmoothieActivityModule;
 
 public class BrowseAlbumFragment extends Fragment
     implements AlbumEntryAdapter.MenuItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
@@ -64,7 +66,9 @@ public class BrowseAlbumFragment extends Fragment
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
-    Scope scope = Toothpick.openScopes(getActivity().getApplication(), getActivity(), this);
+    Activity activity = getActivity();
+    Scope scope = Toothpick.openScopes(activity.getApplication(), activity, this);
+    scope.installModules(new SmoothieActivityModule(activity));
     super.onCreate(savedInstanceState);
     Toothpick.inject(this, scope);
   }
@@ -82,12 +86,12 @@ public class BrowseAlbumFragment extends Fragment
 
   @Override
   public void onMenuItemSelected(MenuItem menuItem, Album entry) {
-    actionHandler.albumSelected(menuItem, entry);
+    actionHandler.albumSelected(menuItem, entry, getActivity());
   }
 
   @Override
   public void onItemClicked(Album album) {
-    actionHandler.albumSelected(album);
+    actionHandler.albumSelected(album, getActivity());
   }
 
   @Override

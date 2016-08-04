@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import com.kelsos.mbrc.annotations.PlayerState;
 import com.kelsos.mbrc.annotations.PlayerState.State;
 import com.kelsos.mbrc.domain.TrackInfo;
+import javax.inject.Inject;
 
 public class NotificationModel {
   private TrackInfo trackInfo;
@@ -12,6 +13,7 @@ public class NotificationModel {
   @State
   private String playState;
 
+  @Inject
   public NotificationModel() {
     playState = PlayerState.STOPPED;
   }

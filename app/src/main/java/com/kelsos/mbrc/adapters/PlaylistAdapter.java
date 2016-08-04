@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.adapters;
 
-import android.content.Context;
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,11 +9,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import javax.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.Playlist;
 import java.util.ArrayList;
 import java.util.List;
+import javax.inject.Inject;
 
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
 
@@ -21,13 +21,13 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
   private List<Playlist> data;
   private OnPlaylistPressedListener playlistPressedListener;
 
-  @Inject public PlaylistAdapter(Context context) {
+  @Inject public PlaylistAdapter(Activity context) {
     inflater = LayoutInflater.from(context);
     data = new ArrayList<>();
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View view = inflater.inflate(R.layout.listitem_single, parent, false);
+    final View view = inflater.inflate(R.layout.listitem_single, parent, false);
     ViewHolder viewHolder = new ViewHolder(view);
     viewHolder.context.setVisibility(View.GONE);
     viewHolder.itemView.setOnClickListener(v -> {

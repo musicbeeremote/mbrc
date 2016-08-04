@@ -69,12 +69,12 @@ public class ArtistAlbumsActivity extends AppCompatActivity implements AlbumEntr
 
   @Override
   public void onMenuItemSelected(MenuItem menuItem, Album album) {
-    actionHandler.albumSelected(menuItem, album);
+    actionHandler.albumSelected(menuItem, album, this);
   }
 
   @Override
   public void onItemClicked(Album album) {
-    actionHandler.albumSelected(album);
+    actionHandler.albumSelected(album, this);
   }
 
   @Override
