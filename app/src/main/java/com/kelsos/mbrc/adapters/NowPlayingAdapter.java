@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.adapters;
 
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import javax.inject.Inject;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.NowPlaying;
 import com.kelsos.mbrc.data.NowPlaying_Table;
@@ -19,9 +19,7 @@ import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter;
 import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.list.FlowQueryList;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import javax.inject.Inject;
 import rx.Observable;
 import timber.log.Timber;
 
@@ -35,7 +33,7 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
   private NowPlaying temporary;
   private NowPlayingListener listener;
 
-  @Inject public NowPlayingAdapter(Context context) {
+  @Inject public NowPlayingAdapter(Activity context) {
     data = SQLite.select()
         .from(NowPlaying.class)
         .orderBy(NowPlaying_Table.position, true)

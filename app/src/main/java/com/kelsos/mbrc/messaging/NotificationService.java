@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.messaging;
 
+import android.app.Application;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -44,7 +45,7 @@ public class NotificationService {
   private String next;
 
   @Inject
-  public NotificationService(Context context,
+  public NotificationService(Application context,
       RxBus bus,
       RemoteSessionManager sessionManager,
       SettingsManager settings) {

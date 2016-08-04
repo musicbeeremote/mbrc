@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.di.providers;
 
+import android.app.Application;
 import android.content.Context;
 import android.support.v4.app.NotificationManagerCompat;
 import javax.inject.Inject;
@@ -9,7 +10,7 @@ public class NotificationManagerCompatProvider implements Provider<NotificationM
   private Context context;
 
   @Inject
-  public NotificationManagerCompatProvider(Context context) {
+  public NotificationManagerCompatProvider(Application context) {
     this.context = context;
   }
 

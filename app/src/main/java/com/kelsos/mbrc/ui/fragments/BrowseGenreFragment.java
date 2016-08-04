@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -50,7 +51,8 @@ public class BrowseGenreFragment extends Fragment
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
-    Scope scope = Toothpick.openScopes(getActivity().getApplication(), getActivity(), this);
+    Activity activity = getActivity();
+    Scope scope = Toothpick.openScopes(activity.getApplication(), activity, this);
     super.onCreate(savedInstanceState);
     Toothpick.inject(this, scope);
   }
@@ -75,12 +77,12 @@ public class BrowseGenreFragment extends Fragment
 
   @Override
   public void onMenuItemSelected(MenuItem menuItem, Genre entry) {
-    actionHandler.genreSelected(menuItem, entry);
+    actionHandler.genreSelected(menuItem, entry, getActivity());
   }
 
   @Override
   public void onItemClicked(Genre genre) {
-    actionHandler.genreSelected(genre);
+    actionHandler.genreSelected(genre, getActivity());
   }
 
   @Override

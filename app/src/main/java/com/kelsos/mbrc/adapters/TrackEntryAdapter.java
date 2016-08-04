@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.adapters;
 
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.PopupMenu;
@@ -15,13 +15,13 @@ import android.widget.TextView;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import javax.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.library.Track;
 import com.kelsos.mbrc.data.library.Track_Table;
 import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.language.Where;
+import javax.inject.Inject;
 import rx.Single;
 import rx.SingleSubscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -35,7 +35,7 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
   private LayoutInflater inflater;
 
   @Inject
-  public TrackEntryAdapter(Context context) {
+  public TrackEntryAdapter(Activity context) {
     inflater = LayoutInflater.from(context);
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
   }

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc;
+package com.kelsos.mbrc.di.modules;
 
 import android.support.v4.app.NotificationManagerCompat;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,8 +11,8 @@ import com.kelsos.mbrc.services.NowPlayingService;
 import com.kelsos.mbrc.services.NowPlayingServiceImpl;
 import toothpick.config.Module;
 
-class RemoteModule extends Module {
-  RemoteModule() {
+public class RemoteModule extends Module {
+  public RemoteModule() {
     bind(RxBus.class).to(RxBusImpl.class);
     bind(ObjectMapper.class).toInstance(new ObjectMapper());
     bind(LibraryService.class).to(LibraryServiceImpl.class);
