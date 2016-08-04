@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.adapters;
 
 import android.app.Activity;
-import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +27,6 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
 
   private FlowQueryList<NowPlaying> data;
   private int playingTrackIndex;
-  private Typeface robotoRegular;
   private LayoutInflater inflater;
   private NowPlaying temporary;
   private NowPlayingListener listener;
@@ -41,7 +39,6 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
     data.setTransact(true);
     data.addOnCursorRefreshListener(this);
     inflater = LayoutInflater.from(context);
-    robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
   }
 
   public int getPlayingTrackIndex() {
@@ -65,7 +62,7 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
 
   @Override public TrackHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = inflater.inflate(R.layout.ui_list_track_item, parent, false);
-    TrackHolder holder = new TrackHolder(view, robotoRegular);
+    TrackHolder holder = new TrackHolder(view);
     holder.itemView.setOnClickListener(v -> onClick(holder));
     holder.container.setOnClickListener(v -> onClick(holder));
     return holder;
@@ -168,11 +165,9 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.Tr
     @BindView(R.id.track_container)
     FrameLayout container;
 
-    TrackHolder(View itemView, Typeface typeface) {
+    TrackHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
-      title.setTypeface(typeface);
-      artist.setTypeface(typeface);
     }
   }
 }

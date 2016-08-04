@@ -38,7 +38,8 @@
         android:maxLines="1"
         android:textColor="@color/primary_text"
         android:textSize="@dimen/mini_control_title_text_size"
-        tools:ignore="UnusedAttribute"
+        fontPath="fonts/roboto_medium.ttf"
+        tools:ignore="MissingPrefix,UnusedAttribute"
         tools:text="All night" />
 
     <TextView

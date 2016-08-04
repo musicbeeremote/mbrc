@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -14,7 +13,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.afollestad.materialdialogs.MaterialDialog;
-import javax.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.ConnectionSettingsAdapter;
 import com.kelsos.mbrc.constants.UserInputEventType;
@@ -27,11 +25,12 @@ import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
+import javax.inject.Inject;
 import toothpick.Scope;
 import toothpick.Toothpick;
 import toothpick.smoothie.module.SmoothieActivityModule;
 
-public class ConnectionManagerActivity extends AppCompatActivity
+public class ConnectionManagerActivity extends FontActivity
     implements SettingsDialogFragment.SettingsSaveListener, ConnectionSettingsAdapter.ConnectionChangeListener {
   @Inject RxBus bus;
   @BindView(R.id.connection_list) RecyclerView mRecyclerView;
