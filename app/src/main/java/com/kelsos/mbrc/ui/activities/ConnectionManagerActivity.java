@@ -29,6 +29,7 @@ import com.kelsos.mbrc.events.ui.NotifyUser;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
 import toothpick.Scope;
 import toothpick.Toothpick;
+import toothpick.smoothie.module.SmoothieActivityModule;
 
 public class ConnectionManagerActivity extends AppCompatActivity
     implements SettingsDialogFragment.SettingsSaveListener, ConnectionSettingsAdapter.ConnectionChangeListener {
@@ -59,7 +60,7 @@ public class ConnectionManagerActivity extends AppCompatActivity
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     scope = Toothpick.openScopes(getApplication(), this);
-    //install modules?
+    scope.installModules(new SmoothieActivityModule(this));
     super.onCreate(savedInstanceState);
     Toothpick.inject(this, scope);
     setContentView(R.layout.ui_activity_connection_manager);

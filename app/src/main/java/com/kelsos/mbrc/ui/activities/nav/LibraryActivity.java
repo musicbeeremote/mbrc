@@ -19,6 +19,7 @@ import com.kelsos.mbrc.ui.activities.SearchResultsActivity;
 import javax.inject.Inject;
 import toothpick.Scope;
 import toothpick.Toothpick;
+import toothpick.smoothie.module.SmoothieActivityModule;
 
 public class LibraryActivity extends BaseActivity
     implements SearchView.OnQueryTextListener, ViewPager.OnPageChangeListener {
@@ -52,6 +53,7 @@ public class LibraryActivity extends BaseActivity
   @Override
   public void onCreate(Bundle savedInstanceState) {
     scope = Toothpick.openScopes(getApplication(), this);
+    scope.installModules(new SmoothieActivityModule(this));
     super.onCreate(savedInstanceState);
     Toothpick.inject(this, scope);
     setContentView(R.layout.activity_library);

@@ -1,23 +1,26 @@
 package com.kelsos.mbrc.services;
 
 import android.support.annotation.NonNull;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.data.NowPlaying;
 import com.kelsos.mbrc.data.Page;
 import com.kelsos.mbrc.data.PageRange;
 import com.kelsos.mbrc.data.SocketMessage;
-
 import java.io.IOException;
-
+import javax.inject.Inject;
 import rx.Observable;
 
 public class NowPlayingServiceImpl extends ServiceBase implements NowPlayingService {
+
+  @Inject
+  public NowPlayingServiceImpl() {
+  }
+
   @Override
   public Observable<Page<NowPlaying>> getNowPlaying(int offset, int limit) {
     PageRange range = getPageRange(offset, limit);
-    return request(Protocol.NowPlayingList,  range == null ? "" : range).flatMap(this::getPageObservable);
+    return request(Protocol.NowPlayingList, range == null ? "" : range).flatMap(this::getPageObservable);
   }
 
   @NonNull

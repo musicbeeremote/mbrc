@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.adapters;
 
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.PopupMenu;
@@ -15,7 +15,6 @@ import android.widget.TextView;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import javax.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.library.Album;
 import com.kelsos.mbrc.data.library.Album_Table;
@@ -24,6 +23,7 @@ import com.kelsos.mbrc.data.library.Track_Table;
 import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.language.Where;
+import javax.inject.Inject;
 import rx.Single;
 import rx.SingleSubscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -37,7 +37,7 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.Vi
   private MenuItemSelectedListener mListener;
 
   @Inject
-  public AlbumEntryAdapter(Context context) {
+  public AlbumEntryAdapter(Activity context) {
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
     inflater = LayoutInflater.from(context);
   }

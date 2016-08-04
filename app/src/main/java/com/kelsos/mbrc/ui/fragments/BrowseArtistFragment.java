@@ -78,12 +78,12 @@ public class BrowseArtistFragment extends Fragment
 
   @Override
   public void onMenuItemSelected(MenuItem menuItem, Artist entry) {
-    actionHandler.artistSelected(menuItem, entry);
+    actionHandler.artistSelected(menuItem, entry, getActivity());
   }
 
   @Override
   public void onItemClicked(Artist artist) {
-    actionHandler.artistSelected(artist);
+    actionHandler.artistSelected(artist, getActivity());
   }
 
   @Override

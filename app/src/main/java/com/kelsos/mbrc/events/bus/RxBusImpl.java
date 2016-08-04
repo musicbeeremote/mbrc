@@ -7,12 +7,18 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
+@Singleton
 public class RxBusImpl implements RxBus {
+  @Inject
+  public RxBusImpl() {
+  }
 
   private SerializedRelay<Object, Object> serializedRelay = PublishRelay.create().toSerialized();
   private HashMap<Object, List<Subscription>> activeSubscriptions = new HashMap<>();

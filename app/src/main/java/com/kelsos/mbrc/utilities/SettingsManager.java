@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.utilities;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -42,11 +43,9 @@ public class SettingsManager {
   private boolean isFirstRun;
 
   @Inject
-  public SettingsManager(Context context,
-                         SharedPreferences preferences,
-                         RxBus bus) {
+  public SettingsManager(Application application, SharedPreferences preferences, RxBus bus) {
     this.preferences = preferences;
-    this.context = context;
+    this.context = application;
     this.bus = bus;
     bus.register(this, ChangeSettings.class, this::handleSettingsChange);
 
@@ -55,7 +54,6 @@ public class SettingsManager {
     settingsId = this.preferences.getLong(this.context.getString(R.string.settings_key_default_index), 0);
     checkForFirstRunAfterUpdate();
   }
-
 
   public SocketAddress getSocketAddress() {
     String serverAddress = preferences.getString(context.getString(R.string.settings_key_hostname), null);

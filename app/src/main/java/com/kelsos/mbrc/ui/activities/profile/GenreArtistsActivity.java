@@ -70,11 +70,11 @@ public class GenreArtistsActivity extends AppCompatActivity implements ArtistEnt
 
   @Override
   public void onMenuItemSelected(MenuItem menuItem, Artist entry) {
-    actionHandler.artistSelected(menuItem, entry);
+    actionHandler.artistSelected(menuItem, entry, this);
   }
 
   @Override
   public void onItemClicked(Artist artist) {
-    actionHandler.artistSelected(artist);
+    actionHandler.artistSelected(artist, this);
   }
 }

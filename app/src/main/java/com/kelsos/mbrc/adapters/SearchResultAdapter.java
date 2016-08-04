@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.adapters;
 
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.Typeface;
 import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
@@ -15,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import javax.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.annotations.Search.Section;
 import com.kelsos.mbrc.data.library.Album;
@@ -28,6 +27,7 @@ import com.kelsos.mbrc.data.library.Track;
 import com.kelsos.mbrc.data.library.Track_Table;
 import com.raizlabs.android.dbflow.list.FlowQueryList;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import javax.inject.Inject;
 
 import static com.kelsos.mbrc.annotations.Search.SECTION_ALBUM;
 import static com.kelsos.mbrc.annotations.Search.SECTION_ARTIST;
@@ -50,7 +50,7 @@ public class SearchResultAdapter extends SectionedRecyclerViewAdapter<SearchResu
   private OnSearchItemSelected onSearchItemSelectedListener;
 
   @Inject
-  public SearchResultAdapter(Context context) {
+  public SearchResultAdapter(Activity context) {
     inflater = LayoutInflater.from(context);
     robotoMedium = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_medium.ttf");
   }

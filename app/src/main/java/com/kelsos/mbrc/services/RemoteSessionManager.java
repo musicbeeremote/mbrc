@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.services;
 
 import android.annotation.TargetApi;
+import android.app.Application;
 import android.app.PendingIntent;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.RemoteControlClient;
@@ -41,7 +41,7 @@ public class RemoteSessionManager implements AudioManager.OnAudioFocusChangeList
 
   @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
   @Inject
-  public RemoteSessionManager(final Context context, final RxBus bus, final AudioManager manager) {
+  public RemoteSessionManager(final Application context, final RxBus bus, final AudioManager manager) {
     this.manager = manager;
     this.bus = bus;
 

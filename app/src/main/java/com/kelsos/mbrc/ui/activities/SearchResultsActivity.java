@@ -84,32 +84,32 @@ public class SearchResultsActivity extends AppCompatActivity implements SearchRe
 
   @Override
   public void albumSelected(MenuItem item, Album album) {
-    actionHandler.albumSelected(item, album);
+    actionHandler.albumSelected(item, album, this);
   }
 
   @Override
   public void albumSelected(Album album) {
-    actionHandler.albumSelected(album);
+    actionHandler.albumSelected(album, this);
   }
 
   @Override
   public void artistSelected(MenuItem item, Artist artist) {
-    actionHandler.artistSelected(item, artist);
+    actionHandler.artistSelected(item, artist, this);
   }
 
   @Override
   public void artistSelected(Artist artist) {
-    actionHandler.artistSelected(artist);
+    actionHandler.artistSelected(artist, this);
   }
 
   @Override
   public void genreSelected(MenuItem item, Genre genre) {
-    actionHandler.genreSelected(item, genre);
+    actionHandler.genreSelected(item, genre, this);
   }
 
   @Override
   public void genreSelected(Genre genre) {
-    actionHandler.genreSelected(genre);
+    actionHandler.genreSelected(genre, this);
   }
 
   @Override

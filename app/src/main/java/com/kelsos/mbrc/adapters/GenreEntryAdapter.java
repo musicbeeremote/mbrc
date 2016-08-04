@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.adapters;
 
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.Typeface;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -14,12 +14,12 @@ import android.widget.TextView;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import javax.inject.Inject;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.library.Genre;
 import com.kelsos.mbrc.data.library.Genre_Table;
 import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import javax.inject.Inject;
 import rx.Single;
 import rx.SingleSubscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -33,7 +33,7 @@ public class GenreEntryAdapter extends RecyclerView.Adapter<GenreEntryAdapter.Vi
   private LayoutInflater inflater;
 
   @Inject
-  public GenreEntryAdapter(Context context) {
+  public GenreEntryAdapter(Activity context) {
     inflater = LayoutInflater.from(context);
     robotoRegular = Typeface.createFromAsset(context.getAssets(), "fonts/roboto_regular.ttf");
   }
