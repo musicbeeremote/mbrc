@@ -13,7 +13,7 @@ import toothpick.config.Module;
 
 public class RemoteModule extends Module {
   public RemoteModule() {
-    bind(RxBus.class).to(RxBusImpl.class);
+    bind(RxBus.class).toInstance(new RxBusImpl());
     bind(ObjectMapper.class).toInstance(new ObjectMapper());
     bind(LibraryService.class).to(LibraryServiceImpl.class);
     bind(NowPlayingService.class).to(NowPlayingServiceImpl.class);
