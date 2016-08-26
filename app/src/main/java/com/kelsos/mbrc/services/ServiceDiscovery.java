@@ -7,7 +7,6 @@ import android.net.wifi.WifiManager;
 import android.support.annotation.NonNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.inject.Inject;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.data.DiscoveryMessage;
@@ -24,9 +23,12 @@ import java.net.MulticastSocket;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class ServiceDiscovery {
   private static final String NOTIFY = "notify";
@@ -65,6 +67,8 @@ public class ServiceDiscovery {
     mLock.setReferenceCounted(true);
     mLock.acquire();
 
+    Timber.v("Starting remote service discovery");
+
     ConnectionMapper mapper = new ConnectionMapper();
     discoveryObservable().subscribeOn(Schedulers.io())
         .unsubscribeOn(Schedulers.io())
@@ -81,6 +85,7 @@ public class ServiceDiscovery {
           callback.complete();
 
         }, throwable -> {
+          Timber.v(throwable, "Discovery incomplete");
           bus.post(new DiscoveryStopped(DiscoveryStop.NOT_FOUND));
         });
   }
@@ -135,6 +140,7 @@ public class ServiceDiscovery {
             socket.receive(mPacket);
             String incoming = new String(mPacket.getData(), Const.UTF_8);
             DiscoveryMessage node = mapper.readValue(incoming, DiscoveryMessage.class);
+            Timber.v("Discovery received -> %s", node);
             subscriber.onNext(node);
             subscriber.onCompleted();
           } catch (IOException e) {
@@ -158,6 +164,7 @@ public class ServiceDiscovery {
       multicastSocket.send(new DatagramPacket(discovery, discovery.length, group, MULTICASTPORT));
       return multicastSocket;
     } catch (IOException e) {
+      Timber.v(e, "Failed to open multicast socket");
       throw new RuntimeException(e);
     }
   }

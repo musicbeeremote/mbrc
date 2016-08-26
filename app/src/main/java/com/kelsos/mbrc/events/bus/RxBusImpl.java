@@ -8,16 +8,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
+
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import timber.log.Timber;
 
-@Singleton
 public class RxBusImpl implements RxBus {
   @Inject
   public RxBusImpl() {
+    Timber.v("Injecting RxBus instance %s", this);
   }
 
   private SerializedRelay<Object, Object> serializedRelay = PublishRelay.create().toSerialized();
