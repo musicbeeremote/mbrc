@@ -4,25 +4,30 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.adapters.TrackEntryAdapter;
 import com.kelsos.mbrc.data.library.Track;
+import com.kelsos.mbrc.domain.AlbumInfo;
 import com.kelsos.mbrc.helper.PopupActionHandler;
 import com.kelsos.mbrc.ui.activities.FontActivity;
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView;
+
 import javax.inject.Inject;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import toothpick.Scope;
 import toothpick.Toothpick;
 import toothpick.smoothie.module.SmoothieActivityModule;
 
 public class AlbumTracksActivity extends FontActivity implements TrackEntryAdapter.MenuItemSelectedListener {
 
-  public static final String ALBUM_NAME = "albumName";
+  public static final String ALBUM = "albumName";
 
   @BindView(R.id.toolbar) Toolbar toolbar;
   @BindView(R.id.list_tracks) EmptyRecyclerView listTracks;
@@ -31,7 +36,7 @@ public class AlbumTracksActivity extends FontActivity implements TrackEntryAdapt
   @Inject TrackEntryAdapter adapter;
   @Inject PopupActionHandler actionHandler;
 
-  private String album;
+  private AlbumInfo album;
   private Scope scope;
 
   /**
@@ -52,7 +57,7 @@ public class AlbumTracksActivity extends FontActivity implements TrackEntryAdapt
     final Bundle extras = getIntent().getExtras();
 
     if (extras != null) {
-      album = extras.getString(ALBUM_NAME);
+      album = extras.getParcelable(ALBUM);
     }
 
     setSupportActionBar(toolbar);
@@ -61,7 +66,13 @@ public class AlbumTracksActivity extends FontActivity implements TrackEntryAdapt
     if (actionBar != null) {
       actionBar.setDisplayHomeAsUpEnabled(true);
       actionBar.setDisplayShowHomeEnabled(true);
-      actionBar.setTitle(album);
+
+      if (TextUtils.isEmpty(album.album())) {
+        actionBar.setTitle(R.string.non_album_tracks);
+      } else {
+        actionBar.setTitle(album.album());
+      }
+
     }
 
     adapter.init(album);

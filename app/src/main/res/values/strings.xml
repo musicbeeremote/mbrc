@@ -149,4 +149,5 @@
   <string name="settings_dialog_edit">Edit</string>
   <string name="settings_dialog_save">Save</string>
   <string name="semicolon" translatable="false">:</string>
+  <string name="non_album_tracks">Non album tracks</string>
 </resources>
