@@ -32,7 +32,7 @@ import timber.log.Timber;
 
 public class ServiceDiscovery {
   private static final String NOTIFY = "notify";
-  private static final int SO_TIMEOUT = 6 * 1000;
+  private static final int SO_TIMEOUT = 10 * 1000;
   private static final int MULTICASTPORT = 45345;
   private static final String DISCOVERY_ADDRESS = "239.1.5.10"; //NOPMD
 
@@ -44,10 +44,10 @@ public class ServiceDiscovery {
   private InetAddress group;
 
   @Inject
-  public ServiceDiscovery(WifiManager manager,
-      ConnectivityManager connectivityManager,
-      ObjectMapper mapper,
-      RxBus bus) {
+  ServiceDiscovery(WifiManager manager,
+                   ConnectivityManager connectivityManager,
+                   ObjectMapper mapper,
+                   RxBus bus) {
     this.manager = manager;
     this.connectivityManager = connectivityManager;
     this.mapper = mapper;
