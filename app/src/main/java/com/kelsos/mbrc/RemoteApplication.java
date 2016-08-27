@@ -1,6 +1,7 @@
 package com.kelsos.mbrc;
 
 import android.app.Application;
+import android.support.annotation.CallSuper;
 
 import com.kelsos.mbrc.di.modules.RemoteModule;
 
@@ -15,6 +16,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class RemoteApplication extends Application {
 
+  @CallSuper
   public void onCreate() {
     super.onCreate();
 

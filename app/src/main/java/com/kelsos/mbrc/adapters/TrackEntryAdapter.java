@@ -11,16 +11,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import butterknife.BindString;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.library.Track;
 import com.kelsos.mbrc.data.library.Track_Table;
+import com.kelsos.mbrc.domain.AlbumInfo;
 import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.language.Where;
+
 import javax.inject.Inject;
+
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import rx.Single;
 import rx.SingleSubscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -37,28 +41,24 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
     inflater = LayoutInflater.from(context);
   }
 
-  public void init(@Nullable String filter) {
+  public void init(@Nullable AlbumInfo filter) {
     if (data != null) {
       return;
     }
 
     final Where<Track> query;
 
-    if (TextUtils.isEmpty(filter)) {
-      query = SQLite.select()
-          .from(Track.class)
-          .orderBy(Track_Table.album_artist, true)
-          .orderBy(Track_Table.album, true)
-          .orderBy(Track_Table.disc, true)
-          .orderBy(Track_Table.trackno, true);
+    if (filter == null) {
+      query = allTracks();
     } else {
-      query = SQLite.select()
-          .from(Track.class)
-          .where(Track_Table.album.like('%' + filter + '%'))
-          .orderBy(Track_Table.album_artist, true)
-          .orderBy(Track_Table.album, true)
-          .orderBy(Track_Table.disc, true)
-          .orderBy(Track_Table.trackno, true);
+      String album = filter.album();
+
+      if (TextUtils.isEmpty(album)) {
+        query = nonAlbumTracks(filter.artist());
+      } else {
+        query = albumTracks(album);
+      }
+
     }
 
     Single.create((SingleSubscriber<? super FlowCursorList<Track>> subscriber) -> {
@@ -70,6 +70,42 @@ public class TrackEntryAdapter extends RecyclerView.Adapter<TrackEntryAdapter.Vi
     }, throwable -> {
       Timber.v(throwable, "failed to load the data");
     });
+  }
+
+  private Where<Track> nonAlbumTracks(String artist) {
+    Where<Track> query;
+    query = SQLite.select()
+        .from(Track.class)
+        .where(Track_Table.album.is(""))
+        .and(Track_Table.artist.is(artist))
+        .orderBy(Track_Table.album_artist, true)
+        .orderBy(Track_Table.album, true)
+        .orderBy(Track_Table.disc, true)
+        .orderBy(Track_Table.trackno, true);
+    return query;
+  }
+
+  private Where<Track> albumTracks(String album) {
+    Where<Track> query;
+    query = SQLite.select()
+        .from(Track.class)
+        .where(Track_Table.album.like('%' + album + '%'))
+        .orderBy(Track_Table.album_artist, true)
+        .orderBy(Track_Table.album, true)
+        .orderBy(Track_Table.disc, true)
+        .orderBy(Track_Table.trackno, true);
+    return query;
+  }
+
+  private Where<Track> allTracks() {
+    Where<Track> query;
+    query = SQLite.select()
+        .from(Track.class)
+        .orderBy(Track_Table.album_artist, true)
+        .orderBy(Track_Table.album, true)
+        .orderBy(Track_Table.disc, true)
+        .orderBy(Track_Table.trackno, true);
+    return query;
   }
 
   public void setMenuItemSelectedListener(MenuItemSelectedListener listener) {
