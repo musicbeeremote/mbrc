@@ -11,9 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import butterknife.BindString;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.library.Album;
 import com.kelsos.mbrc.data.library.Album_Table;
@@ -22,7 +20,12 @@ import com.kelsos.mbrc.data.library.Track_Table;
 import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.language.Where;
+
 import javax.inject.Inject;
+
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import rx.Single;
 import rx.SingleSubscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -30,6 +33,7 @@ import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.ViewHolder> {
+
   private final LayoutInflater inflater;
   private FlowCursorList<Album> data;
   private MenuItemSelectedListener mListener;
@@ -100,7 +104,7 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.Vi
   @Override
   public void onBindViewHolder(ViewHolder holder, int position) {
     final Album entry = data.getItem(position);
-    holder.album.setText(entry.getAlbum());
+    holder.album.setText(TextUtils.isEmpty(entry.getAlbum()) ? holder.emptyAlbum : entry.getAlbum());
     holder.artist.setText(TextUtils.isEmpty(entry.getArtist()) ? holder.unknownArtist : entry.getArtist());
   }
 
@@ -137,6 +141,8 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.Vi
     LinearLayout indicator;
     @BindString(R.string.unknown_artist)
     String unknownArtist;
+    @BindString(R.string.non_album_tracks)
+    String emptyAlbum;
 
     public ViewHolder(View itemView) {
       super(itemView);

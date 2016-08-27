@@ -15,6 +15,7 @@ import com.kelsos.mbrc.data.library.Genre;
 import com.kelsos.mbrc.data.library.Track;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.bus.RxBus;
+import com.kelsos.mbrc.mappers.AlbumMapper;
 import com.kelsos.mbrc.ui.activities.profile.AlbumTracksActivity;
 import com.kelsos.mbrc.ui.activities.profile.ArtistAlbumsActivity;
 import com.kelsos.mbrc.ui.activities.profile.GenreArtistsActivity;
@@ -193,8 +194,9 @@ public class PopupActionHandler {
   }
 
   private void openProfile(Album album, Context context) {
+    AlbumMapper mapper = new AlbumMapper();
     Intent intent = new Intent(context, AlbumTracksActivity.class);
-    intent.putExtra(AlbumTracksActivity.ALBUM_NAME, album.getAlbum());
+    intent.putExtra(AlbumTracksActivity.ALBUM, mapper.map(album));
     context.startActivity(intent);
   }
 
