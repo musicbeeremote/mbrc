@@ -73,19 +73,6 @@ public class SettingsManager {
     return new InetSocketAddress(serverAddress, serverPort);
   }
 
-  private boolean checkIfRemoteSettingsExist() {
-    String serverAddress = preferences.getString(context.getString(R.string.settings_key_hostname), null);
-    int serverPort;
-
-    try {
-      serverPort = preferences.getInt(context.getString(R.string.settings_key_port), 0);
-    } catch (ClassCastException castException) {
-      serverPort = Integer.parseInt(preferences.getString(context.getString(R.string.settings_key_port), "0"));
-    }
-
-    return !(isEmpty(serverAddress) || serverPort == 0);
-  }
-
   private void updatePreferences() {
     boolean enabled = preferences.getBoolean(context.getString(R.string.settings_legacy_key_reduce_volume), false);
     if (enabled) {
@@ -154,17 +141,6 @@ public class SettingsManager {
       default:
         break;
     }
-  }
-
-  public DisplayDialog produceDisplayDialog() {
-    int run = DisplayDialog.NONE;
-    if (isFirstRun && checkIfRemoteSettingsExist()) {
-      run = DisplayDialog.UPGRADE;
-    } else if (isFirstRun && !checkIfRemoteSettingsExist()) {
-      run = DisplayDialog.INSTALL;
-    }
-    isFirstRun = false;
-    return new DisplayDialog(run);
   }
 
   @SuppressLint("NewApi")
