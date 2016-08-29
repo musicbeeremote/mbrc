@@ -33,7 +33,7 @@ public class SettingsRepositoryImpl implements SettingsRepository {
   @Override
   public void delete(ConnectionSettings settings) {
     if (settings.getId() == getDefaultId()) {
-
+      // TODO: 8/29/2016 check previous or next value to set as default
     }
     settings.delete();
   }
