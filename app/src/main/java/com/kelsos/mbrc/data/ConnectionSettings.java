@@ -1,9 +1,5 @@
 package com.kelsos.mbrc.data;
 
-import android.support.annotation.NonNull;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.kelsos.mbrc.data.db.CacheDatabase;
 import com.kelsos.mbrc.data.db.SettingsDatabase;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ConflictAction;
@@ -63,4 +59,22 @@ public class ConnectionSettings extends BaseModel {
     return this.port;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    ConnectionSettings settings = (ConnectionSettings) o;
+
+    if (port != settings.port) return false;
+    return address.equals(settings.address);
+
+  }
+
+  @Override
+  public int hashCode() {
+    int result = address.hashCode();
+    result = 31 * result + port;
+    return result;
+  }
 }
