@@ -15,7 +15,7 @@ import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.bus.RxBus;
-import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity;
+import com.kelsos.mbrc.connection_manager.ConnectionManagerActivity;
 import com.kelsos.mbrc.ui.dialogs.WebViewDialog;
 import com.kelsos.mbrc.utilities.RemoteUtils;
 import timber.log.Timber;

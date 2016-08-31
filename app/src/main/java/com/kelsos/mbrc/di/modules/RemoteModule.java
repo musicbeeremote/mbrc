@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kelsos.mbrc.di.providers.NotificationManagerCompatProvider;
 import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.bus.RxBusImpl;
+import com.kelsos.mbrc.repository.ConnectionRepository;
+import com.kelsos.mbrc.repository.ConnectionRepositoryImpl;
 import com.kelsos.mbrc.services.LibraryService;
 import com.kelsos.mbrc.services.LibraryServiceImpl;
 import com.kelsos.mbrc.services.NowPlayingService;
@@ -18,5 +20,6 @@ public class RemoteModule extends Module {
     bind(LibraryService.class).to(LibraryServiceImpl.class);
     bind(NowPlayingService.class).to(NowPlayingServiceImpl.class);
     bind(NotificationManagerCompat.class).toProvider(NotificationManagerCompatProvider.class);
+    bind(ConnectionRepository.class).to(ConnectionRepositoryImpl.class);
   }
 }
