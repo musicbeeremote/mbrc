@@ -9,24 +9,8 @@ import javax.inject.Inject;
 
 import static com.kelsos.mbrc.constants.Const.LYRICS_NEWLINE;
 
-public class LyricsPresenter implements BasePresenter<LyricsView> {
-  private LyricsView view;
+public class LyricsPresenter extends BasePresenter<LyricsView> {
   @Inject LyricsModel model;
-
-  @Override
-  public void attach(LyricsView view) {
-    this.view = view;
-  }
-
-  @Override
-  public void detach() {
-    this.view = null;
-  }
-
-  @Override
-  public boolean isAttached() {
-    return this.view != null;
-  }
 
   public void load() {
     if (!isAttached()) {
@@ -41,6 +25,6 @@ public class LyricsPresenter implements BasePresenter<LyricsView> {
       return;
     }
     final List<String> lyrics = new ArrayList<>(Arrays.asList(text.split(LYRICS_NEWLINE)));
-    this.view.updateLyrics(lyrics);
+    getView().updateLyrics(lyrics);
   }
 }

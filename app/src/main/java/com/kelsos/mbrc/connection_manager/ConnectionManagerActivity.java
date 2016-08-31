@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.activities;
+package com.kelsos.mbrc.connection_manager;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,7 +12,6 @@ import android.view.MenuItem;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.adapters.ConnectionSettingsAdapter;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.enums.SettingsAction;
@@ -22,6 +21,7 @@ import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.events.ui.NotifyUser;
+import com.kelsos.mbrc.ui.activities.FontActivity;
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment;
 
 import javax.inject.Inject;
@@ -34,13 +34,16 @@ import toothpick.Toothpick;
 import toothpick.smoothie.module.SmoothieActivityModule;
 
 public class ConnectionManagerActivity extends FontActivity
-    implements SettingsDialogFragment.SettingsSaveListener, ConnectionSettingsAdapter.ConnectionChangeListener {
+    implements ConnectionManagerView,
+    SettingsDialogFragment.SettingsSaveListener,
+    ConnectionAdapter.ConnectionChangeListener {
   @Inject RxBus bus;
+  @Inject ConnectionManagerPresenter presenter;
   @BindView(R.id.connection_list) RecyclerView mRecyclerView;
   @BindView(R.id.toolbar) Toolbar mToolbar;
   private MaterialDialog mProgress;
   private Context mContext;
-  private ConnectionSettingsAdapter adapter;
+  private ConnectionAdapter adapter;
   private Scope scope;
 
   @OnClick(R.id.connection_add)
@@ -62,7 +65,7 @@ public class ConnectionManagerActivity extends FontActivity
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     scope = Toothpick.openScopes(getApplication(), this);
-    scope.installModules(new SmoothieActivityModule(this));
+    scope.installModules(new SmoothieActivityModule(this), ConnectionManagerModule.create());
     super.onCreate(savedInstanceState);
     Toothpick.inject(this, scope);
     setContentView(R.layout.ui_activity_connection_manager);
@@ -71,9 +74,11 @@ public class ConnectionManagerActivity extends FontActivity
     mRecyclerView.setHasFixedSize(true);
     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
     mRecyclerView.setLayoutManager(mLayoutManager);
-    adapter = new ConnectionSettingsAdapter();
+    adapter = new ConnectionAdapter();
     adapter.setChangeListener(this);
     mRecyclerView.setAdapter(adapter);
+    presenter.attach(this);
+    presenter.load();
   }
 
   @Override
@@ -97,6 +102,7 @@ public class ConnectionManagerActivity extends FontActivity
   @Override
   protected void onResume() {
     super.onResume();
+    presenter.attach(this);
     bus.register(this, ConnectionSettingsChanged.class, this::onConnectionSettingsChange, true);
     bus.register(this, DiscoveryStopped.class, this::onDiscoveryStopped, true);
     bus.register(this, NotifyUser.class, this::onUserNotification, true);
@@ -105,6 +111,7 @@ public class ConnectionManagerActivity extends FontActivity
   @Override
   protected void onPause() {
     super.onPause();
+    presenter.detach();
     bus.unregister(this);
   }
 
@@ -122,6 +129,7 @@ public class ConnectionManagerActivity extends FontActivity
 
   @Override
   public void onSave(ConnectionSettings settings) {
+    presenter.update(settings);
     bus.post(new ChangeSettings(SettingsAction.EDIT, settings));
   }
 
@@ -152,7 +160,6 @@ public class ConnectionManagerActivity extends FontActivity
     }
 
     Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show();
-    adapter.refresh();
   }
 
   private void onUserNotification(NotifyUser event) {
@@ -163,8 +170,8 @@ public class ConnectionManagerActivity extends FontActivity
 
   @Override
   public void onDelete(ConnectionSettings settings) {
+    presenter.delete(settings);
     bus.post(new ChangeSettings(SettingsAction.DELETE, settings));
-    adapter.refresh();
   }
 
   @Override
@@ -172,12 +179,16 @@ public class ConnectionManagerActivity extends FontActivity
     SettingsDialogFragment settingsDialog = SettingsDialogFragment.newInstance(settings);
     FragmentManager fragmentManager = getSupportFragmentManager();
     settingsDialog.show(fragmentManager, "settings_dialog");
-    adapter.refresh();
   }
 
   @Override
   public void onDefault(ConnectionSettings settings) {
+    presenter.setDefault(settings);
     bus.post(new ChangeSettings(SettingsAction.DEFAULT, settings));
-    adapter.refresh();
+  }
+
+  @Override
+  public void updateModel(ConnectionModel connectionModel) {
+    adapter.update(connectionModel);
   }
 }

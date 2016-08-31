@@ -2,9 +2,9 @@ package com.kelsos.mbrc.repository;
 
 import com.kelsos.mbrc.data.ConnectionSettings;
 
-import java.util.Collection;
+import java.util.List;
 
-public interface SettingsRepository {
+public interface ConnectionRepository {
   void save(ConnectionSettings settings);
 
   void delete(ConnectionSettings settings);
@@ -15,7 +15,7 @@ public interface SettingsRepository {
 
   void setDefault(ConnectionSettings settings);
 
-  Collection<ConnectionSettings> getAll();
+  List<ConnectionSettings> getAll();
 
   long count();
 

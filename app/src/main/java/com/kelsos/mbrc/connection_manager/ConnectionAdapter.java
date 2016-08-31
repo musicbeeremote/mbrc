@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.adapters;
+package com.kelsos.mbrc.connection_manager;
 
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.PopupMenu;
@@ -11,23 +11,21 @@ import android.widget.TextView;
 
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
-import com.raizlabs.android.dbflow.list.FlowCursorList;
-import com.raizlabs.android.dbflow.list.FlowQueryList;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ConnectionSettingsAdapter
-    extends RecyclerView.Adapter<ConnectionSettingsAdapter.ConnectionViewHolder>
-    implements FlowCursorList.OnCursorRefreshListener<ConnectionSettings> {
-  private FlowQueryList<ConnectionSettings> data;
+public class ConnectionAdapter
+    extends RecyclerView.Adapter<ConnectionAdapter.ConnectionViewHolder> {
+  private List<ConnectionSettings> data;
   private long selectionId;
   private ConnectionChangeListener changeListener;
 
-  public ConnectionSettingsAdapter() {
-    data = SQLite.select().from(ConnectionSettings.class).flowQueryList();
-    data.addOnCursorRefreshListener(this);
+  public ConnectionAdapter() {
+    data = new ArrayList<>();
     setHasStableIds(true);
   }
 
@@ -113,13 +111,10 @@ public class ConnectionSettingsAdapter
     return data.size();
   }
 
-  public void refresh() {
-    data.refreshAsync();
-  }
-
-  @Override
-  public void onCursorRefreshed(FlowCursorList<ConnectionSettings> cursorList) {
-    notifyDataSetChanged();
+  public void update(ConnectionModel connectionModel) {
+    this.data.clear();
+    this.data.addAll(connectionModel.settings());
+    selectionId = connectionModel.defaultId();
   }
 
   class ConnectionViewHolder extends RecyclerView.ViewHolder {
