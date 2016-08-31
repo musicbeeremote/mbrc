@@ -1,4 +1,4 @@
-package com.kelsos.mbrc;
+package com.kelsos.mbrc.repository;
 
 import com.kelsos.mbrc.data.ConnectionSettings;
 
@@ -18,4 +18,6 @@ public interface SettingsRepository {
   Collection<ConnectionSettings> getAll();
 
   long count();
+
+  long getDefaultId();
 }

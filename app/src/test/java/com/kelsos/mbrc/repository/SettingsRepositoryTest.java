@@ -7,8 +7,6 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 
 import com.kelsos.mbrc.BuildConfig;
-import com.kelsos.mbrc.SettingsRepository;
-import com.kelsos.mbrc.SettingsRepositoryImpl;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.rules.DBFlowTestRule;
 
@@ -41,7 +39,7 @@ import static org.mockito.Mockito.when;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.LOLLIPOP)
 public class SettingsRepositoryTest {
-  public ToothPickRule toothPickRule = new ToothPickRule(this);
+  private ToothPickRule toothPickRule = new ToothPickRule(this);
   @Rule
   public TestRule chain = RuleChain.outerRule(toothPickRule).around(DBFlowTestRule.create());
 
@@ -126,6 +124,183 @@ public class SettingsRepositoryTest {
     repository.setDefault(settings1);
 
     assertThat(repository.getDefault()).isEqualTo(settings1);
+  }
+
+  @Test
+  public void deleteSingleDefault() {
+    SettingsRepository repository = getRepository();
+
+    ConnectionSettings settings = createSettings("192.167.90.10");
+    repository.save(settings);
+
+    assertThat(settings.getId()).isEqualTo(1);
+    assertThat(repository.getDefault()).isEqualTo(settings);
+
+    repository.delete(settings);
+
+    assertThat(repository.count()).isEqualTo(0);
+    assertThat(repository.getDefault()).isNull();
+    assertThat(repository.getDefaultId()).isEqualTo(-1);
+  }
+
+  @Test
+  public void deleteFromMultipleDefaultFirst() {
+    SettingsRepository repository = getRepository();
+
+    ConnectionSettings settings = createSettings("192.167.90.10");
+    ConnectionSettings settings1 = createSettings("192.167.90.11");
+    ConnectionSettings settings2 = createSettings("192.167.90.12");
+    ConnectionSettings settings3 = createSettings("192.167.90.14");
+
+    repository.save(settings);
+    repository.save(settings1);
+    repository.save(settings2);
+    repository.save(settings3);
+
+    assertThat(repository.count()).isEqualTo(4);
+
+    assertThat(settings.getId()).isEqualTo(1);
+    assertThat(repository.getDefault()).isEqualTo(settings);
+
+    repository.delete(settings);
+
+    assertThat(repository.count()).isEqualTo(3);
+    assertThat(repository.getDefault()).isEqualTo(settings1);
+    assertThat(repository.getDefaultId()).isEqualTo(2);
+  }
+
+  @Test
+  public void deleteFromMultipleDefaultSecond() {
+    SettingsRepository repository = getRepository();
+
+    ConnectionSettings settings = createSettings("192.167.90.10");
+    ConnectionSettings settings1 = createSettings("192.167.90.11");
+    ConnectionSettings settings2 = createSettings("192.167.90.12");
+    ConnectionSettings settings3 = createSettings("192.167.90.14");
+
+    repository.save(settings);
+    repository.save(settings1);
+    repository.save(settings2);
+    repository.save(settings3);
+
+    assertThat(repository.count()).isEqualTo(4);
+
+    assertThat(settings.getId()).isEqualTo(1);
+    assertThat(repository.getDefault()).isEqualTo(settings);
+
+    repository.setDefault(settings1);
+    assertThat(repository.getDefault()).isEqualTo(settings1);
+
+    repository.delete(settings1);
+
+    assertThat(repository.count()).isEqualTo(3);
+    assertThat(repository.getDefault()).isEqualTo(settings);
+    assertThat(repository.getDefaultId()).isEqualTo(1);
+  }
+
+  @Test
+  public void deleteFromMultipleDefaultLast() {
+    SettingsRepository repository = getRepository();
+
+    ConnectionSettings settings = createSettings("192.167.90.10");
+    ConnectionSettings settings1 = createSettings("192.167.90.11");
+    ConnectionSettings settings2 = createSettings("192.167.90.12");
+    ConnectionSettings settings3 = createSettings("192.167.90.14");
+
+    repository.save(settings);
+    repository.save(settings1);
+    repository.save(settings2);
+    repository.save(settings3);
+
+    assertThat(repository.count()).isEqualTo(4);
+
+    assertThat(settings.getId()).isEqualTo(1);
+    assertThat(repository.getDefault()).isEqualTo(settings);
+
+    repository.setDefault(settings3);
+    assertThat(repository.getDefault()).isEqualTo(settings3);
+
+    repository.delete(settings3);
+
+    assertThat(repository.count()).isEqualTo(3);
+    assertThat(repository.getDefault()).isEqualTo(settings2);
+    assertThat(repository.getDefaultId()).isEqualTo(3);
+  }
+
+  @Test
+  public void deleteFromMultipleNonDefault() {
+    SettingsRepository repository = getRepository();
+
+    ConnectionSettings settings = createSettings("192.167.90.10");
+    ConnectionSettings settings1 = createSettings("192.167.90.11");
+    ConnectionSettings settings2 = createSettings("192.167.90.12");
+    ConnectionSettings settings3 = createSettings("192.167.90.14");
+
+    repository.save(settings);
+    repository.save(settings1);
+    repository.save(settings2);
+    repository.save(settings3);
+
+    assertThat(repository.count()).isEqualTo(4);
+
+    assertThat(settings.getId()).isEqualTo(1);
+    assertThat(repository.getDefault()).isEqualTo(settings);
+
+    repository.setDefault(settings3);
+    assertThat(repository.getDefault()).isEqualTo(settings3);
+
+    repository.delete(settings1);
+
+    assertThat(repository.count()).isEqualTo(3);
+    assertThat(repository.getDefault()).isEqualTo(settings3);
+    assertThat(repository.getDefaultId()).isEqualTo(4);
+  }
+
+  @Test
+  public void updateSettings() {
+    int newPort = 6060;
+    String address = "192.167.90.10";
+    String newAddress = "192.167.90.11";
+
+    SettingsRepository repository = getRepository();
+
+    ConnectionSettings settings = createSettings(address);
+    repository.save(settings);
+
+    assertThat(settings.getId()).isEqualTo(1);
+    ConnectionSettings defaultSettings = repository.getDefault();
+
+    assertThat(defaultSettings).isEqualTo(settings);
+    assertThat(defaultSettings.getPort()).isEqualTo(3000);
+    assertThat(defaultSettings.getAddress()).isEqualTo(address);
+
+    settings.setPort(newPort);
+
+    repository.update(settings);
+
+    assertThat(repository.getDefault().getPort()).isEqualTo(newPort);
+
+    settings.setAddress(newAddress);
+    repository.update(settings);
+
+    assertThat(repository.getDefault().getAddress()).isEqualTo(newAddress);
+  }
+
+  @Test
+  public void setDefaultNull() {
+    SettingsRepository repository = getRepository();
+
+    ConnectionSettings settings = createSettings("192.167.90.10");
+    repository.save(settings);
+
+    assertThat(settings.getId()).isEqualTo(1);
+    assertThat(repository.getDefault()).isEqualTo(settings);
+
+    repository.setDefault(null);
+
+    assertThat(repository.count()).isEqualTo(1);
+    assertThat(repository.getDefault()).isEqualTo(settings);
+    assertThat(repository.getDefaultId()).isEqualTo(1);
   }
 
   @NonNull
