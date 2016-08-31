@@ -1,8 +1,9 @@
-package com.kelsos.mbrc;
+package com.kelsos.mbrc.repository;
 
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 
+import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.data.ConnectionSettings_Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -32,10 +33,40 @@ public class SettingsRepositoryImpl implements SettingsRepository {
 
   @Override
   public void delete(ConnectionSettings settings) {
-    if (settings.getId() == getDefaultId()) {
-      // TODO: 8/29/2016 check previous or next value to set as default
-    }
+    long oldId = settings.getId();
+
     settings.delete();
+
+    if (oldId != getDefaultId()) {
+      return;
+    }
+
+    long count = count();
+    if (count == 0) {
+      setDefaultId(-1);
+    } else {
+      ConnectionSettings before = getItemBefore(oldId);
+      if (before != null) {
+        setDefault(before);
+      } else {
+        setDefault(getFirst());
+      }
+    }
+  }
+
+  private ConnectionSettings getItemBefore(long id) {
+    return SQLite.select()
+        .from(ConnectionSettings.class)
+        .where(ConnectionSettings_Table.id.lessThan(id))
+        .orderBy(ConnectionSettings_Table.id, false)
+        .querySingle();
+  }
+
+  private ConnectionSettings getFirst() {
+    return SQLite.select()
+        .from(ConnectionSettings.class)
+        .orderBy(ConnectionSettings_Table.id, true)
+        .querySingle();
   }
 
   @Override
@@ -56,7 +87,8 @@ public class SettingsRepositoryImpl implements SettingsRepository {
         .querySingle();
   }
 
-  private long getDefaultId() {
+  @Override
+  public long getDefaultId() {
     String key = resources.getString(R.string.settings_key_default_index);
     return this.preferences.getLong(key, 0);
   }
@@ -67,8 +99,12 @@ public class SettingsRepositoryImpl implements SettingsRepository {
       return;
     }
 
+    setDefaultId(settings.getId());
+  }
+
+  private void setDefaultId(long id) {
     String key = resources.getString(R.string.settings_key_default_index);
-    this.preferences.edit().putLong(key, settings.getId()).apply();
+    this.preferences.edit().putLong(key, id).apply();
   }
 
   @Override
