@@ -108,7 +108,7 @@
           android:value=".ui.activities.nav.MainActivity" />
     </activity>
     <activity
-        android:name=".ui.activities.ConnectionManagerActivity"
+        android:name=".connection_manager.ConnectionManagerActivity"
         android:parentActivityName=".ui.activities.SettingsActivity"
         android:windowSoftInputMode="adjustNothing">
 

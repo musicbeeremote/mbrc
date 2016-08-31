@@ -8,17 +8,17 @@ import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.data.ConnectionSettings_Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
-import java.util.Collection;
+import java.util.List;
 
 import javax.inject.Inject;
 
-public class SettingsRepositoryImpl implements SettingsRepository {
+public class ConnectionRepositoryImpl implements ConnectionRepository {
 
   private SharedPreferences preferences;
   private Resources resources;
 
   @Inject
-  public SettingsRepositoryImpl(SharedPreferences preferences, Resources resources) {
+  public ConnectionRepositoryImpl(SharedPreferences preferences, Resources resources) {
     this.preferences = preferences;
     this.resources = resources;
   }
@@ -108,7 +108,7 @@ public class SettingsRepositoryImpl implements SettingsRepository {
   }
 
   @Override
-  public Collection<ConnectionSettings> getAll() {
+  public List<ConnectionSettings> getAll() {
    return SQLite.select().from(ConnectionSettings.class).queryList();
   }
 

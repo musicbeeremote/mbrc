@@ -38,7 +38,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.LOLLIPOP)
-public class SettingsRepositoryTest {
+public class ConnectionRepositoryTest {
   private ToothPickRule toothPickRule = new ToothPickRule(this);
   @Rule
   public TestRule chain = RuleChain.outerRule(toothPickRule).around(DBFlowTestRule.create());
@@ -50,7 +50,7 @@ public class SettingsRepositoryTest {
 
   @Test
   public void addNewSettings() {
-    SettingsRepository repository = getRepository();
+    ConnectionRepository repository = getRepository();
     ConnectionSettings settings = createSettings("192.167.90.10");
     repository.save(settings);
 
@@ -60,7 +60,7 @@ public class SettingsRepositoryTest {
 
   @Test
   public void addMultipleNewSettings() {
-    SettingsRepository repository = getRepository();
+    ConnectionRepository repository = getRepository();
     ConnectionSettings settings = createSettings("192.167.90.10");
     ConnectionSettings settings1 = createSettings("192.167.90.11");
     ConnectionSettings settings2 = createSettings("192.167.90.12");
@@ -75,15 +75,15 @@ public class SettingsRepositoryTest {
     assertThat(repository.count()).isEqualTo(3);
   }
 
-  private SettingsRepository getRepository() {
+  private ConnectionRepository getRepository() {
     Scope scope = Toothpick.openScope(RuntimeEnvironment.application);
     scope.installModules(new TestModule());
-    return scope.getInstance(SettingsRepository.class);
+    return scope.getInstance(ConnectionRepository.class);
   }
 
   @Test
   public void addMultipleNewSettingsRemoveOne() {
-    SettingsRepository repository = getRepository();
+    ConnectionRepository repository = getRepository();
     ConnectionSettings settings = createSettings("192.167.90.10");
     ConnectionSettings settings1 = createSettings("192.167.90.11");
     ConnectionSettings settings2 = createSettings("192.167.90.12");
@@ -111,7 +111,7 @@ public class SettingsRepositoryTest {
 
   @Test
   public void changeDefault() {
-    SettingsRepository repository = getRepository();
+    ConnectionRepository repository = getRepository();
 
     ConnectionSettings settings = createSettings("192.167.90.10");
     ConnectionSettings settings1 = createSettings("192.167.90.11");
@@ -128,7 +128,7 @@ public class SettingsRepositoryTest {
 
   @Test
   public void deleteSingleDefault() {
-    SettingsRepository repository = getRepository();
+    ConnectionRepository repository = getRepository();
 
     ConnectionSettings settings = createSettings("192.167.90.10");
     repository.save(settings);
@@ -145,7 +145,7 @@ public class SettingsRepositoryTest {
 
   @Test
   public void deleteFromMultipleDefaultFirst() {
-    SettingsRepository repository = getRepository();
+    ConnectionRepository repository = getRepository();
 
     ConnectionSettings settings = createSettings("192.167.90.10");
     ConnectionSettings settings1 = createSettings("192.167.90.11");
@@ -171,7 +171,7 @@ public class SettingsRepositoryTest {
 
   @Test
   public void deleteFromMultipleDefaultSecond() {
-    SettingsRepository repository = getRepository();
+    ConnectionRepository repository = getRepository();
 
     ConnectionSettings settings = createSettings("192.167.90.10");
     ConnectionSettings settings1 = createSettings("192.167.90.11");
@@ -200,7 +200,7 @@ public class SettingsRepositoryTest {
 
   @Test
   public void deleteFromMultipleDefaultLast() {
-    SettingsRepository repository = getRepository();
+    ConnectionRepository repository = getRepository();
 
     ConnectionSettings settings = createSettings("192.167.90.10");
     ConnectionSettings settings1 = createSettings("192.167.90.11");
@@ -229,7 +229,7 @@ public class SettingsRepositoryTest {
 
   @Test
   public void deleteFromMultipleNonDefault() {
-    SettingsRepository repository = getRepository();
+    ConnectionRepository repository = getRepository();
 
     ConnectionSettings settings = createSettings("192.167.90.10");
     ConnectionSettings settings1 = createSettings("192.167.90.11");
@@ -262,7 +262,7 @@ public class SettingsRepositoryTest {
     String address = "192.167.90.10";
     String newAddress = "192.167.90.11";
 
-    SettingsRepository repository = getRepository();
+    ConnectionRepository repository = getRepository();
 
     ConnectionSettings settings = createSettings(address);
     repository.save(settings);
@@ -288,7 +288,7 @@ public class SettingsRepositoryTest {
 
   @Test
   public void setDefaultNull() {
-    SettingsRepository repository = getRepository();
+    ConnectionRepository repository = getRepository();
 
     ConnectionSettings settings = createSettings("192.167.90.10");
     repository.save(settings);
@@ -328,7 +328,7 @@ public class SettingsRepositoryTest {
         });
         return preferences;
       });
-      bind(SettingsRepository.class).to(SettingsRepositoryImpl.class);
+      bind(ConnectionRepository.class).to(ConnectionRepositoryImpl.class);
       bind(Resources.class).toProviderInstance(() -> {
         Resources resources = Mockito.mock(Resources.class);
         when(resources.getString(anyInt())).thenReturn("preferences_key");
