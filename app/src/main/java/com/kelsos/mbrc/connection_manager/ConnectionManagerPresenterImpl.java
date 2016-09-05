@@ -33,17 +33,27 @@ public class ConnectionManagerPresenterImpl extends BasePresenter<ConnectionMana
 
   @Override
   public void setDefault(ConnectionSettings settings) {
+    checkIfAttached();
     repository.setDefault(settings);
+    getView().defaultChanged();
   }
 
   @Override
   public void update(ConnectionSettings settings) {
+    checkIfAttached();
     repository.update(settings);
+    if (settings.getId() == repository.getDefaultId()) {
+      getView().defaultChanged();
+    }
   }
 
   @Override
   public void delete(ConnectionSettings settings) {
+    checkIfAttached();
     repository.delete(settings);
+    if (settings.getId() == repository.getDefaultId()) {
+      getView().defaultChanged();
+    }
   }
 
   private void onLoadError(Throwable throwable) {
