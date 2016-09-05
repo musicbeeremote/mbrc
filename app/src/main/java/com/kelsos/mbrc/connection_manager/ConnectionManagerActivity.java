@@ -14,10 +14,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.UserInputEventType;
 import com.kelsos.mbrc.data.ConnectionSettings;
-import com.kelsos.mbrc.enums.SettingsAction;
+import com.kelsos.mbrc.events.DefaultSettingsChangedEvent;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.bus.RxBus;
-import com.kelsos.mbrc.events.ui.ChangeSettings;
 import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.events.ui.NotifyUser;
@@ -130,7 +129,6 @@ public class ConnectionManagerActivity extends FontActivity
   @Override
   public void onSave(ConnectionSettings settings) {
     presenter.update(settings);
-    bus.post(new ChangeSettings(SettingsAction.EDIT, settings));
   }
 
   private void onConnectionSettingsChange(ConnectionSettingsChanged event) {
@@ -153,6 +151,7 @@ public class ConnectionManagerActivity extends FontActivity
         break;
       case COMPLETE:
         message = getString(R.string.con_man_success);
+        presenter.load();
         break;
       default:
         message = getString(R.string.unknown_reason);
@@ -171,7 +170,6 @@ public class ConnectionManagerActivity extends FontActivity
   @Override
   public void onDelete(ConnectionSettings settings) {
     presenter.delete(settings);
-    bus.post(new ChangeSettings(SettingsAction.DELETE, settings));
   }
 
   @Override
@@ -184,11 +182,15 @@ public class ConnectionManagerActivity extends FontActivity
   @Override
   public void onDefault(ConnectionSettings settings) {
     presenter.setDefault(settings);
-    bus.post(new ChangeSettings(SettingsAction.DEFAULT, settings));
   }
 
   @Override
   public void updateModel(ConnectionModel connectionModel) {
     adapter.update(connectionModel);
+  }
+
+  @Override
+  public void defaultChanged() {
+    bus.post(DefaultSettingsChangedEvent.create());
   }
 }
