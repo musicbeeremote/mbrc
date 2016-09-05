@@ -4,4 +4,6 @@ import com.kelsos.mbrc.views.BaseView;
 
 public interface ConnectionManagerView extends BaseView {
   void updateModel(ConnectionModel connectionModel);
+
+  void defaultChanged();
 }
