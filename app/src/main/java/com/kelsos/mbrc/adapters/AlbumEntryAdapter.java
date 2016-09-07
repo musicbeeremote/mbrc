@@ -60,19 +60,18 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<AlbumEntryAdapter.Vi
           .leftOuterJoin(Track.class)
           .on(Track_Table.album.withTable().eq(Album_Table.album.withTable()))
           .where(Track_Table.artist.withTable().like('%'+filter+'%'))
+          .groupBy(Track_Table.artist.withTable())
           .orderBy(Album_Table.artist.withTable(), true)
           .orderBy(Album_Table.album.withTable(), true);
     }
 
     Single.create((SingleSubscriber<? super FlowCursorList<Album>> subscriber) -> {
-      FlowCursorList<Album> list = new FlowCursorList<>(query);
+      FlowCursorList<Album> list = query.cursorList();
       subscriber.onSuccess(list);
     }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(albums -> {
       data = albums;
       notifyDataSetChanged();
-    }, throwable -> {
-      Timber.v(throwable, "failed to load the data");
-    });
+    }, throwable -> Timber.v(throwable, "failed to load the data"));
   }
 
   @Override
