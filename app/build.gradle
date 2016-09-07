@@ -30,6 +30,7 @@ android {
     versionName "1.0.0"
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
     buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
   }
 
   signingConfigs {
@@ -119,17 +120,22 @@ ext {
   support_library_version = "24.2.0"
   dbflow_version = "3.1.1"
   toothpick_version = "1.0.0-RC9"
-  jackson_version = "2.8.1"
-  butterknife_version = "8.3.0"
+  jackson_version = "2.8.2"
+  butterknife_version = "8.4.0"
   material_dialogs_version = "0.9.0.1"
 }
 
 dependencies {
+  androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    exclude group: 'com.android.support', module: 'support-annotations'
+  })
+
   compile "com.android.support:appcompat-v7:${support_library_version}"
   compile "com.android.support:support-v4:${support_library_version}"
   compile "com.android.support:support-annotations:${support_library_version}"
   compile "com.android.support:recyclerview-v7:${support_library_version}"
   compile "com.android.support:design:${support_library_version}"
+
 
   apt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
   // use kapt for kotlin apt\
@@ -140,11 +146,11 @@ dependencies {
   compile "com.github.machinarius:preferencefragment:0.1.2"
   compile "com.jakewharton:butterknife:${butterknife_version}"
   compile 'io.reactivex:rxandroid:1.2.1'
-  compile 'io.reactivex:rxjava:1.1.9'
+  compile 'io.reactivex:rxjava:1.1.10'
 
-  apt 'com.google.auto.value:auto-value:1.2'
+  apt 'com.google.auto.value:auto-value:1.3'
   apt 'com.ryanharter.auto.value:auto-value-parcel:0.2.4-rc2'
-  provided 'com.jakewharton.auto.value:auto-value-annotations:1.2-update1'
+  provided 'com.jakewharton.auto.value:auto-value-annotations:1.3'
 
   compile "com.github.stephanenicolas.toothpick:toothpick-runtime:${toothpick_version}"
   compile "com.github.stephanenicolas.toothpick:smoothie:${toothpick_version}"
@@ -152,9 +158,10 @@ dependencies {
 
   //highly recommended
   testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
-  testCompile "org.robolectric:robolectric:3.1"
+  testCompile "org.robolectric:robolectric:3.1.2"
   testCompile "org.mockito:mockito-core:1.10.19"
   testCompile "com.google.truth:truth:0.29"
+  testCompile 'junit:junit:4.12'
 
   compile 'uk.co.chrisjenx:calligraphy:2.2.0'
 
@@ -190,76 +197,94 @@ allprojects {
   }
 }
 
-project.tasks.withType(JavaCompile) { task -> options.compilerArgs << "-AguiceAnnotationDatabasePackageName=mbrc"
+check.dependsOn 'pmd'
+
+task pmd(type: Pmd) {
+
+  description "Generate PMD reports for this build"
+
+  ignoreFailures true    // Ignores failing build on warning. If not set build will fail on warning.
+
+  ruleSets = [
+      "java-basic",
+      "java-braces",
+      "java-naming",
+      "java-android",
+      "java-codesize",
+      "java-design",
+      "java-finalizers",
+      "java-junit",
+      "java-optimizations",
+      "java-strictexception",
+      "java-strings",
+      "java-unusedcode"
+  ]
+
+  source 'src'          // Specify the source code. The script should be applied to
+  include '**/*.java'   // the module build.gradle so the 'src' folder resides at the same level
+  exclude '**/gen/**'   // include / exclude folders and files.
+
+  reports {
+    xml.enabled = true
+    html.enabled = true
+  }
 }
 
+
+check.dependsOn 'findbugs'
+
 task findbugs(type: FindBugs) {
-  ignoreFailures = false
-  effort = "max"
-  reportLevel = "high"
-  excludeFilter = new File("${project.rootDir}/config/quality/findbugs/findbugs-filter.xml")
-  classes = fileTree("${project.rootDir}/remote/build/intermediates/classes/debug/")
 
-  source fileTree('src/main/java')
-  include '**/*.java'
-  exclude '**/gen/**'
+  description 'Generate FindBugs reports for this build'
 
+  ignoreFailures true
+
+  //Higher levels increase precision and find more bugs at the expense of running time and memory consumption.
+  effort = 'max'
+  //The priority threshold for reporting bugs. If set to {@code low}, all bugs are reported.
+  reportLevel = 'low'
+
+  //Define path to classes
+  classes = fileTree("${project.rootDir}/app/build/intermediates/classes") //path to compiled class files
+
+  source 'src'          // Specify the source code. The script should be applied to
+  include '**/*.java'   // the module build.gradle so the 'src' folder resides at the same level
+  exclude '**/gen/**'   // include / exclude folders and files.
+
+  //Define exclude config file
+  excludeFilter = file("${rootProject.projectDir}/config/findbugs/exclude.xml")
+
+  //IMPORTANT: FINDBUGS CAN ONLY GENERATE 1 REPORT. XML OR HTML!! AND PATH MUST BE DEFINED!!
   reports {
     xml.enabled = false
     html.enabled = true
-    html {
-      destination "$project.buildDir/reports/findbugs/findbugs.html"
-    }
+    xml.destination = "$project.buildDir/reports/findbugs/findbugs-output.xml"
+    html.destination = "$project.buildDir/reports/findbugs/findbugs-output.html"
   }
 
-  classpath = files(project.configurations.compile.asPath)
+  classpath = files()
 }
 
-checkstyle {
-  toolVersion = "6.5"
-}
+check.dependsOn 'checkstyle'
 
 task checkstyle(type: Checkstyle) {
 
-  configFile file("${project.rootDir}/config/quality/checkstyle/checkstyle.xml")
-  showViolations true
-  configProperties = ['checkstyle.cache.file': rootProject.file('build/checkstyle.cache'),
-                      'checkstyle.config.dir': rootProject.file('config/quality/checkstyle/')]
-  configProperties.checkstyleSuppressionsPath =
-      file("${project.rootDir}/config/quality/checkstyle/suppressions.xml").absolutePath
-  // Where is my suppressions file for checkstyle is...
+  description "Generate Checkstyle reports for this build"     //Add description to task
+
+  ignoreFailures true
+
+  configFile file("${rootProject.projectDir}/gradle/config/checkstyle/checkstyle.xml")
+
   source 'src'
   include '**/*.java'
-  exclude '**/gen/**'
-  classpath = files(project.configurations.compile.asPath)
-}
+  exclude '**/gen/**', '**/test/**'
 
-task pmd(type: Pmd) {
-  ignoreFailures = false
-  ruleSetFiles = files("${project.rootDir}/config/quality/pmd/pmd-ruleset.xml")
-  ruleSets = []
-  source 'src/main/java'
-  include '**/*.java'
-  exclude '**/gen/**'
   reports {
-    xml.enabled = false
+    xml.enabled = true
     html.enabled = true
-    html {
-      destination "$project.buildDir/reports/pmd/pmd.html"
-    }
   }
-}
 
-check.dependsOn 'checkstyle', 'findbugs', 'pmd', 'lint'
-
-gradle.taskGraph.afterTask { Task task, TaskState state ->
-  if (state.failure) {
-    if (task.name in ['checkstyle']) {
-      ant.xslt(in: "$buildDir/reports/checkstyle/checkstyle.xml",
-          style: new File(rootDir, 'config/quality/checkstyle/checkstyle-noframes-sorted.xsl'),
-          out: new File("$buildDir/reports/checkstyle/checkstyle.html"))
-    }
-  }
+  classpath = files(file("${project.rootDir}/app/build/intermediates/classes"))
 }
 
 apt {
