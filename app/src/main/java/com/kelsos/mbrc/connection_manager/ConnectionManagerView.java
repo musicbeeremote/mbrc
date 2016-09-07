@@ -6,4 +6,6 @@ public interface ConnectionManagerView extends BaseView {
   void updateModel(ConnectionModel connectionModel);
 
   void defaultChanged();
+
+  void dataUpdated();
 }

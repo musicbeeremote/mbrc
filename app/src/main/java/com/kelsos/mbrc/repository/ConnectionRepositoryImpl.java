@@ -26,8 +26,9 @@ public class ConnectionRepositoryImpl implements ConnectionRepository {
   @Override
   public void save(ConnectionSettings settings) {
     settings.save();
+
     if (count() == 1) {
-      setDefault(settings);
+      setDefault(getLast());
     }
   }
 
@@ -66,6 +67,13 @@ public class ConnectionRepositoryImpl implements ConnectionRepository {
     return SQLite.select()
         .from(ConnectionSettings.class)
         .orderBy(ConnectionSettings_Table.id, true)
+        .querySingle();
+  }
+
+  private ConnectionSettings getLast() {
+    return SQLite.select()
+        .from(ConnectionSettings.class)
+        .orderBy(ConnectionSettings_Table.id, false)
         .querySingle();
   }
 

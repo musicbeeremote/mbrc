@@ -8,7 +8,7 @@ public interface ConnectionManagerPresenter extends Presenter<ConnectionManagerV
 
   void setDefault(ConnectionSettings settings);
 
-  void update(ConnectionSettings settings);
+  void save(ConnectionSettings settings);
 
   void delete(ConnectionSettings settings);
 }
