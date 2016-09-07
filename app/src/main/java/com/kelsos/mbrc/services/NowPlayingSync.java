@@ -10,6 +10,7 @@ import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModel
 import java.util.List;
 import javax.inject.Inject;
 import rx.Completable;
+import rx.CompletableSubscriber;
 import rx.Observable;
 import rx.Scheduler;
 import timber.log.Timber;
@@ -20,7 +21,7 @@ public class NowPlayingSync {
 
   @NonNull
   public Completable syncNowPlaying(Scheduler scheduler) {
-    return Completable.create(subscriber -> {
+    return Completable.create((CompletableSubscriber subscriber) -> {
       long count = SQLite.delete().from(NowPlaying.class).count();
       Timber.v("Deleted %d previous cached now playing tracks", count);
       Observable.range(0, Integer.MAX_VALUE)
