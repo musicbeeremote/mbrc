@@ -13,6 +13,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 import java.util.List;
 import javax.inject.Inject;
 import rx.Completable;
+import rx.CompletableSubscriber;
 import rx.Observable;
 import rx.Scheduler;
 import rx.schedulers.Schedulers;
@@ -37,7 +38,7 @@ public class BrowseSync {
 
   @NonNull
   public Completable syncTracks(Scheduler scheduler) {
-    return Completable.create(subscriber -> {
+    return Completable.create((CompletableSubscriber subscriber) -> {
       long count = SQLite.delete().from(Track.class).count();
       Timber.v("Deleted %d previous cached Tracks", count);
       Observable.range(0, Integer.MAX_VALUE)
@@ -71,11 +72,12 @@ public class BrowseSync {
     FlowManager.getDatabase(CacheDatabase.class).executeTransaction(dbw -> {
       Observable.from(genres).forEach(BaseModel::save);
     });
+
   }
 
   @NonNull
   public Completable syncAlbums(Scheduler scheduler) {
-    return Completable.create(subscriber -> {
+    return Completable.create((CompletableSubscriber subscriber) -> {
       long count = SQLite.delete().from(Album.class).count();
       Timber.v("Deleted %d previous cached Albums", count);
       Observable.range(0, Integer.MAX_VALUE)
@@ -90,7 +92,7 @@ public class BrowseSync {
   @NonNull
   public Completable syncArtists(Scheduler scheduler) {
 
-    return Completable.create(subscriber -> {
+    return Completable.create((CompletableSubscriber subscriber) -> {
       long count = SQLite.delete().from(Artist.class).count();
       Timber.v("Deleted %d previous cached Artists", count);
 
@@ -106,7 +108,7 @@ public class BrowseSync {
   @NonNull
   public Completable syncGenres(Scheduler scheduler) {
 
-    return Completable.create(subscriber -> {
+    return Completable.create((CompletableSubscriber subscriber) -> {
       long count = SQLite.delete().from(Genre.class).count();
       Timber.v("Deleted %d previous cached genres", count);
 
