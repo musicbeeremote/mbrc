@@ -128,7 +128,7 @@ public class ConnectionManagerActivity extends FontActivity
 
   @Override
   public void onSave(ConnectionSettings settings) {
-    presenter.update(settings);
+    presenter.save(settings);
   }
 
   private void onConnectionSettingsChange(ConnectionSettingsChanged event) {
@@ -192,5 +192,10 @@ public class ConnectionManagerActivity extends FontActivity
   @Override
   public void defaultChanged() {
     bus.post(DefaultSettingsChangedEvent.create());
+  }
+
+  @Override
+  public void dataUpdated() {
+    presenter.load();
   }
 }

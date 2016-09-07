@@ -5,27 +5,15 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
 import android.support.annotation.StringDef;
 import com.kelsos.mbrc.BuildConfig;
 import com.kelsos.mbrc.R;
-import com.kelsos.mbrc.data.ConnectionSettings;
-import com.kelsos.mbrc.events.bus.RxBus;
-import com.kelsos.mbrc.events.ui.ChangeSettings;
-import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
-import com.kelsos.mbrc.events.ui.DisplayDialog;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.util.Date;
-import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import timber.log.Timber;
-
-import static android.text.TextUtils.isEmpty;
 
 @Singleton
 public class SettingsManager {
@@ -37,40 +25,15 @@ public class SettingsManager {
 
   private SharedPreferences preferences;
   private Context context;
-  private RxBus bus;
-
-  private long settingsId;
-  private boolean isFirstRun;
 
   @Inject
-  public SettingsManager(Application application, SharedPreferences preferences, RxBus bus) {
+  public SettingsManager(Application application, SharedPreferences preferences) {
     this.preferences = preferences;
     this.context = application;
-    this.bus = bus;
-    bus.register(this, ChangeSettings.class, this::handleSettingsChange);
 
     updatePreferences();
 
-    settingsId = this.preferences.getLong(this.context.getString(R.string.settings_key_default_index), 0);
     checkForFirstRunAfterUpdate();
-  }
-
-  public SocketAddress getSocketAddress() {
-    String serverAddress = preferences.getString(context.getString(R.string.settings_key_hostname), null);
-    int serverPort;
-
-    try {
-      serverPort = preferences.getInt(context.getString(R.string.settings_key_port), 0);
-    } catch (ClassCastException castException) {
-      serverPort = Integer.parseInt(preferences.getString(context.getString(R.string.settings_key_port), "0"));
-    }
-
-    if (isEmpty(serverAddress) || serverPort == 0) {
-      bus.post(new DisplayDialog(DisplayDialog.SETUP));
-      return null;
-    }
-
-    return new InetSocketAddress(serverAddress, serverPort);
   }
 
   private void updatePreferences() {
@@ -94,15 +57,6 @@ public class SettingsManager {
     return preferences.getBoolean(context.getString(R.string.settings_key_plugin_check), false);
   }
 
-  private void updateDefault(ConnectionSettings settings) {
-    SharedPreferences.Editor editor = preferences.edit();
-    editor.putString(context.getString(R.string.settings_key_hostname), settings.getAddress());
-    editor.putInt(context.getString(R.string.settings_key_port), settings.getPort());
-    editor.putLong(context.getString(R.string.settings_key_default_index), settings.getId());
-    editor.apply();
-    settingsId = settings.getId();
-  }
-
   public Date getLastUpdated() {
     return new Date(preferences.getLong(context.getString(R.string.settings_key_last_update_check), 0));
   }
@@ -113,36 +67,6 @@ public class SettingsManager {
     editor.apply();
   }
 
-  @NonNull
-  private List<ConnectionSettings> getSettings() {
-    return SQLite.select().from(ConnectionSettings.class).queryList();
-  }
-
-  private void handleSettingsChange(ChangeSettings event) {
-    ConnectionSettings connectionSettings = event.getSettings();
-    long id = connectionSettings.getId();
-    List<ConnectionSettings> settings = getSettings();
-    switch (event.getAction()) {
-      case DELETE:
-        connectionSettings.delete();
-        if (id == settingsId && settings.size() > 0) {
-          updateDefault(settings.get(0));
-          bus.post(ConnectionSettingsChanged.newInstance(connectionSettings.getId()));
-        } else {
-          updateDefault(new ConnectionSettings());
-        }
-        break;
-      case DEFAULT:
-        updateDefault(connectionSettings);
-        bus.post(ConnectionSettingsChanged.newInstance(connectionSettings.getId()));
-        break;
-      case EDIT:
-        connectionSettings.save();
-      default:
-        break;
-    }
-  }
-
   @SuppressLint("NewApi")
   private void checkForFirstRunAfterUpdate() {
     try {
@@ -151,14 +75,13 @@ public class SettingsManager {
       long currentVersion = RemoteUtils.getVersionCode(context);
 
       if (lastVersionCode < currentVersion) {
-        isFirstRun = true;
 
         SharedPreferences.Editor editor = preferences.edit();
         editor.putLong(context.getString(R.string.settings_key_last_version_run), currentVersion);
         editor.apply();
 
         if (BuildConfig.DEBUG) {
-          Timber.d("update or fresh install");
+          Timber.d("save or fresh install");
         }
       }
     } catch (PackageManager.NameNotFoundException e) {

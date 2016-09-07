@@ -36,15 +36,24 @@ public class ConnectionManagerPresenterImpl extends BasePresenter<ConnectionMana
     checkIfAttached();
     repository.setDefault(settings);
     getView().defaultChanged();
+    getView().dataUpdated();
   }
 
   @Override
-  public void update(ConnectionSettings settings) {
+  public void save(ConnectionSettings settings) {
     checkIfAttached();
-    repository.update(settings);
+
+    if (settings.getId() > 0) {
+      repository.update(settings);
+    } else {
+      repository.save(settings);
+    }
+
     if (settings.getId() == repository.getDefaultId()) {
       getView().defaultChanged();
     }
+
+    getView().dataUpdated();
   }
 
   @Override
@@ -54,6 +63,8 @@ public class ConnectionManagerPresenterImpl extends BasePresenter<ConnectionMana
     if (settings.getId() == repository.getDefaultId()) {
       getView().defaultChanged();
     }
+
+    getView().dataUpdated();
   }
 
   private void onLoadError(Throwable throwable) {

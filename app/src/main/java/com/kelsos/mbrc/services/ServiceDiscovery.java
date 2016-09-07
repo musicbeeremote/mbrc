@@ -5,26 +5,22 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.support.annotation.NonNull;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
 import com.kelsos.mbrc.data.DiscoveryMessage;
 import com.kelsos.mbrc.enums.DiscoveryStop;
 import com.kelsos.mbrc.events.bus.RxBus;
-import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged;
 import com.kelsos.mbrc.events.ui.DiscoveryStopped;
 import com.kelsos.mbrc.mappers.ConnectionMapper;
-
+import com.kelsos.mbrc.repository.ConnectionRepository;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
-
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
@@ -42,16 +38,19 @@ public class ServiceDiscovery {
   private ObjectMapper mapper;
   private RxBus bus;
   private InetAddress group;
+  private ConnectionRepository connectionRepository;
 
   @Inject
   ServiceDiscovery(WifiManager manager,
-                   ConnectivityManager connectivityManager,
-                   ObjectMapper mapper,
-                   RxBus bus) {
+      ConnectivityManager connectivityManager,
+      ObjectMapper mapper,
+      RxBus bus,
+      ConnectionRepository connectionRepository) {
     this.manager = manager;
     this.connectivityManager = connectivityManager;
     this.mapper = mapper;
     this.bus = bus;
+    this.connectionRepository = connectionRepository;
   }
 
   public void startDiscovery() {
@@ -75,15 +74,14 @@ public class ServiceDiscovery {
         .doOnTerminate(this::stopDiscovery)
         .map(mapper::map)
         .subscribe(settings -> {
-          settings.save();
           bus.post(new DiscoveryStopped(DiscoveryStop.COMPLETE));
-          bus.post(ConnectionSettingsChanged.newInstance(settings.getId()));
+          connectionRepository.save(settings);
+
           if (callback == null) {
             return;
           }
 
           callback.complete();
-
         }, throwable -> {
           Timber.v(throwable, "Discovery incomplete");
           bus.post(new DiscoveryStopped(DiscoveryStop.NOT_FOUND));
