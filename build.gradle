@@ -5,7 +5,6 @@ buildscript {
   repositories {
     jcenter()
   }
-
   dependencies {
     classpath 'com.android.tools.build:gradle:2.2.0-rc1'
     classpath 'me.tatarka:gradle-retrolambda:3.3.0-beta4'
@@ -20,6 +19,10 @@ allprojects {
   repositories {
     jcenter()
     maven { url "https://jitpack.io" }
-    mavenLocal()
   }
 }
+
+task clean(type: Delete) {
+  delete rootProject.buildDir
+}
+
