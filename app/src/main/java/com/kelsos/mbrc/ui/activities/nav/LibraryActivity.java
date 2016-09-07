@@ -67,8 +67,8 @@ public class LibraryActivity extends BaseActivity
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.menu_now_playing, menu);
-    searchView = menu.findItem(R.id.now_playing_search_item);
+    getMenuInflater().inflate(R.menu.library_search, menu);
+    searchView = menu.findItem(R.id.library_search_item);
     mSearchView = (SearchView) MenuItemCompat.getActionView(searchView);
     mSearchView.setQueryHint(getString(R.string.library_search_hint));
     mSearchView.setIconifiedByDefault(true);
