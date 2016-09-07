@@ -7,6 +7,7 @@
         android:title="@string/settings_manage_connections" />
   </PreferenceCategory>
   <PreferenceCategory android:title="@string/settings_miscellaneous">
+
     <com.afollestad.materialdialogs.prefs.MaterialListPreference
         android:defaultValue="@string/incoming_action_default_value"
         android:entries="@array/incoming_action_options"
@@ -16,13 +17,18 @@
         android:title="@string/settings_miscellaneous_incoming_call_action" />
 
     <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/settings_key_notification_control"
+        android:summary="@string/settings_sum_notification_control"
+        android:title="@string/settings_title_notification_control" />
+
+    <CheckBoxPreference
         android:defaultValue="false"
         android:key="@string/settings_key_plugin_check"
         android:summary="@string/setting_miscellaneous_plugin_updates_summary"
-        android:title="@string/setting_miscellaneous_plugin_updates"/>
+        android:title="@string/setting_miscellaneous_plugin_updates" />
 
   </PreferenceCategory>
-
   <com.afollestad.materialdialogs.prefs.MaterialListPreference
       android:defaultValue="@string/search_click_default_value"
       android:dialogTitle="@string/settings_search_default_title"
@@ -49,7 +55,6 @@
     <Preference
         android:key="@string/pref_key_revision"
         android:title="Revision" />
-
   </PreferenceCategory>
 
 </PreferenceScreen>
