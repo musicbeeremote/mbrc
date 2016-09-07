@@ -16,6 +16,11 @@
     <item name="windowActionBar">false</item>
     <item name="windowNoTitle">true</item>
     <item name="md_dark_theme">true</item>
+    <item name="android:actionBarWidgetTheme">@style/AppTheme.ActionBarWidget</item>
+  </style>
+
+  <style name="AppTheme.ActionBarWidget" parent="AppTheme">
+    <item name="android:textColorHint">@color/primary_text_material_light</item>
   </style>
 
   <style name="Theme.Settings"

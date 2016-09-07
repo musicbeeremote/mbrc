@@ -3,9 +3,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:mbrc="http://schemas.android.com/apk/res-auto">
   <item
-    android:id="@+id/now_playing_search_item"
+    android:id="@+id/library_search_item"
     android:icon="@drawable/ic_search_black_24dp"
     android:title="@string/now_playing_search"
     mbrc:actionViewClass="android.support.v7.widget.SearchView"
-    mbrc:showAsAction="collapseActionView|ifRoom" />
+    mbrc:showAsAction="always" />
 </menu>
