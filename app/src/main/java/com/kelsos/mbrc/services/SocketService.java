@@ -1,15 +1,18 @@
 package com.kelsos.mbrc.services;
 
+import android.support.annotation.NonNull;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.SocketEventType;
+import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.enums.SocketAction;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.NotifyUser;
-import com.kelsos.mbrc.utilities.SettingsManager;
+import com.kelsos.mbrc.mappers.InetAddressMapper;
+import com.kelsos.mbrc.repository.ConnectionRepository;
 import com.kelsos.mbrc.utilities.SocketActivityChecker;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -33,15 +36,14 @@ import timber.log.Timber;
 @Singleton
 public class SocketService implements SocketActivityChecker.PingTimeoutListener {
   private static final int DELAY = 3;
-  private SocketActivityChecker activityChecker;
-
   private static final int MAX_RETRIES = 3;
   private static final int SOCKET_BUFFER = 4096;
+  private SocketActivityChecker activityChecker;
   private int numOfRetries;
   private RxBus bus;
-  private SettingsManager settingsManager;
   private ObjectMapper mapper;
   private boolean shouldStop;
+  private ConnectionRepository connectionRepository;
   private Socket socket;
   private PrintWriter output;
   private ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -50,13 +52,13 @@ public class SocketService implements SocketActivityChecker.PingTimeoutListener 
 
   @Inject
   public SocketService(SocketActivityChecker activityChecker,
-      SettingsManager settingsManager,
       RxBus bus,
-      ObjectMapper mapper) {
+      ObjectMapper mapper,
+      ConnectionRepository connectionRepository) {
     this.activityChecker = activityChecker;
     this.bus = bus;
-    this.settingsManager = settingsManager;
     this.mapper = mapper;
+    this.connectionRepository = connectionRepository;
 
     startSocket();
     numOfRetries = 0;
@@ -71,7 +73,12 @@ public class SocketService implements SocketActivityChecker.PingTimeoutListener 
     }
 
     subscription = Completable.timer(DELAY, TimeUnit.SECONDS).subscribe(() -> {
-      executor.execute(new SocketConnection());
+      ConnectionSettings connectionSettings = connectionRepository.getDefault();
+      if (connectionSettings == null) {
+        socketManager(SocketAction.STOP);
+        return;
+      }
+      executor.execute(new SocketConnection(connectionSettings));
       numOfRetries++;
     }, throwable -> Timber.v(throwable, "Failed"));
   }
@@ -161,8 +168,16 @@ public class SocketService implements SocketActivityChecker.PingTimeoutListener 
   }
 
   private class SocketConnection implements Runnable {
+    private final SocketAddress socketAddress;
+    private InetAddressMapper mapper;
+
+    private SocketConnection(@NonNull ConnectionSettings connectionSettings) {
+      mapper = new InetAddressMapper();
+      socketAddress = mapper.map(connectionSettings);
+    }
+
     public void run() {
-      SocketAddress socketAddress = settingsManager.getSocketAddress();
+
       bus.post(new MessageEvent(SocketEventType.SocketHandshakeUpdate, false));
       if (null == socketAddress) {
         return;

@@ -74,9 +74,12 @@ public class ConnectionAdapter
     holder.portNum.setText(String.valueOf(settings.getPort()));
 
     if (settings.getId() == selectionId) {
+      holder.defaultSettings.setVisibility(View.VISIBLE);
       int grey = ContextCompat.getColor(holder.itemView.getContext(), R.color.button_dark);
       holder.defaultSettings.setImageResource(R.drawable.ic_check_black_24dp);
       holder.defaultSettings.setColorFilter(grey);
+    } else {
+      holder.defaultSettings.setVisibility(View.INVISIBLE);
     }
   }
 
@@ -115,6 +118,7 @@ public class ConnectionAdapter
     this.data.clear();
     this.data.addAll(connectionModel.settings());
     selectionId = connectionModel.defaultId();
+    notifyDataSetChanged();
   }
 
   class ConnectionViewHolder extends RecyclerView.ViewHolder {

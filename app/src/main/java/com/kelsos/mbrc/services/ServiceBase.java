@@ -6,14 +6,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kelsos.mbrc.constants.Const;
 import com.kelsos.mbrc.constants.Protocol;
+import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.data.PageRange;
 import com.kelsos.mbrc.data.ProtocolPayload;
 import com.kelsos.mbrc.data.SocketMessage;
-import com.kelsos.mbrc.utilities.SettingsManager;
+import com.kelsos.mbrc.mappers.InetAddressMapper;
+import com.kelsos.mbrc.repository.ConnectionRepository;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.net.SocketAddress;
 import javax.inject.Inject;
 import rx.Observable;
 import rx.Subscriber;
@@ -21,7 +24,7 @@ import timber.log.Timber;
 
 class ServiceBase {
   @Inject ObjectMapper mapper;
-  @Inject SettingsManager settings;
+  @Inject ConnectionRepository repository;
   private Socket socket;
 
   @NonNull
@@ -93,11 +96,19 @@ class ServiceBase {
   }
 
   private Socket getSocket() {
+    InetAddressMapper mapper = new InetAddressMapper();
+    ConnectionSettings connectionSettings = repository.getDefault();
+
+    if (connectionSettings == null) {
+      throw new RuntimeException("Socket address is null");
+    }
+
+    SocketAddress socketAddress = mapper.map(connectionSettings);
     try {
       Timber.v("Creating new socket");
       socket = new Socket();
       socket.setSoTimeout(40 * 1000);
-      socket.connect(settings.getSocketAddress());
+      socket.connect(socketAddress);
       sendMessage(SocketMessage.create(Protocol.Player, "Android"));
       return socket;
     } catch (IOException e) {
