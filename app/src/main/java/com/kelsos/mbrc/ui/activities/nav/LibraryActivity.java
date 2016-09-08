@@ -24,6 +24,7 @@ import toothpick.smoothie.module.SmoothieActivityModule;
 public class LibraryActivity extends BaseActivity
     implements SearchView.OnQueryTextListener, ViewPager.OnPageChangeListener {
 
+  private static final String PAGER_POSITION = "com.kelsos.mbrc.ui.activities.nav.PAGER_POSITION";
   @Inject RxBus bus;
   @BindView(R.id.search_pager) ViewPager pager;
   @BindView(R.id.pager_tab_strip) TabLayout tabs;
@@ -101,5 +102,15 @@ public class LibraryActivity extends BaseActivity
   @Override
   protected int active() {
     return R.id.nav_library;
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    outState.putInt(PAGER_POSITION, pager.getCurrentItem());
+  }
+
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    pager.setCurrentItem(savedInstanceState.getInt(PAGER_POSITION, 0));
   }
 }
