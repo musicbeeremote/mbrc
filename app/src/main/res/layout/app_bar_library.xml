@@ -37,5 +37,14 @@
 
   <include layout="@layout/content_library" />
 
+  <include
+      app:behavior_peekHeight="60dp"
+      app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+      android:id="@+id/library_mini_control"
+      layout="@layout/mini_control_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true" />
+
 </android.support.design.widget.CoordinatorLayout>
 

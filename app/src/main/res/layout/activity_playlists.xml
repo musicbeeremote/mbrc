@@ -7,24 +7,11 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-  <RelativeLayout
+  <include
+      layout="@layout/app_bar_playlists"
       android:layout_width="match_parent"
-      android:layout_height="match_parent">
-
-    <include
-        layout="@layout/app_bar_playlists"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/playlist_mini_control" />
-
-    <include
-        android:id="@+id/playlist_mini_control"
-        layout="@layout/mini_control_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
-
-  </RelativeLayout>
+      android:layout_height="match_parent"
+      />
 
   <android.support.design.widget.NavigationView
       android:id="@+id/nav_view"
