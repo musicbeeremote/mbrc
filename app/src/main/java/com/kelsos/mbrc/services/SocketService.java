@@ -8,6 +8,7 @@ import com.kelsos.mbrc.constants.SocketEventType;
 import com.kelsos.mbrc.data.ConnectionSettings;
 import com.kelsos.mbrc.data.SocketMessage;
 import com.kelsos.mbrc.enums.SocketAction;
+import com.kelsos.mbrc.events.DefaultSettingsChangedEvent;
 import com.kelsos.mbrc.events.MessageEvent;
 import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.NotifyUser;
@@ -64,6 +65,7 @@ public class SocketService implements SocketActivityChecker.PingTimeoutListener 
     numOfRetries = 0;
     shouldStop = false;
     socketManager(SocketAction.START);
+    bus.register(this, DefaultSettingsChangedEvent.class, event -> socketManager(SocketAction.RESET));
   }
 
   private void startSocket() {
