@@ -12,6 +12,7 @@ import android.support.v7.app.NotificationCompat;
 import com.kelsos.mbrc.R;
 import com.kelsos.mbrc.annotations.Connection;
 import com.kelsos.mbrc.annotations.PlayerState;
+import com.kelsos.mbrc.controller.ForegroundHooks;
 import com.kelsos.mbrc.domain.TrackInfo;
 import com.kelsos.mbrc.events.bus.RxBus;
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent;
@@ -43,6 +44,7 @@ public class NotificationService {
   private String previous;
   private String play;
   private String next;
+  private ForegroundHooks hooks;
 
   @Inject
   public NotificationService(Application context,
@@ -86,10 +88,13 @@ public class NotificationService {
     }
 
     if (event.getStatus() == Connection.OFF) {
-      notificationManager.cancel(NOW_PLAYING_PLACEHOLDER);
+      cancelNotification(NOW_PLAYING_PLACEHOLDER);
+    } else {
+      notification = createBuilder().build();
+      if (hooks != null) {
+        hooks.start(NOW_PLAYING_PLACEHOLDER, notification);
+      }
     }
-
-    notification = createBuilder().build();
   }
 
   private NotificationCompat.Builder createBuilder() {
@@ -146,5 +151,12 @@ public class NotificationService {
 
   public void cancelNotification(final int notificationId) {
     notificationManager.cancel(notificationId);
+    if (hooks != null) {
+      hooks.stop();
+    }
+  }
+
+  public void setForegroundHooks(ForegroundHooks hooks) {
+    this.hooks = hooks;
   }
 }
