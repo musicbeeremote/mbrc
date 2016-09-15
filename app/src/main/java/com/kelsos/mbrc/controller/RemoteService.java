@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.controller;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -25,7 +26,7 @@ import toothpick.Scope;
 import toothpick.Toothpick;
 
 @Singleton
-public class RemoteService extends Service {
+public class RemoteService extends Service implements ForegroundHooks {
 
   private final IBinder mBinder = new ControllerBinder();
   @Inject RemoteController remoteController;
@@ -68,6 +69,7 @@ public class RemoteService extends Service {
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
     Timber.d("Background Service::Started");
+    notificationService.setForegroundHooks(this);
     CommandRegistration.register(remoteController);
     threadPoolExecutor = Executors.newSingleThreadExecutor();
     threadPoolExecutor.execute(remoteController);
@@ -89,6 +91,18 @@ public class RemoteService extends Service {
     this.unregisterReceiver(receiver);
     Toothpick.closeScope(this);
     super.onDestroy();
+  }
+
+  @Override
+  public void start(int notificationId, Notification notification) {
+    Timber.v("Notification is starting foreground");
+    startForeground(notificationId, notification);
+  }
+
+  @Override
+  public void stop() {
+    Timber.v("Notification is stopping foreground");
+    stopForeground(true);
   }
 
   private class ControllerBinder extends Binder {
