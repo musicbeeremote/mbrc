@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.TaskStackBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +49,9 @@ public class MiniControlFragment extends Fragment implements MiniControlView {
 
   @OnClick(R.id.mini_control)
   void onControlClick() {
-    getContext().startActivity(new Intent(getContext(), MainActivity.class));
+    TaskStackBuilder builder = TaskStackBuilder.create(getContext());
+    builder.addNextIntentWithParentStack(new Intent(getContext(), MainActivity.class));
+    builder.startActivities();
   }
 
   @OnClick(R.id.mc_next_track)
