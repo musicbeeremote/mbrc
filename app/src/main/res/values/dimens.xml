@@ -46,4 +46,5 @@
   <dimen name="play_button_size">52dp</dimen>
   <dimen name="default_check_icon_size">28dp</dimen>
   <dimen name="semicolon_padding">2dp</dimen>
+  <dimen name="mini_control_peek_height">80dp</dimen>
 </resources>
