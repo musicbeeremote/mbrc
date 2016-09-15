@@ -143,4 +143,5 @@
   <string name="settings_dialog_save">Save</string>
   <string name="semicolon" translatable="false">:</string>
   <string name="non_album_tracks">Non album tracks</string>
+  <string name="no_lyrics">No lyrics found</string>
 </resources>

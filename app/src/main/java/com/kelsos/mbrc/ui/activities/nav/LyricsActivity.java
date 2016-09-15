@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.activities.nav;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -67,7 +68,8 @@ public class LyricsActivity extends BaseActivity implements LyricsView {
   public void updateLyrics(List<String> lyrics) {
     if (lyrics.size() == 1) {
       lyricsRecycler.setVisibility(View.GONE);
-      emptyText.setText(lyrics.get(0));
+      String text = lyrics.get(0);
+      emptyText.setText(TextUtils.isEmpty(text) ? getString(R.string.no_lyrics) : text);
       emptyView.setVisibility(View.VISIBLE);
     } else {
       emptyView.setVisibility(View.GONE);
