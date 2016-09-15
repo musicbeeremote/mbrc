@@ -18,6 +18,9 @@ def gitHash() {
   return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
 
+def version = "1.0.0.alpha.1"
+def version_code = 107
+
 android {
   compileSdkVersion 24
   buildToolsVersion "24.0.2"
@@ -26,8 +29,8 @@ android {
     applicationId "com.kelsos.mbrc"
     minSdkVersion 16
     targetSdkVersion 24
-    versionCode 106
-    versionName "1.0.0"
+    versionCode version_code
+    versionName version
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
     buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

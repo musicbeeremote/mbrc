@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.widgets;
 
+import android.app.Application;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -22,7 +23,7 @@ import toothpick.Toothpick;
 
 public class WidgetSmall extends AppWidgetProvider {
 
-  @Inject Context context;
+  @Inject Application context;
   @Inject RxBus bus;
 
   private int[] widgetsIds;
