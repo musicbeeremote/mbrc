@@ -1,8 +1,8 @@
 import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'checkstyle'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
@@ -106,6 +106,9 @@ android {
       output.outputFile = file(filename)
     }
   }
+  sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+  }
 }
 
 idea {
@@ -120,7 +123,7 @@ task wrapper(type: Wrapper) {
 }
 
 ext {
-  support_library_version = "24.2.0"
+  support_library_version = "24.2.1"
   dbflow_version = "3.1.1"
   toothpick_version = "1.0.0-RC9"
   jackson_version = "2.8.2"
@@ -140,24 +143,26 @@ dependencies {
   compile "com.android.support:design:${support_library_version}"
 
 
-  apt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
+  kapt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
   // use kapt for kotlin apt\
   compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
   compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
+  compile "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}"
   compile "com.fasterxml.jackson.core:jackson-core:${jackson_version}"
   compile "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
   compile "com.github.machinarius:preferencefragment:0.1.2"
   compile "com.jakewharton:butterknife:${butterknife_version}"
   compile 'io.reactivex:rxandroid:1.2.1'
-  compile 'io.reactivex:rxjava:1.1.10'
+  compile 'io.reactivex:rxjava:1.2.0'
+  compile 'io.reactivex:rxkotlin:0.60.0'
 
-  apt 'com.google.auto.value:auto-value:1.3'
-  apt 'com.ryanharter.auto.value:auto-value-parcel:0.2.4-rc2'
+  kapt 'com.google.auto.value:auto-value:1.3'
+  kapt 'com.ryanharter.auto.value:auto-value-parcel:0.2.4-rc2'
   provided 'com.jakewharton.auto.value:auto-value-annotations:1.3'
 
   compile "com.github.stephanenicolas.toothpick:toothpick-runtime:${toothpick_version}"
   compile "com.github.stephanenicolas.toothpick:smoothie:${toothpick_version}"
-  apt "com.github.stephanenicolas.toothpick:toothpick-compiler:${toothpick_version}"
+  kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:${toothpick_version}"
 
   //highly recommended
   testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
@@ -173,8 +178,9 @@ dependencies {
   compile 'com.jakewharton.timber:timber:4.3.0'
   compile 'com.jakewharton.rxrelay:rxrelay:1.1.0'
 
-  apt "com.jakewharton:butterknife-compiler:${butterknife_version}"
+  kapt "com.jakewharton:butterknife-compiler:${butterknife_version}"
   retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
+  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
 allprojects {
@@ -290,9 +296,15 @@ task checkstyle(type: Checkstyle) {
   classpath = files(file("${project.rootDir}/app/build/intermediates/classes"))
 }
 
-apt {
+repositories {
+  mavenCentral()
+}
+
+
+kapt {
+  generateStubs = true
   arguments {
-    'toothpick_registry_package_name' 'com.kelsos.mbrc'
-    'toothpick_registry_children_package_names' 'toothpick.smoothie'
+    arg('toothpick_registry_package_name', 'com.kelsos.mbrc')
+    arg('toothpick_registry_children_package_names', 'toothpick.smoothie')
   }
 }
