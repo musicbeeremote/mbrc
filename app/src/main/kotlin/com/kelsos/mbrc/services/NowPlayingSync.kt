@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.services
 
 import com.kelsos.mbrc.data.NowPlaying
-import com.kelsos.mbrc.data.Page
 import com.kelsos.mbrc.data.db.NowPlayingDatabase
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.sql.language.SQLite
@@ -20,13 +19,18 @@ class NowPlayingSync {
     return Completable.create { subscriber: CompletableSubscriber ->
       val count = SQLite.delete().from(NowPlaying::class.java).count()
       Timber.v("Deleted %d previous cached now playing tracks", count)
-      Observable.range(0, Integer.MAX_VALUE).flatMap<Page<NowPlaying>>({ page -> service!!.getNowPlaying(page!! * LIMIT, LIMIT) }).subscribeOn(scheduler).takeWhile { albumPage -> albumPage.offset < albumPage.total }.map<List<NowPlaying>>(Func1<Page<NowPlaying>, List<NowPlaying>> { it.getData() }).subscribe(Action1<List<NowPlaying>> { this.saveTracks(it) }, Action1<Throwable> { subscriber.onError(it) }, Action0 { subscriber.onCompleted() })
+      Observable.range(0, Integer.MAX_VALUE)
+          .flatMap { service.getNowPlaying(it!! * LIMIT, LIMIT) }
+          .subscribeOn(scheduler)
+          .takeWhile { it.offset < it.total }
+          .map { it.data }
+          .subscribe({ this.saveTracks(it) }, { subscriber.onError(it) }, { subscriber.onCompleted() })
     }
   }
 
   private fun saveTracks(nowPlayings: List<NowPlaying>) {
-    val transaction = FastStoreModelTransaction.insertBuilder(FlowManager.getModelAdapter(NowPlaying::class.java)).addAll(nowPlayings).build()
-
+    val modelAdapter = FlowManager.getModelAdapter(NowPlaying::class.java)
+    val transaction = FastStoreModelTransaction.insertBuilder(modelAdapter).addAll(nowPlayings).build()
     FlowManager.getDatabase(NowPlayingDatabase::class.java).executeTransaction(transaction)
   }
 

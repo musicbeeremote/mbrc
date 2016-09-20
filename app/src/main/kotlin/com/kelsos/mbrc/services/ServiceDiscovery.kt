@@ -37,7 +37,7 @@ internal constructor(private val manager: WifiManager,
   private var mLock: WifiManager.MulticastLock? = null
   private var group: InetAddress? = null
 
-  @JvmOverloads fun startDiscovery(callback: OnDiscoveryComplete? = null) {
+  fun startDiscovery(callback: () -> Unit = {}) {
     if (!isWifiConnected) {
       bus.post(DiscoveryStopped(DiscoveryStop.NO_WIFI))
       return
@@ -53,13 +53,14 @@ internal constructor(private val manager: WifiManager,
         .unsubscribeOn(Schedulers.io())
         .doOnTerminate({
           this.stopDiscovery()
-        }).map<ConnectionSettings>(Func1<DiscoveryMessage, ConnectionSettings> { mapper.map(it) }).subscribe({ settings ->
-      bus.post(DiscoveryStopped(DiscoveryStop.COMPLETE))
-      connectionRepository.save(settings)
+        }).map<ConnectionSettings>(Func1<DiscoveryMessage, ConnectionSettings> { mapper.map(it) }).subscribe(
+        { settings ->
+          bus.post(DiscoveryStopped(DiscoveryStop.COMPLETE))
+          connectionRepository.save(settings)
 
-      callback?.complete()
+          callback.invoke()
 
-    }) {
+        }) {
       Timber.v(it, "Discovery incomplete")
       bus.post(DiscoveryStopped(DiscoveryStop.NOT_FOUND))
     }
@@ -91,7 +92,14 @@ internal constructor(private val manager: WifiManager,
     }
 
   private fun discoveryObservable(): Observable<DiscoveryMessage> {
-    return Observable.using<DiscoveryMessage, MulticastSocket>(Func0<MulticastSocket> { this.getResource() }, Func1<MulticastSocket, Observable<out DiscoveryMessage>> { this.getObservable(it) }, Action1<MulticastSocket> { this.cleanup(it) })
+    return Observable.using<DiscoveryMessage, MulticastSocket>({
+      this.resource
+    }, {
+      this.getObservable(it)
+    },
+    {
+      this.cleanup(it)
+    })
   }
 
   private fun cleanup(resource: MulticastSocket) {
@@ -144,10 +152,6 @@ internal constructor(private val manager: WifiManager,
       }
 
     }
-
-  interface OnDiscoveryComplete {
-    fun complete()
-  }
 
   companion object {
     private val NOTIFY = "notify"

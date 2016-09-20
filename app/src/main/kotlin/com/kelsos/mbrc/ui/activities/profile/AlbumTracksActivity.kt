@@ -53,10 +53,10 @@ class AlbumTracksActivity : FontActivity(), TrackEntryAdapter.MenuItemSelectedLi
       actionBar.setDisplayHomeAsUpEnabled(true)
       actionBar.setDisplayShowHomeEnabled(true)
 
-      if (TextUtils.isEmpty(album!!.album())) {
+      if (TextUtils.isEmpty(album!!.album)) {
         actionBar.setTitle(R.string.non_album_tracks)
       } else {
-        actionBar.title = album!!.album()
+        actionBar.title = album!!.album
       }
 
     }

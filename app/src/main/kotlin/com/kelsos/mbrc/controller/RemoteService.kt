@@ -48,7 +48,7 @@ class RemoteService : Service(), ForegroundHooks {
     super.onCreate()
     Toothpick.inject(this, scope)
     FlowManager.init(FlowConfig.Builder(this).openDatabasesOnInit(true).build())
-    this.registerReceiver(receiver, receiver!!.filter())
+    this.registerReceiver(receiver, receiver.filter())
   }
 
   /**
@@ -57,17 +57,17 @@ class RemoteService : Service(), ForegroundHooks {
    * @param event The message received.
    */
   fun handleUserActionEvents(event: MessageEvent) {
-    remoteController!!.handleUserActionEvents(event)
+    remoteController.handleUserActionEvents(event)
   }
 
   override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
     Timber.d("Background Service::Started")
-    notificationService!!.setForegroundHooks(this)
+    notificationService.setForegroundHooks(this)
     CommandRegistration.register(remoteController)
     threadPoolExecutor = Executors.newSingleThreadExecutor()
-    threadPoolExecutor!!.execute(remoteController!!)
-    remoteController!!.executeCommand(MessageEvent(UserInputEventType.StartConnection))
-    discovery!!.startDiscovery { browseSync!!.sync() }
+    threadPoolExecutor!!.execute(remoteController)
+    remoteController.executeCommand(MessageEvent(UserInputEventType.StartConnection))
+    discovery.startDiscovery { browseSync!!.sync() }
 
     return super.onStartCommand(intent, flags, startId)
   }

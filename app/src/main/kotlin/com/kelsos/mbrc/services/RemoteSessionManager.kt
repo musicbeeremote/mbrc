@@ -36,9 +36,9 @@ constructor(context: Application, private val bus: RxBus, private val manager: A
 
   init {
 
-    bus.register(this, RemoteClientMetaData::class.java, Action1<RemoteClientMetaData> { this.metadataUpdate(it) })
-    bus.register(this, PlayStateChange::class.java, Action1<PlayStateChange> { this.updateState(it) })
-    bus.register(this, PlayStateChange::class.java, Action1<PlayStateChange> { this.onPlayStateChange(it) })
+    bus.register(this, RemoteClientMetaData::class.java, { this.metadataUpdate(it) })
+    bus.register(this, PlayStateChange::class.java, { this.updateState(it) })
+    bus.register(this, PlayStateChange::class.java, { this.onPlayStateChange(it) })
 
     val myEventReceiver = ComponentName(context.packageName, MediaButtonReceiver::class.java.name)
     val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
@@ -48,12 +48,13 @@ constructor(context: Application, private val bus: RxBus, private val manager: A
 
     mMediaSession = MediaSessionCompat(context, "Session", myEventReceiver, mediaPendingIntent)
 
-    mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
+    mMediaSession.setFlags(
+        MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       mMediaSession.setCallback(object : MediaSessionCompat.Callback() {
         override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
-          val success = handler!!.handleMediaIntent(mediaButtonEvent)
+          val success = handler.handleMediaIntent(mediaButtonEvent)
           return success || super.onMediaButtonEvent(mediaButtonEvent)
         }
 
@@ -146,39 +147,39 @@ constructor(context: Application, private val bus: RxBus, private val manager: A
 
     val actions = playbackState.actions
     val remoteObj = mMediaSession!!.remoteControlClient
-    if (actions != 0 && remoteObj != null) {
+    if (actions != 0L && remoteObj != null) {
 
       var transportControls = 0
 
-      if (actions and PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS != 0) {
+      if (actions and PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS != 0L) {
         transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_PREVIOUS
       }
 
-      if (actions and PlaybackStateCompat.ACTION_REWIND != 0) {
+      if (actions and PlaybackStateCompat.ACTION_REWIND != 0L) {
         transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_REWIND
       }
 
-      if (actions and PlaybackStateCompat.ACTION_PLAY != 0) {
+      if (actions and PlaybackStateCompat.ACTION_PLAY != 0L) {
         transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_PLAY
       }
 
-      if (actions and PlaybackStateCompat.ACTION_PLAY_PAUSE != 0) {
+      if (actions and PlaybackStateCompat.ACTION_PLAY_PAUSE != 0L) {
         transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE
       }
 
-      if (actions and PlaybackStateCompat.ACTION_PAUSE != 0) {
+      if (actions and PlaybackStateCompat.ACTION_PAUSE != 0L) {
         transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_PAUSE
       }
 
-      if (actions and PlaybackStateCompat.ACTION_STOP != 0) {
+      if (actions and PlaybackStateCompat.ACTION_STOP != 0L) {
         transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_STOP
       }
 
-      if (actions and PlaybackStateCompat.ACTION_FAST_FORWARD != 0) {
+      if (actions and PlaybackStateCompat.ACTION_FAST_FORWARD != 0L) {
         transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_FAST_FORWARD
       }
 
-      if (actions and PlaybackStateCompat.ACTION_SKIP_TO_NEXT != 0) {
+      if (actions and PlaybackStateCompat.ACTION_SKIP_TO_NEXT != 0L) {
         transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_NEXT
       }
 
