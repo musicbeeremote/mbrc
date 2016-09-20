@@ -19,15 +19,15 @@ class MediaIntentHandler
     previousClick = 0
   }
 
-  fun handleMediaIntent(mediaIntent: Intent): Boolean {
+  fun handleMediaIntent(mediaIntent: Intent?): Boolean {
     var result = false
 
     //noinspection StatementWithEmptyBody
-    if (mediaIntent.action == android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
+    if (mediaIntent?.action == android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
       // Handle somehow
-    } else if (mediaIntent.action == Intent.ACTION_MEDIA_BUTTON) {
-      val extras = mediaIntent.extras
-      val keyEvent = extras.get(Intent.EXTRA_KEY_EVENT) as KeyEvent
+    } else if (mediaIntent?.action == Intent.ACTION_MEDIA_BUTTON) {
+      val extras = mediaIntent?.extras
+      val keyEvent = extras?.get(Intent.EXTRA_KEY_EVENT) as KeyEvent
 
       if (keyEvent.action != KeyEvent.ACTION_DOWN) {
         return false

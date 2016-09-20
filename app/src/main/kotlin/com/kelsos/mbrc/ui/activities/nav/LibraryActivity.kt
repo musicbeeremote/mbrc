@@ -22,7 +22,7 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class LibraryActivity : BaseActivity(), SearchView.OnQueryTextListener, ViewPager.OnPageChangeListener {
-  @Inject lateinit var bus: RxBus
+
   @BindView(R.id.search_pager) lateinit var pager: ViewPager
   @BindView(R.id.pager_tab_strip) lateinit var tabs: TabLayout
 

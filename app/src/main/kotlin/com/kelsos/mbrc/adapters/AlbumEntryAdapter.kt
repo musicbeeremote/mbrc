@@ -47,10 +47,15 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
 
     val query: Where<Album>
     if (TextUtils.isEmpty(filter)) {
-      query = SQLite.select().from<Album>(Album::class.java).orderBy(Album_Table.artist, true).orderBy(Album_Table.album, true)
+      query = SQLite.select().from<Album>(Album::class.java)
+          .orderBy(Album_Table.artist, true)
+          .orderBy(Album_Table.album, true)
     } else {
-      query = SQLite.select().from<Album>(Album::class.java).leftOuterJoin<Track>(Track::class.java).on(
-          Track_Table.album.withTable().eq(Album_Table.album.withTable())).where(Track_Table.artist.withTable().like('%' + filter + '%')).groupBy(Track_Table.artist.withTable()).orderBy(Album_Table.artist.withTable(), true).orderBy(Album_Table.album.withTable(), true)
+      query = SQLite.select().from<Album>(Album::class.java)
+          .leftOuterJoin<Track>(Track::class.java).on(Track_Table.album.withTable().eq(Album_Table.album.withTable())).where(
+          Track_Table.artist.withTable().like('%' + filter as String + '%')).groupBy(
+          Track_Table.artist.withTable()).orderBy(Album_Table.artist.withTable(), true).orderBy(
+          Album_Table.album.withTable(), true)
     }
 
     Single.create { subscriber: SingleSubscriber<in FlowCursorList<Album>> ->
@@ -65,11 +70,11 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val view = inflater.inflate(R.layout.ui_list_dual, parent, false)
     val holder = ViewHolder(view)
-    holder.indicator!!.setOnClickListener { v ->
-      val popupMenu = PopupMenu(v.context, v)
+    holder.indicator.setOnClickListener {
+      val popupMenu = PopupMenu(it.context, it)
       popupMenu.inflate(R.menu.popup_album)
-      popupMenu.setOnMenuItemClickListener { menuItem ->
-        mListener?.onMenuItemSelected(menuItem, data!!.getItem(holder.adapterPosition.toLong()))
+      popupMenu.setOnMenuItemClickListener {
+        mListener?.onMenuItemSelected(it, data!!.getItem(holder.adapterPosition.toLong()))
         true
       }
       popupMenu.show()

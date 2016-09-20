@@ -19,7 +19,6 @@ import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.events.MessageEvent
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
 import com.kelsos.mbrc.rx.RxUtils
 import com.kelsos.mbrc.services.NowPlayingSync
@@ -36,7 +35,6 @@ class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPl
 
   @BindView(R.id.now_playing_list) lateinit var nowPlayingList: RecyclerView
   @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-  @Inject lateinit var bus: RxBus
   @Inject lateinit var adapter: NowPlayingAdapter
   @Inject lateinit var sync: NowPlayingSync
   private val mSearchView: SearchView? = null
@@ -44,16 +42,15 @@ class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPl
   private var scope: Scope? = null
 
   private fun handlePlayingTrackChange(event: TrackInfo) {
-    if (adapter == null || adapter!!.javaClass != NowPlayingAdapter::class.java) {
+    if (adapter.javaClass != NowPlayingAdapter::class.java) {
       return
     }
-    adapter!!.setPlayingTrackIndex(NowPlaying(event.artist, event.title))
-    adapter!!.notifyDataSetChanged()
+    adapter.setPlayingTrackIndex(NowPlaying(event.artist, event.title))
+    adapter.notifyDataSetChanged()
   }
 
   override fun onQueryTextSubmit(query: String): Boolean {
-    bus!!.post(MessageEvent(ProtocolEventType.UserAction,
-        UserAction(Protocol.NowPlayingListSearch, query.trim { it <= ' ' })))
+    bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListSearch, query.trim { it <= ' ' })))
     mSearchView!!.isIconified = true
     MenuItemCompat.collapseActionView(mSearchItem)
     return false
@@ -81,25 +78,25 @@ class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPl
     ButterKnife.bind(this)
     super.setup()
     val manager = LinearLayoutManager(this)
-    nowPlayingList!!.layoutManager = manager
-    nowPlayingList!!.adapter = adapter
-    nowPlayingList!!.itemAnimator.changeDuration = 0
+    nowPlayingList.layoutManager = manager
+    nowPlayingList.adapter = adapter
+    nowPlayingList.itemAnimator.changeDuration = 0
     val callback = SimpleItenTouchHelper(adapter)
     val helper = ItemTouchHelper(callback)
     helper.attachToRecyclerView(nowPlayingList)
-    adapter!!.setListener(this)
-    swipeRefreshLayout!!.setOnRefreshListener(OnRefreshListener { this.refresh() })
+    adapter.setListener(this)
+    swipeRefreshLayout.setOnRefreshListener { this.refresh() }
     refresh()
   }
 
   private fun refresh() {
-    if (!swipeRefreshLayout!!.isRefreshing) {
-      swipeRefreshLayout!!.isRefreshing = true
+    if (!swipeRefreshLayout.isRefreshing) {
+      swipeRefreshLayout.isRefreshing = true
     }
 
-    sync!!.syncNowPlaying(Schedulers.io()).compose(RxUtils.uiTask()).subscribe({
-      adapter!!.refresh()
-      swipeRefreshLayout!!.isRefreshing = false
+    sync.syncNowPlaying(Schedulers.io()).compose(RxUtils.uiTask()).subscribe({
+      adapter.refresh()
+      swipeRefreshLayout.isRefreshing = false
     }) { throwable -> Timber.v(throwable, "Failed") }
   }
 
@@ -109,14 +106,14 @@ class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPl
 
   public override fun onResume() {
     super.onResume()
-    bus!!.register(this, TrackInfoChangeEvent::class.java,
+    bus.register(this, TrackInfoChangeEvent::class.java,
         { trackInfoChangeEvent -> handlePlayingTrackChange(trackInfoChangeEvent.trackInfo) },
         true)
   }
 
   public override fun onPause() {
     super.onPause()
-    bus!!.unregister(this)
+    bus.unregister(this)
   }
 
   private fun calculateNewIndex(from: Int, to: Int, index: Int): Int {
@@ -137,20 +134,20 @@ class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPl
   }
 
   override fun onPress(position: Int) {
-    bus!!.post(MessageEvent(ProtocolEventType.UserAction, UserAction(Protocol.NowPlayingListPlay, position + 1)))
+    bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListPlay, position + 1)))
   }
 
   override fun onMove(from: Int, to: Int) {
-    adapter!!.setPlayingTrackIndex(calculateNewIndex(from, to, adapter!!.getPlayingTrackIndex()))
+    adapter.setPlayingTrackIndex(calculateNewIndex(from, to, adapter.getPlayingTrackIndex()))
 
     val move = HashMap<String, Int>()
     move.put("from", from)
     move.put("to", to)
-    bus!!.post(MessageEvent(ProtocolEventType.UserAction, UserAction(Protocol.NowPlayingListMove, move)))
+    bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListMove, move)))
   }
 
   override fun onDismiss(position: Int) {
-    bus!!.post(MessageEvent(ProtocolEventType.UserAction, UserAction(Protocol.NowPlayingListRemove, position)))
+    bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListRemove, position)))
   }
 
   override fun active(): Int {

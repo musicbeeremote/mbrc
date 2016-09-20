@@ -33,7 +33,6 @@ import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.MessageEvent
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.ui.CoverChangedEvent
 import com.kelsos.mbrc.events.ui.LfmRatingChanged
@@ -66,7 +65,6 @@ import javax.inject.Singleton
 class MainActivity : BaseActivity(), MainView {
   private val progressScheduler = Executors.newScheduledThreadPool(1)
   // Injects
-  @Inject lateinit var bus: RxBus
   @Inject lateinit var presenter: MainViewPresenter
   // Inject elements of the view
   @BindView(R.id.main_artist_label) lateinit var artistLabel: TextView
