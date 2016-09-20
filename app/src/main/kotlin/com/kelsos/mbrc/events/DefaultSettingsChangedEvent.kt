@@ -1,8 +1,10 @@
 package com.kelsos.mbrc.events
 
-object DefaultSettingsChangedEvent {
+class DefaultSettingsChangedEvent() {
 
-  fun create(): DefaultSettingsChangedEvent {
-    return DefaultSettingsChangedEvent()
+  companion object {
+    fun create(): DefaultSettingsChangedEvent {
+      return DefaultSettingsChangedEvent()
+    }
   }
-}//no instance
+}

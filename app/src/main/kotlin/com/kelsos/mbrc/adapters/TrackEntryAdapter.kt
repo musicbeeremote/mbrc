@@ -48,10 +48,10 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
     if (filter == null) {
       query = allTracks()
     } else {
-      val album = filter.album()
+      val album = filter.album
 
       if (TextUtils.isEmpty(album)) {
-        query = nonAlbumTracks(filter.artist())
+        query = nonAlbumTracks(filter.artist)
       } else {
         query = albumTracks(album)
       }
