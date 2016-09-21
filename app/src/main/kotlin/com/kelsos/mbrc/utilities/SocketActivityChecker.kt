@@ -39,7 +39,7 @@ class SocketActivityChecker {
     }
   }
 
-  fun setPingTimeoutListener(pingTimeoutListener: PingTimeoutListener) {
+  fun setPingTimeoutListener(pingTimeoutListener: PingTimeoutListener?) {
     this.pingTimeoutListener = pingTimeoutListener
   }
 

@@ -2,7 +2,6 @@ import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'checkstyle'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
@@ -70,11 +69,6 @@ android {
     }
   }
 
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
-  }
-
   packagingOptions {
     exclude 'META-INF/ASL2.0'
     exclude 'META-INF/LICENSE'
@@ -92,7 +86,7 @@ android {
   }
 
   dexOptions {
-    javaMaxHeapSize "4G"
+    javaMaxHeapSize "5G"
   }
 
   applicationVariants.all { variant ->
@@ -156,10 +150,6 @@ dependencies {
   compile 'io.reactivex:rxjava:1.2.0'
   compile 'io.reactivex:rxkotlin:0.60.0'
 
-  kapt 'com.google.auto.value:auto-value:1.3'
-  kapt 'com.ryanharter.auto.value:auto-value-parcel:0.2.4-rc2'
-  provided 'com.jakewharton.auto.value:auto-value-annotations:1.3'
-
   compile "com.github.stephanenicolas.toothpick:toothpick-runtime:${toothpick_version}"
   compile "com.github.stephanenicolas.toothpick:smoothie:${toothpick_version}"
   kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:${toothpick_version}"
@@ -179,7 +169,6 @@ dependencies {
   compile 'com.jakewharton.rxrelay:rxrelay:1.1.0'
 
   kapt "com.jakewharton:butterknife-compiler:${butterknife_version}"
-  retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
@@ -204,96 +193,6 @@ allprojects {
       }
     }
   }
-}
-
-check.dependsOn 'pmd'
-
-task pmd(type: Pmd) {
-
-  description "Generate PMD reports for this build"
-
-  ignoreFailures true    // Ignores failing build on warning. If not set build will fail on warning.
-
-  ruleSets = [
-      "java-basic",
-      "java-braces",
-      "java-naming",
-      "java-android",
-      "java-codesize",
-      "java-design",
-      "java-finalizers",
-      "java-junit",
-      "java-optimizations",
-      "java-strictexception",
-      "java-strings",
-      "java-unusedcode"
-  ]
-
-  source 'src'          // Specify the source code. The script should be applied to
-  include '**/*.java'   // the module build.gradle so the 'src' folder resides at the same level
-  exclude '**/gen/**'   // include / exclude folders and files.
-
-  reports {
-    xml.enabled = true
-    html.enabled = true
-  }
-}
-
-
-check.dependsOn 'findbugs'
-
-task findbugs(type: FindBugs) {
-
-  description 'Generate FindBugs reports for this build'
-
-  ignoreFailures true
-
-  //Higher levels increase precision and find more bugs at the expense of running time and memory consumption.
-  effort = 'max'
-  //The priority threshold for reporting bugs. If set to {@code low}, all bugs are reported.
-  reportLevel = 'low'
-
-  //Define path to classes
-  classes = fileTree("${project.rootDir}/app/build/intermediates/classes") //path to compiled class files
-
-  source 'src'          // Specify the source code. The script should be applied to
-  include '**/*.java'   // the module build.gradle so the 'src' folder resides at the same level
-  exclude '**/gen/**'   // include / exclude folders and files.
-
-  //Define exclude config file
-  excludeFilter = file("${rootProject.projectDir}/config/findbugs/exclude.xml")
-
-  //IMPORTANT: FINDBUGS CAN ONLY GENERATE 1 REPORT. XML OR HTML!! AND PATH MUST BE DEFINED!!
-  reports {
-    xml.enabled = false
-    html.enabled = true
-    xml.destination = "$project.buildDir/reports/findbugs/findbugs-output.xml"
-    html.destination = "$project.buildDir/reports/findbugs/findbugs-output.html"
-  }
-
-  classpath = files()
-}
-
-check.dependsOn 'checkstyle'
-
-task checkstyle(type: Checkstyle) {
-
-  description "Generate Checkstyle reports for this build"     //Add description to task
-
-  ignoreFailures true
-
-  configFile file("${rootProject.projectDir}/gradle/config/checkstyle/checkstyle.xml")
-
-  source 'src'
-  include '**/*.java'
-  exclude '**/gen/**', '**/test/**'
-
-  reports {
-    xml.enabled = true
-    html.enabled = true
-  }
-
-  classpath = files(file("${project.rootDir}/app/build/intermediates/classes"))
 }
 
 repositories {

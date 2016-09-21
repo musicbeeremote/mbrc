@@ -29,7 +29,7 @@ constructor(private val bus: RxBus, private val settings: BasicSettingsHelper) {
 
   fun albumSelected(menuItem: MenuItem, entry: Album, context: Context) {
 
-    val query = entry.album
+    val query = entry.album!!
 
     var ua: UserAction? = null
     when (menuItem.itemId) {
@@ -47,7 +47,7 @@ constructor(private val bus: RxBus, private val settings: BasicSettingsHelper) {
   }
 
   fun artistSelected(menuItem: MenuItem, entry: Artist, context: Context) {
-    val query = entry.artist
+    val query = entry.artist!!
 
     var ua: UserAction? = null
     when (menuItem.itemId) {
@@ -65,7 +65,7 @@ constructor(private val bus: RxBus, private val settings: BasicSettingsHelper) {
   }
 
   fun genreSelected(menuItem: MenuItem, entry: Genre, context: Context) {
-    val query = entry.genre
+    val query = entry.genre!!
 
     var ua: UserAction? = null
     when (menuItem.itemId) {
@@ -83,7 +83,7 @@ constructor(private val bus: RxBus, private val settings: BasicSettingsHelper) {
   }
 
   fun trackSelected(menuItem: MenuItem, entry: Track) {
-    val query = entry.src
+    val query = entry.src!!
 
     var ua: UserAction? = null
     when (menuItem.itemId) {
@@ -103,7 +103,7 @@ constructor(private val bus: RxBus, private val settings: BasicSettingsHelper) {
     val defaultAction = settings.defaultAction
     if (defaultAction != Const.SUB) {
       //noinspection WrongConstant
-      val queue = Queue(defaultAction, album.album)
+      val queue = Queue(defaultAction, album.album!!)
       val data = UserAction(Protocol.LibraryQueueAlbum, queue)
       val event = MessageEvent(ProtocolEventType.UserAction, data)
       bus.post(event)
@@ -116,7 +116,7 @@ constructor(private val bus: RxBus, private val settings: BasicSettingsHelper) {
     val defaultAction = settings.defaultAction
     if (defaultAction != Const.SUB) {
       //noinspection WrongConstant
-      val queue = Queue(defaultAction, artist.artist)
+      val queue = Queue(defaultAction, artist.artist!!)
       val data = UserAction(Protocol.LibraryQueueArtist, queue)
       val event = MessageEvent(ProtocolEventType.UserAction, data)
       bus.post(event)
@@ -129,7 +129,7 @@ constructor(private val bus: RxBus, private val settings: BasicSettingsHelper) {
     val defaultAction = settings.defaultAction
     if (defaultAction != Const.SUB) {
       //noinspection WrongConstant
-      val queue = Queue(defaultAction, genre.genre)
+      val queue = Queue(defaultAction, genre.genre!!)
       val action = UserAction(Protocol.LibraryQueueGenre, queue)
       val event = MessageEvent(ProtocolEventType.UserAction, action)
       bus.post(event)
@@ -144,7 +144,7 @@ constructor(private val bus: RxBus, private val settings: BasicSettingsHelper) {
       defaultAction = Queue.NOW
     }
     //noinspection WrongConstant
-    val queue = Queue(defaultAction, track.src)
+    val queue = Queue(defaultAction, track.src!!)
     val action = UserAction(Protocol.LibraryQueueTrack, queue)
     val event = MessageEvent(ProtocolEventType.UserAction, action)
     bus.post(event)

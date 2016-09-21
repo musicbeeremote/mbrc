@@ -5,7 +5,7 @@ import android.content.res.Resources
 import com.kelsos.mbrc.R
 import javax.inject.Inject
 
-internal class BasicSettingsHelper
+class BasicSettingsHelper
 @Inject
 constructor(private val preferences: SharedPreferences, private var resources: Resources) {
 

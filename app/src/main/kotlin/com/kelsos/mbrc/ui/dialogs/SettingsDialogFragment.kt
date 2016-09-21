@@ -20,7 +20,7 @@ class SettingsDialogFragment : DialogFragment() {
   @BindView(R.id.settings_dialog_port) lateinit var portEdit: EditText
 
   private var mListener: SettingsSaveListener? = null
-  private var settings: ConnectionSettings? = null
+  private lateinit var settings: ConnectionSettings
   private var edit: Boolean = false
 
   private fun setConnectionSettings(settings: ConnectionSettings) {
@@ -57,10 +57,10 @@ class SettingsDialogFragment : DialogFragment() {
 
       val portNum = if (TextUtils.isEmpty(portText)) 0 else Integer.parseInt(portText)
       if (isValid(portNum) && shouldIClose) {
-        settings!!.name = computerName
-        settings!!.address = hostname
-        settings!!.port = portNum
-        mListener!!.onSave(settings)
+        settings.name = computerName
+        settings.address = hostname
+        settings.port = portNum
+        mListener?.onSave(settings)
         dialog.dismiss()
       }
     }
@@ -75,11 +75,11 @@ class SettingsDialogFragment : DialogFragment() {
 
   override fun onStart() {
     super.onStart()
-    nameEdit.setText(settings!!.name)
-    hostEdit.setText(settings!!.address)
+    nameEdit.setText(settings.name)
+    hostEdit.setText(settings.address)
 
-    if (settings!!.port > 0) {
-      portEdit.setText(settings!!.port.toString())
+    if (settings.port > 0) {
+      portEdit.setText(settings.port.toString())
     }
   }
 
@@ -98,10 +98,9 @@ class SettingsDialogFragment : DialogFragment() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    if (settings == null) {
+    if (!edit) {
       settings = ConnectionSettings()
     }
-
   }
 
   interface SettingsSaveListener {

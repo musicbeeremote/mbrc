@@ -31,11 +31,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.events.ui.RequestConnectionStateEvent
-import com.kelsos.mbrc.ui.activities.nav.LibraryActivity
-import com.kelsos.mbrc.ui.activities.nav.LyricsActivity
-import com.kelsos.mbrc.ui.activities.nav.MainActivity
-import com.kelsos.mbrc.ui.activities.nav.NowPlayingActivity
-import com.kelsos.mbrc.ui.activities.nav.PlaylistActivity
+import com.kelsos.mbrc.ui.activities.nav.*
 import timber.log.Timber
 import toothpick.Scope
 import toothpick.Toothpick
@@ -80,7 +76,7 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
 
   private fun onConnectClick(view: View) {
     ifNotRunningStartService()
-    bus!!.post(MessageEvent(UserInputEventType.StartConnection))
+    bus.post(MessageEvent(UserInputEventType.StartConnection))
   }
 
   private fun ifNotRunningStartService() {
@@ -239,7 +235,7 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
     super.onResume()
     this.bus.register(this, NotifyUser::class.java, { this.handleUserNotification(it) }, true)
     this.bus.register(this, ConnectionStatusChangeEvent::class.java, { this.onConnection(it) }, true)
-    this.bus.post(RequestConnectionStateEvent.create())
+    this.bus.post(RequestConnectionStateEvent())
   }
 
   override fun onPause() {
