@@ -2,14 +2,12 @@ package com.kelsos.mbrc.presenters
 
 import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.model.ConnectionModel
 import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.views.MainView
-
 import javax.inject.Inject
 
 class MainViewPresenter : BasePresenter<MainView>() {
@@ -20,15 +18,15 @@ class MainViewPresenter : BasePresenter<MainView>() {
 
   fun load() {
     checkIfAttached()
-    view?.updateLfmStatus(model!!.lfmStatus)
-    view?.updateScrobbleStatus(model!!.isScrobblingEnabled)
-    view?.updateCover(model!!.cover)
-    view?.updateRepeat(model!!.repeat)
-    view?.updateShuffleState(model!!.shuffle)
-    view?.updateVolume(model!!.volume, model!!.isMute)
-    view?.updatePlayState(model!!.playState)
-    view?.updateTrackInfo(model!!.trackInfo)
-    view?.updateConnection(connectionModel!!.connection)
+    view?.updateLfmStatus(model.lfmStatus)
+    view?.updateScrobbleStatus(model.isScrobblingEnabled)
+    view?.updateCover(model.cover)
+    view?.updateRepeat(model.repeat)
+    view?.updateShuffleState(model.shuffle)
+    view?.updateVolume(model.getVolume(), model.isMute)
+    view?.updatePlayState(model.getPlayState())
+    view?.updateTrackInfo(model.trackInfo)
+    view?.updateConnection(connectionModel.connection)
   }
 
   fun requestNowPlayingPosition() {

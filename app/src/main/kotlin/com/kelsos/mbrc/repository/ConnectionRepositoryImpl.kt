@@ -17,7 +17,7 @@ constructor(private val preferences: SharedPreferences, private val resources: R
   override fun save(settings: ConnectionSettings) {
     settings.save()
 
-    if (count() == 1) {
+    if (count() == 1L) {
       default = last
     }
   }
@@ -32,7 +32,7 @@ constructor(private val preferences: SharedPreferences, private val resources: R
     }
 
     val count = count()
-    if (count == 0) {
+    if (count == 0L) {
       defaultId = -1
     } else {
       val before = getItemBefore(oldId)
@@ -49,10 +49,10 @@ constructor(private val preferences: SharedPreferences, private val resources: R
   }
 
   private val first: ConnectionSettings
-    get() = SQLite.select().from(ConnectionSettings::class.java).orderBy(ConnectionSettings_Table.id, true).querySingle()
+    get() = SQLite.select().from(ConnectionSettings::class.java).orderBy(ConnectionSettings_Table.id, true).querySingle()!!
 
   private val last: ConnectionSettings
-    get() = SQLite.select().from(ConnectionSettings::class.java).orderBy(ConnectionSettings_Table.id, false).querySingle()
+    get() = SQLite.select().from(ConnectionSettings::class.java).orderBy(ConnectionSettings_Table.id, false).querySingle()!!
 
   override fun update(settings: ConnectionSettings) {
     settings.update()

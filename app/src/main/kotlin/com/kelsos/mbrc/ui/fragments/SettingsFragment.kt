@@ -21,7 +21,7 @@ import timber.log.Timber
 
 class SettingsFragment : PreferenceFragment() {
   private var bus: RxBus? = null
-  private var mContext: Context? = null
+  private lateinit var mContext: Context
 
   override fun onCreate(paramBundle: Bundle?) {
     super.onCreate(paramBundle)

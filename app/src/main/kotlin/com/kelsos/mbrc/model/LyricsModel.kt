@@ -35,7 +35,5 @@ constructor(private val bus: RxBus) {
     bus.post(LyricsUpdatedEvent(this.lyrics))
   }
 
-  fun getLyrics(): String {
-    return this.lyrics
-  }
+  fun getLyrics(): String = this.lyrics
 }
