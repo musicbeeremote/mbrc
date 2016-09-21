@@ -41,21 +41,21 @@ constructor(private val bus: RxBus) {
   var cover: Bitmap? = null
     private set
 
-  var shuffle: String? = null
+  var shuffle: String
     private set
   var isScrobblingEnabled: Boolean = false
     private set
   var isMute: Boolean = false
     private set
-  @State
-  private var playState: String? = null
-  var lfmStatus: LfmStatus? = null
+
+  @State private var playState: String
+  var lfmStatus: LfmStatus = LfmStatus.NORMAL
     private set
   private var pluginVersion: String? = null
   var pluginProtocol: Double = 0.toDouble()
 
   @Mode
-  var repeat: String? = null
+  var repeat: String
     private set
 
   init {
@@ -67,7 +67,7 @@ constructor(private val bus: RxBus) {
     volume = 100
 
 
-    shuffle = OFF
+    shuffle = ShuffleChange.OFF
     isScrobblingEnabled = false
     isMute = false
     playState = PlayerState.UNDEFINED
@@ -89,7 +89,7 @@ constructor(private val bus: RxBus) {
   }
 
   fun getPluginVersion(): String {
-    return pluginVersion
+    return pluginVersion ?: "0.0"
   }
 
   fun setPluginVersion(pluginVersion: String) {
@@ -116,7 +116,7 @@ constructor(private val bus: RxBus) {
     this.album = album
     this.year = year
     this.title = title
-    val event = TrackInfoChangeEvent.builder().trackInfo(trackInfo).build()
+    val event = TrackInfoChangeEvent(trackInfo)
     bus.post(event)
     updateNotification()
     updateRemoteClient()
@@ -140,7 +140,7 @@ constructor(private val bus: RxBus) {
   fun setCover(base64format: String?) {
     if (base64format == null || Const.EMPTY == base64format) {
       cover = null
-      bus.post(CoverChangedEvent.builder().build())
+      bus.post(CoverChangedEvent())
       updateNotification()
       updateRemoteClient()
     } else {
@@ -148,16 +148,16 @@ constructor(private val bus: RxBus) {
         val decodedImage = Base64.decode(base64format, Base64.DEFAULT)
         subscriber.onNext(BitmapFactory.decodeByteArray(decodedImage, 0, decodedImage.size))
         subscriber.onCompleted()
-      }.subscribeOn(Schedulers.io()).subscribe(Action1<Bitmap> { this.setAlbumCover(it) }) { throwable ->
+      }.subscribeOn(Schedulers.io()).subscribe({ this.setAlbumCover(it) }) { throwable ->
         cover = null
-        bus.post(CoverChangedEvent.builder().build())
+        bus.post(CoverChangedEvent())
       }
     }
   }
 
   private fun setAlbumCover(cover: Bitmap) {
     this.cover = cover
-    bus.post(CoverChangedEvent.builder().withCover(cover).build())
+    bus.post(CoverChangedEvent(cover))
     updateNotification()
     updateRemoteClient()
   }
@@ -176,7 +176,7 @@ constructor(private val bus: RxBus) {
 
   fun setShuffleState(@ShuffleState shuffleState: String) {
     shuffle = shuffleState
-    bus.post(ShuffleChange(shuffle))
+    bus.post(ShuffleChange(shuffle!!))
   }
 
   fun setScrobbleState(scrobbleButtonActive: Boolean) {
@@ -203,12 +203,12 @@ constructor(private val bus: RxBus) {
 
     this.playState = newState
 
-    bus.post(PlayStateChange.builder().state(this.playState!!).build())
+    bus.post(PlayStateChange(this.playState))
     updateNotification()
   }
 
-  fun setPlaylists(playlists: List<Playlist>) {
-    bus.post(PlaylistAvailable.create(playlists))
+  fun setPlaylists(playlists: MutableList<Playlist>) {
+    bus.post(PlaylistAvailable(playlists))
   }
 
   @State

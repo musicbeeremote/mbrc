@@ -79,7 +79,7 @@ class WidgetNormal : AppWidgetProvider() {
   private fun updateCover(coverAvailable: CoverChangedEvent) {
     val manager = AppWidgetManager.getInstance(context)
     val widget = RemoteViews(context.packageName, R.layout.widget_normal)
-    if (coverAvailable.isAvailable) {
+    if (coverAvailable.available) {
       widget.setImageViewBitmap(R.id.widget_normal_image, coverAvailable.cover)
     } else {
       widget.setImageViewResource(R.id.widget_normal_image, R.drawable.ic_image_no_cover)

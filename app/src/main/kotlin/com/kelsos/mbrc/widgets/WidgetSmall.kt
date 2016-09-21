@@ -79,7 +79,7 @@ class WidgetSmall : AppWidgetProvider() {
   private fun updateCover(coverAvailable: CoverChangedEvent) {
     val manager = AppWidgetManager.getInstance(context)
     val smallWidget = RemoteViews(context.packageName, R.layout.widget_small)
-    if (coverAvailable.isAvailable) {
+    if (coverAvailable.available) {
       smallWidget.setImageViewBitmap(R.id.widget_small_image, coverAvailable.cover)
     } else {
       smallWidget.setImageViewResource(R.id.widget_small_image, R.drawable.ic_image_no_cover)

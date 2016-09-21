@@ -17,10 +17,10 @@ class MapWithIndex<T> : Transformer<T, MapWithIndex.Indexed<T>> {
     internal val INSTANCE: MapWithIndex<*> = MapWithIndex<Any>()
   }
 
-  class Indexed<T>(private val value: T, private val index: Long) {
+  class Indexed<out T>(private val value: T, private val index: Long) {
 
     override fun toString(): String {
-      return index + "->" + value
+      return "$index -> $value"
     }
 
     fun index(): Long {
@@ -43,12 +43,8 @@ class MapWithIndex<T> : Transformer<T, MapWithIndex.Indexed<T>> {
           return true
         }
 
-        override fun next(): Long? {
+        override fun next(): Long {
           return n++
-        }
-
-        override fun remove() {
-          throw RuntimeException("not supported")
         }
       }
     }
@@ -67,7 +63,7 @@ class MapWithIndex<T> : Transformer<T, MapWithIndex.Indexed<T>> {
 
   companion object {
 
-    @SuppressWarnings("unchecked") fun <T> instance(): MapWithIndex<T> {
+    @Suppress("UNCHECKED_CAST") fun <T> instance(): MapWithIndex<T> {
       return Holder.INSTANCE as MapWithIndex<T>
     }
   }

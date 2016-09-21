@@ -59,11 +59,12 @@ constructor(private val activityChecker: SocketActivityChecker,
 
     subscription = Completable.timer(DELAY.toLong(), TimeUnit.SECONDS).subscribe({
       val connectionSettings = connectionRepository.default
+
       if (connectionSettings == null) {
         socketManager(SocketAction.STOP)
-        return@Completable.timer(DELAY, TimeUnit.SECONDS).subscribe
+        return@subscribe
       }
-      executor.execute(SocketConnection(connectionSettings!!))
+      executor.execute(SocketConnection(connectionSettings))
       numOfRetries++
     }) { throwable -> Timber.v(throwable, "Failed") }
   }
@@ -151,7 +152,7 @@ constructor(private val activityChecker: SocketActivityChecker,
     socketManager(SocketAction.RESET)
   }
 
-  private inner class SocketConnection private constructor(connectionSettings: ConnectionSettings) : Runnable {
+  private inner class SocketConnection internal constructor(connectionSettings: ConnectionSettings) : Runnable {
     private val socketAddress: SocketAddress?
     private val mapper: InetAddressMapper
 

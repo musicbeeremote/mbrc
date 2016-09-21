@@ -18,7 +18,7 @@ import java.io.InputStreamReader
 import java.net.Socket
 import javax.inject.Inject
 
-internal open class ServiceBase {
+open class ServiceBase {
   @Inject lateinit var mapper: ObjectMapper
   @Inject lateinit var repository: ConnectionRepository
   private var socket: Socket? = null
@@ -99,14 +99,14 @@ internal open class ServiceBase {
     val mapper = InetAddressMapper()
     val connectionSettings = repository.default
 
-    val socketAddress = mapper.map(connectionSettings)
+    val socketAddress = mapper.map(connectionSettings!!)
     try {
       Timber.v("Creating new socket")
       socket = Socket()
       socket!!.soTimeout = 40 * 1000
       socket!!.connect(socketAddress)
       sendMessage(SocketMessage.create(Protocol.Player, "Android"))
-      return socket
+      return socket!!
     } catch (e: IOException) {
       throw RuntimeException(e)
     }

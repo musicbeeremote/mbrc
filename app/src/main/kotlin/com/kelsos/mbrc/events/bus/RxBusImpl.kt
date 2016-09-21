@@ -4,7 +4,7 @@ import com.jakewharton.rxrelay.PublishRelay
 import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
-import rx.functions.Action1
+import rx.schedulers.Schedulers
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -16,43 +16,42 @@ constructor() : RxBus {
   }
 
   private val serializedRelay = PublishRelay.create<Any>().toSerialized()
-  private val activeSubscriptions = HashMap<Any, List<Subscription>>()
+  private val activeSubscriptions = HashMap<Any, MutableList<Subscription>>()
 
-  override fun <T> register(`object`: Any, eventClass: Class<T>, onNext: Action1<T>) {
+  @Suppress("UNCHECKED_CAST")
+  override fun <T> register(receiver: Any, eventClass: Class<T>, onNext: (T) -> Unit) {
     //noinspection unchecked
-    val subscription = serializedRelay.filter { event -> event.javaClass == eventClass }.map<T>({ obj -> obj }).subscribe(onNext)
+    val subscription = serializedRelay.filter {
+      it.javaClass == eventClass
+    }.map { obj -> obj as T }.subscribe(onNext)
 
-    updateSubscriptions(`object`, subscription)
+    updateSubscriptions(receiver, subscription)
   }
 
-  override fun <T> register(`object`: Any, eventClass: Class<T>, onNext: Action1<T>, main: Boolean) {
+  override fun <T> register(receiver: Any, eventClass: Class<T>, onNext: (T) -> Unit, main: Boolean) {
     val subscription = register(eventClass, onNext, true)
-    updateSubscriptions(`object`, subscription)
+    updateSubscriptions(receiver, subscription)
   }
 
-  private fun updateSubscriptions(`object`: Any, subscription: Subscription) {
-    var subscriptions: MutableList<Subscription>? = activeSubscriptions[`object`]
-    if (subscriptions == null) {
-      subscriptions = LinkedList<Subscription>()
-    }
-
+  private fun updateSubscriptions(receiver: Any, subscription: Subscription) {
+    val subscriptions: MutableList<Subscription> = activeSubscriptions[receiver] ?: LinkedList<Subscription>()
     subscriptions.add(subscription)
-
-    activeSubscriptions.put(`object`, subscriptions)
+    activeSubscriptions.put(receiver, subscriptions)
   }
 
-  override fun unregister(`object`: Any) {
-    val subscriptions = activeSubscriptions.remove(`object`)
+  override fun unregister(receiver: Any) {
+    val subscriptions = activeSubscriptions.remove(receiver)
     if (subscriptions != null) {
-      Observable.from(subscriptions).filter { subscription -> !subscription.isUnsubscribed }.subscribe { it.unsubscribe() }
+      Observable.from(subscriptions).filter { !it.isUnsubscribed }.subscribe { it.unsubscribe() }
     }
   }
 
-  override fun <T> register(eventClass: Class<T>, onNext: Action1<T>, main: Boolean): Subscription {
+  @Suppress("UNCHECKED_CAST")
+  override fun <T> register(eventClass: Class<T>, onNext: (T) -> Unit, main: Boolean): Subscription {
     //noinspection unchecked
-    val observable = serializedRelay.filter { event -> event.javaClass == eventClass }.map<T>({ obj -> obj })
-
-    return if (main) observable.observeOn(AndroidSchedulers.mainThread()).subscribe(onNext) else observable.subscribe(onNext)
+    val observable = serializedRelay.filter { it.javaClass == eventClass }.map { obj -> obj as T }
+    val scheduler = if (main) AndroidSchedulers.mainThread() else Schedulers.immediate()
+    return observable.observeOn(scheduler).subscribe(onNext)
   }
 
   override fun post(event: Any) {

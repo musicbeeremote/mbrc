@@ -3,7 +3,6 @@ package com.kelsos.mbrc.services
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.ConnectionSettings
 import com.kelsos.mbrc.data.DiscoveryMessage
@@ -14,8 +13,6 @@ import com.kelsos.mbrc.mappers.ConnectionMapper
 import com.kelsos.mbrc.repository.ConnectionRepository
 import rx.Observable
 import rx.Subscriber
-import rx.functions.Action1
-import rx.functions.Func0
 import rx.functions.Func1
 import rx.schedulers.Schedulers
 import timber.log.Timber
@@ -114,14 +111,14 @@ internal constructor(private val manager: WifiManager,
   }
 
   private fun getObservable(socket: MulticastSocket): Observable<DiscoveryMessage> {
-    return Observable.interval(600, TimeUnit.MILLISECONDS).take(6).flatMap<DiscoveryMessage>({ aLong ->
+    return Observable.interval(600, TimeUnit.MILLISECONDS).take(6).flatMap { aLong ->
       Observable.create { subscriber: Subscriber<in DiscoveryMessage> ->
         try {
           val mPacket: DatagramPacket
           val buffer = ByteArray(512)
           mPacket = DatagramPacket(buffer, buffer.size)
           socket.receive(mPacket)
-          val incoming = String(mPacket.data, Const.UTF_8)
+          val incoming = String(mPacket.data, Charsets.UTF_8)
           val node = mapper.readValue(incoming, DiscoveryMessage::class.java)
           Timber.v("Discovery received -> %s", node)
           subscriber.onNext(node)
@@ -130,7 +127,7 @@ internal constructor(private val manager: WifiManager,
           subscriber.onError(e)
         }
       }
-    }).filter { message -> NOTIFY == message.context }.first()
+    }.filter { message -> NOTIFY == message.context }.first()
   }
 
   private val resource: MulticastSocket

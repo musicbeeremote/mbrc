@@ -9,7 +9,7 @@ interface ConnectionRepository {
 
   fun update(settings: ConnectionSettings)
 
-  var default: ConnectionSettings
+  var default: ConnectionSettings?
 
   val all: List<ConnectionSettings>
 
