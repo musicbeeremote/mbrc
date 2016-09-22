@@ -30,7 +30,7 @@ class HelpFeedbackActivity : FontActivity() {
     }
 
     pagerAdapter = HelpFeedbackPagerAdapter(supportFragmentManager, this)
-    viewPager!!.adapter = pagerAdapter
-    tabLayout!!.setupWithViewPager(viewPager)
+    viewPager.adapter = pagerAdapter
+    tabLayout.setupWithViewPager(viewPager)
   }
 }

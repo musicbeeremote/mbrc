@@ -59,20 +59,20 @@ class LyricsActivity : BaseActivity(), LyricsView {
 
   override fun updateLyrics(lyrics: List<String>) {
     if (lyrics.size == 1) {
-      lyricsRecycler!!.visibility = View.GONE
+      lyricsRecycler.visibility = View.GONE
       val text = lyrics[0]
-      emptyText!!.text = if (TextUtils.isEmpty(text)) getString(R.string.no_lyrics) else text
-      emptyView!!.visibility = View.VISIBLE
+      emptyText.text = if (TextUtils.isEmpty(text)) getString(R.string.no_lyrics) else text
+      emptyView.visibility = View.VISIBLE
     } else {
-      emptyView!!.visibility = View.GONE
-      lyricsRecycler!!.visibility = View.VISIBLE
+      emptyView.visibility = View.GONE
+      lyricsRecycler.visibility = View.VISIBLE
       val adapter = LyricsAdapter(lyrics)
-      lyricsRecycler!!.adapter = adapter
+      lyricsRecycler.adapter = adapter
     }
   }
 
   private fun onLyricsUpdated(update: LyricsUpdatedEvent) {
-    presenter!!.updateLyrics(update.lyrics)
+    presenter.updateLyrics(update.lyrics)
   }
 
   override fun active(): Int {

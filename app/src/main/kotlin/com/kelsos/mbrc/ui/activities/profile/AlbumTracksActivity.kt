@@ -61,11 +61,11 @@ class AlbumTracksActivity : FontActivity(), TrackEntryAdapter.MenuItemSelectedLi
 
     }
 
-    adapter!!.init(album)
-    adapter!!.setMenuItemSelectedListener(this)
-    listTracks!!.layoutManager = LinearLayoutManager(baseContext)
-    listTracks!!.adapter = adapter
-    listTracks!!.setEmptyView(emptyView)
+    adapter.init(album)
+    adapter.setMenuItemSelectedListener(this)
+    listTracks.layoutManager = LinearLayoutManager(baseContext)
+    listTracks.adapter = adapter
+    listTracks.setEmptyView(emptyView)
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -85,11 +85,11 @@ class AlbumTracksActivity : FontActivity(), TrackEntryAdapter.MenuItemSelectedLi
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Track) {
-    actionHandler!!.trackSelected(menuItem, entry)
+    actionHandler.trackSelected(menuItem, entry)
   }
 
   override fun onItemClicked(track: Track) {
-    actionHandler!!.trackSelected(track)
+    actionHandler.trackSelected(track)
   }
 
   override fun onDestroy() {

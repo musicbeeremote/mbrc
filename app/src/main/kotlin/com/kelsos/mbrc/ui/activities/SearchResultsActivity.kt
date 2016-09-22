@@ -41,10 +41,11 @@ class SearchResultsActivity : FontActivity(), SearchResultAdapter.OnSearchItemSe
     ButterKnife.bind(this)
 
     val query = intent.getStringExtra(QUERY)
+
     if (TextUtils.isEmpty(query)) {
       finish()
     } else {
-      adapter!!.setQuery(query)
+      adapter.setQuery(query)
     }
 
     setSupportActionBar(toolbar)
@@ -55,11 +56,11 @@ class SearchResultsActivity : FontActivity(), SearchResultAdapter.OnSearchItemSe
       actionBar.title = query
     }
 
-    searchResultsRecycler!!.adapter = adapter
-    searchResultsRecycler!!.setEmptyView(emptyView)
-    searchResultsRecycler!!.layoutManager = LinearLayoutManager(this)
-    adapter!!.setOnSearchItemSelectedListener(this)
-    emptyViewText!!.setText(R.string.no_results_found)
+    searchResultsRecycler.adapter = adapter
+    searchResultsRecycler.setEmptyView(emptyView)
+    searchResultsRecycler.layoutManager = LinearLayoutManager(this)
+    adapter.setOnSearchItemSelectedListener(this)
+    emptyViewText.setText(R.string.no_results_found)
   }
 
   override fun onDestroy() {
@@ -76,35 +77,35 @@ class SearchResultsActivity : FontActivity(), SearchResultAdapter.OnSearchItemSe
   }
 
   override fun albumSelected(item: MenuItem, album: Album) {
-    actionHandler!!.albumSelected(item, album, this)
+    actionHandler.albumSelected(item, album, this)
   }
 
   override fun albumSelected(album: Album) {
-    actionHandler!!.albumSelected(album, this)
+    actionHandler.albumSelected(album, this)
   }
 
   override fun artistSelected(item: MenuItem, artist: Artist) {
-    actionHandler!!.artistSelected(item, artist, this)
+    actionHandler.artistSelected(item, artist, this)
   }
 
   override fun artistSelected(artist: Artist) {
-    actionHandler!!.artistSelected(artist, this)
+    actionHandler.artistSelected(artist, this)
   }
 
   override fun genreSelected(item: MenuItem, genre: Genre) {
-    actionHandler!!.genreSelected(item, genre, this)
+    actionHandler.genreSelected(item, genre, this)
   }
 
   override fun genreSelected(genre: Genre) {
-    actionHandler!!.genreSelected(genre, this)
+    actionHandler.genreSelected(genre, this)
   }
 
   override fun trackSelected(item: MenuItem, track: Track) {
-    actionHandler!!.trackSelected(item, track)
+    actionHandler.trackSelected(item, track)
   }
 
   override fun trackSelected(track: Track) {
-    actionHandler!!.trackSelected(track)
+    actionHandler.trackSelected(track)
   }
 
   companion object {

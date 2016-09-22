@@ -27,24 +27,13 @@ import com.kelsos.mbrc.annotations.Repeat
 import com.kelsos.mbrc.annotations.Repeat.Mode
 import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.MessageEvent
-import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
-import com.kelsos.mbrc.events.ui.CoverChangedEvent
-import com.kelsos.mbrc.events.ui.LfmRatingChanged
-import com.kelsos.mbrc.events.ui.OnMainFragmentOptionsInflated
-import com.kelsos.mbrc.events.ui.PlayStateChange
-import com.kelsos.mbrc.events.ui.RepeatChange
-import com.kelsos.mbrc.events.ui.ScrobbleChange
-import com.kelsos.mbrc.events.ui.ShuffleChange
+import com.kelsos.mbrc.events.ui.*
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
-import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
-import com.kelsos.mbrc.events.ui.UpdatePosition
-import com.kelsos.mbrc.events.ui.VolumeChange
 import com.kelsos.mbrc.helper.VolumeChangeHelper
 import com.kelsos.mbrc.presenters.MainViewPresenter
 import com.kelsos.mbrc.ui.activities.BaseActivity
@@ -52,9 +41,7 @@ import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment
 import com.kelsos.mbrc.views.MainView
 import rx.functions.Action1
 import timber.log.Timber
-import toothpick.Scope
 import toothpick.Toothpick
-import toothpick.smoothie.module.SmoothieActivityModule
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
@@ -100,7 +87,6 @@ class MainActivity : BaseActivity(), MainView {
     }
   }
   private var volumeChangeListener: VolumeChangeHelper? = null
-  private var scope: Scope? = null
 
   private fun register() {
     this.bus.register(this, CoverChangedEvent::class.java, { this.handleCoverEvent(it) }, true)
@@ -171,7 +157,7 @@ class MainActivity : BaseActivity(), MainView {
    * @param action Any kind of UserAction available in the [Protocol]
    */
   private fun postAction(action: UserAction) {
-    bus!!.post(MessageEvent(ProtocolEventType.UserAction, action))
+    bus.post(MessageEvent.action(action))
   }
 
   private fun changeVolume(volume: Int) {
@@ -179,42 +165,39 @@ class MainActivity : BaseActivity(), MainView {
   }
 
   public override fun onCreate(savedInstanceState: Bundle?) {
-    scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this))
     super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
     setContentView(R.layout.activity_main)
     ButterKnife.bind(this)
     super.setup()
     volumeChangeListener = VolumeChangeHelper(Action1<Int> { this.changeVolume(it) })
-    volumeBar!!.setOnSeekBarChangeListener(volumeChangeListener)
-    progressBar!!.setOnSeekBarChangeListener(progressBarChangeListener)
+    volumeBar.setOnSeekBarChangeListener(volumeChangeListener)
+    progressBar.setOnSeekBarChangeListener(progressBarChangeListener)
   }
 
   public override fun onStart() {
     super.onStart()
-    artistLabel!!.isSelected = true
-    titleLabel!!.isSelected = true
-    albumLabel!!.isSelected = true
+    artistLabel.isSelected = true
+    titleLabel.isSelected = true
+    albumLabel.isSelected = true
   }
 
   public override fun onResume() {
     super.onResume()
     register()
-    presenter!!.attach(this)
-    presenter!!.requestNowPlayingPosition()
-    presenter!!.load()
+    presenter.attach(this)
+    presenter.requestNowPlayingPosition()
+    presenter.load()
   }
 
   override fun onPause() {
     super.onPause()
-    presenter!!.detach()
+    presenter.detach()
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     when (item.itemId) {
       R.id.menu_lastfm_scrobble -> {
-        presenter!!.toggleScrobbling()
+        presenter.toggleScrobbling()
         return true
       }
       R.id.menu_rating_dialog -> {
@@ -223,8 +206,7 @@ class MainActivity : BaseActivity(), MainView {
         return true
       }
       R.id.menu_lastfm_love -> {
-        bus!!.post(MessageEvent(ProtocolEventType.UserAction,
-            UserAction(Protocol.NowPlayingLfmRating, Const.TOGGLE)))
+        bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingLfmRating, Const.TOGGLE)))
         return true
       }
       else -> return false
@@ -233,7 +215,7 @@ class MainActivity : BaseActivity(), MainView {
 
   public override fun onStop() {
     super.onStop()
-    bus!!.unregister(this)
+    bus.unregister(this)
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -242,7 +224,7 @@ class MainActivity : BaseActivity(), MainView {
     val shareItem = menu.findItem(R.id.actionbar_share)
     mShareActionProvider = MenuItemCompat.getActionProvider(shareItem) as ShareActionProvider
     mShareActionProvider!!.setShareIntent(shareIntent)
-    bus!!.post(OnMainFragmentOptionsInflated())
+    bus.post(OnMainFragmentOptionsInflated())
     return super.onCreateOptionsMenu(menu)
   }
 
@@ -250,7 +232,7 @@ class MainActivity : BaseActivity(), MainView {
     get() {
       val shareIntent = Intent(Intent.ACTION_SEND)
       shareIntent.type = "text/plain"
-      val payload = String.format("Now Playing: %s - %s", artistLabel!!.text, titleLabel!!.text)
+      val payload = String.format("Now Playing: %s - %s", artistLabel.text, titleLabel.text)
       shareIntent.putExtra(Intent.EXTRA_TEXT, payload)
       return shareIntent
     }
@@ -260,13 +242,11 @@ class MainActivity : BaseActivity(), MainView {
   }
 
   override fun updateCover(cover: Bitmap?) {
-    if (albumCover == null) {
-      return
-    }
+
     if (cover != null) {
-      albumCover!!.setImageBitmap(cover)
+      albumCover.setImageBitmap(cover)
     } else {
-      albumCover!!.setImageResource(R.drawable.ic_image_no_cover)
+      albumCover.setImageResource(R.drawable.ic_image_no_cover)
     }
   }
 
@@ -275,17 +255,13 @@ class MainActivity : BaseActivity(), MainView {
   }
 
   override fun updateShuffleState(@ShuffleState shuffleState: String) {
-    if (shuffleButton == null) {
-      return
-    }
-
     val shuffle = ShuffleChange.OFF != shuffleState
     val autoDj = ShuffleChange.AUTODJ == shuffleState
 
     val color = ContextCompat.getColor(this, if (shuffle) R.color.accent else R.color.button_dark)
-    shuffleButton!!.setColorFilter(color)
+    shuffleButton.setColorFilter(color)
 
-    shuffleButton!!.setImageResource(if (autoDj) R.drawable.ic_headset_black_24dp else R.drawable.ic_shuffle_black_24dp)
+    shuffleButton.setImageResource(if (autoDj) R.drawable.ic_headset_black_24dp else R.drawable.ic_shuffle_black_24dp)
   }
 
   private fun updateRepeatButtonState(change: RepeatChange) {
@@ -293,10 +269,6 @@ class MainActivity : BaseActivity(), MainView {
   }
 
   override fun updateRepeat(@Mode mode: String) {
-    if (repeatButton == null) {
-      return
-    }
-
     @ColorRes var colorId = R.color.accent
     @DrawableRes var resId = R.drawable.ic_repeat_black_24dp
 
@@ -310,8 +282,8 @@ class MainActivity : BaseActivity(), MainView {
     }
 
     val color = ContextCompat.getColor(this, colorId)
-    repeatButton!!.setImageResource(resId)
-    repeatButton!!.setColorFilter(color)
+    repeatButton.setImageResource(resId)
+    repeatButton.setColorFilter(color)
   }
 
   private fun updateVolumeData(change: VolumeChange) {
@@ -319,21 +291,14 @@ class MainActivity : BaseActivity(), MainView {
   }
 
   override fun updateVolume(volume: Int, mute: Boolean) {
-    if (volumeBar == null) {
-      return
-    }
 
     if (!volumeChangeListener!!.isUserChangingVolume) {
-      volumeBar!!.progress = volume
-    }
-
-    if (muteButton == null) {
-      return
+      volumeBar.progress = volume
     }
 
     val color = ContextCompat.getColor(this, R.color.button_dark)
-    muteButton!!.setColorFilter(color)
-    muteButton!!.setImageResource(if (mute) R.drawable.ic_volume_off_black_24dp else R.drawable.ic_volume_up_black_24dp)
+    muteButton.setColorFilter(color)
+    muteButton.setImageResource(if (mute) R.drawable.ic_volume_off_black_24dp else R.drawable.ic_volume_up_black_24dp)
   }
 
   private fun handlePlayStateChange(change: PlayStateChange) {
@@ -341,9 +306,6 @@ class MainActivity : BaseActivity(), MainView {
   }
 
   override fun updatePlayState(@State state: String) {
-    if (playPauseButton == null) {
-      return
-    }
     val accentColor = ContextCompat.getColor(this, R.color.accent)
     @DrawableRes val resId: Int
     val tag: String
@@ -352,7 +314,7 @@ class MainActivity : BaseActivity(), MainView {
       resId = R.drawable.ic_pause_circle_filled_black_24dp
       tag = "Playing"
       /* Start the animation if the track is playing*/
-      presenter!!.requestNowPlayingPosition()
+      presenter.requestNowPlayingPosition()
       trackProgressAnimation()
     } else if (PlayerState.PAUSED == state) {
       resId = R.drawable.ic_play_circle_filled_black_24dp
@@ -370,9 +332,9 @@ class MainActivity : BaseActivity(), MainView {
       tag = STOPPED
     }
 
-    playPauseButton!!.setColorFilter(accentColor)
-    playPauseButton!!.setImageResource(resId)
-    playPauseButton!!.tag = tag
+    playPauseButton.setColorFilter(accentColor)
+    playPauseButton.setImageResource(resId)
+    playPauseButton.tag = tag
   }
 
   /**
@@ -392,24 +354,21 @@ class MainActivity : BaseActivity(), MainView {
 timer to create them anew */
     val timePeriod = 1
     stopTrackProgressAnimation()
-    val tag = playPauseButton!!.tag
+    val tag = playPauseButton.tag
     if (STOPPED == tag || PAUSED == tag) {
       return
     }
 
     val updateProgress = {
 
-      val currentProgress = progressBar!!.progress / 1000
+      val currentProgress = progressBar.progress / 1000
       val currentMinutes = currentProgress / 60
       val currentSeconds = currentProgress % 60
 
       runOnUiThread {
         try {
-          if (progressBar == null) {
-            return@runOnUiThread
-          }
-          progressBar!!.progress = progressBar!!.progress + 1000
-          trackProgressCurrent!!.text = getString(R.string.playback_progress,
+          progressBar.progress = progressBar.progress + 1000
+          trackProgressCurrent.text = getString(R.string.playback_progress,
               currentMinutes,
               currentSeconds)
         } catch (ex: Exception) {
@@ -425,11 +384,8 @@ timer to create them anew */
   }
 
   private fun activateStoppedState() {
-    if (trackProgressCurrent == null || progressBar == null) {
-      return
-    }
-    progressBar!!.progress = 0
-    trackProgressCurrent!!.text = getString(R.string.playback_progress, 0, 0)
+    progressBar.progress = 0
+    trackProgressCurrent.text = getString(R.string.playback_progress, 0, 0)
   }
 
   private fun handleTrackInfoChange(change: TrackInfoChangeEvent) {
@@ -437,12 +393,9 @@ timer to create them anew */
   }
 
   override fun updateTrackInfo(info: TrackInfo) {
-    if (artistLabel == null) {
-      return
-    }
-    artistLabel!!.text = info.artist
-    titleLabel!!.text = info.title
-    albumLabel!!.text = if (TextUtils.isEmpty(info.year)) info.album
+    artistLabel.text = info.artist
+    titleLabel.text = info.title
+    albumLabel.text = if (TextUtils.isEmpty(info.year)) info.album
     else String.format("%s [%s]", info.album, info.year)
 
     if (mShareActionProvider != null) {
@@ -470,11 +423,9 @@ timer to create them anew */
   private fun handlePositionUpdate(position: UpdatePosition) {
     val total = position.total
     val current = position.current
-    if (trackProgressCurrent == null || progressBar == null || trackDuration == null) {
-      return
-    }
+
     if (total == 0) {
-      bus!!.post(MessageEvent(UserInputEventType.RequestPosition))
+      bus.post(MessageEvent(UserInputEventType.RequestPosition))
       return
     }
     var currentSeconds = current / 1000
@@ -488,13 +439,13 @@ timer to create them anew */
     val finalTotalSeconds = totalSeconds
     val finalCurrentSeconds = currentSeconds
 
-    trackDuration!!.text = getString(R.string.playback_progress, totalMinutes, finalTotalSeconds)
-    trackProgressCurrent!!.text = getString(R.string.playback_progress,
+    trackDuration.text = getString(R.string.playback_progress, totalMinutes, finalTotalSeconds)
+    trackProgressCurrent.text = getString(R.string.playback_progress,
         currentMinutes,
         finalCurrentSeconds)
 
-    progressBar!!.max = total
-    progressBar!!.progress = current
+    progressBar.max = total
+    progressBar.progress = current
 
     trackProgressAnimation()
   }

@@ -24,6 +24,7 @@ import android.net.Uri
 import android.support.annotation.ColorInt
 import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
+import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.widget.ImageView
 import com.kelsos.mbrc.R
@@ -147,7 +148,7 @@ class CircleImageView : ImageView {
     }
 
   fun setBorderColorResource(@ColorRes borderColorRes: Int) {
-    borderColor = context.resources.getColor(borderColorRes)
+    borderColor = ContextCompat.getColor(context, borderColorRes)
   }
 
   var fillColor: Int
@@ -163,7 +164,7 @@ class CircleImageView : ImageView {
     }
 
   fun setFillColorResource(@ColorRes fillColorRes: Int) {
-    fillColor = context.resources.getColor(fillColorRes)
+    fillColor = ContextCompat.getColor(context, fillColorRes)
   }
 
   var borderWidth: Int
