@@ -67,14 +67,14 @@ class RemoteService : Service(), ForegroundHooks {
     threadPoolExecutor = Executors.newSingleThreadExecutor()
     threadPoolExecutor!!.execute(remoteController)
     remoteController.executeCommand(MessageEvent(UserInputEventType.StartConnection))
-    discovery.startDiscovery { browseSync!!.sync() }
+    discovery.startDiscovery { browseSync.sync() }
 
     return super.onStartCommand(intent, flags, startId)
   }
 
   override fun onDestroy() {
-    remoteController!!.executeCommand(MessageEvent(UserInputEventType.CancelNotification))
-    remoteController!!.executeCommand(MessageEvent(UserInputEventType.TerminateConnection))
+    remoteController.executeCommand(MessageEvent(UserInputEventType.CancelNotification))
+    remoteController.executeCommand(MessageEvent(UserInputEventType.TerminateConnection))
     CommandRegistration.unregister(remoteController)
     if (threadPoolExecutor != null) {
       threadPoolExecutor!!.shutdownNow()
@@ -85,9 +85,9 @@ class RemoteService : Service(), ForegroundHooks {
     super.onDestroy()
   }
 
-  override fun start(notificationId: Int, notification: Notification) {
+  override fun start(id: Int, notification: Notification) {
     Timber.v("Notification is starting foreground")
-    startForeground(notificationId, notification)
+    startForeground(id, notification)
   }
 
   override fun stop() {

@@ -8,8 +8,6 @@ import toothpick.Toothpick
 import toothpick.configuration.Configuration
 import toothpick.registries.FactoryRegistryLocator
 import toothpick.registries.MemberInjectorRegistryLocator
-import toothpick.smoothie.FactoryRegistry
-import toothpick.smoothie.MemberInjectorRegistry
 import toothpick.smoothie.module.SmoothieApplicationModule
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 
@@ -28,8 +26,8 @@ class RemoteApplication : Application() {
 
     Toothpick.setConfiguration(configuration)
 
-    MemberInjectorRegistryLocator.setRootRegistry(MemberInjectorRegistry())
-    FactoryRegistryLocator.setRootRegistry(FactoryRegistry())
+    MemberInjectorRegistryLocator.setRootRegistry(com.kelsos.mbrc.MemberInjectorRegistry())
+    FactoryRegistryLocator.setRootRegistry(com.kelsos.mbrc.FactoryRegistry())
     val applicationScope = Toothpick.openScope(this)
     applicationScope.installModules(SmoothieApplicationModule(this), RemoteModule())
 

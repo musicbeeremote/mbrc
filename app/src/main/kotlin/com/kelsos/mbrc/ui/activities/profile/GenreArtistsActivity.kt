@@ -53,19 +53,19 @@ class GenreArtistsActivity : FontActivity(), ArtistEntryAdapter.MenuItemSelected
       actionBar.title = genre
     }
 
-    adapter!!.init(genre)
-    adapter!!.setMenuItemSelectedListener(this)
-    recyclerView!!.layoutManager = LinearLayoutManager(this)
-    recyclerView!!.adapter = adapter
-    recyclerView!!.setEmptyView(emptyView)
+    adapter.init(genre)
+    adapter.setMenuItemSelectedListener(this)
+    recyclerView.layoutManager = LinearLayoutManager(this)
+    recyclerView.adapter = adapter
+    recyclerView.setEmptyView(emptyView)
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Artist) {
-    actionHandler!!.artistSelected(menuItem, entry, this)
+    actionHandler.artistSelected(menuItem, entry, this)
   }
 
   override fun onItemClicked(artist: Artist) {
-    actionHandler!!.artistSelected(artist, this)
+    actionHandler.artistSelected(artist, this)
   }
 
   companion object {

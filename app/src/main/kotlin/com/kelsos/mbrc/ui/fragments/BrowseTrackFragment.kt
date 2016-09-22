@@ -53,39 +53,42 @@ class BrowseTrackFragment : Fragment(), TrackEntryAdapter.MenuItemSelectedListen
 
   override fun onStart() {
     super.onStart()
-    adapter!!.init(null)
+    adapter.init(null)
   }
 
   override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    swipeLayout!!.setOnRefreshListener(this)
+    swipeLayout.setOnRefreshListener(this)
     val layoutManager = LinearLayoutManager(activity)
-    recycler!!.setHasFixedSize(true)
-    recycler!!.layoutManager = layoutManager
-    adapter!!.setMenuItemSelectedListener(this)
-    recycler!!.adapter = adapter
-    recycler!!.setEmptyView(emptyView)
+    recycler.setHasFixedSize(true)
+    recycler.layoutManager = layoutManager
+    adapter.setMenuItemSelectedListener(this)
+    recycler.adapter = adapter
+    recycler.setEmptyView(emptyView)
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Track) {
-    actionHandler!!.trackSelected(menuItem, entry)
+    actionHandler.trackSelected(menuItem, entry)
   }
 
   override fun onItemClicked(track: Track) {
-    actionHandler!!.trackSelected(track)
+    actionHandler.trackSelected(track)
   }
 
   override fun onRefresh() {
-    if (!swipeLayout!!.isRefreshing) {
-      swipeLayout!!.isRefreshing = true
+    if (!swipeLayout.isRefreshing) {
+      swipeLayout.isRefreshing = true
     }
 
     if (subscription != null && !subscription!!.isUnsubscribed) {
       return
     }
 
-    subscription = sync!!.syncTracks(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnTerminate { swipeLayout!!.isRefreshing = false }.subscribe({ adapter!!.refresh() }) { t ->
-      bus!!.post(NotifyUser(R.string.refresh_failed))
+    subscription = sync.syncTracks(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnTerminate { swipeLayout.isRefreshing = false }
+            .subscribe({ adapter.refresh() }) { t ->
+      bus.post(NotifyUser(R.string.refresh_failed))
       Timber.v(t, "failed")
     }
   }

@@ -37,8 +37,7 @@ class MediaIntentHandler
         KeyEvent.KEYCODE_HEADSETHOOK -> {
           val currentClick = System.currentTimeMillis()
           if (currentClick - previousClick < DOUBLE_CLICK_INTERVAL) {
-            result = postAction(UserAction(Protocol.PlayerNext, true))
-            return true
+            return postAction(UserAction(Protocol.PlayerNext, true))
           }
           previousClick = currentClick
           result = postAction(UserAction(Protocol.PlayerPlayPause, true))

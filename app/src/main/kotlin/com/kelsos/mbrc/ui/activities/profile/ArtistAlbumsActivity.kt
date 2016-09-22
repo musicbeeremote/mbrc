@@ -52,19 +52,19 @@ class ArtistAlbumsActivity : FontActivity(), AlbumEntryAdapter.MenuItemSelectedL
       actionBar.title = artist
     }
 
-    adapter!!.setMenuItemSelectedListener(this)
-    adapter!!.init(artist)
-    recyclerView!!.layoutManager = LinearLayoutManager(this)
-    recyclerView!!.adapter = adapter
-    recyclerView!!.setEmptyView(emptyView)
+    adapter.setMenuItemSelectedListener(this)
+    adapter.init(artist)
+    recyclerView.layoutManager = LinearLayoutManager(this)
+    recyclerView.adapter = adapter
+    recyclerView.setEmptyView(emptyView)
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, album: Album) {
-    actionHandler!!.albumSelected(menuItem, album, this)
+  override fun onMenuItemSelected(menuItem: MenuItem, entry: Album) {
+    actionHandler.albumSelected(menuItem, entry, this)
   }
 
   override fun onItemClicked(album: Album) {
-    actionHandler!!.albumSelected(album, this)
+    actionHandler.albumSelected(album, this)
   }
 
   override fun onDestroy() {

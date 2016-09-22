@@ -17,6 +17,6 @@ class MediaButtonReceiver : BroadcastReceiver() {
       Toothpick.inject(this, scope)
     }
 
-    handler!!.handleMediaIntent(intent)
+    handler.handleMediaIntent(intent)
   }
 }
