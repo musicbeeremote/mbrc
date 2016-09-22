@@ -27,7 +27,7 @@ class FeedbackFragment : Fragment() {
 
   @OnClick(R.id.feedback_button)
   internal fun onFeedbackButtonClicked() {
-    val feedbackText = feedbackEditText!!.text.toString().trim { it <= ' ' }
+    val feedbackText = feedbackEditText.text.toString().trim { it <= ' ' }
     if (TextUtils.isEmpty(feedbackText)) {
       return
     }

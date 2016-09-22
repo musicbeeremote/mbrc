@@ -68,9 +68,9 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
     scope = Toothpick.openScopes(application, this)
     scope!!.installModules(SmoothieActivityModule(this))
-    super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
   }
 

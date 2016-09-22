@@ -12,10 +12,8 @@ import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.events.MessageEvent
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.PlaylistAvailable
 import com.kelsos.mbrc.ui.activities.BaseActivity
-import rx.functions.Action1
 import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
@@ -71,9 +69,9 @@ class PlaylistActivity : BaseActivity(), PlaylistAdapter.OnPlaylistPressedListen
   }
 
   override fun onRefresh() {
-    if (!swipeLayout!!.isRefreshing) {
-      swipeLayout!!.isRefreshing = true
+    if (!swipeLayout.isRefreshing) {
+      swipeLayout.isRefreshing = true
     }
-    bus!!.post(MessageEvent(ProtocolEventType.UserAction, UserAction(Protocol.PlaylistList, true)))
+    bus.post(MessageEvent(ProtocolEventType.UserAction, UserAction(Protocol.PlaylistList, true)))
   }
 }// Required empty public constructor

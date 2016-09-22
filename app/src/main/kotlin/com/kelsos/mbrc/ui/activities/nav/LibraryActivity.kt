@@ -13,13 +13,11 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.LibraryPagerAdapter
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.activities.SearchResultsActivity
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
-import javax.inject.Inject
 
 class LibraryActivity : BaseActivity(), SearchView.OnQueryTextListener, ViewPager.OnPageChangeListener {
 
@@ -55,9 +53,9 @@ class LibraryActivity : BaseActivity(), SearchView.OnQueryTextListener, ViewPage
     ButterKnife.bind(this)
     super.setup()
     pagerAdapter = LibraryPagerAdapter(this)
-    pager!!.adapter = pagerAdapter
-    tabs!!.setupWithViewPager(pager)
-    pager!!.addOnPageChangeListener(this)
+    pager.adapter = pagerAdapter
+    tabs.setupWithViewPager(pager)
+    pager.addOnPageChangeListener(this)
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -93,11 +91,11 @@ class LibraryActivity : BaseActivity(), SearchView.OnQueryTextListener, ViewPage
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
-    outState.putInt(PAGER_POSITION, pager!!.currentItem)
+    outState.putInt(PAGER_POSITION, pager.currentItem)
   }
 
   override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-    pager!!.currentItem = savedInstanceState.getInt(PAGER_POSITION, 0)
+    pager.currentItem = savedInstanceState.getInt(PAGER_POSITION, 0)
   }
 
   companion object {

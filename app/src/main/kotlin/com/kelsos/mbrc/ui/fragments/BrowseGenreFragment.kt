@@ -52,41 +52,44 @@ class BrowseGenreFragment : Fragment(), GenreEntryAdapter.MenuItemSelectedListen
 
   override fun onStart() {
     super.onStart()
-    adapter!!.init()
+    adapter.init()
   }
 
   override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    swipeLayout!!.setOnRefreshListener(this)
+    swipeLayout.setOnRefreshListener(this)
     val layoutManager = LinearLayoutManager(activity)
-    recycler!!.layoutManager = layoutManager
-    recycler!!.setHasFixedSize(true)
-    adapter!!.setMenuItemSelectedListener(this)
-    recycler!!.adapter = adapter
-    recycler!!.setEmptyView(emptyView)
+    recycler.layoutManager = layoutManager
+    recycler.setHasFixedSize(true)
+    adapter.setMenuItemSelectedListener(this)
+    recycler.adapter = adapter
+    recycler.setEmptyView(emptyView)
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Genre) {
-    actionHandler!!.genreSelected(menuItem, entry, activity)
+    actionHandler.genreSelected(menuItem, entry, activity)
   }
 
   override fun onItemClicked(genre: Genre) {
-    actionHandler!!.genreSelected(genre, activity)
+    actionHandler.genreSelected(genre, activity)
   }
 
   override fun onRefresh() {
-    if (!swipeLayout!!.isRefreshing) {
-      swipeLayout!!.isRefreshing = true
+    if (!swipeLayout.isRefreshing) {
+      swipeLayout.isRefreshing = true
     }
 
     if (subscription != null && !subscription!!.isUnsubscribed) {
       return
     }
 
-    subscription = sync!!.syncGenres(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnTerminate { swipeLayout!!.isRefreshing = false }.subscribe({ adapter!!.refresh() }) { throwable ->
-      bus!!.post(NotifyUser(R.string.refresh_failed))
-      Timber.v(throwable, "Refresh failed")
-    }
+    subscription = sync.syncGenres(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnTerminate { swipeLayout.isRefreshing = false }
+            .subscribe({ adapter.refresh() }) {
+              bus.post(NotifyUser(R.string.refresh_failed))
+              Timber.v(it, "Refresh failed")
+            }
   }
 
   override fun onDestroy() {

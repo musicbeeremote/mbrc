@@ -176,7 +176,7 @@ constructor(private val bus: RxBus) {
 
   fun setShuffleState(@ShuffleState shuffleState: String) {
     shuffle = shuffleState
-    bus.post(ShuffleChange(shuffle!!))
+    bus.post(ShuffleChange(shuffle))
   }
 
   fun setScrobbleState(scrobbleButtonActive: Boolean) {
