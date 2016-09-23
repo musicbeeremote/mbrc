@@ -10,7 +10,6 @@ import com.kelsos.mbrc.annotations.Repeat.Mode
 import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.constants.ProtocolEventType
-import com.kelsos.mbrc.data.MusicTrack
 import com.kelsos.mbrc.data.Playlist
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
@@ -21,7 +20,6 @@ import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
 import rx.Observable
 import rx.Subscriber
 import rx.schedulers.Schedulers
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -95,11 +93,6 @@ constructor(private val bus: RxBus) {
   fun setPluginVersion(pluginVersion: String) {
     this.pluginVersion = pluginVersion.substring(0, pluginVersion.lastIndexOf('.'))
     bus.post(MessageEvent(ProtocolEventType.PluginVersionCheck))
-  }
-
-  fun setNowPlayingList(nowPlayingList: ArrayList<MusicTrack>) {
-    bus.post(NowPlayingListAvailable(nowPlayingList,
-        nowPlayingList.indexOf(MusicTrack(artist, title))))
   }
 
   fun setRating(rating: Double) {

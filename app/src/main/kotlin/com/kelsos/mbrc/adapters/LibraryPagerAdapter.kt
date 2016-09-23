@@ -32,7 +32,7 @@ class LibraryPagerAdapter(activity: FragmentActivity) : FragmentStatePagerAdapte
   }
 
   override fun getCount(): Int {
-    return count
+    return COUNT
   }
 
   override fun getPageTitle(@Section position: Int): CharSequence {
@@ -46,6 +46,6 @@ class LibraryPagerAdapter(activity: FragmentActivity) : FragmentStatePagerAdapte
   }
 
   companion object {
-    private val count = 4
+    const val COUNT = 4
   }
 }

@@ -50,6 +50,7 @@ constructor(bus: RxBus, app: Application) : Runnable {
     eventQueue.add(event)
   }
 
+  @Suppress("UNCHECKED_CAST")
   @Synchronized internal fun executeCommand(event: IEvent) {
     val commandClass = commandMap!![event.type] ?: return
     val commandInstance: ICommand?
