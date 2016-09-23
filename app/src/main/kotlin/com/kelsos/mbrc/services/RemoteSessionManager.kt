@@ -138,6 +138,7 @@ constructor(context: Application, private val bus: RxBus, private val manager: A
     }
   }
 
+  @Suppress("DEPRECATION")
   @SuppressWarnings("deprecation")
   @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
   private fun ensureTransportControls(playbackState: PlaybackStateCompat) {
