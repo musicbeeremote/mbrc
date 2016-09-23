@@ -160,9 +160,9 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
    */
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
     val entry = data!!.getItem(position.toLong())
-    holder.title!!.text = entry.title
+    holder.title.text = entry.title
     val artist = entry.artist
-    holder.artist!!.text = if (TextUtils.isEmpty(artist)) holder.unknownArtist else artist
+    holder.artist.text = if (TextUtils.isEmpty(artist)) holder.unknownArtist else artist
   }
 
   /**

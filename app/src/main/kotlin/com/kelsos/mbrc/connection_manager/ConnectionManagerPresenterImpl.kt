@@ -4,6 +4,7 @@ import com.kelsos.mbrc.data.ConnectionSettings
 import com.kelsos.mbrc.presenters.BasePresenter
 import com.kelsos.mbrc.repository.ConnectionRepository
 import rx.Observable
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -60,6 +61,6 @@ constructor(private val repository: ConnectionRepository) : BasePresenter<Connec
 
   private fun onLoadError(throwable: Throwable) {
     checkIfAttached()
-
+    Timber.v(throwable, "Failure")
   }
 }

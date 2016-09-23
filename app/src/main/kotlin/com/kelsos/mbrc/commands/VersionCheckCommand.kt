@@ -42,7 +42,7 @@ internal constructor(private val model: MainDataModel, private val mapper: Objec
 
     val jsonNode: JsonNode
     try {
-      jsonNode = mapper.readValue<JsonNode>(URL(CHECK_URL), JsonNode::class.java!!)
+      jsonNode = mapper.readValue<JsonNode>(URL(CHECK_URL), JsonNode::class.java)
     } catch (e1: IOException) {
       Timber.d(e1, "While reading json node")
       return
@@ -62,8 +62,8 @@ internal constructor(private val model: MainDataModel, private val mapper: Objec
     if (suggestedVersion != model.getPluginVersion()) {
       var isOutOfDate = false
 
-      val currentVersion = model.getPluginVersion().split("\\.".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
-      val latestVersion = suggestedVersion.split("\\.".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
+      val currentVersion = model.getPluginVersion().split("\\.".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
+      val latestVersion = suggestedVersion.split("\\.".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
 
       var i = 0
       while (i < currentVersion.size && i < latestVersion.size && currentVersion[i] == latestVersion[i]) {

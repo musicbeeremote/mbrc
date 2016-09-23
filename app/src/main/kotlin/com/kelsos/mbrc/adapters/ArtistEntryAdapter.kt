@@ -21,8 +21,8 @@ import com.kelsos.mbrc.data.library.Track_Table
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.sql.language.Where
-import rx.Single
-import rx.SingleSubscriber
+import rx.AsyncEmitter
+import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import timber.log.Timber
@@ -48,18 +48,26 @@ class ArtistEntryAdapter
     if (TextUtils.isEmpty(filter)) {
       query = SQLite.select().from<Artist>(Artist::class.java).orderBy(Artist_Table.artist, true)
     } else {
-      query = SQLite.select().distinct().from<Artist>(Artist::class.java).innerJoin<Track>(Track::class.java).on(Artist_Table.artist.withTable().eq(Track_Table.artist.withTable())).where(Track_Table.genre.`is`(filter)).orderBy(Artist_Table.artist.withTable(), true).groupBy(Artist_Table.artist.withTable())
+      query = SQLite.select().distinct()
+          .from<Artist>(Artist::class.java)
+          .innerJoin<Track>(Track::class.java)
+          .on(Artist_Table.artist.withTable()
+              .eq(Track_Table.artist.withTable()))
+          .where(Track_Table.genre.`is`(filter))
+          .orderBy(Artist_Table.artist.withTable(), true).
+          groupBy(Artist_Table.artist.withTable())
     }
 
-    Single.create { subscriber: SingleSubscriber<in FlowCursorList<Artist>> ->
-
-      val list = FlowCursorList(query)
-
-      subscriber.onSuccess(list)
-    }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ artists ->
-      data = artists
+    Observable.fromEmitter<FlowCursorList<Artist>>({
+      val cursor = FlowCursorList.Builder<Artist>(Artist::class.java).modelQueriable(query).build()
+      it.onNext(cursor)
+      it.onCompleted()
+    }, AsyncEmitter.BackpressureMode.LATEST)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread()).subscribe({
+      data = it
       notifyDataSetChanged()
-    }) { throwable -> Timber.v(throwable, "failed to load the data") }
+    }) { Timber.v(it, "failed to load the data") }
   }
 
   fun setMenuItemSelectedListener(listener: MenuItemSelectedListener) {
@@ -132,7 +140,7 @@ class ArtistEntryAdapter
    */
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
     val entry = data!!.getItem(position.toLong())
-    holder.title!!.text = if (TextUtils.isEmpty(entry.artist)) holder.empty else entry.artist
+    holder.title.text = if (TextUtils.isEmpty(entry.artist)) holder.empty else entry.artist
   }
 
   /**
@@ -141,7 +149,7 @@ class ArtistEntryAdapter
    * @return The total number of items in this adapter.
    */
   override fun getItemCount(): Int {
-    return if (data != null) data!!.count else 0
+    return data?.count ?: 0
   }
 
   fun refresh() {

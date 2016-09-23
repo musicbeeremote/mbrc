@@ -14,8 +14,8 @@ import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.NowPlayingAdapter
 import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.data.NowPlaying
+import com.kelsos.mbrc.data.NowPlayingMoveRequest
 import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.events.MessageEvent
@@ -28,7 +28,6 @@ import rx.schedulers.Schedulers
 import timber.log.Timber
 import toothpick.Scope
 import toothpick.Toothpick
-import java.util.*
 import javax.inject.Inject
 
 class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPlayingAdapter.NowPlayingListener {
@@ -139,11 +138,8 @@ class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPl
 
   override fun onMove(from: Int, to: Int) {
     adapter.setPlayingTrackIndex(calculateNewIndex(from, to, adapter.getPlayingTrackIndex()))
-
-    val move = HashMap<String, Int>()
-    move.put("from", from)
-    move.put("to", to)
-    bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListMove, move)))
+    val data = NowPlayingMoveRequest(from, to)
+    bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListMove, data)))
   }
 
   override fun onDismiss(position: Int) {
