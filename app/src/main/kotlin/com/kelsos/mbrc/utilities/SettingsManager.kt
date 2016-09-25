@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.support.annotation.StringDef
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.logging.FileLoggingTree
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -23,8 +24,18 @@ constructor(application: Application, private val preferences: SharedPreferences
     this.context = application
 
     updatePreferences()
-
     checkForFirstRunAfterUpdate()
+    val loggingEnabled = loggingEnabled()
+    if (loggingEnabled) {
+      Timber.plant(FileLoggingTree(context.applicationContext))
+    } else {
+      val fileLoggingTree = Timber.forest().find { it is FileLoggingTree }
+      fileLoggingTree?.let { Timber.uproot(it) }
+    }
+  }
+
+  private fun loggingEnabled(): Boolean {
+    return preferences.getBoolean(context.getString(R.string.settings_key_debug_logging), false)
   }
 
   private fun updatePreferences() {

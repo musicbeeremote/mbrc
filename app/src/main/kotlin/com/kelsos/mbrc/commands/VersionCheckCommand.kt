@@ -21,7 +21,11 @@ import javax.inject.Inject
 
 class VersionCheckCommand
 @Inject
-internal constructor(private val model: MainDataModel, private val mapper: ObjectMapper, private val context: Context, private val manager: SettingsManager, private val bus: RxBus) : ICommand {
+internal constructor(private val model: MainDataModel,
+                     private val mapper: ObjectMapper,
+                     private val context: Context,
+                     private val manager: SettingsManager,
+                     private val bus: RxBus) : ICommand {
 
   override fun execute(e: IEvent) {
 

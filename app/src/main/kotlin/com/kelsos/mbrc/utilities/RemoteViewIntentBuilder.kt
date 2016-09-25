@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.utilities
 
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
 import android.support.annotation.IntDef
@@ -26,42 +27,42 @@ object RemoteViewIntentBuilder {
         return PendingIntent.getActivity(mContext,
             0,
             notificationIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT)
+            FLAG_UPDATE_CURRENT)
       }
       PLAY -> {
         val playPressedIntent = Intent(REMOTE_PLAY_PRESSED)
         return PendingIntent.getBroadcast(mContext,
             1,
             playPressedIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT)
+            FLAG_UPDATE_CURRENT)
       }
       NEXT -> {
         val mediaNextButtonIntent = Intent(REMOTE_NEXT_PRESSED)
         return PendingIntent.getBroadcast(mContext,
             2,
             mediaNextButtonIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT)
+            FLAG_UPDATE_CURRENT)
       }
       CLOSE -> {
         val clearNotificationIntent = Intent(REMOTE_CLOSE_PRESSED)
         return PendingIntent.getBroadcast(mContext,
             3,
             clearNotificationIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT)
+            FLAG_UPDATE_CURRENT)
       }
       PREVIOUS -> {
         val mediaPreviousButtonIntent = Intent(REMOTE_PREVIOUS_PRESSED)
         return PendingIntent.getBroadcast(mContext,
             4,
             mediaPreviousButtonIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT)
+            FLAG_UPDATE_CURRENT)
       }
       CANCEL -> {
         val cancelIntent = Intent(CANCELLED_NOTIFICATION)
         return PendingIntent.getBroadcast(mContext,
             4,
             cancelIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT)
+            FLAG_UPDATE_CURRENT)
       }
       else -> throw IndexOutOfBoundsException()
     }

@@ -42,6 +42,7 @@ class RatingDialogFragment : DialogFragment() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     val builder = MaterialDialog.Builder(activity)
+    builder.title(R.string.rate_the_playing_track)
     builder.customView(R.layout.ui_dialog_rating, false)
     val dialog = builder.build()
     ratingBar = ButterKnife.findById<RatingBar>(dialog.customView!!, R.id.ratingBar)

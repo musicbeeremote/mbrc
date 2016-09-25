@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.events.ui
 
-import android.graphics.Bitmap
+import android.text.TextUtils
 
-class CoverChangedEvent(val cover: Bitmap? = null) {
+class CoverChangedEvent(val path: String = "") {
   val available: Boolean
-    get() = this.cover != null
+    get() = TextUtils.isEmpty(this.path).not()
 }

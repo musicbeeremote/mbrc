@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.view.MenuItem
@@ -15,6 +14,7 @@ import com.kelsos.mbrc.connection_manager.ConnectionManagerActivity
 import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.logging.FileLoggingTree
 import com.kelsos.mbrc.ui.dialogs.WebViewDialog
 import com.kelsos.mbrc.utilities.RemoteUtils
 import timber.log.Timber
@@ -34,7 +34,20 @@ class SettingsFragment : PreferenceFragment() {
     val mVersion = findPreference(resources.getString(R.string.settings_version))
     val mBuild = findPreference(resources.getString(R.string.pref_key_build_time))
     val mRevision = findPreference(resources.getString(R.string.pref_key_revision))
-    mOpenSource?.setOnPreferenceClickListener { preference ->
+    val debugLogging = findPreference(resources.getString(R.string.settings_key_debug_logging))
+
+    debugLogging?.setOnPreferenceChangeListener { preference, newValue ->
+      if (newValue as Boolean) {
+        Timber.plant(FileLoggingTree(context.applicationContext))
+      } else {
+        val fileLoggingTree = Timber.forest().find { it is FileLoggingTree }
+        fileLoggingTree?.let { Timber.uproot(it) }
+      }
+
+      true
+    }
+
+    mOpenSource?.setOnPreferenceClickListener {
       showOpenSourceLicenseDialog()
       false
     }
@@ -46,44 +59,36 @@ class SettingsFragment : PreferenceFragment() {
       true
     }
 
-    mManager?.setOnPreferenceClickListener { preference ->
+    mManager?.setOnPreferenceClickListener {
       startActivity(Intent(mContext, ConnectionManagerActivity::class.java))
       false
     }
 
-    if (mVersion != null) {
-      try {
-        mVersion.summary = String.format(resources.getString(R.string.settings_version_number),
-            RemoteUtils.getVersion(mContext))
-      } catch (e: PackageManager.NameNotFoundException) {
-        Timber.d(e, "failed")
-      }
-
+    try {
+      mVersion?.summary = String.format(resources.getString(R.string.settings_version_number),
+          RemoteUtils.getVersion(mContext))
+    } catch (e: PackageManager.NameNotFoundException) {
+      Timber.d(e, "failed")
     }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-      val mShowNotification = findPreference(resources.getString(R.string.settings_key_notification_control))
-      mShowNotification?.setOnPreferenceChangeListener { preference, newValue ->
-        val value = newValue as Boolean
-        if (!value) {
-          bus!!.post(MessageEvent(UserInputEventType.CancelNotification))
-        }
-        true
+    val showNotification = findPreference(resources.getString(R.string.settings_key_notification_control))
+
+    showNotification?.setOnPreferenceChangeListener { preference, newValue ->
+      val value = newValue as Boolean
+      if (!value) {
+        bus!!.post(MessageEvent(UserInputEventType.CancelNotification))
       }
+      true
     }
 
     val mLicense = findPreference(resources.getString(R.string.settings_key_license))
-    mLicense?.setOnPreferenceClickListener { preference ->
+    mLicense?.setOnPreferenceClickListener {
       showLicenseDialog()
       false
     }
 
-    if (mBuild != null) {
-      mBuild.summary = BuildConfig.BUILD_TIME
-    }
-    if (mRevision != null) {
-      mRevision.summary = BuildConfig.GIT_SHA
-    }
+    mBuild?.summary = BuildConfig.BUILD_TIME
+    mRevision?.summary = BuildConfig.GIT_SHA
   }
 
   fun requestPhoneStatePermission() {

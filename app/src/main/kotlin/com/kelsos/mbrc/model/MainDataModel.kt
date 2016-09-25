@@ -1,8 +1,6 @@
 package com.kelsos.mbrc.model
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.util.Base64
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.PlayerState.State
 import com.kelsos.mbrc.annotations.Repeat
@@ -17,9 +15,6 @@ import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.*
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
-import rx.Observable
-import rx.Subscriber
-import rx.schedulers.Schedulers
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -128,31 +123,6 @@ constructor(private val bus: RxBus) {
       this.volume = volume
       bus.post(VolumeChange(this.volume))
     }
-  }
-
-  fun setCover(base64format: String?) {
-    if (base64format == null || Const.EMPTY == base64format) {
-      cover = null
-      bus.post(CoverChangedEvent())
-      updateNotification()
-      updateRemoteClient()
-    } else {
-      Observable.create { subscriber: Subscriber<in Bitmap> ->
-        val decodedImage = Base64.decode(base64format, Base64.DEFAULT)
-        subscriber.onNext(BitmapFactory.decodeByteArray(decodedImage, 0, decodedImage.size))
-        subscriber.onCompleted()
-      }.subscribeOn(Schedulers.io()).subscribe({ this.setAlbumCover(it) }) { throwable ->
-        cover = null
-        bus.post(CoverChangedEvent())
-      }
-    }
-  }
-
-  private fun setAlbumCover(cover: Bitmap) {
-    this.cover = cover
-    bus.post(CoverChangedEvent(cover))
-    updateNotification()
-    updateRemoteClient()
   }
 
   fun setRepeatState(repeat: String) {
