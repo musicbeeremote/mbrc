@@ -14,7 +14,11 @@ import com.kelsos.mbrc.events.ui.CoverChangedEvent
 import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
 import com.kelsos.mbrc.ui.activities.nav.MainActivity
-import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder
+import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.NEXT
+import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PLAY
+import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PREVIOUS
+import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.getPendingIntent
+import com.squareup.picasso.Picasso
 import timber.log.Timber
 import toothpick.Scope
 import toothpick.Toothpick
@@ -51,15 +55,9 @@ class WidgetNormal : AppWidgetProvider() {
       val views = RemoteViews(context.packageName, R.layout.widget_normal)
 
       views.setOnClickPendingIntent(R.id.widget_normal_image, pendingIntent)
-
-      views.setOnClickPendingIntent(R.id.widget_normal_play,
-          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PLAY, context))
-
-      views.setOnClickPendingIntent(R.id.widget_normal_next,
-          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.NEXT, context))
-
-      views.setOnClickPendingIntent(R.id.widget_normal_previous,
-          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PREVIOUS, context))
+      views.setOnClickPendingIntent(R.id.widget_normal_play, getPendingIntent(PLAY, context))
+      views.setOnClickPendingIntent(R.id.widget_normal_next, getPendingIntent(NEXT, context))
+      views.setOnClickPendingIntent(R.id.widget_normal_previous, getPendingIntent(PREVIOUS, context))
 
       // Tell the AppWidgetManager to perform an update on the current app widget
       appWidgetManager.updateAppWidget(appWidgetId, views)
@@ -80,7 +78,10 @@ class WidgetNormal : AppWidgetProvider() {
     val manager = AppWidgetManager.getInstance(context)
     val widget = RemoteViews(context.packageName, R.layout.widget_normal)
     if (coverAvailable.available) {
-      widget.setImageViewBitmap(R.id.widget_normal_image, coverAvailable.cover)
+      Picasso.with(context).load(coverAvailable.path)
+          .centerCrop()
+          .resizeDimen(R.dimen.widget_normal_height, R.dimen.widget_normal_height)
+          .into(widget, R.id.widget_normal_image, widgetsIds)
     } else {
       widget.setImageViewResource(R.id.widget_normal_image, R.drawable.ic_image_no_cover)
     }

@@ -77,7 +77,7 @@
   <string name="settings_search_default_summary">Set the default press action for the search list.</string>
   <string name="search_click_default_value">sub</string>
   <string name="settings_key_notification_control">set_show_notification</string>
-  <string name="settings_sum_notification_control">Show a notification control widget</string>
+  <string name="settings_sum_notification_control">Show a notification control widget.</string>
   <string name="settings_title_notification_control">Notification Control</string>
   <string name="settings_key_last_update_check">last_update_check</string>
   <string name="settings_title_license">License</string>
@@ -137,11 +137,14 @@
   <string name="playback_progress">%1$02d:%2$02d</string>
   <string name="notification_action_previous">Previous</string>
   <string name="notification_action_play">Play/Pause</string>
-  <string name="notification_action_next">Next</string>
+  <string name="notification_action_next">Next</string>dw
   <string name="description_computer_icon">Computer icon</string>
   <string name="settings_dialog_edit">Edit</string>
   <string name="settings_dialog_save">Save</string>
   <string name="semicolon" translatable="false">:</string>
   <string name="non_album_tracks">Non album tracks</string>
   <string name="no_lyrics">No lyrics found</string>
+  <string name="settings_key_debug_logging">settings_debug_log</string>
+  <string name="setting_miscellaneous_debug_logging_summary">Enables debug logging for the application.  May cause performance degradation since it logs everything.</string>
+  <string name="setting_miscellaneous_debug_logging">Debug Logging</string>
 </resources>

@@ -11,8 +11,8 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.DiscoveryStopped
 import com.kelsos.mbrc.mappers.ConnectionMapper
 import com.kelsos.mbrc.repository.ConnectionRepository
+import rx.AsyncEmitter
 import rx.Observable
-import rx.Subscriber
 import rx.functions.Func1
 import rx.schedulers.Schedulers
 import timber.log.Timber
@@ -94,9 +94,9 @@ internal constructor(private val manager: WifiManager,
     }, {
       this.getObservable(it)
     },
-    {
-      this.cleanup(it)
-    })
+        {
+          this.cleanup(it)
+        })
   }
 
   private fun cleanup(resource: MulticastSocket) {
@@ -111,8 +111,9 @@ internal constructor(private val manager: WifiManager,
   }
 
   private fun getObservable(socket: MulticastSocket): Observable<DiscoveryMessage> {
-    return Observable.interval(600, TimeUnit.MILLISECONDS).take(6).flatMap { aLong ->
-      Observable.create { subscriber: Subscriber<in DiscoveryMessage> ->
+    return Observable.interval(600, TimeUnit.MILLISECONDS).take(6).flatMap {
+      Observable.fromEmitter<DiscoveryMessage>({
+        emitter: AsyncEmitter<DiscoveryMessage> ->
         try {
           val mPacket: DatagramPacket
           val buffer = ByteArray(512)
@@ -121,12 +122,12 @@ internal constructor(private val manager: WifiManager,
           val incoming = String(mPacket.data, Charsets.UTF_8)
           val node = mapper.readValue(incoming, DiscoveryMessage::class.java)
           Timber.v("Discovery received -> %s", node)
-          subscriber.onNext(node)
-          subscriber.onCompleted()
+          emitter.onNext(node)
+          emitter.onCompleted()
         } catch (e: IOException) {
-          subscriber.onError(e)
+          emitter.onError(e)
         }
-      }
+      }, AsyncEmitter.BackpressureMode.LATEST)
     }.filter { message -> NOTIFY == message.context }.first()
   }
 

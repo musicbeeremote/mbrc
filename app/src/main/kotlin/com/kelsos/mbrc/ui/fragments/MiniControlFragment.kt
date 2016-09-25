@@ -28,6 +28,7 @@ import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
 import com.kelsos.mbrc.presenters.MiniControlPresenter
 import com.kelsos.mbrc.ui.activities.nav.MainActivity
 import com.kelsos.mbrc.views.MiniControlView
+import com.squareup.picasso.Picasso
 import toothpick.Toothpick
 import javax.inject.Inject
 
@@ -115,7 +116,18 @@ class MiniControlFragment : Fragment(), MiniControlView {
   }
 
   private fun onCoverChange(event: CoverChangedEvent) {
-    updateCover(event.cover)
+    if (!event.available) {
+      trackCover.setImageResource(R.drawable.ic_image_no_cover)
+      return
+    }
+
+    Picasso.with(activity)
+        .load(event.path)
+        .placeholder(R.drawable.ic_image_no_cover)
+        .config(Bitmap.Config.RGB_565)
+        .centerCrop()
+        .resize(600, 600)
+        .into(trackCover)
   }
 
   private fun onTrackInfoChange(event: TrackInfoChangeEvent) {
