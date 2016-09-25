@@ -203,7 +203,7 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
   }
 
   /**
-   * Should be called after RoboGuice injections and Butterknife bindings.
+   * Should be called after injections and Butterknife bindings.
    */
   fun setup() {
     Timber.v("Initializing base activity")

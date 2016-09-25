@@ -14,7 +14,11 @@ import com.kelsos.mbrc.events.ui.CoverChangedEvent
 import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
 import com.kelsos.mbrc.ui.activities.nav.MainActivity
-import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder
+import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.NEXT
+import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PLAY
+import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PREVIOUS
+import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.getPendingIntent
+import com.squareup.picasso.Picasso
 import timber.log.Timber
 import toothpick.Scope
 import toothpick.Toothpick
@@ -52,15 +56,9 @@ class WidgetSmall : AppWidgetProvider() {
       val views = RemoteViews(context.packageName, R.layout.widget_small)
 
       views.setOnClickPendingIntent(R.id.widget_small_image, pendingIntent)
-
-      views.setOnClickPendingIntent(R.id.widget_small_play,
-          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PLAY, context))
-
-      views.setOnClickPendingIntent(R.id.widget_small_next,
-          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.NEXT, context))
-
-      views.setOnClickPendingIntent(R.id.widget_small_previous,
-          RemoteViewIntentBuilder.getPendingIntent(RemoteViewIntentBuilder.PREVIOUS, context))
+      views.setOnClickPendingIntent(R.id.widget_small_play, getPendingIntent(PLAY, context))
+      views.setOnClickPendingIntent(R.id.widget_small_next, getPendingIntent(NEXT, context))
+      views.setOnClickPendingIntent(R.id.widget_small_previous, getPendingIntent(PREVIOUS, context))
 
       // Tell the AppWidgetManager to perform an update on the current app widget
       appWidgetManager.updateAppWidget(appWidgetId, views)
@@ -80,7 +78,11 @@ class WidgetSmall : AppWidgetProvider() {
     val manager = AppWidgetManager.getInstance(context)
     val smallWidget = RemoteViews(context.packageName, R.layout.widget_small)
     if (coverAvailable.available) {
-      smallWidget.setImageViewBitmap(R.id.widget_small_image, coverAvailable.cover)
+      Picasso.with(context)
+          .load(coverAvailable.path)
+          .centerCrop()
+          .resizeDimen(R.dimen.widget_small_height, R.dimen.widget_small_height)
+          .into(smallWidget, R.id.widget_small_image, widgetsIds)
     } else {
       smallWidget.setImageViewResource(R.id.widget_small_image, R.drawable.ic_image_no_cover)
     }

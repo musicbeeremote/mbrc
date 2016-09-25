@@ -3,6 +3,7 @@ package com.kelsos.mbrc.messaging
 import android.app.Application
 import android.app.Notification
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.support.v4.app.NotificationCompat.Action
 import android.support.v4.app.NotificationManagerCompat
@@ -24,6 +25,8 @@ import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PLAY
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PREVIOUS
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.getPendingIntent
 import com.kelsos.mbrc.utilities.SettingsManager
+import rx.AsyncEmitter
+import rx.Observable
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -62,9 +65,29 @@ constructor(context: Application,
   }
 
   private fun coverChanged(event: CoverChangedEvent) {
-    model.cover = event.cover
-    notification = createBuilder().build()
-    notificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification)
+    if (event.available) {
+      Observable.fromEmitter<Bitmap>({
+        try {
+          val options = BitmapFactory.Options()
+          options.inPreferredConfig = Bitmap.Config.RGB_565
+          val bitmap = BitmapFactory.decodeFile(event.path, options)
+          it.onNext(bitmap)
+          it.onCompleted()
+        } catch(e: Exception) {
+          it.onError(e)
+        }
+      }, AsyncEmitter.BackpressureMode.LATEST).subscribe({
+        model.cover = it
+      }, {
+        Timber.v(it, "failed to decode")
+        model.cover = null
+      }, {
+        notification = createBuilder().build()
+        notificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification)
+      })
+    }
+
+
   }
 
   private fun playStateChanged(event: PlayStateChange) {

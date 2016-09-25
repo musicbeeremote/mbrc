@@ -5,6 +5,7 @@ import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.data.Page
 import com.kelsos.mbrc.data.SocketMessage
+import rx.AsyncEmitter
 import rx.Observable
 import java.io.IOException
 import javax.inject.Inject
@@ -19,15 +20,15 @@ constructor() : ServiceBase(), NowPlayingService {
   }
 
   private fun getPageObservable(socketMessage: SocketMessage): Observable<Page<NowPlaying>> {
-    return Observable.create<Page<NowPlaying>> { subscriber ->
+    return Observable.fromEmitter<Page<NowPlaying>> ({ emitter ->
       try {
         val typeReference = object : TypeReference<Page<NowPlaying>>() {}
         val page = mapper.readValue<Page<NowPlaying>>(socketMessage.data as String, typeReference)
-        subscriber.onNext(page)
-        subscriber.onCompleted()
+        emitter.onNext(page)
+        emitter.onCompleted()
       } catch (e: IOException) {
-        subscriber.onError(e)
+        emitter.onError(e)
       }
-    }
+    },AsyncEmitter.BackpressureMode.LATEST)
   }
 }

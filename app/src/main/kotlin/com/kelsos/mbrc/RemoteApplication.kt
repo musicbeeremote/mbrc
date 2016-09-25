@@ -31,7 +31,10 @@ class RemoteApplication : Application() {
     val applicationScope = Toothpick.openScope(this)
     applicationScope.installModules(SmoothieApplicationModule(this), RemoteModule())
 
-    CalligraphyConfig.initDefault(CalligraphyConfig.Builder().setDefaultFontPath("fonts/roboto_regular.ttf").setFontAttrId(R.attr.fontPath).build())
+    CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
+        .setDefaultFontPath("fonts/roboto_regular.ttf")
+        .setFontAttrId(R.attr.fontPath)
+        .build())
 
     if (BuildConfig.DEBUG) {
       Timber.plant(object : Timber.DebugTree() {

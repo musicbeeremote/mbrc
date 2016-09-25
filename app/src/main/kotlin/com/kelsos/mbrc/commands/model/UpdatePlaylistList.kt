@@ -19,13 +19,13 @@ class UpdatePlaylistList
   override fun execute(e: IEvent) {
     val nodes = e.data as ArrayNode
     Observable.from(nodes).flatMap {
-      Observable.fromEmitter({ it: AsyncEmitter<Playlist> ->
+      Observable.fromEmitter({ emitter: AsyncEmitter<Playlist> ->
         try {
-          val playlist = mapper.treeToValue<Playlist>(nodes, Playlist::class.java)
-          it.onNext(playlist)
-          it.onCompleted()
+          val playlist = mapper.treeToValue<Playlist>(it, Playlist::class.java)
+          emitter.onNext(playlist)
+          emitter.onCompleted()
         } catch (e1: JsonProcessingException) {
-          it.onError(e1)
+          emitter.onError(e1)
         }
       }, AsyncEmitter.BackpressureMode.BUFFER)
     }.subscribeOn(Schedulers.io()).toList().subscribe({ model.setPlaylists(it) }) {

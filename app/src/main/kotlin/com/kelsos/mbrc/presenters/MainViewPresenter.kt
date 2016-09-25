@@ -20,7 +20,6 @@ class MainViewPresenter : BasePresenter<MainView>() {
     checkIfAttached()
     view?.updateLfmStatus(model.lfmStatus)
     view?.updateScrobbleStatus(model.isScrobblingEnabled)
-    view?.updateCover(model.cover)
     view?.updateRepeat(model.repeat)
     view?.updateShuffleState(model.shuffle)
     view?.updateVolume(model.getVolume(), model.isMute)

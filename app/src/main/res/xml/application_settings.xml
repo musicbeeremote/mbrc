@@ -28,6 +28,12 @@
         android:summary="@string/setting_miscellaneous_plugin_updates_summary"
         android:title="@string/setting_miscellaneous_plugin_updates" />
 
+    <CheckBoxPreference
+      android:defaultValue="false"
+      android:key="@string/settings_key_debug_logging"
+      android:summary="@string/setting_miscellaneous_debug_logging_summary"
+      android:title="@string/setting_miscellaneous_debug_logging" />
+
   </PreferenceCategory>
   <com.afollestad.materialdialogs.prefs.MaterialListPreference
       android:defaultValue="@string/search_click_default_value"

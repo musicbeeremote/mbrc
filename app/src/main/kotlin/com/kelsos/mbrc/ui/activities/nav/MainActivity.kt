@@ -39,9 +39,12 @@ import com.kelsos.mbrc.presenters.MainViewPresenter
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment
 import com.kelsos.mbrc.views.MainView
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
 import rx.functions.Action1
 import timber.log.Timber
 import toothpick.Toothpick
+import java.io.File
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
@@ -238,16 +241,29 @@ class MainActivity : BaseActivity(), MainView {
     }
 
   private fun handleCoverEvent(cevent: CoverChangedEvent) {
-    updateCover(cevent.cover)
-  }
-
-  override fun updateCover(cover: Bitmap?) {
-
-    if (cover != null) {
-      albumCover.setImageBitmap(cover)
-    } else {
+    if (!cevent.available) {
       albumCover.setImageResource(R.drawable.ic_image_no_cover)
+      return
     }
+    val file = File(cevent.path)
+
+    Picasso.with(this).invalidate(file)
+    Picasso.with(this)
+        .load(file)
+        .placeholder(R.drawable.ic_image_no_cover)
+        .config(Bitmap.Config.RGB_565)
+        .centerCrop()
+        .into(albumCover, object : Callback {
+
+          override fun onSuccess() {
+
+          }
+
+          override fun onError() {
+            Timber.v("FaILEEEEED")
+          }
+        })
+
   }
 
   private fun handleShuffleChange(change: ShuffleChange) {
