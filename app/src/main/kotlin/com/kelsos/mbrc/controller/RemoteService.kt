@@ -15,8 +15,6 @@ import com.kelsos.mbrc.services.ProtocolHandler
 import com.kelsos.mbrc.services.ServiceDiscovery
 import com.kelsos.mbrc.services.SocketService
 import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver
-import com.raizlabs.android.dbflow.config.FlowConfig
-import com.raizlabs.android.dbflow.config.FlowManager
 import timber.log.Timber
 import toothpick.Toothpick
 import java.util.concurrent.ExecutorService
@@ -47,17 +45,7 @@ class RemoteService : Service(), ForegroundHooks {
     val scope = Toothpick.openScope(application)
     super.onCreate()
     Toothpick.inject(this, scope)
-    FlowManager.init(FlowConfig.Builder(this).openDatabasesOnInit(true).build())
     this.registerReceiver(receiver, receiver.filter())
-  }
-
-  /**
-   * Takes a MessageEvent and passes it to the command execution function.
-
-   * @param event The message received.
-   */
-  fun handleUserActionEvents(event: MessageEvent) {
-    remoteController.handleUserActionEvents(event)
   }
 
   override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {

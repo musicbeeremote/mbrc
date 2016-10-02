@@ -66,8 +66,9 @@ class BrowseGenreFragment : Fragment(), GenreEntryAdapter.MenuItemSelectedListen
     recycler.setEmptyView(emptyView)
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: Genre) {
+  override fun onMenuItemSelected(menuItem: MenuItem, entry: Genre): Boolean {
     actionHandler.genreSelected(menuItem, entry, activity)
+    return true
   }
 
   override fun onItemClicked(genre: Genre) {
@@ -84,12 +85,12 @@ class BrowseGenreFragment : Fragment(), GenreEntryAdapter.MenuItemSelectedListen
     }
 
     subscription = sync.syncGenres(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnTerminate { swipeLayout.isRefreshing = false }
-            .subscribe({ adapter.refresh() }) {
-              bus.post(NotifyUser(R.string.refresh_failed))
-              Timber.v(it, "Refresh failed")
-            }
+        .observeOn(AndroidSchedulers.mainThread())
+        .doOnTerminate { swipeLayout.isRefreshing = false }
+        .subscribe({ adapter.refresh() }) {
+          bus.post(NotifyUser(R.string.refresh_failed))
+          Timber.v(it, "Refresh failed")
+        }
   }
 
   override fun onDestroy() {

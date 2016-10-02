@@ -117,8 +117,8 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val view = inflater.inflate(R.layout.ui_list_dual, parent, false)
     val holder = ViewHolder(view)
-    holder.indicator!!.setOnClickListener { v ->
-      val popupMenu = PopupMenu(v.context, v)
+    holder.indicator.setOnClickListener {
+      val popupMenu = PopupMenu(it.context, it)
       popupMenu.inflate(R.menu.popup_track)
       popupMenu.setOnMenuItemClickListener { menuItem ->
         if (mListener == null) {

@@ -116,6 +116,7 @@ constructor(private val activityChecker: SocketActivityChecker,
   }
 
   private fun cleanupSocket() {
+    Timber.v("Socket cleanup")
     if (!sIsConnected()) {
       return
     }
@@ -162,7 +163,7 @@ constructor(private val activityChecker: SocketActivityChecker,
     }
 
     override fun run() {
-
+      Timber.v("Socket Startsa")
       bus.post(MessageEvent(SocketEventType.SocketHandshakeUpdate, false))
       if (null == socketAddress) {
         return

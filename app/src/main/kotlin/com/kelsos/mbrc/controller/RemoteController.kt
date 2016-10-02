@@ -21,7 +21,7 @@ constructor(bus: RxBus, app: Application) : Runnable {
 
   init {
     eventQueue = LinkedBlockingQueue<IEvent>()
-    bus.register<MessageEvent>(this, MessageEvent::class.java, { this.handleUserActionEvents(it) })
+    bus.register(this, MessageEvent::class.java, { this.handleUserActionEvents(it) })
     scope = Toothpick.openScope(app)
   }
 

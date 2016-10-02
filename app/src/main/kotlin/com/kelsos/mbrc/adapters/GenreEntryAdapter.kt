@@ -16,8 +16,11 @@ import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.library.Genre
 import com.kelsos.mbrc.data.library.Genre_Table
+import com.raizlabs.android.dbflow.kotlinextensions.from
+import com.raizlabs.android.dbflow.kotlinextensions.orderBy
+import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import com.raizlabs.android.dbflow.sql.language.SQLite
+import com.raizlabs.android.dbflow.sql.language.OrderBy
 import rx.Single
 import rx.SingleSubscriber
 import rx.android.schedulers.AndroidSchedulers
@@ -29,7 +32,7 @@ class GenreEntryAdapter
 @Inject
 constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHolder>() {
   private var data: FlowCursorList<Genre>? = null
-  private var mListener: MenuItemSelectedListener? = null
+  private var listener: MenuItemSelectedListener? = null
   private val inflater: LayoutInflater
 
   init {
@@ -42,16 +45,18 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
     }
 
     Single.create { subscriber: SingleSubscriber<in FlowCursorList<Genre>> ->
-      val list = FlowCursorList(SQLite.select().from<Genre>(Genre::class.java).orderBy(Genre_Table.genre, true))
+      val genreAscending = OrderBy.fromProperty(Genre_Table.genre).ascending()
+      val query = select from Genre::class orderBy genreAscending
+      val list = FlowCursorList.Builder(Genre::class.java).modelQueriable(query).build()
       subscriber.onSuccess(list)
-    }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ genres ->
-      data = genres
+    }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+      data = it
       notifyDataSetChanged()
     }) { throwable -> Timber.v(throwable, "failed to load the data") }
   }
 
   fun setMenuItemSelectedListener(listener: MenuItemSelectedListener) {
-    mListener = listener
+    this.listener = listener
   }
 
   /**
@@ -111,18 +116,15 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
       val popupMenu = PopupMenu(it.context, it)
       popupMenu.inflate(R.menu.popup_genre)
       popupMenu.setOnMenuItemClickListener { menuItem ->
-        if (mListener != null) {
-          mListener!!.onMenuItemSelected(menuItem, entry)
-          return@setOnMenuItemClickListener true
-        }
-        false
+        return@setOnMenuItemClickListener listener?.onMenuItemSelected(menuItem, entry) ?: false
+
       }
       popupMenu.show()
     }
 
     holder.itemView.setOnClickListener { v ->
-      if (mListener != null) {
-        mListener!!.onItemClicked(entry)
+      if (listener != null) {
+        listener!!.onItemClicked(entry)
       }
     }
   }
@@ -142,7 +144,7 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
   }
 
   interface MenuItemSelectedListener {
-    fun onMenuItemSelected(menuItem: MenuItem, entry: Genre)
+    fun onMenuItemSelected(menuItem: MenuItem, entry: Genre) : Boolean
 
     fun onItemClicked(genre: Genre)
   }

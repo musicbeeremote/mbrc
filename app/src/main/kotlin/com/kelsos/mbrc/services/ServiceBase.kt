@@ -98,9 +98,11 @@ open class ServiceBase {
   private fun getSocket(): Socket {
     val mapper = InetAddressMapper()
     val connectionSettings = repository.default
-
-    val socketAddress = mapper.map(connectionSettings!!)
     try {
+      if (connectionSettings == null) {
+        throw RuntimeException("no settings")
+      }
+      val socketAddress = mapper.map(connectionSettings)
       Timber.v("Creating new socket")
       socket = Socket()
       socket!!.soTimeout = 40 * 1000

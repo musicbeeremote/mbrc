@@ -19,10 +19,10 @@ class RemoteModule : Module() {
     val mapper = ObjectMapper()
     mapper.registerModule(KotlinModule())
 
-    bind(RxBus::class.java).toInstance(RxBusImpl())
+    bind(RxBus::class.java).to(RxBusImpl::class.java).singletonInScope()
     bind(ObjectMapper::class.java).toInstance(mapper)
-    bind(LibraryService::class.java).to(LibraryServiceImpl::class.java)
-    bind(NowPlayingService::class.java).to(NowPlayingServiceImpl::class.java)
+    bind(LibraryService::class.java).to(LibraryServiceImpl::class.java).singletonInScope()
+    bind(NowPlayingService::class.java).to(NowPlayingServiceImpl::class.java).singletonInScope()
     bind(NotificationManagerCompat::class.java).toProvider(NotificationManagerCompatProvider::class.java)
     bind(ConnectionRepository::class.java).to(ConnectionRepositoryImpl::class.java)
   }
