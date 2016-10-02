@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.kelsos.mbrc.services
 
 import android.annotation.TargetApi

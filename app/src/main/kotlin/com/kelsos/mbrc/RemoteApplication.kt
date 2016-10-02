@@ -3,6 +3,8 @@ package com.kelsos.mbrc
 import android.app.Application
 import android.support.annotation.CallSuper
 import com.kelsos.mbrc.di.modules.RemoteModule
+import com.raizlabs.android.dbflow.config.FlowConfig
+import com.raizlabs.android.dbflow.config.FlowManager
 import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
@@ -16,7 +18,7 @@ class RemoteApplication : Application() {
   @CallSuper
   override fun onCreate() {
     super.onCreate()
-
+    FlowManager.init(FlowConfig.Builder(this).openDatabasesOnInit(true).build())
     val configuration: Configuration
     if (BuildConfig.DEBUG) {
       configuration = Configuration.forDevelopment().disableReflection()

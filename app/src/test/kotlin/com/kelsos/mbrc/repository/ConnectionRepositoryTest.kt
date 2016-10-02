@@ -31,7 +31,7 @@ import java.util.*
 class ConnectionRepositoryTest {
     private val toothPickRule = ToothPickRule(this)
     @Rule
-    var chain: TestRule = RuleChain.outerRule(toothPickRule).around(DBFlowTestRule.create())
+    fun chain(): TestRule = RuleChain.outerRule(toothPickRule).around(DBFlowTestRule.create())
 
     @Before
     @Throws(Exception::class)

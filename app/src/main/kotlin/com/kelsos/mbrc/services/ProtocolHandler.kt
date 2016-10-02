@@ -10,6 +10,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.model.MainDataModel
 import timber.log.Timber
 import java.io.IOException
+import java.lang.Double.parseDouble
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -44,10 +45,10 @@ constructor(private val bus: RxBus, private val mapper: ObjectMapper, private va
           } else if (context.contains(Protocol.ProtocolTag)) {
 
             val protocolVersion: Double
-            try {
-              protocolVersion = java.lang.Double.parseDouble(node.path(Const.DATA).asText())
+            protocolVersion = try {
+              parseDouble(node.path(Const.DATA).asText())
             } catch (ignore: Exception) {
-              protocolVersion = 2.0
+              2.0
             }
 
             model.pluginProtocol = protocolVersion

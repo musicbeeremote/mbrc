@@ -248,13 +248,14 @@ class MainActivity : BaseActivity(), MainView {
     val file = File(cevent.path)
 
     Picasso.with(this).invalidate(file)
+    val dimens = getDimens()
     Picasso.with(this)
         .load(file)
         .placeholder(R.drawable.ic_image_no_cover)
         .config(Bitmap.Config.RGB_565)
+        .resize(dimens, dimens)
         .centerCrop()
         .into(albumCover, object : Callback {
-
           override fun onSuccess() {
 
           }
@@ -264,6 +265,17 @@ class MainActivity : BaseActivity(), MainView {
           }
         })
 
+  }
+
+  private fun getDimens(): Int {
+    val displayMetrics = resources.displayMetrics
+    val dpHeight = displayMetrics.heightPixels / displayMetrics.density
+    val dpWidth = displayMetrics.widthPixels / displayMetrics.density
+    if (dpHeight > dpWidth) {
+      return dpWidth.toInt()
+    } else {
+      return dpHeight.toInt()
+    }
   }
 
   private fun handleShuffleChange(change: ShuffleChange) {

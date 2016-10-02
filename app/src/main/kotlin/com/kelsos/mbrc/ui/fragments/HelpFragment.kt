@@ -26,11 +26,11 @@ class HelpFragment : Fragment() {
     super.onStart()
 
     val url: String
-    try {
-      url = String.format("http://kelsos.net/musicbeeremote/help?version=%s", RemoteUtils.getVersion(context))
+    url = try {
+      String.format("http://kelsos.net/musicbeeremote/help?version=%s", RemoteUtils.getVersion(context))
     } catch (e: PackageManager.NameNotFoundException) {
       Timber.v(e, "Failed to get version")
-      url = "http://kelsos.net/musicbeeremote/help"
+      "http://kelsos.net/musicbeeremote/help"
     }
 
     helpWebview.loadUrl(url)
@@ -45,6 +45,7 @@ class HelpFragment : Fragment() {
   }
 
   private class RemoteWebViewClient : WebViewClient() {
+    @Suppress("OverridingDeprecatedMember")
     override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
       view.loadUrl(url)
       return false

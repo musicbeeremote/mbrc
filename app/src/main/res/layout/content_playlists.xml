@@ -1,19 +1,30 @@
-<android.support.v4.widget.SwipeRefreshLayout
-    android:id="@+id/swipe_layout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/mini_control_height"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.kelsos.mbrc.ui.activities.nav.PlaylistActivity">
+<com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/swipe_layout"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:layout_marginBottom="@dimen/mini_control_height"
+  app:layout_behavior="@string/appbar_scrolling_view_behavior"
+  tools:context="com.kelsos.mbrc.ui.activities.nav.PlaylistActivity">
 
-  <android.support.v7.widget.RecyclerView
+  <FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
       android:id="@+id/playlist_list"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:paddingTop="@dimen/list_padding_top"
-      tools:listitem="@layout/listitem_single" />
+      tools:listitem="@layout/listitem_single"/>
 
-</android.support.v4.widget.SwipeRefreshLayout>
+    <include
+      layout="@layout/list_empty_view"
+      android:visibility="gone"/>
+
+  </FrameLayout>
+
+
+</com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout>

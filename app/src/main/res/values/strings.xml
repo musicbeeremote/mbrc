@@ -147,4 +147,6 @@
   <string name="settings_key_debug_logging">settings_debug_log</string>
   <string name="setting_miscellaneous_debug_logging_summary">Enables debug logging for the application.  May cause performance degradation since it logs everything.</string>
   <string name="setting_miscellaneous_debug_logging">Debug Logging</string>
+  <string name="now_playing_list_empty">No tracks found</string>
+  <string name="swipe_to_refresh">Swipe to refresh the list.</string>
 </resources>
