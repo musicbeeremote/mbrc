@@ -15,9 +15,12 @@ import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.data.NowPlaying_Table
 import com.kelsos.mbrc.rx.MapWithIndex
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter
+import com.raizlabs.android.dbflow.kotlinextensions.from
+import com.raizlabs.android.dbflow.kotlinextensions.orderBy
+import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.list.FlowQueryList
-import com.raizlabs.android.dbflow.sql.language.SQLite
+import com.raizlabs.android.dbflow.sql.language.OrderBy
 import rx.Observable
 import timber.log.Timber
 import javax.inject.Inject
@@ -31,8 +34,10 @@ class NowPlayingAdapter
   private var listener: NowPlayingListener? = null
 
   init {
-    data = SQLite.select().from<NowPlaying>(NowPlaying::class.java).orderBy(NowPlaying_Table.position, true).flowQueryList()
-    data.setTransact(true)
+    val positionAscending = OrderBy.fromProperty(NowPlaying_Table.position).ascending()
+    data = (select from  NowPlaying::class orderBy positionAscending).flowQueryList()
+
+
     data.addOnCursorRefreshListener(this)
     inflater = LayoutInflater.from(context)
   }

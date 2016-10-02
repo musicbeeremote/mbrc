@@ -29,12 +29,9 @@ class PlaylistAdapter
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val view = inflater.inflate(R.layout.listitem_single, parent, false)
     val viewHolder = ViewHolder(view)
-    viewHolder.context.visibility = View.GONE
+
     viewHolder.itemView.setOnClickListener {
-      if (playlistPressedListener == null) {
-        return@setOnClickListener
-      }
-      playlistPressedListener!!.playlistPressed(data!![viewHolder.adapterPosition].url ?: "")
+      playlistPressedListener?.playlistPressed(data!![viewHolder.adapterPosition].url)
     }
     return viewHolder
   }

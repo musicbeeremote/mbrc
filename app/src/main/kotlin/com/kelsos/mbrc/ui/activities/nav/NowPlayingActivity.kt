@@ -2,13 +2,12 @@ package com.kelsos.mbrc.ui.activities.nav
 
 import android.os.Bundle
 import android.support.v4.view.MenuItemCompat
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
@@ -24,6 +23,8 @@ import com.kelsos.mbrc.rx.RxUtils
 import com.kelsos.mbrc.services.NowPlayingSync
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.drag.SimpleItenTouchHelper
+import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
+import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import rx.schedulers.Schedulers
 import timber.log.Timber
 import toothpick.Scope
@@ -32,8 +33,9 @@ import javax.inject.Inject
 
 class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPlayingAdapter.NowPlayingListener {
 
-  @BindView(R.id.now_playing_list) lateinit var nowPlayingList: RecyclerView
-  @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+  @BindView(R.id.now_playing_list) lateinit var nowPlayingList: EmptyRecyclerView
+  @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: MultiSwipeRefreshLayout
+  @BindView(R.id.empty_view) lateinit var emptyView: View
   @Inject lateinit var adapter: NowPlayingAdapter
   @Inject lateinit var sync: NowPlayingSync
   private val mSearchView: SearchView? = null
@@ -76,6 +78,8 @@ class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPl
     setContentView(R.layout.activity_nowplaying)
     ButterKnife.bind(this)
     super.setup()
+    swipeRefreshLayout.setSwipeableChildren(R.id.now_playing_list, R.id.empty_view)
+    nowPlayingList.emptyView = emptyView
     val manager = LinearLayoutManager(this)
     nowPlayingList.layoutManager = manager
     nowPlayingList.adapter = adapter
@@ -93,10 +97,13 @@ class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPl
       swipeRefreshLayout.isRefreshing = true
     }
 
-    sync.syncNowPlaying(Schedulers.io()).compose(RxUtils.uiTask()).subscribe({
-      adapter.refresh()
-      swipeRefreshLayout.isRefreshing = false
-    }) { throwable -> Timber.v(throwable, "Failed") }
+    sync.syncNowPlaying(Schedulers.io()).compose(RxUtils.uiTask())
+        .doOnTerminate {
+          swipeRefreshLayout.isRefreshing = false
+        }
+        .subscribe({
+          adapter.refresh()
+        }) { Timber.v(it, "Failed") }
   }
 
   public override fun onStart() {

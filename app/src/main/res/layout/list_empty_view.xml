@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/empty_view"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:gravity="center"
+  android:visibility="visible">
+
+  <TextView
+    android:id="@+id/list_empty_title"
+    fontPath="fonts/roboto_medium.ttf"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:fontFamily="sans-serif-medium"
+    android:maxLines="1"
+    android:text="@string/now_playing_list_empty"
+    android:textSize="22sp"
+    tools:ignore="MissingPrefix"/>
+
+  <ImageView
+    android:id="@+id/list_empty_icon"
+    style="@style/empty_view_image"
+    android:layout_below="@+id/list_empty_title"
+    android:src="@drawable/ic_music_note_black_80dp"/>
+
+  <TextView
+    android:id="@+id/list_empty_subtitle"
+    fontPath="fonts/roboto_light.ttf"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/list_empty_icon"
+    android:layout_centerHorizontal="true"
+    android:fontFamily="sans-serif-light"
+    android:text="@string/swipe_to_refresh"
+    android:textSize="14sp"
+    tools:ignore="MissingPrefix"/>
+
+</RelativeLayout>

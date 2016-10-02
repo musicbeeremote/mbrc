@@ -3,7 +3,7 @@ package com.kelsos.mbrc.ui.activities.nav
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import android.view.View
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
@@ -14,14 +14,17 @@ import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.ui.PlaylistAvailable
 import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
+import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
 
 class PlaylistActivity : BaseActivity(), PlaylistAdapter.OnPlaylistPressedListener, SwipeRefreshLayout.OnRefreshListener {
 
-  @BindView(R.id.swipe_layout) lateinit var swipeLayout: SwipeRefreshLayout
-  @BindView(R.id.playlist_list) lateinit var playlistList: RecyclerView
+  @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
+  @BindView(R.id.playlist_list) lateinit var playlistList: EmptyRecyclerView
+  @BindView(R.id.empty_view) lateinit var emptyView: View
 
   @Inject lateinit var adapter: PlaylistAdapter
   private var scope: Scope? = null
@@ -33,7 +36,9 @@ class PlaylistActivity : BaseActivity(), PlaylistAdapter.OnPlaylistPressedListen
     setContentView(R.layout.activity_playlists)
     ButterKnife.bind(this)
     super.setup()
+    swipeLayout.setSwipeableChildren(R.id.playlist_list, R.id.empty_view)
     adapter.setPlaylistPressedListener(this)
+    playlistList.emptyView = emptyView
     playlistList.adapter = adapter
     playlistList.layoutManager = LinearLayoutManager(this)
     swipeLayout.setOnRefreshListener(this)
