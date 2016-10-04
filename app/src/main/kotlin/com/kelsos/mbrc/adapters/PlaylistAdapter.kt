@@ -18,7 +18,7 @@ class PlaylistAdapter
 @Inject constructor(context: Activity) : RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
 
   private val inflater: LayoutInflater
-  private var data: MutableList<Playlist>? = null
+  private var data: MutableList<Playlist>
   private var playlistPressedListener: OnPlaylistPressedListener? = null
 
   init {
@@ -31,22 +31,23 @@ class PlaylistAdapter
     val viewHolder = ViewHolder(view)
 
     viewHolder.itemView.setOnClickListener {
-      playlistPressedListener?.playlistPressed(data!![viewHolder.adapterPosition].url)
+      playlistPressedListener?.playlistPressed(data[viewHolder.adapterPosition].url)
     }
     return viewHolder
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val playlist = data!![holder.adapterPosition]
+    val playlist = data[holder.adapterPosition]
     holder.name.text = playlist.name
+    holder.context.visibility = View.GONE
   }
 
   override fun getItemCount(): Int {
-    return data?.size ?: 0
+    return data.size
   }
 
   fun update(playlist: MutableList<Playlist>) {
-    this.data!!.clear()
+    this.data.clear()
     this.data = playlist
     notifyDataSetChanged()
   }
