@@ -38,8 +38,8 @@ class PlaylistActivity : BaseActivity(), PlaylistAdapter.OnPlaylistPressedListen
     super.setup()
     swipeLayout.setSwipeableChildren(R.id.playlist_list, R.id.empty_view)
     adapter.setPlaylistPressedListener(this)
-    playlistList.emptyView = emptyView
     playlistList.adapter = adapter
+    playlistList.emptyView = emptyView
     playlistList.layoutManager = LinearLayoutManager(this)
     swipeLayout.setOnRefreshListener(this)
   }
@@ -47,7 +47,7 @@ class PlaylistActivity : BaseActivity(), PlaylistAdapter.OnPlaylistPressedListen
   public override fun onStart() {
     super.onStart()
     bus.register(this, PlaylistAvailable::class.java, { this.onPlaylistAvailable(it) }, true)
-    bus.post(MessageEvent(ProtocolEventType.UserAction, UserAction(Protocol.PlaylistList, true)))
+    bus.post(MessageEvent.action(UserAction(Protocol.PlaylistList, true)))
   }
 
   public override fun onStop() {
@@ -79,4 +79,4 @@ class PlaylistActivity : BaseActivity(), PlaylistAdapter.OnPlaylistPressedListen
     }
     bus.post(MessageEvent(ProtocolEventType.UserAction, UserAction(Protocol.PlaylistList, true)))
   }
-}// Required empty public constructor
+}
