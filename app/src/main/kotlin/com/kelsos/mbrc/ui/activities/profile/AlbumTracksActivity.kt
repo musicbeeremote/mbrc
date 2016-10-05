@@ -65,7 +65,7 @@ class AlbumTracksActivity : FontActivity(), TrackEntryAdapter.MenuItemSelectedLi
     adapter.setMenuItemSelectedListener(this)
     listTracks.layoutManager = LinearLayoutManager(baseContext)
     listTracks.adapter = adapter
-    listTracks.setEmptyView(emptyView)
+    listTracks.emptyView = emptyView
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {

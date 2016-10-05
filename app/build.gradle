@@ -120,7 +120,7 @@ task wrapper(type: Wrapper) {
 ext {
   support_library_version = "24.2.1"
   dbflow_version = "3.1.1"
-  toothpick_version = "1.0.0-RC10"
+  toothpick_version = "1.0.0"
   jackson_version = "2.8.3"
   butterknife_version = "8.4.0"
   material_dialogs_version = "0.9.0.1"
@@ -160,7 +160,7 @@ dependencies {
   //highly recommended
   testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
   testCompile "org.robolectric:robolectric:3.1.2"
-  testCompile "org.mockito:mockito-core:1.10.19"
+  testCompile "org.mockito:mockito-core:2.2.0-beta.1"
   testCompile "com.google.truth:truth:0.30"
   testCompile 'junit:junit:4.12'
 

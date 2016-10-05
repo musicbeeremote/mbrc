@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
@@ -25,6 +26,7 @@ class PlaylistActivity : BaseActivity(), PlaylistAdapter.OnPlaylistPressedListen
   @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
   @BindView(R.id.playlist_list) lateinit var playlistList: EmptyRecyclerView
   @BindView(R.id.empty_view) lateinit var emptyView: View
+  @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
 
   @Inject lateinit var adapter: PlaylistAdapter
   private var scope: Scope? = null
@@ -38,10 +40,11 @@ class PlaylistActivity : BaseActivity(), PlaylistAdapter.OnPlaylistPressedListen
     super.setup()
     swipeLayout.setSwipeableChildren(R.id.playlist_list, R.id.empty_view)
     adapter.setPlaylistPressedListener(this)
-    playlistList.adapter = adapter
-    playlistList.emptyView = emptyView
     playlistList.layoutManager = LinearLayoutManager(this)
+    playlistList.emptyView = emptyView
+    playlistList.adapter = adapter
     swipeLayout.setOnRefreshListener(this)
+    emptyViewTitle.setText(R.string.playlists_list_empty)
   }
 
   public override fun onStart() {

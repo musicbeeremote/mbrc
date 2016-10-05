@@ -71,7 +71,7 @@ class BrowseAlbumFragment : Fragment(), AlbumEntryAdapter.MenuItemSelectedListen
         recycler.layoutManager = mLayoutManager
         adapter.setMenuItemSelectedListener(this)
         recycler.adapter = adapter
-        recycler.setEmptyView(emptyView)
+        recycler.emptyView = emptyView
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem, entry: Album) {
