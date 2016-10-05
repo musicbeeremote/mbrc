@@ -63,7 +63,7 @@ class BrowseGenreFragment : Fragment(), GenreEntryAdapter.MenuItemSelectedListen
     recycler.setHasFixedSize(true)
     adapter.setMenuItemSelectedListener(this)
     recycler.adapter = adapter
-    recycler.setEmptyView(emptyView)
+    recycler.emptyView = emptyView
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Genre): Boolean {

@@ -66,7 +66,7 @@ class BrowseArtistFragment : Fragment(), ArtistEntryAdapter.MenuItemSelectedList
         recycler.layoutManager = layoutManager
         adapter.setMenuItemSelectedListener(this)
         recycler.adapter = adapter
-        recycler.setEmptyView(emptyView)
+        recycler.emptyView = emptyView
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem, entry: Artist) {

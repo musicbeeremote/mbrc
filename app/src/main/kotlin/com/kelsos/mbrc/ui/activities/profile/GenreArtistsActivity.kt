@@ -57,7 +57,7 @@ class GenreArtistsActivity : FontActivity(), ArtistEntryAdapter.MenuItemSelected
     adapter.setMenuItemSelectedListener(this)
     recyclerView.layoutManager = LinearLayoutManager(this)
     recyclerView.adapter = adapter
-    recyclerView.setEmptyView(emptyView)
+    recyclerView.emptyView = emptyView
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Artist) {

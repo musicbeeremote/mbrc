@@ -57,7 +57,7 @@ class SearchResultsActivity : FontActivity(), SearchResultAdapter.OnSearchItemSe
     }
 
     searchResultsRecycler.adapter = adapter
-    searchResultsRecycler.setEmptyView(emptyView)
+    searchResultsRecycler.emptyView = emptyView
     searchResultsRecycler.layoutManager = LinearLayoutManager(this)
     adapter.setOnSearchItemSelectedListener(this)
     emptyViewText.setText(R.string.no_results_found)
