@@ -64,7 +64,7 @@ class BrowseTrackFragment : Fragment(), TrackEntryAdapter.MenuItemSelectedListen
     recycler.layoutManager = layoutManager
     adapter.setMenuItemSelectedListener(this)
     recycler.adapter = adapter
-    recycler.setEmptyView(emptyView)
+    recycler.emptyView = emptyView
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Track) {

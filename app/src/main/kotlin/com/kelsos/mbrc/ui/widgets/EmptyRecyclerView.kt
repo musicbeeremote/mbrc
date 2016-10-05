@@ -6,7 +6,11 @@ import android.util.AttributeSet
 import android.view.View
 
 class EmptyRecyclerView : RecyclerView {
-  internal var emptyView: View? = null
+  var emptyView: View? = null
+    set(value) {
+      field = value
+      checkIfEmpty()
+    }
 
   constructor(context: Context) : super(context) {
   }
@@ -18,9 +22,7 @@ class EmptyRecyclerView : RecyclerView {
   }
 
   internal fun checkIfEmpty() {
-    if (emptyView != null) {
-      emptyView!!.visibility = if (adapter.itemCount > 0) View.GONE else View.VISIBLE
-    }
+    emptyView?.visibility = if (adapter != null && adapter.itemCount > 0) View.GONE else View.VISIBLE
   }
 
   internal val observer: RecyclerView.AdapterDataObserver = object : RecyclerView.AdapterDataObserver() {
@@ -35,11 +37,6 @@ class EmptyRecyclerView : RecyclerView {
     oldAdapter?.unregisterAdapterDataObserver(observer)
     super.setAdapter(adapter)
     adapter?.registerAdapterDataObserver(observer)
-  }
-
-  fun setEmptyView(emptyView: View?) {
-    this.emptyView = emptyView
-    checkIfEmpty()
   }
 }
 
