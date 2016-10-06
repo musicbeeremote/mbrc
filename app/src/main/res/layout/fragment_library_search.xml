@@ -1,53 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_vertical"
-    android:orientation="vertical">
+<com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/swipe_layout"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
 
-  <android.support.v4.widget.SwipeRefreshLayout
-      android:id="@+id/swipe_layout"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent">
+  <FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
-        android:id="@+id/search_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="@dimen/small_margin"
-        android:paddingTop="@dimen/small_margin"
-        android:scrollbars="vertical"
-        tools:listitem="@layout/listitem_single" />
-
-  </android.support.v4.widget.SwipeRefreshLayout>
-
-  <LinearLayout
-      android:id="@+id/empty_view"
+      android:id="@+id/library_data_list"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:gravity="center"
-      android:orientation="horizontal"
-      android:visibility="gone">
+      android:paddingBottom="@dimen/small_margin"
+      android:paddingTop="@dimen/small_margin"
+      android:scrollbars="vertical"
+      tools:listitem="@layout/listitem_single"/>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingEnd="@dimen/small_margin"
-        android:paddingRight="@dimen/small_margin"
-        android:src="@drawable/ic_error_outline_black_24dp"
-        android:tint="@color/white"
-        tools:ignore="RtlSymmetry" />
+    <include
+      layout="@layout/list_empty_view"
+      android:visibility="gone"/>
+  </FrameLayout>
 
-    <TextView
-        android:id="@+id/empty_view_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-light"
-        android:text="@string/search_for_results_to_appear"
-        android:textColor="@color/primary_text"
-        tools:ignore="UnusedAttribute" />
 
-  </LinearLayout>
-
-</LinearLayout>
+</com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout>
