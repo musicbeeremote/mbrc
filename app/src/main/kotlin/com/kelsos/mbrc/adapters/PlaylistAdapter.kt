@@ -46,9 +46,9 @@ class PlaylistAdapter
     return data.size
   }
 
-  fun update(playlist: MutableList<Playlist>) {
+  fun update(playlist: List<Playlist>) {
     this.data.clear()
-    this.data = playlist
+    this.data.addAll(playlist)
     notifyDataSetChanged()
   }
 
