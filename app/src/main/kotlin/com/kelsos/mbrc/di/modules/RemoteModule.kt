@@ -8,10 +8,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.bus.RxBusImpl
 import com.kelsos.mbrc.repository.ConnectionRepository
 import com.kelsos.mbrc.repository.ConnectionRepositoryImpl
-import com.kelsos.mbrc.services.LibraryService
-import com.kelsos.mbrc.services.LibraryServiceImpl
-import com.kelsos.mbrc.services.NowPlayingService
-import com.kelsos.mbrc.services.NowPlayingServiceImpl
+import com.kelsos.mbrc.services.*
 import toothpick.config.Module
 
 class RemoteModule : Module() {
@@ -22,6 +19,7 @@ class RemoteModule : Module() {
     bind(RxBus::class.java).to(RxBusImpl::class.java).singletonInScope()
     bind(ObjectMapper::class.java).toInstance(mapper)
     bind(LibraryService::class.java).to(LibraryServiceImpl::class.java).singletonInScope()
+    bind(PlaylistService::class.java).to(PlaylistServiceImpl::class.java).singletonInScope()
     bind(NowPlayingService::class.java).to(NowPlayingServiceImpl::class.java).singletonInScope()
     bind(NotificationManagerCompat::class.java).toProvider(NotificationManagerCompatProvider::class.java)
     bind(ConnectionRepository::class.java).to(ConnectionRepositoryImpl::class.java)

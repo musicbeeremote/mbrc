@@ -154,4 +154,6 @@
   <string name="albums_list_empty">No albums found</string>
   <string name="tracks_list_empty">No tracks found</string>
   <string name="swipe_to_refresh">Swipe to refresh the list.</string>
+  <string name="playlists_load_failed">There was an error while trying to load the playlists.</string>
+  <string name="service_connection_error">Failed to connect to remote host.</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.ui.activities.nav
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
@@ -14,11 +15,16 @@ import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.ui.PlaylistAvailable
+import com.kelsos.mbrc.services.PlaylistService
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
+import timber.log.Timber
 import toothpick.Scope
 import toothpick.Toothpick
+import java.net.ConnectException
 import javax.inject.Inject
 
 class PlaylistActivity : BaseActivity(), PlaylistAdapter.OnPlaylistPressedListener, SwipeRefreshLayout.OnRefreshListener {
@@ -29,6 +35,7 @@ class PlaylistActivity : BaseActivity(), PlaylistAdapter.OnPlaylistPressedListen
   @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
 
   @Inject lateinit var adapter: PlaylistAdapter
+  @Inject lateinit var service: PlaylistService
   private var scope: Scope? = null
 
   public override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,6 +87,21 @@ class PlaylistActivity : BaseActivity(), PlaylistAdapter.OnPlaylistPressedListen
     if (!swipeLayout.isRefreshing) {
       swipeLayout.isRefreshing = true
     }
-    bus.post(MessageEvent(ProtocolEventType.UserAction, UserAction(Protocol.PlaylistList, true)))
+
+    service.getPlaylists(0, 5000)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .doOnTerminate { swipeLayout.isRefreshing = false }
+        .subscribe({
+          adapter.update(it.data)
+        }, {
+          if (it.cause is ConnectException) {
+            Snackbar.make(swipeLayout, R.string.service_connection_error, Snackbar.LENGTH_SHORT).show()
+          } else {
+            Snackbar.make(swipeLayout, R.string.playlists_load_failed, Snackbar.LENGTH_SHORT).show()
+          }
+
+          Timber.v(it, "Failed to load playlists")
+        })
   }
 }
