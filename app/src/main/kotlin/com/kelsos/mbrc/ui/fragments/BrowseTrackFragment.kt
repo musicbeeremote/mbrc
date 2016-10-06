@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
@@ -19,6 +20,7 @@ import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.services.BrowseSync
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
+import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -28,9 +30,10 @@ import javax.inject.Inject
 
 class BrowseTrackFragment : Fragment(), TrackEntryAdapter.MenuItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
 
-  @BindView(R.id.swipe_layout) lateinit var swipeLayout: SwipeRefreshLayout
-  @BindView(R.id.search_recycler_view) lateinit var recycler: EmptyRecyclerView
-  @BindView(R.id.empty_view) lateinit var emptyView: LinearLayout
+  @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
+  @BindView(R.id.library_data_list) lateinit var recycler: EmptyRecyclerView
+  @BindView(R.id.empty_view) lateinit var emptyView: View
+  @BindView(R.id.list_empty_title) lateinit var emptyTitle: TextView
 
   @Inject lateinit var bus: RxBus
   @Inject lateinit var adapter: TrackEntryAdapter
@@ -42,6 +45,8 @@ class BrowseTrackFragment : Fragment(), TrackEntryAdapter.MenuItemSelectedListen
   override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     val view = inflater!!.inflate(R.layout.fragment_library_search, container, false)
     ButterKnife.bind(this, view)
+    swipeLayout.setSwipeableChildren(R.id.library_data_list, R.id.empty_view)
+    emptyTitle.setText(R.string.tracks_list_empty)
     return view
   }
 
@@ -85,11 +90,11 @@ class BrowseTrackFragment : Fragment(), TrackEntryAdapter.MenuItemSelectedListen
     }
 
     subscription = sync.syncTracks(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnTerminate { swipeLayout.isRefreshing = false }
-            .subscribe({ adapter.refresh() }) { t ->
-      bus.post(NotifyUser(R.string.refresh_failed))
-      Timber.v(t, "failed")
-    }
+        .observeOn(AndroidSchedulers.mainThread())
+        .doOnTerminate { swipeLayout.isRefreshing = false }
+        .subscribe({ adapter.refresh() }) { t ->
+          bus.post(NotifyUser(R.string.refresh_failed))
+          Timber.v(t, "failed")
+        }
   }
 }
