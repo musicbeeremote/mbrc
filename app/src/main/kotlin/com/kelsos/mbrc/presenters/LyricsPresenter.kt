@@ -14,7 +14,7 @@ class LyricsPresenter : BasePresenter<LyricsView>() {
       return
     }
 
-    updateLyrics(model.getLyrics())
+    updateLyrics(model.lyrics)
   }
 
   fun updateLyrics(text: String) {
