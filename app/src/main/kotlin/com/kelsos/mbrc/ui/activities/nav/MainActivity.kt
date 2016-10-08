@@ -34,6 +34,8 @@ import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.ui.*
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
+import com.kelsos.mbrc.helper.ProgressSeekerHelper
+import com.kelsos.mbrc.helper.ProgressSeekerHelper.ProgressUpdate
 import com.kelsos.mbrc.helper.VolumeChangeHelper
 import com.kelsos.mbrc.presenters.MainViewPresenter
 import com.kelsos.mbrc.ui.activities.BaseActivity
@@ -45,17 +47,16 @@ import rx.functions.Action1
 import timber.log.Timber
 import toothpick.Toothpick
 import java.io.File
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledFuture
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MainActivity : BaseActivity(), MainView {
-  private val progressScheduler = Executors.newScheduledThreadPool(1)
+class MainActivity : BaseActivity(), MainView, ProgressUpdate {
+
+
   // Injects
   @Inject lateinit var presenter: MainViewPresenter
+  @Inject lateinit var progressHelper: ProgressSeekerHelper
   // Inject elements of the view
   @BindView(R.id.main_artist_label) lateinit var artistLabel: TextView
   @BindView(R.id.main_title_label) lateinit var titleLabel: TextView
@@ -71,8 +72,8 @@ class MainActivity : BaseActivity(), MainView {
   @BindView(R.id.main_album_cover_image_view) lateinit var albumCover: ImageView
   private var mShareActionProvider: ShareActionProvider? = null
   private var previousVol: Int = 0
-  private var mProgressUpdateHandler: ScheduledFuture<*>? = null
   private var menu: Menu? = null
+
 
   private val progressBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -175,6 +176,7 @@ class MainActivity : BaseActivity(), MainView {
     volumeChangeListener = VolumeChangeHelper(Action1<Int> { this.changeVolume(it) })
     volumeBar.setOnSeekBarChangeListener(volumeChangeListener)
     progressBar.setOnSeekBarChangeListener(progressBarChangeListener)
+    progressHelper.setProgressListener(this)
   }
 
   public override fun onStart() {
@@ -343,17 +345,17 @@ class MainActivity : BaseActivity(), MainView {
       tag = "Playing"
       /* Start the animation if the track is playing*/
       presenter.requestNowPlayingPosition()
-      trackProgressAnimation()
+      trackProgressAnimation(progressBar.progress, progressBar.max)
     } else if (PlayerState.PAUSED == state) {
       resId = R.drawable.ic_play_circle_filled_black_24dp
       tag = PAUSED
       /* Stop the animation if the track is paused*/
-      stopTrackProgressAnimation()
+      progressHelper.stop()
     } else if (PlayerState.STOPPED == state) {
       resId = R.drawable.ic_play_circle_filled_black_24dp
       tag = STOPPED
       /* Stop the animation if the track is paused*/
-      stopTrackProgressAnimation()
+      progressHelper.stop()
       activateStoppedState()
     } else {
       resId = R.drawable.ic_play_circle_filled_black_24dp
@@ -366,49 +368,18 @@ class MainActivity : BaseActivity(), MainView {
   }
 
   /**
-   * If the track progress animation is running the the function stops it.
-   */
-  private fun stopTrackProgressAnimation() {
-    if (mProgressUpdateHandler != null) {
-      mProgressUpdateHandler!!.cancel(true)
-    }
-  }
-
-  /**
    * Starts the progress animation when called. If It was previously running then it restarts it.
    */
-  private fun trackProgressAnimation() {
-    /* If the scheduled tasks is not null then cancel it and clear it along with the
-timer to create them anew */
-    val timePeriod = 1
-    stopTrackProgressAnimation()
+  private fun trackProgressAnimation(current: Int, total: Int) {
+    progressHelper.stop()
+
     val tag = playPauseButton.tag
     if (STOPPED == tag || PAUSED == tag) {
       return
     }
 
-    val updateProgress = {
 
-      val currentProgress = progressBar.progress / 1000
-      val currentMinutes = currentProgress / 60
-      val currentSeconds = currentProgress % 60
-
-      runOnUiThread {
-        try {
-          progressBar.progress = progressBar.progress + 1000
-          trackProgressCurrent.text = getString(R.string.playback_progress,
-              currentMinutes,
-              currentSeconds)
-        } catch (ex: Exception) {
-          Timber.d(ex, "animation timer")
-        }
-      }
-    }
-
-    mProgressUpdateHandler = progressScheduler.scheduleAtFixedRate(updateProgress,
-        0,
-        timePeriod.toLong(),
-        TimeUnit.SECONDS)
+    progressHelper.update(current, total)
   }
 
   private fun activateStoppedState() {
@@ -437,7 +408,7 @@ timer to create them anew */
 
   override fun updateConnection(status: Int) {
     if (status == Connection.OFF) {
-      stopTrackProgressAnimation()
+      progressHelper.stop()
       activateStoppedState()
     }
   }
@@ -475,7 +446,7 @@ timer to create them anew */
     progressBar.max = total
     progressBar.progress = current
 
-    trackProgressAnimation()
+    trackProgressAnimation(position.current, position.total)
   }
 
   private fun handleScrobbleChange(event: ScrobbleChange) {
@@ -509,6 +480,17 @@ timer to create them anew */
 
   override fun active(): Int {
     return R.id.nav_home
+  }
+
+  override fun progress(position: Int, duration: Int) {
+    val currentProgress = progressBar.progress / 1000
+    val currentMinutes = currentProgress / 60
+    val currentSeconds = currentProgress % 60
+
+    progressBar.progress = progressBar.progress + 1000
+    trackProgressCurrent.text = getString(R.string.playback_progress,
+        currentMinutes,
+        currentSeconds)
   }
 
   override fun onDestroy() {

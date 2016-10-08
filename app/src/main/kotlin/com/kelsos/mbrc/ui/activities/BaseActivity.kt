@@ -17,7 +17,6 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.Toolbar
 import android.view.KeyEvent
 import android.view.MenuItem
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
@@ -61,7 +60,7 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
 
   protected abstract fun active(): Int
 
-  private fun onConnectLongClick(view: View): Boolean {
+  private fun onConnectLongClick(): Boolean {
     ifNotRunningStartService()
     bus.post(MessageEvent(UserInputEventType.ResetConnection))
     return true
@@ -74,7 +73,7 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
     Toothpick.inject(this, scope)
   }
 
-  private fun onConnectClick(view: View) {
+  private fun onConnectClick() {
     ifNotRunningStartService()
     bus.post(MessageEvent(UserInputEventType.StartConnection))
   }
@@ -219,8 +218,8 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
     val header = navigationView.getHeaderView(0)
     connectText = ButterKnife.findById<TextView>(header, R.id.nav_connect_text)
     connect = ButterKnife.findById<ImageView>(header, R.id.connect_button)
-    connect!!.setOnClickListener({ this.onConnectClick(it) })
-    connect!!.setOnLongClickListener({ this.onConnectLongClick(it) })
+    connect!!.setOnClickListener({ this.onConnectClick() })
+    connect!!.setOnLongClickListener({ this.onConnectLongClick() })
 
     val actionBar = supportActionBar
     if (actionBar != null) {

@@ -16,17 +16,17 @@ class RemoteController
 @Inject
 constructor(bus: RxBus, app: Application) : Runnable {
   private val scope: Scope
-  private var commandMap: MutableMap<String, Class<out ICommand>>
+  private var commandMap: MutableMap<String, ICommand>
   private val eventQueue: LinkedBlockingQueue<IEvent>
 
   init {
     eventQueue = LinkedBlockingQueue<IEvent>()
     bus.register(this, MessageEvent::class.java, { this.handleUserActionEvents(it) })
     scope = Toothpick.openScope(app)
-    commandMap = HashMap<String, Class<out ICommand>>()
+    commandMap = HashMap<String, ICommand>()
   }
 
-  fun register(type: String, command: Class<out ICommand>) {
+  fun register(type: String, command: ICommand) {
     if (!commandMap.containsKey(type)) {
       commandMap.put(type, command)
     }
@@ -54,14 +54,10 @@ constructor(bus: RxBus, app: Application) : Runnable {
 
   @Suppress("UNCHECKED_CAST")
   @Synchronized internal fun executeCommand(event: IEvent) {
-    val commandClass = commandMap[event.type] ?: return
-    val commandInstance: ICommand?
+    val command = commandMap[event.type] ?: return
+
     try {
-      commandInstance = scope.getInstance<ICommand>(commandClass as Class<ICommand>)
-      if (commandInstance == null) {
-        return
-      }
-      commandInstance.execute(event)
+      command.execute(event)
     } catch (ex: Exception) {
       Timber.d(ex, "executing command for type: \t%s", event.type)
       Timber.d("command data: \t%s", event.data)

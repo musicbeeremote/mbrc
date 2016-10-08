@@ -43,9 +43,6 @@ class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPl
   private var scope: Scope? = null
 
   private fun handlePlayingTrackChange(event: TrackInfo) {
-    if (adapter.javaClass != NowPlayingAdapter::class.java) {
-      return
-    }
     adapter.setPlayingTrackIndex(NowPlaying(event.artist, event.title))
     adapter.notifyDataSetChanged()
   }
@@ -112,9 +109,7 @@ class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPl
 
   public override fun onResume() {
     super.onResume()
-    bus.register(this, TrackInfoChangeEvent::class.java,
-        { trackInfoChangeEvent -> handlePlayingTrackChange(trackInfoChangeEvent.trackInfo) },
-        true)
+    bus.register(this, TrackInfoChangeEvent::class.java, { handlePlayingTrackChange(it.trackInfo) }, true)
   }
 
   public override fun onPause() {

@@ -6,5 +6,5 @@ import rx.Observable
 
 interface PlaylistService {
 
-  open fun getPlaylists(offset: Int, limit: Int): Observable<Page<Playlist>>
+  fun getPlaylists(offset: Int, limit: Int): Observable<Page<Playlist>>
 }

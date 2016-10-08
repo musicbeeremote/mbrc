@@ -9,6 +9,8 @@ import com.kelsos.mbrc.events.bus.RxBusImpl
 import com.kelsos.mbrc.repository.ConnectionRepository
 import com.kelsos.mbrc.repository.ConnectionRepositoryImpl
 import com.kelsos.mbrc.services.*
+import rx.Scheduler
+import rx.android.schedulers.AndroidSchedulers
 import toothpick.config.Module
 
 class RemoteModule : Module() {
@@ -23,5 +25,6 @@ class RemoteModule : Module() {
     bind(NowPlayingService::class.java).to(NowPlayingServiceImpl::class.java).singletonInScope()
     bind(NotificationManagerCompat::class.java).toProvider(NotificationManagerCompatProvider::class.java)
     bind(ConnectionRepository::class.java).to(ConnectionRepositoryImpl::class.java)
+    bind(Scheduler::class.java).withName("main").toProviderInstance { AndroidSchedulers.mainThread() }
   }
 }

@@ -14,24 +14,20 @@ import javax.inject.Inject
 class SettingsActivity : FontActivity() {
 
   @Inject lateinit var bus: RxBus
-  private var scope: Scope? = null
+  private lateinit var scope: Scope
 
   override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this))
+    scope.installModules(SmoothieActivityModule(this))
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.settings_activity)
 
     val mToolbar = findViewById(R.id.toolbar) as Toolbar
     setSupportActionBar(mToolbar)
-
-    val actionBar = supportActionBar
-    if (actionBar != null) {
-      actionBar.setHomeButtonEnabled(true)
-      actionBar.setDisplayHomeAsUpEnabled(true)
-      actionBar.setTitle(R.string.nav_settings)
-    }
+    supportActionBar?.setHomeButtonEnabled(true)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    supportActionBar?.setTitle(R.string.nav_settings)
 
     val fragment = SettingsFragment.newInstance(bus)
     supportFragmentManager.beginTransaction().replace(R.id.content_wrapper, fragment).commit()
