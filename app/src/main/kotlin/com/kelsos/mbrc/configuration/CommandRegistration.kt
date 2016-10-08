@@ -20,6 +20,7 @@ object CommandRegistration {
     controller.register(ProtocolEventType.InitiateProtocolRequest, ProtocolRequest::class.java)
     controller.register(ProtocolEventType.PluginVersionCheck, VersionCheckCommand::class.java)
     controller.register(ProtocolEventType.UserAction, ProcessUserAction::class.java)
+
     controller.register(Protocol.NowPlayingTrack, UpdateNowPlayingTrack::class.java)
     controller.register(Protocol.NowPlayingCover, UpdateCover::class.java)
     controller.register(Protocol.NowPlayingRating, UpdateRating::class.java)
@@ -54,45 +55,6 @@ object CommandRegistration {
   }
 
   fun unregister(controller: RemoteController) {
-    controller.unregister(ProtocolEventType.ReduceVolume, ReduceVolumeOnRingCommand::class.java)
-    controller.unregister(ProtocolEventType.HandshakeComplete, VisualUpdateHandshakeComplete::class.java)
-    controller.unregister(ProtocolEventType.InformClientNotAllowed, NotifyNotAllowedCommand::class.java)
-    controller.unregister(ProtocolEventType.InformClientPluginOutOfDate,
-        NotifyPluginOutOfDateCommand::class.java)
-    controller.unregister(ProtocolEventType.InitiateProtocolRequest, ProtocolRequest::class.java)
-    controller.unregister(ProtocolEventType.PluginVersionCheck, VersionCheckCommand::class.java)
-    controller.unregister(ProtocolEventType.UserAction, ProcessUserAction::class.java)
-    controller.unregister(Protocol.NowPlayingTrack, UpdateNowPlayingTrack::class.java)
-    controller.unregister(Protocol.NowPlayingCover, UpdateCover::class.java)
-    controller.unregister(Protocol.NowPlayingRating, UpdateRating::class.java)
-    controller.unregister(Protocol.PlayerStatus, UpdatePlayerStatus::class.java)
-    controller.unregister(Protocol.PlayerState, UpdatePlayState::class.java)
-    controller.unregister(Protocol.PlayerRepeat, UpdateRepeat::class.java)
-    controller.unregister(Protocol.PlayerVolume, UpdateVolume::class.java)
-    controller.unregister(Protocol.PlayerMute, UpdateMute::class.java)
-    controller.unregister(Protocol.PlayerShuffle, UpdateShuffle::class.java)
-    controller.unregister(Protocol.PlayerScrobble, UpdateLastFm::class.java)
-    controller.unregister(Protocol.NowPlayingLyrics, UpdateLyrics::class.java)
-    controller.unregister(Protocol.NowPlayingLfmRating, UpdateLfmRating::class.java)
-    controller.unregister(Protocol.NowPlayingListRemove, UpdateNowPlayingTrackRemoval::class.java)
-    controller.unregister(Protocol.NowPlayingListMove, UpdateNowPlayingTrackMoved::class.java)
-    controller.unregister(Protocol.NowPlayingPosition, UpdatePlaybackPositionCommand::class.java)
-    controller.unregister(Protocol.PluginVersion, UpdatePluginVersionCommand::class.java)
-    controller.unregister(Protocol.PING, ProtocolPingHandle::class.java)
-    controller.unregister(Protocol.PONG, ProtocolPongHandle::class.java)
-
-
-    controller.unregister(UserInputEventType.SettingsChanged, RestartConnectionCommand::class.java)
-    controller.unregister(UserInputEventType.CancelNotification, CancelNotificationCommand::class.java)
-    controller.unregister(UserInputEventType.StartConnection, InitiateConnectionCommand::class.java)
-    controller.unregister(UserInputEventType.TerminateConnection, TerminateConnectionCommand::class.java)
-    controller.unregister(UserInputEventType.ResetConnection, RestartConnectionCommand::class.java)
-    controller.unregister(UserInputEventType.StartDiscovery, StartDiscoveryCommand::class.java)
-    controller.unregister(UserInputEventType.KeyVolumeUp, KeyVolumeUpCommand::class.java)
-    controller.unregister(UserInputEventType.KeyVolumeDown, KeyVolumeDownCommand::class.java)
-    controller.unregister(SocketEventType.SocketDataAvailable, SocketDataAvailableCommand::class.java)
-    controller.unregister(SocketEventType.SocketStatusChanged,
-        ConnectionStatusChangedCommand::class.java)
-    controller.unregister(SocketEventType.SocketHandshakeUpdate, HandleHandshake::class.java)
+    controller.clearCommands()
   }
 }
