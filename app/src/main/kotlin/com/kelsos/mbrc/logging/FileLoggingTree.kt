@@ -47,11 +47,13 @@ class FileLoggingTree(context: Context): Timber.Tree() {
 
     val namingPolicy = SizeAndTimeBasedFNATP<ILoggingEvent>()
     namingPolicy.maxFileSize = "2MB"
+    namingPolicy.start()
 
     val rollingPolicy = TimeBasedRollingPolicy<ILoggingEvent>()
     rollingPolicy.maxHistory = 3
     rollingPolicy.fileNamePattern = "$LOG_DIR/log.%d{yyyy-MM-dd}.%i.html"
     rollingPolicy.timeBasedFileNamingAndTriggeringPolicy = namingPolicy
+    rollingPolicy.start()
 
     val fileAppender = RollingFileAppender<ILoggingEvent>()
     fileAppender.triggeringPolicy = rollingPolicy

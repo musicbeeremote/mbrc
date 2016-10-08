@@ -59,7 +59,7 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
     }
 
     Single.create { subscriber: SingleSubscriber<in FlowCursorList<Track>> ->
-      val list = FlowCursorList(query)
+      val list = FlowCursorList.Builder<Track>(Track::class.java).modelQueriable(query).build();
       subscriber.onSuccess(list)
     }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ genres ->
       data = genres
@@ -75,7 +75,7 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
 
   private fun albumTracks(album: String): Where<Track> {
     val query: Where<Track>
-    query = SQLite.select().from<Track>(Track::class.java).where(Track_Table.album.like('%' + album + '%')).orderBy(Track_Table.album_artist, true).orderBy(Track_Table.album, true).orderBy(Track_Table.disc, true).orderBy(Track_Table.trackno, true)
+    query = SQLite.select().from<Track>(Track::class.java).where(Track_Table.album.like("%$album%")).orderBy(Track_Table.album_artist, true).orderBy(Track_Table.album, true).orderBy(Track_Table.disc, true).orderBy(Track_Table.trackno, true)
     return query
   }
 

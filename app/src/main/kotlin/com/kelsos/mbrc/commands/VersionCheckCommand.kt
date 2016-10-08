@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.commands
 
-import android.content.Context
+import android.app.Application
 import android.content.pm.PackageManager
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -23,7 +23,7 @@ class VersionCheckCommand
 @Inject
 internal constructor(private val model: MainDataModel,
                      private val mapper: ObjectMapper,
-                     private val context: Context,
+                     private val context: Application,
                      private val manager: SettingsManager,
                      private val bus: RxBus) : ICommand {
 

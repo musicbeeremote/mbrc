@@ -36,13 +36,14 @@ class RemoteService : Service(), ForegroundHooks {
   @Inject lateinit var browseSync: BrowseSync
 
   private var threadPoolExecutor: ExecutorService? = null
+  private lateinit var scope: toothpick.Scope
 
   override fun onBind(intent: Intent): IBinder? {
     return mBinder
   }
 
   override fun onCreate() {
-    val scope = Toothpick.openScope(application)
+    scope = Toothpick.openScope(application)
     super.onCreate()
     Toothpick.inject(this, scope)
     this.registerReceiver(receiver, receiver.filter())
@@ -51,7 +52,7 @@ class RemoteService : Service(), ForegroundHooks {
   override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
     Timber.d("Background Service::Started")
     notificationService.setForegroundHooks(this)
-    CommandRegistration.register(remoteController)
+    CommandRegistration.register(remoteController, scope)
     threadPoolExecutor = Executors.newSingleThreadExecutor()
     threadPoolExecutor!!.execute(remoteController)
     remoteController.executeCommand(MessageEvent(UserInputEventType.StartConnection))
