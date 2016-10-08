@@ -10,6 +10,6 @@ class UpdateLyrics
 constructor(private val model: LyricsModel) : ICommand {
 
   override fun execute(e: IEvent) {
-    model.setLyrics(e.dataString)
+    model.lyrics = e.dataString
   }
 }
