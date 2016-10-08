@@ -3,7 +3,13 @@ Change Log
 
 # Versions
 
-## 1.0.0.alpha.1
+## 1.0.0-alpha.2
+- Full migration to kotling lang
+- Commands are now instantiated on registration.
+- Adds empty view for list without data
+-
+
+## 1.0.0-alpha.1
 - Increases minimum supported Android version from 2.3 to 4.1
 - Reworks part of the application UI
 - Replaces Search with Library browser. Library browser has search functionality for the localy cached metadata.
