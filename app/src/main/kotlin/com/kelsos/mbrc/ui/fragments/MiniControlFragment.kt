@@ -25,11 +25,13 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.CoverChangedEvent
 import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
+import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.presenters.MiniControlPresenter
 import com.kelsos.mbrc.ui.activities.nav.MainActivity
 import com.kelsos.mbrc.views.MiniControlView
 import com.squareup.picasso.Picasso
 import toothpick.Toothpick
+import java.io.File
 import javax.inject.Inject
 
 class MiniControlFragment : Fragment(), MiniControlView {
@@ -95,12 +97,18 @@ class MiniControlFragment : Fragment(), MiniControlView {
     presenter.load()
   }
 
-  override fun updateCover(cover: Bitmap?) {
-    if (cover != null) {
-      trackCover.setImageBitmap(cover)
-    } else {
-      trackCover.setImageResource(R.drawable.ic_image_no_cover)
-    }
+  override fun updateCover(cover: String) {
+    val file = File(cover)
+    val dimens = context.getDimens()
+
+    Picasso.with(context).invalidate(file)
+    Picasso.with(context)
+        .load(file)
+        .placeholder(R.drawable.ic_image_no_cover)
+        .config(Bitmap.Config.RGB_565)
+        .resize(dimens, dimens)
+        .centerCrop()
+        .into(trackCover)
   }
 
   override fun updateTrackInfo(trackInfo: TrackInfo) {
@@ -120,14 +128,7 @@ class MiniControlFragment : Fragment(), MiniControlView {
       trackCover.setImageResource(R.drawable.ic_image_no_cover)
       return
     }
-
-    Picasso.with(activity)
-        .load(event.path)
-        .placeholder(R.drawable.ic_image_no_cover)
-        .config(Bitmap.Config.RGB_565)
-        .centerCrop()
-        .resize(600, 600)
-        .into(trackCover)
+    updateCover(event.path)
   }
 
   private fun onTrackInfoChange(event: TrackInfoChangeEvent) {

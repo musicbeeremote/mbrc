@@ -49,6 +49,7 @@ class UpdateCover
     return Observable.fromEmitter<String>({
       val storage = context.filesDir
       val file = File(storage, "cover.jpg")
+      file.delete()
       val fileStream = FileOutputStream(file)
       val success = bitmap.compress(JPEG, 100, fileStream)
       if (success) {

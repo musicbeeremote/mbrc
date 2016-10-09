@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.presenters
 
+import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.views.MiniControlView
 import javax.inject.Inject
@@ -13,7 +14,7 @@ class MiniControlPresenter : BasePresenter<MiniControlView>() {
       return
     }
 
-    view?.updateCover(model.cover)
+    view?.updateCover(Const.COVER_FILE)
     view?.updateState(model.getPlayState())
     view?.updateTrackInfo(model.trackInfo)
   }
