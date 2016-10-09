@@ -62,5 +62,5 @@ object Protocol {
   val LibraryBrowseTracks = "browsetracks"
   val ONE = "one"
 
-  var ProtocolVersionNumber = 2.2f
+  var ProtocolVersionNumber = 3
 }

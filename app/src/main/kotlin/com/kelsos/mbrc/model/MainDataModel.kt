@@ -8,7 +8,6 @@ import com.kelsos.mbrc.annotations.Repeat.Mode
 import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.constants.ProtocolEventType
-import com.kelsos.mbrc.data.Playlist
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.MessageEvent
@@ -45,7 +44,7 @@ constructor(private val bus: RxBus) {
   var lfmStatus: LfmStatus = LfmStatus.NORMAL
     private set
   private var pluginVersion: String? = null
-  var pluginProtocol: Double = 0.toDouble()
+  var pluginProtocol: Int = 2
 
   @Mode
   var repeat: String
@@ -97,17 +96,6 @@ constructor(private val bus: RxBus) {
 
   private fun updateNotification() {
     bus.post(NotificationDataAvailable(artist, title, album, cover, playState))
-  }
-
-  fun setTrackInfo(artist: String, album: String, title: String, year: String) {
-    this.artist = artist
-    this.album = album
-    this.year = year
-    this.title = title
-    val event = TrackInfoChangeEvent(trackInfo)
-    bus.post(event)
-    updateNotification()
-    updateRemoteClient()
   }
 
   private fun updateRemoteClient() {
@@ -170,17 +158,20 @@ constructor(private val bus: RxBus) {
     updateNotification()
   }
 
-  fun setPlaylists(playlists: MutableList<Playlist>) {
-    bus.post(PlaylistAvailable(playlists))
-  }
-
   @State
   fun getPlayState(): String {
     return playState
   }
 
-  val trackInfo: TrackInfo
-    get() = TrackInfo(artist, title, album, year)
+  var trackInfo: TrackInfo = TrackInfo()
+    get
+    set(value) {
+      field = value
+      val event = TrackInfoChangeEvent(value)
+      bus.post(event)
+      updateNotification()
+      updateRemoteClient()
+    }
 
 }
 

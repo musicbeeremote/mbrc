@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.activities.nav
+package com.kelsos.mbrc.ui.activities.nav.nowplaying
 
 import android.os.Bundle
 import android.support.v4.view.MenuItemCompat
@@ -13,45 +13,37 @@ import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.NowPlayingAdapter
 import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.data.NowPlaying
-import com.kelsos.mbrc.data.NowPlayingMoveRequest
 import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.events.MessageEvent
-import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
-import com.kelsos.mbrc.rx.RxUtils
-import com.kelsos.mbrc.services.NowPlayingSync
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.drag.SimpleItenTouchHelper
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
-import rx.schedulers.Schedulers
-import timber.log.Timber
 import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
 
-class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPlayingAdapter.NowPlayingListener {
+class NowPlayingActivity : BaseActivity(),
+    NowPlayingView,
+    SearchView.OnQueryTextListener,
+    NowPlayingAdapter.NowPlayingListener {
 
   @BindView(R.id.now_playing_list) lateinit var nowPlayingList: EmptyRecyclerView
   @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: MultiSwipeRefreshLayout
   @BindView(R.id.empty_view) lateinit var emptyView: View
   @Inject lateinit var adapter: NowPlayingAdapter
-  @Inject lateinit var sync: NowPlayingSync
-  private val mSearchView: SearchView? = null
-  private val mSearchItem: MenuItem? = null
-  private var scope: Scope? = null
 
-  private fun handlePlayingTrackChange(event: TrackInfo) {
-    adapter.setPlayingTrackIndex(NowPlaying(event.artist, event.title))
-    adapter.notifyDataSetChanged()
-  }
+  @Inject lateinit var presenter: NowPlayingPresenter
+  private var mSearchView: SearchView? = null
+  private var mSearchItem: MenuItem? = null
+  private var scope: Scope? = null
 
   override fun onQueryTextSubmit(query: String): Boolean {
     bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListSearch, query.trim { it <= ' ' })))
     mSearchView!!.isIconified = true
     MenuItemCompat.collapseActionView(mSearchItem)
-    return false
+    return true
   }
 
   override fun onQueryTextChange(newText: String): Boolean {
@@ -59,17 +51,18 @@ class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPl
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
-    //inflater.inflate(R.menu.menu_now_playing, menu);
-    //mSearchItem = menu.findItem(R.id.now_playing_search_item);
-    //mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
-    //mSearchView.setQueryHint(getString(R.string.now_playing_search_hint));
-    //mSearchView.setIconifiedByDefault(true);
-    //mSearchView.setOnQueryTextListener(this);
+    menuInflater.inflate(R.menu.nowplaying_search, menu)
+    mSearchItem = menu.findItem(R.id.now_playing_search)
+    mSearchView = MenuItemCompat.getActionView(mSearchItem) as SearchView
+    mSearchView?.queryHint = getString(R.string.now_playing_search_hint)
+    mSearchView?.setIconifiedByDefault(true)
+    mSearchView?.setOnQueryTextListener(this)
     return super.onCreateOptionsMenu(menu)
   }
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
+    scope?.installModules(NowPlayingModule.create())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_nowplaying)
@@ -86,6 +79,7 @@ class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPl
     helper.attachToRecyclerView(nowPlayingList)
     adapter.setListener(this)
     swipeRefreshLayout.setOnRefreshListener { this.refresh() }
+    presenter.attach(this)
     refresh()
   }
 
@@ -93,59 +87,29 @@ class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPl
     if (!swipeRefreshLayout.isRefreshing) {
       swipeRefreshLayout.isRefreshing = true
     }
-
-    sync.syncNowPlaying(Schedulers.io()).compose(RxUtils.uiTask())
-        .doOnTerminate {
-          swipeRefreshLayout.isRefreshing = false
-        }
-        .subscribe({
-          adapter.refresh()
-        }) { Timber.v(it, "Failed") }
+    presenter.refresh()
   }
 
-  public override fun onStart() {
+  override fun onStart() {
     super.onStart()
+    presenter.attach(this)
   }
 
-  public override fun onResume() {
-    super.onResume()
-    bus.register(this, TrackInfoChangeEvent::class.java, { handlePlayingTrackChange(it.trackInfo) }, true)
-  }
-
-  public override fun onPause() {
-    super.onPause()
-    bus.unregister(this)
-  }
-
-  private fun calculateNewIndex(from: Int, to: Int, index: Int): Int {
-    var index = index
-    val dist = Math.abs(from - to)
-    if (dist == 1 && index == from
-        || dist > 1 && from > to && index == from
-        || dist > 1 && from < to && index == from) {
-      index = to
-    } else if (dist == 1 && index == to) {
-      index = from
-    } else if (dist > 1 && from > to && index == to || from > index && to < index) {
-      index += 1
-    } else if (dist > 1 && from < to && index == to || from < index && to > index) {
-      index -= 1
-    }
-    return index
+  override fun onStop() {
+    super.onStop()
+    presenter.detach()
   }
 
   override fun onPress(position: Int) {
-    bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListPlay, position + 1)))
+    presenter.play(position + 1)
   }
 
   override fun onMove(from: Int, to: Int) {
-    adapter.setPlayingTrackIndex(calculateNewIndex(from, to, adapter.getPlayingTrackIndex()))
-    val data = NowPlayingMoveRequest(from, to)
-    bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListMove, data)))
+    presenter.moveTrack(from, to)
   }
 
   override fun onDismiss(position: Int) {
-    bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListRemove, position)))
+    presenter.removeTrack(position)
   }
 
   override fun active(): Int {
@@ -155,5 +119,17 @@ class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPl
   override fun onDestroy() {
     Toothpick.closeScope(this)
     super.onDestroy()
+  }
+
+  override fun refreshingDone() {
+    swipeRefreshLayout.isRefreshing = false
+  }
+
+  override fun reload() {
+    adapter.refresh()
+  }
+
+  override fun trackChanged(trackInfo: TrackInfo) {
+    adapter.setPlayingTrack(trackInfo.path)
   }
 }

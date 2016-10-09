@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.commands.model
 
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.model.MainDataModel
@@ -11,9 +12,11 @@ class UpdateNowPlayingTrack
 
   override fun execute(e: IEvent) {
     val node = e.data as ObjectNode
-    model.setTrackInfo(node.path("Artist").textValue(),
-        node.path("Album").textValue(),
-        node.path("Title").textValue(),
-        node.path("Year").textValue())
+    val artist = node.path("artist").textValue()
+    val album = node.path("album").textValue()
+    val title = node.path("title").textValue()
+    val year = node.path("year").textValue()
+    val path = node.path("path").textValue()
+    model.trackInfo = TrackInfo(artist, title, album, year, path)
   }
 }

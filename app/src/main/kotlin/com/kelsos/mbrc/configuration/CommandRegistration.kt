@@ -39,7 +39,6 @@ object CommandRegistration {
     controller.register(Protocol.PluginVersion, scope.getInstance(UpdatePluginVersionCommand::class.java))
     controller.register(Protocol.PING, scope.getInstance(ProtocolPingHandle::class.java))
     controller.register(Protocol.PONG, scope.getInstance(ProtocolPongHandle::class.java))
-    controller.register(Protocol.PlaylistList, scope.getInstance(UpdatePlaylistList::class.java))
 
     controller.register(UserInputEventType.SettingsChanged, scope.getInstance(RestartConnectionCommand::class.java))
     controller.register(UserInputEventType.CancelNotification, scope.getInstance(CancelNotificationCommand::class.java))
