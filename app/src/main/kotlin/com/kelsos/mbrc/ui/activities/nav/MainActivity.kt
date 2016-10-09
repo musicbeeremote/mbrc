@@ -34,6 +34,7 @@ import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.ui.*
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
+import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.helper.ProgressSeekerHelper
 import com.kelsos.mbrc.helper.ProgressSeekerHelper.ProgressUpdate
 import com.kelsos.mbrc.helper.VolumeChangeHelper
@@ -269,17 +270,6 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
   }
 
-  private fun getDimens(): Int {
-    val displayMetrics = resources.displayMetrics
-    val dpHeight = displayMetrics.heightPixels / displayMetrics.density
-    val dpWidth = displayMetrics.widthPixels / displayMetrics.density
-    if (dpHeight > dpWidth) {
-      return dpWidth.toInt()
-    } else {
-      return dpHeight.toInt()
-    }
-  }
-
   private fun handleShuffleChange(change: ShuffleChange) {
     updateShuffleState(change.shuffleState)
   }
@@ -503,3 +493,4 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     private val STOPPED = "Stopped"
   }
 }
+

@@ -13,4 +13,5 @@ object Const {
   val STOPPED = "stopped"
   val NEWLINE = "\r\n"
   val UTF_8 = "UTF-8"
+  val COVER_FILE = "cover.jpg"
 }

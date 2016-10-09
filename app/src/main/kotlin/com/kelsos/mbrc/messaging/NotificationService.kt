@@ -3,7 +3,6 @@ package com.kelsos.mbrc.messaging
 import android.app.Application
 import android.app.Notification
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.support.v4.app.NotificationCompat.Action
 import android.support.v4.app.NotificationManagerCompat
@@ -19,14 +18,13 @@ import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
 import com.kelsos.mbrc.model.NotificationModel
 import com.kelsos.mbrc.services.RemoteSessionManager
+import com.kelsos.mbrc.utilities.RemoteUtils
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.NEXT
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.OPEN
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PLAY
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PREVIOUS
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.getPendingIntent
 import com.kelsos.mbrc.utilities.SettingsManager
-import rx.AsyncEmitter
-import rx.Observable
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -66,17 +64,7 @@ constructor(context: Application,
 
   private fun coverChanged(event: CoverChangedEvent) {
     if (event.available) {
-      Observable.fromEmitter<Bitmap>({
-        try {
-          val options = BitmapFactory.Options()
-          options.inPreferredConfig = Bitmap.Config.RGB_565
-          val bitmap = BitmapFactory.decodeFile(event.path, options)
-          it.onNext(bitmap)
-          it.onCompleted()
-        } catch(e: Exception) {
-          it.onError(e)
-        }
-      }, AsyncEmitter.BackpressureMode.LATEST).subscribe({
+      RemoteUtils.bitmapFromFile(event.path).subscribe({
         model.cover = it
       }, {
         Timber.v(it, "failed to decode")

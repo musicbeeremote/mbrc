@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import com.kelsos.mbrc.annotations.PlayerState.State
 
 data class NotificationDataAvailable(val artist: String,
-                                val title: String,
-                                val album: String,
-                                val cover: Bitmap?,
-                                @State val state: String)
+                                     val title: String,
+                                     val album: String,
+                                     @State val state: String)
