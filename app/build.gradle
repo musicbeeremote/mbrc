@@ -150,7 +150,7 @@ dependencies {
   compile "com.github.machinarius:preferencefragment:0.1.2"
   compile "com.jakewharton:butterknife:${butterknife_version}"
   compile 'io.reactivex:rxandroid:1.2.1'
-  compile 'io.reactivex:rxjava:1.2.0'
+  compile 'io.reactivex:rxjava:1.2.1'
   compile 'io.reactivex:rxkotlin:0.60.0'
 
   compile "com.github.stephanenicolas.toothpick:toothpick-runtime:${toothpick_version}"
@@ -169,7 +169,7 @@ dependencies {
   compile "com.github.afollestad.material-dialogs:core:${material_dialogs_version}"
   compile "com.github.afollestad.material-dialogs:commons:${material_dialogs_version}"
   compile 'com.jakewharton.timber:timber:4.3.1'
-  compile 'com.jakewharton.rxrelay:rxrelay:1.1.0'
+  compile 'com.jakewharton.rxrelay:rxrelay:1.2.0'
 
   kapt "com.jakewharton:butterknife-compiler:${butterknife_version}"
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
