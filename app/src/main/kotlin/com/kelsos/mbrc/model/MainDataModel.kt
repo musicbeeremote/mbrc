@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.model
 
-import android.graphics.Bitmap
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.PlayerState.State
 import com.kelsos.mbrc.annotations.Repeat
@@ -30,8 +29,6 @@ constructor(private val bus: RxBus) {
   private var year: String
 
   private var volume: Int = 0
-  var cover: Bitmap? = null
-    private set
 
   var shuffle: String
     private set
@@ -63,7 +60,6 @@ constructor(private val bus: RxBus) {
     isScrobblingEnabled = false
     isMute = false
     playState = PlayerState.UNDEFINED
-    cover = null
     rating = 0f
 
     lfmStatus = LfmStatus.NORMAL
@@ -95,11 +91,11 @@ constructor(private val bus: RxBus) {
   }
 
   private fun updateNotification() {
-    bus.post(NotificationDataAvailable(artist, title, album, cover, playState))
+    bus.post(NotificationDataAvailable(artist, title, album, playState))
   }
 
   private fun updateRemoteClient() {
-    bus.post(RemoteClientMetaData(artist, title, album, cover))
+    bus.post(RemoteClientMetaData(artist, title, album))
   }
 
   fun getVolume(): Int {

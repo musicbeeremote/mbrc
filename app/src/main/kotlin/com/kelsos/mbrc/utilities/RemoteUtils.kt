@@ -2,6 +2,12 @@ package com.kelsos.mbrc.utilities
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import com.kelsos.mbrc.constants.Const
+import rx.Emitter
+import rx.Observable
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -30,4 +36,24 @@ object RemoteUtils {
       df.timeZone = TimeZone.getTimeZone("UTC")
       return df.format(Date())
     }
+
+  fun bitmapFromFile(path: String): Observable<Bitmap> {
+    return Observable.fromEmitter<Bitmap>({
+      try {
+        val options = BitmapFactory.Options()
+        options.inPreferredConfig = Bitmap.Config.RGB_565
+        val bitmap = BitmapFactory.decodeFile(path, options)
+        it.onNext(bitmap)
+        it.onCompleted()
+      } catch(e: Exception) {
+        it.onError(e)
+      }
+    }, Emitter.BackpressureMode.LATEST)
+  }
+
+  fun coverBitmap(context: Context) :Observable<Bitmap> {
+    val filesDir = context.filesDir
+    val cover = File(filesDir, Const.COVER_FILE)
+    return bitmapFromFile(cover.absolutePath)
+  }
 }

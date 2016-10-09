@@ -24,6 +24,7 @@ import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.RemoteClientMetaData
 import com.kelsos.mbrc.utilities.MediaButtonReceiver
 import com.kelsos.mbrc.utilities.MediaIntentHandler
+import com.kelsos.mbrc.utilities.RemoteUtils
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,7 +33,7 @@ import javax.inject.Singleton
 class RemoteSessionManager
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 @Inject
-constructor(context: Application, private val bus: RxBus, private val manager: AudioManager) : AudioManager.OnAudioFocusChangeListener {
+constructor(private val context: Application, private val bus: RxBus, private val manager: AudioManager) : AudioManager.OnAudioFocusChangeListener {
   private val mMediaSession: MediaSessionCompat?
   @Inject lateinit var handler: MediaIntentHandler
 
@@ -99,7 +100,7 @@ constructor(context: Application, private val bus: RxBus, private val manager: A
     builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, data.album)
     builder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, data.artist)
     builder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, data.title)
-    builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, data.cover)
+    builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, RemoteUtils.coverBitmap(context).toBlocking().first())
     mMediaSession.setMetadata(builder.build())
   }
 
