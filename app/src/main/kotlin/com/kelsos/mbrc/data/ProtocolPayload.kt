@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 class ProtocolPayload {
 
   @JsonProperty("no_broadcast")
-  var noBroadcast: Boolean? = null
+  var noBroadcast: Boolean = false
   @JsonProperty("protocol_version")
-  var protocolVersion: Float? = null
+  var protocolVersion: Int = 2
 }

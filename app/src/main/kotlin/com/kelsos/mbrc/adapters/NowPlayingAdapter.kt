@@ -1,7 +1,9 @@
 package com.kelsos.mbrc.adapters
 
 import android.app.Activity
+
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,39 +26,37 @@ import com.raizlabs.android.dbflow.sql.language.OrderBy
 import rx.Observable
 import timber.log.Timber
 import javax.inject.Inject
-
 class NowPlayingAdapter
 @Inject constructor(context: Activity) : RecyclerView.Adapter<NowPlayingAdapter.TrackHolder>(), ItemTouchHelperAdapter, FlowCursorList.OnCursorRefreshListener<NowPlaying> {
 
   private val data: FlowQueryList<NowPlaying>
   private var playingTrackIndex: Int = 0
+  private var currentTrack: String = ""
   private val inflater: LayoutInflater
+
   private var listener: NowPlayingListener? = null
 
   init {
     val positionAscending = OrderBy.fromProperty(NowPlaying_Table.position).ascending()
-    data = (select from  NowPlaying::class orderBy positionAscending).flowQueryList()
+    data = (select from NowPlaying::class orderBy positionAscending).flowQueryList()
 
 
     data.addOnCursorRefreshListener(this)
     inflater = LayoutInflater.from(context)
   }
 
-  fun getPlayingTrackIndex(): Int {
-    return this.playingTrackIndex
-  }
-
-  fun setPlayingTrackIndex(track: NowPlaying) {
-    Observable.from(data).compose(MapWithIndex.instance<NowPlaying>()).filter { indexed ->
-      val info = indexed.value()
-      info == track
-    }.subscribe({ indexed -> setPlayingTrackIndex(indexed.index().toInt()) }) { throwable -> Timber.v(throwable, "Failed") }
-  }
-
-  fun setPlayingTrackIndex(index: Int) {
+  fun setPlayingTrack(index: Int) {
     notifyItemChanged(playingTrackIndex)
     this.playingTrackIndex = index
     notifyItemChanged(index)
+  }
+
+  fun setPlayingTrack(path: String) {
+    this.currentTrack = path
+    Observable.from(data).compose(MapWithIndex.instance<NowPlaying>()).filter {
+      val info = it.value()
+      info.path.equals(path)
+    }.subscribe({ setPlayingTrack(it.index().toInt()) }) { Timber.v(it, "Failed") }
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackHolder {
@@ -73,7 +73,7 @@ class NowPlayingAdapter
     }
 
     val position = holder.adapterPosition
-    setPlayingTrackIndex(position)
+    setPlayingTrack(position)
     listener!!.onPress(position)
   }
 
@@ -100,6 +100,10 @@ class NowPlayingAdapter
     }
 
     notifyItemMoved(from, to)
+
+    if (!TextUtils.isEmpty(currentTrack)) {
+      setPlayingTrack(currentTrack)
+    }
 
     return true
   }
@@ -136,7 +140,6 @@ class NowPlayingAdapter
   fun setListener(listener: NowPlayingListener) {
     this.listener = listener
   }
-
   /**
    * Callback when cursor refreshes.
 
@@ -147,21 +150,22 @@ class NowPlayingAdapter
   }
 
   interface NowPlayingListener {
-    fun onPress(position: Int)
 
+    fun onPress(position: Int)
     fun onMove(from: Int, to: Int)
 
     fun onDismiss(position: Int)
   }
-
   class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     @BindView(R.id.track_title) lateinit var title: TextView
     @BindView(R.id.track_artist) lateinit var artist: TextView
+
     @BindView(R.id.track_indicator_view) lateinit var trackPlaying: ImageView
     @BindView(R.id.track_container) lateinit var container: FrameLayout
 
     init {
       ButterKnife.bind(this, itemView)
     }
+
   }
 }
