@@ -79,7 +79,7 @@
           android:value=".ui.activities.nav.MainActivity" />
     </activity>
     <activity
-        android:name=".ui.activities.nav.NowPlayingActivity"
+        android:name=".ui.activities.nav.nowplaying.NowPlayingActivity"
         android:label="@string/nav_now_playing"
         android:parentActivityName=".ui.activities.nav.MainActivity">
 

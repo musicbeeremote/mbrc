@@ -227,6 +227,6 @@ constructor(private val activityChecker: SocketActivityChecker,
   companion object {
     private val DELAY = 3
     private val MAX_RETRIES = 3
-    private val SOCKET_BUFFER = 4096
+    private val SOCKET_BUFFER = 2 * 4096
   }
 }

@@ -156,4 +156,5 @@
   <string name="swipe_to_refresh">Swipe to refresh the list.</string>
   <string name="playlists_load_failed">There was an error while trying to load the playlists.</string>
   <string name="service_connection_error">Failed to connect to remote host.</string>
+  <string name="now_playing_search_hint">Search and play a track</string>
 </resources>

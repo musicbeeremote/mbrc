@@ -30,7 +30,11 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.events.ui.RequestConnectionStateEvent
-import com.kelsos.mbrc.ui.activities.nav.*
+import com.kelsos.mbrc.ui.activities.nav.LibraryActivity
+import com.kelsos.mbrc.ui.activities.nav.LyricsActivity
+import com.kelsos.mbrc.ui.activities.nav.MainActivity
+import com.kelsos.mbrc.ui.activities.nav.PlaylistActivity
+import com.kelsos.mbrc.ui.activities.nav.nowplaying.NowPlayingActivity
 import timber.log.Timber
 import toothpick.Scope
 import toothpick.Toothpick
