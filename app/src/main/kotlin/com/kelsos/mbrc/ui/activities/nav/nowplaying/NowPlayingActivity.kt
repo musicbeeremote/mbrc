@@ -35,14 +35,16 @@ class NowPlayingActivity : BaseActivity(),
   @Inject lateinit var adapter: NowPlayingAdapter
 
   @Inject lateinit var presenter: NowPlayingPresenter
-  private var mSearchView: SearchView? = null
-  private var mSearchItem: MenuItem? = null
+  private var searchView: SearchView? = null
+  private var searchItem: MenuItem? = null
   private var scope: Scope? = null
 
   override fun onQueryTextSubmit(query: String): Boolean {
     bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListSearch, query.trim { it <= ' ' })))
-    mSearchView!!.isIconified = true
-    MenuItemCompat.collapseActionView(mSearchItem)
+    searchView!!.setQuery("", false)
+    searchView!!.isIconified = true
+    searchView!!.clearFocus()
+    MenuItemCompat.collapseActionView(searchItem)
     return true
   }
 
@@ -52,11 +54,11 @@ class NowPlayingActivity : BaseActivity(),
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     menuInflater.inflate(R.menu.nowplaying_search, menu)
-    mSearchItem = menu.findItem(R.id.now_playing_search)
-    mSearchView = MenuItemCompat.getActionView(mSearchItem) as SearchView
-    mSearchView?.queryHint = getString(R.string.now_playing_search_hint)
-    mSearchView?.setIconifiedByDefault(true)
-    mSearchView?.setOnQueryTextListener(this)
+    searchItem = menu.findItem(R.id.now_playing_search)
+    searchView = MenuItemCompat.getActionView(searchItem) as SearchView
+    searchView?.queryHint = getString(R.string.now_playing_search_hint)
+    searchView?.setIconifiedByDefault(true)
+    searchView?.setOnQueryTextListener(this)
     return super.onCreateOptionsMenu(menu)
   }
 
