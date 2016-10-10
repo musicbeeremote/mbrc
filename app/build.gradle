@@ -177,6 +177,7 @@ dependencies {
   compile 'org.slf4j:slf4j-api:1.7.21'
   compile 'com.github.tony19:logback-android-core:1.1.1-6'
   compile 'com.github.tony19:logback-android-classic:1.1.1-6'
+  compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha7'
 }
 
 allprojects {

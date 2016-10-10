@@ -11,7 +11,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.DiscoveryStopped
 import com.kelsos.mbrc.mappers.ConnectionMapper
 import com.kelsos.mbrc.repository.ConnectionRepository
-import rx.AsyncEmitter
+import rx.Emitter
 import rx.Observable
 import rx.functions.Func1
 import rx.schedulers.Schedulers
@@ -113,7 +113,7 @@ internal constructor(private val manager: WifiManager,
   private fun getObservable(socket: MulticastSocket): Observable<DiscoveryMessage> {
     return Observable.interval(600, TimeUnit.MILLISECONDS).take(6).flatMap {
       Observable.fromEmitter<DiscoveryMessage>({
-        emitter: AsyncEmitter<DiscoveryMessage> ->
+        emitter: Emitter<DiscoveryMessage> ->
         try {
           val mPacket: DatagramPacket
           val buffer = ByteArray(512)
@@ -127,7 +127,7 @@ internal constructor(private val manager: WifiManager,
         } catch (e: IOException) {
           emitter.onError(e)
         }
-      }, AsyncEmitter.BackpressureMode.LATEST)
+      }, Emitter.BackpressureMode.LATEST)
     }.filter { message -> NOTIFY == message.context }.first()
   }
 
