@@ -96,10 +96,11 @@ constructor(private val context: Application, private val bus: RxBus, private va
       return
     }
 
+    val trackInfo = data.trackInfo
     val builder = MediaMetadataCompat.Builder()
-    builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, data.album)
-    builder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, data.artist)
-    builder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, data.title)
+    builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, trackInfo.album)
+    builder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, trackInfo.artist)
+    builder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, trackInfo.title)
     builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, RemoteUtils.coverBitmap(context).toBlocking().first())
     mMediaSession.setMetadata(builder.build())
   }

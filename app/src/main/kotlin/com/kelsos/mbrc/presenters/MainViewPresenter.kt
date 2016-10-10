@@ -22,8 +22,8 @@ class MainViewPresenter : BasePresenter<MainView>() {
     view?.updateScrobbleStatus(model.isScrobblingEnabled)
     view?.updateRepeat(model.repeat)
     view?.updateShuffleState(model.shuffle)
-    view?.updateVolume(model.getVolume(), model.isMute)
-    view?.updatePlayState(model.getPlayState())
+    view?.updateVolume(model.volume, model.isMute)
+    view?.updatePlayState(model.playState)
     view?.updateTrackInfo(model.trackInfo)
     view?.updateConnection(connectionModel.connection)
   }

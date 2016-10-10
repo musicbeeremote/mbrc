@@ -19,6 +19,6 @@ class UpdateShuffle
     }
 
     //noinspection ResourceType
-    model.setShuffleState(data)
+    model.shuffle = data
   }
 }

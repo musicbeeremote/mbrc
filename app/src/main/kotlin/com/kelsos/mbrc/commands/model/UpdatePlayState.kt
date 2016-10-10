@@ -9,6 +9,6 @@ class UpdatePlayState
 @Inject constructor(private val model: MainDataModel) : ICommand {
 
   override fun execute(e: IEvent) {
-    model.setPlayState(e.dataString)
+    model.playState = e.dataString
   }
 }

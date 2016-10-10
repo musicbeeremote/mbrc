@@ -63,10 +63,10 @@ internal constructor(private val model: MainDataModel,
 
     val suggestedVersion = vNode.path(Const.PLUGIN).asText()
 
-    if (suggestedVersion != model.getPluginVersion()) {
+    if (suggestedVersion != model.pluginVersion) {
       var isOutOfDate = false
 
-      val currentVersion = model.getPluginVersion().split("\\.".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
+      val currentVersion = model.pluginVersion.split("\\.".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
       val latestVersion = suggestedVersion.split("\\.".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
 
       var i = 0
@@ -86,7 +86,7 @@ internal constructor(private val model: MainDataModel,
 
     manager.lastUpdated = now
     Timber.d("last check on: %s", java.lang.Long.toString(now.time))
-    Timber.d("plugin reported version: %s", model.getPluginVersion())
+    Timber.d("plugin reported version: %s", model.pluginVersion)
     Timber.d("plugin suggested version: %s", suggestedVersion)
   }
 

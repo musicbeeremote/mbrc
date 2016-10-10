@@ -10,7 +10,9 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.CoverChangedEvent
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
-import rx.AsyncEmitter
+import com.kelsos.mbrc.model.MainDataModel
+import rx.Emitter
+import rx.Emitter.BackpressureMode
 import rx.Observable
 import rx.schedulers.Schedulers
 import timber.log.Timber
@@ -19,12 +21,14 @@ import java.io.FileOutputStream
 import javax.inject.Inject
 
 class UpdateCover
-@Inject constructor(private val bus: RxBus, private val context: Application) : ICommand {
+@Inject constructor(private val bus: RxBus,
+                    private val context: Application,
+                    private val model: MainDataModel) : ICommand {
 
   override fun execute(e: IEvent) {
     val cover = (e.data as TextNode).textValue()
     Observable.fromEmitter<Bitmap>({
-      emitter: AsyncEmitter<Bitmap> ->
+      emitter: Emitter<Bitmap> ->
       val decodedImage = Base64.decode(cover, Base64.DEFAULT)
       val bitmap = BitmapFactory.decodeByteArray(decodedImage, 0, decodedImage.size)
 
@@ -35,10 +39,11 @@ class UpdateCover
         emitter.onError(RuntimeException("no cover found"))
       }
 
-    }, AsyncEmitter.BackpressureMode.LATEST).flatMap {
+    }, BackpressureMode.LATEST).flatMap {
       storeCover(it)
     }.subscribeOn(Schedulers.io()).subscribe({
       bus.post(CoverChangedEvent(it))
+      model.updateRemoteClient()
     }, {
       Timber.v(it, "Failed to store path")
       bus.post(CoverChangedEvent())
@@ -58,6 +63,6 @@ class UpdateCover
         it.onNext("")
       }
       it.onCompleted()
-    }, AsyncEmitter.BackpressureMode.LATEST)
+    }, BackpressureMode.LATEST)
   }
 }
