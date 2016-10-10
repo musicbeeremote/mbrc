@@ -9,7 +9,7 @@ import com.kelsos.mbrc.data.ProtocolPayload
 import com.kelsos.mbrc.data.SocketMessage
 import com.kelsos.mbrc.mappers.InetAddressMapper
 import com.kelsos.mbrc.repository.ConnectionRepository
-import rx.AsyncEmitter.BackpressureMode.LATEST
+import rx.Emitter.BackpressureMode.LATEST
 import rx.Observable
 import timber.log.Timber
 import java.io.BufferedReader

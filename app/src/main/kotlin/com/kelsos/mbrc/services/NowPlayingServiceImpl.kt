@@ -5,7 +5,7 @@ import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.data.Page
 import com.kelsos.mbrc.data.SocketMessage
-import rx.AsyncEmitter
+import rx.Emitter
 import rx.Observable
 import java.io.IOException
 import javax.inject.Inject
@@ -29,6 +29,6 @@ constructor() : ServiceBase(), NowPlayingService {
       } catch (e: IOException) {
         emitter.onError(e)
       }
-    },AsyncEmitter.BackpressureMode.LATEST)
+    }, Emitter.BackpressureMode.LATEST)
   }
 }

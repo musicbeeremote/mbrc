@@ -21,7 +21,7 @@ import com.kelsos.mbrc.data.library.Track_Table
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.sql.language.Where
-import rx.AsyncEmitter
+import rx.Emitter
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -62,7 +62,7 @@ class ArtistEntryAdapter
       val cursor = FlowCursorList.Builder<Artist>(Artist::class.java).modelQueriable(query).build()
       it.onNext(cursor)
       it.onCompleted()
-    }, AsyncEmitter.BackpressureMode.LATEST)
+    }, Emitter.BackpressureMode.LATEST)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread()).subscribe({
       data = it
