@@ -10,6 +10,6 @@ class UpdateMute
 @Inject constructor(private val model: MainDataModel) : ICommand {
 
   override fun execute(e: IEvent) {
-    model.setMuteState((e.data as BooleanNode).asBoolean())
+    model.isMute = (e.data as BooleanNode).asBoolean()
   }
 }

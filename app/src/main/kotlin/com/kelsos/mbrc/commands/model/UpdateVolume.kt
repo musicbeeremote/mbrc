@@ -10,6 +10,6 @@ class UpdateVolume
 @Inject constructor(private val model: MainDataModel) : ICommand {
 
   override fun execute(e: IEvent) {
-    model.setVolume((e.data as IntNode).asInt())
+    model.volume = (e.data as IntNode).asInt()
   }
 }

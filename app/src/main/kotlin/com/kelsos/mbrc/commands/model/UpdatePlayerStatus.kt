@@ -12,13 +12,12 @@ class UpdatePlayerStatus
 
   override fun execute(e: IEvent) {
     val node = e.data as ObjectNode
-    model.setPlayState(node.path(Protocol.PlayerState).asText())
-    model.setMuteState(node.path(Protocol.PlayerMute).asBoolean())
+    model.playState = node.path(Protocol.PlayerState).asText()
+    model.isMute = node.path(Protocol.PlayerMute).asBoolean()
     model.setRepeatState(node.path(Protocol.PlayerRepeat).asText())
-    val shuffleState = node.path(Protocol.PlayerShuffle).asText()
     //noinspection ResourceType
-    model.setShuffleState(shuffleState)
-    model.setScrobbleState(node.path(Protocol.PlayerScrobble).asBoolean())
-    model.setVolume(Integer.parseInt(node.path(Protocol.PlayerVolume).asText()))
+    model.shuffle = node.path(Protocol.PlayerShuffle).asText()
+    model.isScrobblingEnabled = node.path(Protocol.PlayerScrobble).asBoolean()
+    model.volume = Integer.parseInt(node.path(Protocol.PlayerVolume).asText())
   }
 }

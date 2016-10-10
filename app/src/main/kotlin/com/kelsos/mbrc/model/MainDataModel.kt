@@ -11,8 +11,16 @@ import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.*
+import com.kelsos.mbrc.events.ui.LfmRatingChanged
+import com.kelsos.mbrc.events.ui.PlayStateChange
+import com.kelsos.mbrc.events.ui.RatingChanged
+import com.kelsos.mbrc.events.ui.RemoteClientMetaData
+import com.kelsos.mbrc.events.ui.RepeatChange
+import com.kelsos.mbrc.events.ui.ScrobbleChange
+import com.kelsos.mbrc.events.ui.ShuffleChange
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
+import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
+import com.kelsos.mbrc.events.ui.VolumeChange
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,28 +28,71 @@ import javax.inject.Singleton
 class MainDataModel
 @Inject
 constructor(private val bus: RxBus) {
-  private var rating: Float = 0.toFloat()
-  var title: String
-    private set
-  var artist: String
-    private set
-  private var album: String
-  private var year: String
+  var rating: Float = 0f
+  set(value) {
+    field = value
+    bus.post(RatingChanged(field))
+  }
 
-  private var volume: Int = 0
+  var volume: Int = 0
+    get
+    set(value) {
+      if (value != field) {
+        field = value
+        bus.post(VolumeChange(field))
+      }
+    }
 
-  var shuffle: String
-    private set
+  @ShuffleState var shuffle: String = ShuffleChange.OFF
+    set(value) {
+      field = value
+      bus.post(ShuffleChange(value))
+    }
+
   var isScrobblingEnabled: Boolean = false
-    private set
-  var isMute: Boolean = false
-    private set
+    set(value) {
+      field = value
+      bus.post(ScrobbleChange(field))
+    }
 
-  @State private var playState: String
+  var isMute: Boolean = false
+    set(value) {
+      field = value
+      bus.post(if (value) VolumeChange() else VolumeChange(volume))
+    }
+
+
   var lfmStatus: LfmStatus = LfmStatus.NORMAL
     private set
-  private var pluginVersion: String? = null
+
+  var pluginVersion: String = "1.0.0"
+    set(value) {
+      if (value.isNullOrEmpty()) {
+        return
+      }
+      field = value.substring(0, value.lastIndexOf('.'))
+      bus.post(MessageEvent(ProtocolEventType.PluginVersionCheck))
+    }
+
   var pluginProtocol: Int = 2
+
+  @State var playState: String = PlayerState.UNDEFINED
+  set(value) {
+    @State val newState: String
+    if (Const.PLAYING.equals(value, ignoreCase = true)) {
+      newState = PlayerState.PLAYING
+    } else if (Const.STOPPED.equals(value, ignoreCase = true)) {
+      newState = PlayerState.STOPPED
+    } else if (Const.PAUSED.equals(value, ignoreCase = true)) {
+      newState = PlayerState.PAUSED
+    } else {
+      newState = PlayerState.UNDEFINED
+    }
+
+    field = newState
+
+    bus.post(PlayStateChange(field))
+  }
 
   @Mode
   var repeat: String
@@ -49,17 +100,6 @@ constructor(private val bus: RxBus) {
 
   init {
     repeat = Repeat.NONE
-    title = Const.EMPTY
-    artist = Const.EMPTY
-    album = Const.EMPTY
-    year = Const.EMPTY
-    volume = 100
-
-
-    shuffle = ShuffleChange.OFF
-    isScrobblingEnabled = false
-    isMute = false
-    playState = PlayerState.UNDEFINED
     rating = 0f
 
     lfmStatus = LfmStatus.NORMAL
@@ -76,37 +116,8 @@ constructor(private val bus: RxBus) {
     bus.post(LfmRatingChanged(lfmStatus))
   }
 
-  fun getPluginVersion(): String {
-    return pluginVersion ?: "0.0"
-  }
-
-  fun setPluginVersion(pluginVersion: String) {
-    this.pluginVersion = pluginVersion.substring(0, pluginVersion.lastIndexOf('.'))
-    bus.post(MessageEvent(ProtocolEventType.PluginVersionCheck))
-  }
-
-  fun setRating(rating: Double) {
-    this.rating = rating.toFloat()
-    bus.post(RatingChanged(this.rating))
-  }
-
-  private fun updateNotification() {
-    bus.post(NotificationDataAvailable(artist, title, album, playState))
-  }
-
-  private fun updateRemoteClient() {
-    bus.post(RemoteClientMetaData(artist, title, album))
-  }
-
-  fun getVolume(): Int {
-    return this.volume
-  }
-
-  fun setVolume(volume: Int) {
-    if (volume != this.volume) {
-      this.volume = volume
-      bus.post(VolumeChange(this.volume))
-    }
+  fun updateRemoteClient() {
+    bus.post(RemoteClientMetaData(trackInfo))
   }
 
   fun setRepeatState(repeat: String) {
@@ -121,51 +132,12 @@ constructor(private val bus: RxBus) {
     bus.post(RepeatChange(this.repeat))
   }
 
-  fun setShuffleState(@ShuffleState shuffleState: String) {
-    shuffle = shuffleState
-    bus.post(ShuffleChange(shuffle))
-  }
-
-  fun setScrobbleState(scrobbleButtonActive: Boolean) {
-    isScrobblingEnabled = scrobbleButtonActive
-    bus.post(ScrobbleChange(isScrobblingEnabled))
-  }
-
-  fun setMuteState(isMuteActive: Boolean) {
-    this.isMute = isMuteActive
-    bus.post(if (isMuteActive) VolumeChange() else VolumeChange(volume))
-  }
-
-  fun setPlayState(playState: String) {
-    @State val newState: String
-    if (Const.PLAYING.equals(playState, ignoreCase = true)) {
-      newState = PlayerState.PLAYING
-    } else if (Const.STOPPED.equals(playState, ignoreCase = true)) {
-      newState = PlayerState.STOPPED
-    } else if (Const.PAUSED.equals(playState, ignoreCase = true)) {
-      newState = PlayerState.PAUSED
-    } else {
-      newState = PlayerState.UNDEFINED
-    }
-
-    this.playState = newState
-
-    bus.post(PlayStateChange(this.playState))
-    updateNotification()
-  }
-
-  @State
-  fun getPlayState(): String {
-    return playState
-  }
-
   var trackInfo: TrackInfo = TrackInfo()
     get
     set(value) {
       field = value
       val event = TrackInfoChangeEvent(value)
       bus.post(event)
-      updateNotification()
       updateRemoteClient()
     }
 
