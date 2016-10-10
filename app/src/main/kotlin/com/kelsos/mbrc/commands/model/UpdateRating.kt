@@ -10,6 +10,6 @@ class UpdateRating
 @Inject constructor(private val model: MainDataModel) : ICommand {
 
   override fun execute(e: IEvent) {
-    model.setRating((e.data as TextNode).asDouble(0.0))
+    model.rating = (e.data as TextNode).asDouble(0.0).toFloat()
   }
 }

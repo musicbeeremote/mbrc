@@ -9,6 +9,6 @@ class UpdatePluginVersionCommand
 @Inject constructor(private val model: MainDataModel) : ICommand {
 
   override fun execute(e: IEvent) {
-    model.setPluginVersion(e.dataString)
+    model.pluginVersion = e.dataString
   }
 }

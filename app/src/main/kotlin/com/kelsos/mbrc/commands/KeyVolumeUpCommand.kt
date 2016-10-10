@@ -13,16 +13,16 @@ class KeyVolumeUpCommand
 @Inject constructor(private val model: MainDataModel, private val bus: RxBus) : ICommand {
 
   override fun execute(e: IEvent) {
-    if (model.getVolume() <= 90) {
-      val mod = model.getVolume() % 10
+    if (model.volume <= 90) {
+      val mod = model.volume % 10
       val volume: Int
 
       if (mod == 0) {
-        volume = model.getVolume() + 10
+        volume = model.volume + 10
       } else if (mod < 5) {
-        volume = model.getVolume() + (10 - mod)
+        volume = model.volume + (10 - mod)
       } else {
-        volume = model.getVolume() + (20 - mod)
+        volume = model.volume + (20 - mod)
       }
 
       bus.post(MessageEvent.action(UserAction(Protocol.PlayerVolume, volume)))

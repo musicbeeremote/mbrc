@@ -10,6 +10,6 @@ class UpdateLastFm
 @Inject constructor(private val model: MainDataModel) : ICommand {
 
   override fun execute(e: IEvent) {
-    model.setScrobbleState((e.data as BooleanNode).asBoolean())
+    model.isScrobblingEnabled = (e.data as BooleanNode).asBoolean()
   }
 }

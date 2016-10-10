@@ -15,7 +15,7 @@ class MiniControlPresenter : BasePresenter<MiniControlView>() {
     }
 
     view?.updateCover(Const.COVER_FILE)
-    view?.updateState(model.getPlayState())
+    view?.updateState(model.playState)
     view?.updateTrackInfo(model.trackInfo)
   }
 
