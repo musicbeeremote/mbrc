@@ -14,7 +14,6 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.SectionedRecyclerViewAdapter.Companion.VIEW_TYPE_HEADER
 import com.kelsos.mbrc.annotations.Search.SECTION_ALBUM
 import com.kelsos.mbrc.annotations.Search.SECTION_ARTIST
 import com.kelsos.mbrc.annotations.Search.SECTION_GENRE
@@ -89,7 +88,7 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
         val album = albumList!![relativePosition]
         holder.lineOne.text = album.album
         holder.lineTwo?.text = album.artist
-        holder.uiItemContextIndicator.setOnClickListener { onContextClick(holder, album) }
+        holder.uiItemContextIndicator?.setOnClickListener { onContextClick(holder, album) }
         holder.itemView.setOnClickListener {
           onSearchItemSelectedListener?.albumSelected(album)
         }
@@ -97,7 +96,7 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
       SECTION_ARTIST -> {
         val artist = artistList!![relativePosition]
         holder.lineOne.text = artist.artist
-        holder.uiItemContextIndicator.setOnClickListener { onContextClick(holder, artist) }
+        holder.uiItemContextIndicator?.setOnClickListener { onContextClick(holder, artist) }
         holder.itemView.setOnClickListener {
           onSearchItemSelectedListener?.artistSelected(artist)
         }
@@ -105,7 +104,7 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
       SECTION_GENRE -> {
         val genre = genreList!![relativePosition]
         holder.lineOne.text = genre.genre
-        holder.uiItemContextIndicator.setOnClickListener { onContextClick(holder, genre) }
+        holder.uiItemContextIndicator?.setOnClickListener { onContextClick(holder, genre) }
         holder.itemView.setOnClickListener {
           onSearchItemSelectedListener?.genreSelected(genre)
         }
@@ -114,7 +113,7 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
         val track = trackList!![relativePosition]
         holder.lineOne.text = track.title
         holder.lineTwo?.text = track.artist
-        holder.uiItemContextIndicator.setOnClickListener { onContextClick(holder, track) }
+        holder.uiItemContextIndicator?.setOnClickListener { onContextClick(holder, track) }
         holder.itemView.setOnClickListener {
           onSearchItemSelectedListener?.trackSelected(track)
         }
@@ -125,28 +124,28 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
   }
 
   private fun onContextClick(holder: SearchViewHolder, track: Track) {
-    showPopup(R.menu.popup_track, holder.uiItemContextIndicator, { item ->
+    showPopup(R.menu.popup_track, holder.uiItemContextIndicator!!, { item ->
       onSearchItemSelectedListener?.trackSelected(item, track)
       true
     })
   }
 
   private fun onContextClick(holder: SearchViewHolder, genre: Genre) {
-    showPopup(R.menu.popup_genre, holder.uiItemContextIndicator, { item ->
+    showPopup(R.menu.popup_genre, holder.uiItemContextIndicator!!, { item ->
       onSearchItemSelectedListener?.genreSelected(item, genre)
       true
     })
   }
 
   private fun onContextClick(holder: SearchViewHolder, album: Album) {
-    showPopup(R.menu.popup_album, holder.uiItemContextIndicator, { item ->
+    showPopup(R.menu.popup_album, holder.uiItemContextIndicator!!, { item ->
       onSearchItemSelectedListener?.albumSelected(item, album)
       true
     })
   }
 
   private fun onContextClick(holder: SearchViewHolder, artist: Artist) {
-    showPopup(R.menu.popup_artist, holder.uiItemContextIndicator, { item ->
+    showPopup(R.menu.popup_artist, holder.uiItemContextIndicator!!, { item ->
       onSearchItemSelectedListener?.artistSelected(item, artist)
       true
     })
@@ -177,9 +176,7 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
   private fun showPopup(@MenuRes menu: Int, view: View, listener: (MenuItem) -> Boolean) {
     val popupMenu = PopupMenu(view.context, view)
     popupMenu.inflate(menu)
-    popupMenu.setOnMenuItemClickListener({
-      listener.invoke(it)
-    });
+    popupMenu.setOnMenuItemClickListener({ listener.invoke(it) })
     popupMenu.show()
   }
 
@@ -207,8 +204,8 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
 
   class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     @BindView(R.id.line_one) lateinit var lineOne: TextView
-    @BindView(R.id.line_two) lateinit var lineTwo: TextView
-    @BindView(R.id.ui_item_context_indicator) lateinit var uiItemContextIndicator: LinearLayout
+    @BindView(R.id.line_two) @Nullable @JvmField var lineTwo: TextView? = null
+    @BindView(R.id.ui_item_context_indicator) @Nullable @JvmField var uiItemContextIndicator: LinearLayout? = null
 
     init {
       ButterKnife.bind(this, itemView)
