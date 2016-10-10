@@ -8,7 +8,7 @@ import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.data.library.Genre
 import com.kelsos.mbrc.data.library.Track
-import rx.AsyncEmitter
+import rx.Emitter
 import rx.Observable
 import java.io.IOException
 import javax.inject.Inject
@@ -31,7 +31,7 @@ constructor() : ServiceBase(), LibraryService {
         } catch (e: IOException) {
           it.onError(e)
         }
-      }, AsyncEmitter.BackpressureMode.BUFFER)
+      }, Emitter.BackpressureMode.BUFFER)
     }
   }
 
@@ -49,7 +49,7 @@ constructor() : ServiceBase(), LibraryService {
         } catch (e: IOException) {
           it.onError(e)
         }
-      }, AsyncEmitter.BackpressureMode.BUFFER)
+      }, Emitter.BackpressureMode.BUFFER)
     }
   }
 
@@ -67,7 +67,7 @@ constructor() : ServiceBase(), LibraryService {
         } catch (e: IOException) {
           it.onError(e)
         }
-      }, AsyncEmitter.BackpressureMode.BUFFER)
+      }, Emitter.BackpressureMode.BUFFER)
     }
   }
 
@@ -85,7 +85,7 @@ constructor() : ServiceBase(), LibraryService {
         } catch (e: IOException) {
           it.onError(e)
         }
-      }, AsyncEmitter.BackpressureMode.BUFFER)
+      }, Emitter.BackpressureMode.BUFFER)
     }
   }
 
