@@ -16,7 +16,6 @@ import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.data.library.Track_Table
-import com.kelsos.mbrc.domain.AlbumInfo
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.sql.language.Where
@@ -38,28 +37,16 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
     inflater = LayoutInflater.from(context)
   }
 
-  fun init(filter: AlbumInfo?) {
+  fun init() {
     if (data != null) {
       return
     }
 
     val query: Where<Track>
-
-    if (filter == null) {
-      query = allTracks()
-    } else {
-      val album = filter.album
-
-      if (TextUtils.isEmpty(album)) {
-        query = nonAlbumTracks(filter.artist)
-      } else {
-        query = albumTracks(album)
-      }
-
-    }
+    query = allTracks()
 
     Single.create { subscriber: SingleSubscriber<in FlowCursorList<Track>> ->
-      val list = FlowCursorList.Builder<Track>(Track::class.java).modelQueriable(query).build();
+      val list = FlowCursorList.Builder<Track>(Track::class.java).modelQueriable(query).build()
       subscriber.onSuccess(list)
     }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ genres ->
       data = genres
@@ -67,21 +54,13 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
     }) { throwable -> Timber.v(throwable, "failed to load the data") }
   }
 
-  private fun nonAlbumTracks(artist: String): Where<Track> {
-    val query: Where<Track>
-    query = SQLite.select().from<Track>(Track::class.java).where(Track_Table.album.`is`("")).and(Track_Table.artist.`is`(artist)).orderBy(Track_Table.album_artist, true).orderBy(Track_Table.album, true).orderBy(Track_Table.disc, true).orderBy(Track_Table.trackno, true)
-    return query
-  }
-
-  private fun albumTracks(album: String): Where<Track> {
-    val query: Where<Track>
-    query = SQLite.select().from<Track>(Track::class.java).where(Track_Table.album.like("%$album%")).orderBy(Track_Table.album_artist, true).orderBy(Track_Table.album, true).orderBy(Track_Table.disc, true).orderBy(Track_Table.trackno, true)
-    return query
-  }
-
   private fun allTracks(): Where<Track> {
     val query: Where<Track>
-    query = SQLite.select().from<Track>(Track::class.java).orderBy(Track_Table.album_artist, true).orderBy(Track_Table.album, true).orderBy(Track_Table.disc, true).orderBy(Track_Table.trackno, true)
+    query = SQLite.select().from<Track>(Track::class.java)
+        .orderBy(Track_Table.album_artist, true)
+        .orderBy(Track_Table.album, true)
+        .orderBy(Track_Table.disc, true)
+        .orderBy(Track_Table.trackno, true)
     return query
   }
 
@@ -171,11 +150,11 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
    * @return The total number of items in this adapter.
    */
   override fun getItemCount(): Int {
-    return if (data != null) data!!.count else 0
+    return data?.count ?: 0
   }
 
   fun refresh() {
-    data!!.refresh()
+    data?.refresh()
     notifyDataSetChanged()
   }
 
@@ -194,5 +173,10 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
     init {
       ButterKnife.bind(this, itemView)
     }
+  }
+
+  fun update(cursor: FlowCursorList<Track>) {
+    data = cursor
+    notifyDataSetChanged()
   }
 }
