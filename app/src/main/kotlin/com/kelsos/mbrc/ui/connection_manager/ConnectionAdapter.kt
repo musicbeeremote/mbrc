@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.connection_manager
+package com.kelsos.mbrc.ui.connection_manager
 
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.PopupMenu
