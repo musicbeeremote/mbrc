@@ -4,7 +4,7 @@ Change Log
 # Versions
 
 ## 1.0.0-alpha.2
-- Full migration to kotling lang
+- Full migration to kotlin lang
 - Commands are now instantiated on registration.
 - Adds empty view for list without data
 -
@@ -12,7 +12,7 @@ Change Log
 ## 1.0.0-alpha.1
 - Increases minimum supported Android version from 2.3 to 4.1
 - Reworks part of the application UI
-- Replaces Search with Library browser. Library browser has search functionality for the localy cached metadata.
+- Replaces Search with Library browser. Library browser has search functionality for the locally cached metadata.
 - Adds basic playlist support. View and click two play.
 - Merges Help and Feedback views.
 - Fixes an issue where the application would start automatically on device boot.

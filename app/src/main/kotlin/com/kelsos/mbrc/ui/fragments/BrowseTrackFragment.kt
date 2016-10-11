@@ -58,7 +58,7 @@ class BrowseTrackFragment : Fragment(), TrackEntryAdapter.MenuItemSelectedListen
 
   override fun onStart() {
     super.onStart()
-    adapter.init(null)
+    adapter.init()
   }
 
   override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {

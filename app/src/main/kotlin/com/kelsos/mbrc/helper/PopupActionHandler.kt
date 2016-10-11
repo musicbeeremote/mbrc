@@ -16,9 +16,9 @@ import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mappers.AlbumMapper
-import com.kelsos.mbrc.ui.activities.profile.AlbumTracksActivity
-import com.kelsos.mbrc.ui.activities.profile.ArtistAlbumsActivity
-import com.kelsos.mbrc.ui.activities.profile.GenreArtistsActivity
+import com.kelsos.mbrc.ui.activities.profile.album.AlbumTracksActivity
+import com.kelsos.mbrc.ui.activities.profile.artist.ArtistAlbumsActivity
+import com.kelsos.mbrc.ui.activities.profile.genre.GenreArtistsActivity
 import javax.inject.Inject
 import javax.inject.Singleton
 

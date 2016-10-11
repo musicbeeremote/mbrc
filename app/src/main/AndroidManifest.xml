@@ -42,7 +42,7 @@
           android:value=".ui.activities.nav.MainActivity" />
     </activity>
     <activity
-        android:name=".ui.activities.profile.AlbumTracksActivity"
+        android:name=".ui.activities.profile.album.AlbumTracksActivity"
         android:parentActivityName=".ui.activities.nav.LibraryActivity">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
@@ -51,7 +51,7 @@
           android:value=".ui.activities.nav.LibraryActivity" />
     </activity>
     <activity
-        android:name=".ui.activities.profile.ArtistAlbumsActivity"
+        android:name=".ui.activities.profile.artist.ArtistAlbumsActivity"
         android:parentActivityName=".ui.activities.nav.LibraryActivity">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
@@ -60,7 +60,7 @@
           android:value=".ui.activities.nav.LibraryActivity" />
     </activity>
     <activity
-        android:name=".ui.activities.profile.GenreArtistsActivity"
+        android:name=".ui.activities.profile.genre.GenreArtistsActivity"
         android:parentActivityName=".ui.activities.nav.LibraryActivity">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
