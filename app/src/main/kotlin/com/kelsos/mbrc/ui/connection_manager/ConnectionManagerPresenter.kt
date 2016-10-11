@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.connection_manager
+package com.kelsos.mbrc.ui.connection_manager
 
 import com.kelsos.mbrc.data.ConnectionSettings
 import com.kelsos.mbrc.presenters.Presenter
