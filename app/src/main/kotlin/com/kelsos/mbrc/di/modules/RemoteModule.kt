@@ -8,6 +8,8 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.bus.RxBusImpl
 import com.kelsos.mbrc.repository.ConnectionRepository
 import com.kelsos.mbrc.repository.ConnectionRepositoryImpl
+import com.kelsos.mbrc.repository.TrackRepository
+import com.kelsos.mbrc.repository.TrackRepositoryImpl
 import com.kelsos.mbrc.services.*
 import rx.Scheduler
 import rx.android.schedulers.AndroidSchedulers
@@ -26,5 +28,7 @@ class RemoteModule : Module() {
     bind(NotificationManagerCompat::class.java).toProvider(NotificationManagerCompatProvider::class.java)
     bind(ConnectionRepository::class.java).to(ConnectionRepositoryImpl::class.java)
     bind(Scheduler::class.java).withName("main").toProviderInstance { AndroidSchedulers.mainThread() }
+
+    bind(TrackRepository::class.java).to(TrackRepositoryImpl::class.java)
   }
 }

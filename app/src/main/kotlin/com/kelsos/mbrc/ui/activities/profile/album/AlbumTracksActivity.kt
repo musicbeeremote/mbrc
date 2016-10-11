@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.activities.profile
+package com.kelsos.mbrc.ui.activities.profile.album
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -16,12 +16,15 @@ import com.kelsos.mbrc.domain.AlbumInfo
 import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.ui.activities.FontActivity
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
+import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class AlbumTracksActivity : FontActivity(), TrackEntryAdapter.MenuItemSelectedListener {
+class AlbumTracksActivity : FontActivity(),
+    AlbumTracksView,
+    TrackEntryAdapter.MenuItemSelectedListener {
 
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
   @BindView(R.id.list_tracks) lateinit var listTracks: EmptyRecyclerView
@@ -29,13 +32,14 @@ class AlbumTracksActivity : FontActivity(), TrackEntryAdapter.MenuItemSelectedLi
 
   @Inject lateinit var adapter: TrackEntryAdapter
   @Inject lateinit var actionHandler: PopupActionHandler
+  @Inject lateinit var presenter: AlbumTracksPresenter
 
   private var album: AlbumInfo? = null
   private var scope: Scope? = null
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this))
+    scope!!.installModules(SmoothieActivityModule(this), AlbumTracksModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_album_tracks)
@@ -46,22 +50,23 @@ class AlbumTracksActivity : FontActivity(), TrackEntryAdapter.MenuItemSelectedLi
       album = extras.getParcelable<AlbumInfo>(ALBUM)
     }
 
-    setSupportActionBar(toolbar)
-    val actionBar = supportActionBar
-
-    if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(true)
-      actionBar.setDisplayShowHomeEnabled(true)
-
-      if (TextUtils.isEmpty(album!!.album)) {
-        actionBar.setTitle(R.string.non_album_tracks)
-      } else {
-        actionBar.title = album!!.album
-      }
-
+    if (album == null) {
+      finish()
+      return
     }
 
-    adapter.init(album)
+    setSupportActionBar(toolbar)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    supportActionBar?.setDisplayShowHomeEnabled(true)
+
+    if (TextUtils.isEmpty(album!!.album)) {
+      supportActionBar?.setTitle(R.string.non_album_tracks)
+    } else {
+      supportActionBar?.title = album!!.album
+    }
+
+    presenter.attach(this)
+    presenter.load(album!!)
     adapter.setMenuItemSelectedListener(this)
     listTracks.layoutManager = LinearLayoutManager(baseContext)
     listTracks.adapter = adapter
@@ -92,17 +97,26 @@ class AlbumTracksActivity : FontActivity(), TrackEntryAdapter.MenuItemSelectedLi
     actionHandler.trackSelected(track)
   }
 
+  override fun update(cursor: FlowCursorList<Track>) {
+    adapter.update(cursor)
+  }
+
+  override fun onStart() {
+    super.onStart()
+    presenter.attach(this)
+  }
+
+  override fun onStop() {
+    super.onStop()
+    presenter.detach()
+  }
+
   override fun onDestroy() {
     Toothpick.closeScope(this)
     super.onDestroy()
   }
 
   companion object {
-
     val ALBUM = "albumName"
   }
 }
-/**
- * Mandatory empty constructor for the fragment manager to instantiate the
- * fragment (e.g. upon screen orientation changes).
- */

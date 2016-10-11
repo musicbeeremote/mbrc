@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.activities.profile
+package com.kelsos.mbrc.ui.activities.profile.artist
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
