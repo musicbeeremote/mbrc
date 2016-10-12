@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -21,6 +20,7 @@ import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.services.BrowseSync
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
+import com.raizlabs.android.dbflow.list.FlowCursorList
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -29,7 +29,12 @@ import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class BrowseAlbumFragment : Fragment(), AlbumEntryAdapter.MenuItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
+class BrowseAlbumFragment : Fragment(),
+    BrowseAlbumView,
+    AlbumEntryAdapter.MenuItemSelectedListener,
+    SwipeRefreshLayout.OnRefreshListener {
+
+
   @BindView(R.id.library_data_list) lateinit var recycler: EmptyRecyclerView
   @BindView(R.id.empty_view) lateinit var emptyView: View
   @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
@@ -39,6 +44,7 @@ class BrowseAlbumFragment : Fragment(), AlbumEntryAdapter.MenuItemSelectedListen
   @Inject lateinit var bus: RxBus
   @Inject lateinit var actionHandler: PopupActionHandler
   @Inject lateinit var sync: BrowseSync
+  @Inject lateinit var presenter: BrowseAlbumPresenter
 
   private var subscription: Subscription? = null
 
@@ -53,7 +59,8 @@ class BrowseAlbumFragment : Fragment(), AlbumEntryAdapter.MenuItemSelectedListen
 
   override fun onStart() {
     super.onStart()
-    adapter.init(null)
+    presenter.attach(this)
+
   }
 
   override fun onResume() {
@@ -64,9 +71,11 @@ class BrowseAlbumFragment : Fragment(), AlbumEntryAdapter.MenuItemSelectedListen
   override fun onCreate(savedInstanceState: Bundle?) {
     val activity = activity
     val scope = Toothpick.openScopes(activity.application, activity, this)
-    scope.installModules(SmoothieActivityModule(activity))
+    scope.installModules(SmoothieActivityModule(activity), BrowseAlbumModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
+    presenter.attach(this)
+    presenter.load()
   }
 
   override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -96,6 +105,7 @@ class BrowseAlbumFragment : Fragment(), AlbumEntryAdapter.MenuItemSelectedListen
       return
     }
 
+    //todo: Move to presenter
     subscription = sync.syncAlbums(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .doOnTerminate { swipeLayout.isRefreshing = false }
@@ -103,6 +113,15 @@ class BrowseAlbumFragment : Fragment(), AlbumEntryAdapter.MenuItemSelectedListen
           bus.post(NotifyUser(R.string.refresh_failed))
           Timber.v(it, "failed")
         }
+  }
+
+  override fun onStop() {
+    super.onStop()
+    presenter.detach()
+  }
+
+  override fun update(cursor: FlowCursorList<Album>) {
+    adapter.update(cursor)
   }
 
   override fun onDestroy() {
