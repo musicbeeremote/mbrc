@@ -12,6 +12,7 @@ You can find help on how to use the application and more info on the dedicated [
 
 You can also find information about the plugin and the remote to the dedicated topic in the [MusicBee forums](http://getmusicbee.com/forum/index.php?topic=7221.new;topicseen#new).
 
+
 Building
 -------
 Clone the repository and import on IntelliJ IDEA or Android Studio.
@@ -23,25 +24,16 @@ Credits
 Many of the icons used are created by [Tasos Papazoglou Chalikias](https://github.com/sushiperv) and are licenced under the [Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License.](https://creativecommons.org/licenses/by-nc-nd/3.0/deed.en_US) some of them where taken by other projects and some awful icons during the earlier development where created by me. The original logo idea belongs to Jordan Georgiades. Any other icons introduced in version 0.9.7 and later was probably my work. Some design ideas are based on [mockups](https://groups.google.com/forum/#!topic/musicbee-remote/wgm029yfJnU) by Carlos Parga
 
 ### Inspiration
-A great source of inspiration for this project was the [Cyanogen Apollo player](https://github.com/CyanogenMod/android_packages_apps_Apollo)
-along with [Google Play Music for Android](https://play.google.com/store/apps/details?id=com.google.android.music).
+Initially a great source of inspiration for this project was the [Cyanogen Apollo player](https://github.com/CyanogenMod/android_packages_apps_Apollo)
+along with [Google Play Music for Android](https://play.google.com/store/apps/details?id=com.google.android.music). Nowadays I am looking closely the material design documentation.
 
 ### Dependencies
 
-*   [Guice](https://github.com/google/guice)
-
-    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-
-*   [RoboGuice](https://github.com/roboguice/roboguice)
+*   [Toothpick](https://github.com/stephanenicolas/toothpick)
 
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 *   [Jackson](http://jackson.codehaus.org/)
-
-    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-
-*   [DragSortListView](https://github.com/kelsos/drag-sort-listview)
-    (A fork of the library is used int th project)
 
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
@@ -61,10 +53,6 @@ along with [Google Play Music for Android](https://play.google.com/store/apps/de
 
     License: [MIT](https://github.com/afollestad/material-dialogs/blob/master/LICENSE.txt)
     
-*   [Floating Action Button](https://github.com/str4d/android-floating-action-button)
-    
-    License: [Apache 2.0](https://raw.githubusercontent.com/str4d/android-floating-action-button/master/LICENSE.txt)
-    
 *   [Butterknife](https://github.com/JakeWharton/butterknife)
 
     License: [Apache 2.0](https://raw.githubusercontent.com/JakeWharton/butterknife/master/LICENSE.txt)
@@ -72,9 +60,7 @@ along with [Google Play Music for Android](https://play.google.com/store/apps/de
 *   [Preference Fragment Compat](https://github.com/Machinarius/PreferenceFragment-Compat)
 
     License: [Apache 2.0](https://raw.githubusercontent.com/Machinarius/PreferenceFragment-Compat/master/LICENSE)
-        
-        
-The project also uses [Retrolamda](https://github.com/evant/gradle-retrolambda)
+               
 
 License
 ----------
