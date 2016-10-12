@@ -15,17 +15,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.library.Album
-import com.kelsos.mbrc.data.library.Album_Table
-import com.kelsos.mbrc.data.library.Track
-import com.kelsos.mbrc.data.library.Track_Table
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import com.raizlabs.android.dbflow.sql.language.SQLite
-import com.raizlabs.android.dbflow.sql.language.Where
-import rx.Single
-import rx.SingleSubscriber
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import timber.log.Timber
 import javax.inject.Inject
 
 class AlbumEntryAdapter
@@ -38,33 +28,6 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
 
   init {
     inflater = LayoutInflater.from(context)
-  }
-
-  fun init(filter: String?) {
-    if (data != null) {
-      return
-    }
-
-    val query: Where<Album>
-    if (TextUtils.isEmpty(filter)) {
-      query = SQLite.select().from<Album>(Album::class.java)
-          .orderBy(Album_Table.artist, true)
-          .orderBy(Album_Table.album, true)
-    } else {
-      query = SQLite.select().from<Album>(Album::class.java)
-          .leftOuterJoin<Track>(Track::class.java).on(Track_Table.album.withTable().eq(Album_Table.album.withTable())).where(
-          Track_Table.artist.withTable().like('%' + filter as String + '%')).groupBy(
-          Track_Table.artist.withTable()).orderBy(Album_Table.artist.withTable(), true).orderBy(
-          Album_Table.album.withTable(), true)
-    }
-
-    Single.create { subscriber: SingleSubscriber<in FlowCursorList<Album>> ->
-      val list = query.cursorList()
-      subscriber.onSuccess(list)
-    }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ albums ->
-      data = albums
-      notifyDataSetChanged()
-    }) { throwable -> Timber.v(throwable, "failed to load the data") }
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -125,5 +88,10 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
     init {
       ButterKnife.bind(this, itemView)
     }
+  }
+
+  fun update(albums: FlowCursorList<Album>) {
+    data = albums
+    notifyDataSetChanged()
   }
 }

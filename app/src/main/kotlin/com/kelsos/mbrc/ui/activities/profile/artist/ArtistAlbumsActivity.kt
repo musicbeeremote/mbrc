@@ -13,12 +13,15 @@ import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.ui.activities.FontActivity
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
+import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class ArtistAlbumsActivity : FontActivity(), AlbumEntryAdapter.MenuItemSelectedListener {
+class ArtistAlbumsActivity : FontActivity(),
+    ArtistAlbumsView,
+    AlbumEntryAdapter.MenuItemSelectedListener {
 
   @BindView(R.id.album_recycler) lateinit var recyclerView: EmptyRecyclerView
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
@@ -26,13 +29,14 @@ class ArtistAlbumsActivity : FontActivity(), AlbumEntryAdapter.MenuItemSelectedL
 
   @Inject lateinit var actionHandler: PopupActionHandler
   @Inject lateinit var adapter: AlbumEntryAdapter
+  @Inject lateinit var presenter: ArtistAlbumsPresenter
 
   private var artist: String? = null
   private var scope: Scope? = null
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this))
+    scope!!.installModules(SmoothieActivityModule(this), ArtistAlbumsModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_artist_albums)
@@ -43,20 +47,22 @@ class ArtistAlbumsActivity : FontActivity(), AlbumEntryAdapter.MenuItemSelectedL
       artist = extras.getString(ARTIST_NAME)
     }
 
-    setSupportActionBar(toolbar)
-    val actionBar = supportActionBar
-
-    if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(true)
-      actionBar.setDisplayShowHomeEnabled(true)
-      actionBar.title = artist
+    if (artist == null) {
+      finish()
+      return
     }
 
+    setSupportActionBar(toolbar)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    supportActionBar?.setDisplayShowHomeEnabled(true)
+    supportActionBar?.title = artist
+
     adapter.setMenuItemSelectedListener(this)
-    adapter.init(artist)
     recyclerView.layoutManager = LinearLayoutManager(this)
     recyclerView.adapter = adapter
     recyclerView.emptyView = emptyView
+    presenter.attach(this)
+    presenter.load(artist!!)
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Album) {
@@ -67,13 +73,28 @@ class ArtistAlbumsActivity : FontActivity(), AlbumEntryAdapter.MenuItemSelectedL
     actionHandler.albumSelected(album, this)
   }
 
+  override fun update(albums: FlowCursorList<Album>) {
+    adapter.update(albums)
+  }
+
   override fun onDestroy() {
     Toothpick.closeScope(this)
     super.onDestroy()
   }
 
-  companion object {
+  override fun onStart() {
+    super.onStart()
+    presenter.attach(this)
+  }
 
+  override fun onStop() {
+    super.onStop()
+    presenter.detach()
+  }
+
+  companion object {
     val ARTIST_NAME = "artist_name"
   }
-}// Required empty public constructor
+}
+
+
