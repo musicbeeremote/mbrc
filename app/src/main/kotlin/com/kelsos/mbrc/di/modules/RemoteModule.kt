@@ -28,5 +28,6 @@ class RemoteModule : Module() {
 
     bind(TrackRepository::class.java).to(TrackRepositoryImpl::class.java)
     bind(AlbumRepository::class.java).to(AlbumRepositoryImpl::class.java)
+    bind(ArtistRepository::class.java).to(ArtistRepositoryImpl::class.java)
   }
 }

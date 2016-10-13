@@ -2,21 +2,21 @@ package com.kelsos.mbrc.ui.fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter
+import com.kelsos.mbrc.adapters.ArtistEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.NotifyUser
+import com.kelsos.mbrc.extensions.initLinear
 import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.services.BrowseSync
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
@@ -29,7 +29,10 @@ import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
 
-class BrowseArtistFragment : Fragment(), ArtistEntryAdapter.MenuItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
+class BrowseArtistFragment : Fragment(),
+    BrowseArtistView,
+    MenuItemSelectedListener,
+    OnRefreshListener {
 
   @BindView(R.id.library_data_list) lateinit var recycler: EmptyRecyclerView
   @BindView(R.id.empty_view) lateinit var emptyView: View
@@ -40,6 +43,7 @@ class BrowseArtistFragment : Fragment(), ArtistEntryAdapter.MenuItemSelectedList
   @Inject lateinit var adapter: ArtistEntryAdapter
   @Inject lateinit var actionHandler: PopupActionHandler
   @Inject lateinit var sync: BrowseSync
+  @Inject lateinit var presenter: BrowseArtistPresenter
 
   private var subscription: Subscription? = null
   private var scope: Scope? = null
@@ -48,11 +52,16 @@ class BrowseArtistFragment : Fragment(), ArtistEntryAdapter.MenuItemSelectedList
     scope = Toothpick.openScopes(activity.application, activity, this)
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
-    adapter.init(null)
   }
 
   override fun onStart() {
     super.onStart()
+    presenter.attach(this)
+  }
+
+  override fun onStop() {
+    super.onStop()
+    presenter.detach()
   }
 
   override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -67,11 +76,10 @@ class BrowseArtistFragment : Fragment(), ArtistEntryAdapter.MenuItemSelectedList
   override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     recycler.setHasFixedSize(true)
-    val layoutManager = LinearLayoutManager(activity)
-    recycler.layoutManager = layoutManager
+    recycler.initLinear(adapter, emptyView)
     adapter.setMenuItemSelectedListener(this)
-    recycler.adapter = adapter
-    recycler.emptyView = emptyView
+    presenter.attach(this)
+    presenter.load()
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Artist) {
