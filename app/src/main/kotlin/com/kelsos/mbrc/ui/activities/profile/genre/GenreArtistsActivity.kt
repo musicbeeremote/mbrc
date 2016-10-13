@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.ui.activities.profile.genre
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.widget.LinearLayout
@@ -9,16 +8,22 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter
+import com.kelsos.mbrc.adapters.ArtistEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.data.library.Artist
+import com.kelsos.mbrc.extensions.enableHome
+import com.kelsos.mbrc.extensions.initLinear
 import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.ui.activities.FontActivity
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
+import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class GenreArtistsActivity : FontActivity(), ArtistEntryAdapter.MenuItemSelectedListener {
+class GenreArtistsActivity : FontActivity(),
+    GenreArtistsView,
+    MenuItemSelectedListener {
 
   @BindView(R.id.genre_artists_recycler) lateinit var recyclerView: EmptyRecyclerView
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
@@ -26,38 +31,33 @@ class GenreArtistsActivity : FontActivity(), ArtistEntryAdapter.MenuItemSelected
 
   @Inject lateinit var adapter: ArtistEntryAdapter
   @Inject lateinit var actionHandler: PopupActionHandler
+  @Inject lateinit var presenter: GenreArtistsPresenter
 
   private var genre: String? = null
   private var scope: Scope? = null
 
   public override fun onCreate(savedInstanceState: Bundle?) {
-    scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this))
     super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
     setContentView(R.layout.activity_genre_artists)
+    scope = Toothpick.openScopes(application, this)
+    scope!!.installModules(SmoothieActivityModule(this), GenreArtistsModule())
+    Toothpick.inject(this, scope)
+
     ButterKnife.bind(this)
 
-    val extras = intent.extras
+    genre = intent?.extras?.getString(GENRE_NAME) ?: null
 
-    if (extras != null) {
-      genre = extras.getString(GENRE_NAME)
+    if (genre == null) {
+      finish()
+      return
     }
 
     setSupportActionBar(toolbar)
-    val actionBar = supportActionBar
-
-    if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(true)
-      actionBar.setDisplayShowHomeEnabled(true)
-      actionBar.title = genre
-    }
-
-    adapter.init(genre)
+    supportActionBar?.enableHome(genre)
     adapter.setMenuItemSelectedListener(this)
-    recyclerView.layoutManager = LinearLayoutManager(this)
-    recyclerView.adapter = adapter
-    recyclerView.emptyView = emptyView
+    recyclerView.initLinear(adapter, emptyView)
+    presenter.attach(this)
+    presenter.load(genre!!)
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Artist) {
@@ -68,8 +68,22 @@ class GenreArtistsActivity : FontActivity(), ArtistEntryAdapter.MenuItemSelected
     actionHandler.artistSelected(artist, this)
   }
 
-  companion object {
-
-    val GENRE_NAME = "genre_name"
+  override fun update(data: FlowCursorList<Artist>) {
+   adapter.update(data)
   }
-}// Required empty public constructor
+
+  override fun onStart() {
+    super.onStart()
+    presenter.attach(this)
+  }
+
+  override fun onStop() {
+    super.onStop()
+    presenter.detach()
+  }
+
+  companion object {
+    const val GENRE_NAME = "genre_name"
+  }
+}
+
