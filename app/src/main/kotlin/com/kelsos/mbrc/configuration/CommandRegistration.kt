@@ -9,10 +9,9 @@ import com.kelsos.mbrc.constants.SocketEventType
 import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.controller.RemoteController
 import toothpick.Scope
-import javax.inject.Inject
 
 object CommandRegistration {
-  @Inject fun register(controller: RemoteController, scope: Scope) {
+  fun register(controller: RemoteController, scope: Scope) {
     controller.register(ProtocolEventType.ReduceVolume, scope.getInstance(ReduceVolumeOnRingCommand::class.java))
     controller.register(ProtocolEventType.HandshakeComplete, scope.getInstance(VisualUpdateHandshakeComplete::class.java))
     controller.register(ProtocolEventType.InformClientNotAllowed, scope.getInstance(NotifyNotAllowedCommand::class.java))

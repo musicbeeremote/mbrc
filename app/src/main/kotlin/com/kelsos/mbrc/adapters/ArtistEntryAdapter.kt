@@ -15,17 +15,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.library.Artist
-import com.kelsos.mbrc.data.library.Artist_Table
-import com.kelsos.mbrc.data.library.Track
-import com.kelsos.mbrc.data.library.Track_Table
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import com.raizlabs.android.dbflow.sql.language.SQLite
-import com.raizlabs.android.dbflow.sql.language.Where
-import rx.Emitter
-import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import timber.log.Timber
 import javax.inject.Inject
 
 class ArtistEntryAdapter
@@ -36,38 +26,6 @@ class ArtistEntryAdapter
 
   init {
     inflater = LayoutInflater.from(context)
-  }
-
-  fun init(filter: String?) {
-    if (data != null) {
-      return
-    }
-
-    val query: Where<Artist>
-
-    if (TextUtils.isEmpty(filter)) {
-      query = SQLite.select().from<Artist>(Artist::class.java).orderBy(Artist_Table.artist, true)
-    } else {
-      query = SQLite.select().distinct()
-          .from<Artist>(Artist::class.java)
-          .innerJoin<Track>(Track::class.java)
-          .on(Artist_Table.artist.withTable()
-              .eq(Track_Table.artist.withTable()))
-          .where(Track_Table.genre.`is`(filter))
-          .orderBy(Artist_Table.artist.withTable(), true).
-          groupBy(Artist_Table.artist.withTable())
-    }
-
-    Observable.fromEmitter<FlowCursorList<Artist>>({
-      val cursor = FlowCursorList.Builder<Artist>(Artist::class.java).modelQueriable(query).build()
-      it.onNext(cursor)
-      it.onCompleted()
-    }, Emitter.BackpressureMode.LATEST)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread()).subscribe({
-      data = it
-      notifyDataSetChanged()
-    }) { Timber.v(it, "failed to load the data") }
   }
 
   fun setMenuItemSelectedListener(listener: MenuItemSelectedListener) {
@@ -171,5 +129,10 @@ class ArtistEntryAdapter
     init {
       ButterKnife.bind(this, itemView)
     }
+  }
+
+  fun update(data: FlowCursorList<Artist>) {
+    this.data = data
+    notifyDataSetChanged()
   }
 }

@@ -17,10 +17,10 @@
     native <methods>;
 }
 -keepclasseswithmembers class * {
-    public <init>(android.content.Context, android.util.AttributeSet);
+    public <initLinear>(android.content.Context, android.util.AttributeSet);
 }
 -keepclasseswithmembers class * {
-    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public <initLinear>(android.content.Context, android.util.AttributeSet, int);
 }
 -keepclassmembers class * extends android.app.Activity {
    public void *(android.view.View);
@@ -60,13 +60,13 @@
 }
 
 -keepclassmembers class * {
-    @com.google.inject.Inject <init>(...);
+    @com.google.inject.Inject <initLinear>(...);
 }
 
 -keep public class * extends android.view.View {
-    public <init>(android.content.Context);
-    public <init>(android.content.Context, android.util.AttributeSet);
-    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public <initLinear>(android.content.Context);
+    public <initLinear>(android.content.Context, android.util.AttributeSet);
+    public <initLinear>(android.content.Context, android.util.AttributeSet, int);
     public void set*(...);
 }
 
@@ -86,7 +86,7 @@
 -keep public class * implements com.kelsos.mbrc.interfaces.ICommand
 
 -keepclassmembers class * {
- public <init>(android.content.Context);
+ public <initLinear>(android.content.Context);
 }
 
 -keep class com.kelsos.**

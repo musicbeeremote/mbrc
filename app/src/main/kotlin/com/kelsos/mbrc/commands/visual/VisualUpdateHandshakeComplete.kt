@@ -39,7 +39,7 @@ class VisualUpdateHandshakeComplete
       val totalMessages = messages.size
       Observable.interval(150, TimeUnit.MILLISECONDS).take(totalMessages).subscribe { tick -> service.sendData(messages.removeAt(0)) }
     } else {
-      Timber.v("Sending init request")
+      Timber.v("Sending initLinear request")
       service.sendData(SocketMessage.create(Protocol.INIT))
     }
   }
