@@ -20,6 +20,4 @@ class GenreRepositoryImpl
       localDataSource.saveAll(it)
     }.toCompletable().andThen(localDataSource.loadAllCursor().toSingle())
   }
-
-
 }

@@ -6,4 +6,5 @@ import rx.Single
 
 interface Repository<T : Model> {
   fun getAllCursor(): Single<FlowCursorList<T>>
+  fun getAndSaveRemote(): Single<FlowCursorList<T>>
 }
