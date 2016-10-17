@@ -15,16 +15,11 @@ import com.kelsos.mbrc.adapters.ArtistEntryAdapter
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.extensions.initLinear
 import com.kelsos.mbrc.helper.PopupActionHandler
-import com.kelsos.mbrc.services.BrowseSync
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import timber.log.Timber
+import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
@@ -42,14 +37,13 @@ class BrowseArtistFragment : Fragment(),
   @Inject lateinit var bus: RxBus
   @Inject lateinit var adapter: ArtistEntryAdapter
   @Inject lateinit var actionHandler: PopupActionHandler
-  @Inject lateinit var sync: BrowseSync
   @Inject lateinit var presenter: BrowseArtistPresenter
 
-  private var subscription: Subscription? = null
   private var scope: Scope? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(activity.application, activity, this)
+    scope?.installModules(BrowseArtistModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
   }
@@ -95,16 +89,10 @@ class BrowseArtistFragment : Fragment(),
       swipeLayout.isRefreshing = true
     }
 
-    if (subscription != null && !subscription!!.isUnsubscribed) {
-      return
-    }
+    presenter.reload()
+  }
 
-    subscription = sync.syncArtists(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnTerminate { swipeLayout.isRefreshing = false }
-        .subscribe({ adapter.refresh() }) {
-          bus.post(NotifyUser(R.string.refresh_failed))
-          Timber.v(it, "Failed")
-        }
+  override fun update(data: FlowCursorList<Artist>) {
+    adapter.update(data)
   }
 }

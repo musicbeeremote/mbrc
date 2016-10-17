@@ -2,11 +2,20 @@ package com.kelsos.mbrc.repository.data
 
 
 import com.kelsos.mbrc.data.library.Artist
-import com.raizlabs.android.dbflow.kotlinextensions.*
+import com.kelsos.mbrc.data.library.Artist_Table
+import com.kelsos.mbrc.data.library.Track
+import com.kelsos.mbrc.data.library.Track_Table
+import com.raizlabs.android.dbflow.kotlinextensions.database
+import com.raizlabs.android.dbflow.kotlinextensions.delete
+import com.raizlabs.android.dbflow.kotlinextensions.from
+import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
+import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import rx.Emitter
 import rx.Observable
+import rx.Single
 import javax.inject.Inject
 
 class LocalArtistDataSource
@@ -27,11 +36,26 @@ class LocalArtistDataSource
 
   override fun loadAllCursor(): Observable<FlowCursorList<Artist>> {
     return Observable.fromEmitter({
-      val modelQueriable = select from Artist::class
+      val modelQueriable = (select from Artist::class).orderBy(Artist_Table.artist, true)
       val cursor = FlowCursorList.Builder(Artist::class.java).modelQueriable(modelQueriable).build()
       it.onNext(cursor)
       it.onCompleted()
     }, Emitter.BackpressureMode.LATEST)
 
+  }
+
+  fun getArtistByGenre(genre: String): Single<FlowCursorList<Artist>> {
+    return Single.create {
+      val modelQueriable = SQLite.select().distinct()
+          .from<Artist>(Artist::class.java)
+          .innerJoin<Track>(Track::class.java)
+          .on(Artist_Table.artist.withTable()
+              .eq(Track_Table.artist.withTable()))
+          .where(Track_Table.genre.`is`(genre))
+          .orderBy(Artist_Table.artist.withTable(), true).
+          groupBy(Artist_Table.artist.withTable())
+      val cursor = FlowCursorList.Builder(Artist::class.java).modelQueriable(modelQueriable).build()
+      it.onSuccess(cursor)
+    }
   }
 }

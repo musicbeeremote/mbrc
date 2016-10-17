@@ -1,11 +1,13 @@
 package com.kelsos.mbrc.ui.fragments
 
+import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.presenters.Presenter
 import com.kelsos.mbrc.views.BaseView
+import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.config.Module
 
 interface BrowseArtistView: BaseView {
-
+  fun update(data: FlowCursorList<Artist>)
 }
 
 interface BrowseArtistPresenter : Presenter<BrowseArtistView> {
