@@ -2,11 +2,19 @@ package com.kelsos.mbrc.repository.data
 
 
 import com.kelsos.mbrc.data.library.Track
-import com.raizlabs.android.dbflow.kotlinextensions.*
+import com.kelsos.mbrc.data.library.Track_Table
+import com.raizlabs.android.dbflow.kotlinextensions.and
+import com.raizlabs.android.dbflow.kotlinextensions.database
+import com.raizlabs.android.dbflow.kotlinextensions.delete
+import com.raizlabs.android.dbflow.kotlinextensions.from
+import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
+import com.raizlabs.android.dbflow.kotlinextensions.select
+import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import rx.Emitter
 import rx.Observable
+import rx.Single
 import javax.inject.Inject
 
 class LocalTrackDataSource
@@ -27,11 +35,43 @@ class LocalTrackDataSource
 
   override fun loadAllCursor(): Observable<FlowCursorList<Track>> {
     return Observable.fromEmitter({
-      val modelQueriable = select from Track::class
-      val cursor = FlowCursorList.Builder(Track::class.java).modelQueriable(modelQueriable).build()
+      val modelQueriable = (select from Track::class)
+          .orderBy(Track_Table.album_artist, true)
+          .orderBy(Track_Table.album, true)
+          .orderBy(Track_Table.disc, true)
+          .orderBy(Track_Table.trackno, true)
+
+      val cursor = FlowCursorList.Builder<Track>(Track::class.java).modelQueriable(modelQueriable).build()
       it.onNext(cursor)
       it.onCompleted()
     }, Emitter.BackpressureMode.LATEST)
 
+  }
+
+  fun getAlbumTracks(album: String): Single<FlowCursorList<Track>> {
+    return Single.create<FlowCursorList<Track>> {
+      val modelQueriable = (select from Track::class where Track_Table.album.like("%$album%"))
+          .orderBy(Track_Table.album_artist, true)
+          .orderBy(Track_Table.album, true)
+          .orderBy(Track_Table.disc, true)
+          .orderBy(Track_Table.trackno, true)
+      val cursor = FlowCursorList.Builder<Track>(Track::class.java).modelQueriable(modelQueriable).build()
+      it.onSuccess(cursor)
+    }
+  }
+
+  fun getNonAlbumTracks(artist: String): Single<FlowCursorList<Track>> {
+    return Single.create<FlowCursorList<Track>> {
+      val modelQueriable = (select from Track::class
+          where Track_Table.album.`is`("")
+          and Track_Table.artist.`is`(artist))
+          .orderBy(Track_Table.album_artist, true)
+          .orderBy(Track_Table.album, true)
+          .orderBy(Track_Table.disc, true)
+          .orderBy(Track_Table.trackno, true)
+
+      val cursor = FlowCursorList.Builder<Track>(Track::class.java).modelQueriable(modelQueriable).build()
+      it.onSuccess(cursor)
+    }
   }
 }
