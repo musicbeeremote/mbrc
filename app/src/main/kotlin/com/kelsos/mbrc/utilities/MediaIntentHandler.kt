@@ -2,8 +2,8 @@ package com.kelsos.mbrc.utilities
 
 import android.content.Intent
 import android.view.KeyEvent
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import javax.inject.Inject
+import javax.inject.Singleton
 import com.kelsos.mbrc.annotations.PlayerAction
 import com.kelsos.mbrc.interactors.PlayerInteractor
 import timber.log.Timber

@@ -6,8 +6,8 @@ import android.graphics.BitmapFactory
 import android.support.v4.app.NotificationCompat.Action
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.app.NotificationCompat
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import javax.inject.Inject
+import javax.inject.Singleton
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState

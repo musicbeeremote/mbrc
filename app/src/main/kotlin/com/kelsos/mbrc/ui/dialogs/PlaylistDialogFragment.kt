@@ -15,7 +15,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.PlaylistDialogAdapter
 import com.kelsos.mbrc.domain.Playlist

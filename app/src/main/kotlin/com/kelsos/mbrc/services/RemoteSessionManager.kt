@@ -11,8 +11,8 @@ import android.os.Build
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import javax.inject.Inject
+import javax.inject.Singleton
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.RemoteClientMetaData

@@ -20,8 +20,8 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.OnLongClick
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import javax.inject.Inject
+import javax.inject.Singleton
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.PlayerState.State

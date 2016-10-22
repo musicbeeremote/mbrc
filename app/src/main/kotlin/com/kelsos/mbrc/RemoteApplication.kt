@@ -7,14 +7,30 @@ import com.kelsos.mbrc.controller.Controller
 import com.kelsos.mbrc.extensions.initDBFlow
 import roboguice.RoboGuice
 import timber.log.Timber
+import toothpick.Toothpick
+import toothpick.configuration.Configuration
+import toothpick.registries.FactoryRegistryLocator
+import toothpick.registries.MemberInjectorRegistryLocator
 
 open class RemoteApplication : Application() {
 
   override fun onCreate() {
     super.onCreate()
     MultiDex.install(this)
-    RoboGuice.setupBaseApplicationInjector(this)
     this.initDBFlow()
+    val configuration: Configuration
+    if (BuildConfig.DEBUG) {
+      configuration = Configuration.forDevelopment().disableReflection()
+    } else {
+      configuration = Configuration.forProduction().disableReflection()
+    }
+
+    Toothpick.setConfiguration(configuration)
+
+    MemberInjectorRegistryLocator.setRootRegistry(com.kelsos.mbrc.MemberInjectorRegistry())
+    FactoryRegistryLocator.setRootRegistry(com.kelsos.mbrc.FactoryRegistry())
+    val applicationScope = Toothpick.openScope(this)
+
     startService(Intent(this, Controller::class.java))
 
     if (BuildConfig.DEBUG) {

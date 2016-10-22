@@ -3,8 +3,8 @@ package com.kelsos.mbrc.controller
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import javax.inject.Inject
+import javax.inject.Singleton
 import com.kelsos.mbrc.events.ChangeWebSocketStatusEvent
 import com.kelsos.mbrc.extensions.initDBFlow
 import com.kelsos.mbrc.interactors.LibrarySyncInteractor

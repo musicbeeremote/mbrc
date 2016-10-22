@@ -6,7 +6,7 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.events.ui.CoverChangedEvent

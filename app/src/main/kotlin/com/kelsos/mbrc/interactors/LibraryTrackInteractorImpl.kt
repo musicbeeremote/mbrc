@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.interactors
 
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.constants.Constants
 import com.kelsos.mbrc.domain.Track
 import com.kelsos.mbrc.extensions.io

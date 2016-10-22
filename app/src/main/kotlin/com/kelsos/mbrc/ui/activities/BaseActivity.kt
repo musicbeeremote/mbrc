@@ -24,7 +24,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.KeyEvent
 import android.view.MenuItem
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.Connection

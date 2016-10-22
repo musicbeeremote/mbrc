@@ -2,7 +2,7 @@ package com.kelsos.mbrc.repository
 
 import android.graphics.Bitmap
 import android.text.TextUtils
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.cache.TrackCache
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.domain.TrackPosition

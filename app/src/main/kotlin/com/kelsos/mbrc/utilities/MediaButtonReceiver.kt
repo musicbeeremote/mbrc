@@ -3,7 +3,7 @@ package com.kelsos.mbrc.utilities
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.google.inject.Inject
+import javax.inject.Inject
 import roboguice.RoboGuice
 
 class MediaButtonReceiver : BroadcastReceiver() {

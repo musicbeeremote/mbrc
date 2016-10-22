@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.presenters
 
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.annotations.PlayerAction
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.Repeat

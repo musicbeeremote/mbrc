@@ -140,11 +140,14 @@ task wrapper(type: Wrapper) {
 }
 
 ext {
-  supportLibraryVersion = '23.3.0'
-  jacksonVersion = '2.7.4'
-  okhttpVersion = '3.2.0'
-  retrofitVersion = '2.0.2'
-  dbflow_version = "3.0.0-beta6"
+  supportLibraryVersion = '25.0.0'
+  jacksonVersion = '2.8.4'
+  okhttpVersion = '3.4.1'
+  retrofitVersion = '2.1.0'
+  dbflow_version = "4.0.0-beta1"
+  toothpick_version = "1.0.0"
+  butterknife_version = "8.4.0"
+  stetho_version = "1.4.1"
 }
 
 dependencies {
@@ -172,18 +175,16 @@ dependencies {
   compile "com.squareup.okhttp3:okhttp-ws:${okhttpVersion}"
   compile "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
 
-  compile 'io.reactivex:rxandroid:1.2.0'
-  compile 'io.reactivex:rxjava:1.1.5'
-  compile 'io.reactivex:rxkotlin:0.55.0'
+  compile 'io.reactivex:rxandroid:1.2.1'
+  compile 'io.reactivex:rxjava:1.2.1'
+  compile 'io.reactivex:rxkotlin:0.60.0'
 
-  compile 'com.jakewharton:butterknife:8.0.1'
-  kapt 'com.jakewharton:butterknife-compiler:8.0.1'
+  compile "com.jakewharton:butterknife:${butterknife_version}"
+  kapt "com.jakewharton:butterknife-compiler:${butterknife_version}"
 
-  compile 'com.jakewharton.timber:timber:4.1.2'
+  compile 'com.jakewharton.timber:timber:4.3.1'
   compile 'com.android.support:multidex:1.0.1'
 
-  compile "org.roboguice:roboguice:4.0.0"
-  kapt 'org.roboguice:roboblender:4.0.1-SNAPSHOT'
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
   kapt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
@@ -193,22 +194,28 @@ dependencies {
   compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
   compile "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}"
 
-  compile('com.afollestad.material-dialogs:core:0.8.5.8@aar') {
+  compile('com.afollestad.material-dialogs:core:0.9.0.2@aar') {
     transitive = true
   }
 
-  kapt 'org.roboguice:roboblender:4.0.1-SNAPSHOT'
   testCompile 'junit:junit:4.12'
-  testCompile 'org.mockito:mockito-core:2.0.52-beta'
+  testCompile 'org.mockito:mockito-core:2.2.6'
   testCompile 'org.powermock:powermock-module-junit4:1.6.5'
   testCompile 'org.powermock:powermock-api-mockito:1.6.5'
-  testCompile 'org.robolectric:robolectric:3.1-rc1'
+  testCompile 'org.robolectric:robolectric:3.1.2'
   testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 
   compile 'nl.littlerobots.rxlint:rxlint:1.0'
 
-  debugCompile 'com.facebook.stetho:stetho:1.3.1'
-  debugCompile 'com.facebook.stetho:stetho-okhttp3:1.3.1'
+  debugCompile "com.facebook.stetho:stetho:${stetho_version}"
+  debugCompile "com.facebook.stetho:stetho-okhttp3:${stetho_version}"
+
+  compile "com.github.stephanenicolas.toothpick:toothpick-runtime:${toothpick_version}"
+  compile "com.github.stephanenicolas.toothpick:smoothie:${toothpick_version}"
+  kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:${toothpick_version}"
+
+  //highly recommended
+  testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
 }
 
 allprojects {
@@ -240,4 +247,8 @@ project.tasks.withType(JavaCompile) {
 
 kapt {
   generateStubs = true
+  arguments {
+    arg('toothpick_registry_package_name', 'com.kelsos.mbrc')
+    arg('toothpick_registry_children_package_names', 'toothpick.smoothie')
+  }
 }

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.presenters
 
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.interactors.PlaylistInteractor
 import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.ui.views.PlaylistDialogView

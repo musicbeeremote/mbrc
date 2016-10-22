@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.interactors
 
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.cache.PlayerStateCache
 import com.kelsos.mbrc.extensions.task

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.presenters
 
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.dao.DeviceSettings
 import com.kelsos.mbrc.events.ui.DiscoveryStopped
 import com.kelsos.mbrc.events.ui.NotifyUser

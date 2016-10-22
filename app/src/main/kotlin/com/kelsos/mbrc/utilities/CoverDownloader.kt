@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.utilities
 
 import android.content.Context
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.dao.CoverDao
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.interactors
 
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.domain.Album
 import com.kelsos.mbrc.domain.AlbumTrackModel
 import com.kelsos.mbrc.domain.Track

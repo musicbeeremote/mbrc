@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.repository
 
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.domain.QueueTrack
 import com.kelsos.mbrc.dto.NowPlayingTrack
 import com.kelsos.mbrc.dto.PageResponse

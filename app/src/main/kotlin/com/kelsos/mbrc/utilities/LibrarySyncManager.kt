@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.utilities
 
 import android.content.SharedPreferences
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.constants.Code
 import com.kelsos.mbrc.constants.Constants.LIMIT
 import com.kelsos.mbrc.dao.AlbumDao_Table

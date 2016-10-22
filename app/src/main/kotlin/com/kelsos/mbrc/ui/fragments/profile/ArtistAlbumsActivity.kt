@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.AlbumAdapter
 import com.kelsos.mbrc.annotations.Queue

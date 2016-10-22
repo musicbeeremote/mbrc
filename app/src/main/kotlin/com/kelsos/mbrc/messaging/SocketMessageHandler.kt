@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.messaging
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import javax.inject.Inject
+import javax.inject.Singleton
 import com.kelsos.mbrc.constants.SocketNotification
 import com.kelsos.mbrc.dto.WebSocketMessage
 import com.kelsos.mbrc.events.ui.CoverChangedEvent

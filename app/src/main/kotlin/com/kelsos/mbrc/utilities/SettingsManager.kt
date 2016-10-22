@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.text.TextUtils
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import javax.inject.Inject
+import javax.inject.Singleton
 import com.kelsos.mbrc.dao.DeviceSettings
 import com.kelsos.mbrc.extensions.versionCode
 import com.kelsos.mbrc.repository.DeviceRepository

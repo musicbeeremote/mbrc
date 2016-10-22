@@ -5,8 +5,6 @@ package com.kelsos.mbrc.di.modules
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.NotificationManagerCompat
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.inject.AbstractModule
-import com.google.inject.Singleton
 import com.kelsos.mbrc.cache.PlayerStateCache
 import com.kelsos.mbrc.cache.PlayerStateCacheImpl
 import com.kelsos.mbrc.cache.TrackCache
@@ -113,14 +111,13 @@ import com.kelsos.mbrc.viewmodels.MainViewModel
 import com.kelsos.mbrc.viewmodels.MainViewModelImpl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import roboguice.inject.ContextSingleton
-import roboguice.inject.fragment.SupportFragmentManagerProvider
+import toothpick.config.Module
 
-@SuppressWarnings("UnusedDeclaration") class RemoteModule : AbstractModule() {
-  public override fun configure() {
-    bind(ObjectMapper::class.java).toProvider(ObjectMapperProvider::class.java).asEagerSingleton()
-    bind(OkHttpClient::class.java).toProvider(OkHttpClientProvider::class.java).`in`(Singleton::class.java)
-    bind(Retrofit::class.java).toProvider(RetrofitProvider::class.java).`in`(Singleton::class.java)
+@SuppressWarnings("UnusedDeclaration") class RemoteModule : Module() {
+  init {
+    bind(ObjectMapper::class.java).toProvider(ObjectMapperProvider::class.java).providesSingletonInScope()
+    bind(OkHttpClient::class.java).toProvider(OkHttpClientProvider::class.java).providesSingletonInScope()
+    bind(Retrofit::class.java).toProvider(RetrofitProvider::class.java).providesSingletonInScope()
     bind(MiniControlPresenter::class.java).to(MiniControlPresenterImpl::class.java).`in`(ContextSingleton::class.java)
     bind(MainViewPresenter::class.java).to(MainViewPresenterImpl::class.java).`in`(ContextSingleton::class.java)
     bind(MainViewModel::class.java).to(MainViewModelImpl::class.java).`in`(ContextSingleton::class.java)
@@ -161,34 +158,32 @@ import roboguice.inject.fragment.SupportFragmentManagerProvider
     bind(LibraryAlbumInteractor::class.java).to(LibraryAlbumInteractorImpl::class.java)
     bind(LibrarySyncInteractor::class.java).to(LibrarySyncInteractorImpl::class.java)
 
-    bind(TrackRepository::class.java).to(TrackRepositoryImpl::class.java).`in`(Singleton::class.java)
+    bind(TrackRepository::class.java).to(TrackRepositoryImpl::class.java).singletonInScope()
 
-    bind(ArtistRepository::class.java).to(ArtistRepositoryImpl::class.java).`in`(Singleton::class.java)
-    bind(AlbumRepository::class.java).to(AlbumRepositoryImpl::class.java).`in`(Singleton::class.java)
-    bind(GenreRepository::class.java).to(GenreRepositoryImpl::class.java).`in`(Singleton::class.java)
-    bind(com.kelsos.mbrc.repository.library.TrackRepository::class.java).to(com.kelsos.mbrc.repository.library.TrackRepositoryImpl::class.java).`in`(
-        Singleton::class.java)
+    bind(ArtistRepository::class.java).to(ArtistRepositoryImpl::class.java).singletonInScope()
+    bind(AlbumRepository::class.java).to(AlbumRepositoryImpl::class.java).singletonInScope()
+    bind(GenreRepository::class.java).to(GenreRepositoryImpl::class.java).singletonInScope()
+    bind(com.kelsos.mbrc.repository.library.TrackRepository::class.java).to(com.kelsos.mbrc.repository.library.TrackRepositoryImpl::class.java).singletonInScope()
 
-    bind(CoverRepository::class.java).to(CoverRepositoryImpl::class.java).`in`(Singleton::class.java)
+    bind(CoverRepository::class.java).to(CoverRepositoryImpl::class.java).singletonInScope()
 
-    bind(NowPlayingRepository::class.java).to(NowPlayingRepositoryImpl::class.java).`in`(Singleton::class.java)
-    bind(PlaylistRepository::class.java).to(PlaylistRepositoryImpl::class.java).`in`(Singleton::class.java)
-    bind(DeviceRepository::class.java).to(DeviceRepositoryImpl::class.java).`in`(Singleton::class.java)
+    bind(NowPlayingRepository::class.java).to(NowPlayingRepositoryImpl::class.java).singletonInScope()
+    bind(PlaylistRepository::class.java).to(PlaylistRepositoryImpl::class.java).singletonInScope()
+    bind(DeviceRepository::class.java).to(DeviceRepositoryImpl::class.java).singletonInScope()
 
-    bind(TrackCache::class.java).to(TrackCacheImpl::class.java).`in`(Singleton::class.java)
-    bind(PlayerStateCache::class.java).to(PlayerStateCacheImpl::class.java).`in`(Singleton::class.java)
+    bind(TrackCache::class.java).to(TrackCacheImpl::class.java).singletonInScope()
+    bind(PlayerStateCache::class.java).to(PlayerStateCacheImpl::class.java).singletonInScope()
 
-    bind(TrackService::class.java).toProvider(ApiServiceProvider(TrackService::class.java)).`in`(Singleton::class.java)
-    bind(PlayerService::class.java).toProvider(ApiServiceProvider(PlayerService::class.java)).`in`(Singleton::class.java)
-    bind(LibraryService::class.java).toProvider(ApiServiceProvider(LibraryService::class.java)).`in`(Singleton::class.java)
-    bind(NowPlayingService::class.java).toProvider(ApiServiceProvider(NowPlayingService::class.java)).`in`(Singleton::class.java)
-    bind(PlaylistService::class.java).toProvider(ApiServiceProvider(PlaylistService::class.java)).`in`(Singleton::class.java)
-    bind(ApiService::class.java).toProvider(ApiServiceProvider(ApiService::class.java)).`in`(Singleton::class.java)
-    bind(RxBus::class.java).to(RxBusImpl::class.java).`in`(Singleton::class.java)
+    bind(TrackService::class.java).toProviderInstance(ApiServiceProvider(TrackService::class.java)).providesSingletonInScope()
+    bind(PlayerService::class.java).toProviderInstance(ApiServiceProvider(PlayerService::class.java)).providesSingletonInScope()
+    bind(LibraryService::class.java).toProviderInstance(ApiServiceProvider(LibraryService::class.java)).providesSingletonInScope()
+    bind(NowPlayingService::class.java).toProviderInstance(ApiServiceProvider(NowPlayingService::class.java)).providesSingletonInScope()
+    bind(PlaylistService::class.java).toProviderInstance(ApiServiceProvider(PlaylistService::class.java)).providesSingletonInScope()
+    bind(ApiService::class.java).toProviderInstance(ApiServiceProvider(ApiService::class.java)).providesSingletonInScope()
+    bind(RxBus::class.java).to(RxBusImpl::class.java).singletonInScope()
 
-    bind(NotificationManagerCompat::class.java).toProvider(NotificationManagerCompatProvider::class.java).`in`(Singleton::class.java)
-    bind(FragmentManager::class.java).toProvider(SupportFragmentManagerProvider::class.java).`in`(ContextSingleton::class.java)
+    bind(NotificationManagerCompat::class.java).toProvider(NotificationManagerCompatProvider::class.java).providesSingletonInScope()
     bind(com.kelsos.mbrc.utilities.KeyProvider::class.java).to(com.kelsos.mbrc.utilities.KeyProviderImpl::class.java)
-    bind(SocketMessageHandler::class.java).asEagerSingleton()
+    bind(SocketMessageHandler::class.java).singletonInScope()
   }
 }

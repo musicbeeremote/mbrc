@@ -11,7 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.ArtistAdapter
 import com.kelsos.mbrc.adapters.EndlessRecyclerViewScrollListener

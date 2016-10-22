@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.R
 import java.util.*
 

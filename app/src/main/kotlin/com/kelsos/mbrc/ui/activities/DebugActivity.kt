@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.utilities.LibrarySyncManager
 import roboguice.RoboGuice

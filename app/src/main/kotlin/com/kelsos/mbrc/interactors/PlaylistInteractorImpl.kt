@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.interactors
 
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.domain.Playlist
 import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.repository.PlaylistRepository

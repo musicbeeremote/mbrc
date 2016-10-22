@@ -12,7 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.domain.Track
 import com.kelsos.mbrc.ui.SquareImageView

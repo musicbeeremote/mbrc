@@ -7,7 +7,7 @@ import android.content.IntentFilter
 import android.net.NetworkInfo
 import android.net.wifi.WifiManager
 import android.telephony.TelephonyManager
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.interactors.VolumeInteractor

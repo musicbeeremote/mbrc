@@ -12,7 +12,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.afollestad.materialdialogs.MaterialDialog
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.DeviceManagerAdapter
 import com.kelsos.mbrc.adapters.DeviceManagerAdapter.DeviceActionListener

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.utilities
 
-import com.google.inject.Singleton
+import javax.inject.Singleton
 import timber.log.Timber
 import java.net.ConnectException
 

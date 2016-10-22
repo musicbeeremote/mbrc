@@ -7,7 +7,7 @@ import android.widget.RatingBar
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.events.ui.RatingChanged
 import com.kelsos.mbrc.interactors.TrackRatingInteractor

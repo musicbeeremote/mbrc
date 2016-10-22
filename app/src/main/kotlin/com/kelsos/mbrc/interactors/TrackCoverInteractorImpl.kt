@@ -2,7 +2,7 @@ package com.kelsos.mbrc.interactors
 
 import android.graphics.Bitmap
 
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.repository.TrackRepository
 
 import rx.Observable

@@ -3,7 +3,7 @@ package com.kelsos.mbrc.adapters
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.ui.fragments.browse.BrowseAlbumFragment
 import com.kelsos.mbrc.ui.fragments.browse.BrowseArtistFragment
 import com.kelsos.mbrc.ui.fragments.browse.BrowseGenreFragment

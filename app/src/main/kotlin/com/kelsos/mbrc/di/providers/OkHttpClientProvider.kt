@@ -1,18 +1,19 @@
 package com.kelsos.mbrc.di.providers
 
-import com.google.inject.Inject
-import com.google.inject.Provider
 import com.kelsos.mbrc.utilities.SettingsManager
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
+import javax.annotation.Nullable
+import javax.inject.Inject
+import javax.inject.Provider
 
 class OkHttpClientProvider : Provider<OkHttpClient> {
 
   @Inject private lateinit var manager: SettingsManager
-  @Inject(optional = true) private var interceptor: Interceptor? = null
+  @Inject @Nullable private var interceptor: Interceptor? = null
 
   override fun get(): OkHttpClient {
     val loggingInterceptor = HttpLoggingInterceptor { Timber.tag("OkHttp").d(it) }

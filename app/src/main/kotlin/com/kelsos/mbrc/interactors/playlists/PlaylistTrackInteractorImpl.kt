@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.interactors.playlists
 
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.domain.PlaylistTrack
 import com.kelsos.mbrc.mappers.PlaylistTrackMapper
 import com.kelsos.mbrc.repository.PlaylistRepository

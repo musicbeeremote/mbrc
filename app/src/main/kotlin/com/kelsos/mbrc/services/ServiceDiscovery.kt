@@ -3,8 +3,8 @@ package com.kelsos.mbrc.services
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import javax.inject.Inject
+import javax.inject.Singleton
 import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.dao.DeviceSettings
 import com.kelsos.mbrc.dto.DiscoveryResponse

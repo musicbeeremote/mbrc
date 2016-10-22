@@ -5,7 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.MenuItem
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.constants.UserInputEventType

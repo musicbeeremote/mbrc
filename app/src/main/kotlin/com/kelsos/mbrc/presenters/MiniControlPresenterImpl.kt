@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.presenters
 
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.annotations.PlayerAction
 import com.kelsos.mbrc.events.ui.CoverChangedEvent
 import com.kelsos.mbrc.events.ui.PlayStateChange

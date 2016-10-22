@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.net
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import javax.inject.Inject
+import javax.inject.Singleton
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.dto.WebSocketMessage
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent

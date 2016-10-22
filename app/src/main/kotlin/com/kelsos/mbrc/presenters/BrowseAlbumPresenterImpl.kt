@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.presenters
 
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.annotations.MetaDataType
 import com.kelsos.mbrc.annotations.Queue.Action
 import com.kelsos.mbrc.constants.Constants.PAGE_SIZE

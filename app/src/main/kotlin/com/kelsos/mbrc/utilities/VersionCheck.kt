@@ -2,7 +2,7 @@ package com.kelsos.mbrc.utilities
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.BuildConfig
 import timber.log.Timber
 import java.io.IOException

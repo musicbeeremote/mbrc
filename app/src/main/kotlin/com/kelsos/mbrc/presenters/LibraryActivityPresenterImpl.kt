@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.presenters
 
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.interactors.LibrarySyncInteractor
 import com.kelsos.mbrc.ui.views.LibraryActivityView
 

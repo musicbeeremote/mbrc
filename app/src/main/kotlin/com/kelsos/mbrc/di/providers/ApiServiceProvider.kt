@@ -1,9 +1,8 @@
 package com.kelsos.mbrc.di.providers
 
-import com.google.inject.Inject
-import com.google.inject.Provider
-
 import retrofit2.Retrofit
+import javax.inject.Inject
+import javax.inject.Provider
 
 class ApiServiceProvider<T>(private val serviceClass: Class<T>) : Provider<T> {
   @Inject private lateinit var retrofit: Retrofit

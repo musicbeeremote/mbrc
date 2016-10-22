@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.interactors
 
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.annotations.PlayerAction.Action
 import com.kelsos.mbrc.dto.BaseResponse
 import com.kelsos.mbrc.services.api.PlayerService

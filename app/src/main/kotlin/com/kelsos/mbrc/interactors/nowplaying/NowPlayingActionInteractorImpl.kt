@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.interactors.nowplaying
 
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.constants.Code
 import com.kelsos.mbrc.dto.requests.MoveRequest
 import com.kelsos.mbrc.dto.requests.PlayPathRequest

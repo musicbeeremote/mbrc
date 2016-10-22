@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.presenters
 
-import com.google.inject.Inject
+import javax.inject.Inject
 import com.kelsos.mbrc.domain.QueueTrack
 import com.kelsos.mbrc.interactors.NowPlayingListInteractor
 import com.kelsos.mbrc.interactors.nowplaying.NowPlayingActionInteractor
