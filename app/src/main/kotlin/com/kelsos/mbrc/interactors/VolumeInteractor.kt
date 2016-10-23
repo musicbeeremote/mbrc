@@ -1,13 +1,13 @@
 package com.kelsos.mbrc.interactors
 
-import javax.inject.Inject
 import com.kelsos.mbrc.dto.requests.VolumeRequest
 import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.services.api.PlayerService
 import rx.Observable
+import javax.inject.Inject
 
-class VolumeInteractor {
-  @Inject private lateinit var api: PlayerService
+class VolumeInteractor
+@Inject constructor(private val api: PlayerService) {
 
   fun getVolume(): Observable<Int> {
     return api.getVolume()

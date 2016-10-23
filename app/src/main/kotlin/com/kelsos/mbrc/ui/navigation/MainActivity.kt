@@ -20,8 +20,6 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.OnLongClick
-import javax.inject.Inject
-import javax.inject.Singleton
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.PlayerState.State
@@ -35,7 +33,9 @@ import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment
 import com.kelsos.mbrc.ui.views.MainView
 import com.kelsos.mbrc.utilities.FontUtils
-import roboguice.RoboGuice
+import toothpick.Toothpick
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton class MainActivity : BaseActivity(), MainView {
 
@@ -56,7 +56,7 @@ import roboguice.RoboGuice
   @BindView(R.id.main_repeat_button) lateinit var repeatButton: ImageButton
   @BindView(R.id.main_album_cover_image_view) lateinit var albumCover: ImageView
 
-  @Inject private lateinit var presenter: MainViewPresenter
+  @Inject lateinit var presenter: MainViewPresenter
 
   private var mShareActionProvider: ShareActionProvider? = null
 
@@ -123,7 +123,8 @@ import roboguice.RoboGuice
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
-    RoboGuice.getInjector(this).injectMembers(this)
+    val scope = Toothpick.openScopes(application, this)
+    Toothpick.inject(this, scope)
     ButterKnife.bind(this)
     initialize(toolbar, drawer, navigationView)
 
@@ -145,6 +146,11 @@ import roboguice.RoboGuice
 
     progressBar.setOnSeekBarChangeListener(progressBarChangeListener)
     volumeBar.setOnSeekBarChangeListener(volumeBarChangeListener)
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    Toothpick.closeScope(this)
   }
 
   public override fun onPause() {

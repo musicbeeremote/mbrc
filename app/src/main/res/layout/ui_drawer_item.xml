@@ -12,7 +12,7 @@
       android:layout_height="wrap_content"
       android:layout_gravity="center_vertical"
       android:contentDescription="@string/description_checkable_linearlayout_icon"
-      android:tint="@color/hint_foreground_material_dark" />
+      android:tint="@color/button_dark" />
 
   <CheckedTextView
       android:id="@+id/rowText"

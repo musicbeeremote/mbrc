@@ -1,14 +1,15 @@
 package com.kelsos.mbrc.interactors
 
-import javax.inject.Inject
 import com.kelsos.mbrc.dto.requests.RatingRequest
 import com.kelsos.mbrc.dto.track.Rating
 import com.kelsos.mbrc.services.api.TrackService
 import rx.Observable
 import rx.lang.kotlin.toSingletonObservable
+import javax.inject.Inject
 
-class TrackRatingInteractorImpl : TrackRatingInteractor {
-  @Inject private lateinit var service: TrackService
+class TrackRatingInteractorImpl
+@Inject constructor(private val service: TrackService) :
+    TrackRatingInteractor {
 
   override fun getRating(): Observable<Rating> {
     return service.getTrackRating()

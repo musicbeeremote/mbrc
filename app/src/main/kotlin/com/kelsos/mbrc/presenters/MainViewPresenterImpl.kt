@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.presenters
 
-import javax.inject.Inject
 import com.kelsos.mbrc.annotations.PlayerAction
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.Repeat
@@ -26,12 +25,13 @@ import com.kelsos.mbrc.ui.views.MainView
 import com.kelsos.mbrc.utilities.ErrorHandler
 import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.viewmodels.MainViewModel
-import roboguice.inject.ContextSingleton
 import rx.Observable
 import rx.Subscription
 import rx.subjects.PublishSubject
 import timber.log.Timber
+import toothpick.smoothie.annotations.ContextSingleton
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 @ContextSingleton class MainViewPresenterImpl : MainViewPresenter {
   override fun attachView(view: MainView) {

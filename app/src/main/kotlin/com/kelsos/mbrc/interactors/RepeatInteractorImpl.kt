@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.interactors
 
-import javax.inject.Inject
 import com.kelsos.mbrc.annotations.Repeat.Mode
 import com.kelsos.mbrc.annotations.Shuffle
 import com.kelsos.mbrc.cache.PlayerStateCache
@@ -9,10 +8,11 @@ import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.services.api.PlayerService
 import rx.Observable
 import rx.lang.kotlin.toSingletonObservable
+import javax.inject.Inject
 
-class RepeatInteractorImpl : RepeatInteractor {
-  @Inject private lateinit var cache: PlayerStateCache
-  @Inject private lateinit var service: PlayerService
+class RepeatInteractorImpl
+@Inject constructor(private val cache: PlayerStateCache,
+                    private val service: PlayerService) : RepeatInteractor {
 
   override fun getRepeat(): Observable<String> {
     val networkRequest = service.getRepeatMode()

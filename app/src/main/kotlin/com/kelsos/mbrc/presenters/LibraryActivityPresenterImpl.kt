@@ -1,13 +1,11 @@
 package com.kelsos.mbrc.presenters
 
-import javax.inject.Inject
-import com.kelsos.mbrc.interactors.LibrarySyncInteractor
 import com.kelsos.mbrc.ui.views.LibraryActivityView
+import javax.inject.Inject
 
-class LibraryActivityPresenterImpl : LibraryActivityPresenter {
+class LibraryActivityPresenterImpl
+@Inject constructor() : LibraryActivityPresenter {
   private var view: LibraryActivityView? = null
-
-  @Inject private lateinit var librarySyncInteractor: LibrarySyncInteractor
 
   override fun bind(view: LibraryActivityView) {
 

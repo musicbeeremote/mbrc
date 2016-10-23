@@ -1,15 +1,16 @@
 package com.kelsos.mbrc.interactors
 
-import javax.inject.Inject
 import com.kelsos.mbrc.domain.TrackPosition
 import com.kelsos.mbrc.dto.requests.PositionRequest
 import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.services.api.TrackService
 import rx.Observable
 import rx.lang.kotlin.toSingletonObservable
+import javax.inject.Inject
 
-class TrackPositionInteractorImpl : TrackPositionInteractor {
-  @Inject private lateinit var service: TrackService
+class TrackPositionInteractorImpl
+@Inject constructor(private val service: TrackService) :
+    TrackPositionInteractor {
 
   override fun getPosition(): Observable<TrackPosition> {
     return service.getCurrentPosition()

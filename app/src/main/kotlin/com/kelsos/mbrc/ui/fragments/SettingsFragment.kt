@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.MenuItem
-import javax.inject.Inject
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.constants.UserInputEventType
@@ -14,16 +13,23 @@ import com.kelsos.mbrc.extensions.version
 import com.kelsos.mbrc.ui.activities.DeviceManagerActivity
 import com.kelsos.mbrc.ui.dialogs.WebViewDialog
 import com.kelsos.mbrc.utilities.RxBus
-import roboguice.RoboGuice
 import timber.log.Timber
+import toothpick.Toothpick
+import javax.inject.Inject
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
-  @Inject private lateinit var bus: RxBus
+  @Inject lateinit var bus: RxBus
+
+  override fun onDestroy() {
+    super.onDestroy()
+    Toothpick.closeScope(this)
+  }
 
   override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
     addPreferencesFromResource(R.xml.application_settings)
-    RoboGuice.getInjector(activity).injectMembers(this)
+    val scope = Toothpick.openScopes(context.applicationContext, this)
+    Toothpick.inject(this, scope)
 
     val mOpenSource = findPreference(resources.getString(R.string.preferences_open_source))
     val mManager = findPreference(resources.getString(R.string.preferences_key_connection_manager))

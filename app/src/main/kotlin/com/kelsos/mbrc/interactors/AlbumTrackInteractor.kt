@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.interactors
 
-import javax.inject.Inject
 import com.kelsos.mbrc.domain.Album
 import com.kelsos.mbrc.domain.AlbumTrackModel
 import com.kelsos.mbrc.domain.Track
@@ -11,19 +10,18 @@ import com.kelsos.mbrc.repository.library.AlbumRepository
 import com.kelsos.mbrc.repository.library.TrackRepository
 import rx.Observable
 import rx.lang.kotlin.toSingletonObservable
+import javax.inject.Inject
 
-class AlbumTrackInteractor {
-  @Inject private lateinit var repository: AlbumRepository
-  @Inject private lateinit var trackRepository: TrackRepository
+class AlbumTrackInteractor
+@Inject constructor(private val trackRepository: TrackRepository,
+                    private val repository: AlbumRepository) {
 
   fun execute(id: Long): Observable<AlbumTrackModel> {
     val tracks = trackRepository.getTracksByAlbumId(id)
         .flatMap { TrackMapper.map(it).toSingletonObservable() }
     return Observable.zip<List<Track>, Album, AlbumTrackModel>(tracks,
         getAlbum(id),
-        { tracks, album ->
-          AlbumTrackModel(tracks, album)
-        }).io()
+        ::AlbumTrackModel).io()
   }
 
   private fun getAlbum(id: Long): Observable<Album> {

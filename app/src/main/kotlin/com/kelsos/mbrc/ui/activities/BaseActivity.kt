@@ -9,8 +9,6 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.os.PersistableBundle
-import android.support.annotation.CallSuper
 import android.support.annotation.IdRes
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
@@ -24,7 +22,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.KeyEvent
 import android.view.MenuItem
-import javax.inject.Inject
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.Connection
@@ -44,9 +41,9 @@ import com.kelsos.mbrc.ui.navigation.NowPlayingActivity
 import com.kelsos.mbrc.ui.navigation.PlaylistListActivity
 import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.viewmodels.ConnectionStatusModel
-import roboguice.RoboGuice
 import rx.Subscription
 import timber.log.Timber
+import javax.inject.Inject
 
 open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -124,12 +121,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
   override fun onPause() {
     super.onPause()
     rxBus.unregister(this)
-  }
-
-  @CallSuper
-  override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-    super.onCreate(savedInstanceState, persistentState)
-    RoboGuice.getInjector(this).injectMembers(this)
   }
 
   override fun onConfigurationChanged(newConfig: Configuration) {

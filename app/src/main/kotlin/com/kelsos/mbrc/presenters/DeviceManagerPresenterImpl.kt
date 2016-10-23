@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.presenters
 
-import javax.inject.Inject
 import com.kelsos.mbrc.dao.DeviceSettings
 import com.kelsos.mbrc.events.ui.DiscoveryStopped
 import com.kelsos.mbrc.events.ui.NotifyUser
@@ -9,17 +8,16 @@ import com.kelsos.mbrc.ui.views.DeviceManagerView
 import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.utilities.SettingsManager
 import timber.log.Timber
+import javax.inject.Inject
 
-class DeviceManagerPresenterImpl : DeviceManagerPresenter {
-
-  @Inject private lateinit var bus: RxBus
-  @Inject private lateinit var repository: DeviceRepository
-  @Inject private lateinit var settingsManager: SettingsManager
+class DeviceManagerPresenterImpl
+@Inject constructor(private val bus: RxBus,
+                    private val repository: DeviceRepository,
+                    private val settingsManager: SettingsManager) : DeviceManagerPresenter {
 
   private var view: DeviceManagerView? = null
 
   override fun bind(view: DeviceManagerView) {
-
     this.view = view
   }
 
@@ -37,7 +35,7 @@ class DeviceManagerPresenterImpl : DeviceManagerPresenter {
   }
 
   override fun loadDevices() {
-    repository.getAllObservable().subscribe({ view?.updateDevices(it) }) { t -> Timber.e(t, "Failed") }
+    repository.getAllObservable().subscribe({ view?.updateDevices(it) }) { Timber.e(it, "Failed") }
   }
 
   override fun deleteSettings(settings: DeviceSettings) {

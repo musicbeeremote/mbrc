@@ -1,23 +1,22 @@
 package com.kelsos.mbrc.presenters
 
-import javax.inject.Inject
 import com.kelsos.mbrc.annotations.MetaDataType
 import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.constants.Constants
 import com.kelsos.mbrc.domain.Genre
+import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.interactors.QueueInteractor
 import com.kelsos.mbrc.interactors.library.LibraryGenreInteractor
 import com.kelsos.mbrc.interactors.playlists.PlaylistAddInteractor
-import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.ui.views.BrowseGenreView
-import roboguice.util.Ln
 import timber.log.Timber
+import javax.inject.Inject
 
-class BrowseGenrePresenterImpl : BrowseGenrePresenter {
+class BrowseGenrePresenterImpl
+@Inject constructor(private val interactor: LibraryGenreInteractor,
+                    private val queue: QueueInteractor,
+                    private val playlistAddInteractor: PlaylistAddInteractor) : BrowseGenrePresenter {
   private var view: BrowseGenreView? = null
-  @Inject private lateinit var interactor: LibraryGenreInteractor
-  @Inject private lateinit var queue: QueueInteractor
-  @Inject private lateinit var playlistAddInteractor: PlaylistAddInteractor
 
   override fun bind(view: BrowseGenreView) {
     this.view = view
@@ -45,7 +44,7 @@ class BrowseGenrePresenterImpl : BrowseGenrePresenter {
   override fun load(page: Int) {
     interactor.execute(page * Constants.PAGE_SIZE)
         .task()
-        .subscribe({ view!!.update(it) }, { Ln.v(it) })
+        .subscribe({ view!!.update(it) }, { Timber.v(it) })
   }
 
   override fun createPlaylist(selectionId: Long, name: String) {

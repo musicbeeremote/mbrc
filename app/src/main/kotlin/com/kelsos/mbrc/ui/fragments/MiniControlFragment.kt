@@ -12,13 +12,13 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.presenters.MiniControlPresenter
 import com.kelsos.mbrc.ui.views.MiniControlView
 import com.kelsos.mbrc.utilities.FontUtils
-import roboguice.RoboGuice
+import toothpick.Toothpick
+import javax.inject.Inject
 
 class MiniControlFragment : Fragment(), MiniControlView {
 
@@ -27,7 +27,7 @@ class MiniControlFragment : Fragment(), MiniControlView {
   @BindView(R.id.mc_track_title) internal lateinit var trackTitle: TextView
   @BindView(R.id.mc_play_pause) internal lateinit var playPause: ImageButton
 
-  @Inject private lateinit var presenter: MiniControlPresenter
+  @Inject lateinit var presenter: MiniControlPresenter
 
   @OnClick(R.id.mc_next_track) fun onNextClicked() {
     presenter.onNextPressed()
@@ -44,12 +44,18 @@ class MiniControlFragment : Fragment(), MiniControlView {
   override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     val view = inflater!!.inflate(R.layout.ui_fragment_mini_control, container, false)
     ButterKnife.bind(this, view)
-    RoboGuice.getInjector(context).injectMembers(this)
+    val scope = Toothpick.openScopes(context.applicationContext, this)
+    Toothpick.inject(this, scope)
     presenter.bind(this)
     trackTitle.typeface = FontUtils.getRobotoMedium(activity)
     trackArtist.typeface = FontUtils.getRobotoRegular(activity)
     presenter.load()
     return view
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    Toothpick.closeScope(this)
   }
 
   override fun onPause() {

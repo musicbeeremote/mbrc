@@ -7,7 +7,6 @@ import android.content.IntentFilter
 import android.net.NetworkInfo
 import android.net.wifi.WifiManager
 import android.telephony.TelephonyManager
-import javax.inject.Inject
 import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.interactors.VolumeInteractor
@@ -15,11 +14,12 @@ import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.utilities.SettingsManager
 import rx.functions.Func1
 import timber.log.Timber
+import javax.inject.Inject
 
 class StateBroadcastReceiver : BroadcastReceiver() {
-  @Inject private lateinit var settingsManager: SettingsManager
-  @Inject private lateinit var bus: RxBus
-  @Inject private lateinit var interactor: VolumeInteractor
+  @Inject lateinit var settingsManager: SettingsManager
+  @Inject lateinit var bus: RxBus
+  @Inject lateinit var interactor: VolumeInteractor
 
   override fun onReceive(context: Context, intent: Intent) {
     if (TelephonyManager.ACTION_PHONE_STATE_CHANGED == intent.action) {

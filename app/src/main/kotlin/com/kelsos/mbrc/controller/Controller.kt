@@ -3,8 +3,6 @@ package com.kelsos.mbrc.controller
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import javax.inject.Inject
-import javax.inject.Singleton
 import com.kelsos.mbrc.events.ChangeWebSocketStatusEvent
 import com.kelsos.mbrc.extensions.initDBFlow
 import com.kelsos.mbrc.interactors.LibrarySyncInteractor
@@ -17,21 +15,25 @@ import com.kelsos.mbrc.services.ServiceDiscovery
 import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.utilities.SettingsManager
 import com.raizlabs.android.dbflow.config.FlowManager
-import roboguice.RoboGuice
 import rx.Observable
 import timber.log.Timber
+import toothpick.Scope
+import toothpick.Toothpick
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton class Controller : Service() {
 
-  @Inject private lateinit var socket: SocketService
-  @Inject private lateinit var handler: SocketMessageHandler
-  @Inject private lateinit var receiver: StateBroadcastReceiver
-  @Inject private lateinit var actionReceiver: PlayerActionReceiver
-  @Inject private lateinit var notificationService: NotificationService
-  @Inject private lateinit var discovery: ServiceDiscovery
-  @Inject private lateinit var settingsManager: SettingsManager
-  @Inject private lateinit var bus: RxBus
-  @Inject private lateinit var sync: LibrarySyncInteractor
+  @Inject lateinit var socket: SocketService
+  @Inject lateinit var handler: SocketMessageHandler
+  @Inject lateinit var receiver: StateBroadcastReceiver
+  @Inject lateinit var actionReceiver: PlayerActionReceiver
+  @Inject lateinit var notificationService: NotificationService
+  @Inject lateinit var discovery: ServiceDiscovery
+  @Inject lateinit var settingsManager: SettingsManager
+  @Inject lateinit var bus: RxBus
+  @Inject lateinit var sync: LibrarySyncInteractor
+  private lateinit var scope: Scope
 
   init {
     Timber.d("Application Controller Initialized")
@@ -44,7 +46,9 @@ import timber.log.Timber
   override fun onCreate() {
     super.onCreate()
     this.initDBFlow()
-    RoboGuice.getInjector(this).injectMembers(this)
+    scope = Toothpick.openScopes(application, this)
+    Toothpick.inject(this, scope)
+
     this.registerReceiver(actionReceiver, actionReceiver.intentFilter)
     this.registerReceiver(receiver, receiver.intentFilter)
     bus.register(this,
@@ -77,6 +81,7 @@ import timber.log.Timber
     FlowManager.destroy()
     this.unregisterReceiver(receiver)
     this.unregisterReceiver(actionReceiver)
+    Toothpick.closeScope(this)
   }
 
   private fun onWebSocketActionRequest(event: ChangeWebSocketStatusEvent) {

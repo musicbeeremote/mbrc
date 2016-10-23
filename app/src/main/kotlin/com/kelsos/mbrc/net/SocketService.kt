@@ -1,8 +1,6 @@
 package com.kelsos.mbrc.net
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import javax.inject.Inject
-import javax.inject.Singleton
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.dto.WebSocketMessage
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
@@ -26,17 +24,21 @@ import timber.log.Timber
 import java.io.IOException
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton class SocketService
 @Inject
-constructor(private val settingsManager: SettingsManager, private val mapper: ObjectMapper, client: OkHttpClient)
+constructor(private val settingsManager: SettingsManager,
+            private val mapper: ObjectMapper,
+            client: OkHttpClient,
+            private val rxBus: RxBus)
 : WebSocketListener {
   private val messagePublisher: PublishSubject<String>
   private val client: OkHttpClient
   private var connected: Boolean = false
   private val executor = Executors.newSingleThreadExecutor()
   private var subscription: Subscription? = null
-  @Inject private lateinit var rxBus: RxBus
   private var webSocket: WebSocket? = null
 
   init {

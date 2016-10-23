@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.presenters
 
-import javax.inject.Inject
 import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.domain.PlaylistTrack
 import com.kelsos.mbrc.extensions.task
@@ -8,12 +7,13 @@ import com.kelsos.mbrc.interactors.QueueInteractor
 import com.kelsos.mbrc.interactors.playlists.PlaylistTrackInteractor
 import com.kelsos.mbrc.ui.views.PlaylistTrackView
 import timber.log.Timber
+import javax.inject.Inject
 
-class PlaylistTrackPresenterImpl : PlaylistTrackPresenter {
+
+class PlaylistTrackPresenterImpl
+@Inject constructor(private val playlistTrackInteractor: PlaylistTrackInteractor,
+                      private val queueInteractor: QueueInteractor): PlaylistTrackPresenter {
   private var view: PlaylistTrackView? = null
-
-  @Inject private lateinit var playlistTrackInteractor: PlaylistTrackInteractor
-  @Inject private lateinit var queueInteractor: QueueInteractor
 
   override fun bind(view: PlaylistTrackView) {
     this.view = view

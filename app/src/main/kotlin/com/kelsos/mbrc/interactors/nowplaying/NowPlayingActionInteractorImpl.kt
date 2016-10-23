@@ -1,17 +1,16 @@
 package com.kelsos.mbrc.interactors.nowplaying
 
-import javax.inject.Inject
 import com.kelsos.mbrc.constants.Code
 import com.kelsos.mbrc.dto.requests.MoveRequest
 import com.kelsos.mbrc.dto.requests.PlayPathRequest
 import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.services.api.NowPlayingService
 import rx.Observable
+import javax.inject.Inject
 
-class NowPlayingActionInteractorImpl : NowPlayingActionInteractor {
-
-  @Inject
-  private lateinit var service: NowPlayingService
+class NowPlayingActionInteractorImpl
+@Inject constructor(private val service: NowPlayingService) :
+    NowPlayingActionInteractor {
 
   override fun play(path: String): Observable<Boolean> {
     val request = PlayPathRequest()

@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.presenters
 
-import javax.inject.Inject
 import com.kelsos.mbrc.annotations.MetaDataType
 import com.kelsos.mbrc.annotations.Queue.Action
 import com.kelsos.mbrc.constants.Constants.PAGE_SIZE
@@ -9,13 +8,12 @@ import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.interactors.LibraryAlbumInteractor
 import com.kelsos.mbrc.interactors.QueueInteractor
 import com.kelsos.mbrc.ui.views.BrowseAlbumView
-import roboguice.util.Ln
 import timber.log.Timber
+import javax.inject.Inject
 
-class BrowseAlbumPresenterImpl : BrowseAlbumPresenter {
-
-  @Inject private lateinit var queueInteractor: QueueInteractor
-  @Inject private lateinit var albumInteractor: LibraryAlbumInteractor
+class BrowseAlbumPresenterImpl
+@Inject constructor(private val queueInteractor: QueueInteractor,
+                    private val albumInteractor: LibraryAlbumInteractor): BrowseAlbumPresenter {
 
   private var view: BrowseAlbumView? = null
 
@@ -30,7 +28,7 @@ class BrowseAlbumPresenterImpl : BrowseAlbumPresenter {
   override fun queue(album: Album, @Action action: String) {
     queueInteractor.execute(MetaDataType.ALBUM, action, album.id).subscribe({
 
-    }, { Ln.v(it) })
+    }, { Timber.v(it) })
   }
 
   override fun load(page: Int) {
@@ -40,6 +38,6 @@ class BrowseAlbumPresenterImpl : BrowseAlbumPresenter {
         .task()
         .subscribe({
           view?.updateData(it)
-        }, { Ln.v(it) })
+        }, { Timber.v(it) })
   }
 }

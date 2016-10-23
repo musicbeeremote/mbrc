@@ -1,16 +1,16 @@
 package com.kelsos.mbrc.interactors
 
-import javax.inject.Inject
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.cache.PlayerStateCache
 import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.services.api.PlayerService
 import rx.Observable
 import rx.lang.kotlin.toSingletonObservable
+import javax.inject.Inject
 
-class PlayerStateInteractorImpl : PlayerStateInteractor {
-  @Inject private lateinit var cache: PlayerStateCache
-  @Inject private lateinit var service: PlayerService
+class PlayerStateInteractorImpl
+@Inject constructor(private val cache: PlayerStateCache,
+                    private val service: PlayerService) : PlayerStateInteractor {
 
   override fun getState(): Observable<String> {
     val networkRequest = service.getPlayState()
@@ -20,7 +20,7 @@ class PlayerStateInteractorImpl : PlayerStateInteractor {
     val cached = cache.playState.toSingletonObservable()
 
     return Observable.concat(networkRequest, cached)
-        .filter { !PlayerState.UNDEFINED.equals(it) }
+        .filter { PlayerState.UNDEFINED != it }
         .doOnError { PlayerState.STOPPED.toSingletonObservable() }
         .firstOrDefault(PlayerState.STOPPED)
         .task()

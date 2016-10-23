@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.interactors
 
-import javax.inject.Inject
 import com.kelsos.mbrc.annotations.Mute
 import com.kelsos.mbrc.cache.PlayerStateCache
 import com.kelsos.mbrc.dto.requests.ChangeStateRequest
@@ -8,10 +7,11 @@ import com.kelsos.mbrc.extensions.io
 import com.kelsos.mbrc.services.api.PlayerService
 import rx.Observable
 import rx.lang.kotlin.toSingletonObservable
+import javax.inject.Inject
 
-class MuteInteractorImpl : MuteInteractor {
-  @Inject private lateinit var cache: PlayerStateCache
-  @Inject private lateinit var service: PlayerService
+class MuteInteractorImpl
+@Inject constructor(private val cache: PlayerStateCache,
+                    private val service: PlayerService): MuteInteractor {
 
   override fun getMuteState(): Observable<Boolean> {
     val networkRequest = service.getMuteState()

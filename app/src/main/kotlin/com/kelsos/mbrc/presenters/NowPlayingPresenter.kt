@@ -1,11 +1,11 @@
 package com.kelsos.mbrc.presenters
 
-import javax.inject.Inject
 import com.kelsos.mbrc.domain.QueueTrack
 import com.kelsos.mbrc.interactors.NowPlayingListInteractor
 import com.kelsos.mbrc.interactors.nowplaying.NowPlayingActionInteractor
 import com.kelsos.mbrc.ui.views.NowPlayingView
-import roboguice.util.Ln
+import timber.log.Timber
+import javax.inject.Inject
 
 class NowPlayingPresenter {
   private var view: NowPlayingView? = null
@@ -18,7 +18,7 @@ class NowPlayingPresenter {
 
   fun loadData() {
     nowPlayingListInteractor.execute().subscribe({ view!!.updateAdapter(it) },
-        { Ln.v(it) })
+        { Timber.v(it) })
   }
 
   fun playTrack(track: QueueTrack) {
@@ -26,7 +26,7 @@ class NowPlayingPresenter {
       if (it) {
         view!!.updatePlayingTrack(track)
       }
-    }, { Ln.v(it) })
+    }, { Timber.v(it) })
   }
 
   fun removeItem(position: Int) {

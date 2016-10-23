@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.widgets
 
+import android.R
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
@@ -15,8 +16,9 @@ import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder
 import com.kelsos.mbrc.utilities.RxBus
-import roboguice.RoboGuice
 import timber.log.Timber
+import toothpick.Scope
+import toothpick.Toothpick
 import java.util.*
 
 class WidgetNormal : AppWidgetProvider() {
@@ -26,9 +28,11 @@ class WidgetNormal : AppWidgetProvider() {
 
   private var widgetsIds: IntArray? = null
 
+  private lateinit var scope: Scope
+
   override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
     super.onUpdate(context, appWidgetManager, appWidgetIds)
-    RoboGuice.getInjector(context).injectMembers(this)
+    scope = Toothpick.openScope(context.applicationContext)
     this.context = context
     widgetsIds = appWidgetIds
 

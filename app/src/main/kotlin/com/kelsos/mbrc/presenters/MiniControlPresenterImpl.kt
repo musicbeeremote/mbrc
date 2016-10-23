@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.presenters
 
-import javax.inject.Inject
 import com.kelsos.mbrc.annotations.PlayerAction
+import com.kelsos.mbrc.annotations.PlayerAction.Action
 import com.kelsos.mbrc.events.ui.CoverChangedEvent
 import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
@@ -14,7 +14,8 @@ import com.kelsos.mbrc.ui.views.MiniControlView
 import com.kelsos.mbrc.utilities.ErrorHandler
 import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.viewmodels.MiniControlModel
-import roboguice.inject.ContextSingleton
+import toothpick.smoothie.annotations.ContextSingleton
+import javax.inject.Inject
 
 @ContextSingleton class MiniControlPresenterImpl : MiniControlPresenter {
   private var view: MiniControlView? = null
@@ -30,7 +31,7 @@ import roboguice.inject.ContextSingleton
     action(PlayerAction.NEXT)
   }
 
-  private fun action(@PlayerAction.Action action: String) {
+  private fun action(@Action action: String) {
     interactor.performAction(action)
         .task()
         .subscribe({ }, { handler.handleThrowable(it) })

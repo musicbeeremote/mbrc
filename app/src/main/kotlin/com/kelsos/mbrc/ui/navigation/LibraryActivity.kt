@@ -10,13 +10,13 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import butterknife.BindView
 import butterknife.ButterKnife
-import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.BrowsePagerAdapter
 import com.kelsos.mbrc.presenters.LibraryActivityPresenter
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.views.LibraryActivityView
-import roboguice.RoboGuice
+import toothpick.Toothpick
+import javax.inject.Inject
 
 class LibraryActivity : BaseActivity(), LibraryActivityView {
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
@@ -25,8 +25,8 @@ class LibraryActivity : BaseActivity(), LibraryActivityView {
   @BindView(R.id.library_pager) lateinit var pager: ViewPager
   @BindView(R.id.library_pager_tabs) lateinit var tabLayout: TabLayout
 
-  @Inject private lateinit var adapter: BrowsePagerAdapter
-  @Inject private lateinit var presenter: LibraryActivityPresenter
+  @Inject lateinit var adapter: BrowsePagerAdapter
+  @Inject lateinit var presenter: LibraryActivityPresenter
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return false
@@ -35,7 +35,8 @@ class LibraryActivity : BaseActivity(), LibraryActivityView {
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_library)
-    RoboGuice.getInjector(this).injectMembers(this)
+    val scope = Toothpick.openScopes(application, this)
+    Toothpick.inject(this, scope)
     presenter.bind(this)
     ButterKnife.bind(this)
     initialize(toolbar,drawer,navigationView)
@@ -54,6 +55,11 @@ class LibraryActivity : BaseActivity(), LibraryActivityView {
   override fun onResume() {
     super.onResume()
     presenter.onResume()
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    Toothpick.closeScope(this)
   }
 
   override fun onBackPressed() {

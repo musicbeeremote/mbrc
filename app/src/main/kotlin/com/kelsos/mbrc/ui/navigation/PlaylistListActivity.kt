@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import butterknife.BindView
 import butterknife.ButterKnife
-import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.PlaylistListAdapter
 import com.kelsos.mbrc.adapters.PlaylistListAdapter.OnPlaylistPlayPressedListener
@@ -17,7 +16,8 @@ import com.kelsos.mbrc.domain.Playlist
 import com.kelsos.mbrc.presenters.PlaylistPresenter
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.views.PlaylistListView
-import roboguice.RoboGuice
+import toothpick.Toothpick
+import javax.inject.Inject
 
 class PlaylistListActivity : BaseActivity(), PlaylistListView, OnPlaylistPlayPressedListener {
 
@@ -26,12 +26,13 @@ class PlaylistListActivity : BaseActivity(), PlaylistListView, OnPlaylistPlayPre
   @BindView(R.id.drawer_layout) lateinit var drawer: DrawerLayout
   @BindView(R.id.navigation_view) lateinit var navigationView: NavigationView
 
-  @Inject private lateinit var adapter: PlaylistListAdapter
-  @Inject private lateinit var presenter: PlaylistPresenter
+  @Inject lateinit var adapter: PlaylistListAdapter
+  @Inject lateinit var presenter: PlaylistPresenter
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    RoboGuice.getInjector(this).injectMembers(this)
+    val scope = Toothpick.openScopes(application, this)
+    Toothpick.inject(this, scope)
     setContentView(R.layout.activity_playlist_list)
     ButterKnife.bind(this)
     initialize(toolbar,drawer,navigationView)
@@ -48,6 +49,11 @@ class PlaylistListActivity : BaseActivity(), PlaylistListView, OnPlaylistPlayPre
   public override fun onStart() {
     super.onStart()
     presenter.load()
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    Toothpick.closeScope(this)
   }
 
   override fun update(playlists: List<Playlist>) {

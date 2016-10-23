@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.events.ui.CoverChangedEvent
@@ -15,9 +14,11 @@ import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder
 import com.kelsos.mbrc.utilities.RxBus
-import roboguice.RoboGuice
 import timber.log.Timber
+import toothpick.Scope
+import toothpick.Toothpick
 import java.util.*
+import javax.inject.Inject
 
 class WidgetSmall : AppWidgetProvider() {
 
@@ -25,10 +26,11 @@ class WidgetSmall : AppWidgetProvider() {
   @Inject private lateinit var bus: RxBus
 
   private var widgetsIds: IntArray? = null
+  private var scope: Scope? = null
 
   override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
     super.onUpdate(context, appWidgetManager, appWidgetIds)
-    RoboGuice.getInjector(context).injectMembers(this)
+    scope = Toothpick.openScope(context.applicationContext)
     this.context = context
 
     widgetsIds = appWidgetIds

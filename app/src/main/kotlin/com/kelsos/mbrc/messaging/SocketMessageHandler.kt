@@ -1,7 +1,5 @@
 package com.kelsos.mbrc.messaging
 
-import javax.inject.Inject
-import javax.inject.Singleton
 import com.kelsos.mbrc.constants.SocketNotification
 import com.kelsos.mbrc.dto.WebSocketMessage
 import com.kelsos.mbrc.events.ui.CoverChangedEvent
@@ -25,19 +23,21 @@ import rx.subjects.PublishSubject
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton class SocketMessageHandler
-@Inject constructor(bus: RxBus) {
+@Inject constructor(bus: RxBus,
+                    private val volumeInteractor: VolumeInteractor,
+                    private val coverInteractor: TrackCoverInteractor,
+                    private val lyricsInteractor: TrackLyricsInteractor,
+                    private val trackInfoInteractor: TrackInfoInteractor,
+                    private val repeatInteractor: RepeatInteractor,
+                    private val playerStateInteractor: PlayerStateInteractor,
+                    private val muteInteractor: MuteInteractor) {
 
   private val actions: MutableMap<String, () -> Subscription>
   private val activeSubscriptions: MutableMap<String, Subscription>
-  @Inject private lateinit var volumeInteractor: VolumeInteractor
-  @Inject private lateinit var coverInteractor: TrackCoverInteractor
-  @Inject private lateinit var lyricsInteractor: TrackLyricsInteractor
-  @Inject private lateinit var trackInfoInteractor: TrackInfoInteractor
-  @Inject private lateinit var repeatInteractor: RepeatInteractor
-  @Inject private lateinit var playerStateInteractor: PlayerStateInteractor
-  @Inject private lateinit var muteInteractor: MuteInteractor
 
   private val volumeThrottler = PublishSubject.create<WebSocketMessage>()
 

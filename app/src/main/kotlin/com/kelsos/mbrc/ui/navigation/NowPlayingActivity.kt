@@ -14,7 +14,6 @@ import android.view.Menu
 import android.view.MenuItem
 import butterknife.BindView
 import butterknife.ButterKnife
-import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.NowPlayingAdapter
 import com.kelsos.mbrc.adapters.SimpleItemTouchHelperCallback
@@ -25,7 +24,7 @@ import com.kelsos.mbrc.events.ui.TrackRemoval
 import com.kelsos.mbrc.presenters.NowPlayingPresenter
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.views.NowPlayingView
-import roboguice.RoboGuice
+import toothpick.Toothpick
 
 class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPlayingAdapter.OnUserActionListener, NowPlayingView {
 
@@ -33,15 +32,19 @@ class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPl
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
   @BindView(R.id.drawer_layout) lateinit var drawer: DrawerLayout
   @BindView(R.id.navigation_view) lateinit var navigationView: NavigationView
-  @Inject private lateinit var adapter: NowPlayingAdapter
-  @Inject private lateinit var presenter: NowPlayingPresenter
+  lateinit var adapter: NowPlayingAdapter
+  lateinit var presenter: NowPlayingPresenter
   private var layoutManager: LinearLayoutManager? = null
   private var mSearchView: SearchView? = null
   private var mSearchItem: MenuItem? = null
 
+  override fun onDestroy() {
+    super.onDestroy()
+    Toothpick.closeScope(this)
+  }
+
   override fun onStart() {
     super.onStart()
-
   }
 
   fun handlePlayingTrackChange(event: TrackInfoChangeEvent) {
@@ -78,7 +81,8 @@ class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPl
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    RoboGuice.getInjector(this).injectMembers(this)
+    val scope = Toothpick.openScopes(application, this)
+    Toothpick.inject(this, scope)
     setContentView(R.layout.activity_now_playing)
     ButterKnife.bind(this)
     initialize(toolbar,drawer,navigationView)

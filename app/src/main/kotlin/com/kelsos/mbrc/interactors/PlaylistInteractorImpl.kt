@@ -1,14 +1,13 @@
 package com.kelsos.mbrc.interactors
 
-import javax.inject.Inject
 import com.kelsos.mbrc.domain.Playlist
 import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.repository.PlaylistRepository
 import rx.Observable
+import javax.inject.Inject
 
-class PlaylistInteractorImpl : PlaylistInteractor {
-
-  @Inject private lateinit var repository: PlaylistRepository
+class PlaylistInteractorImpl
+@Inject constructor(private val repository: PlaylistRepository) : PlaylistInteractor {
 
   override fun getAllPlaylists(): Observable<List<Playlist>> = repository.getPlaylists().task()
 

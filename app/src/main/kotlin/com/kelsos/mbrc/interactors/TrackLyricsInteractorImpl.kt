@@ -1,15 +1,14 @@
 package com.kelsos.mbrc.interactors
 
-import javax.inject.Inject
 import com.kelsos.mbrc.repository.TrackRepository
-
 import rx.Observable
+import javax.inject.Inject
 
-class TrackLyricsInteractorImpl : TrackLyricsInteractor {
+class TrackLyricsInteractorImpl
+@Inject constructor(private val repository: TrackRepository) :
+    TrackLyricsInteractor {
 
-    @Inject private lateinit var repository: TrackRepository
-
-    override fun execute(reload: Boolean): Observable<List<String>> {
-        return repository.getTrackLyrics(reload)
-    }
+  override fun execute(reload: Boolean): Observable<List<String>> {
+    return repository.getTrackLyrics(reload)
+  }
 }

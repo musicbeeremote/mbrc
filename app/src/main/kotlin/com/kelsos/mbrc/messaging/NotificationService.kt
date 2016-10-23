@@ -6,8 +6,6 @@ import android.graphics.BitmapFactory
 import android.support.v4.app.NotificationCompat.Action
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.app.NotificationCompat
-import javax.inject.Inject
-import javax.inject.Singleton
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
@@ -25,17 +23,19 @@ import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.getPendingIntent
 import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.utilities.SettingsManager
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton class
 NotificationService
 @Inject
 constructor(private val context: Context,
             bus: RxBus,
+            private val model: NotificationModel,
+            private val notificationManager: NotificationManagerCompat,
             private val sessionManager: RemoteSessionManager,
             private val settings: SettingsManager) {
   private var notification: Notification? = null
-  @Inject private val notificationManager: NotificationManagerCompat? = null
-  @Inject private val model: NotificationModel? = null
   private val previous: String
   private val play: String
   private val next: String

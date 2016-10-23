@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.presenters
 
-import javax.inject.Inject
 import com.kelsos.mbrc.annotations.MetaDataType
 import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.domain.Artist
@@ -8,10 +7,11 @@ import com.kelsos.mbrc.interactors.QueueInteractor
 import com.kelsos.mbrc.interactors.library.GenreArtistInteractor
 import com.kelsos.mbrc.ui.views.GenreArtistView
 import timber.log.Timber
+import javax.inject.Inject
 
-class GenreArtistsPresenterImpl : GenreArtistsPresenter {
-  @Inject private lateinit var genreArtistInteractor: GenreArtistInteractor
-  @Inject private lateinit var interactor: QueueInteractor
+class GenreArtistsPresenterImpl
+@Inject constructor(private val genreArtistInteractor: GenreArtistInteractor,
+                    private val interactor: QueueInteractor) : GenreArtistsPresenter {
 
   private var view: GenreArtistView? = null
 

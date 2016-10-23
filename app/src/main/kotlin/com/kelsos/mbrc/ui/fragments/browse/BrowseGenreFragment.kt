@@ -14,7 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import butterknife.BindView
 import butterknife.ButterKnife
-import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.EndlessRecyclerViewScrollListener
 import com.kelsos.mbrc.adapters.GenreAdapter
@@ -24,19 +23,29 @@ import com.kelsos.mbrc.presenters.BrowseGenrePresenter
 import com.kelsos.mbrc.ui.dialogs.PlaylistDialogFragment
 import com.kelsos.mbrc.ui.fragments.profile.GenreArtistsActivity
 import com.kelsos.mbrc.ui.views.BrowseGenreView
-import roboguice.RoboGuice
+import toothpick.Toothpick
+import javax.inject.Inject
 
-class BrowseGenreFragment : Fragment(), BrowseGenreView, GenreAdapter.MenuItemSelectedListener, PlaylistDialogFragment.PlaylistActionListener {
+class BrowseGenreFragment : Fragment(),
+    BrowseGenreView,
+    GenreAdapter.MenuItemSelectedListener,
+    PlaylistDialogFragment.PlaylistActionListener {
 
   @BindView(R.id.library_recycler) internal lateinit var recyclerView: RecyclerView
   @Inject private lateinit var adapter: GenreAdapter
   @Inject private lateinit var presenter: BrowseGenrePresenter
   private var scrollListener: EndlessRecyclerViewScrollListener? = null
+  private lateinit var scope: toothpick.Scope
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    RoboGuice.getInjector(context).injectMembers(this)
+    scope = Toothpick.openScopes(context.applicationContext, this)
     setHasOptionsMenu(true)
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    Toothpick.closeScope(this)
   }
 
   override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

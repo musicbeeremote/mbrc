@@ -1,14 +1,14 @@
 package com.kelsos.mbrc.interactors
 
-import javax.inject.Inject
 import com.kelsos.mbrc.annotations.Shuffle.State
 import com.kelsos.mbrc.dto.requests.ShuffleRequest
 import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.services.api.PlayerService
 import rx.Observable
+import javax.inject.Inject
 
-class ShuffleInteractorImpl : ShuffleInteractor {
-  @Inject private lateinit var api: PlayerService
+class ShuffleInteractorImpl
+@Inject constructor(private val api: PlayerService): ShuffleInteractor {
 
   override fun getShuffle(): Observable<String> {
     return api.getShuffleState()

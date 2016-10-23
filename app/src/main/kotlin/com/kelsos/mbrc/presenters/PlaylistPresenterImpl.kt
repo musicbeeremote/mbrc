@@ -1,17 +1,16 @@
 package com.kelsos.mbrc.presenters
 
-import javax.inject.Inject
+import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.interactors.PlaylistActionInteractor
 import com.kelsos.mbrc.interactors.PlaylistInteractor
-import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.ui.views.PlaylistListView
-import roboguice.util.Ln
+import timber.log.Timber
+import javax.inject.Inject
 
-class PlaylistPresenterImpl : PlaylistPresenter {
+class PlaylistPresenterImpl
+@Inject constructor(private val actionInteractor: PlaylistActionInteractor,
+                    private val playlistInteractor: PlaylistInteractor) : PlaylistPresenter {
   private var view: PlaylistListView? = null
-
-  @Inject private lateinit var playlistInteractor: PlaylistInteractor
-  @Inject private lateinit var actionInteractor: PlaylistActionInteractor
 
   override fun bind(view: PlaylistListView) {
     this.view = view
@@ -20,7 +19,7 @@ class PlaylistPresenterImpl : PlaylistPresenter {
   override fun load() {
     playlistInteractor.getAllPlaylists().task().subscribe({
       view?.update(it)
-    }, { Ln.v(it) })
+    }, { Timber.v(it) })
   }
 
   override fun play(path: String) {

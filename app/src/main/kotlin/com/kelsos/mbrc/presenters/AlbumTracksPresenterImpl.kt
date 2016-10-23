@@ -1,21 +1,20 @@
 package com.kelsos.mbrc.presenters
 
-import javax.inject.Inject
 import com.kelsos.mbrc.annotations.MetaDataType
 import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.domain.Track
 import com.kelsos.mbrc.interactors.AlbumTrackInteractor
 import com.kelsos.mbrc.interactors.QueueInteractor
 import com.kelsos.mbrc.ui.views.AlbumTrackView
-import roboguice.util.Ln
 import rx.android.schedulers.AndroidSchedulers
 import timber.log.Timber
+import javax.inject.Inject
 
-class AlbumTracksPresenterImpl : AlbumTracksPresenter {
+class AlbumTracksPresenterImpl
+@Inject constructor(private val albumTrackInteractor: AlbumTrackInteractor,
+                    private val interactor: QueueInteractor): AlbumTracksPresenter {
 
   private var view: AlbumTrackView? = null
-  @Inject private lateinit var albumTrackInteractor: AlbumTrackInteractor
-  @Inject private lateinit var interactor: QueueInteractor
 
   override fun bind(view: AlbumTrackView) {
     this.view = view
@@ -25,7 +24,7 @@ class AlbumTracksPresenterImpl : AlbumTracksPresenter {
     albumTrackInteractor.execute(albumId).observeOn(AndroidSchedulers.mainThread()).subscribe({
       view?.updateTracks(it.tracks)
       view?.updateAlbum(it.album)
-    }, { Ln.v(it) })
+    }, { Timber.v(it) })
   }
 
   override fun play(albumId: Long) {
@@ -35,9 +34,9 @@ class AlbumTracksPresenterImpl : AlbumTracksPresenter {
       } else {
         view?.showPlayFailed()
       }
-    }) { t ->
+    }) {
       view?.showPlayFailed()
-      Timber.e(t, "Failed to play the album %d", albumId)
+      Timber.e(it, "Failed to play the album %d", albumId)
     }
   }
 

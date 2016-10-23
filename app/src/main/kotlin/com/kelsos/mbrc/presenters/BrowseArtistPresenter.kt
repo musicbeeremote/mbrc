@@ -1,22 +1,21 @@
 package com.kelsos.mbrc.presenters
 
-import javax.inject.Inject
 import com.kelsos.mbrc.annotations.MetaDataType
-import com.kelsos.mbrc.annotations.Queue
+import com.kelsos.mbrc.annotations.Queue.Action
 import com.kelsos.mbrc.constants.Constants
 import com.kelsos.mbrc.domain.Artist
+import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.interactors.LibraryArtistInteractor
 import com.kelsos.mbrc.interactors.QueueInteractor
-import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.ui.views.BrowseArtistView
-import roboguice.util.Ln
 import rx.android.schedulers.AndroidSchedulers
 import timber.log.Timber
+import javax.inject.Inject
 
-class BrowseArtistPresenter {
+class BrowseArtistPresenter
+@Inject constructor(private val artistInteractor: LibraryArtistInteractor,
+                    private val queueInteractor: QueueInteractor) {
   private var view: BrowseArtistView? = null
-  @Inject private lateinit var artistInteractor: LibraryArtistInteractor
-  @Inject private lateinit var queueInteractor: QueueInteractor
 
   fun bind(view: BrowseArtistView) {
     this.view = view
@@ -26,10 +25,10 @@ class BrowseArtistPresenter {
     artistInteractor.execute().task().subscribe({
       view!!.clear()
       view!!.load(it)
-    }, { Ln.v(it) })
+    }, { Timber.v(it) })
   }
 
-  fun queue(artist: Artist, @Queue.Action action: String) {
+  fun queue(artist: Artist, @Action action: String) {
     queueInteractor.execute(MetaDataType.ARTIST,
         action,
         artist.id).observeOn(AndroidSchedulers.mainThread()).subscribe({
@@ -38,7 +37,7 @@ class BrowseArtistPresenter {
       } else {
         view!!.showEnqueueFailure()
       }
-    }) { throwable -> view!!.showEnqueueFailure() }
+    }) { view!!.showEnqueueFailure() }
   }
 
   fun load(page: Int) {

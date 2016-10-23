@@ -1,22 +1,20 @@
 package com.kelsos.mbrc.interactors
 
-import javax.inject.Inject
 import com.kelsos.mbrc.constants.Code
 import com.kelsos.mbrc.extensions.io
 import com.kelsos.mbrc.services.api.ApiService
 import com.kelsos.mbrc.utilities.LibrarySyncManager
 import timber.log.Timber
+import javax.inject.Inject
 
 class LibrarySyncInteractorImpl
 @Inject
-constructor() : LibrarySyncInteractor {
-
-  @Inject private lateinit var manager: LibrarySyncManager
-  @Inject private lateinit var service: ApiService
+constructor(private val manager: LibrarySyncManager,
+            private val service: ApiService) : LibrarySyncInteractor {
 
   override fun sync() {
     service.getStatus().io().subscribe({
-      if (it.code.equals(Code.SUCCESS)) {
+      if (it.code == Code.SUCCESS) {
         manager.sync()
       }
     }) {
