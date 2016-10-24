@@ -2,7 +2,6 @@ package com.kelsos.mbrc.repository
 
 import android.graphics.Bitmap
 import android.text.TextUtils
-import javax.inject.Inject
 import com.kelsos.mbrc.cache.TrackCache
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.domain.TrackPosition
@@ -18,16 +17,13 @@ import rx.functions.Func1
 import rx.lang.kotlin.toSingletonObservable
 import rx.schedulers.Schedulers
 import java.util.*
+import javax.inject.Inject
 
-class TrackRepositoryImpl : TrackRepository {
-  @Inject
-  private lateinit var trackRatingUserCase: TrackRatingInteractor
-  @Inject
-  private lateinit var trackPositionInteractor: TrackPositionInteractor
-  @Inject
-  private lateinit var cache: TrackCache
-  @Inject
-  private lateinit var trackService: TrackService
+class TrackRepositoryImpl
+@Inject constructor(private val trackRatingUserCase: TrackRatingInteractor,
+                    private val trackPositionInteractor: TrackPositionInteractor,
+                    private val cache: TrackCache,
+                    private val trackService: TrackService) : TrackRepository {
 
   override fun getTrackInfo(reload: Boolean): Observable<TrackInfo> {
     val infoObservable = trackService.getTrackInfo()

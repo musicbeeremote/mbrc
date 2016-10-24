@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.mappers
 
-import com.kelsos.mbrc.dao.GenreDao
+import com.kelsos.mbrc.data.dao.GenreDao
 import com.kelsos.mbrc.domain.Genre
 import com.kelsos.mbrc.dto.library.GenreDto
 

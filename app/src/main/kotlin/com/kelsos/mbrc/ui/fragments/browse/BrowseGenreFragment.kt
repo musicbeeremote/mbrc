@@ -16,7 +16,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.EndlessRecyclerViewScrollListener
-import com.kelsos.mbrc.adapters.GenreAdapter
+import com.kelsos.mbrc.adapters.GenreEntryAdapter
 import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.domain.Genre
 import com.kelsos.mbrc.presenters.BrowseGenrePresenter
@@ -28,18 +28,19 @@ import javax.inject.Inject
 
 class BrowseGenreFragment : Fragment(),
     BrowseGenreView,
-    GenreAdapter.MenuItemSelectedListener,
+    GenreEntryAdapter.MenuItemSelectedListener,
     PlaylistDialogFragment.PlaylistActionListener {
 
   @BindView(R.id.library_recycler) internal lateinit var recyclerView: RecyclerView
-  @Inject private lateinit var adapter: GenreAdapter
-  @Inject private lateinit var presenter: BrowseGenrePresenter
+  @Inject lateinit var adapter: GenreEntryAdapter
+  @Inject lateinit var presenter: BrowseGenrePresenter
   private var scrollListener: EndlessRecyclerViewScrollListener? = null
   private lateinit var scope: toothpick.Scope
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     scope = Toothpick.openScopes(context.applicationContext, this)
+    Toothpick.inject(this, scope)
     setHasOptionsMenu(true)
   }
 

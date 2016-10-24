@@ -5,12 +5,14 @@ import android.content.Context
 import android.content.Intent
 import javax.inject.Inject
 import roboguice.RoboGuice
+import toothpick.Toothpick
 
 class MediaButtonReceiver : BroadcastReceiver() {
-  @Inject private lateinit var handler: MediaIntentHandler
+  @Inject lateinit var handler: MediaIntentHandler
 
   override fun onReceive(context: Context, intent: Intent) {
-    RoboGuice.getInjector(context).injectMembers(this)
+    val scope = Toothpick.openScope(context.applicationContext)
+    Toothpick.inject(this, scope)
     handler.handleMediaIntent(intent)
   }
 }

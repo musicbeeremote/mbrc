@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.mappers
 
-import com.kelsos.mbrc.dao.AlbumDao
-import com.kelsos.mbrc.dao.ArtistDao
-import com.kelsos.mbrc.dao.GenreDao
-import com.kelsos.mbrc.dao.TrackDao
-import com.kelsos.mbrc.dao.views.TrackModelView
+import com.kelsos.mbrc.data.dao.AlbumDao
+import com.kelsos.mbrc.data.dao.ArtistDao
+import com.kelsos.mbrc.data.dao.GenreDao
+import com.kelsos.mbrc.data.dao.TrackDao
+import com.kelsos.mbrc.data.views.TrackModelView
 import com.kelsos.mbrc.domain.Track
 import com.kelsos.mbrc.dto.library.TrackDto
 

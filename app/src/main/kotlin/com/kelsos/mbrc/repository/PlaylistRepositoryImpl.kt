@@ -1,9 +1,12 @@
 package com.kelsos.mbrc.repository
 
-import com.kelsos.mbrc.RemoteDatabase
-import com.kelsos.mbrc.dao.*
-import com.kelsos.mbrc.dao.views.PlaylistTrackView
-import com.kelsos.mbrc.dao.views.PlaylistTrackView_ViewTable
+import com.kelsos.mbrc.data.RemoteDatabase
+import com.kelsos.mbrc.data.*
+import com.kelsos.mbrc.data.views.PlaylistTrackView
+import com.kelsos.mbrc.data.dao.PlaylistDao
+import com.kelsos.mbrc.data.dao.PlaylistTrackDao
+import com.kelsos.mbrc.data.dao.PlaylistTrackInfoDao
+import com.kelsos.mbrc.data.views.PlaylistTrackView_ViewTable
 import com.kelsos.mbrc.domain.Playlist
 import com.kelsos.mbrc.dto.playlist.PlaylistTrackInfo
 import com.kelsos.mbrc.mappers.PlaylistMapper

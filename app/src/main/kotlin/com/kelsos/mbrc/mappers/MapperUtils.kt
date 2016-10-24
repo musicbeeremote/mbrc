@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.mappers
 
-import com.kelsos.mbrc.dao.AlbumDao
-import com.kelsos.mbrc.dao.ArtistDao
-import com.kelsos.mbrc.dao.CoverDao
-import com.kelsos.mbrc.dao.GenreDao
+import com.kelsos.mbrc.data.dao.AlbumDao
+import com.kelsos.mbrc.data.dao.ArtistDao
+import com.kelsos.mbrc.data.dao.CoverDao
+import com.kelsos.mbrc.data.dao.GenreDao
 
 object MapperUtils {
 

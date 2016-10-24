@@ -50,9 +50,9 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
   private lateinit var toolbar: Toolbar
   private lateinit var drawer: DrawerLayout
   private lateinit var navigationView: NavigationView
-  @Inject private lateinit var rxBus: RxBus
-  @Inject private lateinit var handler: Handler
-  @Inject private lateinit var model: ConnectionStatusModel
+  @Inject lateinit var rxBus: RxBus
+  @Inject lateinit var handler: Handler
+  @Inject lateinit var model: ConnectionStatusModel
   private var toggle: ActionBarDrawerToggle? = null
   private var mDialog: DialogFragment? = null
   private val subscription: Subscription? = null

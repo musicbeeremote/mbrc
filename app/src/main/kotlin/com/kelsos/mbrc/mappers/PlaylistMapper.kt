@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.mappers
 
-import com.kelsos.mbrc.dao.PlaylistDao
+import com.kelsos.mbrc.data.dao.PlaylistDao
 import com.kelsos.mbrc.domain.Playlist
 import com.kelsos.mbrc.dto.playlist.PlaylistDto
 

@@ -11,8 +11,8 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 class RetrofitProvider : Provider<Retrofit> {
-  @Inject private lateinit var client: OkHttpClient
-  @Inject private lateinit var mapper: ObjectMapper
+  @Inject lateinit var client: OkHttpClient
+  @Inject lateinit var mapper: ObjectMapper
 
   override fun get(): Retrofit {
 

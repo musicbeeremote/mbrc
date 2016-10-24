@@ -1,8 +1,7 @@
 package com.kelsos.mbrc.utilities
 
-import android.content.Context
-import javax.inject.Inject
-import com.kelsos.mbrc.dao.CoverDao
+import android.app.Application
+import com.kelsos.mbrc.data.dao.CoverDao
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -14,11 +13,12 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
+import javax.inject.Inject
 
-class CoverDownloader {
-  @Inject private lateinit var client: OkHttpClient
-  @Inject private lateinit var manager: SettingsManager
-  @Inject private lateinit var context: Context
+class CoverDownloader
+@Inject constructor(private val client: OkHttpClient,
+                    private val manager: SettingsManager,
+                    private val context: Application) {
 
   private var baseUrl: HttpUrl? = null
   private var coverDirectory: File? = null
@@ -50,7 +50,7 @@ class CoverDownloader {
 
     covers.toObservable().window(cores).subscribe {
       it.observeOn(Schedulers.from(executor))
-          .subscribe loop@{
+          .subscribe loop@ {
             val file = File(coverDirectory, it.hash)
             if (file.exists()) {
               return@loop

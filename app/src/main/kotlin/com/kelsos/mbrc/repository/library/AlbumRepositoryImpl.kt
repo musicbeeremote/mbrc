@@ -1,15 +1,15 @@
 package com.kelsos.mbrc.repository.library
 
 import android.text.TextUtils
-import com.kelsos.mbrc.RemoteDatabase
-import com.kelsos.mbrc.dao.AlbumDao
-import com.kelsos.mbrc.dao.AlbumDao_Table
-import com.kelsos.mbrc.dao.TrackDao
-import com.kelsos.mbrc.dao.TrackDao_Table
-import com.kelsos.mbrc.dao.views.AlbumModelView
-import com.kelsos.mbrc.dao.views.AlbumModelView_ViewTable
-import com.kelsos.mbrc.dao.views.ArtistAlbumView
-import com.kelsos.mbrc.dao.views.ArtistAlbumView_ViewTable
+import com.kelsos.mbrc.data.RemoteDatabase
+import com.kelsos.mbrc.data.dao.AlbumDao
+import com.kelsos.mbrc.data.AlbumDao_Table
+import com.kelsos.mbrc.data.dao.TrackDao
+import com.kelsos.mbrc.data.TrackDao_Table
+import com.kelsos.mbrc.data.views.AlbumModelView
+import com.kelsos.mbrc.data.views.AlbumModelView_ViewTable
+import com.kelsos.mbrc.data.views.ArtistAlbumView
+import com.kelsos.mbrc.data.views.ArtistAlbumView_ViewTable
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import rx.Observable

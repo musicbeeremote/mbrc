@@ -11,29 +11,31 @@ import android.view.View
 import android.view.ViewGroup
 import butterknife.BindView
 import butterknife.ButterKnife
-import javax.inject.Inject
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.AlbumAdapter
+import com.kelsos.mbrc.adapters.AlbumEntryAdapter
 import com.kelsos.mbrc.adapters.EndlessGridRecyclerViewScrollListener
 import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.domain.Album
 import com.kelsos.mbrc.presenters.BrowseAlbumPresenter
 import com.kelsos.mbrc.ui.fragments.profile.AlbumTracksActivity
 import com.kelsos.mbrc.ui.views.BrowseAlbumView
-import roboguice.RoboGuice
+import toothpick.Toothpick
+import javax.inject.Inject
 
-class BrowseAlbumFragment : Fragment(), AlbumAdapter.MenuItemSelectedListener, BrowseAlbumView {
+class BrowseAlbumFragment : Fragment(), AlbumEntryAdapter.MenuItemSelectedListener, BrowseAlbumView {
 
   @BindView(R.id.album_recycler) internal lateinit var recyclerView: RecyclerView
-  @Inject private lateinit var adapter: AlbumAdapter
-  @Inject private lateinit var presenter: BrowseAlbumPresenter
+  @Inject lateinit var adapter: AlbumEntryAdapter
+  @Inject lateinit var presenter: BrowseAlbumPresenter
   private var scrollListener: EndlessGridRecyclerViewScrollListener? = null
 
   override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                             savedInstanceState: Bundle?): View? {
     val view = inflater!!.inflate(R.layout.ui_library_grid, container, false)
     ButterKnife.bind(this, view)
-    RoboGuice.getInjector(context).injectMembers(this)
+    val scope = Toothpick.openScopes(context.applicationContext, this)
+    Toothpick.inject(this, scope)
+
     presenter.attachView(this)
     val layoutManager = GridLayoutManager(context, 2)
     scrollListener = object : EndlessGridRecyclerViewScrollListener(layoutManager) {
@@ -47,6 +49,12 @@ class BrowseAlbumFragment : Fragment(), AlbumAdapter.MenuItemSelectedListener, B
     presenter.load()
     return view
   }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    Toothpick.closeScope(this)
+  }
+
 
   override fun onResume() {
     super.onResume()

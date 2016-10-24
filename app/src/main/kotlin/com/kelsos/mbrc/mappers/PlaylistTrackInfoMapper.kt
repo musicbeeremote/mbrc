@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.mappers
 
-import com.kelsos.mbrc.dao.PlaylistTrackInfoDao
+import com.kelsos.mbrc.data.dao.PlaylistTrackInfoDao
 import com.kelsos.mbrc.dto.playlist.PlaylistTrackInfo
 import rx.Observable
 

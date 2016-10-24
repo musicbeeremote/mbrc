@@ -10,27 +10,29 @@ import android.view.View
 import android.view.ViewGroup
 import butterknife.BindView
 import butterknife.ButterKnife
-import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.EndlessRecyclerViewScrollListener
-import com.kelsos.mbrc.adapters.TrackAdapter
+import com.kelsos.mbrc.adapters.TrackEntryAdapter
 import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.domain.Track
 import com.kelsos.mbrc.presenters.BrowseTrackPresenter
 import com.kelsos.mbrc.ui.views.BrowseTrackView
-import roboguice.RoboGuice
+import toothpick.Toothpick
+import javax.inject.Inject
 
-class BrowseTrackFragment : Fragment(), BrowseTrackView, TrackAdapter.MenuItemSelectedListener {
+class BrowseTrackFragment : Fragment(), BrowseTrackView, TrackEntryAdapter.MenuItemSelectedListener {
 
   @BindView(R.id.library_recycler) internal lateinit var recyclerView: RecyclerView
-  @Inject private lateinit var adapter: TrackAdapter
-  @Inject private lateinit var presenter: BrowseTrackPresenter
+  @Inject lateinit var adapter: TrackEntryAdapter
+  @Inject lateinit var presenter: BrowseTrackPresenter
   private lateinit var manager: LinearLayoutManager
   private var scrollListener: EndlessRecyclerViewScrollListener? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    RoboGuice.getInjector(context).injectMembers(this)
+    val scope = Toothpick.openScopes(context.applicationContext, this)
+    Toothpick.inject(this, scope)
+
     manager = LinearLayoutManager(context)
     adapter.setMenuItemSelectedListener(this)
     scrollListener = object : EndlessRecyclerViewScrollListener(manager) {
@@ -38,6 +40,11 @@ class BrowseTrackFragment : Fragment(), BrowseTrackView, TrackAdapter.MenuItemSe
         presenter.load(page, totalItemsCount)
       }
     }
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    Toothpick.closeScope(this)
   }
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

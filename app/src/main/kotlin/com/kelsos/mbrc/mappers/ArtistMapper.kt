@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.mappers
 
-import com.kelsos.mbrc.dao.ArtistDao
-import com.kelsos.mbrc.dao.views.GenreArtistView
+import com.kelsos.mbrc.data.dao.ArtistDao
+import com.kelsos.mbrc.data.views.GenreArtistView
 import com.kelsos.mbrc.domain.Artist
 import com.kelsos.mbrc.dto.library.ArtistDto
 

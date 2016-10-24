@@ -33,7 +33,19 @@ import toothpick.smoothie.annotations.ContextSingleton
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-@ContextSingleton class MainViewPresenterImpl : MainViewPresenter {
+@ContextSingleton class MainViewPresenterImpl
+@Inject constructor(private val errorHandler: ErrorHandler,
+                    private val model: MainViewModel,
+                    private val playerInteractor: PlayerInteractor,
+                    private val trackInfoInteractor: TrackInfoInteractor,
+                    private val volumeInteractor: VolumeInteractor,
+                    private val shuffleInteractor: ShuffleInteractor,
+                    private val repeatInteractor: RepeatInteractor,
+                    private val muteInteractor: MuteInteractor,
+                    private val coverInteractor: TrackCoverInteractor,
+                    private val positionInteractor: TrackPositionInteractor,
+                    private val playerStateInteractor: PlayerStateInteractor,
+                    private val bus: RxBus) : MainViewPresenter {
   override fun attachView(view: MainView) {
     this.mainView = view
 
@@ -52,20 +64,6 @@ import javax.inject.Inject
     this.mainView = null
     bus.unregister(this)
   }
-
-  @Inject private lateinit var errorHandler: ErrorHandler
-  @Inject private lateinit var model: MainViewModel
-  @Inject private lateinit var playerInteractor: PlayerInteractor
-  @Inject private lateinit var trackInfoInteractor: TrackInfoInteractor
-  @Inject private lateinit var volumeInteractor: VolumeInteractor
-  @Inject private lateinit var shuffleInteractor: ShuffleInteractor
-  @Inject private lateinit var repeatInteractor: RepeatInteractor
-  @Inject private lateinit var muteInteractor: MuteInteractor
-  @Inject private lateinit var coverInteractor: TrackCoverInteractor
-  @Inject private lateinit var positionInteractor: TrackPositionInteractor
-  @Inject private lateinit var playerStateInteractor: PlayerStateInteractor
-
-  @Inject private lateinit var bus: RxBus
 
   private var mainView: MainView? = null
   private var positionUpdate: Subscription? = null

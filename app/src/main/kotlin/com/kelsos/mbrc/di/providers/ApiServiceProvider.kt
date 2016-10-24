@@ -5,7 +5,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 class ApiServiceProvider<T>(private val serviceClass: Class<T>) : Provider<T> {
-  @Inject private lateinit var retrofit: Retrofit
+  @Inject lateinit var retrofit: Retrofit
 
   override fun get(): T {
     return retrofit.create(serviceClass)

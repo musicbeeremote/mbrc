@@ -8,7 +8,7 @@ import android.view.View
 import android.widget.EditText
 import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.dao.DeviceSettings
+import com.kelsos.mbrc.data.dao.DeviceSettings
 
 class SettingsDialogFragment : DialogFragment() {
 

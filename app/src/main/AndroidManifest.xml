@@ -103,7 +103,7 @@
           android:value=".ui.navigation.LibraryActivity" />
     </activity>
     <activity
-        android:name=".ui.activities.DeviceManagerActivity"
+        android:name=".ui.activities.ConnectionManagerActivity"
         android:windowSoftInputMode="adjustNothing" />
 
     <service

@@ -7,10 +7,10 @@ import com.kelsos.mbrc.ui.views.NowPlayingView
 import timber.log.Timber
 import javax.inject.Inject
 
-class NowPlayingPresenter {
+class NowPlayingPresenter
+@Inject constructor(private val nowPlayingListInteractor: NowPlayingListInteractor,
+                    private val nowPlayingActionInteractor: NowPlayingActionInteractor) {
   private var view: NowPlayingView? = null
-  @Inject private lateinit var nowPlayingListInteractor: NowPlayingListInteractor
-  @Inject private lateinit var nowPlayingActionInteractor: NowPlayingActionInteractor
 
   fun bind(view: NowPlayingView) {
     this.view = view

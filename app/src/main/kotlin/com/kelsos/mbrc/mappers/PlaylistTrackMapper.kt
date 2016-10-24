@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.mappers
 
-import com.kelsos.mbrc.dao.PlaylistDao
-import com.kelsos.mbrc.dao.PlaylistTrackDao
-import com.kelsos.mbrc.dao.PlaylistTrackInfoDao
-import com.kelsos.mbrc.dao.views.PlaylistTrackView
+import com.kelsos.mbrc.data.dao.PlaylistDao
+import com.kelsos.mbrc.data.dao.PlaylistTrackDao
+import com.kelsos.mbrc.data.dao.PlaylistTrackInfoDao
+import com.kelsos.mbrc.data.views.PlaylistTrackView
 import com.kelsos.mbrc.dto.playlist.PlaylistTrack
 
 object PlaylistTrackMapper {

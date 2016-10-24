@@ -22,8 +22,8 @@ import javax.inject.Inject
 
 class WidgetSmall : AppWidgetProvider() {
 
-  @Inject private lateinit var context: Context
-  @Inject private lateinit var bus: RxBus
+  @Inject lateinit var context: Context
+  @Inject lateinit var bus: RxBus
 
   private var widgetsIds: IntArray? = null
   private var scope: Scope? = null

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import javax.inject.Inject
 import javax.inject.Singleton
 import com.kelsos.mbrc.constants.UserInputEventType
-import com.kelsos.mbrc.dao.DeviceSettings
+import com.kelsos.mbrc.data.dao.DeviceSettings
 import com.kelsos.mbrc.dto.DiscoveryResponse
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.ui.DiscoveryStopped

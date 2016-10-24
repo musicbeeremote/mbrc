@@ -18,7 +18,7 @@ def gitHash() {
 
 android {
   compileSdkVersion 25
-  buildToolsVersion '23.0.3'
+  buildToolsVersion '25.0.0'
 
   defaultConfig {
     applicationId 'com.kelsos.mbrc'
@@ -135,16 +135,12 @@ idea {
   }
 }
 
-task wrapper(type: Wrapper) {
-  gradleVersion = '2.13'
-}
-
 ext {
   supportLibraryVersion = '25.0.0'
   jacksonVersion = '2.8.4'
   okhttpVersion = '3.4.1'
   retrofitVersion = '2.1.0'
-  dbflow_version = "4.0.0-beta1"
+  dbflow_version = "3.1.1"
   toothpick_version = "1.0.0"
   butterknife_version = "8.4.0"
   stetho_version = "1.4.1"

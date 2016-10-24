@@ -10,8 +10,8 @@ import android.support.v7.widget.Toolbar
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.PlaylistListAdapter
-import com.kelsos.mbrc.adapters.PlaylistListAdapter.OnPlaylistPlayPressedListener
+import com.kelsos.mbrc.adapters.PlaylistAdapter
+import com.kelsos.mbrc.adapters.PlaylistAdapter.OnPlaylistPlayPressedListener
 import com.kelsos.mbrc.domain.Playlist
 import com.kelsos.mbrc.presenters.PlaylistPresenter
 import com.kelsos.mbrc.ui.activities.BaseActivity
@@ -26,7 +26,7 @@ class PlaylistListActivity : BaseActivity(), PlaylistListView, OnPlaylistPlayPre
   @BindView(R.id.drawer_layout) lateinit var drawer: DrawerLayout
   @BindView(R.id.navigation_view) lateinit var navigationView: NavigationView
 
-  @Inject lateinit var adapter: PlaylistListAdapter
+  @Inject lateinit var adapter: PlaylistAdapter
   @Inject lateinit var presenter: PlaylistPresenter
 
   public override fun onCreate(savedInstanceState: Bundle?) {

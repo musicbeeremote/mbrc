@@ -9,27 +9,29 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import butterknife.BindView
 import butterknife.ButterKnife
-import javax.inject.Inject
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.AlbumAdapter
+import com.kelsos.mbrc.adapters.AlbumEntryAdapter
 import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.domain.Album
 import com.kelsos.mbrc.presenters.ArtistAlbumPresenter
 import com.kelsos.mbrc.ui.views.ArtistAlbumsView
-import roboguice.RoboGuice
+import toothpick.Toothpick
+import javax.inject.Inject
 
-class ArtistAlbumsActivity : AppCompatActivity(), ArtistAlbumsView, AlbumAdapter.MenuItemSelectedListener {
+class ArtistAlbumsActivity : AppCompatActivity(), ArtistAlbumsView, AlbumEntryAdapter.MenuItemSelectedListener {
   @BindView(R.id.album_recycler) lateinit internal var recyclerView: RecyclerView
   @BindView(R.id.toolbar) lateinit internal var toolbar: Toolbar
-  @Inject private lateinit var adapter: AlbumAdapter
-  @Inject private lateinit var presenter: ArtistAlbumPresenter
+  @Inject lateinit var adapter: AlbumEntryAdapter
+  @Inject lateinit var presenter: ArtistAlbumPresenter
 
   private var artistId: Long = 0
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_artist_albums)
-    RoboGuice.getInjector(this).injectMembers(this)
+    val scope = Toothpick.openScopes(application, this)
+    Toothpick.inject(this, scope)
+
     ButterKnife.bind(this)
     presenter.bind(this)
     val manager = GridLayoutManager(this, 2)

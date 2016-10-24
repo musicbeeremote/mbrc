@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.repository.library
 
-import com.kelsos.mbrc.RemoteDatabase
-import com.kelsos.mbrc.dao.ArtistDao
-import com.kelsos.mbrc.dao.ArtistDao_Table
-import com.kelsos.mbrc.dao.views.GenreArtistView
-import com.kelsos.mbrc.dao.views.GenreArtistView_ViewTable
+import com.kelsos.mbrc.data.RemoteDatabase
+import com.kelsos.mbrc.data.dao.ArtistDao
+import com.kelsos.mbrc.data.ArtistDao_Table
+import com.kelsos.mbrc.data.views.GenreArtistView
+import com.kelsos.mbrc.data.views.GenreArtistView_ViewTable
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import rx.Observable

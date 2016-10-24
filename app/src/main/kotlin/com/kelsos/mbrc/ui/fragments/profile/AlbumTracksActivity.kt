@@ -15,7 +15,6 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.AlbumProfileAdapter
 import com.kelsos.mbrc.annotations.Queue
@@ -24,8 +23,9 @@ import com.kelsos.mbrc.domain.Track
 import com.kelsos.mbrc.presenters.AlbumTracksPresenter
 import com.kelsos.mbrc.ui.views.AlbumTrackView
 import com.squareup.picasso.Picasso
-import roboguice.RoboGuice
+import toothpick.Toothpick
 import java.io.File
+import javax.inject.Inject
 
 class AlbumTracksActivity : AppCompatActivity(), AlbumTrackView, AlbumProfileAdapter.MenuItemSelectedListener {
   @BindView(R.id.imageView_list) internal lateinit var imageViewList: ImageView
@@ -37,14 +37,15 @@ class AlbumTracksActivity : AppCompatActivity(), AlbumTrackView, AlbumProfileAda
   @BindView(R.id.album_year) internal lateinit var albumYear: TextView
   @BindView(R.id.album_tracks) internal lateinit var albumTracks: TextView
 
-  @Inject private lateinit var adapter: AlbumProfileAdapter
-  @Inject private lateinit var presenter: AlbumTracksPresenter
+  @Inject lateinit var adapter: AlbumProfileAdapter
+  @Inject lateinit var presenter: AlbumTracksPresenter
   private var albumId: Long = 0
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.fragment_album_tracks)
-    RoboGuice.getInjector(this).injectMembers(this)
+    val scope = Toothpick.openScopes(application, this)
+    Toothpick.inject(this, scope)
     ButterKnife.bind(this)
     presenter.bind(this)
     albumId = intent?.extras?.getLong(ALBUM_ID, 0) ?: 0
@@ -64,6 +65,11 @@ class AlbumTracksActivity : AppCompatActivity(), AlbumTrackView, AlbumProfileAda
     adapter.setListener(this)
 
     presenter.load(albumId)
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    Toothpick.closeScope(this)
   }
 
   override fun updateAlbum(album: Album) {

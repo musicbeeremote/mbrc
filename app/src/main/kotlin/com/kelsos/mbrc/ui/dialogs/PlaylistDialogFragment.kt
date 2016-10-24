@@ -15,14 +15,14 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
-import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.PlaylistDialogAdapter
 import com.kelsos.mbrc.domain.Playlist
 import com.kelsos.mbrc.presenters.PlaylistDialogPresenter
 import com.kelsos.mbrc.ui.views.PlaylistDialogView
-import roboguice.RoboGuice
 import timber.log.Timber
+import toothpick.Toothpick
+import javax.inject.Inject
 
 class PlaylistDialogFragment : DialogFragment(), PlaylistDialogView {
 
@@ -31,17 +31,23 @@ class PlaylistDialogFragment : DialogFragment(), PlaylistDialogView {
   @BindView(R.id.playlist_name_text) internal lateinit var name: EditText
   @BindView(R.id.playlist_name_til) internal lateinit var textInputLayout: TextInputLayout
 
-  @Inject private lateinit var adapter: PlaylistDialogAdapter
-  @Inject private lateinit var presenter: PlaylistDialogPresenter
+  @Inject lateinit var adapter: PlaylistDialogAdapter
+  @Inject lateinit var presenter: PlaylistDialogPresenter
 
   private var playlistActionListener: PlaylistActionListener? = null
 
   @Mode private var mode: Long = 0
   private var selectionId: Long = 0
 
+  override fun onDestroy() {
+    super.onDestroy()
+    Toothpick.closeScope(this)
+  }
+
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     mode = ADD_MODE
-    RoboGuice.getInjector(context).injectMembers(this)
+    val scope = Toothpick.openScopes(context.applicationContext, this)
+    Toothpick.inject(this, scope)
     val builder = MaterialDialog.Builder(activity)
     builder.customView(R.layout.playlist_add, true)
     builder.autoDismiss(false)

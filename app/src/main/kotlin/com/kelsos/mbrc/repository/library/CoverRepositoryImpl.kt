@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.repository.library
 
-import com.kelsos.mbrc.RemoteDatabase
-import com.kelsos.mbrc.dao.CoverDao
-import com.kelsos.mbrc.dao.TrackDao_Table
+import com.kelsos.mbrc.data.RemoteDatabase
+import com.kelsos.mbrc.data.dao.CoverDao
+import com.kelsos.mbrc.data.TrackDao_Table
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import rx.Observable

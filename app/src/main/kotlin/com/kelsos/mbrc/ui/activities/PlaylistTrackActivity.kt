@@ -8,28 +8,30 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import butterknife.BindView
 import butterknife.ButterKnife
-import javax.inject.Inject
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.PlaylistAdapter
+import com.kelsos.mbrc.adapters.PlaylistTrackAdapter
 import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.domain.PlaylistTrack
 import com.kelsos.mbrc.presenters.PlaylistTrackPresenter
 import com.kelsos.mbrc.ui.views.PlaylistTrackView
-import roboguice.RoboGuice
+import toothpick.Toothpick
+import javax.inject.Inject
 
-class PlaylistTrackActivity : AppCompatActivity(), PlaylistTrackView, PlaylistAdapter.MenuItemSelectedListener {
+class PlaylistTrackActivity : AppCompatActivity(), PlaylistTrackView, PlaylistTrackAdapter.MenuItemSelectedListener {
 
   @BindView(R.id.playlist_recycler) internal lateinit var playlist: RecyclerView
   @BindView(R.id.toolbar) internal lateinit var toolbar: Toolbar
 
-  @Inject private lateinit var adapter: PlaylistAdapter
-  @Inject private lateinit var presenter: PlaylistTrackPresenter
+  @Inject lateinit var trackAdapter: PlaylistTrackAdapter
+  @Inject lateinit var presenter: PlaylistTrackPresenter
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_playlist)
     ButterKnife.bind(this)
-    RoboGuice.getInjector(this).injectMembers(this)
+    val scope = Toothpick.openScopes(application, this)
+    Toothpick.inject(this, scope)
+
     presenter.bind(this)
     setSupportActionBar(toolbar)
 
@@ -38,8 +40,8 @@ class PlaylistTrackActivity : AppCompatActivity(), PlaylistTrackView, PlaylistAd
     supportActionBar?.title = intent.getStringExtra(NAME)
 
     playlist.layoutManager = LinearLayoutManager(this)
-    playlist.adapter = adapter
-    adapter.setMenuItemSelectedListener(this)
+    playlist.adapter = trackAdapter
+    trackAdapter.setMenuItemSelectedListener(this)
     presenter.load(intent.getLongExtra(ID, 0))
   }
 
@@ -62,7 +64,7 @@ class PlaylistTrackActivity : AppCompatActivity(), PlaylistTrackView, PlaylistAd
   }
 
   override fun update(data: List<PlaylistTrack>) {
-    adapter.update(data)
+    trackAdapter.update(data)
   }
 
   override fun onMenuItemSelected(item: MenuItem, track: PlaylistTrack) {

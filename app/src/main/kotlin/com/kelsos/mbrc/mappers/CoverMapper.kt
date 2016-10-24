@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.mappers
 
-import com.kelsos.mbrc.dao.CoverDao
+import com.kelsos.mbrc.data.dao.CoverDao
 import com.kelsos.mbrc.dto.library.CoverDto
 
 object CoverMapper {

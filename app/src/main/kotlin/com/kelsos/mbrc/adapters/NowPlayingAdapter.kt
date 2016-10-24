@@ -12,7 +12,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import javax.inject.Inject
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.dao.QueueTrackDao
+import com.kelsos.mbrc.data.dao.QueueTrackDao
 import com.kelsos.mbrc.domain.QueueTrack
 import com.kelsos.mbrc.interfaces.ITouchHelperAdapter
 import java.util.ArrayList

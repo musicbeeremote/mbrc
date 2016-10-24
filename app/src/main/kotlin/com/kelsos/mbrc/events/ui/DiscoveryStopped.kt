@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.events.ui
 
 import android.support.annotation.IntDef
-import com.kelsos.mbrc.dao.DeviceSettings
+import com.kelsos.mbrc.data.dao.DeviceSettings
 
 class DiscoveryStopped(@Status val reason: Long, var settings: DeviceSettings? = null) {
 

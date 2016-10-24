@@ -10,10 +10,9 @@ import javax.annotation.Nullable
 import javax.inject.Inject
 import javax.inject.Provider
 
-class OkHttpClientProvider : Provider<OkHttpClient> {
-
-  @Inject private lateinit var manager: SettingsManager
-  @Inject @Nullable private var interceptor: Interceptor? = null
+class OkHttpClientProvider
+@Inject constructor(private val manager: SettingsManager,
+                    @Nullable private val interceptor: Interceptor? = null) : Provider<OkHttpClient> {
 
   override fun get(): OkHttpClient {
     val loggingInterceptor = HttpLoggingInterceptor { Timber.tag("OkHttp").d(it) }

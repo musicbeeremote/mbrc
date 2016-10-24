@@ -1,14 +1,13 @@
 package com.kelsos.mbrc.utilities
 
 import android.content.SharedPreferences
-import javax.inject.Inject
 import com.kelsos.mbrc.constants.Code
 import com.kelsos.mbrc.constants.Constants.LIMIT
-import com.kelsos.mbrc.dao.AlbumDao_Table
-import com.kelsos.mbrc.dao.ArtistDao_Table
-import com.kelsos.mbrc.dao.GenreDao_Table
-import com.kelsos.mbrc.dao.PlaylistDao_Table
-import com.kelsos.mbrc.dao.TrackDao_Table
+import com.kelsos.mbrc.data.AlbumDao_Table
+import com.kelsos.mbrc.data.ArtistDao_Table
+import com.kelsos.mbrc.data.GenreDao_Table
+import com.kelsos.mbrc.data.PlaylistDao_Table
+import com.kelsos.mbrc.data.TrackDao_Table
 import com.kelsos.mbrc.dto.PageResponse
 import com.kelsos.mbrc.extensions.io
 import com.kelsos.mbrc.mappers.AlbumMapper
@@ -31,18 +30,19 @@ import rx.Observable
 import rx.lang.kotlin.toObservable
 import rx.schedulers.Schedulers
 import timber.log.Timber
+import javax.inject.Inject
 
-class LibrarySyncManager {
-  @Inject private lateinit var service: LibraryService
-  @Inject private lateinit var albumRepository: AlbumRepository
-  @Inject private lateinit var artistRepository: ArtistRepository
-  @Inject private lateinit var genreRepository: GenreRepository
-  @Inject private lateinit var trackRepository: TrackRepository
-  @Inject private lateinit var coverRepository: CoverRepository
-  @Inject private lateinit var downloader: CoverDownloader
-  @Inject private lateinit var preferences: SharedPreferences
-  @Inject private lateinit var playlistService: PlaylistService
-  @Inject private lateinit var playlistRepository: PlaylistRepository
+class LibrarySyncManager
+@Inject constructor(private val service: LibraryService,
+                    private val albumRepository: AlbumRepository,
+                    private val artistRepository: ArtistRepository,
+                    private val genreRepository: GenreRepository,
+                    private val trackRepository: TrackRepository,
+                    private val coverRepository: CoverRepository,
+                    private val downloader: CoverDownloader,
+                    private val preferences: SharedPreferences,
+                    private val playlistService: PlaylistService,
+                    private val playlistRepository: PlaylistRepository) {
 
   fun sync() {
     GenreDao_Table.index_genre_name_index.createIfNotExists()

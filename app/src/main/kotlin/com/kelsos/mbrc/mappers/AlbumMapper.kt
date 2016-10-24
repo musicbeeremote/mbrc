@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.mappers
 
-import com.kelsos.mbrc.dao.AlbumDao
-import com.kelsos.mbrc.dao.ArtistDao
-import com.kelsos.mbrc.dao.CoverDao
-import com.kelsos.mbrc.dao.views.AlbumModelView
-import com.kelsos.mbrc.dao.views.ArtistAlbumView
+import com.kelsos.mbrc.data.dao.AlbumDao
+import com.kelsos.mbrc.data.dao.ArtistDao
+import com.kelsos.mbrc.data.dao.CoverDao
+import com.kelsos.mbrc.data.views.AlbumModelView
+import com.kelsos.mbrc.data.views.ArtistAlbumView
 import com.kelsos.mbrc.domain.Album
 import com.kelsos.mbrc.dto.library.AlbumDto
 

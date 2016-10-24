@@ -17,15 +17,17 @@ import com.kelsos.mbrc.viewmodels.MiniControlModel
 import toothpick.smoothie.annotations.ContextSingleton
 import javax.inject.Inject
 
-@ContextSingleton class MiniControlPresenterImpl : MiniControlPresenter {
+@ContextSingleton
+class MiniControlPresenterImpl
+@Inject constructor(private val bus: RxBus,
+                    private val interactor: PlayerInteractor,
+                    private val handler: ErrorHandler,
+                    private val model: MiniControlModel,
+                    private val coverInteractor: TrackCoverInteractor,
+                    private val infoInteractor: TrackInfoInteractor,
+                    private val playerStateInteractor: PlayerStateInteractor) : MiniControlPresenter {
+
   private var view: MiniControlView? = null
-  @Inject private lateinit var bus: RxBus
-  @Inject private lateinit var interactor: PlayerInteractor
-  @Inject private lateinit var handler: ErrorHandler
-  @Inject private lateinit var model: MiniControlModel
-  @Inject private lateinit var coverInteractor: TrackCoverInteractor
-  @Inject private lateinit var infoInteractor: TrackInfoInteractor
-  @Inject private lateinit var playerStateInteractor: PlayerStateInteractor
 
   override fun onNextPressed() {
     action(PlayerAction.NEXT)
@@ -72,9 +74,9 @@ import javax.inject.Inject
     }, { handler.handleThrowable(it) })
 
     playerStateInteractor.getState().task()
-        .doOnNext( { model.setPlayerState(it) })
+        .doOnNext({ model.setPlayerState(it) })
         .subscribe({ view?.updatePlayerState(it) },
-        { handler.handleThrowable(it) })
+            { handler.handleThrowable(it) })
   }
 
   fun onCoverAvailable(event: CoverChangedEvent) {

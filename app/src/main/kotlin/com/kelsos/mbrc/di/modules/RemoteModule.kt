@@ -65,8 +65,8 @@ import com.kelsos.mbrc.presenters.BrowseGenrePresenter
 import com.kelsos.mbrc.presenters.BrowseGenrePresenterImpl
 import com.kelsos.mbrc.presenters.BrowseTrackPresenter
 import com.kelsos.mbrc.presenters.BrowseTrackPresenterImpl
-import com.kelsos.mbrc.presenters.DeviceManagerPresenter
-import com.kelsos.mbrc.presenters.DeviceManagerPresenterImpl
+import com.kelsos.mbrc.presenters.ConnectionManagerPresenter
+import com.kelsos.mbrc.presenters.ConnectionManagerPresenterImpl
 import com.kelsos.mbrc.presenters.GenreArtistsPresenter
 import com.kelsos.mbrc.presenters.GenreArtistsPresenterImpl
 import com.kelsos.mbrc.presenters.LibraryActivityPresenter
@@ -129,7 +129,7 @@ import toothpick.config.Module
     bind(BrowseTrackPresenter::class.java).to(BrowseTrackPresenterImpl::class.java).`in`(ContextSingleton::class.java)
     bind(AlbumTracksPresenter::class.java).to(AlbumTracksPresenterImpl::class.java).`in`(ContextSingleton::class.java)
     bind(GenreArtistsPresenter::class.java).to(GenreArtistsPresenterImpl::class.java).`in`(ContextSingleton::class.java)
-    bind(DeviceManagerPresenter::class.java).to(DeviceManagerPresenterImpl::class.java).`in`(ContextSingleton::class.java)
+    bind(ConnectionManagerPresenter::class.java).to(ConnectionManagerPresenterImpl::class.java).`in`(ContextSingleton::class.java)
     bind(LibraryActivityPresenter::class.java).to(LibraryActivityPresenterImpl::class.java).`in`(ContextSingleton::class.java)
     bind(ArtistAlbumPresenter::class.java).to(ArtistAlbumPresenterImpl::class.java).`in`(ContextSingleton::class.java)
     bind(PlaylistDialogPresenter::class.java).to(PlaylistDialogPresenterImpl::class.java).`in`(ContextSingleton::class.java)

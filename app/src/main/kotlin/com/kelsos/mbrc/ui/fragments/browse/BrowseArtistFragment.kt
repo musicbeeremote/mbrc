@@ -11,29 +11,31 @@ import android.view.View
 import android.view.ViewGroup
 import butterknife.BindView
 import butterknife.ButterKnife
-import javax.inject.Inject
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.ArtistAdapter
+import com.kelsos.mbrc.adapters.ArtistEntryAdapter
 import com.kelsos.mbrc.adapters.EndlessRecyclerViewScrollListener
 import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.domain.Artist
 import com.kelsos.mbrc.presenters.BrowseArtistPresenter
 import com.kelsos.mbrc.ui.fragments.profile.ArtistAlbumsActivity
 import com.kelsos.mbrc.ui.views.BrowseArtistView
-import roboguice.RoboGuice
+import toothpick.Toothpick
+import javax.inject.Inject
 
-class BrowseArtistFragment : Fragment(), BrowseArtistView, ArtistAdapter.MenuItemSelectedListener {
+class BrowseArtistFragment : Fragment(), BrowseArtistView, ArtistEntryAdapter.MenuItemSelectedListener {
 
   @BindView(R.id.library_recycler) internal lateinit  var recyclerView: RecyclerView
-  @Inject private lateinit var adapter: ArtistAdapter
-  @Inject private lateinit var presenter: BrowseArtistPresenter
+  @Inject lateinit var adapter: ArtistEntryAdapter
+  @Inject lateinit var presenter: BrowseArtistPresenter
   private lateinit var layoutManager: LinearLayoutManager
   private var scrollListener: EndlessRecyclerViewScrollListener? = null
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     val view = inflater.inflate(R.layout.fragment_library, container, false)
     ButterKnife.bind(this, view)
-    RoboGuice.getInjector(context).injectMembers(this)
+    val scope = Toothpick.openScopes(context.applicationContext, this)
+    Toothpick.inject(this, scope)
+
     presenter.bind(this)
     layoutManager = LinearLayoutManager(context)
     recyclerView.layoutManager = layoutManager
@@ -46,6 +48,11 @@ class BrowseArtistFragment : Fragment(), BrowseArtistView, ArtistAdapter.MenuIte
     adapter.setMenuItemSelectedListener(this)
     presenter.load()
     return view
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    Toothpick.closeScope(this)
   }
 
   override fun onResume() {

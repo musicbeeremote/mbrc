@@ -11,8 +11,6 @@ import android.os.Build
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import javax.inject.Inject
-import javax.inject.Singleton
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.RemoteClientMetaData
@@ -20,13 +18,17 @@ import com.kelsos.mbrc.utilities.MediaButtonReceiver
 import com.kelsos.mbrc.utilities.MediaIntentHandler
 import com.kelsos.mbrc.utilities.RxBus
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton class RemoteSessionManager
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 @Inject
-constructor(context: Context, private val bus: RxBus, private val manager: AudioManager) : AudioManager.OnAudioFocusChangeListener {
+constructor(context: Context,
+            bus: RxBus,
+            private val manager: AudioManager,
+            val handler: MediaIntentHandler) : AudioManager.OnAudioFocusChangeListener {
   private val mMediaSession: MediaSessionCompat?
-  @Inject private val handler: MediaIntentHandler? = null
 
   init {
 
@@ -37,7 +39,9 @@ constructor(context: Context, private val bus: RxBus, private val manager: Audio
     val myEventReceiver = ComponentName(context.packageName, MediaButtonReceiver::class.java.name)
     val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
     mediaButtonIntent.component = myEventReceiver
-    val mediaPendingIntent = PendingIntent.getBroadcast(context.applicationContext, 0, mediaButtonIntent,
+    val mediaPendingIntent = PendingIntent.getBroadcast(context.applicationContext,
+        0,
+        mediaButtonIntent,
         PendingIntent.FLAG_UPDATE_CURRENT)
 
     mMediaSession = MediaSessionCompat(context, "Session", myEventReceiver, mediaPendingIntent)

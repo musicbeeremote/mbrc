@@ -9,28 +9,30 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import butterknife.BindView
 import butterknife.ButterKnife
-import javax.inject.Inject
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.ArtistAdapter
+import com.kelsos.mbrc.adapters.ArtistEntryAdapter
 import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.domain.Artist
 import com.kelsos.mbrc.extensions.empty
 import com.kelsos.mbrc.presenters.GenreArtistsPresenter
 import com.kelsos.mbrc.ui.views.GenreArtistView
-import roboguice.RoboGuice
+import toothpick.Toothpick
+import javax.inject.Inject
 
-class GenreArtistsActivity : AppCompatActivity(), GenreArtistView, ArtistAdapter.MenuItemSelectedListener {
+class GenreArtistsActivity : AppCompatActivity(), GenreArtistView, ArtistEntryAdapter.MenuItemSelectedListener {
   @BindView(R.id.genre_artists_recycler) internal lateinit var recyclerView: RecyclerView
   @BindView(R.id.toolbar) internal lateinit var toolbar: Toolbar
 
-  @Inject private lateinit var adapter: ArtistAdapter
-  @Inject private lateinit var presenter: GenreArtistsPresenter
+  @Inject lateinit var adapter: ArtistEntryAdapter
+  @Inject lateinit var presenter: GenreArtistsPresenter
   private var genreId: Long = 0
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_genre_artists)
-    RoboGuice.getInjector(this).injectMembers(this)
+    val scope = Toothpick.openScopes(application, this)
+    Toothpick.inject(this, scope)
+
     ButterKnife.bind(this)
     presenter.bind(this)
     val manager = LinearLayoutManager(this)
@@ -52,6 +54,11 @@ class GenreArtistsActivity : AppCompatActivity(), GenreArtistView, ArtistAdapter
     supportActionBar?.setDisplayShowHomeEnabled(true)
     supportActionBar?.title = title
     presenter.load(genreId)
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    Toothpick.closeScope(this)
   }
 
   override fun update(data: List<Artist>) {

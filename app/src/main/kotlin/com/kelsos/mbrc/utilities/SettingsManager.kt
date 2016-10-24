@@ -7,7 +7,7 @@ import android.content.pm.PackageManager
 import android.text.TextUtils
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.kelsos.mbrc.dao.DeviceSettings
+import com.kelsos.mbrc.data.dao.DeviceSettings
 import com.kelsos.mbrc.extensions.versionCode
 import com.kelsos.mbrc.repository.DeviceRepository
 import rx.Observable

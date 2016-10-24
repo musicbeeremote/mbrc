@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.widgets
 
-import android.R
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
@@ -23,8 +22,8 @@ import java.util.*
 
 class WidgetNormal : AppWidgetProvider() {
 
-  @Inject private lateinit var context: Context
-  @Inject private lateinit var bus: RxBus
+  @Inject lateinit var context: Context
+  @Inject lateinit var bus: RxBus
 
   private var widgetsIds: IntArray? = null
 

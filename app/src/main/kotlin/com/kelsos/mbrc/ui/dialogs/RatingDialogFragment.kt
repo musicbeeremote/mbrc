@@ -12,19 +12,20 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.events.ui.RatingChanged
 import com.kelsos.mbrc.interactors.TrackRatingInteractor
 import com.kelsos.mbrc.utilities.RxBus
-import roboguice.RoboGuice
 import timber.log.Timber
+import toothpick.Toothpick
 
 class RatingDialogFragment : DialogFragment() {
 
   @BindView(R.id.ratingBar) internal lateinit var ratingBar: RatingBar
-  @Inject private lateinit var bus: RxBus
-  @Inject private lateinit var ratingInteractor: TrackRatingInteractor
+  @Inject lateinit var bus: RxBus
+  @Inject lateinit var ratingInteractor: TrackRatingInteractor
   private var mRating: Float = 0.toFloat()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    RoboGuice.getInjector(context).injectMembers(this)
+    val scope = Toothpick.openScopes(activity.application, this)
+    Toothpick.inject(this, scope)
     bus.registerOnMain(this, RatingChanged::class.java, { this.handleRatingChange(it) })
   }
 
