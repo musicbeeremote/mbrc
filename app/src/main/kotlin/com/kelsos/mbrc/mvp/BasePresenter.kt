@@ -1,6 +1,6 @@
-package com.kelsos.mbrc.presenters
+package com.kelsos.mbrc.mvp
 
-import com.kelsos.mbrc.views.BaseView
+import com.kelsos.mbrc.mvp.BaseView
 
 import rx.Subscription
 import rx.subscriptions.CompositeSubscription

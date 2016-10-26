@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.ui.activities.nav.nowplaying
 
 import com.kelsos.mbrc.domain.TrackInfo
-import com.kelsos.mbrc.presenters.Presenter
-import com.kelsos.mbrc.views.BaseView
+import com.kelsos.mbrc.mvp.Presenter
+import com.kelsos.mbrc.mvp.BaseView
 
 interface NowPlayingView : BaseView {
   fun refreshingDone()

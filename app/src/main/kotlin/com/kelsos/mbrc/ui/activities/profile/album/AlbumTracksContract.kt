@@ -2,8 +2,8 @@ package com.kelsos.mbrc.ui.activities.profile.album
 
 import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.domain.AlbumInfo
-import com.kelsos.mbrc.presenters.Presenter
-import com.kelsos.mbrc.views.BaseView
+import com.kelsos.mbrc.mvp.Presenter
+import com.kelsos.mbrc.mvp.BaseView
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.config.Module
 

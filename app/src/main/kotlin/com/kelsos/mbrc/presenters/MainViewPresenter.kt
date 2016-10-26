@@ -7,6 +7,7 @@ import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.model.ConnectionModel
 import com.kelsos.mbrc.model.MainDataModel
+import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.views.MainView
 import javax.inject.Inject
 

@@ -5,6 +5,7 @@ import com.kelsos.mbrc.annotations.Repeat.Mode
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
+import com.kelsos.mbrc.mvp.BaseView
 
 interface MainView : BaseView {
 
