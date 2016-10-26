@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -18,7 +19,7 @@
 
   <fragment
       android:id="@+id/lyrics_mini_control"
-      android:name="com.kelsos.mbrc.ui.fragments.MiniControlFragment"
+      android:name="com.kelsos.mbrc.ui.mini_control.MiniControlFragment"
       android:layout_width="match_parent"
       android:layout_height="@dimen/mini_control_height"
       android:layout="@layout/ui_fragment_mini_control"

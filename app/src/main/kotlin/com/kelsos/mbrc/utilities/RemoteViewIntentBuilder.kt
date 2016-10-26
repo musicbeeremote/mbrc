@@ -5,7 +5,7 @@ import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
 import android.support.annotation.IntDef
-import com.kelsos.mbrc.ui.activities.nav.MainActivity
+import com.kelsos.mbrc.ui.navigation.main.MainActivity
 
 object RemoteViewIntentBuilder {
   const val REMOTE_PLAY_PRESSED = "com.kelsos.mbrc.notification.play"

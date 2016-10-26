@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.activities.nav
+package com.kelsos.mbrc.ui.navigation.playlists
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar

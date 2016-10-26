@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.activities.nav
+package com.kelsos.mbrc.ui.navigation.library
 
 import android.content.Intent
 import android.os.Bundle
@@ -14,7 +14,7 @@ import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.LibraryPagerAdapter
 import com.kelsos.mbrc.ui.activities.BaseActivity
-import com.kelsos.mbrc.ui.activities.SearchResultsActivity
+import com.kelsos.mbrc.ui.navigation.library.search.SearchResultsActivity
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule

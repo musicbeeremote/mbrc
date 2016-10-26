@@ -13,7 +13,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.CoverChangedEvent
 import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
-import com.kelsos.mbrc.ui.activities.nav.MainActivity
+import com.kelsos.mbrc.ui.navigation.main.MainActivity
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.NEXT
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PLAY
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PREVIOUS

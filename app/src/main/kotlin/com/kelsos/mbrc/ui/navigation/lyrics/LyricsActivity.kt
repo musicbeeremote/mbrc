@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.activities.nav
+package com.kelsos.mbrc.ui.navigation.lyrics
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager

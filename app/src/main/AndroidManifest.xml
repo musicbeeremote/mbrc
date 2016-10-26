@@ -22,7 +22,7 @@
       android:theme="@style/AppTheme"
       tools:ignore="UnusedAttribute">
     <activity
-        android:name=".ui.activities.nav.MainActivity"
+        android:name=".ui.navigation.main.MainActivity"
         android:launchMode="singleTop"
         android:windowSoftInputMode="adjustNothing">
       <intent-filter>
@@ -32,90 +32,90 @@
       </intent-filter>
     </activity>
     <activity
-        android:name=".ui.activities.nav.LibraryActivity"
+        android:name=".ui.navigation.library.LibraryActivity"
         android:label="@string/nav_library"
-        android:parentActivityName=".ui.activities.nav.MainActivity">
+        android:parentActivityName=".ui.navigation.main.MainActivity">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.activities.nav.MainActivity" />
+          android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
         android:name=".ui.activities.profile.album.AlbumTracksActivity"
-        android:parentActivityName=".ui.activities.nav.LibraryActivity">
+        android:parentActivityName=".ui.navigation.library.LibraryActivity">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.activities.nav.LibraryActivity" />
+          android:value=".ui.navigation.library.LibraryActivity" />
     </activity>
     <activity
         android:name=".ui.activities.profile.artist.ArtistAlbumsActivity"
-        android:parentActivityName=".ui.activities.nav.LibraryActivity">
+        android:parentActivityName=".ui.navigation.library.LibraryActivity">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.activities.nav.LibraryActivity" />
+          android:value=".ui.navigation.library.LibraryActivity" />
     </activity>
     <activity
         android:name=".ui.activities.profile.genre.GenreArtistsActivity"
-        android:parentActivityName=".ui.activities.nav.LibraryActivity">
+        android:parentActivityName=".ui.navigation.library.LibraryActivity">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.activities.nav.LibraryActivity" />
+          android:value=".ui.navigation.library.LibraryActivity" />
     </activity>
     <activity
-        android:name=".ui.activities.nav.LyricsActivity"
+        android:name=".ui.navigation.lyrics.LyricsActivity"
         android:label="@string/nav_lyrics"
-        android:parentActivityName=".ui.activities.nav.MainActivity">
+        android:parentActivityName=".ui.navigation.main.MainActivity">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.activities.nav.MainActivity" />
+          android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
         android:name=".ui.activities.nav.nowplaying.NowPlayingActivity"
         android:label="@string/nav_now_playing"
-        android:parentActivityName=".ui.activities.nav.MainActivity">
+        android:parentActivityName=".ui.navigation.main.MainActivity">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.activities.nav.MainActivity" />
+          android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
-        android:name=".ui.activities.nav.PlaylistActivity"
+        android:name=".ui.navigation.playlists.PlaylistActivity"
         android:label="@string/nav_playlists"
-        android:parentActivityName=".ui.activities.nav.MainActivity">
+        android:parentActivityName=".ui.navigation.main.MainActivity">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.activities.nav.MainActivity" />
+          android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
-        android:name=".ui.activities.SettingsActivity"
-        android:parentActivityName=".ui.activities.nav.MainActivity">
+        android:name=".ui.preferences.SettingsActivity"
+        android:parentActivityName=".ui.navigation.main.MainActivity">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.activities.nav.MainActivity" />
+          android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
         android:name="com.kelsos.mbrc.ui.connection_manager.ConnectionManagerActivity"
-        android:parentActivityName=".ui.activities.SettingsActivity"
+        android:parentActivityName=".ui.preferences.SettingsActivity"
         android:windowSoftInputMode="adjustNothing">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.activities.SettingsActivity" />
+          android:value=".ui.preferences.SettingsActivity" />
     </activity>
 
     <service
@@ -168,14 +168,14 @@
     </receiver>
 
     <activity
-        android:name=".ui.activities.HelpFeedbackActivity"
+        android:name=".ui.help_feedback.HelpFeedbackActivity"
         android:label="@string/title_activity_help_feedback"
-        android:parentActivityName=".ui.activities.nav.MainActivity">
+        android:parentActivityName=".ui.navigation.main.MainActivity">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value="com.kelsos.mbrc.ui.activities.nav.MainActivity" />
+          android:value="com.kelsos.mbrc.ui.navigation.main.MainActivity" />
     </activity>
-    <activity android:name=".ui.activities.SearchResultsActivity">
+    <activity android:name=".ui.navigation.library.search.SearchResultsActivity">
     </activity>
   </application>
 
