@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.connection_manager
 
 import com.kelsos.mbrc.data.ConnectionSettings
-import com.kelsos.mbrc.presenters.Presenter
+import com.kelsos.mbrc.mvp.Presenter
 
 interface ConnectionManagerPresenter : Presenter<ConnectionManagerView> {
   fun load()

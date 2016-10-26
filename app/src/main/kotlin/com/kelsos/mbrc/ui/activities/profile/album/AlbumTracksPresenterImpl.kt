@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.activities.profile.album
 
 import com.kelsos.mbrc.domain.AlbumInfo
-import com.kelsos.mbrc.presenters.BasePresenter
+import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.TrackRepository
 import timber.log.Timber
 import javax.inject.Inject
