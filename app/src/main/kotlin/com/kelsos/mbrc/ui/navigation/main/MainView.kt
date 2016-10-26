@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.views
+package com.kelsos.mbrc.ui.navigation.main
 
 import com.kelsos.mbrc.annotations.PlayerState.State
 import com.kelsos.mbrc.annotations.Repeat.Mode

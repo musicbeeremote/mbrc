@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.activities
+package com.kelsos.mbrc.ui.help_feedback
 
 import android.os.Bundle
 import android.support.design.widget.TabLayout
@@ -8,6 +8,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.HelpFeedbackPagerAdapter
+import com.kelsos.mbrc.ui.activities.FontActivity
 
 class HelpFeedbackActivity : FontActivity() {
 

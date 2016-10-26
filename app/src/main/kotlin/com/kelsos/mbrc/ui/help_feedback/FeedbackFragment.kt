@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.fragments
+package com.kelsos.mbrc.ui.help_feedback
 
 import android.content.Intent
 import android.os.Bundle

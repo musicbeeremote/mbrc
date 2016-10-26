@@ -6,8 +6,8 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.ui.fragments.FeedbackFragment
-import com.kelsos.mbrc.ui.fragments.HelpFragment
+import com.kelsos.mbrc.ui.help_feedback.FeedbackFragment
+import com.kelsos.mbrc.ui.help_feedback.HelpFragment
 
 class HelpFeedbackPagerAdapter(fm: FragmentManager, context: Activity) : FragmentStatePagerAdapter(fm) {
   private val context: Context

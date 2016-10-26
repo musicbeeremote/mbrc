@@ -1,11 +1,12 @@
-package com.kelsos.mbrc.ui.activities
+package com.kelsos.mbrc.ui.preferences
 
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.ui.fragments.SettingsFragment
+import com.kelsos.mbrc.ui.activities.FontActivity
+import com.kelsos.mbrc.ui.preferences.SettingsFragment
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.activities.nav.nowplaying
+package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import toothpick.config.Module
 
