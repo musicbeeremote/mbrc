@@ -4,12 +4,14 @@ import android.app.Application
 import android.content.Intent
 import android.support.multidex.MultiDex
 import com.kelsos.mbrc.controller.Controller
+import com.kelsos.mbrc.di.modules.RemoteModule
 import com.kelsos.mbrc.extensions.initDBFlow
 import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
 import toothpick.registries.FactoryRegistryLocator
 import toothpick.registries.MemberInjectorRegistryLocator
+import toothpick.smoothie.module.SmoothieApplicationModule
 
 open class RemoteApplication : Application() {
 
@@ -29,6 +31,7 @@ open class RemoteApplication : Application() {
     MemberInjectorRegistryLocator.setRootRegistry(com.kelsos.mbrc.MemberInjectorRegistry())
     FactoryRegistryLocator.setRootRegistry(com.kelsos.mbrc.FactoryRegistry())
     val applicationScope = Toothpick.openScope(this)
+    applicationScope.installModules(SmoothieApplicationModule(this), RemoteModule())
 
     startService(Intent(this, Controller::class.java))
 

@@ -7,8 +7,10 @@ import com.kelsos.mbrc.annotations.Repeat
 import com.kelsos.mbrc.annotations.Shuffle
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.domain.TrackPosition
+import javax.inject.Inject
 
-class MainViewModelImpl : MainViewModel {
+class MainViewModelImpl
+  @Inject constructor(): MainViewModel {
   override var trackInfo: TrackInfo = TrackInfo()
   override var trackCover: Bitmap? = null
   override var position: TrackPosition = TrackPosition()

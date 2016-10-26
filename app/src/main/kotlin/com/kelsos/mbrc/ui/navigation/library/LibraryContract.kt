@@ -5,6 +5,6 @@ import com.kelsos.mbrc.mvp.Presenter
 
 interface LibraryView : BaseView
 
-interface LibraryActivityPresenter : Presenter<LibraryView> {
+interface LibraryPresenter : Presenter<LibraryView> {
   fun checkLibrary()
 }

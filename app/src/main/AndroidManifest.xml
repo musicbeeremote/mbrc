@@ -31,7 +31,7 @@
       </intent-filter>
     </activity>
     <activity
-        android:name=".ui.navigation.LibraryActivity"
+        android:name=".ui.navigation.library.LibraryActivity"
         android:label="@string/menu_library"
         android:parentActivityName=".ui.navigation.main.MainActivity"
         tools:ignore="UnusedAttribute">
@@ -40,7 +40,7 @@
           android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
-        android:name=".ui.navigation.NowPlayingActivity"
+        android:name=".ui.navigation.nowplaying.NowPlayingActivity"
         android:label="@string/menu_now_playing"
         android:parentActivityName=".ui.navigation.main.MainActivity"
         tools:ignore="UnusedAttribute">
@@ -58,7 +58,7 @@
           android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
-        android:name=".ui.navigation.PlaylistListActivity"
+        android:name=".ui.navigation.playlists.PlaylistActivity"
         android:label="@string/menu_playlist"
         android:parentActivityName=".ui.navigation.main.MainActivity"
         tools:ignore="UnusedAttribute">
@@ -67,14 +67,14 @@
           android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
-        android:name=".ui.activities.PlaylistTrackActivity"
-        android:parentActivityName=".ui.navigation.PlaylistListActivity">
+        android:name=".ui.navigation.playlists.tracks.PlaylistTrackActivity"
+        android:parentActivityName=".ui.navigation.playlists.PlaylistActivity">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.navigation.PlaylistListActivity" />
+          android:value=".ui.navigation.playlists.PlaylistActivity" />
     </activity>
     <activity
-        android:name=".ui.activities.HelpActivity"
+        android:name=".ui.help_feedback.HelpFeedbackActivity"
         android:parentActivityName=".ui.navigation.main.MainActivity"
         tools:ignore="UnusedAttribute">
       <meta-data
@@ -82,28 +82,28 @@
           android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
-        android:name=".ui.fragments.profile.AlbumTracksActivity"
-        android:parentActivityName=".ui.navigation.LibraryActivity">
+        android:name=".ui.navigation.library.album_tracks.AlbumTracksActivity"
+        android:parentActivityName=".ui.navigation.library.LibraryActivity">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.navigation.LibraryActivity" />
+          android:value=".ui.navigation.library.LibraryActivity" />
     </activity>
     <activity
-        android:name=".ui.fragments.profile.GenreArtistsActivity"
-        android:parentActivityName=".ui.navigation.LibraryActivity">
+        android:name=".ui.navigation.library.genre_artists.GenreArtistsActivity"
+        android:parentActivityName=".ui.navigation.library.LibraryActivity">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.navigation.LibraryActivity" />
+          android:value=".ui.navigation.library.LibraryActivity" />
     </activity>
     <activity
-        android:name=".ui.fragments.profile.ArtistAlbumsActivity"
-        android:parentActivityName=".ui.navigation.LibraryActivity">
+        android:name=".ui.navigation.library.artist_albums.ArtistAlbumsActivity"
+        android:parentActivityName=".ui.navigation.library.LibraryActivity">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.navigation.LibraryActivity" />
+          android:value=".ui.navigation.library.LibraryActivity" />
     </activity>
     <activity
-        android:name=".ui.activities.ConnectionManagerActivity"
+        android:name=".ui.connection_manager.ConnectionManagerActivity"
         android:windowSoftInputMode="adjustNothing" />
 
     <service
@@ -137,7 +137,7 @@
         android:value="roboguice,com.kelsos.mbrc" />
 
     <activity
-        android:name=".ui.activities.SettingsActivity"
+        android:name=".ui.preferences.SettingsActivity"
         android:parentActivityName=".ui.navigation.main.MainActivity"
         tools:ignore="UnusedAttribute">
       <meta-data

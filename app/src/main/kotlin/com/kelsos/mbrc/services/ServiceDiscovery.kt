@@ -4,13 +4,13 @@ import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.constants.UserInputEventType
-import com.kelsos.mbrc.data.dao.DeviceSettings
+import com.kelsos.mbrc.data.dao.ConnectionSettings
 import com.kelsos.mbrc.dto.DiscoveryResponse
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.ui.DiscoveryStopped
 import com.kelsos.mbrc.extensions.io
 import com.kelsos.mbrc.mappers.DeviceSettingsMapper
-import com.kelsos.mbrc.repository.DeviceRepository
+import com.kelsos.mbrc.repository.ConnectionRepository
 import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.utilities.SettingsManager
 import rx.Observable
@@ -29,7 +29,7 @@ class ServiceDiscovery
 constructor(private val manager: WifiManager,
             private val connectivityManager: ConnectivityManager,
             private val mapper: ObjectMapper,
-            private val bus: RxBus, private val repository: DeviceRepository, private val settingsManager: SettingsManager) {
+            private val bus: RxBus, private val repository: ConnectionRepository, private val settingsManager: SettingsManager) {
   private var multicastLock: WifiManager.MulticastLock? = null
 
   init {
@@ -45,11 +45,11 @@ constructor(private val manager: WifiManager,
     }) { Timber.v(it) }
   }
 
-  fun startDiscovery(): Observable<DeviceSettings> {
+  fun startDiscovery(): Observable<ConnectionSettings> {
 
     if (!isWifiConnected) {
       bus.post(DiscoveryStopped(DiscoveryStopped.NO_WIFI, null))
-      return Observable.empty<DeviceSettings>()
+      return Observable.empty<ConnectionSettings>()
     }
 
     return discover().io().doOnTerminate({ this.stopDiscovery() }).doOnNext {
@@ -92,8 +92,8 @@ constructor(private val manager: WifiManager,
       return current != null && current.type == ConnectivityManager.TYPE_WIFI
     }
 
-  fun discover(): Observable<DeviceSettings> {
-    return Observable.create<DeviceSettings> {
+  fun discover(): Observable<ConnectionSettings> {
+    return Observable.create<ConnectionSettings> {
       try {
         multicastLock = manager.createMulticastLock("locked")
         multicastLock!!.setReferenceCounted(true)

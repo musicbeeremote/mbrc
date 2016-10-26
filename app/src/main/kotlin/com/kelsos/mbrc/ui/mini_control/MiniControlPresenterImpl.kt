@@ -13,7 +13,6 @@ import com.kelsos.mbrc.interactors.TrackInfoInteractor
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.utilities.ErrorHandler
 import com.kelsos.mbrc.utilities.RxBus
-import com.kelsos.mbrc.viewmodels.MiniControlModel
 import toothpick.smoothie.annotations.ContextSingleton
 import javax.inject.Inject
 

@@ -4,8 +4,8 @@ import toothpick.config.Module
 
 class LibraryModule : Module() {
   init {
-    bind(LibraryActivityPresenter::class.java)
-        .to(LibraryActivityPresenterImpl::class.java)
+    bind(LibraryPresenter::class.java)
+        .to(LibraryPresenterImpl::class.java)
         .singletonInScope()
   }
 }

@@ -13,8 +13,10 @@ import com.kelsos.mbrc.data.views.ArtistAlbumView_ViewTable
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import rx.Observable
+import javax.inject.Inject
 
-class AlbumRepositoryImpl : AlbumRepository {
+class AlbumRepositoryImpl
+  @Inject constructor(): AlbumRepository {
   override fun getPageObservable(offset: Int, limit: Int): Observable<List<AlbumDao>> {
     return Observable.defer { Observable.just(getPage(offset, limit)) }
   }

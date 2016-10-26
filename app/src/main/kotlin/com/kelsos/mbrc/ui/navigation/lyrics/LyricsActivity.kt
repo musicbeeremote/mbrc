@@ -11,10 +11,9 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.LyricsAdapter
-import com.kelsos.mbrc.ui.navigation.lyrics.LyricsPresenter
 import com.kelsos.mbrc.ui.activities.BaseActivity
-import com.kelsos.mbrc.ui.navigation.lyrics.LyricsView
 import toothpick.Toothpick
+import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class LyricsActivity : BaseActivity(), LyricsView {
@@ -29,27 +28,28 @@ class LyricsActivity : BaseActivity(), LyricsView {
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     val scope = Toothpick.openScopes(application, this)
+    scope.installModules(SmoothieActivityModule(this), LyricsModule())
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_lyrics)
     ButterKnife.bind(this)
     initialize(toolbar, drawer, navigationView)
     setCurrentSelection(R.id.drawer_menu_lyrics)
 
-    presenter.bind(this)
+    presenter.attach(this)
     recyclerView.setHasFixedSize(true)
     val layoutManager = LinearLayoutManager(baseContext)
     recyclerView.layoutManager = layoutManager
     recyclerView.adapter = adapter
   }
 
-  public override fun onPause() {
-    super.onPause()
-    presenter.onPause()
+  override fun onStart() {
+    super.onStart()
+    presenter.attach(this)
   }
 
-  public override fun onResume() {
-    super.onResume()
-    presenter.onResume()
+  override fun onStop() {
+    super.onStop()
+    presenter.detach()
   }
 
   override fun onDestroy() {

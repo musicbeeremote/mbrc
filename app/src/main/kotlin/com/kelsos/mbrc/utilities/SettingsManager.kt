@@ -1,15 +1,16 @@
 package com.kelsos.mbrc.utilities
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.text.TextUtils
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.kelsos.mbrc.data.dao.DeviceSettings
+import com.kelsos.mbrc.data.dao.ConnectionSettings
 import com.kelsos.mbrc.extensions.versionCode
-import com.kelsos.mbrc.repository.DeviceRepository
+import com.kelsos.mbrc.repository.ConnectionRepository
 import rx.Observable
 import rx.lang.kotlin.observable
 import rx.lang.kotlin.toSingletonObservable
@@ -17,9 +18,9 @@ import timber.log.Timber
 import java.util.*
 
 @Singleton class SettingsManager
-@Inject constructor(private val context: Context,
+@Inject constructor(private val context: Application,
                     private val preferences: SharedPreferences,
-                    private val repository: DeviceRepository,
+                    private val repository: ConnectionRepository,
                     private val keyProvider: KeyProvider) {
   private var isFirstRun: Boolean = false
 
@@ -84,11 +85,11 @@ import java.util.*
 
   }
 
-  val observableDefault: Observable<DeviceSettings>
+  val observableDefault: Observable<ConnectionSettings>
     get() = preferences.getLong(DEFAULT_ID, -1)
         .toSingletonObservable()
         .flatMap { id ->
-          observable<DeviceSettings> {
+          observable<ConnectionSettings> {
             if (id > 0) {
               it.onNext(repository.getById(id))
             }
@@ -96,7 +97,7 @@ import java.util.*
           }
         }
 
-  val default: DeviceSettings?
+  val default: ConnectionSettings?
     get() {
       val selection = preferences.getLong(DEFAULT_ID, -1)
       if (selection < 0) {

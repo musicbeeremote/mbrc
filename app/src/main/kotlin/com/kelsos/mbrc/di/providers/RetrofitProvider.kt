@@ -10,9 +10,9 @@ import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.inject.Provider
 
-class RetrofitProvider : Provider<Retrofit> {
-  @Inject lateinit var client: OkHttpClient
-  @Inject lateinit var mapper: ObjectMapper
+class RetrofitProvider
+@Inject constructor(private val client: OkHttpClient,
+                    private val mapper: ObjectMapper) : Provider<Retrofit> {
 
   override fun get(): Retrofit {
 

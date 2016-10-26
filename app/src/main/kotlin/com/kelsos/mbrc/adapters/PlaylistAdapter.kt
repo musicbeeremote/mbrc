@@ -16,7 +16,7 @@ import butterknife.ButterKnife
 import javax.inject.Inject
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.domain.Playlist
-import com.kelsos.mbrc.ui.activities.PlaylistTrackActivity
+import com.kelsos.mbrc.ui.navigation.playlists.tracks.PlaylistTrackActivity
 import com.kelsos.mbrc.utilities.FontUtils
 import java.util.*
 

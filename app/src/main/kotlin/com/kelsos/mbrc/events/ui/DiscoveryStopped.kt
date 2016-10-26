@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.events.ui
 
 import android.support.annotation.IntDef
-import com.kelsos.mbrc.data.dao.DeviceSettings
+import com.kelsos.mbrc.data.dao.ConnectionSettings
 
-class DiscoveryStopped(@Status val reason: Long, var settings: DeviceSettings? = null) {
+class DiscoveryStopped(@Status val reason: Long, var settings: ConnectionSettings? = null) {
 
   companion object {
     const val NO_WIFI = 1L

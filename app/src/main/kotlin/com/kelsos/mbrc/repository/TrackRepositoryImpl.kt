@@ -66,7 +66,7 @@ class TrackRepositoryImpl
 
           val lyricsList = if (TextUtils.isEmpty(trackLyrics)) emptyList<String>()
           else ArrayList(Arrays.asList<String>(*trackLyrics.split("\r\n".toRegex())
-              .dropLastWhile({ it.isEmpty() })
+              .dropLastWhile(String::isEmpty)
               .toTypedArray()))
 
           cache.lyrics = lyricsList

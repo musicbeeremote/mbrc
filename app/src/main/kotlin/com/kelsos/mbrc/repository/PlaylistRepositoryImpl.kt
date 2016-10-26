@@ -18,8 +18,10 @@ import rx.Observable
 import rx.Subscriber
 import rx.schedulers.Schedulers
 import timber.log.Timber
+import javax.inject.Inject
 
-class PlaylistRepositoryImpl : PlaylistRepository {
+class PlaylistRepositoryImpl
+@Inject constructor() : PlaylistRepository {
 
   override fun getPlaylists(): Observable<List<Playlist>> = Observable.create { subscriber: Subscriber<in List<Playlist>> ->
     val playlistDaos = Select().from(PlaylistDao::class.java).queryList()

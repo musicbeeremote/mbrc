@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.messaging
 
+import android.app.Application
 import android.app.Notification
-import android.content.Context
 import android.graphics.BitmapFactory
 import android.support.v4.app.NotificationCompat.Action
 import android.support.v4.app.NotificationManagerCompat
@@ -29,7 +29,7 @@ import javax.inject.Singleton
 @Singleton class
 NotificationService
 @Inject
-constructor(private val context: Context,
+constructor(private val context: Application,
             bus: RxBus,
             private val model: NotificationModel,
             private val notificationManager: NotificationManagerCompat,

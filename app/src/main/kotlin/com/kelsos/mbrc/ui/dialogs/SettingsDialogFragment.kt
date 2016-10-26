@@ -8,7 +8,7 @@ import android.view.View
 import android.widget.EditText
 import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.data.dao.DeviceSettings
+import com.kelsos.mbrc.data.dao.ConnectionSettings
 
 class SettingsDialogFragment : DialogFragment() {
 
@@ -46,7 +46,7 @@ class SettingsDialogFragment : DialogFragment() {
 
       if (isValid(portNum) && shouldIClose) {
 
-        val settings = DeviceSettings()
+        val settings = ConnectionSettings()
         settings.address = hostname
         settings.name = computerName
         settings.port = portNum
@@ -105,7 +105,7 @@ class SettingsDialogFragment : DialogFragment() {
   }
 
   interface SettingsDialogListener {
-    fun onDialogPositiveClick(dialog: SettingsDialogFragment, settings: DeviceSettings)
+    fun onDialogPositiveClick(dialog: SettingsDialogFragment, settings: ConnectionSettings)
   }
 
   companion object {
@@ -129,7 +129,7 @@ class SettingsDialogFragment : DialogFragment() {
       return fragment
     }
 
-    fun newInstance(settings: DeviceSettings): SettingsDialogFragment {
+    fun newInstance(settings: ConnectionSettings): SettingsDialogFragment {
       val fragment = SettingsDialogFragment()
       val args = Bundle()
       args.putLong(ID, settings.id)

@@ -4,10 +4,10 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import javax.inject.Inject
-import com.kelsos.mbrc.ui.fragments.browse.BrowseAlbumFragment
-import com.kelsos.mbrc.ui.fragments.browse.BrowseArtistFragment
-import com.kelsos.mbrc.ui.fragments.browse.BrowseGenreFragment
-import com.kelsos.mbrc.ui.fragments.browse.BrowseTrackFragment
+import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumFragment
+import com.kelsos.mbrc.ui.navigation.library.artists.BrowseArtistFragment
+import com.kelsos.mbrc.ui.navigation.library.genres.BrowseGenreFragment
+import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackFragment
 
 class BrowsePagerAdapter
 @Inject

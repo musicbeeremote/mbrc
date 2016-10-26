@@ -32,6 +32,7 @@ import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment
 import com.kelsos.mbrc.utilities.FontUtils
 import toothpick.Toothpick
+import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -122,7 +123,7 @@ import javax.inject.Singleton
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
     val scope = Toothpick.openScopes(application, this)
-    scope.installModules(MainModule())
+    scope.installModules(SmoothieActivityModule(this), MainModule())
     Toothpick.inject(this, scope)
     ButterKnife.bind(this)
     initialize(toolbar, drawer, navigationView)

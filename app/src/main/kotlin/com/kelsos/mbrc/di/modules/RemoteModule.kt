@@ -8,11 +8,16 @@ import com.kelsos.mbrc.cache.PlayerStateCache
 import com.kelsos.mbrc.cache.PlayerStateCacheImpl
 import com.kelsos.mbrc.cache.TrackCache
 import com.kelsos.mbrc.cache.TrackCacheImpl
-import com.kelsos.mbrc.di.providers.ApiServiceProvider
+import com.kelsos.mbrc.di.providers.ApiProvider
+import com.kelsos.mbrc.di.providers.LibraryServiceProvider
 import com.kelsos.mbrc.di.providers.NotificationManagerCompatProvider
+import com.kelsos.mbrc.di.providers.NowPlayingServiceProvider
 import com.kelsos.mbrc.di.providers.ObjectMapperProvider
 import com.kelsos.mbrc.di.providers.OkHttpClientProvider
+import com.kelsos.mbrc.di.providers.PlayerServiceProvider
+import com.kelsos.mbrc.di.providers.PlaylistServiceProvider
 import com.kelsos.mbrc.di.providers.RetrofitProvider
+import com.kelsos.mbrc.di.providers.TrackServiceProvider
 import com.kelsos.mbrc.interactors.LibraryAlbumInteractor
 import com.kelsos.mbrc.interactors.LibraryAlbumInteractorImpl
 import com.kelsos.mbrc.interactors.LibrarySyncInteractor
@@ -54,30 +59,8 @@ import com.kelsos.mbrc.interactors.playlists.PlaylistAddInteractorImpl
 import com.kelsos.mbrc.interactors.playlists.PlaylistTrackInteractor
 import com.kelsos.mbrc.interactors.playlists.PlaylistTrackInteractorImpl
 import com.kelsos.mbrc.messaging.SocketMessageHandler
-import com.kelsos.mbrc.presenters.AlbumTracksPresenter
-import com.kelsos.mbrc.presenters.AlbumTracksPresenterImpl
-import com.kelsos.mbrc.presenters.ArtistAlbumPresenter
-import com.kelsos.mbrc.presenters.ArtistAlbumPresenterImpl
-import com.kelsos.mbrc.presenters.BrowseAlbumPresenter
-import com.kelsos.mbrc.presenters.BrowseAlbumPresenterImpl
-import com.kelsos.mbrc.presenters.BrowseGenrePresenter
-import com.kelsos.mbrc.presenters.BrowseGenrePresenterImpl
-import com.kelsos.mbrc.presenters.BrowseTrackPresenter
-import com.kelsos.mbrc.presenters.BrowseTrackPresenterImpl
-import com.kelsos.mbrc.presenters.GenreArtistsPresenter
-import com.kelsos.mbrc.presenters.GenreArtistsPresenterImpl
-import com.kelsos.mbrc.ui.navigation.library.LibraryActivityPresenter
-import com.kelsos.mbrc.ui.navigation.library.LibraryActivityPresenterImpl
-import com.kelsos.mbrc.ui.navigation.lyrics.LyricsPresenter
-import com.kelsos.mbrc.ui.navigation.lyrics.LyricsPresenterImpl
-import com.kelsos.mbrc.presenters.PlaylistDialogPresenter
-import com.kelsos.mbrc.presenters.PlaylistDialogPresenterImpl
-import com.kelsos.mbrc.ui.navigation.playlists.PlaylistPresenter
-import com.kelsos.mbrc.ui.navigation.playlists.PlaylistPresenterImpl
-import com.kelsos.mbrc.presenters.PlaylistTrackPresenter
-import com.kelsos.mbrc.presenters.PlaylistTrackPresenterImpl
-import com.kelsos.mbrc.repository.DeviceRepository
-import com.kelsos.mbrc.repository.DeviceRepositoryImpl
+import com.kelsos.mbrc.repository.ConnectionRepository
+import com.kelsos.mbrc.repository.ConnectionRepositoryImpl
 import com.kelsos.mbrc.repository.NowPlayingRepository
 import com.kelsos.mbrc.repository.NowPlayingRepositoryImpl
 import com.kelsos.mbrc.repository.PlaylistRepository
@@ -103,25 +86,15 @@ import com.kelsos.mbrc.utilities.RxBusImpl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import toothpick.config.Module
-import toothpick.smoothie.annotations.ContextSingleton
 
-@SuppressWarnings("UnusedDeclaration") class RemoteModule : Module() {
+class RemoteModule : Module() {
   init {
     bind(ObjectMapper::class.java).toProvider(ObjectMapperProvider::class.java).providesSingletonInScope()
     bind(OkHttpClient::class.java).toProvider(OkHttpClientProvider::class.java).providesSingletonInScope()
     bind(Retrofit::class.java).toProvider(RetrofitProvider::class.java).providesSingletonInScope()
+    bind(RxBus::class.java).to(RxBusImpl::class.java).singletonInScope()
 
-    bind(LyricsPresenter::class.java).to(LyricsPresenterImpl::class.java).`in`(ContextSingleton::class.java)
-    bind(PlaylistPresenter::class.java).to(PlaylistPresenterImpl::class.java).`in`(ContextSingleton::class.java)
-    bind(PlaylistTrackPresenter::class.java).to(PlaylistTrackPresenterImpl::class.java).`in`(ContextSingleton::class.java)
-    bind(BrowseGenrePresenter::class.java).to(BrowseGenrePresenterImpl::class.java).`in`(ContextSingleton::class.java)
-    bind(BrowseAlbumPresenter::class.java).to(BrowseAlbumPresenterImpl::class.java).`in`(ContextSingleton::class.java)
-    bind(BrowseTrackPresenter::class.java).to(BrowseTrackPresenterImpl::class.java).`in`(ContextSingleton::class.java)
-    bind(AlbumTracksPresenter::class.java).to(AlbumTracksPresenterImpl::class.java).`in`(ContextSingleton::class.java)
-    bind(GenreArtistsPresenter::class.java).to(GenreArtistsPresenterImpl::class.java).`in`(ContextSingleton::class.java)
-    bind(LibraryActivityPresenter::class.java).to(LibraryActivityPresenterImpl::class.java).`in`(ContextSingleton::class.java)
-    bind(ArtistAlbumPresenter::class.java).to(ArtistAlbumPresenterImpl::class.java).`in`(ContextSingleton::class.java)
-    bind(PlaylistDialogPresenter::class.java).to(PlaylistDialogPresenterImpl::class.java).`in`(ContextSingleton::class.java)
+    bind(okhttp3.Interceptor::class.java).toProviderInstance { null }
 
     bind(TrackInfoInteractor::class.java).to(TrackInfoInteractorImpl::class.java)
     bind(TrackRatingInteractor::class.java).to(TrackRatingInteractorImpl::class.java)
@@ -158,21 +131,21 @@ import toothpick.smoothie.annotations.ContextSingleton
 
     bind(NowPlayingRepository::class.java).to(NowPlayingRepositoryImpl::class.java).singletonInScope()
     bind(PlaylistRepository::class.java).to(PlaylistRepositoryImpl::class.java).singletonInScope()
-    bind(DeviceRepository::class.java).to(DeviceRepositoryImpl::class.java).singletonInScope()
+    bind(ConnectionRepository::class.java).to(ConnectionRepositoryImpl::class.java).singletonInScope()
 
     bind(TrackCache::class.java).to(TrackCacheImpl::class.java).singletonInScope()
     bind(PlayerStateCache::class.java).to(PlayerStateCacheImpl::class.java).singletonInScope()
 
-    bind(TrackService::class.java).toProviderInstance(ApiServiceProvider(TrackService::class.java)).providesSingletonInScope()
-    bind(PlayerService::class.java).toProviderInstance(ApiServiceProvider(PlayerService::class.java)).providesSingletonInScope()
-    bind(LibraryService::class.java).toProviderInstance(ApiServiceProvider(LibraryService::class.java)).providesSingletonInScope()
-    bind(NowPlayingService::class.java).toProviderInstance(ApiServiceProvider(NowPlayingService::class.java)).providesSingletonInScope()
-    bind(PlaylistService::class.java).toProviderInstance(ApiServiceProvider(PlaylistService::class.java)).providesSingletonInScope()
-    bind(ApiService::class.java).toProviderInstance(ApiServiceProvider(ApiService::class.java)).providesSingletonInScope()
-    bind(RxBus::class.java).to(RxBusImpl::class.java).singletonInScope()
+    bind(TrackService::class.java).toProvider(TrackServiceProvider::class.java).providesSingletonInScope()
+    bind(PlayerService::class.java).toProvider(PlayerServiceProvider::class.java).providesSingletonInScope()
+    bind(LibraryService::class.java).toProvider(LibraryServiceProvider::class.java).providesSingletonInScope()
+    bind(NowPlayingService::class.java).toProvider(NowPlayingServiceProvider::class.java).providesSingletonInScope()
+    bind(PlaylistService::class.java).toProvider(PlaylistServiceProvider::class.java).providesSingletonInScope()
+    bind(ApiService::class.java).toProvider(ApiProvider::class.java).providesSingletonInScope()
 
     bind(NotificationManagerCompat::class.java).toProvider(NotificationManagerCompatProvider::class.java).providesSingletonInScope()
     bind(com.kelsos.mbrc.utilities.KeyProvider::class.java).to(com.kelsos.mbrc.utilities.KeyProviderImpl::class.java)
     bind(SocketMessageHandler::class.java).singletonInScope()
   }
 }
+

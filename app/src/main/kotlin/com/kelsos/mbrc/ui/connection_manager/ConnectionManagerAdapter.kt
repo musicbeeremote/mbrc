@@ -12,7 +12,7 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.data.dao.DeviceSettings
+import com.kelsos.mbrc.data.dao.ConnectionSettings
 import java.util.*
 import javax.inject.Inject
 
@@ -20,12 +20,12 @@ class ConnectionManagerAdapter
 @Inject constructor(context: Context) : RecyclerView.Adapter<ConnectionManagerAdapter.ConnectionViewHolder>() {
 
   private val inflater: LayoutInflater
-  private val data: MutableList<DeviceSettings>
+  private val data: MutableList<ConnectionSettings>
   private var defaultIndex: Int = 0
   private var listener: DeviceActionListener? = null
 
   init {
-    this.data = ArrayList<DeviceSettings>()
+    this.data = ArrayList<ConnectionSettings>()
     this.defaultIndex = 0
     this.inflater = LayoutInflater.from(context)
   }
@@ -91,18 +91,18 @@ class ConnectionManagerAdapter
     this.listener = listener
   }
 
-  fun updateDevices(list: List<DeviceSettings>) {
+  fun updateDevices(list: List<ConnectionSettings>) {
     data.clear()
     data.addAll(list)
     notifyDataSetChanged()
   }
 
   interface DeviceActionListener {
-    fun onDelete(settings: DeviceSettings)
+    fun onDelete(settings: ConnectionSettings)
 
-    fun onDefault(settings: DeviceSettings)
+    fun onDefault(settings: ConnectionSettings)
 
-    fun onEdit(settings: DeviceSettings)
+    fun onEdit(settings: ConnectionSettings)
   }
 
   inner class ConnectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

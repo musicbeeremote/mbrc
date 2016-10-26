@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.services
 
 import android.annotation.TargetApi
+import android.app.Application
 import android.app.PendingIntent
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
 import android.media.RemoteControlClient
@@ -24,7 +24,7 @@ import javax.inject.Singleton
 @Singleton class RemoteSessionManager
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 @Inject
-constructor(context: Context,
+constructor(context: Application,
             bus: RxBus,
             private val manager: AudioManager,
             val handler: MediaIntentHandler) : AudioManager.OnAudioFocusChangeListener {

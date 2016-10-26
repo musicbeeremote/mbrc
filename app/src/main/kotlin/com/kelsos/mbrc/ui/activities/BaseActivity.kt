@@ -12,7 +12,6 @@ import android.os.Handler
 import android.support.annotation.IdRes
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
-import android.support.v4.app.DialogFragment
 import android.support.v4.app.NavUtils
 import android.support.v4.app.TaskStackBuilder
 import android.support.v4.view.GravityCompat
@@ -30,16 +29,16 @@ import com.kelsos.mbrc.controller.Controller
 import com.kelsos.mbrc.events.ChangeWebSocketStatusEvent
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
-import com.kelsos.mbrc.events.ui.DisplayDialog
 import com.kelsos.mbrc.events.ui.NotifyUser
-import com.kelsos.mbrc.ui.navigation.LibraryActivity
+import com.kelsos.mbrc.ui.help_feedback.HelpFeedbackActivity
+import com.kelsos.mbrc.ui.navigation.library.LibraryActivity
 import com.kelsos.mbrc.ui.navigation.lyrics.LyricsActivity
 import com.kelsos.mbrc.ui.navigation.main.MainActivity
-import com.kelsos.mbrc.ui.navigation.NowPlayingActivity
-import com.kelsos.mbrc.ui.navigation.PlaylistListActivity
+import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingActivity
+import com.kelsos.mbrc.ui.navigation.playlists.PlaylistActivity
+import com.kelsos.mbrc.ui.preferences.SettingsActivity
 import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.viewmodels.ConnectionStatusModel
-import rx.Subscription
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -52,8 +51,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
   @Inject lateinit var handler: Handler
   @Inject lateinit var model: ConnectionStatusModel
   private var toggle: ActionBarDrawerToggle? = null
-  private var mDialog: DialogFragment? = null
-  private val subscription: Subscription? = null
+
 
   /**
    * Sends an event object.
@@ -110,7 +108,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     rxBus.registerOnMain(this,
         ConnectionStatusChangeEvent::class.java,
         { this.handleConnectionStatusChange(it) })
-    rxBus.registerOnMain(this, DisplayDialog::class.java, { this.showSetupDialog(it) })
     rxBus.registerOnMain(this, NotifyUser::class.java, { this.handleUserNotification(it) })
 
     updateStatus(model.status)
@@ -182,7 +179,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     } else if (id == R.id.drawer_menu_library) {
       createBackStack(Intent(this, LibraryActivity::class.java))
     } else if (id == R.id.drawer_menu_playlist) {
-      createBackStack(Intent(this, PlaylistListActivity::class.java))
+      createBackStack(Intent(this, PlaylistActivity::class.java))
     } else if (id == R.id.drawer_menu_now_playing) {
       createBackStack(Intent(this, NowPlayingActivity::class.java))
     } else if (id == R.id.drawer_menu_lyrics) {
@@ -194,7 +191,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     } else if (id == R.id.drawer_menu_connect) {
       onConnectClick()
     } else if (id == R.id.drawer_menu_help) {
-      createBackStack(Intent(this, HelpActivity::class.java))
+      createBackStack(Intent(this, HelpFeedbackActivity::class.java))
     } else if (id == DEBUG_ITEM_ID) {
       createBackStack(Intent(this, DebugActivity::class.java))
     }

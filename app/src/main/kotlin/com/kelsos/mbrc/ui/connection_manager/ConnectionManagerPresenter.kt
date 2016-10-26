@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.connection_manager
 
-import com.kelsos.mbrc.data.dao.DeviceSettings
+import com.kelsos.mbrc.data.dao.ConnectionSettings
 
 interface ConnectionManagerPresenter {
   fun bind(view: ConnectionManagerView)
@@ -9,11 +9,11 @@ interface ConnectionManagerPresenter {
 
   fun onPause()
 
-  fun saveSettings(settings: DeviceSettings)
+  fun saveSettings(settings: ConnectionSettings)
 
   fun loadDevices()
 
-  fun deleteSettings(settings: DeviceSettings)
+  fun deleteSettings(settings: ConnectionSettings)
 
-  fun setDefault(settings: DeviceSettings)
+  fun setDefault(settings: ConnectionSettings)
 }

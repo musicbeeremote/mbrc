@@ -14,7 +14,7 @@ import butterknife.OnClick
 import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.constants.UserInputEventType
-import com.kelsos.mbrc.data.dao.DeviceSettings
+import com.kelsos.mbrc.data.dao.ConnectionSettings
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.ui.DiscoveryStopped
 import com.kelsos.mbrc.events.ui.NotifyUser
@@ -102,7 +102,7 @@ class ConnectionManagerActivity : AppCompatActivity(), ConnectionManagerView, Se
     return true
   }
 
-  override fun onDialogPositiveClick(dialog: SettingsDialogFragment, settings: DeviceSettings) {
+  override fun onDialogPositiveClick(dialog: SettingsDialogFragment, settings: ConnectionSettings) {
     presenter.saveSettings(settings)
   }
 
@@ -134,19 +134,19 @@ class ConnectionManagerActivity : AppCompatActivity(), ConnectionManagerView, Se
     Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show()
   }
 
-  override fun updateDevices(list: List<DeviceSettings>) {
+  override fun updateDevices(list: List<ConnectionSettings>) {
     adapter.updateDevices(list)
   }
 
-  override fun onDelete(settings: DeviceSettings) {
+  override fun onDelete(settings: ConnectionSettings) {
     presenter.deleteSettings(settings)
   }
 
-  override fun onDefault(settings: DeviceSettings) {
+  override fun onDefault(settings: ConnectionSettings) {
     presenter.setDefault(settings)
   }
 
-  override fun onEdit(settings: DeviceSettings) {
+  override fun onEdit(settings: ConnectionSettings) {
     val settingsDialog = SettingsDialogFragment.newInstance(settings)
     settingsDialog.show(supportFragmentManager, SettingsDialogFragment.TAG)
   }

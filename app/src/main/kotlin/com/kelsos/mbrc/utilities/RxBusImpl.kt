@@ -6,9 +6,12 @@ import rx.Subscription
 import rx.subjects.PublishSubject
 import rx.subjects.SerializedSubject
 import java.util.*
+import javax.inject.Inject
 
 @Suppress("UNCHECKED_CAST")
-class RxBusImpl : RxBus {
+
+class RxBusImpl
+  @Inject constructor(): RxBus {
 
   private val mBusSubject = SerializedSubject(PublishSubject.create<Any>())
   private val activeSubscriptions = HashMap<Any, MutableList<Subscription>>()

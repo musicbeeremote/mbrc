@@ -27,11 +27,10 @@ import rx.Observable
 import rx.Subscription
 import rx.subjects.PublishSubject
 import timber.log.Timber
-import toothpick.smoothie.annotations.ContextSingleton
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-@ContextSingleton class MainViewPresenterImpl
+class MainViewPresenterImpl
 @Inject constructor(private val errorHandler: ErrorHandler,
                     private val model: MainViewModel,
                     private val playerInteractor: PlayerInteractor,

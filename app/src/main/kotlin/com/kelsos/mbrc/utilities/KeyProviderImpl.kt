@@ -1,13 +1,12 @@
 package com.kelsos.mbrc.utilities
 
-import android.content.Context
-import javax.inject.Inject
-
+import android.app.Application
 import com.kelsos.mbrc.R
+import javax.inject.Inject
 
 class KeyProviderImpl
 @Inject
-constructor(private val context: Context) : KeyProvider {
+constructor(private val context: Application) : KeyProvider {
 
   override val hostKey: String
     get() = context.getString(R.string.settings_key_hostname)
