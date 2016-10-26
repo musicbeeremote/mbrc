@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.activities.nav
+package com.kelsos.mbrc.ui.navigation.main
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -38,10 +38,10 @@ import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.helper.ProgressSeekerHelper
 import com.kelsos.mbrc.helper.ProgressSeekerHelper.ProgressUpdate
 import com.kelsos.mbrc.helper.VolumeChangeHelper
-import com.kelsos.mbrc.presenters.MainViewPresenter
+import com.kelsos.mbrc.ui.navigation.main.MainViewPresenter
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment
-import com.kelsos.mbrc.views.MainView
+import com.kelsos.mbrc.ui.navigation.main.MainView
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import rx.functions.Action1

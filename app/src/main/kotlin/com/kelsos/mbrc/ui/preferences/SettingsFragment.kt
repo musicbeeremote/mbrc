@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.fragments
+package com.kelsos.mbrc.ui.preferences
 
 import android.Manifest
 import android.content.Context
@@ -10,11 +10,11 @@ import android.view.MenuItem
 import com.github.machinarius.preferencefragment.PreferenceFragment
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.ui.connection_manager.ConnectionManagerActivity
 import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.logging.FileLoggingTree
+import com.kelsos.mbrc.ui.connection_manager.ConnectionManagerActivity
 import com.kelsos.mbrc.ui.dialogs.WebViewDialog
 import com.kelsos.mbrc.utilities.RemoteUtils
 import timber.log.Timber

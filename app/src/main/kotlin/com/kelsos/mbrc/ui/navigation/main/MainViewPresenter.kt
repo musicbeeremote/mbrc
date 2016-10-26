@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.presenters
+package com.kelsos.mbrc.ui.navigation.main
 
 import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
@@ -8,7 +8,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.model.ConnectionModel
 import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.views.MainView
+import com.kelsos.mbrc.ui.navigation.main.MainView
 import javax.inject.Inject
 
 class MainViewPresenter : BasePresenter<MainView>() {

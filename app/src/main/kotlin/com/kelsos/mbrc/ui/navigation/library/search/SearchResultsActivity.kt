@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.activities
+package com.kelsos.mbrc.ui.navigation.library.search
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -16,6 +16,7 @@ import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.data.library.Genre
 import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.helper.PopupActionHandler
+import com.kelsos.mbrc.ui.activities.FontActivity
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import toothpick.Scope
 import toothpick.Toothpick

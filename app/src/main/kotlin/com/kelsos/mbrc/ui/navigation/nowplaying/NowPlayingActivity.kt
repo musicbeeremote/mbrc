@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.activities.nav.nowplaying
+package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import android.os.Bundle
 import android.support.v4.view.MenuItemCompat
@@ -17,6 +17,9 @@ import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingModule
+import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingPresenter
+import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingView
 import com.kelsos.mbrc.ui.drag.SimpleItenTouchHelper
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout

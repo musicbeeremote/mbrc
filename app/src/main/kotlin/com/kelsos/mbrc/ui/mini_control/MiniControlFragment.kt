@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.fragments
+package com.kelsos.mbrc.ui.mini_control
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -27,7 +27,7 @@ import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.presenters.MiniControlPresenter
-import com.kelsos.mbrc.ui.activities.nav.MainActivity
+import com.kelsos.mbrc.ui.navigation.main.MainActivity
 import com.kelsos.mbrc.views.MiniControlView
 import com.squareup.picasso.Picasso
 import toothpick.Toothpick
