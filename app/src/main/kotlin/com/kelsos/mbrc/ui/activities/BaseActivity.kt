@@ -32,8 +32,6 @@ import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.ui.DisplayDialog
 import com.kelsos.mbrc.events.ui.NotifyUser
-import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment
-import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment
 import com.kelsos.mbrc.ui.navigation.LibraryActivity
 import com.kelsos.mbrc.ui.navigation.lyrics.LyricsActivity
 import com.kelsos.mbrc.ui.navigation.main.MainActivity
@@ -143,23 +141,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return super.onOptionsItemSelected(item)
-  }
-
-  fun showSetupDialog(event: DisplayDialog) {
-    if (mDialog != null) {
-      return
-    }
-    if (event.dialogType == DisplayDialog.SETUP) {
-      mDialog = SetupDialogFragment()
-      mDialog!!.show(supportFragmentManager, "SetupDialogFragment")
-    } else if (event.dialogType == DisplayDialog.UPGRADE) {
-      mDialog = UpgradeDialogFragment()
-      mDialog!!.show(supportFragmentManager, "UpgradeDialogFragment")
-    } else if (event.dialogType == DisplayDialog.INSTALL) {
-      mDialog = UpgradeDialogFragment()
-      (mDialog as UpgradeDialogFragment).setNewInstall(true)
-      mDialog!!.show(supportFragmentManager, "UpgradeDialogFragment")
-    }
   }
 
   private fun handleUserNotification(event: NotifyUser) {
