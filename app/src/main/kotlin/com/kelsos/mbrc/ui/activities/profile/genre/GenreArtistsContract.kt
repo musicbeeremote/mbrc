@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.ui.activities.profile.genre
 
 import com.kelsos.mbrc.data.library.Artist
-import com.kelsos.mbrc.presenters.Presenter
-import com.kelsos.mbrc.views.BaseView
+import com.kelsos.mbrc.mvp.Presenter
+import com.kelsos.mbrc.mvp.BaseView
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.config.Module
 

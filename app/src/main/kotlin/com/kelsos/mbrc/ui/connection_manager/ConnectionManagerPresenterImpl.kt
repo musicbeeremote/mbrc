@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.connection_manager
 
 import com.kelsos.mbrc.data.ConnectionSettings
-import com.kelsos.mbrc.presenters.BasePresenter
+import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.ConnectionRepository
 import rx.Observable
 import timber.log.Timber

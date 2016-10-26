@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.connection_manager
 
-import com.kelsos.mbrc.views.BaseView
+import com.kelsos.mbrc.mvp.BaseView
 
 interface ConnectionManagerView : BaseView {
   fun updateModel(connectionModel: ConnectionModel)

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.activities.profile.genre
 
-import com.kelsos.mbrc.presenters.BasePresenter
+import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.ArtistRepository
 import timber.log.Timber
 import javax.inject.Inject
