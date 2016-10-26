@@ -14,8 +14,8 @@ import com.raizlabs.android.dbflow.structure.Model
     useBooleanGetterSetters = false,
     indexGroups = arrayOf(IndexGroup(number = 1, name = "playlist_name_index")))
 data class PlaylistDao(
-    @Column @Index(indexGroups = intArrayOf(1)) var name: String,
-    @Column var path: String,
+    @Column @Index(indexGroups = intArrayOf(1)) var name: String = "",
+    @Column var path: String = "",
     @Column var tracks: Int = 0,
     @Column(name = "read_only") var readOnly: Boolean = false,
     @Column(name = "date_added") var dateAdded: Long = 0,

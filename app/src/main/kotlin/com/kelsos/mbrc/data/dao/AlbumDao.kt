@@ -15,17 +15,21 @@ import com.raizlabs.android.dbflow.structure.Model
     name = "albums",
     indexGroups = arrayOf(IndexGroup(number = 1, name = "album_name_index")))
 data class AlbumDao(
-    @Column(name = "name") @Index(indexGroups = intArrayOf(1)) var name: String,
+    @Column(name = "name") @Index(indexGroups = intArrayOf(1)) var name: String = "",
     @Column
     @ForeignKey(references = arrayOf(ForeignKeyReference(columnName = "artist_id",
         columnType = Long::class,
         referencedFieldIsPrivate = true,
+        referencedGetterName = "getId",
+        referencedSetterName = "setId",
         foreignKeyColumnName = "id")), saveForeignKeyModel = false)
     var artist: ArtistDao? = null,
     @Column
     @ForeignKey(references = arrayOf(ForeignKeyReference(columnName = "cover_id",
         columnType = Long::class,
         referencedFieldIsPrivate = true,
+        referencedGetterName = "getId",
+        referencedSetterName = "setId",
         foreignKeyColumnName = "id")), saveForeignKeyModel = false)
     var cover: CoverDao? = null,
     @Column(name = "date_added") var dateAdded: Long = 0,

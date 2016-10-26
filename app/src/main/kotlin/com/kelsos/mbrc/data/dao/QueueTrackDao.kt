@@ -9,10 +9,10 @@ import com.raizlabs.android.dbflow.structure.Model
 
 @Table(database = RemoteDatabase::class, name = "queue_tracks")
 data class QueueTrackDao(
-    @Column var artist: String,
-    @Column var title: String,
-    @Column var path: String,
-    @Column var position: Int,
+    @Column var artist: String = "",
+    @Column var title: String = "",
+    @Column var path: String = "",
+    @Column var position: Int = 0,
     @Column @PrimaryKey(autoincrement = true) var id: Long = 0) : Model {
 
   override fun load() = modelAdapter<QueueTrackDao>().load(this)

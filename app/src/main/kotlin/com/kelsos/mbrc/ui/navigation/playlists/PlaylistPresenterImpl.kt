@@ -1,9 +1,8 @@
-package com.kelsos.mbrc.presenters
+package com.kelsos.mbrc.ui.navigation.playlists
 
 import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.interactors.PlaylistActionInteractor
 import com.kelsos.mbrc.interactors.PlaylistInteractor
-import com.kelsos.mbrc.ui.views.PlaylistListView
 import timber.log.Timber
 import javax.inject.Inject
 

@@ -140,7 +140,7 @@ ext {
   jacksonVersion = '2.8.4'
   okhttpVersion = '3.4.1'
   retrofitVersion = '2.1.0'
-  dbflow_version = "3.1.1"
+  dbflow_version = "4.0.0-beta1"
   toothpick_version = "1.0.0"
   butterknife_version = "8.4.0"
   stetho_version = "1.4.1"
@@ -237,9 +237,6 @@ allprojects {
   }
 }
 
-project.tasks.withType(JavaCompile) {
-  task -> options.compilerArgs << "-AguiceAnnotationDatabasePackageName=com.kelsos.mbrc"
-}
 
 kapt {
   generateStubs = true

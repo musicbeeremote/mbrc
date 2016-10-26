@@ -15,33 +15,41 @@ import com.raizlabs.android.dbflow.structure.Model
     name = "tracks",
     indexGroups = arrayOf(IndexGroup(number = 1, name = "track_title_index")))
 data class TrackDao(
-    @Column @Index(indexGroups = intArrayOf(1)) var title: String,
-    @Column var path: String,
-    @Column var year: String,
+    @Column @Index(indexGroups = intArrayOf(1)) var title: String = "",
+    @Column var path: String = "",
+    @Column var year: String = "",
     @Column var position: Int = 0,
     @Column var disc: Int = 0,
     @Column
     @ForeignKey(references = arrayOf(ForeignKeyReference(columnName = "genre_id",
         columnType = Long::class,
         referencedFieldIsPrivate = true,
+        referencedGetterName = "getId",
+        referencedSetterName = "setId",
         foreignKeyColumnName = "id")), saveForeignKeyModel = false)
     var genre: GenreDao? = null,
     @Column
     @ForeignKey(references = arrayOf(ForeignKeyReference(columnName = "artist_id",
         columnType = Long::class,
         referencedFieldIsPrivate = true,
+        referencedGetterName = "getId",
+        referencedSetterName = "setId",
         foreignKeyColumnName = "id")), saveForeignKeyModel = false)
     var artist: ArtistDao? = null,
     @Column
     @ForeignKey(references = arrayOf(ForeignKeyReference(columnName = "album_artist_id",
         columnType = Long::class,
         referencedFieldIsPrivate = true,
+        referencedGetterName = "getId",
+        referencedSetterName = "setId",
         foreignKeyColumnName = "id")), saveForeignKeyModel = false)
     var albumArtist: ArtistDao? = null,
     @Column
     @ForeignKey(references = arrayOf(ForeignKeyReference(columnName = "album_id",
         columnType = Long::class,
         referencedFieldIsPrivate = true,
+        referencedGetterName = "getId",
+        referencedSetterName = "setId",
         foreignKeyColumnName = "id")), saveForeignKeyModel = false)
     var album: AlbumDao? = null,
 

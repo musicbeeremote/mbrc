@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation
+package com.kelsos.mbrc.ui.navigation.library
 
 import android.os.Bundle
 import android.support.design.widget.NavigationView
@@ -12,13 +12,12 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.BrowsePagerAdapter
-import com.kelsos.mbrc.presenters.LibraryActivityPresenter
 import com.kelsos.mbrc.ui.activities.BaseActivity
-import com.kelsos.mbrc.ui.views.LibraryActivityView
 import toothpick.Toothpick
+import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class LibraryActivity : BaseActivity(), LibraryActivityView {
+class Library : BaseActivity(), LibraryView {
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
   @BindView(R.id.drawer_layout) lateinit  var drawer: DrawerLayout
   @BindView(R.id.navigation_view) lateinit  var navigationView: NavigationView
@@ -36,8 +35,9 @@ class LibraryActivity : BaseActivity(), LibraryActivityView {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_library)
     val scope = Toothpick.openScopes(application, this)
+    scope.installModules(SmoothieActivityModule(this), LibraryModule())
     Toothpick.inject(this, scope)
-    presenter.bind(this)
+    presenter.attach(this)
     ButterKnife.bind(this)
     initialize(toolbar,drawer,navigationView)
     setCurrentSelection(R.id.drawer_menu_library)
@@ -47,14 +47,14 @@ class LibraryActivity : BaseActivity(), LibraryActivityView {
     presenter.checkLibrary()
   }
 
-  override fun onPause() {
-    super.onPause()
-    presenter.onPause()
+  override fun onStart() {
+    super.onStart()
+    presenter.attach(this)
   }
 
-  override fun onResume() {
-    super.onResume()
-    presenter.onResume()
+  override fun onStop() {
+    super.onStop()
+    presenter.detach()
   }
 
   override fun onDestroy() {

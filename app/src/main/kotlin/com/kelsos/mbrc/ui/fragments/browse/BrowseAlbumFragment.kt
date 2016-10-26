@@ -36,7 +36,7 @@ class BrowseAlbumFragment : Fragment(), AlbumEntryAdapter.MenuItemSelectedListen
     val scope = Toothpick.openScopes(context.applicationContext, this)
     Toothpick.inject(this, scope)
 
-    presenter.attachView(this)
+    presenter.attach(this)
     val layoutManager = GridLayoutManager(context, 2)
     scrollListener = object : EndlessGridRecyclerViewScrollListener(layoutManager) {
       override fun onLoadMore(page: Int, totalItemsCount: Int) {
@@ -64,7 +64,7 @@ class BrowseAlbumFragment : Fragment(), AlbumEntryAdapter.MenuItemSelectedListen
   override fun onPause() {
     super.onPause()
     recyclerView.removeOnScrollListener(scrollListener)
-    presenter.detachView()
+    presenter.detach()
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {

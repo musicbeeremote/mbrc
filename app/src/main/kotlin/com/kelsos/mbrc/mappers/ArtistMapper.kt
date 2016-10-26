@@ -7,7 +7,7 @@ import com.kelsos.mbrc.dto.library.ArtistDto
 
 object ArtistMapper {
   fun map(data: List<ArtistDto>): List<ArtistDao> {
-    return data.map { map(it) }.toList()
+    return data.map { map(it) }
   }
 
   fun map(dto: ArtistDto): ArtistDao {
@@ -25,14 +25,14 @@ object ArtistMapper {
   }
 
   fun mapData(data: List<ArtistDao>): List<Artist> {
-    return data.map { map(it) }.toList()
+    return data.map { map(it) }
   }
 
   fun mapGenreArtists(genreArtistViews: List<GenreArtistView>): List<Artist> {
-    return genreArtistViews.map { mapGenreArtist(it) }.toList()
+    return genreArtistViews.map { mapGenreArtist(it) }
   }
 
   fun mapGenreArtist(genreArtist: GenreArtistView): Artist {
-    return Artist(genreArtist.id, genreArtist.name)
+    return Artist(genreArtist.id, genreArtist.name!!)
   }
 }

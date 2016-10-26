@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation
+package com.kelsos.mbrc.ui.navigation.main
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -28,10 +28,8 @@ import com.kelsos.mbrc.annotations.Shuffle
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.domain.TrackPosition
 import com.kelsos.mbrc.enums.LfmStatus
-import com.kelsos.mbrc.presenters.MainViewPresenter
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment
-import com.kelsos.mbrc.ui.views.MainView
 import com.kelsos.mbrc.utilities.FontUtils
 import toothpick.Toothpick
 import javax.inject.Inject
@@ -124,6 +122,7 @@ import javax.inject.Singleton
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
     val scope = Toothpick.openScopes(application, this)
+    scope.installModules(MainModule())
     Toothpick.inject(this, scope)
     ButterKnife.bind(this)
     initialize(toolbar, drawer, navigationView)
@@ -155,12 +154,12 @@ import javax.inject.Singleton
 
   public override fun onPause() {
     super.onPause()
-    presenter.detachView()
+    presenter.detach()
   }
 
   public override fun onResume() {
     super.onResume()
-    presenter.attachView(this)
+    presenter.attach(this)
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {

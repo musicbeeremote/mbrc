@@ -2,7 +2,7 @@ package com.kelsos.mbrc.repository.library
 
 import com.kelsos.mbrc.data.RemoteDatabase
 import com.kelsos.mbrc.data.dao.GenreDao
-import com.kelsos.mbrc.data.GenreDao_Table
+import com.kelsos.mbrc.data.dao.GenreDao_Table
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.sql.language.OrderBy
 import com.raizlabs.android.dbflow.sql.language.SQLite

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.presenters
+package com.kelsos.mbrc.ui.navigation.main
 
 import com.kelsos.mbrc.annotations.PlayerAction
 import com.kelsos.mbrc.annotations.PlayerState
@@ -21,10 +21,8 @@ import com.kelsos.mbrc.interactors.TrackCoverInteractor
 import com.kelsos.mbrc.interactors.TrackInfoInteractor
 import com.kelsos.mbrc.interactors.TrackPositionInteractor
 import com.kelsos.mbrc.interactors.VolumeInteractor
-import com.kelsos.mbrc.ui.views.MainView
 import com.kelsos.mbrc.utilities.ErrorHandler
 import com.kelsos.mbrc.utilities.RxBus
-import com.kelsos.mbrc.viewmodels.MainViewModel
 import rx.Observable
 import rx.Subscription
 import rx.subjects.PublishSubject
@@ -46,7 +44,7 @@ import javax.inject.Inject
                     private val positionInteractor: TrackPositionInteractor,
                     private val playerStateInteractor: PlayerStateInteractor,
                     private val bus: RxBus) : MainViewPresenter {
-  override fun attachView(view: MainView) {
+  override fun attach(view: MainView) {
     this.mainView = view
 
     loadTrackInfo()
@@ -60,7 +58,7 @@ import javax.inject.Inject
     subscribe()
   }
 
-  override fun detachView() {
+  override fun detach() {
     this.mainView = null
     bus.unregister(this)
   }

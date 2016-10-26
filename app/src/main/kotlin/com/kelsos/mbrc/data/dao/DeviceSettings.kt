@@ -16,10 +16,10 @@ import com.raizlabs.android.dbflow.structure.Model
         uniqueConflict = ConflictAction.IGNORE)))
 data class DeviceSettings(
     @Column(name = "address")
-    @Unique(uniqueGroups = intArrayOf(1), unique = false) var address: String,
-    @Column(name = "name") var name: String,
+    @Unique(uniqueGroups = intArrayOf(1), unique = false) var address: String = "",
+    @Column(name = "name") var name: String = "",
     @Column(name = "port")
-    @Unique(uniqueGroups = intArrayOf(1), unique = false) var port: Int,
+    @Unique(uniqueGroups = intArrayOf(1), unique = false) var port: Int = 0,
     @Column(name = "id") @PrimaryKey(autoincrement = true) var id: Long = 0) : Model {
 
   override fun load() = modelAdapter<DeviceSettings>().load(this)

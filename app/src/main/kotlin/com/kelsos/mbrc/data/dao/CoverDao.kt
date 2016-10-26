@@ -10,7 +10,7 @@ import com.raizlabs.android.dbflow.structure.Model
 @Table(database = RemoteDatabase::class, name = "covers")
 
 data class CoverDao(
-    @Column var hash: String,
+    @Column var hash: String = "",
     @Column(name = "date_added") var dateAdded: Long = 0,
     @Column(name = "date_updated") var dateUpdated: Long = 0,
     @Column(name = "date_deleted") var dateDeleted: Long = 0,

@@ -2,7 +2,7 @@ package com.kelsos.mbrc.repository.library
 
 import com.kelsos.mbrc.data.RemoteDatabase
 import com.kelsos.mbrc.data.dao.TrackDao
-import com.kelsos.mbrc.data.TrackDao_Table
+import com.kelsos.mbrc.data.dao.TrackDao_Table
 import com.kelsos.mbrc.data.views.TrackModelView
 import com.kelsos.mbrc.data.views.TrackModelView_ViewTable
 import com.raizlabs.android.dbflow.config.FlowManager

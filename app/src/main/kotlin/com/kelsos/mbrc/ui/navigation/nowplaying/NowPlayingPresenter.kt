@@ -1,9 +1,8 @@
-package com.kelsos.mbrc.presenters
+package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import com.kelsos.mbrc.domain.QueueTrack
 import com.kelsos.mbrc.interactors.NowPlayingListInteractor
 import com.kelsos.mbrc.interactors.nowplaying.NowPlayingActionInteractor
-import com.kelsos.mbrc.ui.views.NowPlayingView
 import timber.log.Timber
 import javax.inject.Inject
 

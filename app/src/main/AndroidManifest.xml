@@ -21,7 +21,7 @@
       android:theme="@style/AppTheme"
       tools:ignore="UnusedAttribute">
     <activity
-        android:name=".ui.navigation.MainActivity"
+        android:name=".ui.navigation.main.MainActivity"
         android:launchMode="singleTop"
         android:windowSoftInputMode="adjustNothing">
       <intent-filter>
@@ -33,38 +33,38 @@
     <activity
         android:name=".ui.navigation.LibraryActivity"
         android:label="@string/menu_library"
-        android:parentActivityName=".ui.navigation.MainActivity"
+        android:parentActivityName=".ui.navigation.main.MainActivity"
         tools:ignore="UnusedAttribute">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.navigation.MainActivity" />
+          android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
         android:name=".ui.navigation.NowPlayingActivity"
         android:label="@string/menu_now_playing"
-        android:parentActivityName=".ui.navigation.MainActivity"
+        android:parentActivityName=".ui.navigation.main.MainActivity"
         tools:ignore="UnusedAttribute">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.navigation.MainActivity" />
+          android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
-        android:name=".ui.navigation.LyricsActivity"
+        android:name=".ui.navigation.lyrics.LyricsActivity"
         android:label="@string/menu_lyrics"
-        android:parentActivityName=".ui.navigation.MainActivity"
+        android:parentActivityName=".ui.navigation.main.MainActivity"
         tools:ignore="UnusedAttribute">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.navigation.MainActivity" />
+          android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
         android:name=".ui.navigation.PlaylistListActivity"
         android:label="@string/menu_playlist"
-        android:parentActivityName=".ui.navigation.MainActivity"
+        android:parentActivityName=".ui.navigation.main.MainActivity"
         tools:ignore="UnusedAttribute">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.navigation.MainActivity" />
+          android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
         android:name=".ui.activities.PlaylistTrackActivity"
@@ -75,11 +75,11 @@
     </activity>
     <activity
         android:name=".ui.activities.HelpActivity"
-        android:parentActivityName=".ui.navigation.MainActivity"
+        android:parentActivityName=".ui.navigation.main.MainActivity"
         tools:ignore="UnusedAttribute">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.navigation.MainActivity" />
+          android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
         android:name=".ui.fragments.profile.AlbumTracksActivity"
@@ -138,11 +138,11 @@
 
     <activity
         android:name=".ui.activities.SettingsActivity"
-        android:parentActivityName=".ui.navigation.MainActivity"
+        android:parentActivityName=".ui.navigation.main.MainActivity"
         tools:ignore="UnusedAttribute">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.navigation.MainActivity" />
+          android:value=".ui.navigation.main.MainActivity" />
     </activity>
 
     <receiver android:name=".widgets.WidgetSmall">
@@ -166,11 +166,11 @@
 
     <activity
         android:name=".ui.activities.DebugActivity"
-        android:parentActivityName=".ui.navigation.MainActivity"
+        android:parentActivityName=".ui.navigation.main.MainActivity"
         tools:ignore="UnusedAttribute">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.navigation.MainActivity" />
+          android:value=".ui.navigation.main.MainActivity" />
     </activity>
 
     <receiver

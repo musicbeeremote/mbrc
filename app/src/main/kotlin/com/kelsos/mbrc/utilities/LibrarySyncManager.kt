@@ -3,11 +3,11 @@ package com.kelsos.mbrc.utilities
 import android.content.SharedPreferences
 import com.kelsos.mbrc.constants.Code
 import com.kelsos.mbrc.constants.Constants.LIMIT
-import com.kelsos.mbrc.data.AlbumDao_Table
-import com.kelsos.mbrc.data.ArtistDao_Table
-import com.kelsos.mbrc.data.GenreDao_Table
-import com.kelsos.mbrc.data.PlaylistDao_Table
-import com.kelsos.mbrc.data.TrackDao_Table
+import com.kelsos.mbrc.data.dao.AlbumDao_Table
+import com.kelsos.mbrc.data.dao.ArtistDao_Table
+import com.kelsos.mbrc.data.dao.GenreDao_Table
+import com.kelsos.mbrc.data.dao.PlaylistDao_Table
+import com.kelsos.mbrc.data.dao.TrackDao_Table
 import com.kelsos.mbrc.dto.PageResponse
 import com.kelsos.mbrc.extensions.io
 import com.kelsos.mbrc.mappers.AlbumMapper

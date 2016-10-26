@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.presenters
+package com.kelsos.mbrc.ui.mini_control
 
 import com.kelsos.mbrc.annotations.PlayerAction
 import com.kelsos.mbrc.annotations.PlayerAction.Action
@@ -10,7 +10,7 @@ import com.kelsos.mbrc.interactors.PlayerInteractor
 import com.kelsos.mbrc.interactors.PlayerStateInteractor
 import com.kelsos.mbrc.interactors.TrackCoverInteractor
 import com.kelsos.mbrc.interactors.TrackInfoInteractor
-import com.kelsos.mbrc.ui.views.MiniControlView
+import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.utilities.ErrorHandler
 import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.viewmodels.MiniControlModel
@@ -25,9 +25,9 @@ class MiniControlPresenterImpl
                     private val model: MiniControlModel,
                     private val coverInteractor: TrackCoverInteractor,
                     private val infoInteractor: TrackInfoInteractor,
-                    private val playerStateInteractor: PlayerStateInteractor) : MiniControlPresenter {
-
-  private var view: MiniControlView? = null
+                    private val playerStateInteractor: PlayerStateInteractor) :
+    MiniControlPresenter,
+    BasePresenter<MiniControlView>() {
 
   override fun onNextPressed() {
     action(PlayerAction.NEXT)
@@ -47,17 +47,15 @@ class MiniControlPresenterImpl
     action(PlayerAction.PLAY_PLAUSE)
   }
 
-  override fun bind(view: MiniControlView) {
-    this.view = view
-  }
-
-  override fun onResume() {
+  override fun attach(view: MiniControlView) {
+    super.attach(view)
     bus.registerOnMain(this, CoverChangedEvent::class.java, { this.onCoverAvailable(it) })
     bus.registerOnMain(this, PlayStateChange::class.java, { this.onPlayStateChange(it) })
     bus.registerOnMain(this, TrackInfoChangeEvent::class.java, { this.onTrackInfoChange(it) })
   }
 
-  override fun onPause() {
+  override fun detach() {
+    super.detach()
     bus.unregister(this)
   }
 

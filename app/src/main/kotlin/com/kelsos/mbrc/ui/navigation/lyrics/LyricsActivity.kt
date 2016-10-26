@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation
+package com.kelsos.mbrc.ui.navigation.lyrics
 
 import android.os.Bundle
 import android.support.design.widget.NavigationView
@@ -11,9 +11,9 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.LyricsAdapter
-import com.kelsos.mbrc.presenters.LyricsPresenter
+import com.kelsos.mbrc.ui.navigation.lyrics.LyricsPresenter
 import com.kelsos.mbrc.ui.activities.BaseActivity
-import com.kelsos.mbrc.ui.views.LyricsView
+import com.kelsos.mbrc.ui.navigation.lyrics.LyricsView
 import toothpick.Toothpick
 import javax.inject.Inject
 

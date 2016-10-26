@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.viewmodels
+package com.kelsos.mbrc.ui.navigation.main
 
 import android.graphics.Bitmap
 import android.support.annotation.IntRange

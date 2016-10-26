@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.views
+package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import com.kelsos.mbrc.domain.QueueTrack
 

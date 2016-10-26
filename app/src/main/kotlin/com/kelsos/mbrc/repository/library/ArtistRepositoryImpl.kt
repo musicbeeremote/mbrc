@@ -2,7 +2,7 @@ package com.kelsos.mbrc.repository.library
 
 import com.kelsos.mbrc.data.RemoteDatabase
 import com.kelsos.mbrc.data.dao.ArtistDao
-import com.kelsos.mbrc.data.ArtistDao_Table
+import com.kelsos.mbrc.data.dao.ArtistDao_Table
 import com.kelsos.mbrc.data.views.GenreArtistView
 import com.kelsos.mbrc.data.views.GenreArtistView_ViewTable
 import com.raizlabs.android.dbflow.config.FlowManager

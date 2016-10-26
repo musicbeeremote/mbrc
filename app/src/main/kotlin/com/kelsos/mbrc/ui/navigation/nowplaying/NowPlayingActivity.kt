@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation
+package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import android.os.Bundle
 import android.support.design.widget.NavigationView
@@ -21,9 +21,9 @@ import com.kelsos.mbrc.domain.QueueTrack
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
 import com.kelsos.mbrc.events.ui.TrackMoved
 import com.kelsos.mbrc.events.ui.TrackRemoval
-import com.kelsos.mbrc.presenters.NowPlayingPresenter
+import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingPresenter
 import com.kelsos.mbrc.ui.activities.BaseActivity
-import com.kelsos.mbrc.ui.views.NowPlayingView
+import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingView
 import toothpick.Toothpick
 
 class NowPlayingActivity : BaseActivity(), SearchView.OnQueryTextListener, NowPlayingAdapter.OnUserActionListener, NowPlayingView {

@@ -10,7 +10,7 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.extensions.version
-import com.kelsos.mbrc.ui.activities.ConnectionManagerActivity
+import com.kelsos.mbrc.ui.connection_manager.ConnectionManagerActivity
 import com.kelsos.mbrc.ui.dialogs.WebViewDialog
 import com.kelsos.mbrc.utilities.RxBus
 import timber.log.Timber

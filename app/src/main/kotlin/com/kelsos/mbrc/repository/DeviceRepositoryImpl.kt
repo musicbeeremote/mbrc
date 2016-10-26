@@ -2,11 +2,10 @@ package com.kelsos.mbrc.repository
 
 import com.kelsos.mbrc.data.SettingsDatabase
 import com.kelsos.mbrc.data.dao.DeviceSettings
-import com.kelsos.mbrc.data.DeviceSettings_Table
-import rx.Observable
+import com.kelsos.mbrc.data.dao.DeviceSettings_Table
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.sql.language.SQLite
-import com.raizlabs.android.dbflow.sql.language.Select
+import rx.Observable
 import rx.lang.kotlin.toSingletonObservable
 
 class DeviceRepositoryImpl : DeviceRepository {

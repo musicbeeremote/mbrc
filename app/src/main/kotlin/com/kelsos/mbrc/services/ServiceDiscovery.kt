@@ -3,8 +3,6 @@ package com.kelsos.mbrc.services
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import com.fasterxml.jackson.databind.ObjectMapper
-import javax.inject.Inject
-import javax.inject.Singleton
 import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.data.dao.DeviceSettings
 import com.kelsos.mbrc.dto.DiscoveryResponse
@@ -15,7 +13,6 @@ import com.kelsos.mbrc.mappers.DeviceSettingsMapper
 import com.kelsos.mbrc.repository.DeviceRepository
 import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.utilities.SettingsManager
-import roboguice.util.Ln
 import rx.Observable
 import timber.log.Timber
 import java.io.IOException
@@ -23,6 +20,8 @@ import java.net.DatagramPacket
 import java.net.InetAddress
 import java.net.MulticastSocket
 import java.util.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class ServiceDiscovery
@@ -43,7 +42,7 @@ constructor(private val manager: WifiManager,
     }
     startDiscovery().subscribe({
 
-    }) { Ln.v(it) }
+    }) { Timber.v(it) }
   }
 
   fun startDiscovery(): Observable<DeviceSettings> {

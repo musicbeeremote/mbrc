@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.fragments
+package com.kelsos.mbrc.ui.mini_control
 
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -14,8 +14,6 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.PlayerState
-import com.kelsos.mbrc.presenters.MiniControlPresenter
-import com.kelsos.mbrc.ui.views.MiniControlView
 import com.kelsos.mbrc.utilities.FontUtils
 import toothpick.Toothpick
 import javax.inject.Inject
@@ -45,27 +43,28 @@ class MiniControlFragment : Fragment(), MiniControlView {
     val view = inflater!!.inflate(R.layout.ui_fragment_mini_control, container, false)
     ButterKnife.bind(this, view)
     val scope = Toothpick.openScopes(context.applicationContext, this)
+    scope.installTestModules(MiniControlModule())
     Toothpick.inject(this, scope)
-    presenter.bind(this)
+    presenter.attach(this)
     trackTitle.typeface = FontUtils.getRobotoMedium(activity)
     trackArtist.typeface = FontUtils.getRobotoRegular(activity)
     presenter.load()
     return view
   }
 
+  override fun onStop() {
+    super.onStop()
+    presenter.detach()
+  }
+
+  override fun onStart() {
+    super.onStart()
+    presenter.attach(this)
+  }
+
   override fun onDestroy() {
     super.onDestroy()
     Toothpick.closeScope(this)
-  }
-
-  override fun onPause() {
-    super.onPause()
-    presenter.onPause()
-  }
-
-  override fun onResume() {
-    super.onResume()
-    presenter.onResume()
   }
 
   override fun updateCover(cover: Bitmap?) {

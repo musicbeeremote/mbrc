@@ -16,12 +16,16 @@ data class PlaylistTrackDao(
     @ForeignKey(references = arrayOf(ForeignKeyReference(columnName = "playlist_id",
         columnType = Long::class,
         referencedFieldIsPrivate = true,
+        referencedGetterName = "getId",
+        referencedSetterName = "setId",
         foreignKeyColumnName = "id")), saveForeignKeyModel = false)
     var playlist: PlaylistDao? = null,
     @Column
     @ForeignKey(references = arrayOf(ForeignKeyReference(columnName = "track_info_id",
         columnType = Long::class,
         foreignKeyColumnName = "id",
+        referencedGetterName = "getId",
+        referencedSetterName = "setId",
         referencedFieldIsPrivate = true)), saveForeignKeyModel = false)
     var trackInfo: PlaylistTrackInfoDao? = null,
     @Column(name = "date_added") var dateAdded: Long = 0,

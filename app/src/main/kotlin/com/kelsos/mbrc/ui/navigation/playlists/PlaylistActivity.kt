@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation
+package com.kelsos.mbrc.ui.navigation.playlists
 
 import android.os.Bundle
 import android.support.design.widget.NavigationView
@@ -13,13 +13,12 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.PlaylistAdapter
 import com.kelsos.mbrc.adapters.PlaylistAdapter.OnPlaylistPlayPressedListener
 import com.kelsos.mbrc.domain.Playlist
-import com.kelsos.mbrc.presenters.PlaylistPresenter
+import com.kelsos.mbrc.ui.navigation.playlists.PlaylistPresenter
 import com.kelsos.mbrc.ui.activities.BaseActivity
-import com.kelsos.mbrc.ui.views.PlaylistListView
 import toothpick.Toothpick
 import javax.inject.Inject
 
-class PlaylistListActivity : BaseActivity(), PlaylistListView, OnPlaylistPlayPressedListener {
+class PlaylistActivity : BaseActivity(), PlaylistListView, OnPlaylistPlayPressedListener {
 
   @BindView(R.id.playlist_recycler) lateinit var recyclerView: RecyclerView
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar

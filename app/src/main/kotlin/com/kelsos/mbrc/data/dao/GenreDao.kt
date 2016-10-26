@@ -13,7 +13,7 @@ import com.raizlabs.android.dbflow.structure.Model
     name = "genres",
     indexGroups = arrayOf(IndexGroup(number = 1, name = "genre_name_index")))
 data class GenreDao(
-    @Column @Index(indexGroups = intArrayOf(1)) var name: String,
+    @Column @Index(indexGroups = intArrayOf(1)) var name: String = "",
     @Column(name = "date_added") var dateAdded: Long = 0,
     @Column(name = "date_updated") var dateUpdated: Long = 0,
     @Column(name = "date_deleted") var dateDeleted: Long = 0,

@@ -10,7 +10,7 @@ import com.kelsos.mbrc.dto.library.AlbumDto
 
 object AlbumMapper {
   fun map(dao: AlbumModelView, year: String): Album {
-    return Album(dao.id, dao.name, dao.artist, dao.cover, year)
+    return Album(dao.id, dao.name!!, dao.artist!!, dao.cover!!, year)
   }
 
   fun map(daoList: List<AlbumModelView>): List<Album> {
@@ -20,7 +20,7 @@ object AlbumMapper {
   fun mapDtos(albums: List<AlbumDto>,
               covers: List<CoverDao>,
               artists: List<ArtistDao>): List<AlbumDao> {
-    return albums.map { mapDto(it, covers, artists) }.toList()
+    return albums.map { mapDto(it, covers, artists) }
   }
 
   fun mapDto(album: AlbumDto, covers: List<CoverDao>, artists: List<ArtistDao>): AlbumDao {
@@ -36,10 +36,10 @@ object AlbumMapper {
   }
 
   fun mapArtistAlbums(albums: List<ArtistAlbumView>): List<Album> {
-    return albums.map { mapArtistAlbum(it) }.toList()
+    return albums.map { mapArtistAlbum(it) }
   }
 
   fun mapArtistAlbum(view: ArtistAlbumView): Album {
-    return Album(view.id, view.name, view.artist, view.cover, "")
+    return Album(view.id, view.name!!, view.artist!!, view.cover!!, "")
   }
 }

@@ -33,11 +33,11 @@ object PlaylistTrackMapper {
 
     fun map(view: PlaylistTrackView): com.kelsos.mbrc.domain.PlaylistTrack {
         val track = com.kelsos.mbrc.domain.PlaylistTrack()
-        track.path = view.path
+        track.path = view.path!!
         track.position = view.position
         track.id = view.id
-        track.artist = view.artist
-        track.title = view.title
+        track.artist = view.artist!!
+        track.title = view.title!!
         return track
     }
 }

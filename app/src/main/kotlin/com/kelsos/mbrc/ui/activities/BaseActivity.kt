@@ -35,8 +35,8 @@ import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.ui.dialogs.SetupDialogFragment
 import com.kelsos.mbrc.ui.dialogs.UpgradeDialogFragment
 import com.kelsos.mbrc.ui.navigation.LibraryActivity
-import com.kelsos.mbrc.ui.navigation.LyricsActivity
-import com.kelsos.mbrc.ui.navigation.MainActivity
+import com.kelsos.mbrc.ui.navigation.lyrics.LyricsActivity
+import com.kelsos.mbrc.ui.navigation.main.MainActivity
 import com.kelsos.mbrc.ui.navigation.NowPlayingActivity
 import com.kelsos.mbrc.ui.navigation.PlaylistListActivity
 import com.kelsos.mbrc.utilities.RxBus

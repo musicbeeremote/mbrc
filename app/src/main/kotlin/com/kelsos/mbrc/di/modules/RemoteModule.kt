@@ -2,7 +2,6 @@
 
 package com.kelsos.mbrc.di.modules
 
-import android.support.v4.app.FragmentManager
 import android.support.v4.app.NotificationManagerCompat
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.cache.PlayerStateCache
@@ -65,22 +64,16 @@ import com.kelsos.mbrc.presenters.BrowseGenrePresenter
 import com.kelsos.mbrc.presenters.BrowseGenrePresenterImpl
 import com.kelsos.mbrc.presenters.BrowseTrackPresenter
 import com.kelsos.mbrc.presenters.BrowseTrackPresenterImpl
-import com.kelsos.mbrc.presenters.ConnectionManagerPresenter
-import com.kelsos.mbrc.presenters.ConnectionManagerPresenterImpl
 import com.kelsos.mbrc.presenters.GenreArtistsPresenter
 import com.kelsos.mbrc.presenters.GenreArtistsPresenterImpl
-import com.kelsos.mbrc.presenters.LibraryActivityPresenter
-import com.kelsos.mbrc.presenters.LibraryActivityPresenterImpl
-import com.kelsos.mbrc.presenters.LyricsPresenter
-import com.kelsos.mbrc.presenters.LyricsPresenterImpl
-import com.kelsos.mbrc.presenters.MainViewPresenter
-import com.kelsos.mbrc.presenters.MainViewPresenterImpl
-import com.kelsos.mbrc.presenters.MiniControlPresenter
-import com.kelsos.mbrc.presenters.MiniControlPresenterImpl
+import com.kelsos.mbrc.ui.navigation.library.LibraryActivityPresenter
+import com.kelsos.mbrc.ui.navigation.library.LibraryActivityPresenterImpl
+import com.kelsos.mbrc.ui.navigation.lyrics.LyricsPresenter
+import com.kelsos.mbrc.ui.navigation.lyrics.LyricsPresenterImpl
 import com.kelsos.mbrc.presenters.PlaylistDialogPresenter
 import com.kelsos.mbrc.presenters.PlaylistDialogPresenterImpl
-import com.kelsos.mbrc.presenters.PlaylistPresenter
-import com.kelsos.mbrc.presenters.PlaylistPresenterImpl
+import com.kelsos.mbrc.ui.navigation.playlists.PlaylistPresenter
+import com.kelsos.mbrc.ui.navigation.playlists.PlaylistPresenterImpl
 import com.kelsos.mbrc.presenters.PlaylistTrackPresenter
 import com.kelsos.mbrc.presenters.PlaylistTrackPresenterImpl
 import com.kelsos.mbrc.repository.DeviceRepository
@@ -107,20 +100,17 @@ import com.kelsos.mbrc.services.api.PlaylistService
 import com.kelsos.mbrc.services.api.TrackService
 import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.utilities.RxBusImpl
-import com.kelsos.mbrc.viewmodels.MainViewModel
-import com.kelsos.mbrc.viewmodels.MainViewModelImpl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import toothpick.config.Module
+import toothpick.smoothie.annotations.ContextSingleton
 
 @SuppressWarnings("UnusedDeclaration") class RemoteModule : Module() {
   init {
     bind(ObjectMapper::class.java).toProvider(ObjectMapperProvider::class.java).providesSingletonInScope()
     bind(OkHttpClient::class.java).toProvider(OkHttpClientProvider::class.java).providesSingletonInScope()
     bind(Retrofit::class.java).toProvider(RetrofitProvider::class.java).providesSingletonInScope()
-    bind(MiniControlPresenter::class.java).to(MiniControlPresenterImpl::class.java).`in`(ContextSingleton::class.java)
-    bind(MainViewPresenter::class.java).to(MainViewPresenterImpl::class.java).`in`(ContextSingleton::class.java)
-    bind(MainViewModel::class.java).to(MainViewModelImpl::class.java).`in`(ContextSingleton::class.java)
+
     bind(LyricsPresenter::class.java).to(LyricsPresenterImpl::class.java).`in`(ContextSingleton::class.java)
     bind(PlaylistPresenter::class.java).to(PlaylistPresenterImpl::class.java).`in`(ContextSingleton::class.java)
     bind(PlaylistTrackPresenter::class.java).to(PlaylistTrackPresenterImpl::class.java).`in`(ContextSingleton::class.java)
@@ -129,7 +119,6 @@ import toothpick.config.Module
     bind(BrowseTrackPresenter::class.java).to(BrowseTrackPresenterImpl::class.java).`in`(ContextSingleton::class.java)
     bind(AlbumTracksPresenter::class.java).to(AlbumTracksPresenterImpl::class.java).`in`(ContextSingleton::class.java)
     bind(GenreArtistsPresenter::class.java).to(GenreArtistsPresenterImpl::class.java).`in`(ContextSingleton::class.java)
-    bind(ConnectionManagerPresenter::class.java).to(ConnectionManagerPresenterImpl::class.java).`in`(ContextSingleton::class.java)
     bind(LibraryActivityPresenter::class.java).to(LibraryActivityPresenterImpl::class.java).`in`(ContextSingleton::class.java)
     bind(ArtistAlbumPresenter::class.java).to(ArtistAlbumPresenterImpl::class.java).`in`(ContextSingleton::class.java)
     bind(PlaylistDialogPresenter::class.java).to(PlaylistDialogPresenterImpl::class.java).`in`(ContextSingleton::class.java)

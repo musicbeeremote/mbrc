@@ -1,9 +1,8 @@
-package com.kelsos.mbrc.presenters
+package com.kelsos.mbrc.ui.navigation.lyrics
 
 import com.kelsos.mbrc.events.ui.LyricsChangedEvent
 import com.kelsos.mbrc.extensions.task
 import com.kelsos.mbrc.interactors.TrackLyricsInteractor
-import com.kelsos.mbrc.ui.views.LyricsView
 import com.kelsos.mbrc.utilities.RxBus
 import timber.log.Timber
 import javax.inject.Inject

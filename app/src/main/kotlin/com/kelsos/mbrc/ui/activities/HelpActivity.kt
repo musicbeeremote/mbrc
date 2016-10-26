@@ -11,7 +11,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.kelsos.mbrc.R
-import roboguice.RoboGuice
+import toothpick.Toothpick
 
 class HelpActivity : AppCompatActivity() {
 
@@ -22,10 +22,17 @@ class HelpActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_feedback)
     ButterKnife.bind(this)
-    RoboGuice.getInjector(this).injectMembers(this)
+    val scope = Toothpick.openScopes(application, this)
+    Toothpick.inject(this, scope)
+
     setSupportActionBar(mToolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     supportActionBar?.setHomeButtonEnabled(true)
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    Toothpick.closeScope(this)
   }
 
   @OnClick(R.id.feedback_button) fun onFeedbackButtonClicked() {

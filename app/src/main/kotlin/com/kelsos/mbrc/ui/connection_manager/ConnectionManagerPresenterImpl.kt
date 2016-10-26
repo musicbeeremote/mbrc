@@ -4,7 +4,6 @@ import com.kelsos.mbrc.data.dao.DeviceSettings
 import com.kelsos.mbrc.events.ui.DiscoveryStopped
 import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.repository.DeviceRepository
-import com.kelsos.mbrc.ui.views.DeviceManagerView
 import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.utilities.SettingsManager
 import timber.log.Timber

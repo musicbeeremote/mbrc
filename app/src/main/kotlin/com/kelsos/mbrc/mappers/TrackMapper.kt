@@ -10,18 +10,18 @@ import com.kelsos.mbrc.dto.library.TrackDto
 
 object TrackMapper {
     fun map(view: TrackModelView): Track {
-        return Track(view.id, view.artist, view.title, view.cover)
+        return Track(view.id, view.artist!!, view.title!!, view.cover!!)
     }
 
     fun map(dao: List<TrackModelView>): List<Track> {
-        return dao.map { map(it) }.toList()
+        return dao.map { map(it) }
     }
 
     fun mapDtos(trackDto: List<TrackDto>,
                 artists: List<ArtistDao>,
                 genres: List<GenreDao>,
                 albums: List<AlbumDao>): List<TrackDao> {
-        return trackDto.map { dto -> mapDto(dto, artists, genres, albums) }.toList()
+        return trackDto.map { dto -> mapDto(dto, artists, genres, albums) }
     }
 
     fun mapDto(trackDto: TrackDto,

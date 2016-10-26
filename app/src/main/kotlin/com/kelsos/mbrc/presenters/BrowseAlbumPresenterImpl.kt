@@ -17,11 +17,11 @@ class BrowseAlbumPresenterImpl
 
   private var view: BrowseAlbumView? = null
 
-  override fun attachView(view: BrowseAlbumView) {
+  override fun attach(view: BrowseAlbumView) {
     this.view = view
   }
 
-  override fun detachView() {
+  override fun detach() {
     this.view = null
   }
 
