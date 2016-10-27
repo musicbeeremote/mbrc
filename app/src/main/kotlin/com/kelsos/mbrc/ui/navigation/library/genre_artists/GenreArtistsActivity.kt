@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.activities.profile.genre
+package com.kelsos.mbrc.ui.navigation.library.genre_artists
 
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
@@ -40,7 +40,8 @@ class GenreArtistsActivity : FontActivity(),
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_genre_artists)
     scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this), GenreArtistsModule())
+    scope!!.installModules(SmoothieActivityModule(this),
+        GenreArtistsModule())
     Toothpick.inject(this, scope)
 
     ButterKnife.bind(this)

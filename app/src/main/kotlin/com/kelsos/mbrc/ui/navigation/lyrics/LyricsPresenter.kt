@@ -1,9 +1,8 @@
-package com.kelsos.mbrc.presenters
+package com.kelsos.mbrc.ui.navigation.lyrics
 
 import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.model.LyricsModel
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.views.LyricsView
 import java.util.*
 import javax.inject.Inject
 
@@ -22,7 +21,9 @@ class LyricsPresenter : BasePresenter<LyricsView>() {
     if (!isAttached) {
       return
     }
-    val lyrics = ArrayList(Arrays.asList<String>(*text.split(Const.LYRICS_NEWLINE.toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()))
+    val lyrics = ArrayList(Arrays.asList<String>(*text.split(Const.LYRICS_NEWLINE.toRegex())
+        .dropLastWhile(String::isEmpty)
+        .toTypedArray()))
     view?.updateLyrics(lyrics)
   }
 }

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.fragments
+package com.kelsos.mbrc.ui.navigation.library.artists
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
