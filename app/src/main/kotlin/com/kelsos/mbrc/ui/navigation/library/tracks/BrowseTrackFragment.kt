@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library.tracks
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
 import android.support.v7.widget.LinearLayoutManager
@@ -101,5 +102,6 @@ class BrowseTrackFragment : Fragment(),
 
   override fun failure(it: Throwable) {
     swipeLayout.isRefreshing = false
+    Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
   }
 }
