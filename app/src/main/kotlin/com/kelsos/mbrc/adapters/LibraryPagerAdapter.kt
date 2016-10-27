@@ -7,10 +7,10 @@ import android.support.v4.app.FragmentStatePagerAdapter
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.Search
 import com.kelsos.mbrc.annotations.Search.Section
-import com.kelsos.mbrc.ui.fragments.BrowseAlbumFragment
-import com.kelsos.mbrc.ui.fragments.BrowseArtistFragment
-import com.kelsos.mbrc.ui.fragments.BrowseGenreFragment
-import com.kelsos.mbrc.ui.fragments.BrowseTrackFragment
+import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumFragment
+import com.kelsos.mbrc.ui.navigation.library.artists.BrowseArtistFragment
+import com.kelsos.mbrc.ui.navigation.library.gernes.BrowseGenreFragment
+import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackFragment
 
 class LibraryPagerAdapter(activity: FragmentActivity) : FragmentStatePagerAdapter(activity.supportFragmentManager) {
   private val context: Context

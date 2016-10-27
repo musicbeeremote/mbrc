@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.activities.profile.album
+package com.kelsos.mbrc.ui.navigation.library.album_tracks
 
 import com.kelsos.mbrc.domain.AlbumInfo
 import com.kelsos.mbrc.mvp.BasePresenter

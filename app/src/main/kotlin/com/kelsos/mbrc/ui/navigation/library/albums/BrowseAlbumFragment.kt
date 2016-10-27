@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.fragments
+package com.kelsos.mbrc.ui.navigation.library.albums
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -8,76 +8,93 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.GenreEntryAdapter
-import com.kelsos.mbrc.data.library.Genre
+import com.kelsos.mbrc.adapters.AlbumEntryAdapter
+import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.services.BrowseSync
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
+import com.raizlabs.android.dbflow.list.FlowCursorList
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import timber.log.Timber
 import toothpick.Toothpick
+import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class BrowseGenreFragment : Fragment(), GenreEntryAdapter.MenuItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
+class BrowseAlbumFragment : Fragment(),
+    BrowseAlbumView,
+    AlbumEntryAdapter.MenuItemSelectedListener,
+    SwipeRefreshLayout.OnRefreshListener {
+
+
   @BindView(R.id.library_data_list) lateinit var recycler: EmptyRecyclerView
   @BindView(R.id.empty_view) lateinit var emptyView: View
   @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
   @BindView(R.id.list_empty_title) lateinit var emptyTitle: TextView
 
-  @Inject lateinit var adapter: GenreEntryAdapter
+  @Inject lateinit var adapter: AlbumEntryAdapter
   @Inject lateinit var bus: RxBus
   @Inject lateinit var actionHandler: PopupActionHandler
   @Inject lateinit var sync: BrowseSync
+  @Inject lateinit var presenter: BrowseAlbumPresenter
+
   private var subscription: Subscription? = null
 
   override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     val view = inflater!!.inflate(R.layout.fragment_library_search, container, false)
     ButterKnife.bind(this, view)
+    swipeLayout.setOnRefreshListener(this)
     swipeLayout.setSwipeableChildren(R.id.library_data_list, R.id.empty_view)
-    emptyTitle.setText(R.string.genres_list_empty)
+    emptyTitle.setText(R.string.albums_list_empty)
     return view
+  }
+
+  override fun onStart() {
+    super.onStart()
+    presenter.attach(this)
+
+  }
+
+  override fun onResume() {
+    super.onResume()
+    adapter.refresh()
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     val activity = activity
     val scope = Toothpick.openScopes(activity.application, activity, this)
+    scope.installModules(SmoothieActivityModule(activity),
+        BrowseAlbumModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
-  }
-
-  override fun onStart() {
-    super.onStart()
-    adapter.init()
+    presenter.attach(this)
+    presenter.load()
   }
 
   override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    swipeLayout.setOnRefreshListener(this)
-    val layoutManager = LinearLayoutManager(activity)
-    recycler.layoutManager = layoutManager
     recycler.setHasFixedSize(true)
+    val mLayoutManager = LinearLayoutManager(activity)
+    recycler.layoutManager = mLayoutManager
     adapter.setMenuItemSelectedListener(this)
     recycler.adapter = adapter
     recycler.emptyView = emptyView
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: Genre): Boolean {
-    actionHandler.genreSelected(menuItem, entry, activity)
-    return true
+  override fun onMenuItemSelected(menuItem: MenuItem, entry: Album) {
+    actionHandler.albumSelected(menuItem, entry, activity)
   }
 
-  override fun onItemClicked(genre: Genre) {
-    actionHandler.genreSelected(genre, activity)
+  override fun onItemClicked(album: Album) {
+    actionHandler.albumSelected(album, activity)
   }
 
   override fun onRefresh() {
@@ -89,13 +106,23 @@ class BrowseGenreFragment : Fragment(), GenreEntryAdapter.MenuItemSelectedListen
       return
     }
 
-    subscription = sync.syncGenres(Schedulers.io())
+    //todo: Move to presenter
+    subscription = sync.syncAlbums(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .doOnTerminate { swipeLayout.isRefreshing = false }
         .subscribe({ adapter.refresh() }) {
           bus.post(NotifyUser(R.string.refresh_failed))
-          Timber.v(it, "Refresh failed")
+          Timber.v(it, "failed")
         }
+  }
+
+  override fun onStop() {
+    super.onStop()
+    presenter.detach()
+  }
+
+  override fun update(cursor: FlowCursorList<Album>) {
+    adapter.update(cursor)
   }
 
   override fun onDestroy() {

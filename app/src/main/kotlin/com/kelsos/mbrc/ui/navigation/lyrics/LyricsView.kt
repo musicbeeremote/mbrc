@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.views
+package com.kelsos.mbrc.ui.navigation.lyrics
 
 import com.kelsos.mbrc.mvp.BaseView
 
