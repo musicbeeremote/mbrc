@@ -12,9 +12,7 @@ import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.LyricsAdapter
 import com.kelsos.mbrc.events.ui.LyricsUpdatedEvent
-import com.kelsos.mbrc.presenters.LyricsPresenter
 import com.kelsos.mbrc.ui.activities.BaseActivity
-import com.kelsos.mbrc.views.LyricsView
 import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject

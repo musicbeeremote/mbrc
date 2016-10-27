@@ -26,9 +26,7 @@ import com.kelsos.mbrc.events.ui.CoverChangedEvent
 import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
 import com.kelsos.mbrc.extensions.getDimens
-import com.kelsos.mbrc.presenters.MiniControlPresenter
 import com.kelsos.mbrc.ui.navigation.main.MainActivity
-import com.kelsos.mbrc.views.MiniControlView
 import com.squareup.picasso.Picasso
 import toothpick.Toothpick
 import java.io.File
@@ -73,6 +71,7 @@ class MiniControlFragment : Fragment(), MiniControlView {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     val scope = Toothpick.openScopes(activity.application, activity, this)
+    scope.installModules(MiniControlModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
   }

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.activities.profile.artist
+package com.kelsos.mbrc.ui.navigation.library.artist_albums
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -36,7 +36,8 @@ class ArtistAlbumsActivity : FontActivity(),
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this), ArtistAlbumsModule())
+    scope!!.installModules(SmoothieActivityModule(this),
+        ArtistAlbumsModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_artist_albums)

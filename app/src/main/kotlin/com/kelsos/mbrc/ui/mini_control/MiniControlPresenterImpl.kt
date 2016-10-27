@@ -1,16 +1,15 @@
-package com.kelsos.mbrc.presenters
+package com.kelsos.mbrc.ui.mini_control
 
 import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.views.MiniControlView
 import javax.inject.Inject
 
-class MiniControlPresenter : BasePresenter<MiniControlView>() {
+class MiniControlPresenterImpl : BasePresenter<MiniControlView>(), MiniControlPresenter {
 
   @Inject lateinit var model: MainDataModel
 
-  fun load() {
+  override fun load() {
     if (!isAttached) {
       return
     }

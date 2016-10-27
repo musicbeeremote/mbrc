@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.activities.profile.genre
+package com.kelsos.mbrc.ui.navigation.library.genre_artists
 
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.ArtistRepository
