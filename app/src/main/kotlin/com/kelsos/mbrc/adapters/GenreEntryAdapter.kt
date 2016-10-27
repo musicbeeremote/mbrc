@@ -15,17 +15,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.library.Genre
-import com.kelsos.mbrc.data.library.Genre_Table
-import com.raizlabs.android.dbflow.kotlinextensions.from
-import com.raizlabs.android.dbflow.kotlinextensions.orderBy
-import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import com.raizlabs.android.dbflow.sql.language.OrderBy
-import rx.Single
-import rx.SingleSubscriber
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import timber.log.Timber
 import javax.inject.Inject
 
 class GenreEntryAdapter
@@ -37,22 +27,6 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
 
   init {
     inflater = LayoutInflater.from(context)
-  }
-
-  fun init() {
-    if (data != null) {
-      return
-    }
-
-    Single.create { subscriber: SingleSubscriber<in FlowCursorList<Genre>> ->
-      val genreAscending = OrderBy.fromProperty(Genre_Table.genre).ascending()
-      val query = select from Genre::class orderBy genreAscending
-      val list = FlowCursorList.Builder(Genre::class.java).modelQueriable(query).build()
-      subscriber.onSuccess(list)
-    }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
-      data = it
-      notifyDataSetChanged()
-    }) { throwable -> Timber.v(throwable, "failed to load the data") }
   }
 
   fun setMenuItemSelectedListener(listener: MenuItemSelectedListener) {
@@ -157,5 +131,10 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
     init {
       ButterKnife.bind(this, itemView)
     }
+  }
+
+  fun update(cursor: FlowCursorList<Genre>) {
+    data = cursor
+    notifyDataSetChanged()
   }
 }
