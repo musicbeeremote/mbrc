@@ -15,15 +15,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.library.Track
-import com.kelsos.mbrc.data.library.Track_Table
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import com.raizlabs.android.dbflow.sql.language.SQLite
-import com.raizlabs.android.dbflow.sql.language.Where
-import rx.Single
-import rx.SingleSubscriber
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import timber.log.Timber
 import javax.inject.Inject
 
 class TrackEntryAdapter
@@ -35,33 +27,6 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
 
   init {
     inflater = LayoutInflater.from(context)
-  }
-
-  fun init() {
-    if (data != null) {
-      return
-    }
-
-    val query: Where<Track>
-    query = allTracks()
-
-    Single.create { subscriber: SingleSubscriber<in FlowCursorList<Track>> ->
-      val list = FlowCursorList.Builder<Track>(Track::class.java).modelQueriable(query).build()
-      subscriber.onSuccess(list)
-    }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ genres ->
-      data = genres
-      notifyDataSetChanged()
-    }) { throwable -> Timber.v(throwable, "failed to load the data") }
-  }
-
-  private fun allTracks(): Where<Track> {
-    val query: Where<Track>
-    query = SQLite.select().from<Track>(Track::class.java)
-        .orderBy(Track_Table.album_artist, true)
-        .orderBy(Track_Table.album, true)
-        .orderBy(Track_Table.disc, true)
-        .orderBy(Track_Table.trackno, true)
-    return query
   }
 
   fun setMenuItemSelectedListener(listener: MenuItemSelectedListener) {
