@@ -9,6 +9,7 @@ class BrowseAlbumPresenterImpl
 @Inject constructor(private val repository: AlbumRepository) :
     BasePresenter<BrowseAlbumView>(),
     BrowseAlbumPresenter {
+
   override fun load() {
     addSubcription(repository.getAllCursor().subscribe ({
       view?.update(it)
@@ -16,4 +17,14 @@ class BrowseAlbumPresenterImpl
       Timber.v(it)
     })
   }
+
+  override fun reload() {
+    addSubcription(repository.getAndSaveRemote().subscribe ({
+      view?.update(it)
+    }) {
+      Timber.v(it)
+    })
+
+  }
+
 }

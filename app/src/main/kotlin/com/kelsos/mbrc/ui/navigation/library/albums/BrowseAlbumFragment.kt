@@ -15,16 +15,10 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.AlbumEntryAdapter
 import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.helper.PopupActionHandler
-import com.kelsos.mbrc.services.BrowseSync
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
@@ -43,10 +37,7 @@ class BrowseAlbumFragment : Fragment(),
   @Inject lateinit var adapter: AlbumEntryAdapter
   @Inject lateinit var bus: RxBus
   @Inject lateinit var actionHandler: PopupActionHandler
-  @Inject lateinit var sync: BrowseSync
   @Inject lateinit var presenter: BrowseAlbumPresenter
-
-  private var subscription: Subscription? = null
 
   override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     val view = inflater!!.inflate(R.layout.fragment_library_search, container, false)
@@ -69,7 +60,6 @@ class BrowseAlbumFragment : Fragment(),
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val activity = activity
     val scope = Toothpick.openScopes(activity.application, activity, this)
     scope.installModules(SmoothieActivityModule(activity),
         BrowseAlbumModule())
@@ -102,18 +92,7 @@ class BrowseAlbumFragment : Fragment(),
       swipeLayout.isRefreshing = true
     }
 
-    if (subscription != null && !subscription!!.isUnsubscribed) {
-      return
-    }
-
-    //todo: Move to presenter
-    subscription = sync.syncAlbums(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnTerminate { swipeLayout.isRefreshing = false }
-        .subscribe({ adapter.refresh() }) {
-          bus.post(NotifyUser(R.string.refresh_failed))
-          Timber.v(it, "failed")
-        }
+    presenter.reload()
   }
 
   override fun onStop() {
@@ -123,6 +102,7 @@ class BrowseAlbumFragment : Fragment(),
 
   override fun update(cursor: FlowCursorList<Album>) {
     adapter.update(cursor)
+    swipeLayout.isRefreshing = false
   }
 
   override fun onDestroy() {
