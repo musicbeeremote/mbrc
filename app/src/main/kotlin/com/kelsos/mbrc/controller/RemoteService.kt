@@ -9,11 +9,7 @@ import com.kelsos.mbrc.configuration.CommandRegistration
 import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.messaging.NotificationService
-import com.kelsos.mbrc.model.MainDataModel
-import com.kelsos.mbrc.services.BrowseSync
-import com.kelsos.mbrc.services.ProtocolHandler
 import com.kelsos.mbrc.services.ServiceDiscovery
-import com.kelsos.mbrc.services.SocketService
 import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver
 import timber.log.Timber
 import toothpick.Toothpick
@@ -27,13 +23,9 @@ class RemoteService : Service(), ForegroundHooks {
 
   private val mBinder = ControllerBinder()
   @Inject lateinit var remoteController: RemoteController
-  @Inject lateinit var mainDataModel: MainDataModel
-  @Inject lateinit var protocolHandler: ProtocolHandler
-  @Inject lateinit var socketService: SocketService
   @Inject lateinit var discovery: ServiceDiscovery
   @Inject lateinit var receiver: RemoteBroadcastReceiver
   @Inject lateinit var notificationService: NotificationService
-  @Inject lateinit var browseSync: BrowseSync
 
   private var threadPoolExecutor: ExecutorService? = null
   private lateinit var scope: toothpick.Scope
@@ -56,7 +48,7 @@ class RemoteService : Service(), ForegroundHooks {
     threadPoolExecutor = Executors.newSingleThreadExecutor()
     threadPoolExecutor!!.execute(remoteController)
     remoteController.executeCommand(MessageEvent(UserInputEventType.StartConnection))
-    discovery.startDiscovery { browseSync.sync() }
+    discovery.startDiscovery {  }
 
     return super.onStartCommand(intent, flags, startId)
   }
