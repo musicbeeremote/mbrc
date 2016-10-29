@@ -11,5 +11,6 @@ interface BrowseAlbumView : BaseView {
 
 interface BrowseAlbumPresenter : Presenter<BrowseAlbumView> {
   fun load()
+  fun reload()
 }
 
