@@ -18,7 +18,6 @@ import com.kelsos.mbrc.adapters.GenreEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.data.library.Genre
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.helper.PopupActionHandler
-import com.kelsos.mbrc.services.BrowseSync
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import com.raizlabs.android.dbflow.list.FlowCursorList
@@ -38,7 +37,6 @@ class BrowseGenreFragment : Fragment(),
   @Inject lateinit var adapter: GenreEntryAdapter
   @Inject lateinit var bus: RxBus
   @Inject lateinit var actionHandler: PopupActionHandler
-  @Inject lateinit var sync: BrowseSync
   @Inject lateinit var presenter: BrowseGenrePresenter
 
   override fun onCreateView(inflater: LayoutInflater?,

@@ -2,7 +2,6 @@ package com.kelsos.mbrc.messaging
 
 import android.app.Application
 import android.app.Notification
-import android.content.Context
 import android.graphics.BitmapFactory
 import android.support.v4.app.NotificationCompat.Action
 import android.support.v4.app.NotificationManagerCompat
@@ -32,21 +31,19 @@ import javax.inject.Singleton
 @Singleton
 class NotificationService
 @Inject
-constructor(context: Application,
-            bus: RxBus,
+constructor(bus: RxBus,
+            private val context: Application,
             private val sessionManager: RemoteSessionManager,
-            private val settings: SettingsManager) {
+            private val settings: SettingsManager,
+            private val model: NotificationModel,
+            private val notificationManager: NotificationManagerCompat) {
   private var notification: Notification? = null
-  @Inject lateinit var notificationManager: NotificationManagerCompat
-  @Inject lateinit var model: NotificationModel
-  private val context: Context
   private val previous: String
   private val play: String
   private val next: String
   private var hooks: ForegroundHooks? = null
 
   init {
-    this.context = context
     bus.register(this, TrackInfoChangeEvent::class.java, { this.handleTrackInfo(it) })
     bus.register(this, CoverChangedEvent::class.java, { this.coverChanged(it) })
     bus.register(this, PlayStateChange::class.java, { this.playStateChanged(it) })
