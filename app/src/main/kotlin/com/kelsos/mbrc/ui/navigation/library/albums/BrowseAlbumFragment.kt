@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library.albums
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
@@ -27,7 +28,6 @@ class BrowseAlbumFragment : Fragment(),
     BrowseAlbumView,
     AlbumEntryAdapter.MenuItemSelectedListener,
     SwipeRefreshLayout.OnRefreshListener {
-
 
   @BindView(R.id.library_data_list) lateinit var recycler: EmptyRecyclerView
   @BindView(R.id.empty_view) lateinit var emptyView: View
@@ -103,6 +103,11 @@ class BrowseAlbumFragment : Fragment(),
   override fun update(cursor: FlowCursorList<Album>) {
     adapter.update(cursor)
     swipeLayout.isRefreshing = false
+  }
+
+  override fun failure(throwable: Throwable) {
+    swipeLayout.isRefreshing = false
+    Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
   }
 
   override fun onDestroy() {

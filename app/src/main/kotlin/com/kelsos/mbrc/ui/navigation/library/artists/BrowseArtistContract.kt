@@ -5,8 +5,9 @@ import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 import com.raizlabs.android.dbflow.list.FlowCursorList
 
-interface BrowseArtistView: BaseView {
+interface BrowseArtistView : BaseView {
   fun update(data: FlowCursorList<Artist>)
+  fun failure(throwable: Throwable)
 }
 
 interface BrowseArtistPresenter : Presenter<BrowseArtistView> {
