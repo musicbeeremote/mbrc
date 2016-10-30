@@ -24,7 +24,10 @@ class VisualUpdateHandshakeComplete
       return
     }
 
-    if (model.pluginProtocol < 2.1) {
+    if (model.pluginProtocol > 2) {
+      Timber.v("Sending initLinear request")
+      service.sendData(SocketMessage.create(Protocol.INIT))
+    } else {
 
       Timber.v("Preparing to send requests for state")
 
@@ -38,9 +41,6 @@ class VisualUpdateHandshakeComplete
 
       val totalMessages = messages.size
       Observable.interval(150, TimeUnit.MILLISECONDS).take(totalMessages).subscribe { tick -> service.sendData(messages.removeAt(0)) }
-    } else {
-      Timber.v("Sending initLinear request")
-      service.sendData(SocketMessage.create(Protocol.INIT))
     }
   }
 }

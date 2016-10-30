@@ -24,7 +24,7 @@ class RatingDialogFragment : DialogFragment() {
   private var scope: Scope? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    scope = Toothpick.openScopes(activity.application, activity, this)
+    scope = Toothpick.openScopes(activity.application, this)
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     bus.register(this, RatingChanged::class.java, { this.handleRatingChange(it) })

@@ -5,7 +5,9 @@ import com.kelsos.mbrc.annotations.Repeat.Mode
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
+import com.kelsos.mbrc.events.ui.UpdatePosition
 import com.kelsos.mbrc.mvp.BaseView
+import com.kelsos.mbrc.mvp.Presenter
 
 interface MainView : BaseView {
 
@@ -24,4 +26,25 @@ interface MainView : BaseView {
   fun updateScrobbleStatus(active: Boolean)
 
   fun updateLfmStatus(status: LfmStatus)
+
+  fun updateCover()
+
+  fun updateProgress(position: UpdatePosition)
+}
+
+
+interface MainViewPresenter : Presenter<MainView> {
+  fun load()
+  fun requestNowPlayingPosition()
+  fun toggleScrobbling()
+  fun seek(position: Int)
+  fun play()
+  fun previous()
+  fun next()
+  fun stop(): Boolean
+  fun mute()
+  fun shuffle()
+  fun repeat()
+  fun changeVolume(value: Int)
+  fun lfmLove(): Boolean
 }
