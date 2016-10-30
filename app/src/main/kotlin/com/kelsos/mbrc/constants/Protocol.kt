@@ -1,12 +1,8 @@
 package com.kelsos.mbrc.constants
 
 object Protocol {
-
-  @SuppressWarnings("unused")
-  val Error = "error"
   val Player = "player"
   val ProtocolTag = "protocol"
-  val ProtocolVersion = "2.2"
   val PluginVersion = "pluginversion"
   val ClientNotAllowed = "notallowed"
 
@@ -21,7 +17,6 @@ object Protocol {
   val PlayerStop = "playerstop"
   val PlayerState = "playerstate"
   val PlayerVolume = "playervolume"
-  val PlayerAutoDj = "playerautodj"
 
   val NowPlayingTrack = "nowplayingtrack"
   val NowPlayingCover = "nowplayingcover"
@@ -30,8 +25,6 @@ object Protocol {
   val NowPlayingRating = "nowplayingrating"
   val NowPlayingLfmRating = "nowplayinglfmrating"
   val NowPlayingList = "nowplayinglist"
-  @SuppressWarnings("unused")
-  val NowPlayingListChanged = "nowplayinglistchanged"
   val NowPlayingListPlay = "nowplayinglistplay"
   val NowPlayingListRemove = "nowplayinglistremove"
   val NowPlayingListMove = "nowplayinglistmove"
