@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library.artists
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
 import android.view.LayoutInflater
@@ -93,6 +94,12 @@ class BrowseArtistFragment : Fragment(),
   }
 
   override fun update(data: FlowCursorList<Artist>) {
+    swipeLayout.isRefreshing = false
     adapter.update(data)
+  }
+
+  override fun failure(throwable: Throwable) {
+    swipeLayout.isRefreshing = false
+    Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
   }
 }
