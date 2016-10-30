@@ -30,7 +30,7 @@ class LibraryActivity : BaseActivity(), SearchView.OnQueryTextListener, ViewPage
   private var scope: Scope? = null
 
   override fun onQueryTextSubmit(query: String): Boolean {
-    if (!TextUtils.isEmpty(query) && query.trim { it <= ' ' }.length > 0) {
+    if (!TextUtils.isEmpty(query) && query.trim { it <= ' ' }.isNotEmpty()) {
       val searchIntent = Intent(this, SearchResultsActivity::class.java)
       searchIntent.putExtra(SearchResultsActivity.QUERY, query.trim { it <= ' ' })
       startActivity(searchIntent)
