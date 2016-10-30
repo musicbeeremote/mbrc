@@ -7,6 +7,7 @@ import com.raizlabs.android.dbflow.list.FlowCursorList
 
 interface BrowseAlbumView : BaseView {
   fun update(cursor: FlowCursorList<Album>)
+  fun failure(throwable: Throwable)
 }
 
 interface BrowseAlbumPresenter : Presenter<BrowseAlbumView> {
