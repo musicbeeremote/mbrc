@@ -49,7 +49,7 @@ class SettingsDialogFragment : DialogFragment() {
       val hostname = hostEdit.text.toString()
       val computerName = nameEdit.text.toString()
 
-      if (hostname.length == 0 || computerName.length == 0) {
+      if (hostname.isEmpty() || computerName.isEmpty()) {
         shouldIClose = false
       }
 

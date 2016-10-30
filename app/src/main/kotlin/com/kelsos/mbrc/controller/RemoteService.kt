@@ -21,7 +21,7 @@ import javax.inject.Singleton
 @Singleton
 class RemoteService : Service(), ForegroundHooks {
 
-  private val mBinder = ControllerBinder()
+  private val controllerBinder = ControllerBinder()
   @Inject lateinit var remoteController: RemoteController
   @Inject lateinit var discovery: ServiceDiscovery
   @Inject lateinit var receiver: RemoteBroadcastReceiver
@@ -31,7 +31,7 @@ class RemoteService : Service(), ForegroundHooks {
   private lateinit var scope: toothpick.Scope
 
   override fun onBind(intent: Intent): IBinder? {
-    return mBinder
+    return controllerBinder
   }
 
   override fun onCreate() {

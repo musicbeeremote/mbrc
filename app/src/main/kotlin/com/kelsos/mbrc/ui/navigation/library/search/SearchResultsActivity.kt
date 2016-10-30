@@ -110,7 +110,6 @@ class SearchResultsActivity : FontActivity(), SearchResultAdapter.OnSearchItemSe
   }
 
   companion object {
-
     val QUERY = "com.kelsos.mbrc.extras.QUERY"
   }
 }
