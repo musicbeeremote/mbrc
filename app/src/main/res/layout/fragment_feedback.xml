@@ -24,11 +24,11 @@
       android:id="@+id/feedback_content"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_above="@+id/feedback_button"
       android:layout_below="@+id/feedback_header"
       android:gravity="top|start"
       android:hint="@string/feedback_hint"
-      android:inputType="textMultiLine" />
+      android:inputType="textMultiLine"
+      android:layout_above="@+id/include_device_info" />
 
   <Button
       android:id="@+id/feedback_button"
@@ -36,6 +36,17 @@
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
       android:text="@string/feedback_button_text" />
+
+  <CheckBox
+      android:text="@string/feedback_device_information"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:id="@+id/include_device_info"
+      android:layout_above="@+id/feedback_button"
+      android:layout_alignParentRight="true"
+      android:layout_alignParentEnd="true"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentStart="true" />
 
 </RelativeLayout>
 
