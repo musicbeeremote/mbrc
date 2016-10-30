@@ -25,8 +25,15 @@ data class Genre(@JsonProperty("genre")
                  @Column
                  @PrimaryKey(autoincrement = true)
                  var id: Long = 0) : Model {
-  override fun insert() {
-    modelAdapter<Genre>().insert(this)
+  /**
+   * Loads from the database the most recent version of the model based on it's primary keys.
+   */
+  override fun load() {
+    modelAdapter<Genre>().load(this)
+  }
+
+  override fun insert(): Long {
+    return modelAdapter<Genre>().insert(this)
   }
 
   override fun save() {

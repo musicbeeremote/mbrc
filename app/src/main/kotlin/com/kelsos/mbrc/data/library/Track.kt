@@ -4,13 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.fasterxml.jackson.databind.JsonNode
 import com.kelsos.mbrc.data.db.CacheDatabase
 import com.raizlabs.android.dbflow.annotation.Column
 import com.raizlabs.android.dbflow.annotation.PrimaryKey
 import com.raizlabs.android.dbflow.annotation.Table
 import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
-import com.raizlabs.android.dbflow.structure.BaseModel
 import com.raizlabs.android.dbflow.structure.Model
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -45,8 +43,15 @@ data class Track(@JsonProperty("artist")
                  @Column
                  @PrimaryKey(autoincrement = true)
                  var id: Long = 0) : Model {
-  override fun insert() {
-    modelAdapter<Track>().insert(this)
+  /**
+   * Loads from the database the most recent version of the model based on it's primary keys.
+   */
+  override fun load() {
+    modelAdapter<Track>().load(this)
+  }
+
+  override fun insert(): Long {
+    return modelAdapter<Track>().insert(this)
   }
 
   override fun save() {
