@@ -8,6 +8,7 @@ import android.util.Base64
 import com.fasterxml.jackson.databind.node.TextNode
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.CoverChangedEvent
+import com.kelsos.mbrc.extensions.coverFile
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.model.MainDataModel
@@ -16,7 +17,6 @@ import rx.Emitter.BackpressureMode
 import rx.Observable
 import rx.schedulers.Schedulers
 import timber.log.Timber
-import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
 
@@ -45,6 +45,10 @@ class UpdateCover
       bus.post(CoverChangedEvent(it))
       model.updateRemoteClient()
     }, {
+      val coverFile = context.coverFile()
+      if (coverFile.exists()) {
+        coverFile.delete()
+      }
       Timber.v(it, "Failed to store path")
       bus.post(CoverChangedEvent())
     })
@@ -52,8 +56,7 @@ class UpdateCover
 
   private fun storeCover(bitmap: Bitmap): Observable<String> {
     return Observable.fromEmitter<String>({
-      val storage = context.filesDir
-      val file = File(storage, "cover.jpg")
+      val file = context.coverFile()
       file.delete()
       val fileStream = FileOutputStream(file)
       val success = bitmap.compress(JPEG, 100, fileStream)
@@ -65,4 +68,6 @@ class UpdateCover
       it.onCompleted()
     }, BackpressureMode.LATEST)
   }
+
 }
+
