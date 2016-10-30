@@ -4,24 +4,17 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.view.MenuItemCompat
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.SearchView.OnQueryTextListener
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.view.GestureDetector
-import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.Menu
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.view.View
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.NowPlaying
-import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.domain.TrackInfo
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper
 import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingAdapter.NowPlayingListener
@@ -47,9 +40,10 @@ class NowPlayingActivity : BaseActivity(),
   private var searchView: SearchView? = null
   private var searchItem: MenuItem? = null
   private lateinit var scope: Scope
+  private lateinit var touchListener: NowPlayingTouchListener
 
   override fun onQueryTextSubmit(query: String): Boolean {
-    bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListSearch, query.trim { it <= ' ' })))
+    presenter.search(query)
     searchView!!.setQuery("", false)
     searchView!!.isIconified = true
     searchView!!.clearFocus()
@@ -85,6 +79,18 @@ class NowPlayingActivity : BaseActivity(),
     nowPlayingList.layoutManager = manager
     nowPlayingList.adapter = adapter
     nowPlayingList.itemAnimator.changeDuration = 0
+    touchListener = NowPlayingTouchListener(this, {
+      if (it) {
+        swipeRefreshLayout.clearSwipeableChildren()
+        swipeRefreshLayout.isRefreshing = false
+        swipeRefreshLayout.isEnabled = false
+        swipeRefreshLayout.cancelPendingInputEvents()
+      } else {
+        swipeRefreshLayout.setSwipeableChildren(R.id.now_playing_list, R.id.empty_view)
+        swipeRefreshLayout.isEnabled = true
+      }
+    })
+    nowPlayingList.addOnItemTouchListener(touchListener)
     val callback = SimpleItemTouchHelper(adapter)
     val helper = ItemTouchHelper(callback)
     helper.attachToRecyclerView(nowPlayingList)
