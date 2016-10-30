@@ -25,8 +25,15 @@ data class ConnectionSettings(@Column(name = "address")
                               @PrimaryKey(autoincrement = true)
                               @Column(name = "id")
                               var id: Long = 0) : Model {
-  override fun insert() {
-    modelAdapter<ConnectionSettings>().insert(this)
+  /**
+   * Loads from the database the most recent version of the model based on it's primary keys.
+   */
+  override fun load() {
+    modelAdapter<ConnectionSettings>().load(this)
+  }
+
+  override fun insert(): Long {
+    return modelAdapter<ConnectionSettings>().insert(this)
   }
 
   override fun save() {

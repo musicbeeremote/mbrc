@@ -23,8 +23,15 @@ data class Album(@JsonProperty("artist")
                  @Column
                  @PrimaryKey(autoincrement = true)
                  var id: Long = 0) : Model {
-  override fun insert() {
-    modelAdapter<Album>().insert(this)
+  /**
+   * Loads from the database the most recent version of the model based on it's primary keys.
+   */
+  override fun load() {
+    modelAdapter<Album>().load(this)
+  }
+
+  override fun insert(): Long {
+    return modelAdapter<Album>().insert(this)
   }
 
   override fun save() {

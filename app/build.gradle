@@ -2,6 +2,7 @@ import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'checkstyle'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
@@ -17,22 +18,24 @@ def gitHash() {
   return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
 
-def version = "1.0.0.alpha.1"
-def version_code = 107
+def version = "1.0.0.alpha.2"
+def version_code = 108
 
 android {
-  compileSdkVersion 24
+  compileSdkVersion 25
   buildToolsVersion "24.0.2"
 
   defaultConfig {
     applicationId "com.kelsos.mbrc"
     minSdkVersion 16
-    targetSdkVersion 24
+    targetSdkVersion 25
     versionCode version_code
     versionName version
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
     buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    // Enabling multidex support.
+    multiDexEnabled true
   }
 
   signingConfigs {
@@ -113,15 +116,11 @@ idea {
   }
 }
 
-task wrapper(type: Wrapper) {
-  gradleVersion = '2.14.1'
-}
-
 ext {
-  support_library_version = "24.2.1"
-  dbflow_version = "3.1.1"
-  toothpick_version = "1.0.0"
-  jackson_version = "2.8.3"
+  support_library_version = "25.0.0"
+  dbflow_version = "4.0.0-beta1"
+  toothpick_version = "1.0.1"
+  jackson_version = "2.8.4"
   butterknife_version = "8.4.0"
   material_dialogs_version = "0.9.0.1"
 }
@@ -130,6 +129,8 @@ dependencies {
   androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
     exclude group: 'com.android.support', module: 'support-annotations'
   })
+
+  compile 'com.android.support:multidex:1.0.1'
 
   compile "com.android.support:appcompat-v7:${support_library_version}"
   compile "com.android.support:support-v4:${support_library_version}"
@@ -159,8 +160,8 @@ dependencies {
 
   //highly recommended
   testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
-  testCompile "org.robolectric:robolectric:3.1.2"
-  testCompile "org.mockito:mockito-core:2.2.0-beta.1"
+  testCompile "org.robolectric:robolectric:3.1.3"
+  testCompile "org.mockito:mockito-core:2.2.9"
   testCompile "com.google.truth:truth:0.30"
   testCompile 'junit:junit:4.12'
 

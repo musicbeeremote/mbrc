@@ -1,7 +1,7 @@
 package com.kelsos.mbrc
 
-import android.app.Application
 import android.support.annotation.CallSuper
+import android.support.multidex.MultiDexApplication
 import com.kelsos.mbrc.di.modules.RemoteModule
 import com.raizlabs.android.dbflow.config.FlowConfig
 import com.raizlabs.android.dbflow.config.FlowManager
@@ -13,7 +13,7 @@ import toothpick.registries.MemberInjectorRegistryLocator
 import toothpick.smoothie.module.SmoothieApplicationModule
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 
-class RemoteApplication : Application() {
+class RemoteApplication : MultiDexApplication() {
 
   @CallSuper
   override fun onCreate() {
