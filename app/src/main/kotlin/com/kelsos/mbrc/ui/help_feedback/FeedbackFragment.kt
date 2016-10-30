@@ -1,21 +1,25 @@
 package com.kelsos.mbrc.ui.help_feedback
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.EditText
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.utilities.RemoteUtils
 
 class FeedbackFragment : Fragment() {
 
   @BindView(R.id.feedback_content) lateinit var feedbackEditText: EditText
+  @BindView(R.id.include_device_info) lateinit var deviceInfo: CheckBox
 
   override fun onCreateView(inflater: LayoutInflater?,
                             container: ViewGroup?,
@@ -27,9 +31,22 @@ class FeedbackFragment : Fragment() {
 
   @OnClick(R.id.feedback_button)
   internal fun onFeedbackButtonClicked() {
-    val feedbackText = feedbackEditText.text.toString().trim { it <= ' ' }
+    var feedbackText = feedbackEditText.text.toString().trim { it <= ' ' }
     if (TextUtils.isEmpty(feedbackText)) {
       return
+    }
+
+    if (deviceInfo.isChecked) {
+      val device = Build.DEVICE
+      val manufacturer = Build.MANUFACTURER
+      val appVersion = RemoteUtils.getVersion(context)
+      val androidVersion = Build.VERSION.RELEASE
+
+      feedbackText += getString(R.string.feedback_version_info,
+          manufacturer,
+          device,
+          androidVersion,
+          appVersion)
     }
 
     val emailIntent = Intent(Intent.ACTION_SEND)
