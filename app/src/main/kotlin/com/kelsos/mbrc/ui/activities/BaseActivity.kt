@@ -30,17 +30,14 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.events.ui.RequestConnectionStateEvent
+import com.kelsos.mbrc.ui.help_feedback.HelpFeedbackActivity
 import com.kelsos.mbrc.ui.navigation.library.LibraryActivity
 import com.kelsos.mbrc.ui.navigation.lyrics.LyricsActivity
 import com.kelsos.mbrc.ui.navigation.main.MainActivity
-import com.kelsos.mbrc.ui.navigation.playlists.PlaylistActivity
-import com.kelsos.mbrc.ui.help_feedback.HelpFeedbackActivity
 import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingActivity
+import com.kelsos.mbrc.ui.navigation.playlists.PlaylistActivity
 import com.kelsos.mbrc.ui.preferences.SettingsActivity
 import timber.log.Timber
-import toothpick.Scope
-import toothpick.Toothpick
-import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -52,16 +49,10 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
   private var connectText: TextView? = null
   private var toggle: ActionBarDrawerToggle? = null
   private var connect: ImageView? = null
-  private var scope: Scope? = null
 
   private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
     val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-    for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
-      if (serviceClass.name == service.service.className) {
-        return true
-      }
-    }
-    return false
+    return manager.getRunningServices(Integer.MAX_VALUE).any { serviceClass.name == it.service.className }
   }
 
   protected abstract fun active(): Int
@@ -70,13 +61,6 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
     ifNotRunningStartService()
     bus.post(MessageEvent(UserInputEventType.ResetConnection))
     return true
-  }
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this))
-    Toothpick.inject(this, scope)
   }
 
   private fun onConnectClick() {
@@ -91,7 +75,6 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
   }
 
   override fun onDestroy() {
-    Toothpick.closeScope(this)
     super.onDestroy()
     drawer.removeDrawerListener(toggle!!)
   }
@@ -227,12 +210,8 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
     connect!!.setOnClickListener({ this.onConnectClick() })
     connect!!.setOnLongClickListener({ this.onConnectLongClick() })
 
-    val actionBar = supportActionBar
-    if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(true)
-      actionBar.setHomeButtonEnabled(true)
-    }
-
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    supportActionBar?.setHomeButtonEnabled(true)
     navigationView.setCheckedItem(active())
   }
 
