@@ -46,6 +46,10 @@ class NowPlayingPresenterImpl
         })
   }
 
+  override fun search(query: String) {
+    bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListSearch, query.trim { it <= ' ' })))
+  }
+
   override fun moveTrack(from: Int, to: Int) {
     val data = NowPlayingMoveRequest(from, to)
     bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListMove, data)))

@@ -30,7 +30,7 @@ import android.widget.AbsListView
  */
 class MultiSwipeRefreshLayout : SwipeRefreshLayout {
 
-  private lateinit var mSwipeableChildren: Array<View?>
+  private lateinit var swipeableChildren: Array<View?>
 
   constructor(context: Context) : super(context) {
   }
@@ -44,10 +44,14 @@ class MultiSwipeRefreshLayout : SwipeRefreshLayout {
    */
   fun setSwipeableChildren(vararg ids: Int) {
     // Iterate through the ids and find the Views
-    mSwipeableChildren = arrayOfNulls<View>(ids.size)
+    swipeableChildren = arrayOfNulls<View>(ids.size)
     for (i in ids.indices) {
-      mSwipeableChildren[i] = findViewById(ids[i])
+      swipeableChildren[i] = findViewById(ids[i])
     }
+  }
+
+  fun clearSwipeableChildren() {
+    swipeableChildren = emptyArray<View?>()
   }
 
   /**
@@ -60,9 +64,9 @@ class MultiSwipeRefreshLayout : SwipeRefreshLayout {
    * state to trigger the gesture. If so we return false to start the gesture.
    */
   override fun canChildScrollUp(): Boolean {
-    if (mSwipeableChildren.size > 0) {
+    if (swipeableChildren.isNotEmpty()) {
       // Iterate through the scrollable children and check if any of them can not scroll up
-      for (view in mSwipeableChildren) {
+      for (view in swipeableChildren) {
         if (view != null && view.isShown && !canViewScrollUp(view)) {
           // If the view is shown, and can not scroll upwards, return false and start the
           // gesture.
