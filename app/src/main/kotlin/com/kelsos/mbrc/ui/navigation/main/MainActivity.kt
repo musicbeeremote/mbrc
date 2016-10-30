@@ -25,36 +25,30 @@ import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.PlayerState.State
 import com.kelsos.mbrc.annotations.Repeat
 import com.kelsos.mbrc.annotations.Repeat.Mode
-import com.kelsos.mbrc.constants.Const
-import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.constants.UserInputEventType
-import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
-import com.kelsos.mbrc.events.MessageEvent
-import com.kelsos.mbrc.events.ui.*
+import com.kelsos.mbrc.events.ui.OnMainFragmentOptionsInflated
+import com.kelsos.mbrc.events.ui.ShuffleChange
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
+import com.kelsos.mbrc.events.ui.UpdatePosition
+import com.kelsos.mbrc.extensions.coverFile
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.helper.ProgressSeekerHelper
 import com.kelsos.mbrc.helper.ProgressSeekerHelper.ProgressUpdate
-import com.kelsos.mbrc.helper.VolumeChangeHelper
-import com.kelsos.mbrc.ui.navigation.main.MainViewPresenter
+import com.kelsos.mbrc.helper.SeekBarThrottler
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment
-import com.kelsos.mbrc.ui.navigation.main.MainView
-import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import rx.functions.Action1
-import timber.log.Timber
+import toothpick.Scope
 import toothpick.Toothpick
-import java.io.File
+import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
-
+  val PRESENTER_SCOPE: Class<*> = Presenter::class.java
   // Injects
   @Inject lateinit var presenter: MainViewPresenter
   @Inject lateinit var progressHelper: ProgressSeekerHelper
@@ -72,116 +66,69 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   @BindView(R.id.main_repeat_button) lateinit var repeatButton: ImageButton
   @BindView(R.id.main_album_cover_image_view) lateinit var albumCover: ImageView
   private var mShareActionProvider: ShareActionProvider? = null
-  private var previousVol: Int = 0
+
   private var menu: Menu? = null
 
-
-  private val progressBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
-    override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-      if (fromUser && progress != previousVol) {
-        val action = UserAction(Protocol.NowPlayingPosition, progress.toString())
-        postAction(action)
-        previousVol = progress
-      }
-    }
-
-    override fun onStartTrackingTouch(seekBar: SeekBar) {
-    }
-
-    override fun onStopTrackingTouch(seekBar: SeekBar) {
-    }
-  }
-  private var volumeChangeListener: VolumeChangeHelper? = null
-
-  private fun register() {
-    this.bus.register(this, CoverChangedEvent::class.java, { this.handleCoverEvent(it) }, true)
-    this.bus.register(this, ShuffleChange::class.java, { this.handleShuffleChange(it) }, true)
-    this.bus.register(this, RepeatChange::class.java, { this.updateRepeatButtonState(it) }, true)
-    this.bus.register(this, VolumeChange::class.java, { this.updateVolumeData(it) }, true)
-    this.bus.register(this, PlayStateChange::class.java, { this.handlePlayStateChange(it) }, true)
-    this.bus.register(this,
-        TrackInfoChangeEvent::class.java,
-        { this.handleTrackInfoChange(it) },
-        true)
-    this.bus.register(this,
-        ConnectionStatusChangeEvent::class.java,
-        { this.handleConnectionStatusChange(it) },
-        true)
-    this.bus.register(this, UpdatePosition::class.java, { this.handlePositionUpdate(it) }, true)
-    this.bus.register(this, ScrobbleChange::class.java, { this.handleScrobbleChange(it) }, true)
-    this.bus.register(this, LfmRatingChanged::class.java, { this.handleLfmLoveChange(it) }, true)
-  }
+  private var volumeChangeListener: SeekBarThrottler? = null
+  private var positionChangeListener: SeekBarThrottler? = null
 
   @OnClick(R.id.main_button_play_pause)
   internal fun playButtonPressed() {
-    val action = UserAction(Protocol.PlayerPlayPause, true)
-    postAction(action)
+    presenter.play()
   }
 
   @OnClick(R.id.main_button_previous)
   internal fun onPreviousButtonPressed() {
-    val action = UserAction(Protocol.PlayerPrevious, true)
-    postAction(action)
+    presenter.previous()
   }
 
   @OnClick(R.id.main_button_next)
   internal fun onNextButtonPressed() {
-    val action = UserAction(Protocol.PlayerNext, true)
-    postAction(action)
+    presenter.next()
   }
 
   @OnLongClick(R.id.main_button_play_pause)
   internal fun onPlayerStopPressed(): Boolean {
-    val action = UserAction(Protocol.PlayerStop, true)
-    postAction(action)
-    return true
+    return presenter.stop()
   }
 
   @OnClick(R.id.main_mute_button)
   internal fun onMuteButtonPressed() {
-    val action = UserAction(Protocol.PlayerMute, Const.TOGGLE)
-    postAction(action)
+    presenter.mute()
   }
 
   @OnClick(R.id.main_shuffle_button)
   internal fun onShuffleButtonClicked() {
-    val action = UserAction(Protocol.PlayerShuffle, Const.TOGGLE)
-    postAction(action)
+    presenter.shuffle()
   }
 
   @OnClick(R.id.main_repeat_button)
   internal fun onRepeatButtonPressed() {
-    val action = UserAction(Protocol.PlayerRepeat, Const.TOGGLE)
-    postAction(action)
+    presenter.repeat()
   }
 
-  /**
-   * Posts a user action wrapped in a MessageEvent. The bus will
-   * pass the MessageEvent through the Socket to the plugin.
-
-   * @param action Any kind of UserAction available in the [Protocol]
-   */
-  private fun postAction(action: UserAction) {
-    bus.post(MessageEvent.action(action))
-  }
-
-  private fun changeVolume(volume: Int) {
-    postAction(UserAction.create(Protocol.PlayerVolume, volume))
-  }
+  private lateinit var scope: Scope
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
     ButterKnife.bind(this)
     super.setup()
-    volumeChangeListener = VolumeChangeHelper(Action1<Int> { this.changeVolume(it) })
+    scope = Toothpick.openScopes(application, PRESENTER_SCOPE, this)
+    scope.installModules(SmoothieActivityModule(this), MainModule())
+    Toothpick.inject(this, scope)
+    volumeChangeListener = SeekBarThrottler { presenter.changeVolume(it) }
+    positionChangeListener = SeekBarThrottler { presenter.seek(it) }
     volumeBar.setOnSeekBarChangeListener(volumeChangeListener)
-    progressBar.setOnSeekBarChangeListener(progressBarChangeListener)
+    progressBar.setOnSeekBarChangeListener(positionChangeListener)
     progressHelper.setProgressListener(this)
+    presenter.attach(this)
+    presenter.load()
   }
 
   public override fun onStart() {
     super.onStart()
+    presenter.attach(this)
     artistLabel.isSelected = true
     titleLabel.isSelected = true
     albumLabel.isSelected = true
@@ -189,15 +136,8 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
   public override fun onResume() {
     super.onResume()
-    register()
-    presenter.attach(this)
-    presenter.requestNowPlayingPosition()
     presenter.load()
-  }
-
-  override fun onPause() {
-    super.onPause()
-    presenter.detach()
+    presenter.requestNowPlayingPosition()
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -212,8 +152,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
         return true
       }
       R.id.menu_lastfm_love -> {
-        bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingLfmRating, Const.TOGGLE)))
-        return true
+        return presenter.lfmLove()
       }
       else -> return false
     }
@@ -221,6 +160,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
   public override fun onStop() {
     super.onStop()
+    presenter.detach()
     bus.unregister(this)
   }
 
@@ -243,14 +183,25 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
       return shareIntent
     }
 
-  private fun handleCoverEvent(cevent: CoverChangedEvent) {
-    if (!cevent.available) {
+  override fun updateCover() {
+    val file = this.coverFile()
+
+    if (!file.exists()) {
+      Picasso.with(this).invalidate(file)
+      albumCover.tag = 0L
       albumCover.setImageResource(R.drawable.ic_image_no_cover)
       return
     }
-    val file = File(cevent.path)
 
-    Picasso.with(this).invalidate(file)
+    val lastModified = if (albumCover.tag != null) albumCover.tag as Long else 0L
+
+    if (lastModified == 0L || lastModified < file.lastModified()) {
+      albumCover.tag = file.lastModified()
+      Picasso.with(this).invalidate(file)
+    } else {
+      return
+    }
+
     val dimens = getDimens()
     Picasso.with(this)
         .load(file)
@@ -258,20 +209,8 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
         .config(Bitmap.Config.RGB_565)
         .resize(dimens, dimens)
         .centerCrop()
-        .into(albumCover, object : Callback {
-          override fun onSuccess() {
+        .into(albumCover)
 
-          }
-
-          override fun onError() {
-            Timber.v("FaILEEEEED")
-          }
-        })
-
-  }
-
-  private fun handleShuffleChange(change: ShuffleChange) {
-    updateShuffleState(change.shuffleState)
   }
 
   override fun updateShuffleState(@ShuffleState shuffleState: String) {
@@ -282,10 +221,6 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     shuffleButton.setColorFilter(color)
 
     shuffleButton.setImageResource(if (autoDj) R.drawable.ic_headset_black_24dp else R.drawable.ic_shuffle_black_24dp)
-  }
-
-  private fun updateRepeatButtonState(change: RepeatChange) {
-    updateRepeat(change.mode)
   }
 
   override fun updateRepeat(@Mode mode: String) {
@@ -306,23 +241,15 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     repeatButton.setColorFilter(color)
   }
 
-  private fun updateVolumeData(change: VolumeChange) {
-    updateVolume(change.volume, change.isMute)
-  }
-
   override fun updateVolume(volume: Int, mute: Boolean) {
 
-    if (!volumeChangeListener!!.isUserChangingVolume) {
+    if (!volumeChangeListener!!.fromUser) {
       volumeBar.progress = volume
     }
 
     val color = ContextCompat.getColor(this, R.color.button_dark)
     muteButton.setColorFilter(color)
     muteButton.setImageResource(if (mute) R.drawable.ic_volume_off_black_24dp else R.drawable.ic_volume_up_black_24dp)
-  }
-
-  private fun handlePlayStateChange(change: PlayStateChange) {
-    updatePlayState(change.state)
   }
 
   override fun updatePlayState(@State state: String) {
@@ -377,10 +304,6 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     trackProgressCurrent.text = getString(R.string.playback_progress, 0, 0)
   }
 
-  private fun handleTrackInfoChange(change: TrackInfoChangeEvent) {
-    updateTrackInfo(change.trackInfo)
-  }
-
   override fun updateTrackInfo(info: TrackInfo) {
     artistLabel.text = info.artist
     titleLabel.text = info.title
@@ -390,10 +313,6 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     if (mShareActionProvider != null) {
       mShareActionProvider!!.setShareIntent(shareIntent)
     }
-  }
-
-  private fun handleConnectionStatusChange(change: ConnectionStatusChangeEvent) {
-    updateConnection(change.status)
   }
 
   override fun updateConnection(status: Int) {
@@ -409,14 +328,10 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
    * current progress of playback
    */
 
-  private fun handlePositionUpdate(position: UpdatePosition) {
+  override fun updateProgress(position: UpdatePosition) {
     val total = position.total
     val current = position.current
 
-    if (total == 0) {
-      bus.post(MessageEvent(UserInputEventType.RequestPosition))
-      return
-    }
     var currentSeconds = current / 1000
     var totalSeconds = total / 1000
 
@@ -439,10 +354,6 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     trackProgressAnimation(position.current, position.total)
   }
 
-  private fun handleScrobbleChange(event: ScrobbleChange) {
-    updateScrobbleStatus(event.isActive)
-  }
-
   override fun updateScrobbleStatus(active: Boolean) {
     if (menu == null) {
       return
@@ -450,10 +361,6 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     val scrobbleMenuItem = menu!!.findItem(R.id.menu_lastfm_scrobble) ?: return
 
     scrobbleMenuItem.isChecked = active
-  }
-
-  private fun handleLfmLoveChange(event: LfmRatingChanged) {
-    updateLfmStatus(event.status)
   }
 
   override fun updateLfmStatus(status: LfmStatus) {
@@ -485,6 +392,11 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
   override fun onDestroy() {
     Toothpick.closeScope(this)
+    if (isFinishing) {
+      //when we leave the presenter flow,
+      //we close its scope
+      Toothpick.closeScope(PRESENTER_SCOPE)
+    }
     super.onDestroy()
   }
 
@@ -492,5 +404,10 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     private val PAUSED = "Paused"
     private val STOPPED = "Stopped"
   }
+
+  @javax.inject.Scope
+  @Target(AnnotationTarget.TYPE)
+  @Retention(AnnotationRetention.RUNTIME)
+  annotation class Presenter
 }
 

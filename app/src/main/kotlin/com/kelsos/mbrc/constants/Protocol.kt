@@ -47,7 +47,7 @@ object Protocol {
 
   val PING = "ping"
   val PONG = "pong"
-  val INIT = "initLinear"
+  val INIT = "init"
 
   val PlayerPlay = "playerplay"
   val PlayerPause = "playerpause"
