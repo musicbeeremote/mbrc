@@ -19,4 +19,5 @@ interface NowPlayingPresenter : Presenter<NowPlayingView> {
   fun moveTrack(from: Int, to: Int)
   fun removeTrack(position: Int)
   fun load()
+  fun search(query: String)
 }
