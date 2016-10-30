@@ -3,7 +3,7 @@ package com.kelsos.mbrc.ui.drag
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 
-class SimpleItenTouchHelper(private val adapter: ItemTouchHelperAdapter) : ItemTouchHelper.Callback() {
+class SimpleItemTouchHelper(private val adapter: ItemTouchHelperAdapter) : ItemTouchHelper.Callback() {
 
   override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
     val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN

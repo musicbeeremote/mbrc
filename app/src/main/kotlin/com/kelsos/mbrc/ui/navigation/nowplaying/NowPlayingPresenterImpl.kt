@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import com.kelsos.mbrc.constants.Protocol
+import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.data.NowPlayingMoveRequest
 import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.events.MessageEvent
@@ -8,29 +9,41 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
 import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.rx.RxUtils
-import com.kelsos.mbrc.services.NowPlayingSync
-import rx.schedulers.Schedulers
-import timber.log.Timber
+import com.kelsos.mbrc.repository.NowPlayingRepository
+import com.raizlabs.android.dbflow.list.FlowCursorList
+import rx.Scheduler
+import rx.Single
 import javax.inject.Inject
+import javax.inject.Named
 
 class NowPlayingPresenterImpl
-@Inject constructor(private val sync: NowPlayingSync,
+@Inject constructor(private val repository: NowPlayingRepository,
                     private val bus: RxBus,
-                    private val model: MainDataModel) :
+                    private val model: MainDataModel,
+                    @Named("io") private val ioScheduler: Scheduler,
+                    @Named("main") private val mainScheduler: Scheduler) :
     BasePresenter<NowPlayingView>(),
     NowPlayingPresenter {
 
-  override fun refresh() {
-    addSubcription(sync.syncNowPlaying(Schedulers.io())
-        .compose(RxUtils.uiTask())
-        .doOnTerminate {
-          view?.refreshingDone()
-        }
+  override fun reload() {
+    addSubcription(repository.getAndSaveRemote()
+        .compose { schedule(it) }
         .subscribe({
-          view?.reload()
+          view?.update(it)
           view?.trackChanged(model.trackInfo)
-        }) { Timber.v(it, "Failed") })
+        }) {
+          view?.failure(it)
+        })
+  }
+
+  override fun load() {
+    addSubcription(repository.getAllCursor().compose { schedule(it) }
+        .subscribe({
+          view?.update(it)
+          view?.trackChanged(model.trackInfo)
+        }) {
+          view?.failure(it)
+        })
   }
 
   override fun moveTrack(from: Int, to: Int) {
@@ -55,4 +68,7 @@ class NowPlayingPresenterImpl
   override fun removeTrack(position: Int) {
     bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListRemove, position)))
   }
+
+  private fun schedule(it: Single<FlowCursorList<NowPlaying>>) = it.observeOn(mainScheduler)
+      .subscribeOn(ioScheduler)
 }

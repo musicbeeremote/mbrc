@@ -1,36 +1,42 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.view.MenuItemCompat
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
+import android.support.v7.widget.SearchView.OnQueryTextListener
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.view.GestureDetector
+import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.NowPlayingAdapter
 import com.kelsos.mbrc.constants.Protocol
+import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.ui.activities.BaseActivity
-import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingModule
-import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingPresenter
-import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingView
-import com.kelsos.mbrc.ui.drag.SimpleItenTouchHelper
+import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper
+import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingAdapter.NowPlayingListener
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
+import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
 import toothpick.Toothpick
+import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class NowPlayingActivity : BaseActivity(),
-    NowPlayingView,
-    SearchView.OnQueryTextListener,
-    NowPlayingAdapter.NowPlayingListener {
+                           NowPlayingView,
+                           OnQueryTextListener,
+                           NowPlayingListener {
 
   @BindView(R.id.now_playing_list) lateinit var nowPlayingList: EmptyRecyclerView
   @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: MultiSwipeRefreshLayout
@@ -40,7 +46,7 @@ class NowPlayingActivity : BaseActivity(),
   @Inject lateinit var presenter: NowPlayingPresenter
   private var searchView: SearchView? = null
   private var searchItem: MenuItem? = null
-  private var scope: Scope? = null
+  private lateinit var scope: Scope
 
   override fun onQueryTextSubmit(query: String): Boolean {
     bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListSearch, query.trim { it <= ' ' })))
@@ -66,12 +72,12 @@ class NowPlayingActivity : BaseActivity(),
   }
 
   public override fun onCreate(savedInstanceState: Bundle?) {
-    scope = Toothpick.openScopes(application, this)
-    scope?.installModules(NowPlayingModule.create())
     super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
     setContentView(R.layout.activity_nowplaying)
     ButterKnife.bind(this)
+    scope = Toothpick.openScopes(application, this)
+    scope.installModules(SmoothieActivityModule(this), NowPlayingModule.create())
+    Toothpick.inject(this, scope)
     super.setup()
     swipeRefreshLayout.setSwipeableChildren(R.id.now_playing_list, R.id.empty_view)
     nowPlayingList.emptyView = emptyView
@@ -79,7 +85,7 @@ class NowPlayingActivity : BaseActivity(),
     nowPlayingList.layoutManager = manager
     nowPlayingList.adapter = adapter
     nowPlayingList.itemAnimator.changeDuration = 0
-    val callback = SimpleItenTouchHelper(adapter)
+    val callback = SimpleItemTouchHelper(adapter)
     val helper = ItemTouchHelper(callback)
     helper.attachToRecyclerView(nowPlayingList)
     adapter.setListener(this)
@@ -92,7 +98,7 @@ class NowPlayingActivity : BaseActivity(),
     if (!swipeRefreshLayout.isRefreshing) {
       swipeRefreshLayout.isRefreshing = true
     }
-    presenter.refresh()
+    presenter.reload()
   }
 
   override fun onStart() {
@@ -126,7 +132,8 @@ class NowPlayingActivity : BaseActivity(),
     super.onDestroy()
   }
 
-  override fun refreshingDone() {
+  override fun update(cursor: FlowCursorList<NowPlaying>) {
+    adapter.update(cursor)
     swipeRefreshLayout.isRefreshing = false
   }
 
@@ -136,5 +143,10 @@ class NowPlayingActivity : BaseActivity(),
 
   override fun trackChanged(trackInfo: TrackInfo) {
     adapter.setPlayingTrack(trackInfo.path)
+  }
+
+  override fun failure(throwable: Throwable) {
+    swipeRefreshLayout.isRefreshing = false
+    Snackbar.make(nowPlayingList, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
   }
 }
