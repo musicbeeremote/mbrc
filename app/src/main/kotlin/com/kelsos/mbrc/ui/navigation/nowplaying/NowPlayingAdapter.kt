@@ -1,7 +1,6 @@
-package com.kelsos.mbrc.adapters
+package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import android.app.Activity
-
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -14,22 +13,16 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.NowPlaying
-import com.kelsos.mbrc.data.NowPlaying_Table
 import com.kelsos.mbrc.rx.MapWithIndex
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter
-import com.raizlabs.android.dbflow.kotlinextensions.from
-import com.raizlabs.android.dbflow.kotlinextensions.orderBy
-import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import com.raizlabs.android.dbflow.list.FlowQueryList
-import com.raizlabs.android.dbflow.sql.language.OrderBy
 import rx.Observable
 import timber.log.Timber
 import javax.inject.Inject
 class NowPlayingAdapter
 @Inject constructor(context: Activity) : RecyclerView.Adapter<NowPlayingAdapter.TrackHolder>(), ItemTouchHelperAdapter, FlowCursorList.OnCursorRefreshListener<NowPlaying> {
 
-  private val data: FlowQueryList<NowPlaying>
+  private var cursor: FlowCursorList<NowPlaying>? = null
   private var playingTrackIndex: Int = 0
   private var currentTrack: String = ""
   private val inflater: LayoutInflater
@@ -37,11 +30,6 @@ class NowPlayingAdapter
   private var listener: NowPlayingListener? = null
 
   init {
-    val positionAscending = OrderBy.fromProperty(NowPlaying_Table.position).ascending()
-    data = (select from NowPlaying::class orderBy positionAscending).flowQueryList()
-
-
-    data.addOnCursorRefreshListener(this)
     inflater = LayoutInflater.from(context)
   }
 
@@ -52,8 +40,12 @@ class NowPlayingAdapter
   }
 
   fun setPlayingTrack(path: String) {
+    if (cursor == null) {
+      return
+    }
+
     this.currentTrack = path
-    Observable.from(data).compose(MapWithIndex.instance<NowPlaying>()).filter {
+    Observable.from(cursor).compose(MapWithIndex.instance<NowPlaying>()).filter {
       val info = it.value()
       info.path.equals(path)
     }.subscribe({ setPlayingTrack(it.index().toInt()) }) { Timber.v(it, "Failed") }
@@ -78,7 +70,7 @@ class NowPlayingAdapter
   }
 
   override fun onBindViewHolder(holder: TrackHolder, position: Int) {
-    val track = data[position]
+    val track = cursor!!.getItem(position.toLong())
     holder.title.text = track.title
     holder.artist.text = track.artist
     if (position == playingTrackIndex) {
@@ -89,7 +81,7 @@ class NowPlayingAdapter
   }
 
   override fun getItemCount(): Int {
-    return data.size
+    return cursor?.count ?: 0
   }
 
   override fun onItemMove(from: Int, to: Int): Boolean {
@@ -109,9 +101,13 @@ class NowPlayingAdapter
   }
 
   private fun swapPositions(from: Int, to: Int) {
+    if (cursor == null) {
+      return
+    }
+
     Timber.v("Swapping %d => %d", from, to)
-    val fromTrack = data[from]
-    val toTrack = data[to]
+    val fromTrack = cursor!!.getItem(from.toLong())
+    val toTrack = cursor!!.getItem(to.toLong())
     Timber.v("from => %s to => %s", fromTrack, toTrack)
     val position = toTrack.position
     toTrack.position = fromTrack.position
@@ -119,22 +115,22 @@ class NowPlayingAdapter
     toTrack.save()
     fromTrack.save()
     // Before saving remove the listener to avoid interrupting the swapping functionality
-    data.removeOnCursorRefreshListener(this)
-    data.refresh()
-    data.addOnCursorRefreshListener(this)
+    cursor!!.removeOnCursorRefreshListener(this)
+    cursor!!.refresh()
+    cursor!!.addOnCursorRefreshListener(this)
     Timber.v("after swap => from => %s to => %s", fromTrack, toTrack)
   }
 
   override fun onItemDismiss(position: Int) {
-    data.removeAt(position)
+    val item = cursor!!.getItem(position.toLong())
+    item.delete()
+    refresh()
     notifyItemRemoved(position)
-    if (listener != null) {
-      listener!!.onDismiss(position)
-    }
+    listener?.onDismiss(position)
   }
 
   fun refresh() {
-    data.refreshAsync()
+    cursor?.refresh()
   }
 
   fun setListener(listener: NowPlayingListener) {
@@ -167,5 +163,10 @@ class NowPlayingAdapter
       ButterKnife.bind(this, itemView)
     }
 
+  }
+
+  fun update(cursor: FlowCursorList<NowPlaying>) {
+    this.cursor = cursor
+    notifyDataSetChanged()
   }
 }
