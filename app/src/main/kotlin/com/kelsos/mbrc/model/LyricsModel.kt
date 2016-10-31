@@ -11,7 +11,7 @@ class LyricsModel
 constructor(private val bus: RxBus) {
   var lyrics: String = ""
     set(value) {
-      if (field == lyrics) {
+      if (field == value) {
         return
       }
       field = value.replace("<p>", "\r\n")
