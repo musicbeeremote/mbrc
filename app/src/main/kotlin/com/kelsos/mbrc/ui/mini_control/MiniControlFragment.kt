@@ -70,7 +70,7 @@ class MiniControlFragment : Fragment(), MiniControlView {
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val scope = Toothpick.openScopes(activity.application, activity, this)
+    val scope = Toothpick.openScopes(activity.application, this)
     scope.installModules(MiniControlModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
