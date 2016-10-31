@@ -16,6 +16,8 @@ import com.kelsos.mbrc.repository.GenreRepository
 import com.kelsos.mbrc.repository.GenreRepositoryImpl
 import com.kelsos.mbrc.repository.NowPlayingRepository
 import com.kelsos.mbrc.repository.NowPlayingRepositoryImpl
+import com.kelsos.mbrc.repository.PlaylistRepository
+import com.kelsos.mbrc.repository.PlaylistRepositoryImpl
 import com.kelsos.mbrc.repository.TrackRepository
 import com.kelsos.mbrc.repository.TrackRepositoryImpl
 import com.kelsos.mbrc.services.LibraryService
@@ -50,5 +52,6 @@ class RemoteModule : Module() {
     bind(GenreRepository::class.java).to(GenreRepositoryImpl::class.java)
 
     bind(NowPlayingRepository::class.java).to(NowPlayingRepositoryImpl::class.java)
+    bind(PlaylistRepository::class.java).to(PlaylistRepositoryImpl::class.java)
   }
 }

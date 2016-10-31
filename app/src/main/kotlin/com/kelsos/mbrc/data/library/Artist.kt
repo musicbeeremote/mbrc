@@ -2,14 +2,14 @@ package com.kelsos.mbrc.data.library
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.kelsos.mbrc.data.db.CacheDatabase
+import com.kelsos.mbrc.data.db.RemoteDatabase
 import com.raizlabs.android.dbflow.annotation.Column
 import com.raizlabs.android.dbflow.annotation.PrimaryKey
 import com.raizlabs.android.dbflow.annotation.Table
 import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.structure.Model
 
-@Table(name = "artist", database = CacheDatabase::class)
+@Table(name = "artist", database = RemoteDatabase::class)
 data class Artist(@JsonProperty("artist")
                   @Column
                   var artist: String? = null,

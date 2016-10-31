@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.kelsos.mbrc.data.db.NowPlayingDatabase
+import com.kelsos.mbrc.data.db.RemoteDatabase
 import com.raizlabs.android.dbflow.annotation.Column
 import com.raizlabs.android.dbflow.annotation.PrimaryKey
 import com.raizlabs.android.dbflow.annotation.Table
@@ -16,7 +16,7 @@ import com.raizlabs.android.dbflow.structure.Model
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 @JsonPropertyOrder("artist", "title", "path", "position")
-@Table(database = NowPlayingDatabase::class, name = "now_playing")
+@Table(database = RemoteDatabase::class, name = "now_playing")
 data class NowPlaying(@JsonProperty("title")
                       @Column(name = "title")
                       var title: String? = null,
