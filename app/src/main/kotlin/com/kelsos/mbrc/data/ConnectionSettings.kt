@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.data
 
-import com.kelsos.mbrc.data.db.SettingsDatabase
+import com.kelsos.mbrc.data.db.RemoteDatabase
 import com.raizlabs.android.dbflow.annotation.Column
 import com.raizlabs.android.dbflow.annotation.ConflictAction
 import com.raizlabs.android.dbflow.annotation.PrimaryKey
@@ -12,7 +12,7 @@ import com.raizlabs.android.dbflow.structure.Model
 
 
 @Table(name = "settings",
-    database = SettingsDatabase::class,
+    database = RemoteDatabase::class,
     uniqueColumnGroups = arrayOf(UniqueGroup(groupNumber = 1, uniqueConflict = ConflictAction.IGNORE)))
 data class ConnectionSettings(@Column(name = "address")
                               @Unique(unique = false, uniqueGroups = kotlin.intArrayOf(1))

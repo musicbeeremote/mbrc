@@ -48,7 +48,7 @@ import javax.inject.Singleton
 @Singleton
 class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
-  val PRESENTER_SCOPE: Class<*> = Presenter::class.java
+  private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
   // Injects
   @Inject lateinit var presenter: MainViewPresenter
   @Inject lateinit var progressHelper: ProgressSeekerHelper

@@ -11,19 +11,18 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.Playlist
-import java.util.*
+import com.raizlabs.android.dbflow.list.FlowCursorList
 import javax.inject.Inject
 
 class PlaylistAdapter
 @Inject constructor(context: Activity) : RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
 
   private val inflater: LayoutInflater
-  private var data: MutableList<Playlist>
+  private var data: FlowCursorList<Playlist>? = null
   private var playlistPressedListener: OnPlaylistPressedListener? = null
 
   init {
     inflater = LayoutInflater.from(context)
-    data = ArrayList<Playlist>()
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,24 +30,30 @@ class PlaylistAdapter
     val viewHolder = ViewHolder(view)
 
     viewHolder.itemView.setOnClickListener {
-      playlistPressedListener?.playlistPressed(data[viewHolder.adapterPosition].url)
+      val path = data?.getItem(viewHolder.adapterPosition.toLong())?.url
+      path?.let {
+        playlistPressedListener?.playlistPressed(it)
+      }
+
     }
     return viewHolder
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val playlist = data[holder.adapterPosition]
-    holder.name.text = playlist.name
+    val playlist = data?.getItem(holder.adapterPosition.toLong())
+    playlist?.let {
+      holder.name.text = playlist.name
+    }
     holder.context.visibility = View.GONE
+
   }
 
   override fun getItemCount(): Int {
-    return data.size
+    return data?.count ?: 0
   }
 
-  fun update(playlist: List<Playlist>) {
-    this.data.clear()
-    this.data.addAll(playlist)
+  fun update(cursor: FlowCursorList<Playlist>) {
+    this.data = cursor
     notifyDataSetChanged()
   }
 
