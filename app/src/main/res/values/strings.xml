@@ -144,6 +144,7 @@
   <string name="semicolon" translatable="false">:</string>
   <string name="non_album_tracks">Non album tracks</string>
   <string name="no_lyrics">No lyrics found</string>
+    <string name="retrieving_lyrics">Retrieving lyrics…</string>
   <string name="settings_key_debug_logging">settings_debug_log</string>
   <string name="setting_miscellaneous_debug_logging_summary">Enables debug logging for the application.  May cause performance degradation since it logs everything.</string>
   <string name="setting_miscellaneous_debug_logging">Debug Logging</string>
