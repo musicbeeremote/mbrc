@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.model
 
+import com.kelsos.mbrc.data.LyricsPayload
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.LyricsUpdatedEvent
 import javax.inject.Inject
@@ -27,5 +28,7 @@ constructor(private val bus: RxBus) {
 
       bus.post(LyricsUpdatedEvent(field))
     }
+
+  var status: Int = LyricsPayload.NOT_FOUND
 
 }
