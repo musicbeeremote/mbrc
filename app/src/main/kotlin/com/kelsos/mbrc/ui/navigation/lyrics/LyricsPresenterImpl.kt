@@ -1,11 +1,11 @@
 package com.kelsos.mbrc.ui.navigation.lyrics
 
 import com.kelsos.mbrc.constants.Const
+import com.kelsos.mbrc.data.LyricsPayload
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.LyricsUpdatedEvent
 import com.kelsos.mbrc.model.LyricsModel
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.mvp.Presenter
 import java.util.*
 import javax.inject.Inject
 
@@ -15,7 +15,7 @@ class LyricsPresenterImpl
 
   override fun attach(view: LyricsView) {
     super.attach(view)
-    bus.register(this, LyricsUpdatedEvent::class.java, { updateLyrics(model.lyrics) })
+    bus.register(this, LyricsUpdatedEvent::class.java, { load() })
   }
 
   override fun detach() {
@@ -28,7 +28,14 @@ class LyricsPresenterImpl
       return
     }
 
-    updateLyrics(model.lyrics)
+    if (model.status == LyricsPayload.NOT_FOUND) {
+      view?.showNoLyrics()
+    } else if (model.status == LyricsPayload.READING) {
+      view?.showRetrievingLyrics()
+    } else {
+      updateLyrics(model.lyrics)
+    }
+
   }
 
   fun updateLyrics(text: String) {

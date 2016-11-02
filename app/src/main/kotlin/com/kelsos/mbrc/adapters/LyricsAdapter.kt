@@ -9,7 +9,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 
-class LyricsAdapter(private val data: List<String>?) : RecyclerView.Adapter<LyricsAdapter.ViewHolder>() {
+class LyricsAdapter(private var data: List<String> = emptyList()) : RecyclerView.Adapter<LyricsAdapter.ViewHolder>() {
 
   /**
    * Called when RecyclerView needs a new [ViewHolder] of the given type to represent
@@ -61,8 +61,13 @@ class LyricsAdapter(private val data: List<String>?) : RecyclerView.Adapter<Lyri
    * @param position The position of the item within the adapter's data set.
    */
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val str = data!![position]
+    val str = data[position]
     holder.title.text = str
+  }
+
+  fun updateLyrics(lyrics: List<String>) {
+    this.data = lyrics
+    notifyDataSetChanged()
   }
 
   /**
@@ -71,7 +76,7 @@ class LyricsAdapter(private val data: List<String>?) : RecyclerView.Adapter<Lyri
    * @return The total number of items in this adapter.
    */
   override fun getItemCount(): Int {
-    return if (data == null) 0 else data.size
+    return data.size
   }
 
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -79,6 +84,12 @@ class LyricsAdapter(private val data: List<String>?) : RecyclerView.Adapter<Lyri
 
     init {
       ButterKnife.bind(this, itemView)
+    }
+  }
+
+  fun clear() {
+    if (data.isNotEmpty()) {
+      data = emptyList()
     }
   }
 }

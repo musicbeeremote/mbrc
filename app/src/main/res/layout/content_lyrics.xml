@@ -1,49 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/mini_control_height"
-    android:orientation="vertical"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_marginBottom="@dimen/mini_control_height"
+              android:orientation="vertical"
+              app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-  <android.support.v7.widget.RecyclerView
-      android:id="@+id/lyrics_recycler_view"
-      android:layout_width="match_parent"
-      android:layout_height="0dip"
-      android:layout_weight="1"
-      android:paddingLeft="@dimen/normal_margin"
-      android:paddingRight="@dimen/normal_margin"
-      android:paddingTop="@dimen/small_margin"
-      android:scrollbars="vertical"
-      tools:listitem="@layout/ui_list_lyrics_item" />
+    <com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
+            android:id="@+id/lyrics_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:paddingLeft="@dimen/normal_margin"
+            android:paddingRight="@dimen/normal_margin"
+            android:paddingTop="@dimen/small_margin"
+            android:scrollbars="vertical"
+            tools:listitem="@layout/ui_list_lyrics_item"/>
 
-  <LinearLayout
-      android:id="@+id/empty_view"
-      android:layout_width="match_parent"
-      android:layout_height="0dip"
-      android:layout_weight="1"
-      android:gravity="center"
-      android:orientation="horizontal"
-      android:visibility="gone">
+    <LinearLayout
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="visible">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingEnd="@dimen/small_margin"
-        android:paddingRight="@dimen/small_margin"
-        android:src="@drawable/ic_error_outline_black_24dp"
-        android:tint="@color/white"
-        tools:ignore="RtlSymmetry" />
+        <TextView
+                android:textSize="22sp"
+                android:maxLines="1"
+                android:fontFamily="sans-serif-medium"
+                fontPath="fonts/roboto_medium.ttf"
+                android:id="@+id/empty_view_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary_text"
+                tools:ignore="MissingPrefix,UnusedAttribute"/>
 
-    <TextView
-        android:id="@+id/empty_view_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-light"
-        android:textColor="@color/primary_text"
-        tools:ignore="UnusedAttribute" />
-  </LinearLayout>
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/small_margin"
+                android:paddingRight="@dimen/small_margin"
+                style="@style/empty_view_image"
+                android:src="@drawable/ic_view_headline_black_120dp"
+                tools:ignore="RtlSymmetry"/>
+
+
+    </LinearLayout>
 
 </LinearLayout>
