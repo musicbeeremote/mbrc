@@ -5,7 +5,12 @@ import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.JPEG
 import android.graphics.BitmapFactory
 import android.util.Base64
-import com.fasterxml.jackson.databind.node.TextNode
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.kelsos.mbrc.constants.Protocol
+import com.kelsos.mbrc.data.CoverPayload
+import com.kelsos.mbrc.data.UserAction
+import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.CoverChangedEvent
 import com.kelsos.mbrc.extensions.coverFile
@@ -23,13 +28,28 @@ import javax.inject.Inject
 class UpdateCover
 @Inject constructor(private val bus: RxBus,
                     private val context: Application,
+                    private val mapper: ObjectMapper,
                     private val model: MainDataModel) : ICommand {
 
   override fun execute(e: IEvent) {
-    val cover = (e.data as TextNode).textValue()
+
+    val payload = mapper.treeToValue((e.data as JsonNode), CoverPayload::class.java)
+
+    if (payload.status == CoverPayload.NOT_FOUND) {
+      val file = context.coverFile()
+      file.delete()
+      return
+    }
+
+    if (payload.status == CoverPayload.READY) {
+      bus.post(MessageEvent.action(UserAction.create(Protocol.NowPlayingCover)))
+      Timber.v("Message received for available cover")
+      return
+    }
+
     Observable.fromEmitter<Bitmap>({
       emitter: Emitter<Bitmap> ->
-      val decodedImage = Base64.decode(cover, Base64.DEFAULT)
+      val decodedImage = Base64.decode(payload.cover, Base64.DEFAULT)
       val bitmap = BitmapFactory.decodeByteArray(decodedImage, 0, decodedImage.size)
 
       if  (bitmap != null) {
@@ -45,13 +65,21 @@ class UpdateCover
       bus.post(CoverChangedEvent(it))
       model.updateRemoteClient()
     }, {
-      val coverFile = context.coverFile()
-      if (coverFile.exists()) {
-        coverFile.delete()
-      }
-      Timber.v(it, "Failed to store path")
-      bus.post(CoverChangedEvent())
+      removeCover(it)
     })
+  }
+
+  private fun removeCover(it: Throwable? = null) {
+    val coverFile = context.coverFile()
+    if (coverFile.exists()) {
+      coverFile.delete()
+    }
+
+    it?.let {
+      Timber.v(it, "Failed to store path")
+    }
+
+    bus.post(CoverChangedEvent())
   }
 
   private fun storeCover(bitmap: Bitmap): Observable<String> {
