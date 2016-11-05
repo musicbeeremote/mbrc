@@ -20,6 +20,8 @@ import com.kelsos.mbrc.repository.PlaylistRepository
 import com.kelsos.mbrc.repository.PlaylistRepositoryImpl
 import com.kelsos.mbrc.repository.TrackRepository
 import com.kelsos.mbrc.repository.TrackRepositoryImpl
+import com.kelsos.mbrc.services.CoverService
+import com.kelsos.mbrc.services.CoverServiceImpl
 import com.kelsos.mbrc.services.LibraryService
 import com.kelsos.mbrc.services.LibraryServiceImpl
 import com.kelsos.mbrc.services.NowPlayingService
@@ -41,6 +43,8 @@ class RemoteModule : Module() {
     bind(LibraryService::class.java).to(LibraryServiceImpl::class.java).singletonInScope()
     bind(PlaylistService::class.java).to(PlaylistServiceImpl::class.java).singletonInScope()
     bind(NowPlayingService::class.java).to(NowPlayingServiceImpl::class.java).singletonInScope()
+    bind(CoverService::class.java).to(CoverServiceImpl::class.java).singletonInScope()
+
     bind(NotificationManagerCompat::class.java).toProvider(NotificationManagerCompatProvider::class.java)
     bind(ConnectionRepository::class.java).to(ConnectionRepositoryImpl::class.java)
     bind(Scheduler::class.java).withName("main").toProviderInstance { AndroidSchedulers.mainThread() }
