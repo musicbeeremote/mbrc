@@ -28,7 +28,7 @@ open class ServiceBase {
     return (mapper.writeValueAsString(message) + "\r\n").toByteArray()
   }
 
-  fun request(request: String, data: Any): Observable<SocketMessage> {
+  fun request(request: String, data: Any = true): Observable<SocketMessage> {
     return Observable.using<String, Socket>({
       this.getSocket()
     }, {
