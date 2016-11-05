@@ -6,8 +6,6 @@ import com.kelsos.mbrc.mvp.Presenter
 interface LyricsView : BaseView {
   fun updateLyrics(lyrics: List<String>)
 
-  fun showRetrievingLyrics()
-
   fun showNoLyrics()
 }
 

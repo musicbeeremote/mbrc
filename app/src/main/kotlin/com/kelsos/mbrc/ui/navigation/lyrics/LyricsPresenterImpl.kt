@@ -15,7 +15,7 @@ class LyricsPresenterImpl
 
   override fun attach(view: LyricsView) {
     super.attach(view)
-    bus.register(this, LyricsUpdatedEvent::class.java, { load() })
+    bus.register(this, LyricsUpdatedEvent::class.java, { load() }, true)
   }
 
   override fun detach() {
@@ -30,8 +30,6 @@ class LyricsPresenterImpl
 
     if (model.status == LyricsPayload.NOT_FOUND) {
       view?.showNoLyrics()
-    } else if (model.status == LyricsPayload.READING) {
-      view?.showRetrievingLyrics()
     } else {
       updateLyrics(model.lyrics)
     }
