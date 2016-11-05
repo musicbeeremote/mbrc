@@ -16,16 +16,11 @@ constructor(private val model: LyricsModel,
   override fun execute(e: IEvent) {
     val payload = mapper.treeToValue((e.data as JsonNode), LyricsPayload::class.java)
 
+    model.status = payload.status
     if (payload.status == LyricsPayload.SUCCESS) {
       model.lyrics = payload.lyrics
-      model.status = payload.status
-    } else if (payload.status == LyricsPayload.READING) {
-      model.lyrics = ""
-      model.status = payload.status
     } else {
       model.lyrics = ""
-      model.status = LyricsPayload.NOT_FOUND
     }
-
   }
 }
