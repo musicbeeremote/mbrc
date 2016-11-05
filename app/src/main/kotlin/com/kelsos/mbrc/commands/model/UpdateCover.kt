@@ -15,6 +15,7 @@ import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.services.CoverService
+import com.kelsos.mbrc.widgets.UpdateWidgets
 import rx.Single
 import rx.schedulers.Schedulers
 import timber.log.Timber
@@ -33,6 +34,7 @@ class UpdateCover
 
     if (payload.status == CoverPayload.NOT_FOUND) {
       clearCover()
+      UpdateWidgets.update(context)
     } else if (payload.status == CoverPayload.READY) {
       retrieveCover()
     }
@@ -52,6 +54,7 @@ class UpdateCover
     }.subscribeOn(Schedulers.io()).subscribe({
       bus.post(CoverChangedEvent())
       model.updateRemoteClient()
+      UpdateWidgets.update(context)
     }, {
       removeCover(it)
     })

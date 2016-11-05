@@ -6,7 +6,7 @@ import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 
 interface MiniControlView : BaseView {
-  fun updateCover(cover: String)
+  fun updateCover()
 
   fun updateTrackInfo(trackInfo: TrackInfo)
 

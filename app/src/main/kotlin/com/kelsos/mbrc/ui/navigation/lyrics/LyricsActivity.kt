@@ -70,11 +70,6 @@ class LyricsActivity : BaseActivity(), LyricsView {
     adapter.updateLyrics(lyrics)
   }
 
-  override fun showRetrievingLyrics() {
-    emptyText.setText(R.string.retrieving_lyrics)
-    adapter.clear()
-  }
-
   override fun showNoLyrics() {
     emptyText.setText(R.string.no_lyrics)
     adapter.clear()

@@ -15,6 +15,7 @@ import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.ui.CoverChangedEvent
 import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
+import com.kelsos.mbrc.extensions.coverFile
 import com.kelsos.mbrc.model.NotificationModel
 import com.kelsos.mbrc.services.RemoteSessionManager
 import com.kelsos.mbrc.utilities.RemoteUtils
@@ -45,7 +46,7 @@ constructor(bus: RxBus,
 
   init {
     bus.register(this, TrackInfoChangeEvent::class.java, { this.handleTrackInfo(it) })
-    bus.register(this, CoverChangedEvent::class.java, { this.coverChanged(it) })
+    bus.register(this, CoverChangedEvent::class.java, { this.coverChanged() })
     bus.register(this, PlayStateChange::class.java, { this.playStateChanged(it) })
     bus.register(this, ConnectionStatusChangeEvent::class.java, { this.connectionChanged(it) })
     previous = context.getString(R.string.notification_action_previous)
@@ -55,28 +56,32 @@ constructor(bus: RxBus,
 
   private fun handleTrackInfo(event: TrackInfoChangeEvent) {
     model.trackInfo = event.trackInfo
-    notification = createBuilder().build()
-    notificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification)
+    update()
   }
 
-  private fun coverChanged(event: CoverChangedEvent) {
-    if (event.available) {
-      RemoteUtils.bitmapFromFile(event.path).subscribe({
+  private fun coverChanged() {
+    val coverFile = context.coverFile()
+    if (coverFile.exists()) {
+      RemoteUtils.bitmapFromFile(coverFile.absolutePath).doOnTerminate {
+        update()
+      }.subscribe({
         model.cover = it
       }, {
         Timber.v(it, "failed to decode")
         model.cover = null
-      }, {
-        notification = createBuilder().build()
-        notificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification)
       })
+    } else {
+      model.cover = null
+      update()
     }
-
-
   }
 
   private fun playStateChanged(event: PlayStateChange) {
     model.playState = event.state
+    update()
+  }
+
+  private fun update() {
     notification = createBuilder().build()
     notificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification)
   }
@@ -104,7 +109,15 @@ constructor(bus: RxBus,
     val builder = NotificationCompat.Builder(context)
     val resId = if (model.playState == PlayerState.PLAYING) R.drawable.ic_action_pause else R.drawable.ic_action_play
 
-    builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setSmallIcon(R.drawable.ic_mbrc_status).setStyle(mediaStyle.setShowActionsInCompactView(1, 2)).addAction(previousAction).addAction(getPlayAction(resId)).addAction(nextAction)
+    builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+        .setSmallIcon(R.drawable.ic_mbrc_status)
+        .setStyle(mediaStyle.setShowActionsInCompactView(1, 2))
+        .addAction(previousAction)
+        .addAction(getPlayAction(resId))
+        .addAction(nextAction)
+
+    builder.priority = NotificationCompat.PRIORITY_LOW
+    builder.setOnlyAlertOnce(true)
 
     if (model.cover != null) {
       builder.setLargeIcon(model.cover)
