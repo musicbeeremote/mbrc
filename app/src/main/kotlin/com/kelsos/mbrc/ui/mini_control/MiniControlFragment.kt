@@ -22,14 +22,11 @@ import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.CoverChangedEvent
-import com.kelsos.mbrc.events.ui.PlayStateChange
-import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
+import com.kelsos.mbrc.extensions.coverFile
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.ui.navigation.main.MainActivity
 import com.squareup.picasso.Picasso
 import toothpick.Toothpick
-import java.io.File
 import javax.inject.Inject
 
 class MiniControlFragment : Fragment(), MiniControlView {
@@ -89,25 +86,27 @@ class MiniControlFragment : Fragment(), MiniControlView {
 
   override fun onResume() {
     super.onResume()
-    bus.register(this, CoverChangedEvent::class.java, { this.onCoverChange(it) }, true)
-    bus.register(this, TrackInfoChangeEvent::class.java, { this.onTrackInfoChange(it) }, true)
-    bus.register(this, PlayStateChange::class.java, { this.onPlayStateChange(it) }, true)
     presenter.attach(this)
     presenter.load()
   }
 
-  override fun updateCover(cover: String) {
-    val file = File(cover)
-    val dimens = context.getDimens()
+  override fun updateCover() {
+    val file = activity.coverFile()
 
-    Picasso.with(context).invalidate(file)
-    Picasso.with(context)
-        .load(file)
-        .placeholder(R.drawable.ic_image_no_cover)
-        .config(Bitmap.Config.RGB_565)
-        .resize(dimens, dimens)
-        .centerCrop()
-        .into(trackCover)
+    if (file.exists()) {
+      val dimens = context.getDimens()
+
+      Picasso.with(context).invalidate(file)
+      Picasso.with(context)
+          .load(file)
+          .placeholder(R.drawable.ic_image_no_cover)
+          .config(Bitmap.Config.RGB_565)
+          .resize(dimens, dimens)
+          .centerCrop()
+          .into(trackCover)
+    } else {
+      trackCover.setImageResource(R.drawable.ic_image_no_cover)
+    }
   }
 
   override fun updateTrackInfo(trackInfo: TrackInfo) {
@@ -120,22 +119,6 @@ class MiniControlFragment : Fragment(), MiniControlView {
       PlayerState.PLAYING -> playPause.setImageResource(R.drawable.ic_action_pause)
       else -> playPause.setImageResource(R.drawable.ic_action_play)
     }
-  }
-
-  private fun onCoverChange(event: CoverChangedEvent) {
-    if (!event.available) {
-      trackCover.setImageResource(R.drawable.ic_image_no_cover)
-      return
-    }
-    updateCover(event.path)
-  }
-
-  private fun onTrackInfoChange(event: TrackInfoChangeEvent) {
-    updateTrackInfo(event.trackInfo)
-  }
-
-  private fun onPlayStateChange(event: PlayStateChange) {
-    updateState(event.state)
   }
 
   override fun onDestroy() {

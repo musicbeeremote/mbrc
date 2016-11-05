@@ -43,17 +43,30 @@ object RemoteUtils {
         val options = BitmapFactory.Options()
         options.inPreferredConfig = Bitmap.Config.RGB_565
         val bitmap = BitmapFactory.decodeFile(path, options)
-        it.onNext(bitmap)
-        it.onCompleted()
+        if (bitmap != null) {
+          it.onNext(bitmap)
+          it.onCompleted()
+        } else {
+          it.onError(RuntimeException("Unable to decode the image"))
+        }
+
       } catch(e: Exception) {
         it.onError(e)
       }
     }, Emitter.BackpressureMode.LATEST)
   }
 
-  fun coverBitmap(context: Context) :Observable<Bitmap> {
+  fun coverBitmap(context: Context): Observable<Bitmap> {
     val filesDir = context.filesDir
     val cover = File(filesDir, Const.COVER_FILE)
     return bitmapFromFile(cover.absolutePath)
+  }
+
+  fun coverBitmapSync(context: Context): Bitmap? {
+    return try {
+      RemoteUtils.coverBitmap(context).toBlocking().first()
+    } catch (e: Exception) {
+      null
+    }
   }
 }
