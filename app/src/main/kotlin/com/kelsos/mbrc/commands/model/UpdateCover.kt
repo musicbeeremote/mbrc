@@ -5,16 +5,17 @@ import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.JPEG
 import android.graphics.BitmapFactory
 import android.util.Base64
-import com.fasterxml.jackson.databind.node.TextNode
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.kelsos.mbrc.data.CoverPayload
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.CoverChangedEvent
 import com.kelsos.mbrc.extensions.coverFile
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.model.MainDataModel
-import rx.Emitter
-import rx.Emitter.BackpressureMode
-import rx.Observable
+import com.kelsos.mbrc.services.CoverService
+import rx.Single
 import rx.schedulers.Schedulers
 import timber.log.Timber
 import java.io.FileOutputStream
@@ -23,50 +24,76 @@ import javax.inject.Inject
 class UpdateCover
 @Inject constructor(private val bus: RxBus,
                     private val context: Application,
+                    private val mapper: ObjectMapper,
+                    private val coverService: CoverService,
                     private val model: MainDataModel) : ICommand {
 
   override fun execute(e: IEvent) {
-    val cover = (e.data as TextNode).textValue()
-    Observable.fromEmitter<Bitmap>({
-      emitter: Emitter<Bitmap> ->
-      val decodedImage = Base64.decode(cover, Base64.DEFAULT)
-      val bitmap = BitmapFactory.decodeByteArray(decodedImage, 0, decodedImage.size)
+    val payload = mapper.treeToValue((e.data as JsonNode), CoverPayload::class.java)
 
-      if  (bitmap != null) {
-        emitter.onNext(bitmap)
-        emitter.onCompleted()
-      } else {
-        emitter.onError(RuntimeException("no cover found"))
-      }
-
-    }, BackpressureMode.LATEST).flatMap {
-      storeCover(it)
-    }.subscribeOn(Schedulers.io()).subscribe({
-      bus.post(CoverChangedEvent(it))
-      model.updateRemoteClient()
-    }, {
-      val coverFile = context.coverFile()
-      if (coverFile.exists()) {
-        coverFile.delete()
-      }
-      Timber.v(it, "Failed to store path")
-      bus.post(CoverChangedEvent())
-    })
+    if (payload.status == CoverPayload.NOT_FOUND) {
+      clearCover()
+    } else if (payload.status == CoverPayload.READY) {
+      retrieveCover()
+    }
   }
 
-  private fun storeCover(bitmap: Bitmap): Observable<String> {
-    return Observable.fromEmitter<String>({
-      val file = context.coverFile()
-      file.delete()
-      val fileStream = FileOutputStream(file)
-      val success = bitmap.compress(JPEG, 100, fileStream)
-      if (success) {
-        it.onNext(file.absolutePath)
-      } else {
-        it.onNext("")
-      }
-      it.onCompleted()
-    }, BackpressureMode.LATEST)
+  private fun clearCover() {
+    val file = context.coverFile()
+    file.delete()
+    bus.post(CoverChangedEvent())
+  }
+
+  private fun retrieveCover() {
+    coverService.getCover().subscribeOn(Schedulers.io()).flatMap {
+      Single.fromCallable { getBitmap(it) }
+    }.flatMap {
+      return@flatMap Single.fromCallable { storeCover(it) }
+    }.subscribeOn(Schedulers.io()).subscribe({
+      bus.post(CoverChangedEvent())
+      model.updateRemoteClient()
+    }, {
+      removeCover(it)
+    })
+
+    Timber.v("Message received for available cover")
+    return
+  }
+
+  private fun getBitmap(base64: String): Bitmap {
+    val decodedImage = Base64.decode(base64, Base64.DEFAULT)
+    val bitmap = BitmapFactory.decodeByteArray(decodedImage, 0, decodedImage.size)
+    if (bitmap != null) {
+      return bitmap
+    } else {
+      throw RuntimeException("Base64 was not an image")
+    }
+
+  }
+
+  private fun removeCover(it: Throwable? = null) {
+    val coverFile = context.coverFile()
+    if (coverFile.exists()) {
+      coverFile.delete()
+    }
+
+    it?.let {
+      Timber.v(it, "Failed to store path")
+    }
+
+    bus.post(CoverChangedEvent())
+  }
+
+  private fun storeCover(bitmap: Bitmap): String {
+    val file = context.coverFile()
+    file.delete()
+    val fileStream = FileOutputStream(file)
+    val success = bitmap.compress(JPEG, 100, fileStream)
+    if (success) {
+      return file.absolutePath
+    } else {
+      throw RuntimeException("unable to store cover")
+    }
   }
 
 }
