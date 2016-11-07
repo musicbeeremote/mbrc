@@ -12,6 +12,7 @@ import com.kelsos.mbrc.messaging.NotificationService
 import com.kelsos.mbrc.services.ServiceDiscovery
 import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver
 import timber.log.Timber
+import toothpick.Scope
 import toothpick.Toothpick
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -28,7 +29,7 @@ class RemoteService : Service(), ForegroundHooks {
   @Inject lateinit var notificationService: NotificationService
 
   private var threadPoolExecutor: ExecutorService? = null
-  private lateinit var scope: toothpick.Scope
+  private var scope: Scope? = null
 
   override fun onBind(intent: Intent): IBinder? {
     return controllerBinder
@@ -44,7 +45,7 @@ class RemoteService : Service(), ForegroundHooks {
   override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
     Timber.d("Background Service::Started")
     notificationService.setForegroundHooks(this)
-    CommandRegistration.register(remoteController, scope)
+    CommandRegistration.register(remoteController, scope!!)
     threadPoolExecutor = Executors.newSingleThreadExecutor()
     threadPoolExecutor!!.execute(remoteController)
     remoteController.executeCommand(MessageEvent(UserInputEventType.StartConnection))
@@ -54,16 +55,14 @@ class RemoteService : Service(), ForegroundHooks {
   }
 
   override fun onDestroy() {
+    super.onDestroy()
+    this.unregisterReceiver(receiver)
     remoteController.executeCommand(MessageEvent(UserInputEventType.CancelNotification))
     remoteController.executeCommand(MessageEvent(UserInputEventType.TerminateConnection))
     CommandRegistration.unregister(remoteController)
-    if (threadPoolExecutor != null) {
-      threadPoolExecutor!!.shutdownNow()
-    }
+    threadPoolExecutor?.shutdownNow()
     Timber.d("Background Service::Destroyed")
-    this.unregisterReceiver(receiver)
     Toothpick.closeScope(this)
-    super.onDestroy()
   }
 
   override fun start(id: Int, notification: Notification) {
