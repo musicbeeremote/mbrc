@@ -89,6 +89,11 @@ class MainViewPresenterImpl
     this.bus.register(this, LfmRatingChanged::class.java, { this.view?.updateLfmStatus(it.status) }, true)
   }
 
+  override fun detach() {
+    super.detach()
+    this.bus.unregister(this)
+  }
+
   override fun play() {
     val action = UserAction(Protocol.PlayerPlayPause, true)
     postAction(action)
