@@ -13,6 +13,6 @@ class UpdatePlayState
 
   override fun execute(e: IEvent) {
     model.playState = e.dataString
-    UpdateWidgets.update(context)
+    UpdateWidgets.updatePlaystate(context, e.dataString)
   }
 }
