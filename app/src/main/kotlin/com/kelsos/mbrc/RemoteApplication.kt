@@ -1,10 +1,13 @@
 package com.kelsos.mbrc
 
+import android.content.Context
 import android.support.annotation.CallSuper
 import android.support.multidex.MultiDexApplication
 import com.kelsos.mbrc.di.modules.RemoteModule
 import com.raizlabs.android.dbflow.config.FlowConfig
 import com.raizlabs.android.dbflow.config.FlowManager
+import com.squareup.leakcanary.LeakCanary
+import com.squareup.leakcanary.RefWatcher
 import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
@@ -12,8 +15,11 @@ import toothpick.registries.FactoryRegistryLocator
 import toothpick.registries.MemberInjectorRegistryLocator
 import toothpick.smoothie.module.SmoothieApplicationModule
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
+import java.util.concurrent.TimeUnit
 
 class RemoteApplication : MultiDexApplication() {
+
+  private lateinit var refWatcher: RefWatcher
 
   @CallSuper
   override fun onCreate() {
@@ -41,12 +47,31 @@ class RemoteApplication : MultiDexApplication() {
     if (BuildConfig.DEBUG) {
       Timber.plant(object : Timber.DebugTree() {
         override fun createStackElementTag(element: StackTraceElement): String {
-          return super.createStackElementTag(element) + ":" +
-              element.lineNumber +
-              " [" + Thread.currentThread().name + "]"
+          return "${super.createStackElementTag(element)}:${element.lineNumber} [${Thread.currentThread().name}]"
         }
       })
     }
 
+    if (LeakCanary.isInAnalyzerProcess(this)) {
+      // This process is dedicated to LeakCanary for heap analysis.
+      // You should not init your app in this process.
+      return
+    }
+    refWatcher = installLeakCanary()
+  }
+
+  private fun installLeakCanary(): RefWatcher {
+    return if (BuildConfig.DEBUG) {
+      LeakCanary.refWatcher(this)
+          .watchDelay(10, TimeUnit.SECONDS)
+          .buildAndInstall()
+    } else {
+      RefWatcher.DISABLED
+    }
+  }
+
+  fun getRefWatcher(context: Context): RefWatcher {
+    val application = context.applicationContext as RemoteApplication
+    return application.refWatcher
   }
 }

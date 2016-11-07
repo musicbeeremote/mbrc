@@ -98,7 +98,7 @@ android {
       def versionInfo = "-v${variant.mergedFlavor.versionCode}-${variant.mergedFlavor.versionName}"
       def filename = originalFilename.name
           .replace(".apk", versionInfo + ".apk")
-          .replace(project.name, defaultConfig.applicationId);
+          .replace(project.name, defaultConfig.applicationId)
       filename = "${originalFilename.parent}/${filename}"
       output.outputFile = file(filename)
     }
@@ -176,6 +176,10 @@ dependencies {
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
   compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha7'
+
+  debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+  releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+  testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 }
 
 allprojects {
