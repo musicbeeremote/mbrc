@@ -34,7 +34,7 @@ class UpdateCover
 
     if (payload.status == CoverPayload.NOT_FOUND) {
       clearCover()
-      UpdateWidgets.update(context)
+      UpdateWidgets.updateCover(context)
     } else if (payload.status == CoverPayload.READY) {
       retrieveCover()
     }
@@ -54,7 +54,7 @@ class UpdateCover
     }.subscribeOn(Schedulers.io()).subscribe({
       bus.post(CoverChangedEvent())
       model.updateRemoteClient()
-      UpdateWidgets.update(context)
+      UpdateWidgets.updateCover(context)
     }, {
       removeCover(it)
     })
