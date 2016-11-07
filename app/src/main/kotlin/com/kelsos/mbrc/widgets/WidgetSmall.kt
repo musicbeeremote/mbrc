@@ -1,50 +1,49 @@
 package com.kelsos.mbrc.widgets
 
-import android.app.Application
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.PlayerState
-import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.CoverChangedEvent
-import com.kelsos.mbrc.events.ui.PlayStateChange
-import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
+import com.kelsos.mbrc.annotations.PlayerState.State
+import com.kelsos.mbrc.domain.TrackInfo
+import com.kelsos.mbrc.extensions.coverFile
 import com.kelsos.mbrc.ui.navigation.main.MainActivity
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.NEXT
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PLAY
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PREVIOUS
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.getPendingIntent
 import com.squareup.picasso.Picasso
-import timber.log.Timber
-import toothpick.Scope
-import toothpick.Toothpick
-import javax.inject.Inject
 
 class WidgetSmall : AppWidgetProvider() {
 
-  @Inject lateinit var context: Application
-  @Inject lateinit var bus: RxBus
+  override fun onReceive(context: Context?, intent: Intent?) {
+    super.onReceive(context, intent)
+    if (intent == null || intent.action != AppWidgetManager.ACTION_APPWIDGET_UPDATE) {
+      return
+    }
 
-  private var widgetsIds: IntArray? = null
-  private var scope: Scope? = null
+    val extras = intent.extras
+    val widgetManager = AppWidgetManager.getInstance(context)
+    val widgets = ComponentName(context?.packageName, WidgetSmall::class.java.name)
+    val widgetsIds = widgetManager.getAppWidgetIds(widgets)
+
+    if (extras.getBoolean(UpdateWidgets.COVER, false)) {
+      updateCover(context, widgetManager, widgetsIds)
+    } else if (extras.getBoolean(UpdateWidgets.INFO, false)) {
+      updateInfo(context, widgetManager, widgetsIds, extras.getParcelable<TrackInfo>(UpdateWidgets.TRACK_INFO))
+    } else if (extras.getBoolean(UpdateWidgets.STATE, false)) {
+      updatePlayState(context, widgetManager, widgetsIds,
+          extras.getString(UpdateWidgets.PLAYER_STATE, PlayerState.UNDEFINED))
+    }
+  }
 
   override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
     super.onUpdate(context, appWidgetManager, appWidgetIds)
-    Timber.v("Update widget received")
-    if (scope == null) {
-      scope = Toothpick.openScope(context.applicationContext)
-      Toothpick.inject(this, scope)
-    }
-
-    widgetsIds = appWidgetIds
-
-    bus.register(this, TrackInfoChangeEvent::class.java, { this.updateDisplay(it) })
-    bus.register(this, CoverChangedEvent::class.java, { this.updateCover(it) })
-    bus.register(this, PlayStateChange::class.java, { this.updatePlayState(it) })
 
     for (appWidgetId in appWidgetIds) {
       // Create an Intent to launch ExampleActivity
@@ -65,36 +64,58 @@ class WidgetSmall : AppWidgetProvider() {
     }
   }
 
-  private fun updateDisplay(event: TrackInfoChangeEvent) {
-    val manager = AppWidgetManager.getInstance(context)
+  private fun updateInfo(context: Context?,
+                         widgetManager: AppWidgetManager,
+                         widgetsIds: IntArray,
+                         info: TrackInfo) {
+
+    if (context == null) {
+      return
+    }
+
     val smallWidget = RemoteViews(context.packageName, R.layout.widget_small)
-    val info = event.trackInfo
     smallWidget.setTextViewText(R.id.widget_small_line_one, info.title)
     smallWidget.setTextViewText(R.id.widget_small_line_two, info.artist)
-    manager.updateAppWidget(widgetsIds, smallWidget)
+    widgetManager.updateAppWidget(widgetsIds, smallWidget)
   }
 
-  private fun updateCover(coverAvailable: CoverChangedEvent) {
-    val manager = AppWidgetManager.getInstance(context)
+  private fun updateCover(context: Context?,
+                          widgetManager: AppWidgetManager,
+                          widgetsIds: IntArray) {
+    if (context == null) {
+      return
+    }
+
     val smallWidget = RemoteViews(context.packageName, R.layout.widget_small)
-    if (coverAvailable.available) {
-      Picasso.with(context)
-          .load(coverAvailable.path)
+    val coverFile = context.coverFile()
+    if (coverFile.exists()) {
+      Picasso.with(context).invalidate(coverFile)
+      Picasso.with(context).load(coverFile)
           .centerCrop()
           .resizeDimen(R.dimen.widget_small_height, R.dimen.widget_small_height)
           .into(smallWidget, R.id.widget_small_image, widgetsIds)
     } else {
       smallWidget.setImageViewResource(R.id.widget_small_image, R.drawable.ic_image_no_cover)
+      widgetManager.updateAppWidget(widgetsIds, smallWidget)
     }
-    manager.updateAppWidget(widgetsIds, smallWidget)
   }
 
-  private fun updatePlayState(state: PlayStateChange) {
-    val manager = AppWidgetManager.getInstance(context)
+  private fun updatePlayState(context: Context?,
+                              manager: AppWidgetManager,
+                              widgetsIds: IntArray,
+                              @State state: String) {
+    if (context == null) {
+      return
+    }
+
     val smallWidget = RemoteViews(context.packageName, R.layout.widget_small)
 
     smallWidget.setImageViewResource(R.id.widget_small_play,
-        if (PlayerState.PLAYING == state.state) R.drawable.ic_action_pause else R.drawable.ic_action_play)
+        if (PlayerState.PLAYING == state) {
+          R.drawable.ic_action_pause
+        } else {
+          R.drawable.ic_action_play
+        })
     manager.updateAppWidget(widgetsIds, smallWidget)
   }
 }

@@ -21,6 +21,6 @@ class UpdateNowPlayingTrack
     val year = node.path("year").textValue()
     val path = node.path("path").textValue()
     model.trackInfo = TrackInfo(artist, title, album, year, path)
-    UpdateWidgets.update(context)
+    UpdateWidgets.updateTrackInfo(context, model.trackInfo)
   }
 }
