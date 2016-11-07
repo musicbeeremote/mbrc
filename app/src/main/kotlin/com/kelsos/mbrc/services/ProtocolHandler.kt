@@ -8,8 +8,8 @@ import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.model.MainDataModel
+import rx.Completable
 import timber.log.Timber
-import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,19 +23,21 @@ constructor(private val bus: RxBus, private val mapper: ObjectMapper, private va
     isHandshakeComplete = false
   }
 
-  fun preProcessIncoming(incoming: String) {
-    try {
-      val replies = incoming.split("\r\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-      for (reply in replies) {
+  fun preProcessIncoming(incoming: String): Completable {
+    return Completable.fromAction {
+      val replies = incoming.split("\r\n".toRegex())
+          .dropLastWhile(String::isEmpty)
+          .toTypedArray()
 
-        Timber.v("message -> %s", reply)
+      replies.forEach {
+        Timber.v("message -> %s", it)
 
-        val node = mapper.readValue(reply, JsonNode::class.java)
+        val node = mapper.readValue(it, JsonNode::class.java)
         val context = node.path("context").textValue()
 
         if (context.contains(Protocol.ClientNotAllowed)) {
           bus.post(MessageEvent(ProtocolEventType.InformClientNotAllowed))
-          return
+          return@fromAction
         }
 
         if (!isHandshakeComplete) {
@@ -54,15 +56,12 @@ constructor(private val bus: RxBus, private val mapper: ObjectMapper, private va
             isHandshakeComplete = true
             bus.post(MessageEvent(ProtocolEventType.HandshakeComplete, true))
           } else {
-            return
+            return@fromAction
           }
         }
 
         bus.post(MessageEvent(context, node.path(Const.DATA)))
       }
-    } catch (e: IOException) {
-      Timber.d(e, "Incoming preprocessor")
-      Timber.d("While processing: %s", incoming)
     }
 
   }

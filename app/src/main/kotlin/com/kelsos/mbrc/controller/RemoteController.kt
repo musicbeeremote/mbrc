@@ -59,8 +59,7 @@ constructor(bus: RxBus, app: Application) : Runnable {
     try {
       command.execute(event)
     } catch (ex: Exception) {
-      Timber.d(ex, "executing command for type: \t%s", event.type)
-      Timber.d("command data: \t%s", event.data)
+      Timber.d(ex, "executing command for type: \t%s", event)
     }
 
   }
