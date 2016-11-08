@@ -16,7 +16,6 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.TrackEntryAdapter
 import com.kelsos.mbrc.adapters.TrackEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.data.library.Track
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
@@ -34,7 +33,6 @@ class BrowseTrackFragment : Fragment(),
   @BindView(R.id.empty_view) lateinit var emptyView: View
   @BindView(R.id.list_empty_title) lateinit var emptyTitle: TextView
 
-  @Inject lateinit var bus: RxBus
   @Inject lateinit var adapter: TrackEntryAdapter
   @Inject lateinit var actionHandler: PopupActionHandler
   @Inject lateinit var presenter: BrowseTrackPresenter
