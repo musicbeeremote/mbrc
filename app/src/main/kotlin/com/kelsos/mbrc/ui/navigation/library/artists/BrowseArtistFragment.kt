@@ -15,7 +15,6 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.data.library.Artist
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.extensions.initLinear
 import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
@@ -35,7 +34,6 @@ class BrowseArtistFragment : Fragment(),
   @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
   @BindView(R.id.list_empty_title) lateinit var emptyTitle: TextView
 
-  @Inject lateinit var bus: RxBus
   @Inject lateinit var adapter: ArtistEntryAdapter
   @Inject lateinit var actionHandler: PopupActionHandler
   @Inject lateinit var presenter: BrowseArtistPresenter

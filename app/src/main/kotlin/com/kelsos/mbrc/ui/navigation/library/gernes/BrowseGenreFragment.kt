@@ -16,7 +16,6 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.GenreEntryAdapter
 import com.kelsos.mbrc.adapters.GenreEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.data.library.Genre
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
@@ -35,7 +34,6 @@ class BrowseGenreFragment : Fragment(),
   @BindView(R.id.list_empty_title) lateinit var emptyTitle: TextView
 
   @Inject lateinit var adapter: GenreEntryAdapter
-  @Inject lateinit var bus: RxBus
   @Inject lateinit var actionHandler: PopupActionHandler
   @Inject lateinit var presenter: BrowseGenrePresenter
 
