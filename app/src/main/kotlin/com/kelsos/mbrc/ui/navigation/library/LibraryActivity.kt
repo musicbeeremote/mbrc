@@ -2,10 +2,13 @@ package com.kelsos.mbrc.ui.navigation.library
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.view.MenuItemCompat
 import android.support.v4.view.ViewPager
+import android.support.v4.view.ViewPager.OnPageChangeListener
 import android.support.v7.widget.SearchView
+import android.support.v7.widget.SearchView.OnQueryTextListener
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
@@ -18,8 +21,12 @@ import com.kelsos.mbrc.ui.navigation.library.search.SearchResultsActivity
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
+import javax.inject.Inject
 
-class LibraryActivity : BaseActivity(), SearchView.OnQueryTextListener, ViewPager.OnPageChangeListener {
+class LibraryActivity : BaseActivity(),
+                        LibraryView,
+                        OnQueryTextListener,
+                        OnPageChangeListener {
 
   @BindView(R.id.search_pager) lateinit var pager: ViewPager
   @BindView(R.id.pager_tab_strip) lateinit var tabs: TabLayout
@@ -28,6 +35,7 @@ class LibraryActivity : BaseActivity(), SearchView.OnQueryTextListener, ViewPage
   private var searchView: MenuItem? = null
   private var pagerAdapter: LibraryPagerAdapter? = null
   private var scope: Scope? = null
+  @Inject lateinit var presenter: LibraryPresenter
 
   override fun onQueryTextSubmit(query: String): Boolean {
     if (!TextUtils.isEmpty(query) && query.trim { it <= ' ' }.isNotEmpty()) {
@@ -46,7 +54,7 @@ class LibraryActivity : BaseActivity(), SearchView.OnQueryTextListener, ViewPage
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this))
+    scope!!.installModules(SmoothieActivityModule(this), LibraryModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_library)
@@ -66,6 +74,13 @@ class LibraryActivity : BaseActivity(), SearchView.OnQueryTextListener, ViewPage
     mSearchView!!.setIconifiedByDefault(true)
     mSearchView!!.setOnQueryTextListener(this)
     return super.onCreateOptionsMenu(menu)
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    if (item?.itemId == R.id.library_refresh_item) {
+      presenter.refresh()
+    }
+    return super.onOptionsItemSelected(item)
   }
 
   public override fun onDestroy() {
@@ -98,8 +113,11 @@ class LibraryActivity : BaseActivity(), SearchView.OnQueryTextListener, ViewPage
     pager.currentItem = savedInstanceState.getInt(PAGER_POSITION, 0)
   }
 
-  companion object {
+  override fun refreshFailed() {
+    Snackbar.make(pager, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
+  }
 
+  companion object {
     private val PAGER_POSITION = "com.kelsos.mbrc.ui.activities.nav.PAGER_POSITION"
   }
 }

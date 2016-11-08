@@ -4,6 +4,7 @@ import com.kelsos.mbrc.data.library.Genre
 import com.kelsos.mbrc.repository.data.LocalGenreDataSource
 import com.kelsos.mbrc.repository.data.RemoteGenreDataSource
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import rx.Completable
 import rx.Single
 import javax.inject.Inject
 
@@ -15,9 +16,13 @@ class GenreRepositoryImpl
   }
 
   override fun getAndSaveRemote(): Single<FlowCursorList<Genre>> {
+    return getRemote().andThen(localDataSource.loadAllCursor().toSingle())
+  }
+
+  override fun getRemote(): Completable {
     localDataSource.deleteAll()
     return remoteDataSource.fetch().doOnNext {
       localDataSource.saveAll(it)
-    }.toCompletable().andThen(localDataSource.loadAllCursor().toSingle())
+    }.toCompletable()
   }
 }
