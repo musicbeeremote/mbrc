@@ -4,10 +4,14 @@ Change Log
 # Versions
 
 ## 1.0.0-alpha.2
-- Full migration to kotlin lang
+- Full migration to kotlin language.
 - Commands are now instantiated on registration.
-- Adds empty view for list without data
--
+- Adds empty view for lists without data.
+- Changes the widget update mechanism to avoid previous issues where the widgets failed to update properly.
+- Migrates cover loading mechanism to a newer API implementation.
+- Migrates lyrics to an newer API implementation.
+- Playlists now work through the no broadcast mechanism.
+- Adds a library refresh actionbar action.
 
 ## 1.0.0-alpha.1
 - Increases minimum supported Android version from 2.3 to 4.1
