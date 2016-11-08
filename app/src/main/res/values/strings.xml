@@ -159,4 +159,5 @@
   <string name="now_playing_search_hint">Search and play a track</string>
   <string name="feedback_device_information"><![CDATA[Include Device & Application Information]]></string>
   <string name="feedback_version_info">\n\nDevice: %1$s %2$s Android(%3$s)\nMusicBee Remote v%4$s</string>
+    <string name="library_actionbar_refresh">Refresh</string>
 </resources>
