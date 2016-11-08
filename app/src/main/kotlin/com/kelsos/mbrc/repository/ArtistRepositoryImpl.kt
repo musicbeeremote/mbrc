@@ -4,6 +4,7 @@ import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.repository.data.LocalArtistDataSource
 import com.kelsos.mbrc.repository.data.RemoteArtistDataSource
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import rx.Completable
 import rx.Single
 import javax.inject.Inject
 
@@ -21,9 +22,13 @@ class ArtistRepositoryImpl
   }
 
   override fun getAndSaveRemote(): Single<FlowCursorList<Artist>> {
+    return getRemote().andThen(localDataSource.loadAllCursor().toSingle())
+  }
+
+  override fun getRemote(): Completable {
     localDataSource.deleteAll()
     return remoteDataSource.fetch().doOnNext {
       localDataSource.saveAll(it)
-    }.toCompletable().andThen(localDataSource.loadAllCursor().toSingle())
+    }.toCompletable()
   }
 }

@@ -4,6 +4,7 @@ import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.repository.data.LocalTrackDataSource
 import com.kelsos.mbrc.repository.data.RemoteTrackDataSource
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import rx.Completable
 import rx.Single
 import javax.inject.Inject
 
@@ -25,9 +26,13 @@ class TrackRepositoryImpl
   }
 
   override fun getAndSaveRemote(): Single<FlowCursorList<Track>> {
+    return getRemote().andThen(localDataSource.loadAllCursor().toSingle())
+  }
+
+  override fun getRemote(): Completable {
     localDataSource.deleteAll()
     return remoteDataSource.fetch().doOnNext {
       localDataSource.saveAll(it)
-    }.toCompletable().andThen(localDataSource.loadAllCursor().toSingle())
+    }.toCompletable()
   }
 }
