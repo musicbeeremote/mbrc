@@ -2,6 +2,7 @@ package com.kelsos.mbrc.helper
 
 import android.widget.SeekBar
 import com.jakewharton.rxrelay.PublishRelay
+import rx.Subscription
 import java.util.concurrent.TimeUnit
 
 class SeekBarThrottler(private val action: (Int) -> Unit) : SeekBar.OnSeekBarChangeListener {
@@ -9,10 +10,13 @@ class SeekBarThrottler(private val action: (Int) -> Unit) : SeekBar.OnSeekBarCha
   var fromUser: Boolean = false
     private set
   private val progressRelay = PublishRelay.create<Int>()
+  private var subscription: Subscription? = null
 
   init {
     this.fromUser = false
-    progressRelay.throttleLast(600, TimeUnit.MILLISECONDS).distinct().subscribe { this.onProgressChange(it) }
+    subscription = progressRelay.throttleLast(600, TimeUnit.MILLISECONDS)
+        .distinct()
+        .subscribe { this.onProgressChange(it) }
   }
 
   override fun onProgressChanged(seekBar: SeekBar, value: Int, fromUser: Boolean) {
@@ -31,5 +35,9 @@ class SeekBarThrottler(private val action: (Int) -> Unit) : SeekBar.OnSeekBarCha
 
   private fun onProgressChange(change: Int) {
     action.invoke(change)
+  }
+
+  fun terminate() {
+    subscription?.unsubscribe()
   }
 }

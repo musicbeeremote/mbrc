@@ -32,7 +32,7 @@ class ProgressSeekerHelper
     subscription?.unsubscribe()
   }
 
-  fun setProgressListener(progressUpdate: ProgressUpdate) {
+  fun setProgressListener(progressUpdate: ProgressUpdate?) {
     this.progressUpdate = progressUpdate
   }
 
