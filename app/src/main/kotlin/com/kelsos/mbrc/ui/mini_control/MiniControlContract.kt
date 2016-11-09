@@ -15,4 +15,7 @@ interface MiniControlView : BaseView {
 
 interface MiniControlPresenter : Presenter<MiniControlView> {
   fun load()
+  fun next()
+  fun previous()
+  fun playPause()
 }
