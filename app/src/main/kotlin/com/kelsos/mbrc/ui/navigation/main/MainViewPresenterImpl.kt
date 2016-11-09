@@ -55,6 +55,7 @@ class MainViewPresenterImpl
 
   override fun load() {
     checkIfAttached()
+    view?.updateCover()
     view?.updateLfmStatus(model.lfmStatus)
     view?.updateScrobbleStatus(model.isScrobblingEnabled)
     view?.updateRepeat(model.repeat)
@@ -63,7 +64,6 @@ class MainViewPresenterImpl
     view?.updatePlayState(model.playState)
     view?.updateTrackInfo(model.trackInfo)
     view?.updateConnection(connectionModel.connection)
-    view?.updateCover()
   }
 
   override fun requestNowPlayingPosition() {

@@ -117,11 +117,6 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     scope = Toothpick.openScopes(application, PRESENTER_SCOPE, this)
     scope.installModules(SmoothieActivityModule(this), MainModule())
     Toothpick.inject(this, scope)
-    volumeChangeListener = SeekBarThrottler { presenter.changeVolume(it) }
-    positionChangeListener = SeekBarThrottler { presenter.seek(it) }
-    volumeBar.setOnSeekBarChangeListener(volumeChangeListener)
-    progressBar.setOnSeekBarChangeListener(positionChangeListener)
-    progressHelper.setProgressListener(this)
     presenter.attach(this)
     presenter.load()
   }
@@ -129,6 +124,11 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   public override fun onStart() {
     super.onStart()
     presenter.attach(this)
+    progressHelper.setProgressListener(this)
+    volumeChangeListener = SeekBarThrottler { presenter.changeVolume(it) }
+    positionChangeListener = SeekBarThrottler { presenter.seek(it) }
+    volumeBar.setOnSeekBarChangeListener(volumeChangeListener)
+    progressBar.setOnSeekBarChangeListener(positionChangeListener)
     artistLabel.isSelected = true
     titleLabel.isSelected = true
     albumLabel.isSelected = true
@@ -162,6 +162,13 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     super.onStop()
     presenter.detach()
     bus.unregister(this)
+    progressHelper.setProgressListener(null)
+    volumeChangeListener?.terminate()
+    volumeChangeListener = null
+    positionChangeListener?.terminate()
+    positionChangeListener = null
+    volumeBar.setOnSeekBarChangeListener(null)
+    progressBar.setOnSeekBarChangeListener(null)
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -243,7 +250,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
   override fun updateVolume(volume: Int, mute: Boolean) {
 
-    if (!volumeChangeListener!!.fromUser) {
+    if (volumeChangeListener?.fromUser ?: false) {
       volumeBar.progress = volume
     }
 
