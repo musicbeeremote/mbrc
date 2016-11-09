@@ -33,36 +33,6 @@
   public static final android.os.Parcelable$Creator *;
 }
 
-###Action bar sherlock
--keep class android.support.v4.** { *; }
--keep class android.support.v4.app.** { *; }
--keep interface android.support.v4.app.** { *; }
--keep class com.actionbarsherlock.** { *; }
--keep interface com.actionbarsherlock.** { *; }
--keepattributes *Annotation*
-
-# Needed for RoboGuice, etc
--keepattributes SourceFile,LineNumberTable,RuntimeVisibleAnnotations,RuntimeVisibleParameterAnnotations,RuntimeVisibleFieldAnnotations
--keep public class com.google.inject.Inject
--keep,allowobfuscation public class com.google.inject.name.Named
--keep,allowobfuscation public class * implements com.google.inject.Provider
--keep,allowobfuscation @com.google.inject.Provides class *
--keep,allowobfuscation @com.google.inject.Provides class *
--keep,allowobfuscation @com.google.inject.ProvidedBy class *
--keep,allowobfuscation @com.google.inject.Singleton class *
--keep,allowobfuscation @com.google.inject.BindingAnnotation class *
--keep,allowobfuscation @com.google.inject.ScopeAnnotation class *
-
--keep class com.google.inject.Binder
-
--keepclassmembers class com.google.inject.Inject {
-    public boolean optional();
-}
-
--keepclassmembers class * {
-    @com.google.inject.Inject <initLinear>(...);
-}
-
 -keep public class * extends android.view.View {
     public <initLinear>(android.content.Context);
     public <initLinear>(android.content.Context, android.util.AttributeSet);
@@ -70,47 +40,110 @@
     public void set*(...);
 }
 
--keep class com.google.inject.** { *; }
+
 -keep class javax.inject.** { *; }
 -keep class javax.annotation.** { *; }
--keep class roboguice.** { *; }
--keep class android.content.Context.** { *; }
 
-#### Otto
--keepclassmembers class ** {
-    @com.squareup.otto.Subscribe public *;
-    @com.squareup.otto.Produce public *;
-}
-
--keep public class com.squareup.**
--keep public class * implements com.kelsos.mbrc.interfaces.ICommand
-
--keepclassmembers class * {
- public <initLinear>(android.content.Context);
-}
-
--keep class com.kelsos.**
 -assumenosideeffects class android.util.Log {
     public static *** d(...);
     public static *** v(...);
 }
 
--dontnote org.xml.sax.**
--dontnote org.w3c.dom.**
--dontnote javax.xml.transform.**
--dontnote javax.xml.parsers.**
--dontwarn roboguice.test.**
--dontwarn roboguice.activity.RoboMapActivity
--dontwarn org.codehaus.jackson.**
 
--keep class butterknife.** { *; }
--dontwarn butterknife.internal.**
--keep class **$$ViewInjector { *; }
+# Butterknife
+# Retain generated class which implement Unbinder.
+-keep public class * implements butterknife.Unbinder { public <init>(...); }
 
--keepclasseswithmembernames class * {
-    @butterknife.* <fields>;
+# Prevent obfuscation of types which use ButterKnife annotations since the simple name
+# is used to reflectively look up the generated ViewBinding.
+-keep class butterknife.*
+-keepclasseswithmembernames class * { @butterknife.* <methods>; }
+-keepclasseswithmembernames class * { @butterknife.* <fields>; }
+
+
+# Proguard configuration for Jackson 2.x (fasterxml package instead of codehaus package)
+
+-keep class com.fasterxml.jackson.databind.ObjectMapper {
+    public <methods>;
+    protected <methods>;
+}
+-keep class com.fasterxml.jackson.databind.ObjectWriter {
+    public ** writeValueAsString(**);
 }
 
--keepclasseswithmembernames class * {
-    @butterknife.* <methods>;
+## Retrolambda specific rules ##
+
+# as per official recommendation: https://github.com/evant/gradle-retrolambda#proguard
+-dontwarn java.lang.invoke.*
+
+
+# rxjava
+-keep class rx.schedulers.Schedulers {
+    public static <methods>;
 }
+-keep class rx.schedulers.ImmediateScheduler {
+    public <methods>;
+}
+-keep class rx.schedulers.TestScheduler {
+    public <methods>;
+}
+-keep class rx.schedulers.Schedulers {
+    public static ** test();
+}
+-keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
+    long producerIndex;
+    long consumerIndex;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
+    long producerNode;
+    long consumerNode;
+}
+
+
+#Toothpick
+# Do not obfuscate annotation scoped classes
+-keepnames @javax.inject.Singleton class *
+# Add any custom defined @Scope (e.g. @Singleton) annotations here
+# because proguard does not allow annotation inheritance rules
+
+# Do not obfuscate classes with Injected Constructors
+-keepclasseswithmembernames class * {
+    @javax.inject.Inject <init>(...);
+}
+
+# Do not obfuscate classes with Injected Fields
+-keepclasseswithmembernames class * {
+    @javax.inject.Inject <fields>;
+}
+
+# Do not obfuscate classes with Injected Methods
+-keepclasseswithmembernames class * {
+    @javax.inject.Inject <methods>;
+}
+
+
+# DBFlow
+-keep class * extends com.raizlabs.android.dbflow.config.DatabaseHolder { *; }
+-keep class com.raizlabs.android.dbflow.config.GeneratedDatabaseHolder
+-keep class * extends com.raizlabs.android.dbflow.config.BaseDatabaseDefinition { *; }
+
+## Square Picasso specific rules ##
+## https://square.github.io/picasso/ ##
+
+-dontwarn com.squareup.okhttp.**
+
+
+# AppCompat v7
+-keep public class android.support.v7.widget.** { *; }
+-keep public class android.support.v7.internal.widget.** { *; }
+-keep public class android.support.v7.internal.view.menu.** { *; }
+
+-keep public class * extends android.support.v4.view.ActionProvider {
+    public <init>(android.content.Context);
+}
+
+# Support Design
+-dontwarn android.support.design.**
+-keep class android.support.design.** { *; }
+-keep interface android.support.design.** { *; }
+-keep public class android.support.design.R$* { *; }
