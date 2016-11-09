@@ -10,32 +10,35 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.SearchResultAdapter
 import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.data.library.Genre
 import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.ui.activities.FontActivity
+import com.kelsos.mbrc.ui.navigation.library.search.SearchResultAdapter.OnSearchItemSelected
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class SearchResultsActivity : FontActivity(), SearchResultAdapter.OnSearchItemSelected {
+class SearchResultsActivity : FontActivity(),
+                              SearchResultsView,
+                              OnSearchItemSelected {
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
   @BindView(R.id.search_results_recycler) lateinit var searchResultsRecycler: EmptyRecyclerView
   @BindView(R.id.empty_view_text) lateinit var emptyViewText: TextView
   @BindView(R.id.empty_view) lateinit var emptyView: LinearLayout
 
   @Inject lateinit var adapter: SearchResultAdapter
+  @Inject lateinit var presenter: SearchResultsPresenter
   @Inject lateinit var actionHandler: PopupActionHandler
   private var scope: Scope? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this))
+    scope!!.installModules(SmoothieActivityModule(this), SearchResultsModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_search_results)
@@ -43,25 +46,39 @@ class SearchResultsActivity : FontActivity(), SearchResultAdapter.OnSearchItemSe
 
     val query = intent.getStringExtra(QUERY)
 
+    presenter.attach(this)
+
     if (TextUtils.isEmpty(query)) {
       finish()
     } else {
-      adapter.setQuery(query)
+      presenter.search(query)
     }
 
     setSupportActionBar(toolbar)
-    val actionBar = supportActionBar
-    if (actionBar != null) {
-      actionBar.setHomeButtonEnabled(true)
-      actionBar.setDisplayHomeAsUpEnabled(true)
-      actionBar.title = query
-    }
+    supportActionBar?.setHomeButtonEnabled(true)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    supportActionBar?.title = query
 
     searchResultsRecycler.adapter = adapter
     searchResultsRecycler.emptyView = emptyView
     searchResultsRecycler.layoutManager = LinearLayoutManager(this)
     adapter.setOnSearchItemSelectedListener(this)
     emptyViewText.setText(R.string.no_results_found)
+
+  }
+
+  override fun update(searchResults: SearchResults) {
+    adapter.update(searchResults)
+  }
+
+  override fun onStart() {
+    super.onStart()
+    presenter.attach(this)
+  }
+
+  override fun onStop() {
+    super.onStop()
+    presenter.detach()
   }
 
   override fun onDestroy() {
