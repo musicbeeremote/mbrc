@@ -17,11 +17,7 @@ import butterknife.OnClick
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.PlayerState.State
-import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.domain.TrackInfo
-import com.kelsos.mbrc.events.MessageEvent
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.extensions.coverFile
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.ui.navigation.main.MainActivity
@@ -36,12 +32,7 @@ class MiniControlFragment : Fragment(), MiniControlView {
   @BindView(R.id.mc_track_title) lateinit var trackTitle: TextView
   @BindView(R.id.mc_play_pause) lateinit var playPause: ImageButton
 
-  @Inject lateinit var bus: RxBus
   @Inject lateinit var presenter: MiniControlPresenter
-
-  private fun post(action: String) {
-    bus.post(MessageEvent.action(UserAction.create(action)))
-  }
 
   @OnClick(R.id.mini_control)
   internal fun onControlClick() {
@@ -52,18 +43,17 @@ class MiniControlFragment : Fragment(), MiniControlView {
 
   @OnClick(R.id.mc_next_track)
   internal fun onNextClick() {
-    val playerNext = Protocol.PlayerNext
-    post(playerNext)
+    presenter.next()
   }
 
   @OnClick(R.id.mc_play_pause)
   internal fun onPlayClick() {
-    post(Protocol.PlayerPlayPause)
+    presenter.playPause()
   }
 
   @OnClick(R.id.mc_prev_track)
   internal fun onPreviousClick() {
-    post(Protocol.PlayerPrevious)
+    presenter.previous()
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,18 +69,22 @@ class MiniControlFragment : Fragment(), MiniControlView {
     return view
   }
 
-  override fun onPause() {
-    super.onPause()
-    bus.unregister(this)
-  }
-
-  override fun onResume() {
-    super.onResume()
+  override fun onStart() {
+    super.onStart()
     presenter.attach(this)
     presenter.load()
   }
 
+  override fun onStop() {
+    super.onStop()
+    presenter.detach()
+  }
+
   override fun updateCover() {
+    if (activity == null) {
+      return
+    }
+
     val file = activity.coverFile()
 
     if (file.exists()) {
