@@ -13,8 +13,6 @@ class AlbumRepositoryImpl
                     private val remoteDataSource: RemoteAlbumDataSource) :
     AlbumRepository {
 
-
-
   override fun getAlbumsByArtist(artist: String): Single<FlowCursorList<Album>> {
     return localDataSource.getAlbumsByArtist(artist)
   }
@@ -32,5 +30,9 @@ class AlbumRepositoryImpl
     return remoteDataSource.fetch().doOnNext {
       localDataSource.saveAll(it)
     }.toCompletable()
+  }
+
+  override fun search(term: String): Single<FlowCursorList<Album>> {
+    return localDataSource.search(term)
   }
 }

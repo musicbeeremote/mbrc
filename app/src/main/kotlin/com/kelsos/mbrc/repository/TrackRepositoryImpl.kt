@@ -35,4 +35,8 @@ class TrackRepositoryImpl
       localDataSource.saveAll(it)
     }.toCompletable()
   }
+
+  override fun search(term: String): Single<FlowCursorList<Track>> {
+    return localDataSource.search(term)
+  }
 }

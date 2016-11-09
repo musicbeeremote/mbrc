@@ -2,17 +2,22 @@ package com.kelsos.mbrc.repository.data
 
 import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.data.NowPlaying_Table
+import com.kelsos.mbrc.data.NowPlaying_Table.artist
+import com.kelsos.mbrc.data.NowPlaying_Table.title
 import com.raizlabs.android.dbflow.kotlinextensions.database
 import com.raizlabs.android.dbflow.kotlinextensions.delete
 import com.raizlabs.android.dbflow.kotlinextensions.from
 import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
+import com.raizlabs.android.dbflow.kotlinextensions.or
 import com.raizlabs.android.dbflow.kotlinextensions.orderBy
 import com.raizlabs.android.dbflow.kotlinextensions.select
+import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.OrderBy
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import rx.Emitter
 import rx.Observable
+import rx.Single
 import javax.inject.Inject
 
 class LocalNowPlayingDataSource
@@ -39,5 +44,14 @@ class LocalNowPlayingDataSource
       it.onNext(cursor)
       it.onCompleted()
     }, Emitter.BackpressureMode.LATEST)
+  }
+
+  override fun search(term: String): Single<FlowCursorList<NowPlaying>> {
+    return Single.create<FlowCursorList<NowPlaying>> {
+      val searchTerm = "%$term%"
+      val modelQueriable = (select from NowPlaying::class where title.like(searchTerm) or artist.like(searchTerm))
+      val cursor = FlowCursorList.Builder(NowPlaying::class.java).modelQueriable(modelQueriable).build()
+      it.onSuccess(cursor)
+    }
   }
 }

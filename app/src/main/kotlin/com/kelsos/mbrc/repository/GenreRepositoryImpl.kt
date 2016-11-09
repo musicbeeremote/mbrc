@@ -25,4 +25,8 @@ class GenreRepositoryImpl
       localDataSource.saveAll(it)
     }.toCompletable()
   }
+
+  override fun search(term: String): Single<FlowCursorList<Genre>> {
+    return localDataSource.search(term)
+  }
 }

@@ -25,4 +25,8 @@ class NowPlayingRepositoryImpl
       localDataSource.saveAll(it)
     }.toCompletable()
   }
+
+  override fun search(term: String): Single<FlowCursorList<NowPlaying>> {
+    return localDataSource.search(term)
+  }
 }

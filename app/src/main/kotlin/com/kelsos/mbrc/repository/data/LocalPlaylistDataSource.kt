@@ -1,15 +1,18 @@
 package com.kelsos.mbrc.repository.data
 
 import com.kelsos.mbrc.data.Playlist
+import com.kelsos.mbrc.data.Playlist_Table.name
 import com.raizlabs.android.dbflow.kotlinextensions.database
 import com.raizlabs.android.dbflow.kotlinextensions.delete
 import com.raizlabs.android.dbflow.kotlinextensions.from
 import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.kotlinextensions.select
+import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import rx.Emitter
 import rx.Observable
+import rx.Single
 import javax.inject.Inject
 
 class LocalPlaylistDataSource
@@ -35,5 +38,13 @@ class LocalPlaylistDataSource
       it.onNext(cursor)
       it.onCompleted()
     }, Emitter.BackpressureMode.LATEST)
+  }
+
+  override fun search(term: String): Single<FlowCursorList<Playlist>> {
+    return Single.create<FlowCursorList<Playlist>> {
+      val modelQueriable = (select from Playlist::class where name.like("%$term%"))
+      val cursor = FlowCursorList.Builder(Playlist::class.java).modelQueriable(modelQueriable).build()
+      it.onSuccess(cursor)
+    }
   }
 }

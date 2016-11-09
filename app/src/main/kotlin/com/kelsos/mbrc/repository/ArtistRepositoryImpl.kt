@@ -31,4 +31,8 @@ class ArtistRepositoryImpl
       localDataSource.saveAll(it)
     }.toCompletable()
   }
+
+  override fun search(term: String): Single<FlowCursorList<Artist>> {
+    return localDataSource.search(term)
+  }
 }

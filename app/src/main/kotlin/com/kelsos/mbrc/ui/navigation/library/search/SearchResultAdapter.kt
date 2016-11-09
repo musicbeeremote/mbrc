@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.adapters
+package com.kelsos.mbrc.ui.navigation.library.search
 
 import android.app.Activity
 import android.support.annotation.MenuRes
@@ -14,14 +14,16 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.adapters.SectionedRecyclerViewAdapter
 import com.kelsos.mbrc.annotations.Search.SECTION_ALBUM
 import com.kelsos.mbrc.annotations.Search.SECTION_ARTIST
 import com.kelsos.mbrc.annotations.Search.SECTION_GENRE
 import com.kelsos.mbrc.annotations.Search.SECTION_TRACK
 import com.kelsos.mbrc.annotations.Search.Section
-import com.kelsos.mbrc.data.library.*
-import com.raizlabs.android.dbflow.list.FlowQueryList
-import com.raizlabs.android.dbflow.sql.language.SQLite
+import com.kelsos.mbrc.data.library.Album
+import com.kelsos.mbrc.data.library.Artist
+import com.kelsos.mbrc.data.library.Genre
+import com.kelsos.mbrc.data.library.Track
 import javax.inject.Inject
 
 class SearchResultAdapter
@@ -29,11 +31,7 @@ class SearchResultAdapter
 constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapter.SearchViewHolder>() {
 
   private val inflater: LayoutInflater
-
-  private var genreList: FlowQueryList<Genre>? = null
-  private var artistList: FlowQueryList<Artist>? = null
-  private var albumList: FlowQueryList<Album>? = null
-  private var trackList: FlowQueryList<Track>? = null
+  private var data: SearchResults? = null
 
   private var onSearchItemSelectedListener: OnSearchItemSelected? = null
 
@@ -45,27 +43,13 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
     get() = 4
 
   override fun getItemCount(@Section section: Int): Int {
-
-    if (section == SECTION_GENRE) {
-      return if (genreList != null) genreList!!.size else 0
-    } else if (section == SECTION_ARTIST) {
-      return if (artistList != null) artistList!!.size else 0
-    } else if (section == SECTION_ALBUM) {
-      return if (albumList != null) albumList!!.size else 0
-    } else if (section == SECTION_TRACK) {
-      return if (trackList != null) trackList!!.size else 0
+    return when (section) {
+      SECTION_GENRE -> data?.genreList?.count ?: 0
+      SECTION_ARTIST -> data?.artistList?.count ?: 0
+      SECTION_ALBUM -> data?.albumList?.count ?: 0
+      SECTION_TRACK -> data?.trackList?.count ?: 0
+      else -> 0
     }
-
-    return 0
-  }
-
-  fun setQuery(query: String) {
-    val like = "%$query%"
-    genreList = SQLite.select().from<Genre>(Genre::class.java).where(Genre_Table.genre.like(like)).flowQueryList()
-    artistList = SQLite.select().from<Artist>(Artist::class.java).where(Artist_Table.artist.like(like)).flowQueryList()
-    albumList = SQLite.select().from<Album>(Album::class.java).where(Album_Table.album.like(like)).flowQueryList()
-    trackList = SQLite.select().from<Track>(Track::class.java).where(Track_Table.title.like(like)).flowQueryList()
-    notifyDataSetChanged()
   }
 
   override fun onBindHeaderViewHolder(holder: SearchViewHolder, @Section section: Int) {
@@ -85,7 +69,7 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
                                 absolutePosition: Int) {
     when (section) {
       SECTION_ALBUM -> {
-        val album = albumList!![relativePosition]
+        val album = data?.albumList!!.getItem(relativePosition.toLong())
         holder.lineOne.text = album.album
         holder.lineTwo?.text = album.artist
         holder.uiItemContextIndicator?.setOnClickListener { onContextClick(holder, album) }
@@ -94,7 +78,7 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
         }
       }
       SECTION_ARTIST -> {
-        val artist = artistList!![relativePosition]
+        val artist = data?.artistList!!.getItem(relativePosition.toLong())
         holder.lineOne.text = artist.artist
         holder.uiItemContextIndicator?.setOnClickListener { onContextClick(holder, artist) }
         holder.itemView.setOnClickListener {
@@ -102,7 +86,7 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
         }
       }
       SECTION_GENRE -> {
-        val genre = genreList!![relativePosition]
+        val genre = data?.genreList!!.getItem(relativePosition.toLong())
         holder.lineOne.text = genre.genre
         holder.uiItemContextIndicator?.setOnClickListener { onContextClick(holder, genre) }
         holder.itemView.setOnClickListener {
@@ -110,7 +94,7 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
         }
       }
       SECTION_TRACK -> {
-        val track = trackList!![relativePosition]
+        val track = data?.trackList!!.getItem(relativePosition.toLong())
         holder.lineOne.text = track.title
         holder.lineTwo?.text = track.artist
         holder.uiItemContextIndicator?.setOnClickListener { onContextClick(holder, track) }
@@ -216,6 +200,11 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
 
     private val VIEW_TYPE_DUAL = 1
     private val VIEW_TYPE_SINGLE = 2
+  }
+
+  fun update(searchResults: SearchResults) {
+    this.data = searchResults
+    notifyDataSetChanged()
   }
 }
 
