@@ -18,14 +18,21 @@ class LibraryPresenterImpl
                     private val albumRepository: AlbumRepository,
                     private val trackRepository: TrackRepository,
                     @Named("io") private val ioScheduler: Scheduler,
+                    @Named("main") private val mainScheduler: Scheduler,
                     private val bus: RxBus) : LibraryPresenter, BasePresenter<LibraryView>() {
 
   override fun refresh() {
+    view?.showRefreshing()
+
     addSubcription(genreRepository.getRemote()
         .andThen(artistRepository.getRemote())
         .andThen(albumRepository.getRemote())
         .andThen(trackRepository.getRemote())
         .subscribeOn(ioScheduler)
+        .observeOn(mainScheduler)
+        .doOnTerminate {
+          view?.hideRefreshing()
+        }
         .subscribe({
           bus.post(LibraryRefreshCompleteEvent())
           Timber.v("Library refresh was complete")

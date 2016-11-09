@@ -6,6 +6,8 @@ import com.kelsos.mbrc.mvp.Presenter
 
 interface LibraryView : BaseView {
   fun refreshFailed()
+  fun showRefreshing()
+  fun hideRefreshing()
 }
 
 interface LibraryPresenter : Presenter<LibraryView> {
