@@ -14,6 +14,7 @@ import android.view.Menu
 import android.view.MenuItem
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.LibraryPagerAdapter
 import com.kelsos.mbrc.ui.activities.BaseActivity
@@ -36,6 +37,8 @@ class LibraryActivity : BaseActivity(),
   private var pagerAdapter: LibraryPagerAdapter? = null
   private var scope: Scope? = null
   @Inject lateinit var presenter: LibraryPresenter
+
+  private var refreshDialog: MaterialDialog? = null
 
   override fun onQueryTextSubmit(query: String): Boolean {
     if (!TextUtils.isEmpty(query) && query.trim { it <= ' ' }.isNotEmpty()) {
@@ -89,6 +92,16 @@ class LibraryActivity : BaseActivity(),
     pagerAdapter = null
   }
 
+  override fun onStart() {
+    super.onStart()
+    presenter.attach(this)
+  }
+
+  override fun onStop() {
+    super.onStop()
+    presenter.detach()
+  }
+
   override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
 
   }
@@ -115,6 +128,20 @@ class LibraryActivity : BaseActivity(),
 
   override fun refreshFailed() {
     Snackbar.make(pager, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
+  }
+
+  override fun showRefreshing() {
+    refreshDialog = MaterialDialog.Builder(this)
+        .content(R.string.refreshing_library_data)
+        .progress(true, 100, false)
+        .cancelable(false)
+        .build()
+
+    refreshDialog?.show()
+  }
+
+  override fun hideRefreshing() {
+    refreshDialog?.dismiss()
   }
 
   companion object {
