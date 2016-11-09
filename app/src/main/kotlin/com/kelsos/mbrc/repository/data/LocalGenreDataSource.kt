@@ -1,11 +1,18 @@
 package com.kelsos.mbrc.repository.data
 
 import com.kelsos.mbrc.data.library.Genre
-import com.raizlabs.android.dbflow.kotlinextensions.*
+import com.kelsos.mbrc.data.library.Genre_Table.genre
+import com.raizlabs.android.dbflow.kotlinextensions.database
+import com.raizlabs.android.dbflow.kotlinextensions.delete
+import com.raizlabs.android.dbflow.kotlinextensions.from
+import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
+import com.raizlabs.android.dbflow.kotlinextensions.select
+import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import rx.Emitter
 import rx.Observable
+import rx.Single
 import javax.inject.Inject
 
 class LocalGenreDataSource
@@ -32,5 +39,13 @@ class LocalGenreDataSource
       it.onCompleted()
     }, Emitter.BackpressureMode.LATEST)
 
+  }
+
+  override fun search(term: String): Single<FlowCursorList<Genre>> {
+    return Single.create<FlowCursorList<Genre>> {
+      val modelQueriable = (select from Genre::class where genre.like("%$term%"))
+      val cursor = FlowCursorList.Builder(Genre::class.java).modelQueriable(modelQueriable).build()
+      it.onSuccess(cursor)
+    }
   }
 }

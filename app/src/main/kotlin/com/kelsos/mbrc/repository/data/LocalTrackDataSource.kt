@@ -3,6 +3,7 @@ package com.kelsos.mbrc.repository.data
 
 import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.data.library.Track_Table
+import com.kelsos.mbrc.data.library.Track_Table.title
 import com.raizlabs.android.dbflow.kotlinextensions.and
 import com.raizlabs.android.dbflow.kotlinextensions.database
 import com.raizlabs.android.dbflow.kotlinextensions.delete
@@ -70,6 +71,14 @@ class LocalTrackDataSource
           .orderBy(Track_Table.disc, true)
           .orderBy(Track_Table.trackno, true)
 
+      val cursor = FlowCursorList.Builder<Track>(Track::class.java).modelQueriable(modelQueriable).build()
+      it.onSuccess(cursor)
+    }
+  }
+
+  override fun search(term: String): Single<FlowCursorList<Track>> {
+    return Single.create<FlowCursorList<Track>> {
+      val modelQueriable = (select from Track::class where title.like("%$term%"))
       val cursor = FlowCursorList.Builder<Track>(Track::class.java).modelQueriable(modelQueriable).build()
       it.onSuccess(cursor)
     }
