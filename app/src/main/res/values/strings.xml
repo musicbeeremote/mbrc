@@ -167,4 +167,5 @@
     <string name="feedback_version_info">\n\nDevice: %1$s %2$s Android(%3$s)\nMusicBee Remote v%4$s</string>
     <string name="library_actionbar_refresh">Refresh</string>
     <string name="refreshing_library_data">Refreshing library data</string>
+    <string name="feedback_logs">Include Logs</string>
 </resources>
