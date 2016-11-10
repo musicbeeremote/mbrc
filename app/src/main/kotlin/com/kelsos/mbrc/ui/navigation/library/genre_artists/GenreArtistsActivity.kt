@@ -46,7 +46,7 @@ class GenreArtistsActivity : FontActivity(),
 
     ButterKnife.bind(this)
 
-    genre = intent?.extras?.getString(GENRE_NAME) ?: null
+    genre = intent?.extras?.getString(GENRE_NAME)
 
     if (genre == null) {
       finish()

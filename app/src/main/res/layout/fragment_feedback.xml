@@ -1,52 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.kelsos.mbrc.ui.activities.HelpFeedbackActivity">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                tools:context="com.kelsos.mbrc.ui.help_feedback.HelpFeedbackActivity">
 
-  <TextView
-      android:id="@+id/feedback_header"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_centerHorizontal="true"
-      android:text="@string/feedback_title"
-      android:textSize="@dimen/text_subhead_size" />
+    <TextView
+        android:id="@+id/feedback_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="@string/feedback_title"
+        android:textSize="@dimen/text_subhead_size" />
 
-  <EditText
-      android:id="@+id/feedback_content"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_below="@+id/feedback_header"
-      android:gravity="top|start"
-      android:hint="@string/feedback_hint"
-      android:inputType="textMultiLine"
-      android:layout_above="@+id/include_device_info" />
+    <Button
+        android:id="@+id/feedback_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/feedback_button_text" />
 
-  <Button
-      android:id="@+id/feedback_button"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_alignParentBottom="true"
-      android:text="@string/feedback_button_text" />
+    <CheckBox
+        android:text="@string/feedback_device_information"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/include_device_info"
+        android:layout_above="@+id/feedback_button"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
-  <CheckBox
-      android:text="@string/feedback_device_information"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:id="@+id/include_device_info"
-      android:layout_above="@+id/feedback_button"
-      android:layout_alignParentRight="true"
-      android:layout_alignParentEnd="true"
-      android:layout_alignParentLeft="true"
-      android:layout_alignParentStart="true" />
+    <CheckBox
+        android:enabled="false"
+        android:text="@string/feedback_logs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/include_log_info"
+        android:layout_above="@+id/include_device_info"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:id="@+id/feedback_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top|start"
+        android:hint="@string/feedback_hint"
+        android:inputType="textMultiLine"
+        android:layout_below="@+id/feedback_header"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/include_log_info"/>
 
 </RelativeLayout>
 
