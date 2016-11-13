@@ -10,7 +10,7 @@
 
   <ImageView
     android:id="@+id/main_album_cover_image_view"
-    android:layout_width="384dp"
+    android:layout_width="0dp"
     android:layout_height="0dp"
     android:layout_marginBottom="8dp"
     android:adjustViewBounds="false"
@@ -69,7 +69,7 @@
 
   <SeekBar
     android:id="@+id/main_track_progress_seeker"
-    android:layout_width="274dp"
+    android:layout_width="0dp"
     android:layout_height="17dp"
     android:layout_centerVertical="true"
     android:layout_gravity="top"
@@ -153,9 +153,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_centerVertical="true"
-    android:layout_marginEnd="8dp"
     android:layout_marginLeft="16dp"
-    android:layout_marginRight="8dp"
     android:layout_marginStart="16dp"
     android:background="?attr/selectableItemBackgroundBorderless"
     android:contentDescription="@string/main_button_mute_description"
@@ -164,12 +162,12 @@
     android:tint="@color/button_dark"
     app:layout_constraintBottom_toTopOf="@+id/main_repeat_button"
     app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintRight_toLeftOf="@+id/main_volume_seeker"
-    tools:ignore="RtlHardcoded,RtlSymmetry"/>
+    tools:ignore="RtlHardcoded,RtlSymmetry"
+    />
 
   <SeekBar
     android:id="@+id/main_volume_seeker"
-    android:layout_width="304dp"
+    android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_alignParentTop="true"
     android:layout_centerHorizontal="true"
@@ -177,7 +175,9 @@
     android:layout_centerVertical="true"
     android:layout_marginBottom="8dp"
     android:layout_marginEnd="16dp"
+    android:layout_marginLeft="8dp"
     android:layout_marginRight="16dp"
+    android:layout_marginStart="8dp"
     android:layout_toEndOf="@+id/main_mute_button"
     android:layout_toRightOf="@+id/main_mute_button"
     android:gravity="center"
@@ -191,6 +191,7 @@
     android:secondaryProgress="0"
     android:thumbTint="@color/primary_dark"
     app:layout_constraintBottom_toTopOf="@+id/main_button_play_pause"
+    app:layout_constraintLeft_toRightOf="@+id/main_mute_button"
     app:layout_constraintRight_toRightOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/main_label_album"
     app:layout_constraintVertical_bias="0.66"/>
