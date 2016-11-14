@@ -8,11 +8,16 @@
   android:orientation="vertical"
   app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-  <ImageView
+  <com.kelsos.mbrc.ui.widgets.SquareImageView
     android:id="@+id/main_album_cover_image_view"
     android:layout_width="0dp"
     android:layout_height="0dp"
     android:layout_marginBottom="8dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="16dp"
     android:adjustViewBounds="false"
     android:contentDescription="@string/description_album_cover"
     android:scaleType="centerCrop"
@@ -20,15 +25,16 @@
     app:layout_constraintBottom_toTopOf="@+id/main_track_progress_seeker"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintRight_toRightOf="parent"
-    app:layout_constraintTop_toTopOf="parent"/>
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.7"/>
 
   <TextView
     android:id="@+id/main_track_progress_current"
     fontPath="fonts/roboto_medium.ttf"
     android:layout_width="wrap_content"
     android:layout_height="17dp"
-    android:layout_marginLeft="8dp"
-    android:layout_marginStart="8dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginStart="16dp"
     android:paddingEnd="@dimen/small_margin"
     android:paddingLeft="@dimen/small_margin"
     android:paddingRight="@dimen/small_margin"
@@ -51,8 +57,8 @@
     android:layout_height="17dp"
     android:layout_alignParentEnd="true"
     android:layout_alignParentRight="true"
-    android:layout_marginEnd="8dp"
-    android:layout_marginRight="8dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginRight="16dp"
     android:paddingEnd="@dimen/small_margin"
     android:paddingLeft="@dimen/small_margin"
     android:paddingRight="@dimen/small_margin"
@@ -196,45 +202,42 @@
     app:layout_constraintTop_toBottomOf="@+id/main_label_album"
     app:layout_constraintVertical_bias="0.66"/>
 
-  <ImageButton
+  <com.kelsos.mbrc.ui.widgets.SquareImageButton
     android:id="@+id/main_repeat_button"
-    android:layout_width="64dp"
-    android:layout_height="64dp"
+    android:layout_width="56dp"
+    android:layout_height="0dp"
     android:layout_gravity="center_vertical"
-    android:layout_marginBottom="16dp"
     android:layout_marginLeft="16dp"
     android:layout_marginStart="16dp"
-    android:layout_weight="0.7"
     android:background="?attr/selectableItemBackgroundBorderless"
     android:contentDescription="@string/main_button_repeat_description"
     android:src="@drawable/ic_repeat_black_24dp"
     android:tint="@color/button_dark"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintLeft_toLeftOf="parent"/>
+    app:layout_constraintBottom_toBottomOf="@+id/main_button_play_pause"
+    app:layout_constraintHorizontal_weight="1"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toLeftOf="@+id/main_button_previous"
+    app:layout_constraintTop_toTopOf="@+id/main_button_play_pause"/>
 
-  <ImageButton
+  <com.kelsos.mbrc.ui.widgets.SquareImageButton
     android:id="@+id/main_button_previous"
-    android:layout_width="64dp"
-    android:layout_height="64dp"
-    android:layout_marginBottom="16dp"
-    android:layout_weight="0.8"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
     android:background="?attr/selectableItemBackgroundBorderless"
     android:contentDescription="@string/main_button_previous_description"
     android:src="@drawable/ic_skip_previous_black_24dp"
     android:tint="@color/button_dark"
-    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintBottom_toBottomOf="@+id/main_button_play_pause"
+    app:layout_constraintHorizontal_weight="1"
     app:layout_constraintLeft_toRightOf="@+id/main_repeat_button"
-    app:layout_constraintRight_toLeftOf="@+id/main_button_play_pause"/>
+    app:layout_constraintRight_toLeftOf="@+id/main_button_play_pause"
+    app:layout_constraintTop_toTopOf="@+id/main_button_play_pause"/>
 
-  <ImageButton
+  <com.kelsos.mbrc.ui.widgets.SquareImageButton
     android:id="@+id/main_button_play_pause"
-    android:layout_width="64dp"
-    android:layout_height="64dp"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
     android:layout_marginBottom="16dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
-    android:layout_marginStart="16dp"
     android:layout_weight="1"
     android:background="?attr/selectableItemBackgroundBorderless"
     android:clickable="true"
@@ -244,35 +247,40 @@
     android:src="@drawable/ic_play_circle_filled_black_24dp"
     android:tint="@color/accent"
     app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintRight_toRightOf="parent"/>
+    app:layout_constraintHorizontal_weight="1"
+    app:layout_constraintLeft_toRightOf="@+id/main_button_previous"
+    app:layout_constraintRight_toLeftOf="@+id/main_button_next"
+    />
 
-  <ImageButton
+  <com.kelsos.mbrc.ui.widgets.SquareImageButton
     android:id="@+id/main_button_next"
-    android:layout_width="64dp"
-    android:layout_height="64dp"
-    android:layout_marginBottom="16dp"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
     android:background="?attr/selectableItemBackgroundBorderless"
     android:contentDescription="@string/main_button_next_description"
     android:src="@drawable/ic_skip_next_black_24dp"
     android:tint="@color/button_dark"
-    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintBottom_toBottomOf="@+id/main_button_play_pause"
+    app:layout_constraintHorizontal_weight="1"
     app:layout_constraintLeft_toRightOf="@+id/main_button_play_pause"
-    app:layout_constraintRight_toLeftOf="@+id/main_shuffle_button"/>
+    app:layout_constraintRight_toLeftOf="@+id/main_shuffle_button"
+    app:layout_constraintTop_toTopOf="@+id/main_button_play_pause"/>
 
-  <ImageButton
+  <com.kelsos.mbrc.ui.widgets.SquareImageButton
     android:id="@+id/main_shuffle_button"
-    android:layout_width="64dp"
-    android:layout_height="64dp"
+    android:layout_width="56dp"
+    android:layout_height="0dp"
     android:layout_gravity="center_vertical"
-    android:layout_marginBottom="16dp"
     android:layout_marginEnd="16dp"
     android:layout_marginRight="16dp"
     android:background="?attr/selectableItemBackgroundBorderless"
     android:contentDescription="@string/main_button_shuffle_description"
     android:src="@drawable/ic_shuffle_black_24dp"
     android:tint="@color/button_dark"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintRight_toRightOf="parent"/>
+    app:layout_constraintBottom_toBottomOf="@+id/main_button_play_pause"
+    app:layout_constraintHorizontal_weight="1"
+    app:layout_constraintLeft_toRightOf="@+id/main_button_next"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintTop_toTopOf="@+id/main_button_play_pause"/>
 
 </android.support.constraint.ConstraintLayout>

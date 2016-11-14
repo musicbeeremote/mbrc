@@ -6,4 +6,5 @@
   <dimen name="center_button_margin">25dp</dimen>
   <dimen name="second_tier_button_margin">40dp</dimen>
   <dimen name="main_action_button_landscape_size">68dp</dimen>
+  <dimen name="control_button">68dp</dimen>
 </resources>
