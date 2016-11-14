@@ -118,9 +118,9 @@ idea {
 
 ext {
   support_library_version = "25.0.0"
-  dbflow_version = "4.0.0-beta1"
+  dbflow_version = "4.0.0-beta2"
   toothpick_version = "1.0.2"
-  jackson_version = "2.8.4"
+  jackson_version = "2.8.5"
   butterknife_version = "8.4.0"
   material_dialogs_version = "0.9.1.0"
 }
@@ -147,7 +147,7 @@ dependencies {
   compile "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}"
   compile "com.fasterxml.jackson.core:jackson-core:${jackson_version}"
   compile "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
-  compile "com.fasterxml.jackson.module:jackson-module-kotlin:${jackson_version}"
+  compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.8.4"
   compile "com.github.machinarius:preferencefragment:0.1.2"
   compile "com.jakewharton:butterknife:${butterknife_version}"
   compile 'io.reactivex:rxandroid:1.2.1'
@@ -161,7 +161,7 @@ dependencies {
   //highly recommended
   testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
   testCompile "org.robolectric:robolectric:3.1.4"
-  testCompile "org.mockito:mockito-core:2.2.15"
+  testCompile "org.mockito:mockito-core:2.2.16"
   testCompile "com.google.truth:truth:0.30"
   testCompile 'junit:junit:4.12'
 
