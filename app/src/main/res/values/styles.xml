@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <style name="RatingBar"
-         parent="@android:style/Widget.RatingBar">
-    <item name="android:progressDrawable">@drawable/ui_rating_bar</item>
-    <item name="android:maxHeight">24dip</item>
-    <item name="android:minHeight">24dip</item>
-  </style>
-
   <style name="ActionBarStyle"
       parent="ThemeOverlay.AppCompat.Dark.ActionBar">
     <item name="android:textColorPrimary">@color/primary_text_material_light</item>

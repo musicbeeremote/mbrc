@@ -12,6 +12,7 @@ import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.RatingChanged
+import com.kelsos.mbrc.model.MainDataModel
 import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
@@ -19,21 +20,22 @@ import javax.inject.Inject
 class RatingDialogFragment : DialogFragment() {
 
   @Inject lateinit var bus: RxBus
+  @Inject lateinit var model: MainDataModel
   private var ratingBar: RatingBar? = null
   private var rating: Float = 0.toFloat()
   private var scope: Scope? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    scope = Toothpick.openScopes(activity.application, this)
     super.onCreate(savedInstanceState)
+    scope = Toothpick.openScopes(activity.application, this)
     Toothpick.inject(this, scope)
     bus.register(this, RatingChanged::class.java, { this.handleRatingChange(it) })
   }
 
   override fun onDestroy() {
-    Toothpick.closeScope(this)
-    bus.unregister(this)
     super.onDestroy()
+    bus.unregister(this)
+    Toothpick.closeScope(this)
   }
 
   private fun handleRatingChange(event: RatingChanged) {
@@ -41,6 +43,7 @@ class RatingDialogFragment : DialogFragment() {
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    rating = model.rating
     val builder = MaterialDialog.Builder(activity)
     builder.title(R.string.rate_the_playing_track)
     builder.customView(R.layout.ui_dialog_rating, false)
