@@ -83,6 +83,11 @@ class GenreArtistsActivity : FontActivity(),
     presenter.detach()
   }
 
+  override fun onDestroy() {
+    super.onDestroy()
+    Toothpick.closeScope(this)
+  }
+
   companion object {
     const val GENRE_NAME = "genre_name"
   }
