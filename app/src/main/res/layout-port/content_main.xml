@@ -90,7 +90,7 @@
 
   <TextView
     android:id="@+id/main_artist_label"
-    android:layout_width="wrap_content"
+    android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_below="@+id/main_title_label"
     android:layout_marginLeft="16dp"
@@ -99,6 +99,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:freezesText="true"
+    android:gravity="center_horizontal"
     android:marqueeRepeatLimit="marquee_forever"
     android:maxLines="1"
     android:scrollHorizontally="true"
@@ -106,12 +107,13 @@
     android:textSize="@dimen/text_subhead_size"
     app:layout_constraintBottom_toTopOf="@+id/main_label_album"
     app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="@+id/main_track_duration_total"
     tools:text="Caravan Palace"/>
 
   <TextView
     android:id="@+id/main_label_album"
     fontPath="fonts/roboto_medium.ttf"
-    android:layout_width="wrap_content"
+    android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_below="@+id/main_artist_label"
     android:layout_marginLeft="16dp"
@@ -119,6 +121,7 @@
     android:ellipsize="marquee"
     android:focusable="true"
     android:focusableInTouchMode="true"
+    android:gravity="center_horizontal"
     android:lines="1"
     android:marqueeRepeatLimit="marquee_forever"
     android:maxLines="1"
@@ -127,13 +130,14 @@
     android:textSize="@dimen/text_body_size"
     app:layout_constraintBottom_toTopOf="@+id/main_mute_button"
     app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="@+id/main_track_duration_total"
     tools:ignore="MissingPrefix"
     tools:text="Panic [2012]"/>
 
   <TextView
     android:id="@+id/main_title_label"
     fontPath="fonts/roboto_light.ttf"
-    android:layout_width="wrap_content"
+    android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_alignParentLeft="true"
     android:layout_alignParentStart="true"
@@ -144,6 +148,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:freezesText="true"
+    android:gravity="center_horizontal"
     android:marqueeRepeatLimit="marquee_forever"
     android:maxLines="1"
     android:scrollHorizontally="true"
@@ -151,6 +156,7 @@
     android:textSize="@dimen/text_title_size"
     app:layout_constraintBottom_toTopOf="@+id/main_artist_label"
     app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="@+id/main_track_duration_total"
     tools:ignore="MissingPrefix"
     tools:text="Rock it for me"/>
 
@@ -204,13 +210,14 @@
 
   <com.kelsos.mbrc.ui.widgets.SquareImageButton
     android:id="@+id/main_repeat_button"
-    android:layout_width="56dp"
+    android:layout_width="0dp"
     android:layout_height="0dp"
     android:layout_gravity="center_vertical"
     android:layout_marginLeft="16dp"
     android:layout_marginStart="16dp"
     android:background="?attr/selectableItemBackgroundBorderless"
     android:contentDescription="@string/main_button_repeat_description"
+    android:scaleType="centerInside"
     android:src="@drawable/ic_repeat_black_24dp"
     android:tint="@color/button_dark"
     app:layout_constraintBottom_toBottomOf="@+id/main_button_play_pause"
@@ -225,6 +232,7 @@
     android:layout_height="0dp"
     android:background="?attr/selectableItemBackgroundBorderless"
     android:contentDescription="@string/main_button_previous_description"
+    android:scaleType="centerInside"
     android:src="@drawable/ic_skip_previous_black_24dp"
     android:tint="@color/button_dark"
     app:layout_constraintBottom_toBottomOf="@+id/main_button_play_pause"
@@ -258,6 +266,7 @@
     android:layout_height="0dp"
     android:background="?attr/selectableItemBackgroundBorderless"
     android:contentDescription="@string/main_button_next_description"
+    android:scaleType="centerInside"
     android:src="@drawable/ic_skip_next_black_24dp"
     android:tint="@color/button_dark"
     app:layout_constraintBottom_toBottomOf="@+id/main_button_play_pause"
@@ -268,13 +277,14 @@
 
   <com.kelsos.mbrc.ui.widgets.SquareImageButton
     android:id="@+id/main_shuffle_button"
-    android:layout_width="56dp"
+    android:layout_width="0dp"
     android:layout_height="0dp"
     android:layout_gravity="center_vertical"
     android:layout_marginEnd="16dp"
     android:layout_marginRight="16dp"
     android:background="?attr/selectableItemBackgroundBorderless"
     android:contentDescription="@string/main_button_shuffle_description"
+    android:scaleType="centerInside"
     android:src="@drawable/ic_shuffle_black_24dp"
     android:tint="@color/button_dark"
     app:layout_constraintBottom_toBottomOf="@+id/main_button_play_pause"
