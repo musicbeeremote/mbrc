@@ -1,52 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="@dimen/nav_header_height"
-              android:background="@drawable/side_nav_bar"
-              android:gravity="bottom"
-              android:orientation="vertical"
-              android:paddingBottom="@dimen/activity_vertical_margin"
-              android:paddingLeft="@dimen/activity_horizontal_margin"
-              android:paddingRight="@dimen/activity_horizontal_margin"
-              android:paddingTop="@dimen/activity_vertical_margin"
-              android:theme="@style/ThemeOverlay.AppCompat.Dark">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="@dimen/nav_header_height"
+                                             android:background="@drawable/side_nav_bar"
+                                             android:gravity="bottom"
+                                             android:orientation="horizontal"
+                                             android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
   <com.kelsos.mbrc.ui.widgets.CircleImageView
-      android:layout_width="74dp"
-      android:layout_height="74dp"
-      android:paddingTop="@dimen/nav_header_vertical_spacing"
-      android:src="@mipmap/ic_launcher"
-      app:civ_border_color="@color/accent"
-      app:civ_border_width="2dp"
-      app:civ_fill_color="@color/primary_light"/>
+    android:id="@+id/circleImageView"
+    android:layout_width="74dp"
+    android:layout_height="74dp"
+    android:layout_marginBottom="16dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="16dp"
+    android:paddingTop="@dimen/nav_header_vertical_spacing"
+    android:src="@mipmap/ic_launcher"
+    app:civ_border_color="@color/accent"
+    app:civ_border_width="2dp"
+    app:civ_fill_color="@color/primary_light"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.46"
+    tools:layout_constraintLeft_creator="1"/>
+
+
+  <TextView
+    android:id="@+id/nav_connect_text"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="16dp"
+    android:layout_marginRight="16dp"
+    android:lines="1"
+    android:paddingLeft="@dimen/normal_margin"
+    android:paddingRight="@dimen/normal_margin"
+    android:textColor="@color/black"
+    app:layout_constraintBottom_toBottomOf="@+id/circleImageView"
+    app:layout_constraintHorizontal_bias="0.96"
+    app:layout_constraintLeft_toLeftOf="@+id/circleImageView"
+    app:layout_constraintRight_toRightOf="parent"
+    tools:text="192.168.100.10:7777"/>
 
   <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="?selectableItemBackground"
-      android:gravity="center_vertical"
-      android:paddingTop="@dimen/nav_header_vertical_spacing">
+    android:layout_width="32dp"
+    android:layout_height="32dp"
+    android:layout_marginEnd="32dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="32dp"
+    android:layout_marginStart="8dp"
+    android:background="@drawable/connect_background_offline"
+    android:gravity="center"
+    app:layout_constraintHorizontal_bias="1.0"
+    app:layout_constraintLeft_toRightOf="@+id/nav_connect_text"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintTop_toTopOf="@+id/circleImageView">
 
     <ImageView
-        android:id="@+id/connect_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/connect_button_description"
-        android:src="@drawable/ic_power_settings_new_black_24dp"/>
-
-    <TextView
-        android:id="@+id/nav_connect_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:lines="1"
-        android:paddingLeft="@dimen/normal_margin"
-        android:paddingRight="@dimen/normal_margin"
-        android:textColor="@color/black"
-        tools:text="192.168.100.10:7777"/>
+      android:id="@+id/connect_button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:background="?attr/selectableItemBackgroundBorderless"
+      android:contentDescription="@string/connect_button_description"
+      android:src="@drawable/ic_power_settings_new_black_24dp"
+      />
   </LinearLayout>
 
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

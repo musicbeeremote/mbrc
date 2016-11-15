@@ -16,4 +16,5 @@
   <color name="primary_text_material_light">#de000000</color>
   <color name="secondary_text_material_light">#8a000000</color>
   <color name="empty_view_icon_tint">#bdbdbd</color>
+  <color name="light_gray">#bdbdbd</color>
 </resources>
