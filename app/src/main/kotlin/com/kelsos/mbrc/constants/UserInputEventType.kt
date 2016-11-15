@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.constants
 
 object UserInputEventType {
-  val RequestPosition = "RequestPosition"
   val StartConnection = "StartConnection"
   val SettingsChanged = "SettingsChanged"
   val ResetConnection = "ResetConnection"
