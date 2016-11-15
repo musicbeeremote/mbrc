@@ -58,6 +58,10 @@ class ArtistAlbumsActivity : FontActivity(),
     supportActionBar?.setDisplayShowHomeEnabled(true)
     supportActionBar?.title = artist
 
+    if (artist.isNullOrEmpty()) {
+      supportActionBar?.setTitle(R.string.empty)
+    }
+
     adapter.setMenuItemSelectedListener(this)
     recyclerView.layoutManager = LinearLayoutManager(this)
     recyclerView.adapter = adapter
