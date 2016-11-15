@@ -249,11 +249,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   }
 
   override fun updateVolume(volume: Int, mute: Boolean) {
-
-    if (volumeChangeListener?.fromUser ?: false) {
-      volumeBar.progress = volume
-    }
-
+    volumeBar.progress = volume
     val color = ContextCompat.getColor(this, R.color.button_dark)
     muteButton.setColorFilter(color)
     muteButton.setImageResource(if (mute) R.drawable.ic_volume_off_black_24dp else R.drawable.ic_volume_up_black_24dp)
