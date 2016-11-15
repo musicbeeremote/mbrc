@@ -14,7 +14,7 @@ class AlbumTracksPresenterImpl
     val request = if (album.album.isNullOrEmpty()) {
       repository.getNonAlbumTracks(album.artist)
     } else {
-      repository.getAlbumTracks(album.album)
+      repository.getAlbumTracks(album.album, album.artist)
     }
 
     addSubcription(request.subscribe ({

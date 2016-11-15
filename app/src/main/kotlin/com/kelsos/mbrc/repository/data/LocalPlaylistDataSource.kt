@@ -2,12 +2,8 @@ package com.kelsos.mbrc.repository.data
 
 import com.kelsos.mbrc.data.Playlist
 import com.kelsos.mbrc.data.Playlist_Table.name
-import com.raizlabs.android.dbflow.kotlinextensions.database
-import com.raizlabs.android.dbflow.kotlinextensions.delete
-import com.raizlabs.android.dbflow.kotlinextensions.from
-import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
-import com.raizlabs.android.dbflow.kotlinextensions.select
-import com.raizlabs.android.dbflow.kotlinextensions.where
+import com.kelsos.mbrc.extensions.escapeLike
+import com.raizlabs.android.dbflow.kotlinextensions.*
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import rx.Emitter
@@ -42,7 +38,7 @@ class LocalPlaylistDataSource
 
   override fun search(term: String): Single<FlowCursorList<Playlist>> {
     return Single.create<FlowCursorList<Playlist>> {
-      val modelQueriable = (select from Playlist::class where name.like("%$term%"))
+      val modelQueriable = (select from Playlist::class where name.like("%${term.escapeLike()}%"))
       val cursor = FlowCursorList.Builder(Playlist::class.java).modelQueriable(modelQueriable).build()
       it.onSuccess(cursor)
     }

@@ -4,13 +4,8 @@ package com.kelsos.mbrc.repository.data
 import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.data.library.Track_Table
 import com.kelsos.mbrc.data.library.Track_Table.title
-import com.raizlabs.android.dbflow.kotlinextensions.and
-import com.raizlabs.android.dbflow.kotlinextensions.database
-import com.raizlabs.android.dbflow.kotlinextensions.delete
-import com.raizlabs.android.dbflow.kotlinextensions.from
-import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
-import com.raizlabs.android.dbflow.kotlinextensions.select
-import com.raizlabs.android.dbflow.kotlinextensions.where
+import com.kelsos.mbrc.extensions.escapeLike
+import com.raizlabs.android.dbflow.kotlinextensions.*
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import rx.Emitter
@@ -49,9 +44,11 @@ class LocalTrackDataSource
 
   }
 
-  fun getAlbumTracks(album: String): Single<FlowCursorList<Track>> {
+  fun getAlbumTracks(album: String, artist: String): Single<FlowCursorList<Track>> {
     return Single.create<FlowCursorList<Track>> {
-      val modelQueriable = (select from Track::class where Track_Table.album.like("%$album%"))
+      val modelQueriable = (select from Track::class
+          where Track_Table.album.`is`(album)
+          and Track_Table.album_artist.`is`(artist))
           .orderBy(Track_Table.album_artist, true)
           .orderBy(Track_Table.album, true)
           .orderBy(Track_Table.disc, true)
@@ -78,7 +75,7 @@ class LocalTrackDataSource
 
   override fun search(term: String): Single<FlowCursorList<Track>> {
     return Single.create<FlowCursorList<Track>> {
-      val modelQueriable = (select from Track::class where title.like("%$term%"))
+      val modelQueriable = (select from Track::class where title.like("%${term.escapeLike()}%"))
       val cursor = FlowCursorList.Builder<Track>(Track::class.java).modelQueriable(modelQueriable).build()
       it.onSuccess(cursor)
     }
