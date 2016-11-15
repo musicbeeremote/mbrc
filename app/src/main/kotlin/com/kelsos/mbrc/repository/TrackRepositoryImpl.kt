@@ -17,8 +17,8 @@ class TrackRepositoryImpl
     return localDataSource.loadAllCursor().toSingle()
   }
 
-  override fun getAlbumTracks(album: String): Single<FlowCursorList<Track>> {
-    return localDataSource.getAlbumTracks(album)
+  override fun getAlbumTracks(album: String, artist: String): Single<FlowCursorList<Track>> {
+    return localDataSource.getAlbumTracks(album, artist)
   }
 
   override fun getNonAlbumTracks(artist: String): Single<FlowCursorList<Track>> {
