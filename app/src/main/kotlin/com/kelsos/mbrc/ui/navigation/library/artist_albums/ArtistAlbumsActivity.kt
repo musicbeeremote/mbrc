@@ -79,8 +79,8 @@ class ArtistAlbumsActivity : FontActivity(),
   }
 
   override fun onDestroy() {
-    Toothpick.closeScope(this)
     super.onDestroy()
+    Toothpick.closeScope(this)
   }
 
   override fun onStart() {
