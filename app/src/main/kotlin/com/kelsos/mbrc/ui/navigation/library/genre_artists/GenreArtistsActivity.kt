@@ -55,6 +55,9 @@ class GenreArtistsActivity : FontActivity(),
 
     setSupportActionBar(toolbar)
     supportActionBar?.enableHome(genre)
+    if (genre.isNullOrEmpty()) {
+      supportActionBar?.setTitle(R.string.empty)
+    }
     adapter.setMenuItemSelectedListener(this)
     recyclerView.initLinear(adapter, emptyView)
     presenter.attach(this)
