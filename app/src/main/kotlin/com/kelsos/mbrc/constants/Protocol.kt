@@ -29,6 +29,7 @@ object Protocol {
   val NowPlayingListRemove = "nowplayinglistremove"
   val NowPlayingListMove = "nowplayinglistmove"
   val NowPlayingListSearch = "nowplayinglistsearch"
+  val NowPlayingQueue = "nowplayingqueue"
 
   val LibraryQueueGenre = "libraryqueuegenre"
   val LibraryQueueArtist = "libraryqueueartist"
@@ -56,4 +57,5 @@ object Protocol {
   val ONE = "one"
 
   var ProtocolVersionNumber = 3
+
 }
