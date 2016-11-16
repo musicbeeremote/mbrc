@@ -13,6 +13,7 @@ class TrackRepositoryImpl
                     private val remoteDataSource: RemoteTrackDataSource) : TrackRepository {
 
 
+
   override fun getAllCursor(): Single<FlowCursorList<Track>> {
     return localDataSource.loadAllCursor().toSingle()
   }
@@ -38,5 +39,17 @@ class TrackRepositoryImpl
 
   override fun search(term: String): Single<FlowCursorList<Track>> {
     return localDataSource.search(term)
+  }
+
+  override fun getGenreTrackPaths(genre: String): Single<List<String>> {
+    return localDataSource.getGenreTrackPaths(genre)
+  }
+
+  override fun getArtistTrackPaths(artist: String): Single<List<String>> {
+    return localDataSource.getArtistTrackPaths(artist)
+  }
+
+  override fun getAlbumTrackPaths(album: String, artist: String): Single<List<String>> {
+    return localDataSource.getAlbumTrackPaths(album, artist)
   }
 }
