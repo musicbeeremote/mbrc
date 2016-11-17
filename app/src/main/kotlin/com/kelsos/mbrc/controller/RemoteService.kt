@@ -35,14 +35,14 @@ class RemoteService : Service(), ForegroundHooks {
     return controllerBinder
   }
 
-  override fun onCreate() {
-    scope = Toothpick.openScope(application)
-    super.onCreate()
-    Toothpick.inject(this, scope)
-    this.registerReceiver(receiver, receiver.filter())
-  }
-
   override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+
+    if (scope == null) {
+      scope = Toothpick.openScope(application)
+      Toothpick.inject(this, scope)
+      this.registerReceiver(receiver, receiver.filter())
+    }
+
     Timber.d("Background Service::Started")
     notificationService.setForegroundHooks(this)
     CommandRegistration.register(remoteController, scope!!)

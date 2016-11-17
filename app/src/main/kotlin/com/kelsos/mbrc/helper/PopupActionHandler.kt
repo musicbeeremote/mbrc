@@ -17,14 +17,18 @@ import com.kelsos.mbrc.services.QueueService
 import com.kelsos.mbrc.ui.navigation.library.album_tracks.AlbumTracksActivity
 import com.kelsos.mbrc.ui.navigation.library.artist_albums.ArtistAlbumsActivity
 import com.kelsos.mbrc.ui.navigation.library.genre_artists.GenreArtistsActivity
+import rx.Scheduler
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class PopupActionHandler
 @Inject
 constructor(private val settings: BasicSettingsHelper,
+            @Named("io") private val ioScheduler: Scheduler,
             private val trackRepository: TrackRepository,
             private val queueService: QueueService) {
 
@@ -49,8 +53,10 @@ constructor(private val settings: BasicSettingsHelper,
   private fun queueAlbum(entry: Album, @QueueType type: String) {
     trackRepository.getAlbumTrackPaths(entry.album!!, entry.artist!!).flatMap {
       queueService.queue(type, it)
-    }.subscribe {
+    }.subscribeOn(ioScheduler).subscribe({
 
+    }) {
+      Timber.v(it, "Failed to queue")
     }
   }
 
@@ -74,8 +80,10 @@ constructor(private val settings: BasicSettingsHelper,
   private fun queueArtist(entry: Artist, type: String) {
     trackRepository.getArtistTrackPaths(artist = entry.artist!!).flatMap {
       queueService.queue(type, it)
-    }.subscribe {
+    }.subscribeOn(ioScheduler).subscribe({
 
+    }) {
+      Timber.v(it, "Failed to queue")
     }
   }
 
@@ -100,8 +108,10 @@ constructor(private val settings: BasicSettingsHelper,
   private fun queueGenre(entry: Genre, type: String) {
     trackRepository.getGenreTrackPaths(genre = entry.genre!!).flatMap {
       queueService.queue(type, it)
-    }.subscribe {
+    }.subscribeOn(ioScheduler).subscribe({
 
+    }) {
+      Timber.v(it, "Failed to queue")
     }
   }
 
@@ -120,8 +130,10 @@ constructor(private val settings: BasicSettingsHelper,
     val list = ArrayList<String>()
     list.add(entry.src!!)
 
-    queueService.queue(type, list).subscribe {
+    queueService.queue(type, list).subscribeOn(ioScheduler).subscribe({
 
+    }) {
+      Timber.v(it, "Failed to queue")
     }
   }
 
