@@ -89,7 +89,7 @@ class LocalTrackDataSource
           .orderBy(Track_Table.album, true)
           .orderBy(Track_Table.disc, true)
           .orderBy(Track_Table.trackno, true)
-          .queryList().filter { it.src.isNullOrEmpty() }.map { it.src!! }
+          .queryList().filter { !it.src.isNullOrEmpty() }.map { it.src!! }
 
       return@fromCallable trackList
     }
@@ -102,7 +102,7 @@ class LocalTrackDataSource
           .orderBy(Track_Table.album, true)
           .orderBy(Track_Table.disc, true)
           .orderBy(Track_Table.trackno, true)
-          .queryList().filter { it.src.isNullOrEmpty() }.map { it.src!! }
+          .queryList().filter { !it.src.isNullOrEmpty() }.map { it.src!! }
 
       return@fromCallable trackList
     }
@@ -115,7 +115,7 @@ class LocalTrackDataSource
           and Track_Table.album.`is`(album))
           .orderBy(Track_Table.disc, true)
           .orderBy(Track_Table.trackno, true)
-          .queryList().filter { it.src.isNullOrEmpty() }.map { it.src!! }
+          .queryList().filter { !it.src.isNullOrEmpty() }.map { it.src!! }
 
       return@fromCallable trackList
     }
