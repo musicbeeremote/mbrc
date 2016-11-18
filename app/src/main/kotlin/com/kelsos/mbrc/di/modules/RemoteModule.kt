@@ -6,28 +6,8 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.kelsos.mbrc.di.providers.NotificationManagerCompatProvider
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.bus.RxBusImpl
-import com.kelsos.mbrc.repository.AlbumRepository
-import com.kelsos.mbrc.repository.AlbumRepositoryImpl
-import com.kelsos.mbrc.repository.ArtistRepository
-import com.kelsos.mbrc.repository.ArtistRepositoryImpl
-import com.kelsos.mbrc.repository.ConnectionRepository
-import com.kelsos.mbrc.repository.ConnectionRepositoryImpl
-import com.kelsos.mbrc.repository.GenreRepository
-import com.kelsos.mbrc.repository.GenreRepositoryImpl
-import com.kelsos.mbrc.repository.NowPlayingRepository
-import com.kelsos.mbrc.repository.NowPlayingRepositoryImpl
-import com.kelsos.mbrc.repository.PlaylistRepository
-import com.kelsos.mbrc.repository.PlaylistRepositoryImpl
-import com.kelsos.mbrc.repository.TrackRepository
-import com.kelsos.mbrc.repository.TrackRepositoryImpl
-import com.kelsos.mbrc.services.CoverService
-import com.kelsos.mbrc.services.CoverServiceImpl
-import com.kelsos.mbrc.services.LibraryService
-import com.kelsos.mbrc.services.LibraryServiceImpl
-import com.kelsos.mbrc.services.NowPlayingService
-import com.kelsos.mbrc.services.NowPlayingServiceImpl
-import com.kelsos.mbrc.services.PlaylistService
-import com.kelsos.mbrc.services.PlaylistServiceImpl
+import com.kelsos.mbrc.repository.*
+import com.kelsos.mbrc.services.*
 import rx.Scheduler
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -44,6 +24,7 @@ class RemoteModule : Module() {
     bind(PlaylistService::class.java).to(PlaylistServiceImpl::class.java).singletonInScope()
     bind(NowPlayingService::class.java).to(NowPlayingServiceImpl::class.java).singletonInScope()
     bind(CoverService::class.java).to(CoverServiceImpl::class.java).singletonInScope()
+    bind(QueueService::class.java).to(QueueServiceImpl::class.java).singletonInScope()
 
     bind(NotificationManagerCompat::class.java).toProvider(NotificationManagerCompatProvider::class.java)
     bind(ConnectionRepository::class.java).to(ConnectionRepositoryImpl::class.java)

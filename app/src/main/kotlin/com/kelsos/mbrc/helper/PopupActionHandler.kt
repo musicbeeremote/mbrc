@@ -4,109 +4,143 @@ import android.content.Context
 import android.content.Intent
 import android.view.MenuItem
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.annotations.Queue
+import com.kelsos.mbrc.annotations.Queue.QueueType
 import com.kelsos.mbrc.constants.Const
-import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.constants.ProtocolEventType
-import com.kelsos.mbrc.data.Queue
-import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.data.library.Genre
 import com.kelsos.mbrc.data.library.Track
-import com.kelsos.mbrc.events.MessageEvent
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mappers.AlbumMapper
+import com.kelsos.mbrc.repository.TrackRepository
+import com.kelsos.mbrc.services.QueueService
 import com.kelsos.mbrc.ui.navigation.library.album_tracks.AlbumTracksActivity
 import com.kelsos.mbrc.ui.navigation.library.artist_albums.ArtistAlbumsActivity
 import com.kelsos.mbrc.ui.navigation.library.genre_artists.GenreArtistsActivity
+import rx.Scheduler
+import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class PopupActionHandler
 @Inject
-constructor(private val bus: RxBus, private val settings: BasicSettingsHelper) {
+constructor(private val settings: BasicSettingsHelper,
+            @Named("io") private val ioScheduler: Scheduler,
+            private val trackRepository: TrackRepository,
+            private val queueService: QueueService) {
 
   fun albumSelected(menuItem: MenuItem, entry: Album, context: Context) {
 
-    val query = entry.album!!
-
-    var ua: UserAction? = null
-    when (menuItem.itemId) {
-      R.id.popup_album_queue_next -> ua = UserAction(Protocol.LibraryQueueAlbum, Queue(Queue.NEXT, query))
-      R.id.popup_album_queue_last -> ua = UserAction(Protocol.LibraryQueueAlbum, Queue(Queue.LAST, query))
-      R.id.popup_album_play -> ua = UserAction(Protocol.LibraryQueueAlbum, Queue(Queue.NOW, query))
-      R.id.popup_album_tracks -> openProfile(entry, context)
-      else -> {
-      }
+    if (menuItem.itemId == R.id.popup_album_tracks) {
+      openProfile(entry, context)
+      return
     }
 
-    if (ua != null) {
-      bus.post(MessageEvent(ProtocolEventType.UserAction, ua))
+
+    val type = when (menuItem.itemId) {
+      R.id.popup_album_queue_next -> Queue.NEXT
+      R.id.popup_album_queue_last -> Queue.LAST
+      R.id.popup_album_play -> Queue.NOW
+      else -> Queue.NOW
+    }
+
+    queueAlbum(entry, type)
+  }
+
+  private fun queueAlbum(entry: Album, @QueueType type: String) {
+    trackRepository.getAlbumTrackPaths(entry.album!!, entry.artist!!).flatMap {
+      queueService.queue(type, it)
+    }.subscribeOn(ioScheduler).subscribe({
+
+    }) {
+      Timber.v(it, "Failed to queue")
     }
   }
 
   fun artistSelected(menuItem: MenuItem, entry: Artist, context: Context) {
-    val query = entry.artist!!
 
-    var ua: UserAction? = null
-    when (menuItem.itemId) {
-      R.id.popup_artist_queue_next -> ua = UserAction(Protocol.LibraryQueueArtist, Queue(Queue.NEXT, query))
-      R.id.popup_artist_queue_last -> ua = UserAction(Protocol.LibraryQueueArtist, Queue(Queue.LAST, query))
-      R.id.popup_artist_play -> ua = UserAction(Protocol.LibraryQueueArtist, Queue(Queue.NOW, query))
-      R.id.popup_artist_album -> openProfile(entry, context)
-      else -> {
-      }
+    if (menuItem.itemId == R.id.popup_artist_album) {
+      openProfile(entry, context)
+      return
     }
 
-    if (ua != null) {
-      bus.post(MessageEvent(ProtocolEventType.UserAction, ua))
+    val type = when (menuItem.itemId) {
+      R.id.popup_artist_queue_next -> Queue.NEXT
+      R.id.popup_artist_queue_last -> Queue.LAST
+      R.id.popup_artist_play -> Queue.NOW
+      else -> Queue.NOW
+    }
+
+    queueArtist(entry, type)
+  }
+
+  private fun queueArtist(entry: Artist, type: String) {
+    trackRepository.getArtistTrackPaths(artist = entry.artist!!).flatMap {
+      queueService.queue(type, it)
+    }.subscribeOn(ioScheduler).subscribe({
+
+    }) {
+      Timber.v(it, "Failed to queue")
     }
   }
 
   fun genreSelected(menuItem: MenuItem, entry: Genre, context: Context) {
-    val query = entry.genre!!
 
-    var ua: UserAction? = null
-    when (menuItem.itemId) {
-      R.id.popup_genre_queue_next -> ua = UserAction(Protocol.LibraryQueueGenre, Queue(Queue.NEXT, query))
-      R.id.popup_genre_queue_last -> ua = UserAction(Protocol.LibraryQueueGenre, Queue(Queue.LAST, query))
-      R.id.popup_genre_play -> ua = UserAction(Protocol.LibraryQueueGenre, Queue(Queue.NOW, query))
-      R.id.popup_genre_artists -> openProfile(entry, context)
-      else -> {
-      }
+    if (R.id.popup_genre_artists == menuItem.itemId) {
+      openProfile(entry, context)
+      return
     }
 
-    if (ua != null) {
-      bus.post(MessageEvent(ProtocolEventType.UserAction, ua))
+
+    val type = when (menuItem.itemId) {
+      R.id.popup_genre_queue_next -> Queue.NEXT
+      R.id.popup_genre_queue_last -> Queue.LAST
+      R.id.popup_genre_play -> Queue.NOW
+      else -> Queue.NOW
+    }
+
+    queueGenre(entry, type)
+  }
+
+  private fun queueGenre(entry: Genre, type: String) {
+    trackRepository.getGenreTrackPaths(genre = entry.genre!!).flatMap {
+      queueService.queue(type, it)
+    }.subscribeOn(ioScheduler).subscribe({
+
+    }) {
+      Timber.v(it, "Failed to queue")
     }
   }
 
   fun trackSelected(menuItem: MenuItem, entry: Track) {
-    val query = entry.src!!
-
-    var ua: UserAction? = null
-    when (menuItem.itemId) {
-      R.id.popup_track_queue_next -> ua = UserAction(Protocol.LibraryQueueTrack, Queue(Queue.NEXT, query))
-      R.id.popup_track_queue_last -> ua = UserAction(Protocol.LibraryQueueTrack, Queue(Queue.LAST, query))
-      R.id.popup_track_play -> ua = UserAction(Protocol.LibraryQueueTrack, Queue(Queue.NOW, query))
-      else -> {
-      }
+    val type = when (menuItem.itemId) {
+      R.id.popup_track_queue_next -> Queue.NEXT
+      R.id.popup_track_queue_last -> Queue.LAST
+      R.id.popup_track_play -> Queue.NOW
+      else -> Queue.NOW
     }
 
-    if (ua != null) {
-      bus.post(MessageEvent(ProtocolEventType.UserAction, ua))
+    queueTrack(entry, type)
+  }
+
+  private fun queueTrack(entry: Track, type: String) {
+    val list = ArrayList<String>()
+    list.add(entry.src!!)
+
+    queueService.queue(type, list).subscribeOn(ioScheduler).subscribe({
+
+    }) {
+      Timber.v(it, "Failed to queue")
     }
   }
 
   fun albumSelected(album: Album, context: Context) {
     val defaultAction = settings.defaultAction
     if (defaultAction != Const.SUB) {
-      //noinspection WrongConstant
-      val queue = Queue(defaultAction, album.album!!)
-      val data = UserAction(Protocol.LibraryQueueAlbum, queue)
-      val event = MessageEvent(ProtocolEventType.UserAction, data)
-      bus.post(event)
+      queueAlbum(album, defaultAction)
     } else {
       openProfile(album, context)
     }
@@ -115,11 +149,7 @@ constructor(private val bus: RxBus, private val settings: BasicSettingsHelper) {
   fun artistSelected(artist: Artist, context: Context) {
     val defaultAction = settings.defaultAction
     if (defaultAction != Const.SUB) {
-      //noinspection WrongConstant
-      val queue = Queue(defaultAction, artist.artist!!)
-      val data = UserAction(Protocol.LibraryQueueArtist, queue)
-      val event = MessageEvent(ProtocolEventType.UserAction, data)
-      bus.post(event)
+      queueArtist(artist, defaultAction)
     } else {
       openProfile(artist, context)
     }
@@ -128,11 +158,7 @@ constructor(private val bus: RxBus, private val settings: BasicSettingsHelper) {
   fun genreSelected(genre: Genre, context: Context) {
     val defaultAction = settings.defaultAction
     if (defaultAction != Const.SUB) {
-      //noinspection WrongConstant
-      val queue = Queue(defaultAction, genre.genre!!)
-      val action = UserAction(Protocol.LibraryQueueGenre, queue)
-      val event = MessageEvent(ProtocolEventType.UserAction, action)
-      bus.post(event)
+      queueGenre(genre, defaultAction)
     } else {
       openProfile(genre, context)
     }
@@ -143,11 +169,8 @@ constructor(private val bus: RxBus, private val settings: BasicSettingsHelper) {
     if (Const.SUB == defaultAction) {
       defaultAction = Queue.NOW
     }
-    //noinspection WrongConstant
-    val queue = Queue(defaultAction, track.src!!)
-    val action = UserAction(Protocol.LibraryQueueTrack, queue)
-    val event = MessageEvent(ProtocolEventType.UserAction, action)
-    bus.post(event)
+
+    queueTrack(track, defaultAction)
   }
 
   private fun openProfile(artist: Artist, context: Context) {
