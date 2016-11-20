@@ -11,9 +11,15 @@ import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.*
+import com.kelsos.mbrc.events.ui.LfmRatingChanged
+import com.kelsos.mbrc.events.ui.PlayStateChange
+import com.kelsos.mbrc.events.ui.RatingChanged
+import com.kelsos.mbrc.events.ui.RepeatChange
+import com.kelsos.mbrc.events.ui.ScrobbleChange
+import com.kelsos.mbrc.events.ui.ShuffleChange
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
-import com.kelsos.mbrc.repository.TrackCache
+import com.kelsos.mbrc.events.ui.VolumeChange
+import com.kelsos.mbrc.repository.ModelCache
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -22,11 +28,12 @@ import javax.inject.Singleton
 class MainDataModel
 @Inject
 constructor(private val bus: RxBus,
-            private val cache: TrackCache) {
+            private val cache: ModelCache) {
   private var _trackInfo: TrackInfo = TrackInfo()
+  private var _coverPath: String = ""
 
   init {
-    cache.restore().subscribe({
+    cache.restoreInfo().subscribe({
       trackInfo = it
     }, {
       Timber.v(it, "No state was previously stored")
@@ -83,15 +90,12 @@ constructor(private val bus: RxBus,
 
   @State var playState: String = PlayerState.UNDEFINED
     set(value) {
-      @State val newState: String
-      if (Const.PLAYING.equals(value, ignoreCase = true)) {
-        newState = PlayerState.PLAYING
-      } else if (Const.STOPPED.equals(value, ignoreCase = true)) {
-        newState = PlayerState.STOPPED
-      } else if (Const.PAUSED.equals(value, ignoreCase = true)) {
-        newState = PlayerState.PAUSED
-      } else {
-        newState = PlayerState.UNDEFINED
+      @State val newState: String =
+          when {
+            Const.PLAYING.equals(value, ignoreCase = true) -> PlayerState.PLAYING
+            Const.STOPPED.equals(value, ignoreCase = true) -> PlayerState.STOPPED
+            Const.PAUSED.equals(value, ignoreCase = true) -> PlayerState.PAUSED
+            else -> PlayerState.UNDEFINED
       }
 
       field = newState
@@ -121,17 +125,11 @@ constructor(private val bus: RxBus,
     bus.post(LfmRatingChanged(lfmStatus))
   }
 
-  fun updateRemoteClient() {
-    bus.post(RemoteClientMetaData(trackInfo))
-  }
-
   fun setRepeatState(repeat: String) {
-    if (Protocol.ALL.equals(repeat, ignoreCase = true)) {
-      this.repeat = Repeat.ALL
-    } else if (Protocol.ONE.equals(repeat, ignoreCase = true)) {
-      this.repeat = Repeat.ONE
-    } else {
-      this.repeat = Repeat.NONE
+    this.repeat = when {
+      Protocol.ALL.equals(repeat, ignoreCase = true) -> Repeat.ALL
+      Protocol.ONE.equals(repeat, ignoreCase = true) -> Repeat.ONE
+      else -> Repeat.NONE
     }
 
     bus.post(RepeatChange(this.repeat))
@@ -144,14 +142,19 @@ constructor(private val bus: RxBus,
     }
     set(value) {
       _trackInfo = value
-      val event = TrackInfoChangeEvent(value)
-      bus.post(event)
-      updateRemoteClient()
-      cache.persist(value).subscribe({
+      cache.persistInfo(value).subscribe({
         Timber.v("Playing track info successfully persisted")
       }) {
         Timber.v(it, "Failed to perist the playing track info")
       }
+    }
+
+  var coverPath: String
+    get() {
+      return _coverPath
+    }
+    set(value) {
+      _coverPath = value
     }
 
 }

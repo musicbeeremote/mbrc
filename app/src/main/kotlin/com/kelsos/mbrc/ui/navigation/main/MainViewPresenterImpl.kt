@@ -55,7 +55,7 @@ class MainViewPresenterImpl
 
   override fun load() {
     checkIfAttached()
-    view?.updateCover()
+    view?.updateCover(model.coverPath)
     view?.updateLfmStatus(model.lfmStatus)
     view?.updateScrobbleStatus(model.isScrobblingEnabled)
     view?.updateRepeat(model.repeat)
@@ -77,7 +77,7 @@ class MainViewPresenterImpl
 
   override fun attach(view: MainView) {
     super.attach(view)
-    this.bus.register(this, CoverChangedEvent::class.java, { this.view?.updateCover() }, true)
+    this.bus.register(this, CoverChangedEvent::class.java, { this.view?.updateCover(it.path) }, true)
     this.bus.register(this, ShuffleChange::class.java, { this.view?.updateShuffleState(it.shuffleState) }, true)
     this.bus.register(this, RepeatChange::class.java, { this.view?.updateRepeat(it.mode) }, true)
     this.bus.register(this, VolumeChange::class.java, { this.view?.updateVolume(it.volume, it.isMute) }, true)

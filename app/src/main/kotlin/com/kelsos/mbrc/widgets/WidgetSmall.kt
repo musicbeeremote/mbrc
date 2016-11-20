@@ -11,13 +11,13 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.PlayerState.State
 import com.kelsos.mbrc.domain.TrackInfo
-import com.kelsos.mbrc.extensions.coverFile
 import com.kelsos.mbrc.ui.navigation.main.MainActivity
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.NEXT
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PLAY
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PREVIOUS
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.getPendingIntent
 import com.squareup.picasso.Picasso
+import java.io.File
 
 class WidgetSmall : AppWidgetProvider() {
 
@@ -33,7 +33,8 @@ class WidgetSmall : AppWidgetProvider() {
     val widgetsIds = widgetManager.getAppWidgetIds(widgets)
 
     if (extras.getBoolean(UpdateWidgets.COVER, false)) {
-      updateCover(context, widgetManager, widgetsIds)
+      val path = extras.getString(UpdateWidgets.COVER_PATH, "")
+      updateCover(context, widgetManager, widgetsIds, path)
     } else if (extras.getBoolean(UpdateWidgets.INFO, false)) {
       updateInfo(context, widgetManager, widgetsIds, extras.getParcelable<TrackInfo>(UpdateWidgets.TRACK_INFO))
     } else if (extras.getBoolean(UpdateWidgets.STATE, false)) {
@@ -81,13 +82,13 @@ class WidgetSmall : AppWidgetProvider() {
 
   private fun updateCover(context: Context?,
                           widgetManager: AppWidgetManager,
-                          widgetsIds: IntArray) {
+                          widgetsIds: IntArray, path: String) {
     if (context == null) {
       return
     }
 
     val smallWidget = RemoteViews(context.packageName, R.layout.widget_small)
-    val coverFile = context.coverFile()
+    val coverFile = File(path)
     if (coverFile.exists()) {
       Picasso.with(context).invalidate(coverFile)
       Picasso.with(context).load(coverFile)

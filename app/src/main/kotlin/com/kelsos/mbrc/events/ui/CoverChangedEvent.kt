@@ -1,3 +1,3 @@
 package com.kelsos.mbrc.events.ui
 
-class CoverChangedEvent()
+class CoverChangedEvent(val path: String = "")
