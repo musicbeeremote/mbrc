@@ -18,11 +18,11 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.PlayerState.State
 import com.kelsos.mbrc.domain.TrackInfo
-import com.kelsos.mbrc.extensions.coverFile
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.ui.navigation.main.MainActivity
 import com.squareup.picasso.Picasso
 import toothpick.Toothpick
+import java.io.File
 import javax.inject.Inject
 
 class MiniControlFragment : Fragment(), MiniControlView {
@@ -80,12 +80,12 @@ class MiniControlFragment : Fragment(), MiniControlView {
     presenter.detach()
   }
 
-  override fun updateCover() {
+  override fun updateCover(path: String) {
     if (activity == null) {
       return
     }
 
-    val file = activity.coverFile()
+    val file = File(path)
 
     if (file.exists()) {
       val dimens = context.getDimens()

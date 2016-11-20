@@ -15,7 +15,6 @@ import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.ui.CoverChangedEvent
 import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
-import com.kelsos.mbrc.extensions.coverFile
 import com.kelsos.mbrc.model.NotificationModel
 import com.kelsos.mbrc.services.RemoteSessionManager
 import com.kelsos.mbrc.utilities.RemoteUtils
@@ -26,6 +25,7 @@ import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PREVIOUS
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.getPendingIntent
 import com.kelsos.mbrc.utilities.SettingsManager
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -46,7 +46,7 @@ constructor(bus: RxBus,
 
   init {
     bus.register(this, TrackInfoChangeEvent::class.java, { this.handleTrackInfo(it) })
-    bus.register(this, CoverChangedEvent::class.java, { this.coverChanged() })
+    bus.register(this, CoverChangedEvent::class.java, { this.coverChanged(it.path) })
     bus.register(this, PlayStateChange::class.java, { this.playStateChanged(it) })
     bus.register(this, ConnectionStatusChangeEvent::class.java, { this.connectionChanged(it) })
     previous = context.getString(R.string.notification_action_previous)
@@ -59,8 +59,8 @@ constructor(bus: RxBus,
     update()
   }
 
-  private fun coverChanged() {
-    val coverFile = context.coverFile()
+  private fun coverChanged(path: String) {
+    val coverFile = File(path)
     if (coverFile.exists()) {
       RemoteUtils.bitmapFromFile(coverFile.absolutePath).doOnTerminate {
         update()

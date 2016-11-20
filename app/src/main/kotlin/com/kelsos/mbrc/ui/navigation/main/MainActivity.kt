@@ -31,7 +31,6 @@ import com.kelsos.mbrc.events.ui.OnMainFragmentOptionsInflated
 import com.kelsos.mbrc.events.ui.ShuffleChange
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
 import com.kelsos.mbrc.events.ui.UpdatePosition
-import com.kelsos.mbrc.extensions.coverFile
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.helper.ProgressSeekerHelper
 import com.kelsos.mbrc.helper.ProgressSeekerHelper.ProgressUpdate
@@ -42,6 +41,7 @@ import com.squareup.picasso.Picasso
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -110,13 +110,13 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   private lateinit var scope: Scope
 
   public override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
-    ButterKnife.bind(this)
-    super.setup()
     scope = Toothpick.openScopes(application, PRESENTER_SCOPE, this)
     scope.installModules(SmoothieActivityModule(this), MainModule())
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
     Toothpick.inject(this, scope)
+    ButterKnife.bind(this)
+    super.setup()
     presenter.attach(this)
     presenter.load()
   }
@@ -136,7 +136,6 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
   public override fun onResume() {
     super.onResume()
-    presenter.load()
     presenter.requestNowPlayingPosition()
   }
 
@@ -190,29 +189,19 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
       return shareIntent
     }
 
-  override fun updateCover() {
-    val file = this.coverFile()
+  override fun updateCover(path: String) {
+    val file = File(path)
 
     if (!file.exists()) {
-      Picasso.with(this).invalidate(file)
-      albumCover.tag = 0L
       albumCover.setImageResource(R.drawable.ic_image_no_cover)
-      return
-    }
-
-    val lastModified = if (albumCover.tag != null) albumCover.tag as Long else 0L
-
-    if (lastModified == 0L || lastModified < file.lastModified()) {
-      albumCover.tag = file.lastModified()
-      Picasso.with(this).invalidate(file)
-    } else {
       return
     }
 
     val dimens = getDimens()
     Picasso.with(this)
         .load(file)
-        .placeholder(R.drawable.ic_image_no_cover)
+        .noFade()
+        .error(R.drawable.ic_image_no_cover)
         .config(Bitmap.Config.RGB_565)
         .resize(dimens, dimens)
         .centerCrop()

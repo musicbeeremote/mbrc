@@ -27,7 +27,7 @@ interface MainView : BaseView {
 
   fun updateLfmStatus(status: LfmStatus)
 
-  fun updateCover()
+  fun updateCover(path: String)
 
   fun updateProgress(position: UpdatePosition)
 }
