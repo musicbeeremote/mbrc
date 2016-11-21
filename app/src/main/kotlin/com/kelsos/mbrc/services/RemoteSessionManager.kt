@@ -97,7 +97,7 @@ constructor(private val context: Application, private val bus: RxBus, private va
     }
 
     val trackInfo = data.trackInfo
-    val bitmap = RemoteUtils.coverBitmapSync(context)
+    val bitmap = RemoteUtils.coverBitmapSync(data.coverPath)
 
     val builder = MediaMetadataCompat.Builder()
     builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, trackInfo.album)

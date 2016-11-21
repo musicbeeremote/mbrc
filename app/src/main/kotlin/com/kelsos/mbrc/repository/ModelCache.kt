@@ -5,12 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.domain.TrackInfo
 import rx.Completable
 import rx.Single
-import java.io.BufferedReader
-import java.io.BufferedWriter
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileReader
-import java.io.FileWriter
+import java.io.*
 import javax.inject.Inject
 
 class ModelCache
@@ -70,6 +65,6 @@ class ModelCache
 
   companion object {
     const val TRACK_INFO = "track.json"
-    const val COVER_INFO = "cover"
+    const val COVER_INFO = "cover.txt"
   }
 }
