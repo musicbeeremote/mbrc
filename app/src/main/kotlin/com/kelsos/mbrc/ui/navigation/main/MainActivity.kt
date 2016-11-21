@@ -124,6 +124,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   public override fun onStart() {
     super.onStart()
     presenter.attach(this)
+    presenter.load()
     progressHelper.setProgressListener(this)
     volumeChangeListener = SeekBarThrottler { presenter.changeVolume(it) }
     positionChangeListener = SeekBarThrottler { presenter.seek(it) }

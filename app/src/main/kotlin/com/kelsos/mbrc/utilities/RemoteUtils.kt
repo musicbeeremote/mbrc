@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.kelsos.mbrc.constants.Const
 import rx.Emitter
 import rx.Observable
 import java.io.File
@@ -56,15 +55,14 @@ object RemoteUtils {
     }, Emitter.BackpressureMode.LATEST)
   }
 
-  fun coverBitmap(context: Context): Observable<Bitmap> {
-    val filesDir = context.filesDir
-    val cover = File(filesDir, Const.COVER_FILE)
+  fun coverBitmap(coverPath: String): Observable<Bitmap> {
+    val cover = File(coverPath)
     return bitmapFromFile(cover.absolutePath)
   }
 
-  fun coverBitmapSync(context: Context): Bitmap? {
+  fun coverBitmapSync(coverPath: String): Bitmap? {
     return try {
-      RemoteUtils.coverBitmap(context).toBlocking().first()
+      RemoteUtils.coverBitmap(coverPath).toBlocking().first()
     } catch (e: Exception) {
       null
     }

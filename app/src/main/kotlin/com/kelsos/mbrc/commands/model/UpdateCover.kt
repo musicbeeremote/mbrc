@@ -96,6 +96,7 @@ class UpdateCover
     val file = temporaryCover()
     val fileStream = FileOutputStream(file)
     val success = bitmap.compress(JPEG, 100, fileStream)
+    fileStream.close()
     if (success) {
       val md5 = file.md5()
       val extension = file.extension

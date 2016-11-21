@@ -89,15 +89,14 @@ class MiniControlFragment : Fragment(), MiniControlView {
 
     if (file.exists()) {
       val dimens = context.getDimens()
-
-      Picasso.with(context).invalidate(file)
       Picasso.with(context)
           .load(file)
-          .placeholder(R.drawable.ic_image_no_cover)
+          .noFade()
           .config(Bitmap.Config.RGB_565)
           .resize(dimens, dimens)
           .centerCrop()
           .into(trackCover)
+
     } else {
       trackCover.setImageResource(R.drawable.ic_image_no_cover)
     }
