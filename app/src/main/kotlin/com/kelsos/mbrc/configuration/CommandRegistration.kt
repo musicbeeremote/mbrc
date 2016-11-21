@@ -3,9 +3,9 @@ package com.kelsos.mbrc.configuration
 import com.kelsos.mbrc.commands.*
 import com.kelsos.mbrc.commands.model.*
 import com.kelsos.mbrc.commands.visual.*
+import com.kelsos.mbrc.constants.ApplicationEvents
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.constants.ProtocolEventType
-import com.kelsos.mbrc.constants.SocketEventType
 import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.controller.RemoteController
 import toothpick.Scope
@@ -47,12 +47,13 @@ object CommandRegistration {
     controller.register(UserInputEventType.StartDiscovery, scope.getInstance(StartDiscoveryCommand::class.java))
     controller.register(UserInputEventType.KeyVolumeUp, scope.getInstance(KeyVolumeUpCommand::class.java))
     controller.register(UserInputEventType.KeyVolumeDown, scope.getInstance(KeyVolumeDownCommand::class.java))
-    controller.register(SocketEventType.SocketDataAvailable, scope.getInstance(SocketDataAvailableCommand::class.java))
-    controller.register(SocketEventType.SocketStatusChanged, scope.getInstance(ConnectionStatusChangedCommand::class.java))
-    controller.register(SocketEventType.SocketHandshakeUpdate, scope.getInstance(HandleHandshake::class.java))
+    controller.register(ApplicationEvents.SocketDataAvailable, scope.getInstance(SocketDataAvailableCommand::class.java))
+    controller.register(ApplicationEvents.SocketStatusChanged, scope.getInstance(ConnectionStatusChangedCommand::class.java))
+    controller.register(ApplicationEvents.SocketHandshakeUpdate, scope.getInstance(HandleHandshake::class.java))
   }
 
   fun unregister(controller: RemoteController) {
     controller.clearCommands()
   }
 }
+
