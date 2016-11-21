@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.commands
 
-import com.kelsos.mbrc.enums.SocketAction
+import com.kelsos.mbrc.annotations.SocketAction.TERMINATE
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.model.ConnectionModel
@@ -13,6 +13,6 @@ class TerminateConnectionCommand
   override fun execute(e: IEvent) {
     model.setHandShakeDone(false)
     model.setConnectionState("false")
-    service.socketManager(SocketAction.TERMINATE)
+    service.socketManager(TERMINATE)
   }
 }

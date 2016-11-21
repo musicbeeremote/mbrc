@@ -2,11 +2,16 @@ package com.kelsos.mbrc.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.annotations.SocketAction.Action
+import com.kelsos.mbrc.annotations.SocketAction.RESET
+import com.kelsos.mbrc.annotations.SocketAction.RETRY
+import com.kelsos.mbrc.annotations.SocketAction.START
+import com.kelsos.mbrc.annotations.SocketAction.STOP
+import com.kelsos.mbrc.annotations.SocketAction.TERMINATE
+import com.kelsos.mbrc.constants.ApplicationEvents
 import com.kelsos.mbrc.constants.Const
-import com.kelsos.mbrc.constants.SocketEventType
 import com.kelsos.mbrc.data.ConnectionSettings
 import com.kelsos.mbrc.data.SocketMessage
-import com.kelsos.mbrc.enums.SocketAction
 import com.kelsos.mbrc.events.DefaultSettingsChangedEvent
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
@@ -14,6 +19,7 @@ import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.mappers.InetAddressMapper
 import com.kelsos.mbrc.repository.ConnectionRepository
 import com.kelsos.mbrc.utilities.SocketActivityChecker
+import com.kelsos.mbrc.utilities.SocketActivityChecker.PingTimeoutListener
 import rx.Completable
 import rx.Subscription
 import timber.log.Timber
@@ -33,7 +39,7 @@ class SocketService
 constructor(private val activityChecker: SocketActivityChecker,
             private val bus: RxBus,
             private val mapper: ObjectMapper,
-            private val connectionRepository: ConnectionRepository) : SocketActivityChecker.PingTimeoutListener {
+            private val connectionRepository: ConnectionRepository) : PingTimeoutListener {
   private var numOfRetries: Int = 0
   private var shouldStop: Boolean = false
   private var socket: Socket? = null
@@ -43,12 +49,11 @@ constructor(private val activityChecker: SocketActivityChecker,
   private var subscription: Subscription? = null
 
   init {
-
     startSocket()
     numOfRetries = 0
     shouldStop = false
-    socketManager(SocketAction.START)
-    bus.register(this, DefaultSettingsChangedEvent::class.java) { event -> socketManager(SocketAction.RESET) }
+    socketManager(START)
+    bus.register(this, DefaultSettingsChangedEvent::class.java) { socketManager(RESET) }
   }
 
   private fun startSocket() {
@@ -61,29 +66,29 @@ constructor(private val activityChecker: SocketActivityChecker,
       val connectionSettings = connectionRepository.default
 
       if (connectionSettings == null) {
-        socketManager(SocketAction.STOP)
+        socketManager(STOP)
         return@subscribe
       }
       executor.execute(SocketConnection(connectionSettings))
       numOfRetries++
-    }) { throwable -> Timber.v(throwable, "Failed") }
+    }) { Timber.v(it, "Failed") }
   }
 
-  fun socketManager(action: SocketAction) {
+  fun socketManager(@Action action: Int) {
     when (action) {
-      SocketAction.RESET -> {
+      RESET -> {
         startSocket()
         cleanupSocket()
         shouldStop = false
         numOfRetries = 0
       }
-      SocketAction.START -> {
-        startSocket()
-        if (sIsConnected()) {
+      START -> {
+        if (isConnected()) {
           return
         }
+        startSocket()
       }
-      SocketAction.RETRY -> {
+      RETRY -> {
         startSocket()
         cleanupSocket()
 
@@ -93,11 +98,9 @@ constructor(private val activityChecker: SocketActivityChecker,
           return
         }
       }
-      SocketAction.STOP -> shouldStop = true
-      SocketAction.TERMINATE -> {
-        if (subscription != null && !subscription!!.isUnsubscribed) {
-          subscription!!.unsubscribe()
-        }
+      STOP -> shouldStop = true
+      TERMINATE -> {
+        subscription?.unsubscribe()
         shouldStop = true
         cleanupSocket()
       }
@@ -111,22 +114,20 @@ constructor(private val activityChecker: SocketActivityChecker,
 
    * @return Boolean
    */
-  private fun sIsConnected(): Boolean {
-    return socket != null && socket!!.isConnected
+  private fun isConnected(): Boolean {
+    return socket?.isConnected ?: false
   }
 
   private fun cleanupSocket() {
     Timber.v("Socket cleanup")
-    if (!sIsConnected()) {
+    if (!isConnected()) {
       return
     }
     try {
-      if (output != null) {
-        output!!.flush()
-        output!!.close()
-        output = null
-      }
-      socket!!.close()
+      output?.flush()
+      output?.close()
+      output = null
+      socket?.close()
       socket = null
     } catch (ignore: IOException) {
 
@@ -136,7 +137,7 @@ constructor(private val activityChecker: SocketActivityChecker,
 
   @Synchronized fun sendData(message: SocketMessage) {
     try {
-      if (sIsConnected()) {
+      if (isConnected()) {
         output!!.print(mapper.writeValueAsString(message) + Const.NEWLINE)
         if (output!!.checkError()) {
           throw Exception("Check error")
@@ -150,7 +151,7 @@ constructor(private val activityChecker: SocketActivityChecker,
 
   override fun onTimeout() {
     Timber.v("Timeout received resetting socket")
-    socketManager(SocketAction.RESET)
+    socketManager(RESET)
   }
 
   private inner class SocketConnection internal constructor(connectionSettings: ConnectionSettings) : Runnable {
@@ -163,8 +164,8 @@ constructor(private val activityChecker: SocketActivityChecker,
     }
 
     override fun run() {
-      Timber.v("Socket Startsa")
-      bus.post(MessageEvent(SocketEventType.SocketHandshakeUpdate, false))
+      Timber.v("Socket Start")
+      bus.post(MessageEvent(ApplicationEvents.SocketHandshakeUpdate, false))
       if (null == socketAddress) {
         return
       }
@@ -174,50 +175,47 @@ constructor(private val activityChecker: SocketActivityChecker,
         socket!!.connect(socketAddress)
         val out = OutputStreamWriter(socket!!.outputStream, Const.UTF_8)
         output = PrintWriter(BufferedWriter(out, SOCKET_BUFFER), true)
-        val `in` = InputStreamReader(socket!!.inputStream, Const.UTF_8)
-        input = BufferedReader(`in`, SOCKET_BUFFER)
+        val inputStreamReader = InputStreamReader(socket!!.inputStream, Const.UTF_8)
+        input = BufferedReader(inputStreamReader, SOCKET_BUFFER)
 
         val socketStatus = socket!!.isConnected.toString()
 
-        bus.post(MessageEvent(SocketEventType.SocketStatusChanged, socketStatus))
+        bus.post(MessageEvent(ApplicationEvents.SocketStatusChanged, socketStatus))
         activityChecker.start()
         activityChecker.setPingTimeoutListener(this@SocketService)
         while (socket!!.isConnected) {
           try {
-            val incoming = input.readLine() ?: throw IOException()
-            if (incoming.length > 0) {
-              bus.post(MessageEvent(SocketEventType.SocketDataAvailable, incoming))
+            val incoming = input.readLine() ?: throw IOException("no data")
+            if (incoming.isNotEmpty()) {
+              bus.post(MessageEvent(ApplicationEvents.SocketDataAvailable, incoming))
             }
           } catch (e: IOException) {
             input.close()
-            if (socket != null) {
-              socket!!.close()
-            }
+            socket?.close()
             throw e
           }
-
         }
       } catch (e: SocketTimeoutException) {
         bus.post(NotifyUser(R.string.notification_connection_timeout))
+        Timber.v(e)
       } catch (e: SocketException) {
         bus.post(NotifyUser(e.toString().substring(26)))
+        Timber.v(e)
       } catch (ignored: IOException) {
+        Timber.v(ignored, "IO")
       } catch (npe: NullPointerException) {
         Timber.d(npe, "NPE")
       } finally {
-        if (output != null) {
-          output!!.close()
-        }
-
+        output?.close()
         activityChecker.stop()
         activityChecker.setPingTimeoutListener(null)
 
         socket = null
 
-        bus.post(MessageEvent(SocketEventType.SocketStatusChanged, false))
+        bus.post(MessageEvent(ApplicationEvents.SocketStatusChanged, false))
         if (numOfRetries < MAX_RETRIES) {
           Timber.d("Trying to reconnect. Try %d of %d", numOfRetries, MAX_RETRIES)
-          socketManager(SocketAction.RETRY)
+          socketManager(RETRY)
         }
         Timber.d("Socket closed")
       }
