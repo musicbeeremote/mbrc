@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.commands.visual
 
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.enums.SocketAction
+import com.kelsos.mbrc.annotations.SocketAction.STOP
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.interfaces.ICommand
@@ -18,7 +18,7 @@ constructor(private val socketService: SocketService, private val model: Connect
 
   override fun execute(e: IEvent) {
     bus.post(NotifyUser(R.string.notification_not_allowed))
-    socketService.socketManager(SocketAction.STOP)
+    socketService.socketManager(STOP)
     model.setConnectionState("false")
     handler.resetHandshake()
   }

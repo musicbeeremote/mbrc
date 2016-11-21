@@ -5,19 +5,12 @@ import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
-import com.kelsos.mbrc.events.ui.CoverChangedEvent
-import com.kelsos.mbrc.events.ui.LfmRatingChanged
-import com.kelsos.mbrc.events.ui.PlayStateChange
-import com.kelsos.mbrc.events.ui.RepeatChange
-import com.kelsos.mbrc.events.ui.ScrobbleChange
-import com.kelsos.mbrc.events.ui.ShuffleChange
-import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
-import com.kelsos.mbrc.events.ui.UpdatePosition
-import com.kelsos.mbrc.events.ui.VolumeChange
+import com.kelsos.mbrc.events.ui.*
 import com.kelsos.mbrc.model.ConnectionModel
 import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.mvp.BasePresenter
+import rx.Completable
+import timber.log.Timber
 import javax.inject.Inject
 
 class MainViewPresenterImpl
@@ -54,16 +47,24 @@ class MainViewPresenterImpl
   }
 
   override fun load() {
-    checkIfAttached()
-    view?.updateCover(model.coverPath)
-    view?.updateLfmStatus(model.lfmStatus)
-    view?.updateScrobbleStatus(model.isScrobblingEnabled)
-    view?.updateRepeat(model.repeat)
-    view?.updateShuffleState(model.shuffle)
-    view?.updateVolume(model.volume, model.isMute)
-    view?.updatePlayState(model.playState)
-    view?.updateTrackInfo(model.trackInfo)
-    view?.updateConnection(connectionModel.connection)
+    addSubcription(Completable.fromCallable {
+      checkIfAttached()
+      view?.updateCover(model.coverPath)
+      view?.updateLfmStatus(model.lfmStatus)
+      view?.updateScrobbleStatus(model.isScrobblingEnabled)
+      view?.updateRepeat(model.repeat)
+      view?.updateShuffleState(model.shuffle)
+      view?.updateVolume(model.volume, model.isMute)
+      view?.updatePlayState(model.playState)
+      view?.updateTrackInfo(model.trackInfo)
+      view?.updateConnection(connectionModel.connection)
+    }.subscribe({
+
+    }) {
+      Timber.e(it, "Failed to load")
+    })
+
+
   }
 
   override fun requestNowPlayingPosition() {
