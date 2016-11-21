@@ -11,14 +11,8 @@ import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.LfmRatingChanged
-import com.kelsos.mbrc.events.ui.PlayStateChange
-import com.kelsos.mbrc.events.ui.RatingChanged
-import com.kelsos.mbrc.events.ui.RepeatChange
-import com.kelsos.mbrc.events.ui.ScrobbleChange
-import com.kelsos.mbrc.events.ui.ShuffleChange
+import com.kelsos.mbrc.events.ui.*
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
-import com.kelsos.mbrc.events.ui.VolumeChange
 import com.kelsos.mbrc.repository.ModelCache
 import timber.log.Timber
 import javax.inject.Inject
@@ -35,6 +29,11 @@ constructor(private val bus: RxBus,
   init {
     cache.restoreInfo().subscribe({
       trackInfo = it
+    }, {
+      Timber.v(it, "No state was previously stored")
+    })
+    cache.restoreCover().subscribe({
+      coverPath = it
     }, {
       Timber.v(it, "No state was previously stored")
     })
@@ -155,6 +154,11 @@ constructor(private val bus: RxBus,
     }
     set(value) {
       _coverPath = value
+      cache.persistCover(value).subscribe({
+        Timber.v("Playing track info successfully persisted")
+      }) {
+        Timber.v(it, "Failed to perist the playing track info")
+      }
     }
 
 }
