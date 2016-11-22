@@ -136,13 +136,6 @@
       </intent-filter>
     </receiver>
 
-    <meta-data
-      android:name="roboguice.modules"
-      android:value="com.kelsos.mbrc.RemoteModule"/>
-    <meta-data
-      android:name="roboguice.annotations.packages"
-      android:value="roboguice,mbrc"/>
-
     <receiver android:name=".widgets.WidgetSmall">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
