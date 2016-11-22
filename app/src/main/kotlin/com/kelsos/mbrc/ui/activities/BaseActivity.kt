@@ -9,6 +9,7 @@ import android.support.annotation.ColorRes
 import android.support.annotation.StringRes
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
+import android.support.v4.app.NavUtils
 import android.support.v4.app.TaskStackBuilder
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
@@ -39,6 +40,7 @@ import com.kelsos.mbrc.ui.navigation.playlists.PlaylistActivity
 import com.kelsos.mbrc.ui.preferences.SettingsActivity
 import timber.log.Timber
 import javax.inject.Inject
+
 
 abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSelectedListener {
   @Inject lateinit var bus: RxBus
@@ -164,7 +166,12 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
     }
 
     if (itemId == R.id.nav_home) {
-      createBackStack(Intent(this, MainActivity::class.java))
+      val upIntent = NavUtils.getParentActivityIntent(this)
+      if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+        createBackStack(Intent(this, MainActivity::class.java))
+      } else {
+        NavUtils.navigateUpTo(this, upIntent)
+      }
     } else if (itemId == R.id.nav_library) {
       createBackStack(Intent(this, LibraryActivity::class.java))
     } else if (itemId == R.id.nav_now_playing) {
