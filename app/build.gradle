@@ -1,6 +1,7 @@
 import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'checkstyle'
@@ -8,10 +9,26 @@ apply plugin: 'findbugs'
 apply plugin: 'pmd'
 apply plugin: 'idea'
 
+
+repositories {
+  maven { url 'https://maven.fabric.io/public' }
+}
+
 def buildTime() {
   def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
   df.setTimeZone(TimeZone.getTimeZone("UTC"))
   return df.format(new Date())
+}
+
+def fabricApiKey() {
+  def fabricProperties = rootProject.file('fabric.properties')
+  if (fabricProperties.exists()) {
+    def prop = new Properties()
+    prop.load(new FileInputStream(fabricProperties))
+    return prop.getAt("apiKey")
+  } else {
+    return ""
+  }
 }
 
 def gitHash() {
@@ -26,6 +43,7 @@ android {
   buildToolsVersion "25.0.0"
 
   defaultConfig {
+    manifestPlaceholders = [apiKey: fabricApiKey()]
     applicationId "com.kelsos.mbrc"
     minSdkVersion 16
     targetSdkVersion 25
@@ -72,6 +90,17 @@ android {
     }
   }
 
+  productFlavors {
+    play {
+      ext.enableCrashlytics = true
+    }
+
+    github {
+      ext.enableCrashlytics = false
+    }
+  }
+
+
   packagingOptions {
     exclude 'META-INF/ASL2.0'
     exclude 'META-INF/LICENSE'
@@ -105,6 +134,7 @@ android {
   }
   sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
+    main.java.srcDirs += 'src/play/kotlin'
     test.java.srcDirs += 'src/test/kotlin'
   }
 }
@@ -129,7 +159,6 @@ dependencies {
   androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
     exclude group: 'com.android.support', module: 'support-annotations'
   })
-
 
   compile "com.android.support:appcompat-v7:${support_library_version}"
   compile "com.android.support:support-v4:${support_library_version}"
@@ -180,6 +209,10 @@ dependencies {
   testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
   debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
   releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+
+  playCompile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
+    transitive = true;
+  }
 }
 
 allprojects {
@@ -208,6 +241,8 @@ allprojects {
 repositories {
   mavenCentral()
 }
+
+
 
 
 kapt {

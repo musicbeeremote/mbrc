@@ -17,7 +17,7 @@ import toothpick.smoothie.module.SmoothieApplicationModule
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 import java.util.concurrent.TimeUnit
 
-class RemoteApplication : MultiDexApplication() {
+open class RemoteApplication : MultiDexApplication() {
 
   private lateinit var refWatcher: RefWatcher
 
