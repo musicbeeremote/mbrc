@@ -31,18 +31,18 @@ class RemoteService : Service(), ForegroundHooks {
   private var threadPoolExecutor: ExecutorService? = null
   private var scope: Scope? = null
 
-  override fun onBind(intent: Intent): IBinder? {
+  override fun onBind(intent: Intent?): IBinder {
     return controllerBinder
   }
 
-  override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+  override fun onCreate() {
+    super.onCreate()
+    scope = Toothpick.openScope(application)
+    Toothpick.inject(this, scope)
+    this.registerReceiver(receiver, receiver.filter())
+  }
 
-    if (scope == null) {
-      scope = Toothpick.openScope(application)
-      Toothpick.inject(this, scope)
-      this.registerReceiver(receiver, receiver.filter())
-    }
-
+  override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     Timber.d("Background Service::Started")
     notificationService.setForegroundHooks(this)
     CommandRegistration.register(remoteController, scope!!)
