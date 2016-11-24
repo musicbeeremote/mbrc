@@ -17,10 +17,10 @@
     native <methods>;
 }
 -keepclasseswithmembers class * {
-    public <initLinear>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet);
 }
 -keepclasseswithmembers class * {
-    public <initLinear>(android.content.Context, android.util.AttributeSet, int);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 -keepclassmembers class * extends android.app.Activity {
    public void *(android.view.View);
@@ -34,9 +34,9 @@
 }
 
 -keep public class * extends android.view.View {
-    public <initLinear>(android.content.Context);
-    public <initLinear>(android.content.Context, android.util.AttributeSet);
-    public <initLinear>(android.content.Context, android.util.AttributeSet, int);
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
     public void set*(...);
 }
 
