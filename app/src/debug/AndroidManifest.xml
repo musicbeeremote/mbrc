@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
   <application
-    android:largeHeap="true">
+      android:name="com.kelsos.mbrc.DebugApplication"
+      android:largeHeap="true">
   </application>
 
 </manifest>
