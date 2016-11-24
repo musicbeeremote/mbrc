@@ -14,7 +14,7 @@ repositories {
   maven { url 'https://maven.fabric.io/public' }
 }
 
-def buildTime() {
+static def buildTime() {
   def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
   df.setTimeZone(TimeZone.getTimeZone("UTC"))
   return df.format(new Date())
@@ -184,8 +184,16 @@ dependencies {
   testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
 
 
-  compile "com.afollestad.material-dialogs:core:${material_dialogs_version}"
-  compile "com.afollestad.material-dialogs:commons:${material_dialogs_version}"
+  compile("com.afollestad.material-dialogs:core:${material_dialogs_version}", {
+    exclude group: 'com.android.support', module: 'support-v13'
+    exclude group: 'com.android.support', module: 'appcompat-v7'
+    exclude group: 'com.android.support', module: 'recyclerview-v7'
+    exclude group: 'com.android.support', module: 'support-annotations'
+  })
+  compile("com.afollestad.material-dialogs:commons:${material_dialogs_version}", {
+    exclude group: 'com.android.support', module: 'support-annotations'
+    exclude group: 'com.android.support', module: 'appcompat-v7'
+  })
 
   kapt "com.jakewharton:butterknife-compiler:${butterknife_version}"
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -196,14 +204,14 @@ dependencies {
   compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.5'
   compile 'com.github.machinarius:preferencefragment:0.1.2'
   compile 'io.reactivex:rxandroid:1.2.1'
-  compile 'io.reactivex:rxjava:1.2.2'
+  compile 'io.reactivex:rxjava:1.2.3'
   compile 'io.reactivex:rxkotlin:0.60.0'
   compile 'uk.co.chrisjenx:calligraphy:2.2.0'
   compile 'com.jakewharton.timber:timber:4.3.1'
   compile 'com.jakewharton.rxrelay:rxrelay:1.2.0'
-  compile 'com.android.support.constraint:constraint-layout:1.0.0-beta3'
+  compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
   testCompile 'org.robolectric:robolectric:3.1.4'
-  testCompile 'org.mockito:mockito-core:2.2.21'
+  testCompile 'org.mockito:mockito-core:2.2.22'
   testCompile 'com.google.truth:truth:0.30'
   testCompile 'junit:junit:4.12'
   testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
