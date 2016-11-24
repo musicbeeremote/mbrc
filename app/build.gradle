@@ -35,12 +35,12 @@ def gitHash() {
   return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
 
-def version = "1.0.0.alpha.2"
-def version_code = 108
+def version = "1.0.0.beta.1"
+def version_code = 109
 
 android {
   compileSdkVersion 25
-  buildToolsVersion "25.0.0"
+  buildToolsVersion "25.0.1"
 
   defaultConfig {
     manifestPlaceholders = [apiKey: fabricApiKey()]
@@ -70,7 +70,7 @@ android {
       signingConfig signingConfigs.release
       debuggable false
       zipAlignEnabled true
-      minifyEnabled false
+      minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
 
@@ -83,7 +83,7 @@ android {
       signingConfig signingConfigs.release
       debuggable false
       zipAlignEnabled true
-      minifyEnabled false
+      minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       applicationIdSuffix ".preview"
       versionNameSuffix "-preview"
@@ -134,7 +134,8 @@ android {
   }
   sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
-    main.java.srcDirs += 'src/play/kotlin'
+    debug.java.srcDirs += 'src/debug/kotlin'
+    play.java.srcDirs += 'src/play/kotlin'
     test.java.srcDirs += 'src/test/kotlin'
   }
 }
@@ -237,7 +238,7 @@ allprojects {
         def props = new Properties()
         props.load(new FileInputStream(keyProperties))
         def keystorePath = props.getAt('keystore')
-        def releaseConfig = android.signingConfigs.getAt('release')
+        def releaseConfig = android.signingConfigs['release']
         releaseConfig.storeFile = file(keystorePath)
         releaseConfig.storePassword = props.getAt('storePass')
         releaseConfig.keyAlias = props.getAt('keyAlias')
@@ -250,9 +251,6 @@ allprojects {
 repositories {
   mavenCentral()
 }
-
-
-
 
 kapt {
   generateStubs = true
