@@ -37,6 +37,7 @@ class LibraryPresenterImpl
           bus.post(LibraryRefreshCompleteEvent())
           Timber.v("Library refresh was complete")
         }) {
+          Timber.e(it, "Refresh couldn't complete")
           view?.refreshFailed()
         })
   }

@@ -15,6 +15,7 @@ import com.kelsos.mbrc.events.ui.*
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
 import com.kelsos.mbrc.repository.ModelCache
 import timber.log.Timber
+import java.io.FileNotFoundException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,16 +28,16 @@ constructor(private val bus: RxBus,
   private var _coverPath: String = ""
 
   init {
-    cache.restoreInfo().subscribe({
-      trackInfo = it
-    }, {
-      Timber.v(it, "No state was previously stored")
-    })
-    cache.restoreCover().subscribe({
-      coverPath = it
-    }, {
-      Timber.v(it, "No state was previously stored")
-    })
+    cache.restoreInfo().subscribe({ trackInfo = it }, { onLoadError(it) })
+    cache.restoreCover().subscribe({ coverPath = it }, { onLoadError(it) })
+  }
+
+  private fun onLoadError(it: Throwable?) {
+    if (it is FileNotFoundException) {
+      Timber.v("No state was previously stored")
+    } else {
+      Timber.v(it, "Error while loading the state")
+    }
   }
 
   var rating: Float = 0f
