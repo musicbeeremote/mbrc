@@ -1,9 +1,6 @@
 -printmapping proguard/mapping.txt
--dontskipnonpubliclibraryclasses
--dontobfuscate
--forceprocessing
--dontoptimize
--dontwarn org.codehaus.jackson.**
+
+-keepattributes SourceFile,LineNumberTable
 
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
@@ -121,7 +118,6 @@
     @javax.inject.Inject <methods>;
 }
 
-
 # DBFlow
 -keep class * extends com.raizlabs.android.dbflow.config.DatabaseHolder { *; }
 -keep class com.raizlabs.android.dbflow.config.GeneratedDatabaseHolder
@@ -147,3 +143,39 @@
 -keep class android.support.design.** { *; }
 -keep interface android.support.design.** { *; }
 -keep public class android.support.design.R$* { *; }
+
+
+-dontwarn com.fasterxml.jackson.databind.ext.**
+-dontwarn rx.internal.util.unsafe.**
+
+### Jackson SERIALIZER SETTINGS
+-keepclassmembers class * {
+    @com.fasterxml.jackson.annotation.* <fields>;
+    @com.fasterxml.jackson.annotation.* <init>(...);
+}
+
+# Jackson
+-dontskipnonpubliclibraryclassmembers
+-keepattributes *Annotation*,EnclosingMethod,Signature
+-keepnames class com.fasterxml.jackson.** { *; }
+-dontwarn com.fasterxml.jackson.databind.**
+
+# Keep anything annotated with @JsonCreator
+-keepclassmembers public class * {
+    @com.fasterxml.jackson.annotation.JsonCreator *;
+    @com.fasterxml.jackson.annotation.JsonProperty *;
+}
+
+-keep class kotlin.** { *; }
+-keep class com.raizlabs.android.dbflow.structure.Model { *; }
+
+-keep class com.kelsos.mbrc.** {
+    void set*(***);
+    void set*(int, ***);
+
+    boolean is*();
+    boolean is*(int);
+
+    *** get*();
+    *** get*(int);
+}
