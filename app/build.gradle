@@ -167,7 +167,6 @@ dependencies {
   compile "com.android.support:recyclerview-v7:${support_library_version}"
   compile "com.android.support:design:${support_library_version}"
 
-
   kapt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
   // use kapt for kotlin apt\
   compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
@@ -184,16 +183,22 @@ dependencies {
   //highly recommended
   testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
 
-
   compile("com.afollestad.material-dialogs:core:${material_dialogs_version}", {
     exclude group: 'com.android.support', module: 'support-v13'
     exclude group: 'com.android.support', module: 'appcompat-v7'
     exclude group: 'com.android.support', module: 'recyclerview-v7'
     exclude group: 'com.android.support', module: 'support-annotations'
   })
+
   compile("com.afollestad.material-dialogs:commons:${material_dialogs_version}", {
     exclude group: 'com.android.support', module: 'support-annotations'
     exclude group: 'com.android.support', module: 'appcompat-v7'
+  })
+
+  compile('com.github.gabrielemariotti.changeloglib:changelog:2.1.0', {
+    exclude group: 'com.android.support', module: 'support-v4'
+    exclude group: 'com.android.support', module: 'recyclerview-v7'
+    exclude group: 'com.android.support', module: 'support-annotations'
   })
 
   kapt "com.jakewharton:butterknife-compiler:${butterknife_version}"

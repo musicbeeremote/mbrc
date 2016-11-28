@@ -168,4 +168,5 @@
   <string name="library_actionbar_refresh">Refresh</string>
   <string name="refreshing_library_data">Refreshing library data</string>
   <string name="feedback_logs">Include Logs</string>
+  <string name="change_log">Change Log</string>
 </resources>

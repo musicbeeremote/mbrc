@@ -30,6 +30,8 @@ interface MainView : BaseView {
   fun updateCover(path: String)
 
   fun updateProgress(position: UpdatePosition)
+
+  fun showPluginUpdateDialog()
 }
 
 
