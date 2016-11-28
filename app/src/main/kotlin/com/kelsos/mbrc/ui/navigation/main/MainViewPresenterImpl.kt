@@ -9,14 +9,15 @@ import com.kelsos.mbrc.events.ui.*
 import com.kelsos.mbrc.model.ConnectionModel
 import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.mvp.BasePresenter
+import com.kelsos.mbrc.utilities.SettingsManager
 import rx.Completable
-import timber.log.Timber
 import javax.inject.Inject
 
 class MainViewPresenterImpl
 @Inject constructor(val bus: RxBus,
                     val model: MainDataModel,
-                    val connectionModel: ConnectionModel) : BasePresenter<MainView>(), MainViewPresenter {
+                    val connectionModel: ConnectionModel,
+                    private val settingsManager: SettingsManager) : BasePresenter<MainView>(), MainViewPresenter {
   override fun stop(): Boolean {
     val action = UserAction(Protocol.PlayerStop, true)
     postAction(action)
@@ -62,6 +63,14 @@ class MainViewPresenterImpl
 
     }) {
       Timber.e(it, "Failed to load")
+    })
+
+    addSubcription(settingsManager.shouldShowPluginUpdate().subscribe({
+      if (it) {
+        view?.showPluginUpdateDialog()
+      }
+    }) {
+
     })
 
 

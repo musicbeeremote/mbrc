@@ -5,9 +5,6 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.MenuItemCompat
-import android.support.v7.widget.ShareActionProvider
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
@@ -16,10 +13,8 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import butterknife.BindView
-import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.OnLongClick
-import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.PlayerState.State
@@ -31,7 +26,6 @@ import com.kelsos.mbrc.events.ui.OnMainFragmentOptionsInflated
 import com.kelsos.mbrc.events.ui.ShuffleChange
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
 import com.kelsos.mbrc.events.ui.UpdatePosition
-import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.helper.ProgressSeekerHelper
 import com.kelsos.mbrc.helper.ProgressSeekerHelper.ProgressUpdate
 import com.kelsos.mbrc.helper.SeekBarThrottler
@@ -109,7 +103,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
   private lateinit var scope: Scope
 
-  public override fun onCreate(savedInstanceState: Bundle?) {
+  override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, PRESENTER_SCOPE, this)
     scope.installModules(SmoothieActivityModule(this), MainModule())
     super.onCreate(savedInstanceState)
@@ -121,7 +115,16 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     presenter.load()
   }
 
-  public override fun onStart() {
+  override fun showPluginUpdateDialog() {
+    MaterialDialog.Builder(this)
+        .title(R.string.change_log)
+        .customView(R.layout.change_log_dialog, false)
+        .positiveText(android.R.string.ok)
+        .onPositive { materialDialog, dialogAction -> materialDialog.dismiss() }
+        .show()
+  }
+
+  override fun onStart() {
     super.onStart()
     presenter.attach(this)
     presenter.load()
@@ -135,7 +138,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     albumLabel.isSelected = true
   }
 
-  public override fun onResume() {
+  override fun onResume() {
     super.onResume()
     presenter.requestNowPlayingPosition()
   }
@@ -158,7 +161,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     }
   }
 
-  public override fun onStop() {
+  override fun onStop() {
     super.onStop()
     presenter.detach()
     bus.unregister(this)
