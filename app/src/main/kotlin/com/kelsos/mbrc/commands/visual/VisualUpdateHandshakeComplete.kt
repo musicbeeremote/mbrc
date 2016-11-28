@@ -25,7 +25,7 @@ class VisualUpdateHandshakeComplete
     }
 
     if (model.pluginProtocol > 2) {
-      Timber.v("Sending initLinear request")
+      Timber.v("Sending init request")
       service.sendData(SocketMessage.create(Protocol.INIT))
     } else {
 

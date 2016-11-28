@@ -36,7 +36,7 @@ def gitHash() {
 }
 
 def version = "1.0.0.beta.1"
-def version_code = 108
+def version_code = 109
 
 android {
   compileSdkVersion 25
@@ -70,7 +70,7 @@ android {
       signingConfig signingConfigs.release
       debuggable false
       zipAlignEnabled true
-      minifyEnabled false
+      minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
 
@@ -83,7 +83,7 @@ android {
       signingConfig signingConfigs.release
       debuggable false
       zipAlignEnabled true
-      minifyEnabled false
+      minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       applicationIdSuffix ".preview"
       versionNameSuffix "-preview"
@@ -242,7 +242,7 @@ allprojects {
         def props = new Properties()
         props.load(new FileInputStream(keyProperties))
         def keystorePath = props.getAt('keystore')
-        def releaseConfig = android.signingConfigs.getAt('release')
+        def releaseConfig = android.signingConfigs['release']
         releaseConfig.storeFile = file(keystorePath)
         releaseConfig.storePassword = props.getAt('storePass')
         releaseConfig.keyAlias = props.getAt('keyAlias')
@@ -255,9 +255,6 @@ allprojects {
 repositories {
   mavenCentral()
 }
-
-
-
 
 kapt {
   generateStubs = true

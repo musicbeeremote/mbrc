@@ -61,7 +61,6 @@ open class RemoteApplication : MultiDexApplication() {
 
   open internal fun installLeakCanary(): RefWatcher {
     return RefWatcher.DISABLED
-
   }
 
   fun getRefWatcher(context: Context): RefWatcher {
