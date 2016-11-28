@@ -5,6 +5,9 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
+import android.support.v4.content.ContextCompat
+import android.support.v4.view.MenuItemCompat
+import android.support.v7.widget.ShareActionProvider
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
@@ -13,8 +16,11 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import butterknife.BindView
+import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.OnLongClick
+import com.afollestad.materialdialogs.MaterialDialog
+import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.PlayerState.State
@@ -26,6 +32,7 @@ import com.kelsos.mbrc.events.ui.OnMainFragmentOptionsInflated
 import com.kelsos.mbrc.events.ui.ShuffleChange
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
 import com.kelsos.mbrc.events.ui.UpdatePosition
+import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.helper.ProgressSeekerHelper
 import com.kelsos.mbrc.helper.ProgressSeekerHelper.ProgressUpdate
 import com.kelsos.mbrc.helper.SeekBarThrottler
