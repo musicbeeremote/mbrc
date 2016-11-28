@@ -1,15 +1,10 @@
 package com.kelsos.mbrc.utilities
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.support.annotation.StringDef
-import com.kelsos.mbrc.BuildConfig
-import com.kelsos.mbrc.R
 import com.kelsos.mbrc.logging.FileLoggingTree
-import timber.log.Timber
+import rx.Single
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,20 +12,16 @@ import javax.inject.Singleton
 @Singleton
 class SettingsManager
 @Inject
-constructor(application: Application, private val preferences: SharedPreferences) {
-  private val context: Context
-
+constructor(private val context: Application,
+            private val preferences: SharedPreferences) {
   init {
-    this.context = application
-
     updatePreferences()
-    checkForFirstRunAfterUpdate()
     val loggingEnabled = loggingEnabled()
     if (loggingEnabled) {
-      Timber.plant(FileLoggingTree(context.applicationContext))
+      Timber.plant(FileLoggingTree(this.context.applicationContext))
     } else {
       val fileLoggingTree = Timber.forest().find { it is FileLoggingTree }
-      fileLoggingTree?.let { Timber.uproot(it) }
+      fileLoggingTree.let { Timber.uproot(it) }
     }
   }
 
@@ -64,9 +55,9 @@ constructor(application: Application, private val preferences: SharedPreferences
       editor.apply()
     }
 
-  @SuppressLint("NewApi")
-  private fun checkForFirstRunAfterUpdate() {
-    try {
+
+  fun shouldShowPluginUpdate(): Single<Boolean> {
+    return Single.fromCallable {
       val lastVersionCode = preferences.getLong(context.getString(R.string.settings_key_last_version_run), 0)
       val currentVersion = RemoteUtils.getVersionCode(context)
 
@@ -75,17 +66,12 @@ constructor(application: Application, private val preferences: SharedPreferences
         val editor = preferences.edit()
         editor.putLong(context.getString(R.string.settings_key_last_version_run), currentVersion)
         editor.apply()
+        Timber.d("Update or fresh install")
 
-        if (BuildConfig.DEBUG) {
-          Timber.d("save or fresh install")
-        }
+        return@fromCallable true
       }
-    } catch (e: PackageManager.NameNotFoundException) {
-      if (BuildConfig.DEBUG) {
-        Timber.d(e, "check for first run")
-      }
+      return@fromCallable false
     }
-
   }
 
   @StringDef(NONE, PAUSE, STOP)
