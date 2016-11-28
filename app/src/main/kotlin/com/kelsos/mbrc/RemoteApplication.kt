@@ -15,7 +15,6 @@ import toothpick.registries.FactoryRegistryLocator
 import toothpick.registries.MemberInjectorRegistryLocator
 import toothpick.smoothie.module.SmoothieApplicationModule
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
-import java.util.concurrent.TimeUnit
 
 open class RemoteApplication : MultiDexApplication() {
 
@@ -60,14 +59,9 @@ open class RemoteApplication : MultiDexApplication() {
     refWatcher = installLeakCanary()
   }
 
-  private fun installLeakCanary(): RefWatcher {
-    return if (BuildConfig.DEBUG) {
-      LeakCanary.refWatcher(this)
-          .watchDelay(10, TimeUnit.SECONDS)
-          .buildAndInstall()
-    } else {
-      RefWatcher.DISABLED
-    }
+  open internal fun installLeakCanary(): RefWatcher {
+    return RefWatcher.DISABLED
+
   }
 
   fun getRefWatcher(context: Context): RefWatcher {
