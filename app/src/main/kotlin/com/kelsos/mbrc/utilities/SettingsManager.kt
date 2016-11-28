@@ -3,8 +3,10 @@ package com.kelsos.mbrc.utilities
 import android.app.Application
 import android.content.SharedPreferences
 import android.support.annotation.StringDef
+import com.kelsos.mbrc.R
 import com.kelsos.mbrc.logging.FileLoggingTree
 import rx.Single
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
