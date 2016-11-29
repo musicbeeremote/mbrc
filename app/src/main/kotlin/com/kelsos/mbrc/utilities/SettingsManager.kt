@@ -23,7 +23,7 @@ constructor(private val context: Application,
       Timber.plant(FileLoggingTree(this.context.applicationContext))
     } else {
       val fileLoggingTree = Timber.forest().find { it is FileLoggingTree }
-      fileLoggingTree.let { Timber.uproot(it) }
+      fileLoggingTree?.let { Timber.uproot(it) }
     }
   }
 
