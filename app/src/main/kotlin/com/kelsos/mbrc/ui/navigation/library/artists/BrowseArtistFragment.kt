@@ -50,6 +50,7 @@ class BrowseArtistFragment : Fragment(),
   override fun onStart() {
     super.onStart()
     presenter.attach(this)
+    adapter.refresh()
   }
 
   override fun onStop() {

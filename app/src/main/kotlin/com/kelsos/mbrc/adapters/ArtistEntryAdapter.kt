@@ -111,7 +111,7 @@ class ArtistEntryAdapter
   }
 
   fun refresh() {
-    data!!.refresh()
+    data?.refresh()
     notifyDataSetChanged()
   }
 
