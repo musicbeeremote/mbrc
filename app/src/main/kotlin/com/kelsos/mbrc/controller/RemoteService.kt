@@ -46,7 +46,7 @@ class RemoteService : Service(), ForegroundHooks {
     Timber.d("Background Service::Started")
     notificationService.setForegroundHooks(this)
     CommandRegistration.register(remoteController, scope!!)
-    threadPoolExecutor = Executors.newSingleThreadExecutor()
+    threadPoolExecutor = Executors.newSingleThreadExecutor { Thread(it, "message-thread")}
     threadPoolExecutor!!.execute(remoteController)
     remoteController.executeCommand(MessageEvent(UserInputEventType.StartConnection))
     discovery.startDiscovery {  }
