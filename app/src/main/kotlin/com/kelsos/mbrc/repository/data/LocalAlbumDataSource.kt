@@ -9,6 +9,7 @@ import com.kelsos.mbrc.data.library.Track_Table
 import com.kelsos.mbrc.extensions.escapeLike
 import com.raizlabs.android.dbflow.kotlinextensions.*
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import rx.Emitter
 import rx.Observable
@@ -46,11 +47,12 @@ class LocalAlbumDataSource
 
   fun getAlbumsByArtist(artist: String): Single<FlowCursorList<Album>> {
     return Single.create<FlowCursorList<Album>> {
-      val modelQueriable = (select from Album::class
+      val selectAlbum = SQLite.select(Album_Table.album.withTable(), Album_Table.artist.withTable())
+      val modelQueriable = (selectAlbum from Album::class
           leftOuterJoin Track::class
           on Track_Table.album.withTable().eq(album.withTable())
           where Track_Table.artist.withTable().`is`(artist)
-          groupBy Track_Table.artist.withTable())
+          groupBy Track_Table.album_artist.withTable())
           .orderBy(Album_Table.artist.withTable(), true)
           .orderBy(album.withTable(), true)
       val cursor = FlowCursorList.Builder(Album::class.java).modelQueriable(modelQueriable).build()
