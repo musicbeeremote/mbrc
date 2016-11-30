@@ -8,6 +8,7 @@ import com.kelsos.mbrc.repository.ArtistRepository
 import com.kelsos.mbrc.repository.GenreRepository
 import com.kelsos.mbrc.repository.TrackRepository
 import rx.Scheduler
+import rx.Subscription
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
@@ -21,10 +22,16 @@ class LibraryPresenterImpl
                     @Named("main") private val mainScheduler: Scheduler,
                     private val bus: RxBus) : LibraryPresenter, BasePresenter<LibraryView>() {
 
+  private var subscription: Subscription? = null
+  private var running: Boolean = false;
+
   override fun refresh() {
     view?.showRefreshing()
+    subscription?.unsubscribe()
 
-    addSubcription(genreRepository.getRemote()
+    running = true
+
+    subscription = genreRepository.getRemote()
         .andThen(artistRepository.getRemote())
         .andThen(albumRepository.getRemote())
         .andThen(trackRepository.getRemote())
@@ -32,6 +39,7 @@ class LibraryPresenterImpl
         .observeOn(mainScheduler)
         .doOnTerminate {
           view?.hideRefreshing()
+          running = false
         }
         .subscribe({
           bus.post(LibraryRefreshCompleteEvent())
@@ -39,6 +47,14 @@ class LibraryPresenterImpl
         }) {
           Timber.e(it, "Refresh couldn't complete")
           view?.refreshFailed()
-        })
+        }
+  }
+
+  override fun attach(view: LibraryView) {
+    super.attach(view)
+    if (!running) {
+      view.hideRefreshing()
+    }
   }
 }
+
