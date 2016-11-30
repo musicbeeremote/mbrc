@@ -44,7 +44,7 @@ constructor(private val activityChecker: SocketActivityChecker,
   private var shouldStop: Boolean = false
   private var socket: Socket? = null
   private var output: PrintWriter? = null
-  private val executor = Executors.newSingleThreadExecutor()
+  private val executor = Executors.newSingleThreadExecutor { Thread(it, "socket-thread")}
 
   private var subscription: Subscription? = null
 
