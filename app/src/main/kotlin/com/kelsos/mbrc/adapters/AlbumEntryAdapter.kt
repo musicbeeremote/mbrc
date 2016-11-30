@@ -56,16 +56,12 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
   }
 
   fun refresh() {
-    if (data == null) {
-      return
-    }
-
-    data!!.refresh()
+    data?.refresh()
     notifyDataSetChanged()
   }
 
   override fun getItemCount(): Int {
-    return if (data != null) data!!.count else 0
+    return data?.count ?: 0
   }
 
   fun setMenuItemSelectedListener(listener: MenuItemSelectedListener) {

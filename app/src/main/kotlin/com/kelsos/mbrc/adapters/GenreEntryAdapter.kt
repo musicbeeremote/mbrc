@@ -109,11 +109,11 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
    * @return The total number of items in this adapter.
    */
   override fun getItemCount(): Int {
-    return if (data != null) data!!.count else 0
+    return data?.count ?: 0
   }
 
   fun refresh() {
-    data!!.refresh()
+    data?.refresh()
     notifyDataSetChanged()
   }
 
