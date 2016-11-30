@@ -64,6 +64,17 @@ class GenreArtistsActivity : FontActivity(),
     presenter.load(genre!!)
   }
 
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    val itemId = item.itemId
+
+    if (itemId == android.R.id.home) {
+      onBackPressed()
+      return true
+    }
+
+    return super.onOptionsItemSelected(item)
+  }
+
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Artist) {
     actionHandler.artistSelected(menuItem, entry, this)
   }
@@ -89,6 +100,10 @@ class GenreArtistsActivity : FontActivity(),
   override fun onDestroy() {
     super.onDestroy()
     Toothpick.closeScope(this)
+  }
+
+  override fun onBackPressed() {
+    finish()
   }
 
   companion object {

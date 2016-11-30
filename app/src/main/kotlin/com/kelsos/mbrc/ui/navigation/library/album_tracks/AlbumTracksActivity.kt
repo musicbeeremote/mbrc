@@ -78,7 +78,7 @@ class AlbumTracksActivity : FontActivity(),
     val itemId = item.itemId
 
     if (itemId == android.R.id.home) {
-      finish()
+      onBackPressed()
       return true
     }
 
@@ -115,6 +115,10 @@ class AlbumTracksActivity : FontActivity(),
   override fun onDestroy() {
     super.onDestroy()
     Toothpick.closeScope(this)
+  }
+
+  override fun onBackPressed() {
+    finish()
   }
 
   companion object {
