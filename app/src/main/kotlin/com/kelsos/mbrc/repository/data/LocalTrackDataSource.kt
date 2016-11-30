@@ -7,6 +7,7 @@ import com.kelsos.mbrc.data.library.Track_Table.title
 import com.kelsos.mbrc.extensions.escapeLike
 import com.raizlabs.android.dbflow.kotlinextensions.*
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import rx.Emitter
 import rx.Observable
@@ -97,8 +98,7 @@ class LocalTrackDataSource
 
   fun getArtistTrackPaths(artist: String): Single<List<String>> {
     return Single.fromCallable {
-      val trackList = (select from Track::class
-          where Track_Table.artist.`is`(artist) or Track_Table.album_artist.`is`(artist))
+      val trackList =   SQLite.select().from(Track::class).where(Track_Table.artist.`is`(artist)).or(Track_Table.album_artist.`is`(artist))
           .orderBy(Track_Table.album, true)
           .orderBy(Track_Table.disc, true)
           .orderBy(Track_Table.trackno, true)
