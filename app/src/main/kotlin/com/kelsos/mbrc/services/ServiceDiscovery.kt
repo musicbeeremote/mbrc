@@ -111,7 +111,7 @@ internal constructor(private val manager: WifiManager,
   }
 
   private fun getObservable(socket: MulticastSocket): Observable<DiscoveryMessage> {
-    return Observable.interval(600, TimeUnit.MILLISECONDS).take(6).flatMap {
+    return Observable.interval(1000, TimeUnit.MILLISECONDS).take(15).flatMap {
       Observable.fromEmitter<DiscoveryMessage>({
         emitter: Emitter<DiscoveryMessage> ->
         try {
@@ -153,7 +153,7 @@ internal constructor(private val manager: WifiManager,
 
   companion object {
     private val NOTIFY = "notify"
-    private val SO_TIMEOUT = 10 * 1000
+    private val SO_TIMEOUT = 15 * 1000
     private val MULTICASTPORT = 45345
     private val DISCOVERY_ADDRESS = "239.1.5.10" //NOPMD
   }
