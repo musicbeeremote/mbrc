@@ -10,7 +10,7 @@ import javax.inject.Inject
 class QueueServiceImpl
 @Inject constructor() : ServiceBase(), QueueService {
   override fun queue(type: String, tracks: List<String>): Single<QueueResponse> {
-    return request(Protocol.NowPlayingQueue, QueuePayload(type, tracks)).toSingle().flatMap {
+    return request(Protocol.NowPlayingQueue, QueuePayload(type, tracks)).first().toSingle().flatMap {
       return@flatMap Single.fromCallable {
         val payload = mapper.readValue<QueueResponse>(it.data as String, QueueResponse::class.java)
         if (payload.code == CoverPayload.SUCCESS) {
