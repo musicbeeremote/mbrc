@@ -36,33 +36,9 @@
         android:name="android.support.PARENT_ACTIVITY"
         android:value=".ui.navigation.main.MainActivity"/>
     </activity>
-    <activity
-      android:name=".ui.navigation.library.album_tracks.AlbumTracksActivity"
-      android:parentActivityName=".ui.navigation.library.LibraryActivity">
-
-      <!-- Parent activity meta-data to support 4.0 and lower -->
-      <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value=".ui.navigation.library.LibraryActivity"/>
-    </activity>
-    <activity
-      android:name=".ui.navigation.library.artist_albums.ArtistAlbumsActivity"
-      android:parentActivityName=".ui.navigation.library.LibraryActivity">
-
-      <!-- Parent activity meta-data to support 4.0 and lower -->
-      <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value=".ui.navigation.library.LibraryActivity"/>
-    </activity>
-    <activity
-      android:name=".ui.navigation.library.genre_artists.GenreArtistsActivity"
-      android:parentActivityName=".ui.navigation.library.LibraryActivity">
-
-      <!-- Parent activity meta-data to support 4.0 and lower -->
-      <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value=".ui.navigation.library.LibraryActivity"/>
-    </activity>
+    <activity android:name=".ui.navigation.library.album_tracks.AlbumTracksActivity" />
+    <activity android:name=".ui.navigation.library.artist_albums.ArtistAlbumsActivity" />
+    <activity android:name=".ui.navigation.library.genre_artists.GenreArtistsActivity" />
     <activity
       android:name=".ui.navigation.lyrics.LyricsActivity"
       android:label="@string/nav_lyrics"

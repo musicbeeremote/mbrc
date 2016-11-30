@@ -70,6 +70,17 @@ class ArtistAlbumsActivity : FontActivity(),
     presenter.load(artist!!)
   }
 
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    val itemId = item.itemId
+
+    if (itemId == android.R.id.home) {
+      onBackPressed()
+      return true
+    }
+
+    return super.onOptionsItemSelected(item)
+  }
+
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Album) {
     actionHandler.albumSelected(menuItem, entry, this)
   }
@@ -95,6 +106,10 @@ class ArtistAlbumsActivity : FontActivity(),
   override fun onStop() {
     super.onStop()
     presenter.detach()
+  }
+
+  override fun onBackPressed() {
+    finish()
   }
 
   companion object {
