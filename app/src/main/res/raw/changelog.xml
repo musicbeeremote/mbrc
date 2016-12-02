@@ -2,8 +2,14 @@
 <changelog bulletedList="true">
 
   <changelogversion
+      changeDate="Dec 3,2016"
+      versionName="1.0.0-beta.2">
+    <changelogbug>Fixes a potential crash caused by the progress updater</changelogbug>
+  </changelogversion>
+
+  <changelogversion
     changeDate="Nov 28,2016"
-    versionName="1.0.0">
+    versionName="1.0.0-beta.1">
     <changelogtext>Requires v1.0.0 of the [a
       href="https://github.com/kelsos/mbrc-plugin/releases"]mbrc-plugin[/a]
     </changelogtext>

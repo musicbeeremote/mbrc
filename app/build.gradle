@@ -33,7 +33,7 @@ def gitHash() {
 }
 
 def version = "2.0.0.alpha.1"
-def version_code = 110
+def version_code = 111
 
 android {
   compileSdkVersion 25
