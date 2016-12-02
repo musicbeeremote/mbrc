@@ -14,6 +14,7 @@ class ProgressSeekerHelper
   private var subscription: Subscription? = null
 
   fun start(duration: Int) {
+    stop()
     subscription = Observable.interval(1, TimeUnit.SECONDS).takeWhile {
       it <= duration
     }.subscribe({
@@ -26,6 +27,7 @@ class ProgressSeekerHelper
   }
 
   fun update(position: Int, duration: Int) {
+    stop()
     subscription = Observable.interval(1, TimeUnit.SECONDS).map {
       position + it
     }.takeWhile {
