@@ -2,8 +2,10 @@ Change Log
 -----------
 
 # Versions
+## 1.0.0-beta.2
+- Fixes a potential crash on the progress updater.
 
-## 1.0.0-alpha.2
+## 1.0.0-beta.1
 - Full migration to kotlin language.
 - Commands are now instantiated on registration.
 - Adds empty view for lists without data.
