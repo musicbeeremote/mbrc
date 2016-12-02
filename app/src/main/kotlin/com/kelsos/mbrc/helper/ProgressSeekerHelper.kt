@@ -3,6 +3,7 @@ package com.kelsos.mbrc.helper
 import rx.Observable
 import rx.Scheduler
 import rx.Subscription
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
@@ -13,9 +14,15 @@ class ProgressSeekerHelper
   private var subscription: Subscription? = null
 
   fun start(duration: Int) {
-    subscription = Observable.interval(1, TimeUnit.SECONDS).takeWhile { it <= duration }.subscribe {
+    subscription = Observable.interval(1, TimeUnit.SECONDS).takeWhile {
+      it <= duration
+    }.subscribe({
       progressUpdate?.progress(it.toInt(), duration)
-    }
+    }) { onError(it) }
+  }
+
+  private fun onError(throwable: Throwable) {
+    Timber.v(throwable, "Error on progress observable")
   }
 
   fun update(position: Int, duration: Int) {
@@ -23,9 +30,9 @@ class ProgressSeekerHelper
       position + it
     }.takeWhile {
       it <= duration
-    }.observeOn(scheduler).subscribe {
+    }.observeOn(scheduler).subscribe({
       progressUpdate?.progress(it.toInt(), duration)
-    }
+    }) { onError(it) }
   }
 
   fun stop() {
