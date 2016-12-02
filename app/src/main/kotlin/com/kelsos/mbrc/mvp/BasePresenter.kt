@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.mvp
 
-
 import rx.Subscription
 import rx.subscriptions.CompositeSubscription
 

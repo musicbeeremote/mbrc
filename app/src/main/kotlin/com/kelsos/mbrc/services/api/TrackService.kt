@@ -8,7 +8,7 @@ import com.kelsos.mbrc.dto.track.Lyrics
 import com.kelsos.mbrc.dto.track.Position
 import com.kelsos.mbrc.dto.track.Rating
 import com.kelsos.mbrc.dto.track.TrackInfoResponse
-import com.kelsos.mbrc.utilities.RemoteUtils
+import org.threeten.bp.Instant
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PUT
@@ -34,7 +34,7 @@ interface TrackService {
 
     @GET("/track/cover")
     @Streaming
-    fun getTrackCover(@Query("t") timestamp: String = RemoteUtils.timeStamp): Observable<Bitmap>
+    fun getTrackCover(@Query("t") timestamp: String = Instant.now().epochSecond.toString()): Observable<Bitmap>
 
     @GET("/track")
     fun getTrackInfo(): Observable<TrackInfoResponse>

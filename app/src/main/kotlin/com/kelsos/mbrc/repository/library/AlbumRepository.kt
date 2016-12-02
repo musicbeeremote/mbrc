@@ -1,17 +1,10 @@
 package com.kelsos.mbrc.repository.library
 
-import com.kelsos.mbrc.data.dao.AlbumDao
-import com.kelsos.mbrc.data.views.AlbumModelView
-import com.kelsos.mbrc.data.views.ArtistAlbumView
+import com.kelsos.mbrc.domain.Album
 import com.kelsos.mbrc.repository.Repository
-import rx.Observable
+import com.raizlabs.android.dbflow.list.FlowCursorList
+import rx.Single
 
-interface AlbumRepository : Repository<AlbumDao> {
-    fun getAlbumViewById(albumId: Int): AlbumModelView?
-
-    fun getAlbumViews(offset: Int, limit: Int): Observable<List<AlbumModelView>>
-
-    fun getAlbumYear(id: Long): String
-
-    fun getAlbumsByArtist(artistId: Long): Observable<List<ArtistAlbumView>>
+interface AlbumRepository : Repository<Album> {
+  fun getAlbumsByArtist(artist: String): Single<FlowCursorList<Album>>
 }

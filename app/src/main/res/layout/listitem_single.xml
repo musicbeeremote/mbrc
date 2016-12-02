@@ -1,46 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/list_item_single_height"
-    android:background="?attr/selectableItemBackground"
-    android:layout_gravity="center_vertical"
-    android:clickable="false"
-    android:gravity="center_vertical">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/list_item_single_height"
+              android:layout_gravity="center_vertical"
+              android:background="?attr/selectableItemBackground"
+              android:clickable="true"
+              android:gravity="center_vertical">
 
-  <TextView
-      android:id="@+id/line_one"
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
-      android:layout_weight="1"
-      android:ellipsize="end"
-      android:focusableInTouchMode="false"
-      android:paddingLeft="@dimen/normal_margin"
-      android:singleLine="true"
-      android:text="@string/artist_placeholder"
-      android:textColor="@color/primary_text"
-      android:textSize="@dimen/list_item_one"
-      android:textStyle="normal"
-      tools:ignore="RtlHardcoded,RtlSymmetry" />
+    <TextView
+            android:paddingStart="@dimen/normal_margin"
+            android:paddingLeft="@dimen/normal_margin"
+            android:id="@+id/line_one"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:focusableInTouchMode="false"
+            android:maxLines="1"
+            android:text="@string/artist_placeholder"
+            android:textColor="@color/primary_text"
+            android:textSize="@dimen/list_item_one"
+            android:textStyle="normal"
+            tools:ignore="RtlHardcoded,RtlSymmetry"/>
 
-  <LinearLayout
-      android:id="@+id/ui_item_context_indicator"
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
-      android:layout_weight="0"
-      android:background="?attr/selectableItemBackground"
-      android:gravity="center_vertical"
-      android:paddingLeft="@dimen/normal_margin"
-      android:paddingRight="@dimen/normal_margin">
+    <LinearLayout
+            android:id="@+id/ui_item_context_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/normal_margin"
+            android:paddingRight="@dimen/normal_margin">
 
-    <ImageView
+        <ImageView
         android:id="@+id/list_item_track_overflow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:contentDescription="@string/abc_action_menu_overflow_description"
-        android:src="@drawable/ic_more_vert_black_24dp"
-        android:tint="@android:color/white" />
-  </LinearLayout>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/menu_overflow_description"
+                android:src="@drawable/ic_more_vert_black_24dp"
+                android:tint="@android:color/white"/>
+    </LinearLayout>
 </LinearLayout>

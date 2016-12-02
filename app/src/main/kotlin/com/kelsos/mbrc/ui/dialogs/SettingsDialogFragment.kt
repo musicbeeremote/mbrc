@@ -1,81 +1,85 @@
 package com.kelsos.mbrc.ui.dialogs
 
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.text.TextUtils
-import android.view.View
 import android.widget.EditText
+import butterknife.BindView
+import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.Theme
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.dao.ConnectionSettings
 
 class SettingsDialogFragment : DialogFragment() {
 
-  private lateinit var hostEdit: EditText
-  private lateinit var nameEdit: EditText
-  private lateinit var portEdit: EditText
-  private lateinit var httpEdit: EditText
+  @BindView(R.id.settings_dialog_host) lateinit var hostEdit: EditText
+  @BindView(R.id.settings_dialog_name) lateinit var nameEdit: EditText
+  @BindView(R.id.settings_dialog_port) lateinit var portEdit: EditText
 
-  private var currentName: String? = null
-  private var currentAddress: String? = null
-  private var currentPort: Int = 0
-  private var currentIndex: Int = 0
-  private var currentHttpPort: Int = 0
+  private var mListener: SettingsSaveListener? = null
+  private lateinit var settings: ConnectionSettings
+  private var edit: Boolean = false
 
-  private var mListener: SettingsDialogListener? = null
+  private fun setConnectionSettings(settings: ConnectionSettings) {
+    this.settings = settings
+  }
+
+  override fun onAttach(context: Context?) {
+    super.onAttach(context)
+    try {
+      mListener = context as SettingsSaveListener?
+    } catch (e: ClassCastException) {
+      throw ClassCastException(context!!.toString() + " must implement SettingsDialogListener")
+    }
+
+  }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     val builder = MaterialDialog.Builder(activity)
+    builder.theme(Theme.DARK)
     builder.customView(R.layout.ui_dialog_settings, false)
-    builder.title(R.string.settings_dialog_add)
-    builder.positiveText(R.string.settings_dialog_add)
+    builder.title(if (edit) R.string.settings_dialog_edit else R.string.settings_dialog_add)
+    builder.positiveText(if (edit) R.string.settings_dialog_save else R.string.settings_dialog_add)
     builder.negativeText(android.R.string.cancel)
     builder.onPositive { dialog, which ->
       var shouldIClose = true
       val hostname = hostEdit.text.toString()
       val computerName = nameEdit.text.toString()
 
-      if (hostname.length == 0 || computerName.length == 0) {
+      if (hostname.isEmpty() || computerName.isEmpty()) {
         shouldIClose = false
       }
 
       val portText = portEdit.text.toString()
 
       val portNum = if (TextUtils.isEmpty(portText)) 0 else Integer.parseInt(portText)
-
       if (isValid(portNum) && shouldIClose) {
-
-        val settings = ConnectionSettings()
-        settings.address = hostname
         settings.name = computerName
+        settings.address = hostname
         settings.port = portNum
-
-        mListener?.onDialogPositiveClick(this@SettingsDialogFragment, settings)
+        mListener?.onSave(settings)
         dialog.dismiss()
       }
     }
+    builder.onNegative { dialog, which -> dialog.dismiss() }
 
-    val materialDialog = builder.build()
-    val view = materialDialog.customView as View
-    hostEdit = view.findViewById(R.id.settings_dialog_host) as EditText
-    nameEdit = view.findViewById(R.id.settings_dialog_name) as EditText
-    portEdit = view.findViewById(R.id.settings_dialog_port) as EditText
+    val settingsDialog = builder.build()
+    val view = settingsDialog.customView ?: return settingsDialog
 
-    httpEdit = view.findViewById(R.id.settings_dialog_http) as EditText
-    return materialDialog
+    ButterKnife.bind(this, view)
+    return settingsDialog
   }
 
   override fun onStart() {
     super.onStart()
-    nameEdit.setText(currentName)
-    hostEdit.setText(currentAddress)
+    nameEdit.setText(settings.name)
+    hostEdit.setText(settings.address)
 
-    if (currentHttpPort > 0) {
-      httpEdit.setText(String.format("%d", currentHttpPort))
-    }
-    if (currentPort > 0) {
-      portEdit.setText(String.format("%d", currentPort))
+    if (settings.port > 0) {
+      portEdit.setText(settings.port.toString())
     }
   }
 
@@ -94,49 +98,24 @@ class SettingsDialogFragment : DialogFragment() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    val args = arguments
-    if (args != null) {
-      currentIndex = args.getInt(ID)
-      currentPort = args.getInt(PORT)
-      currentAddress = args.getString(ADDRESS)
-      currentName = args.getString(NAME)
-      currentHttpPort = args.getInt(HTTP)
+    if (!edit) {
+      settings = ConnectionSettings()
     }
   }
 
-  interface SettingsDialogListener {
-    fun onDialogPositiveClick(dialog: SettingsDialogFragment, settings: ConnectionSettings)
+  interface SettingsSaveListener {
+    fun onSave(settings: ConnectionSettings)
   }
 
   companion object {
 
-    const val TAG = "settings_dialog"
-
-    const val MAX_PORT = 65535
-    const val MIN_PORT = 1
-
-    const val ID = "index"
-    const val PORT = "port"
-    const val ADDRESS = "address"
-    const val NAME = "name"
-    const val HTTP = "http"
-
-    fun newInstance(index: Int): SettingsDialogFragment {
-      val fragment = SettingsDialogFragment()
-      val args = Bundle()
-      args.putInt(ID, index)
-      fragment.arguments = args
-      return fragment
-    }
+    private val MAX_PORT = 65535
+    private val MIN_PORT = 1
 
     fun newInstance(settings: ConnectionSettings): SettingsDialogFragment {
       val fragment = SettingsDialogFragment()
-      val args = Bundle()
-      args.putLong(ID, settings.id)
-      args.putString(NAME, settings.name)
-      args.putString(ADDRESS, settings.address)
-      args.putInt(PORT, settings.port)
-      fragment.arguments = args
+      fragment.setConnectionSettings(settings)
+      fragment.edit = true
       return fragment
     }
   }

@@ -3,6 +3,7 @@ package com.kelsos.mbrc.dto.player
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.kelsos.mbrc.annotations.Shuffle
 import com.kelsos.mbrc.annotations.Shuffle.State
 import com.kelsos.mbrc.dto.BaseResponse
 
@@ -13,6 +14,6 @@ class Shuffle : BaseResponse() {
 
   @JsonProperty("state")
   @State
-  var state: String = com.kelsos.mbrc.annotations.Shuffle.UNDEF
+  var state: String = Shuffle.OFF
 
 }

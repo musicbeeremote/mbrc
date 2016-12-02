@@ -2,22 +2,7 @@ package com.kelsos.mbrc.messaging
 
 import com.kelsos.mbrc.constants.SocketNotification
 import com.kelsos.mbrc.dto.WebSocketMessage
-import com.kelsos.mbrc.events.ui.CoverChangedEvent
-import com.kelsos.mbrc.events.ui.LyricsChangedEvent
-import com.kelsos.mbrc.events.ui.MuteChangeEvent
-import com.kelsos.mbrc.events.ui.PlayStateChange
-import com.kelsos.mbrc.events.ui.RepeatChange
-import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
-import com.kelsos.mbrc.events.ui.VolumeChangeEvent
-import com.kelsos.mbrc.extensions.io
-import com.kelsos.mbrc.interactors.MuteInteractor
-import com.kelsos.mbrc.interactors.PlayerStateInteractor
-import com.kelsos.mbrc.interactors.RepeatInteractor
-import com.kelsos.mbrc.interactors.TrackCoverInteractor
-import com.kelsos.mbrc.interactors.TrackInfoInteractor
-import com.kelsos.mbrc.interactors.TrackLyricsInteractor
-import com.kelsos.mbrc.interactors.VolumeInteractor
-import com.kelsos.mbrc.utilities.RxBus
+import com.kelsos.mbrc.events.bus.RxBus
 import rx.Subscription
 import rx.subjects.PublishSubject
 import timber.log.Timber
@@ -27,14 +12,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton class SocketMessageHandler
-@Inject constructor(bus: RxBus,
-                    private val volumeInteractor: VolumeInteractor,
-                    private val coverInteractor: TrackCoverInteractor,
-                    private val lyricsInteractor: TrackLyricsInteractor,
-                    private val trackInfoInteractor: TrackInfoInteractor,
-                    private val repeatInteractor: RepeatInteractor,
-                    private val playerStateInteractor: PlayerStateInteractor,
-                    private val muteInteractor: MuteInteractor) {
+@Inject constructor(bus: RxBus) {
 
   private val actions: MutableMap<String, () -> Subscription>
   private val activeSubscriptions: MutableMap<String, Subscription>
@@ -59,59 +37,31 @@ import javax.inject.Singleton
   }
 
   fun getMuteAction(bus: RxBus): () -> Subscription = {
-    muteInteractor.getMuteState().io().doOnTerminate {
-      activeSubscriptions.remove(SocketNotification.MUTE)
-    }.subscribe {
-      bus.post(MuteChangeEvent(it))
-    }
+    TODO()
   }
 
   fun getRepeatAction(bus: RxBus): () -> Subscription = {
-    repeatInteractor.getRepeat().io().doOnTerminate {
-      activeSubscriptions.remove(SocketNotification.REPEAT)
-    }.subscribe {
-      bus.post(RepeatChange(it))
-    }
+    TODO()
   }
 
   fun getPlayStatusAction(bus: RxBus): () -> Subscription = {
-    playerStateInteractor.getState().io().doOnTerminate {
-      activeSubscriptions.remove(SocketNotification.PLAY_STATUS)
-    }.subscribe {
-      bus.post(PlayStateChange(it))
-    }
+    TODO()
   }
 
   fun getTrackAction(bus: RxBus): () -> Subscription = {
-    trackInfoInteractor.load(true).io().doOnTerminate {
-      activeSubscriptions.remove(SocketNotification.TRACK)
-    }.subscribe {
-      bus.post(TrackInfoChangeEvent(it))
-    }
+    TODO()
   }
 
   fun getLyricsAction(bus: RxBus): () -> Subscription = {
-    lyricsInteractor.execute(true).io().doOnTerminate {
-      activeSubscriptions.remove(SocketNotification.LYRICS)
-    }.subscribe {
-      bus.post(LyricsChangedEvent(it))
-    }
+    TODO()
   }
 
   fun getCoverAction(bus: RxBus): () -> Subscription = {
-    coverInteractor.load(true).io().doOnTerminate {
-      activeSubscriptions.remove(SocketNotification.COVER)
-    }.subscribe {
-      bus.post(CoverChangedEvent(it))
-    }
+    TODO()
   }
 
   fun getVolumeAction(bus: RxBus): () -> Subscription = {
-    volumeInteractor.getVolume().io().doOnTerminate {
-      activeSubscriptions.remove(SocketNotification.VOLUME)
-    }.subscribe {
-      bus.post(VolumeChangeEvent(it))
-    }
+    TODO()
   }
 
   private fun onWebSocketMessage(message: WebSocketMessage) {

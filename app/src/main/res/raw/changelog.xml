@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<changelog bulletedList="true">
+
+  <changelogversion
+    changeDate="Nov 28,2016"
+    versionName="1.0.0">
+    <changelogtext>Requires v1.0.0 of the [a
+      href="https://github.com/kelsos/mbrc-plugin/releases"]mbrc-plugin[/a]
+    </changelogtext>
+    <changelogtext>Changes minimum supported version to Android 4.1.x</changelogtext>
+    <changelogtext>Optimizations on code</changelogtext>
+    <changelogtext>Visual update of the application</changelogtext>
+    <changelogtext>Replaces previous startup dialogs with Change Log</changelogtext>
+    <changelogimprovement>Implements and optimizes a new library view</changelogimprovement>
+    <changelogtext>Adds basic playlist support</changelogtext>
+    <changelogtext>Merges Help and feedback views</changelogtext>
+    <changelogtext>Uses new API to load covers.</changelogtext>
+    <changelogtext>Uses new API to load lyrics.</changelogtext>
+    <changelogtext>Users new API for Now Playing loading</changelogtext>
+    <changelogbug>Fixes an issue where the application would start automatically on device boot
+    </changelogbug>
+    <changelogbug>Fixes an issue with the widgets that stopped to update after some time
+    </changelogbug>
+    <changelogtext>Increases the timeout of the automatic discovery function</changelogtext>
+    <changelogimprovement>Adds extra actions on the Incoming call action [i](Stop and Pause along
+      with Volume reduce)[/i]
+    </changelogimprovement>
+    <changelogimprovement>Reworks the connection settings detection functionality. [i](If the
+      network allows it the detection should happen automatically on the application startup)[/i]
+    </changelogimprovement>
+    <changelogtext>Adds support for Debug logging</changelogtext>
+    <changelogtext>Application now is written in Kotlin language</changelogtext>
+  </changelogversion>
+
+</changelog>

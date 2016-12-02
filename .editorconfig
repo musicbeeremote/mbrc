@@ -11,6 +11,12 @@ indent_style = space
 intent_size = 2
 trim_trailing_whitespace = true
 
+[*.kt]
+charset = utf-8
+indent_style = space
+intent_size = 2
+trim_trailing_whitespace = true
+
 [*.xml]
 charset = utf-8
 indent_style = space

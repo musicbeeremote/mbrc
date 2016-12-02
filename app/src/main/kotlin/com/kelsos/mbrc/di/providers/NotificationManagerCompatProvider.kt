@@ -6,7 +6,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 class NotificationManagerCompatProvider
-@Inject constructor(val context: Application) : Provider<NotificationManagerCompat> {
+@Inject constructor(private val context: Application) : Provider<NotificationManagerCompat> {
   override fun get(): NotificationManagerCompat {
     return NotificationManagerCompat.from(context)
   }

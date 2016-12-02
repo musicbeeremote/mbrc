@@ -5,6 +5,5 @@ import toothpick.config.Module
 class MainModule : Module() {
   init {
     bind(MainViewPresenter::class.java).to(MainViewPresenterImpl::class.java).singletonInScope()
-    bind(MainViewModel::class.java).to(MainViewModelImpl::class.java).singletonInScope()
   }
 }

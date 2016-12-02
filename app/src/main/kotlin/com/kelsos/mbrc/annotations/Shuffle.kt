@@ -11,6 +11,6 @@ object Shuffle {
 
     @StringDef(OFF, AUTODJ, ON, TOGGLE, UNDEF)
 
-    @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
+    @Retention(AnnotationRetention.SOURCE)
     annotation class State
 }

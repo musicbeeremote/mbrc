@@ -9,40 +9,44 @@ import android.support.v7.app.NotificationCompat
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
+import com.kelsos.mbrc.controller.ForegroundHooks
+import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.ui.CoverChangedEvent
 import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
-import com.kelsos.mbrc.models.NotificationModel
+import com.kelsos.mbrc.model.NotificationModel
 import com.kelsos.mbrc.services.RemoteSessionManager
+import com.kelsos.mbrc.utilities.RemoteUtils
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.NEXT
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.OPEN
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PLAY
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PREVIOUS
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.getPendingIntent
-import com.kelsos.mbrc.utilities.RxBus
 import com.kelsos.mbrc.utilities.SettingsManager
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton class
-NotificationService
+@Singleton
+class NotificationService
 @Inject
-constructor(private val context: Application,
-            bus: RxBus,
-            private val model: NotificationModel,
-            private val notificationManager: NotificationManagerCompat,
+constructor(bus: RxBus,
+            private val context: Application,
             private val sessionManager: RemoteSessionManager,
-            private val settings: SettingsManager) {
+            private val settings: SettingsManager,
+            private val model: NotificationModel,
+            private val notificationManager: NotificationManagerCompat) {
   private var notification: Notification? = null
   private val previous: String
   private val play: String
   private val next: String
+  private var hooks: ForegroundHooks? = null
 
   init {
     bus.register(this, TrackInfoChangeEvent::class.java, { this.handleTrackInfo(it) })
-    bus.register(this, CoverChangedEvent::class.java, { this.coverChanged(it) })
+    bus.register(this, CoverChangedEvent::class.java, { this.coverChanged(it.path) })
     bus.register(this, PlayStateChange::class.java, { this.playStateChanged(it) })
     bus.register(this, ConnectionStatusChangeEvent::class.java, { this.connectionChanged(it) })
     previous = context.getString(R.string.notification_action_previous)
@@ -51,21 +55,35 @@ constructor(private val context: Application,
   }
 
   private fun handleTrackInfo(event: TrackInfoChangeEvent) {
-    model!!.trackInfo = event.trackInfo
-    notification = createBuilder().build()
-    notificationManager!!.notify(NOW_PLAYING_PLACEHOLDER, notification)
+    model.trackInfo = event.trackInfo
+    update()
   }
 
-  private fun coverChanged(event: CoverChangedEvent) {
-    model!!.cover = event.cover
-    notification = createBuilder().build()
-    notificationManager!!.notify(NOW_PLAYING_PLACEHOLDER, notification)
+  private fun coverChanged(path: String) {
+    val coverFile = File(path)
+    if (coverFile.exists()) {
+      RemoteUtils.bitmapFromFile(coverFile.absolutePath).doOnTerminate {
+        update()
+      }.subscribe({
+        model.cover = it
+      }, {
+        Timber.v(it, "failed to decode")
+        model.cover = null
+      })
+    } else {
+      model.cover = null
+      update()
+    }
   }
 
   private fun playStateChanged(event: PlayStateChange) {
-    model!!.playState = event.state
+    model.playState = event.state
+    update()
+  }
+
+  private fun update() {
     notification = createBuilder().build()
-    notificationManager!!.notify(NOW_PLAYING_PLACEHOLDER, notification)
+    notificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification)
   }
 
   private fun connectionChanged(event: ConnectionStatusChangeEvent) {
@@ -75,25 +93,31 @@ constructor(private val context: Application,
     }
 
     if (event.status == Connection.OFF) {
-      notificationManager?.cancel(NOW_PLAYING_PLACEHOLDER)
+      cancelNotification(NOW_PLAYING_PLACEHOLDER)
+    } else {
+      notification = createBuilder().build()
+      if (hooks != null) {
+        hooks!!.start(NOW_PLAYING_PLACEHOLDER, notification!!)
+      }
     }
-
-    notification = createBuilder().build()
   }
 
   private fun createBuilder(): NotificationCompat.Builder {
     val mediaStyle = NotificationCompat.MediaStyle()
-    mediaStyle.setMediaSession(sessionManager.token)
+    mediaStyle.setMediaSession(sessionManager.mediaSessionToken)
 
     val builder = NotificationCompat.Builder(context)
-    val resId = if (model!!.playState == PlayerState.PLAYING)
-      R.drawable.ic_action_pause
-    else
-      R.drawable.ic_action_play
+    val resId = if (model.playState == PlayerState.PLAYING) R.drawable.ic_action_pause else R.drawable.ic_action_play
 
-    builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setSmallIcon(R.drawable.ic_mbrc_status).setStyle(
-        mediaStyle.setShowActionsInCompactView(1,
-            2)).addAction(previousAction).addAction(getPlayAction(resId)).addAction(nextAction)
+    builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+        .setSmallIcon(R.drawable.ic_mbrc_status)
+        .setStyle(mediaStyle.setShowActionsInCompactView(1, 2))
+        .addAction(previousAction)
+        .addAction(getPlayAction(resId))
+        .addAction(nextAction)
+
+    builder.priority = NotificationCompat.PRIORITY_LOW
+    builder.setOnlyAlertOnce(true)
 
     if (model.cover != null) {
       builder.setLargeIcon(model.cover)
@@ -104,10 +128,8 @@ constructor(private val context: Application,
 
     val info = model.trackInfo
 
-    if (info.title.isNotBlank()) {
-      builder.setContentTitle(info.title)
-          .setContentText(info.artist)
-          .setSubText(info.album)
+    if (info != null) {
+      builder.setContentTitle(info.title).setContentText(info.artist).setSubText(info.album)
     }
 
     builder.setContentIntent(getPendingIntent(OPEN, context))
@@ -134,7 +156,14 @@ constructor(private val context: Application,
     }
 
   fun cancelNotification(notificationId: Int) {
-    notificationManager?.cancel(notificationId)
+    notificationManager.cancel(notificationId)
+    if (hooks != null) {
+      hooks!!.stop()
+    }
+  }
+
+  fun setForegroundHooks(hooks: ForegroundHooks) {
+    this.hooks = hooks
   }
 
   companion object {

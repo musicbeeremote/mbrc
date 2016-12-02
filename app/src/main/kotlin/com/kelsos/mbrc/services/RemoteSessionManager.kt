@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.kelsos.mbrc.services
 
 import android.annotation.TargetApi
@@ -12,23 +14,24 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.kelsos.mbrc.annotations.PlayerState
+import com.kelsos.mbrc.annotations.PlayerState.State
+import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.RemoteClientMetaData
 import com.kelsos.mbrc.utilities.MediaButtonReceiver
 import com.kelsos.mbrc.utilities.MediaIntentHandler
-import com.kelsos.mbrc.utilities.RxBus
+import com.kelsos.mbrc.utilities.RemoteUtils
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton class RemoteSessionManager
+@Singleton
+class RemoteSessionManager
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 @Inject
-constructor(context: Application,
-            bus: RxBus,
-            private val manager: AudioManager,
-            val handler: MediaIntentHandler) : AudioManager.OnAudioFocusChangeListener {
+constructor(private val context: Application, private val bus: RxBus, private val manager: AudioManager) : AudioManager.OnAudioFocusChangeListener {
   private val mMediaSession: MediaSessionCompat?
+  @Inject lateinit var handler: MediaIntentHandler
 
   init {
 
@@ -39,93 +42,101 @@ constructor(context: Application,
     val myEventReceiver = ComponentName(context.packageName, MediaButtonReceiver::class.java.name)
     val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
     mediaButtonIntent.component = myEventReceiver
-    val mediaPendingIntent = PendingIntent.getBroadcast(context.applicationContext,
-        0,
-        mediaButtonIntent,
+    val mediaPendingIntent = PendingIntent.getBroadcast(context.applicationContext, 0, mediaButtonIntent,
         PendingIntent.FLAG_UPDATE_CURRENT)
 
     mMediaSession = MediaSessionCompat(context, "Session", myEventReceiver, mediaPendingIntent)
 
-    mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or
-        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
+    mMediaSession.setFlags(
+        MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       mMediaSession.setCallback(object : MediaSessionCompat.Callback() {
         override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
-          val success = handler!!.handleMediaIntent(mediaButtonEvent!!)
+          val success = handler.handleMediaIntent(mediaButtonEvent)
           return success || super.onMediaButtonEvent(mediaButtonEvent)
         }
 
         override fun onPlay() {
-
+          TODO("Api action")
         }
 
         override fun onPause() {
-
+          TODO("Api action")
         }
 
         override fun onSkipToNext() {
-
+          TODO("Api action")
         }
 
         override fun onSkipToPrevious() {
-
+          TODO("Api action")
         }
 
         override fun onStop() {
-
+          TODO("Api action")
         }
       })
     }
   }
 
-  val token: MediaSessionCompat.Token
+  val mediaSessionToken: MediaSessionCompat.Token
     get() = mMediaSession!!.sessionToken
 
-  fun metadataUpdate(data: RemoteClientMetaData) {
+  private fun metadataUpdate(data: RemoteClientMetaData) {
     if (mMediaSession == null) {
       return
     }
 
+    val trackInfo = data.trackInfo
+    val bitmap = RemoteUtils.coverBitmapSync(data.coverPath)
 
     val builder = MediaMetadataCompat.Builder()
-    builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, data.album)
-    builder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, data.artist)
-    builder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, data.title)
-    builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, data.cover)
+    builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, trackInfo.album)
+    builder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, trackInfo.artist)
+    builder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, trackInfo.title)
+    builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
     mMediaSession.setMetadata(builder.build())
   }
 
-  fun updateState(stateChange: PlayStateChange) {
+  private fun updateState(stateChange: PlayStateChange) {
     if (mMediaSession == null) {
       return
     }
 
     val builder = PlaybackStateCompat.Builder()
     builder.setActions(PLAYBACK_ACTIONS)
-    val playerState = stateChange.state
-    when (playerState) {
-      PlayerState.PLAYING -> builder.setState(PlaybackStateCompat.STATE_PLAYING, -1, 1f)
-      PlayerState.PAUSED -> builder.setState(PlaybackStateCompat.STATE_PAUSED, -1, 0f)
-      else -> builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
+    @State val state = stateChange.state
+    if (PlayerState.PLAYING == state) {
+      builder.setState(PlaybackStateCompat.STATE_PLAYING, -1, 1f)
+      mMediaSession.isActive = true
+
+    } else if (PlayerState.PAUSED == state) {
+      builder.setState(PlaybackStateCompat.STATE_PAUSED, -1, 0f)
+      mMediaSession.isActive = true
+
+    } else {
+      builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
+      mMediaSession.isActive = false
+
     }
     val playbackState = builder.build()
     mMediaSession.setPlaybackState(playbackState)
     ensureTransportControls(playbackState)
-
-    val isActive = PlayerState.STOPPED == playerState || PlayerState.UNDEFINED == playerState
-    mMediaSession.isActive = isActive
   }
 
-  fun onPlayStateChange(change: PlayStateChange) {
-    when (change.state) {
-      PlayerState.PLAYING -> requestFocus()
-      PlayerState.PAUSED -> {
-      }
-      else -> abandonFocus()
+  private fun onPlayStateChange(change: PlayStateChange) {
+    if (PlayerState.PLAYING == change.state) {
+      requestFocus()
+    } else if (change.state == PlayerState.PAUSED) {
+      // Do nothing
+    } else {
+      abandonFocus()
+
     }
   }
 
+  @Suppress("DEPRECATION")
   @SuppressWarnings("deprecation")
   @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
   private fun ensureTransportControls(playbackState: PlaybackStateCompat) {

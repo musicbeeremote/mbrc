@@ -1,12 +1,5 @@
 package com.kelsos.mbrc.events.ui
 
-import com.kelsos.mbrc.annotations.Repeat
+import com.kelsos.mbrc.annotations.Repeat.Mode
 
-class RepeatChange {
-  @Repeat.Mode val mode: String
-
-  constructor(@Repeat.Mode mode: String) {
-    this.mode = mode
-  }
-
-}
+class RepeatChange(@Mode val mode: String)

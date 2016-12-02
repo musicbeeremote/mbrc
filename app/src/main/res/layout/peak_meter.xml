@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/peak_meter"
         android:src="@anim/peak_meter_1"
-        android:tint="@color/primary_material_light" />
+        android:tint="@color/primary_light" />
 
     <View
         android:layout_width="1dp"
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/peak_meter"
         android:src="@anim/peak_meter_2"
-        android:tint="@color/primary_material_light" />
+        android:tint="@color/primary_light" />
 
     <View
         android:layout_width="1dp"
@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/peak_meter"
         android:src="@anim/peak_meter_3"
-        android:tint="@color/primary_material_light" />
+        android:tint="@color/primary_light" />
 
 
   </LinearLayout>

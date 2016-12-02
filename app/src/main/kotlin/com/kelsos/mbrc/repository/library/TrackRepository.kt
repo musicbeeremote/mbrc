@@ -1,11 +1,14 @@
 package com.kelsos.mbrc.repository.library
 
-import com.kelsos.mbrc.data.dao.TrackDao
-import com.kelsos.mbrc.data.views.TrackModelView
+import com.kelsos.mbrc.domain.Track
 import com.kelsos.mbrc.repository.Repository
-import rx.Observable
+import com.raizlabs.android.dbflow.list.FlowCursorList
+import rx.Single
 
-interface TrackRepository : Repository<TrackDao> {
-    fun getTracksByAlbumId(albumId: Long): Observable<List<TrackModelView>>
-    fun getTracks(offset: Int, limit: Int): Observable<List<TrackModelView>>
+interface TrackRepository : Repository<Track> {
+  fun getAlbumTracks(album: String, artist: String): Single<FlowCursorList<Track>>
+  fun getNonAlbumTracks(artist: String): Single<FlowCursorList<Track>>
+  fun getAlbumTrackPaths(album: String, artist: String): Single<List<String>>
+  fun getGenreTrackPaths(genre: String): Single<List<String>>
+  fun getArtistTrackPaths(artist: String): Single<List<String>>
 }

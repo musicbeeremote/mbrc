@@ -1,25 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="mbrc_pressed_default">#44ffffff</color>
   <color name="mbrc_selected_item">#11ffffff</color>
   <color name="mbrc_transparent_dark">#99000000</color>
-  <color name="drop_shadow_end">#66000000</color>
-  <color name="drop_shadow_start">#00000000</color>
-  <color name="colorAccentPressed">#f53900</color>
-
-  <color name="dark_background">#ff303030</color>
-
   <color name="primary">#FFC107</color>
   <color name="primary_dark">#FFA000</color>
   <color name="primary_light">#FFECB3</color>
   <color name="accent">#FF5722</color>
   <color name="primary_text">#FFFFFF</color>
   <color name="secondary_text">#b2ffffff</color>
-  <color name="icons">#4dffffff</color>
-  <color name="divider">#1fffffff</color>
-
   <color name="button_dark">#ff5a595b</color>
   <color name="white">#fff</color>
-
-
+  <color name="icons">#4dffffff</color>
+  <color name="divider">#1fffffff</color>
+  <color name="black">#000</color>
+  <color name="power_on">#33A328</color>
+  <color name="background_dark">#ff303030</color>
+  <color name="primary_text_material_light">#de000000</color>
+  <color name="secondary_text_material_light">#8a000000</color>
+  <color name="empty_view_icon_tint">#bdbdbd</color>
+  <color name="light_gray">#bdbdbd</color>
 </resources>

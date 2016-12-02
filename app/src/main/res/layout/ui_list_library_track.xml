@@ -10,7 +10,7 @@
     android:gravity="center_vertical"
     android:orientation="horizontal">
 
-  <com.kelsos.mbrc.ui.SquareImageView
+  <com.kelsos.mbrc.ui.widgets.SquareImageView
       android:id="@+id/track_cover"
       android:layout_width="wrap_content"
       android:layout_height="match_parent"
@@ -35,22 +35,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:singleLine="true"
-        android:text="@string/title_placeholder"
+        android:maxLines="1"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/primary_text"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        tools:text="Placeholder" />
 
     <TextView
         android:id="@+id/line_two"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:singleLine="true"
-        android:text="@string/artist_placeholder"
+        android:maxLines="1"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/secondary_text"
-        android:textSize="13sp" />
+        android:textSize="13sp"
+        tools:text="Placeholder" />
   </LinearLayout>
 
   <LinearLayout
@@ -69,7 +69,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:contentDescription="@string/abc_action_menu_overflow_description"
+        android:contentDescription="@string/menu_overflow_description"
         android:src="@drawable/ic_more_vert_black_24dp"
         android:tint="@android:color/white" />
   </LinearLayout>

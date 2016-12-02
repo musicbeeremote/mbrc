@@ -1,0 +1,18 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+  <include
+      android:id="@+id/playlist_content"
+      layout="@layout/app_bar_playlist_tracks"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_above="@+id/mini_control" />
+
+  <include
+      android:id="@+id/mini_control"
+      layout="@layout/mini_control_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true" />
+</RelativeLayout>

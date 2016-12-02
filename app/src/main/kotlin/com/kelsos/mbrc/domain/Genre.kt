@@ -1,3 +1,12 @@
 package com.kelsos.mbrc.domain
 
-data class Genre(val id: Long, val name: String)
+import com.kelsos.mbrc.data.db.RemoteDatabase
+import com.raizlabs.android.dbflow.annotation.Column
+import com.raizlabs.android.dbflow.annotation.QueryModel
+import com.raizlabs.android.dbflow.structure.BaseQueryModel
+
+@QueryModel(database = RemoteDatabase::class)
+class Genre() : BaseQueryModel() {
+  @Column var id: Long = 0
+  @Column var name: String = ""
+}

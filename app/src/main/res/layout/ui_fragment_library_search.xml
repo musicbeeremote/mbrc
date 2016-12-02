@@ -16,6 +16,6 @@
       android:paddingTop="@dimen/small_margin"
       android:scrollbars="vertical"
       app:layout_behavior="@string/appbar_scrolling_view_behavior"
-      tools:listitem="@layout/ui_list_single" />
+      tools:listitem="@layout/listitem_single" />
 
 </LinearLayout>

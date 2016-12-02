@@ -1,118 +1,104 @@
 package com.kelsos.mbrc.ui.navigation.library.artists
 
-import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter
-import com.kelsos.mbrc.adapters.EndlessRecyclerViewScrollListener
-import com.kelsos.mbrc.annotations.Queue
+import com.kelsos.mbrc.adapters.ArtistEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.domain.Artist
-import com.kelsos.mbrc.ui.navigation.library.artists.BrowseArtistPresenter
-import com.kelsos.mbrc.ui.navigation.library.artist_albums.ArtistAlbumsActivity
-import com.kelsos.mbrc.ui.navigation.library.artists.BrowseArtistView
+import com.kelsos.mbrc.extensions.initLinear
+import com.kelsos.mbrc.helper.PopupActionHandler
+import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
+import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
+import com.raizlabs.android.dbflow.list.FlowCursorList
+import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
 
-class BrowseArtistFragment : Fragment(), BrowseArtistView, ArtistEntryAdapter.MenuItemSelectedListener {
+class BrowseArtistFragment : Fragment(),
+    BrowseArtistView,
+    MenuItemSelectedListener,
+    OnRefreshListener {
 
-  @BindView(R.id.library_recycler) internal lateinit  var recyclerView: RecyclerView
+  @BindView(R.id.library_data_list) lateinit var recycler: EmptyRecyclerView
+  @BindView(R.id.empty_view) lateinit var emptyView: View
+  @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
+  @BindView(R.id.list_empty_title) lateinit var emptyTitle: TextView
+
   @Inject lateinit var adapter: ArtistEntryAdapter
+  @Inject lateinit var actionHandler: PopupActionHandler
   @Inject lateinit var presenter: BrowseArtistPresenter
-  private lateinit var layoutManager: LinearLayoutManager
-  private var scrollListener: EndlessRecyclerViewScrollListener? = null
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-    val view = inflater.inflate(R.layout.fragment_library, container, false)
-    ButterKnife.bind(this, view)
-    val scope = Toothpick.openScopes(context.applicationContext, this)
+  private var scope: Scope? = null
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    scope = Toothpick.openScopes(activity.application, activity, this)
+    scope?.installModules(BrowseArtistModule())
+    super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
+  }
 
-    presenter.bind(this)
-    layoutManager = LinearLayoutManager(context)
-    recyclerView.layoutManager = layoutManager
-    recyclerView.adapter = adapter
-    scrollListener = object : EndlessRecyclerViewScrollListener(layoutManager) {
-      override fun onLoadMore(page: Int, totalItemsCount: Int) {
-        presenter.load(page)
-      }
-    }
-    adapter.setMenuItemSelectedListener(this)
-    presenter.load()
+  override fun onStart() {
+    super.onStart()
+    presenter.attach(this)
+    adapter.refresh()
+  }
+
+  override fun onStop() {
+    super.onStop()
+    presenter.detach()
+  }
+
+  override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    val view = inflater!!.inflate(R.layout.fragment_library_search, container, false)
+    ButterKnife.bind(this, view)
+    swipeLayout.setOnRefreshListener(this)
+    swipeLayout.setSwipeableChildren(R.id.library_data_list, R.id.empty_view)
+    emptyTitle.setText(R.string.artists_list_empty)
     return view
   }
 
-  override fun onDestroy() {
-    super.onDestroy()
-    Toothpick.closeScope(this)
-  }
-
-  override fun onResume() {
-    super.onResume()
-    recyclerView.addOnScrollListener(scrollListener)
-  }
-
-  override fun onPause() {
-    super.onPause()
-    recyclerView.removeOnScrollListener(scrollListener)
-  }
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+  override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    recycler.setHasFixedSize(true)
+    recycler.initLinear(adapter, emptyView)
+    adapter.setMenuItemSelectedListener(this)
+    presenter.attach(this)
+    presenter.load()
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Artist) {
-    when (menuItem.itemId) {
-      R.id.popup_artist_queue_next -> presenter.queue(entry, Queue.NEXT)
-      R.id.popup_artist_queue_last -> presenter.queue(entry, Queue.LAST)
-      R.id.popup_artist_play -> presenter.queue(entry, Queue.NOW)
-      R.id.popup_artist_album -> openProfile(entry)
-      R.id.popup_artist_playlist -> {
-      }
-      else -> {
-      }
-    }
-  }
-
-  private fun openProfile(artist: Artist) {
-    val intent = Intent(activity, ArtistAlbumsActivity::class.java)
-    intent.putExtra(ArtistAlbumsActivity.ARTIST_ID, artist.id)
-    intent.putExtra(ArtistAlbumsActivity.ARTIST_NAME, artist.name)
-    startActivity(intent)
+    actionHandler.artistSelected(menuItem, entry, activity)
   }
 
   override fun onItemClicked(artist: Artist) {
-    openProfile(artist)
+    actionHandler.artistSelected(artist, activity)
   }
 
-  override fun showEnqueueSuccess() {
-
-  }
-
-  override fun showEnqueueFailure() {
-
-  }
-
-  override fun load(artists: List<Artist>) {
-    adapter.updateData(artists)
-  }
-
-  override fun clear() {
-    adapter.clear()
-  }
-
-  companion object {
-
-    fun newInstance(): BrowseArtistFragment {
-      return BrowseArtistFragment()
+  override fun onRefresh() {
+    if (!swipeLayout.isRefreshing) {
+      swipeLayout.isRefreshing = true
     }
+
+    presenter.reload()
+  }
+
+  override fun update(data: FlowCursorList<Artist>) {
+    swipeLayout.isRefreshing = false
+    adapter.update(data)
+  }
+
+  override fun failure(throwable: Throwable) {
+    swipeLayout.isRefreshing = false
+    Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
   }
 }

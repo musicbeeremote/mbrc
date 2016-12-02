@@ -1,53 +1,95 @@
 package com.kelsos.mbrc.repository
 
-import com.kelsos.mbrc.data.SettingsDatabase
+import android.content.SharedPreferences
+import android.content.res.Resources
+
+import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.dao.ConnectionSettings
 import com.kelsos.mbrc.data.dao.ConnectionSettings_Table
-import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.sql.language.SQLite
-import rx.Observable
-import rx.lang.kotlin.toSingletonObservable
+
 import javax.inject.Inject
 
 class ConnectionRepositoryImpl
-@Inject constructor() : ConnectionRepository {
-  override fun getPageObservable(offset: Int, limit: Int): Observable<List<ConnectionSettings>> {
-    return getPage(offset, limit).toSingletonObservable()
-  }
+@Inject
+constructor(private val preferences: SharedPreferences, private val resources: Resources) : ConnectionRepository {
 
-  override fun getAllObservable(): Observable<List<ConnectionSettings>> = getAll().toSingletonObservable()
+  override fun save(settings: ConnectionSettings) {
+    settings.save()
 
-
-  override fun getPage(offset: Int, limit: Int): List<ConnectionSettings> {
-    return SQLite.select()
-        .from(ConnectionSettings::class.java)
-        .limit(limit)
-        .offset(offset)
-        .queryList()
-  }
-
-  override fun getAll(): List<ConnectionSettings> = SQLite.select()
-      .from(ConnectionSettings::class.java)
-      .queryList()
-
-  override fun getById(id: Long): ConnectionSettings? {
-    return SQLite.select()
-        .from(ConnectionSettings::class.java)
-        .where(ConnectionSettings_Table.id.eq(id))
-        .querySingle()
-  }
-
-  override fun save(items: List<ConnectionSettings>) {
-    FlowManager.getDatabase(SettingsDatabase::class.java).executeTransaction {
-      items.forEach { it.save() }
+    if (count() == 1L) {
+      default = last
     }
   }
 
-  override fun save(item: ConnectionSettings) {
-    item.save()
+  override fun delete(settings: ConnectionSettings) {
+    val oldId = settings.id
+
+    settings.delete()
+
+    if (oldId != defaultId) {
+      return
+    }
+
+    val count = count()
+    if (count == 0L) {
+      defaultId = -1
+    } else {
+      val before = getItemBefore(oldId)
+      if (before != null) {
+        default = before
+      } else {
+        default = first
+      }
+    }
   }
+
+  private fun getItemBefore(id: Long): ConnectionSettings? {
+    return SQLite.select().from(ConnectionSettings::class.java).where(ConnectionSettings_Table.id.lessThan(id)).orderBy(ConnectionSettings_Table.id, false).querySingle()
+  }
+
+  private val first: ConnectionSettings
+    get() = SQLite.select().from(ConnectionSettings::class.java).orderBy(ConnectionSettings_Table.id, true).querySingle()!!
+
+  private val last: ConnectionSettings
+    get() = SQLite.select().from(ConnectionSettings::class.java).orderBy(ConnectionSettings_Table.id, false).querySingle()!!
+
+  override fun update(settings: ConnectionSettings) {
+    settings.update()
+  }
+
+  override var default: ConnectionSettings?
+    get() {
+      val defaultId = defaultId
+      if (defaultId < 0) {
+        return null
+      }
+
+      return SQLite.select().from(ConnectionSettings::class.java).where(ConnectionSettings_Table.id.`is`(defaultId)).querySingle()
+    }
+    set(settings) {
+      if (settings == null) {
+        return
+      }
+
+      defaultId = settings.id
+    }
+
+  override var defaultId: Long
+    get() {
+      val key = resources.getString(R.string.settings_key_default_index)
+      return this.preferences.getLong(key, 0)
+    }
+    private set(id) {
+      val key = resources.getString(R.string.settings_key_default_index)
+      this.preferences.edit().putLong(key, id).apply()
+    }
+
+  override val all: List<ConnectionSettings>
+    get() = SQLite.select().from(ConnectionSettings::class.java).queryList()
 
   override fun count(): Long {
     return SQLite.selectCountOf().from(ConnectionSettings::class.java).count()
   }
+
 }

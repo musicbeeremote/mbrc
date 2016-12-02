@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.kelsos.mbrc.annotations.Repeat
 import com.kelsos.mbrc.annotations.Repeat.Mode
 import com.kelsos.mbrc.dto.BaseResponse
 
@@ -13,5 +14,5 @@ import com.kelsos.mbrc.dto.BaseResponse
 class Repeat : BaseResponse() {
   @JsonProperty("value")
   @Mode
-  var value: String = com.kelsos.mbrc.annotations.Repeat.UNDEFINED
+  var value: String = Repeat.NONE
 }

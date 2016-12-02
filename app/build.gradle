@@ -1,35 +1,56 @@
 import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.github.ben-manes.versions'
+apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'idea'
 
 
-def buildTime() {
+repositories {
+  maven { url 'https://maven.fabric.io/public' }
+}
+
+static def buildTime() {
   def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
   df.setTimeZone(TimeZone.getTimeZone("UTC"))
   return df.format(new Date())
+}
+
+def fabricApiKey() {
+  def fabricProperties = rootProject.file('fabric.properties')
+  if (fabricProperties.exists()) {
+    def prop = new Properties()
+    prop.load(new FileInputStream(fabricProperties))
+    return prop.getAt("apiKey")
+  } else {
+    return ""
+  }
 }
 
 def gitHash() {
   return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
 
+def version = "2.0.0.alpha.1"
+def version_code = 110
+
 android {
   compileSdkVersion 25
-  buildToolsVersion '25.0.0'
+  buildToolsVersion "25.0.1"
 
   defaultConfig {
-    applicationId 'com.kelsos.mbrc'
+    manifestPlaceholders = [apiKey: fabricApiKey()]
+    applicationId "com.kelsos.mbrc"
     minSdkVersion 16
     targetSdkVersion 25
-    versionCode 105
-    versionName "2.0.0-alpha.1"
-
+    versionCode version_code
+    versionName version
+    buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
+    buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     // Enabling multidex support.
     multiDexEnabled true
-
   }
 
   signingConfigs {
@@ -46,7 +67,7 @@ android {
       signingConfig signingConfigs.release
       debuggable false
       zipAlignEnabled true
-      minifyEnabled false
+      minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
       buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
@@ -64,7 +85,7 @@ android {
       signingConfig signingConfigs.release
       debuggable false
       zipAlignEnabled true
-      minifyEnabled false
+      minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       applicationIdSuffix ".preview"
       versionNameSuffix "-preview"
@@ -74,17 +95,16 @@ android {
     }
   }
 
-
   productFlavors {
-
-    development {
-      minSdkVersion 21
+    play {
+      ext.enableCrashlytics = true
     }
 
-    production {
-      // Default minSdkVersion
+    github {
+      ext.enableCrashlytics = false
     }
   }
+
 
   packagingOptions {
     exclude 'META-INF/ASL2.0'
@@ -102,13 +122,17 @@ android {
     xmlOutput file("$project.buildDir/reports/lint/lint-result.xml")
   }
 
+  dexOptions {
+    javaMaxHeapSize "5G"
+  }
+
   applicationVariants.all { variant ->
     variant.outputs.each { output ->
       def originalFilename = output.outputFile
       def versionInfo = "-v${variant.mergedFlavor.versionCode}-${variant.mergedFlavor.versionName}"
       def filename = originalFilename.name
           .replace(".apk", versionInfo + ".apk")
-          .replace(project.name, defaultConfig.applicationId);
+          .replace(project.name, defaultConfig.applicationId)
       filename = "${originalFilename.parent}/${filename}"
       output.outputFile = file(filename)
     }
@@ -124,6 +148,7 @@ android {
     main.java.srcDirs += 'src/main/kotlin'
     debug.java.srcDirs += 'src/debug/kotlin'
     androidTest.java.srcDirs += 'src/androidTest/kotlin'
+    play.java.srcDirs += 'src/play/kotlin'
     test.java.srcDirs += 'src/test/kotlin'
   }
 }
@@ -136,44 +161,51 @@ idea {
 }
 
 ext {
-  supportLibraryVersion = '25.0.0'
-  jacksonVersion = '2.8.4'
-  okhttpVersion = '3.4.1'
-  retrofitVersion = '2.1.0'
-  dbflow_version = "4.0.0-beta1"
-  toothpick_version = "1.0.0"
+  support_library_version = "25.0.1"
+  dbflow_version = "4.0.0-beta2"
+  toothpick_version = "1.0.2"
+  okhttp_version = '3.4.2'
+  retrofit_version = '2.1.0'
+  jackson_version = "2.8.5"
   butterknife_version = "8.4.0"
+  material_dialogs_version = "0.9.1.0"
   stetho_version = "1.4.1"
 }
 
 dependencies {
-  compile "com.android.support:support-v4:${supportLibraryVersion}"
-  compile "com.android.support:appcompat-v7:${supportLibraryVersion}"
-  compile "com.android.support:cardview-v7:${supportLibraryVersion}"
-  compile "com.android.support:preference-v7:${supportLibraryVersion}"
-  compile "com.android.support:preference-v14:${supportLibraryVersion}"
-  compile "com.android.support:recyclerview-v7:${supportLibraryVersion}"
-  compile "com.android.support:palette-v7:${supportLibraryVersion}"
-  compile "com.android.support:support-annotations:${supportLibraryVersion}"
-  compile "com.android.support:design:${supportLibraryVersion}"
+  androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    exclude group: 'com.android.support', module: 'support-annotations'
+  })
 
-  compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
-  compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+  compile "com.android.support:support-v4:${support_library_version}"
+  compile "com.android.support:appcompat-v7:${support_library_version}"
+  compile "com.android.support:cardview-v7:${support_library_version}"
+  compile "com.android.support:preference-v7:${support_library_version}"
+  compile "com.android.support:preference-v14:${support_library_version}"
+  compile "com.android.support:recyclerview-v7:${support_library_version}"
+  compile "com.android.support:palette-v7:${support_library_version}"
+  compile "com.android.support:support-annotations:${support_library_version}"
+  compile "com.android.support:design:${support_library_version}"
 
-  compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
-  compile "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
-  compile "com.squareup.retrofit2:converter-jackson:${retrofitVersion}"
+  compile "com.fasterxml.jackson.core:jackson-core:${jackson_version}"
+  compile "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
+
+  compile "com.squareup.retrofit2:retrofit:${retrofit_version}"
+  compile "com.squareup.retrofit2:adapter-rxjava:${retrofit_version}"
+  compile "com.squareup.retrofit2:converter-jackson:${retrofit_version}"
 
   compile "com.squareup.picasso:picasso:2.5.2"
 
-  compile "com.squareup.okhttp3:okhttp-urlconnection:${okhttpVersion}"
-  compile "com.squareup.okhttp3:okhttp:${okhttpVersion}"
-  compile "com.squareup.okhttp3:okhttp-ws:${okhttpVersion}"
-  compile "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
+  compile "com.squareup.okhttp3:okhttp-urlconnection:${okhttp_version}"
+  compile "com.squareup.okhttp3:okhttp:${okhttp_version}"
+  compile "com.squareup.okhttp3:okhttp-ws:${okhttp_version}"
+  compile "com.squareup.okhttp3:logging-interceptor:${okhttp_version}"
 
   compile 'io.reactivex:rxandroid:1.2.1'
   compile 'io.reactivex:rxjava:1.2.1'
   compile 'io.reactivex:rxkotlin:0.60.0'
+
+  compile 'com.jakewharton.threetenabp:threetenabp:1.0.4'
 
   compile "com.jakewharton:butterknife:${butterknife_version}"
   kapt "com.jakewharton:butterknife-compiler:${butterknife_version}"
@@ -190,15 +222,38 @@ dependencies {
   compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
   compile "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}"
 
-  compile('com.afollestad.material-dialogs:core:0.9.0.2@aar') {
-    transitive = true
-  }
+  compile("com.afollestad.material-dialogs:core:${material_dialogs_version}", {
+    exclude group: 'com.android.support', module: 'support-v13'
+    exclude group: 'com.android.support', module: 'appcompat-v7'
+    exclude group: 'com.android.support', module: 'recyclerview-v7'
+    exclude group: 'com.android.support', module: 'support-annotations'
+  })
+
+  compile("com.afollestad.material-dialogs:commons:${material_dialogs_version}", {
+    exclude group: 'com.android.support', module: 'support-annotations'
+    exclude group: 'com.android.support', module: 'appcompat-v7'
+  })
+
+  compile('com.github.gabrielemariotti.changeloglib:changelog:2.1.0', {
+    exclude group: 'com.android.support', module: 'support-v4'
+    exclude group: 'com.android.support', module: 'recyclerview-v7'
+    exclude group: 'com.android.support', module: 'support-annotations'
+  })
+
+  compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.5'
+  compile 'com.github.machinarius:preferencefragment:0.1.2'
+  compile 'io.reactivex:rxandroid:1.2.1'
+  compile 'io.reactivex:rxjava:1.2.3'
+  compile 'io.reactivex:rxkotlin:0.60.0'
+  compile 'uk.co.chrisjenx:calligraphy:2.2.0'
+  compile 'com.jakewharton.timber:timber:4.3.1'
+  compile 'com.jakewharton.rxrelay:rxrelay:1.2.0'
+  compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
   testCompile 'junit:junit:4.12'
-  testCompile 'org.mockito:mockito-core:2.2.6'
-  testCompile 'org.powermock:powermock-module-junit4:1.6.5'
-  testCompile 'org.powermock:powermock-api-mockito:1.6.5'
-  testCompile 'org.robolectric:robolectric:3.1.2'
+  testCompile 'org.robolectric:robolectric:3.1.4'
+  testCompile 'org.mockito:mockito-core:2.2.22'
+  testCompile 'com.google.truth:truth:0.30'
   testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 
   compile 'nl.littlerobots.rxlint:rxlint:1.0'
@@ -212,6 +267,15 @@ dependencies {
 
   //highly recommended
   testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
+
+  testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+  debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+  releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+  previewCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+
+  playCompile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
+    transitive = true;
+  }
 }
 
 allprojects {
@@ -227,7 +291,7 @@ allprojects {
         def props = new Properties()
         props.load(new FileInputStream(keyProperties))
         def keystorePath = props.getAt('keystore')
-        def releaseConfig = android.signingConfigs.getAt('release')
+        def releaseConfig = android.signingConfigs['release']
         releaseConfig.storeFile = file(keystorePath)
         releaseConfig.storePassword = props.getAt('storePass')
         releaseConfig.keyAlias = props.getAt('keyAlias')
@@ -237,6 +301,9 @@ allprojects {
   }
 }
 
+repositories {
+  mavenCentral()
+}
 
 kapt {
   generateStubs = true

@@ -1,70 +1,115 @@
 package com.kelsos.mbrc.ui.navigation.library.album_tracks
 
 import android.os.Bundle
-import android.support.annotation.StringRes
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.CollapsingToolbarLayout
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.text.TextUtils
 import android.view.MenuItem
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.LinearLayout
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.AlbumProfileAdapter
-import com.kelsos.mbrc.annotations.Queue
-import com.kelsos.mbrc.domain.Album
+import com.kelsos.mbrc.adapters.TrackEntryAdapter
+import com.kelsos.mbrc.domain.AlbumInfo
 import com.kelsos.mbrc.domain.Track
-import com.kelsos.mbrc.ui.navigation.library.album_tracks.AlbumTracksPresenter
-import com.kelsos.mbrc.ui.navigation.library.album_tracks.AlbumTrackView
-import com.squareup.picasso.Picasso
+import com.kelsos.mbrc.helper.PopupActionHandler
+import com.kelsos.mbrc.ui.activities.FontActivity
+import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
+import com.raizlabs.android.dbflow.list.FlowCursorList
+import toothpick.Scope
 import toothpick.Toothpick
-import java.io.File
+import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class AlbumTracksActivity : AppCompatActivity(), AlbumTrackView, AlbumProfileAdapter.MenuItemSelectedListener {
-  @BindView(R.id.imageView_list) internal lateinit var imageViewList: ImageView
-  @BindView(R.id.toolbar) internal lateinit var toolbar: Toolbar
-  @BindView(R.id.collapsing_toolbar) internal lateinit var collapsingToolbar: CollapsingToolbarLayout
-  @BindView(R.id.app_bar_layout) internal lateinit var appBarLayout: AppBarLayout
-  @BindView(R.id.list_tracks) internal lateinit var listTracks: RecyclerView
-  @BindView(R.id.album_title) internal lateinit var albumTitle: TextView
-  @BindView(R.id.album_year) internal lateinit var albumYear: TextView
-  @BindView(R.id.album_tracks) internal lateinit var albumTracks: TextView
+class AlbumTracksActivity : FontActivity(),
+    AlbumTracksView,
+    TrackEntryAdapter.MenuItemSelectedListener {
 
-  @Inject lateinit var adapter: AlbumProfileAdapter
+  @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+  @BindView(R.id.list_tracks) lateinit var listTracks: EmptyRecyclerView
+  @BindView(R.id.empty_view) lateinit var emptyView: LinearLayout
+
+  @Inject lateinit var adapter: TrackEntryAdapter
+  @Inject lateinit var actionHandler: PopupActionHandler
   @Inject lateinit var presenter: AlbumTracksPresenter
-  private var albumId: Long = 0
+
+  private var album: AlbumInfo? = null
+  private var scope: Scope? = null
 
   public override fun onCreate(savedInstanceState: Bundle?) {
+    scope = Toothpick.openScopes(application, this)
+    scope!!.installModules(SmoothieActivityModule(this),
+        AlbumTracksModule())
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.fragment_album_tracks)
-    val scope = Toothpick.openScopes(application, this)
     Toothpick.inject(this, scope)
+    setContentView(R.layout.activity_album_tracks)
     ButterKnife.bind(this)
-    presenter.bind(this)
-    albumId = intent?.extras?.getLong(ALBUM_ID, 0) ?: 0
+    val extras = intent.extras
 
+    if (extras != null) {
+      album = extras.getParcelable<AlbumInfo>(ALBUM)
+    }
+
+    if (album == null) {
+      finish()
+      return
+    }
 
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     supportActionBar?.setDisplayShowHomeEnabled(true)
 
-    collapsingToolbar.isTitleEnabled = true
+    if (TextUtils.isEmpty(album!!.album)) {
+      supportActionBar?.setTitle(R.string.non_album_tracks)
+    } else {
+      supportActionBar?.title = album!!.album
+    }
+
+    presenter.attach(this)
+    presenter.load(album!!)
+    adapter.setMenuItemSelectedListener(this)
     listTracks.layoutManager = LinearLayoutManager(baseContext)
     listTracks.adapter = adapter
+    listTracks.emptyView = emptyView
+  }
 
-    if (albumId == 0L) {
-      finish()
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    val itemId = item.itemId
+
+    if (itemId == android.R.id.home) {
+      onBackPressed()
+      return true
     }
-    adapter.setListener(this)
 
-    presenter.load(albumId)
+    return super.onOptionsItemSelected(item)
+  }
+
+  @OnClick(R.id.play_album)
+  fun onPlayClicked() {
+
+  }
+
+  override fun onMenuItemSelected(menuItem: MenuItem, entry: Track) {
+    actionHandler.trackSelected(menuItem, entry)
+  }
+
+  override fun onItemClicked(track: Track) {
+    actionHandler.trackSelected(track)
+  }
+
+  override fun update(cursor: FlowCursorList<Track>) {
+    adapter.update(cursor)
+  }
+
+  override fun onStart() {
+    super.onStart()
+    presenter.attach(this)
+  }
+
+  override fun onStop() {
+    super.onStop()
+    presenter.detach()
   }
 
   override fun onDestroy() {
@@ -72,84 +117,11 @@ class AlbumTracksActivity : AppCompatActivity(), AlbumTrackView, AlbumProfileAda
     Toothpick.closeScope(this)
   }
 
-  override fun updateAlbum(album: Album) {
-    val cover = album.cover
-
-    albumTitle.text = album.name
-    albumYear.text = album.year
-    collapsingToolbar.title = album.artist
-
-    if (!cover.isNullOrEmpty()) {
-
-      val image = File(File(filesDir, "covers"), cover)
-
-      Picasso.with(baseContext)
-          .load(image)
-          .placeholder(R.drawable.ic_image_no_cover)
-          .fit()
-          .centerCrop()
-          .into(imageViewList)
-    }
-  }
-
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    val itemId = item.itemId
-
-    if (itemId == android.R.id.home) {
-      finish()
-      return true
-    }
-
-    return super.onOptionsItemSelected(item)
-  }
-
-  override fun updateTracks(tracks: List<Track>) {
-    adapter.updateData(tracks)
-    albumTracks.text = getString(R.string.number_of_tracks, tracks.size)
-  }
-
-  override fun showPlaySuccess() {
-    showSnackbar(R.string.album_play_success)
-  }
-
-  private fun showSnackbar(@StringRes resId: Int) {
-    Snackbar.make(appBarLayout, resId, Snackbar.LENGTH_SHORT).show()
-  }
-
-  override fun showPlayFailed() {
-    showSnackbar(R.string.album_play_failure)
-  }
-
-  override fun showTrackSuccess() {
-    showSnackbar(R.string.track_added_successfully)
-  }
-
-  override fun showTrackFailed() {
-    showSnackbar(R.string.track_add_failed)
-  }
-
-  @OnClick(R.id.play_album) fun onPlayClicked() {
-    presenter.play(albumId)
-  }
-
-
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: Track) {
-    when (menuItem.itemId) {
-      R.id.popup_track_play -> presenter.queue(entry, Queue.NOW)
-      R.id.popup_track_queue_last -> presenter.queue(entry, Queue.LAST)
-      R.id.popup_track_queue_next -> presenter.queue(entry, Queue.NEXT)
-      R.id.popup_track_playlist -> {
-      }
-      else -> {
-      }
-    }
-  }
-
-  override fun onItemClicked(track: Track) {
-    presenter.queue(track, Queue.NOW)
+  override fun onBackPressed() {
+    finish()
   }
 
   companion object {
-    const val ALBUM_ID = "albumId"
+    val ALBUM = "albumName"
   }
 }

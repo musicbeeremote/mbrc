@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.di.providers
 
-import com.kelsos.mbrc.utilities.SettingsManager
+import com.kelsos.mbrc.repository.ConnectionRepository
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -11,7 +11,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 class OkHttpClientProvider
-@Inject constructor(private val manager: SettingsManager,
+@Inject constructor(private val connectionRepository: ConnectionRepository,
                     @Nullable private val interceptor: Interceptor? = null) : Provider<OkHttpClient> {
 
   override fun get(): OkHttpClient {
@@ -19,7 +19,7 @@ class OkHttpClientProvider
     loggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
 
     val accept = Interceptor {
-      val settings = manager.default
+      val settings = connectionRepository.default
       val request = it.request()
       val builder = request.newBuilder().header("Accept", "application/json")
 

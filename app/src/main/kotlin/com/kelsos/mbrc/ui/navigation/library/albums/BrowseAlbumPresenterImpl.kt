@@ -1,43 +1,52 @@
 package com.kelsos.mbrc.ui.navigation.library.albums
 
-import com.kelsos.mbrc.annotations.MetaDataType
-import com.kelsos.mbrc.annotations.Queue.Action
-import com.kelsos.mbrc.constants.Constants.PAGE_SIZE
 import com.kelsos.mbrc.domain.Album
-import com.kelsos.mbrc.extensions.task
-import com.kelsos.mbrc.interactors.LibraryAlbumInteractor
-import com.kelsos.mbrc.interactors.QueueInteractor
-import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumView
+import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.events.ui.LibraryRefreshCompleteEvent
+import com.kelsos.mbrc.mvp.BasePresenter
+import com.kelsos.mbrc.repository.library.AlbumRepository
+import com.raizlabs.android.dbflow.list.FlowCursorList
+import rx.Scheduler
+import rx.Single
 import timber.log.Timber
 import javax.inject.Inject
+import javax.inject.Named
 
 class BrowseAlbumPresenterImpl
-@Inject constructor(private val queueInteractor: QueueInteractor,
-                    private val albumInteractor: LibraryAlbumInteractor): BrowseAlbumPresenter {
-
-  private var view: BrowseAlbumView? = null
+@Inject constructor(private val bus: RxBus,
+                    private val repository: AlbumRepository,
+                    @Named("io") private val ioScheduler: Scheduler,
+                    @Named("main") private val mainScheduler: Scheduler) :
+    BasePresenter<BrowseAlbumView>(),
+    BrowseAlbumPresenter {
 
   override fun attach(view: BrowseAlbumView) {
-    this.view = view
+    super.attach(view)
+    bus.register(this, LibraryRefreshCompleteEvent::class.java, { load() })
   }
 
   override fun detach() {
-    this.view = null
+    super.detach()
+    bus.unregister(this)
   }
 
-  override fun queue(album: Album, @Action action: String) {
-    queueInteractor.execute(MetaDataType.ALBUM, action, album.id).subscribe({
-
-    }, { Timber.v(it) })
+  override fun load() {
+    addSubcription(repository.getAllCursor().compose { schedule(it) }.subscribe({
+      view?.update(it)
+    }) {
+      Timber.v(it)
+    })
   }
 
-  override fun load(page: Int) {
-    Timber.v("Loading page %d", page)
+  override fun reload() {
+    addSubcription(repository.getAndSaveRemote().compose { schedule(it) }.subscribe({
+      view?.update(it)
+    }) {
+      Timber.v(it)
+    })
 
-    albumInteractor.getPage(page * PAGE_SIZE)
-        .task()
-        .subscribe({
-          view?.updateData(it)
-        }, { Timber.v(it) })
   }
+
+  private fun schedule(it: Single<FlowCursorList<Album>>) = it.observeOn(mainScheduler)
+      .subscribeOn(ioScheduler)
 }

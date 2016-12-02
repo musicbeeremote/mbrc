@@ -6,15 +6,12 @@ import android.content.Intent
 import android.content.IntentFilter
 import com.kelsos.mbrc.annotations.PlayerAction
 import com.kelsos.mbrc.annotations.PlayerAction.Action
-import com.kelsos.mbrc.extensions.io
-import com.kelsos.mbrc.interactors.PlayerInteractor
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder
 import timber.log.Timber
 import toothpick.Toothpick
-import javax.inject.Inject
 
 class PlayerActionReceiver : BroadcastReceiver() {
-  @Inject lateinit var playerInteractor: PlayerInteractor
+
 
   val intentFilter: IntentFilter
     get() {
@@ -50,8 +47,6 @@ class PlayerActionReceiver : BroadcastReceiver() {
   }
 
   private fun perform(@Action action: String) {
-    playerInteractor.performAction(action).io().subscribe({
-      Timber.v("Action -> %s", it)
-    }) { Timber.e(it, "failed") }
+    TODO()
   }
 }

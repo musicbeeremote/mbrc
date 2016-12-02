@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height"
+    android:background="?attr/selectableItemBackground"
     android:orientation="horizontal">
 
   <FrameLayout
-      android:id="@+id/container"
+      android:id="@+id/track_container"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:clickable="true"
@@ -22,7 +24,6 @@
         tools:ignore="UselessParent">
 
       <LinearLayout
-          android:id="@+id/drag_handle"
           android:layout_width="42dp"
           android:layout_height="match_parent"
           android:gravity="center_vertical"
@@ -51,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:singleLine="true"
+            android:maxLines="1"
             android:textColor="@color/primary_text"
             android:textSize="@dimen/dual_list_title"
             tools:text="Track title" />
@@ -61,7 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:singleLine="true"
+            android:maxLines="1"
             android:textColor="@color/secondary_text"
             android:textSize="@dimen/dual_list_subtitle"
             tools:text="Artist Name" />
@@ -77,7 +78,6 @@
           android:scaleType="fitCenter" />
 
       <LinearLayout
-          android:id="@+id/list_overflow"
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
           android:layout_gravity="end|center_vertical"
@@ -86,12 +86,12 @@
           android:paddingRight="@dimen/normal_margin">
 
         <ImageView
-            android:id="@+id/list_item_track_overflow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:contentDescription="@string/abc_action_menu_overflow_description"
+            android:contentDescription="@string/menu_overflow_description"
             android:tint="@android:color/transparent" />
+
 
       </LinearLayout>
 

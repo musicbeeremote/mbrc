@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:baselineAligned="false"
+    android:divider="@android:color/transparent"
+    android:orientation="vertical">
+
+  <android.support.v7.widget.Toolbar
+      android:id="@+id/toolbar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@color/primary"
+      android:minHeight="?attr/actionBarSize"
+      android:theme="@style/ActionBarStyle"
+      app:popupTheme="@style/Theme.AppCompat" />
+
+  <android.support.v7.widget.RecyclerView
+      android:id="@+id/connection_list"
+      android:layout_width="match_parent"
+      android:layout_height="0dip"
+      android:layout_weight="1"
+      tools:listitem="@layout/ui_list_connection_settings" />
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:baselineAligned="false"
+      android:divider="@android:color/transparent"
+      android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/connection_scan"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/connection_manager_scan"
+        android:textColor="@color/accent" />
+
+    <Button
+        android:id="@+id/connection_add"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/connection_manager_add"
+        android:textColor="@color/accent" />
+
+  </LinearLayout>
+
+</LinearLayout>

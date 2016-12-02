@@ -4,11 +4,27 @@
     <item>Queue Next</item>
     <item>Queue Last</item>
     <item>Play Now</item>
+    <item>Get Subcategory</item>
   </string-array>
 
   <string-array name="search_click_options_values">
     <item>next</item>
     <item>last</item>
     <item>now</item>
+    <item>sub</item>
+  </string-array>
+
+  <string-array name="incoming_action_options">
+    <item>None</item>
+    <item>Pause</item>
+    <item>Stop</item>
+    <item>Reduce Volume</item>
+  </string-array>
+
+  <string-array name="incoming_action_options_values">
+    <item>none</item>
+    <item>pause</item>
+    <item>stop</item>
+    <item>reduce</item>
   </string-array>
 </resources>

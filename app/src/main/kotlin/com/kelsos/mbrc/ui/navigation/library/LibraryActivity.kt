@@ -1,50 +1,95 @@
 package com.kelsos.mbrc.ui.navigation.library
 
+import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.NavigationView
+import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
-import android.support.v4.app.ActivityCompat
+import android.support.v4.view.MenuItemCompat
 import android.support.v4.view.ViewPager
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.widget.Toolbar
+import android.support.v4.view.ViewPager.OnPageChangeListener
+import android.support.v7.widget.SearchView
+import android.support.v7.widget.SearchView.OnQueryTextListener
+import android.text.TextUtils
+import android.view.Menu
 import android.view.MenuItem
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.BrowsePagerAdapter
+import com.kelsos.mbrc.adapters.LibraryPagerAdapter
 import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.navigation.library.search.SearchResultsActivity
+import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class LibraryActivity : BaseActivity(), LibraryView {
-  @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-  @BindView(R.id.drawer_layout) lateinit  var drawer: DrawerLayout
-  @BindView(R.id.navigation_view) lateinit  var navigationView: NavigationView
-  @BindView(R.id.library_pager) lateinit var pager: ViewPager
-  @BindView(R.id.library_pager_tabs) lateinit var tabLayout: TabLayout
+class LibraryActivity : BaseActivity(),
+                        LibraryView,
+                        OnQueryTextListener,
+                        OnPageChangeListener {
 
-  @Inject lateinit var adapter: BrowsePagerAdapter
+  @BindView(R.id.search_pager) lateinit var pager: ViewPager
+  @BindView(R.id.pager_tab_strip) lateinit var tabs: TabLayout
+
+  private var mSearchView: SearchView? = null
+  private var searchView: MenuItem? = null
+  private var pagerAdapter: LibraryPagerAdapter? = null
+  private var scope: Scope? = null
   @Inject lateinit var presenter: LibraryPresenter
 
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+  private var refreshDialog: MaterialDialog? = null
+
+  override fun onQueryTextSubmit(query: String): Boolean {
+    if (!TextUtils.isEmpty(query) && query.trim { it <= ' ' }.isNotEmpty()) {
+      val searchIntent = Intent(this, SearchResultsActivity::class.java)
+      searchIntent.putExtra(SearchResultsActivity.QUERY, query.trim { it <= ' ' })
+      startActivity(searchIntent)
+    }
+    mSearchView!!.isIconified = true
+    MenuItemCompat.collapseActionView(searchView)
+    return true
+  }
+
+  override fun onQueryTextChange(newText: String): Boolean {
     return false
   }
 
   public override fun onCreate(savedInstanceState: Bundle?) {
+    scope = Toothpick.openScopes(application, this)
+    scope!!.installModules(SmoothieActivityModule(this), LibraryModule())
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_library)
-    val scope = Toothpick.openScopes(application, this)
-    scope.installModules(SmoothieActivityModule(this), LibraryModule())
     Toothpick.inject(this, scope)
-    presenter.attach(this)
+    setContentView(R.layout.activity_library)
     ButterKnife.bind(this)
-    initialize(toolbar,drawer,navigationView)
-    setCurrentSelection(R.id.drawer_menu_library)
+    super.setup()
+    pagerAdapter = LibraryPagerAdapter(this)
+    pager.adapter = pagerAdapter
+    tabs.setupWithViewPager(pager)
+    pager.addOnPageChangeListener(this)
+  }
 
-    pager.adapter = adapter
-    tabLayout.setupWithViewPager(pager)
-    presenter.checkLibrary()
+  override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    menuInflater.inflate(R.menu.library_search, menu)
+    searchView = menu.findItem(R.id.library_search_item)
+    mSearchView = MenuItemCompat.getActionView(searchView) as SearchView
+    mSearchView!!.queryHint = getString(R.string.library_search_hint)
+    mSearchView!!.setIconifiedByDefault(true)
+    mSearchView!!.setOnQueryTextListener(this)
+    return super.onCreateOptionsMenu(menu)
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    if (item?.itemId == R.id.library_refresh_item) {
+      presenter.refresh()
+    }
+    return super.onOptionsItemSelected(item)
+  }
+
+  public override fun onDestroy() {
+    Toothpick.closeScope(this)
+    super.onDestroy()
+    pagerAdapter = null
   }
 
   override fun onStart() {
@@ -57,12 +102,49 @@ class LibraryActivity : BaseActivity(), LibraryView {
     presenter.detach()
   }
 
-  override fun onDestroy() {
-    super.onDestroy()
-    Toothpick.closeScope(this)
+  override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+
   }
 
-  override fun onBackPressed() {
-    ActivityCompat.finishAfterTransition(this)
+  override fun onPageSelected(position: Int) {
+
+  }
+
+  override fun onPageScrollStateChanged(state: Int) {
+
+  }
+
+  override fun active(): Int {
+    return R.id.nav_library
+  }
+
+  override fun onSaveInstanceState(outState: Bundle) {
+    outState.putInt(PAGER_POSITION, pager.currentItem)
+  }
+
+  override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+    pager.currentItem = savedInstanceState.getInt(PAGER_POSITION, 0)
+  }
+
+  override fun refreshFailed() {
+    Snackbar.make(pager, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
+  }
+
+  override fun showRefreshing() {
+    refreshDialog = MaterialDialog.Builder(this)
+        .content(R.string.refreshing_library_data)
+        .progress(true, 100, false)
+        .cancelable(false)
+        .build()
+
+    refreshDialog?.show()
+  }
+
+  override fun hideRefreshing() {
+    refreshDialog?.dismiss()
+  }
+
+  companion object {
+    private val PAGER_POSITION = "com.kelsos.mbrc.ui.activities.nav.PAGER_POSITION"
   }
 }

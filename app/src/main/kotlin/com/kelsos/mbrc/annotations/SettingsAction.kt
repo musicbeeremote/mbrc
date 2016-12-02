@@ -9,6 +9,6 @@ object SettingsAction {
     const val NEW = 4
 
     @IntDef(DELETE.toLong(), EDIT.toLong(), DEFAULT.toLong(), NEW.toLong())
-    @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
+    @Retention(AnnotationRetention.SOURCE)
     annotation class Action
 }

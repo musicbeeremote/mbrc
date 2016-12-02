@@ -9,17 +9,13 @@ import android.net.wifi.WifiManager
 import android.telephony.TelephonyManager
 import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.events.MessageEvent
-import com.kelsos.mbrc.interactors.VolumeInteractor
-import com.kelsos.mbrc.utilities.RxBus
+import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.utilities.SettingsManager
-import rx.functions.Func1
-import timber.log.Timber
 import javax.inject.Inject
 
 class StateBroadcastReceiver : BroadcastReceiver() {
   @Inject lateinit var settingsManager: SettingsManager
   @Inject lateinit var bus: RxBus
-  @Inject lateinit var interactor: VolumeInteractor
 
   override fun onReceive(context: Context, intent: Intent) {
     if (TelephonyManager.ACTION_PHONE_STATE_CHANGED == intent.action) {
@@ -33,7 +29,7 @@ class StateBroadcastReceiver : BroadcastReceiver() {
     val networkInfo = intent.getParcelableExtra<NetworkInfo>(WifiManager.EXTRA_NETWORK_INFO)
     if (networkInfo.state == NetworkInfo.State.CONNECTED) {
 
-      bus.post(MessageEvent.newInstance(UserInputEventType.StartConnection))
+      bus.post(MessageEvent(UserInputEventType.StartConnection))
     } else //noinspection StatementWithEmptyBody
       if (NetworkInfo.State.DISCONNECTING == networkInfo.state) {
 
@@ -44,13 +40,19 @@ class StateBroadcastReceiver : BroadcastReceiver() {
     val bundle = intent.extras ?: return
 
     val state = bundle.getString(TelephonyManager.EXTRA_STATE)
-    if (TelephonyManager.EXTRA_STATE_RINGING.equals(state,
-        ignoreCase = true) && settingsManager.isVolumeReducedOnRinging) {
-      interactor.getVolume()
-          .flatMap<Int>(Func1 {
-            interactor.setVolume(Math.round(it!! * 0.2).toInt())
-          })
-          .subscribe { Timber.v("Volume reducted to %s due to incoming call", it) }
+    val phoneIsRinging = TelephonyManager.EXTRA_STATE_RINGING.equals(state, ignoreCase = true)
+
+    if (!phoneIsRinging) {
+      return
+    }
+
+    when (settingsManager.callAction) {
+      SettingsManager.PAUSE -> TODO("Pause")
+      SettingsManager.STOP -> TODO("STOP")
+      SettingsManager.NONE -> { }
+      SettingsManager.REDUCE -> TODO("REDUCE")
+      else -> {
+      }
     }
   }
 

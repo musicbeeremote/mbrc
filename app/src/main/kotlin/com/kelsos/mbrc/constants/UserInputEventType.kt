@@ -10,6 +10,7 @@ object UserInputEventType {
   const val StartDiscovery = "StartDiscovery"
   const val KeyVolumeUp = "KeyVolumeUp"
   const val KeyVolumeDown = "KeyVolumeDown"
+  val TerminateConnection = "TerminateConnection"
 
   @StringDef(StartConnection,
       SettingsChanged,

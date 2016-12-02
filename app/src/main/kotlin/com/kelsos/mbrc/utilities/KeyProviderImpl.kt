@@ -15,7 +15,7 @@ constructor(private val context: Application) : KeyProvider {
     get() = context.getString(R.string.settings_key_port)
 
   override val reduceVolumeKey: String
-    get() = context.getString(R.string.settings_key_reduce_volume)
+    get() = context.getString(R.string.settings_legacy_key_reduce_volume)
 
   override val notificationKey: String
     get() = context.getString(R.string.settings_key_notification_control)

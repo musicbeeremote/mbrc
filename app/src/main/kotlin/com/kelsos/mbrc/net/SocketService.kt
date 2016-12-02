@@ -3,10 +3,10 @@ package com.kelsos.mbrc.net
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.dto.WebSocketMessage
+import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.extensions.io
-import com.kelsos.mbrc.utilities.RxBus
-import com.kelsos.mbrc.utilities.SettingsManager
+import com.kelsos.mbrc.repository.ConnectionRepository
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -29,11 +29,11 @@ import javax.inject.Singleton
 
 @Singleton class SocketService
 @Inject
-constructor(private val settingsManager: SettingsManager,
+constructor(private val connectionRepository: ConnectionRepository,
             private val mapper: ObjectMapper,
             client: OkHttpClient,
             private val rxBus: RxBus)
-: WebSocketListener {
+  : WebSocketListener {
   private val messagePublisher: PublishSubject<String>
   private val client: OkHttpClient
   private var connected: Boolean = false
@@ -61,19 +61,17 @@ constructor(private val settingsManager: SettingsManager,
       return
     }
 
-    settingsManager.observableDefault.filter { !it.address.isNullOrEmpty() || it.port == 0 }
-        .map {
-          HttpUrl.Builder()
-              .scheme("http")
-              .host(it.address)
-              .port(it.port)
-              .build()
-        }.subscribe({
-      val request = Request.Builder().url(it).build()
+    connectionRepository.default?.let {
+      val url = HttpUrl.Builder()
+          .scheme("http")
+          .host(it.address)
+          .port(it.port)
+          .build()
+      val request = Request.Builder().url(url).build()
 
       Timber.v("[WebSocket] attempting to connect to [%s]", it)
       WebSocketCall.create(client, request).enqueue(this)
-    }) { Timber.e(it, "While connecting to the websocket") }
+    }
   }
 
   @Throws(IOException::class)

@@ -15,5 +15,3 @@ class ConnectionManagerModule private constructor() : Module() {
     }
   }
 }
-
-

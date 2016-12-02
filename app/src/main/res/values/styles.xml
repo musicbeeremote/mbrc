@@ -15,13 +15,6 @@
     <item name="android:gravity">center_vertical</item>
   </style>
 
-  <style name="RatingBar"
-      parent="@android:style/Widget.RatingBar">
-    <item name="android:progressDrawable">@drawable/ui_rating_bar</item>
-    <item name="android:maxHeight">24dip</item>
-    <item name="android:minHeight">24dip</item>
-  </style>
-
   <style name="ActionBarStyle"
       parent="ThemeOverlay.AppCompat.Dark.ActionBar">
     <item name="android:textColorPrimary">@color/abc_primary_text_material_light</item>
@@ -38,6 +31,17 @@
     <item name="android:singleLine">true</item>
   </style>
 
+  <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
+  <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+  <style name="empty_view_image">
+    <item name="android:tint">@color/empty_view_icon_tint</item>
+    <item name="android:layout_marginTop">@dimen/empty_view_icon_margin_top</item>
+    <item name="android:layout_marginBottom">@dimen/empty_view_icon_margin_bottom</item>
+    <item name="android:layout_centerHorizontal">true</item>
+    <item name="android:layout_width">@dimen/empty_view_icon_size</item>
+    <item name="android:layout_height">@dimen/empty_view_icon_size</item>
+  </style>
 
 </resources>

@@ -1,52 +1,64 @@
 package com.kelsos.mbrc.ui.connection_manager
 
 import com.kelsos.mbrc.data.dao.ConnectionSettings
-import com.kelsos.mbrc.events.ui.DiscoveryStopped
-import com.kelsos.mbrc.events.ui.NotifyUser
+import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.ConnectionRepository
-import com.kelsos.mbrc.utilities.RxBus
-import com.kelsos.mbrc.utilities.SettingsManager
+import rx.Observable
 import timber.log.Timber
 import javax.inject.Inject
 
+
 class ConnectionManagerPresenterImpl
-@Inject constructor(private val bus: RxBus,
-                    private val repository: ConnectionRepository,
-                    private val settingsManager: SettingsManager) : ConnectionManagerPresenter {
+@Inject
+constructor(private val repository: ConnectionRepository) : BasePresenter<ConnectionManagerView>(), ConnectionManagerPresenter {
 
-  private var view: ConnectionManagerView? = null
+  override fun load() {
+    checkIfAttached()
+    val all = Observable.defer { Observable.just(repository.all) }
+    val defaultId = Observable.defer { Observable.just(repository.defaultId) }
 
-  override fun bind(view: ConnectionManagerView) {
-    this.view = view
-  }
-
-  override fun onResume() {
-    bus.register(DiscoveryStopped::class.java, { this.onDiscoveryStopped(it) }, false)
-    bus.register(NotifyUser::class.java, { view?.showNotification(it) }, false)
-  }
-
-  override fun onPause() {
-    bus.unregister(this)
-  }
-
-  override fun saveSettings(settings: ConnectionSettings) {
-    repository.save(settings)
-  }
-
-  override fun loadDevices() {
-    repository.getAllObservable().subscribe({ view?.updateDevices(it) }) { Timber.e(it, "Failed") }
-  }
-
-  override fun deleteSettings(settings: ConnectionSettings) {
-
+    addSubcription(Observable.zip<Long, List<ConnectionSettings>, ConnectionModel>(defaultId, all, ::ConnectionModel).subscribe({
+      view?.updateModel(it)
+    }, {
+      this.onLoadError(it)
+    }))
   }
 
   override fun setDefault(settings: ConnectionSettings) {
-    settingsManager.setDefault(settings.id)
+    checkIfAttached()
+    repository.default = settings
+    view?.defaultChanged()
+    view?.dataUpdated()
   }
 
-  private fun onDiscoveryStopped(event: DiscoveryStopped) {
-    view?.dismissLoadingDialog()
-    view?.showDiscoveryResult(event.reason)
+  override fun save(settings: ConnectionSettings) {
+    checkIfAttached()
+
+    if (settings.id > 0) {
+      repository.update(settings)
+    } else {
+      repository.save(settings)
+    }
+
+    if (settings.id == repository.defaultId) {
+      view?.defaultChanged()
+    }
+
+    view?.dataUpdated()
+  }
+
+  override fun delete(settings: ConnectionSettings) {
+    checkIfAttached()
+    repository.delete(settings)
+    if (settings.id == repository.defaultId) {
+      view?.defaultChanged()
+    }
+
+    view?.dataUpdated()
+  }
+
+  private fun onLoadError(throwable: Throwable) {
+    checkIfAttached()
+    Timber.v(throwable, "Failure")
   }
 }

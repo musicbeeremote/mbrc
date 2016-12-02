@@ -1,35 +1,36 @@
 package com.kelsos.mbrc.ui.activities
 
-import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.support.annotation.IdRes
+import android.support.annotation.ColorRes
+import android.support.annotation.StringRes
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.app.NavUtils
 import android.support.v4.app.TaskStackBuilder
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.KeyEvent
 import android.view.MenuItem
-import com.kelsos.mbrc.BuildConfig
+import android.widget.ImageView
+import android.widget.TextView
+import butterknife.BindView
+import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.constants.UserInputEventType
-import com.kelsos.mbrc.controller.Controller
-import com.kelsos.mbrc.events.ChangeWebSocketStatusEvent
+import com.kelsos.mbrc.controller.RemoteService
 import com.kelsos.mbrc.events.MessageEvent
+import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.ui.NotifyUser
+import com.kelsos.mbrc.events.ui.RequestConnectionStateEvent
 import com.kelsos.mbrc.ui.help_feedback.HelpFeedbackActivity
 import com.kelsos.mbrc.ui.navigation.library.LibraryActivity
 import com.kelsos.mbrc.ui.navigation.lyrics.LyricsActivity
@@ -37,85 +38,55 @@ import com.kelsos.mbrc.ui.navigation.main.MainActivity
 import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingActivity
 import com.kelsos.mbrc.ui.navigation.playlists.PlaylistActivity
 import com.kelsos.mbrc.ui.preferences.SettingsActivity
-import com.kelsos.mbrc.utilities.RxBus
-import com.kelsos.mbrc.viewmodels.ConnectionStatusModel
 import timber.log.Timber
 import javax.inject.Inject
 
-open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-  private lateinit var toolbar: Toolbar
-  private lateinit var drawer: DrawerLayout
-  private lateinit var navigationView: NavigationView
-  @Inject lateinit var rxBus: RxBus
-  @Inject lateinit var handler: Handler
-  @Inject lateinit var model: ConnectionStatusModel
+abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSelectedListener {
+  @Inject lateinit var bus: RxBus
+  @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+  @BindView(R.id.drawer_layout) lateinit var drawer: DrawerLayout
+  @BindView(R.id.nav_view) lateinit var navigationView: NavigationView
+
+  private var connectText: TextView? = null
   private var toggle: ActionBarDrawerToggle? = null
-
-
-  /**
-   * Sends an event object.
-   */
-  protected fun post(`object`: Any) {
-    rxBus.post(`object`)
-  }
+  private var connect: ImageView? = null
 
   private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
     val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-    for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
-      if (serviceClass.name == service.service.className) {
-        return true
-      }
+    return manager.getRunningServices(Integer.MAX_VALUE).any { serviceClass.name == it.service.className }
+  }
+
+  protected abstract fun active(): Int
+
+  private fun onConnectLongClick(): Boolean {
+    ifNotRunningStartService()
+    bus.post(MessageEvent(UserInputEventType.ResetConnection))
+    return true
+  }
+
+  private fun onConnectClick() {
+    ifNotRunningStartService()
+    bus.post(MessageEvent(UserInputEventType.StartConnection))
+  }
+
+  private fun ifNotRunningStartService() {
+    if (!isMyServiceRunning(RemoteService::class.java)) {
+      startService(Intent(this, RemoteService::class.java))
     }
-    return false
   }
 
-  protected fun setCurrentSelection(@IdRes id: Int) {
-    navigationView.menu.findItem(id).isChecked = true
+  override fun onDestroy() {
+    super.onDestroy()
+    drawer.removeDrawerListener(toggle!!)
   }
 
-  protected fun initialize(toolbar: Toolbar,
-                           drawer: DrawerLayout,
-                           navigation: NavigationView) {
-    this.toolbar = toolbar
-    this.drawer = drawer
-    this.navigationView = navigation
-    setSupportActionBar(toolbar)
-    navigationView.setNavigationItemSelectedListener(this)
-
-    if (BuildConfig.DEBUG) {
-      navigationView.menu.add(DEBUG_ITEM_GROUP, DEBUG_ITEM_ID, DEBUG_ORDER, R.string.debug)
+  override fun onBackPressed() {
+    if (drawer.isDrawerOpen(GravityCompat.START)) {
+      drawer.closeDrawer(GravityCompat.START)
+    } else {
+      super.onBackPressed()
     }
-
-    if (!isMyServiceRunning(Controller::class.java)) {
-      startService(Intent(this, Controller::class.java))
-    }
-
-    toggle = ActionBarDrawerToggle(this,
-        drawer,
-        toolbar,
-        R.string.drawer_open,
-        R.string.drawer_close)
-    toggle!!.syncState()
-
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    supportActionBar?.setHomeButtonEnabled(true)
-
-  }
-
-  override fun onResume() {
-    super.onResume()
-    rxBus.registerOnMain(this,
-        ConnectionStatusChangeEvent::class.java,
-        { this.handleConnectionStatusChange(it) })
-    rxBus.registerOnMain(this, NotifyUser::class.java, { this.handleUserNotification(it) })
-
-    updateStatus(model.status)
-  }
-
-  override fun onPause() {
-    super.onPause()
-    rxBus.unregister(this)
   }
 
   override fun onConfigurationChanged(newConfig: Configuration) {
@@ -136,31 +107,42 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
   }
 
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    return super.onOptionsItemSelected(item)
+  private fun onConnection(event: ConnectionStatusChangeEvent) {
+    Timber.v("Handling new connection status %s", event.status)
+    @StringRes val resId: Int
+    @ColorRes val colorId: Int
+    if (event.status == Connection.OFF) {
+      resId = R.string.drawer_connection_status_off
+      colorId = R.color.black
+    } else if (event.status == Connection.ON) {
+      resId = R.string.drawer_connection_status_on
+      colorId = R.color.power_on
+    } else {
+      resId = R.string.drawer_connection_status_off
+      colorId = R.color.black
+    }
+
+    connectText!!.setText(resId)
+    connect!!.setColorFilter(ContextCompat.getColor(this, colorId))
   }
 
   private fun handleUserNotification(event: NotifyUser) {
     val message = if (event.isFromResource) getString(event.resId) else event.message
-    Snackbar.make(toolbar, message, Snackbar.LENGTH_SHORT).show()
-  }
 
-  override fun onBackPressed() {
-    if (drawer.isDrawerOpen(GravityCompat.START)) {
-      drawer.closeDrawer(GravityCompat.START)
-    } else {
-      super.onBackPressed()
+    val focus = currentFocus
+    if (focus != null) {
+      Snackbar.make(focus, message, Snackbar.LENGTH_SHORT).show()
     }
   }
 
   override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
     when (keyCode) {
       KeyEvent.KEYCODE_VOLUME_UP -> {
-        rxBus.post(MessageEvent.newInstance(UserInputEventType.KeyVolumeUp))
+        bus.post(MessageEvent(UserInputEventType.KeyVolumeUp))
         return true
       }
       KeyEvent.KEYCODE_VOLUME_DOWN -> {
-        rxBus.post(MessageEvent.newInstance(UserInputEventType.KeyVolumeDown))
+        bus.post(MessageEvent(UserInputEventType.KeyVolumeDown))
         return true
       }
       else -> return super.onKeyDown(keyCode, event)
@@ -168,137 +150,84 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
   }
 
   override fun onNavigationItemSelected(item: MenuItem): Boolean {
-    handler.postDelayed({ navigate(item.itemId) }, NAVIGATION_DELAY.toLong())
+    val itemId = item.itemId
     drawer.closeDrawer(GravityCompat.START)
+    drawer.postDelayed({ navigate(itemId) }, 250)
     return true
   }
 
-  fun navigate(id: Int) {
-    if (id == R.id.drawer_menu_home) {
-      createBackStack(Intent(this, MainActivity::class.java))
-    } else if (id == R.id.drawer_menu_library) {
-      createBackStack(Intent(this, LibraryActivity::class.java))
-    } else if (id == R.id.drawer_menu_playlist) {
-      createBackStack(Intent(this, PlaylistActivity::class.java))
-    } else if (id == R.id.drawer_menu_now_playing) {
-      createBackStack(Intent(this, NowPlayingActivity::class.java))
-    } else if (id == R.id.drawer_menu_lyrics) {
-      createBackStack(Intent(this, LyricsActivity::class.java))
-    } else if (id == R.id.drawer_menu_settings) {
-      createBackStack(Intent(this, SettingsActivity::class.java))
-    } else if (id == R.id.drawer_menu_exit) {
-      onExitClicked()
-    } else if (id == R.id.drawer_menu_connect) {
-      onConnectClick()
-    } else if (id == R.id.drawer_menu_help) {
-      createBackStack(Intent(this, HelpFeedbackActivity::class.java))
-    } else if (id == DEBUG_ITEM_ID) {
-      createBackStack(Intent(this, DebugActivity::class.java))
-    }
-  }
+  private fun navigate(itemId: Int) {
 
-  private fun createBackStack(intent: Intent) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-      val builder = TaskStackBuilder.create(this)
-      builder.addNextIntentWithParentStack(intent)
-      builder.startActivities()
-    } else {
-      startActivity(intent)
+    if (active() == itemId) {
+      return
+    }
+
+    if (itemId == R.id.nav_home) {
+      val upIntent = NavUtils.getParentActivityIntent(this)
+      if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+        createBackStack(Intent(this, MainActivity::class.java))
+      } else {
+        NavUtils.navigateUpTo(this, upIntent)
+      }
+    } else if (itemId == R.id.nav_library) {
+      createBackStack(Intent(this, LibraryActivity::class.java))
+    } else if (itemId == R.id.nav_now_playing) {
+      createBackStack(Intent(this, NowPlayingActivity::class.java))
+    } else if (itemId == R.id.nav_playlists) {
+      createBackStack(Intent(this, PlaylistActivity::class.java))
+    } else if (itemId == R.id.nav_lyrics) {
+      createBackStack(Intent(this, LyricsActivity::class.java))
+    } else if (itemId == R.id.nav_settings) {
+      createBackStack(Intent(this, SettingsActivity::class.java))
+    } else if (itemId == R.id.nav_help) {
+      createBackStack(Intent(this, HelpFeedbackActivity::class.java))
+    } else if (itemId == R.id.nav_exit) {
+      stopService(Intent(this, RemoteService::class.java))
       finish()
     }
   }
 
-  private fun onConnectClick() {
-    rxBus.post(ChangeWebSocketStatusEvent.newInstance(ChangeWebSocketStatusEvent.CONNECT))
+  private fun createBackStack(intent: Intent) {
+    val builder = TaskStackBuilder.create(this)
+    builder.addNextIntentWithParentStack(intent)
+    builder.startActivities()
+    overridePendingTransition(0, 0)
   }
 
-  private fun onExitClicked() {
-    Timber.v("[Menu] User pressed exit")
-    stopService(Intent(this, Controller::class.java))
-    finish()
+  /**
+   * Should be called after injections and Butterknife bindings.
+   */
+  fun setup() {
+    Timber.v("Initializing base activity")
+    ifNotRunningStartService()
+    setSupportActionBar(toolbar)
+
+    toggle = ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close)
+    drawer.addDrawerListener(toggle!!)
+    toggle!!.syncState()
+    navigationView.setNavigationItemSelectedListener(this)
+
+    val header = navigationView.getHeaderView(0)
+    connectText = ButterKnife.findById<TextView>(header, R.id.nav_connect_text)
+    connect = ButterKnife.findById<ImageView>(header, R.id.connect_button)
+    connect!!.setOnClickListener({ this.onConnectClick() })
+    connect!!.setOnLongClickListener({ this.onConnectLongClick() })
+
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    supportActionBar?.setHomeButtonEnabled(true)
+    navigationView.setCheckedItem(active())
   }
 
-  private fun handleConnectionStatusChange(change: ConnectionStatusChangeEvent) {
-
-    val status = change.status
-    Timber.v("Connection event received %s", status)
-    model.status = status
-    updateStatus(status)
+  override fun onResume() {
+    super.onResume()
+    this.bus.register(this, NotifyUser::class.java, { this.handleUserNotification(it) }, true)
+    this.bus.register(this, ConnectionStatusChangeEvent::class.java, { this.onConnection(it) }, true)
+    this.bus.post(RequestConnectionStateEvent())
   }
 
-  private fun updateStatus(@Connection.Status status: Long) {
-    val item = navigationView.menu.findItem(R.id.drawer_menu_connect)
-
-    if (item == null) {
-      Timber.v("Connection event received but view item null")
-      return
-    }
-
-    if (status == Connection.ON) {
-      item.setTitle(R.string.drawer_connection_status_active)
-    } else {
-      item.setTitle(R.string.drawer_connection_status_off)
-    }
-  }
-
-  companion object {
-
-    const val NAVIGATION_DELAY = 250
-    const val DEBUG_ORDER = 999
-    const val DEBUG_ITEM_ID = 890
-    const val DEBUG_ITEM_GROUP = 0
-
-    /**
-     * This utility method handles Up navigation intents by searching for a parent activity and
-     * navigating there if defined. When using this for an activity make sure to define both the
-     * native parentActivity as well as the AppCompat one when supporting API levels less than 16.
-     * when the activity has a single parent activity. If the activity doesn't have a single parent
-     * activity then don't define one and this method will use back button functionality. If "Up"
-     * functionality is still desired for activities without parents then use
-     * `syntheticParentActivity` to define one dynamically.
-
-     * Note: Up navigation intents are represented by a back arrow in the top left of the Toolbar
-     * in Material Design guidelines.
-
-     * @param currentActivity Activity in use when navigate Up action occurred.
-     * *
-     * @param syntheticParentActivity Parent activity to use when one is not already configured.
-     */
-    fun navigateUpOrBack(currentActivity: Activity, syntheticParentActivity: Class<out Activity>?) {
-      // Retrieve parent activity from AndroidManifest.
-      var intent: Intent? = NavUtils.getParentActivityIntent(currentActivity)
-
-      // Synthesize the parent activity when a natural one doesn't exist.
-      if (intent == null && syntheticParentActivity != null) {
-        try {
-          intent = NavUtils.getParentActivityIntent(currentActivity, syntheticParentActivity)
-        } catch (e: PackageManager.NameNotFoundException) {
-          e.printStackTrace()
-        }
-
-      }
-
-      if (intent == null) {
-        // No parent defined in manifest. This indicates the activity may be used by
-        // in multiple flows throughout the app and doesn't have a strict parent. In
-        // this case the navigation up button should act in the same manner as the
-        // back button. This will result in users being forwarded back to other
-        // applications if currentActivity was invoked from another application.
-        currentActivity.onBackPressed()
-      } else {
-        if (NavUtils.shouldUpRecreateTask(currentActivity, intent)) {
-          // Need to synthesize a backstack since currentActivity was probably invoked by a
-          // different app. The preserves the "Up" functionality within the app according to
-          // the activity hierarchy defined in AndroidManifest.xml via parentActivity
-          // attributes.
-          val builder = TaskStackBuilder.create(currentActivity)
-          builder.addNextIntentWithParentStack(intent)
-          builder.startActivities()
-        } else {
-          // Navigate normally to the manifest defined "Up" activity.
-          NavUtils.navigateUpTo(currentActivity, intent)
-        }
-      }
-    }
+  override fun onPause() {
+    super.onPause()
+    this.bus.unregister(this)
   }
 }
+

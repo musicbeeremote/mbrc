@@ -1,117 +1,90 @@
 package com.kelsos.mbrc.utilities
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
-import android.text.TextUtils
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.kelsos.mbrc.data.dao.ConnectionSettings
-import com.kelsos.mbrc.extensions.versionCode
-import com.kelsos.mbrc.repository.ConnectionRepository
-import rx.Observable
-import rx.lang.kotlin.observable
-import rx.lang.kotlin.toSingletonObservable
+import android.support.annotation.StringDef
+import com.kelsos.mbrc.R
+import com.kelsos.mbrc.logging.FileLoggingTree
+import rx.Single
 import timber.log.Timber
 import java.util.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
-@Singleton class SettingsManager
-@Inject constructor(private val context: Application,
-                    private val preferences: SharedPreferences,
-                    private val repository: ConnectionRepository,
-                    private val keyProvider: KeyProvider) {
-  private var isFirstRun: Boolean = false
-
+@Singleton
+class SettingsManager
+@Inject
+constructor(private val context: Application,
+            private val preferences: SharedPreferences) {
   init {
-    checkForFirstRunAfterUpdate()
-  }
-
-  private fun checkIfRemoteSettingsExist(): Boolean {
-    val serverAddress = preferences.getString(keyProvider.hostKey, null)
-    val serverPort: Int
-
-    try {
-      serverPort = preferences.getInt(keyProvider.portKey, 0)
-    } catch (castException: ClassCastException) {
-      serverPort = Integer.parseInt(preferences.getString(keyProvider.portKey, "0"))
+    updatePreferences()
+    val loggingEnabled = loggingEnabled()
+    if (loggingEnabled) {
+      Timber.plant(FileLoggingTree(this.context.applicationContext))
+    } else {
+      val fileLoggingTree = Timber.forest().find { it is FileLoggingTree }
+      fileLoggingTree?.let { Timber.uproot(it) }
     }
-
-    return !(TextUtils.isEmpty(serverAddress) || serverPort == 0)
   }
 
-  val isVolumeReducedOnRinging: Boolean
-    get() = preferences.getBoolean(keyProvider.reduceVolumeKey, false)
+  private fun loggingEnabled(): Boolean {
+    return preferences.getBoolean(context.getString(R.string.settings_key_debug_logging), false)
+  }
+
+  private fun updatePreferences() {
+    val enabled = preferences.getBoolean(context.getString(R.string.settings_legacy_key_reduce_volume), false)
+    if (enabled) {
+      preferences.edit().putString(context.getString(R.string.settings_key_incoming_call_action), REDUCE).apply()
+    }
+  }
 
   val isNotificationControlEnabled: Boolean
-    get() = preferences.getBoolean(keyProvider.notificationKey, true)
+    get() = preferences.getBoolean(context.getString(R.string.settings_key_notification_control), true)
+
+  internal val callAction: String
+    @SuppressWarnings("WrongConstant")
+    @SettingsManager.CallAction
+    get() = preferences.getString(context.getString(R.string.settings_key_incoming_call_action), NONE)
 
   val isPluginUpdateCheckEnabled: Boolean
-    get() = preferences.getBoolean(keyProvider.lastUpdateKey, false)
-
-  private fun updateDefault(id: Int) {
-    preferences.edit().putLong(DEFAULT_ID, id.toLong()).apply()
-  }
+    get() = preferences.getBoolean(context.getString(R.string.settings_key_plugin_check), false)
 
   var lastUpdated: Date
-    get() = Date(preferences.getLong(keyProvider.lastUpdateKey, 0))
-    @SuppressLint("NewApi") set(lastChecked) {
+    get() = Date(preferences.getLong(context.getString(R.string.settings_key_last_update_check), 0))
+    set(lastChecked) {
       val editor = preferences.edit()
-      editor.putLong(keyProvider.lastUpdateKey, lastChecked.time)
+      editor.putLong(context.getString(R.string.settings_key_last_update_check), lastChecked.time)
       editor.apply()
     }
 
-  @SuppressLint("NewApi") private fun checkForFirstRunAfterUpdate() {
-    try {
-      val lastVersionCode = preferences.getLong(keyProvider.lastVersionKey, 0)
-      val currentVersion = context.versionCode
+
+  fun shouldShowPluginUpdate(): Single<Boolean> {
+    return Single.fromCallable {
+      val lastVersionCode = preferences.getLong(context.getString(R.string.settings_key_last_version_run), 0)
+      val currentVersion = RemoteUtils.getVersionCode(context)
 
       if (lastVersionCode < currentVersion) {
-        isFirstRun = true
 
         val editor = preferences.edit()
-        editor.putLong(keyProvider.lastVersionKey, currentVersion)
-
+        editor.putLong(context.getString(R.string.settings_key_last_version_run), currentVersion)
         editor.apply()
+        Timber.d("Update or fresh install")
 
-        Timber.d("load or fresh install")
-
-
+        return@fromCallable true
       }
-    } catch (e: PackageManager.NameNotFoundException) {
-      Timber.d(e, "check for first run")
+      return@fromCallable false
     }
-
   }
 
-  val observableDefault: Observable<ConnectionSettings>
-    get() = preferences.getLong(DEFAULT_ID, -1)
-        .toSingletonObservable()
-        .flatMap { id ->
-          observable<ConnectionSettings> {
-            if (id > 0) {
-              it.onNext(repository.getById(id))
-            }
-            it.onCompleted()
-          }
-        }
-
-  val default: ConnectionSettings?
-    get() {
-      val selection = preferences.getLong(DEFAULT_ID, -1)
-      if (selection < 0) {
-        return null
-      } else {
-        return repository.getById(selection)
-      }
-    }
-
-  fun setDefault(id: Long) {
-    preferences.edit().putLong(DEFAULT_ID, id).apply()
-  }
+  @StringDef(NONE, PAUSE, STOP)
+  @Retention(AnnotationRetention.SOURCE)
+  internal annotation class CallAction
 
   companion object {
-    val DEFAULT_ID = "default_id"
+
+    const val NONE = "none"
+    const val PAUSE = "pause"
+    const val STOP = "stop"
+    const val REDUCE = "reduce"
   }
 }

@@ -6,7 +6,6 @@
 
   <RatingBar
     android:id="@+id/ratingBar"
-    style="@style/RatingBar"
     android:layout_width="wrap_content"
     android:layout_height="@dimen/rating_bar_height"
     android:layout_gravity="center"

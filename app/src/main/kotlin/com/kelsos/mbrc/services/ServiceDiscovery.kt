@@ -3,75 +3,70 @@ package com.kelsos.mbrc.services
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kelsos.mbrc.constants.UserInputEventType
+import com.kelsos.mbrc.data.DiscoveryMessage
 import com.kelsos.mbrc.data.dao.ConnectionSettings
-import com.kelsos.mbrc.dto.DiscoveryResponse
-import com.kelsos.mbrc.events.MessageEvent
+import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.DiscoveryStopped
-import com.kelsos.mbrc.extensions.io
-import com.kelsos.mbrc.mappers.DeviceSettingsMapper
+import com.kelsos.mbrc.events.ui.DiscoveryStopped.Companion.NOT_FOUND
+import com.kelsos.mbrc.events.ui.DiscoveryStopped.Companion.NO_WIFI
+import com.kelsos.mbrc.events.ui.DiscoveryStopped.Companion.SUCCESS
+import com.kelsos.mbrc.mappers.ConnectionMapper
 import com.kelsos.mbrc.repository.ConnectionRepository
-import com.kelsos.mbrc.utilities.RxBus
-import com.kelsos.mbrc.utilities.SettingsManager
+import rx.Emitter
 import rx.Observable
+import rx.functions.Func1
+import rx.schedulers.Schedulers
 import timber.log.Timber
 import java.io.IOException
 import java.net.DatagramPacket
 import java.net.InetAddress
 import java.net.MulticastSocket
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class ServiceDiscovery
 @Inject
-constructor(private val manager: WifiManager,
-            private val connectivityManager: ConnectivityManager,
-            private val mapper: ObjectMapper,
-            private val bus: RxBus, private val repository: ConnectionRepository, private val settingsManager: SettingsManager) {
-  private var multicastLock: WifiManager.MulticastLock? = null
+internal constructor(private val manager: WifiManager,
+                     private val connectivityManager: ConnectivityManager,
+                     private val mapper: ObjectMapper,
+                     private val bus: RxBus,
+                     private val connectionRepository: ConnectionRepository) {
+  private var mLock: WifiManager.MulticastLock? = null
+  private var group: InetAddress? = null
 
-  init {
-    bus.register(this, MessageEvent::class.java, { this.onDiscoveryMessage(it) })
-  }
-
-  fun onDiscoveryMessage(messageEvent: MessageEvent) {
-    if (UserInputEventType.StartDiscovery != messageEvent.type) {
+  fun startDiscovery(callback: () -> Unit = {}) {
+    if (!isWifiConnected) {
+      bus.post(DiscoveryStopped(NO_WIFI))
       return
     }
-    startDiscovery().subscribe({
+    mLock = manager.createMulticastLock("locked")
+    mLock!!.setReferenceCounted(true)
+    mLock!!.acquire()
 
-    }) { Timber.v(it) }
-  }
+    Timber.v("Starting remote service discovery")
 
-  fun startDiscovery(): Observable<ConnectionSettings> {
+    val mapper = ConnectionMapper()
+    discoveryObservable().subscribeOn(Schedulers.io())
+        .unsubscribeOn(Schedulers.io())
+        .doOnTerminate({
+          this.stopDiscovery()
+        }).map<ConnectionSettings>(Func1<DiscoveryMessage, ConnectionSettings> { mapper.map(it) }).subscribe(
+        {
+          bus.post(DiscoveryStopped(SUCCESS))
+          connectionRepository.save(it)
 
-    if (!isWifiConnected) {
-      bus.post(DiscoveryStopped(DiscoveryStopped.NO_WIFI, null))
-      return Observable.empty<ConnectionSettings>()
-    }
+          callback.invoke()
 
-    return discover().io().doOnTerminate({ this.stopDiscovery() }).doOnNext {
-      repository.save(it)
-
-      if (repository.count() == 1L) {
-        Timber.v("Only one entry found, setting it as default")
-        settingsManager.setDefault(1)
-      }
-
-      bus.post(DiscoveryStopped(DiscoveryStopped.SUCCESS, it))
-    }.doOnError {
-      bus.post(DiscoveryStopped(DiscoveryStopped.NOT_FOUND, null))
-      Timber.e(it, "During service discovery")
+        }) {
+      Timber.v(it, "Discovery incomplete")
+      bus.post(DiscoveryStopped(NOT_FOUND))
     }
   }
 
-  fun stopDiscovery() {
-    if (multicastLock != null) {
-      multicastLock!!.release()
-      multicastLock = null
-    }
+  private fun stopDiscovery() {
+    mLock?.release()
+    mLock = null
   }
 
   private val wifiAddress: String
@@ -92,59 +87,69 @@ constructor(private val manager: WifiManager,
       return current != null && current.type == ConnectivityManager.TYPE_WIFI
     }
 
-  fun discover(): Observable<ConnectionSettings> {
-    return Observable.create<ConnectionSettings> {
-      try {
-        multicastLock = manager.createMulticastLock("locked")
-        multicastLock!!.setReferenceCounted(true)
-        multicastLock!!.acquire()
-
-        val mSocket = MulticastSocket(MULTICAST_PORT)
-        mSocket.soTimeout = DISCOVERY_TIMEOUT
-        val group = InetAddress.getByName(DISCOVERY_ADDRESS)
-        mSocket.joinGroup(group)
-
-        val mPacket: DatagramPacket
-        val buffer = ByteArray(BUFFER)
-        mPacket = DatagramPacket(buffer, buffer.size)
-        val discoveryMessage = Hashtable<String, String>()
-        discoveryMessage.put(CONTEXT, DISCOVERY)
-        discoveryMessage.put(ADDRESS, wifiAddress)
-        val discovery = mapper.writeValueAsBytes(discoveryMessage)
-        mSocket.send(DatagramPacket(discovery, discovery.size, group, PORT))
-        var incoming: String
-
-        while (true) {
-          mSocket.receive(mPacket)
-          incoming = mPacket.data.toString(charset(UTF_8))
-
-          val node = mapper.readValue(incoming, DiscoveryResponse::class.java)
-          if (NOTIFY == node.context) {
-            it.onNext(DeviceSettingsMapper.fromResponse(node))
-            it.onCompleted()
-            break
-          }
-        }
-
-        mSocket.leaveGroup(group)
-        mSocket.close()
-      } catch (e: IOException) {
-        it.onError(e)
-      }
-    }
+  private fun discoveryObservable(): Observable<DiscoveryMessage> {
+    return Observable.using<DiscoveryMessage, MulticastSocket>({
+      this.resource
+    }, {
+      this.getObservable(it)
+    },
+        {
+          this.cleanup(it)
+        })
   }
 
-  companion object {
-    const val NOTIFY = "notify"
-    const val UTF_8 = "UTF-8"
-    const val CONTEXT = "context"
-    const val DISCOVERY = "discovery"
-    const val ADDRESS = "address"
+  private fun cleanup(resource: MulticastSocket) {
+    try {
+      resource.leaveGroup(group)
+      resource.close()
+      stopDiscovery()
+    } catch (e: IOException) {
+      throw RuntimeException(e)
+    }
 
-    const val DISCOVERY_ADDRESS = "239.1.5.10" //NOPMD
-    const val PORT = 45345
-    const val BUFFER = 512
-    const val DISCOVERY_TIMEOUT = 8000
-    const val MULTICAST_PORT = 45345
+  }
+
+  private fun getObservable(socket: MulticastSocket): Observable<DiscoveryMessage> {
+    return Observable.interval(1000, TimeUnit.MILLISECONDS).take(15).flatMap {
+      Observable.fromEmitter<DiscoveryMessage>({ emitter: Emitter<DiscoveryMessage> ->
+        try {
+          val mPacket: DatagramPacket
+          val buffer = ByteArray(512)
+          mPacket = DatagramPacket(buffer, buffer.size)
+          socket.receive(mPacket)
+          val incoming = String(mPacket.data, Charsets.UTF_8)
+          val node = mapper.readValue(incoming, DiscoveryMessage::class.java)
+          Timber.v("Discovery received -> %s", node)
+          emitter.onNext(node)
+          emitter.onCompleted()
+        } catch (e: IOException) {
+          emitter.onError(e)
+        }
+      }, Emitter.BackpressureMode.LATEST)
+    }.filter { message -> NOTIFY == message.context }.first()
+  }
+
+  private val resource: MulticastSocket
+    get() {
+      try {
+        val multicastSocket = MulticastSocket(MULTICASTPORT)
+        multicastSocket.soTimeout = SO_TIMEOUT
+        group = InetAddress.getByName(DISCOVERY_ADDRESS)
+        multicastSocket.joinGroup(group)
+        val payload = mapper.writeValueAsBytes(DiscoveryMessage("Android", wifiAddress))
+        multicastSocket.send(DatagramPacket(payload, payload.size, group, MULTICASTPORT))
+        return multicastSocket
+      } catch (e: IOException) {
+        Timber.v(e, "Failed to open multicast socket")
+        throw RuntimeException(e)
+      }
+
+    }
+
+  companion object {
+    private val NOTIFY = "notify"
+    private val SO_TIMEOUT = 15 * 1000
+    private val MULTICASTPORT = 45345
+    private val DISCOVERY_ADDRESS = "239.1.5.10" //NOPMD
   }
 }

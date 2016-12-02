@@ -10,29 +10,27 @@ import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
-import javax.inject.Inject
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.data.dao.QueueTrackDao
-import com.kelsos.mbrc.domain.QueueTrack
+import com.kelsos.mbrc.domain.NowPlayingTrack
 import com.kelsos.mbrc.interfaces.ITouchHelperAdapter
-import java.util.ArrayList
-import java.util.Collections
 import timber.log.Timber
+import java.util.*
+import javax.inject.Inject
 
 class NowPlayingAdapter
 @Inject constructor(context: Context) : RecyclerView.Adapter<NowPlayingAdapter.TrackHolder>(), ITouchHelperAdapter {
-  private val data: MutableList<QueueTrack>
+  private val data: MutableList<NowPlayingTrack>
   private var playingTrackIndex: Int = 0
   private val inflater: LayoutInflater
   private var listener: OnUserActionListener? = null
 
   init {
     inflater = LayoutInflater.from(context)
-    data = ArrayList<QueueTrack>()
+    data = ArrayList<NowPlayingTrack>()
     setHasStableIds(true)
   }
 
-  fun updateData(data: List<QueueTrack>) {
+  fun updateData(data: List<NowPlayingTrack>) {
     this.data.addAll(data)
     notifyDataSetChanged()
   }
@@ -99,11 +97,11 @@ class NowPlayingAdapter
     data.add(from, track)
   }
 
-  fun insert(track: QueueTrack, index: Int) {
+  fun insert(track: NowPlayingTrack, index: Int) {
     data.add(index, track)
   }
 
-  fun setPlayingTrack(track: QueueTrack) {
+  fun setPlayingTrack(track: NowPlayingTrack) {
     setPlayingTrackIndex(data.indexOf(track))
     notifyDataSetChanged()
   }
@@ -133,7 +131,7 @@ class NowPlayingAdapter
 
     fun onItemMoved(from: Int, to: Int)
 
-    fun onItemClicked(position: Int, track: QueueTrack)
+    fun onItemClicked(position: Int, track: NowPlayingTrack)
   }
 
   class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -1,3 +1,14 @@
 package com.kelsos.mbrc.domain
 
-data class Track(val id: Long, val artist: String, val title: String, val cover: String)
+import com.kelsos.mbrc.data.db.RemoteDatabase
+import com.raizlabs.android.dbflow.annotation.Column
+import com.raizlabs.android.dbflow.annotation.QueryModel
+import com.raizlabs.android.dbflow.structure.BaseQueryModel
+
+@QueryModel(database = RemoteDatabase::class)
+class Track() : BaseQueryModel() {
+  @Column var id: Long = 0
+  @Column var artist: String = ""
+  @Column var title: String = ""
+  @Column var cover: String = ""
+}

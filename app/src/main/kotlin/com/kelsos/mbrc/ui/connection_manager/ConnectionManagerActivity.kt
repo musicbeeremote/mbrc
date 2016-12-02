@@ -3,7 +3,6 @@ package com.kelsos.mbrc.ui.connection_manager
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
@@ -15,83 +14,94 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.data.dao.ConnectionSettings
+import com.kelsos.mbrc.events.DefaultSettingsChangedEvent
 import com.kelsos.mbrc.events.MessageEvent
+import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.events.ui.ConnectionSettingsChanged
 import com.kelsos.mbrc.events.ui.DiscoveryStopped
+import com.kelsos.mbrc.events.ui.DiscoveryStopped.Companion.NOT_FOUND
+import com.kelsos.mbrc.events.ui.DiscoveryStopped.Companion.NO_WIFI
+import com.kelsos.mbrc.events.ui.DiscoveryStopped.Companion.SUCCESS
 import com.kelsos.mbrc.events.ui.NotifyUser
-import com.kelsos.mbrc.ui.connection_manager.ConnectionManagerAdapter.DeviceActionListener
+import com.kelsos.mbrc.ui.activities.FontActivity
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment
-import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment.SettingsDialogListener
-import com.kelsos.mbrc.utilities.RxBus
+import toothpick.Scope
 import toothpick.Toothpick
+import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class ConnectionManagerActivity : AppCompatActivity(), ConnectionManagerView, SettingsDialogListener, DeviceActionListener {
-
-  @BindView(R.id.connection_list) internal lateinit var mRecyclerView: RecyclerView
-  @BindView(R.id.toolbar) internal lateinit var mToolbar: Toolbar
+class ConnectionManagerActivity : FontActivity(),
+    ConnectionManagerView,
+    SettingsDialogFragment.SettingsSaveListener,
+    ConnectionAdapter.ConnectionChangeListener {
   @Inject lateinit var bus: RxBus
   @Inject lateinit var presenter: ConnectionManagerPresenter
-  @Inject lateinit var adapter: ConnectionManagerAdapter
-  private var progressDialog: MaterialDialog? = null
-  private lateinit var context: Context
+  @BindView(R.id.connection_list) lateinit var mRecyclerView: RecyclerView
+  @BindView(R.id.toolbar) lateinit var mToolbar: Toolbar
+  private var mProgress: MaterialDialog? = null
+  private var mContext: Context? = null
+  private var adapter: ConnectionAdapter? = null
+  private var scope: Scope? = null
 
-  @OnClick(R.id.connection_add) fun onAddButtonClick() {
+  @OnClick(R.id.connection_add)
+  internal fun onAddButtonClick() {
     val settingsDialog = SettingsDialogFragment()
-    val args = Bundle()
-    args.putInt("index", -1)
-    settingsDialog.arguments = args
     settingsDialog.show(supportFragmentManager, "settings_dialog")
   }
 
-  @OnClick(R.id.connection_scan) fun onScanButtonClick() {
-    val mBuilder = MaterialDialog.Builder(context)
+  @OnClick(R.id.connection_scan)
+  internal fun onScanButtonClick() {
+    val mBuilder = MaterialDialog.Builder(mContext!!)
     mBuilder.title(R.string.progress_scanning)
     mBuilder.content(R.string.progress_scanning_message)
     mBuilder.progress(true, 0)
-    progressDialog = mBuilder.show()
-    bus.post(MessageEvent.newInstance(UserInputEventType.StartDiscovery))
+    mProgress = mBuilder.show()
+    bus.post(MessageEvent(UserInputEventType.StartDiscovery))
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    scope = Toothpick.openScopes(application, this)
+    scope!!.installModules(SmoothieActivityModule(this), ConnectionManagerModule.create())
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.ui_activity_connection_manager)
-    ButterKnife.bind(this)
-    val scope = Toothpick.openScopes(application, this)
-    scope.installModules(ConnectionManagerModule.create())
     Toothpick.inject(this, scope)
-    presenter.bind(this)
-    adapter.setDeviceActionListener(this)
+    setContentView(R.layout.activity_connection_manager)
+    ButterKnife.bind(this)
     setSupportActionBar(mToolbar)
     mRecyclerView.setHasFixedSize(true)
-    val layoutManager = LinearLayoutManager(this)
-    mRecyclerView.layoutManager = layoutManager
+    val mLayoutManager = LinearLayoutManager(this)
+    mRecyclerView.layoutManager = mLayoutManager
+    adapter = ConnectionAdapter()
+    adapter!!.setChangeListener(this)
     mRecyclerView.adapter = adapter
-    presenter.loadDevices()
+    presenter.attach(this)
+    presenter.load()
   }
 
   override fun onDestroy() {
-    super.onDestroy()
     Toothpick.closeScope(this)
+    super.onDestroy()
   }
 
   override fun onStart() {
     super.onStart()
-    context = this
-    val actionBar = supportActionBar
-    if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(true)
-      actionBar.setTitle(R.string.connection_manager_title)
-    }
+    mContext = this
+
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    supportActionBar?.setTitle(R.string.connection_manager_title)
   }
 
   override fun onResume() {
     super.onResume()
-    presenter.onResume()
+    presenter.attach(this)
+    bus.register(this, ConnectionSettingsChanged::class.java, { this.onConnectionSettingsChange(it) }, true)
+    bus.register(this, DiscoveryStopped::class.java, { this.onDiscoveryStopped(it) }, true)
+    bus.register(this, NotifyUser::class.java, { this.onUserNotification(it) }, true)
   }
 
   override fun onPause() {
     super.onPause()
-    presenter.onPause()
+    presenter.detach()
+    bus.unregister(this)
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -102,52 +112,60 @@ class ConnectionManagerActivity : AppCompatActivity(), ConnectionManagerView, Se
     return true
   }
 
-  override fun onDialogPositiveClick(dialog: SettingsDialogFragment, settings: ConnectionSettings) {
-    presenter.saveSettings(settings)
+  override fun onSave(settings: ConnectionSettings) {
+    presenter.save(settings)
   }
 
-  override fun showDiscoveryResult(@DiscoveryStopped.Status reason: Long) {
+  private fun onConnectionSettingsChange(event: ConnectionSettingsChanged) {
+    adapter!!.setSelectionId(event.defaultId)
+  }
+
+  private fun onDiscoveryStopped(event: DiscoveryStopped) {
+    mProgress?.dismiss()
 
     val message: String
-    if (reason == DiscoveryStopped.NO_WIFI) {
-      message = getString(R.string.con_man_no_wifi)
-    } else if (reason == DiscoveryStopped.NOT_FOUND) {
-      message = getString(R.string.con_man_not_found)
-    } else if (reason == DiscoveryStopped.SUCCESS) {
-      message = getString(R.string.con_man_success)
-    } else {
-      message = getString(R.string.unknown_reason)
+    when (event.reason) {
+      NO_WIFI -> message = getString(R.string.con_man_no_wifi)
+      NOT_FOUND -> message = getString(R.string.con_man_not_found)
+      SUCCESS -> {
+        message = getString(R.string.con_man_success)
+        presenter.load()
+      }
+      else -> message = getString(R.string.unknown_reason)
     }
 
     Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show()
   }
 
-  override fun dismissLoadingDialog() {
-    if (progressDialog != null && progressDialog!!.isShowing) {
-      progressDialog!!.dismiss()
-    }
-  }
-
-  override fun showNotification(event: NotifyUser) {
+  private fun onUserNotification(event: NotifyUser) {
     val message = if (event.isFromResource) getString(event.resId) else event.message
 
     Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show()
   }
 
-  override fun updateDevices(list: List<ConnectionSettings>) {
-    adapter.updateDevices(list)
+  override fun onDelete(settings: ConnectionSettings) {
+    presenter.delete(settings)
   }
 
-  override fun onDelete(settings: ConnectionSettings) {
-    presenter.deleteSettings(settings)
+  override fun onEdit(settings: ConnectionSettings) {
+    val settingsDialog = SettingsDialogFragment.newInstance(settings)
+    val fragmentManager = supportFragmentManager
+    settingsDialog.show(fragmentManager, "settings_dialog")
   }
 
   override fun onDefault(settings: ConnectionSettings) {
     presenter.setDefault(settings)
   }
 
-  override fun onEdit(settings: ConnectionSettings) {
-    val settingsDialog = SettingsDialogFragment.newInstance(settings)
-    settingsDialog.show(supportFragmentManager, SettingsDialogFragment.TAG)
+  override fun updateModel(connectionModel: ConnectionModel) {
+    adapter!!.update(connectionModel)
+  }
+
+  override fun defaultChanged() {
+    bus.post(DefaultSettingsChangedEvent.create())
+  }
+
+  override fun dataUpdated() {
+    presenter.load()
   }
 }

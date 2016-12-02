@@ -1,15 +1,15 @@
 package com.kelsos.mbrc.data.views
 
 
-import com.kelsos.mbrc.data.RemoteDatabase
-import com.kelsos.mbrc.data.dao.AlbumDao
-import com.kelsos.mbrc.data.dao.AlbumDao_Table
-import com.kelsos.mbrc.data.dao.ArtistDao
-import com.kelsos.mbrc.data.dao.ArtistDao_Table
-import com.kelsos.mbrc.data.dao.CoverDao
-import com.kelsos.mbrc.data.dao.CoverDao_Table
-import com.kelsos.mbrc.data.dao.TrackDao
-import com.kelsos.mbrc.data.dao.TrackDao_Table
+import com.kelsos.mbrc.data.dao.Album
+import com.kelsos.mbrc.data.dao.Album_Table
+import com.kelsos.mbrc.data.dao.Artist
+import com.kelsos.mbrc.data.dao.Artist_Table
+import com.kelsos.mbrc.data.dao.Cover
+import com.kelsos.mbrc.data.dao.Cover_Table
+import com.kelsos.mbrc.data.dao.Track
+import com.kelsos.mbrc.data.dao.Track_Table
+import com.kelsos.mbrc.data.db.RemoteDatabase
 import com.raizlabs.android.dbflow.annotation.Column
 import com.raizlabs.android.dbflow.annotation.ModelView
 import com.raizlabs.android.dbflow.annotation.ModelViewQuery
@@ -21,7 +21,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.BaseModelView
 
 @ModelView(database = RemoteDatabase::class,
-    name = "track_view") class TrackModelView : BaseModelView<TrackDao>() {
+    name = "track_view") class TrackModelView : BaseModelView() {
 
   @Column(name = "id") var id: Long = 0
   @Column(name = "disc") var disc: Int = 0
@@ -34,25 +34,25 @@ import com.raizlabs.android.dbflow.structure.BaseModelView
 
   companion object {
     @JvmField
-    @ModelViewQuery val QUERY: Query = SQLite.select(TrackDao_Table.id.`as`("id").withTable(),
-        TrackDao_Table.disc.`as`("disc").withTable(),
-        TrackDao_Table.position.`as`("position").withTable(),
-        TrackDao_Table.title.`as`("title").withTable(),
-        AlbumDao_Table.name.`as`("album").withTable(),
-        AlbumDao_Table.id.`as`("album_id").withTable(),
-        ArtistDao_Table.name.`as`("artist").withTable(),
-        CoverDao_Table.hash.`as`("cover").withTable())
-        .from(TrackDao::class.java)
-        .join(AlbumDao::class.java, Join.JoinType.INNER)
-        .on(TrackDao_Table.album_id.withTable().`is`(AlbumDao_Table.id.withTable()))
-        .join(ArtistDao::class.java, Join.JoinType.INNER)
-        .on(TrackDao_Table.artist_id.withTable().`is`(ArtistDao_Table.id.withTable()))
-        .join(ArtistDao::class.java, Join.JoinType.INNER)
+    @ModelViewQuery val QUERY: Query = SQLite.select(Track_Table.id.`as`("id").withTable(),
+        Track_Table.disc.`as`("disc").withTable(),
+        Track_Table.position.`as`("position").withTable(),
+        Track_Table.title.`as`("title").withTable(),
+        Album_Table.name.`as`("album").withTable(),
+        Album_Table.id.`as`("album_id").withTable(),
+        Artist_Table.name.`as`("artist").withTable(),
+        Cover_Table.hash.`as`("cover").withTable())
+        .from(Track::class.java)
+        .join(Album::class.java, Join.JoinType.INNER)
+        .on(Track_Table.album_id.withTable().`is`(Album_Table.id.withTable()))
+        .join(Artist::class.java, Join.JoinType.INNER)
+        .on(Track_Table.artist_id.withTable().`is`(Artist_Table.id.withTable()))
+        .join(Artist::class.java, Join.JoinType.INNER)
         .`as`("album_artist")
-        .on(TrackDao_Table.album_artist_id.withTable().`is`(ArtistDao_Table.id.withTable(NameAlias.builder(
+        .on(Track_Table.album_artist_id.withTable().`is`(Artist_Table.id.withTable(NameAlias.builder(
             "album_artist").build())))
-        .join(CoverDao::class.java, Join.JoinType.LEFT_OUTER)
-        .on(AlbumDao_Table.cover_id.withTable().`is`(CoverDao_Table.id.withTable()))
+        .join(Cover::class.java, Join.JoinType.LEFT_OUTER)
+        .on(Album_Table.cover_id.withTable().`is`(Cover_Table.id.withTable()))
         .orderBy(OrderBy.fromNameAlias(NameAlias.builder("name").withTable("album_artist").build()).ascending())
         .orderBy(OrderBy.fromNameAlias(NameAlias.builder("album").build()).ascending())
         .orderBy(OrderBy.fromNameAlias(NameAlias.builder("disc").build()).ascending())

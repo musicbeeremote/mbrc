@@ -13,6 +13,7 @@ import com.kelsos.mbrc.adapters.PlaylistTrackAdapter
 import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.domain.PlaylistTrack
 import toothpick.Toothpick
+import toothpick.smoothie.module.SmoothieSupportActivityModule
 import javax.inject.Inject
 
 class PlaylistTrackActivity : AppCompatActivity(), PlaylistTrackView, PlaylistTrackAdapter.MenuItemSelectedListener {
@@ -25,9 +26,10 @@ class PlaylistTrackActivity : AppCompatActivity(), PlaylistTrackView, PlaylistTr
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_playlist)
+    setContentView(R.layout.activity_playlist_tracks)
     ButterKnife.bind(this)
     val scope = Toothpick.openScopes(application, this)
+    scope.installModules(SmoothieSupportActivityModule(this), PlaylistTrackModule())
     Toothpick.inject(this, scope)
 
     presenter.bind(this)

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mini_control"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/mini_control_height"
-    android:background="@color/background_material_dark">
+    android:background="@color/background_dark">
 
   <ImageView
       android:id="@+id/mc_track_cover"
@@ -15,8 +16,7 @@
       android:src="@drawable/ic_image_no_cover" />
 
   <LinearLayout
-      android:id="@+id/relativeLayout"
-      android:layout_width="match_parent"
+    android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:layout_gravity="start"
       android:layout_toEndOf="@+id/mc_track_cover"
@@ -35,10 +35,11 @@
         android:layout_gravity="start|center_vertical"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
-        android:singleLine="true"
+        android:maxLines="1"
         android:textColor="@color/primary_text"
         android:textSize="@dimen/mini_control_title_text_size"
-        tools:ignore="UnusedAttribute"
+        fontPath="fonts/roboto_medium.ttf"
+        tools:ignore="MissingPrefix,UnusedAttribute"
         tools:text="All night" />
 
     <TextView
@@ -48,7 +49,7 @@
         android:layout_gravity="start|center_vertical"
         android:ellipsize="end"
         android:fontFamily="sans-serif"
-        android:singleLine="true"
+        android:maxLines="1"
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/mini_control_subtitle_text_size"
         tools:ignore="UnusedAttribute"
@@ -73,7 +74,7 @@
         android:baselineAlignBottom="false"
         android:contentDescription="@string/main_button_previous_description"
         android:tint="@color/white"
-        android:src="@drawable/ic_skip_previous_black_36dp" />
+        android:src="@drawable/ic_skip_previous_black_24dp" />
 
     <ImageButton
         android:id="@+id/mc_play_pause"
@@ -93,7 +94,8 @@
         android:baselineAlignBottom="false"
         android:contentDescription="@string/main_button_next_description"
         android:tint="@color/white"
-        android:src="@drawable/ic_skip_next_black_36dp" />
+        android:src="@drawable/ic_skip_next_black_24dp" />
+
 
   </LinearLayout>
 

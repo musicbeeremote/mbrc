@@ -1,55 +1,27 @@
 package com.kelsos.mbrc.repository.library
 
-import com.kelsos.mbrc.data.RemoteDatabase
-import com.kelsos.mbrc.data.dao.CoverDao
-import com.kelsos.mbrc.data.dao.TrackDao_Table
-import com.raizlabs.android.dbflow.config.FlowManager
-import com.raizlabs.android.dbflow.sql.language.SQLite
-import rx.Observable
+import com.kelsos.mbrc.data.dao.Cover
+import com.raizlabs.android.dbflow.list.FlowCursorList
+import rx.Completable
+import rx.Single
 import javax.inject.Inject
 
 class CoverRepositoryImpl
 @Inject constructor() : CoverRepository {
-  override fun getPageObservable(offset: Int, limit: Int): Observable<List<CoverDao>> {
-    return Observable.defer { Observable.just(getPage(offset, limit)) }
+  override fun getAllCursor(): Single<FlowCursorList<Cover>> {
+    TODO()
   }
 
-  override fun getAllObservable(): Observable<List<CoverDao>> = Observable.defer {
-    Observable.just(getAll())
+  override fun getAndSaveRemote(): Single<FlowCursorList<Cover>> {
+    TODO()
   }
 
-  override fun getPage(offset: Int, limit: Int): List<CoverDao> {
-    return SQLite.select()
-        .from(CoverDao::class.java)
-        .limit(limit)
-        .offset(offset)
-        .queryList()
+  override fun getRemote(): Completable {
+    TODO()
   }
 
-  override fun getAll(): List<CoverDao> = SQLite.select()
-      .from(CoverDao::class.java)
-      .queryList()
-
-  override fun getById(id: Long): CoverDao? {
-    return SQLite.select()
-        .from(CoverDao::class.java)
-        .where(TrackDao_Table.id.eq(id))
-        .querySingle()
+  override fun search(term: String): Single<FlowCursorList<Cover>> {
+    TODO()
   }
 
-  override fun save(item: CoverDao) {
-    item.save()
-  }
-
-  override fun count(): Long {
-    return SQLite.selectCountOf()
-        .from(CoverDao::class.java)
-        .count()
-  }
-
-  override fun save(items: List<CoverDao>) {
-    FlowManager.getDatabase(RemoteDatabase::class.java).executeTransaction {
-      Observable.from(items).forEach({ it.save() })
-    }
-  }
 }

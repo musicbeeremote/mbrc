@@ -23,16 +23,12 @@ Credits
 Many of the icons used are created by [Tasos Papazoglou Chalikias](https://github.com/sushiperv) and are licenced under the [Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License.](https://creativecommons.org/licenses/by-nc-nd/3.0/deed.en_US) some of them where taken by other projects and some awful icons during the earlier development where created by me. The original logo idea belongs to Jordan Georgiades. Any other icons introduced in version 0.9.7 and later was probably my work. Some design ideas are based on [mockups](https://groups.google.com/forum/#!topic/musicbee-remote/wgm029yfJnU) by Carlos Parga
 
 ### Inspiration
-A great source of inspiration for this project was the [Cyanogen Apollo player](https://github.com/CyanogenMod/android_packages_apps_Apollo)
-along with [Google Play Music for Android](https://play.google.com/store/apps/details?id=com.google.android.music).
+Initially a great source of inspiration for this project was the [Cyanogen Apollo player](https://github.com/CyanogenMod/android_packages_apps_Apollo)
+along with [Google Play Music for Android](https://play.google.com/store/apps/details?id=com.google.android.music). Nowadays I am looking closely the material design documentation.
 
 ### Dependencies
 
-*   [Guice](https://github.com/google/guice)
-
-    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-
-*   [RoboGuice](https://github.com/roboguice/roboguice)
+*   [Toothpick](https://github.com/stephanenicolas/toothpick)
 
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
@@ -69,10 +65,13 @@ along with [Google Play Music for Android](https://play.google.com/store/apps/de
     License: [MIT](https://github.com/afollestad/material-dialogs/blob/master/LICENSE.txt)
     
 *   [Butterknife](https://github.com/JakeWharton/butterknife)
-    
-    License: [Apache 2.0](https://github.com/JakeWharton/butterknife/blob/master/LICENSE.txt)
 
-The project also uses [Retrolamda](https://github.com/evant/gradle-retrolambda)
+    License: [Apache 2.0](https://raw.githubusercontent.com/JakeWharton/butterknife/master/LICENSE.txt)
+    
+*   [Preference Fragment Compat](https://github.com/Machinarius/PreferenceFragment-Compat)
+
+    License: [Apache 2.0](https://raw.githubusercontent.com/Machinarius/PreferenceFragment-Compat/master/LICENSE)
+               
 
 License
 ----------
@@ -80,7 +79,7 @@ License
 The source code of the application is licensed under the [GPLv3](https://www.gnu.org/licenses/gpl.html) license.
 
     MusicBee Remote (for Android)
-    Copyright (C) 2011-2015  Konstantinos Paparas
+    Copyright (C) 2011 - 2016  Konstantinos Paparas
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

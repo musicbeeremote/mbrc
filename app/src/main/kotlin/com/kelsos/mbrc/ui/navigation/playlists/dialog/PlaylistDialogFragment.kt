@@ -29,8 +29,8 @@ class PlaylistDialogFragment : DialogFragment(), PlaylistDialogView {
   @BindView(R.id.playlist_name_text) internal lateinit var name: EditText
   @BindView(R.id.playlist_name_til) internal lateinit var textInputLayout: TextInputLayout
 
-  @Inject lateinit var adapter: PlaylistDialogAdapter
-  @Inject lateinit var presenter: PlaylistDialogPresenter
+  @Inject internal lateinit var adapter: PlaylistDialogAdapter
+  @Inject internal lateinit var presenter: PlaylistDialogPresenter
 
   private var playlistActionListener: PlaylistActionListener? = null
 
@@ -45,6 +45,7 @@ class PlaylistDialogFragment : DialogFragment(), PlaylistDialogView {
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     mode = ADD_MODE
     val scope = Toothpick.openScopes(context.applicationContext, this)
+    scope.installModules(PlaylistDialogModule())
     Toothpick.inject(this, scope)
     val builder = MaterialDialog.Builder(activity)
     builder.customView(R.layout.playlist_add, true)
