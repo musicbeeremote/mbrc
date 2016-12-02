@@ -40,7 +40,11 @@ class VisualUpdateHandshakeComplete
       messages.add(SocketMessage.create(Protocol.PluginVersion))
 
       val totalMessages = messages.size
-      Observable.interval(150, TimeUnit.MILLISECONDS).take(totalMessages).subscribe { tick -> service.sendData(messages.removeAt(0)) }
+      Observable.interval(150, TimeUnit.MILLISECONDS)
+          .take(totalMessages)
+          .subscribe({ service.sendData(messages.removeAt(0)) }) {
+            Timber.v(it, "Failure while sending the init messages")
+          }
     }
   }
 }
