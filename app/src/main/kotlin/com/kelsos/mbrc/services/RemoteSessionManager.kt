@@ -13,6 +13,7 @@ import android.os.Build
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.PlayerState.State
 import com.kelsos.mbrc.constants.Protocol
@@ -20,6 +21,7 @@ import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.RemoteClientMetaData
 import com.kelsos.mbrc.utilities.MediaButtonReceiver
@@ -42,6 +44,7 @@ constructor(private val context: Application, private val bus: RxBus, private va
     bus.register(this, RemoteClientMetaData::class.java, { this.metadataUpdate(it) })
     bus.register(this, PlayStateChange::class.java, { this.updateState(it) })
     bus.register(this, PlayStateChange::class.java, { this.onPlayStateChange(it) })
+    bus.register(this, ConnectionStatusChangeEvent::class.java, { this.onConnectionStatusChanged(it) })
 
     val myEventReceiver = ComponentName(context.packageName, MediaButtonReceiver::class.java.name)
     val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
@@ -81,6 +84,20 @@ constructor(private val context: Application, private val bus: RxBus, private va
           postAction(UserAction(Protocol.PlayerStop, true))
         }
       })
+    }
+  }
+
+  private fun onConnectionStatusChanged(event: ConnectionStatusChangeEvent) {
+    if (event.status == Connection.OFF) {
+      if (mMediaSession != null) {
+        val builder = PlaybackStateCompat.Builder()
+        builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
+        val playbackState = builder.build()
+        mMediaSession.isActive = false
+        mMediaSession.setPlaybackState(playbackState)
+        ensureTransportControls(playbackState)
+      }
+      abandonFocus()
     }
   }
 
@@ -126,7 +143,6 @@ constructor(private val context: Application, private val bus: RxBus, private va
     } else {
       builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
       mMediaSession.isActive = false
-
     }
     val playbackState = builder.build()
     mMediaSession.setPlaybackState(playbackState)
