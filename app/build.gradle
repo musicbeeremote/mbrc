@@ -33,7 +33,7 @@ def gitHash() {
 }
 
 def version = "2.0.0.alpha.1"
-def version_code = 111
+def version_code = 112
 
 android {
   compileSdkVersion 25
@@ -274,7 +274,7 @@ dependencies {
   previewCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
   playCompile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
-    transitive = true;
+    transitive = true
   }
 }
 

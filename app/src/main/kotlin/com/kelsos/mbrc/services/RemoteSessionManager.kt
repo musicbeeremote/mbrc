@@ -12,10 +12,14 @@ import android.media.RemoteControlClient
 import android.os.Build
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS
+import android.support.v4.media.session.MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
 import android.support.v4.media.session.PlaybackStateCompat
+import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.PlayerState.State
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.ui.PlayStateChange
 import com.kelsos.mbrc.events.ui.RemoteClientMetaData
 import com.kelsos.mbrc.utilities.MediaButtonReceiver
@@ -29,8 +33,12 @@ import javax.inject.Singleton
 class RemoteSessionManager
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 @Inject
-constructor(private val context: Application, private val bus: RxBus, private val manager: AudioManager) : AudioManager.OnAudioFocusChangeListener {
+constructor(private val context: Application,
+            private val bus: RxBus,
+            private val volumeProvider: RemoteVolumeProvider,
+            private val manager: AudioManager) : AudioManager.OnAudioFocusChangeListener {
   private val mMediaSession: MediaSessionCompat?
+
   @Inject lateinit var handler: MediaIntentHandler
 
   init {
@@ -38,6 +46,7 @@ constructor(private val context: Application, private val bus: RxBus, private va
     bus.register(this, RemoteClientMetaData::class.java, { this.metadataUpdate(it) })
     bus.register(this, PlayStateChange::class.java, { this.updateState(it) })
     bus.register(this, PlayStateChange::class.java, { this.onPlayStateChange(it) })
+    bus.register(this, ConnectionStatusChangeEvent::class.java, { this.onConnectionStatusChanged(it) })
 
     val myEventReceiver = ComponentName(context.packageName, MediaButtonReceiver::class.java.name)
     val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
@@ -46,9 +55,9 @@ constructor(private val context: Application, private val bus: RxBus, private va
         PendingIntent.FLAG_UPDATE_CURRENT)
 
     mMediaSession = MediaSessionCompat(context, "Session", myEventReceiver, mediaPendingIntent)
+    mMediaSession.setPlaybackToRemote(volumeProvider)
 
-    mMediaSession.setFlags(
-        MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
+    mMediaSession.setFlags(FLAG_HANDLES_MEDIA_BUTTONS or FLAG_HANDLES_TRANSPORT_CONTROLS)
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       mMediaSession.setCallback(object : MediaSessionCompat.Callback() {
@@ -78,6 +87,24 @@ constructor(private val context: Application, private val bus: RxBus, private va
         }
       })
     }
+  }
+
+  private fun onConnectionStatusChanged(event: ConnectionStatusChangeEvent) {
+    if (event.status == Connection.OFF) {
+      if (mMediaSession != null) {
+        val builder = PlaybackStateCompat.Builder()
+        builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
+        val playbackState = builder.build()
+        mMediaSession.isActive = false
+        mMediaSession.setPlaybackState(playbackState)
+        ensureTransportControls(playbackState)
+      }
+      abandonFocus()
+    }
+  }
+
+  private fun postAction(action: UserAction) {
+    bus.post(MessageEvent(ProtocolEventType.UserAction, action))
   }
 
   val mediaSessionToken: MediaSessionCompat.Token
@@ -118,7 +145,6 @@ constructor(private val context: Application, private val bus: RxBus, private va
     } else {
       builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
       mMediaSession.isActive = false
-
     }
     val playbackState = builder.build()
     mMediaSession.setPlaybackState(playbackState)
