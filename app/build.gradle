@@ -14,7 +14,7 @@ repositories {
   maven { url 'https://maven.fabric.io/public' }
 }
 
-static def buildTime() {
+static buildTime() {
   def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
   df.setTimeZone(TimeZone.getTimeZone("UTC"))
   return df.format(new Date())
@@ -35,8 +35,8 @@ def gitHash() {
   return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
 
-def version = "1.0.0.beta.2"
-def version_code = 110
+def version = "1.0.0.beta.3"
+def version_code = 111
 
 android {
   compileSdkVersion 25
@@ -226,7 +226,7 @@ dependencies {
   previewCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
   playCompile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
-    transitive = true;
+    transitive = true
   }
 }
 
