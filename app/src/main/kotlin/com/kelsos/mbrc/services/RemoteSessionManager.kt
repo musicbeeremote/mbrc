@@ -12,6 +12,8 @@ import android.media.RemoteControlClient
 import android.os.Build
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS
+import android.support.v4.media.session.MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
 import android.support.v4.media.session.PlaybackStateCompat
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
@@ -35,8 +37,12 @@ import javax.inject.Singleton
 class RemoteSessionManager
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 @Inject
-constructor(private val context: Application, private val bus: RxBus, private val manager: AudioManager) : AudioManager.OnAudioFocusChangeListener {
+constructor(private val context: Application,
+            private val bus: RxBus,
+            private val volumeProvider: RemoteVolumeProvider,
+            private val manager: AudioManager) : AudioManager.OnAudioFocusChangeListener {
   private val mMediaSession: MediaSessionCompat?
+
   @Inject lateinit var handler: MediaIntentHandler
 
   init {
@@ -53,9 +59,9 @@ constructor(private val context: Application, private val bus: RxBus, private va
         PendingIntent.FLAG_UPDATE_CURRENT)
 
     mMediaSession = MediaSessionCompat(context, "Session", myEventReceiver, mediaPendingIntent)
+    mMediaSession.setPlaybackToRemote(volumeProvider)
 
-    mMediaSession.setFlags(
-        MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
+    mMediaSession.setFlags(FLAG_HANDLES_MEDIA_BUTTONS or FLAG_HANDLES_TRANSPORT_CONTROLS)
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       mMediaSession.setCallback(object : MediaSessionCompat.Callback() {

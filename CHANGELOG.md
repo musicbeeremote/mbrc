@@ -2,6 +2,11 @@ Change Log
 -----------
 
 # Versions
+
+## 1.0.0-beta.3
+-Fixes an issue where the notification would not disappear on a connected wearable after closing MusicBee.
+
+
 ## 1.0.0-beta.2
 - Fixes a potential crash on the progress updater.
 
