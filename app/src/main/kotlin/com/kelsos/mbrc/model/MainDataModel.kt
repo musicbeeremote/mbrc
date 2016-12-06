@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.model
 
 import com.kelsos.mbrc.annotations.PlayerState
+import com.kelsos.mbrc.annotations.PlayerState.STOPPED
 import com.kelsos.mbrc.annotations.PlayerState.State
 import com.kelsos.mbrc.annotations.Repeat
 import com.kelsos.mbrc.annotations.Repeat.Mode
@@ -11,11 +12,20 @@ import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.*
+import com.kelsos.mbrc.events.ui.LfmRatingChanged
+import com.kelsos.mbrc.events.ui.PlayStateChange
+import com.kelsos.mbrc.events.ui.RatingChanged
+import com.kelsos.mbrc.events.ui.RepeatChange
+import com.kelsos.mbrc.events.ui.ScrobbleChange
+import com.kelsos.mbrc.events.ui.ShuffleChange
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
+import com.kelsos.mbrc.events.ui.VolumeChange
 import com.kelsos.mbrc.repository.ModelCache
+import rx.Completable
+import rx.Subscription
 import timber.log.Timber
 import java.io.FileNotFoundException
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,6 +34,8 @@ class MainDataModel
 @Inject
 constructor(private val bus: RxBus,
             private val cache: ModelCache) {
+
+  private var subscription: Subscription? = null
   private var _trackInfo: TrackInfo = TrackInfo()
   private var _coverPath: String = ""
 
@@ -88,8 +100,11 @@ constructor(private val bus: RxBus,
 
   var pluginProtocol: Int = 2
 
+
   @State var playState: String = PlayerState.UNDEFINED
     set(value) {
+      subscription?.unsubscribe()
+
       @State val newState: String =
           when {
             Const.PLAYING.equals(value, ignoreCase = true) -> PlayerState.PLAYING
@@ -100,7 +115,11 @@ constructor(private val bus: RxBus,
 
       field = newState
 
-      bus.post(PlayStateChange(field))
+      if (field != STOPPED) {
+        bus.post(PlayStateChange(field))
+      } else {
+        subscription = Completable.timer(800, TimeUnit.MILLISECONDS).subscribe { bus.post(PlayStateChange(field)) }
+      }
     }
 
   @Mode
