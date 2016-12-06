@@ -4,8 +4,9 @@ Change Log
 # Versions
 
 ## 1.0.0-beta.3
--Fixes an issue where the notification would not disappear on a connected wearable after closing MusicBee.
-
+- Fixes an issue where the notification would not disappear on a connected wearable after closing MusicBee.
+- Fixes an issue where the volume control in the wearable notification would not work.
+- Fixes an issue where the temporary stop during track change would make the notification flicker.
 
 ## 1.0.0-beta.2
 - Fixes a potential crash on the progress updater.
@@ -14,7 +15,7 @@ Change Log
 - Full migration to kotlin language.
 - Commands are now instantiated on registration.
 - Adds empty view for lists without data.
-- Changes the widget update mechanism to avoid previous issues where the widgets failed to update properly.
+- Changes the widget updateNotification mechanism to avoid previous issues where the widgets failed to updateNotification properly.
 - Migrates cover loading mechanism to a newer API implementation.
 - Migrates lyrics to an newer API implementation.
 - Playlists now work through the no broadcast mechanism.
@@ -27,7 +28,7 @@ Change Log
 - Adds basic playlist support. View and click two play.
 - Merges Help and Feedback views.
 - Fixes an issue where the application would start automatically on device boot.
-- Fixes an issue with the widgets that stopped to update after some time.
+- Fixes an issue with the widgets that stopped to updateNotification after some time.
 - Increases the timeout of the automatic discovery function.
 - Adds extra actions on the Incoming call action (Stop and Pause along with Volume reduce).
 - Reworks the connection settings detection functionality. (If the network allows it the detection should happen automatically on the application startup)
