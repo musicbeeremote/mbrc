@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.activities
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
 import android.content.res.Configuration
 import android.os.Bundle
 import android.support.annotation.ColorRes
@@ -185,9 +186,22 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
     } else if (itemId == R.id.nav_help) {
       createBackStack(Intent(this, HelpFeedbackActivity::class.java))
     } else if (itemId == R.id.nav_exit) {
-      stopService(Intent(this, RemoteService::class.java))
-      finish()
+      exitApplication()
     }
+  }
+
+  internal fun exitApplication() {
+    stopService(Intent(this, RemoteService::class.java))
+
+    if (this is MainActivity) {
+      finish()
+    } else {
+      val intent = Intent(this, MainActivity::class.java)
+      intent.putExtra(EXIT_APP, true)
+      intent.flags = FLAG_ACTIVITY_CLEAR_TOP
+      startActivity(intent)
+    }
+
   }
 
   private fun createBackStack(intent: Intent) {
@@ -232,6 +246,10 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
   override fun onPause() {
     super.onPause()
     this.bus.unregister(this)
+  }
+
+  companion object {
+    const val EXIT_APP = "mbrc.exit"
   }
 }
 

@@ -122,6 +122,14 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     presenter.load()
   }
 
+  override fun onNewIntent(intent: Intent?) {
+    super.onNewIntent(intent)
+    if (intent?.getBooleanExtra(EXIT_APP, false) ?: false) {
+      exitApplication()
+      return
+    }
+  }
+
   override fun showPluginUpdateDialog() {
     MaterialDialog.Builder(this)
         .title(R.string.change_log)
