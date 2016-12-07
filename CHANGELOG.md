@@ -7,6 +7,7 @@ Change Log
 - Fixes an issue where the notification would not disappear on a connected wearable after closing MusicBee.
 - Fixes an issue where the volume control in the wearable notification would not work.
 - Fixes an issue where the temporary stop during track change would make the notification flicker.
+- Fixes an issue where exiting the application through an other than MainActivity would navigate to the main activity.
 
 ## 1.0.0-beta.2
 - Fixes a potential crash on the progress updater.
