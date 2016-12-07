@@ -10,8 +10,12 @@
         </changelogbug>
         <changelogbug>Fixes an issue where the volume control in the wearable notification would not work.
         </changelogbug>
-        <changelogbug>Fixes an issue where the temporary stop during track change would make the notification flicker.
-        </changelogbug>
+      <changelogbug>Fixes an issue where the temporary stop during track change would make the
+        notification flicker.
+      </changelogbug>
+      <changelogbug>Fixes an issue where exiting the application through an other than MainActivity
+        would navigate to the main activity.
+      </changelogbug>
     </changelogversion>
   <changelogversion
       changeDate="Dec 3,2016"
