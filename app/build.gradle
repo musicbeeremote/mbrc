@@ -133,6 +133,7 @@ android {
     }
   }
   sourceSets {
+    androidTest.java.srcDirs += "src/androidTest/kotlin"
     main.java.srcDirs += 'src/main/kotlin'
     debug.java.srcDirs += 'src/debug/kotlin'
     play.java.srcDirs += 'src/play/kotlin'
@@ -154,12 +155,13 @@ ext {
   jackson_version = "2.8.5"
   butterknife_version = "8.4.0"
   material_dialogs_version = "0.9.1.0"
+  runner_version = "0.5"
+  espresso_version = "2.2.2"
+  junit_version = "4.12"
+  mockito_version = "2.3.0"
 }
 
 dependencies {
-  androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-    exclude group: 'com.android.support', module: 'support-annotations'
-  })
 
   compile "com.android.support:appcompat-v7:${support_library_version}"
   compile "com.android.support:support-v4:${support_library_version}"
@@ -216,14 +218,28 @@ dependencies {
   compile 'com.jakewharton.timber:timber:4.3.1'
   compile 'com.jakewharton.rxrelay:rxrelay:1.2.0'
   compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
-  testCompile 'org.robolectric:robolectric:3.1.4'
-  testCompile 'org.mockito:mockito-core:2.2.22'
-  testCompile 'com.google.truth:truth:0.30'
-  testCompile 'junit:junit:4.12'
+
   testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
   debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
   releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
   previewCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+
+  testCompile 'org.robolectric:robolectric:3.1.4'
+  testCompile "org.mockito:mockito-core:${mockito_version}"
+  testCompile 'com.google.truth:truth:0.30'
+  testCompile "junit:junit:${junit_version}"
+  testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
+
+  androidTestCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
+  androidTestCompile "org.mockito:mockito-core:${mockito_version}"
+  androidTestCompile 'com.linkedin.dexmaker:dexmaker-mockito:2.2.0'
+  androidTestCompile "junit:junit:${junit_version}"
+  androidTestCompile "com.android.support:support-annotations:${support_library_version}"
+  androidTestCompile "com.android.support.test:runner:${runner_version}"
+  androidTestCompile "com.android.support.test:rules:${runner_version}"
+  androidTestCompile("com.android.support.test.espresso:espresso-core:${espresso_version}", {
+    exclude group: 'com.android.support', module: 'support-annotations'
+  })
 
   playCompile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
     transitive = true

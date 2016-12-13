@@ -32,6 +32,8 @@ interface MainView : BaseView {
   fun updateProgress(position: UpdatePosition)
 
   fun showPluginUpdateDialog()
+
+  fun notifyPluginOutOfDate()
 }
 
 

@@ -169,4 +169,5 @@
   <string name="refreshing_library_data">Refreshing library data</string>
   <string name="feedback_logs">Include Logs</string>
   <string name="change_log">Change Log</string>
+  <string name="plugin_protocol_out_of_date">Some features may not work properly due to mbrc plugin running an older protocol version, please update.</string>
 </resources>

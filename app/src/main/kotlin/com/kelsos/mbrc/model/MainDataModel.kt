@@ -12,14 +12,8 @@ import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.LfmRatingChanged
-import com.kelsos.mbrc.events.ui.PlayStateChange
-import com.kelsos.mbrc.events.ui.RatingChanged
-import com.kelsos.mbrc.events.ui.RepeatChange
-import com.kelsos.mbrc.events.ui.ScrobbleChange
-import com.kelsos.mbrc.events.ui.ShuffleChange
+import com.kelsos.mbrc.events.ui.*
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
-import com.kelsos.mbrc.events.ui.VolumeChange
 import com.kelsos.mbrc.repository.ModelCache
 import rx.Completable
 import rx.Subscription
@@ -38,8 +32,13 @@ constructor(private val bus: RxBus,
   private var subscription: Subscription? = null
   private var _trackInfo: TrackInfo = TrackInfo()
   private var _coverPath: String = ""
+  private var onPluginOutOfDate: (() -> Unit)? = null
 
   init {
+    restoreStated()
+  }
+
+  private fun restoreStated() {
     cache.restoreInfo().subscribe({ trackInfo = it }, { onLoadError(it) })
     cache.restoreCover().subscribe({ coverPath = it }, { onLoadError(it) })
   }
@@ -50,6 +49,10 @@ constructor(private val bus: RxBus,
     } else {
       Timber.v(it, "Error while loading the state")
     }
+  }
+
+  fun setOnPluginOutOfDate(method: (() -> Unit)?) {
+    this.onPluginOutOfDate = method
   }
 
   var rating: Float = 0f
@@ -99,6 +102,13 @@ constructor(private val bus: RxBus,
     }
 
   var pluginProtocol: Int = 2
+    set(value) {
+      field = value
+      if (value < Protocol.ProtocolVersionNumber) {
+        apiOutOfDate = true
+        onPluginOutOfDate?.invoke()
+      }
+    }
 
 
   @State var playState: String = PlayerState.UNDEFINED
@@ -111,7 +121,7 @@ constructor(private val bus: RxBus,
             Const.STOPPED.equals(value, ignoreCase = true) -> PlayerState.STOPPED
             Const.PAUSED.equals(value, ignoreCase = true) -> PlayerState.PAUSED
             else -> PlayerState.UNDEFINED
-      }
+          }
 
       field = newState
 
@@ -180,6 +190,11 @@ constructor(private val bus: RxBus,
         Timber.v(it, "Failed to perist the playing track info")
       }
     }
+
+
+  var apiOutOfDate: Boolean = false
+    get
+    private set
 
 }
 

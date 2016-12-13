@@ -5,6 +5,9 @@ import android.content.SharedPreferences
 import android.support.annotation.StringDef
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.logging.FileLoggingTree
+import com.kelsos.mbrc.utilities.SettingsManager.CallAction
+import com.kelsos.mbrc.utilities.SettingsManager.Companion.NONE
+import com.kelsos.mbrc.utilities.SettingsManager.Companion.REDUCE
 import rx.Single
 import timber.log.Timber
 import java.util.*
@@ -12,11 +15,15 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SettingsManager
+class SettingsManagerImpl
 @Inject
 constructor(private val context: Application,
-            private val preferences: SharedPreferences) {
+            private val preferences: SharedPreferences) : SettingsManager {
   init {
+    setupManager()
+  }
+
+  private fun setupManager() {
     updatePreferences()
     val loggingEnabled = loggingEnabled()
     if (loggingEnabled) {
@@ -38,36 +45,36 @@ constructor(private val context: Application,
     }
   }
 
-  val isNotificationControlEnabled: Boolean
-    get() = preferences.getBoolean(context.getString(R.string.settings_key_notification_control), true)
+  override fun isNotificationControlEnabled(): Boolean {
+    return preferences.getBoolean(context.getString(R.string.settings_key_notification_control), true)
+  }
 
-  internal val callAction: String
-    @SuppressWarnings("WrongConstant")
-    @SettingsManager.CallAction
-    get() = preferences.getString(context.getString(R.string.settings_key_incoming_call_action), NONE)
+  @CallAction override fun getCallAction(): String = preferences.getString(
+      context.getString(R.string.settings_key_incoming_call_action), NONE)
 
-  val isPluginUpdateCheckEnabled: Boolean
-    get() = preferences.getBoolean(context.getString(R.string.settings_key_plugin_check), false)
+  override fun isPluginUpdateCheckEnabled(): Boolean {
+    return preferences.getBoolean(context.getString(R.string.settings_key_plugin_check), false)
+  }
 
-  var lastUpdated: Date
-    get() = Date(preferences.getLong(context.getString(R.string.settings_key_last_update_check), 0))
-    set(lastChecked) {
-      val editor = preferences.edit()
-      editor.putLong(context.getString(R.string.settings_key_last_update_check), lastChecked.time)
-      editor.apply()
-    }
+  override fun getLastUpdated(): Date {
+    return Date(preferences.getLong(context.getString(R.string.settings_key_last_update_check), 0))
+  }
 
+  override fun setLastUpdated(lastChecked: Date) {
+    preferences.edit()
+        .putLong(context.getString(R.string.settings_key_last_update_check), lastChecked.time)
+        .apply()
+  }
 
-  fun shouldShowPluginUpdate(): Single<Boolean> {
+  override fun shouldShowPluginUpdate(): Single<Boolean> {
     return Single.fromCallable {
       val lastVersionCode = preferences.getLong(context.getString(R.string.settings_key_last_version_run), 0)
       val currentVersion = RemoteUtils.getVersionCode(context)
 
       if (lastVersionCode < currentVersion) {
-
-        val editor = preferences.edit()
-        editor.putLong(context.getString(R.string.settings_key_last_version_run), currentVersion)
-        editor.apply()
+        preferences.edit()
+            .putLong(context.getString(R.string.settings_key_last_version_run), currentVersion)
+            .apply()
         Timber.d("Update or fresh install")
 
         return@fromCallable true
@@ -76,15 +83,29 @@ constructor(private val context: Application,
     }
   }
 
-  @StringDef(NONE, PAUSE, STOP)
+}
+
+interface SettingsManager {
+
+  fun shouldShowPluginUpdate(): Single<Boolean>
+  fun isNotificationControlEnabled(): Boolean
+  fun isPluginUpdateCheckEnabled(): Boolean
+  @CallAction fun getCallAction(): String
+
+  @StringDef(NONE,
+      PAUSE,
+      STOP,
+      REDUCE)
   @Retention(AnnotationRetention.SOURCE)
-  internal annotation class CallAction
+  annotation class CallAction
 
   companion object {
-
     const val NONE = "none"
     const val PAUSE = "pause"
     const val STOP = "stop"
     const val REDUCE = "reduce"
   }
+
+  fun getLastUpdated(): Date
+  fun setLastUpdated(lastChecked: Date)
 }
