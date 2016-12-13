@@ -29,12 +29,12 @@ internal constructor(private val model: MainDataModel,
 
   override fun execute(e: IEvent) {
 
-    if (!manager.isPluginUpdateCheckEnabled) {
+    if (!manager.isPluginUpdateCheckEnabled()) {
       return
     }
 
     val calendar = Calendar.getInstance()
-    calendar.timeInMillis = manager.lastUpdated.time
+    calendar.timeInMillis = manager.getLastUpdated().time
     calendar.add(Calendar.DATE, 2)
     val nextCheck = Date(calendar.timeInMillis)
     val now = Date()
@@ -84,7 +84,7 @@ internal constructor(private val model: MainDataModel,
       }
     }
 
-    manager.lastUpdated = now
+    manager.setLastUpdated(now)
     Timber.d("last check on: %s", java.lang.Long.toString(now.time))
     Timber.d("plugin reported version: %s", model.pluginVersion)
     Timber.d("plugin suggested version: %s", suggestedVersion)

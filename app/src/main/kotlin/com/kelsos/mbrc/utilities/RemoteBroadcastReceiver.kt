@@ -42,7 +42,7 @@ class RemoteBroadcastReceiver
       val state = bundle.getString(TelephonyManager.EXTRA_STATE)
       if (TelephonyManager.EXTRA_STATE_RINGING.equals(state!!, ignoreCase = true)) {
 
-        when (settingsManager.callAction) {
+        when (settingsManager.getCallAction()) {
           SettingsManager.PAUSE -> postAction(UserAction(Protocol.PlayerPause, true))
           SettingsManager.STOP -> postAction(UserAction(Protocol.PlayerStop, true))
           SettingsManager.NONE -> {
