@@ -8,11 +8,11 @@ import rx.Single
 import java.io.*
 import javax.inject.Inject
 
-class ModelCache
+class ModelCacheImpl
 @Inject constructor(private val mapper: ObjectMapper,
-                    private val context: Application) {
+                    private val context: Application) : ModelCache {
 
-  fun persistInfo(trackInfo: TrackInfo): Completable {
+  override fun persistInfo(trackInfo: TrackInfo): Completable {
     return Completable.fromCallable {
       val infoFile = File(context.filesDir, TRACK_INFO)
       if (infoFile.exists()) {
@@ -22,7 +22,7 @@ class ModelCache
     }
   }
 
-  fun restoreInfo(): Single<TrackInfo> {
+  override fun restoreInfo(): Single<TrackInfo> {
     return Single.fromCallable {
       val infoFile = File(context.filesDir, TRACK_INFO)
       if (infoFile.exists()) {
@@ -32,7 +32,7 @@ class ModelCache
     }
   }
 
-  fun persistCover(cover: String): Completable {
+  override fun persistCover(cover: String): Completable {
     return Completable.fromCallable {
       val coverFile = File(context.filesDir, COVER_INFO)
       if (coverFile.exists()) {
@@ -48,7 +48,7 @@ class ModelCache
     }
   }
 
-  fun restoreCover(): Single<String> {
+  override fun restoreCover(): Single<String> {
     return Single.fromCallable {
       val coverFile = File(context.filesDir, COVER_INFO)
       if (coverFile.exists()) {
@@ -67,4 +67,11 @@ class ModelCache
     const val TRACK_INFO = "track.json"
     const val COVER_INFO = "cover.txt"
   }
+}
+
+interface ModelCache {
+  fun persistInfo(trackInfo: TrackInfo): Completable
+  fun restoreInfo(): Single<TrackInfo>
+  fun persistCover(cover: String): Completable
+  fun restoreCover(): Single<String>
 }

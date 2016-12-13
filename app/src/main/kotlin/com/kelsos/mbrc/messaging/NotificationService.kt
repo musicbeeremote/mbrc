@@ -87,7 +87,7 @@ constructor(bus: RxBus,
   }
 
   private fun connectionChanged(event: ConnectionStatusChangeEvent) {
-    if (!settings.isNotificationControlEnabled) {
+    if (!settings.isNotificationControlEnabled()) {
       Timber.v("Notification is off doing nothing")
       return
     }
