@@ -2,14 +2,14 @@
 apply plugin: 'com.github.ben-manes.versions'
 
 buildscript {
-  ext.kotlin_version = '1.0.5-2'
+  ext.kotlin_version = '1.0.5-3'
   repositories {
     jcenter()
     mavenCentral()
     maven { url 'https://maven.fabric.io/public' }
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:2.3.0-alpha2'
+    classpath 'com.android.tools.build:gradle:2.3.0-alpha3'
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.13.0'
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.1'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"

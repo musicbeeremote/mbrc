@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.MenuItemCompat
 import android.support.v7.widget.ShareActionProvider
@@ -68,9 +69,11 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   @BindView(R.id.main_album_cover_image_view) lateinit var albumCover: ImageView
   private var mShareActionProvider: ShareActionProvider? = null
 
-  private var menu: Menu? = null
+  private var snackbar: Snackbar? =null
 
+  private var menu: Menu? = null
   private var volumeChangeListener: SeekBarThrottler? = null
+
   private var positionChangeListener: SeekBarThrottler? = null
 
   @OnClick(R.id.main_button_play_pause)
@@ -122,6 +125,14 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     presenter.load()
   }
 
+  override fun onNewIntent(intent: Intent?) {
+    super.onNewIntent(intent)
+    if (intent?.getBooleanExtra(EXIT_APP, false) ?: false) {
+      exitApplication()
+      return
+    }
+  }
+
   override fun showPluginUpdateDialog() {
     MaterialDialog.Builder(this)
         .title(R.string.change_log)
@@ -129,6 +140,12 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
         .positiveText(android.R.string.ok)
         .onPositive { materialDialog, dialogAction -> materialDialog.dismiss() }
         .show()
+  }
+
+  override fun notifyPluginOutOfDate() {
+    snackbar = Snackbar.make(albumCover, R.string.plugin_protocol_out_of_date, Snackbar.LENGTH_INDEFINITE)
+    snackbar!!.setAction(android.R.string.ok, { snackbar?.dismiss() })
+    snackbar!!.show()
   }
 
   override fun onStart() {

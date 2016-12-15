@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
+
+    <changelogversion
+        changeDate="Dec 15,2016"
+        versionName="1.0.0">
+        <changelogbug>Fixes an issue where the notification would not disappear on a connected wearable after closing
+            MusicBee.
+        </changelogbug>
+        <changelogbug>Fixes an issue where the volume control in the wearable notification would not work.
+        </changelogbug>
+      <changelogbug>Fixes an issue where the temporary stop during track change would make the
+        notification flicker.
+      </changelogbug>
+      <changelogbug>Fixes an issue where exiting the application through an other than MainActivity
+        would navigate to the main activity.
+      </changelogbug>
+      <changelogbug>Adds a message on connection to inform the user in case an incompatible version of the plugin is used.</changelogbug>
+    </changelogversion>
   <changelogversion
       changeDate="Dec 3,2016"
       versionName="1.0.0-beta.2">
     <changelogbug>Fixes a potential crash caused by the progress updater</changelogbug>
   </changelogversion>
-
   <changelogversion
     changeDate="Nov 28,2016"
     versionName="1.0.0-beta.1">
@@ -15,7 +31,7 @@
     </changelogtext>
     <changelogtext>Changes minimum supported version to Android 4.1.x</changelogtext>
     <changelogtext>Optimizations on code</changelogtext>
-    <changelogtext>Visual update of the application</changelogtext>
+      <changelogtext>Visual updateNotification of the application</changelogtext>
     <changelogtext>Replaces previous startup dialogs with Change Log</changelogtext>
     <changelogimprovement>Implements and optimizes a new library view</changelogimprovement>
     <changelogtext>Adds basic playlist support</changelogtext>
@@ -25,7 +41,7 @@
     <changelogtext>Users new API for Now Playing loading</changelogtext>
     <changelogbug>Fixes an issue where the application would start automatically on device boot
     </changelogbug>
-    <changelogbug>Fixes an issue with the widgets that stopped to update after some time
+      <changelogbug>Fixes an issue with the widgets that stopped to updateNotification after some time
     </changelogbug>
     <changelogtext>Increases the timeout of the automatic discovery function</changelogtext>
     <changelogimprovement>Adds extra actions on the Incoming call action [i](Stop and Pause along

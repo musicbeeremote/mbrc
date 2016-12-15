@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.model
 
 import com.kelsos.mbrc.annotations.PlayerState
+import com.kelsos.mbrc.annotations.PlayerState.STOPPED
 import com.kelsos.mbrc.annotations.PlayerState.State
 import com.kelsos.mbrc.annotations.Repeat
 import com.kelsos.mbrc.annotations.Repeat.Mode
@@ -17,8 +18,11 @@ import com.kelsos.mbrc.events.ui.ScrobbleChange
 import com.kelsos.mbrc.events.ui.ShuffleChange
 import com.kelsos.mbrc.events.ui.VolumeChange
 import com.kelsos.mbrc.repository.ModelCache
+import rx.Completable
+import rx.Subscription
 import timber.log.Timber
 import java.io.FileNotFoundException
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,10 +31,17 @@ class MainDataModel
 @Inject
 constructor(private val bus: RxBus,
             private val cache: ModelCache) {
+
+  private var subscription: Subscription? = null
   private var _trackInfo: TrackInfo = TrackInfo()
   private var _coverPath: String = ""
+  private var onPluginOutOfDate: (() -> Unit)? = null
 
   init {
+    restoreStated()
+  }
+
+  private fun restoreStated() {
     cache.restoreInfo().subscribe({ trackInfo = it }, { onLoadError(it) })
     cache.restoreCover().subscribe({ coverPath = it }, { onLoadError(it) })
   }
@@ -41,6 +52,10 @@ constructor(private val bus: RxBus,
     } else {
       Timber.v(it, "Error while loading the state")
     }
+  }
+
+  fun setOnPluginOutOfDate(method: (() -> Unit)?) {
+    this.onPluginOutOfDate = method
   }
 
   var rating: Float = 0f
@@ -89,20 +104,34 @@ constructor(private val bus: RxBus,
     }
 
   var pluginProtocol: Int = 2
+    set(value) {
+      field = value
+      if (value < Protocol.ProtocolVersionNumber) {
+        apiOutOfDate = true
+        onPluginOutOfDate?.invoke()
+      }
+    }
+
 
   @State var playState: String = PlayerState.UNDEFINED
     set(value) {
+      subscription?.unsubscribe()
+
       @State val newState: String =
           when {
             Const.PLAYING.equals(value, ignoreCase = true) -> PlayerState.PLAYING
             Const.STOPPED.equals(value, ignoreCase = true) -> PlayerState.STOPPED
             Const.PAUSED.equals(value, ignoreCase = true) -> PlayerState.PAUSED
             else -> PlayerState.UNDEFINED
-      }
+          }
 
       field = newState
 
-      bus.post(PlayStateChange(field))
+      if (field != STOPPED) {
+        bus.post(PlayStateChange(field))
+      } else {
+        subscription = Completable.timer(800, TimeUnit.MILLISECONDS).subscribe { bus.post(PlayStateChange(field)) }
+      }
     }
 
   @Mode
@@ -163,6 +192,11 @@ constructor(private val bus: RxBus,
         Timber.v(it, "Failed to perist the playing track info")
       }
     }
+
+
+  var apiOutOfDate: Boolean = false
+    get
+    private set
 
 }
 

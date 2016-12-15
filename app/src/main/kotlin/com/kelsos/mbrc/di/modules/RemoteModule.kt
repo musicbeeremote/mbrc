@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package com.kelsos.mbrc.di.modules
 
 import android.support.v4.app.NotificationManagerCompat
@@ -19,6 +17,8 @@ import com.kelsos.mbrc.events.bus.RxBusImpl
 import com.kelsos.mbrc.messaging.SocketMessageHandler
 import com.kelsos.mbrc.repository.ConnectionRepository
 import com.kelsos.mbrc.repository.ConnectionRepositoryImpl
+import com.kelsos.mbrc.repository.ModelCache
+import com.kelsos.mbrc.repository.ModelCacheImpl
 import com.kelsos.mbrc.repository.library.AlbumRepository
 import com.kelsos.mbrc.repository.library.AlbumRepositoryImpl
 import com.kelsos.mbrc.repository.library.ArtistRepository
@@ -39,6 +39,8 @@ import com.kelsos.mbrc.services.api.NowPlayingService
 import com.kelsos.mbrc.services.api.PlayerService
 import com.kelsos.mbrc.services.api.PlaylistService
 import com.kelsos.mbrc.services.api.TrackService
+import com.kelsos.mbrc.utilities.SettingsManager
+import com.kelsos.mbrc.utilities.SettingsManagerImpl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import rx.Scheduler
@@ -94,6 +96,9 @@ class RemoteModule : Module() {
     bind(NotificationManagerCompat::class.java).toProvider(NotificationManagerCompatProvider::class.java).providesSingletonInScope()
     bind(com.kelsos.mbrc.utilities.KeyProvider::class.java).to(com.kelsos.mbrc.utilities.KeyProviderImpl::class.java)
     bind(SocketMessageHandler::class.java).singletonInScope()
+
+    bind(SettingsManager::class.java).to(SettingsManagerImpl::class.java).singletonInScope()
+    bind(ModelCache::class.java).to(ModelCacheImpl::class.java).singletonInScope()
   }
 }
 
