@@ -35,7 +35,7 @@ def gitHash() {
   return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
 
-def version = "1.0.0.beta.3"
+def version = "1.0.0"
 def version_code = 111
 
 android {
