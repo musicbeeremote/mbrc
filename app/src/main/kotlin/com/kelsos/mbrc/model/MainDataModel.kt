@@ -101,6 +101,7 @@ constructor(private val bus: RxBus,
         return
       }
       field = value.substring(0, value.lastIndexOf('.'))
+      bus.post(MessageEvent(ProtocolEventType.PluginVersionCheck))
     }
 
   var pluginProtocol: Int = 2

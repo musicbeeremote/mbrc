@@ -38,6 +38,7 @@ constructor(private val context: Application,
             private val volumeProvider: RemoteVolumeProvider,
             private val manager: AudioManager) : AudioManager.OnAudioFocusChangeListener {
   private val mMediaSession: MediaSessionCompat?
+
   @Inject lateinit var handler: MediaIntentHandler
 
   init {
@@ -66,23 +67,23 @@ constructor(private val context: Application,
         }
 
         override fun onPlay() {
-          postAction(UserAction(Protocol.PlayerPlay, true))
+          TODO("Api action")
         }
 
         override fun onPause() {
-          postAction(UserAction(Protocol.PlayerPause, true))
+          TODO("Api action")
         }
 
         override fun onSkipToNext() {
-          postAction(UserAction(Protocol.PlayerNext, true))
+          TODO("Api action")
         }
 
         override fun onSkipToPrevious() {
-          postAction(UserAction(Protocol.PlayerPrevious, true))
+          TODO("Api action")
         }
 
         override fun onStop() {
-          postAction(UserAction(Protocol.PlayerStop, true))
+          TODO("Api action")
         }
       })
     }
@@ -140,7 +141,6 @@ constructor(private val context: Application,
     } else {
       builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
       mMediaSession.isActive = false
-
     }
     val playbackState = builder.build()
     mMediaSession.setPlaybackState(playbackState)
