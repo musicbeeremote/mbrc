@@ -3,11 +3,12 @@ Change Log
 
 # Versions
 
-## 1.0.0-beta.3
+## 1.0.0
 - Fixes an issue where the notification would not disappear on a connected wearable after closing MusicBee.
 - Fixes an issue where the volume control in the wearable notification would not work.
 - Fixes an issue where the temporary stop during track change would make the notification flicker.
 - Fixes an issue where exiting the application through an other than MainActivity would navigate to the main activity.
+- Adds a message on connection to inform the user in case an incompatible version of the plugin is used.
 
 ## 1.0.0-beta.2
 - Fixes a potential crash on the progress updater.

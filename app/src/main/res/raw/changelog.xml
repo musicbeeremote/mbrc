@@ -3,8 +3,8 @@
 
 
     <changelogversion
-        changeDate="Dec 11,2016"
-        versionName="1.0.0-beta.3">
+        changeDate="Dec 15,2016"
+        versionName="1.0.0">
         <changelogbug>Fixes an issue where the notification would not disappear on a connected wearable after closing
             MusicBee.
         </changelogbug>
@@ -16,13 +16,13 @@
       <changelogbug>Fixes an issue where exiting the application through an other than MainActivity
         would navigate to the main activity.
       </changelogbug>
+      <changelogbug>Adds a message on connection to inform the user in case an incompatible version of the plugin is used.</changelogbug>
     </changelogversion>
   <changelogversion
       changeDate="Dec 3,2016"
       versionName="1.0.0-beta.2">
     <changelogbug>Fixes a potential crash caused by the progress updater</changelogbug>
   </changelogversion>
-
   <changelogversion
     changeDate="Nov 28,2016"
     versionName="1.0.0-beta.1">
