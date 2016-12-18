@@ -33,6 +33,10 @@ class WidgetNormal : AppWidgetProvider() {
     val widgets = ComponentName(context?.packageName, WidgetNormal::class.java.name)
     val widgetsIds = widgetManager.getAppWidgetIds(widgets)
 
+    if (extras == null) {
+      return
+    }
+
     if (extras.getBoolean(UpdateWidgets.COVER, false)) {
       val path = extras.getString(UpdateWidgets.COVER_PATH, "")
       updateCover(context, widgetManager, widgetsIds, path)
