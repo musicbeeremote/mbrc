@@ -32,6 +32,10 @@ class WidgetSmall : AppWidgetProvider() {
     val widgets = ComponentName(context?.packageName, WidgetSmall::class.java.name)
     val widgetsIds = widgetManager.getAppWidgetIds(widgets)
 
+    if (extras == null) {
+      return
+    }
+
     if (extras.getBoolean(UpdateWidgets.COVER, false)) {
       val path = extras.getString(UpdateWidgets.COVER_PATH, "")
       updateCover(context, widgetManager, widgetsIds, path)
