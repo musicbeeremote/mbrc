@@ -4,7 +4,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.getkeepsafe.dexcount'
-Zapply plugin: 'idea'
+apply plugin: 'idea'
 
 
 repositories {
