@@ -4,7 +4,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.getkeepsafe.dexcount'
-apply plugin: 'idea'
+Zapply plugin: 'idea'
 
 
 repositories {
@@ -161,8 +161,8 @@ idea {
 }
 
 ext {
-  support_library_version = "25.0.1"
-  dbflow_version = "4.0.0-beta2"
+  support_library_version = "25.1.0"
+  dbflow_version = "4.0.0-beta3"
   toothpick_version = "1.0.2"
   okhttp_version = '3.4.2'
   retrofit_version = '2.1.0'
@@ -173,7 +173,11 @@ ext {
   runner_version = "0.5"
   espresso_version = "2.2.2"
   junit_version = "4.12"
-  mockito_version = "2.3.0"
+  mockito_version = "2.3.7"
+}
+
+configurations.all {
+  resolutionStrategy.force 'com.google.guava:guava:20.0', "com.android.support:support-v13:${support_library_version}"
 }
 
 dependencies {
@@ -191,7 +195,8 @@ dependencies {
   // use kapt for kotlin apt\
   compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
   compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
-  compile "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}"
+  //compile "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}"
+  compile "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:4.0.0-beta2"
   compile "com.fasterxml.jackson.core:jackson-core:${jackson_version}"
   compile "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
   compile "com.jakewharton:butterknife:${butterknife_version}"
@@ -229,23 +234,37 @@ dependencies {
   compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.5'
   compile 'com.github.machinarius:preferencefragment:0.1.2'
   compile 'io.reactivex:rxandroid:1.2.1'
-  compile 'io.reactivex:rxjava:1.2.3'
+  compile 'io.reactivex:rxjava:1.2.4'
   compile 'io.reactivex:rxkotlin:0.60.0'
   compile 'uk.co.chrisjenx:calligraphy:2.2.0'
-  compile 'com.jakewharton.timber:timber:4.3.1'
+  compile 'com.jakewharton.timber:timber:4.4.0'
   compile 'com.jakewharton.rxrelay:rxrelay:1.2.0'
   compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
-  testCompile 'org.robolectric:robolectric:3.1.4'
-  testCompile 'org.mockito:mockito-core:2.2.22'
-  testCompile 'com.google.truth:truth:0.30'
-  testCompile 'junit:junit:4.12'
+
   testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
   debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
   releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
   previewCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
+  testCompile 'org.robolectric:robolectric:3.1.4'
+  testCompile "org.mockito:mockito-core:${mockito_version}"
+  testCompile 'com.google.truth:truth:0.31'
+  testCompile "junit:junit:${junit_version}"
+  testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
+
+  androidTestCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
+  androidTestCompile "org.mockito:mockito-core:${mockito_version}"
+  androidTestCompile 'com.linkedin.dexmaker:dexmaker-mockito:2.2.0'
+  androidTestCompile "junit:junit:${junit_version}"
+  androidTestCompile "com.android.support:support-annotations:${support_library_version}"
+  androidTestCompile "com.android.support.test:runner:${runner_version}"
+  androidTestCompile "com.android.support.test:rules:${runner_version}"
+  androidTestCompile("com.android.support.test.espresso:espresso-core:${espresso_version}", {
+    exclude group: 'com.android.support', module: 'support-annotations'
+  })
+
   playCompile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
-    transitive = true;
+    transitive = true
   }
 }
 
