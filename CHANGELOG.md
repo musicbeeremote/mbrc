@@ -3,6 +3,9 @@ Change Log
 
 # Versions
 
+## 1.0.1 
+- Fixes a NPE crash on the widget update.
+
 ## 1.0.0
 - Fixes an issue where the notification would not disappear on a connected wearable after closing MusicBee.
 - Fixes an issue where the volume control in the wearable notification would not work.

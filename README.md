@@ -1,4 +1,4 @@
-MusicBee Remote - for Android
+MusicBee Remote - for Android [![Build Status](https://travis-ci.org/kelsos/mbrc.svg?branch=development)](https://travis-ci.org/kelsos/mbrc)
 =============================
 About
 -------
@@ -79,7 +79,7 @@ License
 The source code of the application is licensed under the [GPLv3](https://www.gnu.org/licenses/gpl.html) license.
 
     MusicBee Remote (for Android)
-    Copyright (C) 2011 - 2016  Konstantinos Paparas
+    Copyright (C) 2011 - 2017  Konstantinos Paparas
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
