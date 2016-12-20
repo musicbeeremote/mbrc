@@ -5,6 +5,7 @@
     versionName="1.0.1">
     <changelogbug>Fixes a crash with a null extras payload when updating the widget.</changelogbug>
     <changelogbug>Fixes a crash with a null key event on the media intent handler.</changelogbug>
+    <changelogbug>Fixes an issue where the artist albums would not display properly.</changelogbug>
   </changelogversion>
   <changelogversion
     changeDate="Dec 15,2016"

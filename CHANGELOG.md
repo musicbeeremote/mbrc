@@ -6,6 +6,7 @@ Change Log
 ## 1.0.1
 - Fixes a crash with a null extras payload when updating the widget.
 - Fixes a crash with a null key event on the media intent handler.
+- Fixes an issue where the artist albums would not display properly.
 
 ## 1.0.0
 - Fixes an issue where the notification would not disappear on a connected wearable after closing MusicBee.

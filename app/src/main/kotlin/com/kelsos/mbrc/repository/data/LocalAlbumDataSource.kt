@@ -47,12 +47,13 @@ class LocalAlbumDataSource
 
   fun getAlbumsByArtist(artist: String): Single<FlowCursorList<Album>> {
     return Single.create<FlowCursorList<Album>> {
-      val selectAlbum = SQLite.select(Album_Table.album.withTable(), Album_Table.artist.withTable())
+      val selectAlbum = SQLite.select(Album_Table.album.withTable(), Album_Table.artist.withTable()).distinct()
       val modelQueriable = (selectAlbum from Album::class
           leftOuterJoin Track::class
-          on Track_Table.album.withTable().eq(album.withTable())
+          on Track_Table.artist.withTable().eq(Album_Table.artist.withTable())
           where Track_Table.artist.withTable().`is`(artist)
-          groupBy Track_Table.album_artist.withTable())
+          or Track_Table.album_artist.withTable().`is`(artist)
+          and Track_Table.album.withTable().`is`(album.withTable()))
           .orderBy(Album_Table.artist.withTable(), true)
           .orderBy(album.withTable(), true)
       val cursor = FlowCursorList.Builder(Album::class.java).modelQueriable(modelQueriable).build()
