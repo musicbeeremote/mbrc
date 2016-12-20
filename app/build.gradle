@@ -35,8 +35,8 @@ def gitHash() {
   return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
 
-def version = "1.0.0"
-def version_code = 111
+def version = "1.0.1"
+def version_code = 112
 
 android {
   compileSdkVersion 25
@@ -77,6 +77,7 @@ android {
     debug {
       applicationIdSuffix ".dev"
       versionNameSuffix "-dev"
+      testCoverageEnabled = true
     }
 
     preview {
@@ -132,12 +133,13 @@ android {
       output.outputFile = file(filename)
     }
   }
+
   sourceSets {
     androidTest.java.srcDirs += "src/androidTest/kotlin"
+    test.java.srcDirs += 'src/test/kotlin'
     main.java.srcDirs += 'src/main/kotlin'
     debug.java.srcDirs += 'src/debug/kotlin'
     play.java.srcDirs += 'src/play/kotlin'
-    test.java.srcDirs += 'src/test/kotlin'
   }
 }
 
@@ -162,7 +164,7 @@ ext {
 }
 
 configurations.all {
-  resolutionStrategy.force 'com.google.guava:guava:20.0', "com.android.support:support-v13:${support_library_version}"
+  resolutionStrategy.force 'com.google.guava:guava:20.0', "com.android.support:support-v13:${support_library_version}", "junit:junit:${junit_version}"
 }
 
 dependencies {
@@ -223,12 +225,15 @@ dependencies {
   compile 'com.jakewharton.rxrelay:rxrelay:1.2.0'
   compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
-  testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
   debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+  testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
   releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
   previewCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+  androidTestCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
   testCompile 'org.robolectric:robolectric:3.1.4'
+
+  compile group: 'org.robolectric', name: 'shadows-multidex', version: '3.1.4'
   testCompile "org.mockito:mockito-core:${mockito_version}"
   testCompile 'com.google.truth:truth:0.31'
   testCompile "junit:junit:${junit_version}"
