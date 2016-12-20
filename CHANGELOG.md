@@ -3,6 +3,10 @@ Change Log
 
 # Versions
 
+## 1.0.1
+- Fixes a crash with a null extras payload when updating the widget.
+- Fixes a crash with a null key event on the media intent handler.
+
 ## 1.0.0
 - Fixes an issue where the notification would not disappear on a connected wearable after closing MusicBee.
 - Fixes an issue where the volume control in the wearable notification would not work.
