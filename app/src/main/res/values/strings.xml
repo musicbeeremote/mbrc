@@ -188,4 +188,5 @@
   <string name="field_cannot_be_empty">The field cannot be empty.</string>
   <string name="playlist_add">Done</string>
   <string name="playlist_dialog_select">Select</string>
-</resources>  <string name="plugin_protocol_out_of_date">Some features may not work properly due to mbrc plugin running an older protocol version, please update.</string>
+  <string name="plugin_protocol_out_of_date">Some features may not work properly due to mbrc plugin running an older protocol version, please update.</string>
+</resources>
