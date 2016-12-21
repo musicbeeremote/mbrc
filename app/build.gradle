@@ -163,10 +163,6 @@ ext {
   mockito_version = "2.3.7"
 }
 
-configurations.all {
-  resolutionStrategy.force 'com.google.guava:guava:20.0', "com.android.support:support-v13:${support_library_version}", "junit:junit:${junit_version}"
-}
-
 dependencies {
 
   compile "com.android.support:appcompat-v7:${support_library_version}"
@@ -174,9 +170,11 @@ dependencies {
   compile "com.android.support:support-annotations:${support_library_version}"
   compile "com.android.support:recyclerview-v7:${support_library_version}"
   compile "com.android.support:design:${support_library_version}"
+  //Some of the dependencies pull the wrong version support v13
+  compile "com.android.support:support-v13:${support_library_version}"
 
   kapt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
-  // use kapt for kotlin apt\
+
   compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
   compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
   //compile "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}"
@@ -189,26 +187,9 @@ dependencies {
   compile "com.github.stephanenicolas.toothpick:smoothie:${toothpick_version}"
   kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:${toothpick_version}"
 
-  //highly recommended
-  testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
-
-  compile("com.afollestad.material-dialogs:core:${material_dialogs_version}", {
-    exclude group: 'com.android.support', module: 'support-v13'
-    exclude group: 'com.android.support', module: 'appcompat-v7'
-    exclude group: 'com.android.support', module: 'recyclerview-v7'
-    exclude group: 'com.android.support', module: 'support-annotations'
-  })
-
-  compile("com.afollestad.material-dialogs:commons:${material_dialogs_version}", {
-    exclude group: 'com.android.support', module: 'support-annotations'
-    exclude group: 'com.android.support', module: 'appcompat-v7'
-  })
-
-  compile('com.github.gabrielemariotti.changeloglib:changelog:2.1.0', {
-    exclude group: 'com.android.support', module: 'support-v4'
-    exclude group: 'com.android.support', module: 'recyclerview-v7'
-    exclude group: 'com.android.support', module: 'support-annotations'
-  })
+  compile "com.afollestad.material-dialogs:core:${material_dialogs_version}"
+  compile "com.afollestad.material-dialogs:commons:${material_dialogs_version}"
+  compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
 
   kapt "com.jakewharton:butterknife-compiler:${butterknife_version}"
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -226,29 +207,30 @@ dependencies {
   compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
   debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-  testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
   releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
   previewCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-  androidTestCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
-  testCompile 'org.robolectric:robolectric:3.1.4'
-
-  compile group: 'org.robolectric', name: 'shadows-multidex', version: '3.1.4'
-  testCompile "org.mockito:mockito-core:${mockito_version}"
-  testCompile 'com.google.truth:truth:0.31'
+  // Test dependencies
   testCompile "junit:junit:${junit_version}"
+  testCompile "org.mockito:mockito-core:${mockito_version}"
   testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
+  testCompile 'org.robolectric:robolectric:3.1.4'
+  testCompile 'org.robolectric:shadows-multidex:3.1.4'
+  testCompile 'com.google.truth:truth:0.31'
+  testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
-  androidTestCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
-  androidTestCompile "org.mockito:mockito-core:${mockito_version}"
-  androidTestCompile 'com.linkedin.dexmaker:dexmaker-mockito:2.2.0'
-  androidTestCompile "junit:junit:${junit_version}"
-  androidTestCompile "com.android.support:support-annotations:${support_library_version}"
-  androidTestCompile "com.android.support.test:runner:${runner_version}"
-  androidTestCompile "com.android.support.test:rules:${runner_version}"
+  //Instrumentation Test dependencies
   androidTestCompile("com.android.support.test.espresso:espresso-core:${espresso_version}", {
     exclude group: 'com.android.support', module: 'support-annotations'
   })
+  androidTestCompile "junit:junit:${junit_version}"
+  androidTestCompile "org.mockito:mockito-core:${mockito_version}"
+  androidTestCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
+  androidTestCompile 'com.linkedin.dexmaker:dexmaker-mockito:2.2.0'
+  androidTestCompile "com.android.support:support-annotations:${support_library_version}"
+  androidTestCompile "com.android.support.test:runner:${runner_version}"
+  androidTestCompile "com.android.support.test:rules:${runner_version}"
+  androidTestCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
   playCompile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
     transitive = true

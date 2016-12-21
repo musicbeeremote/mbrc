@@ -23,7 +23,48 @@ open class RemoteApplication : MultiDexApplication() {
   @CallSuper
   override fun onCreate() {
     super.onCreate()
+    initialize()
+  }
+
+  open protected fun initialize() {
+    initializeDbflow()
+    initializeToothpick()
+    initializeCalligraphy()
+    initializeTimber()
+    initializeLeakCanary()
+  }
+
+  private fun initializeLeakCanary() {
+    if (LeakCanary.isInAnalyzerProcess(this)) {
+      // This process is dedicated to LeakCanary for heap analysis.
+      // You should not init your app in this process.
+      return
+    }
+    refWatcher = installLeakCanary()
+  }
+
+  private fun initializeTimber() {
+    if (BuildConfig.DEBUG) {
+      Timber.plant(object : Timber.DebugTree() {
+        override fun createStackElementTag(element: StackTraceElement): String {
+          return "${super.createStackElementTag(element)}:${element.lineNumber} [${Thread.currentThread().name}]"
+        }
+      })
+    }
+  }
+
+  private fun initializeDbflow() {
     FlowManager.init(FlowConfig.Builder(this).openDatabasesOnInit(true).build())
+  }
+
+  private fun initializeCalligraphy() {
+    CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
+        .setDefaultFontPath("fonts/roboto_regular.ttf")
+        .setFontAttrId(R.attr.fontPath)
+        .build())
+  }
+
+  protected fun initializeToothpick(testMode: Boolean = false) {
     val configuration: Configuration
     if (BuildConfig.DEBUG) {
       configuration = Configuration.forDevelopment().disableReflection()
@@ -33,30 +74,14 @@ open class RemoteApplication : MultiDexApplication() {
 
     Toothpick.setConfiguration(configuration)
 
-    MemberInjectorRegistryLocator.setRootRegistry(com.kelsos.mbrc.MemberInjectorRegistry())
-    FactoryRegistryLocator.setRootRegistry(com.kelsos.mbrc.FactoryRegistry())
+    MemberInjectorRegistryLocator.setRootRegistry(MemberInjectorRegistry())
+    FactoryRegistryLocator.setRootRegistry(FactoryRegistry())
     val applicationScope = Toothpick.openScope(this)
-    applicationScope.installModules(SmoothieApplicationModule(this), RemoteModule())
-
-    CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
-        .setDefaultFontPath("fonts/roboto_regular.ttf")
-        .setFontAttrId(R.attr.fontPath)
-        .build())
-
-    if (BuildConfig.DEBUG) {
-      Timber.plant(object : Timber.DebugTree() {
-        override fun createStackElementTag(element: StackTraceElement): String {
-          return "${super.createStackElementTag(element)}:${element.lineNumber} [${Thread.currentThread().name}]"
-        }
-      })
+    if (testMode) {
+      applicationScope.installModules(SmoothieApplicationModule(this))
+    } else {
+      applicationScope.installModules(SmoothieApplicationModule(this), RemoteModule())
     }
-
-    if (LeakCanary.isInAnalyzerProcess(this)) {
-      // This process is dedicated to LeakCanary for heap analysis.
-      // You should not init your app in this process.
-      return
-    }
-    refWatcher = installLeakCanary()
   }
 
   open internal fun installLeakCanary(): RefWatcher {
