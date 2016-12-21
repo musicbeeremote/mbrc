@@ -3,6 +3,7 @@ package com.kelsos.mbrc.repository
 import android.os.Build
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.BuildConfig
+import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.data.Page
 import com.kelsos.mbrc.data.library.Genre
 import com.kelsos.mbrc.repository.library.GenreRepository
@@ -17,7 +18,7 @@ import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.mockito.Mockito
-import org.mockito.Mockito.anyInt
+import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
@@ -28,7 +29,10 @@ import toothpick.config.Module
 import toothpick.testing.ToothPickRule
 
 @RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class, sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
+@Config(constants = BuildConfig::class,
+    manifest = "AndroidManifest.xml",
+    application = TestApplication::class,
+    sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
 class GenreRepositoryImplTest {
   private val toothPickRule = ToothPickRule(this)
   @Rule
@@ -66,36 +70,32 @@ class GenreRepositoryImplTest {
     assertThat(cursorList.getItem(0).genre).isEqualTo("Metal0")
   }
 
-
-
   private inner class TestModule : Module() {
     init {
-      bind(LibraryService::class.java).toProviderInstance {
-        val mockService = Mockito.mock(LibraryService::class.java)
-        Mockito.`when`(mockService.getGenres(anyInt(), anyInt()))
-            .thenAnswer {
-              val offset = it.arguments[0] as Int
-              val limit = it.arguments[1] as Int
+      val mockService = mock(LibraryService::class.java)
+      `when`(mockService.getGenres(anyInt(), anyInt()))
+          .thenAnswer {
+            val offset = it.arguments[0] as Int
+            val limit = it.arguments[1] as Int
 
-              if (offset > 1200) {
-                return@thenAnswer Observable.empty<Page<Genre>>()
-              } else {
-                return@thenAnswer Observable.range(offset, limit)
-                    .map { Genre("Metal$it", it) }
-                    .toList()
-                    .map {
-                      val page = Page<Genre>()
-                      page.data = it
-                      page.total = 1200
-                      page.offset = offset
-                      page.limit = limit
-                      return@map page
-                    }
-              }
+            if (offset > 1200) {
+              return@thenAnswer Observable.empty<Page<Genre>>()
+            } else {
+              return@thenAnswer Observable.range(offset, limit)
+                  .map { Genre("Metal$it", it) }
+                  .toList()
+                  .map {
+                    val page = Page<Genre>()
+                    page.data = it
+                    page.total = 1200
+                    page.offset = offset
+                    page.limit = limit
+                    return@map page
+                  }
             }
+          }
 
-        return@toProviderInstance mockService
-      }
+      bind(LibraryService::class.java).toInstance(mockService)
       bind(GenreRepository::class.java).to(GenreRepositoryImpl::class.java)
     }
   }

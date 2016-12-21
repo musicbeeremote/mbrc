@@ -23,13 +23,13 @@ class MediaIntentHandler
       // Handle somehow
     } else if (mediaIntent?.action == Intent.ACTION_MEDIA_BUTTON) {
       val extras = mediaIntent?.extras
-      val keyEvent = extras?.get(Intent.EXTRA_KEY_EVENT) as KeyEvent
+      val keyEvent = extras?.get(Intent.EXTRA_KEY_EVENT) as KeyEvent?
 
-      if (keyEvent.action != KeyEvent.ACTION_DOWN) {
+      if (keyEvent?.action != KeyEvent.ACTION_DOWN) {
         return false
       }
 
-      when (keyEvent.keyCode) {
+      when (keyEvent?.keyCode) {
         KeyEvent.KEYCODE_HEADSETHOOK -> {
           val currentClick = System.currentTimeMillis()
           if (currentClick - previousClick < DOUBLE_CLICK_INTERVAL) {
