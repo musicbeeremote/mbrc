@@ -72,12 +72,17 @@ android {
       zipAlignEnabled true
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+      buildConfigField "boolean", "USE_CRASHLYTICS", "true"
     }
 
     debug {
       applicationIdSuffix ".dev"
       versionNameSuffix "-dev"
       testCoverageEnabled = true
+      ext.enableCrashlytics = false
+
+      buildConfigField "boolean", "USE_CRASHLYTICS", "false"
     }
 
     preview {
@@ -88,6 +93,8 @@ android {
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       applicationIdSuffix ".preview"
       versionNameSuffix "-preview"
+
+      buildConfigField "boolean", "USE_CRASHLYTICS", "false"
     }
   }
 
