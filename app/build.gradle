@@ -84,18 +84,6 @@ android {
 
       buildConfigField "boolean", "USE_CRASHLYTICS", "false"
     }
-
-    preview {
-      signingConfig signingConfigs.release
-      debuggable false
-      zipAlignEnabled true
-      minifyEnabled true
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-      applicationIdSuffix ".preview"
-      versionNameSuffix "-preview"
-
-      buildConfigField "boolean", "USE_CRASHLYTICS", "false"
-    }
   }
 
   productFlavors {
