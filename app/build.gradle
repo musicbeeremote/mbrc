@@ -145,14 +145,14 @@ idea {
 ext {
   support_library_version = "25.1.0"
   dbflow_version = "4.0.0-beta3"
-  toothpick_version = "1.0.2"
+  toothpick_version = "1.0.3"
   jackson_version = "2.8.5"
   butterknife_version = "8.4.0"
   material_dialogs_version = "0.9.1.0"
   runner_version = "0.5"
   espresso_version = "2.2.2"
   junit_version = "4.12"
-  mockito_version = "2.3.7"
+  mockito_version = "2.4.1"
 }
 
 dependencies {
@@ -169,8 +169,8 @@ dependencies {
 
   compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
   compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
-  //compile "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}"
-  compile "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:4.0.0-beta2"
+  compile "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}@aar"
+
   compile "com.fasterxml.jackson.core:jackson-core:${jackson_version}"
   compile "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
   compile "com.jakewharton:butterknife:${butterknife_version}"
