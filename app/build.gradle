@@ -4,9 +4,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.getkeepsafe.dexcount'
-apply plugin: 'checkstyle'
-apply plugin: 'findbugs'
-apply plugin: 'pmd'
 apply plugin: 'idea'
 
 
@@ -21,7 +18,7 @@ static buildTime() {
 }
 
 def fabricApiKey() {
-  def fabricProperties = rootProject.file('fabric.properties')
+  def fabricProperties = file('fabric.properties')
   if (fabricProperties.exists()) {
     def prop = new Properties()
     prop.load(new FileInputStream(fabricProperties))
