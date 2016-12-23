@@ -55,7 +55,7 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : Recy
     }
   }
 
-  @SuppressWarnings("UnusedParameters")
+  @Suppress("UNUSED_PARAMETER")
   protected fun getRowSpan(fullSpanSize: Int, section: Int, relativePosition: Int, absolutePosition: Int): Int {
     return 1
   }
@@ -64,13 +64,9 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : Recy
   private fun getSectionIndexAndRelativePosition(itemPosition: Int): IntArray {
     synchronized(mHeaderLocationMap) {
       var lastSectionIndex: Int = -1
-      for (sectionIndex in mHeaderLocationMap.keys) {
-        if (itemPosition > sectionIndex) {
-          lastSectionIndex = sectionIndex
-        } else {
-          break
-        }
-      }
+      mHeaderLocationMap.keys
+              .takeWhile { itemPosition > it }
+              .forEach { lastSectionIndex = it }
       return intArrayOf(mHeaderLocationMap[lastSectionIndex] ?: -1, itemPosition - lastSectionIndex - 1)
     }
   }
@@ -104,14 +100,14 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : Recy
     }
   }
 
-  @SuppressWarnings("UnusedParameters")
+  @Suppress("UNUSED_PARAMETER")
   @IntRange(from = 0, to = Integer.MAX_VALUE.toLong())
   fun getHeaderViewType(section: Int): Int {
     //noinspection ResourceType
     return VIEW_TYPE_HEADER
   }
 
-  @SuppressWarnings("UnusedParameters")
+  @Suppress("UNUSED_PARAMETER")
   @IntRange(from = 0, to = Integer.MAX_VALUE.toLong())
   open fun getItemViewType(section: Int, relativePosition: Int, absolutePosition: Int): Int {
     //noinspection ResourceType
