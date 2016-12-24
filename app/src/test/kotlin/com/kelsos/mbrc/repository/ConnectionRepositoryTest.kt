@@ -6,6 +6,8 @@ import android.content.res.Resources
 import android.os.Build
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.BuildConfig
+import com.kelsos.mbrc.TestApplication
+import com.kelsos.mbrc.data.dao.ConnectionSettings
 import com.kelsos.mbrc.rules.DBFlowTestRule
 import org.junit.After
 import org.junit.Before
@@ -25,7 +27,10 @@ import toothpick.testing.ToothPickRule
 import java.util.*
 
 @RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class, sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
+@Config(constants = BuildConfig::class,
+    manifest = "AndroidManifest.xml",
+    application = TestApplication::class,
+    sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
 class ConnectionRepositoryTest {
   private val toothPickRule = ToothPickRule(this)
   @Rule

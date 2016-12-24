@@ -10,13 +10,7 @@ import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.LfmRatingChanged
-import com.kelsos.mbrc.events.ui.PlayStateChange
-import com.kelsos.mbrc.events.ui.RatingChanged
-import com.kelsos.mbrc.events.ui.RepeatChange
-import com.kelsos.mbrc.events.ui.ScrobbleChange
-import com.kelsos.mbrc.events.ui.ShuffleChange
-import com.kelsos.mbrc.events.ui.VolumeChange
+import com.kelsos.mbrc.events.ui.*
 import com.kelsos.mbrc.repository.ModelCache
 import rx.Completable
 import rx.Subscription
@@ -101,16 +95,11 @@ constructor(private val bus: RxBus,
         return
       }
       field = value.substring(0, value.lastIndexOf('.'))
-      bus.post(MessageEvent(ProtocolEventType.PluginVersionCheck))
     }
 
   var pluginProtocol: Int = 2
     set(value) {
       field = value
-      if (value < Protocol.ProtocolVersionNumber) {
-        apiOutOfDate = true
-        onPluginOutOfDate?.invoke()
-      }
     }
 
 

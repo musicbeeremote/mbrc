@@ -7,23 +7,12 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.extensions.io
 import com.kelsos.mbrc.repository.ConnectionRepository
-import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.Response
-import okhttp3.ResponseBody
-import okhttp3.ws.WebSocket
-import okhttp3.ws.WebSocketCall
-import okhttp3.ws.WebSocketListener
-import okio.Buffer
-import rx.Observable
+import okhttp3.*
 import rx.Subscription
 import rx.subjects.PublishSubject
 import timber.log.Timber
 import java.io.IOException
 import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,8 +21,8 @@ import javax.inject.Singleton
 constructor(private val connectionRepository: ConnectionRepository,
             private val mapper: ObjectMapper,
             client: OkHttpClient,
-            private val rxBus: RxBus)
-  : WebSocketListener {
+            private val bus: RxBus)
+  : WebSocketListener() {
   private val messagePublisher: PublishSubject<String>
   private val client: OkHttpClient
   private var connected: Boolean = false
@@ -63,14 +52,15 @@ constructor(private val connectionRepository: ConnectionRepository,
 
     connectionRepository.default?.let {
       val url = HttpUrl.Builder()
-          .scheme("http")
+          .scheme("ws")
           .host(it.address)
           .port(it.port)
           .build()
       val request = Request.Builder().url(url).build()
 
       Timber.v("[WebSocket] attempting to connect to [%s]", it)
-      WebSocketCall.create(client, request).enqueue(this)
+
+      client.newWebSocket(request, this)
     }
   }
 
@@ -82,73 +72,56 @@ constructor(private val connectionRepository: ConnectionRepository,
       return
     }
 
-    rxBus.post(message)
+    bus.post(message)
     Timber.v("[Incoming] %s", message)
   }
 
-  override fun onOpen(webSocket: WebSocket, response: Response) {
+  override fun onOpen(webSocket: WebSocket?, response: Response?) {
+    super.onOpen(webSocket, response)
     this.webSocket = webSocket
     this.connected = true
-    rxBus.post(ConnectionStatusChangeEvent(Connection.ON))
+    bus.post(ConnectionStatusChangeEvent(Connection.ON))
     val message = "{\"message\":\"connected\"}"
-    Send(webSocket, message)
-
-    stopPing()
-    startPing(webSocket)
-  }
-
-  fun startPing(webSocket: WebSocket) {
-    subscription = Observable.interval(15, TimeUnit.SECONDS).subscribe {
-      try {
-        webSocket.sendPing(Buffer())
-        Timber.v("send ping")
-      } catch (e: IOException) {
-        e.printStackTrace()
-      }
+    webSocket?.let {
+      Send(it, message)
     }
-  }
 
-  fun stopPing() {
-    subscription?.unsubscribe()
   }
 
   private fun Send(webSocket: WebSocket, message: String) {
     executor.execute {
       try {
-        webSocket.sendMessage(RequestBody.create(WebSocket.TEXT, message.toByteArray()))
+        webSocket.send(message)
       } catch (e: IOException) {
         Timber.e(e, "Failed to send the message")
       }
     }
   }
 
-  override fun onFailure(e: IOException, response: Response?) {
-    stopPing()
+  override fun onFailure(webSocket: WebSocket?, t: Throwable?, response: Response?) {
+    super.onFailure(webSocket, t, response)
     this.connected = false
-    Timber.e("Socket failed with message: ${e.message}")
-    rxBus.post(ConnectionStatusChangeEvent(Connection.OFF))
+    Timber.e("Socket failed with message: ${t?.message}")
+    bus.post(ConnectionStatusChangeEvent(Connection.OFF))
   }
 
-  @Throws(IOException::class)
-  override fun onMessage(responseBody: ResponseBody) {
-    messagePublisher.onNext(responseBody.string())
+
+  override fun onMessage(webSocket: WebSocket?, text: String?) {
+    super.onMessage(webSocket, text)
+    messagePublisher.onNext(text)
   }
 
-  override fun onPong(payload: Buffer?) {
-    Timber.v("pong")
-  }
-
-  override fun onClose(code: Int, reason: String) {
+  override fun onClosed(webSocket: WebSocket?, code: Int, reason: String?) {
+    super.onClosed(webSocket, code, reason)
     this.connected = false
     subscription?.unsubscribe()
-    webSocket = null
+    this.webSocket = null
     Timber.v("[Websocket] closing (%d) %s", code, reason)
-    rxBus.post(ConnectionStatusChangeEvent(Connection.OFF))
+    bus.post(ConnectionStatusChangeEvent(Connection.OFF))
   }
 
-  fun disconnect() {
-    stopPing()
 
+  fun disconnect() {
     try {
       webSocket?.close(1000, "Disconnecting")
     } catch (e: IOException) {

@@ -27,7 +27,7 @@ class VersionCheck
       var isOutOfDate = false
 
       val calendar = Calendar.getInstance()
-      calendar.timeInMillis = manager.lastUpdated.time
+      calendar.timeInMillis = manager.getLastUpdated().time
       calendar.add(Calendar.DATE, 2)
       val nextCheck = Date(calendar.timeInMillis)
       val now = Date()
@@ -61,7 +61,7 @@ class VersionCheck
         }
       }
 
-      manager.lastUpdated = now
+      manager.setLastUpdated(now)
       if (BuildConfig.DEBUG) {
         Timber.d("last check on: %s", java.lang.Long.toString(now.time))
         Timber.d("plugin reported version: %s", pluginVersion)

@@ -18,6 +18,7 @@
     <item name="windowActionBarOverlay">true</item>
     <item name="md_dark_theme">true</item>
     <item name="android:actionBarWidgetTheme">@style/AppTheme.ActionBarWidget</item>
+    <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
   </style>
 
   <style name="AppTheme.ActionBarWidget" parent="AppTheme">
@@ -31,8 +32,7 @@
     <item name="toolbarStyle">@style/Widget.Toolbar</item>
   </style>
 
-  <style name="Theme.Preference" parent="@style/PreferenceThemeOverlay">
-  </style>
+
 
   <style name="Widget.Toolbar"
     parent="@style/Widget.AppCompat.Toolbar">

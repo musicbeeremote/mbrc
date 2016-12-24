@@ -1,13 +1,7 @@
 package com.kelsos.mbrc.data.dao
 
 import com.kelsos.mbrc.data.db.RemoteDatabase
-import com.raizlabs.android.dbflow.annotation.Column
-import com.raizlabs.android.dbflow.annotation.ForeignKey
-import com.raizlabs.android.dbflow.annotation.ForeignKeyReference
-import com.raizlabs.android.dbflow.annotation.Index
-import com.raizlabs.android.dbflow.annotation.IndexGroup
-import com.raizlabs.android.dbflow.annotation.PrimaryKey
-import com.raizlabs.android.dbflow.annotation.Table
+import com.raizlabs.android.dbflow.annotation.*
 import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.structure.Model
 
@@ -18,18 +12,10 @@ data class Album(
     @Column(name = "name") @Index(indexGroups = intArrayOf(1)) var name: String = "",
     @Column
     @ForeignKey(references = arrayOf(ForeignKeyReference(columnName = "artist_id",
-        columnType = Long::class,
-        referencedFieldIsPrivate = true,
-        referencedGetterName = "getId",
-        referencedSetterName = "setId",
         foreignKeyColumnName = "id")), saveForeignKeyModel = false)
     var artist: Artist? = null,
     @Column
     @ForeignKey(references = arrayOf(ForeignKeyReference(columnName = "cover_id",
-        columnType = Long::class,
-        referencedFieldIsPrivate = true,
-        referencedGetterName = "getId",
-        referencedSetterName = "setId",
         foreignKeyColumnName = "id")), saveForeignKeyModel = false)
     var cover: Cover? = null,
     @Column(name = "date_added") var dateAdded: Long = 0,

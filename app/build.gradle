@@ -17,16 +17,6 @@ static def buildTime() {
   return df.format(new Date())
 }
 
-def fabricApiKey() {
-  def fabricProperties = file('fabric.properties')
-  if (fabricProperties.exists()) {
-    def prop = new Properties()
-    prop.load(new FileInputStream(fabricProperties))
-    return prop.getAt("apiKey")
-  } else {
-    return ""
-  }
-}
 
 def gitHash() {
   return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
@@ -149,12 +139,12 @@ ext {
   support_library_version = "25.1.0"
   dbflow_version = "4.0.0-beta3"
   toothpick_version = "1.0.3"
-  okhttp_version = '3.4.2'
+  okhttp_version = '3.5.0'
   retrofit_version = '2.1.0'
   jackson_version = "2.8.5"
   butterknife_version = "8.4.0"
   material_dialogs_version = "0.9.1.0"
-  stetho_version = "1.4.1"
+  stetho_version = "1.4.2"
   runner_version = "0.5"
   espresso_version = "2.2.2"
   junit_version = "4.12"
@@ -168,6 +158,9 @@ dependencies {
   compile "com.android.support:support-annotations:${support_library_version}"
   compile "com.android.support:recyclerview-v7:${support_library_version}"
   compile "com.android.support:design:${support_library_version}"
+  compile "com.android.support:preference-v7:${support_library_version}"
+  compile "com.android.support:preference-v14:${support_library_version}"
+
   //Some of the dependencies pull the wrong version support v13
   compile "com.android.support:support-v13:${support_library_version}"
 
@@ -192,10 +185,21 @@ dependencies {
   kapt "com.jakewharton:butterknife-compiler:${butterknife_version}"
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
+  compile "com.squareup.okhttp3:okhttp:${okhttp_version}"
+  compile "com.squareup.okhttp3:logging-interceptor:${okhttp_version}"
+
+  compile "com.squareup.retrofit2:adapter-rxjava:${retrofit_version}"
+  compile "com.squareup.retrofit2:converter-jackson:${retrofit_version}"
+  compile "com.squareup.retrofit2:retrofit:${retrofit_version}"
+  compile 'com.jakewharton.threetenabp:threetenabp:1.0.4'
+
+  debugCompile "com.facebook.stetho:stetho:${stetho_version}"
+  debugCompile "com.facebook.stetho:stetho-okhttp3:${stetho_version}"
+
   compile 'com.android.support:multidex:1.0.1'
   compile 'com.squareup.picasso:picasso:2.5.2'
   compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.5'
-  compile 'com.github.machinarius:preferencefragment:0.1.2'
+
   compile 'io.reactivex:rxandroid:1.2.1'
   compile 'io.reactivex:rxjava:1.2.4'
   compile 'io.reactivex:rxkotlin:0.60.0'

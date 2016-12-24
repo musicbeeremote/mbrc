@@ -46,7 +46,7 @@ class StateBroadcastReceiver : BroadcastReceiver() {
       return
     }
 
-    when (settingsManager.callAction) {
+    when (settingsManager.getCallAction()) {
       SettingsManager.PAUSE -> TODO("Pause")
       SettingsManager.STOP -> TODO("STOP")
       SettingsManager.NONE -> { }

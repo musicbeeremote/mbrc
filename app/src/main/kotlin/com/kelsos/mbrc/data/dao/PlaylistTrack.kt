@@ -1,11 +1,7 @@
 package com.kelsos.mbrc.data.dao
 
 import com.kelsos.mbrc.data.db.RemoteDatabase
-import com.raizlabs.android.dbflow.annotation.Column
-import com.raizlabs.android.dbflow.annotation.ForeignKey
-import com.raizlabs.android.dbflow.annotation.ForeignKeyReference
-import com.raizlabs.android.dbflow.annotation.PrimaryKey
-import com.raizlabs.android.dbflow.annotation.Table
+import com.raizlabs.android.dbflow.annotation.*
 import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.structure.Model
 
@@ -14,19 +10,11 @@ data class PlaylistTrack(
     @Column var position: Int = 0,
     @Column
     @ForeignKey(references = arrayOf(ForeignKeyReference(columnName = "playlist_id",
-        columnType = Long::class,
-        referencedFieldIsPrivate = true,
-        referencedGetterName = "getId",
-        referencedSetterName = "setId",
         foreignKeyColumnName = "id")), saveForeignKeyModel = false)
     var playlist: Playlist? = null,
     @Column
     @ForeignKey(references = arrayOf(ForeignKeyReference(columnName = "track_info_id",
-        columnType = Long::class,
-        foreignKeyColumnName = "id",
-        referencedGetterName = "getId",
-        referencedSetterName = "setId",
-        referencedFieldIsPrivate = true)), saveForeignKeyModel = false)
+        foreignKeyColumnName = "id")), saveForeignKeyModel = false)
     var trackInfo: PlaylistTrackInfo? = null,
     @Column(name = "date_added") var dateAdded: Long = 0,
     @Column(name = "date_updated") var dateUpdated: Long = 0,

@@ -1,66 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <PreferenceCategory android:title="@string/settings_connection">
+  <android.support.v7.preference.PreferenceCategory android:title="@string/settings_connection">
     <Preference
-        android:key="@string/preferences_key_connection_manager"
-        android:title="@string/settings_manage_connections" />
-  </PreferenceCategory>
-  <PreferenceCategory android:title="@string/settings_miscellaneous">
+      android:key="@string/preferences_key_connection_manager"
+      android:title="@string/settings_manage_connections"/>
+  </android.support.v7.preference.PreferenceCategory>
+
+  <android.support.v7.preference.PreferenceCategory android:title="@string/settings_miscellaneous">
 
     <com.afollestad.materialdialogs.prefs.MaterialListPreference
-        android:defaultValue="@string/incoming_action_default_value"
-        android:entries="@array/incoming_action_options"
-        android:entryValues="@array/incoming_action_options_values"
-        android:key="@string/settings_key_incoming_call_action"
-        android:summary="@string/settings_miscellaneous_incoming_call_description"
-        android:title="@string/settings_miscellaneous_incoming_call_action" />
+      android:defaultValue="@string/incoming_action_default_value"
+      android:entries="@array/incoming_action_options"
+      android:entryValues="@array/incoming_action_options_values"
+      android:key="@string/settings_key_incoming_call_action"
+      android:summary="@string/settings_miscellaneous_incoming_call_description"
+      android:title="@string/settings_miscellaneous_incoming_call_action"/>
 
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="@string/settings_key_notification_control"
-        android:summary="@string/settings_sum_notification_control"
-        android:title="@string/settings_title_notification_control" />
+    <android.support.v7.preference.CheckBoxPreference
+      android:defaultValue="true"
+      android:key="@string/settings_key_notification_control"
+      android:summary="@string/settings_sum_notification_control"
+      android:title="@string/settings_title_notification_control"/>
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="@string/settings_key_plugin_check"
-        android:summary="@string/setting_miscellaneous_plugin_updates_summary"
-        android:title="@string/setting_miscellaneous_plugin_updates" />
+    <android.support.v7.preference.CheckBoxPreference
+      android:defaultValue="false"
+      android:key="@string/settings_key_plugin_check"
+      android:summary="@string/setting_miscellaneous_plugin_updates_summary"
+      android:title="@string/setting_miscellaneous_plugin_updates"/>
 
-    <CheckBoxPreference
+    <android.support.v7.preference.CheckBoxPreference
       android:defaultValue="false"
       android:key="@string/settings_key_debug_logging"
       android:summary="@string/setting_miscellaneous_debug_logging_summary"
-      android:title="@string/setting_miscellaneous_debug_logging" />
+      android:title="@string/setting_miscellaneous_debug_logging"/>
 
-  </PreferenceCategory>
+  </android.support.v7.preference.PreferenceCategory>
   <com.afollestad.materialdialogs.prefs.MaterialListPreference
-      android:defaultValue="@string/search_click_default_value"
-      android:dialogTitle="@string/settings_search_default_title"
-      android:entries="@array/search_click_options"
-      android:entryValues="@array/search_click_options_values"
-      android:key="@string/settings_search_default_key"
-      android:summary="@string/settings_search_default_summary"
-      android:title="@string/settings_search_default_title" />
+    android:defaultValue="@string/search_click_default_value"
+    android:dialogTitle="@string/settings_search_default_title"
+    android:entries="@array/search_click_options"
+    android:entryValues="@array/search_click_options_values"
+    android:key="@string/settings_search_default_key"
+    android:summary="@string/settings_search_default_summary"
+    android:title="@string/settings_search_default_title"/>
 
-  <PreferenceCategory android:title="@string/preferences_category_about">
-    <Preference
-        android:key="@string/preferences_open_source"
-        android:title="@string/settings_oss_license" />
-    <Preference
-        android:key="@string/settings_key_license"
-        android:title="@string/settings_title_license" />
-    <Preference
-        android:key="@string/settings_version"
-        android:summary="@string/settings_version_number"
-        android:title="@string/preferences_about_version" />
-    <Preference
-        android:key="@string/pref_key_build_time"
-        android:title="Build Time" />
-    <Preference
-        android:key="@string/pref_key_revision"
-        android:title="Revision" />
-  </PreferenceCategory>
+  <android.support.v7.preference.PreferenceCategory android:title="@string/preferences_category_about">
+    <android.support.v7.preference.Preference
+      android:key="@string/preferences_open_source"
+      android:title="@string/settings_oss_license"/>
+    <android.support.v7.preference.Preference
+      android:key="@string/settings_key_license"
+      android:title="@string/settings_title_license"/>
+    <android.support.v7.preference.Preference
+      android:key="@string/settings_version"
+      android:summary="@string/settings_version_number"
+      android:title="@string/preferences_about_version"/>
+    <android.support.v7.preference.Preference
+      android:key="@string/pref_key_build_time"
+      android:title="Build Time"/>
+    <android.support.v7.preference.Preference
+      android:key="@string/pref_key_revision"
+      android:title="Revision"/>
+  </android.support.v7.preference.PreferenceCategory>
 
-</PreferenceScreen>
+</android.support.v7.preference.PreferenceScreen>

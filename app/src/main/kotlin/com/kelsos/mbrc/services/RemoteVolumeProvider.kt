@@ -1,9 +1,6 @@
 package com.kelsos.mbrc.services
 
 import android.support.v4.media.VolumeProviderCompat
-import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.data.UserAction
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.VolumeChange
 import com.kelsos.mbrc.model.MainDataModel
@@ -22,20 +19,18 @@ constructor(private val mainDataModel: MainDataModel,
   }
 
   override fun onSetVolumeTo(volume: Int) {
-    bus.post(UserAction.create(Protocol.PlayerVolume, volume))
+    TODO()
   }
 
   override fun onAdjustVolume(direction: Int) {
     if (direction > 0) {
       val volume = mainDataModel.volume + 5
-      post(UserAction.create(Protocol.PlayerVolume, if (volume < 100) volume else 100))
+      TODO()
+      //if (volume < 100) volume else 100)
     } else {
       val volume = mainDataModel.volume - 5
-      post(UserAction.create(Protocol.PlayerVolume, if (volume > 0) volume else 0))
+      TODO()
+      //if (volume > 0) volume else 0)
     }
-  }
-
-  private fun post(action: UserAction) {
-    bus.post(MessageEvent.action(action))
   }
 }

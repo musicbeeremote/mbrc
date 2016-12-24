@@ -6,13 +6,12 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
-import javax.annotation.Nullable
 import javax.inject.Inject
 import javax.inject.Provider
 
 class OkHttpClientProvider
 @Inject constructor(private val connectionRepository: ConnectionRepository,
-                    @Nullable private val interceptor: Interceptor? = null) : Provider<OkHttpClient> {
+                    private val interceptor: Interceptor? = null) : Provider<OkHttpClient> {
 
   override fun get(): OkHttpClient {
     val loggingInterceptor = HttpLoggingInterceptor { Timber.tag("OkHttp").d(it) }
