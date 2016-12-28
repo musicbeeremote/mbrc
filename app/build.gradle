@@ -148,7 +148,7 @@ ext {
   runner_version = "0.5"
   espresso_version = "2.2.2"
   junit_version = "4.12"
-  mockito_version = "2.4.1"
+  mockito_version = "2.5.0"
 }
 
 dependencies {
