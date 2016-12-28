@@ -5,7 +5,7 @@ apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'idea'
-
+apply plugin: 'com.github.kt3k.coveralls'
 
 repositories {
   maven { url 'https://maven.fabric.io/public' }
