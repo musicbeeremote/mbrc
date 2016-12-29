@@ -152,6 +152,7 @@ ext {
 }
 
 dependencies {
+  testCompile "junit:junit:${junit_version}"
 
   compile "com.android.support:appcompat-v7:${support_library_version}"
   compile "com.android.support:support-v4:${support_library_version}"
@@ -212,7 +213,6 @@ dependencies {
   releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
   // Test dependencies
-  testCompile "junit:junit:${junit_version}"
   testCompile "org.mockito:mockito-core:${mockito_version}"
   testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
   testCompile 'org.robolectric:robolectric:3.1.4'
@@ -277,6 +277,15 @@ def initFabricPropertiesIfNeeded() {
       entry(key: "apiKey", value: crashlyticsApikey)
     }
   }
+}
+
+coveralls {
+  jacocoReportPath = "${buildDir}/reports/coverage/debug/report.xml"
+}
+
+tasks.coveralls {
+  dependsOn 'jacocoTestReport'
+  onlyIf { System.env.'CI' }
 }
 
 repositories {

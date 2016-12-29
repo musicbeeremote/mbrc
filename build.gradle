@@ -29,13 +29,3 @@ allprojects {
 task clean(type: Delete) {
   delete rootProject.buildDir
 }
-
-coveralls {
-  jacocoReportPath = "${buildDir}/reports/coverage/debug/report.xml"
-}
-
-tasks.coveralls {
-  dependsOn 'jacocoTestReport'
-  onlyIf { System.env.'CI' }
-}
-
