@@ -5,9 +5,9 @@ import com.raizlabs.android.dbflow.structure.Model
 import rx.Observable
 import rx.Single
 
-interface LocalDataSource<T : Model> {
+interface LocalDataSource<OUT : Model, in IN: Model> {
   fun deleteAll()
-  fun saveAll(list: List<T>)
-  fun loadAllCursor(): Observable<FlowCursorList<T>>
-  fun search(term: String): Single<FlowCursorList<T>>
+  fun saveAll(list: List<IN>)
+  fun loadAllCursor(): Observable<FlowCursorList<OUT>>
+  fun search(term: String): Single<FlowCursorList<OUT>>
 }

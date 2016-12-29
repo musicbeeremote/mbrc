@@ -16,8 +16,11 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
-import org.mockito.Mockito
-import org.mockito.Mockito.*
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.anyInt
+import org.mockito.Mockito.anyLong
+import org.mockito.Mockito.anyString
+import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
@@ -311,8 +314,9 @@ class ConnectionRepositoryTest {
     init {
       bind(SharedPreferences::class.java).toProviderInstance {
         val defaultId = longArrayOf(-1)
-        val preferences = Mockito.mock(SharedPreferences::class.java)
-        val editor = Mockito.mock(SharedPreferences.Editor::class.java)
+        val preferences = mock(SharedPreferences::class.java)
+
+        val editor = mock(SharedPreferences.Editor::class.java)
         `when`(preferences.edit()).thenReturn(editor)
         `when`(preferences.getLong(anyString(), anyLong())).thenAnswer { defaultId[0] }
         `when`(editor.putLong(anyString(), anyLong())).then {
@@ -324,7 +328,7 @@ class ConnectionRepositoryTest {
       }
       bind(ConnectionRepository::class.java).to(ConnectionRepositoryImpl::class.java)
       bind(Resources::class.java).toProviderInstance {
-        val resources = Mockito.mock(Resources::class.java)
+        val resources = mock(Resources::class.java)
         `when`(resources.getString(anyInt())).thenReturn("preferences_key")
         resources
       }

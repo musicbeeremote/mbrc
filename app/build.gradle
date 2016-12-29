@@ -5,6 +5,7 @@ apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'idea'
+apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 
 repositories {
@@ -27,7 +28,7 @@ def version_code = 160
 
 android {
   compileSdkVersion 25
-  buildToolsVersion "25.0.1"
+  buildToolsVersion "25.0.2"
 
   defaultConfig {
     applicationId "com.kelsos.mbrc"
@@ -44,9 +45,13 @@ android {
 
   testOptions {
     unitTests.returnDefaultValues = true
+    unitTests.all {
+      jacoco {
+        includeNoLocationClasses = true
+      }
+    }
   }
-
-
+  
   signingConfigs {
     release {
       storeFile file('placeholder')
@@ -170,7 +175,6 @@ dependencies {
   androidTestCompile "com.android.support.test:rules:${runner_version}"
   androidTestCompile "org.hamcrest:hamcrest-library:${hamcrest_version}"
   androidTestCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
-  androidTestCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
   // Test dependencies
   testCompile "junit:junit:${junit_version}"
@@ -179,7 +183,6 @@ dependencies {
   testCompile 'org.robolectric:shadows-multidex:3.1.4'
   testCompile 'com.google.truth:truth:0.31'
   testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
-  testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
   compile "com.android.support:appcompat-v7:${support_library_version}"
   compile "com.android.support:support-v4:${support_library_version}"
@@ -238,8 +241,6 @@ dependencies {
 
   debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
   releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-
-
 
   playCompile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
     transitive = true
@@ -304,6 +305,24 @@ kapt {
   generateStubs = true
   arguments {
     arg('toothpick_registry_package_name', 'com.kelsos.mbrc')
-    arg('toothpick_registry_children_package_names', 'toothpick.smoothie')
   }
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testGithubDebugUnitTest', 'createGithubDebugCoverageReport']) {
+
+  reports {
+    xml.enabled = true
+    html.enabled = true
+  }
+
+  def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+  def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+  def mainSrc = "${project.projectDir}/src/main/java"
+
+  sourceDirectories = files([mainSrc])
+  classDirectories = files([debugTree])
+  executionData = fileTree(dir: "$buildDir", includes: [
+      "jacoco/testDebugUnitTest.exec",
+      "outputs/code-coverage/connected/*coverage.ec"
+  ])
 }
