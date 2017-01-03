@@ -1,14 +1,31 @@
 language: android
 
+
+before_cache:
+    - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+
+cache:
+  directories:      #Cache all dirs under .gradle folder
+    - $HOME/.gradle/daemon      #Cache daemon logs
+    - $HOME/.gradle/native      #Cache library downloaded from the gradle dependency
+    - $HOME/.gradle/wrapper     #Cache the gradle
+
+env:
+  matrix:
+  - ANDROID_TARGET=android-25 ANDROID_ABI=armeabi-v7a
+  global:
+  - ADB_INSTALL_TIMEOUT=10    #Time out to 10 mins
+
 android:
+  update_sdk: true
   components:
-    # https://github.com/travis-ci/travis-ci/issues/5036
-    - tools
     - platform-tools
     - tools
-    - build-tools-25.0.1
+    - build-tools-25.0.2
     - android-25
     - extra-android-m2repository
+
+    - sys-img-armeabi-v7a-android-25
 
 jdk:
   - oraclejdk8
@@ -35,8 +52,18 @@ cache:
   directories:
     - $HOME/.m2
 
+before_script:
+  - echo no | android create avd --force -n test -t android-25 --abi armeabi-v7a
+  - emulator -avd test -no-skin -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
+
 script:
-  - ./gradlew clean test
+  - ./gradlew check -PdisablePreDex --continue --stacktrace
+  - android-wait-for-emulator
+  - adb devices
+  - adb shell input keyevent 82 &
+  - ./gradlew testGithubDebugUnitTest connectedGithubDebugAndroidTest -PdisablePreDex --stacktrace
 
 after_success:
   - ./gradlew jacocoTestReport coveralls

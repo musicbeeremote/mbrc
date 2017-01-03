@@ -9,9 +9,12 @@ import com.kelsos.mbrc.annotations.PlayerAction.Action
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder
 import timber.log.Timber
 import toothpick.Toothpick
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class PlayerActionReceiver : BroadcastReceiver() {
-
+@Singleton
+class PlayerActionReceiver
+@Inject constructor() : BroadcastReceiver() {
 
   val intentFilter: IntentFilter
     get() {

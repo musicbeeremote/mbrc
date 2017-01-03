@@ -21,7 +21,6 @@ import toothpick.testing.ToothPickRule
 
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
-    manifest = "AndroidManifest.xml",
     application = TestApplication::class,
     sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
 class GenreRepositoryImplTest {

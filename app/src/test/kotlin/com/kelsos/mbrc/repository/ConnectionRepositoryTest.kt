@@ -16,11 +16,7 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.anyInt
-import org.mockito.Mockito.anyLong
-import org.mockito.Mockito.anyString
-import org.mockito.Mockito.mock
+import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
@@ -31,7 +27,6 @@ import java.util.*
 
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
-    manifest = "AndroidManifest.xml",
     application = TestApplication::class,
     sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
 class ConnectionRepositoryTest {
@@ -326,12 +321,11 @@ class ConnectionRepositoryTest {
         }
         preferences
       }
+
+      val resources = mock(Resources::class.java)
+      `when`(resources.getString(anyInt())).thenReturn("preferences_key")
       bind(ConnectionRepository::class.java).to(ConnectionRepositoryImpl::class.java)
-      bind(Resources::class.java).toProviderInstance {
-        val resources = mock(Resources::class.java)
-        `when`(resources.getString(anyInt())).thenReturn("preferences_key")
-        resources
-      }
+      bind(Resources::class.java).toInstance(resources)
     }
   }
 

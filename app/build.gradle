@@ -37,18 +37,18 @@ android {
     versionName version
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
     buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
-    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    testInstrumentationRunner "com.kelsos.mbrc.RemoteTestRunner"
     // Enabling multidex support.
     multiDexEnabled true
   }
 
   testOptions {
     unitTests.returnDefaultValues = true
-    unitTests.all {
-      jacoco {
-        includeNoLocationClasses = true
-      }
-    }
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_7
+    targetCompatibility JavaVersion.VERSION_1_7
   }
   
   signingConfigs {
@@ -147,7 +147,7 @@ idea {
 ext {
   support_library_version = "25.1.0"
   dbflow_version = "4.0.0-beta3"
-  toothpick_version = "1.0.3"
+  toothpick_version = "1.0.2"
   okhttp_version = '3.5.0'
   retrofit_version = '2.1.0'
   jackson_version = "2.8.5"
@@ -167,14 +167,17 @@ dependencies {
   androidTestCompile("com.android.support.test.espresso:espresso-core:${espresso_version}", {
     exclude group: 'com.android.support', module: 'support-annotations'
   })
+  androidTestCompile "com.android.support.test.espresso:espresso-intents:${espresso_version}"
   androidTestCompile "junit:junit:${junit_version}"
-  androidTestCompile "org.mockito:mockito-core:${mockito_version}"
+  // 2017-01-04 (I spend a couple of days until I figured out that if I specify the mockito
+  // version to an different than the one dexmaker supports the tests would crash...)
+  //androidTestCompile "org.mockito:mockito-core:${mockito_version}"
   androidTestCompile 'com.linkedin.dexmaker:dexmaker-mockito:2.2.0'
+  androidTestCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
   androidTestCompile "com.android.support:support-annotations:${support_library_version}"
   androidTestCompile "com.android.support.test:runner:${runner_version}"
   androidTestCompile "com.android.support.test:rules:${runner_version}"
-  androidTestCompile "org.hamcrest:hamcrest-library:${hamcrest_version}"
-  androidTestCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
+  androidTestCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
   // Test dependencies
   testCompile "junit:junit:${junit_version}"
@@ -183,6 +186,7 @@ dependencies {
   testCompile "org.robolectric:shadows-multidex:${robolectric_version}"
   testCompile 'com.google.truth:truth:0.31'
   testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
+  testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
   compile "com.android.support:appcompat-v7:${support_library_version}"
   compile "com.android.support:support-v4:${support_library_version}"
@@ -322,7 +326,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testGithubDebugUnitTest',
   sourceDirectories = files([mainSrc])
   classDirectories = files([debugTree])
   executionData = fileTree(dir: "$buildDir", includes: [
-      "jacoco/testDebugUnitTest.exec",
+      "jacoco/testDebugGithubUnitTest.exec",
       "outputs/code-coverage/connected/*coverage.ec"
   ])
 }

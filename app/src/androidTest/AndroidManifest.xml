@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.kelsos.mbrc.tests">
+
+  <application>
+    <uses-library android:name="android.test.runner"/>
+  </application>
+
+  <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+  <uses-permission android:name="android.permission.WAKE_LOCK"/>
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+  <instrumentation
+    android:name="com.kelsos.mbrc.RemoteTestRunner"
+    android:label="Tests for MusicBee Remote"
+    android:targetPackage="com.kelsos.mbrc"/>
+
+</manifest>
