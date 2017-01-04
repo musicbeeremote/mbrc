@@ -12,7 +12,7 @@ cache:
 
 env:
   matrix:
-  - ANDROID_TARGET=android-25 ANDROID_ABI=armeabi-v7a
+  - ANDROID_TARGET=android-22 ANDROID_ABI=armeabi-v7a
   global:
   - ADB_INSTALL_TIMEOUT=10    #Time out to 10 mins
 
@@ -25,6 +25,7 @@ android:
     - android-25
     - extra-android-m2repository
 
+    # The android emulator image
     - sys-img-armeabi-v7a-android-22
 
 jdk:
