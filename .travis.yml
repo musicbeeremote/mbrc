@@ -11,8 +11,6 @@ cache:
     - $HOME/.gradle/wrapper     #Cache the gradle
 
 env:
-  matrix:
-  - ANDROID_TARGET=android-22 ANDROID_ABI=armeabi-v7a
   global:
   - ADB_INSTALL_TIMEOUT=10    #Time out to 10 mins
 
@@ -53,17 +51,14 @@ cache:
   directories:
     - $HOME/.m2
 
+# Emulator Management: Create, Start and Wait
 before_script:
   - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
-  - emulator -avd test -no-skin -no-audio -no-window &
+  - emulator -avd test -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
 
 script:
-  - ./gradlew check -PdisablePreDex --continue --stacktrace
-  - android-wait-for-emulator
-  - adb devices
-  - adb shell input keyevent 82 &
   - ./gradlew testGithubDebugUnitTest connectedGithubDebugAndroidTest -PdisablePreDex --stacktrace
 
 after_success:
