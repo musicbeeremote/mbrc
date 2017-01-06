@@ -6,8 +6,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.MenuItem
-import com.github.machinarius.preferencefragment.PreferenceFragment
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.constants.UserInputEventType
@@ -19,12 +19,12 @@ import com.kelsos.mbrc.ui.dialogs.WebViewDialog
 import com.kelsos.mbrc.utilities.RemoteUtils
 import timber.log.Timber
 
-class SettingsFragment : PreferenceFragment() {
+class SettingsFragment : PreferenceFragmentCompat() {
   private var bus: RxBus? = null
+
   private lateinit var mContext: Context
 
-  override fun onCreate(paramBundle: Bundle?) {
-    super.onCreate(paramBundle)
+  override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
     addPreferencesFromResource(R.xml.application_settings)
     mContext = activity
 
@@ -65,8 +65,8 @@ class SettingsFragment : PreferenceFragment() {
     }
 
     try {
-      mVersion?.summary = String.format(resources.getString(R.string.settings_version_number),
-          RemoteUtils.getVersion(mContext))
+      val version = RemoteUtils.getVersion(mContext)
+      mVersion?.summary = resources.getString(R.string.settings_version_number, version)
     } catch (e: PackageManager.NameNotFoundException) {
       Timber.d(e, "failed")
     }
@@ -90,6 +90,7 @@ class SettingsFragment : PreferenceFragment() {
     mBuild?.summary = BuildConfig.BUILD_TIME
     mRevision?.summary = BuildConfig.GIT_SHA
   }
+
 
   fun requestPhoneStatePermission() {
     ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.READ_PHONE_STATE), REQUEST_CODE)

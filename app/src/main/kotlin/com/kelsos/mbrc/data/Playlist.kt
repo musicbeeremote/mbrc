@@ -23,27 +23,15 @@ data class Playlist(@Column(name = "name")
                     @JsonIgnore
                     var id: Long = 0) : Model {
   
-  override fun load() {
-    modelAdapter<Playlist>().load(this)
-  }
+  override fun load() = modelAdapter<Playlist>().load(this)
 
-  override fun insert(): Long {
-    return modelAdapter<Playlist>().insert(this)
-  }
+  override fun insert(): Long = modelAdapter<Playlist>().insert(this)
 
-  override fun save() {
-    modelAdapter<Playlist>().save(this)
-  }
+  override fun save(): Boolean = modelAdapter<Playlist>().save(this)
 
-  override fun update() {
-    modelAdapter<Playlist>().update(this)
-  }
+  override fun update(): Boolean = modelAdapter<Playlist>().update(this)
 
-  override fun exists(): Boolean {
-    return modelAdapter<Playlist>().exists(this)
-  }
+  override fun exists(): Boolean = modelAdapter<Playlist>().exists(this)
 
-  override fun delete() {
-    modelAdapter<Playlist>().delete(this)
-  }
+  override fun delete(): Boolean = modelAdapter<Playlist>().delete(this)
 }

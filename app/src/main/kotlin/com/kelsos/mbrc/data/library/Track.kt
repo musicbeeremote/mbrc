@@ -46,27 +46,15 @@ data class Track(@JsonProperty("artist")
   /**
    * Loads from the database the most recent version of the model based on it's primary keys.
    */
-  override fun load() {
-    modelAdapter<Track>().load(this)
-  }
+  override fun load() = modelAdapter<Track>().load(this)
 
-  override fun insert(): Long {
-    return modelAdapter<Track>().insert(this)
-  }
+  override fun insert(): Long = modelAdapter<Track>().insert(this)
 
-  override fun save() {
-    modelAdapter<Track>().save(this)
-  }
+  override fun save(): Boolean = modelAdapter<Track>().save(this)
 
-  override fun update() {
-    modelAdapter<Track>().update(this)
-  }
+  override fun update(): Boolean = modelAdapter<Track>().update(this)
 
-  override fun exists(): Boolean {
-    return modelAdapter<Track>().exists(this)
-  }
+  override fun exists(): Boolean = modelAdapter<Track>().exists(this)
 
-  override fun delete() {
-    modelAdapter<Track>().delete(this)
-  }
+  override fun delete(): Boolean = modelAdapter<Track>().delete(this)
 }

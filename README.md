@@ -56,10 +56,6 @@ along with [Google Play Music for Android](https://play.google.com/store/apps/de
 *   [Butterknife](https://github.com/JakeWharton/butterknife)
 
     License: [Apache 2.0](https://raw.githubusercontent.com/JakeWharton/butterknife/master/LICENSE.txt)
-    
-*   [Preference Fragment Compat](https://github.com/Machinarius/PreferenceFragment-Compat)
-
-    License: [Apache 2.0](https://raw.githubusercontent.com/Machinarius/PreferenceFragment-Compat/master/LICENSE)
                
 
 License
