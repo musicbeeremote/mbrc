@@ -3,6 +3,8 @@ Change Log
 
 # Versions
 
+## 1.1.0
+
 ## 1.0.1
 - Fixes a crash with a null extras payload when updating the widget.
 - Fixes a crash with a null key event on the media intent handler.

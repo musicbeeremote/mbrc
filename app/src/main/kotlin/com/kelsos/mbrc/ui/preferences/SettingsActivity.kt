@@ -6,7 +6,6 @@ import android.view.MenuItem
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.ui.activities.FontActivity
-import com.kelsos.mbrc.ui.preferences.SettingsFragment
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -22,7 +21,7 @@ class SettingsActivity : FontActivity() {
     scope.installModules(SmoothieActivityModule(this))
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
-    setContentView(R.layout.settings_activity)
+    setContentView(R.layout.activity_settings)
 
     val mToolbar = findViewById(R.id.toolbar) as Toolbar
     setSupportActionBar(mToolbar)
@@ -31,7 +30,7 @@ class SettingsActivity : FontActivity() {
     supportActionBar?.setTitle(R.string.nav_settings)
 
     val fragment = SettingsFragment.newInstance(bus)
-    supportFragmentManager.beginTransaction().replace(R.id.content_wrapper, fragment).commit()
+    supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
   }
 
   override fun onDestroy() {

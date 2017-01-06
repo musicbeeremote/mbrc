@@ -28,28 +28,16 @@ data class Genre(@JsonProperty("genre")
   /**
    * Loads from the database the most recent version of the model based on it's primary keys.
    */
-  override fun load() {
-    modelAdapter<Genre>().load(this)
-  }
+  override fun load() = modelAdapter<Genre>().load(this)
 
-  override fun insert(): Long {
-    return modelAdapter<Genre>().insert(this)
-  }
+  override fun insert(): Long = modelAdapter<Genre>().insert(this)
 
-  override fun save() {
-    modelAdapter<Genre>().save(this)
-  }
+  override fun save(): Boolean = modelAdapter<Genre>().save(this)
 
-  override fun update() {
-    modelAdapter<Genre>().update(this)
-  }
+  override fun update(): Boolean = modelAdapter<Genre>().update(this)
 
-  override fun exists(): Boolean {
-    return modelAdapter<Genre>().exists(this)
-  }
+  override fun exists(): Boolean = modelAdapter<Genre>().exists(this)
 
-  override fun delete() {
-    modelAdapter<Genre>().delete(this)
-  }
+  override fun delete(): Boolean = modelAdapter<Genre>().delete(this)
 }
 
