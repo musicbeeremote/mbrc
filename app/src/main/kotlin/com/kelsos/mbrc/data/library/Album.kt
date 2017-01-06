@@ -26,27 +26,15 @@ data class Album(@JsonProperty("artist")
   /**
    * Loads from the database the most recent version of the model based on it's primary keys.
    */
-  override fun load() {
-    modelAdapter<Album>().load(this)
-  }
+  override fun load() = modelAdapter<Album>().load(this)
 
-  override fun insert(): Long {
-    return modelAdapter<Album>().insert(this)
-  }
+  override fun insert(): Long = modelAdapter<Album>().insert(this)
 
-  override fun save() {
-    modelAdapter<Album>().save(this)
-  }
+  override fun save(): Boolean = modelAdapter<Album>().save(this)
 
-  override fun update() {
-    modelAdapter<Album>().update(this)
-  }
+  override fun update(): Boolean = modelAdapter<Album>().update(this)
 
-  override fun exists(): Boolean {
-    return modelAdapter<Album>().exists(this)
-  }
+  override fun exists(): Boolean = modelAdapter<Album>().exists(this)
 
-  override fun delete() {
-    modelAdapter<Album>().delete(this)
-  }
+  override fun delete(): Boolean = modelAdapter<Album>().delete(this)
 }
