@@ -42,3 +42,4 @@ build
 # Maven created directories
 target/
 gen-external-apklibs/
+gradle.properties
