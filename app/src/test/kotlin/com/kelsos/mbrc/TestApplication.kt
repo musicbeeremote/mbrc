@@ -6,9 +6,7 @@ import java.lang.reflect.Method
 
 class TestApplication : RemoteApplication(), TestLifecycleApplication {
 
-  override fun initialize() {
-    initializeToothpick(true)
-  }
+  override fun testMode(): Boolean = true
 
   override fun beforeTest(method: Method?) {
 

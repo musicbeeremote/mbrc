@@ -16,8 +16,9 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
-import org.mockito.Mockito
-import org.mockito.Mockito.*
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.anyInt
+import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
@@ -29,9 +30,8 @@ import toothpick.testing.ToothPickRule
 
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
-    manifest = "AndroidManifest.xml",
     application = TestApplication::class,
-    sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
+    sdk = intArrayOf(Build.VERSION_CODES.N_MR1))
 class GenreRepositoryImplTest {
   private val toothPickRule = ToothPickRule(this)
   @Rule
