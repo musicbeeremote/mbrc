@@ -10,14 +10,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
-      android:id="@+id/library_data_list"
+    <RelativeLayout
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:paddingBottom="@dimen/small_margin"
-      android:paddingTop="@dimen/small_margin"
-      android:scrollbars="vertical"
-      tools:listitem="@layout/listitem_single"/>
+      android:layout_height="match_parent">
+
+      <com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
+        android:id="@+id/library_data_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/small_margin"
+        android:paddingTop="@dimen/small_margin"
+        android:scrollbars="none"
+        tools:listitem="@layout/listitem_single"/>
+
+      <com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
+        android:id="@+id/fastscroller"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@id/library_data_list"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@id/library_data_list"
+        />
+    </RelativeLayout>
+
 
     <include
       layout="@layout/list_empty_view"

@@ -15,19 +15,17 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.library.Genre
+import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import javax.inject.Inject
 
 class GenreEntryAdapter
 @Inject
-constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHolder>() {
+constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHolder>(),
+    BubbleTextGetter {
   private var data: FlowCursorList<Genre>? = null
   private var listener: MenuItemSelectedListener? = null
-  private val inflater: LayoutInflater
-
-  init {
-    inflater = LayoutInflater.from(context)
-  }
+  private val inflater: LayoutInflater = LayoutInflater.from(context)
 
   fun setMenuItemSelectedListener(listener: MenuItemSelectedListener) {
     this.listener = listener
@@ -117,8 +115,16 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
     notifyDataSetChanged()
   }
 
+  override fun getTextToShowInBubble(pos: Int): String {
+    val genre = data?.getItem(pos.toLong())?.genre
+    if (genre != null && genre.isNotBlank()) {
+      return genre.substring(0, 1)
+    }
+    return "-"
+  }
+
   interface MenuItemSelectedListener {
-    fun onMenuItemSelected(menuItem: MenuItem, entry: Genre) : Boolean
+    fun onMenuItemSelected(menuItem: MenuItem, entry: Genre): Boolean
 
     fun onItemClicked(genre: Genre)
   }
