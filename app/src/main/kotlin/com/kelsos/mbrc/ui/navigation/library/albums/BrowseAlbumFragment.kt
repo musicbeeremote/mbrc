@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -15,9 +14,11 @@ import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.AlbumEntryAdapter
 import com.kelsos.mbrc.data.library.Album
+import com.kelsos.mbrc.extensions.initLinear
 import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
+import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -32,6 +33,7 @@ class BrowseAlbumFragment : Fragment(),
   @BindView(R.id.empty_view) lateinit var emptyView: View
   @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
   @BindView(R.id.list_empty_title) lateinit var emptyTitle: TextView
+  @BindView(R.id.fastscroller) lateinit var fastScroller: RecyclerViewFastScroller
 
   @Inject lateinit var adapter: AlbumEntryAdapter
   @Inject lateinit var actionHandler: PopupActionHandler
@@ -69,12 +71,9 @@ class BrowseAlbumFragment : Fragment(),
 
   override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+    recycler.initLinear(adapter, emptyView, fastScroller)
     recycler.setHasFixedSize(true)
-    val mLayoutManager = LinearLayoutManager(activity)
-    recycler.layoutManager = mLayoutManager
     adapter.setMenuItemSelectedListener(this)
-    recycler.adapter = adapter
-    recycler.emptyView = emptyView
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Album) {

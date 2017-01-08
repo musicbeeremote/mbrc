@@ -28,7 +28,9 @@ open class RemoteApplication : MultiDexApplication() {
   }
 
   open protected fun initialize() {
-    AndroidThreeTen.init(this);
+    if (!testMode()) {
+      AndroidThreeTen.init(this);
+    }
     initializeDbflow()
     initializeToothpick()
     initializeCalligraphy()
