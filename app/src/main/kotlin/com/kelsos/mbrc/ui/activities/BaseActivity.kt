@@ -32,6 +32,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.events.ui.RequestConnectionStateEvent
+import com.kelsos.mbrc.services.ServiceChecker
 import com.kelsos.mbrc.ui.help_feedback.HelpFeedbackActivity
 import com.kelsos.mbrc.ui.navigation.library.LibraryActivity
 import com.kelsos.mbrc.ui.navigation.lyrics.LyricsActivity
@@ -45,6 +46,7 @@ import javax.inject.Inject
 
 abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSelectedListener {
   @Inject lateinit var bus: RxBus
+  @Inject lateinit var serviceChecker: ServiceChecker
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
   @BindView(R.id.drawer_layout) lateinit var drawer: DrawerLayout
   @BindView(R.id.nav_view) lateinit var navigationView: NavigationView
@@ -53,28 +55,17 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
   private var toggle: ActionBarDrawerToggle? = null
   private var connect: ImageView? = null
 
-  private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
-    val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-    return manager.getRunningServices(Integer.MAX_VALUE).any { serviceClass.name == it.service.className }
-  }
-
   protected abstract fun active(): Int
 
   private fun onConnectLongClick(): Boolean {
-    ifNotRunningStartService()
+    serviceChecker.startServiceIfNotRunning()
     bus.post(MessageEvent(UserInputEventType.ResetConnection))
     return true
   }
 
   private fun onConnectClick() {
-    ifNotRunningStartService()
+    serviceChecker.startServiceIfNotRunning()
     bus.post(MessageEvent(UserInputEventType.StartConnection))
-  }
-
-  private fun ifNotRunningStartService() {
-    if (!isMyServiceRunning(RemoteService::class.java)) {
-      startService(Intent(this, RemoteService::class.java))
-    }
   }
 
   override fun onDestroy() {
@@ -216,7 +207,7 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
    */
   fun setup() {
     Timber.v("Initializing base activity")
-    ifNotRunningStartService()
+    serviceChecker.startServiceIfNotRunning()
     setSupportActionBar(toolbar)
 
     toggle = ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close)
@@ -252,4 +243,3 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
     const val EXIT_APP = "mbrc.exit"
   }
 }
-
