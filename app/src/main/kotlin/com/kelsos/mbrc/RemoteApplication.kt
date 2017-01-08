@@ -3,6 +3,7 @@ package com.kelsos.mbrc
 import android.content.Context
 import android.support.annotation.CallSuper
 import android.support.multidex.MultiDexApplication
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.kelsos.mbrc.di.modules.RemoteModule
 import com.raizlabs.android.dbflow.config.FlowConfig
 import com.raizlabs.android.dbflow.config.FlowManager
@@ -27,6 +28,7 @@ open class RemoteApplication : MultiDexApplication() {
   }
 
   open protected fun initialize() {
+    AndroidThreeTen.init(this);
     initializeDbflow()
     initializeToothpick()
     initializeCalligraphy()
@@ -64,7 +66,7 @@ open class RemoteApplication : MultiDexApplication() {
         .build())
   }
 
-  protected fun initializeToothpick(testMode: Boolean = false) {
+  protected fun initializeToothpick() {
     val configuration: Configuration
     if (BuildConfig.DEBUG) {
       configuration = Configuration.forDevelopment().disableReflection()
@@ -77,9 +79,7 @@ open class RemoteApplication : MultiDexApplication() {
     MemberInjectorRegistryLocator.setRootRegistry(MemberInjectorRegistry())
     FactoryRegistryLocator.setRootRegistry(FactoryRegistry())
     val applicationScope = Toothpick.openScope(this)
-    if (testMode) {
-      applicationScope.installModules(SmoothieApplicationModule(this))
-    } else {
+    if (!testMode()) {
       applicationScope.installModules(SmoothieApplicationModule(this), RemoteModule())
     }
   }
@@ -92,4 +92,6 @@ open class RemoteApplication : MultiDexApplication() {
     val application = context.applicationContext as RemoteApplication
     return application.refWatcher
   }
+
+  open internal fun testMode(): Boolean = false
 }

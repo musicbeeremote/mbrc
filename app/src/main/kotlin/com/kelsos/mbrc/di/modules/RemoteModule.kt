@@ -32,6 +32,8 @@ import com.kelsos.mbrc.services.PlaylistService
 import com.kelsos.mbrc.services.PlaylistServiceImpl
 import com.kelsos.mbrc.services.QueueService
 import com.kelsos.mbrc.services.QueueServiceImpl
+import com.kelsos.mbrc.services.ServiceChecker
+import com.kelsos.mbrc.services.ServiceCheckerImpl
 import com.kelsos.mbrc.utilities.SettingsManager
 import com.kelsos.mbrc.utilities.SettingsManagerImpl
 import rx.Scheduler
@@ -67,5 +69,6 @@ class RemoteModule : Module() {
 
     bind(SettingsManager::class.java).to(SettingsManagerImpl::class.java).singletonInScope()
     bind(ModelCache::class.java).to(ModelCacheImpl::class.java).singletonInScope()
+    bind(ServiceChecker::class.java).to(ServiceCheckerImpl::class.java).singletonInScope()
   }
 }
