@@ -19,6 +19,7 @@ import com.kelsos.mbrc.extensions.initLinear
 import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
+import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
 import toothpick.Toothpick
@@ -33,6 +34,7 @@ class BrowseArtistFragment : Fragment(),
   @BindView(R.id.empty_view) lateinit var emptyView: View
   @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
   @BindView(R.id.list_empty_title) lateinit var emptyTitle: TextView
+  @BindView(R.id.fastscroller) lateinit var fastScroller: RecyclerViewFastScroller
 
   @Inject lateinit var adapter: ArtistEntryAdapter
   @Inject lateinit var actionHandler: PopupActionHandler
@@ -70,7 +72,7 @@ class BrowseArtistFragment : Fragment(),
   override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     recycler.setHasFixedSize(true)
-    recycler.initLinear(adapter, emptyView)
+    recycler.initLinear(adapter, emptyView, fastScroller)
     adapter.setMenuItemSelectedListener(this)
     presenter.attach(this)
     presenter.load()

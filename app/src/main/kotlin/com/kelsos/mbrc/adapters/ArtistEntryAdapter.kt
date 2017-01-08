@@ -15,18 +15,16 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.library.Artist
+import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import javax.inject.Inject
 
 class ArtistEntryAdapter
-@Inject constructor(context: Activity) : RecyclerView.Adapter<ArtistEntryAdapter.ViewHolder>() {
-  private val inflater: LayoutInflater
+@Inject constructor(context: Activity) : RecyclerView.Adapter<ArtistEntryAdapter.ViewHolder>(), BubbleTextGetter {
+
+  private val inflater: LayoutInflater = LayoutInflater.from(context)
   private var data: FlowCursorList<Artist>? = null
   private var mListener: MenuItemSelectedListener? = null
-
-  init {
-    inflater = LayoutInflater.from(context)
-  }
 
   fun setMenuItemSelectedListener(listener: MenuItemSelectedListener) {
     mListener = listener
@@ -113,6 +111,14 @@ class ArtistEntryAdapter
   fun refresh() {
     data?.refresh()
     notifyDataSetChanged()
+  }
+
+  override fun getTextToShowInBubble(pos: Int): String {
+    val artist = data?.getItem(pos.toLong())?.artist
+    if (artist != null && artist.isNotBlank()) {
+      return artist.substring(0, 1)
+    }
+    return "-"
   }
 
   interface MenuItemSelectedListener {
