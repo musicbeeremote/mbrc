@@ -22,7 +22,7 @@ constructor(private val mainDataModel: MainDataModel,
   }
 
   override fun onSetVolumeTo(volume: Int) {
-    bus.post(UserAction.create(Protocol.PlayerVolume, volume))
+    post(UserAction.create(Protocol.PlayerVolume, volume))
   }
 
   override fun onAdjustVolume(direction: Int) {
