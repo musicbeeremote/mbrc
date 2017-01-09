@@ -45,6 +45,11 @@ android {
 
   testOptions {
     unitTests.returnDefaultValues = true
+    unitTests.all {
+      jacoco {
+        includeNoLocationClasses = true
+      }
+    }
   }
 
   compileOptions {
@@ -114,7 +119,8 @@ android {
   }
 
   dexOptions {
-    javaMaxHeapSize "5G"
+    javaMaxHeapSize "2G"
+
   }
 
   applicationVariants.all { variant ->
@@ -286,7 +292,7 @@ def initFabricPropertiesIfNeeded() {
 }
 
 coveralls {
-  jacocoReportPath = "${buildDir}/reports/coverage/debug/report.xml"
+  jacocoReportPath = "${buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
 }
 
 tasks.coveralls {
@@ -306,20 +312,30 @@ kapt {
 }
 
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testGithubDebugUnitTest', 'createGithubDebugCoverageReport']) {
+  group = "Reporting"
+  description "Generate jacoco coverage reports"
 
   reports {
     xml.enabled = true
     html.enabled = true
   }
 
-  def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+  def fileFilter = ['**/R.class',
+                    '**/R$*.class',
+                    '**/BuildConfig.*',
+                    '**/Manifest*.*',
+                    '**/*Test*.*',
+                    '**/FactoryRegistry.*',
+                    '**/MemberInjectorRegistry.*',
+                    '**/**_Table.*',
+                    'android/**/*.*']
   def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/github/debug", excludes: fileFilter)
   def mainSrc = "${project.projectDir}/src/main/kotlin"
 
   sourceDirectories = files([mainSrc])
   classDirectories = files([debugTree])
   executionData = fileTree(dir: "$buildDir", includes: [
-      "jacoco/testGithubDebugUnitTest.exec",
-      "outputs/code-coverage/connected/flavors/GITHUB/*coverage.ec"
+      "**/*.exec",
+      "**/*.ec"
   ])
 }
