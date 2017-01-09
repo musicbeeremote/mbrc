@@ -13,7 +13,7 @@ cache:
 env:
   global:
   - ADB_INSTALL_TIMEOUT=10    #Time out to 10 mins
-  - GRADLE_OPTS="-Dorg.gradle.jvmargs=-Xmx2560M"
+  - GRADLE_OPTS="-Dorg.gradle.jvmargs=-Xmx2868M -XX:MaxPermSize=2868m"
 
 android:
   update_sdk: true
@@ -61,6 +61,6 @@ before_script:
   - adb shell input keyevent 82 &
 
 script:
-  - ./gradlew jacocoTestReport -PdisablePreDex
+  - ./gradlew jacocoTestReport -PdisablePreDex --stacktrace
 after_success:
-  - ./gradlew coveralls -PdisablePreDex
+  - ./gradlew coveralls -PdisablePreDex --stacktrace
