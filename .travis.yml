@@ -13,7 +13,7 @@ cache:
 env:
   global:
   - ADB_INSTALL_TIMEOUT=10    #Time out to 10 mins
-  - GRADLE_OPTS="-Dorg.gradle.jvmargs=-Xmx2868M -XX:MaxPermSize=2868m"
+  #- GRADLE_OPTS="-Dorg.gradle.jvmargs=-Xmx2868M -XX:MaxPermSize=2868m"
 
 android:
   update_sdk: true
@@ -47,7 +47,8 @@ branches:
 notifications:
   email: false
 
-sudo: false
+# Container builds fail due to memory let's try non container
+sudo: true
 
 cache:
   directories:
