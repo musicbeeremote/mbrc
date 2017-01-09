@@ -13,7 +13,7 @@ cache:
 env:
   global:
   - ADB_INSTALL_TIMEOUT=10    #Time out to 10 mins
-  - GRADLE_OPTS="-Xms128m"
+  - GRADLE_OPTS="-Xms128m -Xmx2560M"
 
 android:
   update_sdk: true
