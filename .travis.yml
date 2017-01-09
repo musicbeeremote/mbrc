@@ -13,6 +13,7 @@ cache:
 env:
   global:
   - ADB_INSTALL_TIMEOUT=10    #Time out to 10 mins
+  - GRADLE_OPTS="-Xms128m"
 
 android:
   update_sdk: true
@@ -60,7 +61,7 @@ before_script:
   - adb shell input keyevent 82 &
 
 script:
-  - ./gradlew testGithubDebugUnitTest connectedGithubDebugAndroidTest -PdisablePreDex --stacktrace
+  - ./gradlew jacocoTestReport -PdisablePreDex
 
 after_success:
-  - ./gradlew jacocoTestReport coveralls
+  - ./gradlew coveralls -PdisablePreDex
