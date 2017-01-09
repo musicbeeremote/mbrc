@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.repository.data
 
 import com.kelsos.mbrc.data.library.Genre
+import com.kelsos.mbrc.data.library.Genre_Table
 import com.kelsos.mbrc.data.library.Genre_Table.genre
 import com.kelsos.mbrc.extensions.escapeLike
 import com.raizlabs.android.dbflow.kotlinextensions.*
@@ -29,7 +30,7 @@ class LocalGenreDataSource
 
   override fun loadAllCursor(): Observable<FlowCursorList<Genre>> {
     return Observable.fromEmitter({
-      val modelQueriable = select from Genre::class
+      val modelQueriable = (select from Genre::class).orderBy(Genre_Table.genre, true)
       val cursor = FlowCursorList.Builder(Genre::class.java).modelQueriable(modelQueriable).build()
       it.onNext(cursor)
       it.onCompleted()
@@ -40,6 +41,7 @@ class LocalGenreDataSource
   override fun search(term: String): Single<FlowCursorList<Genre>> {
     return Single.create<FlowCursorList<Genre>> {
       val modelQueriable = (select from Genre::class where genre.like("%${term.escapeLike()}%"))
+          .orderBy(Genre_Table.genre, true)
       val cursor = FlowCursorList.Builder(Genre::class.java).modelQueriable(modelQueriable).build()
       it.onSuccess(cursor)
     }
