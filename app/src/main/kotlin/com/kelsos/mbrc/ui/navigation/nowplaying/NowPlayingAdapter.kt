@@ -16,27 +16,31 @@ import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.rx.MapWithIndex
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import com.raizlabs.android.dbflow.list.FlowCursorList.OnCursorRefreshListener
 import rx.Observable
 import timber.log.Timber
 import javax.inject.Inject
+
 class NowPlayingAdapter
-@Inject constructor(context: Activity) : RecyclerView.Adapter<NowPlayingAdapter.TrackHolder>(), ItemTouchHelperAdapter, FlowCursorList.OnCursorRefreshListener<NowPlaying> {
+@Inject constructor(context: Activity) : RecyclerView.Adapter<NowPlayingAdapter.TrackHolder>(),
+    ItemTouchHelperAdapter,
+    OnCursorRefreshListener<NowPlaying> {
 
   private var cursor: FlowCursorList<NowPlaying>? = null
   private var playingTrackIndex: Int = 0
   private var currentTrack: String = ""
-  private val inflater: LayoutInflater
+  private val inflater: LayoutInflater = LayoutInflater.from(context)
 
   private var listener: NowPlayingListener? = null
-
-  init {
-    inflater = LayoutInflater.from(context)
-  }
 
   fun setPlayingTrack(index: Int) {
     notifyItemChanged(playingTrackIndex)
     this.playingTrackIndex = index
     notifyItemChanged(index)
+  }
+
+  fun getPlayingTrackIndex(): Int {
+    return this.playingTrackIndex
   }
 
   fun setPlayingTrack(path: String) {
@@ -133,9 +137,15 @@ class NowPlayingAdapter
     cursor?.refresh()
   }
 
+  fun update(cursor: FlowCursorList<NowPlaying>) {
+    this.cursor = cursor
+    notifyDataSetChanged()
+  }
+
   fun setListener(listener: NowPlayingListener) {
     this.listener = listener
   }
+
   /**
    * Callback when cursor refreshes.
 
@@ -146,27 +156,24 @@ class NowPlayingAdapter
   }
 
   interface NowPlayingListener {
-
     fun onPress(position: Int)
-    fun onMove(from: Int, to: Int)
 
+    fun onMove(from: Int, to: Int)
     fun onDismiss(position: Int)
+
   }
+
   class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     @BindView(R.id.track_title) lateinit var title: TextView
-    @BindView(R.id.track_artist) lateinit var artist: TextView
 
+    @BindView(R.id.track_artist) lateinit var artist: TextView
     @BindView(R.id.track_indicator_view) lateinit var trackPlaying: ImageView
+
     @BindView(R.id.track_container) lateinit var container: FrameLayout
 
     init {
       ButterKnife.bind(this, itemView)
     }
 
-  }
-
-  fun update(cursor: FlowCursorList<NowPlaying>) {
-    this.cursor = cursor
-    notifyDataSetChanged()
   }
 }
