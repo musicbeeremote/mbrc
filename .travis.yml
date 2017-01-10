@@ -29,7 +29,7 @@ android:
     - extra-android-m2repository
 
     # The android emulator image
-    - sys-img-armeabi-v7a-android-$ANDROID_EMULATOR_API_LEVEL
+    - sys-img-armeabi-v7a-google_apis-$ANDROID_EMULATOR_API_LEVEL
 
 jdk:
   - oraclejdk8
