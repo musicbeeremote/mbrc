@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.view.MenuItemCompat
@@ -27,9 +28,9 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class NowPlayingActivity : BaseActivity(),
-                           NowPlayingView,
-                           OnQueryTextListener,
-                           NowPlayingListener {
+    NowPlayingView,
+    OnQueryTextListener,
+    NowPlayingListener {
 
   @BindView(R.id.now_playing_list) lateinit var nowPlayingList: EmptyRecyclerView
   @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: MultiSwipeRefreshLayout
@@ -84,7 +85,9 @@ class NowPlayingActivity : BaseActivity(),
         swipeRefreshLayout.clearSwipeableChildren()
         swipeRefreshLayout.isRefreshing = false
         swipeRefreshLayout.isEnabled = false
-        swipeRefreshLayout.cancelPendingInputEvents()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          swipeRefreshLayout.cancelPendingInputEvents()
+        }
       } else {
         swipeRefreshLayout.setSwipeableChildren(R.id.now_playing_list, R.id.empty_view)
         swipeRefreshLayout.isEnabled = true
@@ -97,14 +100,14 @@ class NowPlayingActivity : BaseActivity(),
     adapter.setListener(this)
     swipeRefreshLayout.setOnRefreshListener { this.refresh() }
     presenter.attach(this)
-    refresh()
+    refresh(true)
   }
 
-  private fun refresh() {
+  private fun refresh(scrollToTrack: Boolean = false) {
     if (!swipeRefreshLayout.isRefreshing) {
       swipeRefreshLayout.isRefreshing = true
     }
-    presenter.reload()
+    presenter.reload(scrollToTrack)
   }
 
   override fun onStart() {
@@ -147,8 +150,11 @@ class NowPlayingActivity : BaseActivity(),
     adapter.refresh()
   }
 
-  override fun trackChanged(trackInfo: TrackInfo) {
+  override fun trackChanged(trackInfo: TrackInfo, scrollToTrack: Boolean) {
     adapter.setPlayingTrack(trackInfo.path)
+    if (scrollToTrack) {
+      nowPlayingList.scrollToPosition(adapter.getPlayingTrackIndex())
+    }
   }
 
   override fun failure(throwable: Throwable) {

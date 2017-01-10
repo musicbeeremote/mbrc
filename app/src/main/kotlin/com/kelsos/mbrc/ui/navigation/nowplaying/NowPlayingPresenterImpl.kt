@@ -25,12 +25,12 @@ class NowPlayingPresenterImpl
     BasePresenter<NowPlayingView>(),
     NowPlayingPresenter {
 
-  override fun reload() {
+  override fun reload(scrollToTrack: Boolean) {
     addSubcription(repository.getAndSaveRemote()
         .compose { schedule(it) }
         .subscribe({
           view?.update(it)
-          view?.trackChanged(model.trackInfo)
+          view?.trackChanged(model.trackInfo, scrollToTrack)
         }) {
           view?.failure(it)
         })
@@ -40,7 +40,7 @@ class NowPlayingPresenterImpl
     addSubcription(repository.getAllCursor().compose { schedule(it) }
         .subscribe({
           view?.update(it)
-          view?.trackChanged(model.trackInfo)
+          view?.trackChanged(model.trackInfo, true)
         }) {
           view?.failure(it)
         })
