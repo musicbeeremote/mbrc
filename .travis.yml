@@ -13,7 +13,7 @@ cache:
 env:
   global:
   - ADB_INSTALL_TIMEOUT=20    #Time out to 20 mins
-  - ANDROID_EMULATOR_API_LEVEL=22
+  - ANDROID_EMULATOR_API_LEVEL=24
   - ANDROID_ABI=armeabi-v7a
   - ANDROID_TAG=google_apis
   #- GRADLE_OPTS="-Dorg.gradle.jvmargs=-Xmx2868M -XX:MaxPermSize=2868m"
