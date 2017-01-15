@@ -7,6 +7,7 @@ import com.kelsos.mbrc.repository.AlbumRepository
 import com.kelsos.mbrc.repository.ArtistRepository
 import com.kelsos.mbrc.repository.GenreRepository
 import com.kelsos.mbrc.repository.TrackRepository
+import com.kelsos.mbrc.utilities.SettingsManager
 import rx.Scheduler
 import rx.Subscription
 import timber.log.Timber
@@ -20,6 +21,7 @@ class LibraryPresenterImpl
                     private val trackRepository: TrackRepository,
                     @Named("io") private val ioScheduler: Scheduler,
                     @Named("main") private val mainScheduler: Scheduler,
+                    private val settingsManager: SettingsManager,
                     private val bus: RxBus) : LibraryPresenter, BasePresenter<LibraryView>() {
 
   private var subscription: Subscription? = null
@@ -55,6 +57,22 @@ class LibraryPresenterImpl
     if (!running) {
       view.hideRefreshing()
     }
+  }
+
+  override fun loadArtistPreference() {
+    settingsManager.shouldDisplayOnlyAlbumArtists()
+        .subscribeOn(ioScheduler)
+        .observeOn(mainScheduler)
+        .subscribe({
+          view?.updateArtistOnlyPreference(it)
+        }, {
+
+        })
+  }
+
+  override fun setArtistPreference(albumArtistOnly: Boolean) {
+    settingsManager.setShouldDisplayOnlyAlbumArtist(albumArtistOnly)
+    bus.post(ArtistTabRefreshEvent())
   }
 }
 
