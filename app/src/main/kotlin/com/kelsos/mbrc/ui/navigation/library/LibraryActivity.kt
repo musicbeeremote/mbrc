@@ -25,15 +25,16 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class LibraryActivity : BaseActivity(),
-                        LibraryView,
-                        OnQueryTextListener,
-                        OnPageChangeListener {
+    LibraryView,
+    OnQueryTextListener,
+    OnPageChangeListener {
 
   @BindView(R.id.search_pager) lateinit var pager: ViewPager
   @BindView(R.id.pager_tab_strip) lateinit var tabs: TabLayout
 
   private var mSearchView: SearchView? = null
   private var searchView: MenuItem? = null
+  private var albumArtistOnly: MenuItem? = null
   private var pagerAdapter: LibraryPagerAdapter? = null
   private var scope: Scope? = null
   @Inject lateinit var presenter: LibraryPresenter
@@ -72,16 +73,26 @@ class LibraryActivity : BaseActivity(),
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     menuInflater.inflate(R.menu.library_search, menu)
     searchView = menu.findItem(R.id.library_search_item)
+    albumArtistOnly = menu.findItem(R.id.library_album_artist)
     mSearchView = MenuItemCompat.getActionView(searchView) as SearchView
     mSearchView!!.queryHint = getString(R.string.library_search_hint)
     mSearchView!!.setIconifiedByDefault(true)
     mSearchView!!.setOnQueryTextListener(this)
+    presenter.loadArtistPreference()
     return super.onCreateOptionsMenu(menu)
   }
 
   override fun onOptionsItemSelected(item: MenuItem?): Boolean {
     if (item?.itemId == R.id.library_refresh_item) {
       presenter.refresh()
+      return true
+    } else if (item?.itemId == R.id.library_album_artist) {
+      albumArtistOnly?.let {
+        it.isChecked = !it.isChecked
+        presenter.setArtistPreference(it.isChecked)
+      }
+
+      return true
     }
     return super.onOptionsItemSelected(item)
   }
@@ -112,6 +123,10 @@ class LibraryActivity : BaseActivity(),
 
   override fun onPageScrollStateChanged(state: Int) {
 
+  }
+
+  override fun updateArtistOnlyPreference(albumArtistOnly: Boolean?) {
+    this.albumArtistOnly?.isChecked = albumArtistOnly ?: false
   }
 
   override fun active(): Int {

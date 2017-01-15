@@ -6,4 +6,6 @@ import rx.Single
 
 interface ArtistRepository : Repository<Artist> {
   fun getArtistByGenre(genre: String): Single<FlowCursorList<Artist>>
+  fun getAlbumArtistsOnly(): Single<FlowCursorList<Artist>>
+  fun getAllRemoteAndShowAlbumArtist(): Single<FlowCursorList<Artist>>
 }
