@@ -170,4 +170,6 @@
   <string name="feedback_logs">Include Logs</string>
   <string name="change_log">Change Log</string>
   <string name="plugin_protocol_out_of_date">Some features may not work properly due to mbrc plugin running an older protocol version, please update.</string>
+  <string name="library_album_artists_only">Only Album Artists</string>
+  <string name="settings_key_album_artists_only">mbrc.settings.album_artist_only</string>
 </resources>

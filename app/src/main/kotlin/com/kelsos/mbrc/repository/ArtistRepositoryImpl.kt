@@ -12,7 +12,6 @@ class ArtistRepositoryImpl
 @Inject constructor(private val localDataSource: LocalArtistDataSource,
                     private val remoteDataSource: RemoteArtistDataSource) : ArtistRepository {
 
-
   override fun getArtistByGenre(genre: String): Single<FlowCursorList<Artist>> {
     return localDataSource.getArtistByGenre(genre)
   }
@@ -34,5 +33,13 @@ class ArtistRepositoryImpl
 
   override fun search(term: String): Single<FlowCursorList<Artist>> {
     return localDataSource.search(term)
+  }
+
+  override fun getAlbumArtistsOnly(): Single<FlowCursorList<Artist>> {
+    return localDataSource.getAlbumArtists()
+  }
+
+  override fun getAllRemoteAndShowAlbumArtist():  Single<FlowCursorList<Artist>> {
+    return getRemote().andThen(localDataSource.getAlbumArtists())
   }
 }

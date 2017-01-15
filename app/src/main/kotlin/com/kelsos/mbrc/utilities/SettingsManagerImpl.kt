@@ -19,6 +19,7 @@ class SettingsManagerImpl
 @Inject
 constructor(private val context: Application,
             private val preferences: SharedPreferences) : SettingsManager {
+
   init {
     setupManager()
   }
@@ -35,45 +36,56 @@ constructor(private val context: Application,
   }
 
   private fun loggingEnabled(): Boolean {
-    return preferences.getBoolean(context.getString(R.string.settings_key_debug_logging), false)
+    return preferences.getBoolean(getKey(R.string.settings_key_debug_logging), false)
   }
 
   private fun updatePreferences() {
-    val enabled = preferences.getBoolean(context.getString(R.string.settings_legacy_key_reduce_volume), false)
+    val enabled = preferences.getBoolean(getKey(R.string.settings_legacy_key_reduce_volume), false)
     if (enabled) {
-      preferences.edit().putString(context.getString(R.string.settings_key_incoming_call_action), REDUCE).apply()
+      preferences.edit().putString(getKey(R.string.settings_key_incoming_call_action), REDUCE).apply()
     }
   }
 
   override fun isNotificationControlEnabled(): Boolean {
-    return preferences.getBoolean(context.getString(R.string.settings_key_notification_control), true)
+    return preferences.getBoolean(getKey(R.string.settings_key_notification_control), true)
   }
 
   @CallAction override fun getCallAction(): String = preferences.getString(
-      context.getString(R.string.settings_key_incoming_call_action), NONE)
+      getKey(R.string.settings_key_incoming_call_action), NONE)
 
   override fun isPluginUpdateCheckEnabled(): Boolean {
-    return preferences.getBoolean(context.getString(R.string.settings_key_plugin_check), false)
+    return preferences.getBoolean(getKey(R.string.settings_key_plugin_check), false)
   }
 
   override fun getLastUpdated(): Date {
-    return Date(preferences.getLong(context.getString(R.string.settings_key_last_update_check), 0))
+    return Date(preferences.getLong(getKey(R.string.settings_key_last_update_check), 0))
   }
 
   override fun setLastUpdated(lastChecked: Date) {
     preferences.edit()
-        .putLong(context.getString(R.string.settings_key_last_update_check), lastChecked.time)
+        .putLong(getKey(R.string.settings_key_last_update_check), lastChecked.time)
         .apply()
+  }
+
+  override fun shouldDisplayOnlyAlbumArtists(): Single<Boolean> {
+    return Single.fromCallable {
+      return@fromCallable preferences.getBoolean(getKey(R.string.settings_key_album_artists_only), false)
+    }
+  }
+
+  override fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean) {
+    preferences.edit().putBoolean(getKey(R.string.settings_key_album_artists_only), onlyAlbumArtist).apply()
   }
 
   override fun shouldShowPluginUpdate(): Single<Boolean> {
     return Single.fromCallable {
-      val lastVersionCode = preferences.getLong(context.getString(R.string.settings_key_last_version_run), 0)
+
+      val lastVersionCode = preferences.getLong(getKey(R.string.settings_key_last_version_run), 0)
       val currentVersion = RemoteUtils.getVersionCode(context)
 
       if (lastVersionCode < currentVersion) {
         preferences.edit()
-            .putLong(context.getString(R.string.settings_key_last_version_run), currentVersion)
+            .putLong(getKey(R.string.settings_key_last_version_run), currentVersion)
             .apply()
         Timber.d("Update or fresh install")
 
@@ -83,13 +95,18 @@ constructor(private val context: Application,
     }
   }
 
+  private fun getKey(settingsKey: Int) = context.getString(settingsKey)
+
 }
 
 interface SettingsManager {
 
+  fun shouldDisplayOnlyAlbumArtists() : Single<Boolean>
+  fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean)
   fun shouldShowPluginUpdate(): Single<Boolean>
   fun isNotificationControlEnabled(): Boolean
   fun isPluginUpdateCheckEnabled(): Boolean
+
   @CallAction fun getCallAction(): String
 
   @StringDef(NONE,

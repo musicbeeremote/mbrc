@@ -5,6 +5,8 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.ArtistRepository
+import com.kelsos.mbrc.ui.navigation.library.ArtistTabRefreshEvent
+import com.kelsos.mbrc.utilities.SettingsManager
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import rx.Scheduler
 import rx.Single
@@ -15,6 +17,7 @@ import javax.inject.Named
 class BrowseArtistPresenterImpl
 @Inject constructor(private val bus: RxBus,
                     private val repository: ArtistRepository,
+                    private val settingsManager: SettingsManager,
                     @Named("io") private val ioScheduler: Scheduler,
                     @Named("main") private val mainScheduler: Scheduler) :
     BasePresenter<BrowseArtistView>(),
@@ -23,6 +26,7 @@ class BrowseArtistPresenterImpl
   override fun attach(view: BrowseArtistView) {
     super.attach(view)
     bus.register(this, LibraryRefreshCompleteEvent::class.java, { load() })
+    bus.register(this, ArtistTabRefreshEvent::class.java, { load() })
   }
 
   override fun detach() {
@@ -31,7 +35,14 @@ class BrowseArtistPresenterImpl
   }
 
   override fun load() {
-    addSubcription(repository.getAllCursor().compose { schedule(it) }.subscribe({
+    val artistObservable = settingsManager.shouldDisplayOnlyAlbumArtists().flatMap {
+      if (it) {
+        return@flatMap repository.getAlbumArtistsOnly()
+      } else {
+        return@flatMap repository.getAllCursor()
+      }
+    }
+    addSubcription(artistObservable.compose { schedule(it) }.subscribe({
       view?.update(it)
     }, {
       Timber.v(it, "Error while loading the data from the database")
@@ -40,7 +51,14 @@ class BrowseArtistPresenterImpl
   }
 
   override fun reload() {
-    addSubcription(repository.getAndSaveRemote().compose { schedule(it) }.subscribe({
+    val artistObservable = settingsManager.shouldDisplayOnlyAlbumArtists().flatMap {
+      if (it) {
+        return@flatMap repository.getAllRemoteAndShowAlbumArtist()
+      } else {
+        return@flatMap repository.getAndSaveRemote()
+      }
+    }
+    addSubcription(artistObservable.compose { schedule(it) }.subscribe({
       view?.update(it)
     }, {
       Timber.v(it, "Error retrieving the data")
