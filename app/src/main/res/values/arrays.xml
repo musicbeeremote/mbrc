@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string-array name="search_click_options">
+  <string-array name="preferences_library_track_default_action_option_labels">
     <item>Queue Next</item>
     <item>Queue Last</item>
     <item>Play Now</item>
-    <item>Get Subcategory</item>
   </string-array>
 
-  <string-array name="search_click_options_values">
+  <string-array name="preferences_library_track_default_action_option_values">
     <item>next</item>
     <item>last</item>
     <item>now</item>
-    <item>sub</item>
   </string-array>
 
   <string-array name="incoming_action_options">

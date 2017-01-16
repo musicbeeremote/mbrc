@@ -37,13 +37,13 @@
 
   </android.support.v7.preference.PreferenceCategory>
   <android.support.v7.preference.ListPreference
-    android:defaultValue="@string/search_click_default_value"
-    android:dialogTitle="@string/settings_search_default_title"
-    android:entries="@array/search_click_options"
-    android:entryValues="@array/search_click_options_values"
-    android:key="@string/settings_search_default_key"
-    android:summary="@string/settings_search_default_summary"
-    android:title="@string/settings_search_default_title"/>
+    android:defaultValue="@string/preferences_library_track_default_action_default_value"
+    android:dialogTitle="@string/preferences_library_track_default_action_title"
+    android:entries="@array/preferences_library_track_default_action_option_labels"
+    android:entryValues="@array/preferences_library_track_default_action_option_values"
+    android:key="@string/preferences_library_track_default_action_key"
+    android:summary="@string/preferences_library_track_default_action_summary"
+    android:title="@string/preferences_library_track_default_action_title"/>
 
   <android.support.v7.preference.PreferenceCategory android:title="@string/preferences_category_about">
     <android.support.v7.preference.Preference
