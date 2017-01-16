@@ -6,7 +6,6 @@ import android.view.MenuItem
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.annotations.Queue.QueueType
-import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.data.library.Genre
@@ -138,39 +137,19 @@ constructor(private val settings: BasicSettingsHelper,
   }
 
   fun albumSelected(album: Album, context: Context) {
-    val defaultAction = settings.defaultAction
-    if (defaultAction != Const.SUB) {
-      queueAlbum(album, defaultAction)
-    } else {
-      openProfile(album, context)
-    }
+    openProfile(album, context)
   }
 
   fun artistSelected(artist: Artist, context: Context) {
-    val defaultAction = settings.defaultAction
-    if (defaultAction != Const.SUB) {
-      queueArtist(artist, defaultAction)
-    } else {
-      openProfile(artist, context)
-    }
+    openProfile(artist, context)
   }
 
   fun genreSelected(genre: Genre, context: Context) {
-    val defaultAction = settings.defaultAction
-    if (defaultAction != Const.SUB) {
-      queueGenre(genre, defaultAction)
-    } else {
-      openProfile(genre, context)
-    }
+    openProfile(genre, context)
   }
 
   fun trackSelected(track: Track) {
-    var defaultAction = settings.defaultAction
-    if (Const.SUB == defaultAction) {
-      defaultAction = Queue.NOW
-    }
-
-    queueTrack(track, defaultAction)
+    queueTrack(track, settings.defaultAction)
   }
 
   private fun openProfile(artist: Artist, context: Context) {
