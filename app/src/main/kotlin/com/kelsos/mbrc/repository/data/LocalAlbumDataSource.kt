@@ -9,6 +9,7 @@ import com.kelsos.mbrc.data.library.Track_Table
 import com.kelsos.mbrc.extensions.escapeLike
 import com.raizlabs.android.dbflow.kotlinextensions.*
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import com.raizlabs.android.dbflow.sql.language.ConditionGroup.clause
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import rx.Emitter
@@ -46,14 +47,17 @@ class LocalAlbumDataSource
   }
 
   fun getAlbumsByArtist(artist: String): Single<FlowCursorList<Album>> {
+
     return Single.create<FlowCursorList<Album>> {
       val selectAlbum = SQLite.select(Album_Table.album.withTable(), Album_Table.artist.withTable()).distinct()
+      var artistOrAlbumArtist = clause(Track_Table.artist.withTable().`is`(artist))
+          .or(Track_Table.album_artist.withTable().`is`(artist))
+      val columns = clause(Track_Table.album.withTable().eq(Album_Table.album.withTable()))
+          .and(Track_Table.album_artist.withTable().eq(Album_Table.artist.withTable()))
       val modelQueriable = (selectAlbum from Album::class
-          leftOuterJoin Track::class
-          on Track_Table.artist.withTable().eq(Album_Table.artist.withTable())
-          where Track_Table.artist.withTable().`is`(artist)
-          or Track_Table.album_artist.withTable().`is`(artist)
-          and Track_Table.album.withTable().`is`(album.withTable()))
+          innerJoin Track::class
+          on columns
+          where artistOrAlbumArtist)
           .orderBy(Album_Table.artist.withTable(), true)
           .orderBy(album.withTable(), true)
       val cursor = FlowCursorList.Builder(Album::class.java).modelQueriable(modelQueriable).build()
