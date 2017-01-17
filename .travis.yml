@@ -61,13 +61,14 @@ cache:
 before_script:
   - echo no | android create avd --force -n test -t "android-"$ANDROID_EMULATOR_API_LEVEL --abi $ANDROID_ABI --tag $ANDROID_TAG
   - emulator -avd test -no-audio -no-window &
+
+script:
   - android-wait-for-emulator
+  - adb devices
   - adb shell input keyevent 82 &
   - curl -o file.apk "https://dl.bintray.com/linkedin/maven/com/linkedin/testbutler/test-butler-app/1.2.0/test-butler-app-1.2.0.apk" && adb install file.apk
   - adb shell input tap 400 933 & #Hopefully it will close that annoying "Process system isn't responding" dialog that fails the tests
-
-script:
-  - ./gradlew jacocoTestReport -PdisablePreDex --stacktrace
+  - ./gradlew jacocoTestReport -PdisablePreDex --continue --stacktrace
 after_success:
   - ./gradlew coveralls -PdisablePreDex --stacktrace
 
