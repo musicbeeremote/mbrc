@@ -39,17 +39,29 @@ class NowPlayingActivity : BaseActivity(),
 
   @Inject lateinit var presenter: NowPlayingPresenter
   private var searchView: SearchView? = null
-  private var searchItem: MenuItem? = null
+  private var searchMenuItem: MenuItem? = null
   private lateinit var scope: Scope
   private lateinit var touchListener: NowPlayingTouchListener
 
   override fun onQueryTextSubmit(query: String): Boolean {
+    closeSearch()
     presenter.search(query)
-    searchView!!.setQuery("", false)
-    searchView!!.isIconified = true
-    searchView!!.clearFocus()
-    MenuItemCompat.collapseActionView(searchItem)
     return true
+  }
+
+  private fun closeSearch(): Boolean {
+    searchView?.let {
+      if (it.isShown) {
+        it.isIconified = true
+        it.isFocusable = false
+        it.clearFocus()
+        it.setQuery("", false)
+        searchMenuItem?.collapseActionView()
+        MenuItemCompat.collapseActionView(searchMenuItem)
+        return true
+      }
+    }
+    return false
   }
 
   override fun onQueryTextChange(newText: String): Boolean {
@@ -58,8 +70,8 @@ class NowPlayingActivity : BaseActivity(),
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     menuInflater.inflate(R.menu.nowplaying_search, menu)
-    searchItem = menu.findItem(R.id.now_playing_search)
-    searchView = MenuItemCompat.getActionView(searchItem) as SearchView
+    searchMenuItem = menu.findItem(R.id.now_playing_search)
+    searchView = MenuItemCompat.getActionView(searchMenuItem) as SearchView
     searchView?.queryHint = getString(R.string.now_playing_search_hint)
     searchView?.setIconifiedByDefault(true)
     searchView?.setOnQueryTextListener(this)
@@ -160,5 +172,12 @@ class NowPlayingActivity : BaseActivity(),
   override fun failure(throwable: Throwable) {
     swipeRefreshLayout.isRefreshing = false
     Snackbar.make(nowPlayingList, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
+  }
+
+  override fun onBackPressed() {
+    if (closeSearch()) {
+      return
+    }
+    super.onBackPressed()
   }
 }
