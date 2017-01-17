@@ -32,8 +32,8 @@ class LibraryActivity : BaseActivity(),
   @BindView(R.id.search_pager) lateinit var pager: ViewPager
   @BindView(R.id.pager_tab_strip) lateinit var tabs: TabLayout
 
-  private var mSearchView: SearchView? = null
-  private var searchView: MenuItem? = null
+  private var searchView: SearchView? = null
+  private var searchMenuItem: MenuItem? = null
   private var albumArtistOnly: MenuItem? = null
   private var pagerAdapter: LibraryPagerAdapter? = null
   private var scope: Scope? = null
@@ -43,13 +43,29 @@ class LibraryActivity : BaseActivity(),
 
   override fun onQueryTextSubmit(query: String): Boolean {
     if (!TextUtils.isEmpty(query) && query.trim { it <= ' ' }.isNotEmpty()) {
+      closeSearch()
+
       val searchIntent = Intent(this, SearchResultsActivity::class.java)
       searchIntent.putExtra(SearchResultsActivity.QUERY, query.trim { it <= ' ' })
       startActivity(searchIntent)
     }
-    mSearchView!!.isIconified = true
-    MenuItemCompat.collapseActionView(searchView)
+
     return true
+  }
+
+  private fun closeSearch(): Boolean {
+    searchView?.let {
+      if (it.isShown) {
+        it.isIconified = true
+        it.isFocusable = false
+        it.clearFocus()
+        it.setQuery("", false)
+        searchMenuItem?.collapseActionView()
+        MenuItemCompat.collapseActionView(searchMenuItem)
+        return true
+      }
+    }
+    return false
   }
 
   override fun onQueryTextChange(newText: String): Boolean {
@@ -72,12 +88,12 @@ class LibraryActivity : BaseActivity(),
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     menuInflater.inflate(R.menu.library_search, menu)
-    searchView = menu.findItem(R.id.library_search_item)
+    searchMenuItem = menu.findItem(R.id.library_search_item)
     albumArtistOnly = menu.findItem(R.id.library_album_artist)
-    mSearchView = MenuItemCompat.getActionView(searchView) as SearchView
-    mSearchView!!.queryHint = getString(R.string.library_search_hint)
-    mSearchView!!.setIconifiedByDefault(true)
-    mSearchView!!.setOnQueryTextListener(this)
+    searchView = MenuItemCompat.getActionView(searchMenuItem) as SearchView
+    searchView!!.queryHint = getString(R.string.library_search_hint)
+    searchView!!.setIconifiedByDefault(true)
+    searchView!!.setOnQueryTextListener(this)
     presenter.loadArtistPreference()
     return super.onCreateOptionsMenu(menu)
   }
@@ -111,6 +127,13 @@ class LibraryActivity : BaseActivity(),
   override fun onStop() {
     super.onStop()
     presenter.detach()
+  }
+
+  override fun onBackPressed() {
+    if (closeSearch()) {
+      return
+    }
+    super.onBackPressed()
   }
 
   override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
