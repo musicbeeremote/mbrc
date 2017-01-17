@@ -70,3 +70,9 @@ script:
   - ./gradlew jacocoTestReport -PdisablePreDex --stacktrace
 after_success:
   - ./gradlew coveralls -PdisablePreDex --stacktrace
+
+after_failure:
+  - wget http://imgur.com/tools/imgurbash.sh
+  - chmod a+x imgurbash.sh
+  - adb shell screencap -p | sed 's/\r$//' &gt; screen.png
+  - ./imgurbash.sh screen.png
