@@ -67,7 +67,7 @@ script:
   - adb devices
   - adb shell input keyevent 82 &
   - curl -o file.apk "https://dl.bintray.com/linkedin/maven/com/linkedin/testbutler/test-butler-app/1.2.0/test-butler-app-1.2.0.apk" && adb install file.apk
-  - adb shell input tap 400 933 & #Hopefully it will close that annoying "Process system isn't responding" dialog that fails the tests
+  - adb shell input tap 240 390 & #Hopefully it will close that annoying "Process system isn't responding" dialog that fails the tests
   - ./gradlew jacocoTestReport -PdisablePreDex --continue --stacktrace
 after_success:
   - ./gradlew coveralls -PdisablePreDex --stacktrace
