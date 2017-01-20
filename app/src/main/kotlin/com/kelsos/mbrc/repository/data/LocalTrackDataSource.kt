@@ -120,4 +120,17 @@ class LocalTrackDataSource
       return@fromCallable trackList
     }
   }
+
+  fun getAllTrackPaths(): Single<List<String>> {
+    return Single.fromCallable {
+      val trackList = (select from Track::class)
+          .orderBy(Track_Table.album_artist, true)
+          .orderBy(Track_Table.album, true)
+          .orderBy(Track_Table.disc, true)
+          .orderBy(Track_Table.trackno, true)
+          .queryList().filter { !it.src.isNullOrEmpty() }.map { it.src!! }
+
+      return@fromCallable trackList
+    }
+  }
 }

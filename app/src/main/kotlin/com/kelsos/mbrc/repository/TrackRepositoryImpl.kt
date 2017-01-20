@@ -12,8 +12,6 @@ class TrackRepositoryImpl
 @Inject constructor(private val localDataSource: LocalTrackDataSource,
                     private val remoteDataSource: RemoteTrackDataSource) : TrackRepository {
 
-
-
   override fun getAllCursor(): Single<FlowCursorList<Track>> {
     return localDataSource.loadAllCursor().toSingle()
   }
@@ -51,5 +49,9 @@ class TrackRepositoryImpl
 
   override fun getAlbumTrackPaths(album: String, artist: String): Single<List<String>> {
     return localDataSource.getAlbumTrackPaths(album, artist)
+  }
+
+  override fun getAllTrackPaths(): Single<List<String>> {
+    return localDataSource.getAllTrackPaths()
   }
 }
