@@ -31,11 +31,6 @@ object Protocol {
   val NowPlayingListSearch = "nowplayinglistsearch"
   val NowPlayingQueue = "nowplayingqueue"
 
-  val LibraryQueueGenre = "libraryqueuegenre"
-  val LibraryQueueArtist = "libraryqueueartist"
-  val LibraryQueueAlbum = "libraryqueuealbum"
-  val LibraryQueueTrack = "libraryqueuetrack"
-
   val ALL = "All"
   val DISCOVERY = "discovery"
 
@@ -56,6 +51,5 @@ object Protocol {
   val LibraryBrowseTracks = "browsetracks"
   val ONE = "one"
 
-  var ProtocolVersionNumber = 3
-
+  val ProtocolVersionNumber = 4
 }

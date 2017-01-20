@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.services
 
+import com.kelsos.mbrc.annotations.Queue.QueueType
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.CoverPayload
 import com.kelsos.mbrc.data.QueuePayload
@@ -9,8 +10,8 @@ import javax.inject.Inject
 
 class QueueServiceImpl
 @Inject constructor() : ServiceBase(), QueueService {
-  override fun queue(type: String, tracks: List<String>): Single<QueueResponse> {
-    return request(Protocol.NowPlayingQueue, QueuePayload(type, tracks)).first().toSingle().flatMap {
+  override fun queue(@QueueType type: String, tracks: List<String>, play: String?): Single<QueueResponse> {
+    return request(Protocol.NowPlayingQueue, QueuePayload(type, tracks, play)).first().toSingle().flatMap {
       return@flatMap Single.fromCallable {
         val payload = mapper.readValue<QueueResponse>(it.data as String, QueueResponse::class.java)
         if (payload.code == CoverPayload.SUCCESS) {
