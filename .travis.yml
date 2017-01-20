@@ -13,9 +13,9 @@ cache:
 env:
   global:
   - ADB_INSTALL_TIMEOUT=20    #Time out to 20 mins
-  - ANDROID_EMULATOR_API_LEVEL=24
+  - ANDROID_EMULATOR_API_LEVEL=21
   - ANDROID_ABI=armeabi-v7a
-  - ANDROID_TAG=google_apis
+  #- ANDROID_TAG=google_apis
   #- GRADLE_OPTS="-Dorg.gradle.jvmargs=-Xmx2868M -XX:MaxPermSize=2868m"
 
 android:
@@ -26,10 +26,11 @@ android:
     - build-tools-25.0.2
     - android-$ANDROID_EMULATOR_API_LEVEL
     - android-25
+    - extra-google-m2repository
     - extra-android-m2repository
 
     # The android emulator image
-    - sys-img-armeabi-v7a-google_apis-$ANDROID_EMULATOR_API_LEVEL
+    - sys-img-armeabi-v7a-$ANDROID_EMULATOR_API_LEVEL
 
 jdk:
   - oraclejdk8
@@ -59,14 +60,14 @@ cache:
 
 # Emulator Management: Create, Start and Wait
 before_script:
-  - echo no | android create avd --force -n test -t "android-"$ANDROID_EMULATOR_API_LEVEL --abi $ANDROID_ABI --tag $ANDROID_TAG
+  - echo no | android create avd --force -n test -t "android-"$ANDROID_EMULATOR_API_LEVEL --abi $ANDROID_ABI # --tag $ANDROID_TAG
   - emulator -avd test -no-audio -no-window &
 
 script:
   - android-wait-for-emulator
   - adb devices
-  - adb shell input keyevent 82 &
   - curl -o file.apk "https://dl.bintray.com/linkedin/maven/com/linkedin/testbutler/test-butler-app/1.2.0/test-butler-app-1.2.0.apk" && adb install file.apk
+  - adb shell input keyevent 82 &
   - adb shell input tap 240 390 & #Hopefully it will close that annoying "Process system isn't responding" dialog that fails the tests
   - ./gradlew jacocoTestReport -PdisablePreDex --continue --stacktrace
 after_success:
