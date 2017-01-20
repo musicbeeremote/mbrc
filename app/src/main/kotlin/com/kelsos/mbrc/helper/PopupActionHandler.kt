@@ -17,8 +17,8 @@ import com.kelsos.mbrc.ui.navigation.library.album_tracks.AlbumTracksActivity
 import com.kelsos.mbrc.ui.navigation.library.artist_albums.ArtistAlbumsActivity
 import com.kelsos.mbrc.ui.navigation.library.genre_artists.GenreArtistsActivity
 import rx.Scheduler
+import rx.Single
 import timber.log.Timber
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -119,21 +119,33 @@ constructor(private val settings: BasicSettingsHelper,
       R.id.popup_track_queue_next -> Queue.NEXT
       R.id.popup_track_queue_last -> Queue.LAST
       R.id.popup_track_play -> Queue.NOW
+      R.id.popup_track_play_queue_all -> Queue.ADD_ALL
       else -> Queue.NOW
     }
 
     queueTrack(entry, type)
   }
 
-  private fun queueTrack(entry: Track, type: String) {
-    val list = ArrayList<String>()
-    list.add(entry.src!!)
+  private fun queueTrack(entry: Track, @QueueType type: String) {
 
-    queueService.queue(type, list).subscribeOn(ioScheduler).subscribe({
-
-    }) {
-      Timber.v(it, "Failed to queue")
+    val trackSource: Single<List<String>>
+    val path:String?
+    if (type == Queue.ADD_ALL) {
+      trackSource = trackRepository.getAllTrackPaths()
+      path = entry.src
+    } else {
+      trackSource = Single.fromCallable {
+        val list = listOf(entry.src!!)
+        return@fromCallable list
+      }
+      path = null
     }
+
+    trackSource.flatMap { queueService.queue(type, it, path) }
+        .subscribeOn(ioScheduler)
+        .subscribe({ }) {
+          Timber.v(it, "Failed to queue")
+        }
   }
 
   fun albumSelected(album: Album, context: Context) {

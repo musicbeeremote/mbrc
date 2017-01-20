@@ -10,4 +10,5 @@ interface TrackRepository : Repository<Track> {
   fun getAlbumTrackPaths(album: String, artist: String): Single<List<String>>
   fun getGenreTrackPaths(genre: String): Single<List<String>>
   fun getArtistTrackPaths(artist: String): Single<List<String>>
+  fun getAllTrackPaths(): Single<List<String>>
 }
