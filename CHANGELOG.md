@@ -4,6 +4,18 @@ Change Log
 # Versions
 
 ## 1.1.0
+- (#95) Refreshes the playlists along with the library data.
+- (#96) Sorting now starts only from the triple dash icon in the now playing.
+- (#100) Adds the option to enqueue all tracks and play the selected on the library track tab.
+- (#91) Fixes the library search collapse that did not work previously.
+- (#94) Reworks the default action option to affect only the track view.
+- (#93) Fixes the query for showing the albums of an artist.
+- (#92) Adds the option to show only album artists in the library view.
+- (#90) Fixes the tab colors in the Help screen.
+- (#105) Automatically scrolls to the playing track when entering the now playing screen.
+- (#97) Fixes an issue where the remote session volume slider wouldn't work.
+- (#102) Fixes the ordering of the Genres to alphabetical.
+- (#99) Adds fast scrolling to the library tabs.
 
 ## 1.0.1
 - Fixes a crash with a null extras payload when updating the widget.
