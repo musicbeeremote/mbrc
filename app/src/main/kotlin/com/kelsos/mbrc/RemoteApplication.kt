@@ -19,7 +19,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 
 open class RemoteApplication : MultiDexApplication() {
 
-  private lateinit var refWatcher: RefWatcher
+  private var refWatcher: RefWatcher? = null
 
   @CallSuper
   override fun onCreate() {
@@ -39,6 +39,10 @@ open class RemoteApplication : MultiDexApplication() {
   }
 
   private fun initializeLeakCanary() {
+    if (testMode()){
+      return
+    }
+
     if (LeakCanary.isInAnalyzerProcess(this)) {
       // This process is dedicated to LeakCanary for heap analysis.
       // You should not init your app in this process.
@@ -90,7 +94,7 @@ open class RemoteApplication : MultiDexApplication() {
     return RefWatcher.DISABLED
   }
 
-  fun getRefWatcher(context: Context): RefWatcher {
+  fun getRefWatcher(context: Context): RefWatcher? {
     val application = context.applicationContext as RemoteApplication
     return application.refWatcher
   }
