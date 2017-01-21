@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.view.MenuItemCompat
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.SearchView.OnQueryTextListener
 import android.support.v7.widget.helper.ItemTouchHelper
@@ -17,6 +18,7 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper
 import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingAdapter.NowPlayingListener
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
@@ -30,6 +32,7 @@ import javax.inject.Inject
 class NowPlayingActivity : BaseActivity(),
     NowPlayingView,
     OnQueryTextListener,
+    OnStartDragListener,
     NowPlayingListener {
 
   @BindView(R.id.now_playing_list) lateinit var nowPlayingList: EmptyRecyclerView
@@ -42,6 +45,8 @@ class NowPlayingActivity : BaseActivity(),
   private var searchMenuItem: MenuItem? = null
   private lateinit var scope: Scope
   private lateinit var touchListener: NowPlayingTouchListener
+  private var itemTouchHelper: ItemTouchHelper? = null
+
 
   override fun onQueryTextSubmit(query: String): Boolean {
     closeSearch()
@@ -107,8 +112,8 @@ class NowPlayingActivity : BaseActivity(),
     })
     nowPlayingList.addOnItemTouchListener(touchListener)
     val callback = SimpleItemTouchHelper(adapter)
-    val helper = ItemTouchHelper(callback)
-    helper.attachToRecyclerView(nowPlayingList)
+    itemTouchHelper = ItemTouchHelper(callback)
+    itemTouchHelper!!.attachToRecyclerView(nowPlayingList)
     adapter.setListener(this)
     swipeRefreshLayout.setOnRefreshListener { this.refresh() }
     presenter.attach(this)
@@ -179,5 +184,9 @@ class NowPlayingActivity : BaseActivity(),
       return
     }
     super.onBackPressed()
+  }
+
+  override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
+    itemTouchHelper?.startDrag(viewHolder)
   }
 }

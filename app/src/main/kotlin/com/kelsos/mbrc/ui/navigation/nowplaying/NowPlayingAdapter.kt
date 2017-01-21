@@ -1,9 +1,11 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import android.app.Activity
+import android.support.v4.view.MotionEventCompat
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.LayoutInflater
+import android.view.MotionEvent.ACTION_DOWN
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -15,6 +17,7 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.rx.MapWithIndex
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter
+import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.list.FlowCursorList.OnCursorRefreshListener
 import rx.Observable
@@ -25,6 +28,8 @@ class NowPlayingAdapter
 @Inject constructor(context: Activity) : RecyclerView.Adapter<NowPlayingAdapter.TrackHolder>(),
     ItemTouchHelperAdapter,
     OnCursorRefreshListener<NowPlaying> {
+
+  private val dragStartListener: OnStartDragListener = context as OnStartDragListener
 
   private var cursor: FlowCursorList<NowPlaying>? = null
   private var playingTrackIndex: Int = 0
@@ -60,6 +65,12 @@ class NowPlayingAdapter
     val holder = TrackHolder(view)
     holder.itemView.setOnClickListener { onClick(holder) }
     holder.container.setOnClickListener { onClick(holder) }
+    holder.dragHandle.setOnTouchListener { view, motionEvent ->
+      if (MotionEventCompat.getActionMasked(motionEvent) == ACTION_DOWN) {
+        dragStartListener.onStartDrag(holder)
+      }
+      return@setOnTouchListener false
+    }
     return holder
   }
 
@@ -157,7 +168,6 @@ class NowPlayingAdapter
 
   interface NowPlayingListener {
     fun onPress(position: Int)
-
     fun onMove(from: Int, to: Int)
     fun onDismiss(position: Int)
 
@@ -165,11 +175,10 @@ class NowPlayingAdapter
 
   class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     @BindView(R.id.track_title) lateinit var title: TextView
-
     @BindView(R.id.track_artist) lateinit var artist: TextView
     @BindView(R.id.track_indicator_view) lateinit var trackPlaying: ImageView
-
     @BindView(R.id.track_container) lateinit var container: FrameLayout
+    @BindView(R.id.drag_handle) lateinit var dragHandle: View
 
     init {
       ButterKnife.bind(this, itemView)
