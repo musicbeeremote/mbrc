@@ -3,10 +3,7 @@ package com.kelsos.mbrc.ui.navigation.library
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.repository.AlbumRepository
-import com.kelsos.mbrc.repository.ArtistRepository
-import com.kelsos.mbrc.repository.GenreRepository
-import com.kelsos.mbrc.repository.TrackRepository
+import com.kelsos.mbrc.repository.*
 import com.kelsos.mbrc.utilities.SettingsManager
 import rx.Scheduler
 import rx.Subscription
@@ -19,6 +16,7 @@ class LibraryPresenterImpl
                     private val artistRepository: ArtistRepository,
                     private val albumRepository: AlbumRepository,
                     private val trackRepository: TrackRepository,
+                    private val playlistRepository: PlaylistRepository,
                     @Named("io") private val ioScheduler: Scheduler,
                     @Named("main") private val mainScheduler: Scheduler,
                     private val settingsManager: SettingsManager,
@@ -37,6 +35,7 @@ class LibraryPresenterImpl
         .andThen(artistRepository.getRemote())
         .andThen(albumRepository.getRemote())
         .andThen(trackRepository.getRemote())
+        .andThen(playlistRepository.getRemote())
         .subscribeOn(ioScheduler)
         .observeOn(mainScheduler)
         .doOnTerminate {
