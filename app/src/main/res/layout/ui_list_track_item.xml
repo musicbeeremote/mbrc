@@ -23,6 +23,7 @@
       tools:ignore="UselessParent">
 
       <LinearLayout
+        android:id="@+id/drag_handle"
         android:layout_width="42dp"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
