@@ -41,6 +41,7 @@ android {
     multiDexEnabled true
 
     testInstrumentationRunner 'com.kelsos.mbrc.MockTestRunner'
+    testApplicationId "com.kelsos.mbrc.test"
   }
 
   testOptions {

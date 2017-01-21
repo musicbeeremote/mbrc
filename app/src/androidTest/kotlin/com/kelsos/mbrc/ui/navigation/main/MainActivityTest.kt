@@ -7,10 +7,8 @@ import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.assertion.ViewAssertions.doesNotExist
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.intent.rule.IntentsTestRule
+import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE
-import android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
-import android.support.test.espresso.matcher.ViewMatchers.withId
-import android.support.test.espresso.matcher.ViewMatchers.withText
 import android.support.test.filters.LargeTest
 import android.support.test.runner.AndroidJUnit4
 import com.kelsos.mbrc.R
@@ -28,9 +26,7 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.anyString
-import org.mockito.Mockito.mock
+import org.mockito.Mockito.*
 import rx.Completable
 import rx.Scheduler
 import rx.Single
@@ -84,7 +80,7 @@ class MainActivityTest {
     activityRule.launchActivity(Intent())
     onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.plugin_protocol_out_of_date)))
         .check(doesNotExist())
-    model.pluginProtocol = 1
+    model.pluginProtocol = 3
     onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.plugin_protocol_out_of_date)))
         .check(matches(withEffectiveVisibility(VISIBLE)))
   }
@@ -94,7 +90,7 @@ class MainActivityTest {
     activityRule.launchActivity(Intent())
     onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.plugin_protocol_out_of_date)))
         .check(doesNotExist())
-    model.pluginProtocol = 3
+    model.pluginProtocol = 4
     onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.plugin_protocol_out_of_date)))
         .check(doesNotExist())
   }
