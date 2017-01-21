@@ -63,7 +63,7 @@ License
 The source code of the application is licensed under the [GPLv3](https://www.gnu.org/licenses/gpl.html) license.
 
     MusicBee Remote (for Android)
-    Copyright (C) 2013  Konstantinos Paparas
+    Copyright (C) 2011-2017  Konstantinos Paparas
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
