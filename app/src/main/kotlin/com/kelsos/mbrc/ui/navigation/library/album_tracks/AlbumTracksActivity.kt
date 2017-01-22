@@ -91,11 +91,11 @@ class AlbumTracksActivity : FontActivity(),
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Track) {
-    actionHandler.trackSelected(menuItem, entry)
+    actionHandler.trackSelected(menuItem, entry, true)
   }
 
   override fun onItemClicked(track: Track) {
-    actionHandler.trackSelected(track)
+    actionHandler.trackSelected(track, true)
   }
 
   override fun update(cursor: FlowCursorList<Track>) {

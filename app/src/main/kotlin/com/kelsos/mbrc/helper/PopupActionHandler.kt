@@ -114,7 +114,8 @@ constructor(private val settings: BasicSettingsHelper,
     }
   }
 
-  fun trackSelected(menuItem: MenuItem, entry: Track) {
+  //todo album detection -> queue album tracks
+  fun trackSelected(menuItem: MenuItem, entry: Track, album: Boolean = false) {
     val type = when (menuItem.itemId) {
       R.id.popup_track_queue_next -> Queue.NEXT
       R.id.popup_track_queue_last -> Queue.LAST
@@ -123,16 +124,22 @@ constructor(private val settings: BasicSettingsHelper,
       else -> Queue.NOW
     }
 
-    queueTrack(entry, type)
+    queueTrack(entry, type, album)
   }
 
-  private fun queueTrack(entry: Track, @QueueType type: String) {
+  private fun queueTrack(entry: Track, @QueueType type: String, album: Boolean = false) {
 
     val trackSource: Single<List<String>>
     val path:String?
     if (type == Queue.ADD_ALL) {
-      trackSource = trackRepository.getAllTrackPaths()
+      if (album) {
+        trackSource = trackRepository.getAlbumTrackPaths(entry.album!!, entry.albumArtist!!)
+      } else {
+        trackSource = trackRepository.getAllTrackPaths()
+      }
+
       path = entry.src
+
     } else {
       trackSource = Single.fromCallable {
         val list = listOf(entry.src!!)
@@ -160,8 +167,8 @@ constructor(private val settings: BasicSettingsHelper,
     openProfile(genre, context)
   }
 
-  fun trackSelected(track: Track) {
-    queueTrack(track, settings.defaultAction)
+  fun trackSelected(track: Track, album: Boolean = false) {
+    queueTrack(track, settings.defaultAction, album)
   }
 
   private fun openProfile(artist: Artist, context: Context) {
