@@ -29,4 +29,8 @@ class GenreRepositoryImpl
   override fun search(term: String): Single<FlowCursorList<Genre>> {
     return localDataSource.search(term)
   }
+
+  override fun cacheIsEmpty(): Single<Boolean> {
+    return localDataSource.isEmpty()
+  }
 }

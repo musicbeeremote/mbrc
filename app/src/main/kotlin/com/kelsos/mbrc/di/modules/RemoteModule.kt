@@ -10,6 +10,8 @@ import com.kelsos.mbrc.repository.*
 import com.kelsos.mbrc.repository.data.LocalArtistDataSource
 import com.kelsos.mbrc.repository.data.LocalArtistDataSourceImpl
 import com.kelsos.mbrc.services.*
+import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
+import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractorImpl
 import com.kelsos.mbrc.utilities.SettingsManager
 import com.kelsos.mbrc.utilities.SettingsManagerImpl
 import rx.Scheduler
@@ -48,5 +50,7 @@ class RemoteModule : Module() {
     bind(SettingsManager::class.java).to(SettingsManagerImpl::class.java).singletonInScope()
     bind(ModelCache::class.java).to(ModelCacheImpl::class.java).singletonInScope()
     bind(ServiceChecker::class.java).to(ServiceCheckerImpl::class.java).singletonInScope()
+
+    bind(LibrarySyncInteractor::class.java).to(LibrarySyncInteractorImpl::class.java).singletonInScope()
   }
 }

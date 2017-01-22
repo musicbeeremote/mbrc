@@ -12,7 +12,6 @@ class AlbumRepositoryImpl
 @Inject constructor(private val localDataSource: LocalAlbumDataSource,
                     private val remoteDataSource: RemoteAlbumDataSource) :
     AlbumRepository {
-
   override fun getAlbumsByArtist(artist: String): Single<FlowCursorList<Album>> {
     return localDataSource.getAlbumsByArtist(artist)
   }
@@ -34,5 +33,9 @@ class AlbumRepositoryImpl
 
   override fun search(term: String): Single<FlowCursorList<Album>> {
     return localDataSource.search(term)
+  }
+
+  override fun cacheIsEmpty(): Single<Boolean> {
+    return localDataSource.isEmpty()
   }
 }

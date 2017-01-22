@@ -42,4 +42,8 @@ class ArtistRepositoryImpl
   override fun getAllRemoteAndShowAlbumArtist():  Single<FlowCursorList<Artist>> {
     return getRemote().andThen(localDataSource.getAlbumArtists())
   }
+
+  override fun cacheIsEmpty(): Single<Boolean> {
+    return localDataSource.isEmpty()
+  }
 }
