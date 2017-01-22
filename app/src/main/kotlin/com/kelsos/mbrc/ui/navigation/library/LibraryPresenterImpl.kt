@@ -1,61 +1,46 @@
 package com.kelsos.mbrc.ui.navigation.library
 
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.repository.*
+import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor.OnCompleteListener
 import com.kelsos.mbrc.utilities.SettingsManager
 import rx.Scheduler
-import rx.Subscription
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
 class LibraryPresenterImpl
-@Inject constructor(private val genreRepository: GenreRepository,
-                    private val artistRepository: ArtistRepository,
-                    private val albumRepository: AlbumRepository,
-                    private val trackRepository: TrackRepository,
-                    private val playlistRepository: PlaylistRepository,
-                    @Named("io") private val ioScheduler: Scheduler,
-                    @Named("main") private val mainScheduler: Scheduler,
-                    private val settingsManager: SettingsManager,
-                    private val bus: RxBus) : LibraryPresenter, BasePresenter<LibraryView>() {
-
-  private var subscription: Subscription? = null
-  private var running: Boolean = false;
+@Inject constructor(
+    @Named("io") private val ioScheduler: Scheduler,
+    @Named("main") private val mainScheduler: Scheduler,
+    private val settingsManager: SettingsManager,
+    private val bus: RxBus,
+    private val librarySyncInteractor: LibrarySyncInteractor
+) : LibraryPresenter, OnCompleteListener, BasePresenter<LibraryView>() {
 
   override fun refresh() {
     view?.showRefreshing()
-    subscription?.unsubscribe()
-
-    running = true
-
-    subscription = genreRepository.getRemote()
-        .andThen(artistRepository.getRemote())
-        .andThen(albumRepository.getRemote())
-        .andThen(trackRepository.getRemote())
-        .andThen(playlistRepository.getRemote())
-        .subscribeOn(ioScheduler)
-        .observeOn(mainScheduler)
-        .doOnTerminate {
-          view?.hideRefreshing()
-          running = false
-        }
-        .subscribe({
-          bus.post(LibraryRefreshCompleteEvent())
-          Timber.v("Library refresh was complete")
-        }) {
-          Timber.e(it, "Refresh couldn't complete")
-          view?.refreshFailed()
-        }
+    librarySyncInteractor.sync(false)
   }
 
   override fun attach(view: LibraryView) {
     super.attach(view)
-    if (!running) {
+    librarySyncInteractor.setOnCompleteListener(this)
+    if (!librarySyncInteractor.isRunning()) {
       view.hideRefreshing()
     }
+  }
+
+  override fun detach() {
+    super.detach()
+    librarySyncInteractor.setOnCompleteListener(null)
+  }
+
+  override fun onSuccess() {
+    view?.hideRefreshing()
+  }
+
+  override fun onFailure(throwable: Throwable) {
+    view?.refreshFailed()
   }
 
   override fun loadArtistPreference() {

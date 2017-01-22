@@ -29,4 +29,8 @@ class NowPlayingRepositoryImpl
   override fun search(term: String): Single<FlowCursorList<NowPlaying>> {
     return localDataSource.search(term)
   }
+
+  override fun cacheIsEmpty(): Single<Boolean> {
+    return localDataSource.isEmpty()
+  }
 }
