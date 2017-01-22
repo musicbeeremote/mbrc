@@ -16,6 +16,7 @@ Change Log
 - (#97) Fixes an issue where the remote session volume slider wouldn't work.
 - (#102) Fixes the ordering of the Genres to alphabetical.
 - (#99) Adds fast scrolling to the library tabs.
+- (#112) Adds Play Now (Queue All) option for albums.
 
 ## 1.0.1
 - Fixes a crash with a null extras payload when updating the widget.

@@ -16,6 +16,7 @@
     <changelogbug>Fixes an issue where the remote session volume slider wouldn't work.</changelogbug>
     <changelogbug>Fixes the ordering of the Genres to alphabetical.</changelogbug>
     <changelogimprovement>Adds fast scrolling to the library tabs.</changelogimprovement>
+    <changelogimprovement>Adds Play Now (Queue All) option for albums.</changelogimprovement>
   </changelogversion>
   <changelogversion
     changeDate="Dec 22,2016"
