@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.repository.data
 
 
+import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.data.library.Artist_Table.artist
 import com.kelsos.mbrc.data.library.Track
@@ -76,6 +77,12 @@ class LocalArtistDataSourceImpl
           groupBy(artist.withTable())
       val cursor = FlowCursorList.Builder(Artist::class.java).modelQueriable(modelQueriable).build()
       it.onSuccess(cursor)
+    }
+  }
+
+  override fun isEmpty(): Single<Boolean> {
+    return Single.fromCallable {
+      return@fromCallable SQLite.selectCountOf().from(Artist::class.java).count() == 0L
     }
   }
 }

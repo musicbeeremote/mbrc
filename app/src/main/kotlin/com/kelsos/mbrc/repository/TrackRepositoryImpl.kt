@@ -54,4 +54,8 @@ class TrackRepositoryImpl
   override fun getAllTrackPaths(): Single<List<String>> {
     return localDataSource.getAllTrackPaths()
   }
+
+  override fun cacheIsEmpty(): Single<Boolean> {
+    return localDataSource.isEmpty()
+  }
 }

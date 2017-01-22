@@ -10,4 +10,5 @@ interface LocalDataSource<T : Model> {
   fun saveAll(list: List<T>)
   fun loadAllCursor(): Observable<FlowCursorList<T>>
   fun search(term: String): Single<FlowCursorList<T>>
+  fun isEmpty(): Single<Boolean>
 }

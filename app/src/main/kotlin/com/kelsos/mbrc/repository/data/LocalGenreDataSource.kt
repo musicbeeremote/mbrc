@@ -1,11 +1,13 @@
 package com.kelsos.mbrc.repository.data
 
+import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.data.library.Genre
 import com.kelsos.mbrc.data.library.Genre_Table
 import com.kelsos.mbrc.data.library.Genre_Table.genre
 import com.kelsos.mbrc.extensions.escapeLike
 import com.raizlabs.android.dbflow.kotlinextensions.*
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import rx.Emitter
 import rx.Observable
@@ -44,6 +46,12 @@ class LocalGenreDataSource
           .orderBy(Genre_Table.genre, true)
       val cursor = FlowCursorList.Builder(Genre::class.java).modelQueriable(modelQueriable).build()
       it.onSuccess(cursor)
+    }
+  }
+
+  override fun isEmpty(): Single<Boolean> {
+    return Single.fromCallable {
+      return@fromCallable SQLite.selectCountOf().from(Genre::class.java).count() == 0L
     }
   }
 }

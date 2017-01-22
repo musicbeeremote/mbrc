@@ -10,4 +10,5 @@ interface Repository<T : Model> {
   fun getAndSaveRemote(): Single<FlowCursorList<T>>
   fun getRemote(): Completable
   fun search(term: String): Single<FlowCursorList<T>>
+  fun cacheIsEmpty() : Single<Boolean>
 }

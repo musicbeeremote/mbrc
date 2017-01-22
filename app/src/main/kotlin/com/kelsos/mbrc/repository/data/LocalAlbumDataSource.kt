@@ -19,7 +19,6 @@ import javax.inject.Inject
 
 class LocalAlbumDataSource
 @Inject constructor() : LocalDataSource<Album> {
-
   override fun deleteAll() {
     delete(Album::class).execute()
   }
@@ -70,6 +69,12 @@ class LocalAlbumDataSource
       val modelQueriable = (select from Album::class where album.like("%${term.escapeLike()}%"))
       val cursor = FlowCursorList.Builder(Album::class.java).modelQueriable(modelQueriable).build()
       it.onSuccess(cursor)
+    }
+  }
+
+  override fun isEmpty(): Single<Boolean> {
+    return Single.fromCallable {
+      return@fromCallable SQLite.selectCountOf().from(Album::class.java).count() == 0L
     }
   }
 }
