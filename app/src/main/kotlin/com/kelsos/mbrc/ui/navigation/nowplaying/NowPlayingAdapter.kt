@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import android.app.Activity
+import android.graphics.Color
 import android.support.v4.view.MotionEventCompat
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
@@ -18,6 +19,7 @@ import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.rx.MapWithIndex
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
+import com.kelsos.mbrc.ui.drag.TouchHelperViewHolder
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.list.FlowCursorList.OnCursorRefreshListener
 import rx.Observable
@@ -173,7 +175,8 @@ class NowPlayingAdapter
 
   }
 
-  class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+  class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView), TouchHelperViewHolder {
+
     @BindView(R.id.track_title) lateinit var title: TextView
     @BindView(R.id.track_artist) lateinit var artist: TextView
     @BindView(R.id.track_indicator_view) lateinit var trackPlaying: ImageView
@@ -182,6 +185,14 @@ class NowPlayingAdapter
 
     init {
       ButterKnife.bind(this, itemView)
+    }
+
+    override fun onItemSelected() {
+      this.itemView.setBackgroundColor(Color.DKGRAY)
+    }
+
+    override fun onItemClear() {
+      this.itemView.setBackgroundColor(0)
     }
 
   }
