@@ -13,7 +13,7 @@ import toothpick.Scope
 object CommandRegistration {
   fun register(controller: RemoteController, scope: Scope) {
     controller.register(ProtocolEventType.ReduceVolume, scope.getInstance(ReduceVolumeOnRingCommand::class.java))
-    controller.register(ProtocolEventType.HandshakeComplete, scope.getInstance(VisualUpdateHandshakeComplete::class.java))
+    controller.register(ProtocolEventType.HandshakeComplete, scope.getInstance(HandshakeCompletionActions::class.java))
     controller.register(ProtocolEventType.InformClientNotAllowed, scope.getInstance(NotifyNotAllowedCommand::class.java))
     controller.register(ProtocolEventType.InformClientPluginOutOfDate, scope.getInstance(NotifyPluginOutOfDateCommand::class.java))
     controller.register(ProtocolEventType.InitiateProtocolRequest, scope.getInstance(ProtocolRequest::class.java))

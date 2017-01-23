@@ -19,7 +19,7 @@ class LibraryPresenterImpl
 
   override fun refresh() {
     view?.showRefreshing()
-    librarySyncInteractor.sync(false)
+    librarySyncInteractor.sync()
   }
 
   override fun attach(view: LibraryView) {
@@ -35,7 +35,7 @@ class LibraryPresenterImpl
     librarySyncInteractor.setOnCompleteListener(null)
   }
 
-  override fun onSuccess() {
+  override fun onTermination() {
     view?.hideRefreshing()
   }
 
@@ -57,6 +57,10 @@ class LibraryPresenterImpl
   override fun setArtistPreference(albumArtistOnly: Boolean) {
     settingsManager.setShouldDisplayOnlyAlbumArtist(albumArtistOnly)
     bus.post(ArtistTabRefreshEvent())
+  }
+
+  override fun onSuccess() {
+    //todo show success message
   }
 }
 

@@ -2,7 +2,11 @@ package com.kelsos.mbrc.ui.navigation.library
 
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.LibraryRefreshCompleteEvent
-import com.kelsos.mbrc.repository.*
+import com.kelsos.mbrc.repository.AlbumRepository
+import com.kelsos.mbrc.repository.ArtistRepository
+import com.kelsos.mbrc.repository.GenreRepository
+import com.kelsos.mbrc.repository.PlaylistRepository
+import com.kelsos.mbrc.repository.TrackRepository
 import rx.Completable
 import rx.Scheduler
 import rx.Single
@@ -28,10 +32,12 @@ class LibrarySyncInteractorImpl
   private var onCompleteListener: LibrarySyncInteractor.OnCompleteListener? = null
 
   override fun sync(auto: Boolean) {
-    if (subscription?.isUnsubscribed?.not() ?: false) {
+    if (subscription != null && !subscription!!.isUnsubscribed) {
       return
     }
     running = true
+
+    Timber.v("Starting library metadata sync")
 
     subscription = checkIfShouldSync(auto)
         .andThen(genreRepository.getRemote())
@@ -42,11 +48,12 @@ class LibrarySyncInteractorImpl
         .subscribeOn(ioScheduler)
         .observeOn(mainScheduler)
         .doOnTerminate {
-          onCompleteListener?.onSuccess()
+          onCompleteListener?.onTermination()
+          bus.post(LibraryRefreshCompleteEvent())
           running = false
         }
         .subscribe({
-          bus.post(LibraryRefreshCompleteEvent())
+          onCompleteListener?.onSuccess()
           Timber.v("Library refresh was complete")
         }) {
           Timber.e(it, "Refresh couldn't complete")
@@ -68,13 +75,15 @@ class LibrarySyncInteractorImpl
     }
   }
 
-  private fun isEmpty(): Single<Boolean> = Single.zip(genreRepository.cacheIsEmpty(),
-      artistRepository.cacheIsEmpty(),
-      albumRepository.cacheIsEmpty(),
-      trackRepository.cacheIsEmpty(),
-      { noGenres, noArtists, noAlbums, noTracks ->
-        noGenres && noArtists && noAlbums && noTracks
-      })
+  private fun isEmpty(): Single<Boolean> {
+    return Single.zip(genreRepository.cacheIsEmpty(),
+        artistRepository.cacheIsEmpty(),
+        albumRepository.cacheIsEmpty(),
+        trackRepository.cacheIsEmpty(),
+        { noGenres, noArtists, noAlbums, noTracks ->
+          noGenres && noArtists && noAlbums && noTracks
+        })
+  }
 
   override fun setOnCompleteListener(onCompleteListener: LibrarySyncInteractor.OnCompleteListener?) {
     this.onCompleteListener = onCompleteListener
@@ -84,5 +93,5 @@ class LibrarySyncInteractorImpl
     return running
   }
 
-  private inner class ShouldNotProceedException : Exception()
+  inner class ShouldNotProceedException : Exception()
 }
