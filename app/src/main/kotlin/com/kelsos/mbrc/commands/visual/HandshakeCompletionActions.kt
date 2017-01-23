@@ -7,14 +7,20 @@ import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.model.ConnectionModel
 import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.services.SocketService
+import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
 import rx.Observable
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class VisualUpdateHandshakeComplete
-@Inject constructor(private val service: SocketService, private val model: MainDataModel, private val connectionModel: ConnectionModel) : ICommand {
+class HandshakeCompletionActions
+@Inject constructor(
+    private val service: SocketService,
+    private val model: MainDataModel,
+    private val connectionModel: ConnectionModel,
+    private val syncInteractor: LibrarySyncInteractor
+) : ICommand {
 
   override fun execute(e: IEvent) {
     val isComplete = e.data as Boolean
@@ -46,6 +52,8 @@ class VisualUpdateHandshakeComplete
             Timber.v(it, "Failure while sending the init messages")
           }
     }
+
+    syncInteractor.sync(true)
   }
 }
 
