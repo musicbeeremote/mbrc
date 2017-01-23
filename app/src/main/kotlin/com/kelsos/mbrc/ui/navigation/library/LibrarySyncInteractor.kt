@@ -12,7 +12,7 @@ interface LibrarySyncInteractor {
    * @param auto Marks the sync process as automatic (initiated by conditions) or
    * manual (initiated by the user)
    */
-  fun sync(auto: Boolean)
+  fun sync(auto: Boolean = false)
 
   /**
    * Provides access to the interactor's current status.
@@ -24,7 +24,8 @@ interface LibrarySyncInteractor {
   fun setOnCompleteListener(onCompleteListener: OnCompleteListener?)
 
   interface OnCompleteListener {
-    fun onSuccess()
+    fun onTermination()
     fun onFailure(throwable: Throwable)
+    fun onSuccess()
   }
 }
