@@ -9,6 +9,6 @@ interface RemoteDataSource<T> {
   fun fetch(): Observable<List<T>>
 
   companion object {
-    const val LIMIT = 400
+    const val LIMIT = 800
   }
 }
