@@ -111,6 +111,11 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     presenter.repeat()
   }
 
+  @OnClick(R.id.track_info_area)
+  internal fun onTrackInfoPressed() {
+    navigate(R.id.nav_now_playing)
+  }
+
   private lateinit var scope: Scope
 
   override fun onCreate(savedInstanceState: Bundle?) {
