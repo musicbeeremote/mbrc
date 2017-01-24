@@ -105,7 +105,7 @@ internal constructor(private val manager: WifiManager,
       resource.close()
       stopDiscovery()
     } catch (e: IOException) {
-      throw RuntimeException(e)
+      Timber.v("While cleaning up the discovery %s", e.message)
     }
 
   }
