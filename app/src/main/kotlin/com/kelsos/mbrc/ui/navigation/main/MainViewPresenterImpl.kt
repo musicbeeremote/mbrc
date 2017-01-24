@@ -5,7 +5,16 @@ import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.*
+import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
+import com.kelsos.mbrc.events.ui.CoverChangedEvent
+import com.kelsos.mbrc.events.ui.LfmRatingChanged
+import com.kelsos.mbrc.events.ui.PlayStateChange
+import com.kelsos.mbrc.events.ui.RepeatChange
+import com.kelsos.mbrc.events.ui.ScrobbleChange
+import com.kelsos.mbrc.events.ui.ShuffleChange
+import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
+import com.kelsos.mbrc.events.ui.UpdatePosition
+import com.kelsos.mbrc.events.ui.VolumeChange
 import com.kelsos.mbrc.model.ConnectionModel
 import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.mvp.BasePresenter
@@ -66,9 +75,9 @@ class MainViewPresenterImpl
       Timber.e(it, "Failed to load")
     })
 
-    addSubcription(settingsManager.shouldShowPluginUpdate().subscribe({
+    addSubcription(settingsManager.shouldShowChangeLog().subscribe({
       if (it) {
-        view?.showPluginUpdateDialog()
+        view?.showChangeLog()
       }
     }) {
 

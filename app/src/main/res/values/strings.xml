@@ -168,9 +168,10 @@
   <string name="library_actionbar_refresh">Refresh</string>
   <string name="refreshing_library_data">Refreshing library data</string>
   <string name="feedback_logs">Include Logs</string>
-  <string name="change_log">Change Log</string>
-  <string name="plugin_protocol_out_of_date">Some features may not work properly due to mbrc plugin running an older protocol version, please update.</string>
+  <string name="main__dialog_change_log">Change Log</string>
+  <string name="main__dialog_plugin_outdated_message">It seems that you are using an older version of the MusicBee Remote Plugin. Some features require an newer version of the plugin to work. Please Update.</string>
   <string name="library_album_artists_only">Only Album Artists</string>
   <string name="settings_key_album_artists_only">mbrc.settings.album_artist_only</string>
   <string name="menu_play_queue_all">Play Now (Queue All)</string>
+  <string name="main__dialog_plugin_outdated_title">Plugin Update Required</string>
 </resources>

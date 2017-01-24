@@ -138,9 +138,9 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     }
   }
 
-  override fun showPluginUpdateDialog() {
+  override fun showChangeLog() {
     MaterialDialog.Builder(this)
-        .title(R.string.change_log)
+        .title(R.string.main__dialog_change_log)
         .customView(R.layout.change_log_dialog, false)
         .positiveText(android.R.string.ok)
         .onPositive { materialDialog, dialogAction -> materialDialog.dismiss() }
@@ -148,15 +148,22 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   }
 
   override fun notifyPluginOutOfDate() {
-    snackbar = Snackbar.make(albumCover, R.string.plugin_protocol_out_of_date, Snackbar.LENGTH_INDEFINITE)
-    snackbar!!.setAction(android.R.string.ok, { snackbar?.dismiss() })
-    snackbar!!.show()
+    MaterialDialog.Builder(this)
+        .title(R.string.main__dialog_plugin_outdated_title)
+        .content(R.string.main__dialog_plugin_outdated_message)
+        .positiveText(android.R.string.ok)
+        .onPositive { materialDialog, dialogAction -> materialDialog.dismiss() }
+        .show()
   }
 
   override fun onStart() {
     super.onStart()
-    presenter.attach(this)
-    presenter.load()
+
+    if (!presenter.isAttached) {
+      presenter.attach(this)
+      presenter.load()
+    }
+
     progressHelper.setProgressListener(this)
     volumeChangeListener = SeekBarThrottler { presenter.changeVolume(it) }
     positionChangeListener = SeekBarThrottler { presenter.seek(it) }

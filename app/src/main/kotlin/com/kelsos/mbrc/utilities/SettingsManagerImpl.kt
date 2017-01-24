@@ -77,7 +77,7 @@ constructor(private val context: Application,
     preferences.edit().putBoolean(getKey(R.string.settings_key_album_artists_only), onlyAlbumArtist).apply()
   }
 
-  override fun shouldShowPluginUpdate(): Single<Boolean> {
+  override fun shouldShowChangeLog(): Single<Boolean> {
     return Single.fromCallable {
 
       val lastVersionCode = preferences.getLong(getKey(R.string.settings_key_last_version_run), 0)
@@ -103,7 +103,7 @@ interface SettingsManager {
 
   fun shouldDisplayOnlyAlbumArtists() : Single<Boolean>
   fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean)
-  fun shouldShowPluginUpdate(): Single<Boolean>
+  fun shouldShowChangeLog(): Single<Boolean>
   fun isNotificationControlEnabled(): Boolean
   fun isPluginUpdateCheckEnabled(): Boolean
 
