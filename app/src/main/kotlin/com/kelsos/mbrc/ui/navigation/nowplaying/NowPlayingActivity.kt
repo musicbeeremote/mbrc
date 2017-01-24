@@ -84,11 +84,11 @@ class NowPlayingActivity : BaseActivity(),
   }
 
   public override fun onCreate(savedInstanceState: Bundle?) {
+    scope = Toothpick.openScopes(application, this)
+    scope.installModules(SmoothieActivityModule(this), NowPlayingModule.create())
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_nowplaying)
     ButterKnife.bind(this)
-    scope = Toothpick.openScopes(application, this)
-    scope.installModules(SmoothieActivityModule(this), NowPlayingModule.create())
     Toothpick.inject(this, scope)
     super.setup()
     swipeRefreshLayout.setSwipeableChildren(R.id.now_playing_list, R.id.empty_view)

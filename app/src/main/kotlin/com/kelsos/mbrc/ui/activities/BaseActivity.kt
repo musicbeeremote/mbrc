@@ -1,7 +1,5 @@
 package com.kelsos.mbrc.ui.activities
 
-import android.app.ActivityManager
-import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
 import android.content.res.Configuration
@@ -199,7 +197,7 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
     val builder = TaskStackBuilder.create(this)
     builder.addNextIntentWithParentStack(intent)
     builder.startActivities()
-    overridePendingTransition(0, 0)
+    overridePendingTransition(R.anim.slide_in, R.anim.slide_out)
   }
 
   /**
@@ -207,7 +205,6 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
    */
   fun setup() {
     Timber.v("Initializing base activity")
-    serviceChecker.startServiceIfNotRunning()
     setSupportActionBar(toolbar)
 
     toggle = ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close)
@@ -225,6 +222,7 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     supportActionBar?.setHomeButtonEnabled(true)
     navigationView.setCheckedItem(active())
+    serviceChecker.startServiceIfNotRunning()
   }
 
   override fun onResume() {
