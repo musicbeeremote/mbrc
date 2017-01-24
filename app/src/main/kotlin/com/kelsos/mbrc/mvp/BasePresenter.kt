@@ -1,7 +1,5 @@
 package com.kelsos.mbrc.mvp
 
-import com.kelsos.mbrc.mvp.BaseView
-
 import rx.Subscription
 import rx.subscriptions.CompositeSubscription
 
@@ -11,7 +9,7 @@ open class BasePresenter<T : BaseView> : Presenter<T> {
 
   private val compositeSubscription = CompositeSubscription()
 
-  internal val isAttached: Boolean
+  override val isAttached: Boolean
     get() = view != null
 
   override fun attach(view: T) {
