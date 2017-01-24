@@ -17,6 +17,7 @@
     <changelogbug>Fixes the ordering of the Genres to alphabetical.</changelogbug>
     <changelogimprovement>Adds fast scrolling to the library tabs.</changelogimprovement>
     <changelogimprovement>Adds Play Now (Queue All) option for albums.</changelogimprovement>
+    <changelogimprovement>Pressing the track info on the main view should now open the Now Playing screen.</changelogimprovement>
   </changelogversion>
   <changelogversion
     changeDate="Dec 22,2016"

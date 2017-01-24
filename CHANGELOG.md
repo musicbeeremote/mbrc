@@ -17,6 +17,7 @@ Change Log
 - (#102) Fixes the ordering of the Genres to alphabetical.
 - (#99) Adds fast scrolling to the library tabs.
 - (#112) Adds Play Now (Queue All) option for albums.
+- Pressing the track info on the main view should now open the Now Playing screen.
 
 ## 1.0.1
 - Fixes a crash with a null extras payload when updating the widget.
