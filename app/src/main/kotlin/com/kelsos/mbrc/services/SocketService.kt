@@ -23,7 +23,12 @@ import com.kelsos.mbrc.utilities.SocketActivityChecker.PingTimeoutListener
 import rx.Completable
 import rx.Subscription
 import timber.log.Timber
-import java.io.*
+import java.io.BufferedReader
+import java.io.BufferedWriter
+import java.io.IOException
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
+import java.io.PrintWriter
 import java.net.Socket
 import java.net.SocketAddress
 import java.net.SocketException
@@ -36,15 +41,17 @@ import javax.inject.Singleton
 @Singleton
 class SocketService
 @Inject
-constructor(private val activityChecker: SocketActivityChecker,
-            private val bus: RxBus,
-            private val mapper: ObjectMapper,
-            private val connectionRepository: ConnectionRepository) : PingTimeoutListener {
+constructor(
+    private val activityChecker: SocketActivityChecker,
+    private val bus: RxBus,
+    private val mapper: ObjectMapper,
+    private val connectionRepository: ConnectionRepository
+) : PingTimeoutListener {
   private var numOfRetries: Int = 0
   private var shouldStop: Boolean = false
   private var socket: Socket? = null
   private var output: PrintWriter? = null
-  private val executor = Executors.newSingleThreadExecutor { Thread(it, "socket-thread")}
+  private val executor = Executors.newSingleThreadExecutor { Thread(it, "socket-thread") }
 
   private var subscription: Subscription? = null
 
@@ -69,6 +76,8 @@ constructor(private val activityChecker: SocketActivityChecker,
         socketManager(STOP)
         return@subscribe
       }
+
+      Timber.v("Attempting connection on %s", connectionSettings)
       executor.execute(SocketConnection(connectionSettings))
       numOfRetries++
     }) { Timber.v(it, "Failed") }
@@ -156,10 +165,9 @@ constructor(private val activityChecker: SocketActivityChecker,
 
   private inner class SocketConnection internal constructor(connectionSettings: ConnectionSettings) : Runnable {
     private val socketAddress: SocketAddress?
-    private val mapper: InetAddressMapper
+    private val mapper: InetAddressMapper = InetAddressMapper()
 
     init {
-      mapper = InetAddressMapper()
       socketAddress = mapper.map(connectionSettings)
     }
 
