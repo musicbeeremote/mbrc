@@ -12,11 +12,18 @@ import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.*
+import com.kelsos.mbrc.events.ui.LfmRatingChanged
+import com.kelsos.mbrc.events.ui.PlayStateChange
+import com.kelsos.mbrc.events.ui.RatingChanged
+import com.kelsos.mbrc.events.ui.RepeatChange
+import com.kelsos.mbrc.events.ui.ScrobbleChange
+import com.kelsos.mbrc.events.ui.ShuffleChange
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
+import com.kelsos.mbrc.events.ui.VolumeChange
 import com.kelsos.mbrc.repository.ModelCache
 import rx.Completable
 import rx.Subscription
+import rx.android.schedulers.AndroidSchedulers
 import timber.log.Timber
 import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
@@ -106,7 +113,10 @@ constructor(private val bus: RxBus,
       field = value
       if (value < Protocol.ProtocolVersionNumber) {
         apiOutOfDate = true
-        onPluginOutOfDate?.invoke()
+        Completable.fromCallable { onPluginOutOfDate?.invoke() }
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribe({ })
+
       }
     }
 

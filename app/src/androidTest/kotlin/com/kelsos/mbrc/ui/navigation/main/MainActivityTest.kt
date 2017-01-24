@@ -7,8 +7,8 @@ import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.assertion.ViewAssertions.doesNotExist
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.intent.rule.IntentsTestRule
-import android.support.test.espresso.matcher.ViewMatchers.*
-import android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE
+import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
+import android.support.test.espresso.matcher.ViewMatchers.withText
 import android.support.test.filters.LargeTest
 import android.support.test.runner.AndroidJUnit4
 import com.kelsos.mbrc.R
@@ -18,7 +18,6 @@ import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.repository.ModelCache
 import com.kelsos.mbrc.services.ServiceChecker
 import com.kelsos.mbrc.utilities.SettingsManager
-import org.hamcrest.Matchers.allOf
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -26,7 +25,11 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
-import org.mockito.Mockito.*
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.anyString
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import rx.Completable
 import rx.Scheduler
 import rx.Single
@@ -60,7 +63,7 @@ class MainActivityTest {
     `when`(mockCache.restoreCover()).thenReturn(Single.just(""))
     `when`(mockCache.persistCover(anyString())).thenReturn(Completable.complete())
     `when`(mockCache.restoreInfo()).thenReturn(Single.just(TrackInfo()))
-    `when`(mockSettingsManager.shouldShowPluginUpdate()).thenReturn(Single.just(false))
+    `when`(mockSettingsManager.shouldShowChangeLog()).thenReturn(Single.just(false))
     mockBus = mock(RxBus::class.java)
 
     model = MainDataModel(mockBus, mockCache)
@@ -76,23 +79,34 @@ class MainActivityTest {
   }
 
   @Test
-  fun testShowOutdatedPluginSnackBar() {
+  fun testShowOutdatedDialog() {
     activityRule.launchActivity(Intent())
-    onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.plugin_protocol_out_of_date)))
-        .check(doesNotExist())
+    onView(withText(R.string.main__dialog_plugin_outdated_message)).check(doesNotExist())
     model.pluginProtocol = 3
-    onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.plugin_protocol_out_of_date)))
-        .check(matches(withEffectiveVisibility(VISIBLE)))
+    onView(withText(R.string.main__dialog_plugin_outdated_message)).check(matches(isDisplayed()))
   }
 
   @Test
   fun testShouldNotShowOutdatedPluginSnackBar() {
     activityRule.launchActivity(Intent())
-    onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.plugin_protocol_out_of_date)))
-        .check(doesNotExist())
+    onView(withText(R.string.main__dialog_plugin_outdated_message)).check(doesNotExist())
     model.pluginProtocol = 4
-    onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.plugin_protocol_out_of_date)))
-        .check(doesNotExist())
+    onView(withText(R.string.main__dialog_plugin_outdated_message)).check(doesNotExist())
+  }
+
+  @Test
+  fun testShouldShowChangeLog() {
+    `when`(mockSettingsManager.shouldShowChangeLog()).thenReturn(Single.just(true))
+    activityRule.launchActivity(Intent())
+    onView(withText(R.string.main__dialog_change_log)).check(matches(isDisplayed()))
+    verify(mockSettingsManager, times(1)).shouldShowChangeLog()
+  }
+
+  @Test
+  fun testShouldNoShowChangeLog() {
+    activityRule.launchActivity(Intent())
+    onView(withText(R.string.main__dialog_change_log)).check(doesNotExist())
+    verify(mockSettingsManager, times(1)).shouldShowChangeLog()
   }
 
   inner class TestModule : Module() {
