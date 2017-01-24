@@ -151,7 +151,7 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
     return true
   }
 
-  private fun navigate(itemId: Int) {
+  internal fun navigate(itemId: Int) {
 
     if (active() == itemId) {
       return
