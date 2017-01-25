@@ -20,13 +20,14 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.anyInt
 import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import rx.Observable
 import rx.observers.TestSubscriber
+import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule
+import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
@@ -34,33 +35,31 @@ import toothpick.testing.ToothPickRule
     sdk = intArrayOf(Build.VERSION_CODES.N_MR1))
 class GenreRepositoryImplTest {
   private val toothPickRule = ToothPickRule(this)
+  private lateinit var scope: Scope
+
   @Rule
   fun chain(): TestRule = RuleChain.outerRule(toothPickRule).around(DBFlowTestRule.create())
 
   @Before
   fun setUp() {
-
+    scope = Toothpick.openScope(TEST_SCOPE)
+    scope.installModules(TestModule())
   }
 
   @After
   @Throws(Exception::class)
   fun tearDown() {
+    Toothpick.closeScope(scope)
     Toothpick.reset()
   }
 
   @Test
-  fun getAllCursor() {
-
-  }
-
-  @Test
   fun getAndSaveRemote() {
-    val scope = Toothpick.openScope(RuntimeEnvironment.application)
-    scope.installModules(TestModule())
     val repository = scope.getInstance(GenreRepository::class.java)
     val testSubscriber = TestSubscriber<FlowCursorList<Genre>>()
     repository.getAndSaveRemote().subscribe(testSubscriber)
-    testSubscriber.awaitTerminalEvent()
+
+    testSubscriber.awaitTerminalEvent(2, TimeUnit.SECONDS)
     testSubscriber.assertCompleted()
     testSubscriber.assertNoErrors()
     testSubscriber.assertValueCount(1)
@@ -75,18 +74,27 @@ class GenreRepositoryImplTest {
       `when`(mockService.getGenres(anyInt(), anyInt()))
           .thenAnswer {
             val offset = it.arguments[0] as Int
-            val limit = it.arguments[1] as Int
+            var limit = it.arguments[1] as Int
 
-            if (offset > 1200) {
-              return@thenAnswer Observable.empty<Page<Genre>>()
+            val totalElements = 1200
+            if (offset > totalElements) {
+              val page = Page<Genre>()
+              page.data = emptyList()
+              page.total = totalElements
+              page.offset = offset
+              page.limit = limit
+              return@thenAnswer Observable.just(page)
             } else {
+              if (offset + limit > totalElements) {
+                limit = totalElements - offset
+              }
               return@thenAnswer Observable.range(offset, limit)
                   .map { Genre("Metal$it", it) }
                   .toList()
                   .map {
                     val page = Page<Genre>()
                     page.data = it
-                    page.total = 1200
+                    page.total = totalElements
                     page.offset = offset
                     page.limit = limit
                     return@map page
@@ -98,5 +106,14 @@ class GenreRepositoryImplTest {
       bind(GenreRepository::class.java).to(GenreRepositoryImpl::class.java)
     }
   }
+
+  companion object {
+    val TEST_SCOPE: Class<*> = TestCase::class.java
+  }
+
+  @javax.inject.Scope
+  @Target(AnnotationTarget.TYPE)
+  @Retention(AnnotationRetention.RUNTIME)
+  annotation class TestCase
 
 }

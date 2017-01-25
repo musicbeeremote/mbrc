@@ -51,5 +51,7 @@ object Protocol {
   val LibraryBrowseTracks = "browsetracks"
   val ONE = "one"
 
+  val VerifyConnection = "verifyconnection"
+
   val ProtocolVersionNumber = 4
 }
