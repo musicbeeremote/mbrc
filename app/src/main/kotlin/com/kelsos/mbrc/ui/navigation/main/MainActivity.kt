@@ -69,7 +69,8 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   @BindView(R.id.main_album_cover_image_view) lateinit var albumCover: ImageView
   private var mShareActionProvider: ShareActionProvider? = null
 
-  private var snackbar: Snackbar? =null
+  var changeLogDialog: MaterialDialog? = null
+  var outOfDateDialog: MaterialDialog? = null
 
   private var menu: Menu? = null
   private var volumeChangeListener: SeekBarThrottler? = null
@@ -139,7 +140,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   }
 
   override fun showChangeLog() {
-    MaterialDialog.Builder(this)
+    changeLogDialog = MaterialDialog.Builder(this)
         .title(R.string.main__dialog_change_log)
         .customView(R.layout.change_log_dialog, false)
         .positiveText(android.R.string.ok)
@@ -148,7 +149,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   }
 
   override fun notifyPluginOutOfDate() {
-    MaterialDialog.Builder(this)
+    outOfDateDialog = MaterialDialog.Builder(this)
         .title(R.string.main__dialog_plugin_outdated_title)
         .content(R.string.main__dialog_plugin_outdated_message)
         .positiveText(android.R.string.ok)
@@ -429,6 +430,8 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
       //we close its scope
       Toothpick.closeScope(PRESENTER_SCOPE)
     }
+    outOfDateDialog?.dismiss()
+    changeLogDialog?.dismiss()
     super.onDestroy()
   }
 
