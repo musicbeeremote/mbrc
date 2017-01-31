@@ -121,7 +121,6 @@ android {
 
   dexOptions {
     javaMaxHeapSize "2G"
-
   }
 
   applicationVariants.all { variant ->
@@ -280,8 +279,7 @@ afterEvaluate {
 }
 
 /**
- * For CI because otherwise the build will fail on the fabric plugin
- */
+ * For CI because otherwise the build will fail on the fabric plugin*/
 def initFabricPropertiesIfNeeded() {
   def propertiesFile = file('fabric.properties')
   if (!propertiesFile.exists()) {
@@ -313,7 +311,8 @@ kapt {
   }
 }
 
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testGithubDebugUnitTest', 'createGithubDebugCoverageReport']) {
+task jacocoTestReport(type: JacocoReport,
+    dependsOn: ['testGithubDebugUnitTest', 'createGithubDebugCoverageReport']) {
   group = "Reporting"
   description "Generate jacoco coverage reports"
 
@@ -328,16 +327,18 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testGithubDebugUnitTest',
                     '**/Manifest*.*',
                     '**/*Test*.*',
                     '**/FactoryRegistry.*',
+                    '**/*_ViewBinding*',
+                    '**/*MemberInjector*',
+                    '**/*$$Factory*.*',
                     '**/MemberInjectorRegistry.*',
                     '**/**_Table.*',
                     'android/**/*.*']
-  def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/github/debug", excludes: fileFilter)
+  def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/github/debug",
+      excludes: fileFilter)
   def mainSrc = "${project.projectDir}/src/main/kotlin"
 
   sourceDirectories = files([mainSrc])
   classDirectories = files([debugTree])
-  executionData = fileTree(dir: "$buildDir", includes: [
-      "**/*.exec",
-      "**/*.ec"
-  ])
+  executionData = fileTree(dir: "$buildDir", includes: ["**/*.exec",
+                                                        "**/*.ec"])
 }

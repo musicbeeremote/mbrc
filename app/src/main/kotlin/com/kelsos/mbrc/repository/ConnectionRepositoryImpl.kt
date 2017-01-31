@@ -11,8 +11,10 @@ import com.raizlabs.android.dbflow.sql.language.SQLite
 import javax.inject.Inject
 
 class ConnectionRepositoryImpl
-@Inject
-constructor(private val preferences: SharedPreferences, private val resources: Resources) : ConnectionRepository {
+@Inject constructor(
+    private val preferences: SharedPreferences,
+    private val resources: Resources
+) : ConnectionRepository {
 
   override fun save(settings: ConnectionSettings) {
     settings.save()
@@ -45,14 +47,24 @@ constructor(private val preferences: SharedPreferences, private val resources: R
   }
 
   private fun getItemBefore(id: Long): ConnectionSettings? {
-    return SQLite.select().from(ConnectionSettings::class.java).where(ConnectionSettings_Table.id.lessThan(id)).orderBy(ConnectionSettings_Table.id, false).querySingle()
+    return SQLite.select()
+        .from(ConnectionSettings::class.java)
+        .where(ConnectionSettings_Table.id.lessThan(id))
+        .orderBy(ConnectionSettings_Table.id, false)
+        .querySingle()
   }
 
-  private val first: ConnectionSettings
-    get() = SQLite.select().from(ConnectionSettings::class.java).orderBy(ConnectionSettings_Table.id, true).querySingle()!!
+  private val first: ConnectionSettings?
+    get() = SQLite.select()
+        .from(ConnectionSettings::class.java)
+        .orderBy(ConnectionSettings_Table.id, true)
+        .querySingle()
 
-  private val last: ConnectionSettings
-    get() = SQLite.select().from(ConnectionSettings::class.java).orderBy(ConnectionSettings_Table.id, false).querySingle()!!
+  private val last: ConnectionSettings?
+    get() = SQLite.select()
+        .from(ConnectionSettings::class.java)
+        .orderBy(ConnectionSettings_Table.id, false)
+        .querySingle()
 
   override fun update(settings: ConnectionSettings) {
     settings.update()
@@ -65,7 +77,10 @@ constructor(private val preferences: SharedPreferences, private val resources: R
         return null
       }
 
-      return SQLite.select().from(ConnectionSettings::class.java).where(ConnectionSettings_Table.id.`is`(defaultId)).querySingle()
+      return SQLite.select()
+          .from(ConnectionSettings::class.java)
+          .where(ConnectionSettings_Table.id.`is`(defaultId))
+          .querySingle()
     }
     set(settings) {
       if (settings == null) {
