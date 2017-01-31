@@ -1,6 +1,9 @@
 package com.kelsos.mbrc.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.ConnectionSettings
@@ -44,7 +47,9 @@ class ConnectionVerifierImplTest {
     scope!!.installModules(ToothPickTestModule(this), TestModule())
   }
 
-  fun startMockServer(prematureDisconnect: Boolean = false, responseContext: String = Protocol.VerifyConnection) {
+  fun startMockServer(prematureDisconnect: Boolean = false,
+                      responseContext: String = Protocol.VerifyConnection,
+                      json: Boolean = true) {
     val mockSocket = Runnable {
 
       try {
@@ -69,9 +74,13 @@ class ConnectionVerifierImplTest {
 
           val out = OutputStreamWriter(connection.outputStream, Const.UTF_8)
           val output = PrintWriter(BufferedWriter(out), true)
-          val response = SocketMessage()
-          response.context = responseContext
-          output.write(mapper.writeValueAsString(response) + "\n\r")
+          if (json) {
+            val response = SocketMessage()
+            response.context = responseContext
+            output.write(mapper.writeValueAsString(response) + "\n\r")
+          } else {
+            output.write(responseContext + "\n\r")
+          }
           output.flush()
           input.close()
           inputReader.close()
@@ -158,7 +167,19 @@ class ConnectionVerifierImplTest {
     subscriber.assertError(RuntimeException::class.java)
   }
 
-  //todo no socket message payload test
+  @Test fun testVerificationNoJsonPayload() {
+    startMockServer(false, "payload", false)
+
+    `when`(connectionRepository.default).thenAnswer {
+      return@thenAnswer null
+    }
+
+    val verifier = scope!!.getInstance(ConnectionVerifier::class.java)
+    val subscriber = TestSubscriber<Boolean>()
+    verifier.verify().subscribe(subscriber)
+    subscriber.awaitTerminalEvent(1, TimeUnit.SECONDS)
+    subscriber.assertError(RuntimeException::class.java)
+  }
 
   inner class TestModule: Module() {
     init {
