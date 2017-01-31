@@ -56,6 +56,15 @@ class GenreRepositoryImplTest {
   @Test
   fun getAndSaveRemote() {
     val repository = scope.getInstance(GenreRepository::class.java)
+    val isEmptySubscriber = TestSubscriber<Boolean>()
+
+    repository.cacheIsEmpty().subscribe(isEmptySubscriber)
+    isEmptySubscriber.awaitTerminalEvent()
+    isEmptySubscriber.assertCompleted()
+    isEmptySubscriber.assertNoErrors()
+    isEmptySubscriber.assertValueCount(1)
+    isEmptySubscriber.assertValue(true)
+
     val testSubscriber = TestSubscriber<FlowCursorList<Genre>>()
     repository.getAndSaveRemote().subscribe(testSubscriber)
 
