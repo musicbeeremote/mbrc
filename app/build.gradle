@@ -332,6 +332,8 @@ task jacocoTestReport(type: JacocoReport,
                     '**/*$$Factory*.*',
                     '**/MemberInjectorRegistry.*',
                     '**/**_Table.*',
+                    '**/GeneratedDatabaseHolder.*',
+                    '**/*_Database.*',
                     'android/**/*.*']
   def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/github/debug",
       excludes: fileFilter)
