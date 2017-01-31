@@ -22,7 +22,7 @@ class ConnectionVerifierImpl
     private val repository: ConnectionRepository
 ) : ConnectionVerifier {
 
-  private var socket: Socket? = null
+  private lateinit var socket: Socket
 
   override fun verify(): Single<Boolean> {
     return Observable.using<String, Socket>({
@@ -56,7 +56,7 @@ class ConnectionVerifierImpl
 
   @Throws(IOException::class)
   private fun sendMessage(socketMessage: SocketMessage) {
-    socket!!.outputStream.write(getMessage(socketMessage))
+    socket.outputStream.write(getMessage(socketMessage))
   }
 
   private fun cleanup(socket: Socket) {
@@ -90,10 +90,10 @@ class ConnectionVerifierImpl
       val socketAddress = mapper.map(connectionSettings)
       Timber.v("Creating new socket")
       socket = Socket()
-      socket!!.soTimeout = 40 * 1000
-      socket!!.connect(socketAddress)
+      socket.soTimeout = 40 * 1000
+      socket.connect(socketAddress)
       sendMessage(SocketMessage.create(Protocol.VerifyConnection))
-      return socket!!
+      return socket
     } catch (e: IOException) {
       throw RuntimeException(e)
     }
