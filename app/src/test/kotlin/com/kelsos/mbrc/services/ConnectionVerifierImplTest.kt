@@ -1,9 +1,6 @@
 package com.kelsos.mbrc.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.common.truth.Truth
-import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.Truth.assertWithMessage
 import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.ConnectionSettings
@@ -31,7 +28,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class ConnectionVerifierImplTest {
-  lateinit var server: ServerSocket
+  private var server: ServerSocket? = null
 
   @Mock lateinit var connectionRepository: ConnectionRepository
   private val mapper = ObjectMapper()
@@ -56,8 +53,8 @@ class ConnectionVerifierImplTest {
         server = ServerSocket(39192)
 
         while (true) {
-          val connection = server.accept()
-          val input = InputStreamReader(connection.inputStream)
+          val connection = server?.accept()
+          val input = InputStreamReader(connection!!.inputStream)
           val inputReader = BufferedReader(input)
           val line = inputReader.readLine()
           val value = mapper.readValue(line, SocketMessage::class.java)
@@ -97,7 +94,7 @@ class ConnectionVerifierImplTest {
 
   @After
   fun tearDown() {
-    server.close()
+    server?.close()
   }
 
   @Test fun testSuccessfulVerification() {
@@ -105,8 +102,8 @@ class ConnectionVerifierImplTest {
 
     `when`(connectionRepository.default).thenAnswer {
       val settings = ConnectionSettings()
-      settings.address = server.inetAddress.hostAddress
-      settings.port = server.localPort
+      settings.address = server!!.inetAddress.hostAddress
+      settings.port = server!!.localPort
       return@thenAnswer settings
     }
 
@@ -125,8 +122,8 @@ class ConnectionVerifierImplTest {
     startMockServer(true)
     `when`(connectionRepository.default).thenAnswer {
       val settings = ConnectionSettings()
-      settings.address = server.inetAddress.hostAddress
-      settings.port = server.localPort
+      settings.address = server!!.inetAddress.hostAddress
+      settings.port = server!!.localPort
       return@thenAnswer settings
     }
 
@@ -141,8 +138,8 @@ class ConnectionVerifierImplTest {
     startMockServer(false, Protocol.ClientNotAllowed)
     `when`(connectionRepository.default).thenAnswer {
       val settings = ConnectionSettings()
-      settings.address = server.inetAddress.hostAddress
-      settings.port = server.localPort
+      settings.address = server!!.inetAddress.hostAddress
+      settings.port = server!!.localPort
       return@thenAnswer settings
     }
 
