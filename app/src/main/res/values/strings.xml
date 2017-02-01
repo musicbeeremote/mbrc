@@ -174,4 +174,5 @@
   <string name="settings_key_album_artists_only">mbrc.settings.album_artist_only</string>
   <string name="menu_play_queue_all">Play Now (Queue All)</string>
   <string name="main__dialog_plugin_outdated_title">Plugin Update Required</string>
+  <string name="nav_radio">Radio</string>
 </resources>

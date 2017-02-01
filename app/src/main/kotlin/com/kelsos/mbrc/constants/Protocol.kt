@@ -52,6 +52,7 @@ object Protocol {
   val ONE = "one"
 
   val VerifyConnection = "verifyconnection"
+  val RadioStations = "radiostations"
 
   val ProtocolVersionNumber = 4
 }

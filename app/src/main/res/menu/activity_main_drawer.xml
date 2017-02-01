@@ -23,6 +23,10 @@
         android:title="@string/nav_playlists"
         />
 
+    <item android:id="@+id/nav_radio"
+          android:icon="@drawable/ic_radio_black_24dp"
+          android:title="@string/nav_radio"/>
+
     <item
         android:id="@+id/nav_lyrics"
         android:icon="@drawable/ic_view_headline_black_24dp"
