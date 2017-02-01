@@ -203,4 +203,5 @@
   <string name="media__tracks">Tracks</string>
   <string name="media__playlists">Playlists</string>
   <string name="library_stats__description">The following metadata entries are currently available to MusicBee Remote:</string>
+  <string name="nav_radio">Radio</string>
 </resources>

@@ -14,84 +14,84 @@
   <uses-sdk tools:overrideLibrary="timber.log" />
 
   <application
-    android:name=".RemoteApplication"
-    android:allowBackup="true"
-    android:description="@string/application_description"
-    android:icon="@mipmap/ic_launcher"
-    android:label="@string/application_name"
-    android:logo="@mipmap/ic_launcher"
-    android:theme="@style/Theme.App"
-    tools:ignore="UnusedAttribute">
+      android:name=".RemoteApplication"
+      android:allowBackup="true"
+      android:description="@string/application_description"
+      android:icon="@mipmap/ic_launcher"
+      android:label="@string/application_name"
+      android:logo="@mipmap/ic_launcher"
+      android:theme="@style/Theme.App"
+      tools:ignore="UnusedAttribute">
     <activity
-      android:name=".ui.navigation.main.MainActivity"
-      android:launchMode="singleTop"
-      android:windowSoftInputMode="adjustNothing" />
+        android:name=".ui.navigation.main.MainActivity"
+        android:launchMode="singleTop"
+        android:windowSoftInputMode="adjustNothing" />
     <activity
-      android:name=".ui.navigation.library.LibraryActivity"
-      android:label="@string/nav_library"
-      android:parentActivityName=".ui.navigation.main.MainActivity">
+        android:name=".ui.navigation.library.LibraryActivity"
+        android:label="@string/nav_library"
+        android:parentActivityName=".ui.navigation.main.MainActivity">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value=".ui.navigation.main.MainActivity" />
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.navigation.main.MainActivity" />
     </activity>
-    <activity android:name=".ui.navigation.library.album_tracks.AlbumTracksActivity" />
-    <activity android:name=".ui.navigation.library.artist_albums.ArtistAlbumsActivity" />
-    <activity android:name=".ui.navigation.library.genre_artists.GenreArtistsActivity" />
+    <activity android:name=".ui.navigation.library.album_tracks.AlbumTracksActivity"/>
+    <activity android:name=".ui.navigation.library.artist_albums.ArtistAlbumsActivity"/>
+    <activity android:name=".ui.navigation.library.genre_artists.GenreArtistsActivity"/>
     <activity
-      android:name=".ui.navigation.lyrics.LyricsActivity"
-      android:label="@string/nav_lyrics"
-      android:parentActivityName=".ui.navigation.main.MainActivity">
+        android:name=".ui.navigation.lyrics.LyricsActivity"
+        android:label="@string/nav_lyrics"
+        android:parentActivityName=".ui.navigation.main.MainActivity">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value=".ui.navigation.main.MainActivity" />
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
-      android:name=".ui.navigation.nowplaying.NowPlayingActivity"
-      android:label="@string/nav_now_playing"
-      android:parentActivityName=".ui.navigation.main.MainActivity">
+        android:name=".ui.navigation.nowplaying.NowPlayingActivity"
+        android:label="@string/nav_now_playing"
+        android:parentActivityName=".ui.navigation.main.MainActivity">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value=".ui.navigation.main.MainActivity" />
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
-      android:name=".ui.navigation.playlists.PlaylistActivity"
-      android:label="@string/nav_playlists"
-      android:parentActivityName=".ui.navigation.main.MainActivity">
+        android:name=".ui.navigation.playlists.PlaylistActivity"
+        android:label="@string/nav_playlists"
+        android:parentActivityName=".ui.navigation.main.MainActivity">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value=".ui.navigation.main.MainActivity" />
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
-      android:name=".ui.preferences.SettingsActivity"
-      android:parentActivityName=".ui.navigation.main.MainActivity">
+        android:name=".ui.preferences.SettingsActivity"
+        android:parentActivityName=".ui.navigation.main.MainActivity">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value=".ui.navigation.main.MainActivity" />
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.navigation.main.MainActivity" />
     </activity>
     <activity
-      android:name=".ui.connection_manager.ConnectionManagerActivity"
-      android:parentActivityName=".ui.preferences.SettingsActivity"
-      android:windowSoftInputMode="adjustNothing">
+        android:name=".ui.connection_manager.ConnectionManagerActivity"
+        android:parentActivityName=".ui.preferences.SettingsActivity"
+        android:windowSoftInputMode="adjustNothing">
 
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value=".ui.preferences.SettingsActivity" />
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.preferences.SettingsActivity" />
     </activity>
 
     <activity
-      android:name=".ui.help_feedback.HelpFeedbackActivity"
-      android:label="@string/title_activity_help_feedback"
+        android:name=".ui.help_feedback.HelpFeedbackActivity"
+        android:label="@string/title_activity_help_feedback"
       android:windowSoftInputMode="adjustNothing"
       android:parentActivityName=".ui.navigation.main.MainActivity">
       <meta-data
@@ -100,7 +100,7 @@
     </activity>
 
     <activity
-      android:name=".ui.activities.SplashActivity"
+        android:name=".ui.activities.SplashActivity"
       android:noHistory="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
@@ -109,20 +109,27 @@
       </intent-filter>
     </activity>
 
+    <activity
+        android:name=".ui.navigation.radio.RadioActivity"
+        android:parentActivityName="com.kelsos.mbrc.ui.navigation.main.MainActivity">
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value="com.kelsos.mbrc.ui.navigation.main.MainActivity"/>
+    </activity>
+
     <receiver android:name=".utilities.MediaButtonReceiver">
       <intent-filter>
         <action android:name="android.intent.action.MEDIA_BUTTON" />
       </intent-filter>
     </receiver>
-
     <receiver android:name=".widgets.WidgetSmall">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
 
       <meta-data
-        android:name="android.appwidget.provider"
-        android:resource="@xml/remote_widget_small" />
+          android:name="android.appwidget.provider"
+          android:resource="@xml/remote_widget_small" />
     </receiver>
     <receiver android:name=".widgets.WidgetNormal">
       <intent-filter>
@@ -130,13 +137,13 @@
       </intent-filter>
 
       <meta-data
-        android:name="android.appwidget.provider"
-        android:resource="@xml/remote_widget_normal" />
+          android:name="android.appwidget.provider"
+          android:resource="@xml/remote_widget_normal" />
     </receiver>
 
     <service
-      android:name=".controller.RemoteService"
-      android:description="@string/info_service_description"
+        android:name=".controller.RemoteService"
+        android:description="@string/info_service_description"
       android:exported="false">
       <intent-filter>
         <action android:name="android.net.wifi.STATE_CHANGE" />

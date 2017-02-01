@@ -37,6 +37,7 @@ import com.kelsos.mbrc.ui.navigation.lyrics.LyricsActivity
 import com.kelsos.mbrc.ui.navigation.main.MainActivity
 import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingActivity
 import com.kelsos.mbrc.ui.navigation.playlists.PlaylistActivity
+import com.kelsos.mbrc.ui.navigation.radio.RadioActivity
 import com.kelsos.mbrc.ui.preferences.SettingsActivity
 import timber.log.Timber
 import javax.inject.Inject
@@ -179,6 +180,8 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
       createBackStack(Intent(this, NowPlayingActivity::class.java))
     } else if (itemId == R.id.nav_playlists) {
       createBackStack(Intent(this, PlaylistActivity::class.java))
+    } else if (itemId == R.id.nav_radio) {
+      createBackStack(Intent(this, RadioActivity::class.java))
     } else if (itemId == R.id.nav_lyrics) {
       createBackStack(Intent(this, LyricsActivity::class.java))
     } else if (itemId == R.id.nav_settings) {

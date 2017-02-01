@@ -26,10 +26,14 @@ import com.kelsos.mbrc.repository.NowPlayingRepository
 import com.kelsos.mbrc.repository.NowPlayingRepositoryImpl
 import com.kelsos.mbrc.repository.PlaylistRepository
 import com.kelsos.mbrc.repository.PlaylistRepositoryImpl
+import com.kelsos.mbrc.repository.RadioRepository
+import com.kelsos.mbrc.repository.RadioRepositoryImpl
 import com.kelsos.mbrc.repository.TrackRepository
 import com.kelsos.mbrc.repository.TrackRepositoryImpl
 import com.kelsos.mbrc.repository.data.LocalArtistDataSource
 import com.kelsos.mbrc.repository.data.LocalArtistDataSourceImpl
+import com.kelsos.mbrc.repository.data.LocalRadioDataSource
+import com.kelsos.mbrc.repository.data.RemoteRadioDataSource
 import com.kelsos.mbrc.services.ServiceChecker
 import com.kelsos.mbrc.services.ServiceCheckerImpl
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
@@ -85,5 +89,9 @@ class RemoteModule : Module() {
       )
     )
     bind(QueueHandler::class.java).singletonInScope()
+
+    bind(LocalRadioDataSource::class.java).to(LocalRadioDataSource::class.java).singletonInScope()
+    bind(RemoteRadioDataSource::class.java).to(RemoteRadioDataSource::class.java).singletonInScope()
+    bind(RadioRepository::class.java).to(RadioRepositoryImpl::class.java).singletonInScope()
   }
 }

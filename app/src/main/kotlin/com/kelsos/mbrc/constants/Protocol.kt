@@ -53,6 +53,7 @@ object Protocol {
   const val ONE = "one"
 
   const val VerifyConnection = "verifyconnection"
+  const val RadioStations = "radiostations"
 
   const val ProtocolVersionNumber = 4
 
