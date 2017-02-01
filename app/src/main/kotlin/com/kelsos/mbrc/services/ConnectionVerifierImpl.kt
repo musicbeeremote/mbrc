@@ -21,19 +21,21 @@ class ConnectionVerifierImpl
   override suspend fun verify(): Boolean = withContext(dispatchers.io) {
     try {
       val connection = requestManager.openConnection(false)
-      val response =
-        requestManager.request(connection, SocketMessage.create(Protocol.VerifyConnection))
+      val response = requestManager.request(
+        connection,
+        SocketMessage.create(Protocol.VerifyConnection)
+      )
       connection.close()
       val message = getMessage(response)
 
       if (Protocol.VerifyConnection == message.context) {
         return@withContext true
-      } else {
-        throw NoValidPluginConnection()
       }
     } catch (e: Exception) {
       return@withContext false
     }
+
+    throw NoValidPluginConnection()
   }
 
 
