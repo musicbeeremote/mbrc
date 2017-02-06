@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.RadioStation
 import rx.Single
+import javax.inject.Inject
 
-class RadioServiceImpl : RadioService, ServiceBase() {
+class RadioServiceImpl
+@Inject constructor() : RadioService, ServiceBase() {
   override fun getRadios(): Single<List<RadioStation>> {
     return request(Protocol.RadioStations).first().toSingle().flatMap {
       return@flatMap Single.fromCallable {
