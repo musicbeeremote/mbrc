@@ -69,12 +69,4 @@ script:
   - curl -o file.apk "https://dl.bintray.com/linkedin/maven/com/linkedin/testbutler/test-butler-app/1.2.0/test-butler-app-1.2.0.apk" && adb install file.apk
   - adb shell input keyevent 82 &
   - adb shell input tap 240 390 & #Hopefully it will close that annoying "Process system isn't responding" dialog that fails the tests
-  - ./gradlew jacocoTestReport -PdisablePreDex --continue --stacktrace
-after_success:
-  - ./gradlew coveralls -PdisablePreDex --stacktrace
-
-after_failure:
-  - wget http://imgur.com/tools/imgurbash.sh
-  - chmod a+x imgurbash.sh
-  - adb shell screencap -p | sed 's/\r$//' > screen.png
-  - ./imgurbash.sh screen.png
+  - ./gradlew coveralls -PdisablePreDex --continue --stacktrace
