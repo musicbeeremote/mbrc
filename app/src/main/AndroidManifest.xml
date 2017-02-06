@@ -150,6 +150,7 @@
       </intent-filter>
     </activity>
     <activity
+        android:label="@string/title_activity_radios"
         android:name=".ui.navigation.radio.RadioActivity"
         android:parentActivityName="com.kelsos.mbrc.ui.navigation.main.MainActivity">
       <meta-data

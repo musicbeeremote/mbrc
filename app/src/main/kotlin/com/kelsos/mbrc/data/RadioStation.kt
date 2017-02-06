@@ -16,7 +16,7 @@ import com.raizlabs.android.dbflow.structure.Model
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 @JsonPropertyOrder("name", "url")
-@Table(database = RemoteDatabase::class, name = "radio")
+@Table(name = "radio_station", database = RemoteDatabase::class)
 data class RadioStation(
     @JsonProperty("name")
     @Column(name = "name")

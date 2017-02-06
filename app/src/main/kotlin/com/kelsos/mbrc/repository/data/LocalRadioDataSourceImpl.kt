@@ -15,8 +15,10 @@ import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModel
 import rx.Emitter
 import rx.Observable
 import rx.Single
+import javax.inject.Inject
 
-class LocalRadioDataSourceImpl : LocalRadioDataSource {
+class LocalRadioDataSourceImpl
+@Inject constructor() : LocalRadioDataSource {
   override fun deleteAll() {
     delete(RadioStation::class).execute()
   }

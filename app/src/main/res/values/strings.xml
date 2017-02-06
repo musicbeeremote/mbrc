@@ -175,4 +175,8 @@
   <string name="menu_play_queue_all">Play Now (Queue All)</string>
   <string name="main__dialog_plugin_outdated_title">Plugin Update Required</string>
   <string name="nav_radio">Radio</string>
+  <string name="radio__loading_failed">There was an error while loading the radio stations</string>
+  <string name="radio__play_successful">The radio stations has been queued successfully.</string>
+  <string name="radio__play_failed">There was an error while trying to play the radio station.</string>
+  <string name="title_activity_radios">Radios</string>
 </resources>
