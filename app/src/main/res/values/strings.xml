@@ -204,4 +204,8 @@
   <string name="media__playlists">Playlists</string>
   <string name="library_stats__description">The following metadata entries are currently available to MusicBee Remote:</string>
   <string name="nav_radio">Radio</string>
+  <string name="radio__loading_failed">There was an error while loading the radio stations</string>
+  <string name="radio__play_successful">The radio stations has been queued successfully.</string>
+  <string name="radio__play_failed">There was an error while trying to play the radio station.</string>
+  <string name="title_activity_radios">Radios</string>
 </resources>

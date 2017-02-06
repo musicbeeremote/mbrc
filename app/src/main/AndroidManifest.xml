@@ -110,11 +110,12 @@
     </activity>
 
     <activity
-        android:name=".ui.navigation.radio.RadioActivity"
-        android:parentActivityName="com.kelsos.mbrc.ui.navigation.main.MainActivity">
+      android:label="@string/title_activity_radios"
+      android:name=".ui.navigation.radio.RadioActivity"
+      android:parentActivityName="com.kelsos.mbrc.ui.navigation.main.MainActivity">
       <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="com.kelsos.mbrc.ui.navigation.main.MainActivity"/>
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value="com.kelsos.mbrc.ui.navigation.main.MainActivity"/>
     </activity>
 
     <receiver android:name=".utilities.MediaButtonReceiver">

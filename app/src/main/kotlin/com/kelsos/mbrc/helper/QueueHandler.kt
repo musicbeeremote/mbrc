@@ -92,6 +92,16 @@ constructor(
     return QueueResult(success, tracks)
   }
 
+  suspend fun queuePath(path: String): QueueResult {
+    var success = false
+    try {
+      success = queue(Queue.NOW, listOf(path))
+    } catch (e: Exception) {
+      Timber.e(e)
+    }
+    return QueueResult(success, 1)
+  }
+
   suspend fun queueTrack(
     track: Track,
     @Queue.Action type: String,
