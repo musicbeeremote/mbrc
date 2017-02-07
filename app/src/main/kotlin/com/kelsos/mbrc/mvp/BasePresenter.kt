@@ -3,6 +3,7 @@ package com.kelsos.mbrc.mvp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -10,7 +11,9 @@ import kotlinx.coroutines.cancelChildren
 import rx.Subscription
 import rx.subscriptions.CompositeSubscription
 
-open class BasePresenter<T : BaseView> : Presenter<T>, LifecycleOwner {
+open class BasePresenter<T : BaseView>(
+  dispatcher: CoroutineDispatcher = Dispatchers.Main
+) : Presenter<T>, LifecycleOwner {
   var view: T? = null
     private set
 
@@ -18,7 +21,7 @@ open class BasePresenter<T : BaseView> : Presenter<T>, LifecycleOwner {
   private val lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
 
   private val job = SupervisorJob()
-  private val coroutineContext = job + Dispatchers.Main
+  private val coroutineContext = job + dispatcher
   protected val scope: CoroutineScope = CoroutineScope(coroutineContext)
 
   override val isAttached: Boolean
