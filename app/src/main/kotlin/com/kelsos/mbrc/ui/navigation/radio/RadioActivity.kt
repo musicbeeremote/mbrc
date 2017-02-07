@@ -2,15 +2,18 @@ package com.kelsos.mbrc.ui.navigation.radio;
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.RadioStation
 import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.navigation.radio.RadioAdapter.OnRadioPressedListener
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import com.raizlabs.android.dbflow.list.FlowCursorList
@@ -19,7 +22,7 @@ import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class RadioActivity : BaseActivity(), RadioView, SwipeRefreshLayout.OnRefreshListener, RadioAdapter.OnRadioPressedListener {
+class RadioActivity : BaseActivity(), RadioView, OnRefreshListener, OnRadioPressedListener {
 
   private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
 
@@ -27,6 +30,9 @@ class RadioActivity : BaseActivity(), RadioView, SwipeRefreshLayout.OnRefreshLis
   @BindView(R.id.radio_list) lateinit var radioView: EmptyRecyclerView
   @BindView(R.id.empty_view) lateinit var emptyView: View
   @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
+  @BindView(R.id.list_empty_icon) lateinit var emptyViewIcon: ImageView
+  @BindView(R.id.list_empty_subtitle) lateinit var emptyViewSubTitle: TextView
+  @BindView(R.id.empty_view_progress_bar) lateinit var emptyViewProgress: ProgressBar
 
   @Inject lateinit var presenter: RadioPresenter
   @Inject lateinit var adapter: RadioAdapter
@@ -48,7 +54,8 @@ class RadioActivity : BaseActivity(), RadioView, SwipeRefreshLayout.OnRefreshLis
     super.setup()
     swipeLayout.setOnRefreshListener(this)
     swipeLayout.setSwipeableChildren(R.id.radio_list, R.id.empty_view)
-    emptyViewTitle.setText(R.string.artists_list_empty)
+    emptyViewTitle.setText(R.string.radio__no_radio_stations)
+    emptyViewIcon.setImageResource(R.drawable.ic_radio_black_80dp)
     radioView.adapter = adapter
     radioView.emptyView = emptyView
     radioView.layoutManager = LinearLayoutManager(this)
@@ -97,6 +104,21 @@ class RadioActivity : BaseActivity(), RadioView, SwipeRefreshLayout.OnRefreshLis
 
   override fun radioPlaySuccessful() {
     Snackbar.make(radioView, R.string.radio__play_successful, Snackbar.LENGTH_SHORT).show()
+  }
+
+  override fun showLoading() {
+    emptyViewProgress.visibility = View.VISIBLE
+    emptyViewIcon.visibility = View.GONE
+    emptyViewTitle.visibility = View.GONE
+    emptyViewSubTitle.visibility = View.GONE
+  }
+
+  override fun hideLoading() {
+    emptyViewProgress.visibility = View.GONE
+    emptyViewIcon.visibility = View.VISIBLE
+    emptyViewTitle.visibility = View.VISIBLE
+    emptyViewSubTitle.visibility = View.VISIBLE
+    swipeLayout.isRefreshing = false
   }
 
   @javax.inject.Scope
