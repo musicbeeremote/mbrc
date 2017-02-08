@@ -22,6 +22,7 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.io.PrintWriter
 import java.net.ServerSocket
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -33,59 +34,64 @@ class ConnectionVerifierImplTest {
   @Rule @JvmField val toothpickRule: ToothPickRule = ToothPickRule(this, "verifier")
       .setRootRegistryPackage("com.kelsos.mbrc")
   private val mapper = ObjectMapper()
+  private val port: Int = 36000
 
 
-  private val executor: ExecutorService = Executors.newSingleThreadExecutor()
+  private lateinit var executor: ExecutorService
 
   @Before
   fun setUp() {
     MockitoAnnotations.initMocks(this)
     toothpickRule.scope.installModules(TestModule())
+    executor = Executors.newSingleThreadExecutor()
   }
 
   fun startMockServer(prematureDisconnect: Boolean = false,
                       responseContext: String = Protocol.VerifyConnection,
                       json: Boolean = true) {
+    val random = Random()
     val mockSocket = Runnable {
 
-      try {
-        server = ServerSocket(39192)
+      server = ServerSocket(port + random.nextInt(1000))
 
-        while (true) {
-          val connection = server?.accept()
-          val input = InputStreamReader(connection!!.inputStream)
-          val inputReader = BufferedReader(input)
-          val line = inputReader.readLine()
-          val value = mapper.readValue(line, SocketMessage::class.java)
+      while (true) {
+        val connection = server?.accept()
+        val input = InputStreamReader(connection!!.inputStream)
+        val inputReader = BufferedReader(input)
+        val line = inputReader.readLine()
+        val value = mapper.readValue(line, SocketMessage::class.java)
 
-          if (value.context != Protocol.VerifyConnection) {
-            connection.close()
-            return@Runnable
-          }
-
-          if (prematureDisconnect) {
-            connection.close()
-            return@Runnable
-          }
-
-          val out = OutputStreamWriter(connection.outputStream, Const.UTF_8)
-          val output = PrintWriter(BufferedWriter(out), true)
-          if (json) {
-            val response = SocketMessage()
-            response.context = responseContext
-            output.write(mapper.writeValueAsString(response) + "\n\r")
-          } else {
-            output.write(responseContext + "\n\r")
-          }
-          output.flush()
-          input.close()
-          inputReader.close()
-          out.close()
-          output.close()
+        if (value.context != Protocol.VerifyConnection) {
           connection.close()
+          server?.close()
+          return@Runnable
         }
-      } catch(e: Exception) {
+
+        if (prematureDisconnect) {
+          connection.close()
+          server?.close()
+          return@Runnable
+        }
+
+        val out = OutputStreamWriter(connection.outputStream, Const.UTF_8)
+        val output = PrintWriter(BufferedWriter(out), true)
+        if (json) {
+          val response = SocketMessage()
+          response.context = responseContext
+          output.write(mapper.writeValueAsString(response) + "\n\r")
+        } else {
+          output.write(responseContext + "\n\r")
+        }
+        output.flush()
+        input.close()
+        inputReader.close()
+        out.close()
+        output.close()
+        connection.close()
+        server?.close()
+        return@Runnable
       }
+
     }
 
     executor.execute(mockSocket)
@@ -93,7 +99,6 @@ class ConnectionVerifierImplTest {
 
   @After
   fun tearDown() {
-    server?.close()
     executor.shutdownNow()
   }
 
