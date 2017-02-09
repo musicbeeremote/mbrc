@@ -27,14 +27,12 @@ import javax.inject.Inject
 
 class MiniControlFragment : Fragment(), MiniControlView {
 
-  @BindView(R.id.mc_track_cover)
-  lateinit var trackCover: ImageView
-  @BindView(R.id.mc_track_artist)
-  lateinit var trackArtist: TextView
-  @BindView(R.id.mc_track_title)
-  lateinit var trackTitle: TextView
-  @BindView(R.id.mc_play_pause)
-  lateinit var playPause: ImageButton
+  private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
+
+  @BindView(R.id.mc_track_cover) lateinit var trackCover: ImageView
+  @BindView(R.id.mc_track_artist) lateinit var trackArtist: TextView
+  @BindView(R.id.mc_track_title) lateinit var trackTitle: TextView
+  @BindView(R.id.mc_play_pause) lateinit var playPause: ImageButton
 
   @Inject
   lateinit var presenter: MiniControlPresenter
@@ -62,8 +60,8 @@ class MiniControlFragment : Fragment(), MiniControlView {
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val scope = Toothpick.openScopes(requireActivity().application, this)
-    scope.installModules(MiniControlModule())
+    Toothpick.openScope(PRESENTER_SCOPE).installModules(MiniControlModule())
+    val scope = Toothpick.openScopes(requireActivity().application, PRESENTER_SCOPE, this)
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
   }
@@ -125,6 +123,11 @@ class MiniControlFragment : Fragment(), MiniControlView {
 
   override fun onDestroy() {
     Toothpick.closeScope(this)
+    Toothpick.closeScope(PRESENTER_SCOPE)
     super.onDestroy()
   }
+
+  @javax.inject.Scope
+  @Retention(AnnotationRetention.RUNTIME)
+  annotation class Presenter
 }
