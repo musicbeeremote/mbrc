@@ -66,7 +66,7 @@ open class RemoteApplication : MultiDexApplication() {
         .build())
   }
 
-  protected fun initializeToothpick(testMode: Boolean = false) {
+  protected fun initializeToothpick() {
     val configuration: Configuration
     if (BuildConfig.DEBUG) {
       configuration = Configuration.forDevelopment().disableReflection()
@@ -79,9 +79,7 @@ open class RemoteApplication : MultiDexApplication() {
     MemberInjectorRegistryLocator.setRootRegistry(MemberInjectorRegistry())
     FactoryRegistryLocator.setRootRegistry(FactoryRegistry())
     val applicationScope = Toothpick.openScope(this)
-    if (testMode) {
-      applicationScope.installModules(SmoothieApplicationModule(this))
-    } else {
+    if (!testMode()) {
       applicationScope.installModules(SmoothieApplicationModule(this), RemoteModule())
     }
   }
@@ -94,4 +92,6 @@ open class RemoteApplication : MultiDexApplication() {
     val application = context.applicationContext as RemoteApplication
     return application.refWatcher
   }
+
+  open internal fun testMode(): Boolean = false
 }

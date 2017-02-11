@@ -3,7 +3,6 @@ import java.text.SimpleDateFormat
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'idea'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
@@ -38,7 +37,6 @@ android {
     versionName version
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
     buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
-
     // Enabling multidex support.
     multiDexEnabled true
 
@@ -54,7 +52,6 @@ android {
       }
     }
   }
-
 
   signingConfigs {
     release {
@@ -177,7 +174,6 @@ dependencies {
   androidTestCompile "junit:junit:${junit_version}"
   androidTestCompile "org.mockito:mockito-core:${mockito_version}"
   androidTestCompile "org.mockito:mockito-android:${mockito_version}"
-
   androidTestCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
   androidTestCompile "com.android.support:support-annotations:${support_library_version}"
   androidTestCompile "com.android.support.test:runner:${runner_version}"
@@ -323,11 +319,8 @@ kapt {
   }
 }
 
-task jacocoTestReport(type: JacocoReport,
-    dependsOn: ['testGithubDebugUnitTest', 'createGithubDebugCoverageReport']) {
-  group = "Reporting"
-  description "Generate jacoco coverage reports"
 
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testGithubDebugUnitTest', 'createGithubDebugCoverageReport']) {
   reports {
     xml.enabled = true
     html.enabled = true

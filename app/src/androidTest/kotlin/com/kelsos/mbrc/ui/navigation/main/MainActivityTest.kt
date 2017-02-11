@@ -1,19 +1,22 @@
 package com.kelsos.mbrc.ui.navigation.main
 
+import android.app.Activity.RESULT_OK
 import android.app.Application
+import android.app.Instrumentation.ActivityResult
 import android.content.Intent
 import android.support.test.InstrumentationRegistry
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.assertion.ViewAssertions.doesNotExist
 import android.support.test.espresso.assertion.ViewAssertions.matches
+import android.support.test.espresso.intent.Intents.intending
+import android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent
+import android.support.test.espresso.intent.rule.IntentsTestRule
+import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE
-import android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
-import android.support.test.espresso.matcher.ViewMatchers.withId
-import android.support.test.espresso.matcher.ViewMatchers.withText
 import android.support.test.filters.LargeTest
-import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.controller.RemoteService
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.model.MainDataModel
@@ -27,9 +30,7 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.anyString
-import org.mockito.Mockito.mock
+import org.mockito.Mockito.*
 import rx.Completable
 import rx.Scheduler
 import rx.Single
@@ -44,15 +45,14 @@ import toothpick.testing.ToothPickRule
 class MainActivityTest {
 
   var toothPickRule = ToothPickRule(this)
-  val activityRule = ActivityTestRule<MainActivity>(MainActivity::class.java, true, false)
-
-  @Rule fun chain(): TestRule = RuleChain.outerRule(toothPickRule).around(activityRule)
-
+  @Rule fun activityRule() = IntentsTestRule(MainActivity::class.java, true, false)
+  @Rule fun chain(): TestRule = RuleChain.outerRule(toothPickRule).around(activityRule())
 
   private lateinit var model: MainDataModel
   private lateinit var mockBus: RxBus
   private lateinit var mockSettingsManager: SettingsManager
   private lateinit var mockCache: ModelCache
+  private lateinit var application: Application
 
   @Before
   fun setUp() {
@@ -66,7 +66,7 @@ class MainActivityTest {
 
     model = MainDataModel(mockBus, mockCache)
 
-    val application = InstrumentationRegistry.getTargetContext().applicationContext as Application
+    application = InstrumentationRegistry.getTargetContext().applicationContext as Application
     val scope = Toothpick.openScope(application)
     scope.installModules(TestModule())
   }
@@ -78,7 +78,9 @@ class MainActivityTest {
 
   @Test
   fun testShowOutdatedPluginSnackBar() {
-    activityRule.launchActivity(Intent())
+    activityRule().launchActivity(Intent())
+    intending(hasComponent(RemoteService::class.java.name))
+        .respondWith(ActivityResult(RESULT_OK, Intent()))
     onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.plugin_protocol_out_of_date)))
         .check(doesNotExist())
     model.pluginProtocol = 1
@@ -88,7 +90,9 @@ class MainActivityTest {
 
   @Test
   fun testShouldNotShowOutdatedPluginSnackBar() {
-    activityRule.launchActivity(Intent())
+    activityRule().launchActivity(Intent())
+    intending(hasComponent(RemoteService::class.java.name))
+        .respondWith(ActivityResult(RESULT_OK, Intent()))
     onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.plugin_protocol_out_of_date)))
         .check(doesNotExist())
     model.pluginProtocol = 3
@@ -104,6 +108,7 @@ class MainActivityTest {
           .toProviderInstance { mockSettingsManager }
           .providesSingletonInScope()
       bind(Scheduler::class.java).withName("main").toProviderInstance { TestScheduler() }
+      bind(Application::class.java).toInstance(application)
     }
   }
 }
