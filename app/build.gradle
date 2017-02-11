@@ -5,6 +5,7 @@ apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'idea'
+apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 
 repositories {
@@ -27,7 +28,7 @@ def version_code = 160
 
 android {
   compileSdkVersion 25
-  buildToolsVersion "25.0.1"
+  buildToolsVersion "25.0.2"
 
   defaultConfig {
     applicationId "com.kelsos.mbrc"
@@ -37,13 +38,21 @@ android {
     versionName version
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
     buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
-    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     // Enabling multidex support.
     multiDexEnabled true
+
+    testInstrumentationRunner 'com.kelsos.mbrc.MockTestRunner'
+    testApplicationId "com.kelsos.mbrc.test"
   }
 
   testOptions {
     unitTests.returnDefaultValues = true
+    unitTests.all {
+      jacoco {
+        includeNoLocationClasses = true
+      }
+    }
   }
 
 
@@ -109,7 +118,7 @@ android {
   }
 
   dexOptions {
-    javaMaxHeapSize "5G"
+    javaMaxHeapSize "2G"
   }
 
   applicationVariants.all { variant ->
@@ -141,20 +150,22 @@ idea {
 }
 
 ext {
-  support_library_version = "25.1.0"
-  dbflow_version = "4.0.0-beta3"
-  toothpick_version = "1.0.3"
-  okhttp_version = '3.5.0'
+  support_library_version = "25.1.1"
+  dbflow_version = "4.0.0-beta5"
+  toothpick_version = "1.0.5"
+  okhttp_version = '3.6.0'
   retrofit_version = '2.1.0'
-  jackson_version = "2.8.5"
-  butterknife_version = "8.4.0"
-  material_dialogs_version = "0.9.1.0"
-  stetho_version = "1.4.2"
+  jackson_version = "2.8.6"
+  butterknife_version = "8.5.1"
+  material_dialogs_version = "0.9.3.0"
   runner_version = "0.5"
   espresso_version = "2.2.2"
   junit_version = "4.12"
-  mockito_version = "2.5.0"
-  hamcrest_version = "1.3"
+  mockito_version = "2.7.5"
+  robolectric_version = "3.2.2"
+  truth_version = "0.31"
+  leakcanary_version = "1.5"
+  stetho_version = "1.4.2"
 }
 
 dependencies {
@@ -162,24 +173,28 @@ dependencies {
   androidTestCompile("com.android.support.test.espresso:espresso-core:${espresso_version}", {
     exclude group: 'com.android.support', module: 'support-annotations'
   })
+  androidTestCompile "com.android.support.test.espresso:espresso-intents:${espresso_version}"
   androidTestCompile "junit:junit:${junit_version}"
   androidTestCompile "org.mockito:mockito-core:${mockito_version}"
-  androidTestCompile 'com.linkedin.dexmaker:dexmaker-mockito:2.2.0'
+  androidTestCompile "org.mockito:mockito-android:${mockito_version}"
+
+  androidTestCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
   androidTestCompile "com.android.support:support-annotations:${support_library_version}"
   androidTestCompile "com.android.support.test:runner:${runner_version}"
   androidTestCompile "com.android.support.test:rules:${runner_version}"
-  androidTestCompile "org.hamcrest:hamcrest-library:${hamcrest_version}"
-  androidTestCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
-  androidTestCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+  androidTestCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
+  androidTestCompile 'com.linkedin.testbutler:test-butler-library:1.2.0'
 
   // Test dependencies
   testCompile "junit:junit:${junit_version}"
   testCompile "org.mockito:mockito-core:${mockito_version}"
-  testCompile 'org.robolectric:robolectric:3.1.4'
-  testCompile 'org.robolectric:shadows-multidex:3.1.4'
-  testCompile 'com.google.truth:truth:0.31'
+  testCompile "org.robolectric:robolectric:${robolectric_version}"
+  testCompile "org.robolectric:shadows-multidex:${robolectric_version}"
+  testCompile "com.google.truth:truth:${truth_version}"
   testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
-  testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+  testCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
+  //The android library only will fail the robolectric tests
+  testCompile 'org.threeten:threetenbp:1.3.3'
 
   compile "com.android.support:appcompat-v7:${support_library_version}"
   compile "com.android.support:support-v4:${support_library_version}"
@@ -200,6 +215,7 @@ dependencies {
 
   compile "com.fasterxml.jackson.core:jackson-core:${jackson_version}"
   compile "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
+  compile "com.fasterxml.jackson.module:jackson-module-kotlin:${jackson_version}"
   compile "com.jakewharton:butterknife:${butterknife_version}"
 
   compile "com.github.stephanenicolas.toothpick:toothpick-runtime:${toothpick_version}"
@@ -219,7 +235,7 @@ dependencies {
   compile "com.squareup.retrofit2:adapter-rxjava:${retrofit_version}"
   compile "com.squareup.retrofit2:converter-jackson:${retrofit_version}"
   compile "com.squareup.retrofit2:retrofit:${retrofit_version}"
-  compile 'com.jakewharton.threetenabp:threetenabp:1.0.4'
+  compile 'com.jakewharton.threetenabp:threetenabp:1.0.5'
 
   debugCompile "com.facebook.stetho:stetho:${stetho_version}"
   debugCompile "com.facebook.stetho:stetho-okhttp3:${stetho_version}"
@@ -229,19 +245,19 @@ dependencies {
   compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.5'
 
   compile 'io.reactivex:rxandroid:1.2.1'
-  compile 'io.reactivex:rxjava:1.2.4'
+  compile 'io.reactivex:rxjava:1.2.6'
   compile 'io.reactivex:rxkotlin:0.60.0'
   compile 'uk.co.chrisjenx:calligraphy:2.2.0'
-  compile 'com.jakewharton.timber:timber:4.4.0'
+  compile 'com.jakewharton.timber:timber:4.5.1'
   compile 'com.jakewharton.rxrelay:rxrelay:1.2.0'
-  compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+  compile 'com.android.support.constraint:constraint-layout:1.0.0-beta5'
 
-  debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-  releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+  compile 'com.jakewharton.threetenabp:threetenabp:1.0.5'
 
+  debugCompile "com.squareup.leakcanary:leakcanary-android:${leakcanary_version}"
+  releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
 
-
-  playCompile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
+  playCompile('com.crashlytics.sdk.android:crashlytics:2.6.6@aar') {
     transitive = true
   }
 }
@@ -288,7 +304,7 @@ def initFabricPropertiesIfNeeded() {
 }
 
 coveralls {
-  jacocoReportPath = "${buildDir}/reports/coverage/debug/report.xml"
+  jacocoReportPath = "${buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
 }
 
 tasks.coveralls {
@@ -304,6 +320,39 @@ kapt {
   generateStubs = true
   arguments {
     arg('toothpick_registry_package_name', 'com.kelsos.mbrc')
-    arg('toothpick_registry_children_package_names', 'toothpick.smoothie')
   }
+}
+
+task jacocoTestReport(type: JacocoReport,
+    dependsOn: ['testGithubDebugUnitTest', 'createGithubDebugCoverageReport']) {
+  group = "Reporting"
+  description "Generate jacoco coverage reports"
+
+  reports {
+    xml.enabled = true
+    html.enabled = true
+  }
+
+  def fileFilter = ['**/R.class',
+                    '**/R$*.class',
+                    '**/BuildConfig.*',
+                    '**/Manifest*.*',
+                    '**/*Test*.*',
+                    '**/FactoryRegistry.*',
+                    '**/*_ViewBinding*',
+                    '**/*MemberInjector*',
+                    '**/*$$Factory*.*',
+                    '**/MemberInjectorRegistry.*',
+                    '**/**_Table.*',
+                    '**/GeneratedDatabaseHolder.*',
+                    '**/*_Database.*',
+                    'android/**/*.*']
+  def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/github/debug",
+      excludes: fileFilter)
+  def mainSrc = "${project.projectDir}/src/main/kotlin"
+
+  sourceDirectories = files([mainSrc])
+  classDirectories = files([debugTree])
+  executionData = fileTree(dir: "$buildDir", includes: ["**/*.exec",
+                                                        "**/*.ec"])
 }
