@@ -37,9 +37,9 @@ class RadioAdapter
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val playlist = data?.getItem(holder.adapterPosition.toLong())
-    playlist?.let {
-      holder.name.text = playlist.name
+    val radio = data?.getItem(holder.adapterPosition.toLong())
+    radio?.let {
+      holder.name.text = radio.name
     }
     holder.context.visibility = View.GONE
 
