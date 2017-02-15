@@ -5,10 +5,14 @@ import android.content.Intent
 import android.support.test.InstrumentationRegistry
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.click
+import android.support.test.espresso.action.ViewActions.swipeDown
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.intent.rule.IntentsTestRule
-import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE
+import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
+import android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
+import android.support.test.espresso.matcher.ViewMatchers.withId
+import android.support.test.espresso.matcher.ViewMatchers.withText
 import android.support.test.filters.LargeTest
 import android.support.test.runner.AndroidJUnit4
 import com.kelsos.mbrc.R
@@ -17,8 +21,6 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.services.ServiceChecker
 import com.kelsos.mbrc.ui.mini_control.MiniControlFragment
 import com.kelsos.mbrc.ui.mini_control.MiniControlPresenter
-import com.raizlabs.android.dbflow.config.FlowConfig
-import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import org.hamcrest.core.AllOf.allOf
 import org.junit.After
@@ -28,7 +30,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
@@ -179,6 +183,19 @@ class RadioActivityTest {
         }
     onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.radio__play_failed)))
         .check(matches(withEffectiveVisibility(VISIBLE)))
+  }
+
+
+  @Test
+  fun radioView_swipeToRefresh() {
+    `when`(cursor.count).thenReturn(0)
+    activityRule.launchActivity(Intent())
+    verify(presenter, times(1)).load()
+    val activity = activityRule.activity
+    activity.update(cursor)
+    activity.hideLoading()
+    onView(withId(R.id.empty_view)).perform(swipeDown())
+    verify(presenter, times(1)).refresh()
   }
 
   inner class TestModule : Module() {
