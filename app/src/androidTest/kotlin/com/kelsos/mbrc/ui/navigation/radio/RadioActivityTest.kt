@@ -191,11 +191,44 @@ class RadioActivityTest {
     `when`(cursor.count).thenReturn(0)
     activityRule.launchActivity(Intent())
     verify(presenter, times(1)).load()
-    val activity = activityRule.activity
-    activity.update(cursor)
-    activity.hideLoading()
+    Single.just(cursor)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe {
+          val activity = activityRule.activity
+          activity.update(it)
+          activity.hideLoading()
+        }
+
     onView(withId(R.id.empty_view)).perform(swipeDown())
     verify(presenter, times(1)).refresh()
+  }
+
+  @Test
+  fun radioView_swipeToRefresh_loadError() {
+    `when`(cursor.count).thenReturn(0)
+    activityRule.launchActivity(Intent())
+    verify(presenter, times(1)).load()
+    Single.just(cursor)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe {
+          val activity = activityRule.activity
+          activity.update(it)
+          activity.hideLoading()
+        }
+
+    onView(withId(R.id.empty_view)).perform(swipeDown())
+    verify(presenter, times(1)).refresh()
+
+    Single.just(SocketTimeoutException())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe {
+          val activity = activityRule.activity
+          activity.hideLoading()
+          activity.error(it)
+        }
+
+    onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.radio__loading_failed)))
+        .check(matches(withEffectiveVisibility(VISIBLE)))
   }
 
   inner class TestModule : Module() {
