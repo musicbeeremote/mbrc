@@ -152,7 +152,7 @@ idea {
 }
 
 ext {
-  support_library_version = "25.1.1"
+  support_library_version = "25.2.0"
   dbflow_version = "4.0.0-beta5"
   toothpick_version = "1.0.5"
   jackson_version = "2.8.6"
@@ -161,9 +161,9 @@ ext {
   runner_version = "0.5"
   espresso_version = "2.2.2"
   junit_version = "4.12"
-  mockito_version = "2.7.4"
-  robolectric_version = "3.2.2"
-  truth_version = "0.31"
+  mockito_version = "2.7.13"
+  robolectric_version = "3.3"
+  truth_version = "0.32"
   leakcanary_version = "1.5"
 }
 
@@ -174,8 +174,7 @@ dependencies {
   })
   androidTestCompile "com.android.support.test.espresso:espresso-intents:${espresso_version}"
   androidTestCompile "junit:junit:${junit_version}"
-  // 2017-01-04 (I spend a couple of days until I figured out that if I specify the mockito
-  // version to an different than the one dexmaker supports the tests would crash...)
+
   androidTestCompile "org.mockito:mockito-core:${mockito_version}"
   androidTestCompile "org.mockito:mockito-android:${mockito_version}"
 
@@ -235,7 +234,7 @@ dependencies {
   compile 'com.squareup.picasso:picasso:2.5.2'
 
   compile 'io.reactivex:rxandroid:1.2.1'
-  compile 'io.reactivex:rxjava:1.2.6'
+  compile 'io.reactivex:rxjava:1.2.7'
   compile 'io.reactivex:rxkotlin:0.60.0'
   compile 'uk.co.chrisjenx:calligraphy:2.2.0'
   compile 'com.jakewharton.timber:timber:4.5.1'
