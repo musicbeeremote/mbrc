@@ -8,6 +8,7 @@ import com.kelsos.mbrc.data.SocketMessage
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.mappers.InetAddressMapper
 import com.kelsos.mbrc.repository.ConnectionRepository
+import com.kelsos.mbrc.utilities.SettingsManager
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.IOException
@@ -20,6 +21,7 @@ class RequestManagerImpl
 constructor(
   private val mapper: ObjectMapper,
   private val repository: ConnectionRepository,
+  private val settingsManager: SettingsManager,
   private val dispatchers: AppDispatchers
 ) : RequestManager {
 
@@ -54,10 +56,11 @@ constructor(
     }
 
   private fun getProtocolPayload(): ProtocolPayload {
-    return ProtocolPayload().apply {
-      noBroadcast = true
-      protocolVersion = Protocol.ProtocolVersionNumber
-    }
+    return ProtocolPayload(
+      noBroadcast = true,
+      protocolVersion = Protocol.ProtocolVersionNumber,
+      clientId = settingsManager.getClientId()
+    )
   }
 
   override suspend fun request(connection: ActiveConnection, message: SocketMessage): String =

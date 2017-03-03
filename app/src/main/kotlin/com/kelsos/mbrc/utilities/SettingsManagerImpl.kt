@@ -9,6 +9,7 @@ import com.kelsos.mbrc.utilities.RemoteUtils.getVersionCode
 import com.kelsos.mbrc.utilities.SettingsManager.Companion.NONE
 import org.threeten.bp.Instant
 import timber.log.Timber
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,6 +33,17 @@ constructor(
       val fileLoggingTree = Timber.forest().find { it is FileLoggingTree }
       fileLoggingTree?.let { Timber.uproot(it) }
     }
+  }
+
+  override fun getClientId(): String {
+    var clientId = preferences.getString(CLIENT_ID, "")
+
+    if (clientId.isNullOrBlank()) {
+      clientId = UUID.randomUUID().toString()
+      preferences.edit().putString(CLIENT_ID, clientId).apply()
+    }
+
+    return clientId
   }
 
   private fun loggingEnabled(): Boolean {
@@ -87,6 +99,7 @@ constructor(
 
   companion object {
     const val REQUIRED_CHECK = "update_required_check"
+    const val CLIENT_ID = "com.kelsos.mbrc.CLIENT_ID"
   }
 }
 
@@ -114,4 +127,5 @@ interface SettingsManager {
   fun isPluginUpdateCheckEnabled(): Boolean
   fun getLastUpdated(required: Boolean = false): Instant
   fun setLastUpdated(lastChecked: Instant, required: Boolean = false)
+  fun getClientId(): String
 }

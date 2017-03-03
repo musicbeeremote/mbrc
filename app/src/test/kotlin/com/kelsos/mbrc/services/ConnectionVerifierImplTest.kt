@@ -1,7 +1,11 @@
 package com.kelsos.mbrc.services
 
+import android.app.Application
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.truth.Truth.assertThat
+import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.ConnectionSettings
@@ -10,6 +14,8 @@ import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.RequestManagerImpl
 import com.kelsos.mbrc.repository.ConnectionRepository
+import com.kelsos.mbrc.utilities.SettingsManager
+import com.kelsos.mbrc.utilities.SettingsManagerImpl
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -18,6 +24,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule
 import java.io.BufferedReader
@@ -30,6 +37,7 @@ import java.util.Random
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
+@RunWith(AndroidJUnit4::class)
 class ConnectionVerifierImplTest {
   private var server: ServerSocket? = null
   private val connectionRepository: ConnectionRepository = mockk()
@@ -196,10 +204,13 @@ class ConnectionVerifierImplTest {
 
   inner class TestModule : Module() {
     init {
+      val applicationContext = getApplicationContext<TestApplication>()
+      bind(Application::class.java).toInstance(applicationContext)
       bind(ObjectMapper::class.java).toInstance(mapper)
       bind(RequestManager::class.java).to(RequestManagerImpl::class.java)
       bind(ConnectionRepository::class.java).toInstance(connectionRepository)
       bind(ConnectionVerifier::class.java).to(ConnectionVerifierImpl::class.java)
+      bind(SettingsManager::class.java).to(SettingsManagerImpl::class.java)
       bind(AppDispatchers::class.java).toInstance(
         AppDispatchers(
           testDispatcher,
