@@ -9,6 +9,7 @@ import com.kelsos.mbrc.data.ProtocolPayload
 import com.kelsos.mbrc.data.SocketMessage
 import com.kelsos.mbrc.mappers.InetAddressMapper
 import com.kelsos.mbrc.repository.ConnectionRepository
+import com.kelsos.mbrc.utilities.SettingsManager
 import rx.Emitter.BackpressureMode.LATEST
 import rx.Observable
 import timber.log.Timber
@@ -21,6 +22,8 @@ import javax.inject.Inject
 open class ServiceBase {
   @Inject lateinit var mapper: ObjectMapper
   @Inject lateinit var repository: ConnectionRepository
+  @Inject lateinit var settingsManager: SettingsManager
+
   private var socket: Socket? = null
 
   @Throws(JsonProcessingException::class)
@@ -45,7 +48,7 @@ open class ServiceBase {
         val context = message.context
 
         if (Protocol.Player == context) {
-          val payload = ProtocolPayload()
+          val payload = ProtocolPayload(settingsManager.getClientId())
           payload.noBroadcast = true
           payload.protocolVersion = Protocol.ProtocolVersionNumber
           sendMessage(SocketMessage.create(Protocol.ProtocolTag, payload))

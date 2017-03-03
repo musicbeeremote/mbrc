@@ -17,8 +17,10 @@ import javax.inject.Singleton
 @Singleton
 class SettingsManagerImpl
 @Inject
-constructor(private val context: Application,
-            private val preferences: SharedPreferences) : SettingsManager {
+constructor(
+    private val context: Application,
+    private val preferences: SharedPreferences
+) : SettingsManager {
 
   init {
     setupManager()
@@ -33,6 +35,17 @@ constructor(private val context: Application,
       val fileLoggingTree = Timber.forest().find { it is FileLoggingTree }
       fileLoggingTree?.let { Timber.uproot(it) }
     }
+  }
+
+  override fun getClientId(): String {
+    var clientId = preferences.getString(CLIENT_ID, "")
+
+    if (clientId.isBlank()) {
+      clientId = UUID.randomUUID().toString()
+      preferences.edit().putString(CLIENT_ID, clientId).apply()
+    }
+
+    return clientId
   }
 
   private fun loggingEnabled(): Boolean {
@@ -97,11 +110,14 @@ constructor(private val context: Application,
 
   private fun getKey(settingsKey: Int) = context.getString(settingsKey)
 
+  companion object {
+    const val CLIENT_ID = "com.kelsos.mbrc.CLIENT_ID"
+  }
 }
 
 interface SettingsManager {
 
-  fun shouldDisplayOnlyAlbumArtists() : Single<Boolean>
+  fun shouldDisplayOnlyAlbumArtists(): Single<Boolean>
   fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean)
   fun shouldShowChangeLog(): Single<Boolean>
   fun isNotificationControlEnabled(): Boolean
@@ -125,4 +141,5 @@ interface SettingsManager {
 
   fun getLastUpdated(): Date
   fun setLastUpdated(lastChecked: Date)
+  fun getClientId(): String
 }
