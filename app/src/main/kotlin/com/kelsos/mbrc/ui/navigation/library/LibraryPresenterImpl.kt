@@ -4,7 +4,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor.OnCompleteListener
 import com.kelsos.mbrc.utilities.SettingsManager
-import rx.Scheduler
+import io.reactivex.Scheduler
 import javax.inject.Inject
 import javax.inject.Named
 

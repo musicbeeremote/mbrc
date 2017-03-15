@@ -5,13 +5,18 @@ import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.data.library.Track_Table
 import com.kelsos.mbrc.data.library.Track_Table.title
 import com.kelsos.mbrc.extensions.escapeLike
-import com.raizlabs.android.dbflow.kotlinextensions.*
+import com.raizlabs.android.dbflow.kotlinextensions.and
+import com.raizlabs.android.dbflow.kotlinextensions.database
+import com.raizlabs.android.dbflow.kotlinextensions.delete
+import com.raizlabs.android.dbflow.kotlinextensions.from
+import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
+import com.raizlabs.android.dbflow.kotlinextensions.select
+import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
-import rx.Emitter
-import rx.Observable
-import rx.Single
+import io.reactivex.Observable
+import io.reactivex.Single
 import javax.inject.Inject
 
 class LocalTrackDataSource
@@ -31,7 +36,7 @@ class LocalTrackDataSource
   }
 
   override fun loadAllCursor(): Observable<FlowCursorList<Track>> {
-    return Observable.fromEmitter({
+    return Observable.create {
       val modelQueriable = (select from Track::class)
           .orderBy(Track_Table.album_artist, true)
           .orderBy(Track_Table.album, true)
@@ -40,9 +45,8 @@ class LocalTrackDataSource
 
       val cursor = FlowCursorList.Builder<Track>(Track::class.java).modelQueriable(modelQueriable).build()
       it.onNext(cursor)
-      it.onCompleted()
-    }, Emitter.BackpressureMode.LATEST)
-
+      it.onComplete()
+    }
   }
 
   fun getAlbumTracks(album: String, artist: String): Single<FlowCursorList<Track>> {

@@ -30,10 +30,10 @@ import org.mockito.Mockito.anyString
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
-import rx.Completable
-import rx.Scheduler
-import rx.Single
-import rx.schedulers.TestScheduler
+import io.reactivex.Completable
+import io.reactivex.Scheduler
+import io.reactivex.Single
+import io.reactivex.schedulers.TestScheduler
 import toothpick.Toothpick
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule

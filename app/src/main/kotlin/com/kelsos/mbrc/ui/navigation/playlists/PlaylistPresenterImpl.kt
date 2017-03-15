@@ -8,8 +8,8 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.PlaylistRepository
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import rx.Scheduler
-import rx.Single
+import io.reactivex.Scheduler
+import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -25,7 +25,7 @@ class PlaylistPresenterImpl
 
   override fun load() {
     view?.showLoading()
-    addSubcription(repository.getAllCursor().compose { schedule(it) }
+    addDisposable(repository.getAllCursor().compose { schedule(it) }
         .subscribe({
           view?.update(it)
           view?.hideLoading()
@@ -41,7 +41,7 @@ class PlaylistPresenterImpl
 
   override fun reload() {
     view?.showLoading()
-    addSubcription(repository.getAndSaveRemote()
+    addDisposable(repository.getAndSaveRemote()
         .compose { schedule(it) }
         .subscribe({
           view?.update(it)

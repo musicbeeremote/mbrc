@@ -10,7 +10,7 @@ class GenreArtistsPresenterImpl
     BasePresenter<GenreArtistsView>(),
     GenreArtistsPresenter {
   override fun load(genre: String) {
-    addSubcription(repository.getArtistByGenre(genre).subscribe ({
+    addDisposable(repository.getArtistByGenre(genre).subscribe ({
       view?.update(it)
     }) {
       Timber.v(it)

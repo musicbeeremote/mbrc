@@ -21,8 +21,8 @@ import org.mockito.Mockito.anyInt
 import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import rx.Observable
-import rx.observers.TestSubscriber
+import io.reactivex.Observable
+import io.reactivex.observers.TestSubscriber
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.config.Module

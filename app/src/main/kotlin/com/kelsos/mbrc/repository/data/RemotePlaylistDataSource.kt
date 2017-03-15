@@ -2,7 +2,7 @@ package com.kelsos.mbrc.repository.data
 
 import com.kelsos.mbrc.data.Playlist
 import com.kelsos.mbrc.services.PlaylistService
-import rx.Observable
+import io.reactivex.Observable
 import javax.inject.Inject
 
 

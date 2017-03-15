@@ -18,8 +18,8 @@ import butterknife.OnClick
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.logging.LogHelper
 import com.kelsos.mbrc.utilities.RemoteUtils
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import java.io.File
 
 class FeedbackFragment : Fragment() {

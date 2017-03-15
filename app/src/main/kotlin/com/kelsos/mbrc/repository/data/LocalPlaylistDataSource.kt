@@ -2,15 +2,18 @@ package com.kelsos.mbrc.repository.data
 
 import com.kelsos.mbrc.data.Playlist
 import com.kelsos.mbrc.data.Playlist_Table.name
-import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.extensions.escapeLike
-import com.raizlabs.android.dbflow.kotlinextensions.*
+import com.raizlabs.android.dbflow.kotlinextensions.database
+import com.raizlabs.android.dbflow.kotlinextensions.delete
+import com.raizlabs.android.dbflow.kotlinextensions.from
+import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
+import com.raizlabs.android.dbflow.kotlinextensions.select
+import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
-import rx.Emitter
-import rx.Observable
-import rx.Single
+import io.reactivex.Observable
+import io.reactivex.Single
 import javax.inject.Inject
 
 class LocalPlaylistDataSource
@@ -30,12 +33,12 @@ class LocalPlaylistDataSource
   }
 
   override fun loadAllCursor(): Observable<FlowCursorList<Playlist>> {
-    return Observable.fromEmitter({
+    return Observable.create {
       val modelQueriable = (select from Playlist::class)
       val cursor = FlowCursorList.Builder(Playlist::class.java).modelQueriable(modelQueriable).build()
       it.onNext(cursor)
-      it.onCompleted()
-    }, Emitter.BackpressureMode.LATEST)
+      it.onComplete()
+    }
   }
 
   override fun search(term: String): Single<FlowCursorList<Playlist>> {

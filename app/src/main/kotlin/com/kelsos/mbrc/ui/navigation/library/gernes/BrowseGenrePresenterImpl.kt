@@ -6,8 +6,8 @@ import com.kelsos.mbrc.events.ui.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.GenreRepository
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import rx.Scheduler
-import rx.Single
+import io.reactivex.Scheduler
+import io.reactivex.Single
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
@@ -33,7 +33,7 @@ class BrowseGenrePresenterImpl
 
   override fun load() {
     view?.showLoading()
-    addSubcription(repository.getAllCursor().compose { schedule(it) }.subscribe({
+    addDisposable(repository.getAllCursor().compose { schedule(it) }.subscribe({
       view?.update(it)
       view?.hideLoading()
     }, {
@@ -46,7 +46,7 @@ class BrowseGenrePresenterImpl
 
   override fun reload() {
     view?.showLoading()
-    addSubcription(repository.getAndSaveRemote().compose { schedule(it) }.subscribe({
+    addDisposable(repository.getAndSaveRemote().compose { schedule(it) }.subscribe({
       view?.update(it)
       view?.hideLoading()
     }, {

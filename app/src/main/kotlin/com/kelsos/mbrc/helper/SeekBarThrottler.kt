@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.helper
 
 import android.widget.SeekBar
-import com.jakewharton.rxrelay.PublishRelay
-import rx.Subscription
+import com.jakewharton.rxrelay2.PublishRelay
+import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
 
 class SeekBarThrottler(private val action: (Int) -> Unit) : SeekBar.OnSeekBarChangeListener {
@@ -10,18 +10,18 @@ class SeekBarThrottler(private val action: (Int) -> Unit) : SeekBar.OnSeekBarCha
   var fromUser: Boolean = false
     private set
   private val progressRelay = PublishRelay.create<Int>()
-  private var subscription: Subscription? = null
+  private var disposable: Disposable? = null
 
   init {
     this.fromUser = false
-    subscription = progressRelay.throttleLast(600, TimeUnit.MILLISECONDS)
+    disposable = progressRelay.throttleLast(600, TimeUnit.MILLISECONDS)
         .distinct()
         .subscribe { this.onProgressChange(it) }
   }
 
   override fun onProgressChanged(seekBar: SeekBar, value: Int, fromUser: Boolean) {
     if (fromUser) {
-      progressRelay.call(value)
+      progressRelay.accept(value)
     }
   }
 
@@ -38,6 +38,6 @@ class SeekBarThrottler(private val action: (Int) -> Unit) : SeekBar.OnSeekBarCha
   }
 
   fun terminate() {
-    subscription?.unsubscribe()
+    disposable?.dispose()
   }
 }

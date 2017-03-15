@@ -2,8 +2,8 @@ package com.kelsos.mbrc.services
 
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.CoverPayload
-import rx.Observable
-import rx.Single
+import io.reactivex.Observable
+import io.reactivex.Single
 import javax.inject.Inject
 
 class CoverServiceImpl
@@ -18,6 +18,6 @@ class CoverServiceImpl
           throw RuntimeException("Cover not available")
         }
       }
-    }.first().toSingle()
+    }.firstOrError()
   }
 }

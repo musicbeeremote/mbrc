@@ -7,8 +7,8 @@ import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.SocketMessage
 import com.kelsos.mbrc.mappers.InetAddressMapper
 import com.kelsos.mbrc.repository.ConnectionRepository
-import rx.Observable
-import rx.Single
+import io.reactivex.Observable
+import io.reactivex.Single
 import timber.log.Timber
 import java.io.BufferedReader
 import java.io.IOException
@@ -31,7 +31,7 @@ class ConnectionVerifierImpl
       this.getObservable(it)
     }, {
       this.cleanup(it)
-    }).first().toSingle().flatMap { checkIfSuccess(it) }
+    }).firstOrError().flatMap { checkIfSuccess(it) }
   }
 
   @Throws(JsonProcessingException::class)
@@ -40,7 +40,7 @@ class ConnectionVerifierImpl
   }
 
   private fun checkIfSuccess(s: String): Single<Boolean> {
-    return Single.fromEmitter {
+    return Single.create {
       try {
         val message = mapper.readValue(s, SocketMessage::class.java)
         if (Protocol.VerifyConnection == message.context) {

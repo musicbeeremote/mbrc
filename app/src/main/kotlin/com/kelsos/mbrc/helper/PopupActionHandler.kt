@@ -16,8 +16,8 @@ import com.kelsos.mbrc.services.QueueService
 import com.kelsos.mbrc.ui.navigation.library.album_tracks.AlbumTracksActivity
 import com.kelsos.mbrc.ui.navigation.library.artist_albums.ArtistAlbumsActivity
 import com.kelsos.mbrc.ui.navigation.library.genre_artists.GenreArtistsActivity
-import rx.Scheduler
-import rx.Single
+import io.reactivex.Scheduler
+import io.reactivex.Single
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named

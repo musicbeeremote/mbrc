@@ -20,8 +20,8 @@ import com.kelsos.mbrc.mappers.InetAddressMapper
 import com.kelsos.mbrc.repository.ConnectionRepository
 import com.kelsos.mbrc.utilities.SocketActivityChecker
 import com.kelsos.mbrc.utilities.SocketActivityChecker.PingTimeoutListener
-import rx.Completable
-import rx.Subscription
+import io.reactivex.Completable
+import io.reactivex.disposables.Disposable
 import timber.log.Timber
 import java.io.BufferedReader
 import java.io.BufferedWriter
@@ -53,7 +53,7 @@ constructor(
   private var output: PrintWriter? = null
   private val executor = Executors.newSingleThreadExecutor { Thread(it, "socket-thread") }
 
-  private var subscription: Subscription? = null
+  private var disposable: Disposable? = null
 
   init {
     startSocket()
@@ -64,12 +64,13 @@ constructor(
   }
 
   private fun startSocket() {
-    if (subscription != null && !subscription!!.isUnsubscribed) {
-      Timber.v("A subscription is already active")
-      return
+    disposable?.let {
+      if (!it.isDisposed) {
+        return
+      }
     }
 
-    subscription = Completable.timer(DELAY.toLong(), TimeUnit.SECONDS).subscribe({
+    disposable = Completable.timer(DELAY.toLong(), TimeUnit.SECONDS).subscribe({
       val connectionSettings = connectionRepository.default
 
       if (connectionSettings == null) {
@@ -109,7 +110,7 @@ constructor(
       }
       STOP -> shouldStop = true
       TERMINATE -> {
-        subscription?.unsubscribe()
+        disposable?.dispose()
         shouldStop = true
         cleanupSocket()
       }

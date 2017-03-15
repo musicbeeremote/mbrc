@@ -3,8 +3,8 @@ package com.kelsos.mbrc.repository
 import android.app.Application
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.domain.TrackInfo
-import rx.Completable
-import rx.Single
+import io.reactivex.Completable
+import io.reactivex.Single
 import java.io.*
 import javax.inject.Inject
 

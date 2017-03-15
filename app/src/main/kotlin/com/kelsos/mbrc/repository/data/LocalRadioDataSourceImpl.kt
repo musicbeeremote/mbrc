@@ -12,9 +12,8 @@ import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
-import rx.Emitter
-import rx.Observable
-import rx.Single
+import io.reactivex.Observable
+import io.reactivex.Single
 import javax.inject.Inject
 
 class LocalRadioDataSourceImpl
@@ -34,12 +33,12 @@ class LocalRadioDataSourceImpl
   }
 
   override fun loadAllCursor(): Observable<FlowCursorList<RadioStation>> {
-    return Observable.fromEmitter({
+    return Observable.create {
       val modelQueriable = (select from RadioStation::class)
       val cursor = FlowCursorList.Builder(RadioStation::class.java).modelQueriable(modelQueriable).build()
       it.onNext(cursor)
-      it.onCompleted()
-    }, Emitter.BackpressureMode.LATEST)
+      it.onComplete()
+    }
   }
 
   override fun search(term: String): Single<FlowCursorList<RadioStation>> {

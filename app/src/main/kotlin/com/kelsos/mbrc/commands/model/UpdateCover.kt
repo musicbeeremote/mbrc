@@ -20,8 +20,8 @@ import com.kelsos.mbrc.services.CoverService
 import com.kelsos.mbrc.widgets.UpdateWidgets
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import rx.Single
-import rx.schedulers.Schedulers
+import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream

@@ -10,7 +10,7 @@ class ArtistAlbumsPresenterImpl
     BasePresenter<ArtistAlbumsView>(),
     ArtistAlbumsPresenter {
   override fun load(artist: String) {
-    addSubcription(repository.getAlbumsByArtist(artist).subscribe ({
+    addDisposable(repository.getAlbumsByArtist(artist).subscribe ({
       view?.update(it)
     }) {
       Timber.v(it)

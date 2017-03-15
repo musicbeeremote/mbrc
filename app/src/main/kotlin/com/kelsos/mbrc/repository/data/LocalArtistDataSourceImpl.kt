@@ -1,19 +1,21 @@
 package com.kelsos.mbrc.repository.data
 
-
-import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.data.library.Artist_Table.artist
 import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.data.library.Track_Table
 import com.kelsos.mbrc.extensions.escapeLike
-import com.raizlabs.android.dbflow.kotlinextensions.*
+import com.raizlabs.android.dbflow.kotlinextensions.database
+import com.raizlabs.android.dbflow.kotlinextensions.delete
+import com.raizlabs.android.dbflow.kotlinextensions.from
+import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
+import com.raizlabs.android.dbflow.kotlinextensions.select
+import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
-import rx.Emitter
-import rx.Observable
-import rx.Single
+import io.reactivex.Observable
+import io.reactivex.Single
 import javax.inject.Inject
 
 class LocalArtistDataSourceImpl
@@ -34,13 +36,12 @@ class LocalArtistDataSourceImpl
   }
 
   override fun loadAllCursor(): Observable<FlowCursorList<Artist>> {
-    return Observable.fromEmitter({
+    return Observable.create {
       val modelQueriable = (select from Artist::class).orderBy(artist, true)
       val cursor = FlowCursorList.Builder(Artist::class.java).modelQueriable(modelQueriable).build()
       it.onNext(cursor)
-      it.onCompleted()
-    }, Emitter.BackpressureMode.LATEST)
-
+      it.onComplete()
+    }
   }
 
   override fun getArtistByGenre(genre: String): Single<FlowCursorList<Artist>> {
@@ -67,7 +68,7 @@ class LocalArtistDataSourceImpl
   }
 
   override fun getAlbumArtists(): Single<FlowCursorList<Artist>> {
-    return Single.fromEmitter {
+    return Single.create {
       val modelQueriable = SQLite.select().distinct()
           .from<Artist>(Artist::class.java)
           .innerJoin<Track>(Track::class.java)
