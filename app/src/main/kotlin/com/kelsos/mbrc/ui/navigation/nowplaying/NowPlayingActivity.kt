@@ -12,6 +12,9 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
@@ -38,6 +41,10 @@ class NowPlayingActivity : BaseActivity(),
   @BindView(R.id.now_playing_list) lateinit var nowPlayingList: EmptyRecyclerView
   @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: MultiSwipeRefreshLayout
   @BindView(R.id.empty_view) lateinit var emptyView: View
+  @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
+  @BindView(R.id.list_empty_icon) lateinit var emptyViewIcon: ImageView
+  @BindView(R.id.list_empty_subtitle) lateinit var emptyViewSubTitle: TextView
+  @BindView(R.id.empty_view_progress_bar) lateinit var emptyViewProgress: ProgressBar
   @Inject lateinit var adapter: NowPlayingAdapter
 
   @Inject lateinit var presenter: NowPlayingPresenter
@@ -177,6 +184,21 @@ class NowPlayingActivity : BaseActivity(),
   override fun failure(throwable: Throwable) {
     swipeRefreshLayout.isRefreshing = false
     Snackbar.make(nowPlayingList, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
+  }
+
+  override fun showLoading() {
+    emptyViewProgress.visibility = View.VISIBLE
+    emptyViewIcon.visibility = View.GONE
+    emptyViewTitle.visibility = View.GONE
+    emptyViewSubTitle.visibility = View.GONE
+  }
+
+  override fun hideLoading() {
+    emptyViewProgress.visibility = View.GONE
+    emptyViewIcon.visibility = View.VISIBLE
+    emptyViewTitle.visibility = View.VISIBLE
+    emptyViewSubTitle.visibility = View.VISIBLE
+    swipeRefreshLayout.isRefreshing = false
   }
 
   override fun onBackPressed() {

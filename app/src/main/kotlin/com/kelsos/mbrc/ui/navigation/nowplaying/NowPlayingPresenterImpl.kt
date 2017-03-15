@@ -26,13 +26,16 @@ class NowPlayingPresenterImpl
     NowPlayingPresenter {
 
   override fun reload(scrollToTrack: Boolean) {
+    view?.showLoading()
     addSubcription(repository.getAndSaveRemote()
         .compose { schedule(it) }
         .subscribe({
           view?.update(it)
           view?.trackChanged(model.trackInfo, scrollToTrack)
+          view?.hideLoading()
         }) {
           view?.failure(it)
+          view?.hideLoading()
         })
   }
 
@@ -41,8 +44,10 @@ class NowPlayingPresenterImpl
         .subscribe({
           view?.update(it)
           view?.trackChanged(model.trackInfo, true)
+          view?.hideLoading()
         }) {
           view?.failure(it)
+          view?.hideLoading()
         })
   }
 
