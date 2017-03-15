@@ -157,12 +157,12 @@ ext {
   toothpick_version = "1.0.5"
   jackson_version = "2.8.6"
   butterknife_version = "8.5.1"
-  material_dialogs_version = "0.9.3.0"
+  material_dialogs_version = "0.9.4.1"
   runner_version = "0.5"
   espresso_version = "2.2.2"
   junit_version = "4.12"
-  mockito_version = "2.7.13"
-  robolectric_version = "3.3"
+  mockito_version = "2.7.17"
+  robolectric_version = "3.3.1"
   truth_version = "0.32"
   leakcanary_version = "1.5"
 }
@@ -245,7 +245,7 @@ dependencies {
   debugCompile "com.squareup.leakcanary:leakcanary-android:${leakcanary_version}"
   releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
 
-  playCompile('com.crashlytics.sdk.android:crashlytics:2.6.6@aar') {
+  playCompile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
     transitive = true
   }
 }
