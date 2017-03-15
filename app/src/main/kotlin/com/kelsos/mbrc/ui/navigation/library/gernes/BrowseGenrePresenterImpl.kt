@@ -32,21 +32,27 @@ class BrowseGenrePresenterImpl
   }
 
   override fun load() {
+    view?.showLoading()
     addSubcription(repository.getAllCursor().compose { schedule(it) }.subscribe({
       view?.update(it)
+      view?.hideLoading()
     }, {
       Timber.v(it, "Error while loading the data from the database")
       view?.failure(it)
+      view?.hideLoading()
     }))
   }
 
 
   override fun reload() {
+    view?.showLoading()
     addSubcription(repository.getAndSaveRemote().compose { schedule(it) }.subscribe({
       view?.update(it)
+      view?.hideLoading()
     }, {
       Timber.v(it, "Error while loading the data from the database")
       view?.failure(it)
+      view?.hideLoading()
     }))
   }
 

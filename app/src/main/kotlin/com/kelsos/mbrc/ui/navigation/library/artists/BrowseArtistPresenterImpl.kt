@@ -35,6 +35,7 @@ class BrowseArtistPresenterImpl
   }
 
   override fun load() {
+    view?.showLoading()
     val artistObservable = settingsManager.shouldDisplayOnlyAlbumArtists().flatMap {
       if (it) {
         return@flatMap repository.getAlbumArtistsOnly()
@@ -44,13 +45,16 @@ class BrowseArtistPresenterImpl
     }
     addSubcription(artistObservable.compose { schedule(it) }.subscribe({
       view?.update(it)
+      view?.hideLoading()
     }, {
       Timber.v(it, "Error while loading the data from the database")
+      view?.hideLoading()
     }))
 
   }
 
   override fun reload() {
+    view?.showLoading()
     val artistObservable = settingsManager.shouldDisplayOnlyAlbumArtists().flatMap {
       if (it) {
         return@flatMap repository.getAllRemoteAndShowAlbumArtist()
@@ -60,8 +64,10 @@ class BrowseArtistPresenterImpl
     }
     addSubcription(artistObservable.compose { schedule(it) }.subscribe({
       view?.update(it)
+      view?.hideLoading()
     }, {
       Timber.v(it, "Error retrieving the data")
+      view?.hideLoading()
     }))
   }
 
