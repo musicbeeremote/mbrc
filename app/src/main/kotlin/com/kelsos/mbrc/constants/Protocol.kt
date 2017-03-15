@@ -54,5 +54,5 @@ object Protocol {
   val VerifyConnection = "verifyconnection"
   val RadioStations = "radiostations"
 
-  val ProtocolVersionNumber = 4
+  val ProtocolVersionNumber = 5
 }

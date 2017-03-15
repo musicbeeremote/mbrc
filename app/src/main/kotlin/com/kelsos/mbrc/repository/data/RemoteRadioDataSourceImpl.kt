@@ -8,6 +8,8 @@ import javax.inject.Inject
 class RemoteRadioDataSourceImpl
 @Inject constructor(private val radioService: RadioService) : RemoteRadioDataSource {
   override fun fetch(): Observable<List<RadioStation>> {
-    return radioService.getRadios().toObservable()
+    return Observable.range(0, Integer.MAX_VALUE).flatMap {
+      radioService.getRadios(it!! * RemoteDataSource.LIMIT, RemoteDataSource.LIMIT)
+    }.takeWhile { it.offset < it.total }.map { it.data }
   }
 }
