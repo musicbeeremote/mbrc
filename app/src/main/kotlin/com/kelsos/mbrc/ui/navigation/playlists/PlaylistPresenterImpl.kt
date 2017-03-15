@@ -14,19 +14,24 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class PlaylistPresenterImpl
-@Inject constructor(private val bus: RxBus,
-                    private val repository: PlaylistRepository,
-                    @Named("io") private val ioScheduler: Scheduler,
-                    @Named("main") private val mainScheduler: Scheduler) :
+@Inject constructor(
+    private val bus: RxBus,
+    private val repository: PlaylistRepository,
+    @Named("io") private val ioScheduler: Scheduler,
+    @Named("main") private val mainScheduler: Scheduler
+) :
     BasePresenter<PlaylistView>(),
     PlaylistPresenter {
 
   override fun load() {
+    view?.showLoading()
     addSubcription(repository.getAllCursor().compose { schedule(it) }
         .subscribe({
           view?.update(it)
+          view?.hideLoading()
         }) {
           view?.failure(it)
+          view?.hideLoading()
         })
   }
 
@@ -35,12 +40,15 @@ class PlaylistPresenterImpl
   }
 
   override fun reload() {
+    view?.showLoading()
     addSubcription(repository.getAndSaveRemote()
         .compose { schedule(it) }
         .subscribe({
           view?.update(it)
+          view?.hideLoading()
         }) {
           view?.failure(it)
+          view?.hideLoading()
         })
   }
 
