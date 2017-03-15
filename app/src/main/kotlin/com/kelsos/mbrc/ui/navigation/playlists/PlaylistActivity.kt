@@ -2,6 +2,8 @@ package com.kelsos.mbrc.ui.navigation.playlists
 
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
@@ -30,19 +32,16 @@ class PlaylistActivity :
 
   private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
 
-  @BindView(R.id.swipe_layout)
-  lateinit var swipeLayout: MultiSwipeRefreshLayout
-  @BindView(R.id.playlist_list)
-  lateinit var playlistList: EmptyRecyclerView
-  @BindView(R.id.empty_view)
-  lateinit var emptyView: View
-  @BindView(R.id.list_empty_title)
-  lateinit var emptyViewTitle: TextView
+  @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
+  @BindView(R.id.playlist_list) lateinit var playlistList: EmptyRecyclerView
+  @BindView(R.id.empty_view) lateinit var emptyView: View
+  @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
+  @BindView(R.id.list_empty_icon) lateinit var emptyViewIcon: ImageView
+  @BindView(R.id.list_empty_subtitle) lateinit var emptyViewSubTitle: TextView
+  @BindView(R.id.empty_view_progress_bar) lateinit var emptyViewProgress: ProgressBar
 
-  @Inject
-  lateinit var adapter: PlaylistAdapter
-  @Inject
-  lateinit var presenter: PlaylistPresenter
+  @Inject lateinit var adapter: PlaylistAdapter
+  @Inject lateinit var presenter: PlaylistPresenter
   private lateinit var scope: Scope
 
   public override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,8 +57,7 @@ class PlaylistActivity :
 
     swipeLayout.setSwipeableChildren(R.id.playlist_list, R.id.empty_view)
     adapter.setPlaylistPressedListener(this)
-    playlistList.layoutManager =
-      LinearLayoutManager(this)
+    playlistList.layoutManager = LinearLayoutManager(this)
     playlistList.emptyView = emptyView
     playlistList.adapter = adapter
     swipeLayout.setOnRefreshListener(this)
@@ -114,6 +112,21 @@ class PlaylistActivity :
     } else {
       Snackbar.make(swipeLayout, R.string.playlists_load_failed, Snackbar.LENGTH_SHORT).show()
     }
+  }
+
+  override fun showLoading() {
+    emptyViewProgress.visibility = View.VISIBLE
+    emptyViewIcon.visibility = View.GONE
+    emptyViewTitle.visibility = View.GONE
+    emptyViewSubTitle.visibility = View.GONE
+  }
+
+  override fun hideLoading() {
+    emptyViewProgress.visibility = View.GONE
+    emptyViewIcon.visibility = View.VISIBLE
+    emptyViewTitle.visibility = View.VISIBLE
+    emptyViewSubTitle.visibility = View.VISIBLE
+    swipeLayout.isRefreshing = false
   }
 
   @javax.inject.Scope

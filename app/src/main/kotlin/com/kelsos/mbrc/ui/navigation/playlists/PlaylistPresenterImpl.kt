@@ -10,8 +10,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class PlaylistPresenterImpl
-@Inject
-constructor(
+@Inject constructor(
   private val bus: RxBus,
   private val repository: PlaylistRepository
 ) : BasePresenter<PlaylistView>(),
@@ -19,11 +18,13 @@ constructor(
 
   override fun load() {
     scope.launch {
+      view?.showLoading()
       try {
         view?.update(repository.getAllCursor())
       } catch (e: Exception) {
         view?.failure(e)
       }
+      view?.hideLoading()
     }
   }
 
@@ -32,12 +33,14 @@ constructor(
   }
 
   override fun reload() {
+    view?.showLoading()
     scope.launch {
       try {
         view?.update(repository.getAndSaveRemote())
       } catch (e: Exception) {
         view?.failure(e)
       }
+      view?.hideLoading()
     }
   }
 }
