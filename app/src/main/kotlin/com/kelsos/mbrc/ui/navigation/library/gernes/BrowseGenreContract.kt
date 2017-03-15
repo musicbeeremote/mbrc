@@ -13,4 +13,6 @@ interface BrowseGenrePresenter : Presenter<BrowseGenreView> {
 interface BrowseGenreView : BaseView {
   fun update(cursor: FlowCursorList<Genre>)
   fun failure(it: Throwable)
+  fun hideLoading()
+  fun showLoading()
 }

@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -30,10 +32,14 @@ class BrowseGenreFragment : Fragment(),
     OnRefreshListener {
 
   @BindView(R.id.library_data_list) lateinit var recycler: EmptyRecyclerView
-  @BindView(R.id.empty_view) lateinit var emptyView: View
   @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
-  @BindView(R.id.list_empty_title) lateinit var emptyTitle: TextView
   @BindView(R.id.fastscroller) lateinit var fastScroller: RecyclerViewFastScroller
+
+  @BindView(R.id.empty_view) lateinit var emptyView: View
+  @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
+  @BindView(R.id.list_empty_icon) lateinit var emptyViewIcon: ImageView
+  @BindView(R.id.list_empty_subtitle) lateinit var emptyViewSubTitle: TextView
+  @BindView(R.id.empty_view_progress_bar) lateinit var emptyViewProgress: ProgressBar
 
   @Inject lateinit var adapter: GenreEntryAdapter
   @Inject lateinit var actionHandler: PopupActionHandler
@@ -42,10 +48,10 @@ class BrowseGenreFragment : Fragment(),
   override fun onCreateView(inflater: LayoutInflater?,
                             container: ViewGroup?,
                             savedInstanceState: Bundle?): View? {
-    val view = inflater!!.inflate(R.layout.fragment_library_search, container, false)
+    val view = inflater!!.inflate(R.layout.fragment_browse, container, false)
     ButterKnife.bind(this, view)
     swipeLayout.setSwipeableChildren(R.id.library_data_list, R.id.empty_view)
-    emptyTitle.setText(R.string.genres_list_empty)
+    emptyViewTitle.setText(R.string.genres_list_empty)
     return view
   }
 
@@ -55,7 +61,6 @@ class BrowseGenreFragment : Fragment(),
     scope.installModules(BrowseGenreModule())
     Toothpick.inject(this, scope)
     presenter.attach(this)
-    presenter.load()
   }
 
   override fun onStart() {
@@ -80,6 +85,7 @@ class BrowseGenreFragment : Fragment(),
     recycler.initLinear(adapter, emptyView, fastScroller)
     recycler.setHasFixedSize(true)
     adapter.setMenuItemSelectedListener(this)
+    presenter.load()
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Genre): Boolean {
@@ -109,4 +115,20 @@ class BrowseGenreFragment : Fragment(),
     Toothpick.closeScope(this)
     super.onDestroy()
   }
+
+  override fun showLoading() {
+    emptyViewProgress.visibility = View.VISIBLE
+    emptyViewIcon.visibility = View.GONE
+    emptyViewTitle.visibility = View.GONE
+    emptyViewSubTitle.visibility = View.GONE
+  }
+
+  override fun hideLoading() {
+    emptyViewProgress.visibility = View.GONE
+    emptyViewIcon.visibility = View.VISIBLE
+    emptyViewTitle.visibility = View.VISIBLE
+    emptyViewSubTitle.visibility = View.VISIBLE
+    swipeLayout.isRefreshing = false
+  }
+
 }

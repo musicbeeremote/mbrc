@@ -8,6 +8,8 @@ import com.raizlabs.android.dbflow.list.FlowCursorList
 interface BrowseArtistView : BaseView {
   fun update(data: FlowCursorList<Artist>)
   fun failure(throwable: Throwable)
+  fun hideLoading()
+  fun showLoading()
 }
 
 interface BrowseArtistPresenter : Presenter<BrowseArtistView> {
