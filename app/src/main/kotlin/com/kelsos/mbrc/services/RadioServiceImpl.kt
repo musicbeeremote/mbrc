@@ -2,19 +2,31 @@ package com.kelsos.mbrc.services
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.kelsos.mbrc.constants.Protocol
+import com.kelsos.mbrc.data.Page
 import com.kelsos.mbrc.data.RadioStation
-import rx.Single
+import com.kelsos.mbrc.data.SocketMessage
+import rx.Emitter
+import rx.Observable
+import java.io.IOException
 import javax.inject.Inject
 
 class RadioServiceImpl
 @Inject constructor() : RadioService, ServiceBase() {
-  override fun getRadios(): Single<List<RadioStation>> {
-    return request(Protocol.RadioStations).first().toSingle().flatMap {
-      return@flatMap Single.fromCallable {
-        val typeReference = object : TypeReference<List<RadioStation>>() {}
-        val page = mapper.readValue<List<RadioStation>>(it.data as String, typeReference)
-        return@fromCallable page
+  override fun getRadios(offset: Int, limit: Int): Observable<Page<RadioStation>> {
+    val range = getPageRange(offset, limit)
+    return request(Protocol.RadioStations, range ?: "").flatMap { getPageObservable(it) }
+  }
+
+  private fun getPageObservable(socketMessage: SocketMessage): Observable<Page<RadioStation>> {
+    return Observable.create<Page<RadioStation>>({ emitter ->
+      try {
+        val typeReference = object : TypeReference<Page<RadioStation>>() {}
+        val page = mapper.readValue<Page<RadioStation>>(socketMessage.data as String, typeReference)
+        emitter.onNext(page)
+        emitter.onCompleted()
+      } catch (e: IOException) {
+        emitter.onError(e)
       }
-    }
+    }, Emitter.BackpressureMode.LATEST)
   }
 }
