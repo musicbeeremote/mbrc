@@ -5,6 +5,8 @@ import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -34,6 +36,9 @@ class PlaylistActivity : BaseActivity(),
   @BindView(R.id.playlist_list) lateinit var playlistList: EmptyRecyclerView
   @BindView(R.id.empty_view) lateinit var emptyView: View
   @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
+  @BindView(R.id.list_empty_icon) lateinit var emptyViewIcon: ImageView
+  @BindView(R.id.list_empty_subtitle) lateinit var emptyViewSubTitle: TextView
+  @BindView(R.id.empty_view_progress_bar) lateinit var emptyViewProgress: ProgressBar
 
   @Inject lateinit var adapter: PlaylistAdapter
   @Inject lateinit var service: PlaylistService
@@ -108,6 +113,21 @@ class PlaylistActivity : BaseActivity(),
     } else {
       Snackbar.make(swipeLayout, R.string.playlists_load_failed, Snackbar.LENGTH_SHORT).show()
     }
+  }
+
+  override fun showLoading() {
+    emptyViewProgress.visibility = View.VISIBLE
+    emptyViewIcon.visibility = View.GONE
+    emptyViewTitle.visibility = View.GONE
+    emptyViewSubTitle.visibility = View.GONE
+  }
+
+  override fun hideLoading() {
+    emptyViewProgress.visibility = View.GONE
+    emptyViewIcon.visibility = View.VISIBLE
+    emptyViewTitle.visibility = View.VISIBLE
+    emptyViewSubTitle.visibility = View.VISIBLE
+    swipeLayout.isRefreshing = false
   }
 
   @javax.inject.Scope
