@@ -10,6 +10,8 @@ interface BrowseAlbumView : BaseView {
   fun update(cursor: FlowCursorList<Album>)
   fun search(term: String)
   fun queue(success: Boolean, tracks: Int)
+  fun hideLoading()
+  fun showLoading()
 }
 
 interface BrowseAlbumPresenter : Presenter<BrowseAlbumView> {

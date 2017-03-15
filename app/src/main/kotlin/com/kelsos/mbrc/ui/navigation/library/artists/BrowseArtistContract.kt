@@ -9,6 +9,8 @@ interface BrowseArtistView : BaseView {
   fun update(data: FlowCursorList<Artist>)
   fun search(term: String)
   fun queue(success: Boolean, tracks: Int)
+  fun hideLoading()
+  fun showLoading()
 }
 
 interface BrowseArtistPresenter : Presenter<BrowseArtistView> {

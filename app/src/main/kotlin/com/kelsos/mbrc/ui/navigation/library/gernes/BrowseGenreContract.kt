@@ -16,4 +16,6 @@ interface BrowseGenreView : BaseView {
   fun update(cursor: FlowCursorList<Genre>)
   fun search(term: String)
   fun queue(success: Boolean, tracks: Int)
+  fun hideLoading()
+  fun showLoading()
 }

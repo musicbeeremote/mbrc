@@ -6,6 +6,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
@@ -30,23 +32,17 @@ class BrowseGenreFragment :
   BrowseGenreView,
   MenuItemSelectedListener {
 
-  @BindView(R.id.library_data_list)
-  lateinit var recycler: EmptyRecyclerView
+  @BindView(R.id.library_data_list) lateinit var recycler: EmptyRecyclerView
 
-  @BindView(R.id.empty_view)
-  lateinit var emptyView: View
+  @BindView(R.id.empty_view) lateinit var emptyView: View
+  @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
+  @BindView(R.id.list_empty_icon) lateinit var emptyViewIcon: ImageView
+  @BindView(R.id.list_empty_subtitle) lateinit var emptyViewSubTitle: TextView
+  @BindView(R.id.empty_view_progress_bar) lateinit var emptyViewProgress: ProgressBar
 
-  @BindView(R.id.list_empty_title)
-  lateinit var emptyTitle: TextView
-
-  @Inject
-  lateinit var adapter: GenreEntryAdapter
-
-  @Inject
-  lateinit var actionHandler: PopupActionHandler
-
-  @Inject
-  lateinit var presenter: BrowseGenrePresenter
+  @Inject lateinit var adapter: GenreEntryAdapter
+  @Inject lateinit var actionHandler: PopupActionHandler
+  @Inject lateinit var presenter: BrowseGenrePresenter
 
   private lateinit var syncButton: Button
 
@@ -55,9 +51,9 @@ class BrowseGenreFragment :
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    val view = inflater.inflate(R.layout.fragment_library_search, container, false)
+    val view = inflater.inflate(R.layout.fragment_browse, container, false)
     ButterKnife.bind(this, view)
-    emptyTitle.setText(R.string.genres_list_empty)
+    emptyViewTitle.setText(R.string.genres_list_empty)
     syncButton = view.findViewById(R.id.list_empty_sync)
     syncButton.setOnClickListener {
       presenter.sync()
@@ -86,7 +82,6 @@ class BrowseGenreFragment :
     scope.installModules(BrowseGenreModule())
     Toothpick.inject(this, scope)
     presenter.attach(this)
-    presenter.load()
   }
 
   override fun onStart() {
@@ -111,6 +106,7 @@ class BrowseGenreFragment :
     recycler.layoutManager = LinearLayoutManager(recycler.context)
     recycler.setHasFixedSize(true)
     adapter.setMenuItemSelectedListener(this)
+    presenter.load()
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, genre: Genre): Boolean {
@@ -128,5 +124,19 @@ class BrowseGenreFragment :
   override fun onDestroy() {
     Toothpick.closeScope(this)
     super.onDestroy()
+  }
+
+  override fun showLoading() {
+    emptyViewProgress.visibility = View.VISIBLE
+    emptyViewIcon.visibility = View.GONE
+    emptyViewTitle.visibility = View.GONE
+    emptyViewSubTitle.visibility = View.GONE
+  }
+
+  override fun hideLoading() {
+    emptyViewProgress.visibility = View.GONE
+    emptyViewIcon.visibility = View.VISIBLE
+    emptyViewTitle.visibility = View.VISIBLE
+    emptyViewSubTitle.visibility = View.VISIBLE
   }
 }

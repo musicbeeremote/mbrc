@@ -6,6 +6,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
@@ -31,19 +33,17 @@ class BrowseArtistFragment :
   BrowseArtistView,
   MenuItemSelectedListener {
 
-  @BindView(R.id.library_data_list)
-  lateinit var recycler: EmptyRecyclerView
-  @BindView(R.id.empty_view)
-  lateinit var emptyView: View
-  @BindView(R.id.list_empty_title)
-  lateinit var emptyTitle: TextView
+  @BindView(R.id.library_data_list) lateinit var recycler: EmptyRecyclerView
 
-  @Inject
-  lateinit var adapter: ArtistEntryAdapter
-  @Inject
-  lateinit var actionHandler: PopupActionHandler
-  @Inject
-  lateinit var presenter: BrowseArtistPresenter
+  @BindView(R.id.empty_view) lateinit var emptyView: View
+  @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
+  @BindView(R.id.list_empty_icon) lateinit var emptyViewIcon: ImageView
+  @BindView(R.id.list_empty_subtitle) lateinit var emptyViewSubTitle: TextView
+  @BindView(R.id.empty_view_progress_bar) lateinit var emptyViewProgress: ProgressBar
+
+  @Inject lateinit var adapter: ArtistEntryAdapter
+  @Inject lateinit var actionHandler: PopupActionHandler
+  @Inject lateinit var presenter: BrowseArtistPresenter
 
   private var scope: Scope? = null
   private lateinit var syncButton: Button
@@ -86,9 +86,9 @@ class BrowseArtistFragment :
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    val view = inflater.inflate(R.layout.fragment_library_search, container, false)
+    val view = inflater.inflate(R.layout.fragment_browse, container, false)
     ButterKnife.bind(this, view)
-    emptyTitle.setText(R.string.artists_list_empty)
+    emptyViewTitle.setText(R.string.artists_list_empty)
     syncButton = view.findViewById<Button>(R.id.list_empty_sync)
     syncButton.setOnClickListener {
       presenter.sync()
@@ -120,5 +120,19 @@ class BrowseArtistFragment :
 
   override fun update(data: FlowCursorList<Artist>) {
     adapter.update(data)
+  }
+
+  override fun showLoading() {
+    emptyViewProgress.visibility = View.VISIBLE
+    emptyViewIcon.visibility = View.GONE
+    emptyViewTitle.visibility = View.GONE
+    emptyViewSubTitle.visibility = View.GONE
+  }
+
+  override fun hideLoading() {
+    emptyViewProgress.visibility = View.GONE
+    emptyViewIcon.visibility = View.VISIBLE
+    emptyViewTitle.visibility = View.VISIBLE
+    emptyViewSubTitle.visibility = View.VISIBLE
   }
 }

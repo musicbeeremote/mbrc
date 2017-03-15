@@ -6,6 +6,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
@@ -30,23 +32,17 @@ class BrowseAlbumFragment :
   BrowseAlbumView,
   AlbumEntryAdapter.MenuItemSelectedListener {
 
-  @BindView(R.id.library_data_list)
-  lateinit var recycler: EmptyRecyclerView
+  @BindView(R.id.library_data_list) lateinit var recycler: EmptyRecyclerView
 
-  @BindView(R.id.empty_view)
-  lateinit var emptyView: View
+  @BindView(R.id.empty_view) lateinit var emptyView: View
+  @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
+  @BindView(R.id.list_empty_icon) lateinit var emptyViewIcon: ImageView
+  @BindView(R.id.list_empty_subtitle) lateinit var emptyViewSubTitle: TextView
+  @BindView(R.id.empty_view_progress_bar) lateinit var emptyViewProgress: ProgressBar
 
-  @BindView(R.id.list_empty_title)
-  lateinit var emptyTitle: TextView
-
-  @Inject
-  lateinit var adapter: AlbumEntryAdapter
-
-  @Inject
-  lateinit var actionHandler: PopupActionHandler
-
-  @Inject
-  lateinit var presenter: BrowseAlbumPresenter
+  @Inject lateinit var adapter: AlbumEntryAdapter
+  @Inject lateinit var actionHandler: PopupActionHandler
+  @Inject lateinit var presenter: BrowseAlbumPresenter
 
   private lateinit var syncButton: Button
 
@@ -58,10 +54,10 @@ class BrowseAlbumFragment :
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
-  ): View? {
-    val view = inflater.inflate(R.layout.fragment_library_search, container, false)
+  ): View {
+    val view = inflater.inflate(R.layout.fragment_browse, container, false)
     ButterKnife.bind(this, view)
-    emptyTitle.setText(R.string.albums_list_empty)
+    emptyViewTitle.setText(R.string.albums_list_empty)
     syncButton = view.findViewById<Button>(R.id.list_empty_sync)
     syncButton.setOnClickListener {
       presenter.sync()
@@ -83,13 +79,11 @@ class BrowseAlbumFragment :
   override fun onCreate(savedInstanceState: Bundle?) {
     val scope = Toothpick.openScopes(requireActivity().application, LIBRARY_SCOPE, activity, this)
     scope.installModules(
-      SmoothieActivityModule(requireActivity()),
-      BrowseAlbumModule()
+      SmoothieActivityModule(requireActivity()), BrowseAlbumModule()
     )
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     presenter.attach(this)
-    presenter.load()
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,6 +93,7 @@ class BrowseAlbumFragment :
     recycler.layoutManager = LinearLayoutManager(recycler.context)
     recycler.setHasFixedSize(true)
     adapter.setMenuItemSelectedListener(this)
+    presenter.load()
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, album: Album) {
@@ -130,6 +125,20 @@ class BrowseAlbumFragment :
     Snackbar.make(recycler, R.string.queue_result__success, Snackbar.LENGTH_SHORT)
       .setText(message)
       .show()
+  }
+
+  override fun showLoading() {
+    emptyViewProgress.visibility = View.VISIBLE
+    emptyViewIcon.visibility = View.GONE
+    emptyViewTitle.visibility = View.GONE
+    emptyViewSubTitle.visibility = View.GONE
+  }
+
+  override fun hideLoading() {
+    emptyViewProgress.visibility = View.GONE
+    emptyViewIcon.visibility = View.VISIBLE
+    emptyViewTitle.visibility = View.VISIBLE
+    emptyViewSubTitle.visibility = View.VISIBLE
   }
 
   override fun onDestroy() {
