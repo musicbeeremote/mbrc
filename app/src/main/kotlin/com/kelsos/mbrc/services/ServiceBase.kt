@@ -47,6 +47,7 @@ open class ServiceBase {
         val message = mapper.readValue(s, SocketMessage::class.java)
         val context = message.context
 
+        Timber.v("$context message received")
         if (Protocol.Player == context) {
           val payload = ProtocolPayload(settingsManager.getClientId())
           payload.noBroadcast = true
@@ -108,7 +109,7 @@ open class ServiceBase {
       val socketAddress = mapper.map(connectionSettings)
       Timber.v("Creating new socket")
       socket = Socket()
-      socket!!.soTimeout = 40 * 1000
+      socket!!.soTimeout = 30 * 1000
       socket!!.connect(socketAddress)
       sendMessage(SocketMessage.create(Protocol.Player, "Android"))
       return socket!!
