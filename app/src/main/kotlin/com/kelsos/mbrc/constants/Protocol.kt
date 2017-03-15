@@ -54,5 +54,7 @@ object Protocol {
   val VerifyConnection = "verifyconnection"
   val RadioStations = "radiostations"
 
+  val CommandUnavailable = "commandunavailable"
+
   val ProtocolVersionNumber = 5
 }
