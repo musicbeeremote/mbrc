@@ -11,6 +11,8 @@ interface NowPlayingView : BaseView {
   fun reload()
   fun trackChanged(trackInfo: TrackInfo, scrollToTrack: Boolean = false)
   fun failure(throwable: Throwable)
+  fun showLoading()
+  fun hideLoading()
 }
 
 interface NowPlayingPresenter : Presenter<NowPlayingView> {
