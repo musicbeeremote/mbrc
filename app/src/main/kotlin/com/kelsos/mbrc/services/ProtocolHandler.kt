@@ -2,11 +2,13 @@ package com.kelsos.mbrc.services
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.kelsos.mbrc.R
 import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.model.MainDataModel
 import io.reactivex.Completable
 import timber.log.Timber
@@ -38,6 +40,9 @@ constructor(private val bus: RxBus, private val mapper: ObjectMapper, private va
         if (context.contains(Protocol.ClientNotAllowed)) {
           bus.post(MessageEvent(ProtocolEventType.InformClientNotAllowed))
           return@fromAction
+        } else if (context.contains(Protocol.CommandUnavailable)) {
+          bus.post(NotifyUser(R.string.party_mode__command_unavailable))
+          return@fromAction
         }
 
         if (!isHandshakeComplete) {
@@ -45,8 +50,7 @@ constructor(private val bus: RxBus, private val mapper: ObjectMapper, private va
             bus.post(MessageEvent(ProtocolEventType.InitiateProtocolRequest))
           } else if (context.contains(Protocol.ProtocolTag)) {
 
-            val protocolVersion: Int
-            protocolVersion = try {
+            val protocolVersion: Int = try {
               Integer.parseInt(node.path(Const.DATA).asText())
             } catch (ignore: Exception) {
               2
