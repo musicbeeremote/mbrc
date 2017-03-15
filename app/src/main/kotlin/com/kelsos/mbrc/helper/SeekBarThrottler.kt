@@ -1,27 +1,38 @@
 package com.kelsos.mbrc.helper
 
 import android.widget.SeekBar
-import com.jakewharton.rxrelay.PublishRelay
-import rx.Subscription
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.sample
+import kotlinx.coroutines.launch
 
 class SeekBarThrottler(private val action: (Int) -> Unit) : SeekBar.OnSeekBarChangeListener {
 
   var fromUser: Boolean = false
     private set
-  private val progressRelay = PublishRelay.create<Int>()
-  private var subscription: Subscription? = null
+  private val progressRelay = MutableStateFlow(0)
+  private val job = SupervisorJob()
+  private val scope = CoroutineScope(job + Dispatchers.IO)
+  private var progressJob: Job? = null
 
   init {
     this.fromUser = false
-    subscription = progressRelay.throttleLast(600, TimeUnit.MILLISECONDS)
-      .distinct()
-      .subscribe { this.onProgressChange(it) }
+    progressJob = progressRelay.sample(600)
+      .distinctUntilChanged()
+      .onEach { this.onProgressChange(it) }
+      .launchIn(scope)
   }
 
   override fun onProgressChanged(seekBar: SeekBar, value: Int, fromUser: Boolean) {
     if (fromUser) {
-      progressRelay.call(value)
+      progressRelay.tryEmit(value)
     }
   }
 
@@ -38,6 +49,6 @@ class SeekBarThrottler(private val action: (Int) -> Unit) : SeekBar.OnSeekBarCha
   }
 
   fun terminate() {
-    subscription?.unsubscribe()
+    scope.launch { progressJob?.cancelAndJoin() }
   }
 }

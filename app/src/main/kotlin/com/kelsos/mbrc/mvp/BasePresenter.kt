@@ -9,8 +9,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
-import rx.Subscription
-import rx.subscriptions.CompositeSubscription
 import kotlin.coroutines.CoroutineContext
 
 open class BasePresenter<T : BaseView>(
@@ -19,7 +17,6 @@ open class BasePresenter<T : BaseView>(
   var view: T? = null
     private set
 
-  private val compositeSubscription = CompositeSubscription()
   private val lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
   private lateinit var job: Job
   protected lateinit var scope: CoroutineScope
@@ -41,12 +38,7 @@ open class BasePresenter<T : BaseView>(
   override fun detach() {
     lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
     this.view = null
-    compositeSubscription.clear()
     job.cancelChildren()
-  }
-
-  protected fun addSubscription(subscription: Subscription) {
-    this.compositeSubscription.add(subscription)
   }
 
   fun checkIfAttached() {

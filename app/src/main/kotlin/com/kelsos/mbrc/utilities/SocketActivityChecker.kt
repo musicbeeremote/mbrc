@@ -1,42 +1,61 @@
 package com.kelsos.mbrc.utilities
 
-import rx.Completable
-import rx.Subscription
+import com.kelsos.mbrc.di.modules.AppDispatchers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SocketActivityChecker {
-  private var subscription: Subscription? = null
+class SocketActivityChecker
+@Inject
+constructor(dispatchers: AppDispatchers) {
+  private var deferred: Deferred<Unit>? = null
   private var pingTimeoutListener: PingTimeoutListener? = null
+  private val job = SupervisorJob()
+  private val context = job + dispatchers.io
+  private val scope = CoroutineScope(context)
 
   fun start() {
     Timber.v("Starting activity checker")
-    subscription = subscribe
+    scope.launch { schedule() }
   }
 
-  private val subscribe: Subscription
-    get() = Completable.timer(DELAY.toLong(), TimeUnit.SECONDS).subscribe({
+  private suspend fun schedule() {
+    cancel()
+    deferred = scope.async {
+      delay(DELAY.times(1000).toLong())
       Timber.v("Ping was more than %d seconds ago", DELAY)
-      pingTimeoutListener?.onTimeout()
-    }) { Timber.v("Subscription failed") }
+      try {
+        pingTimeoutListener?.onTimeout()
+      } catch (e: Exception) {
+        Timber.v(e, "calling the onTimeout method failed")
+      }
+    }
+  }
+
+  private suspend fun cancel() {
+    deferred?.run {
+      if (isActive) {
+        cancelAndJoin()
+      }
+    }
+  }
 
   fun stop() {
     Timber.v("Stopping activity checker")
-    unsubscribe()
+    scope.launch { cancel() }
   }
 
   fun ping() {
     Timber.v("Received ping")
-    unsubscribe()
-    subscription = subscribe
-  }
-
-  private fun unsubscribe() {
-    if (subscription != null && !subscription!!.isUnsubscribed) {
-      subscription!!.unsubscribe()
-    }
+    scope.launch { schedule() }
   }
 
   fun setPingTimeoutListener(pingTimeoutListener: PingTimeoutListener?) {

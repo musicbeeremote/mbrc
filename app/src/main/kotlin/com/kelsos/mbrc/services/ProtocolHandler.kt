@@ -40,7 +40,7 @@ constructor(
         val context = node.path("context")
           .textValue()
           .trim()
-          .toLowerCase(Locale.getDefault())
+          .lowercase(Locale.getDefault())
 
         if (context == Protocol.ClientNotAllowed) {
           bus.post(MessageEvent(ProtocolEventType.InformClientNotAllowed))

@@ -1,44 +1,50 @@
 package com.kelsos.mbrc.helper
 
-import rx.Observable
-import rx.Scheduler
-import rx.Subscription
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import javax.inject.Named
 
 class ProgressSeekerHelper
-@Inject constructor(@Named("main") val scheduler: Scheduler) {
+@Inject
+constructor() {
   private var progressUpdate: ProgressUpdate? = null
-  private var subscription: Subscription? = null
+  private val job = SupervisorJob()
+  private val scope = CoroutineScope(job + Dispatchers.IO)
+  private var progressJob: Job? = null
 
   fun start(duration: Int) {
     stop()
-    subscription = Observable.interval(1, TimeUnit.SECONDS).takeWhile {
-      it <= duration
-    }.subscribe({
-      progressUpdate?.progress(it.toInt(), duration)
-    }) { onError(it) }
+    startUpdating(0, duration)
   }
 
-  private fun onError(throwable: Throwable) {
-    Timber.v(throwable, "Error on progress observable")
+  private fun startUpdating(position: Int, duration: Int) {
+    progressJob = flow<Int> {
+      repeat(duration.minus(position).floorDiv(1000)) { current ->
+        delay(1000)
+        try {
+          progressUpdate?.progress(current * 1000, duration)
+        } catch (e: Exception) {
+          Timber.e(e, "Error while updating progress")
+        }
+      }
+    }.launchIn(scope)
   }
 
   fun update(position: Int, duration: Int) {
     stop()
-    subscription = Observable.interval(1, TimeUnit.SECONDS).map {
-      position + it
-    }.takeWhile {
-      it <= duration
-    }.observeOn(scheduler).subscribe({
-      progressUpdate?.progress(it.toInt(), duration)
-    }) { onError(it) }
+    startUpdating(position, duration)
   }
 
   fun stop() {
-    subscription?.unsubscribe()
+    scope.launch { progressJob?.cancelAndJoin() }
   }
 
   fun setProgressListener(progressUpdate: ProgressUpdate?) {

@@ -42,9 +42,6 @@ import com.kelsos.mbrc.utilities.SettingsManager
 import com.kelsos.mbrc.utilities.SettingsManagerImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
-import rx.Scheduler
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 import toothpick.config.Module
 import java.util.concurrent.Executors
 
@@ -59,9 +56,6 @@ class RemoteModule : Module() {
       NotificationManagerCompatProvider::class.java
     )
     bind(ConnectionRepository::class.java).to(ConnectionRepositoryImpl::class.java)
-    bind(Scheduler::class.java).withName("main")
-      .toProviderInstance { AndroidSchedulers.mainThread() }
-    bind(Scheduler::class.java).withName("io").toProviderInstance { Schedulers.io() }
 
     bind(TrackRepository::class.java).to(TrackRepositoryImpl::class.java)
     bind(AlbumRepository::class.java).to(AlbumRepositoryImpl::class.java)

@@ -19,20 +19,14 @@ import com.kelsos.mbrc.BuildConfig.APPLICATION_ID
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.logging.LogHelper
 import com.kelsos.mbrc.utilities.RemoteUtils.getVersion
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 import java.io.File
 
 class FeedbackFragment : Fragment() {
 
-  @BindView(R.id.feedback_content)
-  lateinit var feedbackEditText: EditText
-  @BindView(R.id.include_device_info)
-  lateinit var deviceInfo: CheckBox
-  @BindView(R.id.include_log_info)
-  lateinit var logInfo: CheckBox
-  @BindView(R.id.feedback_button)
-  lateinit var feedbackButton: Button
+  @BindView(R.id.feedback_content) lateinit var feedbackEditText: EditText
+  @BindView(R.id.include_device_info) lateinit var deviceInfo: CheckBox
+  @BindView(R.id.include_log_info) lateinit var logInfo: CheckBox
+  @BindView(R.id.feedback_button) lateinit var feedbackButton: Button
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -42,13 +36,9 @@ class FeedbackFragment : Fragment() {
     val view = inflater.inflate(R.layout.fragment_feedback, container, false)
     ButterKnife.bind(this, view)
 
-    LogHelper.logsExist(requireContext())
-      .subscribeOn(Schedulers.io())
-      .observeOn(AndroidSchedulers.mainThread())
-      .subscribe({
-        logInfo.isEnabled = true
-      }) {
-      }
+    LogHelper.logsExist(requireContext()) { exists ->
+      logInfo.isEnabled = exists
+    }
     return view
   }
 
@@ -81,14 +71,9 @@ class FeedbackFragment : Fragment() {
       return
     }
 
-    LogHelper.zipLogs(requireContext())
-      .subscribeOn(Schedulers.io())
-      .observeOn(AndroidSchedulers.mainThread())
-      .subscribe({
-        openChooser(feedbackText, it)
-      }) {
-        openChooser(feedbackText)
-      }
+    LogHelper.zipLogs(requireContext()) { file ->
+      openChooser(feedbackText, file)
+    }
   }
 
   private fun openChooser(feedbackText: String, logs: File? = null) {

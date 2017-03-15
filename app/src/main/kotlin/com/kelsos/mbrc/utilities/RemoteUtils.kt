@@ -5,8 +5,10 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.core.content.pm.PackageInfoCompat
-import rx.Emitter
-import rx.Observable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.io.File
 import java.security.MessageDigest
 
@@ -22,38 +24,28 @@ object RemoteUtils {
     return PackageInfoCompat.getLongVersionCode(packageManager.getPackageInfo(packageName, 0))
   }
 
-  fun bitmapFromFile(path: String): Observable<Bitmap> {
-    return Observable.fromEmitter<Bitmap>(
-      {
-        try {
-          val options = BitmapFactory.Options()
-          options.inPreferredConfig = Bitmap.Config.RGB_565
-          val bitmap = BitmapFactory.decodeFile(path, options)
-          if (bitmap != null) {
-            it.onNext(bitmap)
-            it.onCompleted()
-          } else {
-            it.onError(RuntimeException("Unable to decode the image"))
-          }
-        } catch (e: Exception) {
-          it.onError(e)
-        }
-      },
-      Emitter.BackpressureMode.LATEST
-    )
+  fun bitmapFromFile(path: String): Bitmap? = runBlocking {
+    return@runBlocking try {
+      withContext(Dispatchers.IO) {
+        val options = BitmapFactory.Options()
+        options.inPreferredConfig = Bitmap.Config.RGB_565
+        BitmapFactory.decodeFile(path, options)
+      }
+    } catch (e: Exception) {
+      Timber.v(e)
+      null
+    }
   }
 
-  fun coverBitmap(coverPath: String): Observable<Bitmap> {
+  private fun coverBitmap(coverPath: String): Bitmap? {
     val cover = File(coverPath)
     return bitmapFromFile(cover.absolutePath)
   }
 
-  fun coverBitmapSync(coverPath: String): Bitmap? {
-    return try {
-      RemoteUtils.coverBitmap(coverPath).toBlocking().first()
-    } catch (e: Exception) {
-      null
-    }
+  fun coverBitmapSync(coverPath: String): Bitmap? = try {
+    coverBitmap(coverPath)
+  } catch (e: Exception) {
+    null
   }
 
   fun sha1(input: String) = hashString("SHA-1", input)

@@ -25,7 +25,6 @@ import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.OPEN
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PLAY
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PREVIOUS
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.getPendingIntent
-import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -71,22 +70,12 @@ constructor(
 
   private fun coverChanged(path: String) {
     val coverFile = File(path)
-    if (coverFile.exists()) {
-      RemoteUtils.bitmapFromFile(coverFile.absolutePath).doOnTerminate {
-        update()
-      }.subscribe(
-        {
-          model.cover = it
-        },
-        {
-          Timber.v(it, "failed to decode")
-          model.cover = null
-        }
-      )
+    model.cover = if (coverFile.exists()) {
+      RemoteUtils.bitmapFromFile(coverFile.absolutePath)
     } else {
-      model.cover = null
-      update()
+      null
     }
+    update()
   }
 
   private fun playStateChanged(event: PlayStateChange) {

@@ -73,30 +73,6 @@
 # as per official recommendation: https://github.com/evant/gradle-retrolambda#proguard
 -dontwarn java.lang.invoke.*
 
-
-# rxjava
--keep class rx.schedulers.Schedulers {
-    public static <methods>;
-}
--keep class rx.schedulers.ImmediateScheduler {
-    public <methods>;
-}
--keep class rx.schedulers.TestScheduler {
-    public <methods>;
-}
--keep class rx.schedulers.Schedulers {
-    public static ** test();
-}
--keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
-    long producerIndex;
-    long consumerIndex;
-}
--keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
-    long producerNode;
-    long consumerNode;
-}
-
-
 #Toothpick
 # Do not obfuscate annotation scoped classes
 -keepnames @javax.inject.Singleton class *
@@ -146,7 +122,6 @@
 
 
 -dontwarn com.fasterxml.jackson.databind.ext.**
--dontwarn rx.internal.util.unsafe.**
 
 ### Jackson SERIALIZER SETTINGS
 -keepclassmembers class * {
