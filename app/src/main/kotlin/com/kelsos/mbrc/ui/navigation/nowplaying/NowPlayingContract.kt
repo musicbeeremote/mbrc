@@ -12,6 +12,8 @@ interface NowPlayingView : BaseView {
   fun loading()
   fun trackChanged(trackInfo: TrackInfo, scrollToTrack: Boolean = false)
   fun failure(throwable: Throwable)
+  fun showLoading()
+  fun hideLoading()
 }
 
 interface NowPlayingPresenter : Presenter<NowPlayingView> {

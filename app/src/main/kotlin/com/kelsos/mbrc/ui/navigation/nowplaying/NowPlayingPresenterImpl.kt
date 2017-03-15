@@ -22,6 +22,7 @@ constructor(
   NowPlayingPresenter {
 
   override fun reload(scrollToTrack: Boolean) {
+    view?.showLoading()
     scope.launch {
       try {
         view?.update(repository.getAndSaveRemote())
@@ -29,10 +30,12 @@ constructor(
       } catch (e: Exception) {
         view?.failure(e)
       }
+      view?.hideLoading()
     }
   }
 
   override fun load() {
+    view?.showLoading()
     scope.launch {
       try {
         view?.update(repository.getAllCursor())
@@ -42,6 +45,7 @@ constructor(
       } catch (e: Exception) {
         view?.failure(e)
       }
+      view?.hideLoading()
     }
   }
 
