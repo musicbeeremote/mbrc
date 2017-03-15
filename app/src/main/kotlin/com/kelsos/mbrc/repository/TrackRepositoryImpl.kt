@@ -4,8 +4,8 @@ import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.repository.data.LocalTrackDataSource
 import com.kelsos.mbrc.repository.data.RemoteTrackDataSource
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import rx.Completable
-import rx.Single
+import io.reactivex.Completable
+import io.reactivex.Single
 import javax.inject.Inject
 
 class TrackRepositoryImpl
@@ -13,7 +13,7 @@ class TrackRepositoryImpl
                     private val remoteDataSource: RemoteTrackDataSource) : TrackRepository {
 
   override fun getAllCursor(): Single<FlowCursorList<Track>> {
-    return localDataSource.loadAllCursor().toSingle()
+    return localDataSource.loadAllCursor().singleOrError()
   }
 
   override fun getAlbumTracks(album: String, artist: String): Single<FlowCursorList<Track>> {
@@ -25,14 +25,14 @@ class TrackRepositoryImpl
   }
 
   override fun getAndSaveRemote(): Single<FlowCursorList<Track>> {
-    return getRemote().andThen(localDataSource.loadAllCursor().toSingle())
+    return getRemote().andThen(localDataSource.loadAllCursor().singleOrError())
   }
 
   override fun getRemote(): Completable {
     localDataSource.deleteAll()
     return remoteDataSource.fetch().doOnNext {
       localDataSource.saveAll(it)
-    }.toCompletable()
+    }.ignoreElements()
   }
 
   override fun search(term: String): Single<FlowCursorList<Track>> {

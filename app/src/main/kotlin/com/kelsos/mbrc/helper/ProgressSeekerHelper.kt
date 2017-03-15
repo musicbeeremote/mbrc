@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.helper
 
-import rx.Observable
-import rx.Scheduler
-import rx.Subscription
+import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.disposables.Disposable
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -11,11 +11,11 @@ import javax.inject.Named
 class ProgressSeekerHelper
 @Inject constructor(@Named("main") val scheduler: Scheduler) {
   private var progressUpdate: ProgressUpdate? = null
-  private var subscription: Subscription? = null
+  private var disposable: Disposable? = null
 
   fun start(duration: Int) {
     stop()
-    subscription = Observable.interval(1, TimeUnit.SECONDS).takeWhile {
+    disposable = Observable.interval(1, TimeUnit.SECONDS).takeWhile {
       it <= duration
     }.subscribe({
       progressUpdate?.progress(it.toInt(), duration)
@@ -28,7 +28,7 @@ class ProgressSeekerHelper
 
   fun update(position: Int, duration: Int) {
     stop()
-    subscription = Observable.interval(1, TimeUnit.SECONDS).map {
+    disposable = Observable.interval(1, TimeUnit.SECONDS).map {
       position + it
     }.takeWhile {
       it <= duration
@@ -38,7 +38,7 @@ class ProgressSeekerHelper
   }
 
   fun stop() {
-    subscription?.unsubscribe()
+    disposable?.dispose()
   }
 
   fun setProgressListener(progressUpdate: ProgressUpdate?) {

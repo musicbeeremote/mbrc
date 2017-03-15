@@ -4,7 +4,7 @@ import com.kelsos.mbrc.annotations.Queue.NOW
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.RadioRepository
 import com.kelsos.mbrc.services.QueueService
-import rx.Scheduler
+import io.reactivex.Scheduler
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
@@ -22,7 +22,7 @@ class RadioPresenterImpl
 
   override fun load() {
     view?.showLoading()
-    addSubcription(radioRepository.cacheIsEmpty().flatMap {
+    addDisposable(radioRepository.cacheIsEmpty().flatMap {
       if (it) {
         return@flatMap radioRepository.getAndSaveRemote()
       } else {
@@ -40,7 +40,7 @@ class RadioPresenterImpl
 
   override fun refresh() {
     view?.showLoading()
-    addSubcription(radioRepository.getAndSaveRemote()
+    addDisposable(radioRepository.getAndSaveRemote()
         .subscribeOn(ioScheduler)
         .observeOn(mainScheduler)
         .subscribe({

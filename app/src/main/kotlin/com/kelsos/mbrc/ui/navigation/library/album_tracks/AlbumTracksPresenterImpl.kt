@@ -17,7 +17,7 @@ class AlbumTracksPresenterImpl
       repository.getAlbumTracks(album.album, album.artist)
     }
 
-    addSubcription(request.subscribe ({
+    addDisposable(request.subscribe ({
       view?.update(it)
     }) {
       Timber.v(it)

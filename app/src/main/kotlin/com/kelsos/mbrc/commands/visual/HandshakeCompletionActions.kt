@@ -8,7 +8,7 @@ import com.kelsos.mbrc.model.ConnectionModel
 import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.services.SocketService
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
-import rx.Observable
+import io.reactivex.Observable
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -45,7 +45,7 @@ class HandshakeCompletionActions
       messages.add(SocketMessage.create(Protocol.NowPlayingPosition))
       messages.add(SocketMessage.create(Protocol.PluginVersion))
 
-      val totalMessages = messages.size
+      val totalMessages = messages.size.toLong()
       Observable.interval(150, TimeUnit.MILLISECONDS)
           .take(totalMessages)
           .subscribe({ service.sendData(messages.removeAt(0)) }) {

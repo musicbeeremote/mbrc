@@ -8,8 +8,8 @@ import com.kelsos.mbrc.repository.ArtistRepository
 import com.kelsos.mbrc.ui.navigation.library.ArtistTabRefreshEvent
 import com.kelsos.mbrc.utilities.SettingsManager
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import rx.Scheduler
-import rx.Single
+import io.reactivex.Scheduler
+import io.reactivex.Single
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
@@ -43,7 +43,7 @@ class BrowseArtistPresenterImpl
         return@flatMap repository.getAllCursor()
       }
     }
-    addSubcription(artistObservable.compose { schedule(it) }.subscribe({
+    addDisposable(artistObservable.compose { schedule(it) }.subscribe({
       view?.update(it)
       view?.hideLoading()
     }, {
@@ -62,7 +62,7 @@ class BrowseArtistPresenterImpl
         return@flatMap repository.getAndSaveRemote()
       }
     }
-    addSubcription(artistObservable.compose { schedule(it) }.subscribe({
+    addDisposable(artistObservable.compose { schedule(it) }.subscribe({
       view?.update(it)
       view?.hideLoading()
     }, {

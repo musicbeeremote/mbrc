@@ -1,13 +1,13 @@
 package com.kelsos.mbrc.mvp
 
-import rx.Subscription
-import rx.subscriptions.CompositeSubscription
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 
 open class BasePresenter<T : BaseView> : Presenter<T> {
   var view: T? = null
     private set
 
-  private val compositeSubscription = CompositeSubscription()
+  private val compositeDisposable = CompositeDisposable()
 
   override val isAttached: Boolean
     get() = view != null
@@ -18,11 +18,11 @@ open class BasePresenter<T : BaseView> : Presenter<T> {
 
   override fun detach() {
     this.view = null
-    compositeSubscription.clear()
+    compositeDisposable.clear()
   }
 
-  protected fun addSubcription(subscription: Subscription) {
-    this.compositeSubscription.add(subscription)
+  protected fun addDisposable(disposable: Disposable) {
+    this.compositeDisposable.add(disposable)
   }
 
   fun checkIfAttached() {

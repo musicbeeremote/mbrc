@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.repository.data
 
-import rx.Observable
+import io.reactivex.Observable
 
 interface RemoteDataSource<T> {
   /**

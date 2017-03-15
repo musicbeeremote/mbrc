@@ -10,8 +10,7 @@ import com.kelsos.mbrc.data.SocketMessage
 import com.kelsos.mbrc.mappers.InetAddressMapper
 import com.kelsos.mbrc.repository.ConnectionRepository
 import com.kelsos.mbrc.utilities.SettingsManager
-import rx.Emitter.BackpressureMode.LATEST
-import rx.Observable
+import io.reactivex.Observable
 import timber.log.Timber
 import java.io.BufferedReader
 import java.io.IOException
@@ -42,7 +41,7 @@ open class ServiceBase {
   }
 
   private fun getSocketMessageObservable(request: String, data: Any, s: String): Observable<SocketMessage> {
-    return Observable.fromEmitter<SocketMessage>({
+    return Observable.create<SocketMessage> {
       try {
         val message = mapper.readValue(s, SocketMessage::class.java)
         val context = message.context
@@ -60,11 +59,11 @@ open class ServiceBase {
         message.data = mapper.writeValueAsString(message.data)
 
         it.onNext(message)
-        it.onCompleted()
+        it.onComplete()
       } catch (e: IOException) {
         it.onError(e)
       }
-    }, LATEST)
+    }
   }
 
   private fun shouldSkip(ms: SocketMessage): Boolean {

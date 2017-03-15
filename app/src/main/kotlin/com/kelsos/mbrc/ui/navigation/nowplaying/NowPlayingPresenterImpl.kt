@@ -11,8 +11,8 @@ import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.NowPlayingRepository
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import rx.Scheduler
-import rx.Single
+import io.reactivex.Scheduler
+import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -27,7 +27,7 @@ class NowPlayingPresenterImpl
 
   override fun reload(scrollToTrack: Boolean) {
     view?.showLoading()
-    addSubcription(repository.getAndSaveRemote()
+    addDisposable(repository.getAndSaveRemote()
         .compose { schedule(it) }
         .subscribe({
           view?.update(it)
@@ -40,7 +40,7 @@ class NowPlayingPresenterImpl
   }
 
   override fun load() {
-    addSubcription(repository.getAllCursor().compose { schedule(it) }
+    addDisposable(repository.getAllCursor().compose { schedule(it) }
         .subscribe({
           view?.update(it)
           view?.trackChanged(model.trackInfo, true)

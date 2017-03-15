@@ -2,7 +2,7 @@ package com.kelsos.mbrc.repository.data
 
 import com.kelsos.mbrc.data.RadioStation
 import com.kelsos.mbrc.services.RadioService
-import rx.Observable
+import io.reactivex.Observable
 import javax.inject.Inject
 
 class RemoteRadioDataSourceImpl

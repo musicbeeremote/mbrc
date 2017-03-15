@@ -4,17 +4,15 @@ import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.data.ConnectionSettings
 import com.kelsos.mbrc.data.DiscoveryMessage
 import com.kelsos.mbrc.enums.DiscoveryStop
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.DiscoveryStopped
 import com.kelsos.mbrc.mappers.ConnectionMapper
 import com.kelsos.mbrc.repository.ConnectionRepository
-import rx.Emitter
-import rx.Observable
-import rx.functions.Func1
-import rx.schedulers.Schedulers
+import io.reactivex.Emitter
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import java.io.IOException
 import java.net.DatagramPacket
@@ -48,19 +46,16 @@ internal constructor(private val manager: WifiManager,
     val mapper = ConnectionMapper()
     discoveryObservable().subscribeOn(Schedulers.io())
         .unsubscribeOn(Schedulers.io())
-        .doOnTerminate({
-          this.stopDiscovery()
-        }).map<ConnectionSettings>(Func1<DiscoveryMessage, ConnectionSettings> { mapper.map(it) }).subscribe(
-        { settings ->
+        .doOnTerminate({ this.stopDiscovery() })
+        .map { mapper.map(it) }
+        .subscribe({
           bus.post(DiscoveryStopped(DiscoveryStop.COMPLETE))
-          connectionRepository.save(settings)
-
+          connectionRepository.save(it)
           callback.invoke()
-
         }) {
-      Timber.v(it, "Discovery incomplete")
-      bus.post(DiscoveryStopped(DiscoveryStop.NOT_FOUND))
-    }
+          Timber.v(it, "Discovery incomplete")
+          bus.post(DiscoveryStopped(DiscoveryStop.NOT_FOUND))
+        }
   }
 
   private fun stopDiscovery() {
@@ -112,7 +107,7 @@ internal constructor(private val manager: WifiManager,
 
   private fun getObservable(socket: MulticastSocket): Observable<DiscoveryMessage> {
     return Observable.interval(1000, TimeUnit.MILLISECONDS).take(15).flatMap {
-      Observable.fromEmitter<DiscoveryMessage>({
+      Observable.create<DiscoveryMessage> {
         emitter: Emitter<DiscoveryMessage> ->
         try {
           val mPacket: DatagramPacket
@@ -123,12 +118,12 @@ internal constructor(private val manager: WifiManager,
           val node = mapper.readValue(incoming, DiscoveryMessage::class.java)
           Timber.v("Discovery received -> %s", node)
           emitter.onNext(node)
-          emitter.onCompleted()
+          emitter.onComplete()
         } catch (e: IOException) {
           emitter.onError(e)
         }
-      }, Emitter.BackpressureMode.LATEST)
-    }.filter { message -> NOTIFY == message.context }.first()
+      }
+    }.filter { message -> NOTIFY == message.context }
   }
 
   private val resource: MulticastSocket

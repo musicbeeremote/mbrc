@@ -21,10 +21,10 @@ import org.mockito.Mockito.reset
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
-import rx.Completable
-import rx.Scheduler
-import rx.Single
-import rx.schedulers.TestScheduler
+import io.reactivex.Completable
+import io.reactivex.Scheduler
+import io.reactivex.Single
+import io.reactivex.schedulers.TestScheduler
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.config.Module

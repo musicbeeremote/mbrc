@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.services
 
-import rx.Single
+import io.reactivex.Single
 
 interface ConnectionVerifier {
   fun verify(): Single<Boolean>

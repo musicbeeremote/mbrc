@@ -4,11 +4,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import rx.Emitter
-import rx.Observable
+import io.reactivex.Observable
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 
 object RemoteUtils {
 
@@ -24,27 +21,15 @@ object RemoteUtils {
     return mInfo.versionCode.toLong()
   }
 
-  /**
-   * Retrieves the current ISO formatted DateTime.
-
-   * @return Time at this moment in ISO 8601 format
-   */
-  val utcNow: String
-    get() {
-      val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-      df.timeZone = TimeZone.getTimeZone("UTC")
-      return df.format(Date())
-    }
-
   fun bitmapFromFile(path: String): Observable<Bitmap> {
-    return Observable.fromEmitter<Bitmap>({
+    return Observable.create<Bitmap>({
       try {
         val options = BitmapFactory.Options()
         options.inPreferredConfig = Bitmap.Config.RGB_565
         val bitmap = BitmapFactory.decodeFile(path, options)
         if (bitmap != null) {
           it.onNext(bitmap)
-          it.onCompleted()
+          it.onComplete()
         } else {
           it.onError(RuntimeException("Unable to decode the image"))
         }
@@ -52,7 +37,7 @@ object RemoteUtils {
       } catch(e: Exception) {
         it.onError(e)
       }
-    }, Emitter.BackpressureMode.LATEST)
+    })
   }
 
   fun coverBitmap(coverPath: String): Observable<Bitmap> {
@@ -62,7 +47,7 @@ object RemoteUtils {
 
   fun coverBitmapSync(coverPath: String): Bitmap? {
     return try {
-      RemoteUtils.coverBitmap(coverPath).toBlocking().first()
+      RemoteUtils.coverBitmap(coverPath).blockingLast()
     } catch (e: Exception) {
       null
     }

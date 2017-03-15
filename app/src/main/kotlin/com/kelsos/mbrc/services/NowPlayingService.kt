@@ -3,7 +3,7 @@ package com.kelsos.mbrc.services
 import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.data.Page
 
-import rx.Observable
+import io.reactivex.Observable
 
 
 interface NowPlayingService {

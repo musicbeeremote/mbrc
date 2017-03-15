@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.logging
 
 import android.content.Context
-import rx.Single
+import io.reactivex.Single
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException

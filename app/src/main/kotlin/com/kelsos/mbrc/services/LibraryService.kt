@@ -5,7 +5,7 @@ import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.data.library.Genre
 import com.kelsos.mbrc.data.library.Track
-import rx.Observable
+import io.reactivex.Observable
 
 interface LibraryService {
   fun getGenres(offset: Int, limit: Int): Observable<Page<Genre>>

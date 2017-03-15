@@ -13,7 +13,7 @@ import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
-import rx.observers.TestSubscriber
+import io.reactivex.observers.TestSubscriber
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule
 import java.io.BufferedReader

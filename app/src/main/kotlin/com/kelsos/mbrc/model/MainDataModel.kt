@@ -21,9 +21,9 @@ import com.kelsos.mbrc.events.ui.ShuffleChange
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
 import com.kelsos.mbrc.events.ui.VolumeChange
 import com.kelsos.mbrc.repository.ModelCache
-import rx.Completable
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import timber.log.Timber
 import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
@@ -36,7 +36,7 @@ class MainDataModel
 constructor(private val bus: RxBus,
             private val cache: ModelCache) {
 
-  private var subscription: Subscription? = null
+  private var disposable: Disposable? = null
   private var _trackInfo: TrackInfo = TrackInfo()
   private var _coverPath: String = ""
   private var onPluginOutOfDate: (() -> Unit)? = null
@@ -123,7 +123,7 @@ constructor(private val bus: RxBus,
 
   @State var playState: String = PlayerState.UNDEFINED
     set(value) {
-      subscription?.unsubscribe()
+      disposable?.dispose()
 
       @State val newState: String =
           when {
@@ -138,7 +138,7 @@ constructor(private val bus: RxBus,
       if (field != STOPPED) {
         bus.post(PlayStateChange(field))
       } else {
-        subscription = Completable.timer(800, TimeUnit.MILLISECONDS).subscribe { bus.post(PlayStateChange(field)) }
+        disposable = Completable.timer(800, TimeUnit.MILLISECONDS).subscribe { bus.post(PlayStateChange(field)) }
       }
     }
 

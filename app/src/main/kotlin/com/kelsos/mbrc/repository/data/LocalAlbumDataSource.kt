@@ -7,14 +7,20 @@ import com.kelsos.mbrc.data.library.Album_Table.album
 import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.data.library.Track_Table
 import com.kelsos.mbrc.extensions.escapeLike
-import com.raizlabs.android.dbflow.kotlinextensions.*
+import com.raizlabs.android.dbflow.kotlinextensions.database
+import com.raizlabs.android.dbflow.kotlinextensions.delete
+import com.raizlabs.android.dbflow.kotlinextensions.from
+import com.raizlabs.android.dbflow.kotlinextensions.innerJoin
+import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
+import com.raizlabs.android.dbflow.kotlinextensions.on
+import com.raizlabs.android.dbflow.kotlinextensions.select
+import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.ConditionGroup.clause
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
-import rx.Emitter
-import rx.Observable
-import rx.Single
+import io.reactivex.Observable
+import io.reactivex.Single
 import javax.inject.Inject
 
 class LocalAlbumDataSource
@@ -34,22 +40,21 @@ class LocalAlbumDataSource
   }
 
   override fun loadAllCursor(): Observable<FlowCursorList<Album>> {
-    return Observable.fromEmitter({
+    return Observable.create {
       val modelQueriable = (select from Album::class)
           .orderBy(Album_Table.artist, true)
           .orderBy(album, true)
       val cursor = FlowCursorList.Builder(Album::class.java).modelQueriable(modelQueriable).build()
       it.onNext(cursor)
-      it.onCompleted()
-    }, Emitter.BackpressureMode.LATEST)
-
+      it.onComplete()
+    }
   }
 
   fun getAlbumsByArtist(artist: String): Single<FlowCursorList<Album>> {
 
     return Single.create<FlowCursorList<Album>> {
       val selectAlbum = SQLite.select(Album_Table.album.withTable(), Album_Table.artist.withTable()).distinct()
-      var artistOrAlbumArtist = clause(Track_Table.artist.withTable().`is`(artist))
+      val artistOrAlbumArtist = clause(Track_Table.artist.withTable().`is`(artist))
           .or(Track_Table.album_artist.withTable().`is`(artist))
       val columns = clause(Track_Table.album.withTable().eq(Album_Table.album.withTable()))
           .and(Track_Table.album_artist.withTable().eq(Album_Table.artist.withTable()))

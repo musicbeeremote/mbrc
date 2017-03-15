@@ -8,7 +8,7 @@ import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.model.MainDataModel
-import rx.Completable
+import io.reactivex.Completable
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton

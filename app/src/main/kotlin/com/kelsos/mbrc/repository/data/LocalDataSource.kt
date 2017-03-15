@@ -2,8 +2,8 @@ package com.kelsos.mbrc.repository.data
 
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.structure.Model
-import rx.Observable
-import rx.Single
+import io.reactivex.Observable
+import io.reactivex.Single
 
 interface LocalDataSource<T : Model> {
   fun deleteAll()
