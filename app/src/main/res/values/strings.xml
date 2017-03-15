@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
   <string name="application_name">MusicBee Remote</string>
@@ -146,7 +146,7 @@
   <string name="playlists_load_failed">There was an error while trying to load the playlists.</string>
   <string name="service_connection_error">Failed to connect to remote host.</string>
   <string name="now_playing_search_hint">Search and play a track</string>
-  <string name="feedback_device_information">Include Device &amp; Application Information</string>
+  <string name="feedback_device_information"><![CDATA[Include Device & Application Information]]></string>
   <string name="feedback_version_info">\n\nDevice: %1$s %2$s Android(%3$s)\nMusicBee Remote v%4$s</string>
   <string name="library_actionbar_refresh">Refresh</string>
   <string name="feedback_logs">Include Logs</string>
@@ -192,4 +192,5 @@
   <string name="plugin_update__description">It seems that you have connected to an older version of the plugin.\n\nSome features will not function properly unless you update the plugin to %1$s.</string>
   <string name="plugin_update__title">Plugin Update Required</string>
   <string name="update_required__content_description">Update icon</string>
+  <string name="party_mode__command_unavailable">You are not allowed to perform this action in party mode.</string>
 </resources>

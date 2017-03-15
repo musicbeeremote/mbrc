@@ -2,11 +2,13 @@ package com.kelsos.mbrc.services
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.kelsos.mbrc.R
 import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.model.MainDataModel
 import timber.log.Timber
 import java.util.Locale
@@ -44,6 +46,9 @@ constructor(
 
         if (context == Protocol.ClientNotAllowed) {
           bus.post(MessageEvent(ProtocolEventType.InformClientNotAllowed))
+          return
+        } else if (context == Protocol.CommandUnavailable) {
+          bus.post(NotifyUser(R.string.party_mode__command_unavailable))
           return
         }
 
