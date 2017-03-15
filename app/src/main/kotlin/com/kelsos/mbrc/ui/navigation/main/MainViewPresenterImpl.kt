@@ -19,7 +19,7 @@ import com.kelsos.mbrc.model.ConnectionModel
 import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.utilities.SettingsManager
-import rx.Completable
+import io.reactivex.Completable
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -58,7 +58,7 @@ class MainViewPresenterImpl
   }
 
   override fun load() {
-    addSubcription(Completable.fromCallable {
+    addDisposable(Completable.fromCallable {
       checkIfAttached()
       view?.updateCover(model.coverPath)
       view?.updateLfmStatus(model.lfmStatus)
@@ -75,7 +75,7 @@ class MainViewPresenterImpl
       Timber.e(it, "Failed to load")
     })
 
-    addSubcription(settingsManager.shouldShowChangeLog().subscribe({
+    addDisposable(settingsManager.shouldShowChangeLog().subscribe({
       if (it) {
         view?.showChangeLog()
       }

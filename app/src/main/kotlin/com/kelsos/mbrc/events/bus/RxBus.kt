@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.events.bus
 
-import rx.Subscription
+import io.reactivex.disposables.Disposable
 
 interface RxBus {
   fun <T> register(receiver: Any, eventClass: Class<T>, onNext: (T) -> Unit)
@@ -9,7 +9,7 @@ interface RxBus {
 
   fun unregister(receiver: Any)
 
-  fun <T> register(eventClass: Class<T>, onNext: (T) -> Unit, main: Boolean): Subscription
+  fun <T> register(eventClass: Class<T>, onNext: (T) -> Unit, main: Boolean): Disposable
 
   fun post(event: Any)
 }

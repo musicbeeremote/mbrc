@@ -3,7 +3,7 @@ package com.kelsos.mbrc.repository.data
 import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.repository.data.RemoteDataSource.Companion.LIMIT
 import com.kelsos.mbrc.services.LibraryService
-import rx.Observable
+import io.reactivex.Observable
 import javax.inject.Inject
 
 class RemoteAlbumDataSource

@@ -8,7 +8,7 @@ import com.kelsos.mbrc.logging.FileLoggingTree
 import com.kelsos.mbrc.utilities.SettingsManager.CallAction
 import com.kelsos.mbrc.utilities.SettingsManager.Companion.NONE
 import com.kelsos.mbrc.utilities.SettingsManager.Companion.REDUCE
-import rx.Single
+import io.reactivex.Single
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject

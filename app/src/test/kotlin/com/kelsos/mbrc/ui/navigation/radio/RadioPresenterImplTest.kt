@@ -19,9 +19,9 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.never
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
-import rx.Scheduler
-import rx.Single
-import rx.schedulers.Schedulers
+import io.reactivex.Scheduler
+import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule
 import java.net.SocketTimeoutException

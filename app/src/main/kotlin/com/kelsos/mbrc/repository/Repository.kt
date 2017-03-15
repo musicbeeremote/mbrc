@@ -2,8 +2,8 @@ package com.kelsos.mbrc.repository
 
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.structure.Model
-import rx.Completable
-import rx.Single
+import io.reactivex.Completable
+import io.reactivex.Single
 
 interface Repository<T : Model> {
   fun getAllCursor(): Single<FlowCursorList<T>>

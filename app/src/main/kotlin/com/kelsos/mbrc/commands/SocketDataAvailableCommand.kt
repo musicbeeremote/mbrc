@@ -3,7 +3,7 @@ package com.kelsos.mbrc.commands
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.services.ProtocolHandler
-import rx.schedulers.Schedulers
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
 

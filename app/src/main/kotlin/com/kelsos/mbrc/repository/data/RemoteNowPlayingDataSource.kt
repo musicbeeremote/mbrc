@@ -2,7 +2,7 @@ package com.kelsos.mbrc.repository.data
 
 import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.services.NowPlayingService
-import rx.Observable
+import io.reactivex.Observable
 import javax.inject.Inject
 
 class RemoteNowPlayingDataSource

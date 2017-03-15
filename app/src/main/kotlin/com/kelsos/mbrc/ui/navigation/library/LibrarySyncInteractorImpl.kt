@@ -7,10 +7,12 @@ import com.kelsos.mbrc.repository.ArtistRepository
 import com.kelsos.mbrc.repository.GenreRepository
 import com.kelsos.mbrc.repository.PlaylistRepository
 import com.kelsos.mbrc.repository.TrackRepository
-import rx.Completable
-import rx.Scheduler
-import rx.Single
-import rx.Subscription
+import io.reactivex.Completable
+import io.reactivex.Scheduler
+import io.reactivex.Single
+import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Function4
+
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
@@ -27,19 +29,21 @@ class LibrarySyncInteractorImpl
     private val bus: RxBus
 ) : LibrarySyncInteractor {
 
-  private var subscription: Subscription? = null
+  private var disposable: Disposable? = null
   private var running: Boolean = false
   private var onCompleteListener: LibrarySyncInteractor.OnCompleteListener? = null
 
   override fun sync(auto: Boolean) {
-    if (subscription != null && !subscription!!.isUnsubscribed) {
-      return
+    disposable?.let {
+      if (!it.isDisposed) {
+        return
+      }
     }
     running = true
 
     Timber.v("Starting library metadata sync")
 
-    subscription = checkIfShouldSync(auto)
+    disposable = checkIfShouldSync(auto)
         .andThen(genreRepository.getRemote())
         .andThen(artistRepository.getRemote())
         .andThen(albumRepository.getRemote())
@@ -80,7 +84,7 @@ class LibrarySyncInteractorImpl
         artistRepository.cacheIsEmpty(),
         albumRepository.cacheIsEmpty(),
         trackRepository.cacheIsEmpty(),
-        { noGenres, noArtists, noAlbums, noTracks ->
+        Function4 { noGenres, noArtists, noAlbums, noTracks ->
           noGenres && noArtists && noAlbums && noTracks
         })
   }

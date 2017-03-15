@@ -3,7 +3,8 @@ package com.kelsos.mbrc.ui.connection_manager
 import com.kelsos.mbrc.data.ConnectionSettings
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.ConnectionRepository
-import rx.Observable
+import io.reactivex.Observable
+import io.reactivex.functions.BiFunction
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -17,13 +18,14 @@ constructor(private val repository: ConnectionRepository) : BasePresenter<Connec
     val all = Observable.defer { Observable.just(repository.all) }
     val defaultId = Observable.defer { Observable.just(repository.defaultId) }
 
-    addSubcription(Observable.zip<Long, List<ConnectionSettings>, ConnectionModel>(defaultId, all, { defaultId, settings ->
-      ConnectionModel(defaultId, settings)
-    }).subscribe({
-      view?.updateModel(it)
-    }, {
-      this.onLoadError(it)
-    }))
+    addDisposable(Observable.zip<Long,
+        List<ConnectionSettings>,
+        ConnectionModel>(defaultId, all, BiFunction(::ConnectionModel))
+        .subscribe({
+          view?.updateModel(it)
+        }, {
+          this.onLoadError(it)
+        }))
   }
 
   override fun setDefault(settings: ConnectionSettings) {

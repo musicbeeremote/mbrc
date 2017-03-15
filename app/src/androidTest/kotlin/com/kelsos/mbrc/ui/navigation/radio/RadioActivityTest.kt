@@ -34,8 +34,8 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
-import rx.Single
-import rx.android.schedulers.AndroidSchedulers
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
 import toothpick.Toothpick
 import toothpick.config.Module
 import toothpick.testing.ToothPickTestModule

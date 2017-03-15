@@ -4,7 +4,6 @@ import android.app.Activity
 import android.graphics.Color
 import android.support.v4.view.MotionEventCompat
 import android.support.v7.widget.RecyclerView
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.View
@@ -16,13 +15,11 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.NowPlaying
-import com.kelsos.mbrc.rx.MapWithIndex
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.TouchHelperViewHolder
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.list.FlowCursorList.OnCursorRefreshListener
-import rx.Observable
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -56,10 +53,11 @@ class NowPlayingAdapter
     }
 
     this.currentTrack = path
-    Observable.from(cursor).compose(MapWithIndex.instance<NowPlaying>()).filter {
-      val info = it.value()
-      info.path.equals(path)
-    }.subscribe({ setPlayingTrack(it.index().toInt()) }) { Timber.v(it, "Failed") }
+    cursor?.forEachIndexed { index, (_, _, itemPath) ->
+      if (itemPath.equals(path)) {
+        setPlayingTrack(index)
+      }
+    }
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackHolder {
@@ -67,7 +65,7 @@ class NowPlayingAdapter
     val holder = TrackHolder(view)
     holder.itemView.setOnClickListener { onClick(holder) }
     holder.container.setOnClickListener { onClick(holder) }
-    holder.dragHandle.setOnTouchListener { view, motionEvent ->
+    holder.dragHandle.setOnTouchListener { _, motionEvent ->
       if (MotionEventCompat.getActionMasked(motionEvent) == ACTION_DOWN) {
         dragStartListener.onStartDrag(holder)
       }
@@ -103,14 +101,10 @@ class NowPlayingAdapter
 
   override fun onItemMove(from: Int, to: Int): Boolean {
     swapPositions(from, to)
-
-    if (listener != null) {
-      listener!!.onMove(from, to)
-    }
-
+    listener?.onMove(from, to)
     notifyItemMoved(from, to)
 
-    if (!TextUtils.isEmpty(currentTrack)) {
+    if (!currentTrack.isNullOrBlank()) {
       setPlayingTrack(currentTrack)
     }
 
@@ -172,7 +166,6 @@ class NowPlayingAdapter
     fun onPress(position: Int)
     fun onMove(from: Int, to: Int)
     fun onDismiss(position: Int)
-
   }
 
   class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView), TouchHelperViewHolder {
