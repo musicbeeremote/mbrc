@@ -28,3 +28,16 @@ allprojects {
 task clean(type: Delete) {
   delete rootProject.buildDir
 }
+
+dependencyUpdates.resolutionStrategy = {
+  componentSelection { rules ->
+    rules.all { selection ->
+      boolean rejected = ['alpha', 'beta', 'rc', 'cr', 'm', 'pr', 'preview'].any { qualifier ->
+        selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
+      }
+      if (rejected) {
+        selection.reject('Release candidate')
+      }
+    }
+  }
+}
