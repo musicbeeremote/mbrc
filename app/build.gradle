@@ -152,16 +152,16 @@ idea {
 }
 
 ext {
-  support_library_version = "25.2.0"
+  support_library_version = "25.3.0"
   dbflow_version = "4.0.0-beta5"
   toothpick_version = "1.0.5"
-  jackson_version = "2.8.6"
+  jackson_version = "2.8.7"
   butterknife_version = "8.5.1"
-  material_dialogs_version = "0.9.4.1"
+  material_dialogs_version = "0.9.4.2"
   runner_version = "0.5"
   espresso_version = "2.2.2"
   junit_version = "4.12"
-  mockito_version = "2.7.17"
+  mockito_version = "2.7.19"
   robolectric_version = "3.3.1"
   truth_version = "0.32"
   leakcanary_version = "1.5"
