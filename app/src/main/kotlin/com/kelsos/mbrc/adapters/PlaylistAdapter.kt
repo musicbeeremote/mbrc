@@ -46,7 +46,7 @@ constructor(context: Activity) : RecyclerView.Adapter<PlaylistAdapter.ViewHolder
   }
 
   override fun getItemCount(): Int {
-    return data?.count ?: 0
+    return data?.count?.toInt() ?: 0
   }
 
   fun update(cursor: FlowCursorList<Playlist>) {

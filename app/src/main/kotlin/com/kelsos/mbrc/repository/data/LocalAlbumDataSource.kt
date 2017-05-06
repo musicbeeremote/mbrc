@@ -4,7 +4,6 @@ package com.kelsos.mbrc.repository.data
 import com.kelsos.mbrc.data.CoverInfo
 import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.data.library.Album_Table
-import com.kelsos.mbrc.data.library.Album_Table.album
 import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.data.library.Track_Table
 import com.kelsos.mbrc.di.modules.AppDispatchers
@@ -18,7 +17,7 @@ import com.raizlabs.android.dbflow.kotlinextensions.on
 import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import com.raizlabs.android.dbflow.sql.language.ConditionGroup.clause
+import com.raizlabs.android.dbflow.sql.language.OperatorGroup.clause
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import kotlinx.coroutines.withContext
@@ -46,7 +45,7 @@ constructor(
   override suspend fun loadAllCursor(): FlowCursorList<Album> = withContext(dispatchers.db) {
     val query = (select from Album::class)
       .orderBy(Album_Table.artist, true)
-      .orderBy(album, true)
+      .orderBy(Album_Table.album, true)
     return@withContext FlowCursorList.Builder(Album::class.java).modelQueriable(query).build()
   }
 
@@ -63,12 +62,12 @@ constructor(
           on columns
           where artistOrAlbumArtist)
         .orderBy(Album_Table.artist.withTable(), true)
-        .orderBy(album.withTable(), true)
+        .orderBy(Album_Table.album.withTable(), true)
       return@withContext FlowCursorList.Builder(Album::class.java).modelQueriable(query).build()
     }
 
   override suspend fun search(term: String): FlowCursorList<Album> = withContext(dispatchers.db) {
-    val query = (select from Album::class where album.like("%${term.escapeLike()}%"))
+    val query = (select from Album::class where Album_Table.album.like("%${term.escapeLike()}%"))
     return@withContext FlowCursorList.Builder(Album::class.java).modelQueriable(query).build()
   }
 

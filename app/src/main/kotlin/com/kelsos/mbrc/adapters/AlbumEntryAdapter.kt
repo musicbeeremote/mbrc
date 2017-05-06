@@ -2,7 +2,6 @@ package com.kelsos.mbrc.adapters
 
 import android.app.Activity
 import android.graphics.Bitmap
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -29,7 +28,7 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
 
   private val inflater: LayoutInflater = LayoutInflater.from(context)
   private var data: FlowCursorList<Album>? = null
-  private var mListener: MenuItemSelectedListener? = null
+  private var listener: MenuItemSelectedListener? = null
   private val cache = File(context.cacheDir, "covers")
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -38,24 +37,31 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
     holder.indicator.setOnClickListener {
       val popupMenu = PopupMenu(it.context, it)
       popupMenu.inflate(R.menu.popup_album)
-      popupMenu.setOnMenuItemClickListener {
-        mListener?.onMenuItemSelected(it, data!!.getItem(holder.adapterPosition.toLong()))
+      popupMenu.setOnMenuItemClickListener { menuItem ->
+        val data = this.data ?: return@setOnMenuItemClickListener false
+        val position = holder.adapterPosition.toLong()
+        val album = data.getItem(position) ?: return@setOnMenuItemClickListener false
+        listener?.onMenuItemSelected(menuItem, album)
         true
       }
       popupMenu.show()
     }
 
     holder.itemView.setOnClickListener {
-      mListener!!.onItemClicked(data!!.getItem(holder.adapterPosition.toLong()))
+      val data = this.data ?: return@setOnClickListener
+      val position = holder.adapterPosition.toLong()
+      val album = data.getItem(position) ?: return@setOnClickListener
+      listener?.onItemClicked(album)
     }
     return holder
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val entry = data!!.getItem(position.toLong())
-    holder.album.text = if (TextUtils.isEmpty(entry.album)) holder.emptyAlbum else entry.album
-    holder.artist.text = if (TextUtils.isEmpty(entry.artist)) holder.unknownArtist else entry.artist
-    val cover = entry.cover
+    val data = this.data ?: return
+    val item = data.getItem(position.toLong()) ?: return
+    val (artist, album, _, cover) = item
+    holder.album.text = if (album.isNullOrBlank()) holder.emptyAlbum else album
+    holder.artist.text = if (artist.isNullOrBlank()) holder.unknownArtist else artist
     if (cover != null) {
       Picasso.get()
         .load(File(cache, cover))
@@ -78,11 +84,11 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
   }
 
   override fun getItemCount(): Int {
-    return data?.count ?: 0
+    return data?.count?.toInt() ?: 0
   }
 
   fun setMenuItemSelectedListener(listener: MenuItemSelectedListener) {
-    mListener = listener
+    this.listener = listener
   }
 
   interface MenuItemSelectedListener {
@@ -94,14 +100,19 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     @BindView(R.id.line_two)
     lateinit var artist: TextView
+
     @BindView(R.id.line_one)
     lateinit var album: TextView
+
     @BindView(R.id.cover)
-    lateinit var image: SquareImageView;
+    lateinit var image: SquareImageView
+
     @BindView(R.id.ui_item_context_indicator)
     lateinit var indicator: LinearLayout
+
     @BindString(R.string.unknown_artist)
     lateinit var unknownArtist: String
+
     @BindString(R.string.non_album_tracks)
     lateinit var emptyAlbum: String
 

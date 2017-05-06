@@ -205,11 +205,11 @@ dependencies {
   //Some of the dependencies pull the wrong version support v13
   implementation 'androidx.legacy:legacy-support-v13:1.0.0'
 
-  kapt "com.github.Raizlabs.DBFlow:dbflow-processor:4.0.0-beta5"
+  kapt "com.github.Raizlabs.DBFlow:dbflow-processor:4.0.0-beta7"
 
-  implementation "com.github.Raizlabs.DBFlow:dbflow-core:4.0.0-beta5"
-  implementation "com.github.Raizlabs.DBFlow:dbflow:4.0.0-beta5"
-  implementation "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:4.0.0-beta5@aar"
+  implementation "com.github.Raizlabs.DBFlow:dbflow-core:4.0.0-beta7"
+  implementation "com.github.Raizlabs.DBFlow:dbflow:4.0.0-beta7"
+  implementation "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:4.0.0-beta7@aar"
 
   implementation "com.fasterxml.jackson.core:jackson-core:2.12.2"
   implementation "com.fasterxml.jackson.core:jackson-databind:2.12.2"

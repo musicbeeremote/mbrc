@@ -11,7 +11,7 @@ import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import com.raizlabs.android.dbflow.sql.language.ConditionGroup.clause
+import com.raizlabs.android.dbflow.sql.language.OperatorGroup.clause
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import kotlinx.coroutines.withContext

@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.adapters
 
 import android.app.Activity
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -22,11 +21,11 @@ class TrackEntryAdapter
 @Inject
 constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHolder>() {
   private var data: FlowCursorList<Track>? = null
-  private var mListener: MenuItemSelectedListener? = null
+  private var listener: MenuItemSelectedListener? = null
   private val inflater: LayoutInflater = LayoutInflater.from(context)
 
   fun setMenuItemSelectedListener(listener: MenuItemSelectedListener) {
-    mListener = listener
+    this.listener = listener
   }
 
   /**
@@ -57,26 +56,27 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val view = inflater.inflate(R.layout.ui_list_dual, parent, false)
     val holder = ViewHolder(view)
-    holder.indicator.setOnClickListener {
-      val popupMenu = PopupMenu(it.context, it)
-      popupMenu.inflate(R.menu.popup_track)
-      popupMenu.setOnMenuItemClickListener { menuItem ->
-        if (mListener == null) {
-          return@setOnMenuItemClickListener false
-        }
-        mListener!!.onMenuItemSelected(menuItem, data!!.getItem(holder.adapterPosition.toLong()))
-        true
-      }
-      popupMenu.show()
-    }
+    holder.indicator.setOnClickListener { createPopup(it, holder) }
 
     holder.itemView.setOnClickListener {
-      if (mListener == null) {
-        return@setOnClickListener
-      }
-      mListener!!.onItemClicked(data!!.getItem(holder.adapterPosition.toLong()))
+      val position = holder.adapterPosition.toLong()
+      val track = data?.getItem(position) ?: return@setOnClickListener
+      listener?.onItemClicked(track)
+
     }
     return holder
+  }
+
+  private fun createPopup(it: View, holder: ViewHolder) {
+    val popupMenu = PopupMenu(it.context, it)
+    popupMenu.inflate(R.menu.popup_track)
+    popupMenu.setOnMenuItemClickListener { menuItem ->
+      val position = holder.adapterPosition.toLong()
+      val track = data?.getItem(position) ?: return@setOnMenuItemClickListener false
+      listener?.onMenuItemSelected(menuItem, track)
+      true
+    }
+    popupMenu.show()
   }
 
   /**
@@ -99,10 +99,12 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
    * @param position The position of the item within the adapter's data set.
    */
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val entry = data!!.getItem(position.toLong())
-    holder.title.text = entry.title
-    val artist = entry.artist
-    holder.artist.text = if (TextUtils.isEmpty(artist)) holder.unknownArtist else artist
+    val entry = data?.getItem(position.toLong())
+    entry?.let { (artist, title) ->
+      holder.title.text = title
+      holder.artist.text = if (artist.isNullOrBlank()) holder.unknownArtist else artist
+    }
+
   }
 
   /**
@@ -111,7 +113,8 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
    * @return The total number of items in this adapter.
    */
   override fun getItemCount(): Int {
-    return data?.count ?: 0
+    val count = data?.count?.toInt()
+    return count ?: 0
   }
 
   fun refresh() {

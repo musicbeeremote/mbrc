@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.adapters
 
 import android.app.Activity
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -79,24 +78,24 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
    * @param position The position of the item within the adapter's data set.
    */
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val entry = data!!.getItem(position.toLong())
-    holder.title.text = if (TextUtils.isEmpty(entry.genre)) holder.empty else entry.genre
+    val genre = data?.getItem(position.toLong())
 
-    holder.indicator.setOnClickListener {
-      val popupMenu = PopupMenu(it.context, it)
-      popupMenu.inflate(R.menu.popup_genre)
-      popupMenu.setOnMenuItemClickListener { menuItem ->
-        return@setOnMenuItemClickListener listener?.onMenuItemSelected(menuItem, entry) ?: false
-
-      }
-      popupMenu.show()
+    genre?.let {
+      holder.title.text = if (it.genre.isNullOrBlank()) holder.empty else genre.genre
+      holder.indicator.setOnClickListener { createPopup(it, genre) }
+      holder.itemView.setOnClickListener { listener?.onItemClicked(genre) }
     }
 
-    holder.itemView.setOnClickListener {
-      if (listener != null) {
-        listener!!.onItemClicked(entry)
-      }
+  }
+
+  private fun createPopup(it: View, genre: Genre) {
+    val popupMenu = PopupMenu(it.context, it)
+    popupMenu.inflate(R.menu.popup_genre)
+    popupMenu.setOnMenuItemClickListener { menuItem ->
+      return@setOnMenuItemClickListener listener?.onMenuItemSelected(menuItem, genre) ?: false
+
     }
+    popupMenu.show()
   }
 
   /**
@@ -105,7 +104,8 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
    * @return The total number of items in this adapter.
    */
   override fun getItemCount(): Int {
-    return data?.count ?: 0
+    val count = data?.count?.toInt()
+    return count ?: 0
   }
 
   fun refresh() {
