@@ -3,7 +3,6 @@ package com.kelsos.mbrc.adapters
 import android.app.Activity
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -16,6 +15,7 @@ import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
+import com.kelsos.mbrc.utilities.Checks.ifNotNull
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import javax.inject.Inject
 
@@ -63,14 +63,22 @@ class ArtistEntryAdapter
       val popupMenu = PopupMenu(it.context, it)
       popupMenu.inflate(R.menu.popup_artist)
       popupMenu.setOnMenuItemClickListener {
-        mListener?.onMenuItemSelected(it, data!!.getItem(holder.adapterPosition.toLong()))
+        val position = holder.adapterPosition.toLong()
+        ifNotNull(mListener, data?.getItem(position)) { listener, artist ->
+          listener.onMenuItemSelected(it, artist)
+        }
         true
       }
       popupMenu.show()
     }
 
     holder.itemView.setOnClickListener {
-      mListener?.onItemClicked(data!!.getItem(holder.adapterPosition.toLong()))
+      val position = holder.adapterPosition.toLong()
+
+      ifNotNull(mListener, data?.getItem(position)) { listener, artist ->
+        listener.onItemClicked(artist)
+      }
+
     }
     return holder
   }
@@ -95,8 +103,15 @@ class ArtistEntryAdapter
    * @param position The position of the item within the adapter's data set.
    */
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val entry = data!!.getItem(position.toLong())
-    holder.title.text = if (TextUtils.isEmpty(entry.artist)) holder.empty else entry.artist
+    val artist = data?.getItem(position.toLong())
+
+    artist?.let {
+      holder.title.text = if (it.artist.isNullOrBlank()) {
+        holder.empty
+      } else {
+        it.artist
+      }
+    }
   }
 
   /**
@@ -105,7 +120,7 @@ class ArtistEntryAdapter
    * @return The total number of items in this adapter.
    */
   override fun getItemCount(): Int {
-    return data?.count ?: 0
+    return data?.count?.toInt() ?: 0
   }
 
   fun refresh() {

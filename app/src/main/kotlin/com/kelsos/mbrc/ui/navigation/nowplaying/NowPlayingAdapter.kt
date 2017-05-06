@@ -18,6 +18,7 @@ import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.TouchHelperViewHolder
+import com.kelsos.mbrc.utilities.Checks.ifNotNull
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.list.FlowCursorList.OnCursorRefreshListener
 import timber.log.Timber
@@ -30,7 +31,7 @@ class NowPlayingAdapter
 
   private val dragStartListener: OnStartDragListener = context as OnStartDragListener
 
-  private var cursor: FlowCursorList<NowPlaying>? = null
+  private var data: FlowCursorList<NowPlaying>? = null
   private var playingTrackIndex: Int = 0
   private var currentTrack: String = ""
   private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -48,12 +49,12 @@ class NowPlayingAdapter
   }
 
   fun setPlayingTrack(path: String) {
-    if (cursor == null) {
+    if (data == null) {
       return
     }
 
     this.currentTrack = path
-    cursor?.forEachIndexed { index, (_, _, itemPath) ->
+    data?.forEachIndexed { index, (_, _, itemPath) ->
       if (itemPath.equals(path)) {
         setPlayingTrack(index)
       }
@@ -75,28 +76,30 @@ class NowPlayingAdapter
   }
 
   private fun onClick(holder: TrackHolder) {
-    if (listener == null) {
-      return
+    listener?.let {
+      val position = holder.adapterPosition
+      setPlayingTrack(position)
+      it.onPress(position)
     }
-
-    val position = holder.adapterPosition
-    setPlayingTrack(position)
-    listener!!.onPress(position)
   }
 
   override fun onBindViewHolder(holder: TrackHolder, position: Int) {
-    val track = cursor!!.getItem(position.toLong())
-    holder.title.text = track.title
-    holder.artist.text = track.artist
-    if (position == playingTrackIndex) {
-      holder.trackPlaying.setImageResource(R.drawable.ic_media_now_playing)
-    } else {
-      holder.trackPlaying.setImageResource(android.R.color.transparent)
+    val nowPlaying = data?.getItem(position.toLong())
+
+    nowPlaying?.let { (title, artist) ->
+      holder.title.text = title
+      holder.artist.text = artist
+      if (position == playingTrackIndex) {
+        holder.trackPlaying.setImageResource(R.drawable.ic_media_now_playing)
+      } else {
+        holder.trackPlaying.setImageResource(android.R.color.transparent)
+      }
     }
+
   }
 
   override fun getItemCount(): Int {
-    return cursor?.count ?: 0
+    return data?.count?.toInt() ?: 0
   }
 
   override fun onItemMove(from: Int, to: Int): Boolean {
@@ -112,40 +115,43 @@ class NowPlayingAdapter
   }
 
   private fun swapPositions(from: Int, to: Int) {
-    if (cursor == null) {
-      return
-    }
+    data?.let {
+      Timber.v("Swapping %d => %d", from, to)
+      ifNotNull(it.getItem(from.toLong()), it.getItem(to.toLong())) { from, to ->
+        Timber.v("from => %s to => %s", from, to)
+        val position = to.position
+        to.position = from.position
+        from.position = position
+        to.save()
+        from.save()
 
-    Timber.v("Swapping %d => %d", from, to)
-    val fromTrack = cursor!!.getItem(from.toLong())
-    val toTrack = cursor!!.getItem(to.toLong())
-    Timber.v("from => %s to => %s", fromTrack, toTrack)
-    val position = toTrack.position
-    toTrack.position = fromTrack.position
-    fromTrack.position = position
-    toTrack.save()
-    fromTrack.save()
-    // Before saving remove the listener to avoid interrupting the swapping functionality
-    cursor!!.removeOnCursorRefreshListener(this)
-    cursor!!.refresh()
-    cursor!!.addOnCursorRefreshListener(this)
-    Timber.v("after swap => from => %s to => %s", fromTrack, toTrack)
+        // Before saving remove the listener to avoid interrupting the swapping functionality
+        it.removeOnCursorRefreshListener(this)
+        it.refresh()
+        it.addOnCursorRefreshListener(this)
+
+        Timber.v("after swap => from => %s to => %s", from, to)
+      }
+    }
   }
 
   override fun onItemDismiss(position: Int) {
-    val item = cursor!!.getItem(position.toLong())
-    item.delete()
-    refresh()
-    notifyItemRemoved(position)
-    listener?.onDismiss(position)
+    val nowPlaying = data?.getItem(position.toLong())
+
+    nowPlaying?.let {
+      it.delete()
+      refresh()
+      notifyItemRemoved(position)
+      listener?.onDismiss(position)
+    }
   }
 
   fun refresh() {
-    cursor?.refresh()
+    data?.refresh()
   }
 
   fun update(cursor: FlowCursorList<NowPlaying>) {
-    this.cursor = cursor
+    this.data = cursor
     notifyDataSetChanged()
   }
 
@@ -154,7 +160,7 @@ class NowPlayingAdapter
   }
 
   /**
-   * Callback when cursor refreshes.
+   * Callback when data refreshes.
 
    * @param cursorList The object that changed.
    */
