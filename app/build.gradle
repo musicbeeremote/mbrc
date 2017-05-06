@@ -152,8 +152,8 @@ idea {
 }
 
 ext {
-  support_library_version = "25.3.0"
-  dbflow_version = "4.0.0-beta5"
+  support_library_version = "25.3.1"
+  dbflow_version = "4.0.0-beta7"
   toothpick_version = "1.0.6"
   jackson_version = "2.8.8"
   butterknife_version = "8.5.1"
@@ -212,6 +212,8 @@ dependencies {
   compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
   compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
   compile "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}@aar"
+  compile "com.github.Raizlabs.DBFlow:dbflow-rx2:${dbflow_version}"
+  compile "com.github.Raizlabs.DBFlow:dbflow-rx2-kotlinextensions:${dbflow_version}"
 
   compile "com.fasterxml.jackson.core:jackson-core:${jackson_version}"
   compile "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"

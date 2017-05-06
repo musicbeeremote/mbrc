@@ -30,26 +30,28 @@ class SearchResultAdapter
 @Inject
 constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapter.SearchViewHolder>() {
 
-  private val inflater: LayoutInflater
+  private val inflater: LayoutInflater = LayoutInflater.from(context)
   private var data: SearchResults? = null
 
   private var onSearchItemSelectedListener: OnSearchItemSelected? = null
-
-  init {
-    inflater = LayoutInflater.from(context)
-  }
 
   override val sectionCount: Int
     get() = 4
 
   override fun getItemCount(@Section section: Int): Int {
-    return when (section) {
-      SECTION_GENRE -> data?.genreList?.count ?: 0
-      SECTION_ARTIST -> data?.artistList?.count ?: 0
-      SECTION_ALBUM -> data?.albumList?.count ?: 0
-      SECTION_TRACK -> data?.trackList?.count ?: 0
-      else -> 0
+    data?.let {
+      return when (section) {
+        SECTION_GENRE -> it.genreList.count
+        SECTION_ARTIST -> it.artistList.count
+        SECTION_ALBUM -> it.albumList.count
+        SECTION_TRACK -> it.trackList.count
+        else -> 0L
+      }.toInt()
     }
+
+    return 0
+
+
   }
 
   override fun onBindHeaderViewHolder(holder: SearchViewHolder, @Section section: Int) {
@@ -63,47 +65,73 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
     }
   }
 
-  override fun onBindViewHolder(holder: SearchViewHolder,
-                                @Section section: Int,
-                                relativePosition: Int,
-                                absolutePosition: Int) {
-    when (section) {
-      SECTION_ALBUM -> {
-        val album = data?.albumList!!.getItem(relativePosition.toLong())
-        holder.lineOne.text = album.album
-        holder.lineTwo?.text = album.artist
-        holder.uiItemContextIndicator?.setOnClickListener { onContextClick(holder, album) }
-        holder.itemView.setOnClickListener {
-          onSearchItemSelectedListener?.albumSelected(album)
+  override fun onBindViewHolder(
+      holder: SearchViewHolder,
+      @Section section: Int,
+      relativePosition: Int,
+      absolutePosition: Int
+  ) {
+
+    data?.let {
+      val position = relativePosition.toLong()
+
+      when (section) {
+        SECTION_ALBUM -> {
+          val album = it.albumList.getItem(position)
+          album?.let { holder.bindAlbum(it) }
+        }
+        SECTION_ARTIST -> {
+          val artist = it.artistList.getItem(position)
+          artist?.let { holder.bindArtist(it) }
+        }
+        SECTION_GENRE -> {
+          val genre = it.genreList.getItem(position)
+          genre?.let { holder.bindGenre(it) }
+        }
+        SECTION_TRACK -> {
+          val track = it.trackList.getItem(position)
+          track?.let { holder.bindTrack(it) }
+        }
+        else -> {
+          throw IllegalArgumentException("Attempted to bind invalid section")
         }
       }
-      SECTION_ARTIST -> {
-        val artist = data?.artistList!!.getItem(relativePosition.toLong())
-        holder.lineOne.text = artist.artist
-        holder.uiItemContextIndicator?.setOnClickListener { onContextClick(holder, artist) }
-        holder.itemView.setOnClickListener {
-          onSearchItemSelectedListener?.artistSelected(artist)
-        }
-      }
-      SECTION_GENRE -> {
-        val genre = data?.genreList!!.getItem(relativePosition.toLong())
-        holder.lineOne.text = genre.genre
-        holder.uiItemContextIndicator?.setOnClickListener { onContextClick(holder, genre) }
-        holder.itemView.setOnClickListener {
-          onSearchItemSelectedListener?.genreSelected(genre)
-        }
-      }
-      SECTION_TRACK -> {
-        val track = data?.trackList!!.getItem(relativePosition.toLong())
-        holder.lineOne.text = track.title
-        holder.lineTwo?.text = track.artist
-        holder.uiItemContextIndicator?.setOnClickListener { onContextClick(holder, track) }
-        holder.itemView.setOnClickListener {
-          onSearchItemSelectedListener?.trackSelected(track)
-        }
-      }
-      else -> {
-      }
+    }
+
+
+  }
+
+  private fun SearchViewHolder.bindTrack(track: Track) {
+    this.lineOne.text = track.title
+    this.lineTwo?.text = track.artist
+    this.uiItemContextIndicator?.setOnClickListener { onContextClick(this, track) }
+    this.itemView.setOnClickListener {
+      onSearchItemSelectedListener?.trackSelected(track)
+    }
+  }
+
+  private fun SearchViewHolder.bindGenre(genre: Genre) {
+    this.lineOne.text = genre.genre
+    this.uiItemContextIndicator?.setOnClickListener { onContextClick(this, genre) }
+    this.itemView.setOnClickListener {
+      onSearchItemSelectedListener?.genreSelected(genre)
+    }
+  }
+
+  private fun SearchViewHolder.bindArtist(artist: Artist) {
+    this.lineOne.text = artist.artist
+    this.uiItemContextIndicator?.setOnClickListener { onContextClick(this, artist) }
+    this.itemView.setOnClickListener {
+      onSearchItemSelectedListener?.artistSelected(artist)
+    }
+  }
+
+  private fun SearchViewHolder.bindAlbum(album: Album) {
+    this.lineOne.text = album.album
+    this.lineTwo?.text = album.artist
+    this.uiItemContextIndicator?.setOnClickListener { onContextClick(this, album) }
+    this.itemView.setOnClickListener {
+      onSearchItemSelectedListener?.albumSelected(album)
     }
   }
 
