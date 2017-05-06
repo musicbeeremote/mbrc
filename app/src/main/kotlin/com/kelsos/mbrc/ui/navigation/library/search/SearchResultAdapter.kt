@@ -121,6 +121,42 @@ constructor() : SectionedRecyclerViewAdapter<SearchResultAdapter.SearchViewHolde
     this.itemView.setOnClickListener {
       onSearchItemSelectedListener?.artistSelected(artist)
     }
+
+
+  }
+
+  private fun SearchViewHolder.bindTrack(track: Track) {
+    this.lineOne.text = track.title
+    this.lineTwo?.text = track.artist
+    this.uiItemContextIndicator?.setOnClickListener { onContextClick(this, track) }
+    this.itemView.setOnClickListener {
+      onSearchItemSelectedListener?.trackSelected(track)
+    }
+  }
+
+  private fun SearchViewHolder.bindGenre(genre: Genre) {
+    this.lineOne.text = genre.genre
+    this.uiItemContextIndicator?.setOnClickListener { onContextClick(this, genre) }
+    this.itemView.setOnClickListener {
+      onSearchItemSelectedListener?.genreSelected(genre)
+    }
+  }
+
+  private fun SearchViewHolder.bindArtist(artist: Artist) {
+    this.lineOne.text = artist.artist
+    this.uiItemContextIndicator?.setOnClickListener { onContextClick(this, artist) }
+    this.itemView.setOnClickListener {
+      onSearchItemSelectedListener?.artistSelected(artist)
+    }
+  }
+
+  private fun SearchViewHolder.bindAlbum(album: Album) {
+    this.lineOne.text = album.album
+    this.lineTwo?.text = album.artist
+    this.uiItemContextIndicator?.setOnClickListener { onContextClick(this, album) }
+    this.itemView.setOnClickListener {
+      onSearchItemSelectedListener?.albumSelected(album)
+    }
   }
 
   private fun SearchViewHolder.bindAlbum(album: AlbumEntity) {

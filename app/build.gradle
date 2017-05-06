@@ -230,6 +230,8 @@ dependencies {
   implementation 'android.arch.persistence.room:runtime:1.1.0'
   implementation 'android.arch.persistence.room:rxjava2:1.1.0'
   kapt "android.arch.persistence.room:compiler:1.1.0"
+  compile "com.github.Raizlabs.DBFlow:dbflow-rx2:${dbflow_version}"
+  compile "com.github.Raizlabs.DBFlow:dbflow-rx2-kotlinextensions:${dbflow_version}"
 
   implementation 'com.squareup.moshi:moshi:1.6.0'
   kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.6.0'

@@ -40,7 +40,7 @@ class PlaylistAdapter
     holder.context.visibility = View.GONE
   }
 
-  override fun getItemCount(): Int = data?.size ?: 0
+  override fun getItemCount(): Int = data?.size?.toInt() ?: 0
 
   fun update(cursor: List<Playlist>) {
     this.data = cursor
