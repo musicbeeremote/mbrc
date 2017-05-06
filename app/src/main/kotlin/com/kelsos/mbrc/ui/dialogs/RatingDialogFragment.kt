@@ -51,12 +51,12 @@ class RatingDialogFragment : DialogFragment() {
       .show()
 
     ratingBar = dialog.findViewById(R.id.ratingBar)
-    ratingBar!!.setOnRatingBarChangeListener { _, ratingValue, isUserInitiated ->
+    ratingBar?.setOnRatingBarChangeListener { _, ratingValue, isUserInitiated ->
       if (isUserInitiated) {
         bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingRating, ratingValue)))
       }
     }
-    ratingBar!!.rating = rating
+    ratingBar?.rating = rating
     return dialog
   }
 }
