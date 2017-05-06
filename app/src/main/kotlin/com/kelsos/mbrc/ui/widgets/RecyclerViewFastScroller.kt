@@ -40,19 +40,19 @@ class RecyclerViewFastScroller : LinearLayout {
 
 
   constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-    init(context)
+    init()
   }
 
   constructor(context: Context) : super(context) {
-    init(context)
+    init()
   }
 
   constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-    init(context)
+    init()
   }
 
 
-  protected fun init(context: Context) {
+  internal fun init() {
     if (isInitialized)
       return
     isInitialized = true
@@ -79,13 +79,13 @@ class RecyclerViewFastScroller : LinearLayout {
     val action = event.action
     when (action) {
       MotionEvent.ACTION_DOWN -> {
-        if (event.x < handle!!.getX() - ViewCompat.getPaddingStart(handle))
+        if (event.x < handle!!.x - ViewCompat.getPaddingStart(handle))
           return false
         if (currentAnimator != null)
           currentAnimator!!.cancel()
         if (bubble != null && bubble!!.visibility == View.INVISIBLE)
           showBubble()
-        handle!!.setSelected(true)
+        handle!!.isSelected = true
         val y = event.y
         setBubbleAndHandlePosition(y)
         setRecyclerViewPosition(y)
@@ -98,7 +98,7 @@ class RecyclerViewFastScroller : LinearLayout {
         return true
       }
       MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-        handle!!.setSelected(false)
+        handle!!.isSelected = false
         hideBubble()
         return true
       }
@@ -129,9 +129,9 @@ class RecyclerViewFastScroller : LinearLayout {
     if (recyclerView != null) {
       val itemCount = recyclerView!!.adapter.itemCount
       val proportion: Float
-      if (handle!!.y === 0F)
+      if (handle!!.y == 0F)
         proportion = 0f
-      else if (handle!!.getY() + handle!!.getHeight() >= inHeight - TRACK_SNAP_RANGE)
+      else if (handle!!.y + handle!!.height >= inHeight - TRACK_SNAP_RANGE)
         proportion = 1f
       else
         proportion = y / inHeight.toFloat()
@@ -149,7 +149,7 @@ class RecyclerViewFastScroller : LinearLayout {
   }
 
   private fun updateBubbleAndHandlePosition() {
-    if (bubble == null || handle!!.isSelected())
+    if (bubble == null || handle!!.isSelected)
       return
 
     val verticalScrollOffset = recyclerView!!.computeVerticalScrollOffset()
@@ -159,7 +159,7 @@ class RecyclerViewFastScroller : LinearLayout {
   }
 
   private fun setBubbleAndHandlePosition(y: Float) {
-    val handleHeight = handle!!.getHeight()
+    val handleHeight = handle!!.height
     handle!!.y = getValueInRange(0, inHeight - handleHeight, (y - handleHeight / 2).toInt()).toFloat()
     if (bubble != null) {
       val bubbleHeight = bubble!!.height

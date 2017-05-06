@@ -21,7 +21,7 @@ class RatingDialogFragment : DialogFragment() {
 
   @Inject lateinit var bus: RxBus
   @Inject lateinit var model: MainDataModel
-  private var ratingBar: RatingBar? = null
+  private lateinit var ratingBar: RatingBar
   private var rating: Float = 0.toFloat()
   private var scope: Scope? = null
 
@@ -47,14 +47,16 @@ class RatingDialogFragment : DialogFragment() {
     val builder = MaterialDialog.Builder(activity)
     builder.title(R.string.rate_the_playing_track)
     builder.customView(R.layout.ui_dialog_rating, false)
+
     val dialog = builder.build()
+
     ratingBar = ButterKnife.findById<RatingBar>(dialog.customView!!, R.id.ratingBar)
-    ratingBar!!.setOnRatingBarChangeListener { ratingBar, ratingValue, isUserInitiated ->
+    ratingBar.setOnRatingBarChangeListener { _, ratingValue, isUserInitiated ->
       if (isUserInitiated) {
         bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingRating, ratingValue)))
       }
     }
-    ratingBar!!.rating = rating
+    ratingBar.rating = rating
 
     return dialog
   }
