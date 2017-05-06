@@ -144,7 +144,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
         .title(R.string.main__dialog_change_log)
         .customView(R.layout.change_log_dialog, false)
         .positiveText(android.R.string.ok)
-        .onPositive { materialDialog, dialogAction -> materialDialog.dismiss() }
+        .onPositive { materialDialog, _ -> materialDialog.dismiss() }
         .show()
   }
 
@@ -153,7 +153,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
         .title(R.string.main__dialog_plugin_outdated_title)
         .content(R.string.main__dialog_plugin_outdated_message)
         .positiveText(android.R.string.ok)
-        .onPositive { materialDialog, dialogAction -> materialDialog.dismiss() }
+        .onPositive { materialDialog, _ -> materialDialog.dismiss() }
         .show()
   }
 

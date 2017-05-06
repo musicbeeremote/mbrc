@@ -44,7 +44,7 @@ class SettingsDialogFragment : DialogFragment() {
     builder.title(if (edit) R.string.settings_dialog_edit else R.string.settings_dialog_add)
     builder.positiveText(if (edit) R.string.settings_dialog_save else R.string.settings_dialog_add)
     builder.negativeText(android.R.string.cancel)
-    builder.onPositive { dialog, which ->
+    builder.onPositive { dialog, _ ->
       var shouldIClose = true
       val hostname = hostEdit.text.toString()
       val computerName = nameEdit.text.toString()
@@ -64,7 +64,7 @@ class SettingsDialogFragment : DialogFragment() {
         dialog.dismiss()
       }
     }
-    builder.onNegative { dialog, which -> dialog.dismiss() }
+    builder.onNegative { dialog, _ -> dialog.dismiss() }
 
     val settingsDialog = builder.build()
     val view = settingsDialog.customView ?: return settingsDialog
