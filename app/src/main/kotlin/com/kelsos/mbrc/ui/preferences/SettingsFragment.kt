@@ -36,7 +36,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     val mRevision = findPreference(resources.getString(R.string.pref_key_revision))
     val debugLogging = findPreference(resources.getString(R.string.settings_key_debug_logging))
 
-    debugLogging?.setOnPreferenceChangeListener { preference, newValue ->
+    debugLogging?.setOnPreferenceChangeListener { _, newValue ->
       if (newValue as Boolean) {
         Timber.plant(FileLoggingTree(context.applicationContext))
       } else {
@@ -52,7 +52,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
       false
     }
 
-    reduceOnIncoming?.setOnPreferenceChangeListener { preference, newValue ->
+    reduceOnIncoming?.setOnPreferenceChangeListener { _, _ ->
       if (!hasPhonePermission()) {
         requestPhoneStatePermission()
       }
@@ -73,7 +73,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     val showNotification = findPreference(resources.getString(R.string.settings_key_notification_control))
 
-    showNotification?.setOnPreferenceChangeListener { preference, newValue ->
+    showNotification?.setOnPreferenceChangeListener { _, newValue ->
       val value = newValue as Boolean
       if (!value) {
         bus!!.post(MessageEvent(UserInputEventType.CancelNotification))

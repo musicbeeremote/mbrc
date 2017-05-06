@@ -15,7 +15,7 @@ class WebViewDialog : DialogFragment() {
     builder.customView(webView, false)
     builder.title(arguments.getInt(ARG_TITLE))
     builder.positiveText(android.R.string.ok)
-    builder.onPositive { dialog, which -> dialog.dismiss() }
+    builder.onPositive { dialog, _ -> dialog.dismiss() }
     return builder.build()
   }
 
