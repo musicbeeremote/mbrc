@@ -3,6 +3,7 @@ package com.kelsos.mbrc.repository.data
 import com.kelsos.mbrc.data.Playlist
 import com.kelsos.mbrc.data.Playlist_Table
 import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.data.db.RemoteDatabase
 import com.kelsos.mbrc.extensions.escapeLike
 import com.raizlabs.android.dbflow.kotlinextensions.database
 import com.raizlabs.android.dbflow.kotlinextensions.delete
@@ -30,7 +31,7 @@ class LocalPlaylistDataSource
       .addAll(list)
       .build()
 
-    database<Playlist>().executeTransaction(transaction)
+    database<RemoteDatabase>().executeTransaction(transaction)
   }
 
   override suspend fun loadAllCursor(): FlowCursorList<Playlist> = withContext(dispatchers.db) {

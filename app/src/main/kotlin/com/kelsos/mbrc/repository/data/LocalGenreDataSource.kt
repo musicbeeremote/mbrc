@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.repository.data
 
+import com.kelsos.mbrc.data.db.RemoteDatabase
 import com.kelsos.mbrc.data.library.Genre
 import com.kelsos.mbrc.data.library.Genre_Table
 import com.kelsos.mbrc.di.modules.AppDispatchers
@@ -30,7 +31,7 @@ class LocalGenreDataSource
       .addAll(list)
       .build()
 
-    database<Genre>().executeTransaction(transaction)
+    database<RemoteDatabase>().executeTransaction(transaction)
   }
 
   override suspend fun loadAllCursor(): FlowCursorList<Genre> = withContext(dispatchers.db) {

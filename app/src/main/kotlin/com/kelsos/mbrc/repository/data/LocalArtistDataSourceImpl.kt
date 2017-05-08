@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.repository.data
 
+import com.kelsos.mbrc.data.db.RemoteDatabase
 import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.data.library.Artist_Table
 import com.kelsos.mbrc.data.library.Track
@@ -33,7 +34,7 @@ class LocalArtistDataSourceImpl
       .addAll(list)
       .build()
 
-    database<Artist>().executeTransaction(transaction)
+    database<RemoteDatabase>().executeTransaction(transaction)
   }
 
   override suspend fun loadAllCursor(): FlowCursorList<Artist> = withContext(dispatchers.db) {

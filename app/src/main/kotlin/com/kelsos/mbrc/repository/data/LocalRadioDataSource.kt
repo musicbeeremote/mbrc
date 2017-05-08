@@ -2,6 +2,7 @@ package com.kelsos.mbrc.repository.data
 
 import com.kelsos.mbrc.data.RadioStation
 import com.kelsos.mbrc.data.RadioStation_Table
+import com.kelsos.mbrc.data.db.RemoteDatabase
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.extensions.escapeLike
 import com.raizlabs.android.dbflow.kotlinextensions.database
@@ -31,7 +32,7 @@ constructor(val dispatchers: AppDispatchers) : LocalDataSource<RadioStation> {
       .addAll(list)
       .build()
 
-    database<RadioStation>().executeTransaction(transaction)
+    database<RemoteDatabase>().executeTransaction(transaction)
   }
 
   override suspend fun loadAllCursor(): FlowCursorList<RadioStation> = withContext(dispatchers.db) {
