@@ -4,7 +4,6 @@ object Const {
   val EMPTY = ""
   val PLUGIN = "plugin"
   val VERSIONS = "versions"
-  gval SUB = "sub"
   val LYRICS_NEWLINE = "\r\n|\n"
   val DATA = "data"
   val TOGGLE = "toggle"
