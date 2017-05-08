@@ -24,11 +24,13 @@ import javax.inject.Inject
 
 class ServiceDiscovery
 @Inject
-internal constructor(private val manager: WifiManager,
-                     private val connectivityManager: ConnectivityManager,
-                     private val mapper: ObjectMapper,
-                     private val bus: RxBus,
-                     private val connectionRepository: ConnectionRepository) {
+internal constructor(
+    private val manager: WifiManager,
+    private val connectivityManager: ConnectivityManager,
+    private val mapper: ObjectMapper,
+    private val bus: RxBus,
+    private val connectionRepository: ConnectionRepository
+) {
   private var mLock: WifiManager.MulticastLock? = null
   private var group: InetAddress? = null
 
@@ -38,13 +40,17 @@ internal constructor(private val manager: WifiManager,
       return
     }
     mLock = manager.createMulticastLock("locked")
-    mLock!!.setReferenceCounted(true)
-    mLock!!.acquire()
+    mLock?.let {
+      it.setReferenceCounted(true)
+      it.acquire()
+    }
+
 
     Timber.v("Starting remote service discovery")
 
     val mapper = ConnectionMapper()
-    discoveryObservable().subscribeOn(Schedulers.io())
+    discoveryObservable()
+        .subscribeOn(Schedulers.io())
         .unsubscribeOn(Schedulers.io())
         .doOnTerminate({ this.stopDiscovery() })
         .map { mapper.map(it) }
@@ -59,10 +65,8 @@ internal constructor(private val manager: WifiManager,
   }
 
   private fun stopDiscovery() {
-    if (mLock != null) {
-      mLock!!.release()
-      mLock = null
-    }
+    mLock?.release()
+    mLock = null
   }
 
   private val wifiAddress: String
