@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.repository.data
 
 
+import com.kelsos.mbrc.data.db.RemoteDatabase
 import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.data.library.Album_Table
 import com.kelsos.mbrc.data.library.Album_Table.album
@@ -36,7 +37,7 @@ class LocalAlbumDataSource
         .addAll(list)
         .build()
 
-    database<Album>().executeTransaction(transaction)
+    database<RemoteDatabase>().executeTransaction(transaction)
   }
 
   override fun loadAllCursor(): Observable<FlowCursorList<Album>> {

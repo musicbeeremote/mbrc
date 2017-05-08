@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.repository.data
 
 
+import com.kelsos.mbrc.data.db.RemoteDatabase
 import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.data.library.Track_Table
 import com.kelsos.mbrc.data.library.Track_Table.title
@@ -32,7 +33,7 @@ class LocalTrackDataSource
         .addAll(list)
         .build()
 
-    database<Track>().executeTransaction(transaction)
+    database<RemoteDatabase>().executeTransaction(transaction)
   }
 
   override fun loadAllCursor(): Observable<FlowCursorList<Track>> {
