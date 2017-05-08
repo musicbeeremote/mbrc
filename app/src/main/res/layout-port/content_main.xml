@@ -85,6 +85,7 @@
       android:progressTint="@color/white"
       android:secondaryProgress="0"
       android:thumbTint="@color/white"
+      app:layout_constraintTop_toBottomOf="@id/main_album_cover_image_view"
       app:layout_constraintBottom_toTopOf="@+id/track_info_area"
       app:layout_constraintLeft_toRightOf="@+id/main_track_progress_current"
       app:layout_constraintRight_toLeftOf="@+id/main_track_duration_total"/>
