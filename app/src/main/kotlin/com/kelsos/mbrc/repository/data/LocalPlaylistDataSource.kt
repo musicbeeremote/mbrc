@@ -2,6 +2,7 @@ package com.kelsos.mbrc.repository.data
 
 import com.kelsos.mbrc.data.Playlist
 import com.kelsos.mbrc.data.Playlist_Table.name
+import com.kelsos.mbrc.data.db.RemoteDatabase
 import com.kelsos.mbrc.extensions.escapeLike
 import com.raizlabs.android.dbflow.kotlinextensions.database
 import com.raizlabs.android.dbflow.kotlinextensions.delete
@@ -29,7 +30,7 @@ class LocalPlaylistDataSource
         .addAll(list)
         .build()
 
-    database<Playlist>().executeTransaction(transaction)
+    database<RemoteDatabase>().executeTransaction(transaction)
   }
 
   override fun loadAllCursor(): Observable<FlowCursorList<Playlist>> {
