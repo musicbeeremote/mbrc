@@ -9,6 +9,9 @@ import com.kelsos.mbrc.rules.MockitoInitializerRule
 import com.kelsos.mbrc.services.QueueService
 import com.kelsos.mbrc.ui.navigation.radio.RadioActivity.Presenter
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import io.reactivex.Scheduler
+import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -19,9 +22,6 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.never
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
-import io.reactivex.Scheduler
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule
 import java.net.SocketTimeoutException
@@ -244,8 +244,8 @@ class RadioPresenterImplTest {
 
   inner class TestModule : Module() {
     init {
-      bind(Scheduler::class.java).withName("io").toProviderInstance { Schedulers.immediate() }
-      bind(Scheduler::class.java).withName("main").toProviderInstance { Schedulers.immediate() }
+      bind(Scheduler::class.java).withName("io").toProviderInstance { Schedulers.trampoline() }
+      bind(Scheduler::class.java).withName("main").toProviderInstance { Schedulers.trampoline() }
     }
   }
 }

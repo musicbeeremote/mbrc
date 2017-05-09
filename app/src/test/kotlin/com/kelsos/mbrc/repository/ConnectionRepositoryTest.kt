@@ -9,7 +9,6 @@ import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.data.ConnectionSettings
 import com.kelsos.mbrc.rules.DBFlowTestRule
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -22,9 +21,7 @@ import org.mockito.Mockito.anyInt
 import org.mockito.Mockito.anyLong
 import org.mockito.Mockito.anyString
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
-import toothpick.Toothpick
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule
 import java.util.*
@@ -34,19 +31,23 @@ import java.util.*
     application = TestApplication::class,
     sdk = intArrayOf(Build.VERSION_CODES.N_MR1))
 class ConnectionRepositoryTest {
-  private val toothPickRule = ToothPickRule(this)
+  private val toothPickRule = ToothPickRule(this, "test")
   @Rule
-  fun chain(): TestRule = RuleChain.outerRule(toothPickRule).around(DBFlowTestRule.create())
+  @JvmField
+  val ruleChain: TestRule = RuleChain.outerRule(toothPickRule).around(DBFlowTestRule.create())
+
+  private lateinit var repository: ConnectionRepository
 
   @Before
   @Throws(Exception::class)
   fun setUp() {
-
+    toothPickRule.scope.installModules(TestModule())
+    repository = toothPickRule.getInstance(ConnectionRepository::class.java)
   }
 
   @Test
   fun addNewSettings() {
-    val repository = repository
+
     val settings = createSettings("192.167.90.10")
     repository.save(settings)
 
@@ -56,7 +57,6 @@ class ConnectionRepositoryTest {
 
   @Test
   fun addMultipleNewSettings() {
-    val repository = repository
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
     val settings2 = createSettings("192.167.90.12")
@@ -71,16 +71,8 @@ class ConnectionRepositoryTest {
     assertThat(repository.count()).isEqualTo(3)
   }
 
-  private val repository: ConnectionRepository
-    get() {
-      val scope = Toothpick.openScope(RuntimeEnvironment.application)
-      scope.installModules(TestModule())
-      return scope.getInstance(ConnectionRepository::class.java)
-    }
-
   @Test
   fun addMultipleNewSettingsRemoveOne() {
-    val repository = repository
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
     val settings2 = createSettings("192.167.90.12")
@@ -108,7 +100,7 @@ class ConnectionRepositoryTest {
 
   @Test
   fun changeDefault() {
-    val repository = repository
+
 
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
@@ -125,7 +117,7 @@ class ConnectionRepositoryTest {
 
   @Test
   fun deleteSingleDefault() {
-    val repository = repository
+
 
     val settings = createSettings("192.167.90.10")
     repository.save(settings)
@@ -142,7 +134,7 @@ class ConnectionRepositoryTest {
 
   @Test
   fun deleteFromMultipleDefaultFirst() {
-    val repository = repository
+
 
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
@@ -168,7 +160,7 @@ class ConnectionRepositoryTest {
 
   @Test
   fun deleteFromMultipleDefaultSecond() {
-    val repository = repository
+
 
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
@@ -197,7 +189,7 @@ class ConnectionRepositoryTest {
 
   @Test
   fun deleteFromMultipleDefaultLast() {
-    val repository = repository
+
 
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
@@ -226,7 +218,7 @@ class ConnectionRepositoryTest {
 
   @Test
   fun deleteFromMultipleNonDefault() {
-    val repository = repository
+
 
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
@@ -259,8 +251,6 @@ class ConnectionRepositoryTest {
     val address = "192.167.90.10"
     val newAddress = "192.167.90.11"
 
-    val repository = repository
-
     val settings = createSettings(address)
     repository.save(settings)
 
@@ -285,7 +275,7 @@ class ConnectionRepositoryTest {
 
   @Test
   fun setDefaultNull() {
-    val repository = repository
+
 
     val settings = createSettings("192.167.90.10")
     repository.save(settings)
@@ -331,11 +321,5 @@ class ConnectionRepositoryTest {
         resources
       }
     }
-  }
-
-  @After
-  @Throws(Exception::class)
-  fun tearDown() {
-    Toothpick.reset()
   }
 }
