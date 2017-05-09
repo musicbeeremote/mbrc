@@ -22,8 +22,11 @@ import com.kelsos.mbrc.services.ServiceChecker
 import com.kelsos.mbrc.ui.mini_control.MiniControlFragment
 import com.kelsos.mbrc.ui.mini_control.MiniControlPresenter
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
 import org.hamcrest.core.AllOf.allOf
 import org.junit.After
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -34,8 +37,6 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import toothpick.Toothpick
 import toothpick.config.Module
 import toothpick.testing.ToothPickTestModule
@@ -87,11 +88,13 @@ class RadioActivityTest {
     verify(presenter, times(1)).load()
     Single.fromCallable { cursor }
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe {
+        .subscribe({
           val activity = activityRule.activity
           activity.hideLoading()
           activity.update(it)
-        }
+        }, {
+          fail()
+        })
 
     onView(withId(R.id.list_empty_title)).check(matches(isDisplayed()))
   }
@@ -120,11 +123,13 @@ class RadioActivityTest {
     verify(presenter, times(1)).load()
     Single.fromCallable { cursor }
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe {
+        .subscribe({
           val activity = activityRule.activity
           activity.hideLoading()
           activity.update(it)
-        }
+        }, {
+          fail()
+        })
 
     onView(withText(station_3.name)).check(matches(isDisplayed()))
     onView(withText(station_3.name)).perform(click())
@@ -132,10 +137,12 @@ class RadioActivityTest {
 
     Single.just(true)
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe {
+        .subscribe({
           val activity = activityRule.activity
           activity.radioPlaySuccessful()
-        }
+        }, {
+          fail()
+        })
 
     onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.radio__play_successful)))
         .check(matches(withEffectiveVisibility(VISIBLE)))
@@ -165,11 +172,13 @@ class RadioActivityTest {
     verify(presenter, times(1)).load()
     Single.fromCallable { cursor }
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe {
+        .subscribe({
           val activity = activityRule.activity
           activity.hideLoading()
           activity.update(it)
-        }
+        }, {
+          fail()
+        })
 
     onView(withText(station_3.name)).check(matches(isDisplayed()))
     onView(withText(station_3.name)).perform(click())
@@ -177,10 +186,12 @@ class RadioActivityTest {
 
     Single.just(SocketTimeoutException())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe {
+        .subscribe({
           val activity = activityRule.activity
           activity.radioPlayFailed(it)
-        }
+        }, {
+          fail()
+        })
     onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.radio__play_failed)))
         .check(matches(withEffectiveVisibility(VISIBLE)))
   }
@@ -193,11 +204,13 @@ class RadioActivityTest {
     verify(presenter, times(1)).load()
     Single.just(cursor)
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe {
+        .subscribe({
           val activity = activityRule.activity
           activity.update(it)
           activity.hideLoading()
-        }
+        }, {
+          fail()
+        })
 
     onView(withId(R.id.empty_view)).perform(swipeDown())
     verify(presenter, times(1)).refresh()
@@ -210,22 +223,26 @@ class RadioActivityTest {
     verify(presenter, times(1)).load()
     Single.just(cursor)
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe {
+        .subscribe({
           val activity = activityRule.activity
           activity.update(it)
           activity.hideLoading()
-        }
+        }, {
+          fail()
+        })
 
     onView(withId(R.id.empty_view)).perform(swipeDown())
     verify(presenter, times(1)).refresh()
 
     Single.just(SocketTimeoutException())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe {
+        .subscribe({
           val activity = activityRule.activity
           activity.hideLoading()
           activity.error(it)
-        }
+        }, {
+          fail()
+        })
 
     onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.radio__loading_failed)))
         .check(matches(withEffectiveVisibility(VISIBLE)))

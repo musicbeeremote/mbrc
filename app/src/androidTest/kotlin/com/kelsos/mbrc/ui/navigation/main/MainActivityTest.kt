@@ -18,6 +18,10 @@ import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.repository.ModelCache
 import com.kelsos.mbrc.services.ServiceChecker
 import com.kelsos.mbrc.utilities.SettingsManager
+import io.reactivex.Completable
+import io.reactivex.Scheduler
+import io.reactivex.Single
+import io.reactivex.schedulers.TestScheduler
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -30,10 +34,6 @@ import org.mockito.Mockito.anyString
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
-import io.reactivex.Completable
-import io.reactivex.Scheduler
-import io.reactivex.Single
-import io.reactivex.schedulers.TestScheduler
 import toothpick.Toothpick
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule
@@ -60,9 +60,11 @@ class MainActivityTest {
     mockCache = mock(ModelCache::class.java)
     mockServiceChecker = mock(ServiceChecker::class.java)
 
+    val trackInfo = TrackInfo()
     `when`(mockCache.restoreCover()).thenReturn(Single.just(""))
     `when`(mockCache.persistCover(anyString())).thenReturn(Completable.complete())
-    `when`(mockCache.restoreInfo()).thenReturn(Single.just(TrackInfo()))
+    `when`(mockCache.restoreInfo()).thenReturn(Single.just(trackInfo))
+    `when`(mockCache.persistInfo(trackInfo)).thenReturn(Completable.complete())
     `when`(mockSettingsManager.shouldShowChangeLog()).thenReturn(Single.just(false))
     mockBus = mock(RxBus::class.java)
 

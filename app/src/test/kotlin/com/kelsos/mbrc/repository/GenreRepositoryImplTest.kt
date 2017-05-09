@@ -8,8 +8,7 @@ import com.kelsos.mbrc.data.Page
 import com.kelsos.mbrc.data.library.Genre
 import com.kelsos.mbrc.rules.DBFlowTestRule
 import com.kelsos.mbrc.services.LibraryService
-import com.raizlabs.android.dbflow.list.FlowCursorList
-import org.junit.After
+import io.reactivex.Observable
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -21,10 +20,6 @@ import org.mockito.Mockito.anyInt
 import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import io.reactivex.Observable
-import io.reactivex.observers.TestSubscriber
-import toothpick.Scope
-import toothpick.Toothpick
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule
 import java.util.concurrent.TimeUnit
@@ -32,53 +27,46 @@ import java.util.concurrent.TimeUnit
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
     application = TestApplication::class,
-    sdk = intArrayOf(Build.VERSION_CODES.N_MR1))
+    sdk = intArrayOf(Build.VERSION_CODES.N_MR1)
+)
 class GenreRepositoryImplTest {
-  private val toothPickRule = ToothPickRule(this)
-  private lateinit var scope: Scope
+  private val toothPickRule = ToothPickRule(this, "test")
 
   @Rule
   fun chain(): TestRule = RuleChain.outerRule(toothPickRule).around(DBFlowTestRule.create())
 
+  private lateinit var repository: GenreRepository
+
   @Before
   fun setUp() {
-    scope = Toothpick.openScope(TEST_SCOPE)
-    scope.installModules(TestModule())
-  }
-
-  @After
-  @Throws(Exception::class)
-  fun tearDown() {
-    Toothpick.closeScope(scope)
-    Toothpick.reset()
+    toothPickRule.scope.installModules(TestModule())
+    repository = toothPickRule.getInstance(GenreRepository::class.java)
   }
 
   @Test
   fun getAndSaveRemote() {
-    val repository = scope.getInstance(GenreRepository::class.java)
-    val isEmptySubscriber = TestSubscriber<Boolean>()
 
-    repository.cacheIsEmpty().subscribe(isEmptySubscriber)
+    val isEmptySubscriber = repository.cacheIsEmpty().test()
     isEmptySubscriber.awaitTerminalEvent()
-    isEmptySubscriber.assertCompleted()
+    isEmptySubscriber.assertComplete()
     isEmptySubscriber.assertNoErrors()
     isEmptySubscriber.assertValueCount(1)
     isEmptySubscriber.assertValue(true)
 
-    val testSubscriber = TestSubscriber<FlowCursorList<Genre>>()
-    repository.getAndSaveRemote().subscribe(testSubscriber)
+    val testSubscriber = repository.getAndSaveRemote().test()
 
     testSubscriber.awaitTerminalEvent(2, TimeUnit.SECONDS)
-    testSubscriber.assertCompleted()
+    testSubscriber.assertComplete()
     testSubscriber.assertNoErrors()
     testSubscriber.assertValueCount(1)
-    val cursorList = testSubscriber.onNextEvents[0]
+    val cursorList = testSubscriber.values()[0]
     assertThat(cursorList.count).isEqualTo(1200)
-    assertThat(cursorList.getItem(0).genre).isEqualTo("Metal0")
+    assertThat(cursorList.getItem(0)?.genre).isEqualTo("Metal0")
   }
 
   private inner class TestModule : Module() {
     init {
+      bind(GenreRepository::class.java).to(GenreRepositoryImpl::class.java)
       val mockService = mock(LibraryService::class.java)
       `when`(mockService.getGenres(anyInt(), anyInt()))
           .thenAnswer {
@@ -87,12 +75,7 @@ class GenreRepositoryImplTest {
 
             val totalElements = 1200
             if (offset > totalElements) {
-              val page = Page<Genre>()
-              page.data = emptyList()
-              page.total = totalElements
-              page.offset = offset
-              page.limit = limit
-              return@thenAnswer Observable.just(page)
+              return@thenAnswer Observable.just(createPage(totalElements, offset, limit))
             } else {
               if (offset + limit > totalElements) {
                 limit = totalElements - offset
@@ -101,28 +84,22 @@ class GenreRepositoryImplTest {
                   .map { Genre("Metal$it", it) }
                   .toList()
                   .map {
-                    val page = Page<Genre>()
-                    page.data = it
-                    page.total = totalElements
-                    page.offset = offset
-                    page.limit = limit
-                    return@map page
-                  }
+                    return@map createPage(totalElements, offset, limit, it)
+                  }.toObservable()
             }
           }
 
       bind(LibraryService::class.java).toInstance(mockService)
-      bind(GenreRepository::class.java).to(GenreRepositoryImpl::class.java)
     }
   }
 
-  companion object {
-    val TEST_SCOPE: Class<*> = TestCase::class.java
+  private fun createPage(totalElements: Int, offset: Int, limit: Int, data: List<Genre> = emptyList<Genre>()): Page<Genre> {
+    val page = Page<Genre>()
+    page.data = data
+    page.total = totalElements
+    page.offset = offset
+    page.limit = limit
+    return page
   }
-
-  @javax.inject.Scope
-  @Target(AnnotationTarget.TYPE)
-  @Retention(AnnotationRetention.RUNTIME)
-  annotation class TestCase
 
 }

@@ -3,6 +3,7 @@ import java.text.SimpleDateFormat
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'idea'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
@@ -306,7 +307,6 @@ repositories {
 }
 
 kapt {
-  generateStubs = true
   arguments {
     arg('toothpick_registry_package_name', 'com.kelsos.mbrc')
   }
