@@ -92,7 +92,7 @@ class MainActivityTest {
   fun testShouldNotShowOutdatedPluginSnackBar() {
     activityRule.launchActivity(Intent())
     onView(withText(R.string.main__dialog_plugin_outdated_message)).check(doesNotExist())
-    model.pluginProtocol = 4
+    model.pluginProtocol = LATEST_PROTOCOL_VERSION
     onView(withText(R.string.main__dialog_plugin_outdated_message)).check(doesNotExist())
   }
 
@@ -122,5 +122,9 @@ class MainActivityTest {
       bind(Application::class.java).toInstance(application)
       bind(ServiceChecker::class.java).toInstance(mockServiceChecker)
     }
+  }
+
+  companion object {
+    const val LATEST_PROTOCOL_VERSION = 5
   }
 }
