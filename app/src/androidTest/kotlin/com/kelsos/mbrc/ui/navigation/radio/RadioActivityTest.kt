@@ -3,10 +3,12 @@ package com.kelsos.mbrc.ui.navigation.radio
 import android.app.Application
 import android.content.Intent
 import android.support.test.InstrumentationRegistry
+import android.support.test.espresso.Espresso
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.action.ViewActions.swipeDown
 import android.support.test.espresso.assertion.ViewAssertions.matches
+import android.support.test.espresso.idling.CountingIdlingResource
 import android.support.test.espresso.intent.rule.IntentsTestRule
 import android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE
 import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -24,6 +26,8 @@ import com.kelsos.mbrc.ui.mini_control.MiniControlPresenter
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import org.hamcrest.core.AllOf.allOf
 import org.junit.After
 import org.junit.Assert.fail
@@ -56,6 +60,8 @@ class RadioActivityTest {
   @Mock lateinit var serviceChecker: ServiceChecker
   @Mock lateinit var cursor: FlowCursorList<RadioStation>
 
+  private lateinit var countingIdlingResource: CountingIdlingResource
+
   @Before
   fun setUp() {
     MockitoAnnotations.initMocks(this)
@@ -66,6 +72,8 @@ class RadioActivityTest {
     val application = InstrumentationRegistry.getTargetContext().applicationContext as Application
     val scope = Toothpick.openScope(application)
     scope.installModules(ToothPickTestModule(this))
+    countingIdlingResource = CountingIdlingResource("idling resource")
+    Espresso.registerIdlingResources(countingIdlingResource)
   }
 
   @After
@@ -85,18 +93,9 @@ class RadioActivityTest {
   fun radioView_noStationsFound() {
     `when`(cursor.count).thenReturn(0)
     activityRule.launchActivity(Intent())
-    verify(presenter, times(1)).load()
-    Single.fromCallable { cursor }
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({
-          val activity = activityRule.activity
-          activity.hideLoading()
-          activity.update(it)
-        }, {
-          fail()
-        })
-
+    mockDataLoading(activityRule.activity, countingIdlingResource)
     onView(withId(R.id.list_empty_title)).check(matches(isDisplayed()))
+    verify(presenter, times(1)).load()
   }
 
   @Test
@@ -121,16 +120,7 @@ class RadioActivityTest {
 
     activityRule.launchActivity(Intent())
     verify(presenter, times(1)).load()
-    Single.fromCallable { cursor }
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({
-          val activity = activityRule.activity
-          activity.hideLoading()
-          activity.update(it)
-        }, {
-          fail()
-        })
-
+    mockDataLoading(activityRule.activity, countingIdlingResource)
     onView(withText(station_3.name)).check(matches(isDisplayed()))
     onView(withText(station_3.name)).perform(click())
     verify(presenter, times(1)).play(station_3.url)
@@ -169,20 +159,10 @@ class RadioActivityTest {
     `when`(cursor.getItem(eq(2L))).thenReturn(station_3)
 
     activityRule.launchActivity(Intent())
-    verify(presenter, times(1)).load()
-    Single.fromCallable { cursor }
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({
-          val activity = activityRule.activity
-          activity.hideLoading()
-          activity.update(it)
-        }, {
-          fail()
-        })
+    mockDataLoading(activityRule.activity, countingIdlingResource)
 
     onView(withText(station_3.name)).check(matches(isDisplayed()))
     onView(withText(station_3.name)).perform(click())
-    verify(presenter, times(1)).play(station_3.url)
 
     Single.just(SocketTimeoutException())
         .observeOn(AndroidSchedulers.mainThread())
@@ -192,8 +172,12 @@ class RadioActivityTest {
         }, {
           fail()
         })
+
     onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.radio__play_failed)))
         .check(matches(withEffectiveVisibility(VISIBLE)))
+
+    verify(presenter, times(1)).play(station_3.url)
+    verify(presenter, times(1)).load()
   }
 
 
@@ -201,51 +185,62 @@ class RadioActivityTest {
   fun radioView_swipeToRefresh() {
     `when`(cursor.count).thenReturn(0)
     activityRule.launchActivity(Intent())
+    val activity = activityRule.activity
     verify(presenter, times(1)).load()
-    Single.just(cursor)
+    `when`(presenter.load()).then { mockDataLoading(activity, countingIdlingResource) }
+    `when`(presenter.refresh()).then { mockDataLoading(activity, countingIdlingResource) }
+
+    onView(withId(R.id.empty_view)).perform(swipeDown())
+
+    verify(presenter, times(1)).refresh()
+  }
+
+  private fun mockDataLoading(
+      view: RadioView,
+      countingIdlingResource: CountingIdlingResource
+  ): Disposable? {
+    countingIdlingResource.increment()
+
+    return Single.just(cursor)
+        .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
+        .doFinally { countingIdlingResource.decrement() }
         .subscribe({
-          val activity = activityRule.activity
-          activity.update(it)
-          activity.hideLoading()
+          view.update(it)
+          view.hideLoading()
         }, {
           fail()
         })
+  }
 
-    onView(withId(R.id.empty_view)).perform(swipeDown())
-    verify(presenter, times(1)).refresh()
+  private fun mockLoadingError(view: RadioActivity, countingIdlingResource: CountingIdlingResource): Disposable? {
+    countingIdlingResource.increment()
+    return Single.just(SocketTimeoutException())
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .doFinally { countingIdlingResource.decrement() }
+        .subscribe({
+          view.hideLoading()
+          view.error(it)
+        }, {
+          fail()
+        })
   }
 
   @Test
   fun radioView_swipeToRefresh_loadError() {
     `when`(cursor.count).thenReturn(0)
+
     activityRule.launchActivity(Intent())
-    verify(presenter, times(1)).load()
-    Single.just(cursor)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({
-          val activity = activityRule.activity
-          activity.update(it)
-          activity.hideLoading()
-        }, {
-          fail()
-        })
+    val view = activityRule.activity
+    `when`(presenter.refresh()).then { mockLoadingError(view, countingIdlingResource) }
 
     onView(withId(R.id.empty_view)).perform(swipeDown())
-    verify(presenter, times(1)).refresh()
-
-    Single.just(SocketTimeoutException())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({
-          val activity = activityRule.activity
-          activity.hideLoading()
-          activity.error(it)
-        }, {
-          fail()
-        })
-
     onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.radio__loading_failed)))
         .check(matches(withEffectiveVisibility(VISIBLE)))
+
+    verify(presenter, times(1)).refresh()
+    verify(presenter, times(1)).load()
   }
 
   inner class TestModule : Module() {
