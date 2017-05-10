@@ -57,6 +57,8 @@ sudo: true
 cache:
   directories:
     - $HOME/.m2
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
 
 # Emulator Management: Create, Start and Wait
 before_script:
