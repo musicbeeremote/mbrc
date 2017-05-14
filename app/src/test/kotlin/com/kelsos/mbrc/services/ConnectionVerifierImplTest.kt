@@ -39,7 +39,6 @@ import java.util.concurrent.Executors
 
 @RunWith(AndroidJUnit4::class)
 class ConnectionVerifierImplTest {
-  private var server: ServerSocket? = null
   private val connectionRepository: ConnectionRepository = mockk()
   private val testDispatcher = TestCoroutineDispatcher()
 
@@ -48,28 +47,26 @@ class ConnectionVerifierImplTest {
   val toothpickRule: ToothPickRule = ToothPickRule(this, "verifier")
     .setRootRegistryPackage("com.kelsos.mbrc")
   private val mapper = ObjectMapper()
-  private val port: Int = 36000
-
-  private lateinit var executor: ExecutorService
+  private val port: Int = 46000
 
   @Before
   fun setUp() {
     toothpickRule.scope.installModules(TestModule())
-    executor = Executors.newSingleThreadExecutor()
   }
 
   private fun startMockServer(
     prematureDisconnect: Boolean = false,
     responseContext: String = Protocol.VerifyConnection,
     json: Boolean = true
-  ) {
+  ): ServerSocket {
     val random = Random()
+    val executor: ExecutorService = Executors.newSingleThreadExecutor()
+    val server = ServerSocket(port + random.nextInt(1000))
     val mockSocket = Runnable {
-
-      server = ServerSocket(port + random.nextInt(1000))
+      server.soTimeout = 3000
 
       while (true) {
-        val connection = server?.accept()
+        val connection = server.accept()
         val input = InputStreamReader(connection!!.inputStream)
         val inputReader = BufferedReader(input)
         val line = inputReader.readLine()
@@ -77,24 +74,25 @@ class ConnectionVerifierImplTest {
 
         if (value.context != Protocol.VerifyConnection) {
           connection.close()
-          server?.close()
+          server.close()
           return@Runnable
         }
 
         if (prematureDisconnect) {
           connection.close()
-          server?.close()
+          server.close()
           return@Runnable
         }
 
         val out = OutputStreamWriter(connection.outputStream, Const.UTF_8)
         val output = PrintWriter(BufferedWriter(out), true)
+        val newLine = "\r\n"
         if (json) {
           val response = SocketMessage()
           response.context = responseContext
-          output.write(mapper.writeValueAsString(response) + "\n\r")
+          output.write(mapper.writeValueAsString(response) + newLine + newLine)
         } else {
-          output.write(responseContext + "\n\r")
+          output.write(responseContext + newLine + newLine)
         }
         output.flush()
         input.close()
@@ -102,27 +100,27 @@ class ConnectionVerifierImplTest {
         out.close()
         output.close()
         connection.close()
-        server?.close()
+        server.close()
         return@Runnable
       }
     }
 
     executor.execute(mockSocket)
+    return server
   }
 
   @After
   fun tearDown() {
-    executor.shutdownNow()
   }
 
   @Test
   fun testSuccessfulVerification() = testDispatcher.runBlockingTest {
-    startMockServer()
+    val server = startMockServer()
 
     coEvery { connectionRepository.getDefault() } answers {
       val settings = ConnectionSettings()
-      settings.address = server!!.inetAddress.hostAddress
-      settings.port = server!!.localPort
+      settings.address = server.inetAddress.hostAddress
+      settings.port = server.localPort
       settings
     }
 
@@ -132,11 +130,11 @@ class ConnectionVerifierImplTest {
 
   @Test
   fun testPrematureDisconnectDuringVerification() = testDispatcher.runBlockingTest {
-    startMockServer(true)
+    val server = startMockServer(true)
     coEvery { connectionRepository.getDefault() } answers {
       val settings = ConnectionSettings()
-      settings.address = server!!.inetAddress.hostAddress
-      settings.port = server!!.localPort
+      settings.address = server.inetAddress.hostAddress
+      settings.port = server.localPort
       settings
     }
 
@@ -151,11 +149,11 @@ class ConnectionVerifierImplTest {
 
   @Test
   fun testInvalidPluginResponseVerification() = testDispatcher.runBlockingTest {
-    startMockServer(false, Protocol.ClientNotAllowed)
+    val server = startMockServer(false, Protocol.ClientNotAllowed)
     coEvery { connectionRepository.getDefault() } answers {
       val settings = ConnectionSettings()
-      settings.address = server!!.inetAddress.hostAddress
-      settings.port = server!!.localPort
+      settings.address = server.inetAddress.hostAddress
+      settings.port = server.localPort
       settings
     }
 
