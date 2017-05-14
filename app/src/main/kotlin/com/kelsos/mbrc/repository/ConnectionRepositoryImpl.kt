@@ -6,6 +6,9 @@ import android.content.res.Resources
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.ConnectionSettings
 import com.kelsos.mbrc.data.ConnectionSettings_Table
+import com.raizlabs.android.dbflow.kotlinextensions.delete
+import com.raizlabs.android.dbflow.kotlinextensions.save
+import com.raizlabs.android.dbflow.kotlinextensions.update
 import com.raizlabs.android.dbflow.sql.language.SQLite
 
 import javax.inject.Inject
