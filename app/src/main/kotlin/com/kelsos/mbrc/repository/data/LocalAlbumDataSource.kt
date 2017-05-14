@@ -35,12 +35,19 @@ constructor(
 
   override suspend fun saveAll(list: List<Album>) = withContext(dispatchers.db) {
     val adapter = modelAdapter<Album>()
+    val updated = list.filter { it.id > 0 }
+    val inserted = list.filter { it.id <= 0 }
 
     val transaction = FastStoreModelTransaction.insertBuilder(adapter)
-      .addAll(list)
+      .addAll(inserted)
+      .build()
+
+    val updateTransaction = FastStoreModelTransaction.updateBuilder(adapter)
+      .addAll(updated)
       .build()
 
     database<RemoteDatabase>().executeTransaction(transaction)
+    database<RemoteDatabase>().executeTransaction(updateTransaction)
   }
 
   override suspend fun loadAllCursor(): FlowCursorList<Album> = withContext(dispatchers.db) {
@@ -73,11 +80,11 @@ constructor(
   }
 
   override suspend fun isEmpty(): Boolean = withContext(dispatchers.db) {
-    return@withContext SQLite.selectCountOf().from(Album::class.java).count() == 0L
+    return@withContext SQLite.selectCountOf().from(Album::class.java).longValue() == 0L
   }
 
   override suspend fun count(): Long = withContext(dispatchers.db) {
-    return@withContext SQLite.selectCountOf().from(Album::class.java).count()
+    return@withContext SQLite.selectCountOf().from(Album::class.java).longValue()
   }
 
   suspend fun updateCovers(updated: List<CoverInfo>) {

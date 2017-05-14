@@ -2,8 +2,8 @@ package com.kelsos.mbrc.repository.data
 
 import com.kelsos.mbrc.data.Playlist
 import com.kelsos.mbrc.data.Playlist_Table
-import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.data.db.RemoteDatabase
+import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.extensions.escapeLike
 import com.raizlabs.android.dbflow.kotlinextensions.database
 import com.raizlabs.android.dbflow.kotlinextensions.delete
@@ -46,11 +46,11 @@ class LocalPlaylistDataSource
     }
 
   override suspend fun isEmpty(): Boolean = withContext(dispatchers.db) {
-    return@withContext SQLite.selectCountOf().from(Playlist::class.java).count() == 0L
+    return@withContext SQLite.selectCountOf().from(Playlist::class.java).longValue() == 0L
   }
 
   override suspend fun count(): Long = withContext(dispatchers.db) {
-    return@withContext SQLite.selectCountOf().from(Playlist::class.java).count()
+    return@withContext SQLite.selectCountOf().from(Playlist::class.java).longValue()
   }
 
   override suspend fun removePreviousEntries(epoch: Long) {

@@ -2,14 +2,15 @@ package com.kelsos.mbrc.repository
 
 import android.content.SharedPreferences
 import android.content.res.Resources
-
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.ConnectionSettings
 import com.kelsos.mbrc.data.ConnectionSettings_Table
 import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.raizlabs.android.dbflow.kotlinextensions.delete
+import com.raizlabs.android.dbflow.kotlinextensions.save
+import com.raizlabs.android.dbflow.kotlinextensions.update
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import kotlinx.coroutines.withContext
-
 import javax.inject.Inject
 
 class ConnectionRepositoryImpl
@@ -105,7 +106,7 @@ class ConnectionRepositoryImpl
   }
 
   override suspend fun count(): Long = withContext(dispatchers.db) {
-    return@withContext SQLite.selectCountOf().from(ConnectionSettings::class.java).count()
+    return@withContext SQLite.selectCountOf().from(ConnectionSettings::class.java).longValue()
   }
 
 }

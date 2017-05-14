@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.repository
 
+import com.kelsos.mbrc.data.Data
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import com.raizlabs.android.dbflow.structure.Model
 
-interface Repository<T : Model> {
+interface Repository<T : Data> {
   suspend fun getAllCursor(): FlowCursorList<T>
   suspend fun getAndSaveRemote(): FlowCursorList<T>
   suspend fun getRemote()

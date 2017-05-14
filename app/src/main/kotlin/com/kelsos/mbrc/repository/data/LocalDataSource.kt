@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.repository.data
 
+import com.kelsos.mbrc.data.Data
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import com.raizlabs.android.dbflow.structure.Model
 
-interface LocalDataSource<T : Model> {
+interface LocalDataSource<T : Data> {
   suspend fun deleteAll()
   suspend fun saveAll(list: List<T>)
   suspend fun loadAllCursor(): FlowCursorList<T>
