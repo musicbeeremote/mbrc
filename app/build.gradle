@@ -154,7 +154,7 @@ idea {
 
 ext {
   support_library_version = "25.3.1"
-  dbflow_version = "4.0.0-beta7"
+  dbflow_version = "4.0.1"
   toothpick_version = "1.0.6"
   jackson_version = "2.8.8"
   butterknife_version = "8.5.1"
@@ -238,7 +238,7 @@ dependencies {
   compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
   compile 'io.reactivex.rxjava2:rxjava:2.1.0'
   compile 'io.reactivex.rxjava2:rxkotlin:2.0.2'
-  compile 'uk.co.chrisjenx:calligraphy:2.2.0'
+  compile 'uk.co.chrisjenx:calligraphy:2.3.0'
   compile 'com.jakewharton.timber:timber:4.5.1'
   compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
   compile 'com.android.support.constraint:constraint-layout:1.0.2'
