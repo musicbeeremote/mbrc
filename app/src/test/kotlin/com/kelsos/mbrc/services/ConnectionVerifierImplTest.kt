@@ -27,36 +27,33 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class ConnectionVerifierImplTest {
-  private lateinit var server: ServerSocket
 
   @Mock lateinit var connectionRepository: ConnectionRepository
   @Rule @JvmField val toothpickRule: ToothPickRule = ToothPickRule(this, "verifier")
       .setRootRegistryPackage("com.kelsos.mbrc")
   private val mapper = ObjectMapper()
-  private val port: Int = 36000
+  private val port: Int = 46000
 
   lateinit var verifier: ConnectionVerifier
-
-  private lateinit var executor: ExecutorService
 
   @Before
   fun setUp() {
     MockitoAnnotations.initMocks(this)
     toothpickRule.scope.installModules(TestModule())
     verifier = toothpickRule.getInstance(ConnectionVerifier::class.java)
-    executor = Executors.newSingleThreadExecutor()
+
   }
 
   fun startMockServer(
       prematureDisconnect: Boolean = false,
       responseContext: String = Protocol.VerifyConnection,
       json: Boolean = true
-  ) {
+  ) : ServerSocket {
     val random = Random()
+    val executor: ExecutorService = Executors.newSingleThreadExecutor()
+    val server = ServerSocket(port + random.nextInt(1000))
     val mockSocket = Runnable {
-
-      server = ServerSocket(port + random.nextInt(1000))
-      server.soTimeout = 5000
+      server.soTimeout = 3000
 
       while (true) {
         val connection = server.accept()
@@ -100,15 +97,16 @@ class ConnectionVerifierImplTest {
     }
 
     executor.execute(mockSocket)
+    return server
   }
 
   @After
   fun tearDown() {
-    executor.shutdownNow()
+
   }
 
   @Test fun testSuccessfulVerification() {
-    startMockServer()
+    val server = startMockServer()
 
     `when`(connectionRepository.default).thenAnswer {
       val settings = ConnectionSettings()
@@ -127,7 +125,7 @@ class ConnectionVerifierImplTest {
 
 
   @Test fun testPrematureDisconnectDuringVerification() {
-    startMockServer(true)
+    val server = startMockServer(true)
     `when`(connectionRepository.default).thenAnswer {
       val settings = ConnectionSettings()
       settings.address = server.inetAddress.hostAddress
@@ -141,7 +139,7 @@ class ConnectionVerifierImplTest {
   }
 
   @Test fun testInvalidPluginResponseVerification() {
-    startMockServer(false, Protocol.ClientNotAllowed)
+    val server = startMockServer(false, Protocol.ClientNotAllowed)
     `when`(connectionRepository.default).thenAnswer {
       val settings = ConnectionSettings()
       settings.address = server.inetAddress.hostAddress
