@@ -14,6 +14,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.library.Artist
+import com.kelsos.mbrc.extensions.count
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 import com.kelsos.mbrc.utilities.Checks.ifNotNull
 import com.raizlabs.android.dbflow.list.FlowCursorList
@@ -119,9 +120,7 @@ class ArtistEntryAdapter
 
    * @return The total number of items in this adapter.
    */
-  override fun getItemCount(): Int {
-    return data?.count?.toInt() ?: 0
-  }
+  override fun getItemCount(): Int = data.count()
 
   fun refresh() {
     data?.refresh()
