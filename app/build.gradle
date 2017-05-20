@@ -68,6 +68,8 @@ android {
     }
   }
 
+  flavorDimensions "basic"
+
   buildTypes {
     release {
       signingConfig signingConfigs.release
@@ -124,17 +126,17 @@ android {
     javaMaxHeapSize "2G"
   }
 
-  applicationVariants.all { variant ->
-    variant.outputs.each { output ->
-      def originalFilename = output.outputFile
-      def versionInfo = "-v${variant.mergedFlavor.versionCode}-${variant.mergedFlavor.versionName}"
-      def filename = originalFilename.name
-          .replace(".apk", versionInfo + ".apk")
-          .replace(project.name, defaultConfig.applicationId)
-      filename = "${originalFilename.parent}/${filename}"
-      output.outputFile = file(filename)
-    }
-  }
+//  applicationVariants.all { variant ->
+//    variant.outputs.each { output ->
+//      def originalFilename = output.outputFile
+//      def versionInfo = "-v${variant.mergedFlavor.versionCode}-${variant.mergedFlavor.versionName}"
+//      def filename = originalFilename.name
+//          .replace(".apk", versionInfo + ".apk")
+//          .replace(project.name, defaultConfig.applicationId)
+//      filename = "${originalFilename.parent}/${filename}"
+//      output.outputFile = file(filename)
+//    }
+//  }
 
   sourceSets {
     androidTest.java.srcDirs += "src/androidTest/kotlin"
