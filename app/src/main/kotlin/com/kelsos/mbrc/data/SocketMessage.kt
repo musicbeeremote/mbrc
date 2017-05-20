@@ -19,12 +19,8 @@ class SocketMessage {
 
   companion object {
 
-    fun create(context: String, data: Any): SocketMessage {
+    fun create(context: String, data: Any = ""): SocketMessage {
       return SocketMessage(context, data)
-    }
-
-    fun create(context: String): SocketMessage {
-      return SocketMessage(context, "")
     }
   }
 }
