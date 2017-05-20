@@ -51,7 +51,9 @@ import com.kelsos.mbrc.utilities.SettingsManagerImpl
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import toothpick.config.Binding
 import toothpick.config.Module
+import kotlin.reflect.KClass
 
 class RemoteModule : Module() {
   init {
@@ -93,3 +95,7 @@ class RemoteModule : Module() {
     bind(RadioService::class.java).to(RadioServiceImpl::class.java).singletonInScope()
   }
 }
+
+fun <T : Any> Module.bind(clazz: KClass<T>): Binding<T> = bind(clazz.java)
+
+fun <T: Any, K : T> Binding<T>.to(clazz: KClass<K>): Binding<T>.BoundStateForClassBinding = this.to(clazz.java)
