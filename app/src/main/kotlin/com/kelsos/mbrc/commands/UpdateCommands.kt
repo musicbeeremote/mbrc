@@ -15,11 +15,11 @@ import com.kelsos.mbrc.data.CoverPayload
 import com.kelsos.mbrc.data.LyricsPayload
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.domain.TrackInfo
+import com.kelsos.mbrc.events.CoverChangedEvent
+import com.kelsos.mbrc.events.RemoteClientMetaData
+import com.kelsos.mbrc.events.ShuffleChange
+import com.kelsos.mbrc.events.TrackInfoChangeEvent
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.CoverChangedEvent
-import com.kelsos.mbrc.events.ui.RemoteClientMetaData
-import com.kelsos.mbrc.events.ui.ShuffleChange
-import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.extensions.md5
 import com.kelsos.mbrc.interfaces.ICommand
@@ -99,7 +99,7 @@ class UpdateNowPlayingTrack
     val year = node.path("year").textValue()
     val path = node.path("path").textValue()
     model.trackInfo = TrackInfo(artist, title, album, year, path)
-    bus.post(RemoteClientMetaData(model.trackInfo, model.coverPath, 0))
+    bus.post(RemoteClientMetaData(model.trackInfo, model.coverPath, model.duration))
     bus.post(TrackInfoChangeEvent(model.trackInfo))
     UpdateWidgets.updateTrackInfo(context, model.trackInfo)
   }

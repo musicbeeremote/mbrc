@@ -4,18 +4,18 @@ import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.data.UserAction
+import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
+import com.kelsos.mbrc.events.CoverChangedEvent
+import com.kelsos.mbrc.events.LfmRatingChanged
 import com.kelsos.mbrc.events.MessageEvent
+import com.kelsos.mbrc.events.PlayStateChange
+import com.kelsos.mbrc.events.RepeatChange
+import com.kelsos.mbrc.events.ScrobbleChange
+import com.kelsos.mbrc.events.ShuffleChange
+import com.kelsos.mbrc.events.TrackInfoChangeEvent
+import com.kelsos.mbrc.events.UpdatePosition
+import com.kelsos.mbrc.events.VolumeChange
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
-import com.kelsos.mbrc.events.ui.CoverChangedEvent
-import com.kelsos.mbrc.events.ui.LfmRatingChanged
-import com.kelsos.mbrc.events.ui.PlayStateChange
-import com.kelsos.mbrc.events.ui.RepeatChange
-import com.kelsos.mbrc.events.ui.ScrobbleChange
-import com.kelsos.mbrc.events.ui.ShuffleChange
-import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
-import com.kelsos.mbrc.events.ui.UpdateDuration
-import com.kelsos.mbrc.events.ui.VolumeChange
 import com.kelsos.mbrc.model.ConnectionModel
 import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.mvp.BasePresenter
@@ -73,7 +73,7 @@ class MainViewPresenterImpl
         view?.updatePlayState(model.playState)
         view?.updateTrackInfo(model.trackInfo)
         view?.updateConnection(connectionModel.connection)
-        view?.updateDuration(model.position.toInt(), model.duration.toInt())
+        view?.updateProgress(UpdatePosition(model.position.toInt(), model.duration.toInt()))
         showPluginUpdateAvailable()
         showPluginUpdateRequired()
       } catch (e: Exception) {
@@ -152,7 +152,7 @@ class MainViewPresenterImpl
       { this.view?.updateConnection(it.status) },
       true
     )
-    this.bus.register(this, UpdateDuration::class.java, { this.view?.updateProgress(it) }, true)
+    this.bus.register(this, UpdatePosition::class.java, { this.view?.updateProgress(it) }, true)
     this.bus.register(
       this,
       ScrobbleChange::class.java,

@@ -13,11 +13,11 @@ import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.data.UserAction
+import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.MessageEvent
+import com.kelsos.mbrc.events.PlayStateChange
+import com.kelsos.mbrc.events.RemoteClientMetaData
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
-import com.kelsos.mbrc.events.ui.PlayStateChange
-import com.kelsos.mbrc.events.ui.RemoteClientMetaData
 import com.kelsos.mbrc.utilities.MediaButtonReceiver
 import com.kelsos.mbrc.utilities.MediaIntentHandler
 import com.kelsos.mbrc.utilities.RemoteUtils

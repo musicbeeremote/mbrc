@@ -4,8 +4,8 @@ import com.kelsos.mbrc.annotations.PlayerState.State
 import com.kelsos.mbrc.annotations.Repeat.Mode
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
-import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
-import com.kelsos.mbrc.events.ui.UpdateDuration
+import com.kelsos.mbrc.events.ShuffleChange.ShuffleState
+import com.kelsos.mbrc.events.UpdatePosition
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 
@@ -29,13 +29,11 @@ interface MainView : BaseView {
 
   fun updateCover(path: String)
 
-  fun updateProgress(duration: UpdateDuration)
+  fun updateProgress(duration: UpdatePosition)
 
   fun showChangeLog()
 
   fun notifyPluginOutOfDate()
-
-  fun updateDuration(position: Int, duration: Int)
 
   fun showPluginUpdateRequired(minimumRequired: String)
 }

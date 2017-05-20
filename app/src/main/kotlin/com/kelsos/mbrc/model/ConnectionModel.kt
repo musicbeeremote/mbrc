@@ -2,9 +2,9 @@ package com.kelsos.mbrc.model
 
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.Connection.Status
+import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
+import com.kelsos.mbrc.events.RequestConnectionStateEvent
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
-import com.kelsos.mbrc.events.ui.RequestConnectionStateEvent
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -40,7 +40,7 @@ constructor(private val bus: RxBus) {
   }
 
   private fun notifyState() {
-    bus.post(ConnectionStatusChangeEvent.create(connection))
+    bus.post(ConnectionStatusChangeEvent(connection))
   }
 
   fun setHandShakeDone(handShakeDone: Boolean) {

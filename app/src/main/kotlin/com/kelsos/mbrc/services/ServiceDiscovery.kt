@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.DiscoveryMessage
 import com.kelsos.mbrc.enums.DiscoveryStop
+import com.kelsos.mbrc.events.DiscoveryStopped
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.DiscoveryStopped
 import com.kelsos.mbrc.mappers.ConnectionMapper
 import com.kelsos.mbrc.repository.ConnectionRepository
 import kotlinx.coroutines.CoroutineScope

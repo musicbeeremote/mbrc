@@ -4,11 +4,11 @@ import com.kelsos.mbrc.constants.Protocol.PlayerNext
 import com.kelsos.mbrc.constants.Protocol.PlayerPlayPause
 import com.kelsos.mbrc.constants.Protocol.PlayerPrevious
 import com.kelsos.mbrc.data.UserAction.Companion.create
+import com.kelsos.mbrc.events.CoverChangedEvent
 import com.kelsos.mbrc.events.MessageEvent.Companion.action
+import com.kelsos.mbrc.events.PlayStateChange
+import com.kelsos.mbrc.events.TrackInfoChangeEvent
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.CoverChangedEvent
-import com.kelsos.mbrc.events.ui.PlayStateChange
-import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
 import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.mvp.BasePresenter
 import javax.inject.Inject

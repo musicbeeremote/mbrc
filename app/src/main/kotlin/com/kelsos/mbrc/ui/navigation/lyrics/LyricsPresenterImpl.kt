@@ -2,8 +2,8 @@ package com.kelsos.mbrc.ui.navigation.lyrics
 
 import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.data.LyricsPayload
+import com.kelsos.mbrc.events.LyricsUpdatedEvent
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.LyricsUpdatedEvent
 import com.kelsos.mbrc.model.LyricsModel
 import com.kelsos.mbrc.mvp.BasePresenter
 import java.util.Arrays

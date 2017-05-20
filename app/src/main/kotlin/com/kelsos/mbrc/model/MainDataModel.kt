@@ -8,8 +8,7 @@ import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
-import com.kelsos.mbrc.events.ui.ShuffleChange
-import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
+import com.kelsos.mbrc.events.ShuffleChange
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,7 +26,7 @@ constructor() {
   var rating: Float = 0f
   var volume: Int = 0
 
-  @ShuffleState
+  @ShuffleChange.ShuffleState
   var shuffle: String = ShuffleChange.OFF
   var isScrobblingEnabled: Boolean = false
   var isMute: Boolean = false
