@@ -11,10 +11,10 @@ import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.controller.ForegroundHooks
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
-import com.kelsos.mbrc.events.ui.CoverChangedEvent
-import com.kelsos.mbrc.events.ui.PlayStateChange
-import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
+import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
+import com.kelsos.mbrc.events.CoverChangedEvent
+import com.kelsos.mbrc.events.PlayStateChange
+import com.kelsos.mbrc.events.TrackInfoChangeEvent
 import com.kelsos.mbrc.model.NotificationModel
 import com.kelsos.mbrc.services.RemoteSessionManager
 import com.kelsos.mbrc.utilities.RemoteUtils

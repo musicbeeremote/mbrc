@@ -2,7 +2,7 @@ package com.kelsos.mbrc.ui.navigation.library.artists
 
 import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.LibraryRefreshCompleteEvent
+import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.ArtistRepository
 import com.kelsos.mbrc.ui.navigation.library.ArtistTabRefreshEvent

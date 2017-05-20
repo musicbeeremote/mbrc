@@ -3,7 +3,7 @@ package com.kelsos.mbrc.ui.navigation.library
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.any
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.LibraryRefreshCompleteEvent
+import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.repository.AlbumRepository
 import com.kelsos.mbrc.repository.ArtistRepository
 import com.kelsos.mbrc.repository.GenreRepository
