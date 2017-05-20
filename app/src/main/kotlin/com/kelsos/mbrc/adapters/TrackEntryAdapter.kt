@@ -14,6 +14,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.library.Track
+import com.kelsos.mbrc.extensions.count
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 import com.kelsos.mbrc.utilities.Checks.ifNotNull
 import com.raizlabs.android.dbflow.list.FlowCursorList
@@ -116,10 +117,7 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
 
    * @return The total number of items in this adapter.
    */
-  override fun getItemCount(): Int {
-    val count = data?.count?.toInt()
-    return count ?: 0
-  }
+  override fun getItemCount(): Int = data.count()
 
   fun refresh() {
     data?.refresh()
