@@ -2,7 +2,7 @@ package com.kelsos.mbrc.ui.navigation.library.albums
 
 import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.LibraryRefreshCompleteEvent
+import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.AlbumRepository
 import com.raizlabs.android.dbflow.list.FlowCursorList

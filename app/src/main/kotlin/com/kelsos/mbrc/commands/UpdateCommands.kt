@@ -11,9 +11,9 @@ import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.LyricsPayload
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.RemoteClientMetaData
-import com.kelsos.mbrc.events.ui.ShuffleChange
-import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
+import com.kelsos.mbrc.events.RemoteClientMetaData
+import com.kelsos.mbrc.events.ShuffleChange
+import com.kelsos.mbrc.events.TrackInfoChangeEvent
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.model.LyricsModel

@@ -5,10 +5,11 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.SocketAction
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.SocketMessage
+import com.kelsos.mbrc.events.NotifyUser
+import com.kelsos.mbrc.events.TrackMoved
+import com.kelsos.mbrc.events.TrackRemoval
+import com.kelsos.mbrc.events.UpdatePosition
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.NotifyUser
-import com.kelsos.mbrc.events.ui.TrackRemoval
-import com.kelsos.mbrc.events.ui.UpdatePosition
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.model.ConnectionModel
@@ -86,7 +87,11 @@ class UpdateNowPlayingTrackMoved
 @Inject constructor(private val bus: RxBus) : ICommand {
 
   override fun execute(e: IEvent) {
-    bus.post(com.kelsos.mbrc.events.ui.TrackMoved(e.data as ObjectNode))
+    val node = e.data as ObjectNode
+    val isSuccess: Boolean = node.path("success").asBoolean()
+    val from: Int = node.path("from").asInt()
+    val to: Int = node.path("to").asInt()
+    bus.post(TrackMoved(from, to, isSuccess))
   }
 }
 
@@ -94,7 +99,10 @@ class UpdateNowPlayingTrackRemoval
 @Inject constructor(private val bus: RxBus) : ICommand {
 
   override fun execute(e: IEvent) {
-    bus.post(TrackRemoval(e.data as ObjectNode))
+    val node = e.data as ObjectNode
+    val index: Int = node.path("index").asInt()
+    val isSuccess: Boolean = node.path("success").asBoolean()
+    bus.post(TrackRemoval(index, isSuccess))
   }
 }
 

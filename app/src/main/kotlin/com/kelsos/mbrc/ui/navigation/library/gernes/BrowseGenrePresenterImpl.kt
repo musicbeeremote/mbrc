@@ -2,7 +2,7 @@ package com.kelsos.mbrc.ui.navigation.library.gernes
 
 import com.kelsos.mbrc.data.library.Genre
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.LibraryRefreshCompleteEvent
+import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.GenreRepository
 import com.raizlabs.android.dbflow.list.FlowCursorList

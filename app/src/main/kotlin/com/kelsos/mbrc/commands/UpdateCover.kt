@@ -9,8 +9,8 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.data.CoverPayload
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.CoverChangedEvent
-import com.kelsos.mbrc.events.ui.RemoteClientMetaData
+import com.kelsos.mbrc.events.CoverChangedEvent
+import com.kelsos.mbrc.events.RemoteClientMetaData
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.extensions.md5
 import com.kelsos.mbrc.interfaces.ICommand
