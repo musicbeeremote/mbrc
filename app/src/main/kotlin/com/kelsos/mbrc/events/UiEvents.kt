@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.events
 
+import android.support.annotation.StringRes
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.Repeat
@@ -21,7 +22,7 @@ class LibraryRefreshCompleteEvent
 
 class LyricsUpdatedEvent(val lyrics: String)
 
-sealed class NotifyUser {
+class NotifyUser {
   val message: String
   val resId: Int
   var isFromResource: Boolean = false
@@ -33,7 +34,7 @@ sealed class NotifyUser {
     this.resId = -1
   }
 
-  constructor(resId: Int) {
+  constructor(@StringRes resId: Int) {
     this.resId = resId
     this.isFromResource = true
     this.message = ""
