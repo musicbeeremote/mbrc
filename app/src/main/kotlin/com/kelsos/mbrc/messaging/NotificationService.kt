@@ -128,8 +128,8 @@ constructor(
 
     val info = model.trackInfo
 
-    if (info != null) {
-      builder.setContentTitle(info.title).setContentText(info.artist).setSubText(info.album)
+    info?.let {
+      builder.setContentTitle(it.title).setContentText(it.artist).setSubText(it.album)
     }
 
     builder.setContentIntent(getPendingIntent(OPEN, context))

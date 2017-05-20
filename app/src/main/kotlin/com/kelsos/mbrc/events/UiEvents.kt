@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.events
 
 import androidx.annotation.StringDef
+import androidx.annotation.StringRes
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.Repeat
@@ -34,7 +35,7 @@ class NotifyUser {
     this.resId = -1
   }
 
-  constructor(resId: Int) {
+  constructor(@StringRes resId: Int) {
     this.resId = resId
     this.isFromResource = true
     this.message = ""
