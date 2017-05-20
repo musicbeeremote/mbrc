@@ -21,11 +21,11 @@ import com.kelsos.mbrc.annotations.PlayerState.State
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.data.UserAction
-import com.kelsos.mbrc.events.MessageEvent
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
+import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.PlayStateChange
 import com.kelsos.mbrc.events.RemoteClientMetaData
+import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.utilities.MediaButtonReceiver
 import com.kelsos.mbrc.utilities.MediaIntentHandler
 import com.kelsos.mbrc.utilities.RemoteUtils
@@ -35,11 +35,11 @@ import javax.inject.Singleton
 
 @Singleton
 class RemoteSessionManager
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 @Inject
-constructor(private val context: Application,
+constructor(context: Application,
+            volumeProvider: RemoteVolumeProvider,
             private val bus: RxBus,
-            private val volumeProvider: RemoteVolumeProvider,
             private val manager: AudioManager) : AudioManager.OnAudioFocusChangeListener {
   private val mMediaSession: MediaSessionCompat?
 
@@ -168,9 +168,9 @@ constructor(private val context: Application,
 
   @Suppress("DEPRECATION")
   @SuppressWarnings("deprecation")
-  @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+  @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private fun ensureTransportControls(playbackState: PlaybackStateCompat) {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       return
     }
 

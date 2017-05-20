@@ -1,59 +1,44 @@
 package com.kelsos.mbrc.services
 
-import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.PageRange
 import com.kelsos.mbrc.data.ProtocolPayload
 import com.kelsos.mbrc.data.SocketMessage
-import com.kelsos.mbrc.mappers.InetAddressMapper
 import com.kelsos.mbrc.repository.ConnectionRepository
 import com.kelsos.mbrc.utilities.SettingsManager
 import io.reactivex.Observable
 import timber.log.Timber
-import java.io.BufferedReader
 import java.io.IOException
-import java.io.InputStreamReader
-import java.net.Socket
-import javax.inject.Inject
 
-open class ServiceBase {
-  @Inject lateinit var mapper: ObjectMapper
-  @Inject lateinit var repository: ConnectionRepository
-  @Inject lateinit var settingsManager: SettingsManager
+open class ServiceBase(
+    repository: ConnectionRepository,
+    private val mapper: ObjectMapper,
+    private val settingsManager: SettingsManager
+) : ServiceCaller(mapper, repository) {
 
-  private var socket: Socket? = null
-
-  @Throws(JsonProcessingException::class)
-  private fun getMessage(message: SocketMessage): ByteArray {
-    return (mapper.writeValueAsString(message) + "\r\n").toByteArray()
+  fun request(request: String, data: Any? = null): Observable<SocketMessage> {
+    return call().flatMap { getSocketMessageObservable(request, data ?: "", it) }
+        .skipWhile { it.shouldSkip() }
   }
 
-  fun request(request: String, data: Any = true): Observable<SocketMessage> {
-    return Observable.using<String, Socket>({
-      this.getSocket()
-    }, {
-      this.getObservable(it)
-    }, {
-      this.cleanup(it)
-    }).flatMap { getSocketMessageObservable(request, data, it) }.skipWhile { this.shouldSkip(it) }
-  }
-
-  private fun getSocketMessageObservable(request: String, data: Any, s: String): Observable<SocketMessage> {
+  private fun getSocketMessageObservable(
+      request: String,
+      data: Any,
+      serviceMessage: ServiceMessage): Observable<SocketMessage> {
     return Observable.create<SocketMessage> {
       try {
-        val message = mapper.readValue(s, SocketMessage::class.java)
+        val socket = serviceMessage.socket
+        val jsonString = serviceMessage.message
+        val message = mapper.readValue(jsonString, SocketMessage::class.java)
         val context = message.context
 
         Timber.v("$context message received")
         if (Protocol.Player == context) {
-          val payload = ProtocolPayload(settingsManager.getClientId())
-          payload.noBroadcast = true
-          payload.protocolVersion = Protocol.ProtocolVersionNumber
-          sendMessage(SocketMessage.create(Protocol.ProtocolTag, payload))
+          val payload = getProtocolPayload()
+          socket.send(SocketMessage.create(Protocol.ProtocolTag, payload))
         } else if (Protocol.ProtocolTag == context) {
-          sendMessage(SocketMessage.create(request, data))
+          socket.send(SocketMessage.create(request, data))
         }
 
         message.data = mapper.writeValueAsString(message.data)
@@ -66,57 +51,15 @@ open class ServiceBase {
     }
   }
 
-  private fun shouldSkip(ms: SocketMessage): Boolean {
-    return Protocol.Player == ms.context || Protocol.ProtocolTag == ms.context
+  private fun getProtocolPayload(): ProtocolPayload {
+    val payload = ProtocolPayload(settingsManager.getClientId())
+    payload.noBroadcast = true
+    payload.protocolVersion = Protocol.ProtocolVersionNumber
+    return payload
   }
 
-  @Throws(IOException::class)
-  private fun sendMessage(socketMessage: SocketMessage) {
-    socket!!.outputStream.write(getMessage(socketMessage))
-  }
-
-  private fun cleanup(socket: Socket) {
-    Timber.v("Cleaning auxiliary socket")
-    if (!socket.isClosed) {
-      try {
-        socket.close()
-      } catch (ex: IOException) {
-        Timber.v(ex, "Failed to clause the auxiliary socket")
-      }
-
-    }
-  }
-
-  private fun getObservable(socket: Socket): Observable<out String> {
-    try {
-      val `in` = InputStreamReader(socket.inputStream, Const.UTF_8)
-      val bufferedReader = BufferedReader(`in`)
-      return Observable.create(OnSubscribeReader(bufferedReader))
-    } catch (ex: IOException) {
-      return Observable.error<String>(ex)
-    }
-
-  }
-
-  private fun getSocket(): Socket {
-    val mapper = InetAddressMapper()
-    val connectionSettings = repository.default
-    try {
-      if (connectionSettings == null) {
-        throw RuntimeException("no settings")
-      }
-      val socketAddress = mapper.map(connectionSettings)
-      Timber.v("Creating new socket")
-      socket = Socket()
-      socket!!.soTimeout = 20 * 1000
-      socket!!.connect(socketAddress)
-      sendMessage(SocketMessage.create(Protocol.Player, "Android"))
-      return socket!!
-    } catch (e: IOException) {
-      Timber.v("failed to create socket")
-      throw RuntimeException(e)
-    }
-
+  private fun SocketMessage.shouldSkip(): Boolean {
+    return Protocol.Player == this.context || Protocol.ProtocolTag == this.context
   }
 
   fun getPageRange(offset: Int, limit: Int): PageRange? {
