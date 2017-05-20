@@ -42,8 +42,10 @@ import com.kelsos.mbrc.utilities.SettingsManager
 import com.kelsos.mbrc.utilities.SettingsManagerImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
+import toothpick.config.Binding
 import toothpick.config.Module
 import java.util.concurrent.Executors
+import kotlin.reflect.KClass
 
 class RemoteModule : Module() {
   init {
@@ -90,3 +92,9 @@ class RemoteModule : Module() {
     bind(RadioRepository::class.java).to(RadioRepositoryImpl::class.java).singletonInScope()
   }
 }
+
+fun <T : Any> Module.bind(clazz: KClass<T>): Binding<T> = bind(clazz.java)
+
+fun <T : Any, K : T> Binding<T>.to(
+  clazz: KClass<K>
+): Binding<T>.BoundStateForClassBinding = this.to(clazz.java)
