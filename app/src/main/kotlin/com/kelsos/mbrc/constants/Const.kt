@@ -2,8 +2,6 @@ package com.kelsos.mbrc.constants
 
 object Const {
   val EMPTY = ""
-  val PLUGIN = "plugin"
-  val VERSIONS = "versions"
   val LYRICS_NEWLINE = "\r\n|\n"
   val DATA = "data"
   val TOGGLE = "toggle"

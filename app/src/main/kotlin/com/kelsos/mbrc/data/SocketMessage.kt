@@ -8,9 +8,7 @@ class SocketMessage {
   @JsonProperty var data: Any? = null
 
   @SuppressWarnings("unused")
-  constructor() {
-
-  }
+  constructor()
 
   private constructor(context: String, data: Any) {
     this.context = context
@@ -19,12 +17,8 @@ class SocketMessage {
 
   companion object {
 
-    fun create(context: String, data: Any): SocketMessage {
+    fun create(context: String, data: Any = ""): SocketMessage {
       return SocketMessage(context, data)
-    }
-
-    fun create(context: String): SocketMessage {
-      return SocketMessage(context, "")
     }
   }
 }

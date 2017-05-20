@@ -5,7 +5,6 @@ object ProtocolEventType {
   val ReduceVolume = "ReduceVolume"
   val HandshakeComplete = "HandshakeComplete"
   val InformClientNotAllowed = "InformClientNotAllowed"
-  val InformClientPluginOutOfDate = "InformClientPluginOutOfDate"
   val UserAction = "UserAction"
   val PluginVersionCheck = "PluginVersionCheck"
 }

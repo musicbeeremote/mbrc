@@ -1,8 +1,38 @@
 package com.kelsos.mbrc.configuration
 
-import com.kelsos.mbrc.commands.*
-import com.kelsos.mbrc.commands.model.*
-import com.kelsos.mbrc.commands.visual.*
+import com.kelsos.mbrc.commands.CancelNotificationCommand
+import com.kelsos.mbrc.commands.ConnectionStatusChangedCommand
+import com.kelsos.mbrc.commands.HandleHandshake
+import com.kelsos.mbrc.commands.HandshakeCompletionActions
+import com.kelsos.mbrc.commands.InitiateConnectionCommand
+import com.kelsos.mbrc.commands.KeyVolumeDownCommand
+import com.kelsos.mbrc.commands.KeyVolumeUpCommand
+import com.kelsos.mbrc.commands.NotifyNotAllowedCommand
+import com.kelsos.mbrc.commands.ProcessUserAction
+import com.kelsos.mbrc.commands.ProtocolPingHandle
+import com.kelsos.mbrc.commands.ProtocolPongHandle
+import com.kelsos.mbrc.commands.ProtocolRequest
+import com.kelsos.mbrc.commands.ReduceVolumeOnRingCommand
+import com.kelsos.mbrc.commands.RestartConnectionCommand
+import com.kelsos.mbrc.commands.SocketDataAvailableCommand
+import com.kelsos.mbrc.commands.StartDiscoveryCommand
+import com.kelsos.mbrc.commands.TerminateConnectionCommand
+import com.kelsos.mbrc.commands.UpdateCover
+import com.kelsos.mbrc.commands.UpdateLastFm
+import com.kelsos.mbrc.commands.UpdateLfmRating
+import com.kelsos.mbrc.commands.UpdateLyrics
+import com.kelsos.mbrc.commands.UpdateMute
+import com.kelsos.mbrc.commands.UpdateNowPlayingTrack
+import com.kelsos.mbrc.commands.UpdateNowPlayingTrackMoved
+import com.kelsos.mbrc.commands.UpdateNowPlayingTrackRemoval
+import com.kelsos.mbrc.commands.UpdatePlayState
+import com.kelsos.mbrc.commands.UpdatePlaybackPositionCommand
+import com.kelsos.mbrc.commands.UpdatePlayerStatus
+import com.kelsos.mbrc.commands.UpdatePluginVersionCommand
+import com.kelsos.mbrc.commands.UpdateRating
+import com.kelsos.mbrc.commands.UpdateRepeat
+import com.kelsos.mbrc.commands.UpdateShuffle
+import com.kelsos.mbrc.commands.UpdateVolume
 import com.kelsos.mbrc.constants.ApplicationEvents
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.constants.ProtocolEventType
@@ -15,9 +45,7 @@ object CommandRegistration {
     controller.register(ProtocolEventType.ReduceVolume, scope.getInstance(ReduceVolumeOnRingCommand::class.java))
     controller.register(ProtocolEventType.HandshakeComplete, scope.getInstance(HandshakeCompletionActions::class.java))
     controller.register(ProtocolEventType.InformClientNotAllowed, scope.getInstance(NotifyNotAllowedCommand::class.java))
-    controller.register(ProtocolEventType.InformClientPluginOutOfDate, scope.getInstance(NotifyPluginOutOfDateCommand::class.java))
     controller.register(ProtocolEventType.InitiateProtocolRequest, scope.getInstance(ProtocolRequest::class.java))
-    controller.register(ProtocolEventType.PluginVersionCheck, scope.getInstance(VersionCheckCommand::class.java))
     controller.register(ProtocolEventType.UserAction, scope.getInstance(ProcessUserAction::class.java))
 
     controller.register(Protocol.NowPlayingTrack, scope.getInstance(UpdateNowPlayingTrack::class.java))

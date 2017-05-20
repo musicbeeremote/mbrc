@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.commands.model
+package com.kelsos.mbrc.commands
 
 import android.app.Application
 import android.graphics.Bitmap
@@ -28,11 +28,13 @@ import java.io.FileOutputStream
 import javax.inject.Inject
 
 class UpdateCover
-@Inject constructor(private val bus: RxBus,
-                    private val context: Application,
-                    private val mapper: ObjectMapper,
-                    private val coverService: CoverService,
-                    private val model: MainDataModel) : ICommand {
+@Inject constructor(
+    private val bus: RxBus,
+    private val context: Application,
+    private val mapper: ObjectMapper,
+    private val coverService: CoverService,
+    private val model: MainDataModel
+) : ICommand {
   private val coverDir: File
 
   init {
