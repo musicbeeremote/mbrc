@@ -10,11 +10,11 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.controller.ForegroundHooks
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.CoverChangedEvent
 import com.kelsos.mbrc.events.PlayStateChange
 import com.kelsos.mbrc.events.TrackInfoChangeEvent
+import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.model.NotificationModel
 import com.kelsos.mbrc.services.RemoteSessionManager
 import com.kelsos.mbrc.utilities.RemoteUtils
@@ -96,9 +96,8 @@ constructor(bus: RxBus,
       cancelNotification(NOW_PLAYING_PLACEHOLDER)
     } else {
       notification = createBuilder().build()
-      if (hooks != null) {
-        hooks!!.start(NOW_PLAYING_PLACEHOLDER, notification!!)
-      }
+
+      notification?.let { hooks?.start(NOW_PLAYING_PLACEHOLDER, it) }
     }
   }
 
@@ -128,8 +127,8 @@ constructor(bus: RxBus,
 
     val info = model.trackInfo
 
-    if (info != null) {
-      builder.setContentTitle(info.title).setContentText(info.artist).setSubText(info.album)
+    info?.let {
+      builder.setContentTitle(it.title).setContentText(it.artist).setSubText(it.album)
     }
 
     builder.setContentIntent(getPendingIntent(OPEN, context))
@@ -157,9 +156,7 @@ constructor(bus: RxBus,
 
   fun cancelNotification(notificationId: Int) {
     notificationManager.cancel(notificationId)
-    if (hooks != null) {
-      hooks!!.stop()
-    }
+    hooks?.stop()
   }
 
   fun setForegroundHooks(hooks: ForegroundHooks) {

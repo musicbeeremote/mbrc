@@ -1,34 +1,25 @@
 package com.kelsos.mbrc.services
 
-import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.data.Page
-import com.kelsos.mbrc.data.SocketMessage
-import io.reactivex.Emitter
+import com.kelsos.mbrc.extensions.toPage
+import com.kelsos.mbrc.repository.ConnectionRepository
+import com.kelsos.mbrc.utilities.SettingsManager
 import io.reactivex.Observable
-import java.io.IOException
 import javax.inject.Inject
 
 class NowPlayingServiceImpl
 @Inject
-constructor() : ServiceBase(), NowPlayingService {
+constructor(
+    repository: ConnectionRepository,
+    private val mapper: ObjectMapper,
+    settingsManager: SettingsManager
+) : ServiceBase(repository, mapper, settingsManager), NowPlayingService {
 
   override fun getNowPlaying(offset: Int, limit: Int): Observable<Page<NowPlaying>> {
     val range = getPageRange(offset, limit)
-    return request(Protocol.NowPlayingList, range ?: "").flatMap { this.getPageObservable(it) }
-  }
-
-  private fun getPageObservable(socketMessage: SocketMessage): Observable<Page<NowPlaying>> {
-    return Observable.create<Page<NowPlaying>> { emitter ->
-      try {
-        val typeReference = object : TypeReference<Page<NowPlaying>>() {}
-        val page = mapper.readValue<Page<NowPlaying>>(socketMessage.data as String, typeReference)
-        emitter.onNext(page)
-        emitter.onComplete()
-      } catch (e: IOException) {
-        emitter.onError(e)
-      }
-    }
+    return request(Protocol.NowPlayingList, range).flatMap { it.toPage<NowPlaying>(mapper) }
   }
 }
