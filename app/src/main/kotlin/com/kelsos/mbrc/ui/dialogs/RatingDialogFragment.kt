@@ -11,7 +11,7 @@ import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.RatingChanged
+import com.kelsos.mbrc.events.RatingChanged
 import com.kelsos.mbrc.model.MainDataModel
 import toothpick.Scope
 import toothpick.Toothpick

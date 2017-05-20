@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
-import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.MenuItemCompat
 import android.support.v7.widget.ShareActionProvider
@@ -29,10 +28,10 @@ import com.kelsos.mbrc.annotations.Repeat
 import com.kelsos.mbrc.annotations.Repeat.Mode
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
-import com.kelsos.mbrc.events.ui.OnMainFragmentOptionsInflated
-import com.kelsos.mbrc.events.ui.ShuffleChange
-import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
-import com.kelsos.mbrc.events.ui.UpdatePosition
+import com.kelsos.mbrc.events.OnMainFragmentOptionsInflated
+import com.kelsos.mbrc.events.ShuffleChange
+import com.kelsos.mbrc.events.ShuffleChange.ShuffleState
+import com.kelsos.mbrc.events.UpdatePosition
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.helper.ProgressSeekerHelper
 import com.kelsos.mbrc.helper.ProgressSeekerHelper.ProgressUpdate

@@ -15,7 +15,7 @@ import com.kelsos.mbrc.data.SocketMessage
 import com.kelsos.mbrc.events.DefaultSettingsChangedEvent
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.NotifyUser
+import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.mappers.InetAddressMapper
 import com.kelsos.mbrc.repository.ConnectionRepository
 import com.kelsos.mbrc.utilities.SocketActivityChecker

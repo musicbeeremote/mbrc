@@ -2,7 +2,7 @@ package com.kelsos.mbrc.model
 
 import com.kelsos.mbrc.data.LyricsPayload
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.events.ui.LyricsUpdatedEvent
+import com.kelsos.mbrc.events.LyricsUpdatedEvent
 import javax.inject.Inject
 import javax.inject.Singleton
 
