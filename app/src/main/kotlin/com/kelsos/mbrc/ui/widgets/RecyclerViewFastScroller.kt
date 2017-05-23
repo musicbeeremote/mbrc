@@ -15,6 +15,9 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.kelsos.mbrc.extensions.hide
+import com.kelsos.mbrc.extensions.isInvisible
+import com.kelsos.mbrc.extensions.show
 
 
 class RecyclerViewFastScroller : LinearLayout {
@@ -22,7 +25,7 @@ class RecyclerViewFastScroller : LinearLayout {
   private val TRACK_SNAP_RANGE = 5
 
   private var bubble: TextView? = null
-  private var handle: View? = null
+  private lateinit var handle: View
   private var recyclerView: RecyclerView? = null
   private var inHeight: Int = 0
   private var isInitialized = false
@@ -64,8 +67,7 @@ class RecyclerViewFastScroller : LinearLayout {
     val inflater = LayoutInflater.from(context)
     inflater.inflate(layoutResId, this, true)
     bubble = findViewById(bubbleResId) as TextView
-    if (bubble != null)
-      bubble!!.visibility = View.INVISIBLE
+    bubble.hide()
     handle = findViewById(handleResId)
   }
 
@@ -77,15 +79,21 @@ class RecyclerViewFastScroller : LinearLayout {
 
   override fun onTouchEvent(event: MotionEvent): Boolean {
     val action = event.action
+
     when (action) {
       MotionEvent.ACTION_DOWN -> {
-        if (event.x < handle!!.x - ViewCompat.getPaddingStart(handle))
+        if (event.x < handle.x - ViewCompat.getPaddingStart(handle)) {
           return false
-        if (currentAnimator != null)
-          currentAnimator!!.cancel()
-        if (bubble != null && bubble!!.visibility == View.INVISIBLE)
+        }
+
+        currentAnimator?.cancel()
+
+        if (bubble.isInvisible()) {
           showBubble()
-        handle!!.isSelected = true
+        }
+
+        handle.isSelected = true
+
         val y = event.y
         setBubbleAndHandlePosition(y)
         setRecyclerViewPosition(y)
@@ -98,7 +106,7 @@ class RecyclerViewFastScroller : LinearLayout {
         return true
       }
       MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-        handle!!.isSelected = false
+        handle.isSelected = false
         hideBubble()
         return true
       }
@@ -107,40 +115,42 @@ class RecyclerViewFastScroller : LinearLayout {
   }
 
   fun setRecyclerView(recyclerView: RecyclerView) {
-    if (this.recyclerView !== recyclerView) {
-      if (this.recyclerView != null)
-        this.recyclerView!!.removeOnScrollListener(onScrollListener)
-      this.recyclerView = recyclerView
-      if (this.recyclerView == null)
-        return
-      recyclerView.addOnScrollListener(onScrollListener)
+    if (this.recyclerView === recyclerView) {
+      return
     }
+
+    this.recyclerView?.removeOnScrollListener(onScrollListener)
+    this.recyclerView = recyclerView
+    if (this.recyclerView == null)
+      return
+    recyclerView.addOnScrollListener(onScrollListener)
   }
 
   override fun onDetachedFromWindow() {
     super.onDetachedFromWindow()
-    if (recyclerView != null) {
-      recyclerView!!.removeOnScrollListener(onScrollListener)
-      recyclerView = null
-    }
+    recyclerView?.removeOnScrollListener(onScrollListener)
+    recyclerView = null
   }
 
   private fun setRecyclerViewPosition(y: Float) {
-    if (recyclerView != null) {
-      val itemCount = recyclerView!!.adapter.itemCount
-      val proportion: Float
-      if (handle!!.y == 0F)
-        proportion = 0f
-      else if (handle!!.y + handle!!.height >= inHeight - TRACK_SNAP_RANGE)
+
+    val recyclerView = this.recyclerView ?: return
+
+    val itemCount = recyclerView.adapter.itemCount
+    val proportion: Float
+
+    if (handle.y == 0F) {
+      proportion = 0f
+    } else {
+      if (handle.y + handle.height >= inHeight - TRACK_SNAP_RANGE)
         proportion = 1f
       else
         proportion = y / inHeight.toFloat()
-      val targetPos = getValueInRange(0, itemCount - 1, (proportion * itemCount.toFloat()).toInt())
-      (recyclerView!!.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(targetPos, 0)
-      val bubbleText = (recyclerView!!.adapter as BubbleTextGetter).getTextToShowInBubble(targetPos)
-      if (bubble != null)
-        bubble!!.text = bubbleText
     }
+    val targetPos = getValueInRange(0, itemCount - 1, (proportion * itemCount.toFloat()).toInt())
+    (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(targetPos, 0)
+    val bubbleText = (recyclerView.adapter as BubbleTextGetter).getTextToShowInBubble(targetPos)
+    bubble?.text = bubbleText
   }
 
   private fun getValueInRange(min: Int, max: Int, value: Int): Int {
@@ -149,54 +159,65 @@ class RecyclerViewFastScroller : LinearLayout {
   }
 
   private fun updateBubbleAndHandlePosition() {
-    if (bubble == null || handle!!.isSelected)
+    if (bubble == null || handle.isSelected) {
       return
+    }
 
-    val verticalScrollOffset = recyclerView!!.computeVerticalScrollOffset()
-    val verticalScrollRange = recyclerView!!.computeVerticalScrollRange()
+    val recyclerView = recyclerView ?: return
+
+    val verticalScrollOffset = recyclerView.computeVerticalScrollOffset()
+    val verticalScrollRange = recyclerView.computeVerticalScrollRange()
     val proportion = verticalScrollOffset.toFloat() / (verticalScrollRange.toFloat() - inHeight)
+
     setBubbleAndHandlePosition(inHeight * proportion)
   }
 
   private fun setBubbleAndHandlePosition(y: Float) {
-    val handleHeight = handle!!.height
-    handle!!.y = getValueInRange(0, inHeight - handleHeight, (y - handleHeight / 2).toInt()).toFloat()
-    if (bubble != null) {
-      val bubbleHeight = bubble!!.height
-      bubble!!.y = getValueInRange(0, inHeight - bubbleHeight - handleHeight / 2, (y - bubbleHeight).toInt()).toFloat()
+    val handleHeight = handle.height
+    handle.y = getValueInRange(0, inHeight - handleHeight, (y - handleHeight / 2).toInt()).toFloat()
+    bubble?.let {
+      val bubbleHeight = it.height
+      it.y = getValueInRange(0, inHeight - bubbleHeight - handleHeight / 2, (y - bubbleHeight).toInt()).toFloat()
     }
   }
 
   private fun showBubble() {
     if (bubble == null)
       return
-    bubble!!.visibility = View.VISIBLE
-    if (currentAnimator != null)
-      currentAnimator!!.cancel()
-    currentAnimator = ObjectAnimator.ofFloat(bubble, "alpha", 0f, 1f).setDuration(BUBBLE_ANIMATION_DURATION.toLong())
-    currentAnimator!!.start()
+
+    bubble.show()
+
+
+    currentAnimator?.cancel()
+    currentAnimator = ObjectAnimator.ofFloat(bubble, "alpha", 0f, 1f)
+        .setDuration(BUBBLE_ANIMATION_DURATION.toLong())
+        .apply { start() }
   }
 
   private fun hideBubble() {
     if (bubble == null)
       return
-    if (currentAnimator != null)
-      currentAnimator!!.cancel()
-    currentAnimator = ObjectAnimator.ofFloat(bubble, "alpha", 1f, 0f).setDuration(BUBBLE_ANIMATION_DURATION.toLong())
-    currentAnimator!!.addListener(object : AnimatorListenerAdapter() {
-      override fun onAnimationEnd(animation: Animator) {
-        super.onAnimationEnd(animation)
-        bubble!!.visibility = View.INVISIBLE
-        currentAnimator = null
-      }
+    currentAnimator?.cancel()
+    currentAnimator = ObjectAnimator.ofFloat(bubble, "alpha", 1f, 0f)
+        .setDuration(BUBBLE_ANIMATION_DURATION.toLong())
+        .apply {
+          addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+              super.onAnimationEnd(animation)
+              bubble.hide()
+              currentAnimator = null
+            }
 
-      override fun onAnimationCancel(animation: Animator) {
-        super.onAnimationCancel(animation)
-        bubble!!.visibility = View.INVISIBLE
-        currentAnimator = null
-      }
-    })
-    currentAnimator!!.start()
+            override fun onAnimationCancel(animation: Animator) {
+              super.onAnimationCancel(animation)
+              bubble.hide()
+              currentAnimator = null
+            }
+          })
+          start()
+        }
+
   }
 
 }
+

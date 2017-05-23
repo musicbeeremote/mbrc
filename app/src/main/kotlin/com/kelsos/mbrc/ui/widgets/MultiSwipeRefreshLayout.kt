@@ -17,7 +17,6 @@ package com.kelsos.mbrc.ui.widgets
  */
 
 import android.content.Context
-import android.support.v4.view.ViewCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.AttributeSet
 import android.view.View
@@ -32,11 +31,9 @@ class MultiSwipeRefreshLayout : SwipeRefreshLayout {
 
   private lateinit var swipeableChildren: Array<View?>
 
-  constructor(context: Context) : super(context) {
-  }
+  constructor(context: Context) : super(context)
 
-  constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-  }
+  constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
   /**
    * Set the children which can trigger a refresh by swiping down when they are visible. These
@@ -66,13 +63,13 @@ class MultiSwipeRefreshLayout : SwipeRefreshLayout {
   override fun canChildScrollUp(): Boolean {
     if (swipeableChildren.isNotEmpty()) {
       // Iterate through the scrollable children and check if any of them can not scroll up
-      for (view in swipeableChildren) {
-        if (view != null && view.isShown && !canViewScrollUp(view)) {
-          // If the view is shown, and can not scroll upwards, return false and start the
-          // gesture.
-          return false
-        }
-      }
+      swipeableChildren
+          .filter { it != null && it.isShown && !canViewScrollUp(it) }
+          .forEach {
+            // If the view is shown, and can not scroll upwards, return false and start the
+            // gesture.
+            return false
+          }
     }
     return true
   }
@@ -83,19 +80,15 @@ class MultiSwipeRefreshLayout : SwipeRefreshLayout {
    * needed.
    */
   private fun canViewScrollUp(view: View): Boolean {
-    if (android.os.Build.VERSION.SDK_INT >= 14) {
-      // For ICS and above we can call canScrollVertically() to determine this
-      return ViewCompat.canScrollVertically(view, -1)
+    if (view is AbsListView) {
+      // Pre-ICS we need to manually check the first visible item and the child view's top
+      // value
+      val listView = view
+      return listView.childCount > 0 && (listView.firstVisiblePosition > 0 || listView.getChildAt(0).top < listView.getPaddingTop())
     } else {
-      if (view is AbsListView) {
-        // Pre-ICS we need to manually check the first visible item and the child view's top
-        // value
-        val listView = view
-        return listView.childCount > 0 && (listView.firstVisiblePosition > 0 || listView.getChildAt(0).top < listView.getPaddingTop())
-      } else {
-        // For all other view types we just check the getScrollY() value
-        return view.scrollY > 0
-      }
+      // For all other view types we just check the getScrollY() value
+      return view.scrollY > 0
     }
+
   }
 }
