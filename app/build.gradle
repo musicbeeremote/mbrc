@@ -348,3 +348,16 @@ task jacocoTestReport(type: JacocoReport,
   executionData = fileTree(dir: "$buildDir", includes: ["**/*.exec",
                                                         "**/*.ec"])
 }
+
+
+
+// Temporary Test Workaround #https://youtrack.jetbrains.com/issue/KT-17951
+task copyTestClasses(type: Copy) {
+  from "build/tmp/kotlin-classes/githubDebugUnitTest"
+  into "build/intermediates/classes/github/debug"
+}
+
+task copySdkClasses(type: Copy) {
+  from "build/tmp/kotlin-classes/githubDebug"
+  into "build/intermediates/classes/github/debug"
+}
