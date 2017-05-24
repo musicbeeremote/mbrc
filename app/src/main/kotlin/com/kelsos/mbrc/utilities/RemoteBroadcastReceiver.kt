@@ -17,7 +17,10 @@ import com.kelsos.mbrc.events.bus.RxBus
 import javax.inject.Inject
 
 class RemoteBroadcastReceiver
-@Inject constructor(private val settingsManager: SettingsManager, private val bus: RxBus) : BroadcastReceiver() {
+@Inject constructor(
+    private val settingsManager: SettingsManager,
+    private val bus: RxBus
+) : BroadcastReceiver() {
 
   /**
    * Initialized and installs the IntentFilter listening for the SONG_CHANGED
@@ -25,50 +28,48 @@ class RemoteBroadcastReceiver
    * Android operating system.
    */
   fun filter(): IntentFilter {
-    val filter = IntentFilter()
-    filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED)
-    filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION)
-    filter.addAction(RemoteViewIntentBuilder.REMOTE_PLAY_PRESSED)
-    filter.addAction(RemoteViewIntentBuilder.REMOTE_NEXT_PRESSED)
-    filter.addAction(RemoteViewIntentBuilder.REMOTE_CLOSE_PRESSED)
-    filter.addAction(RemoteViewIntentBuilder.REMOTE_PREVIOUS_PRESSED)
-    filter.addAction(RemoteViewIntentBuilder.CANCELLED_NOTIFICATION)
-    return filter
+    return IntentFilter().apply {
+      addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED)
+      addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION)
+      addAction(RemoteViewIntentBuilder.PLAY_PRESSED)
+      addAction(RemoteViewIntentBuilder.NEXT_PRESSED)
+      addAction(RemoteViewIntentBuilder.CLOSE_PRESSED)
+      addAction(RemoteViewIntentBuilder.PREVIOUS_PRESSED)
+      addAction(RemoteViewIntentBuilder.CANCELLED_NOTIFICATION)
+    }
   }
 
   override fun onReceive(context: Context, intent: Intent) {
-    if (TelephonyManager.ACTION_PHONE_STATE_CHANGED == intent.action) {
-      val bundle = intent.extras ?: return
-      val state = bundle.getString(TelephonyManager.EXTRA_STATE)
-      if (TelephonyManager.EXTRA_STATE_RINGING.equals(state!!, ignoreCase = true)) {
+    when {
+      TelephonyManager.ACTION_PHONE_STATE_CHANGED == intent.action -> onPhoneStateChange(intent)
+      WifiManager.NETWORK_STATE_CHANGED_ACTION == intent.action -> onWifiChange(intent)
+      RemoteViewIntentBuilder.PLAY_PRESSED == intent.action -> postAction(UserAction(Protocol.PlayerPlayPause, true))
+      RemoteViewIntentBuilder.NEXT_PRESSED == intent.action -> postAction(UserAction(Protocol.PlayerNext, true))
+      RemoteViewIntentBuilder.CLOSE_PRESSED == intent.action -> bus.post(MessageEvent(UserInputEventType.CancelNotification))
+      RemoteViewIntentBuilder.PREVIOUS_PRESSED == intent.action -> postAction(UserAction(Protocol.PlayerPrevious, true))
+      RemoteViewIntentBuilder.CANCELLED_NOTIFICATION == intent.action -> context.stopService(Intent(context, RemoteService::class.java))
+    }
+  }
 
-        when (settingsManager.getCallAction()) {
-          SettingsManager.PAUSE -> postAction(UserAction(Protocol.PlayerPause, true))
-          SettingsManager.STOP -> postAction(UserAction(Protocol.PlayerStop, true))
-          SettingsManager.NONE -> {
-          }
-          SettingsManager.REDUCE -> bus.post(MessageEvent(ProtocolEventType.ReduceVolume))
-          else -> {
-          }
-        }
+  private fun onWifiChange(intent: Intent) {
+    val networkInfo = intent.getParcelableExtra<NetworkInfo>(WifiManager.EXTRA_NETWORK_INFO)
+    if (networkInfo.state == NetworkInfo.State.CONNECTED) {
+      bus.post(MessageEvent(UserInputEventType.StartConnection))
+    }
+  }
+
+  private fun onPhoneStateChange(intent: Intent) {
+    val bundle = intent.extras ?: return
+    val state = bundle.getString(TelephonyManager.EXTRA_STATE)
+    if (TelephonyManager.EXTRA_STATE_RINGING.equals(state!!, ignoreCase = true)) {
+
+      when (settingsManager.getCallAction()) {
+        SettingsManager.PAUSE -> postAction(UserAction(Protocol.PlayerPause, true))
+        SettingsManager.STOP -> postAction(UserAction(Protocol.PlayerStop, true))
+        SettingsManager.NONE -> Unit
+        SettingsManager.REDUCE -> bus.post(MessageEvent(ProtocolEventType.ReduceVolume))
+        else -> Unit
       }
-    } else if (WifiManager.NETWORK_STATE_CHANGED_ACTION == intent.action) {
-      val networkInfo = intent.getParcelableExtra<NetworkInfo>(WifiManager.EXTRA_NETWORK_INFO)
-      if (networkInfo.state == NetworkInfo.State.CONNECTED) {
-        bus.post(MessageEvent(UserInputEventType.StartConnection))
-      } else //noinspection StatementWithEmptyBody
-        if (NetworkInfo.State.DISCONNECTING == networkInfo.state) {
-        }
-    } else if (RemoteViewIntentBuilder.REMOTE_PLAY_PRESSED == intent.action) {
-      postAction(UserAction(Protocol.PlayerPlayPause, true))
-    } else if (RemoteViewIntentBuilder.REMOTE_NEXT_PRESSED == intent.action) {
-      postAction(UserAction(Protocol.PlayerNext, true))
-    } else if (RemoteViewIntentBuilder.REMOTE_CLOSE_PRESSED == intent.action) {
-      bus.post(MessageEvent(UserInputEventType.CancelNotification))
-    } else if (RemoteViewIntentBuilder.REMOTE_PREVIOUS_PRESSED == intent.action) {
-      postAction(UserAction(Protocol.PlayerPrevious, true))
-    } else if (RemoteViewIntentBuilder.CANCELLED_NOTIFICATION == intent.action) {
-      context.stopService(Intent(context, RemoteService::class.java))
     }
   }
 
