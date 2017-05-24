@@ -18,8 +18,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class RemoteBroadcastReceiver
-@Inject
-constructor(
+@Inject constructor(
   private val settingsManager: SettingsManager,
   private val bus: RxBus
 ) : BroadcastReceiver() {
@@ -38,10 +37,10 @@ constructor(
       if (hasPermission && handleCallAction) {
         addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED)
       }
-      addAction(RemoteViewIntentBuilder.REMOTE_PLAY_PRESSED)
-      addAction(RemoteViewIntentBuilder.REMOTE_NEXT_PRESSED)
-      addAction(RemoteViewIntentBuilder.REMOTE_CLOSE_PRESSED)
-      addAction(RemoteViewIntentBuilder.REMOTE_PREVIOUS_PRESSED)
+      addAction(RemoteViewIntentBuilder.PLAY_PRESSED)
+      addAction(RemoteViewIntentBuilder.NEXT_PRESSED)
+      addAction(RemoteViewIntentBuilder.CLOSE_PRESSED)
+      addAction(RemoteViewIntentBuilder.PREVIOUS_PRESSED)
       addAction(RemoteViewIntentBuilder.CANCELLED_NOTIFICATION)
     }
   }
@@ -57,16 +56,16 @@ constructor(
           handleRinging()
         }
       }
-      RemoteViewIntentBuilder.REMOTE_PLAY_PRESSED -> {
+      RemoteViewIntentBuilder.PLAY_PRESSED -> {
         postAction(UserAction(Protocol.PlayerPlayPause, true))
       }
-      RemoteViewIntentBuilder.REMOTE_NEXT_PRESSED -> {
+      RemoteViewIntentBuilder.NEXT_PRESSED -> {
         postAction(UserAction(Protocol.PlayerNext, true))
       }
-      RemoteViewIntentBuilder.REMOTE_CLOSE_PRESSED -> {
+      RemoteViewIntentBuilder.CLOSE_PRESSED -> {
         bus.post(MessageEvent(UserInputEventType.CancelNotification))
       }
-      RemoteViewIntentBuilder.REMOTE_PREVIOUS_PRESSED -> {
+      RemoteViewIntentBuilder.PREVIOUS_PRESSED -> {
         postAction(UserAction(Protocol.PlayerPrevious, true))
       }
       RemoteViewIntentBuilder.CANCELLED_NOTIFICATION -> {
