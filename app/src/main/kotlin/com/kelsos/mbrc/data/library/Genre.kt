@@ -14,13 +14,15 @@ import com.raizlabs.android.dbflow.annotation.Table
 
 @JsonPropertyOrder("genre", "count")
 @Table(name = "genre", database = RemoteDatabase::class)
-data class Genre(@JsonProperty("genre")
-                 @Column
-                 var genre: String? = null,
-                 @JsonProperty("count")
-                 @Column
-                 var count: Int = 0,
-                 @JsonIgnore
-                 @Column
-                 @PrimaryKey(autoincrement = true)
-                 var id: Long = 0) : Data
+data class Genre(
+    @JsonProperty("genre")
+    @Column
+    var genre: String? = null,
+    @JsonProperty("count")
+    @Column
+    var count: Int = 0,
+    @JsonIgnore
+    @Column
+    @PrimaryKey(autoincrement = true)
+    var id: Long = 0
+) : Data

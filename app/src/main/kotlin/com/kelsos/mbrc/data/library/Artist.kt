@@ -9,13 +9,15 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey
 import com.raizlabs.android.dbflow.annotation.Table
 
 @Table(name = "artist", database = RemoteDatabase::class)
-data class Artist(@JsonProperty("artist")
-                  @Column
-                  var artist: String? = null,
-                  @JsonProperty("count")
-                  @Column
-                  var count: Int = 0,
-                  @JsonIgnore
-                  @Column
-                  @PrimaryKey(autoincrement = true)
-                  var id: Long = 0) : Data
+data class Artist(
+    @JsonProperty("artist")
+    @Column
+    var artist: String? = null,
+    @JsonProperty("count")
+    @Column
+    var count: Int = 0,
+    @JsonIgnore
+    @Column
+    @PrimaryKey(autoincrement = true)
+    var id: Long = 0
+) : Data
