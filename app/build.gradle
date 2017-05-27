@@ -315,7 +315,7 @@ kapt {
 }
 
 task jacocoTestReport(type: JacocoReport,
-    dependsOn: ['testGithubDebugUnitTest', 'createGithubDebugCoverageReport']) {
+    dependsOn: ['testGithubDebugUnitTest'/*, 'createGithubDebugCoverageReport'*/]) {
   group = "Reporting"
   description "Generate jacoco coverage reports"
 
