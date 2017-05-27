@@ -12,14 +12,10 @@ import android.view.ViewGroup
  */
 abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : RecyclerView.Adapter<VH>() {
 
-  private val mHeaderLocationMap: ArrayMap<Int, Int>
+  private val mHeaderLocationMap: ArrayMap<Int, Int> = ArrayMap<Int, Int>()
   private var mLayoutManager: GridLayoutManager? = null
   private val mSpanMap: ArrayMap<Int, Int>? = null
   private var mShowHeadersForEmptySections: Boolean = false
-
-  init {
-    mHeaderLocationMap = ArrayMap<Int, Int>()
-  }
 
   abstract val sectionCount: Int
 
@@ -35,7 +31,7 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : Recy
 
   /**
    * Instructs the list view adapter to whether show headers for empty sections or not.
-
+   *
    * @param show flag indicating whether headers for empty sections ought to be shown.
    */
   fun shouldShowHeadersForEmptySections(show: Boolean) {
@@ -44,29 +40,38 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : Recy
 
   fun setLayoutManager(lm: GridLayoutManager?) {
     mLayoutManager = lm
-    if (lm == null) return
+    if (lm == null) {
+      return
+    }
+
     lm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
       override fun getSpanSize(position: Int): Int {
-        if (isHeader(position)) return mLayoutManager!!.spanCount
+        val layoutManager = mLayoutManager ?: throw RuntimeException("layoutManager was null")
+        if (isHeader(position)) {
+          return layoutManager.spanCount
+        }
         val sectionAndPos = getSectionIndexAndRelativePosition(position)
         val absPos = position - (sectionAndPos[0] + 1)
-        return getRowSpan(mLayoutManager!!.spanCount, sectionAndPos[0], sectionAndPos[1], absPos)
+        return getRowSpan(layoutManager.spanCount, sectionAndPos[0], sectionAndPos[1], absPos)
       }
     }
   }
 
   @Suppress("UNUSED_PARAMETER")
-  protected fun getRowSpan(fullSpanSize: Int, section: Int, relativePosition: Int, absolutePosition: Int): Int {
-    return 1
-  }
+  protected fun getRowSpan(
+      fullSpanSize: Int,
+      section: Int,
+      relativePosition: Int,
+      absolutePosition: Int
+  ): Int = 1
 
   // returns section along with offsetted position
   private fun getSectionIndexAndRelativePosition(itemPosition: Int): IntArray {
     synchronized(mHeaderLocationMap) {
       var lastSectionIndex: Int = -1
       mHeaderLocationMap.keys
-              .takeWhile { itemPosition > it }
-              .forEach { lastSectionIndex = it }
+          .takeWhile { itemPosition > it }
+          .forEach { lastSectionIndex = it }
       return intArrayOf(mHeaderLocationMap[lastSectionIndex] ?: -1, itemPosition - lastSectionIndex - 1)
     }
   }
@@ -145,13 +150,12 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : Recy
    * @hide
    * *
    */
-  @Deprecated("")
+  @Deprecated("Shouldn't be used", replaceWith = ReplaceWith("onBindViewHolder(VH,Int,Int,Int)"))
   override fun onBindViewHolder(holder: VH, position: Int, payloads: List<Any>?) {
     super.onBindViewHolder(holder, position, payloads)
   }
 
   companion object {
-
     const val VIEW_TYPE_HEADER = -2
     const val VIEW_TYPE_ITEM = -1
   }
