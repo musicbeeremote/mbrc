@@ -2,7 +2,6 @@ package com.kelsos.mbrc.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.annotations.SocketAction
 import com.kelsos.mbrc.annotations.SocketAction.Action
 import com.kelsos.mbrc.annotations.SocketAction.RESET
 import com.kelsos.mbrc.annotations.SocketAction.RETRY
@@ -89,41 +88,49 @@ constructor(
     }
   }
 
-  fun socketManager(@Action action: Int) {
-    Timber.v("Received action ${SocketAction.name(action)}")
-    when (action) {
-      RESET -> {
-        shouldStop = false
-        resetState()
-        startSocket()
-        cleanupSocket()
-      }
-      START -> {
-        if (isConnected() || connecting) {
-          return
-        }
-        connecting = true
-        startSocket()
-      }
-      RETRY -> {
-        startSocket()
-        cleanupSocket()
+  fun socketManager(@Action action: Int) = when (action) {
+    RESET -> reset()
+    START -> start()
+    RETRY -> retry()
+    STOP -> stop()
+    TERMINATE -> terminate()
+    else -> throw IllegalArgumentException("There is no such action")
+  }
 
-        if (shouldStop) {
-          resetState()
-          return
-        }
-      }
-      STOP -> shouldStop = true
-      TERMINATE -> {
-        context.cancelChildren()
-        shouldStop = true
-        cleanupSocket()
-        resetState()
-      }
-      else -> {
-      }
+  private fun terminate() {
+    context.cancelChildren()
+    shouldStop = true
+    cleanupSocket()
+    resetState()
+  }
+
+  private fun stop() {
+    shouldStop = true
+  }
+
+  private fun retry() {
+    startSocket()
+    cleanupSocket()
+
+    if (shouldStop) {
+      resetState()
+      return
     }
+  }
+
+  private fun start() {
+    if (isConnected() || connecting) {
+      return
+    }
+    connecting = true
+    startSocket()
+  }
+
+  private fun reset() {
+    shouldStop = false
+    resetState()
+    startSocket()
+    cleanupSocket()
   }
 
   private fun resetState() {
@@ -146,8 +153,10 @@ constructor(
       return
     }
     try {
-      output?.flush()
-      output?.close()
+      output?.let {
+        it.flush()
+        it.close()
+      }
       output = null
       socket?.close()
       socket = null
@@ -157,15 +166,22 @@ constructor(
 
   @Synchronized
   fun sendData(message: SocketMessage) {
+    if (!isConnected()) {
+      return
+    }
     try {
-      if (isConnected()) {
-        output!!.print(mapper.writeValueAsString(message) + Const.NEWLINE)
-        if (output!!.checkError()) {
-          throw Exception("Check error")
-        }
-      }
+      writeToOutput(message)
     } catch (ignored: Exception) {
       Timber.d(ignored, "Send failed")
+    }
+  }
+
+  private fun writeToOutput(message: SocketMessage) {
+    output?.let {
+      it.print(mapper.writeValueAsString(message) + Const.NEWLINE)
+      if (it.checkError()) {
+        throw Exception("Check error")
+      }
     }
   }
 
@@ -174,7 +190,8 @@ constructor(
     socketManager(RESET)
   }
 
-  private inner class SocketConnection(connectionSettings: ConnectionSettings) :
+  private inner class SocketConnection
+  (connectionSettings: ConnectionSettings) :
     Runnable {
     private val socketAddress: SocketAddress?
     private val mapper: InetAddressMapper = InetAddressMapper()
@@ -191,11 +208,17 @@ constructor(
       }
       val input: BufferedReader
       try {
-        socket = Socket()
-        socket!!.connect(socketAddress)
-        val out = OutputStreamWriter(socket!!.outputStream, Const.UTF_8)
+        socket = Socket().apply {
+          soTimeout = 20000
+          connect(socketAddress)
+        }
+
+        val outputStream = socket?.outputStream
+        val out = OutputStreamWriter(outputStream, Const.UTF_8)
         output = PrintWriter(BufferedWriter(out, SOCKET_BUFFER), true)
-        val inputStreamReader = InputStreamReader(socket!!.inputStream, Const.UTF_8)
+
+        val inputStream = socket?.inputStream
+        val inputStreamReader = InputStreamReader(inputStream, Const.UTF_8)
         input = BufferedReader(inputStreamReader, SOCKET_BUFFER)
 
         val socketStatus = socket!!.isConnected.toString()

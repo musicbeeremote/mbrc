@@ -1,27 +1,22 @@
 package com.kelsos.mbrc.controller
 
-import android.app.Application
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import timber.log.Timber
-import toothpick.Scope
-import toothpick.Toothpick
 import java.util.HashMap
 import java.util.concurrent.LinkedBlockingQueue
 import javax.inject.Inject
 
 class RemoteController
-@Inject
-constructor(bus: RxBus, app: Application) : Runnable {
-  private val scope: Scope
+@Inject constructor(bus: RxBus) : Runnable {
+
   private var commandMap: MutableMap<String, ICommand>
-  private val eventQueue: LinkedBlockingQueue<IEvent> = LinkedBlockingQueue<IEvent>()
+  private val eventQueue: LinkedBlockingQueue<IEvent> = LinkedBlockingQueue()
 
   init {
     bus.register(this, MessageEvent::class.java) { this.handleUserActionEvents(it) }
-    scope = Toothpick.openScope(app)
     commandMap = HashMap<String, ICommand>()
   }
 
