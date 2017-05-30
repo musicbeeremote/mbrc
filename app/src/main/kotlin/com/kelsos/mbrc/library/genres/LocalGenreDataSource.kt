@@ -1,10 +1,9 @@
-package com.kelsos.mbrc.repository.data
+package com.kelsos.mbrc.library.genres
 
 import com.kelsos.mbrc.data.db.RemoteDatabase
-import com.kelsos.mbrc.data.library.Genre
-import com.kelsos.mbrc.data.library.Genre_Table
-import com.kelsos.mbrc.data.library.Genre_Table.genre
 import com.kelsos.mbrc.extensions.escapeLike
+import com.kelsos.mbrc.library.genres.Genre_Table.genre
+import com.kelsos.mbrc.repository.data.LocalDataSource
 import com.raizlabs.android.dbflow.kotlinextensions.database
 import com.raizlabs.android.dbflow.kotlinextensions.delete
 import com.raizlabs.android.dbflow.kotlinextensions.from

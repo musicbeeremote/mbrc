@@ -1,10 +1,10 @@
-package com.kelsos.mbrc.services
+package com.kelsos.mbrc.library
 
 import com.kelsos.mbrc.data.Page
-import com.kelsos.mbrc.data.library.Album
-import com.kelsos.mbrc.data.library.Artist
-import com.kelsos.mbrc.data.library.Genre
-import com.kelsos.mbrc.data.library.Track
+import com.kelsos.mbrc.library.albums.Album
+import com.kelsos.mbrc.library.artists.Artist
+import com.kelsos.mbrc.library.genres.Genre
+import com.kelsos.mbrc.library.tracks.Track
 import io.reactivex.Observable
 
 interface LibraryService {

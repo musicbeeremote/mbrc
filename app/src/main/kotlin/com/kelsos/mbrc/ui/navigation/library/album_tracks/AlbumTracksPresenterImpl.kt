@@ -2,7 +2,7 @@ package com.kelsos.mbrc.ui.navigation.library.album_tracks
 
 import com.kelsos.mbrc.domain.AlbumInfo
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.repository.TrackRepository
+import com.kelsos.mbrc.library.tracks.TrackRepository
 import timber.log.Timber
 import javax.inject.Inject
 

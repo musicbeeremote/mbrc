@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.data.library
+package com.kelsos.mbrc.library.albums
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -8,11 +8,14 @@ import com.raizlabs.android.dbflow.annotation.Column
 import com.raizlabs.android.dbflow.annotation.PrimaryKey
 import com.raizlabs.android.dbflow.annotation.Table
 
-@Table(name = "artist", database = RemoteDatabase::class)
-data class Artist(
+@Table(name = "album", database = RemoteDatabase::class)
+data class Album(
     @JsonProperty("artist")
     @Column
     var artist: String? = null,
+    @JsonProperty("album")
+    @Column
+    var album: String? = null,
     @JsonProperty("count")
     @Column
     var count: Int = 0,
