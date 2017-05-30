@@ -1,9 +1,9 @@
-package com.kelsos.mbrc.repository.data
+package com.kelsos.mbrc.playlists
 
-import com.kelsos.mbrc.data.Playlist
 import com.kelsos.mbrc.data.Playlist_Table.name
 import com.kelsos.mbrc.data.db.RemoteDatabase
 import com.kelsos.mbrc.extensions.escapeLike
+import com.kelsos.mbrc.repository.data.LocalDataSource
 import com.raizlabs.android.dbflow.kotlinextensions.database
 import com.raizlabs.android.dbflow.kotlinextensions.delete
 import com.raizlabs.android.dbflow.kotlinextensions.from

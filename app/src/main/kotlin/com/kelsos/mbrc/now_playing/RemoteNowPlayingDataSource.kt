@@ -1,7 +1,6 @@
-package com.kelsos.mbrc.repository.data
+package com.kelsos.mbrc.now_playing
 
-import com.kelsos.mbrc.data.NowPlaying
-import com.kelsos.mbrc.services.NowPlayingService
+import com.kelsos.mbrc.repository.data.RemoteDataSource
 import io.reactivex.Observable
 import javax.inject.Inject
 

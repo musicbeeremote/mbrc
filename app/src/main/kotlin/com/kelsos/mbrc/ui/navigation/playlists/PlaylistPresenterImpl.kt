@@ -1,12 +1,12 @@
 package com.kelsos.mbrc.ui.navigation.playlists
 
 import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.data.Playlist
+import com.kelsos.mbrc.playlists.Playlist
 import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.repository.PlaylistRepository
+import com.kelsos.mbrc.playlists.PlaylistRepository
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Scheduler
 import io.reactivex.Single

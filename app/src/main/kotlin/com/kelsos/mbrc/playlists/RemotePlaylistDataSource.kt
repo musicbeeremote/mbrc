@@ -1,7 +1,6 @@
-package com.kelsos.mbrc.repository.data
+package com.kelsos.mbrc.playlists
 
-import com.kelsos.mbrc.data.Playlist
-import com.kelsos.mbrc.services.PlaylistService
+import com.kelsos.mbrc.repository.data.RemoteDataSource
 import io.reactivex.Observable
 import javax.inject.Inject
 
