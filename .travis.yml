@@ -62,8 +62,8 @@ cache:
 
 # Emulator Management: Create, Start and Wait
 before_script:
-  - echo no | android create avd --force -n test -t "android-"$ANDROID_EMULATOR_API_LEVEL --abi $ANDROID_ABI # --tag $ANDROID_TAG
-  - emulator -avd test -no-audio -no-window &
+        #  - echo no | android create avd --force -n test -t "android-"$ANDROID_EMULATOR_API_LEVEL --abi $ANDROID_ABI # --tag $ANDROID_TAG
+        #  - emulator -avd test -no-audio -no-window &
 
 script:
   #- android-wait-for-emulator
