@@ -1,8 +1,5 @@
-package com.kelsos.mbrc.repository
+package com.kelsos.mbrc.now_playing
 
-import com.kelsos.mbrc.data.NowPlaying
-import com.kelsos.mbrc.repository.data.LocalNowPlayingDataSource
-import com.kelsos.mbrc.repository.data.RemoteNowPlayingDataSource
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Completable
 import io.reactivex.Single

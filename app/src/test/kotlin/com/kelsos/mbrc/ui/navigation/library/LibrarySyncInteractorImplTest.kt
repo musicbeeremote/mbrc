@@ -8,7 +8,7 @@ import com.kelsos.mbrc.library.albums.AlbumRepository
 import com.kelsos.mbrc.library.artists.ArtistRepository
 import com.kelsos.mbrc.library.genres.GenreRepository
 import com.kelsos.mbrc.library.tracks.TrackRepository
-import com.kelsos.mbrc.repository.PlaylistRepository
+import com.kelsos.mbrc.playlists.PlaylistRepository
 import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.Single

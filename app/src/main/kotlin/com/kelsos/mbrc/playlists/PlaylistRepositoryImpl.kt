@@ -1,8 +1,5 @@
-package com.kelsos.mbrc.repository
+package com.kelsos.mbrc.playlists
 
-import com.kelsos.mbrc.data.Playlist
-import com.kelsos.mbrc.repository.data.LocalPlaylistDataSource
-import com.kelsos.mbrc.repository.data.RemotePlaylistDataSource
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Completable
 import io.reactivex.Single
