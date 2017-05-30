@@ -13,7 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.PlaylistAdapter
 import com.kelsos.mbrc.adapters.PlaylistAdapter.OnPlaylistPressedListener
-import com.kelsos.mbrc.data.Playlist
+import com.kelsos.mbrc.playlists.Playlist
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout

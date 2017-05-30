@@ -16,8 +16,8 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.domain.TrackInfo
+import com.kelsos.mbrc.now_playing.NowPlaying
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper

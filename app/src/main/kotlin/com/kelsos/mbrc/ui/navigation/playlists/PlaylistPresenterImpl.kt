@@ -5,7 +5,7 @@ import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.repository.PlaylistRepository
+import com.kelsos.mbrc.playlists.PlaylistRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

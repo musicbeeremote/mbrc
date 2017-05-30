@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
-import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
+import com.kelsos.mbrc.now_playing.NowPlaying
 import com.raizlabs.android.dbflow.list.FlowCursorList
 
 interface NowPlayingView : BaseView {

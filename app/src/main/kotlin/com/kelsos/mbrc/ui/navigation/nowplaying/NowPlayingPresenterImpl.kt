@@ -8,7 +8,7 @@ import com.kelsos.mbrc.events.TrackInfoChangeEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.repository.NowPlayingRepository
+import com.kelsos.mbrc.now_playing.NowPlayingRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

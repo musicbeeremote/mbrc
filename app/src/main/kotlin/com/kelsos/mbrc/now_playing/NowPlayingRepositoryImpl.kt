@@ -1,9 +1,6 @@
-package com.kelsos.mbrc.repository
+package com.kelsos.mbrc.now_playing
 
-import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.di.modules.AppDispatchers
-import com.kelsos.mbrc.repository.data.LocalNowPlayingDataSource
-import com.kelsos.mbrc.repository.data.RemoteNowPlayingDataSource
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion

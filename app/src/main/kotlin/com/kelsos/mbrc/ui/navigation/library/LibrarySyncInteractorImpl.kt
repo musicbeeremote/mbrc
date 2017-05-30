@@ -8,7 +8,7 @@ import com.kelsos.mbrc.library.artists.ArtistRepository
 import com.kelsos.mbrc.library.covers.CoverCache
 import com.kelsos.mbrc.library.genres.GenreRepository
 import com.kelsos.mbrc.library.tracks.TrackRepository
-import com.kelsos.mbrc.repository.PlaylistRepository
+import com.kelsos.mbrc.playlists.PlaylistRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch

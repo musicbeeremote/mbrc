@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.data.NowPlaying
+import com.kelsos.mbrc.now_playing.NowPlaying
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.TouchHelperViewHolder
