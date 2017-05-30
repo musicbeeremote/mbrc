@@ -1,10 +1,9 @@
 package com.kelsos.mbrc.now_playing
 
-import com.kelsos.mbrc.data.NowPlaying_Table
-import com.kelsos.mbrc.data.NowPlaying_Table.artist
-import com.kelsos.mbrc.data.NowPlaying_Table.title
 import com.kelsos.mbrc.data.db.RemoteDatabase
 import com.kelsos.mbrc.extensions.escapeLike
+import com.kelsos.mbrc.now_playing.NowPlaying_Table.artist
+import com.kelsos.mbrc.now_playing.NowPlaying_Table.title
 import com.kelsos.mbrc.repository.data.LocalDataSource
 import com.raizlabs.android.dbflow.kotlinextensions.database
 import com.raizlabs.android.dbflow.kotlinextensions.delete
