@@ -1,8 +1,5 @@
-package com.kelsos.mbrc.repository
+package com.kelsos.mbrc.library.artists
 
-import com.kelsos.mbrc.data.library.Artist
-import com.kelsos.mbrc.repository.data.LocalArtistDataSource
-import com.kelsos.mbrc.repository.data.RemoteArtistDataSource
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Completable
 import io.reactivex.Single

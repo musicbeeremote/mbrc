@@ -2,13 +2,17 @@ package com.kelsos.mbrc.ui.navigation.library
 
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.any
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
-import com.kelsos.mbrc.repository.AlbumRepository
-import com.kelsos.mbrc.repository.ArtistRepository
-import com.kelsos.mbrc.repository.GenreRepository
+import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.library.albums.AlbumRepository
+import com.kelsos.mbrc.library.artists.ArtistRepository
+import com.kelsos.mbrc.library.genres.GenreRepository
+import com.kelsos.mbrc.library.tracks.TrackRepository
 import com.kelsos.mbrc.repository.PlaylistRepository
-import com.kelsos.mbrc.repository.TrackRepository
+import io.reactivex.Completable
+import io.reactivex.Scheduler
+import io.reactivex.Single
+import io.reactivex.schedulers.TestScheduler
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -21,10 +25,6 @@ import org.mockito.Mockito.reset
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
-import io.reactivex.Completable
-import io.reactivex.Scheduler
-import io.reactivex.Single
-import io.reactivex.schedulers.TestScheduler
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.config.Module

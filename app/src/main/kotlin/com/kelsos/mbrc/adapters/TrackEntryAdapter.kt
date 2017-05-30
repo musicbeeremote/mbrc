@@ -13,7 +13,7 @@ import butterknife.BindString
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.data.library.Track
+import com.kelsos.mbrc.library.tracks.Track
 import com.kelsos.mbrc.extensions.count
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 import com.kelsos.mbrc.utilities.Checks.ifNotNull

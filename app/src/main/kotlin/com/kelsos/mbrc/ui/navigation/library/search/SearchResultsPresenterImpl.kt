@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.ui.navigation.library.search
 
+import com.kelsos.mbrc.library.albums.AlbumRepository
+import com.kelsos.mbrc.library.artists.ArtistRepository
+import com.kelsos.mbrc.library.genres.GenreRepository
+import com.kelsos.mbrc.library.tracks.TrackRepository
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.repository.AlbumRepository
-import com.kelsos.mbrc.repository.ArtistRepository
-import com.kelsos.mbrc.repository.GenreRepository
-import com.kelsos.mbrc.repository.TrackRepository
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.functions.Function4
