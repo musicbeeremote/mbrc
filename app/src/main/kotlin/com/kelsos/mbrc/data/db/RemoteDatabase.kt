@@ -2,10 +2,10 @@ package com.kelsos.mbrc.data.db
 
 import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.data.Playlist
-import com.kelsos.mbrc.data.library.Album
-import com.kelsos.mbrc.data.library.Artist
-import com.kelsos.mbrc.data.library.Genre
-import com.kelsos.mbrc.data.library.Track
+import com.kelsos.mbrc.library.albums.Album
+import com.kelsos.mbrc.library.artists.Artist
+import com.kelsos.mbrc.library.genres.Genre
+import com.kelsos.mbrc.library.tracks.Track
 import com.raizlabs.android.dbflow.annotation.Database
 import com.raizlabs.android.dbflow.annotation.Migration
 import com.raizlabs.android.dbflow.sql.SQLiteType

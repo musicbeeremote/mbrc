@@ -19,8 +19,8 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.annotations.Queue
-import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.helper.PopupActionHandler
+import com.kelsos.mbrc.library.artists.Artist
 import com.kelsos.mbrc.ui.navigation.library.LibraryActivity.Companion.LIBRARY_SCOPE
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.raizlabs.android.dbflow.list.FlowCursorList

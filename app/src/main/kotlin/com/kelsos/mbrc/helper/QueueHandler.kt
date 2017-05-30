@@ -5,10 +5,10 @@ import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.CoverPayload
 import com.kelsos.mbrc.data.QueuePayload
 import com.kelsos.mbrc.data.QueueResponse
-import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.library.tracks.Track
+import com.kelsos.mbrc.library.tracks.TrackRepository
 import com.kelsos.mbrc.networking.ApiBase
-import com.kelsos.mbrc.repository.TrackRepository
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject

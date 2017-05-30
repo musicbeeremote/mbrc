@@ -1,6 +1,6 @@
-package com.kelsos.mbrc.repository
+package com.kelsos.mbrc.library.tracks
 
-import com.kelsos.mbrc.data.library.Track
+import com.kelsos.mbrc.repository.Repository
 import com.raizlabs.android.dbflow.list.FlowCursorList
 
 interface TrackRepository : Repository<Track> {

@@ -3,12 +3,12 @@ package com.kelsos.mbrc.ui.navigation.library
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.repository.AlbumRepository
-import com.kelsos.mbrc.repository.ArtistRepository
-import com.kelsos.mbrc.repository.CoverCache
-import com.kelsos.mbrc.repository.GenreRepository
+import com.kelsos.mbrc.library.albums.AlbumRepository
+import com.kelsos.mbrc.library.artists.ArtistRepository
+import com.kelsos.mbrc.library.covers.CoverCache
+import com.kelsos.mbrc.library.genres.GenreRepository
+import com.kelsos.mbrc.library.tracks.TrackRepository
 import com.kelsos.mbrc.repository.PlaylistRepository
-import com.kelsos.mbrc.repository.TrackRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch

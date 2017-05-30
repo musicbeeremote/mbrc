@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library.gernes
 
 import com.kelsos.mbrc.annotations.Queue
-import com.kelsos.mbrc.data.library.Genre
+import com.kelsos.mbrc.library.genres.Genre
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 import com.raizlabs.android.dbflow.list.FlowCursorList

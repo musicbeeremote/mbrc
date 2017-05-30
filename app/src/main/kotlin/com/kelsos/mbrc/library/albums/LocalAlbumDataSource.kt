@@ -1,13 +1,12 @@
-package com.kelsos.mbrc.repository.data
+package com.kelsos.mbrc.library.albums
 
 import com.kelsos.mbrc.data.CoverInfo
 import com.kelsos.mbrc.data.db.RemoteDatabase
-import com.kelsos.mbrc.data.library.Album
-import com.kelsos.mbrc.data.library.Album_Table
-import com.kelsos.mbrc.data.library.Track
-import com.kelsos.mbrc.data.library.Track_Table
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.extensions.escapeLike
+import com.kelsos.mbrc.library.tracks.Track
+import com.kelsos.mbrc.library.tracks.Track_Table
+import com.kelsos.mbrc.repository.data.LocalDataSource
 import com.raizlabs.android.dbflow.kotlinextensions.database
 import com.raizlabs.android.dbflow.kotlinextensions.delete
 import com.raizlabs.android.dbflow.kotlinextensions.from
@@ -58,8 +57,10 @@ constructor(
 
   suspend fun getAlbumsByArtist(artist: String): FlowCursorList<Album> =
     withContext(dispatchers.db) {
-      val selectAlbum =
-        SQLite.select(Album_Table.album.withTable(), Album_Table.artist.withTable()).distinct()
+      val selectAlbum = SQLite.select(
+        Album_Table.album.withTable(),
+        Album_Table.artist.withTable()
+      ).distinct()
       val artistOrAlbumArtist = clause(Track_Table.artist.withTable().`is`(artist))
         .or(Track_Table.album_artist.withTable().`is`(artist))
       val columns = clause(Track_Table.album.withTable().eq(Album_Table.album.withTable()))

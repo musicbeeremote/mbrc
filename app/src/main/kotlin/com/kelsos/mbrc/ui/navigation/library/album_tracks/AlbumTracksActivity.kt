@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.TrackEntryAdapter
-import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.domain.AlbumInfo
 import com.kelsos.mbrc.helper.PopupActionHandler
+import com.kelsos.mbrc.library.tracks.Track
 import com.kelsos.mbrc.ui.activities.FontActivity
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.utilities.RemoteUtils.sha1

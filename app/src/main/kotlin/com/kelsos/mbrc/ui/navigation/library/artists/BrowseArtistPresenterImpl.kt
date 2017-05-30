@@ -1,11 +1,11 @@
 package com.kelsos.mbrc.ui.navigation.library.artists
 
-import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.helper.QueueHandler
+import com.kelsos.mbrc.library.artists.Artist
+import com.kelsos.mbrc.library.artists.ArtistRepository
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.repository.ArtistRepository
 import com.kelsos.mbrc.ui.navigation.library.ArtistTabRefreshEvent
 import com.kelsos.mbrc.ui.navigation.library.LibrarySearchModel
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor

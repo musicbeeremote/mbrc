@@ -1,7 +1,7 @@
-package com.kelsos.mbrc.repository
+package com.kelsos.mbrc.library.albums
 
 import com.kelsos.mbrc.data.CoverInfo
-import com.kelsos.mbrc.data.library.Album
+import com.kelsos.mbrc.repository.Repository
 import com.raizlabs.android.dbflow.list.FlowCursorList
 
 interface AlbumRepository : Repository<Album> {

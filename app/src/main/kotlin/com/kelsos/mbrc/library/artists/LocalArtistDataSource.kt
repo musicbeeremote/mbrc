@@ -1,6 +1,6 @@
-package com.kelsos.mbrc.repository.data
+package com.kelsos.mbrc.library.artists
 
-import com.kelsos.mbrc.data.library.Artist
+import com.kelsos.mbrc.repository.data.LocalDataSource
 import com.raizlabs.android.dbflow.list.FlowCursorList
 
 interface LocalArtistDataSource : LocalDataSource<Artist> {

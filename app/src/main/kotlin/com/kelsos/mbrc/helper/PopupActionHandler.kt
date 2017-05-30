@@ -5,9 +5,9 @@ import android.content.Intent
 import android.view.MenuItem
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.Queue
-import com.kelsos.mbrc.data.library.Album
-import com.kelsos.mbrc.data.library.Artist
-import com.kelsos.mbrc.data.library.Genre
+import com.kelsos.mbrc.library.albums.Album
+import com.kelsos.mbrc.library.artists.Artist
+import com.kelsos.mbrc.library.genres.Genre
 import com.kelsos.mbrc.mappers.AlbumMapper
 import com.kelsos.mbrc.ui.navigation.library.album_tracks.AlbumTracksActivity
 import com.kelsos.mbrc.ui.navigation.library.artist_albums.ArtistAlbumsActivity

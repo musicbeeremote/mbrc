@@ -1,11 +1,11 @@
 package com.kelsos.mbrc.ui.navigation.library.album_tracks
 
 import com.kelsos.mbrc.annotations.Queue
-import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.domain.AlbumInfo
 import com.kelsos.mbrc.helper.QueueHandler
+import com.kelsos.mbrc.library.tracks.Track
+import com.kelsos.mbrc.library.tracks.TrackRepository
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.repository.TrackRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject

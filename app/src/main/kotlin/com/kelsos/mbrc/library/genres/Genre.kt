@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.data.library
+package com.kelsos.mbrc.library.genres
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude

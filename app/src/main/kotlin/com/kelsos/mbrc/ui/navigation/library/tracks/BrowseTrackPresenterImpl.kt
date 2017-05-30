@@ -1,11 +1,11 @@
 package com.kelsos.mbrc.ui.navigation.library.tracks
 
-import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.helper.QueueHandler
+import com.kelsos.mbrc.library.tracks.Track
+import com.kelsos.mbrc.library.tracks.TrackRepository
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.repository.TrackRepository
 import com.kelsos.mbrc.ui.navigation.library.LibrarySearchModel
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
 import com.raizlabs.android.dbflow.list.FlowCursorList

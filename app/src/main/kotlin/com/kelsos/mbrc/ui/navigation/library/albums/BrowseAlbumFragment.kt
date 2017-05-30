@@ -18,8 +18,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.AlbumEntryAdapter
 import com.kelsos.mbrc.annotations.Queue
-import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.helper.PopupActionHandler
+import com.kelsos.mbrc.library.albums.Album
 import com.kelsos.mbrc.ui.navigation.library.LibraryActivity.Companion.LIBRARY_SCOPE
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.raizlabs.android.dbflow.list.FlowCursorList
@@ -32,17 +32,26 @@ class BrowseAlbumFragment :
   BrowseAlbumView,
   AlbumEntryAdapter.MenuItemSelectedListener {
 
-  @BindView(R.id.library_data_list) lateinit var recycler: EmptyRecyclerView
+  @BindView(R.id.library_data_list)
+  lateinit var recycler: EmptyRecyclerView
 
-  @BindView(R.id.empty_view) lateinit var emptyView: View
-  @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
-  @BindView(R.id.list_empty_icon) lateinit var emptyViewIcon: ImageView
-  @BindView(R.id.list_empty_subtitle) lateinit var emptyViewSubTitle: TextView
-  @BindView(R.id.empty_view_progress_bar) lateinit var emptyViewProgress: ProgressBar
+  @BindView(R.id.empty_view)
+  lateinit var emptyView: View
+  @BindView(R.id.list_empty_title)
+  lateinit var emptyViewTitle: TextView
+  @BindView(R.id.list_empty_icon)
+  lateinit var emptyViewIcon: ImageView
+  @BindView(R.id.list_empty_subtitle)
+  lateinit var emptyViewSubTitle: TextView
+  @BindView(R.id.empty_view_progress_bar)
+  lateinit var emptyViewProgress: ProgressBar
 
-  @Inject lateinit var adapter: AlbumEntryAdapter
-  @Inject lateinit var actionHandler: PopupActionHandler
-  @Inject lateinit var presenter: BrowseAlbumPresenter
+  @Inject
+  lateinit var adapter: AlbumEntryAdapter
+  @Inject
+  lateinit var actionHandler: PopupActionHandler
+  @Inject
+  lateinit var presenter: BrowseAlbumPresenter
 
   private lateinit var syncButton: Button
 
@@ -78,9 +87,7 @@ class BrowseAlbumFragment :
 
   override fun onCreate(savedInstanceState: Bundle?) {
     val scope = Toothpick.openScopes(requireActivity().application, LIBRARY_SCOPE, activity, this)
-    scope.installModules(
-      SmoothieActivityModule(requireActivity()), BrowseAlbumModule()
-    )
+    scope.installModules(SmoothieActivityModule(requireActivity()), BrowseAlbumModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     presenter.attach(this)

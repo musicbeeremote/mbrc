@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.data.library
+package com.kelsos.mbrc.library.covers
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty

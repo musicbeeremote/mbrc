@@ -1,11 +1,8 @@
-package com.kelsos.mbrc.repository
+package com.kelsos.mbrc.library.albums
 
 import com.kelsos.mbrc.data.CachedAlbumInfo
 import com.kelsos.mbrc.data.CoverInfo
-import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.di.modules.AppDispatchers
-import com.kelsos.mbrc.repository.data.LocalAlbumDataSource
-import com.kelsos.mbrc.repository.data.RemoteAlbumDataSource
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
@@ -20,6 +17,7 @@ constructor(
   private val remoteDataSource: RemoteAlbumDataSource,
   private val dispatchers: AppDispatchers
 ) : AlbumRepository {
+
   override suspend fun getAlbumsByArtist(artist: String): FlowCursorList<Album> =
     localDataSource.getAlbumsByArtist(artist)
 

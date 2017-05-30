@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.library.artist_albums
 
-import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.helper.QueueHandler
+import com.kelsos.mbrc.library.albums.Album
+import com.kelsos.mbrc.library.albums.AlbumRepository
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.repository.AlbumRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject

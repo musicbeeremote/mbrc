@@ -9,17 +9,21 @@ import com.kelsos.mbrc.events.bus.RxBusImpl
 import com.kelsos.mbrc.features.output.OutputApi
 import com.kelsos.mbrc.features.output.OutputApiImpl
 import com.kelsos.mbrc.helper.QueueHandler
+import com.kelsos.mbrc.library.albums.AlbumRepository
+import com.kelsos.mbrc.library.albums.AlbumRepositoryImpl
+import com.kelsos.mbrc.library.artists.ArtistRepository
+import com.kelsos.mbrc.library.artists.ArtistRepositoryImpl
+import com.kelsos.mbrc.library.artists.LocalArtistDataSource
+import com.kelsos.mbrc.library.artists.LocalArtistDataSourceImpl
+import com.kelsos.mbrc.library.genres.GenreRepository
+import com.kelsos.mbrc.library.genres.GenreRepositoryImpl
+import com.kelsos.mbrc.library.tracks.TrackRepository
+import com.kelsos.mbrc.library.tracks.TrackRepositoryImpl
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.RequestManagerImpl
-import com.kelsos.mbrc.repository.AlbumRepository
-import com.kelsos.mbrc.repository.AlbumRepositoryImpl
-import com.kelsos.mbrc.repository.ArtistRepository
-import com.kelsos.mbrc.repository.ArtistRepositoryImpl
 import com.kelsos.mbrc.repository.ConnectionRepository
 import com.kelsos.mbrc.repository.ConnectionRepositoryImpl
-import com.kelsos.mbrc.repository.GenreRepository
-import com.kelsos.mbrc.repository.GenreRepositoryImpl
 import com.kelsos.mbrc.repository.ModelCache
 import com.kelsos.mbrc.repository.ModelCacheImpl
 import com.kelsos.mbrc.repository.NowPlayingRepository
@@ -28,10 +32,6 @@ import com.kelsos.mbrc.repository.PlaylistRepository
 import com.kelsos.mbrc.repository.PlaylistRepositoryImpl
 import com.kelsos.mbrc.repository.RadioRepository
 import com.kelsos.mbrc.repository.RadioRepositoryImpl
-import com.kelsos.mbrc.repository.TrackRepository
-import com.kelsos.mbrc.repository.TrackRepositoryImpl
-import com.kelsos.mbrc.repository.data.LocalArtistDataSource
-import com.kelsos.mbrc.repository.data.LocalArtistDataSourceImpl
 import com.kelsos.mbrc.repository.data.LocalRadioDataSource
 import com.kelsos.mbrc.repository.data.RemoteRadioDataSource
 import com.kelsos.mbrc.services.ServiceChecker
@@ -54,6 +54,7 @@ class RemoteModule : Module() {
 
     bind(RxBus::class.java).to(RxBusImpl::class.java).singletonInScope()
     bind(ObjectMapper::class.java).toInstance(mapper)
+
     bind(NotificationManagerCompat::class.java).toProvider(
       NotificationManagerCompatProvider::class.java
     )
@@ -95,6 +96,5 @@ class RemoteModule : Module() {
 
 fun <T : Any> Module.bind(clazz: KClass<T>): Binding<T> = bind(clazz.java)
 
-fun <T : Any, K : T> Binding<T>.to(
-  clazz: KClass<K>
-): Binding<T>.BoundStateForClassBinding = this.to(clazz.java)
+fun <T : Any, K : T> Binding<T>.to(clazz: KClass<K>): Binding<T>.BoundStateForClassBinding =
+  this.to(clazz.java)
