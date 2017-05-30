@@ -1,10 +1,11 @@
-package com.kelsos.mbrc.data
+package com.kelsos.mbrc.now_playing
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.kelsos.mbrc.data.Data
 import com.kelsos.mbrc.data.db.RemoteDatabase
 import com.raizlabs.android.dbflow.annotation.Column
 import com.raizlabs.android.dbflow.annotation.PrimaryKey

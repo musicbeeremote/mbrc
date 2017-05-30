@@ -10,7 +10,7 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.data.Playlist
+import com.kelsos.mbrc.playlists.Playlist
 import com.kelsos.mbrc.extensions.count
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import javax.inject.Inject

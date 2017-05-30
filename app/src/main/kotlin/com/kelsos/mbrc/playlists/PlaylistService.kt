@@ -1,7 +1,6 @@
-package com.kelsos.mbrc.services
+package com.kelsos.mbrc.playlists
 
 import com.kelsos.mbrc.data.Page
-import com.kelsos.mbrc.data.Playlist
 import io.reactivex.Observable
 
 interface PlaylistService {
