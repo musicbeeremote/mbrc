@@ -1,8 +1,8 @@
-package com.kelsos.mbrc.repository.data
+package com.kelsos.mbrc.library.genres
 
-import com.kelsos.mbrc.data.library.Genre
+import com.kelsos.mbrc.library.LibraryService
+import com.kelsos.mbrc.repository.data.RemoteDataSource
 import com.kelsos.mbrc.repository.data.RemoteDataSource.Companion.LIMIT
-import com.kelsos.mbrc.services.LibraryService
 import io.reactivex.Observable
 import javax.inject.Inject
 

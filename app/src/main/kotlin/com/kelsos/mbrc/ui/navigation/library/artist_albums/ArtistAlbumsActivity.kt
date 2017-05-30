@@ -9,8 +9,8 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.AlbumEntryAdapter
-import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.helper.PopupActionHandler
+import com.kelsos.mbrc.library.albums.Album
 import com.kelsos.mbrc.ui.activities.FontActivity
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.raizlabs.android.dbflow.list.FlowCursorList

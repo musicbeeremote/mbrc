@@ -1,8 +1,5 @@
-package com.kelsos.mbrc.repository
+package com.kelsos.mbrc.library.tracks
 
-import com.kelsos.mbrc.data.library.Track
-import com.kelsos.mbrc.repository.data.LocalTrackDataSource
-import com.kelsos.mbrc.repository.data.RemoteTrackDataSource
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Completable
 import io.reactivex.Single

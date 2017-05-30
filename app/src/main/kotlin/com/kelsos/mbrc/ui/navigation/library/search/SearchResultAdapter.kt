@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.search
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.support.annotation.MenuRes
 import android.support.annotation.Nullable
@@ -20,10 +21,10 @@ import com.kelsos.mbrc.annotations.Search.SECTION_ARTIST
 import com.kelsos.mbrc.annotations.Search.SECTION_GENRE
 import com.kelsos.mbrc.annotations.Search.SECTION_TRACK
 import com.kelsos.mbrc.annotations.Search.Section
-import com.kelsos.mbrc.data.library.Album
-import com.kelsos.mbrc.data.library.Artist
-import com.kelsos.mbrc.data.library.Genre
-import com.kelsos.mbrc.data.library.Track
+import com.kelsos.mbrc.library.albums.Album
+import com.kelsos.mbrc.library.artists.Artist
+import com.kelsos.mbrc.library.genres.Genre
+import com.kelsos.mbrc.library.tracks.Track
 import javax.inject.Inject
 
 class SearchResultAdapter
@@ -163,6 +164,7 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
     })
   }
 
+  @SuppressLint("Range")
   override fun getItemViewType(@Section section: Int, relativePosition: Int, absolutePosition: Int): Int {
     if (section == SECTION_GENRE || section == SECTION_ARTIST) {
       return VIEW_TYPE_SINGLE

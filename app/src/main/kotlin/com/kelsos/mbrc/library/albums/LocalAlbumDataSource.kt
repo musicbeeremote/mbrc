@@ -1,13 +1,12 @@
-package com.kelsos.mbrc.repository.data
+package com.kelsos.mbrc.library.albums
 
 
 import com.kelsos.mbrc.data.db.RemoteDatabase
-import com.kelsos.mbrc.data.library.Album
-import com.kelsos.mbrc.data.library.Album_Table
-import com.kelsos.mbrc.data.library.Album_Table.album
-import com.kelsos.mbrc.data.library.Track
-import com.kelsos.mbrc.data.library.Track_Table
 import com.kelsos.mbrc.extensions.escapeLike
+import com.kelsos.mbrc.library.albums.Album_Table.album
+import com.kelsos.mbrc.library.tracks.Track
+import com.kelsos.mbrc.library.tracks.Track_Table
+import com.kelsos.mbrc.repository.data.LocalDataSource
 import com.raizlabs.android.dbflow.kotlinextensions.database
 import com.raizlabs.android.dbflow.kotlinextensions.delete
 import com.raizlabs.android.dbflow.kotlinextensions.from

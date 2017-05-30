@@ -1,14 +1,15 @@
-package com.kelsos.mbrc.services
+package com.kelsos.mbrc.library
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.Page
-import com.kelsos.mbrc.data.library.Album
-import com.kelsos.mbrc.data.library.Artist
-import com.kelsos.mbrc.data.library.Genre
-import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.extensions.toPage
+import com.kelsos.mbrc.library.albums.Album
+import com.kelsos.mbrc.library.artists.Artist
+import com.kelsos.mbrc.library.genres.Genre
+import com.kelsos.mbrc.library.tracks.Track
 import com.kelsos.mbrc.repository.ConnectionRepository
+import com.kelsos.mbrc.services.ServiceBase
 import com.kelsos.mbrc.utilities.SettingsManager
 import io.reactivex.Observable
 import javax.inject.Inject

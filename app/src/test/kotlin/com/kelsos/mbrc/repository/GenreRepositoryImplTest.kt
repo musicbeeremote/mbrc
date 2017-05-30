@@ -5,9 +5,11 @@ import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.data.Page
-import com.kelsos.mbrc.data.library.Genre
+import com.kelsos.mbrc.library.LibraryService
+import com.kelsos.mbrc.library.genres.Genre
+import com.kelsos.mbrc.library.genres.GenreRepository
+import com.kelsos.mbrc.library.genres.GenreRepositoryImpl
 import com.kelsos.mbrc.rules.DBFlowTestRule
-import com.kelsos.mbrc.services.LibraryService
 import io.reactivex.Observable
 import org.junit.Before
 import org.junit.Rule
