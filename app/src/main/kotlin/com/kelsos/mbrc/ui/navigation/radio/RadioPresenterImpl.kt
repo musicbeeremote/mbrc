@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
 import com.kelsos.mbrc.annotations.Queue.NOW
+import com.kelsos.mbrc.content.now_playing.queue.QueueApi
+import com.kelsos.mbrc.content.radios.RadioRepository
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.repository.RadioRepository
-import com.kelsos.mbrc.services.QueueService
 import io.reactivex.Scheduler
 import timber.log.Timber
 import javax.inject.Inject
@@ -13,7 +13,7 @@ import javax.inject.Named
 class RadioPresenterImpl
 @Inject constructor(
     private val radioRepository: RadioRepository,
-    private val queueService: QueueService,
+    private val queueApi: QueueApi,
     @Named("io") private val ioScheduler: Scheduler,
     @Named("main") private val mainScheduler: Scheduler
 ) :
@@ -53,7 +53,7 @@ class RadioPresenterImpl
   }
 
   override fun play(path: String) {
-    queueService.queue(NOW, listOf(path))
+    queueApi.queue(NOW, listOf(path))
         .subscribeOn(ioScheduler)
         .observeOn(mainScheduler)
         .subscribe({

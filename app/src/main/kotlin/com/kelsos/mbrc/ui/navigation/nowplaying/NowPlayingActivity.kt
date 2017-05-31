@@ -18,8 +18,8 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.now_playing.NowPlaying
-import com.kelsos.mbrc.domain.TrackInfo
+import com.kelsos.mbrc.content.library.tracks.TrackInfo
+import com.kelsos.mbrc.content.now_playing.NowPlaying
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper

@@ -7,7 +7,9 @@ import android.os.Build
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.TestApplication
-import com.kelsos.mbrc.data.ConnectionSettings
+import com.kelsos.mbrc.networking.connections.ConnectionRepository
+import com.kelsos.mbrc.networking.connections.ConnectionRepositoryImpl
+import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.rules.DBFlowTestRule
 import org.junit.Before
 import org.junit.Rule

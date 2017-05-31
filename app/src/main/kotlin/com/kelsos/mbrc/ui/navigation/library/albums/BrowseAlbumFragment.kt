@@ -14,10 +14,9 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.AlbumEntryAdapter
+import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.extensions.initLinear
-import com.kelsos.mbrc.helper.PopupActionHandler
-import com.kelsos.mbrc.library.albums.Album
+import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller

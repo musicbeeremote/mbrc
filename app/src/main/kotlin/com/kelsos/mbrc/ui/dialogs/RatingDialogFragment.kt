@@ -8,11 +8,11 @@ import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.data.UserAction
+import com.kelsos.mbrc.content.active_status.MainDataModel
 import com.kelsos.mbrc.events.MessageEvent
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.RatingChanged
-import com.kelsos.mbrc.model.MainDataModel
+import com.kelsos.mbrc.events.UserAction
+import com.kelsos.mbrc.events.bus.RxBus
 import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject

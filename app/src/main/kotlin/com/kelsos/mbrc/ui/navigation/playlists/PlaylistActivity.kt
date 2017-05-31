@@ -11,11 +11,10 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.PlaylistAdapter
-import com.kelsos.mbrc.adapters.PlaylistAdapter.OnPlaylistPressedListener
-import com.kelsos.mbrc.playlists.Playlist
-import com.kelsos.mbrc.playlists.PlaylistService
+import com.kelsos.mbrc.content.playlists.Playlist
+import com.kelsos.mbrc.content.playlists.PlaylistService
 import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.navigation.playlists.PlaylistAdapter.OnPlaylistPressedListener
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import com.raizlabs.android.dbflow.list.FlowCursorList

@@ -2,8 +2,8 @@ package com.kelsos.mbrc.extensions
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kelsos.mbrc.data.Page
-import com.kelsos.mbrc.data.SocketMessage
+import com.kelsos.mbrc.networking.SocketMessage
+import com.kelsos.mbrc.networking.protocol.Page
 import io.reactivex.Observable
 import java.io.IOException
 
