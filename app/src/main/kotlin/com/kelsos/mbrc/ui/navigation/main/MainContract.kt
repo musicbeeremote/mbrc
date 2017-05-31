@@ -3,11 +3,11 @@ package com.kelsos.mbrc.ui.navigation.main
 import com.kelsos.mbrc.annotations.PlayerState.State
 import com.kelsos.mbrc.annotations.Repeat.Mode
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
-import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.ShuffleChange.ShuffleState
 import com.kelsos.mbrc.events.UpdatePosition
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
+import com.kelsos.mbrc.ui.navigation.main.LfmRating.Rating
 
 interface MainView : BaseView {
 
@@ -25,7 +25,7 @@ interface MainView : BaseView {
 
   fun updateScrobbleStatus(active: Boolean)
 
-  fun updateLfmStatus(status: LfmStatus)
+  fun updateLfmStatus(@Rating status: Int)
 
   fun updateCover(path: String)
 

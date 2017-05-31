@@ -7,8 +7,8 @@ import com.kelsos.mbrc.annotations.Repeat.Mode
 import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
-import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.ShuffleChange
+import com.kelsos.mbrc.ui.navigation.main.LfmRating
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -30,7 +30,7 @@ constructor() {
   var shuffle: String = ShuffleChange.OFF
   var isScrobblingEnabled: Boolean = false
   var isMute: Boolean = false
-  var lfmStatus: LfmStatus = LfmStatus.NORMAL
+  var lfmStatus: Int = LfmRating.NORMAL
     private set
   var apiOutOfDate: Boolean = false
     private set
@@ -72,15 +72,15 @@ constructor() {
     repeat = Repeat.NONE
     rating = 0f
 
-    lfmStatus = LfmStatus.NORMAL
+    lfmStatus = LfmRating.NORMAL
     pluginVersion = Const.EMPTY
   }
 
   fun setLfmRating(rating: String) {
     lfmStatus = when (rating) {
-      "Love" -> LfmStatus.LOVED
-      "Ban" -> LfmStatus.BANNED
-      else -> LfmStatus.NORMAL
+      "Love" -> LfmRating.LOVED
+      "Ban" -> LfmRating.BANNED
+      else -> LfmRating.NORMAL
     }
   }
 

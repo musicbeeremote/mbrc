@@ -134,7 +134,7 @@ class ConnectionManagerActivity :
         presenter.load()
         getString(R.string.con_man_success)
       }
-      else -> ""
+      else -> throw IllegalArgumentException(event.reason.toString())
     }
 
     Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show()
