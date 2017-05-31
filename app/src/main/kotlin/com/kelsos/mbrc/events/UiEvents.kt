@@ -6,8 +6,8 @@ import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.Repeat
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
-import com.kelsos.mbrc.enums.DiscoveryStop
 import com.kelsos.mbrc.enums.LfmStatus
+import com.kelsos.mbrc.networking.DiscoveryStop.Reason
 
 class ConnectionSettingsChanged(val defaultId: Long)
 
@@ -15,7 +15,7 @@ class ConnectionStatusChangeEvent(@Connection.Status val status: Int)
 
 class CoverChangedEvent(val path: String = "")
 
-class DiscoveryStopped(val reason: DiscoveryStop)
+class DiscoveryStopped(@Reason val reason: Int)
 
 class LfmRatingChanged(val status: LfmStatus)
 

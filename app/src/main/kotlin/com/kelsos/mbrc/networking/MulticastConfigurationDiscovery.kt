@@ -5,7 +5,6 @@ import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.enums.DiscoveryStop
 import com.kelsos.mbrc.events.DiscoveryStopped
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.networking.connections.ConnectionMapper
