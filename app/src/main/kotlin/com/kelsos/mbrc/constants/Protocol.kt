@@ -57,4 +57,7 @@ object Protocol {
   val CommandUnavailable = "commandunavailable"
 
   val ProtocolVersionNumber = 5
+
+  // Protocol Constants
+  const val CLIENT_PLATFORM = "Android"
 }
