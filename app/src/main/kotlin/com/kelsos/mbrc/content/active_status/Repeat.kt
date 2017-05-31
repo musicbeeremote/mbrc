@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.annotations
+package com.kelsos.mbrc.content.active_status
 
 import androidx.annotation.StringDef
 

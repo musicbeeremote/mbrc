@@ -1,11 +1,8 @@
 package com.kelsos.mbrc.content.active_status
 
-import com.kelsos.mbrc.annotations.PlayerState
-import com.kelsos.mbrc.annotations.PlayerState.State
-import com.kelsos.mbrc.annotations.Repeat
-import com.kelsos.mbrc.annotations.Repeat.Mode
 import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
+import com.kelsos.mbrc.content.active_status.PlayerState.State
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.events.ShuffleChange
 import com.kelsos.mbrc.ui.navigation.main.LfmRating
@@ -64,7 +61,7 @@ constructor() {
       field = newState
     }
 
-  @Mode
+  @Repeat.Mode
   var repeat: String
     private set
 

@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Intent
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kelsos.mbrc.annotations.SocketAction
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.content.active_status.MainDataModel
@@ -14,6 +13,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.networking.MulticastConfigurationDiscovery
+import com.kelsos.mbrc.networking.SocketAction
 import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.SocketClient
 import com.kelsos.mbrc.networking.SocketMessage

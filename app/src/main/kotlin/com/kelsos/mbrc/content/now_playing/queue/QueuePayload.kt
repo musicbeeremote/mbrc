@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.content.now_playing.queue
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.kelsos.mbrc.annotations.Queue.Action
+import com.kelsos.mbrc.content.now_playing.queue.Queue.Action
 
 data class QueuePayload(
   @JsonProperty("queue") @Action val type: String,

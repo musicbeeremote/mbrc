@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.library.album_tracks
 
-import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.content.library.albums.AlbumInfo
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
+import com.kelsos.mbrc.content.now_playing.queue.Queue
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
 import kotlinx.coroutines.launch

@@ -3,7 +3,6 @@ package com.kelsos.mbrc.ui.navigation.library
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.kelsos.mbrc.annotations.Search
 import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumFragment
 import com.kelsos.mbrc.ui.navigation.library.artists.BrowseArtistFragment
 import com.kelsos.mbrc.ui.navigation.library.gernes.BrowseGenreFragment

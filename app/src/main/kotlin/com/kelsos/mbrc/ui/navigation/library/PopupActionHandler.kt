@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.view.MenuItem
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.library.albums.AlbumMapper
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.library.genres.Genre
+import com.kelsos.mbrc.content.now_playing.queue.Queue
 import com.kelsos.mbrc.ui.navigation.library.album_tracks.AlbumTracksActivity
 import com.kelsos.mbrc.ui.navigation.library.artist_albums.ArtistAlbumsActivity
 import com.kelsos.mbrc.ui.navigation.library.genre_artists.GenreArtistsActivity

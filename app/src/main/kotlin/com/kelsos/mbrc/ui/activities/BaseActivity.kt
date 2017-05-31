@@ -21,7 +21,6 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.MessageEvent
@@ -29,6 +28,7 @@ import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.events.RequestConnectionStateEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.features.output.OutputSelectionDialog
+import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.platform.RemoteService
 import com.kelsos.mbrc.platform.ServiceChecker
 import com.kelsos.mbrc.ui.help_feedback.HelpFeedbackActivity

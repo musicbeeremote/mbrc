@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library.artist_albums
 
-import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.content.library.albums.Album
+import com.kelsos.mbrc.content.now_playing.queue.Queue
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 import com.raizlabs.android.dbflow.list.FlowCursorList

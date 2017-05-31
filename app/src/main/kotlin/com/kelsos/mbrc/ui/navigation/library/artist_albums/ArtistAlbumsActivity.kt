@@ -9,8 +9,8 @@ import butterknife.ButterKnife
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.content.library.albums.Album
+import com.kelsos.mbrc.content.now_playing.queue.Queue
 import com.kelsos.mbrc.ui.activities.FontActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.albums.AlbumEntryAdapter
