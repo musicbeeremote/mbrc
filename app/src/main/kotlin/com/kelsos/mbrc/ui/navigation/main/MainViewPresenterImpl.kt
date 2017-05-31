@@ -17,7 +17,7 @@ import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.VolumeChange
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.networking.connections.ConnectionModel
+import com.kelsos.mbrc.networking.connections.ConnectionStatusModel
 import com.kelsos.mbrc.preferences.SettingsManager
 import io.reactivex.Completable
 import timber.log.Timber
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class MainViewPresenterImpl
 @Inject constructor(val bus: RxBus,
                     val model: MainDataModel,
-                    val connectionModel: ConnectionModel,
+                    val connectionStatusModel: ConnectionStatusModel,
                     private val settingsManager: SettingsManager) : BasePresenter<MainView>(), MainViewPresenter {
   override fun stop(): Boolean {
     val action = UserAction(Protocol.PlayerStop, true)
@@ -68,7 +68,7 @@ class MainViewPresenterImpl
       view?.updateVolume(model.volume, model.isMute)
       view?.updatePlayState(model.playState)
       view?.updateTrackInfo(model.trackInfo)
-      view?.updateConnection(connectionModel.connection)
+      view?.updateConnection(connectionStatusModel.connection)
     }.subscribe({
 
     }) {

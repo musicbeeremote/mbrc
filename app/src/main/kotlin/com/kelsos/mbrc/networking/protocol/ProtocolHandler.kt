@@ -10,7 +10,13 @@ import com.kelsos.mbrc.content.active_status.MainDataModel
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.networking.SendProtocolMessage
+import com.kelsos.mbrc.networking.SocketDataAvailableEvent
+import com.kelsos.mbrc.networking.SocketHandshakeUpdateEvent
+import com.kelsos.mbrc.networking.SocketMessage
+import com.kelsos.mbrc.networking.connections.ConnectionStatusModel
 import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,11 +24,36 @@ import javax.inject.Singleton
 @Singleton
 class ProtocolHandler
 @Inject
-constructor(private val bus: RxBus, private val mapper: ObjectMapper, private val model: MainDataModel) {
-  private var isHandshakeComplete: Boolean = false
+constructor(
+    private val bus: RxBus,
+    private val mapper: ObjectMapper,
+    private val model: MainDataModel,
+    private val connectionStatusModel: ConnectionStatusModel
+) {
 
-  fun resetHandshake() {
-    isHandshakeComplete = false
+  init {
+    bus.register(this, SocketDataAvailableEvent::class.java, { onIncoming(it) })
+    bus.register(this, SocketHandshakeUpdateEvent::class.java, { onHandsakeUpdate(it) })
+    connectionStatusModel.onConnectedListener = {
+      bus.post(SendProtocolMessage(SocketMessage.create(Protocol.Player, Protocol.CLIENT_PLATFORM)))
+    }
+  }
+
+  private fun onHandsakeUpdate(event: SocketHandshakeUpdateEvent) {
+    if (!event.done) {
+      connectionStatusModel.handshake = false
+    }
+  }
+
+  private fun onIncoming(event: SocketDataAvailableEvent) {
+    preProcessIncoming(event.data)
+        .subscribeOn(Schedulers.io())
+        .subscribe({
+          Timber.v("processing done")
+        })
+        {
+          Timber.e(it, "processing error")
+        }
   }
 
   fun preProcessIncoming(incoming: String): Completable {
@@ -45,7 +76,7 @@ constructor(private val bus: RxBus, private val mapper: ObjectMapper, private va
           return@fromAction
         }
 
-        if (!isHandshakeComplete) {
+        if (!connectionStatusModel.handshake) {
           if (context.contains(Protocol.Player)) {
             bus.post(MessageEvent(ProtocolEventType.InitiateProtocolRequest))
           } else if (context.contains(Protocol.ProtocolTag)) {
@@ -57,7 +88,7 @@ constructor(private val bus: RxBus, private val mapper: ObjectMapper, private va
             }
 
             model.pluginProtocol = protocolVersion
-            isHandshakeComplete = true
+            connectionStatusModel.handshake = true
             bus.post(MessageEvent(ProtocolEventType.HandshakeComplete, true))
           } else {
             return@fromAction
