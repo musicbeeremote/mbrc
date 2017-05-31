@@ -9,7 +9,6 @@ import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
-import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.LfmRatingChanged
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.PlayStateChange
@@ -20,6 +19,7 @@ import com.kelsos.mbrc.events.ShuffleChange
 import com.kelsos.mbrc.events.ShuffleChange.ShuffleState
 import com.kelsos.mbrc.events.VolumeChange
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.ui.navigation.main.LfmRating
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -95,7 +95,9 @@ constructor(private val bus: RxBus,
     }
 
 
-  var lfmStatus: LfmStatus = LfmStatus.NORMAL
+  @get:LfmRating.Rating
+  @setparam:LfmRating.Rating
+  var lfmStatus: Int = LfmRating.NORMAL
     private set
 
   var pluginVersion: String = "1.0.0"
@@ -149,15 +151,15 @@ constructor(private val bus: RxBus,
     repeat = Repeat.NONE
     rating = 0f
 
-    lfmStatus = LfmStatus.NORMAL
+    lfmStatus = LfmRating.NORMAL
     pluginVersion = Const.EMPTY
   }
 
   fun setLfmRating(rating: String) {
     when (rating) {
-      "Love" -> lfmStatus = LfmStatus.LOVED
-      "Ban" -> lfmStatus = LfmStatus.BANNED
-      else -> lfmStatus = LfmStatus.NORMAL
+      "Love" -> lfmStatus = LfmRating.LOVED
+      "Ban" -> lfmStatus = LfmRating.BANNED
+      else -> lfmStatus = LfmRating.NORMAL
     }
 
     bus.post(LfmRatingChanged(lfmStatus))

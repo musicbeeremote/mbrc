@@ -27,7 +27,6 @@ import com.kelsos.mbrc.annotations.PlayerState.State
 import com.kelsos.mbrc.annotations.Repeat
 import com.kelsos.mbrc.annotations.Repeat.Mode
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
-import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.OnMainFragmentOptionsInflated
 import com.kelsos.mbrc.events.ShuffleChange
 import com.kelsos.mbrc.events.ShuffleChange.ShuffleState
@@ -35,6 +34,7 @@ import com.kelsos.mbrc.events.UpdatePosition
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment
+import com.kelsos.mbrc.ui.navigation.main.LfmRating.Rating
 import com.kelsos.mbrc.ui.navigation.main.ProgressSeekerHelper.ProgressUpdate
 import com.squareup.picasso.Picasso
 import toothpick.Scope
@@ -393,14 +393,14 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     scrobbleMenuItem.isChecked = active
   }
 
-  override fun updateLfmStatus(status: LfmStatus) {
+  override fun updateLfmStatus(@Rating status: Int) {
     if (menu == null) {
       return
     }
     val favoriteMenuItem = menu!!.findItem(R.id.menu_lastfm_love) ?: return
 
     when (status) {
-      LfmStatus.LOVED -> favoriteMenuItem.setIcon(R.drawable.ic_favorite_black_24dp)
+      LfmRating.LOVED -> favoriteMenuItem.setIcon(R.drawable.ic_favorite_black_24dp)
       else -> favoriteMenuItem.setIcon(R.drawable.ic_favorite_border_black_24dp)
     }
   }
