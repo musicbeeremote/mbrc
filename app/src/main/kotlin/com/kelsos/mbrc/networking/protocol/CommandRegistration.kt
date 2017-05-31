@@ -1,12 +1,9 @@
 package com.kelsos.mbrc.networking.protocol
 
-import com.kelsos.mbrc.constants.ApplicationEvents
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.networking.protocol.commands.CancelNotificationCommand
-import com.kelsos.mbrc.networking.protocol.commands.ConnectionStatusChangedCommand
-import com.kelsos.mbrc.networking.protocol.commands.HandleHandshake
 import com.kelsos.mbrc.networking.protocol.commands.HandshakeCompletionActions
 import com.kelsos.mbrc.networking.protocol.commands.InitiateConnectionCommand
 import com.kelsos.mbrc.networking.protocol.commands.KeyVolumeDownCommand
@@ -18,7 +15,6 @@ import com.kelsos.mbrc.networking.protocol.commands.ProtocolPongHandle
 import com.kelsos.mbrc.networking.protocol.commands.ProtocolRequest
 import com.kelsos.mbrc.networking.protocol.commands.ReduceVolumeOnRingCommand
 import com.kelsos.mbrc.networking.protocol.commands.RestartConnectionCommand
-import com.kelsos.mbrc.networking.protocol.commands.SocketDataAvailableCommand
 import com.kelsos.mbrc.networking.protocol.commands.StartDiscoveryCommand
 import com.kelsos.mbrc.networking.protocol.commands.TerminateConnectionCommand
 import com.kelsos.mbrc.networking.protocol.commands.UpdateCover
@@ -74,9 +70,6 @@ object CommandRegistration {
     controller.register(UserInputEventType.StartDiscovery, scope.getInstance(StartDiscoveryCommand::class.java))
     controller.register(UserInputEventType.KeyVolumeUp, scope.getInstance(KeyVolumeUpCommand::class.java))
     controller.register(UserInputEventType.KeyVolumeDown, scope.getInstance(KeyVolumeDownCommand::class.java))
-    controller.register(ApplicationEvents.SocketDataAvailable, scope.getInstance(SocketDataAvailableCommand::class.java))
-    controller.register(ApplicationEvents.SocketStatusChanged, scope.getInstance(ConnectionStatusChangedCommand::class.java))
-    controller.register(ApplicationEvents.SocketHandshakeUpdate, scope.getInstance(HandleHandshake::class.java))
   }
 
   fun unregister(controller: CommandExecutor) {

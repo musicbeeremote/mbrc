@@ -14,8 +14,7 @@ import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.networking.SocketClient
 import com.kelsos.mbrc.networking.SocketMessage
-import com.kelsos.mbrc.networking.connections.ConnectionModel
-import com.kelsos.mbrc.networking.protocol.ProtocolHandler
+import com.kelsos.mbrc.networking.connections.ConnectionStatusModel
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
 import io.reactivex.Observable
 import timber.log.Timber
@@ -27,13 +26,11 @@ class HandshakeCompletionActions
 @Inject constructor(
     private val client: SocketClient,
     private val model: MainDataModel,
-    private val connectionModel: ConnectionModel,
     private val syncInteractor: LibrarySyncInteractor
 ) : ICommand {
 
   override fun execute(e: IEvent) {
     val isComplete = e.data as Boolean
-    connectionModel.setHandShakeDone(isComplete)
 
     if (!isComplete) {
       return
@@ -70,16 +67,14 @@ class HandshakeCompletionActions
 class NotifyNotAllowedCommand
 @Inject constructor(
     private val socketClient: SocketClient,
-    private val model: ConnectionModel,
-    private val handler: ProtocolHandler,
+    private val statusModel: ConnectionStatusModel,
     private val bus: RxBus
 ) : ICommand {
 
   override fun execute(e: IEvent) {
     bus.post(NotifyUser(R.string.notification_not_allowed))
     socketClient.socketManager(SocketAction.STOP)
-    model.setConnectionState("false")
-    handler.resetHandshake()
+    statusModel.disconnected()
   }
 }
 

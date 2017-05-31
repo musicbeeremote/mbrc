@@ -8,10 +8,8 @@ import com.kelsos.mbrc.annotations.SocketAction.RETRY
 import com.kelsos.mbrc.annotations.SocketAction.START
 import com.kelsos.mbrc.annotations.SocketAction.STOP
 import com.kelsos.mbrc.annotations.SocketAction.TERMINATE
-import com.kelsos.mbrc.constants.ApplicationEvents
 import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.events.DefaultSettingsChangedEvent
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.networking.SocketActivityChecker.PingTimeoutListener
@@ -59,6 +57,7 @@ constructor(
     shouldStop = false
     socketManager(START)
     bus.register(this, DefaultSettingsChangedEvent::class.java) { socketManager(RESET) }
+    bus.register(this, SendProtocolMessage::class.java) { sendData(it.message) }
   }
 
   private fun startSocket() {
@@ -191,7 +190,7 @@ constructor(
 
     override fun run() {
       Timber.v("Socket Start")
-      bus.post(MessageEvent(ApplicationEvents.SocketHandshakeUpdate, false))
+      bus.post(SocketHandshakeUpdateEvent(false))
       if (null == socketAddress) {
         return
       }
@@ -210,16 +209,16 @@ constructor(
         val inputStreamReader = InputStreamReader(inputStream, Const.UTF_8)
         input = BufferedReader(inputStreamReader, SOCKET_BUFFER)
 
-        val socketStatus = socket!!.isConnected.toString()
+        val socketStatus = socket!!.isConnected
 
-        bus.post(MessageEvent(ApplicationEvents.SocketStatusChanged, socketStatus))
+        bus.post(SocketStatusChangedEvent(socketStatus))
         activityChecker.start()
         activityChecker.setPingTimeoutListener(this@SocketClient)
         while (socket!!.isConnected) {
           try {
             val incoming = input.readLine() ?: throw IOException("no data")
             if (incoming.isNotEmpty()) {
-              bus.post(MessageEvent(ApplicationEvents.SocketDataAvailable, incoming))
+              bus.post(SocketDataAvailableEvent(incoming))
             }
           } catch (e: IOException) {
             input.close()
@@ -244,7 +243,7 @@ constructor(
 
         socket = null
 
-        bus.post(MessageEvent(ApplicationEvents.SocketStatusChanged, false))
+        bus.post(SocketStatusChangedEvent(false))
         if (numOfRetries < MAX_RETRIES) {
           Timber.d("Trying to reconnect. Try %d of %d", numOfRetries, MAX_RETRIES)
           socketManager(RETRY)
