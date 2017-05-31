@@ -9,13 +9,13 @@ import butterknife.ButterKnife
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.ArtistEntryAdapter
-import com.kelsos.mbrc.adapters.ArtistEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.annotations.Queue
+import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.extensions.enableHome
-import com.kelsos.mbrc.helper.PopupActionHandler
-import com.kelsos.mbrc.library.artists.Artist
 import com.kelsos.mbrc.ui.activities.FontActivity
+import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
+import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter
+import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
@@ -28,13 +28,19 @@ class GenreArtistsActivity :
   GenreArtistsView,
   MenuItemSelectedListener {
 
-  @BindView(R.id.genre_artists_recycler) lateinit var recyclerView: EmptyRecyclerView
-  @BindView(R.id.toolbar) lateinit var toolbar: MaterialToolbar
-  @BindView(R.id.empty_view) lateinit var emptyView: ConstraintLayout
+  @BindView(R.id.genre_artists_recycler)
+  lateinit var recyclerView: EmptyRecyclerView
+  @BindView(R.id.toolbar)
+  lateinit var toolbar: MaterialToolbar
+  @BindView(R.id.empty_view)
+  lateinit var emptyView: ConstraintLayout
 
-  @Inject lateinit var adapter: ArtistEntryAdapter
-  @Inject lateinit var actionHandler: PopupActionHandler
-  @Inject lateinit var presenter: GenreArtistsPresenter
+  @Inject
+  lateinit var adapter: ArtistEntryAdapter
+  @Inject
+  lateinit var actionHandler: PopupActionHandler
+  @Inject
+  lateinit var presenter: GenreArtistsPresenter
 
   private var genre: String? = null
   private var scope: Scope? = null

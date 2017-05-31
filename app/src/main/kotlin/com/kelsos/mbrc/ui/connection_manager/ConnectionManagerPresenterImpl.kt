@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.ui.connection_manager
 
-import com.kelsos.mbrc.data.ConnectionSettings
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.repository.ConnectionRepository
+import com.kelsos.mbrc.networking.connections.ConnectionRepository
+import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject

@@ -3,43 +3,42 @@ package com.kelsos.mbrc.di.modules
 import androidx.core.app.NotificationManagerCompat
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.kelsos.mbrc.content.active_status.ModelCache
+import com.kelsos.mbrc.content.active_status.ModelCacheImpl
+import com.kelsos.mbrc.content.library.albums.AlbumRepository
+import com.kelsos.mbrc.content.library.albums.AlbumRepositoryImpl
+import com.kelsos.mbrc.content.library.artists.ArtistRepository
+import com.kelsos.mbrc.content.library.artists.ArtistRepositoryImpl
+import com.kelsos.mbrc.content.library.artists.LocalArtistDataSource
+import com.kelsos.mbrc.content.library.artists.LocalArtistDataSourceImpl
+import com.kelsos.mbrc.content.library.genres.GenreRepository
+import com.kelsos.mbrc.content.library.genres.GenreRepositoryImpl
+import com.kelsos.mbrc.content.library.tracks.TrackRepository
+import com.kelsos.mbrc.content.library.tracks.TrackRepositoryImpl
+import com.kelsos.mbrc.content.now_playing.NowPlayingRepository
+import com.kelsos.mbrc.content.now_playing.NowPlayingRepositoryImpl
+import com.kelsos.mbrc.content.playlists.PlaylistRepository
+import com.kelsos.mbrc.content.playlists.PlaylistRepositoryImpl
+import com.kelsos.mbrc.content.radios.LocalRadioDataSource
+import com.kelsos.mbrc.content.radios.RadioRepository
+import com.kelsos.mbrc.content.radios.RadioRepositoryImpl
 import com.kelsos.mbrc.di.providers.NotificationManagerCompatProvider
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.bus.RxBusImpl
 import com.kelsos.mbrc.features.output.OutputApi
 import com.kelsos.mbrc.features.output.OutputApiImpl
 import com.kelsos.mbrc.helper.QueueHandler
-import com.kelsos.mbrc.library.albums.AlbumRepository
-import com.kelsos.mbrc.library.albums.AlbumRepositoryImpl
-import com.kelsos.mbrc.library.artists.ArtistRepository
-import com.kelsos.mbrc.library.artists.ArtistRepositoryImpl
-import com.kelsos.mbrc.library.artists.LocalArtistDataSource
-import com.kelsos.mbrc.library.artists.LocalArtistDataSourceImpl
-import com.kelsos.mbrc.library.genres.GenreRepository
-import com.kelsos.mbrc.library.genres.GenreRepositoryImpl
-import com.kelsos.mbrc.library.tracks.TrackRepository
-import com.kelsos.mbrc.library.tracks.TrackRepositoryImpl
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.RequestManagerImpl
-import com.kelsos.mbrc.now_playing.NowPlayingRepository
-import com.kelsos.mbrc.now_playing.NowPlayingRepositoryImpl
-import com.kelsos.mbrc.playlists.PlaylistRepository
-import com.kelsos.mbrc.playlists.PlaylistRepositoryImpl
-import com.kelsos.mbrc.repository.ConnectionRepository
-import com.kelsos.mbrc.repository.ConnectionRepositoryImpl
-import com.kelsos.mbrc.repository.ModelCache
-import com.kelsos.mbrc.repository.ModelCacheImpl
-import com.kelsos.mbrc.repository.RadioRepository
-import com.kelsos.mbrc.repository.RadioRepositoryImpl
-import com.kelsos.mbrc.repository.data.LocalRadioDataSource
-import com.kelsos.mbrc.repository.data.RemoteRadioDataSource
-import com.kelsos.mbrc.services.ServiceChecker
-import com.kelsos.mbrc.services.ServiceCheckerImpl
+import com.kelsos.mbrc.networking.connections.ConnectionRepository
+import com.kelsos.mbrc.networking.connections.ConnectionRepositoryImpl
+import com.kelsos.mbrc.platform.ServiceChecker
+import com.kelsos.mbrc.platform.ServiceCheckerImpl
+import com.kelsos.mbrc.preferences.SettingsManager
+import com.kelsos.mbrc.preferences.SettingsManagerImpl
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractorImpl
-import com.kelsos.mbrc.utilities.SettingsManager
-import com.kelsos.mbrc.utilities.SettingsManagerImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
 import toothpick.config.Binding
@@ -89,7 +88,6 @@ class RemoteModule : Module() {
     bind(QueueHandler::class.java).singletonInScope()
 
     bind(LocalRadioDataSource::class.java).to(LocalRadioDataSource::class.java).singletonInScope()
-    bind(RemoteRadioDataSource::class.java).to(RemoteRadioDataSource::class.java).singletonInScope()
     bind(RadioRepository::class.java).to(RadioRepositoryImpl::class.java).singletonInScope()
   }
 }

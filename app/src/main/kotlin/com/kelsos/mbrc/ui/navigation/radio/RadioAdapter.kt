@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.data.RadioStation
+import com.kelsos.mbrc.content.radios.RadioStation
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import javax.inject.Inject
 

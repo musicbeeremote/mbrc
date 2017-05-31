@@ -8,7 +8,6 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.HelpFeedbackPagerAdapter
 import com.kelsos.mbrc.ui.activities.FontActivity
 
 class HelpFeedbackActivity : FontActivity() {

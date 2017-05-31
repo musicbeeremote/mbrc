@@ -8,7 +8,7 @@ import android.widget.EditText
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.data.ConnectionSettings
+import com.kelsos.mbrc.networking.connections.ConnectionSettings
 
 class SettingsDialogFragment : DialogFragment() {
 

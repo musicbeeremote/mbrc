@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.LyricsAdapter
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import toothpick.Scope

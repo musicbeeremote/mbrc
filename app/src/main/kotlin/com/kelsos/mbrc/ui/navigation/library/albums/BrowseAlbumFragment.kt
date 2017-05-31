@@ -16,11 +16,10 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.AlbumEntryAdapter
 import com.kelsos.mbrc.annotations.Queue
-import com.kelsos.mbrc.helper.PopupActionHandler
-import com.kelsos.mbrc.library.albums.Album
+import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.ui.navigation.library.LibraryActivity.Companion.LIBRARY_SCOPE
+import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Toothpick
@@ -37,19 +36,25 @@ class BrowseAlbumFragment :
 
   @BindView(R.id.empty_view)
   lateinit var emptyView: View
+
   @BindView(R.id.list_empty_title)
   lateinit var emptyViewTitle: TextView
+
   @BindView(R.id.list_empty_icon)
   lateinit var emptyViewIcon: ImageView
+
   @BindView(R.id.list_empty_subtitle)
   lateinit var emptyViewSubTitle: TextView
+
   @BindView(R.id.empty_view_progress_bar)
   lateinit var emptyViewProgress: ProgressBar
 
   @Inject
   lateinit var adapter: AlbumEntryAdapter
+
   @Inject
   lateinit var actionHandler: PopupActionHandler
+
   @Inject
   lateinit var presenter: BrowseAlbumPresenter
 

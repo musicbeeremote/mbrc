@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.library.genre_artists
 
 import com.kelsos.mbrc.annotations.Queue
+import com.kelsos.mbrc.content.library.artists.Artist
+import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.helper.QueueHandler
-import com.kelsos.mbrc.library.artists.Artist
-import com.kelsos.mbrc.library.artists.ArtistRepository
 import com.kelsos.mbrc.mvp.BasePresenter
 import kotlinx.coroutines.launch
 import timber.log.Timber

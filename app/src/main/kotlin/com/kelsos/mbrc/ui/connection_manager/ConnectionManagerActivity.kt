@@ -13,7 +13,6 @@ import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.constants.UserInputEventType
-import com.kelsos.mbrc.data.ConnectionSettings
 import com.kelsos.mbrc.enums.DiscoveryStop
 import com.kelsos.mbrc.events.ConnectionSettingsChanged
 import com.kelsos.mbrc.events.DefaultSettingsChangedEvent
@@ -21,6 +20,7 @@ import com.kelsos.mbrc.events.DiscoveryStopped
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.ui.activities.FontActivity
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment
 import toothpick.Scope

@@ -2,7 +2,7 @@ package com.kelsos.mbrc.ui.navigation.main
 
 import com.kelsos.mbrc.annotations.PlayerState.State
 import com.kelsos.mbrc.annotations.Repeat.Mode
-import com.kelsos.mbrc.domain.TrackInfo
+import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.ShuffleChange.ShuffleState
 import com.kelsos.mbrc.events.UpdatePosition

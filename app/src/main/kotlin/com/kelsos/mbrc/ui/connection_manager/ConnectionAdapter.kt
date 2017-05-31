@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.data.ConnectionSettings
+import com.kelsos.mbrc.networking.connections.ConnectionSettings
 
 class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewHolder>() {
   private val data: MutableList<ConnectionSettings>

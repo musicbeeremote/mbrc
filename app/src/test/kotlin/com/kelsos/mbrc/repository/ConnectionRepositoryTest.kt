@@ -6,8 +6,10 @@ import android.content.res.Resources
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.data.ConnectionSettings
 import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.networking.connections.ConnectionRepository
+import com.kelsos.mbrc.networking.connections.ConnectionRepositoryImpl
+import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.rules.DBFlowTestRule
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest

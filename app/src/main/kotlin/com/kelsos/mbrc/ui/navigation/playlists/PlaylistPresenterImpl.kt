@@ -1,11 +1,11 @@
 package com.kelsos.mbrc.ui.navigation.playlists
 
 import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.data.UserAction
+import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.events.MessageEvent
+import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.playlists.PlaylistRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

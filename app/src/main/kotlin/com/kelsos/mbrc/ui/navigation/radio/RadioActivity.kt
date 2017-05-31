@@ -11,7 +11,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.data.RadioStation
+import com.kelsos.mbrc.content.radios.RadioStation
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.radio.RadioAdapter.OnRadioPressedListener
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView

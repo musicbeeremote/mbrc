@@ -16,7 +16,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.LibraryPagerAdapter
 import com.kelsos.mbrc.annotations.Search
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import toothpick.Scope

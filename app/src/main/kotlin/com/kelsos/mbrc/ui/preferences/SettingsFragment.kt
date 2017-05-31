@@ -18,9 +18,9 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.controller.RemoteService
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.logging.FileLoggingTree
+import com.kelsos.mbrc.platform.RemoteService
 import com.kelsos.mbrc.ui.connection_manager.ConnectionManagerActivity
 import com.kelsos.mbrc.ui.dialogs.WebViewDialog
 import com.kelsos.mbrc.utilities.RemoteUtils.getVersion

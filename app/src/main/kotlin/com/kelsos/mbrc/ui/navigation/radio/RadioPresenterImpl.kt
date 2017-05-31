@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
+import com.kelsos.mbrc.content.radios.RadioRepository
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.repository.RadioRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

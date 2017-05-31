@@ -16,12 +16,11 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.GenreEntryAdapter
-import com.kelsos.mbrc.adapters.GenreEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.annotations.Queue
-import com.kelsos.mbrc.helper.PopupActionHandler
-import com.kelsos.mbrc.library.genres.Genre
+import com.kelsos.mbrc.content.library.genres.Genre
 import com.kelsos.mbrc.ui.navigation.library.LibraryActivity.Companion.LIBRARY_SCOPE
+import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
+import com.kelsos.mbrc.ui.navigation.library.gernes.GenreEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Toothpick
