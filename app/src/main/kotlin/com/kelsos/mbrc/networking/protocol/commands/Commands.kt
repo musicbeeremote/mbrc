@@ -17,8 +17,7 @@ import com.kelsos.mbrc.networking.MulticastConfigurationDiscovery
 import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.SocketClient
 import com.kelsos.mbrc.networking.SocketMessage
-import com.kelsos.mbrc.networking.connections.ConnectionModel
-import com.kelsos.mbrc.networking.protocol.ProtocolHandler
+import com.kelsos.mbrc.networking.connections.ConnectionStatusModel
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 import com.kelsos.mbrc.platform.RemoteService
 import com.kelsos.mbrc.platform.media_session.SessionNotificationManager
@@ -37,40 +36,6 @@ class CancelNotificationCommand
     sessionNotificationManager.cancelNotification(
       SessionNotificationManager.NOW_PLAYING_PLACEHOLDER
     )
-  }
-}
-
-class ConnectionStatusChangedCommand
-@Inject constructor(
-  private val model: ConnectionModel,
-  private val client: SocketClient,
-  private val sessionNotificationManager: SessionNotificationManager
-) : ICommand {
-
-  override fun execute(e: IEvent) {
-    model.setConnectionState(e.dataString)
-
-    if (model.isConnectionActive) {
-      client.sendData(SocketMessage.create(Protocol.Player, "Android"))
-    } else {
-      sessionNotificationManager.cancelNotification(
-        SessionNotificationManager.NOW_PLAYING_PLACEHOLDER
-      )
-    }
-  }
-}
-
-class HandleHandshake
-@Inject constructor(
-  private val handler: ProtocolHandler,
-  private val model: ConnectionModel
-) : ICommand {
-
-  override fun execute(e: IEvent) {
-    if (!(e.data as Boolean)) {
-      handler.resetHandshake()
-      model.setHandShakeDone(false)
-    }
   }
 }
 
@@ -194,17 +159,6 @@ class RestartConnectionCommand
   }
 }
 
-class SocketDataAvailableCommand
-@Inject
-constructor(
-  private val handler: ProtocolHandler
-) : ICommand {
-
-  override fun execute(e: IEvent) {
-    handler.preProcessIncoming(e.dataString)
-  }
-}
-
 class StartDiscoveryCommand
 @Inject constructor(private val mDiscovery: MulticastConfigurationDiscovery) : ICommand {
 
@@ -216,12 +170,11 @@ class StartDiscoveryCommand
 class TerminateConnectionCommand
 @Inject constructor(
   private val client: SocketClient,
-  private val model: ConnectionModel
+  private val statusModel: ConnectionStatusModel
 ) : ICommand {
 
   override fun execute(e: IEvent) {
-    model.setHandShakeDone(false)
-    model.setConnectionState("false")
+    statusModel.disconnected()
     client.socketManager(SocketAction.TERMINATE)
   }
 }

@@ -9,4 +9,5 @@ object ProtocolEventType {
   const val PluginUpdateRequired = "PluginUpdateRequired"
   const val UserAction = "UserAction"
   const val PluginVersionCheck = "PluginVersionCheck"
+  const val TerminateService = "TerminateService"
 }

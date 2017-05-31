@@ -10,6 +10,11 @@ import com.kelsos.mbrc.content.active_status.MainDataModel
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.networking.SendProtocolMessage
+import com.kelsos.mbrc.networking.SocketDataAvailableEvent
+import com.kelsos.mbrc.networking.SocketHandshakeUpdateEvent
+import com.kelsos.mbrc.networking.SocketMessage
+import com.kelsos.mbrc.networking.connections.ConnectionStatusModel
 import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
@@ -21,12 +26,22 @@ class ProtocolHandler
 constructor(
   private val bus: RxBus,
   private val mapper: ObjectMapper,
-  private val model: MainDataModel
+  private val model: MainDataModel,
+  private val connectionStatusModel: ConnectionStatusModel
 ) {
-  private var isHandshakeComplete: Boolean = false
 
-  fun resetHandshake() {
-    isHandshakeComplete = false
+  init {
+    bus.register(this, SocketDataAvailableEvent::class.java) { preProcessIncoming(it.data) }
+    bus.register(this, SocketHandshakeUpdateEvent::class.java) { onHandsakeUpdate(it) }
+    connectionStatusModel.onConnectedListener = {
+      bus.post(SendProtocolMessage(SocketMessage.create(Protocol.Player, Protocol.CLIENT_PLATFORM)))
+    }
+  }
+
+  private fun onHandsakeUpdate(event: SocketHandshakeUpdateEvent) {
+    if (!event.done) {
+      connectionStatusModel.handshake = false
+    }
   }
 
   fun preProcessIncoming(incoming: String) {
@@ -52,7 +67,7 @@ constructor(
           return
         }
 
-        if (!isHandshakeComplete) {
+        if (!connectionStatusModel.handshake) {
           when (context) {
             Protocol.Player -> bus.post(MessageEvent(ProtocolEventType.InitiateProtocolRequest))
             Protocol.ProtocolTag -> handleProtocolMessage(node)
@@ -72,7 +87,7 @@ constructor(
     if (model.apiOutOfDate) {
       bus.post(MessageEvent(ProtocolEventType.PluginUpdateAvailable))
     }
-    isHandshakeComplete = true
+    connectionStatusModel.handshake = true
     bus.post(MessageEvent(ProtocolEventType.HandshakeComplete, true))
   }
 

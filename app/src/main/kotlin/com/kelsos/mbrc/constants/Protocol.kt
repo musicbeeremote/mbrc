@@ -61,4 +61,7 @@ object Protocol {
   const val PlayerOutputSwitch = "playeroutputswitch"
   const val LibraryCover = "libraryalbumcover"
   const val CommandUnavailable = "commandunavailable"
+
+  // Protocol Constants
+  const val CLIENT_PLATFORM = "Android"
 }
