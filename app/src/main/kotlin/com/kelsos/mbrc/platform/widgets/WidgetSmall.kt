@@ -8,8 +8,8 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.annotations.PlayerState
-import com.kelsos.mbrc.annotations.PlayerState.State
+import com.kelsos.mbrc.content.active_status.PlayerState
+import com.kelsos.mbrc.content.active_status.PlayerState.State
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.platform.media_session.RemoteViewIntentBuilder.NEXT
 import com.kelsos.mbrc.platform.media_session.RemoteViewIntentBuilder.PLAY

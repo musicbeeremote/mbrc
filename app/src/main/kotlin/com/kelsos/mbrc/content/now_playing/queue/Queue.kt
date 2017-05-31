@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.annotations
+package com.kelsos.mbrc.content.now_playing.queue
 
 import android.support.annotation.StringDef
 

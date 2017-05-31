@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.annotations
+package com.kelsos.mbrc.networking
 
 import android.support.annotation.IntDef
 

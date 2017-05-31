@@ -2,7 +2,6 @@ package com.kelsos.mbrc.networking.protocol.commands
 
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.annotations.SocketAction
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.content.active_status.MainDataModel
 import com.kelsos.mbrc.events.NotifyUser
@@ -12,6 +11,7 @@ import com.kelsos.mbrc.events.UpdatePosition
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
+import com.kelsos.mbrc.networking.SocketAction
 import com.kelsos.mbrc.networking.SocketClient
 import com.kelsos.mbrc.networking.SocketMessage
 import com.kelsos.mbrc.networking.connections.ConnectionStatusModel

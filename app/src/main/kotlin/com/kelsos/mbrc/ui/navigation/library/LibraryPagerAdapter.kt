@@ -5,8 +5,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentStatePagerAdapter
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.annotations.Search
-import com.kelsos.mbrc.annotations.Search.Section
+import com.kelsos.mbrc.ui.navigation.library.Search.Section
 import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumFragment
 import com.kelsos.mbrc.ui.navigation.library.artists.BrowseArtistFragment
 import com.kelsos.mbrc.ui.navigation.library.gernes.BrowseGenreFragment
