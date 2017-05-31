@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.content.now_playing.queue
 
-import com.kelsos.mbrc.annotations.Queue.QueueType
+import com.kelsos.mbrc.content.now_playing.queue.Queue.QueueType
 import io.reactivex.Single
 
 interface QueueApi {

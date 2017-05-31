@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.mini_control
 
-import com.kelsos.mbrc.annotations.PlayerState.State
+import com.kelsos.mbrc.content.active_status.PlayerState.State
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter

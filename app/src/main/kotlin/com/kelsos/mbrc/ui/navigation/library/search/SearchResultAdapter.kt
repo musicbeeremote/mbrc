@@ -15,16 +15,16 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.annotations.Search.SECTION_ALBUM
-import com.kelsos.mbrc.annotations.Search.SECTION_ARTIST
-import com.kelsos.mbrc.annotations.Search.SECTION_GENRE
-import com.kelsos.mbrc.annotations.Search.SECTION_TRACK
-import com.kelsos.mbrc.annotations.Search.Section
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.library.genres.Genre
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.ui.SectionedRecyclerViewAdapter
+import com.kelsos.mbrc.ui.navigation.library.Search.SECTION_ALBUM
+import com.kelsos.mbrc.ui.navigation.library.Search.SECTION_ARTIST
+import com.kelsos.mbrc.ui.navigation.library.Search.SECTION_GENRE
+import com.kelsos.mbrc.ui.navigation.library.Search.SECTION_TRACK
+import com.kelsos.mbrc.ui.navigation.library.Search.Section
 import javax.inject.Inject
 
 class SearchResultAdapter

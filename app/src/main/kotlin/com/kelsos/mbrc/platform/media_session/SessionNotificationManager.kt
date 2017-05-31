@@ -7,13 +7,13 @@ import android.support.v4.app.NotificationCompat.Action
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.app.NotificationCompat
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.annotations.Connection
-import com.kelsos.mbrc.annotations.PlayerState
+import com.kelsos.mbrc.content.active_status.PlayerState
 import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.CoverChangedEvent
 import com.kelsos.mbrc.events.PlayStateChange
 import com.kelsos.mbrc.events.TrackInfoChangeEvent
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.platform.ForegroundHooks
 import com.kelsos.mbrc.platform.media_session.RemoteViewIntentBuilder.NEXT
 import com.kelsos.mbrc.platform.media_session.RemoteViewIntentBuilder.OPEN

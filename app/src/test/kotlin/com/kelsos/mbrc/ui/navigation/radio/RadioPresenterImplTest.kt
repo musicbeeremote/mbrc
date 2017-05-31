@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
-import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.any
+import com.kelsos.mbrc.content.now_playing.queue.Queue
 import com.kelsos.mbrc.content.now_playing.queue.QueueApi
 import com.kelsos.mbrc.content.now_playing.queue.QueueResponse
 import com.kelsos.mbrc.content.radios.RadioRepository
