@@ -11,7 +11,7 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.data.ConnectionSettings
+import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import java.util.*
 
 class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewHolder>() {

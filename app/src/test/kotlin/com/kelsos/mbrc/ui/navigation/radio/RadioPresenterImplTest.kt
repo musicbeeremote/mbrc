@@ -2,11 +2,11 @@ package com.kelsos.mbrc.ui.navigation.radio
 
 import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.any
-import com.kelsos.mbrc.data.QueueResponse
-import com.kelsos.mbrc.data.RadioStation
-import com.kelsos.mbrc.repository.RadioRepository
+import com.kelsos.mbrc.content.now_playing.queue.QueueApi
+import com.kelsos.mbrc.content.now_playing.queue.QueueResponse
+import com.kelsos.mbrc.content.radios.RadioRepository
+import com.kelsos.mbrc.content.radios.RadioStation
 import com.kelsos.mbrc.rules.MockitoInitializerRule
-import com.kelsos.mbrc.services.QueueService
 import com.kelsos.mbrc.ui.navigation.radio.RadioActivity.Presenter
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Scheduler
@@ -35,7 +35,7 @@ class RadioPresenterImplTest {
 
   @Mock lateinit var radioView: RadioView
   @Mock lateinit var radioRepository: RadioRepository
-  @Mock lateinit var queueService: QueueService
+  @Mock lateinit var queueApi: QueueApi
   @Mock lateinit var result: FlowCursorList<RadioStation>
 
   private lateinit var presenter: RadioPresenter
@@ -196,11 +196,11 @@ class RadioPresenterImplTest {
   fun playRadio_successful_ViewAttached() {
     val path = "http://fake.rad"
     val queueResponse = QueueResponse(200)
-    `when`(queueService.queue(Queue.NOW, listOf(path))).thenReturn(Single.just(queueResponse))
+    `when`(queueApi.queue(Queue.NOW, listOf(path))).thenReturn(Single.just(queueResponse))
 
     presenter.attach(radioView)
     presenter.play(path)
-    verify(queueService, times(1)).queue(Queue.NOW, listOf(path))
+    verify(queueApi, times(1)).queue(Queue.NOW, listOf(path))
     verify(radioView, never()).radioPlayFailed(any())
     verify(radioView, times(1)).radioPlaySuccessful()
   }
@@ -209,10 +209,10 @@ class RadioPresenterImplTest {
   fun playRadio_successful_ViewNotAttached() {
     val path = "http://fake.rad"
     val queueResponse = QueueResponse(200)
-    `when`(queueService.queue(Queue.NOW, listOf(path))).thenReturn(Single.just(queueResponse))
+    `when`(queueApi.queue(Queue.NOW, listOf(path))).thenReturn(Single.just(queueResponse))
 
     presenter.play(path)
-    verify(queueService, times(1)).queue(Queue.NOW, listOf(path))
+    verify(queueApi, times(1)).queue(Queue.NOW, listOf(path))
     verify(radioView, never()).radioPlayFailed(any())
     verify(radioView, never()).radioPlaySuccessful()
   }
@@ -221,11 +221,11 @@ class RadioPresenterImplTest {
   fun playRadio_failure_ViewAttached() {
     val path = "http://fake.rad"
     val timeout = SocketTimeoutException()
-    `when`(queueService.queue(Queue.NOW, listOf(path))).thenReturn(Single.error(timeout))
+    `when`(queueApi.queue(Queue.NOW, listOf(path))).thenReturn(Single.error(timeout))
 
     presenter.attach(radioView)
     presenter.play(path)
-    verify(queueService, times(1)).queue(Queue.NOW, listOf(path))
+    verify(queueApi, times(1)).queue(Queue.NOW, listOf(path))
     verify(radioView, times(1)).radioPlayFailed(timeout)
     verify(radioView, never()).radioPlaySuccessful()
   }
@@ -234,10 +234,10 @@ class RadioPresenterImplTest {
   fun playRadio_failure_ViewNotAttached() {
     val path = "http://fake.rad"
     val timeout = SocketTimeoutException()
-    `when`(queueService.queue(Queue.NOW, listOf(path))).thenReturn(Single.error(timeout))
+    `when`(queueApi.queue(Queue.NOW, listOf(path))).thenReturn(Single.error(timeout))
 
     presenter.play(path)
-    verify(queueService, times(1)).queue(Queue.NOW, listOf(path))
+    verify(queueApi, times(1)).queue(Queue.NOW, listOf(path))
     verify(radioView, never()).radioPlayFailed(timeout)
     verify(radioView, never()).radioPlaySuccessful()
   }

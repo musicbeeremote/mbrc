@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.radio;
+package com.kelsos.mbrc.ui.navigation.radio
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -11,7 +11,7 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.data.RadioStation
+import com.kelsos.mbrc.content.radios.RadioStation
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.radio.RadioAdapter.OnRadioPressedListener
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
-import com.kelsos.mbrc.data.RadioStation
+import com.kelsos.mbrc.content.radios.RadioStation
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 import com.raizlabs.android.dbflow.list.FlowCursorList

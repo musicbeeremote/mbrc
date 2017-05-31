@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.genre_artists
 
-import com.kelsos.mbrc.library.artists.ArtistRepository
+import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.mvp.BasePresenter
 import timber.log.Timber
 import javax.inject.Inject

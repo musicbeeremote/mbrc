@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.artist_albums
 
-import com.kelsos.mbrc.library.albums.AlbumRepository
+import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.mvp.BasePresenter
 import timber.log.Timber
 import javax.inject.Inject

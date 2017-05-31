@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.playlists
 
-import com.kelsos.mbrc.playlists.Playlist
+import com.kelsos.mbrc.content.playlists.Playlist
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 import com.raizlabs.android.dbflow.list.FlowCursorList

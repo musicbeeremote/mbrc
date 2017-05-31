@@ -10,11 +10,11 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.TrackEntryAdapter
-import com.kelsos.mbrc.library.tracks.Track
-import com.kelsos.mbrc.domain.AlbumInfo
-import com.kelsos.mbrc.helper.PopupActionHandler
+import com.kelsos.mbrc.content.library.albums.AlbumInfo
+import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.ui.activities.FontActivity
+import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
+import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope

@@ -4,7 +4,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.ArtistEntryAdapter
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 

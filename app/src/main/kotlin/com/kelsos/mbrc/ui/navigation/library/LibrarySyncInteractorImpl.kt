@@ -1,18 +1,17 @@
 package com.kelsos.mbrc.ui.navigation.library
 
-import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.content.library.albums.AlbumRepository
+import com.kelsos.mbrc.content.library.artists.ArtistRepository
+import com.kelsos.mbrc.content.library.genres.GenreRepository
+import com.kelsos.mbrc.content.library.tracks.TrackRepository
+import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
-import com.kelsos.mbrc.library.albums.AlbumRepository
-import com.kelsos.mbrc.library.artists.ArtistRepository
-import com.kelsos.mbrc.library.genres.GenreRepository
-import com.kelsos.mbrc.playlists.PlaylistRepository
-import com.kelsos.mbrc.library.tracks.TrackRepository
+import com.kelsos.mbrc.events.bus.RxBus
 import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function4
-
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
