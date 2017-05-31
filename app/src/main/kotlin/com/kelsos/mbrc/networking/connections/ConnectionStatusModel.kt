@@ -1,11 +1,10 @@
 package com.kelsos.mbrc.networking.connections
 
-import com.kelsos.mbrc.annotations.Connection
-import com.kelsos.mbrc.annotations.Connection.Status
 import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.RequestConnectionStateEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.networking.SocketStatusChangedEvent
+import com.kelsos.mbrc.networking.connections.Connection.Status
 import javax.inject.Inject
 import javax.inject.Singleton
 

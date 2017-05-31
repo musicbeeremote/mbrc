@@ -2,8 +2,8 @@ package com.kelsos.mbrc.platform.media_session
 
 import android.graphics.Bitmap
 
-import com.kelsos.mbrc.annotations.PlayerState
-import com.kelsos.mbrc.annotations.PlayerState.State
+import com.kelsos.mbrc.content.active_status.PlayerState
+import com.kelsos.mbrc.content.active_status.PlayerState.State
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import javax.inject.Inject
 

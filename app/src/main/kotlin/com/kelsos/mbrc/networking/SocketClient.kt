@@ -2,20 +2,20 @@ package com.kelsos.mbrc.networking
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.annotations.SocketAction.Action
-import com.kelsos.mbrc.annotations.SocketAction.RESET
-import com.kelsos.mbrc.annotations.SocketAction.RETRY
-import com.kelsos.mbrc.annotations.SocketAction.START
-import com.kelsos.mbrc.annotations.SocketAction.STOP
-import com.kelsos.mbrc.annotations.SocketAction.TERMINATE
 import com.kelsos.mbrc.constants.Const
-import com.kelsos.mbrc.events.DefaultSettingsChangedEvent
 import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.networking.SocketAction.Action
+import com.kelsos.mbrc.networking.SocketAction.RESET
+import com.kelsos.mbrc.networking.SocketAction.RETRY
+import com.kelsos.mbrc.networking.SocketAction.START
+import com.kelsos.mbrc.networking.SocketAction.STOP
+import com.kelsos.mbrc.networking.SocketAction.TERMINATE
 import com.kelsos.mbrc.networking.SocketActivityChecker.PingTimeoutListener
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.networking.connections.InetAddressMapper
+import com.kelsos.mbrc.preferences.DefaultSettingsChangedEvent
 import io.reactivex.Completable
 import io.reactivex.disposables.Disposable
 import timber.log.Timber
