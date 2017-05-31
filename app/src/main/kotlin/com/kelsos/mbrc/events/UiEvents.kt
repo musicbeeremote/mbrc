@@ -4,7 +4,7 @@ import android.support.annotation.StringRes
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.Repeat
-import com.kelsos.mbrc.domain.TrackInfo
+import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.enums.DiscoveryStop
 import com.kelsos.mbrc.enums.LfmStatus
 

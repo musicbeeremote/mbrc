@@ -26,7 +26,7 @@
     </string>
   <string name="main_label_duration_current">01:03</string>
   <string name="main_label_duration_total">04:11</string>
-  <string name="info_service_description">This service is responsible for the communication
+  <string name="info_service_description">This client is responsible for the communication
         of the application
         with the plugin.
     </string>
@@ -70,8 +70,8 @@
   <string name="preferences_key_connection_manager">manage_connections</string>
   <string name="progress_scanning">Scanning…</string>
   <string name="progress_scanning_message">Wait while scanning for a remote host</string>
-  <string name="con_man_no_wifi">This service is available only on a wifi connection</string>
-  <string name="con_man_not_found">A remote service could not be found</string>
+  <string name="con_man_no_wifi">This client is available only on a wifi connection</string>
+  <string name="con_man_not_found">A remote client could not be found</string>
   <string name="con_man_success">Service successfully found</string>
   <string name="settings_key_default_index">mbrc_default_settings</string>
   <string name="preferences_library_track_default_action_key">mbrc.library_track_default</string>

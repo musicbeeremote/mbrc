@@ -18,9 +18,9 @@ import android.support.test.espresso.matcher.ViewMatchers.withText
 import android.support.test.filters.LargeTest
 import android.support.test.runner.AndroidJUnit4
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.data.RadioStation
+import com.kelsos.mbrc.content.radios.RadioStation
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.services.ServiceChecker
+import com.kelsos.mbrc.platform.ServiceChecker
 import com.kelsos.mbrc.ui.mini_control.MiniControlFragment
 import com.kelsos.mbrc.ui.mini_control.MiniControlPresenter
 import com.raizlabs.android.dbflow.list.FlowCursorList

@@ -11,7 +11,7 @@ import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.Theme
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.data.ConnectionSettings
+import com.kelsos.mbrc.networking.connections.ConnectionSettings
 
 class SettingsDialogFragment : DialogFragment() {
 

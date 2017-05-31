@@ -3,51 +3,51 @@ package com.kelsos.mbrc.di.modules
 import android.support.v4.app.NotificationManagerCompat
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.kelsos.mbrc.content.active_status.ModelCache
+import com.kelsos.mbrc.content.active_status.ModelCacheImpl
+import com.kelsos.mbrc.content.library.LibraryApiImpl
+import com.kelsos.mbrc.content.library.LibraryService
+import com.kelsos.mbrc.content.library.albums.AlbumRepository
+import com.kelsos.mbrc.content.library.albums.AlbumRepositoryImpl
+import com.kelsos.mbrc.content.library.artists.ArtistRepository
+import com.kelsos.mbrc.content.library.artists.ArtistRepositoryImpl
+import com.kelsos.mbrc.content.library.artists.LocalArtistDataSource
+import com.kelsos.mbrc.content.library.artists.LocalArtistDataSourceImpl
+import com.kelsos.mbrc.content.library.genres.GenreRepository
+import com.kelsos.mbrc.content.library.genres.GenreRepositoryImpl
+import com.kelsos.mbrc.content.library.tracks.TrackRepository
+import com.kelsos.mbrc.content.library.tracks.TrackRepositoryImpl
+import com.kelsos.mbrc.content.now_playing.NowPlayingApiImpl
+import com.kelsos.mbrc.content.now_playing.NowPlayingRepository
+import com.kelsos.mbrc.content.now_playing.NowPlayingRepositoryImpl
+import com.kelsos.mbrc.content.now_playing.NowPlayingService
+import com.kelsos.mbrc.content.now_playing.cover.CoverApi
+import com.kelsos.mbrc.content.now_playing.cover.CoverApiImpl
+import com.kelsos.mbrc.content.now_playing.queue.QueueApi
+import com.kelsos.mbrc.content.now_playing.queue.QueueApiImpl
+import com.kelsos.mbrc.content.playlists.PlaylistApiImpl
+import com.kelsos.mbrc.content.playlists.PlaylistRepository
+import com.kelsos.mbrc.content.playlists.PlaylistRepositoryImpl
+import com.kelsos.mbrc.content.playlists.PlaylistService
+import com.kelsos.mbrc.content.radios.LocalRadioDataSource
+import com.kelsos.mbrc.content.radios.LocalRadioDataSourceImpl
+import com.kelsos.mbrc.content.radios.RadioApi
+import com.kelsos.mbrc.content.radios.RadioApiImpl
+import com.kelsos.mbrc.content.radios.RadioRepository
+import com.kelsos.mbrc.content.radios.RadioRepositoryImpl
+import com.kelsos.mbrc.content.radios.RemoteRadioDataSource
+import com.kelsos.mbrc.content.radios.RemoteRadioDataSourceImpl
 import com.kelsos.mbrc.di.providers.NotificationManagerCompatProvider
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.bus.RxBusImpl
-import com.kelsos.mbrc.library.LibraryService
-import com.kelsos.mbrc.library.LibraryServiceImpl
-import com.kelsos.mbrc.library.albums.AlbumRepository
-import com.kelsos.mbrc.library.albums.AlbumRepositoryImpl
-import com.kelsos.mbrc.library.artists.ArtistRepository
-import com.kelsos.mbrc.library.artists.ArtistRepositoryImpl
-import com.kelsos.mbrc.library.artists.LocalArtistDataSource
-import com.kelsos.mbrc.library.artists.LocalArtistDataSourceImpl
-import com.kelsos.mbrc.library.genres.GenreRepository
-import com.kelsos.mbrc.library.genres.GenreRepositoryImpl
-import com.kelsos.mbrc.library.tracks.TrackRepository
-import com.kelsos.mbrc.library.tracks.TrackRepositoryImpl
-import com.kelsos.mbrc.repository.ConnectionRepository
-import com.kelsos.mbrc.repository.ConnectionRepositoryImpl
-import com.kelsos.mbrc.repository.ModelCache
-import com.kelsos.mbrc.repository.ModelCacheImpl
-import com.kelsos.mbrc.now_playing.NowPlayingRepository
-import com.kelsos.mbrc.now_playing.NowPlayingRepositoryImpl
-import com.kelsos.mbrc.playlists.PlaylistRepository
-import com.kelsos.mbrc.playlists.PlaylistRepositoryImpl
-import com.kelsos.mbrc.repository.RadioRepository
-import com.kelsos.mbrc.repository.RadioRepositoryImpl
-import com.kelsos.mbrc.repository.data.LocalRadioDataSource
-import com.kelsos.mbrc.repository.data.LocalRadioDataSourceImpl
-import com.kelsos.mbrc.repository.data.RemoteRadioDataSource
-import com.kelsos.mbrc.repository.data.RemoteRadioDataSourceImpl
-import com.kelsos.mbrc.services.CoverService
-import com.kelsos.mbrc.services.CoverServiceImpl
-import com.kelsos.mbrc.now_playing.NowPlayingService
-import com.kelsos.mbrc.now_playing.NowPlayingServiceImpl
-import com.kelsos.mbrc.playlists.PlaylistService
-import com.kelsos.mbrc.playlists.PlaylistServiceImpl
-import com.kelsos.mbrc.services.QueueService
-import com.kelsos.mbrc.services.QueueServiceImpl
-import com.kelsos.mbrc.services.RadioService
-import com.kelsos.mbrc.services.RadioServiceImpl
-import com.kelsos.mbrc.services.ServiceChecker
-import com.kelsos.mbrc.services.ServiceCheckerImpl
+import com.kelsos.mbrc.networking.connections.ConnectionRepository
+import com.kelsos.mbrc.networking.connections.ConnectionRepositoryImpl
+import com.kelsos.mbrc.platform.ServiceChecker
+import com.kelsos.mbrc.platform.ServiceCheckerImpl
+import com.kelsos.mbrc.preferences.SettingsManager
+import com.kelsos.mbrc.preferences.SettingsManagerImpl
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractorImpl
-import com.kelsos.mbrc.utilities.SettingsManager
-import com.kelsos.mbrc.utilities.SettingsManagerImpl
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -62,11 +62,11 @@ class RemoteModule : Module() {
 
     bind(RxBus::class.java).to(RxBusImpl::class.java).singletonInScope()
     bind(ObjectMapper::class.java).toInstance(mapper)
-    bind(LibraryService::class.java).to(LibraryServiceImpl::class.java).singletonInScope()
-    bind(PlaylistService::class.java).to(PlaylistServiceImpl::class.java).singletonInScope()
-    bind(NowPlayingService::class.java).to(NowPlayingServiceImpl::class.java).singletonInScope()
-    bind(CoverService::class.java).to(CoverServiceImpl::class.java).singletonInScope()
-    bind(QueueService::class.java).to(QueueServiceImpl::class.java).singletonInScope()
+    bind(LibraryService::class.java).to(LibraryApiImpl::class.java).singletonInScope()
+    bind(PlaylistService::class.java).to(PlaylistApiImpl::class.java).singletonInScope()
+    bind(NowPlayingService::class.java).to(NowPlayingApiImpl::class.java).singletonInScope()
+    bind(CoverApi::class.java).to(CoverApiImpl::class.java).singletonInScope()
+    bind(QueueApi::class.java).to(QueueApiImpl::class.java).singletonInScope()
 
     bind(NotificationManagerCompat::class.java).toProvider(NotificationManagerCompatProvider::class.java)
     bind(ConnectionRepository::class.java).to(ConnectionRepositoryImpl::class.java)
@@ -92,7 +92,7 @@ class RemoteModule : Module() {
     bind(LocalRadioDataSource::class.java).to(LocalRadioDataSourceImpl::class.java).singletonInScope()
     bind(RemoteRadioDataSource::class.java).to(RemoteRadioDataSourceImpl::class.java).singletonInScope()
     bind(RadioRepository::class.java).to(RadioRepositoryImpl::class.java).singletonInScope()
-    bind(RadioService::class.java).to(RadioServiceImpl::class.java).singletonInScope()
+    bind(RadioApi::class.java).to(RadioApiImpl::class.java).singletonInScope()
   }
 }
 

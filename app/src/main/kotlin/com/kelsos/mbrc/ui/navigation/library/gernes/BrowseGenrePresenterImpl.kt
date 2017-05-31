@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.library.gernes
 
+import com.kelsos.mbrc.content.library.genres.Genre
+import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.events.bus.RxBus
-import com.kelsos.mbrc.library.genres.Genre
-import com.kelsos.mbrc.library.genres.GenreRepository
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Scheduler

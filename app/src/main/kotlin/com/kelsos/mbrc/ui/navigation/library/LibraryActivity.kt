@@ -16,7 +16,6 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.adapters.LibraryPagerAdapter
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.search.SearchResultsActivity
 import toothpick.Scope
