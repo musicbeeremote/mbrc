@@ -9,7 +9,6 @@ import android.content.pm.PackageManager
 import android.telephony.TelephonyManager
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.constants.ProtocolEventType
-import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.bus.RxBus
@@ -64,7 +63,9 @@ class RemoteBroadcastReceiver
         postAction(UserAction(Protocol.PlayerNext, true))
       }
       RemoteViewIntentBuilder.CLOSE_PRESSED -> {
-        bus.post(MessageEvent(UserInputEventType.CancelNotification))
+        if (!RemoteService.SERVICE_STOPPING) {
+          context.stopService(Intent(context, RemoteService::class.java))
+        }
       }
       RemoteViewIntentBuilder.PREVIOUS_PRESSED -> {
         postAction(UserAction(Protocol.PlayerPrevious, true))

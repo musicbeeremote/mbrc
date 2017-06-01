@@ -13,8 +13,11 @@ class ConnectionStatusModel
 @Inject
 constructor(private val bus: RxBus) {
 
-  var onConnectedListener: OnConnectedListener? = null
-    set
+  private var onConnectedListener: OnConnectedListener? = null
+
+  fun setOnConnectedListener(onConnectedListener: OnConnectedListener?) {
+    this.onConnectedListener = onConnectedListener
+  }
 
   var connected: Boolean = false
     private set(value) {
@@ -48,11 +51,6 @@ constructor(private val bus: RxBus) {
         else -> return Connection.OFF
       }
     }
-
-  fun setConnectionState(connectionActive: String) {
-    this.connected = java.lang.Boolean.parseBoolean(connectionActive)
-    notifyState()
-  }
 
   fun disconnected() {
     this.connected = false

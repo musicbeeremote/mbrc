@@ -10,22 +10,15 @@ import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.constants.UserInputEventType
-import com.kelsos.mbrc.events.MessageEvent
-import com.kelsos.mbrc.networking.MulticastConfigurationDiscovery
-import com.kelsos.mbrc.networking.protocol.CommandExecutor
-import com.kelsos.mbrc.networking.protocol.CommandRegistration
+import com.kelsos.mbrc.RemoteServiceCore
 import com.kelsos.mbrc.platform.media_session.RemoteViewIntentBuilder
 import com.kelsos.mbrc.platform.media_session.RemoteViewIntentBuilder.getPendingIntent
-import com.kelsos.mbrc.platform.media_session.SessionNotificationManager
 import com.kelsos.mbrc.platform.media_session.SessionNotificationManager.Companion.CHANNEL_ID
 import com.kelsos.mbrc.platform.media_session.SessionNotificationManager.Companion.NOW_PLAYING_PLACEHOLDER
 import com.kelsos.mbrc.platform.media_session.SessionNotificationManager.Companion.channel
 import timber.log.Timber
 import toothpick.Scope
 import toothpick.Toothpick
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -35,18 +28,11 @@ class RemoteService : Service() {
   private val controllerBinder = ControllerBinder()
 
   @Inject
-  lateinit var commandExecutor: CommandExecutor
-
-  @Inject
-  lateinit var discovery: MulticastConfigurationDiscovery
-
-  @Inject
   lateinit var receiver: RemoteBroadcastReceiver
 
   @Inject
-  lateinit var sessionNotificationManager: SessionNotificationManager
+  lateinit var core: RemoteServiceCore
 
-  private var threadPoolExecutor: ExecutorService? = null
   private lateinit var scope: Scope
   private lateinit var handler: Handler
 
@@ -72,9 +58,7 @@ class RemoteService : Service() {
       .build()
   }
 
-  override fun onBind(intent: Intent?): IBinder {
-    return controllerBinder
-  }
+  override fun onBind(intent: Intent?): IBinder = controllerBinder
 
   override fun onCreate() {
     super.onCreate()
@@ -90,16 +74,7 @@ class RemoteService : Service() {
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     Timber.d("Background Service::Started")
     startForeground(NOW_PLAYING_PLACEHOLDER, placeholderNotification())
-    CommandRegistration.register(commandExecutor, scope)
-    threadPoolExecutor = Executors.newSingleThreadExecutor {
-      Thread(it, "message-thread")
-    }.apply {
-      execute(commandExecutor)
-    }
-
-    commandExecutor.executeCommand(MessageEvent(UserInputEventType.StartConnection))
-    discovery.startDiscovery()
-
+    core.start()
     return super.onStartCommand(intent, flags, startId)
   }
 
@@ -110,11 +85,8 @@ class RemoteService : Service() {
     this.unregisterReceiver(receiver)
     handler.postDelayed(
       {
-        commandExecutor.executeCommand(MessageEvent(UserInputEventType.TerminateConnection))
-        CommandRegistration.unregister(commandExecutor)
-        threadPoolExecutor?.shutdownNow()
+        core.stop()
         Toothpick.closeScope(this)
-
         SERVICE_STOPPING = false
         SERVICE_RUNNING = false
         Timber.d("Background Service::Destroyed")

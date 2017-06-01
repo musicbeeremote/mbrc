@@ -153,7 +153,7 @@ constructor(
       return Action.Builder(R.drawable.ic_action_next, next, nextIntent).build()
     }
 
-  fun cancelNotification(notificationId: Int) {
+  fun cancelNotification(notificationId: Int = NOW_PLAYING_PLACEHOLDER) {
     notificationManager.cancel(notificationId)
   }
 
@@ -180,4 +180,6 @@ constructor(
       }
     }
   }
+
+  class CancelNotificationEvent
 }
