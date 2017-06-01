@@ -9,11 +9,13 @@ import android.net.wifi.WifiManager
 import android.telephony.TelephonyManager
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.constants.ProtocolEventType
-import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.networking.ChangeConnectionStateEvent
+import com.kelsos.mbrc.networking.SocketAction.START
 import com.kelsos.mbrc.platform.media_session.RemoteViewIntentBuilder
+import com.kelsos.mbrc.platform.media_session.SessionNotificationManager
 import com.kelsos.mbrc.preferences.SettingsManager
 import javax.inject.Inject
 
@@ -46,7 +48,7 @@ class RemoteBroadcastReceiver
       WifiManager.NETWORK_STATE_CHANGED_ACTION == intent.action -> onWifiChange(intent)
       RemoteViewIntentBuilder.PLAY_PRESSED == intent.action -> postAction(UserAction(Protocol.PlayerPlayPause, true))
       RemoteViewIntentBuilder.NEXT_PRESSED == intent.action -> postAction(UserAction(Protocol.PlayerNext, true))
-      RemoteViewIntentBuilder.CLOSE_PRESSED == intent.action -> bus.post(MessageEvent(UserInputEventType.CancelNotification))
+      RemoteViewIntentBuilder.CLOSE_PRESSED == intent.action -> bus.post(SessionNotificationManager.CancelNotificationEvent())
       RemoteViewIntentBuilder.PREVIOUS_PRESSED == intent.action -> postAction(UserAction(Protocol.PlayerPrevious, true))
       RemoteViewIntentBuilder.CANCELLED_NOTIFICATION == intent.action -> context.stopService(Intent(context, RemoteService::class.java))
     }
@@ -55,7 +57,7 @@ class RemoteBroadcastReceiver
   private fun onWifiChange(intent: Intent) {
     val networkInfo = intent.getParcelableExtra<NetworkInfo>(WifiManager.EXTRA_NETWORK_INFO)
     if (networkInfo.state == NetworkInfo.State.CONNECTED) {
-      bus.post(MessageEvent(UserInputEventType.StartConnection))
+      bus.post(ChangeConnectionStateEvent(START))
     }
   }
 

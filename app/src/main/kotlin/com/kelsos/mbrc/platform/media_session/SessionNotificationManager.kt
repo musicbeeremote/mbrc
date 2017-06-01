@@ -47,6 +47,7 @@ constructor(bus: RxBus,
     bus.register(this, CoverChangedEvent::class.java, { this.coverChanged(it.path) })
     bus.register(this, PlayStateChange::class.java, { this.playStateChanged(it) })
     bus.register(this, ConnectionStatusChangeEvent::class.java, { this.connectionChanged(it) })
+    bus.register(this, CancelNotificationEvent::class.java, { this.cancelNotification() })
     previous = context.getString(R.string.notification_action_previous)
     play = context.getString(R.string.notification_action_play)
     next = context.getString(R.string.notification_action_next)
@@ -152,7 +153,7 @@ constructor(bus: RxBus,
       return Action.Builder(R.drawable.ic_action_next, next, nextIntent).build()
     }
 
-  fun cancelNotification(notificationId: Int) {
+  fun cancelNotification(notificationId: Int = NOW_PLAYING_PLACEHOLDER) {
     notificationManager.cancel(notificationId)
     hooks?.stop()
   }
@@ -164,4 +165,6 @@ constructor(bus: RxBus,
   companion object {
     val NOW_PLAYING_PLACEHOLDER = 15613
   }
+
+  class CancelNotificationEvent
 }

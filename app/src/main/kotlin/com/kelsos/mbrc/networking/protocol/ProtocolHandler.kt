@@ -34,7 +34,7 @@ constructor(
   init {
     bus.register(this, SocketDataAvailableEvent::class.java, { onIncoming(it) })
     bus.register(this, SocketHandshakeUpdateEvent::class.java, { onHandsakeUpdate(it) })
-    connectionStatusModel.onConnectedListener = {
+    connectionStatusModel.setOnConnectedListener {
       bus.post(SendProtocolMessage(SocketMessage.create(Protocol.Player, Protocol.CLIENT_PLATFORM)))
     }
   }

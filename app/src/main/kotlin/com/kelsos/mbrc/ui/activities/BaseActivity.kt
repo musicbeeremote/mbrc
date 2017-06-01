@@ -28,6 +28,8 @@ import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.events.RequestConnectionStateEvent
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.networking.ChangeConnectionStateEvent
+import com.kelsos.mbrc.networking.SocketAction
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.platform.RemoteService
 import com.kelsos.mbrc.platform.ServiceChecker
@@ -58,13 +60,13 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
 
   private fun onConnectLongClick(): Boolean {
     serviceChecker.startServiceIfNotRunning()
-    bus.post(MessageEvent(UserInputEventType.ResetConnection))
+    bus.post(ChangeConnectionStateEvent(SocketAction.RESET))
     return true
   }
 
   private fun onConnectClick() {
     serviceChecker.startServiceIfNotRunning()
-    bus.post(MessageEvent(UserInputEventType.StartConnection))
+    bus.post(ChangeConnectionStateEvent(SocketAction.START))
   }
 
   override fun onDestroy() {
