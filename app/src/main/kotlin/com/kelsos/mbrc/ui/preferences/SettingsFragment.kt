@@ -10,10 +10,9 @@ import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.MenuItem
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.constants.UserInputEventType
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.logging.FileLoggingTree
+import com.kelsos.mbrc.platform.media_session.SessionNotificationManager
 import com.kelsos.mbrc.ui.connection_manager.ConnectionManagerActivity
 import com.kelsos.mbrc.ui.dialogs.WebViewDialog
 import com.kelsos.mbrc.utilities.RemoteUtils
@@ -76,7 +75,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     showNotification?.setOnPreferenceChangeListener { _, newValue ->
       val value = newValue as Boolean
       if (!value) {
-        bus!!.post(MessageEvent(UserInputEventType.CancelNotification))
+        bus!!.post(SessionNotificationManager.CancelNotificationEvent())
       }
       true
     }
