@@ -8,32 +8,13 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.networking.MulticastConfigurationDiscovery
-import com.kelsos.mbrc.networking.SocketAction
 import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.SocketClient
 import com.kelsos.mbrc.networking.SocketMessage
-import com.kelsos.mbrc.networking.connections.ConnectionStatusModel
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
-import com.kelsos.mbrc.platform.media_session.SessionNotificationManager
 import com.kelsos.mbrc.preferences.SettingsManager
 import timber.log.Timber
 import javax.inject.Inject
-
-class CancelNotificationCommand
-@Inject constructor(private val sessionNotificationManager: SessionNotificationManager) : ICommand {
-
-  override fun execute(e: IEvent) {
-    sessionNotificationManager.cancelNotification(SessionNotificationManager.NOW_PLAYING_PLACEHOLDER)
-  }
-}
-
-class InitiateConnectionCommand
-@Inject constructor(private val socketClient: SocketClient) : ICommand {
-
-  override fun execute(e: IEvent) {
-    socketClient.socketManager(SocketAction.START)
-  }
-}
 
 class KeyVolumeDownCommand
 @Inject constructor(
@@ -136,31 +117,11 @@ class ReduceVolumeOnRingCommand
   }
 }
 
-class RestartConnectionCommand
-@Inject constructor(private val socket: SocketClient) : ICommand {
-
-  override fun execute(e: IEvent) {
-    socket.socketManager(SocketAction.RESET)
-  }
-}
-
 class StartDiscoveryCommand
 @Inject constructor(private val mDiscovery: MulticastConfigurationDiscovery) : ICommand {
 
   override fun execute(e: IEvent) {
     mDiscovery.startDiscovery()
-  }
-}
-
-class TerminateConnectionCommand
-@Inject constructor(
-    private val client: SocketClient,
-    private val statusModel: ConnectionStatusModel
-) : ICommand {
-
-  override fun execute(e: IEvent) {
-    statusModel.disconnected()
-    client.socketManager(SocketAction.TERMINATE)
   }
 }
 

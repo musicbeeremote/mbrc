@@ -1,12 +1,12 @@
 package com.kelsos.mbrc.content.library
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.library.genres.Genre
 import com.kelsos.mbrc.content.library.tracks.Track
-import com.kelsos.mbrc.extensions.toPage
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.protocol.Page
@@ -24,21 +24,29 @@ constructor(
 
   override fun getGenres(offset: Int, limit: Int): Observable<Page<Genre>> {
     val range = getPageRange(offset, limit)
-    return request(Protocol.LibraryBrowseGenres, range).flatMap { it.toPage<Genre>(mapper) }
+    return request(Protocol.LibraryBrowseGenres, range).flatMap {
+      Observable.fromCallable { mapper.readValue<Page<Genre>>(it.data as String) }
+    }
   }
 
   override fun getArtists(offset: Int, limit: Int): Observable<Page<Artist>> {
     val range = getPageRange(offset, limit)
-    return request(Protocol.LibraryBrowseArtists, range).flatMap { it.toPage<Artist>(mapper) }
+    return request(Protocol.LibraryBrowseArtists, range).flatMap {
+      Observable.fromCallable { mapper.readValue<Page<Artist>>(it.data as String) }
+    }
   }
 
   override fun getAlbums(offset: Int, limit: Int): Observable<Page<Album>> {
     val range = getPageRange(offset, limit)
-    return request(Protocol.LibraryBrowseAlbums, range).flatMap { it.toPage<Album>(mapper) }
+    return request(Protocol.LibraryBrowseAlbums, range).flatMap {
+      Observable.fromCallable { mapper.readValue<Page<Album>>(it.data as String) }
+    }
   }
 
   override fun getTracks(offset: Int, limit: Int): Observable<Page<Track>> {
     val range = getPageRange(offset, limit)
-    return request(Protocol.LibraryBrowseTracks, range).flatMap { it.toPage<Track>(mapper) }
+    return request(Protocol.LibraryBrowseTracks, range).flatMap {
+      Observable.fromCallable { mapper.readValue<Page<Track>>(it.data as String) }
+    }
   }
 }

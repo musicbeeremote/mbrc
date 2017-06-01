@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.content.playlists
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.extensions.toPage
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.protocol.Page
@@ -20,7 +20,9 @@ constructor(
 
   override fun getPlaylists(offset: Int, limit: Int): Observable<Page<Playlist>> {
     val range = getPageRange(offset, limit)
-    return request(Protocol.PlaylistList, range).flatMap { it.toPage<Playlist>(mapper) }
+    return request(Protocol.PlaylistList, range).flatMap {
+      Observable.fromCallable { mapper.readValue<Page<Playlist>>(it.data as String) }
+    }
   }
 }
 

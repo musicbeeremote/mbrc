@@ -3,9 +3,7 @@ package com.kelsos.mbrc.networking.protocol
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.constants.UserInputEventType
-import com.kelsos.mbrc.networking.protocol.commands.CancelNotificationCommand
 import com.kelsos.mbrc.networking.protocol.commands.HandshakeCompletionActions
-import com.kelsos.mbrc.networking.protocol.commands.InitiateConnectionCommand
 import com.kelsos.mbrc.networking.protocol.commands.KeyVolumeDownCommand
 import com.kelsos.mbrc.networking.protocol.commands.KeyVolumeUpCommand
 import com.kelsos.mbrc.networking.protocol.commands.NotifyNotAllowedCommand
@@ -14,9 +12,7 @@ import com.kelsos.mbrc.networking.protocol.commands.ProtocolPingHandle
 import com.kelsos.mbrc.networking.protocol.commands.ProtocolPongHandle
 import com.kelsos.mbrc.networking.protocol.commands.ProtocolRequest
 import com.kelsos.mbrc.networking.protocol.commands.ReduceVolumeOnRingCommand
-import com.kelsos.mbrc.networking.protocol.commands.RestartConnectionCommand
 import com.kelsos.mbrc.networking.protocol.commands.StartDiscoveryCommand
-import com.kelsos.mbrc.networking.protocol.commands.TerminateConnectionCommand
 import com.kelsos.mbrc.networking.protocol.commands.UpdateCover
 import com.kelsos.mbrc.networking.protocol.commands.UpdateLastFm
 import com.kelsos.mbrc.networking.protocol.commands.UpdateLfmRating
@@ -62,11 +58,6 @@ object CommandRegistration {
     controller.register(Protocol.PING, scope.getInstance(ProtocolPingHandle::class.java))
     controller.register(Protocol.PONG, scope.getInstance(ProtocolPongHandle::class.java))
 
-    controller.register(UserInputEventType.SettingsChanged, scope.getInstance(RestartConnectionCommand::class.java))
-    controller.register(UserInputEventType.CancelNotification, scope.getInstance(CancelNotificationCommand::class.java))
-    controller.register(UserInputEventType.StartConnection, scope.getInstance(InitiateConnectionCommand::class.java))
-    controller.register(UserInputEventType.TerminateConnection, scope.getInstance(TerminateConnectionCommand::class.java))
-    controller.register(UserInputEventType.ResetConnection, scope.getInstance(RestartConnectionCommand::class.java))
     controller.register(UserInputEventType.StartDiscovery, scope.getInstance(StartDiscoveryCommand::class.java))
     controller.register(UserInputEventType.KeyVolumeUp, scope.getInstance(KeyVolumeUpCommand::class.java))
     controller.register(UserInputEventType.KeyVolumeDown, scope.getInstance(KeyVolumeDownCommand::class.java))
