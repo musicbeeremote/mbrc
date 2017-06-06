@@ -2,10 +2,8 @@ package com.kelsos.mbrc.networking
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.constants.Const
-import com.kelsos.mbrc.constants.ProtocolEventType
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.NotifyUser
+import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.networking.SocketAction.Action
 import com.kelsos.mbrc.networking.SocketAction.RESET
@@ -63,6 +61,9 @@ constructor(
     resetState()
     bus.register(this, DefaultSettingsChangedEvent::class.java) { socketManager(RESET) }
     bus.register(this, SendProtocolMessage::class.java) { sendData(it.message) }
+    bus.register(this, UserAction::class.java) {
+      sendData(SocketMessage.create(it.context, it.data))
+    }
   }
 
   private fun startSocket() {
@@ -74,7 +75,7 @@ constructor(
         val settings = connectionRepository.getDefault()
         if (settings == null) {
           socketManager(STOP)
-          bus.post(MessageEvent(ProtocolEventType.TerminateService,))
+          // TODO: Terminate Service
           return@launch
         }
 
@@ -169,18 +170,18 @@ constructor(
       return
     }
     try {
-      writeToOutput(message)
+      writeToSocket(message = mapper.writeValueAsString(message) + "\r\n")
     } catch (ignored: Exception) {
       Timber.d(ignored, "Send failed")
     }
   }
 
-  private fun writeToOutput(message: SocketMessage) {
-    output?.let {
-      it.print(mapper.writeValueAsString(message) + Const.NEWLINE)
-      if (it.checkError()) {
-        throw Exception("Check error")
-      }
+  private fun writeToSocket(message: String) {
+    val output = output ?: throw RuntimeException("output was null")
+    output.print(message)
+
+    if (output.checkError()) {
+      throw RuntimeException("Output stream encountered an error")
     }
   }
 
@@ -189,9 +190,7 @@ constructor(
     socketManager(RESET)
   }
 
-  private inner class SocketConnection
-  (connectionSettings: ConnectionSettings) :
-    Runnable {
+  private inner class SocketConnection(connectionSettings: ConnectionSettings) : Runnable {
     private val socketAddress: SocketAddress?
     private val mapper: InetAddressMapper = InetAddressMapper()
 
@@ -213,11 +212,11 @@ constructor(
         }
 
         val outputStream = socket?.outputStream
-        val out = OutputStreamWriter(outputStream, Const.UTF_8)
+        val out = OutputStreamWriter(outputStream, "UTF-8")
         output = PrintWriter(BufferedWriter(out, SOCKET_BUFFER), true)
 
         val inputStream = socket?.inputStream
-        val inputStreamReader = InputStreamReader(inputStream, Const.UTF_8)
+        val inputStreamReader = InputStreamReader(inputStream, "UTF-8")
         input = BufferedReader(inputStreamReader, SOCKET_BUFFER)
 
         val socketStatus = socket!!.isConnected
@@ -260,7 +259,7 @@ constructor(
         if (numOfRetries < MAX_RETRIES && !shouldStop) {
           socketManager(RETRY)
         } else {
-          bus.post(MessageEvent(ProtocolEventType.TerminateService))
+          // TODO terminate service
         }
       }
     }

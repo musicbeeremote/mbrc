@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.node.BooleanNode
 import com.fasterxml.jackson.databind.node.IntNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
-import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.content.active_status.MainDataModel
 import com.kelsos.mbrc.content.active_status.ModelCache
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
@@ -28,6 +27,7 @@ import com.kelsos.mbrc.extensions.md5
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.networking.ApiBase
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.platform.widgets.UpdateWidgets
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso

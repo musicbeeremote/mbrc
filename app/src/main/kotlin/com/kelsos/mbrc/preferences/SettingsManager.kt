@@ -27,5 +27,4 @@ interface SettingsManager {
   fun isPluginUpdateCheckEnabled(): Boolean
   fun getLastUpdated(required: Boolean = false): Instant
   fun setLastUpdated(lastChecked: Instant, required: Boolean = false)
-  fun getClientId(): String
 }

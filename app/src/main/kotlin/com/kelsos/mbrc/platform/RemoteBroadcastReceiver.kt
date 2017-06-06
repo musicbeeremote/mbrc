@@ -7,11 +7,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.telephony.TelephonyManager
-import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.constants.ProtocolEventType
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.networking.protocol.VolumeInteractor
 import com.kelsos.mbrc.platform.media_session.RemoteViewIntentBuilder
 import com.kelsos.mbrc.preferences.SettingsManager
 import timber.log.Timber
@@ -20,7 +19,8 @@ import javax.inject.Inject
 class RemoteBroadcastReceiver
 @Inject constructor(
   private val settingsManager: SettingsManager,
-  private val bus: RxBus
+  private val bus: RxBus,
+  private val volumeInteractor: VolumeInteractor
 ) : BroadcastReceiver() {
 
   /**
@@ -82,11 +82,11 @@ class RemoteBroadcastReceiver
     when (settingsManager.getCallAction()) {
       SettingsManager.PAUSE -> postAction(UserAction(Protocol.PlayerPause, true))
       SettingsManager.STOP -> postAction(UserAction(Protocol.PlayerStop, true))
-      SettingsManager.REDUCE -> bus.post(MessageEvent(ProtocolEventType.ReduceVolume))
+      SettingsManager.REDUCE -> volumeInteractor.reduceVolume()
     }
   }
 
   private fun postAction(data: UserAction) {
-    bus.post(MessageEvent(ProtocolEventType.UserAction, data))
+    bus.post(data)
   }
 }

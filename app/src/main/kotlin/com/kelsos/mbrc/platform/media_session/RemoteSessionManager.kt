@@ -7,16 +7,14 @@ import android.content.Intent
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.content.active_status.PlayerState
 import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.PlayStateChange
 import com.kelsos.mbrc.events.RemoteClientMetaData
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.networking.connections.Connection
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.RemoteUtils
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -97,7 +95,7 @@ constructor(
   }
 
   private fun postAction(action: UserAction) {
-    bus.post(MessageEvent(ProtocolEventType.UserAction, action))
+    bus.post(action)
   }
 
   val mediaSessionToken: MediaSessionCompat.Token

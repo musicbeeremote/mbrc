@@ -6,8 +6,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.TestApplication
-import com.kelsos.mbrc.constants.Const
-import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.networking.ConnectivityVerifier
 import com.kelsos.mbrc.networking.ConnectivityVerifierImpl
@@ -16,6 +14,7 @@ import com.kelsos.mbrc.networking.RequestManagerImpl
 import com.kelsos.mbrc.networking.SocketMessage
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.preferences.SettingsManagerImpl
 import io.mockk.coEvery
@@ -89,7 +88,7 @@ class ConnectivityVerifierImplTest {
           return@Runnable
         }
 
-        val out = OutputStreamWriter(connection.outputStream, Const.UTF_8)
+        val out = OutputStreamWriter(connection.outputStream, "UTF-8")
         val output = PrintWriter(BufferedWriter(out), true)
         val newLine = "\r\n"
         if (json) {

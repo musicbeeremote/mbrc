@@ -1,7 +1,8 @@
-package com.kelsos.mbrc.constants
+package com.kelsos.mbrc.networking.protocol
+
+import androidx.annotation.StringDef
 
 object Protocol {
-
   const val Player = "player"
   const val ProtocolTag = "protocol"
   const val PluginVersion = "pluginversion"
@@ -32,9 +33,6 @@ object Protocol {
   const val NowPlayingListSearch = "nowplayinglistsearch"
   const val NowPlayingQueue = "nowplayingqueue"
 
-  const val ALL = "All"
-  const val DISCOVERY = "discovery"
-
   const val PING = "ping"
   const val PONG = "pong"
   const val INIT = "init"
@@ -50,12 +48,11 @@ object Protocol {
   const val LibraryBrowseArtists = "browseartists"
   const val LibraryBrowseAlbums = "browsealbums"
   const val LibraryBrowseTracks = "browsetracks"
-  const val ONE = "one"
+
+  const val DISCOVERY = "discovery"
 
   const val VerifyConnection = "verifyconnection"
   const val RadioStations = "radiostations"
-
-  const val ProtocolVersionNumber = 4
 
   const val PlayerOutput = "playeroutput"
   const val PlayerOutputSwitch = "playeroutputswitch"
@@ -64,4 +61,20 @@ object Protocol {
 
   // Protocol Constants
   const val CLIENT_PLATFORM = "Android"
+
+  // Repeat Constants
+  const val ONE = "one"
+  const val ALL = "All"
+
+  /**
+   * Toggle action in protocol. This should be send to the functions with multiple states
+   * in order to change to the next in order state.
+   */
+  const val TOGGLE = "toggle"
+
+  const val ProtocolVersionNumber = 4
+
+  @StringDef()
+  @Retention(AnnotationRetention.SOURCE)
+  annotation class Context
 }

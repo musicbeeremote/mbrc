@@ -3,18 +3,18 @@ package com.kelsos.mbrc.networking.protocol
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.constants.Const
-import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.content.active_status.MainDataModel
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.networking.ChangeConnectionStateEvent
 import com.kelsos.mbrc.networking.SendProtocolMessage
+import com.kelsos.mbrc.networking.SocketAction
 import com.kelsos.mbrc.networking.SocketDataAvailableEvent
 import com.kelsos.mbrc.networking.SocketHandshakeUpdateEvent
 import com.kelsos.mbrc.networking.SocketMessage
 import com.kelsos.mbrc.networking.connections.ConnectionStatusModel
+import com.kelsos.mbrc.preferences.ClientInformationStore
 import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
@@ -27,7 +27,8 @@ constructor(
   private val bus: RxBus,
   private val mapper: ObjectMapper,
   private val model: MainDataModel,
-  private val connectionStatusModel: ConnectionStatusModel
+  private val connectionStatusModel: ConnectionStatusModel,
+  private val clientInformationStore: ClientInformationStore
 ) {
 
   init {
@@ -60,7 +61,7 @@ constructor(
           .lowercase(Locale.getDefault())
 
         if (context == Protocol.ClientNotAllowed) {
-          bus.post(MessageEvent(ProtocolEventType.InformClientNotAllowed))
+          clientNotAllowed()
           return
         } else if (context == Protocol.CommandUnavailable) {
           bus.post(NotifyUser(R.string.party_mode__command_unavailable))
@@ -69,13 +70,13 @@ constructor(
 
         if (!connectionStatusModel.handshake) {
           when (context) {
-            Protocol.Player -> bus.post(MessageEvent(ProtocolEventType.InitiateProtocolRequest))
+            Protocol.Player -> sendProtocolPayload()
             Protocol.ProtocolTag -> handleProtocolMessage(node)
             else -> return
           }
         }
 
-        bus.post(MessageEvent(context, node.path(Const.DATA)))
+        bus.post(MessageEvent(context, node.path("data")))
       }
     } catch (e: Exception) {
       Timber.v(e, "Failure while processing incoming data")
@@ -85,15 +86,34 @@ constructor(
   private fun handleProtocolMessage(node: JsonNode) {
     model.pluginProtocol = getProtocolVersion(node)
     if (model.apiOutOfDate) {
-      bus.post(MessageEvent(ProtocolEventType.PluginUpdateAvailable))
+      // TODO Handle out of date
     }
     connectionStatusModel.handshake = true
-    bus.post(MessageEvent(ProtocolEventType.HandshakeComplete, true))
+    handshakeComplete()
   }
 
   private fun getProtocolVersion(node: JsonNode): Int = try {
-    Integer.parseInt(node.path(Const.DATA).asText())
+    Integer.parseInt(node.path("data").asText())
   } catch (ignore: Exception) {
     2
+  }
+
+  fun sendProtocolPayload() {
+    val payload = ProtocolPayload(clientInformationStore.getClientId())
+    payload.noBroadcast = false
+    payload.protocolVersion = Protocol.ProtocolVersionNumber
+    bus.post(SendProtocolMessage(SocketMessage.create(Protocol.ProtocolTag, payload)))
+  }
+
+  private fun clientNotAllowed() {
+    bus.post(NotifyUser(R.string.notification_not_allowed))
+    bus.post(ChangeConnectionStateEvent(SocketAction.STOP))
+    connectionStatusModel.disconnected()
+  }
+
+  private fun handshakeComplete() {
+    Timber.v("Sending init request")
+    bus.post(SendProtocolMessage(SocketMessage.create(Protocol.INIT)))
+    bus.post(SendProtocolMessage(SocketMessage.create(Protocol.PluginVersion)))
   }
 }

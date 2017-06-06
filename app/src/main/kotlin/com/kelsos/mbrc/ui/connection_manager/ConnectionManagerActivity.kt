@@ -12,13 +12,12 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.events.ConnectionSettingsChanged
 import com.kelsos.mbrc.events.DiscoveryStopped
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.networking.DiscoveryStop
+import com.kelsos.mbrc.networking.StartServiceDiscoveryEvent
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.preferences.DefaultSettingsChangedEvent
 import com.kelsos.mbrc.ui.activities.FontActivity
@@ -56,7 +55,7 @@ class ConnectionManagerActivity :
   @OnClick(R.id.connection_scan)
   internal fun onScanButtonClick() {
     findViewById<LinearProgressIndicator>(R.id.connection_manager__progress).isGone = false
-    bus.post(MessageEvent(UserInputEventType.StartDiscovery))
+    bus.post(StartServiceDiscoveryEvent())
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {

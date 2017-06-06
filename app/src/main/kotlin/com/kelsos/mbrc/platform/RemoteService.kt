@@ -75,6 +75,7 @@ class RemoteService : Service() {
     Timber.d("Background Service::Started")
     startForeground(NOW_PLAYING_PLACEHOLDER, placeholderNotification())
     core.start()
+    core.setSyncStartAction { LibrarySyncService.startActionSync(this, true) }
     return super.onStartCommand(intent, flags, startId)
   }
 

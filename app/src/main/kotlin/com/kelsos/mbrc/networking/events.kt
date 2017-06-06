@@ -16,6 +16,10 @@ class SendProtocolMessage(val message: SocketMessage)
 
 /**
  * Notifies the socket client manager that the state of the socket connection must change
- * @param action The action that will be performed to the socket client connection [Action]
+ * @property action The action that will be performed to the socket client connection [Action]
  */
 class ChangeConnectionStateEvent(@Action val action: Int)
+
+class StartLibrarySyncEvent
+
+class StartServiceDiscoveryEvent

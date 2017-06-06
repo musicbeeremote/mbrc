@@ -21,9 +21,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.events.RequestConnectionStateEvent
 import com.kelsos.mbrc.events.bus.RxBus
@@ -31,6 +29,7 @@ import com.kelsos.mbrc.features.output.OutputSelectionDialog
 import com.kelsos.mbrc.networking.ChangeConnectionStateEvent
 import com.kelsos.mbrc.networking.SocketAction
 import com.kelsos.mbrc.networking.connections.Connection
+import com.kelsos.mbrc.networking.protocol.VolumeInteractor
 import com.kelsos.mbrc.platform.RemoteService
 import com.kelsos.mbrc.platform.ServiceChecker
 import com.kelsos.mbrc.ui.help_feedback.HelpFeedbackActivity
@@ -50,6 +49,8 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
 
   @Inject
   lateinit var serviceChecker: ServiceChecker
+
+  @Inject lateinit var volumeInteractor: VolumeInteractor
 
   @BindView(R.id.toolbar)
   lateinit var toolbar: MaterialToolbar
@@ -146,11 +147,11 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
   override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
     when (keyCode) {
       KeyEvent.KEYCODE_VOLUME_UP -> {
-        bus.post(MessageEvent(UserInputEventType.KeyVolumeUp))
+        volumeInteractor.increment()
         return true
       }
       KeyEvent.KEYCODE_VOLUME_DOWN -> {
-        bus.post(MessageEvent(UserInputEventType.KeyVolumeDown))
+        volumeInteractor.decrement()
         return true
       }
       else -> return super.onKeyDown(keyCode, event)

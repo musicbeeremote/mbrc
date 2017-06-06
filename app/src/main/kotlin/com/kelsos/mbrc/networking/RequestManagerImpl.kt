@@ -2,12 +2,12 @@ package com.kelsos.mbrc.networking
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.InetAddressMapper
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
-import com.kelsos.mbrc.preferences.SettingsManager
+import com.kelsos.mbrc.preferences.ClientInformationStore
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.IOException
@@ -20,7 +20,7 @@ class RequestManagerImpl
 constructor(
   private val mapper: ObjectMapper,
   private val repository: ConnectionRepository,
-  private val settingsManager: SettingsManager,
+  private val clientInformationStore: ClientInformationStore,
   private val dispatchers: AppDispatchers
 ) : RequestManager {
 
@@ -58,7 +58,7 @@ constructor(
     return ProtocolPayload(
       noBroadcast = true,
       protocolVersion = Protocol.ProtocolVersionNumber,
-      clientId = settingsManager.getClientId()
+      clientId = clientInformationStore.getClientId()
     )
   }
 

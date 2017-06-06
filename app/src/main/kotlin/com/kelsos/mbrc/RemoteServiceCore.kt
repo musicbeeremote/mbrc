@@ -7,6 +7,8 @@ import com.kelsos.mbrc.networking.MulticastConfigurationDiscovery
 import com.kelsos.mbrc.networking.SocketAction.START
 import com.kelsos.mbrc.networking.SocketAction.TERMINATE
 import com.kelsos.mbrc.networking.SocketClient
+import com.kelsos.mbrc.networking.StartLibrarySyncEvent
+import com.kelsos.mbrc.networking.StartServiceDiscoveryEvent
 import com.kelsos.mbrc.networking.protocol.CommandExecutor
 import com.kelsos.mbrc.networking.protocol.CommandRegistration
 import com.kelsos.mbrc.networking.protocol.ProtocolHandler
@@ -29,6 +31,7 @@ class RemoteServiceCore
 ) : SimpleLifecycle {
 
   private lateinit var threadPoolExecutor: ExecutorService
+  private var action: SyncStartAction? = null
 
   override fun start() {
     Timber.v("Starting remote core")
@@ -40,6 +43,8 @@ class RemoteServiceCore
     bus.register(this, ChangeConnectionStateEvent::class.java) {
       this.client.socketManager(it.action)
     }
+    bus.register(this, StartLibrarySyncEvent::class.java) { action?.invoke() }
+    bus.register(this, StartServiceDiscoveryEvent::class.java) { discovery.startDiscovery() }
   }
 
   override fun stop() {
@@ -50,4 +55,10 @@ class RemoteServiceCore
     threadPoolExecutor.shutdownNow()
     bus.unregister(this)
   }
+
+  fun setSyncStartAction(action: SyncStartAction?) {
+    this.action = action
+  }
 }
+
+typealias SyncStartAction = () -> Unit

@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.helper
 
-import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.now_playing.cover.CoverPayload
@@ -9,6 +8,7 @@ import com.kelsos.mbrc.content.now_playing.queue.QueuePayload
 import com.kelsos.mbrc.content.now_playing.queue.QueueResponse
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.networking.ApiBase
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
 import kotlinx.coroutines.withContext
 import timber.log.Timber

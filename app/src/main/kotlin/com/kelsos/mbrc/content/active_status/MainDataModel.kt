@@ -1,10 +1,9 @@
 package com.kelsos.mbrc.content.active_status
 
-import com.kelsos.mbrc.constants.Const
-import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.content.active_status.PlayerState.State
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.events.ShuffleChange
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.ui.navigation.main.LfmRating
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -50,16 +49,6 @@ constructor() {
 
   @State
   var playState: String = PlayerState.UNDEFINED
-    set(value) {
-      @State val newState: String =
-        when {
-          Const.PLAYING.equals(value, ignoreCase = true) -> PlayerState.PLAYING
-          Const.STOPPED.equals(value, ignoreCase = true) -> PlayerState.STOPPED
-          Const.PAUSED.equals(value, ignoreCase = true) -> PlayerState.PAUSED
-          else -> PlayerState.UNDEFINED
-        }
-      field = newState
-    }
 
   @Repeat.Mode
   var repeat: String
@@ -70,7 +59,7 @@ constructor() {
     rating = 0f
 
     lfmStatus = LfmRating.NORMAL
-    pluginVersion = Const.EMPTY
+    pluginVersion = ""
   }
 
   fun setLfmRating(rating: String) {

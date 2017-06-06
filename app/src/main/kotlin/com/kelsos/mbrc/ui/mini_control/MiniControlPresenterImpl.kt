@@ -1,16 +1,15 @@
 package com.kelsos.mbrc.ui.mini_control
 
-import com.kelsos.mbrc.constants.Protocol.PlayerNext
-import com.kelsos.mbrc.constants.Protocol.PlayerPlayPause
-import com.kelsos.mbrc.constants.Protocol.PlayerPrevious
 import com.kelsos.mbrc.content.active_status.MainDataModel
 import com.kelsos.mbrc.events.CoverChangedEvent
-import com.kelsos.mbrc.events.MessageEvent.Companion.action
 import com.kelsos.mbrc.events.PlayStateChange
 import com.kelsos.mbrc.events.TrackInfoChangeEvent
 import com.kelsos.mbrc.events.UserAction.Companion.create
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
+import com.kelsos.mbrc.networking.protocol.Protocol.PlayerNext
+import com.kelsos.mbrc.networking.protocol.Protocol.PlayerPlayPause
+import com.kelsos.mbrc.networking.protocol.Protocol.PlayerPrevious
 import javax.inject.Inject
 
 class MiniControlPresenterImpl
@@ -54,7 +53,7 @@ class MiniControlPresenterImpl
   }
 
   fun post(action: String) {
-    bus.post(action(create(action)))
+    bus.post(create(action))
   }
 
   override fun detach() {

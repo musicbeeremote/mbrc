@@ -6,12 +6,11 @@ import android.widget.RatingBar
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.content.active_status.MainDataModel
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.RatingChanged
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.networking.protocol.Protocol
 import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
@@ -53,7 +52,7 @@ class RatingDialogFragment : DialogFragment() {
     ratingBar = dialog.findViewById(R.id.ratingBar)
     ratingBar?.setOnRatingBarChangeListener { _, ratingValue, isUserInitiated ->
       if (isUserInitiated) {
-        bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingRating, ratingValue)))
+        bus.post(UserAction(Protocol.NowPlayingRating, ratingValue))
       }
     }
     ratingBar?.rating = rating

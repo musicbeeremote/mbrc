@@ -33,8 +33,12 @@ import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.RequestManagerImpl
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionRepositoryImpl
+import com.kelsos.mbrc.networking.protocol.VolumeInteractor
+import com.kelsos.mbrc.networking.protocol.VolumeInteractorImpl
 import com.kelsos.mbrc.platform.ServiceChecker
 import com.kelsos.mbrc.platform.ServiceCheckerImpl
+import com.kelsos.mbrc.preferences.ClientInformationStore
+import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.preferences.SettingsManagerImpl
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
@@ -89,6 +93,8 @@ class RemoteModule : Module() {
 
     bind(LocalRadioDataSource::class.java).to(LocalRadioDataSource::class.java).singletonInScope()
     bind(RadioRepository::class.java).to(RadioRepositoryImpl::class.java).singletonInScope()
+    bind(ClientInformationStore::class).to(ClientInformationStoreImpl::class).singletonInScope()
+    bind(VolumeInteractor::class).to(VolumeInteractorImpl::class).singletonInScope()
   }
 }
 

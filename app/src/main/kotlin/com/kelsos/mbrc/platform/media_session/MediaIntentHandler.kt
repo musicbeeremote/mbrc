@@ -2,11 +2,9 @@ package com.kelsos.mbrc.platform.media_session
 
 import android.content.Intent
 import android.view.KeyEvent
-import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.constants.ProtocolEventType
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.networking.protocol.Protocol
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -53,7 +51,7 @@ constructor(private val bus: RxBus) {
   }
 
   private fun postAction(action: UserAction): Boolean {
-    bus.post(MessageEvent(ProtocolEventType.UserAction, action))
+    bus.post(action)
     return true
   }
 

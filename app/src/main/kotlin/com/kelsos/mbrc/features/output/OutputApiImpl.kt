@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.features.output
 
-import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.networking.ApiBase
+import com.kelsos.mbrc.networking.protocol.Protocol
 import javax.inject.Inject
 
 class OutputApiImpl
