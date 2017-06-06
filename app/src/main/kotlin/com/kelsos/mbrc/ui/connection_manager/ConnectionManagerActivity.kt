@@ -12,13 +12,12 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.events.ConnectionSettingsChanged
 import com.kelsos.mbrc.events.DiscoveryStopped
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.networking.DiscoveryStop
+import com.kelsos.mbrc.networking.StartServiceDiscoveryEvent
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.preferences.DefaultSettingsChangedEvent
 import com.kelsos.mbrc.ui.activities.FontActivity
@@ -54,7 +53,7 @@ class ConnectionManagerActivity : FontActivity(),
     mBuilder.content(R.string.progress_scanning_message)
     mBuilder.progress(true, 0)
     mProgress = mBuilder.show()
-    bus.post(MessageEvent(UserInputEventType.StartDiscovery))
+    bus.post(StartServiceDiscoveryEvent())
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {

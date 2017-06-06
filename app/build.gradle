@@ -126,17 +126,11 @@ android {
     javaMaxHeapSize "2G"
   }
 
-//  applicationVariants.all { variant ->
-//    variant.outputs.each { output ->
-//      def originalFilename = output.outputFile
-//      def versionInfo = "-v${variant.mergedFlavor.versionCode}-${variant.mergedFlavor.versionName}"
-//      def filename = originalFilename.name
-//          .replace(".apk", versionInfo + ".apk")
-//          .replace(project.name, defaultConfig.applicationId)
-//      filename = "${originalFilename.parent}/${filename}"
-//      output.outputFile = file(filename)
-//    }
-//  }
+  android.applicationVariants.all { variant ->
+    variant.outputs.all {
+      outputFileName = "${defaultConfig.applicationId}-{$variant.flavorName}-${variant.versionCode}-v${variant.versionName}.apk"
+    }
+  }
 
   sourceSets {
     androidTest.java.srcDirs += "src/androidTest/kotlin"
@@ -314,6 +308,15 @@ kapt {
   }
 }
 
+afterEvaluate {
+  project.android.unitTestVariants.each { variant ->
+    def scope = variant.variantData.scope
+    project.tasks.getByName("test${variant.name.capitalize()}") { testTask ->
+      testTask.testClassesDirs = files(scope.javaOutputDir)
+    }
+  }
+}
+
 task jacocoTestReport(type: JacocoReport,
     dependsOn: ['testGithubDebugUnitTest'/*, 'createGithubDebugCoverageReport'*/]) {
   group = "Reporting"
@@ -347,17 +350,4 @@ task jacocoTestReport(type: JacocoReport,
   classDirectories = files([debugTree])
   executionData = fileTree(dir: "$buildDir", includes: ["**/*.exec",
                                                         "**/*.ec"])
-}
-
-
-
-// Temporary Test Workaround #https://youtrack.jetbrains.com/issue/KT-17951
-task copyTestClasses(type: Copy) {
-  from "build/tmp/kotlin-classes/githubDebugUnitTest"
-  into "build/intermediates/classes/github/debug"
-}
-
-task copySdkClasses(type: Copy) {
-  from "build/tmp/kotlin-classes/githubDebug"
-  into "build/intermediates/classes/github/debug"
 }

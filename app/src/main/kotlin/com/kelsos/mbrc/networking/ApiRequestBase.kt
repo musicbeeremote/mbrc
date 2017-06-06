@@ -2,10 +2,9 @@ package com.kelsos.mbrc.networking
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kelsos.mbrc.constants.Const
-import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.InetAddressMapper
+import com.kelsos.mbrc.networking.protocol.Protocol
 import io.reactivex.Observable
 import timber.log.Timber
 import java.io.BufferedReader
@@ -32,7 +31,7 @@ open class ApiRequestBase(
 
   private fun responses(socket: Socket): Observable<out ServiceMessage> {
     try {
-      val `in` = InputStreamReader(socket.inputStream, Const.UTF_8)
+      val `in` = InputStreamReader(socket.inputStream, "UTF-8")
       val bufferedReader = BufferedReader(`in`)
       return Observable.create(ProtocolResponseReader(bufferedReader, socket))
     } catch (ex: IOException) {

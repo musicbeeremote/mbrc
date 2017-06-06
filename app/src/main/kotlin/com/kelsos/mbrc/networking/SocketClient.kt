@@ -2,8 +2,8 @@ package com.kelsos.mbrc.networking
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.events.NotifyUser
+import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.networking.SocketAction.Action
 import com.kelsos.mbrc.networking.SocketAction.RESET
@@ -17,7 +17,9 @@ import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.networking.connections.InetAddressMapper
 import com.kelsos.mbrc.preferences.DefaultSettingsChangedEvent
 import io.reactivex.Completable
+import io.reactivex.Single
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import java.io.BufferedReader
 import java.io.BufferedWriter
@@ -48,6 +50,8 @@ constructor(
   private var socket: Socket? = null
   private var output: PrintWriter? = null
   private val executor = Executors.newSingleThreadExecutor { Thread(it, "socket-thread") }
+  private val messageExecutor = Executors.newSingleThreadExecutor { Thread(it, "client-send-thread") }
+  private val messageScheduler = Schedulers.from(messageExecutor)
 
   private var disposable: Disposable? = null
 
@@ -58,6 +62,9 @@ constructor(
     socketManager(START)
     bus.register(this, DefaultSettingsChangedEvent::class.java) { socketManager(RESET) }
     bus.register(this, SendProtocolMessage::class.java) { sendData(it.message) }
+    bus.register(this, UserAction::class.java) {
+      sendData(SocketMessage.create(it.context, it.data))
+    }
   }
 
   private fun startSocket() {
@@ -157,19 +164,28 @@ constructor(
     if (!isConnected()) {
       return
     }
+    Single.fromCallable { return@fromCallable message }
+        .map { mapper.writeValueAsString(message) + "\r\n" }
+        .doOnSuccess { Timber.v("Sending -> $it") }
+        .flatMapCompletable { writeToSocket(it) }
+        .subscribeOn(messageScheduler)
+        .observeOn(messageScheduler)
+        .subscribe({
 
-    try {
-      writeToOutput(message)
-    } catch (ignored: Exception) {
-      Timber.d(ignored, "Trying to send a message")
-    }
+        }, {
+          Timber.e(it, "When sending")
+        })
+
+
   }
 
-  private fun writeToOutput(message: SocketMessage) {
-    output?.let {
-      it.print(mapper.writeValueAsString(message) + Const.NEWLINE)
-      if (it.checkError()) {
-        throw Exception("Check error")
+  private fun writeToSocket(message: String): Completable {
+    return Completable.fromAction {
+      val output = output ?: throw RuntimeException("output was null")
+      output.print(message)
+
+      if (output.checkError()) {
+        throw RuntimeException("Output stream encountered an error")
       }
     }
   }
@@ -202,11 +218,11 @@ constructor(
         }
 
         val outputStream = socket?.outputStream
-        val out = OutputStreamWriter(outputStream, Const.UTF_8)
+        val out = OutputStreamWriter(outputStream, "UTF-8")
         output = PrintWriter(BufferedWriter(out, SOCKET_BUFFER), true)
 
         val inputStream = socket?.inputStream
-        val inputStreamReader = InputStreamReader(inputStream, Const.UTF_8)
+        val inputStreamReader = InputStreamReader(inputStream, "UTF-8")
         input = BufferedReader(inputStreamReader, SOCKET_BUFFER)
 
         val socketStatus = socket!!.isConnected

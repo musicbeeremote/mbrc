@@ -1,11 +1,11 @@
 package com.kelsos.mbrc.networking
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.protocol.PageRange
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
-import com.kelsos.mbrc.preferences.SettingsManager
+import com.kelsos.mbrc.preferences.ClientInformationStore
 import io.reactivex.Observable
 import timber.log.Timber
 import java.io.IOException
@@ -13,7 +13,7 @@ import java.io.IOException
 open class ApiBase(
     repository: ConnectionRepository,
     private val mapper: ObjectMapper,
-    private val settingsManager: SettingsManager
+    private val clientInformationStore: ClientInformationStore
 ) : ApiRequestBase(mapper, repository) {
 
   fun request(request: String, data: Any? = null): Observable<SocketMessage> {
@@ -51,7 +51,7 @@ open class ApiBase(
   }
 
   private fun getProtocolPayload(): ProtocolPayload {
-    val payload = ProtocolPayload(settingsManager.getClientId())
+    val payload = ProtocolPayload(clientInformationStore.getClientId())
     payload.noBroadcast = true
     payload.protocolVersion = Protocol.ProtocolVersionNumber
     return payload
