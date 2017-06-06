@@ -1,12 +1,12 @@
 package com.kelsos.mbrc.content.now_playing.queue
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.content.now_playing.cover.CoverPayload
 import com.kelsos.mbrc.content.now_playing.queue.Queue.QueueType
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
-import com.kelsos.mbrc.preferences.SettingsManager
+import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.preferences.ClientInformationStore
 import io.reactivex.Single
 import javax.inject.Inject
 
@@ -14,8 +14,8 @@ class QueueApiImpl
 @Inject constructor(
     repository: ConnectionRepository,
     private val mapper: ObjectMapper,
-    settingsManager: SettingsManager
-) : ApiBase(repository, mapper, settingsManager), QueueApi {
+    clientInformationStore: ClientInformationStore
+) : ApiBase(repository, mapper, clientInformationStore), QueueApi {
   override fun queue(@QueueType type: String, tracks: List<String>, play: String?): Single<QueueResponse> {
     return request(Protocol.NowPlayingQueue, QueuePayload(type, tracks, play)).firstOrError().flatMap {
       return@flatMap Single.fromCallable {

@@ -30,5 +30,4 @@ interface SettingsManager {
 
   fun getLastUpdated(): Date
   fun setLastUpdated(lastChecked: Date)
-  fun getClientId(): String
 }

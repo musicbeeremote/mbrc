@@ -1,15 +1,14 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
-import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.content.active_status.MainDataModel
 import com.kelsos.mbrc.content.now_playing.NowPlaying
 import com.kelsos.mbrc.content.now_playing.NowPlayingRepository
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.TrackInfoChangeEvent
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.protocol.NowPlayingMoveRequest
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Scheduler
 import io.reactivex.Single
@@ -52,16 +51,16 @@ class NowPlayingPresenterImpl
   }
 
   override fun search(query: String) {
-    bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListSearch, query.trim { it <= ' ' })))
+    bus.post(UserAction(Protocol.NowPlayingListSearch, query.trim { it <= ' ' }))
   }
 
   override fun moveTrack(from: Int, to: Int) {
     val data = NowPlayingMoveRequest(from, to)
-    bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListMove, data)))
+    bus.post(UserAction(Protocol.NowPlayingListMove, data))
   }
 
   override fun play(position: Int) {
-    bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListPlay, position)))
+    bus.post(UserAction(Protocol.NowPlayingListPlay, position))
   }
 
   override fun attach(view: NowPlayingView) {
@@ -75,7 +74,7 @@ class NowPlayingPresenterImpl
   }
 
   override fun removeTrack(position: Int) {
-    bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListRemove, position)))
+    bus.post(UserAction(Protocol.NowPlayingListRemove, position))
   }
 
   private fun schedule(it: Single<FlowCursorList<NowPlaying>>) = it.observeOn(mainScheduler)

@@ -1,12 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.main
 
-import com.kelsos.mbrc.constants.Const
-import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.content.active_status.MainDataModel
 import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.CoverChangedEvent
 import com.kelsos.mbrc.events.LfmRatingChanged
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.PlayStateChange
 import com.kelsos.mbrc.events.RepeatChange
 import com.kelsos.mbrc.events.ScrobbleChange
@@ -18,6 +15,7 @@ import com.kelsos.mbrc.events.VolumeChange
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.connections.ConnectionStatusModel
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.preferences.SettingsManager
 import io.reactivex.Completable
 import timber.log.Timber
@@ -29,32 +27,28 @@ class MainViewPresenterImpl
                     val connectionStatusModel: ConnectionStatusModel,
                     private val settingsManager: SettingsManager) : BasePresenter<MainView>(), MainViewPresenter {
   override fun stop(): Boolean {
-    val action = UserAction(Protocol.PlayerStop, true)
-    postAction(action)
+    bus.post(UserAction(Protocol.PlayerStop, true))
     return true
   }
 
   override fun mute() {
-    val action = UserAction(Protocol.PlayerMute, Const.TOGGLE)
-    postAction(action)
+    bus.post(UserAction.toggle(Protocol.PlayerMute))
   }
 
   override fun shuffle() {
-    val action = UserAction(Protocol.PlayerShuffle, Const.TOGGLE)
-    postAction(action)
+    bus.post(UserAction.toggle(Protocol.PlayerShuffle))
   }
 
   override fun repeat() {
-    val action = UserAction(Protocol.PlayerRepeat, Const.TOGGLE)
-    postAction(action)
+    bus.post(UserAction.toggle(Protocol.PlayerRepeat))
   }
 
   override fun changeVolume(value: Int) {
-    postAction(UserAction.create(Protocol.PlayerVolume, value))
+    bus.post(UserAction.create(Protocol.PlayerVolume, value))
   }
 
   override fun seek(position: Int) {
-    postAction(UserAction.create(Protocol.NowPlayingPosition, position))
+    bus.post(UserAction.create(Protocol.NowPlayingPosition, position))
   }
 
   override fun load() {
@@ -87,12 +81,11 @@ class MainViewPresenterImpl
   }
 
   override fun requestNowPlayingPosition() {
-    val action = UserAction.create(Protocol.NowPlayingPosition)
-    bus.post(MessageEvent.action(action))
+    bus.post(UserAction.create(Protocol.NowPlayingPosition))
   }
 
   override fun toggleScrobbling() {
-    bus.post(MessageEvent.action(UserAction(Protocol.PlayerScrobble, Const.TOGGLE)))
+    bus.post(UserAction.toggle(Protocol.PlayerScrobble))
   }
 
   override fun attach(view: MainView) {
@@ -117,33 +110,22 @@ class MainViewPresenterImpl
   }
 
   override fun play() {
-    val action = UserAction(Protocol.PlayerPlayPause, true)
-    postAction(action)
+    bus.post(UserAction(Protocol.PlayerPlayPause, true))
   }
 
   override fun previous() {
-    val action = UserAction(Protocol.PlayerPrevious, true)
-    postAction(action)
+    bus.post(UserAction(Protocol.PlayerPrevious, true))
   }
 
   override fun next() {
     val action = UserAction(Protocol.PlayerNext, true)
-    postAction(action)
+    bus.post(action)
   }
 
   override fun lfmLove(): Boolean {
-    bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingLfmRating, Const.TOGGLE)))
+    bus.post(UserAction.toggle(Protocol.NowPlayingLfmRating))
     return true
   }
 
 
-  /**
-   * Posts a user action wrapped in a MessageEvent. The bus will
-   * pass the MessageEvent through the Socket to the plugin.
-
-   * @param action Any kind of UserAction available in the [Protocol]
-   */
-  private fun postAction(action: UserAction) {
-    bus.post(MessageEvent.action(action))
-  }
 }

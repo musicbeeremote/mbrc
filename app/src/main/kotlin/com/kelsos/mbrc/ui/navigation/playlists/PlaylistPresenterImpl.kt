@@ -1,12 +1,11 @@
 package com.kelsos.mbrc.ui.navigation.playlists
 
-import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.content.playlists.Playlist
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Scheduler
 import io.reactivex.Single
@@ -36,7 +35,7 @@ class PlaylistPresenterImpl
   }
 
   override fun play(path: String) {
-    bus.post(MessageEvent.action(UserAction(Protocol.PlaylistPlay, path)))
+    bus.post(UserAction(Protocol.PlaylistPlay, path))
   }
 
   override fun reload() {

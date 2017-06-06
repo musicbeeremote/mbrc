@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.navigation.lyrics
 
-import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.content.lyrics.LyricsModel
 import com.kelsos.mbrc.content.lyrics.LyricsPayload
 import com.kelsos.mbrc.events.LyricsUpdatedEvent
@@ -40,10 +39,14 @@ class LyricsPresenterImpl
     if (!isAttached) {
       return
     }
-    val lyrics = ArrayList(Arrays.asList<String>(*text.split(Const.LYRICS_NEWLINE.toRegex())
+    val lyrics = ArrayList(Arrays.asList<String>(*text.split(LYRICS_NEWLINE.toRegex())
         .dropLastWhile(String::isEmpty)
         .toTypedArray()))
     view?.updateLyrics(lyrics)
+  }
+
+  companion object {
+    const val LYRICS_NEWLINE = "\r\n|\n"
   }
 }
 

@@ -3,21 +3,25 @@ package com.kelsos.mbrc.networking.protocol
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.constants.Const
-import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.content.active_status.MainDataModel
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.networking.ChangeConnectionStateEvent
 import com.kelsos.mbrc.networking.SendProtocolMessage
+import com.kelsos.mbrc.networking.SocketAction.STOP
 import com.kelsos.mbrc.networking.SocketDataAvailableEvent
 import com.kelsos.mbrc.networking.SocketHandshakeUpdateEvent
 import com.kelsos.mbrc.networking.SocketMessage
+import com.kelsos.mbrc.networking.StartLibrarySyncEvent
 import com.kelsos.mbrc.networking.connections.ConnectionStatusModel
+import com.kelsos.mbrc.preferences.ClientInformationStore
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
+import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,7 +32,8 @@ constructor(
     private val bus: RxBus,
     private val mapper: ObjectMapper,
     private val model: MainDataModel,
-    private val connectionStatusModel: ConnectionStatusModel
+    private val connectionStatusModel: ConnectionStatusModel,
+    private val clientInformationStore: ClientInformationStore
 ) {
 
   init {
@@ -69,7 +74,7 @@ constructor(
         val context = node.path("context").textValue()
 
         if (context.contains(Protocol.ClientNotAllowed)) {
-          bus.post(MessageEvent(ProtocolEventType.InformClientNotAllowed))
+          clientNotAllowed()
           return@fromAction
         } else if (context.contains(Protocol.CommandUnavailable)) {
           bus.post(NotifyUser(R.string.party_mode__command_unavailable))
@@ -78,26 +83,66 @@ constructor(
 
         if (!connectionStatusModel.handshake) {
           if (context.contains(Protocol.Player)) {
-            bus.post(MessageEvent(ProtocolEventType.InitiateProtocolRequest))
+            sendProtocolPayload()
           } else if (context.contains(Protocol.ProtocolTag)) {
 
             val protocolVersion: Int = try {
-              Integer.parseInt(node.path(Const.DATA).asText())
+              Integer.parseInt(node.path("data").asText())
             } catch (ignore: Exception) {
               2
             }
 
             model.pluginProtocol = protocolVersion
             connectionStatusModel.handshake = true
-            bus.post(MessageEvent(ProtocolEventType.HandshakeComplete, true))
+            handshakeComplete()
+            bus.post(StartLibrarySyncEvent())
           } else {
             return@fromAction
           }
         }
 
-        bus.post(MessageEvent(context, node.path(Const.DATA)))
+        bus.post(MessageEvent(context, node.path("data")))
       }
     }
 
+  }
+
+  fun sendProtocolPayload() {
+    val payload = ProtocolPayload(clientInformationStore.getClientId())
+    payload.noBroadcast = false
+    payload.protocolVersion = Protocol.ProtocolVersionNumber
+    bus.post(SendProtocolMessage(SocketMessage.create(Protocol.ProtocolTag, payload)))
+  }
+
+  fun clientNotAllowed() {
+    bus.post(NotifyUser(R.string.notification_not_allowed))
+    bus.post(ChangeConnectionStateEvent(STOP))
+    connectionStatusModel.disconnected()
+  }
+
+  fun handshakeComplete() {
+    if (model.pluginProtocol > 2) {
+      Timber.v("Sending init request")
+      bus.post(SendProtocolMessage(SocketMessage.create(Protocol.INIT)))
+    } else {
+
+      Timber.v("Preparing to send requests for state")
+
+      val messages = ArrayList<SocketMessage>().apply {
+        add(SocketMessage.create(Protocol.NowPlayingCover))
+        add(SocketMessage.create(Protocol.PlayerStatus))
+        add(SocketMessage.create(Protocol.NowPlayingTrack))
+        add(SocketMessage.create(Protocol.NowPlayingLyrics))
+        add(SocketMessage.create(Protocol.NowPlayingPosition))
+        add(SocketMessage.create(Protocol.PluginVersion))
+      }
+
+      val totalMessages = messages.size.toLong()
+      Observable.interval(150, TimeUnit.MILLISECONDS)
+          .take(totalMessages)
+          .subscribe({ bus.post(SendProtocolMessage(messages.removeAt(0))) }) {
+            Timber.v(it, "Failure while sending the init messages")
+          }
+    }
   }
 }

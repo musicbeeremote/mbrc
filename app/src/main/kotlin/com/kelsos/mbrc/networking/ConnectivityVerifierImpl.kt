@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.networking
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
+import com.kelsos.mbrc.networking.protocol.Protocol
 import io.reactivex.Single
 import java.io.IOException
 import javax.inject.Inject

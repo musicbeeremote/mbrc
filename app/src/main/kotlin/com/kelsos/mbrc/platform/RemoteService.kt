@@ -35,6 +35,7 @@ class RemoteService : Service(), ForegroundHooks {
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     Timber.d("Background Service::Started")
     core.start()
+    core.setSyncStartAction { LibrarySyncService.startActionSync(this, true) }
     return super.onStartCommand(intent, flags, startId)
   }
 

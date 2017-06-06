@@ -37,17 +37,6 @@ constructor(
     }
   }
 
-  override fun getClientId(): String {
-    var clientId = preferences.getString(CLIENT_ID, "")
-
-    if (clientId.isBlank()) {
-      clientId = UUID.randomUUID().toString()
-      preferences.edit().putString(CLIENT_ID, clientId).apply()
-    }
-
-    return clientId
-  }
-
   private fun loggingEnabled(): Boolean {
     return preferences.getBoolean(getKey(R.string.settings_key_debug_logging), false)
   }
@@ -109,9 +98,5 @@ constructor(
   }
 
   private fun getKey(settingsKey: Int) = context.getString(settingsKey)
-
-  companion object {
-    const val CLIENT_ID = "com.kelsos.mbrc.CLIENT_ID"
-  }
 }
 

@@ -111,7 +111,7 @@
         <action android:name="android.intent.action.MEDIA_BUTTON"/>
       </intent-filter>
     </receiver>
-    <receiver android:name="com.kelsos.mbrc.platform.widgets.WidgetSmall">
+    <receiver android:name=".platform.widgets.WidgetSmall">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
       </intent-filter>
@@ -120,7 +120,7 @@
           android:name="android.appwidget.provider"
           android:resource="@xml/remote_widget_small"/>
     </receiver>
-    <receiver android:name="com.kelsos.mbrc.platform.widgets.WidgetNormal">
+    <receiver android:name=".platform.widgets.WidgetNormal">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
       </intent-filter>
@@ -152,11 +152,16 @@
     <activity
         android:name=".ui.navigation.radio.RadioActivity"
         android:label="@string/title_activity_radios"
-        android:parentActivityName="com.kelsos.mbrc.ui.navigation.main.MainActivity">
+        android:parentActivityName=".ui.navigation.main.MainActivity">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
           android:value="com.kelsos.mbrc.ui.navigation.main.MainActivity"/>
     </activity>
+
+    <service
+        android:name=".platform.LibrarySyncService"
+        android:exported="false">
+    </service>
   </application>
 
 </manifest>
