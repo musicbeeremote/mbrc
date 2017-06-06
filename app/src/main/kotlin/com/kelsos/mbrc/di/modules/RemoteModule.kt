@@ -42,8 +42,12 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.bus.RxBusImpl
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionRepositoryImpl
+import com.kelsos.mbrc.networking.protocol.VolumeInteractor
+import com.kelsos.mbrc.networking.protocol.VolumeInteractorImpl
 import com.kelsos.mbrc.platform.ServiceChecker
 import com.kelsos.mbrc.platform.ServiceCheckerImpl
+import com.kelsos.mbrc.preferences.ClientInformationStore
+import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.preferences.SettingsManagerImpl
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
@@ -93,9 +97,11 @@ class RemoteModule : Module() {
     bind(RemoteRadioDataSource::class.java).to(RemoteRadioDataSourceImpl::class.java).singletonInScope()
     bind(RadioRepository::class.java).to(RadioRepositoryImpl::class.java).singletonInScope()
     bind(RadioApi::class.java).to(RadioApiImpl::class.java).singletonInScope()
+    bind(ClientInformationStore::class).to(ClientInformationStoreImpl::class).singletonInScope()
+    bind(VolumeInteractor::class).to(VolumeInteractorImpl::class).singletonInScope()
   }
 }
 
 fun <T : Any> Module.bind(clazz: KClass<T>): Binding<T> = bind(clazz.java)
 
-fun <T: Any, K : T> Binding<T>.to(clazz: KClass<K>): Binding<T>.BoundStateForClassBinding = this.to(clazz.java)
+fun <T : Any, K : T> Binding<T>.to(clazz: KClass<K>): Binding<T>.BoundStateForClassBinding = this.to(clazz.java)

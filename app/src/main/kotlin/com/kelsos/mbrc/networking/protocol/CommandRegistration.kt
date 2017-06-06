@@ -1,18 +1,7 @@
 package com.kelsos.mbrc.networking.protocol
 
-import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.constants.ProtocolEventType
-import com.kelsos.mbrc.constants.UserInputEventType
-import com.kelsos.mbrc.networking.protocol.commands.HandshakeCompletionActions
-import com.kelsos.mbrc.networking.protocol.commands.KeyVolumeDownCommand
-import com.kelsos.mbrc.networking.protocol.commands.KeyVolumeUpCommand
-import com.kelsos.mbrc.networking.protocol.commands.NotifyNotAllowedCommand
-import com.kelsos.mbrc.networking.protocol.commands.ProcessUserAction
 import com.kelsos.mbrc.networking.protocol.commands.ProtocolPingHandle
 import com.kelsos.mbrc.networking.protocol.commands.ProtocolPongHandle
-import com.kelsos.mbrc.networking.protocol.commands.ProtocolRequest
-import com.kelsos.mbrc.networking.protocol.commands.ReduceVolumeOnRingCommand
-import com.kelsos.mbrc.networking.protocol.commands.StartDiscoveryCommand
 import com.kelsos.mbrc.networking.protocol.commands.UpdateCover
 import com.kelsos.mbrc.networking.protocol.commands.UpdateLastFm
 import com.kelsos.mbrc.networking.protocol.commands.UpdateLfmRating
@@ -33,12 +22,6 @@ import toothpick.Scope
 
 object CommandRegistration {
   fun register(controller: CommandExecutor, scope: Scope) {
-    controller.register(ProtocolEventType.ReduceVolume, scope.getInstance(ReduceVolumeOnRingCommand::class.java))
-    controller.register(ProtocolEventType.HandshakeComplete, scope.getInstance(HandshakeCompletionActions::class.java))
-    controller.register(ProtocolEventType.InformClientNotAllowed, scope.getInstance(NotifyNotAllowedCommand::class.java))
-    controller.register(ProtocolEventType.InitiateProtocolRequest, scope.getInstance(ProtocolRequest::class.java))
-    controller.register(ProtocolEventType.UserAction, scope.getInstance(ProcessUserAction::class.java))
-
     controller.register(Protocol.NowPlayingTrack, scope.getInstance(UpdateNowPlayingTrack::class.java))
     controller.register(Protocol.NowPlayingCover, scope.getInstance(UpdateCover::class.java))
     controller.register(Protocol.NowPlayingRating, scope.getInstance(UpdateRating::class.java))
@@ -57,10 +40,6 @@ object CommandRegistration {
     controller.register(Protocol.PluginVersion, scope.getInstance(UpdatePluginVersionCommand::class.java))
     controller.register(Protocol.PING, scope.getInstance(ProtocolPingHandle::class.java))
     controller.register(Protocol.PONG, scope.getInstance(ProtocolPongHandle::class.java))
-
-    controller.register(UserInputEventType.StartDiscovery, scope.getInstance(StartDiscoveryCommand::class.java))
-    controller.register(UserInputEventType.KeyVolumeUp, scope.getInstance(KeyVolumeUpCommand::class.java))
-    controller.register(UserInputEventType.KeyVolumeDown, scope.getInstance(KeyVolumeDownCommand::class.java))
   }
 
   fun unregister(controller: CommandExecutor) {

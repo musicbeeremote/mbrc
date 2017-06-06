@@ -22,15 +22,14 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.events.RequestConnectionStateEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.networking.ChangeConnectionStateEvent
 import com.kelsos.mbrc.networking.SocketAction
 import com.kelsos.mbrc.networking.connections.Connection
+import com.kelsos.mbrc.networking.protocol.VolumeInteractor
 import com.kelsos.mbrc.platform.RemoteService
 import com.kelsos.mbrc.platform.ServiceChecker
 import com.kelsos.mbrc.ui.help_feedback.HelpFeedbackActivity
@@ -48,6 +47,8 @@ import javax.inject.Inject
 abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSelectedListener {
   @Inject lateinit var bus: RxBus
   @Inject lateinit var serviceChecker: ServiceChecker
+  @Inject lateinit var volumeInteractor: VolumeInteractor
+
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
   @BindView(R.id.drawer_layout) lateinit var drawer: DrawerLayout
   @BindView(R.id.nav_view) lateinit var navigationView: NavigationView
@@ -134,11 +135,11 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
   override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
     when (keyCode) {
       KeyEvent.KEYCODE_VOLUME_UP -> {
-        bus.post(MessageEvent(UserInputEventType.KeyVolumeUp))
+        volumeInteractor.increment()
         return true
       }
       KeyEvent.KEYCODE_VOLUME_DOWN -> {
-        bus.post(MessageEvent(UserInputEventType.KeyVolumeDown))
+        volumeInteractor.decrement()
         return true
       }
       else -> return super.onKeyDown(keyCode, event)

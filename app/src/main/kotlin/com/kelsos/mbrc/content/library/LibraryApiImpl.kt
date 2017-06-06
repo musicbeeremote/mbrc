@@ -2,7 +2,6 @@ package com.kelsos.mbrc.content.library
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.library.genres.Genre
@@ -10,7 +9,8 @@ import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.protocol.Page
-import com.kelsos.mbrc.preferences.SettingsManager
+import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.preferences.ClientInformationStore
 import io.reactivex.Observable
 import javax.inject.Inject
 
@@ -19,8 +19,8 @@ class LibraryApiImpl
 constructor(
     repository: ConnectionRepository,
     private val mapper: ObjectMapper,
-    settingsManager: SettingsManager
-) : ApiBase(repository, mapper, settingsManager), LibraryService {
+    clientInformationStore: ClientInformationStore
+) : ApiBase(repository, mapper, clientInformationStore), LibraryService {
 
   override fun getGenres(offset: Int, limit: Int): Observable<Page<Genre>> {
     val range = getPageRange(offset, limit)

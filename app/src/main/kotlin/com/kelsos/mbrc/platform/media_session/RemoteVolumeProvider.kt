@@ -1,12 +1,11 @@
 package com.kelsos.mbrc.platform.media_session
 
 import android.support.v4.media.VolumeProviderCompat
-import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.content.active_status.MainDataModel
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.VolumeChange
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.networking.protocol.Protocol
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,6 +35,6 @@ constructor(private val mainDataModel: MainDataModel,
   }
 
   private fun post(action: UserAction) {
-    bus.post(MessageEvent.action(action))
+    bus.post(action)
   }
 }

@@ -1,14 +1,10 @@
 package com.kelsos.mbrc.content.active_status
 
-import com.kelsos.mbrc.constants.Const
-import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.content.active_status.PlayerState.STOPPED
 import com.kelsos.mbrc.content.active_status.PlayerState.State
 import com.kelsos.mbrc.content.active_status.Repeat.Mode
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.events.LfmRatingChanged
-import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.PlayStateChange
 import com.kelsos.mbrc.events.RatingChanged
 import com.kelsos.mbrc.events.RepeatChange
@@ -17,6 +13,7 @@ import com.kelsos.mbrc.events.ShuffleChange
 import com.kelsos.mbrc.events.ShuffleChange.ShuffleState
 import com.kelsos.mbrc.events.VolumeChange
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.ui.navigation.main.LfmRating
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -104,7 +101,6 @@ constructor(private val bus: RxBus,
         return
       }
       field = value.substring(0, value.lastIndexOf('.'))
-      bus.post(MessageEvent(ProtocolEventType.PluginVersionCheck))
     }
 
   var pluginProtocol: Int = 2
@@ -123,16 +119,7 @@ constructor(private val bus: RxBus,
   @State var playState: String = PlayerState.UNDEFINED
     set(value) {
       disposable?.dispose()
-
-      @State val newState: String =
-          when {
-            Const.PLAYING.equals(value, ignoreCase = true) -> PlayerState.PLAYING
-            Const.STOPPED.equals(value, ignoreCase = true) -> STOPPED
-            Const.PAUSED.equals(value, ignoreCase = true) -> PlayerState.PAUSED
-            else -> PlayerState.UNDEFINED
-          }
-
-      field = newState
+      field = value
 
       if (field != STOPPED) {
         bus.post(PlayStateChange(field))
@@ -150,7 +137,7 @@ constructor(private val bus: RxBus,
     rating = 0f
 
     lfmStatus = LfmRating.NORMAL
-    pluginVersion = Const.EMPTY
+    pluginVersion = ""
   }
 
   fun setLfmRating(rating: String) {
