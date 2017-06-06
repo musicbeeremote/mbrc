@@ -11,6 +11,8 @@ import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.VolumeInteractor
+import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.networking.protocol.VolumeInteractor
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
 import com.kelsos.mbrc.preferences.SettingsManager
 import javax.inject.Inject

@@ -5,6 +5,8 @@ import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProv
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
 import com.kelsos.mbrc.networking.client.IClientConnectionManager
+import com.kelsos.mbrc.networking.StartLibrarySyncEvent
+import com.kelsos.mbrc.networking.StartServiceDiscoveryEvent
 import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
 import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import timber.log.Timber

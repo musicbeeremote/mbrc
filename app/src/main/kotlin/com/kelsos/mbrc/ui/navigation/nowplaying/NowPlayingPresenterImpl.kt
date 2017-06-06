@@ -12,6 +12,7 @@ import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.NowPlayingMoveRequest
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppRxSchedulers
 import com.kelsos.mbrc.utilities.paged
 import io.reactivex.rxkotlin.plusAssign

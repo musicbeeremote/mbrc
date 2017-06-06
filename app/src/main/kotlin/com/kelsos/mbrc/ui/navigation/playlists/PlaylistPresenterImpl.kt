@@ -8,6 +8,7 @@ import com.kelsos.mbrc.content.playlists.PlaylistEntity
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.mvp.BasePresenter
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppRxSchedulers
