@@ -29,7 +29,7 @@ import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.events.OnMainFragmentOptionsInflated
 import com.kelsos.mbrc.events.ShuffleChange
 import com.kelsos.mbrc.events.ShuffleChange.ShuffleState
-import com.kelsos.mbrc.events.UpdatePosition
+import com.kelsos.mbrc.events.UpdatePositionEvent
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.ui.activities.BaseActivity
@@ -358,7 +358,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
    * current progress of playback
    */
 
-  override fun updateProgress(position: UpdatePosition) {
+  override fun updateProgress(position: UpdatePositionEvent) {
     val total = position.total
     val current = position.current
 

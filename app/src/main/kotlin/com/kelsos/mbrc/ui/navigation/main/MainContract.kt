@@ -4,7 +4,7 @@ import com.kelsos.mbrc.content.active_status.PlayerState.State
 import com.kelsos.mbrc.content.active_status.Repeat.Mode
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.events.ShuffleChange.ShuffleState
-import com.kelsos.mbrc.events.UpdatePosition
+import com.kelsos.mbrc.events.UpdatePositionEvent
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 import com.kelsos.mbrc.ui.navigation.main.LfmRating.Rating
@@ -29,7 +29,7 @@ interface MainView : BaseView {
 
   fun updateCover(path: String)
 
-  fun updateProgress(position: UpdatePosition)
+  fun updateProgress(position: UpdatePositionEvent)
 
   fun showChangeLog()
 
