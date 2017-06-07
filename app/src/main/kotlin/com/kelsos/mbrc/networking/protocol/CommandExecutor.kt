@@ -4,6 +4,7 @@ import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
+import com.kelsos.mbrc.networking.protocol.Protocol.Context
 import timber.log.Timber
 import java.util.HashMap
 import java.util.concurrent.LinkedBlockingQueue
@@ -20,13 +21,13 @@ class CommandExecutor
     commandMap = HashMap<String, ICommand>()
   }
 
-  fun register(type: String, command: ICommand) {
+  fun register(@Context type: String, command: ICommand) {
     if (!commandMap.containsKey(type)) {
       commandMap[type] = command
     }
   }
 
-  fun unregister(type: String, command: Class<out ICommand>) {
+  fun unregister(@Context type: String, command: Class<out ICommand>) {
     if (commandMap.containsKey(type) && commandMap[type] == command) {
       commandMap.remove(type)
     }
