@@ -7,10 +7,12 @@ import com.fasterxml.jackson.databind.node.BooleanNode
 import com.fasterxml.jackson.databind.node.IntNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
+import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.kelsos.mbrc.content.active_status.MainDataModel
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.content.lyrics.LyricsModel
 import com.kelsos.mbrc.content.lyrics.LyricsPayload
+import com.kelsos.mbrc.content.now_playing.NowPlayingTrack
 import com.kelsos.mbrc.events.RemoteClientMetaData
 import com.kelsos.mbrc.events.ShuffleChange
 import com.kelsos.mbrc.events.TrackInfoChangeEvent
@@ -68,17 +70,21 @@ class UpdateNowPlayingTrack
 @Inject constructor(
     private val model: MainDataModel,
     private val context: Application,
+    private val mapper: ObjectMapper,
     private val bus: RxBus
 ) : ICommand {
 
   override fun execute(e: IEvent) {
-    val node = e.data as ObjectNode
-    val artist = node.path("artist").textValue()
-    val album = node.path("album").textValue()
-    val title = node.path("title").textValue()
-    val year = node.path("year").textValue()
-    val path = node.path("path").textValue()
-    model.trackInfo = TrackInfo(artist, title, album, year, path)
+    val nowPlayingTrack: NowPlayingTrack = mapper.treeToValue((e.data as JsonNode))
+
+    model.trackInfo = TrackInfo(
+        nowPlayingTrack.artist,
+        nowPlayingTrack.title,
+        nowPlayingTrack.album,
+        nowPlayingTrack.year,
+        nowPlayingTrack.path
+    )
+
     bus.post(RemoteClientMetaData(model.trackInfo, model.coverPath))
     bus.post(TrackInfoChangeEvent(model.trackInfo))
     UpdateWidgets.updateTrackInfo(context, model.trackInfo)
