@@ -72,7 +72,50 @@ object Protocol {
 
   const val ProtocolVersionNumber = 5
 
-  @StringDef()
+  @StringDef(
+      Player,
+      ProtocolTag,
+      PluginVersion,
+      ClientNotAllowed,
+      PlayerStatus,
+      PlayerRepeat,
+      PlayerScrobble,
+      PlayerShuffle,
+      PlayerMute,
+      PlayerPlayPause,
+      PlayerPrevious,
+      PlayerNext,
+      PlayerStop,
+      PlayerState,
+      PlayerVolume,
+      NowPlayingTrack,
+      NowPlayingCover,
+      NowPlayingPosition,
+      NowPlayingLyrics,
+      NowPlayingRating,
+      NowPlayingLfmRating,
+      NowPlayingList,
+      NowPlayingListPlay,
+      NowPlayingListRemove,
+      NowPlayingListMove,
+      NowPlayingListSearch,
+      NowPlayingQueue,
+      PING,
+      PONG,
+      INIT,
+      PlayerPlay,
+      PlayerPause,
+      PlaylistList,
+      PlaylistPlay,
+      NoBroadcast,
+      LibraryBrowseGenres,
+      LibraryBrowseArtists,
+      LibraryBrowseAlbums,
+      LibraryBrowseTracks,
+      DISCOVERY,
+      VerifyConnection,
+      RadioStations,
+      CommandUnavailable)
   @Retention(AnnotationRetention.SOURCE)
   annotation class Context
 }
