@@ -9,7 +9,7 @@ import com.kelsos.mbrc.events.RepeatChange
 import com.kelsos.mbrc.events.ScrobbleChange
 import com.kelsos.mbrc.events.ShuffleChange
 import com.kelsos.mbrc.events.TrackInfoChangeEvent
-import com.kelsos.mbrc.events.UpdatePosition
+import com.kelsos.mbrc.events.UpdatePositionEvent
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.VolumeChange
 import com.kelsos.mbrc.events.bus.RxBus
@@ -97,7 +97,7 @@ class MainViewPresenterImpl
     this.bus.register(this, PlayStateChange::class.java, { this.view?.updatePlayState(it.state) }, true)
     this.bus.register(this, TrackInfoChangeEvent::class.java, { this.view?.updateTrackInfo(it.trackInfo) }, true)
     this.bus.register(this, ConnectionStatusChangeEvent::class.java, { this.view?.updateConnection(it.status) }, true)
-    this.bus.register(this, UpdatePosition::class.java, { this.view?.updateProgress(it) }, true)
+    this.bus.register(this, UpdatePositionEvent::class.java, { this.view?.updateProgress(it) }, true)
     this.bus.register(this, ScrobbleChange::class.java, { this.view?.updateScrobbleStatus(it.isActive) }, true)
     this.bus.register(this, LfmRatingChanged::class.java, { this.view?.updateLfmStatus(it.status) }, true)
     model.setOnPluginOutOfDate { this.view?.notifyPluginOutOfDate() }
