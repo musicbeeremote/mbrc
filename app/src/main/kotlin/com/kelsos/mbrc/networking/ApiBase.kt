@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.protocol.PageRange
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.networking.protocol.Protocol.Context
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 import com.kelsos.mbrc.preferences.ClientInformationStore
 import io.reactivex.Observable
@@ -16,7 +17,7 @@ open class ApiBase(
     private val clientInformationStore: ClientInformationStore
 ) : ApiRequestBase(mapper, repository) {
 
-  fun request(request: String, data: Any? = null): Observable<SocketMessage> {
+  fun request(@Context request: String, data: Any? = null): Observable<SocketMessage> {
     return call().flatMap { getSocketMessageObservable(request, data ?: "", it) }
         .skipWhile { it.shouldSkip() }
   }
