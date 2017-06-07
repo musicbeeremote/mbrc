@@ -20,17 +20,17 @@ constructor() {
   private val scope = CoroutineScope(job + Dispatchers.IO)
   private var progressJob: Job? = null
 
-  fun start(duration: Int) {
+  fun start(duration: Long) {
     stop()
     startUpdating(0, duration)
   }
 
-  private fun startUpdating(position: Int, duration: Int) {
+  private fun startUpdating(position: Long, duration: Long) {
     progressJob = flow<Int> {
-      repeat(duration.minus(position).floorDiv(1000)) { current ->
+      repeat(duration.minus(position).floorDiv(1000).toInt()) { current ->
         delay(1000)
         try {
-          progressUpdate?.progress(current * 1000, duration)
+          progressUpdate?.progress((current * 1000).toLong(), duration)
         } catch (e: Exception) {
           Timber.e(e, "Error while updating progress")
         }
@@ -38,7 +38,7 @@ constructor() {
     }.launchIn(scope)
   }
 
-  fun update(position: Int, duration: Int) {
+  fun update(position: Long, duration: Long) {
     stop()
     startUpdating(position, duration)
   }
@@ -52,6 +52,6 @@ constructor() {
   }
 
   interface ProgressUpdate {
-    fun progress(position: Int, duration: Int)
+    fun progress(position: Long, duration: Long)
   }
 }

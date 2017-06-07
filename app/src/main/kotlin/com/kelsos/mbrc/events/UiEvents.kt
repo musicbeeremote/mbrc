@@ -75,11 +75,11 @@ class ShuffleChange(@ShuffleState val shuffleState: String) {
 
 class TrackInfoChangeEvent(val trackInfo: TrackInfo)
 
-class TrackMoved(val from: Int, val to: Int, val success: Boolean)
+class TrackMovedEvent(val from: Int, val to: Int, val success: Boolean)
 
-class TrackRemoval(val index: Int, val success: Boolean)
+class TrackRemovalEvent(val index: Int, val success: Boolean)
 
-class UpdatePosition(val current: Int, val total: Int)
+class UpdatePositionEvent(val current: Long, val total: Long)
 
 class VolumeChange {
   var volume: Int = 0

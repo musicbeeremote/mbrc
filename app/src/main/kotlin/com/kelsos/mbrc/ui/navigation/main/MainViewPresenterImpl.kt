@@ -9,7 +9,7 @@ import com.kelsos.mbrc.events.RepeatChange
 import com.kelsos.mbrc.events.ScrobbleChange
 import com.kelsos.mbrc.events.ShuffleChange
 import com.kelsos.mbrc.events.TrackInfoChangeEvent
-import com.kelsos.mbrc.events.UpdatePosition
+import com.kelsos.mbrc.events.UpdatePositionEvent
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.VolumeChange
 import com.kelsos.mbrc.events.bus.RxBus
@@ -69,7 +69,7 @@ class MainViewPresenterImpl
         view?.updatePlayState(model.playState)
         view?.updateTrackInfo(model.trackInfo)
         view?.updateConnection(connectionStatusModel.connection)
-        view?.updateProgress(UpdatePosition(model.position.toInt(), model.duration.toInt()))
+        view?.updateProgress(UpdatePositionEvent(model.position, model.duration))
         showPluginUpdateAvailable()
         showPluginUpdateRequired()
       } catch (e: Exception) {
@@ -147,7 +147,13 @@ class MainViewPresenterImpl
       { this.view?.updateConnection(it.status) },
       true
     )
-    this.bus.register(this, UpdatePosition::class.java, { this.view?.updateProgress(it) }, true)
+    this.bus.register(
+      this, UpdatePositionEvent::class.java,
+      {
+        this.view?.updateProgress(it)
+      },
+      true
+    )
     this.bus.register(
       this,
       ScrobbleChange::class.java,
