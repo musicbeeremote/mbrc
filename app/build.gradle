@@ -26,13 +26,13 @@ def version = "1.2.0"
 def version_code = 114
 
 android {
-  compileSdkVersion 25
-  buildToolsVersion "25.0.3"
+  compileSdkVersion 26
+  buildToolsVersion "26.0.0"
 
   defaultConfig {
     applicationId "com.kelsos.mbrc"
     minSdkVersion 16
-    targetSdkVersion 25
+    targetSdkVersion 26
     versionCode version_code
     versionName version
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
@@ -149,18 +149,18 @@ idea {
 }
 
 ext {
-  support_library_version = "25.3.1"
-  dbflow_version = "4.0.3"
-  toothpick_version = "1.0.6"
-  jackson_version = "2.8.8"
-  butterknife_version = "8.6.0"
+  support_library_version = "25.4.0"
+  dbflow_version = "4.0.4"
+  toothpick_version = "1.0.7"
+  jackson_version = "2.8.9"
+  butterknife_version = "8.7.0"
   material_dialogs_version = "0.9.4.5"
   runner_version = "0.5"
   espresso_version = "2.2.2"
   junit_version = "4.12"
-  mockito_version = "2.8.9"
+  mockito_version = "2.8.47"
   robolectric_version = "3.3.2"
-  truth_version = "0.33"
+  truth_version = "0.34"
   leakcanary_version = "1.5.1"
 }
 
@@ -191,7 +191,7 @@ dependencies {
   testImplementation "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
   testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
   //The android library only will fail the robolectric tests
-  testImplementation 'org.threeten:threetenbp:1.3.4'
+  testImplementation 'org.threeten:threetenbp:1.3.6'
 
   implementation "com.android.support:appcompat-v7:${support_library_version}"
   implementation "com.android.support:support-v4:${support_library_version}"
@@ -232,8 +232,8 @@ dependencies {
   implementation 'com.android.support:multidex:1.0.1'
 
   implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.0'
-  implementation 'io.reactivex.rxjava2:rxkotlin:2.0.3'
+  implementation 'io.reactivex.rxjava2:rxjava:2.1.1'
+  implementation 'io.reactivex.rxjava2:rxkotlin:2.1.0'
   implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
   implementation 'com.jakewharton.timber:timber:4.5.1'
   implementation 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
@@ -300,6 +300,10 @@ tasks.coveralls {
 
 repositories {
   mavenCentral()
+}
+
+jacoco {
+  toolVersion = "0.7.9"
 }
 
 kapt {
