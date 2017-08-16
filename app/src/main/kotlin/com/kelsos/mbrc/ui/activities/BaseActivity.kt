@@ -32,6 +32,7 @@ import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.protocol.VolumeInteractor
 import com.kelsos.mbrc.platform.RemoteService
 import com.kelsos.mbrc.platform.ServiceChecker
+import com.kelsos.mbrc.ui.dialogs.OutputSelectionDialog
 import com.kelsos.mbrc.ui.help_feedback.HelpFeedbackActivity
 import com.kelsos.mbrc.ui.navigation.library.LibraryActivity
 import com.kelsos.mbrc.ui.navigation.lyrics.LyricsActivity
@@ -178,6 +179,9 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
       createBackStack(Intent(this, LyricsActivity::class.java))
     } else if (itemId == R.id.nav_settings) {
       createBackStack(Intent(this, SettingsActivity::class.java))
+    } else if (itemId == R.id.nav_outputs) {
+      val selectionDialog = OutputSelectionDialog.instance(supportFragmentManager)
+      selectionDialog.show()
     } else if (itemId == R.id.nav_help) {
       createBackStack(Intent(this, HelpFeedbackActivity::class.java))
     } else if (itemId == R.id.nav_exit) {

@@ -25,6 +25,8 @@ import com.kelsos.mbrc.content.now_playing.cover.CoverApi
 import com.kelsos.mbrc.content.now_playing.cover.CoverApiImpl
 import com.kelsos.mbrc.content.now_playing.queue.QueueApi
 import com.kelsos.mbrc.content.now_playing.queue.QueueApiImpl
+import com.kelsos.mbrc.content.output.OutputApi
+import com.kelsos.mbrc.content.output.OutputApiImpl
 import com.kelsos.mbrc.content.playlists.PlaylistApiImpl
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.content.playlists.PlaylistRepositoryImpl
@@ -99,6 +101,7 @@ class RemoteModule : Module() {
     bind(RadioApi::class.java).to(RadioApiImpl::class.java).singletonInScope()
     bind(ClientInformationStore::class).to(ClientInformationStoreImpl::class).singletonInScope()
     bind(VolumeInteractor::class).to(VolumeInteractorImpl::class).singletonInScope()
+    bind(OutputApi::class).to(OutputApiImpl::class).singletonInScope()
   }
 }
 
