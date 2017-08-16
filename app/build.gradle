@@ -27,11 +27,11 @@ def version_code = 114
 
 android {
   compileSdkVersion 26
-  buildToolsVersion "26.0.0"
+  buildToolsVersion "26.0.1"
 
   defaultConfig {
     applicationId "com.kelsos.mbrc"
-    minSdkVersion 16
+    minSdkVersion 17
     targetSdkVersion 26
     versionCode version_code
     versionName version
@@ -43,6 +43,7 @@ android {
 
     testInstrumentationRunner 'com.kelsos.mbrc.MockTestRunner'
     testApplicationId "com.kelsos.mbrc.test"
+    vectorDrawables.useSupportLibrary = true
   }
 
   testOptions {
@@ -52,6 +53,8 @@ android {
         includeNoLocationClasses = true
       }
     }
+
+    execution 'ANDROID_TEST_ORCHESTRATOR'
   }
 
   compileOptions {
@@ -149,46 +152,57 @@ idea {
 }
 
 ext {
-  support_library_version = "25.4.0"
-  dbflow_version = "4.0.4"
+  support_library_version = "26.0.1"
+  dbflow_version = "4.0.5"
   toothpick_version = "1.0.7"
-  jackson_version = "2.8.9"
-  butterknife_version = "8.7.0"
-  material_dialogs_version = "0.9.4.5"
-  runner_version = "0.5"
-  espresso_version = "2.2.2"
+  jackson_version = "2.9.0"
+  butterknife_version = "8.8.1"
+  material_dialogs_version = "0.9.4.6"
+  runner_version = "1.0.0"
+  espresso_version = "3.0.0"
   junit_version = "4.12"
   mockito_version = "2.8.47"
-  robolectric_version = "3.3.2"
+  robolectric_version = "3.4.2"
   truth_version = "0.34"
   leakcanary_version = "1.5.1"
 }
 
 dependencies {
   //Instrumentation Test dependencies
+  androidTestImplementation "com.android.support:support-annotations:${support_library_version}"
+
   androidTestImplementation("com.android.support.test.espresso:espresso-core:${espresso_version}", {
     exclude group: 'com.android.support', module: 'support-annotations'
   })
   androidTestImplementation "com.android.support.test.espresso:espresso-intents:${espresso_version}"
   androidTestImplementation "junit:junit:${junit_version}"
+  androidTestImplementation "com.android.support.test:runner:${runner_version}"
+  androidTestImplementation "com.android.support.test:rules:${runner_version}"
+
+  androidTestUtil 'com.android.support.test:orchestrator:1.0.0'
 
   androidTestImplementation "org.mockito:mockito-core:${mockito_version}"
   androidTestImplementation "org.mockito:mockito-android:${mockito_version}"
 
   androidTestImplementation "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
-  androidTestImplementation "com.android.support:support-annotations:${support_library_version}"
-  androidTestImplementation "com.android.support.test:runner:${runner_version}"
-  androidTestImplementation "com.android.support.test:rules:${runner_version}"
+
   androidTestImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
+
   androidTestImplementation 'com.linkedin.testbutler:test-butler-library:1.3.1'
+  androidTestUtil 'com.linkedin.testbutler:test-butler-app:1.3.1@apk'
 
   // Test dependencies
   testImplementation "junit:junit:${junit_version}"
+
   testImplementation "org.mockito:mockito-core:${mockito_version}"
+
   testImplementation "org.robolectric:robolectric:${robolectric_version}"
-  testImplementation "org.robolectric:shadows-multidex:${robolectric_version}"
+  testImplementation "org.robolectric:multidex:${robolectric_version}"
+
   testImplementation "com.google.truth:truth:${truth_version}"
+
   testImplementation "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
+
   testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
   //The android library only will fail the robolectric tests
   testImplementation 'org.threeten:threetenbp:1.3.6'
@@ -229,10 +243,10 @@ dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
   implementation 'com.squareup.picasso:picasso:2.5.2'
-  implementation 'com.android.support:multidex:1.0.1'
+  implementation 'com.android.support:multidex:1.0.2'
 
   implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.1'
+  implementation 'io.reactivex.rxjava2:rxjava:2.1.3'
   implementation 'io.reactivex.rxjava2:rxkotlin:2.1.0'
   implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
   implementation 'com.jakewharton.timber:timber:4.5.1'

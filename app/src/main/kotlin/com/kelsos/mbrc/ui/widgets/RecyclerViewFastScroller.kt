@@ -66,7 +66,7 @@ class RecyclerViewFastScroller : LinearLayout {
   fun setViewsToUse(@LayoutRes layoutResId: Int, @IdRes bubbleResId: Int, @IdRes handleResId: Int) {
     val inflater = LayoutInflater.from(context)
     inflater.inflate(layoutResId, this, true)
-    bubble = findViewById(bubbleResId) as TextView
+    bubble = findViewById<TextView>(bubbleResId)
     bubble.hide()
     handle = findViewById(handleResId)
   }

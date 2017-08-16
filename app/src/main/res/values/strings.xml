@@ -181,4 +181,11 @@
   <string name="title_activity_radios">Radios</string>
   <string name="radio__no_radio_stations">No radio stations found</string>
   <string name="party_mode__command_unavailable">You are not allowed to perform this action in party mode.</string>
+  <string name="nav_output">Output</string>
+  <string name="output_selection__active_device">Active Device:</string>
+  <string name="output_selection__available_outputs">Available Outputs</string>
+  <string name="output_selection__select_output">Select Output</string>
+  <string name="output_selection__close_dialog">Close</string>
+  <string name="output_selection__connection_error">Connection failed while attempting to retrieve the output devices.</string>
+  <string name="output_selection__generic_error">Something when wrong.</string>
 </resources>
