@@ -17,6 +17,8 @@ import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.library.tracks.TrackRepositoryImpl
 import com.kelsos.mbrc.content.now_playing.NowPlayingRepository
 import com.kelsos.mbrc.content.now_playing.NowPlayingRepositoryImpl
+import com.kelsos.mbrc.content.output.OutputApi
+import com.kelsos.mbrc.content.output.OutputApiImpl
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.content.playlists.PlaylistRepositoryImpl
 import com.kelsos.mbrc.content.radios.LocalRadioDataSource
@@ -25,8 +27,6 @@ import com.kelsos.mbrc.content.radios.RadioRepositoryImpl
 import com.kelsos.mbrc.di.providers.NotificationManagerCompatProvider
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.bus.RxBusImpl
-import com.kelsos.mbrc.features.output.OutputApi
-import com.kelsos.mbrc.features.output.OutputApiImpl
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.RequestManager

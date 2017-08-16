@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.features.output
+package com.kelsos.mbrc.content.output
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty

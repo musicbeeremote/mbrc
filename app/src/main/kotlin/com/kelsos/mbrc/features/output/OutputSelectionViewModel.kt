@@ -3,6 +3,8 @@ package com.kelsos.mbrc.features.output
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.kelsos.mbrc.content.output.OutputApi
+import com.kelsos.mbrc.content.output.OutputResponse
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob

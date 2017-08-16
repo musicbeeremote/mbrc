@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.features.output
+package com.kelsos.mbrc.ui.dialogs
 
 import android.annotation.SuppressLint
 import android.app.Dialog
@@ -19,6 +19,8 @@ import androidx.fragment.app.FragmentManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.di.modules.obtainViewModel
+import com.kelsos.mbrc.features.output.OutputSelectionResult
+import com.kelsos.mbrc.features.output.OutputSelectionViewModel
 import toothpick.Scope
 import toothpick.Toothpick
 

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.features.output
+package com.kelsos.mbrc.content.output
 
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
