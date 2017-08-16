@@ -22,6 +22,11 @@ class ProtocolResponseReader(
     }
     observer.onComplete()
   } catch (e: Throwable) {
-    observer.onError(e)
+    Timber.v(e, "Reader encountered an exception")
+    observer.let {
+      if (!it.isDisposed) {
+        observer.onError(e)
+      }
+    }
   }
 }

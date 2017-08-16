@@ -23,7 +23,7 @@ class SettingsActivity : FontActivity() {
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_settings)
 
-    val mToolbar = findViewById(R.id.toolbar) as Toolbar
+    val mToolbar = findViewById<Toolbar>(R.id.toolbar)
     setSupportActionBar(mToolbar)
     supportActionBar?.setHomeButtonEnabled(true)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
