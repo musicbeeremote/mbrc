@@ -39,9 +39,11 @@ constructor(
     )
   }
 
-  @OutputSelectionContract.Error
-  private fun code(it: Throwable?): Long {
-    return when (it) {
+  @OutputSelectionContract.Code
+  private fun code(throwable: Throwable?): Long {
+    val cause = throwable?.cause ?: throwable
+
+    return when (cause) {
       is SocketException -> OutputSelectionContract.CONNECTION_ERROR
       is SocketTimeoutException -> OutputSelectionContract.CONNECTION_ERROR
       else -> OutputSelectionContract.UNKNOWN_ERROR
