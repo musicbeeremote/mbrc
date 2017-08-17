@@ -117,7 +117,7 @@ class OutputSelectionDialog : DialogFragment(),
     availableOutputs.show()
   }
 
-  override fun error(@OutputSelectionContract.Error code: Long) {
+  override fun error(@OutputSelectionContract.Code code: Long) {
     val resId = when (code) {
       OutputSelectionContract.CONNECTION_ERROR -> R.string.output_selection__connection_error
       else -> R.string.output_selection__generic_error
