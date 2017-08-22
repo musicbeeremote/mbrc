@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.library
+package com.kelsos.mbrc.content.sync
 
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
@@ -9,6 +9,7 @@ import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.ui.navigation.library.LibraryStats
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch

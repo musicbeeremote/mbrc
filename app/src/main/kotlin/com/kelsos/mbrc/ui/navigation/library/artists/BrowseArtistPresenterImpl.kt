@@ -2,6 +2,7 @@ package com.kelsos.mbrc.ui.navigation.library.artists
 
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
+import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
 import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.helper.QueueHandler
@@ -9,7 +10,6 @@ import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.ui.navigation.library.ArtistTabRefreshEvent
 import com.kelsos.mbrc.ui.navigation.library.LibrarySearchModel
-import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch

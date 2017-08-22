@@ -1,9 +1,10 @@
 package com.kelsos.mbrc.ui.navigation.library
 
+import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
+import com.kelsos.mbrc.content.sync.LibrarySyncInteractor.OnCompleteListener
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.SettingsManager
-import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor.OnCompleteListener
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

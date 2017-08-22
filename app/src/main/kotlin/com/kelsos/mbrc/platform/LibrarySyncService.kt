@@ -3,7 +3,7 @@ package com.kelsos.mbrc.platform
 import android.app.IntentService
 import android.content.Context
 import android.content.Intent
-import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
+import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
 import toothpick.Toothpick
 import javax.inject.Inject
 
