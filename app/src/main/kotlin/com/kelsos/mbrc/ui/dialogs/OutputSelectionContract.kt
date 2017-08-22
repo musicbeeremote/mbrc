@@ -13,5 +13,3 @@ interface OutputSelectionPresenter : Presenter<OutputSelectionView> {
   fun load()
   fun changeOutput(selectedOutput: String)
 }
-
-
