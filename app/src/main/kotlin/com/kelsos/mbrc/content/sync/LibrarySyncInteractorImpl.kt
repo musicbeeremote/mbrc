@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.library
+package com.kelsos.mbrc.content.sync
 
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.library.artists.ArtistRepository

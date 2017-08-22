@@ -7,6 +7,8 @@ import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
+import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
+import com.kelsos.mbrc.content.sync.LibrarySyncInteractorImpl
 import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import io.reactivex.Completable

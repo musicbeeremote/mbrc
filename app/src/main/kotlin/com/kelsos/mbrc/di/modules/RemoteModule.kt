@@ -39,6 +39,8 @@ import com.kelsos.mbrc.content.radios.RadioRepository
 import com.kelsos.mbrc.content.radios.RadioRepositoryImpl
 import com.kelsos.mbrc.content.radios.RemoteRadioDataSource
 import com.kelsos.mbrc.content.radios.RemoteRadioDataSourceImpl
+import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
+import com.kelsos.mbrc.content.sync.LibrarySyncInteractorImpl
 import com.kelsos.mbrc.di.providers.NotificationManagerCompatProvider
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.bus.RxBusImpl
@@ -52,8 +54,6 @@ import com.kelsos.mbrc.preferences.ClientInformationStore
 import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.preferences.SettingsManagerImpl
-import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
-import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractorImpl
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

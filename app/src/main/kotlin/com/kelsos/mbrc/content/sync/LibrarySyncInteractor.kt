@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.library
+package com.kelsos.mbrc.content.sync
 
 /**
  * The class is responsible for the library metadata and playlist data sync.
