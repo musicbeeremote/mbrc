@@ -39,6 +39,9 @@ data class Track(
     @JsonProperty("genre")
     @Column
     var genre: String? = null,
+    @JsonProperty("year")
+    @Column
+    var year: String? = null,
     @JsonIgnore
     @Column
     @PrimaryKey(autoincrement = true)
