@@ -32,7 +32,7 @@ class BrowseAlbumPresenterImpl
 
   override fun load() {
     view?.showLoading()
-    addDisposable(repository.getAllCursor().compose { schedule(it) }.subscribe({
+    addDisposable(repository.getAlbumsSorted().compose { schedule(it) }.subscribe({
       view?.update(it)
       view?.hideLoading()
     }) {
