@@ -11,6 +11,13 @@ object Sorting {
   const val YEAR__ALBUM = 6L
   const val YEAR__ALBUM_ARTIST__ALBUM = 7L
 
+  const val ORDER_ASCENDING = 1L
+  const val ORDER_DESCENDING = 2L
+
+  @IntDef(ORDER_ASCENDING, ORDER_DESCENDING)
+  @Retention(AnnotationRetention.SOURCE)
+  annotation class Order
+
   /**
    * There order in which the albums appear sorted to the user.
    */
@@ -24,5 +31,5 @@ object Sorting {
       YEAR__ALBUM_ARTIST__ALBUM
   )
   @Retention(AnnotationRetention.SOURCE)
-  annotation class Order
+  annotation class Fields
 }

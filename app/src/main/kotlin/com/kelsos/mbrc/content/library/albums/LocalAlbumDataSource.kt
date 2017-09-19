@@ -85,7 +85,7 @@ class LocalAlbumDataSource
     }
   }
 
-  fun getAlbumsSorted(@Sorting.Order order: Long, ascending: Boolean): Single<FlowCursorList<Album>> {
+  fun getAlbumsSorted(@Sorting.Fields order: Long, ascending: Boolean): Single<FlowCursorList<Album>> {
     val join = SQLite.select().from(Album::class)
         .innerJoin(Track::class)
         .on(

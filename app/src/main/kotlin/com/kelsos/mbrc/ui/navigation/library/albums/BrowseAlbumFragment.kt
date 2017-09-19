@@ -5,6 +5,8 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +15,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.extensions.initLinear
@@ -53,6 +56,7 @@ class BrowseAlbumFragment : Fragment(),
     return view
   }
 
+
   override fun onStart() {
     super.onStart()
     presenter.attach(this)
@@ -70,6 +74,20 @@ class BrowseAlbumFragment : Fragment(),
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     presenter.attach(this)
+    setHasOptionsMenu(true)
+  }
+
+  override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    inflater?.inflate(R.menu.browse_album__menu, menu)
+    super.onCreateOptionsMenu(menu, inflater)
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    if (item?.itemId == R.id.browse_album__sort_albums) {
+      showSortingDialog()
+      return true
+    }
+    return super.onOptionsItemSelected(item)
   }
 
   override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -130,4 +148,18 @@ class BrowseAlbumFragment : Fragment(),
     Toothpick.closeScope(this)
     super.onDestroy()
   }
+
+  private fun showSortingDialog() {
+    MaterialDialog.Builder(context)
+        .items(R.array.album_sorting__options)
+        .title(R.string.album_sorting__dialog_title)
+        .itemsCallbackSingleChoice(-1) { dialog, itemView, which, text ->
+
+          return@itemsCallbackSingleChoice true
+        }.positiveText(R.string.album_sorting__positive_button)
+        .negativeText(android.R.string.cancel)
+        .show()
+
+  }
+
 }

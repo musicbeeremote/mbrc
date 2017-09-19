@@ -37,7 +37,7 @@ class AlbumRepositoryImpl
     return localDataSource.isEmpty()
   }
 
-  override fun getAlbumsSorted(@Sorting.Order order: Long, ascending: Boolean): Single<FlowCursorList<Album>> {
+  override fun getAlbumsSorted(@Sorting.Fields order: Long, ascending: Boolean): Single<FlowCursorList<Album>> {
     return localDataSource.getAlbumsSorted(order, ascending)
   }
 }
