@@ -3,6 +3,10 @@ Change Log
 
 # Versions
 
+## 1.2.0
+- (#103) Adds radio station support. 
+- (#113) Adds ability to switch radio stations.
+
 ## 1.1.0
 - (#95) Refreshes the playlists along with the library data.
 - (#96) Sorting now starts only from the triple dash icon in the now playing.
