@@ -188,4 +188,26 @@
   <string name="output_selection__close_dialog">Close</string>
   <string name="output_selection__connection_error">Connection failed while attempting to retrieve the output devices.</string>
   <string name="output_selection__generic_error">Something when wrong.</string>
+
+  <string name="browse_album__sort">Sort</string>
+
+  <string name="album_sorting__album">Album</string>
+  <string name="album_sorting__album_artist__album">Album Artist, Album</string>
+  <string name="album_sorting__album_artist__year__album">Album Artist, Year, Album</string>
+  <string name="album_sorting__artist__album">Artist, Album</string>
+  <string name="album_sorting__genre__album_artist__album">Genre, Album Artist, Album</string>
+  <string name="album_sorting__year__album">Year, Album</string>
+  <string name="album_sorting__year__album_artist__album">Year, Album Artist, Album</string>
+  <string name="album_sorting__dialog_title">Album Sorting</string>
+  <string name="album_sorting__positive_button">Sort</string>
+
+  <string-array name="album_sorting__options">
+    <item>@string/album_sorting__album</item>
+    <item>@string/album_sorting__album_artist__album</item>
+    <item>@string/album_sorting__album_artist__year__album</item>
+    <item>@string/album_sorting__artist__album</item>
+    <item>@string/album_sorting__genre__album_artist__album</item>
+    <item>@string/album_sorting__year__album</item>
+    <item>@string/album_sorting__year__album_artist__album</item>
+  </string-array>
 </resources>
