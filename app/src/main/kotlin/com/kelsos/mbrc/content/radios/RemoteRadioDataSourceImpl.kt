@@ -8,7 +8,7 @@ class RemoteRadioDataSourceImpl
 @Inject constructor(private val radioApi: RadioApi) : RemoteRadioDataSource {
   override fun fetch(): Observable<List<RadioStation>> {
     return Observable.range(0, Integer.MAX_VALUE).flatMap {
-      radioApi.getRadios(it!! * RemoteDataSource.LIMIT, RemoteDataSource.LIMIT)
+      radioApi.getRadios(it * RemoteDataSource.LIMIT, RemoteDataSource.LIMIT)
     }.takeWhile { it.offset < it.total }.map { it.data }
   }
 }

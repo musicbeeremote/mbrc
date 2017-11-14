@@ -11,6 +11,7 @@ import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.Theme
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
 
 class SettingsDialogFragment : DialogFragment() {
@@ -38,7 +39,8 @@ class SettingsDialogFragment : DialogFragment() {
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val builder = MaterialDialog.Builder(activity)
+    val context = activity ?: fail("null activity")
+    val builder = MaterialDialog.Builder(context)
     builder.theme(Theme.DARK)
     builder.customView(R.layout.ui_dialog_settings, false)
     builder.title(if (edit) R.string.settings_dialog_edit else R.string.settings_dialog_add)
@@ -83,17 +85,16 @@ class SettingsDialogFragment : DialogFragment() {
     }
   }
 
-  private fun isValid(port: Int): Boolean {
-    if (port < MIN_PORT || port > MAX_PORT) {
-      val alert = MaterialDialog.Builder(activity)
-      alert.title(R.string.alert_invalid_range)
-      alert.content(R.string.alert_invalid_port_number)
-      alert.positiveText(android.R.string.ok)
-      alert.show()
-      return false
-    } else {
-      return true
-    }
+  private fun isValid(port: Int): Boolean = if (port < MIN_PORT || port > MAX_PORT) {
+    val context = context ?: fail("null context")
+    MaterialDialog.Builder(context)
+        .title(R.string.alert_invalid_range)
+        .content(R.string.alert_invalid_port_number)
+        .positiveText(android.R.string.ok)
+        .show()
+    false
+  } else {
+    true
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {

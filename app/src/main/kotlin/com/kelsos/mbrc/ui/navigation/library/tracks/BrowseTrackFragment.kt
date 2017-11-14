@@ -15,6 +15,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.Track
+import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.extensions.initLinear
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter.MenuItemSelectedListener
@@ -44,8 +45,8 @@ class BrowseTrackFragment : Fragment(),
   @Inject lateinit var actionHandler: PopupActionHandler
   @Inject lateinit var presenter: BrowseTrackPresenter
 
-  override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-    val view = inflater!!.inflate(R.layout.fragment_browse, container, false)
+  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    val view = inflater.inflate(R.layout.fragment_browse, container, false)
     ButterKnife.bind(this, view)
     swipeLayout.setSwipeableChildren(R.id.library_data_list, R.id.empty_view)
     emptyViewTitle.setText(R.string.tracks_list_empty)
@@ -53,9 +54,10 @@ class BrowseTrackFragment : Fragment(),
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+    val activity = activity ?: fail("null activity")
     val scope = Toothpick.openScopes(activity.application, activity, this)
     scope.installModules(BrowseTrackModule())
+    super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     presenter.attach(this)
   }
@@ -71,7 +73,7 @@ class BrowseTrackFragment : Fragment(),
     presenter.detach()
   }
 
-  override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     swipeLayout.setOnRefreshListener(this)
     recycler.initLinear(adapter, emptyView, fastScroller)

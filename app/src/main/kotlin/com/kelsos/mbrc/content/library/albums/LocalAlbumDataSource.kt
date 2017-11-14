@@ -81,7 +81,7 @@ class LocalAlbumDataSource
 
   override fun isEmpty(): Single<Boolean> {
     return Single.fromCallable {
-      return@fromCallable SQLite.selectCountOf().from(Album::class.java).count() == 0L
+      return@fromCallable SQLite.selectCountOf().from(Album::class.java).longValue() == 0L
     }
   }
 

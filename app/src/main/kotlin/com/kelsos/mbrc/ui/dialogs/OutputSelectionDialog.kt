@@ -18,6 +18,7 @@ import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.output.OutputResponse
+import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.extensions.hide
 import com.kelsos.mbrc.extensions.show
 import toothpick.Toothpick
@@ -45,6 +46,8 @@ class OutputSelectionDialog : DialogFragment(),
 
   @SuppressLint("InflateParams")
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    val context = context ?: fail("context was null")
+
     val scopes = Toothpick.openScopes(context.applicationContext, this)
     scopes.installModules(OutputSelectionModule())
     Toothpick.inject(this, scopes)
@@ -52,7 +55,7 @@ class OutputSelectionDialog : DialogFragment(),
     val view = inflater.inflate(R.layout.dialog__output_selection, null, false)
     ButterKnife.bind(this, view)
 
-    dialog = MaterialDialog.Builder(this.context)
+    dialog = MaterialDialog.Builder(context)
         .title(R.string.output_selection__select_output)
         .customView(view, false)
         .neutralText(R.string.output_selection__close_dialog)

@@ -42,6 +42,8 @@ class LibrarySyncInteractorImpl
 
     Timber.v("Starting library metadata sync")
 
+    val start = System.currentTimeMillis()
+
     disposable = checkIfShouldSync(auto)
         .andThen(genreRepository.getRemote())
         .andThen(artistRepository.getRemote())
@@ -57,7 +59,7 @@ class LibrarySyncInteractorImpl
         }
         .subscribe({
           onCompleteListener?.onSuccess()
-          Timber.v("Library refresh was complete")
+          Timber.v("Library refresh was complete after ${System.currentTimeMillis() - start} ms")
         }) {
           Timber.e(it, "Refresh couldn't complete")
           onCompleteListener?.onFailure(it)
