@@ -72,7 +72,7 @@ class BrowseAlbumFragment :
     val view = inflater.inflate(R.layout.fragment_browse, container, false)
     ButterKnife.bind(this, view)
     emptyViewTitle.setText(R.string.albums_list_empty)
-    syncButton = view.findViewById<Button>(R.id.list_empty_sync)
+    syncButton = view.findViewById(R.id.list_empty_sync)
     syncButton.setOnClickListener {
       presenter.sync()
     }

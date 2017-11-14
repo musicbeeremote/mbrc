@@ -63,7 +63,12 @@ class BrowseArtistFragment :
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    scope = Toothpick.openScopes(requireActivity().application, LIBRARY_SCOPE, activity, this)
+    scope = Toothpick.openScopes(
+      requireActivity().application,
+      LIBRARY_SCOPE,
+      requireActivity(),
+      this
+    )
     scope?.installModules(BrowseArtistModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)

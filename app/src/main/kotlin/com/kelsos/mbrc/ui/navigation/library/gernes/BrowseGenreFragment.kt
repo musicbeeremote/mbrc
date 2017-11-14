@@ -76,9 +76,9 @@ class BrowseGenreFragment :
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
     val scope = Toothpick.openScopes(requireActivity().application, LIBRARY_SCOPE, activity, this)
     scope.installModules(BrowseGenreModule())
+    super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     presenter.attach(this)
   }

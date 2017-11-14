@@ -86,10 +86,6 @@ class MiniControlFragment : Fragment(), MiniControlView {
   }
 
   override fun updateCover(path: String) {
-    if (activity == null) {
-      return
-    }
-
     val file = File(path)
 
     if (file.exists()) {

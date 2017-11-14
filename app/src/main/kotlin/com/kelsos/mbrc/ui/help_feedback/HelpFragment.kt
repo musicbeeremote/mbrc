@@ -59,4 +59,4 @@ class HelpFragment : Fragment() {
       return HelpFragment()
     }
   }
-} // Required empty public constructor
+}

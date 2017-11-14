@@ -75,9 +75,10 @@ class BrowseTrackFragment :
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+    val activity = requireActivity()
     val scope = Toothpick.openScopes(requireActivity().application, LIBRARY_SCOPE, activity, this)
     scope.installModules(BrowseTrackModule())
+    super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     adapter.setCoverMode(true)
     presenter.attach(this)

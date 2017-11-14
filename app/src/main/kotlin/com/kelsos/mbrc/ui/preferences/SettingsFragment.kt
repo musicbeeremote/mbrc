@@ -123,14 +123,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
     dialog.show(requireActivity().supportFragmentManager, "licenses_dialogs")
   }
 
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    return when (item.itemId) {
-      android.R.id.home -> {
-        requireActivity().finish()
-        true
-      }
-      else -> super.onOptionsItemSelected(item)
+  override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+    android.R.id.home -> {
+      requireActivity().finish()
+      true
     }
+    else -> super.onOptionsItemSelected(item)
   }
 
   fun setBus(bus: RxBus) {
