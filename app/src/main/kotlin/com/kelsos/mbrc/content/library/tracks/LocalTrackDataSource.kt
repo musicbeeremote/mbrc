@@ -139,7 +139,7 @@ class LocalTrackDataSource
 
   override fun isEmpty(): Single<Boolean> {
     return Single.fromCallable {
-      return@fromCallable SQLite.selectCountOf().from(Track::class.java).count() == 0L
+      return@fromCallable SQLite.selectCountOf().from(Track::class.java).longValue() == 0L
     }
   }
 }

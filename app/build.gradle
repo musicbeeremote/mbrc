@@ -27,7 +27,7 @@ def version_code = 114
 
 android {
   compileSdkVersion 26
-  buildToolsVersion "26.0.1"
+  buildToolsVersion '26.0.2'
 
   defaultConfig {
     applicationId "com.kelsos.mbrc"
@@ -152,19 +152,19 @@ idea {
 }
 
 ext {
-  support_library_version = "26.0.1"
-  dbflow_version = "4.0.5"
-  toothpick_version = "1.0.7"
-  jackson_version = "2.9.0"
+  support_library_version = "27.0.1"
+  dbflow_version = "4.1.2"
+  toothpick_version = "1.1.1"
+  jackson_version = "2.9.2"
   butterknife_version = "8.8.1"
-  material_dialogs_version = "0.9.4.6"
-  runner_version = "1.0.0"
-  espresso_version = "3.0.0"
+  material_dialogs_version = "0.9.5.0"
+  runner_version = "1.0.1"
+  espresso_version = "3.0.1"
   junit_version = "4.12"
-  mockito_version = "2.8.47"
-  robolectric_version = "3.4.2"
-  truth_version = "0.34"
-  leakcanary_version = "1.5.1"
+  mockito_version = "2.12.0"
+  robolectric_version = "3.5.1"
+  truth_version = "0.36"
+  leakcanary_version = "1.5.4"
 }
 
 dependencies {
@@ -179,7 +179,7 @@ dependencies {
   androidTestImplementation "com.android.support.test:runner:${runner_version}"
   androidTestImplementation "com.android.support.test:rules:${runner_version}"
 
-  androidTestUtil 'com.android.support.test:orchestrator:1.0.0'
+  androidTestUtil 'com.android.support.test:orchestrator:1.0.1'
 
   androidTestImplementation "org.mockito:mockito-core:${mockito_version}"
   androidTestImplementation "org.mockito:mockito-android:${mockito_version}"
@@ -197,7 +197,7 @@ dependencies {
   testImplementation "org.mockito:mockito-core:${mockito_version}"
 
   testImplementation "org.robolectric:robolectric:${robolectric_version}"
-  testImplementation "org.robolectric:multidex:${robolectric_version}"
+  testImplementation "org.robolectric:shadows-multidex:${robolectric_version}"
 
   testImplementation "com.google.truth:truth:${truth_version}"
 
@@ -246,10 +246,10 @@ dependencies {
   implementation 'com.android.support:multidex:1.0.2'
 
   implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.3'
+  implementation 'io.reactivex.rxjava2:rxjava:2.1.6'
   implementation 'io.reactivex.rxjava2:rxkotlin:2.1.0'
   implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
-  implementation 'com.jakewharton.timber:timber:4.5.1'
+  implementation 'com.jakewharton.timber:timber:4.6.0'
   implementation 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
   implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 
@@ -258,7 +258,7 @@ dependencies {
   debugImplementation "com.squareup.leakcanary:leakcanary-android:${leakcanary_version}"
   releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
 
-  playImplementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+  playImplementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
     transitive = true
   }
 }

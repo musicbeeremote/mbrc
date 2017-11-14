@@ -9,7 +9,7 @@ class RemotePlaylistDataSource
 @Inject constructor(private val service: PlaylistService) : RemoteDataSource<Playlist> {
   override fun fetch(): Observable<List<Playlist>> {
     return Observable.range(0, Integer.MAX_VALUE).flatMap {
-      service.getPlaylists(it!! * RemoteDataSource.LIMIT, RemoteDataSource.LIMIT)
+      service.getPlaylists(it * RemoteDataSource.LIMIT, RemoteDataSource.LIMIT)
     }.takeWhile { it.offset < it.total }.map { it.data }
   }
 

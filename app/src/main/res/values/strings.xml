@@ -201,13 +201,7 @@
   <string name="album_sorting__dialog_title">Album Sorting</string>
   <string name="album_sorting__positive_button">Sort</string>
 
-  <string-array name="album_sorting__options">
-    <item>@string/album_sorting__album</item>
-    <item>@string/album_sorting__album_artist__album</item>
-    <item>@string/album_sorting__album_artist__year__album</item>
-    <item>@string/album_sorting__artist__album</item>
-    <item>@string/album_sorting__genre__album_artist__album</item>
-    <item>@string/album_sorting__year__album</item>
-    <item>@string/album_sorting__year__album_artist__album</item>
-  </string-array>
+  <string name="sorting_dialog__order">Order</string>
+  <string name="sorting_dialog__ascending">Ascending</string>
+  <string name="sorting_dialog__descending">Descending</string>
 </resources>

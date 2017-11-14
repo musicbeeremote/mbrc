@@ -105,7 +105,7 @@ class ConnectionRepositoryImpl
     get() = SQLite.select().from(ConnectionSettings::class.java).queryList()
 
   override fun count(): Long {
-    return SQLite.selectCountOf().from(ConnectionSettings::class.java).count()
+    return SQLite.selectCountOf().from(ConnectionSettings::class.java).longValue()
   }
 
 }

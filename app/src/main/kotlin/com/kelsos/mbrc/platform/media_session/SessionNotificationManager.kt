@@ -3,9 +3,9 @@ package com.kelsos.mbrc.platform.media_session
 import android.app.Application
 import android.app.Notification
 import android.graphics.BitmapFactory
+import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationCompat.Action
 import android.support.v4.app.NotificationManagerCompat
-import android.support.v7.app.NotificationCompat
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.active_status.PlayerState
 import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
@@ -101,7 +101,7 @@ constructor(bus: RxBus,
   }
 
   private fun createBuilder(): NotificationCompat.Builder {
-    val mediaStyle = NotificationCompat.MediaStyle()
+    val mediaStyle = android.support.v4.media.app.NotificationCompat.MediaStyle()
     mediaStyle.setMediaSession(sessionManager.mediaSessionToken)
 
     val builder = NotificationCompat.Builder(context)

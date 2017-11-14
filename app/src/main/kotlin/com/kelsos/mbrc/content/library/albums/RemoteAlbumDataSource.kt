@@ -11,7 +11,7 @@ class RemoteAlbumDataSource
 @Inject constructor(private val service: LibraryService) : RemoteDataSource<Album> {
   override fun fetch(): Observable<List<Album>> {
     return Observable.range(0, Integer.MAX_VALUE).flatMap {
-      service.getAlbums(it!! * LIMIT, LIMIT)
+      service.getAlbums(it * LIMIT, LIMIT)
     }.takeWhile { it.offset < it.total }.map { it.data }
   }
 }

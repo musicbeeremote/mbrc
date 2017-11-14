@@ -15,6 +15,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.genres.Genre
+import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.extensions.initLinear
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.gernes.GenreEntryAdapter.MenuItemSelectedListener
@@ -44,10 +45,10 @@ class BrowseGenreFragment : Fragment(),
   @Inject lateinit var actionHandler: PopupActionHandler
   @Inject lateinit var presenter: BrowseGenrePresenter
 
-  override fun onCreateView(inflater: LayoutInflater?,
+  override fun onCreateView(inflater: LayoutInflater,
                             container: ViewGroup?,
                             savedInstanceState: Bundle?): View? {
-    val view = inflater!!.inflate(R.layout.fragment_browse, container, false)
+    val view = inflater.inflate(R.layout.fragment_browse, container, false)
     ButterKnife.bind(this, view)
     swipeLayout.setSwipeableChildren(R.id.library_data_list, R.id.empty_view)
     emptyViewTitle.setText(R.string.genres_list_empty)
@@ -55,9 +56,10 @@ class BrowseGenreFragment : Fragment(),
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+    val activity = activity ?: fail("null activity")
     val scope = Toothpick.openScopes(activity.application, activity, this)
     scope.installModules(BrowseGenreModule())
+    super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     presenter.attach(this)
   }
@@ -78,7 +80,7 @@ class BrowseGenreFragment : Fragment(),
     adapter.update(cursor)
   }
 
-  override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     swipeLayout.setOnRefreshListener(this)
     recycler.initLinear(adapter, emptyView, fastScroller)
@@ -88,11 +90,13 @@ class BrowseGenreFragment : Fragment(),
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Genre): Boolean {
+    val activity = activity ?: fail("null activity")
     actionHandler.genreSelected(menuItem, entry, activity)
     return true
   }
 
   override fun onItemClicked(genre: Genre) {
+    val activity = activity ?: fail("null activity")
     actionHandler.genreSelected(genre, activity)
   }
 

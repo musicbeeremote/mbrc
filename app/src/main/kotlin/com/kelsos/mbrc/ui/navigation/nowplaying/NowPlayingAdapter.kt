@@ -2,7 +2,6 @@ package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import android.app.Activity
 import android.graphics.Color
-import android.support.v4.view.MotionEventCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.MotionEvent.ACTION_DOWN
@@ -69,7 +68,7 @@ class NowPlayingAdapter
     holder.itemView.setOnClickListener { onClick(holder) }
     holder.container.setOnClickListener { onClick(holder) }
     holder.dragHandle.setOnTouchListener { _, motionEvent ->
-      if (MotionEventCompat.getActionMasked(motionEvent) == ACTION_DOWN) {
+      if (motionEvent.action == ACTION_DOWN) {
         dragStartListener.onStartDrag(holder)
       }
       return@setOnTouchListener false
@@ -109,7 +108,7 @@ class NowPlayingAdapter
     listener?.onMove(from, to)
     notifyItemMoved(from, to)
 
-    if (!currentTrack.isNullOrBlank()) {
+    if (!currentTrack.isBlank()) {
       setPlayingTrack(currentTrack)
     }
 

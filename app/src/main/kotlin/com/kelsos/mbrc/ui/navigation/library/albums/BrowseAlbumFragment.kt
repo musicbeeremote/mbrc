@@ -15,10 +15,11 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
+import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.extensions.initLinear
+import com.kelsos.mbrc.ui.dialogs.SortingDialog
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
@@ -47,8 +48,8 @@ class BrowseAlbumFragment : Fragment(),
   @Inject lateinit var actionHandler: PopupActionHandler
   @Inject lateinit var presenter: BrowseAlbumPresenter
 
-  override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-    val view = inflater!!.inflate(R.layout.fragment_browse, container, false)
+  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    val view = inflater.inflate(R.layout.fragment_browse, container, false)
     ButterKnife.bind(this, view)
     swipeLayout.setOnRefreshListener(this)
     swipeLayout.setSwipeableChildren(R.id.library_data_list, R.id.empty_view)
@@ -69,6 +70,7 @@ class BrowseAlbumFragment : Fragment(),
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    val activity = activity ?: fail("null activity")
     val scope = Toothpick.openScopes(activity.application, activity, this)
     scope.installModules(SmoothieActivityModule(activity), BrowseAlbumModule())
     super.onCreate(savedInstanceState)
@@ -84,13 +86,23 @@ class BrowseAlbumFragment : Fragment(),
 
   override fun onOptionsItemSelected(item: MenuItem?): Boolean {
     if (item?.itemId == R.id.browse_album__sort_albums) {
-      showSortingDialog()
+      presenter.showSorting()
       return true
     }
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+  override fun showSorting(order: Long, selection: Long) {
+    val fm = fragmentManager ?: fail("null fragmentManager")
+    SortingDialog.create(fm, order, selection, {
+      presenter.order(it)
+    }, {
+      presenter.sortBy(it)
+    }
+    ).show()
+  }
+
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     recycler.initLinear(adapter, emptyView, fastScroller)
     recycler.setHasFixedSize(true)
@@ -99,10 +111,12 @@ class BrowseAlbumFragment : Fragment(),
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Album) {
+    val activity = activity ?: fail("null activity")
     actionHandler.albumSelected(menuItem, entry, activity)
   }
 
   override fun onItemClicked(album: Album) {
+    val activity = activity ?: fail("null activity")
     actionHandler.albumSelected(album, activity)
   }
 
@@ -147,19 +161,6 @@ class BrowseAlbumFragment : Fragment(),
   override fun onDestroy() {
     Toothpick.closeScope(this)
     super.onDestroy()
-  }
-
-  private fun showSortingDialog() {
-    MaterialDialog.Builder(context)
-        .items(R.array.album_sorting__options)
-        .title(R.string.album_sorting__dialog_title)
-        .itemsCallbackSingleChoice(-1) { dialog, itemView, which, text ->
-
-          return@itemsCallbackSingleChoice true
-        }.positiveText(R.string.album_sorting__positive_button)
-        .negativeText(android.R.string.cancel)
-        .show()
-
   }
 
 }
