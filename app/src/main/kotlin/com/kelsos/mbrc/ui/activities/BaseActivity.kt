@@ -20,12 +20,12 @@ import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
-import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.events.RequestConnectionStateEvent
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.networking.ChangeConnectionStateEvent
 import com.kelsos.mbrc.networking.SocketAction
 import com.kelsos.mbrc.networking.connections.Connection
@@ -161,7 +161,7 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
     }
 
     if (itemId == R.id.nav_home) {
-      val upIntent = NavUtils.getParentActivityIntent(this)
+      val upIntent = NavUtils.getParentActivityIntent(this) ?: fail("couldn't get intent")
       if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
         createBackStack(Intent(this, MainActivity::class.java))
       } else {
@@ -224,8 +224,8 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
     navigationView.setNavigationItemSelectedListener(this)
 
     val header = navigationView.getHeaderView(0)
-    connectText = ButterKnife.findById<TextView>(header, R.id.nav_connect_text)
-    connect = ButterKnife.findById<ImageView>(header, R.id.connect_button)
+    connectText = header.findViewById(R.id.nav_connect_text)
+    connect = header.findViewById(R.id.connect_button)
     connect!!.setOnClickListener({ this.onConnectClick() })
     connect!!.setOnLongClickListener({ this.onConnectLongClick() })
 

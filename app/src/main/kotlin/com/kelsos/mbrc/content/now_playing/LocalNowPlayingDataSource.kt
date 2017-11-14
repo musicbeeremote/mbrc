@@ -57,7 +57,7 @@ class LocalNowPlayingDataSource
   }
   override fun isEmpty(): Single<Boolean> {
     return Single.fromCallable {
-      return@fromCallable SQLite.selectCountOf().from(NowPlaying::class.java).count() == 0L
+      return@fromCallable SQLite.selectCountOf().from(NowPlaying::class.java).longValue() == 0L
     }
   }
 }

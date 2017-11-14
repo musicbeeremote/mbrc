@@ -16,6 +16,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.logging.LogHelper
 import com.kelsos.mbrc.utilities.RemoteUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -29,11 +30,13 @@ class FeedbackFragment : Fragment() {
   @BindView(R.id.include_log_info) lateinit var logInfo: CheckBox
   @BindView(R.id.feedback_button) lateinit var feedbackButton: Button
 
-  override fun onCreateView(inflater: LayoutInflater?,
+  override fun onCreateView(inflater: LayoutInflater,
                             container: ViewGroup?,
                             savedInstanceState: Bundle?): View? {
-    val view = inflater!!.inflate(R.layout.fragment_feedback, container, false)
+    val view = inflater.inflate(R.layout.fragment_feedback, container, false)
     ButterKnife.bind(this, view)
+
+    val context = context ?: fail("null context")
 
     LogHelper.logsExist(context)
         .subscribeOn(Schedulers.io())
@@ -48,6 +51,7 @@ class FeedbackFragment : Fragment() {
 
   @OnClick(R.id.feedback_button)
   internal fun onFeedbackButtonClicked() {
+    val context = context ?: fail("null context")
     var feedbackText = feedbackEditText.text.toString().trim { it <= ' ' }
     if (TextUtils.isEmpty(feedbackText)) {
       return

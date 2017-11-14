@@ -11,22 +11,21 @@ import android.webkit.WebViewClient
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.utilities.RemoteUtils
 import timber.log.Timber
 
 class HelpFragment : Fragment() {
 
-  @BindView(R.id.help_webview) lateinit var helpWebview: WebView
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-  }
+  @BindView(R.id.help_webview)
+  lateinit var helpWebview: WebView
 
   override fun onStart() {
     super.onStart()
 
     val url: String
     url = try {
+      val context = context ?: fail("null context")
       String.format("http://kelsos.net/musicbeeremote/help?version=%s", RemoteUtils.getVersion(context))
     } catch (e: PackageManager.NameNotFoundException) {
       Timber.v(e, "Failed to get version")
@@ -36,11 +35,11 @@ class HelpFragment : Fragment() {
     helpWebview.loadUrl(url)
   }
 
-  override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     // Inflate the layout for this fragment
-    val view = inflater!!.inflate(R.layout.fragment_help, container, false)
+    val view = inflater.inflate(R.layout.fragment_help, container, false)
     ButterKnife.bind(this, view)
-    helpWebview.setWebViewClient(RemoteWebViewClient())
+    helpWebview.webViewClient = RemoteWebViewClient()
     return view
   }
 
@@ -58,4 +57,4 @@ class HelpFragment : Fragment() {
       return HelpFragment()
     }
   }
-}// Required empty public constructor
+}
