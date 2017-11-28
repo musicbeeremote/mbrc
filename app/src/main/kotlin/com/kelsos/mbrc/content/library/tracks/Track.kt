@@ -7,8 +7,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.kelsos.mbrc.RemoteDatabase
 import com.kelsos.mbrc.interfaces.data.Data
 import com.raizlabs.android.dbflow.annotation.Column
+import com.raizlabs.android.dbflow.annotation.ConflictAction
 import com.raizlabs.android.dbflow.annotation.PrimaryKey
 import com.raizlabs.android.dbflow.annotation.Table
+import com.raizlabs.android.dbflow.annotation.Unique
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
@@ -21,6 +23,7 @@ data class Track(
     @JsonProperty("title")
     @Column
     var title: String? = null,
+    @Unique(onUniqueConflict = ConflictAction.REPLACE, unique = true)
     @JsonProperty("src")
     @Column
     var src: String? = null,

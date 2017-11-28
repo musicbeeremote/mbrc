@@ -17,7 +17,7 @@ class ProtocolResponseReader(
         break
       }
 
-      Timber.v("incoming -> %s", line)
+      //Timber.v("incoming -> %s", line)
       observer.onNext(ApiRequestBase.ServiceMessage(line, socket))
     }
     observer.onComplete()

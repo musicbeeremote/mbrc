@@ -1,13 +1,20 @@
 package com.kelsos.mbrc.content.library.tracks
 
+import com.kelsos.mbrc.content.library.UpdatedDataSource
+import com.kelsos.mbrc.utilities.SchedulerProvider
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Completable
 import io.reactivex.Single
+import org.threeten.bp.Instant
 import javax.inject.Inject
 
 class TrackRepositoryImpl
-@Inject constructor(private val localDataSource: LocalTrackDataSource,
-                    private val remoteDataSource: RemoteTrackDataSource) : TrackRepository {
+@Inject constructor(
+    private val localDataSource: LocalTrackDataSource,
+    private val remoteDataSource: RemoteTrackDataSource,
+    private val updatedDataSource: UpdatedDataSource,
+    private val schedulerProvider: SchedulerProvider
+) : TrackRepository {
 
   override fun getAllCursor(): Single<FlowCursorList<Track>> {
     return localDataSource.loadAllCursor().singleOrError()
@@ -26,10 +33,19 @@ class TrackRepositoryImpl
   }
 
   override fun getRemote(): Completable {
-    localDataSource.deleteAll()
+    val epoch = Instant.now().epochSecond
+
+    //localDataSource.deleteAll()
     return remoteDataSource.fetch().doOnNext {
       localDataSource.saveAll(it)
-    }.ignoreElements()
+      updatedDataSource.addUpdated(it.mapNotNull { it.src }, epoch)
+    }.doOnComplete {
+      val paths = updatedDataSource.getPathInsertedAtEpoch(epoch)
+      localDataSource.deletePaths(paths)
+      updatedDataSource.deleteAll()
+    }.subscribeOn(schedulerProvider.io())
+        .observeOn(schedulerProvider.db())
+        .ignoreElements()
   }
 
   override fun search(term: String): Single<FlowCursorList<Track>> {

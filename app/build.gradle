@@ -258,6 +258,8 @@ dependencies {
   debugImplementation "com.squareup.leakcanary:leakcanary-android:${leakcanary_version}"
   releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
 
+  debugImplementation 'com.facebook.stetho:stetho:1.5.0'
+
   playImplementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
     transitive = true
   }
