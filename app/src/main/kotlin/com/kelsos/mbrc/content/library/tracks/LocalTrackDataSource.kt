@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.content.library.tracks
 
 import com.kelsos.mbrc.RemoteDatabase
+import com.kelsos.mbrc.content.library.tracks.Track_Table.src
 import com.kelsos.mbrc.content.library.tracks.Track_Table.title
 import com.kelsos.mbrc.extensions.escapeLike
 import com.kelsos.mbrc.interfaces.data.LocalDataSource
@@ -16,6 +17,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import io.reactivex.Observable
 import io.reactivex.Single
+import timber.log.Timber
 import javax.inject.Inject
 
 class LocalTrackDataSource
@@ -141,5 +143,13 @@ class LocalTrackDataSource
     return Single.fromCallable {
       return@fromCallable SQLite.selectCountOf().from(Track::class.java).longValue() == 0L
     }
+  }
+
+  fun deletePaths(paths: List<String>) {
+    val deleted = SQLite.delete()
+        .from(Track::class.java)
+        .where(src.notIn(paths))
+        .executeUpdateDelete()
+    Timber.v("$deleted entries deleted from tracks")
   }
 }
