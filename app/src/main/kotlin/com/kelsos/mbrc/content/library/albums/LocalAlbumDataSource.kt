@@ -22,7 +22,6 @@ import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.rxkotlin.toSingle
 import javax.inject.Inject
 
 class LocalAlbumDataSource
@@ -127,8 +126,8 @@ class LocalAlbumDataSource
       else -> throw IllegalArgumentException("no such option")
     }
 
-    return FlowCursorList.Builder(Album::class.java)
+    return Single.just(FlowCursorList.Builder(Album::class.java)
         .modelQueriable(sorted.groupBy(Album_Table.album.withTable(), Album_Table.artist.withTable()))
-        .build().toSingle()
+        .build())
   }
 }

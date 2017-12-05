@@ -16,7 +16,6 @@
     <item name="windowActionBar">false</item>
     <item name="windowNoTitle">true</item>
     <item name="windowActionBarOverlay">true</item>
-    <item name="md_dark_theme">true</item>
     <item name="android:actionBarWidgetTheme">@style/AppTheme.ActionBarWidget</item>
     <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
   </style>

@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.connection_manager
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
@@ -10,7 +11,6 @@ import android.view.MenuItem
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.events.ConnectionSettingsChanged
 import com.kelsos.mbrc.events.DiscoveryStopped
@@ -35,7 +35,7 @@ class ConnectionManagerActivity : FontActivity(),
   @Inject lateinit var presenter: ConnectionManagerPresenter
   @BindView(R.id.connection_list) lateinit var mRecyclerView: RecyclerView
   @BindView(R.id.toolbar) lateinit var mToolbar: Toolbar
-  private var mProgress: MaterialDialog? = null
+  private var mProgress: AlertDialog? = null
   private var mContext: Context? = null
   private var adapter: ConnectionAdapter? = null
   private var scope: Scope? = null
@@ -48,10 +48,9 @@ class ConnectionManagerActivity : FontActivity(),
 
   @OnClick(R.id.connection_scan)
   internal fun onScanButtonClick() {
-    val mBuilder = MaterialDialog.Builder(mContext!!)
-    mBuilder.title(R.string.progress_scanning)
-    mBuilder.content(R.string.progress_scanning_message)
-    mBuilder.progress(true, 0)
+    val mBuilder = AlertDialog.Builder(mContext!!)
+    mBuilder.setTitle(R.string.progress_scanning)
+    mBuilder.setMessage(R.string.progress_scanning_message)
     mProgress = mBuilder.show()
     bus.post(StartServiceDiscoveryEvent())
   }

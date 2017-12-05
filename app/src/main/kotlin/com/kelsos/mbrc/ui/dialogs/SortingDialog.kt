@@ -8,13 +8,13 @@ import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
+import android.support.v7.app.AlertDialog
 import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Sorting
 import com.kelsos.mbrc.content.library.albums.Sorting.Fields
@@ -31,7 +31,7 @@ class SortingDialog : DialogFragment() {
   @BindView(R.id.sorting_dialog__sorting_options)
   lateinit var sortingOption: RadioGroup
 
-  private lateinit var dialog: MaterialDialog
+  private lateinit var dialog: AlertDialog
   private lateinit var fm: FragmentManager
   private lateinit var orderChange: (order: Long) -> Unit
   private lateinit var sortingChange: (sorting: Long) -> Unit
@@ -74,15 +74,13 @@ class SortingDialog : DialogFragment() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     val context = context ?: fail("null context")
-    dialog = MaterialDialog.Builder(context)
-        .title(R.string.album_sorting__dialog_title)
-        .customView(R.layout.dialog__sorting, true)
-        .positiveText(android.R.string.ok)
-        .negativeText(android.R.string.cancel)
-        .build()
+    dialog = AlertDialog.Builder(context)
+        .setTitle(R.string.album_sorting__dialog_title)
+        .setView(R.layout.dialog__sorting)
+        .setPositiveButton(android.R.string.ok) { dialogInterface, _ -> dialogInterface.dismiss() }
+        .create()
 
-    val dialogView = dialog.customView ?: fail("view was null")
-    ButterKnife.bind(this, dialogView)
+    ButterKnife.bind(this, dialog)
 
     setOrder(order)
     sortingOption.check(sortingOption.getChildAt(sorting.toInt()).id)
