@@ -4,12 +4,11 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
+import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.widget.EditText
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.Theme
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
@@ -40,13 +39,11 @@ class SettingsDialogFragment : DialogFragment() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     val context = activity ?: fail("null activity")
-    val builder = MaterialDialog.Builder(context)
-    builder.theme(Theme.DARK)
-    builder.customView(R.layout.ui_dialog_settings, false)
-    builder.title(if (edit) R.string.settings_dialog_edit else R.string.settings_dialog_add)
-    builder.positiveText(if (edit) R.string.settings_dialog_save else R.string.settings_dialog_add)
-    builder.negativeText(android.R.string.cancel)
-    builder.onPositive { dialog, _ ->
+    val builder = AlertDialog.Builder(context)
+    builder.setView(R.layout.ui_dialog_settings)
+    builder.setTitle(if (edit) R.string.settings_dialog_edit else R.string.settings_dialog_add)
+    builder.setNegativeButton(android.R.string.cancel) { dialogInterface, _ -> dialogInterface.dismiss() }
+    builder.setPositiveButton(if (edit) R.string.settings_dialog_save else R.string.settings_dialog_add) { dialog, _ ->
       var shouldIClose = true
       val hostname = hostEdit.text.toString()
       val computerName = nameEdit.text.toString()
@@ -66,12 +63,9 @@ class SettingsDialogFragment : DialogFragment() {
         dialog.dismiss()
       }
     }
-    builder.onNegative { dialog, _ -> dialog.dismiss() }
 
-    val settingsDialog = builder.build()
-    val view = settingsDialog.customView ?: return settingsDialog
-
-    ButterKnife.bind(this, view)
+    val settingsDialog = builder.create()
+    ButterKnife.bind(this, settingsDialog)
     return settingsDialog
   }
 
@@ -87,10 +81,10 @@ class SettingsDialogFragment : DialogFragment() {
 
   private fun isValid(port: Int): Boolean = if (port < MIN_PORT || port > MAX_PORT) {
     val context = context ?: fail("null context")
-    MaterialDialog.Builder(context)
-        .title(R.string.alert_invalid_range)
-        .content(R.string.alert_invalid_port_number)
-        .positiveText(android.R.string.ok)
+    AlertDialog.Builder(context)
+        .setTitle(R.string.alert_invalid_range)
+        .setMessage(R.string.alert_invalid_port_number)
+        .setPositiveButton(android.R.string.ok) { dialogInterface, _ -> dialogInterface.dismiss() }
         .show()
     false
   } else {

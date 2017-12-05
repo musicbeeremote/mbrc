@@ -7,6 +7,7 @@ import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.MenuItemCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.ShareActionProvider
 import android.text.TextUtils
 import android.view.Menu
@@ -19,7 +20,6 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.OnLongClick
-import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.active_status.PlayerState
 import com.kelsos.mbrc.content.active_status.PlayerState.State
@@ -66,8 +66,8 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   @BindView(R.id.main_album_cover_image_view) lateinit var albumCover: ImageView
   private var mShareActionProvider: ShareActionProvider? = null
 
-  var changeLogDialog: MaterialDialog? = null
-  var outOfDateDialog: MaterialDialog? = null
+  var changeLogDialog: AlertDialog? = null
+  var outOfDateDialog: AlertDialog? = null
 
   private var menu: Menu? = null
   private var volumeChangeListener: SeekBarThrottler? = null
@@ -137,20 +137,18 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   }
 
   override fun showChangeLog() {
-    changeLogDialog = MaterialDialog.Builder(this)
-        .title(R.string.main__dialog_change_log)
-        .customView(R.layout.change_log_dialog, false)
-        .positiveText(android.R.string.ok)
-        .onPositive { materialDialog, _ -> materialDialog.dismiss() }
+    changeLogDialog = AlertDialog.Builder(this)
+        .setTitle(R.string.main__dialog_change_log)
+        .setView(R.layout.change_log_dialog)
+        .setPositiveButton(android.R.string.ok) { dialogInterface, _ -> dialogInterface.dismiss() }
         .show()
   }
 
   override fun notifyPluginOutOfDate() {
-    outOfDateDialog = MaterialDialog.Builder(this)
-        .title(R.string.main__dialog_plugin_outdated_title)
-        .content(R.string.main__dialog_plugin_outdated_message)
-        .positiveText(android.R.string.ok)
-        .onPositive { materialDialog, _ -> materialDialog.dismiss() }
+    outOfDateDialog = AlertDialog.Builder(this)
+        .setTitle(R.string.main__dialog_plugin_outdated_title)
+        .setMessage(R.string.main__dialog_plugin_outdated_message)
+        .setPositiveButton(android.R.string.ok) { dialogInterface, _ -> dialogInterface.dismiss() }
         .show()
   }
 
