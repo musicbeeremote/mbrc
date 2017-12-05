@@ -7,6 +7,7 @@ import android.support.design.widget.TabLayout
 import android.support.v4.view.MenuItemCompat
 import android.support.v4.view.ViewPager
 import android.support.v4.view.ViewPager.OnPageChangeListener
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.SearchView.OnQueryTextListener
 import android.text.TextUtils
@@ -14,7 +15,6 @@ import android.view.Menu
 import android.view.MenuItem
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.search.SearchResultsActivity
@@ -38,7 +38,7 @@ class LibraryActivity : BaseActivity(),
   private var scope: Scope? = null
   @Inject lateinit var presenter: LibraryPresenter
 
-  private var refreshDialog: MaterialDialog? = null
+  private var refreshDialog: AlertDialog? = null
 
   override fun onQueryTextSubmit(query: String): Boolean {
     if (!TextUtils.isEmpty(query) && query.trim { it <= ' ' }.isNotEmpty()) {
@@ -156,6 +156,7 @@ class LibraryActivity : BaseActivity(),
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
     outState.putInt(PAGER_POSITION, pager.currentItem)
   }
 
@@ -168,11 +169,10 @@ class LibraryActivity : BaseActivity(),
   }
 
   override fun showRefreshing() {
-    refreshDialog = MaterialDialog.Builder(this)
-        .content(R.string.refreshing_library_data)
-        .progress(true, 100, false)
-        .cancelable(false)
-        .build()
+    refreshDialog = AlertDialog.Builder(this)
+        .setMessage(R.string.refreshing_library_data)
+        .setCancelable(false)
+        .create()
 
     refreshDialog?.show()
   }

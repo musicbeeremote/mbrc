@@ -3,8 +3,8 @@ package com.kelsos.mbrc.ui.dialogs
 import android.app.Dialog
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
+import android.support.v7.app.AlertDialog
 import android.widget.RatingBar
-import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.active_status.MainDataModel
 import com.kelsos.mbrc.events.RatingChanged
@@ -45,13 +45,13 @@ class RatingDialogFragment : DialogFragment() {
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     rating = model.rating
     val activity = activity ?: fail("no context")
-    val builder = MaterialDialog.Builder(activity)
-    builder.title(R.string.rate_the_playing_track)
-    builder.customView(R.layout.ui_dialog_rating, false)
+    val builder = AlertDialog.Builder(activity)
+    builder.setTitle(R.string.rate_the_playing_track)
+    builder.setView(R.layout.ui_dialog_rating)
 
-    val dialog = builder.build()
+    val dialog = builder.create()
 
-    ratingBar = dialog.customView?.findViewById(R.id.ratingBar) ?: fail("null view")
+    ratingBar = dialog.findViewById(R.id.ratingBar) ?: fail("null view")
     ratingBar.setOnRatingBarChangeListener { _, ratingValue, isUserInitiated ->
       if (isUserInitiated) {
         bus.post(UserAction(Protocol.NowPlayingRating, ratingValue))

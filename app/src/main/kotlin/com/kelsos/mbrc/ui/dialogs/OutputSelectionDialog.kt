@@ -5,17 +5,13 @@ import android.app.Dialog
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
+import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.ProgressBar
-import android.widget.Spinner
-import android.widget.TextView
+import android.widget.*
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.output.OutputResponse
 import com.kelsos.mbrc.extensions.fail
@@ -31,7 +27,7 @@ class OutputSelectionDialog : DialogFragment(),
 
   private var touchInitiated: Boolean = false
   private lateinit var fm: FragmentManager
-  private lateinit var dialog: MaterialDialog
+  private lateinit var dialog: AlertDialog
 
   @BindView(R.id.output_selection__available_outputs)
   internal lateinit var availableOutputs: Spinner
@@ -55,11 +51,13 @@ class OutputSelectionDialog : DialogFragment(),
     val view = inflater.inflate(R.layout.dialog__output_selection, null, false)
     ButterKnife.bind(this, view)
 
-    dialog = MaterialDialog.Builder(context)
-        .title(R.string.output_selection__select_output)
-        .customView(view, false)
-        .neutralText(R.string.output_selection__close_dialog)
-        .build()
+    dialog = AlertDialog.Builder(context)
+        .setTitle(R.string.output_selection__select_output)
+        .setView(view)
+        .setNeutralButton(R.string.output_selection__close_dialog) { dialogInterface, _ ->
+          dialogInterface.dismiss()
+        }
+        .create()
 
     presenter.load()
 
