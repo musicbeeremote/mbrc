@@ -130,9 +130,6 @@ class NowPlayingActivity : BaseNavigationActivity(),
   }
 
   private fun refresh(scrollToTrack: Boolean = false) {
-    if (!swipeRefreshLayout.isRefreshing) {
-      swipeRefreshLayout.isRefreshing = true
-    }
     presenter.reload(scrollToTrack)
   }
 
