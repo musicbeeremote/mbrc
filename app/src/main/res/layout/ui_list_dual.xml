@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="@dimen/list_item_height"
@@ -7,6 +8,7 @@
     android:background="?attr/selectableItemBackground"
     android:baselineAligned="false"
     android:clickable="true"
+    android:focusable="true"
     android:gravity="center_vertical"
     android:orientation="horizontal">
 
@@ -16,7 +18,6 @@
       android:layout_weight="1"
       android:gravity="center_vertical"
       android:orientation="vertical"
-      android:paddingLeft="@dimen/list_item_padding"
       android:paddingStart="@dimen/list_item_padding"
       tools:ignore="RtlSymmetry">
 
@@ -51,11 +52,11 @@
       android:padding="@dimen/normal_margin">
 
     <ImageView
-      android:layout_width="wrap_content"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/menu_overflow_description"
-        android:src="@drawable/ic_more_vert_black_24dp"
-        android:tint="@android:color/white" />
+        android:tint="@android:color/white"
+        app:srcCompat="@drawable/ic_more_vert_black_24dp" />
   </LinearLayout>
 </LinearLayout>

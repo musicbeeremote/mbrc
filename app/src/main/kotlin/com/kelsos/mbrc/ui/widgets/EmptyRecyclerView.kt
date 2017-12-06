@@ -12,14 +12,11 @@ class EmptyRecyclerView : RecyclerView {
       checkIfEmpty()
     }
 
-  constructor(context: Context) : super(context) {
-  }
+  constructor(context: Context) : super(context)
 
-  constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-  }
+  constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-  constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle) {
-  }
+  constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
 
   internal fun checkIfEmpty() {
     emptyView?.visibility = if (adapter != null && adapter.itemCount > 0) View.GONE else View.VISIBLE
