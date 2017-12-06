@@ -24,8 +24,6 @@ class PlaylistActivity :
   OnPlaylistPressedListener,
   OnRefreshListener {
 
-  private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
-
   @Inject lateinit var adapter: PlaylistAdapter
   @Inject lateinit var presenter: PlaylistPresenter
   private lateinit var scope: Scope
@@ -50,17 +48,8 @@ class PlaylistActivity :
     binding.playlistList.adapter = adapter
     binding.swipeLayout.setOnRefreshListener(this)
     emptyBinding.listEmptyTitle.setText(R.string.playlists_list_empty)
-  }
-
-  public override fun onStart() {
-    super.onStart()
     presenter.attach(this)
     presenter.load()
-  }
-
-  public override fun onStop() {
-    super.onStop()
-    presenter.detach()
   }
 
   override fun playlistPressed(path: String) {
@@ -72,6 +61,7 @@ class PlaylistActivity :
   }
 
   override fun onDestroy() {
+    presenter.detach()
     Toothpick.closeScope(this)
 
     if (isFinishing) {
@@ -122,4 +112,8 @@ class PlaylistActivity :
   @Target(AnnotationTarget.TYPE)
   @Retention(AnnotationRetention.RUNTIME)
   annotation class Presenter
+
+  companion object {
+    private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
+  }
 }
