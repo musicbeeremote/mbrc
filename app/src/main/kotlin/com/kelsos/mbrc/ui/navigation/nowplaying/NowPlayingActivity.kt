@@ -3,7 +3,6 @@ package com.kelsos.mbrc.ui.navigation.nowplaying
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v4.view.MenuItemCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
@@ -80,11 +79,16 @@ class NowPlayingActivity : BaseNavigationActivity(),
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     menuInflater.inflate(R.menu.nowplaying_search, menu)
-    searchMenuItem = menu.findItem(R.id.now_playing_search)
-    searchView = MenuItemCompat.getActionView(searchMenuItem) as SearchView
-    searchView?.queryHint = getString(R.string.now_playing_search_hint)
-    searchView?.setIconifiedByDefault(true)
-    searchView?.setOnQueryTextListener(this)
+    searchMenuItem = menu.findItem(R.id.now_playing_search).apply {
+      searchView = actionView as SearchView
+    }
+
+    searchView?.apply {
+      queryHint = getString(R.string.now_playing_search_hint)
+      setIconifiedByDefault(true)
+      setOnQueryTextListener(this@NowPlayingActivity)
+    }
+
     return super.onCreateOptionsMenu(menu)
   }
 
@@ -132,16 +136,6 @@ class NowPlayingActivity : BaseNavigationActivity(),
     presenter.reload(scrollToTrack)
   }
 
-  override fun onStart() {
-    super.onStart()
-    presenter.attach(this)
-  }
-
-  override fun onStop() {
-    super.onStop()
-    presenter.detach()
-  }
-
   override fun onPress(position: Int) {
     presenter.play(position + 1)
   }
@@ -159,6 +153,7 @@ class NowPlayingActivity : BaseNavigationActivity(),
   }
 
   override fun onDestroy() {
+    presenter.detach()
     Toothpick.closeScope(this)
     super.onDestroy()
   }
