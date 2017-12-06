@@ -25,11 +25,12 @@ import android.support.annotation.ColorInt
 import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.AppCompatImageView
 import android.util.AttributeSet
 import android.widget.ImageView
 import com.kelsos.mbrc.R
 
-class CircleImageView : ImageView {
+class CircleImageView : AppCompatImageView {
 
   private val mDrawableRect = RectF()
   private val mBorderRect = RectF()
