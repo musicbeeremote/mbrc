@@ -30,7 +30,7 @@ import com.kelsos.mbrc.events.ShuffleChange.ShuffleState
 import com.kelsos.mbrc.events.UpdatePositionEvent
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.networking.connections.Connection
-import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment
 import com.kelsos.mbrc.ui.navigation.main.LfmRating.Rating
 import com.kelsos.mbrc.ui.navigation.main.ProgressSeekerHelper.ProgressUpdate
@@ -44,7 +44,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MainActivity : BaseActivity(), MainView, ProgressUpdate {
+class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
 
   private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
   // Injects

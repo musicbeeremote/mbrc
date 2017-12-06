@@ -48,14 +48,6 @@ along with [Google Play Music for Android](https://play.google.com/store/apps/de
 *   [Snackbar](https://github.com/MrEngineer13/SnackBar)
 
     License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-
-*   [Material Dialogs](https://github.com/afollestad/material-dialogs/)
-
-    License: [MIT](https://github.com/afollestad/material-dialogs/blob/master/LICENSE.txt)
-    
-*   [Butterknife](https://github.com/JakeWharton/butterknife)
-
-    License: [Apache 2.0](https://raw.githubusercontent.com/JakeWharton/butterknife/master/LICENSE.txt)
                
 
 License

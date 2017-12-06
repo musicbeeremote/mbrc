@@ -6,7 +6,6 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.widget.Button
 
@@ -20,7 +19,7 @@ import com.kelsos.mbrc.networking.DiscoveryStop
 import com.kelsos.mbrc.networking.StartServiceDiscoveryEvent
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.preferences.DefaultSettingsChangedEvent
-import com.kelsos.mbrc.ui.activities.FontActivity
+import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment
 import kotterknife.bindView
 import toothpick.Scope
@@ -28,15 +27,17 @@ import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class ConnectionManagerActivity : FontActivity(),
+class ConnectionManagerActivity : BaseActivity(),
     ConnectionManagerView,
     SettingsDialogFragment.SettingsSaveListener,
     ConnectionAdapter.ConnectionChangeListener {
+
   @Inject lateinit var bus: RxBus
   @Inject lateinit var presenter: ConnectionManagerPresenter
-  val mRecyclerView: RecyclerView by bindView(R.id.connection_list)
-  val mToolbar: Toolbar by bindView(R.id.toolbar)
-  private var mProgress: AlertDialog? = null
+
+  private val recyclerView: RecyclerView by bindView(R.id.connection_list)
+
+  private var progress: AlertDialog? = null
   private var mContext: Context? = null
   private var adapter: ConnectionAdapter? = null
   private var scope: Scope? = null
@@ -50,10 +51,11 @@ class ConnectionManagerActivity : FontActivity(),
   }
 
   private fun onScanButtonClick() {
-    val mBuilder = AlertDialog.Builder(mContext!!)
-    mBuilder.setTitle(R.string.progress_scanning)
-    mBuilder.setMessage(R.string.progress_scanning_message)
-    mProgress = mBuilder.show()
+    val builder = AlertDialog.Builder(mContext!!)
+        .setTitle(R.string.progress_scanning)
+        .setMessage(R.string.progress_scanning_message)
+
+    progress = builder.show()
     bus.post(StartServiceDiscoveryEvent())
   }
 
@@ -66,13 +68,14 @@ class ConnectionManagerActivity : FontActivity(),
     addButton.setOnClickListener { onAddButtonClick() }
     scanButton.setOnClickListener { onScanButtonClick() }
 
-    setSupportActionBar(mToolbar)
-    mRecyclerView.setHasFixedSize(true)
+    setupToolbar(getString(R.string.connection_manager_title))
+
+    recyclerView.setHasFixedSize(true)
     val mLayoutManager = LinearLayoutManager(this)
-    mRecyclerView.layoutManager = mLayoutManager
+    recyclerView.layoutManager = mLayoutManager
     adapter = ConnectionAdapter()
     adapter!!.setChangeListener(this)
-    mRecyclerView.adapter = adapter
+    recyclerView.adapter = adapter
     presenter.attach(this)
     presenter.load()
   }
@@ -80,14 +83,6 @@ class ConnectionManagerActivity : FontActivity(),
   override fun onDestroy() {
     Toothpick.closeScope(this)
     super.onDestroy()
-  }
-
-  override fun onStart() {
-    super.onStart()
-    mContext = this
-
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    supportActionBar?.setTitle(R.string.connection_manager_title)
   }
 
   override fun onResume() {
@@ -122,8 +117,8 @@ class ConnectionManagerActivity : FontActivity(),
 
   private fun onDiscoveryStopped(event: DiscoveryStopped) {
 
-    if (mProgress != null) {
-      mProgress!!.dismiss()
+    if (progress != null) {
+      progress!!.dismiss()
     }
 
     val message: String
@@ -137,13 +132,13 @@ class ConnectionManagerActivity : FontActivity(),
       else -> message = getString(R.string.unknown_reason)
     }
 
-    Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show()
+    Snackbar.make(recyclerView, message, Snackbar.LENGTH_SHORT).show()
   }
 
   private fun onUserNotification(event: NotifyUser) {
     val message = if (event.isFromResource) getString(event.resId) else event.message
 
-    Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show()
+    Snackbar.make(recyclerView, message, Snackbar.LENGTH_SHORT).show()
   }
 
   override fun onDelete(settings: ConnectionSettings) {
