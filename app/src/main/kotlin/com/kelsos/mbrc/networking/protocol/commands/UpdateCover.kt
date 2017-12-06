@@ -7,9 +7,9 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kelsos.mbrc.content.active_status.MainDataModel
-import com.kelsos.mbrc.content.now_playing.cover.CoverApi
-import com.kelsos.mbrc.content.now_playing.cover.CoverPayload
+import com.kelsos.mbrc.content.activestatus.MainDataModel
+import com.kelsos.mbrc.content.nowplaying.cover.CoverApi
+import com.kelsos.mbrc.content.nowplaying.cover.CoverPayload
 import com.kelsos.mbrc.events.CoverChangedEvent
 import com.kelsos.mbrc.events.RemoteClientMetaData
 import com.kelsos.mbrc.events.bus.RxBus

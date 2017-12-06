@@ -6,7 +6,7 @@ import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.widget.RatingBar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.active_status.MainDataModel
+import com.kelsos.mbrc.content.activestatus.MainDataModel
 import com.kelsos.mbrc.events.RatingChanged
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.bus.RxBus

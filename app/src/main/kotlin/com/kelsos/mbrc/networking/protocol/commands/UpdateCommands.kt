@@ -8,11 +8,11 @@ import com.fasterxml.jackson.databind.node.IntNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 import com.fasterxml.jackson.module.kotlin.treeToValue
-import com.kelsos.mbrc.content.active_status.MainDataModel
+import com.kelsos.mbrc.content.activestatus.MainDataModel
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.content.lyrics.LyricsModel
 import com.kelsos.mbrc.content.lyrics.LyricsPayload
-import com.kelsos.mbrc.content.now_playing.NowPlayingTrack
+import com.kelsos.mbrc.content.nowplaying.NowPlayingTrack
 import com.kelsos.mbrc.events.RemoteClientMetaData
 import com.kelsos.mbrc.events.ShuffleChange
 import com.kelsos.mbrc.events.TrackInfoChangeEvent

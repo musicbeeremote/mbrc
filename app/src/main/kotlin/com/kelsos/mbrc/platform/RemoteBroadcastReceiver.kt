@@ -13,8 +13,8 @@ import com.kelsos.mbrc.networking.ChangeConnectionStateEvent
 import com.kelsos.mbrc.networking.SocketAction.START
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.VolumeInteractor
-import com.kelsos.mbrc.platform.media_session.RemoteViewIntentBuilder
-import com.kelsos.mbrc.platform.media_session.SessionNotificationManager
+import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
+import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
 import com.kelsos.mbrc.preferences.SettingsManager
 import javax.inject.Inject
 

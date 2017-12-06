@@ -16,7 +16,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
-import com.kelsos.mbrc.content.now_playing.NowPlaying
+import com.kelsos.mbrc.content.nowplaying.NowPlaying
 import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper
