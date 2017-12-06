@@ -25,28 +25,28 @@ class NowPlayingPresenterImpl
     NowPlayingPresenter {
 
   override fun reload(scrollToTrack: Boolean) {
-    view?.showLoading()
+    view().showLoading()
     addDisposable(repository.getAndSaveRemote()
         .compose { schedule(it) }
         .subscribe({
-          view?.update(it)
-          view?.trackChanged(model.trackInfo, scrollToTrack)
-          view?.hideLoading()
+          view().update(it)
+          view().trackChanged(model.trackInfo, scrollToTrack)
+          view().hideLoading()
         }) {
-          view?.failure(it)
-          view?.hideLoading()
+          view().failure(it)
+          view().hideLoading()
         })
   }
 
   override fun load() {
     addDisposable(repository.getAllCursor().compose { schedule(it) }
         .subscribe({
-          view?.update(it)
-          view?.trackChanged(model.trackInfo, true)
-          view?.hideLoading()
+          view().update(it)
+          view().trackChanged(model.trackInfo, true)
+          view().hideLoading()
         }) {
-          view?.failure(it)
-          view?.hideLoading()
+          view().failure(it)
+          view().hideLoading()
         })
   }
 
@@ -65,7 +65,7 @@ class NowPlayingPresenterImpl
 
   override fun attach(view: NowPlayingView) {
     super.attach(view)
-    bus.register(this, TrackInfoChangeEvent::class.java, { this.view?.trackChanged(it.trackInfo) }, true)
+    bus.register(this, TrackInfoChangeEvent::class.java, { this.view().trackChanged(it.trackInfo) }, true)
   }
 
   override fun detach() {

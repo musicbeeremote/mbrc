@@ -34,18 +34,18 @@ class BrowseAlbumPresenterImpl
   }
 
   override fun load() {
-    view?.showLoading()
+    view().showLoading()
     addDisposable(repository.getAlbumsSorted().compose { schedule(it) }.subscribe({
-      view?.update(it)
-      view?.hideLoading()
+      view().update(it)
+      view().hideLoading()
     }) {
       Timber.v(it)
-      view?.hideLoading()
+      view().hideLoading()
     })
   }
 
   override fun showSorting() {
-    view?.showSorting(albumSortingStore.getSortingOrder(), albumSortingStore.getSortingSelection())
+    view().showSorting(albumSortingStore.getSortingOrder(), albumSortingStore.getSortingSelection())
   }
 
   override fun order(@Sorting.Order order: Long) {
@@ -60,11 +60,11 @@ class BrowseAlbumPresenterImpl
     addDisposable(repository.getAlbumsSorted(sortingSelection, ascending)
         .compose { schedule(it) }
         .subscribe({
-          view?.update(it)
-          view?.hideLoading()
+          view().update(it)
+          view().hideLoading()
         }) {
           Timber.v(it)
-          view?.hideLoading()
+          view().hideLoading()
         })
   }
 
@@ -76,13 +76,13 @@ class BrowseAlbumPresenterImpl
   }
 
   override fun reload() {
-    view?.showLoading()
+    view().showLoading()
     addDisposable(repository.getAndSaveRemote().compose { schedule(it) }.subscribe({
-      view?.update(it)
-      view?.hideLoading()
+      view().update(it)
+      view().hideLoading()
     }) {
       Timber.v(it)
-      view?.hideLoading()
+      view().hideLoading()
     })
 
   }

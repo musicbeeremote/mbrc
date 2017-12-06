@@ -31,27 +31,27 @@ class BrowseTrackPresenterImpl
   }
 
   override fun load() {
-    view?.showLoading()
+    view().showLoading()
     addDisposable(repository.getAllCursor().compose { schedule(it) }.subscribe({
-      view?.update(it)
-      view?.hideLoading()
+      view().update(it)
+      view().hideLoading()
     }, {
       Timber.v(it, "Error while loading the data from the database")
-      view?.failure(it)
-      view?.hideLoading()
+      view().failure(it)
+      view().hideLoading()
     }))
   }
 
 
   override fun reload() {
-    view?.showLoading()
+    view().showLoading()
     addDisposable(repository.getAndSaveRemote().compose { schedule(it) }.subscribe({
-      view?.update(it)
-      view?.hideLoading()
+      view().update(it)
+      view().hideLoading()
     }, {
       Timber.v(it, "Error while loading the data from the database")
-      view?.failure(it)
-      view?.hideLoading()
+      view().failure(it)
+      view().hideLoading()
     }))
   }
 

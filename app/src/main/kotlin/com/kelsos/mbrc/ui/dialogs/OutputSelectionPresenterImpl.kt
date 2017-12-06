@@ -20,9 +20,9 @@ constructor(
         .subscribeOn(ioScheduler)
         .observeOn(mainScheduler)
         .subscribe({
-          view?.update(it)
+          view().update(it)
         }) {
-          view?.error(code(it))
+          view().error(code(it))
         }
     )
   }
@@ -32,9 +32,9 @@ constructor(
         .subscribeOn(ioScheduler)
         .observeOn(mainScheduler)
         .subscribe({
-          view?.update(it)
+          view().update(it)
         }) {
-          view?.error(code(it))
+          view().error(code(it))
         }
     )
   }

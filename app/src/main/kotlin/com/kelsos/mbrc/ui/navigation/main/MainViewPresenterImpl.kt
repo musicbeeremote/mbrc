@@ -44,15 +44,17 @@ class MainViewPresenterImpl
   override fun load() {
     addDisposable(Completable.fromCallable {
       checkIfAttached()
-      view?.updateCover(model.coverPath)
-      view?.updateLfmStatus(model.lfmStatus)
-      view?.updateScrobbleStatus(model.isScrobblingEnabled)
-      view?.updateRepeat(model.repeat)
-      view?.updateShuffleState(model.shuffle)
-      view?.updateVolume(model.volume, model.isMute)
-      view?.updatePlayState(model.playState)
-      view?.updateTrackInfo(model.trackInfo)
-      view?.updateConnection(connectionStatusModel.connection)
+      with(view()) {
+        updateCover(model.coverPath)
+        updateLfmStatus(model.lfmStatus)
+        updateScrobbleStatus(model.isScrobblingEnabled)
+        updateRepeat(model.repeat)
+        updateShuffleState(model.shuffle)
+        updateVolume(model.volume, model.isMute)
+        updatePlayState(model.playState)
+        updateTrackInfo(model.trackInfo)
+        updateConnection(connectionStatusModel.connection)
+      }
     }.subscribe({
 
     }) {
@@ -61,7 +63,7 @@ class MainViewPresenterImpl
 
     addDisposable(settingsManager.shouldShowChangeLog().subscribe({
       if (it) {
-        view?.showChangeLog()
+        view().showChangeLog()
       }
     }) {
 
@@ -80,17 +82,17 @@ class MainViewPresenterImpl
 
   override fun attach(view: MainView) {
     super.attach(view)
-    this.bus.register(this, CoverChangedEvent::class.java, { this.view?.updateCover(it.path) }, true)
-    this.bus.register(this, ShuffleChange::class.java, { this.view?.updateShuffleState(it.shuffleState) }, true)
-    this.bus.register(this, RepeatChange::class.java, { this.view?.updateRepeat(it.mode) }, true)
-    this.bus.register(this, VolumeChange::class.java, { this.view?.updateVolume(it.volume, it.isMute) }, true)
-    this.bus.register(this, PlayStateChange::class.java, { this.view?.updatePlayState(it.state) }, true)
-    this.bus.register(this, TrackInfoChangeEvent::class.java, { this.view?.updateTrackInfo(it.trackInfo) }, true)
-    this.bus.register(this, ConnectionStatusChangeEvent::class.java, { this.view?.updateConnection(it.status) }, true)
-    this.bus.register(this, UpdatePositionEvent::class.java, { this.view?.updateProgress(it) }, true)
-    this.bus.register(this, ScrobbleChange::class.java, { this.view?.updateScrobbleStatus(it.isActive) }, true)
-    this.bus.register(this, LfmRatingChanged::class.java, { this.view?.updateLfmStatus(it.status) }, true)
-    model.setOnPluginOutOfDate { this.view?.notifyPluginOutOfDate() }
+    this.bus.register(this, CoverChangedEvent::class.java, { this.view().updateCover(it.path) }, true)
+    this.bus.register(this, ShuffleChange::class.java, { this.view().updateShuffleState(it.shuffleState) }, true)
+    this.bus.register(this, RepeatChange::class.java, { this.view().updateRepeat(it.mode) }, true)
+    this.bus.register(this, VolumeChange::class.java, { this.view().updateVolume(it.volume, it.isMute) }, true)
+    this.bus.register(this, PlayStateChange::class.java, { this.view().updatePlayState(it.state) }, true)
+    this.bus.register(this, TrackInfoChangeEvent::class.java, { this.view().updateTrackInfo(it.trackInfo) }, true)
+    this.bus.register(this, ConnectionStatusChangeEvent::class.java, { this.view().updateConnection(it.status) }, true)
+    this.bus.register(this, UpdatePositionEvent::class.java, { this.view().updateProgress(it) }, true)
+    this.bus.register(this, ScrobbleChange::class.java, { this.view().updateScrobbleStatus(it.isActive) }, true)
+    this.bus.register(this, LfmRatingChanged::class.java, { this.view().updateLfmStatus(it.status) }, true)
+    model.setOnPluginOutOfDate { this.view().notifyPluginOutOfDate() }
   }
 
   override fun detach() {
