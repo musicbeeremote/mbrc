@@ -129,16 +129,6 @@ class NowPlayingActivity :
     }
   }
 
-  override fun onStart() {
-    super.onStart()
-    presenter.attach(this)
-  }
-
-  override fun onStop() {
-    super.onStop()
-    presenter.detach()
-  }
-
   override fun onPress(position: Int) {
     presenter.play(position + 1)
   }
@@ -156,6 +146,7 @@ class NowPlayingActivity :
   }
 
   override fun onDestroy() {
+    presenter.detach()
     Toothpick.closeScope(this)
     super.onDestroy()
   }

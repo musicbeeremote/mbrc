@@ -6,6 +6,97 @@
   android:layout_height="match_parent"
   app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+  <com.kelsos.mbrc.ui.widgets.SquareImageView
+    android:id="@+id/main_album_cover_image_view"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:layout_marginTop="16dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="16dp"
+    android:adjustViewBounds="true"
+    android:contentDescription="@string/description_album_cover"
+    android:longClickable="true"
+    android:scaleType="centerCrop"
+    android:src="@drawable/ic_image_no_cover"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintDimensionRatio="h,1:1"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:siv_use_height="true"
+    tools:layout_constraintBottom_creator="1"
+    tools:layout_constraintRight_creator="1"
+    tools:layout_constraintTop_creator="1" />
+
+  <TextView
+    android:id="@+id/main_track_progress_current"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:paddingLeft="@dimen/small_margin"
+    android:paddingEnd="@dimen/small_margin"
+    android:paddingRight="@dimen/small_margin"
+    android:shadowColor="@android:color/black"
+    android:shadowDx="1"
+    android:shadowDy="1"
+    android:shadowRadius="1.5"
+    android:text="@string/main_label_duration_current"
+    android:textColor="@color/primary_text"
+    android:textSize="12sp"
+    app:layout_constraintBottom_toBottomOf="@+id/main_track_progress_seeker"
+    app:layout_constraintHorizontal_chainStyle="spread_inside"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintTop_toTopOf="@+id/main_track_progress_seeker"
+    app:layout_constraintVertical_bias="0.0"
+    tools:ignore="MissingPrefix"
+    tools:layout_constraintBottom_creator="1"
+    tools:layout_constraintTop_creator="1" />
+
+  <TextView
+    android:id="@+id/main_track_duration_total"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="8dp"
+    android:paddingLeft="@dimen/small_margin"
+    android:paddingEnd="@dimen/small_margin"
+    android:paddingRight="@dimen/small_margin"
+    android:shadowColor="@android:color/black"
+    android:shadowDx="1"
+    android:shadowDy="1"
+    android:shadowRadius="1.5"
+    android:text="@string/main_label_duration_total"
+    android:textColor="@color/primary_text"
+    android:textSize="12sp"
+    app:layout_constraintBottom_toBottomOf="@+id/main_track_progress_seeker"
+    app:layout_constraintRight_toLeftOf="@+id/main_album_cover_image_view"
+    app:layout_constraintTop_toTopOf="@+id/main_track_progress_seeker"
+    app:layout_constraintVertical_bias="0.0"
+    tools:ignore="MissingPrefix,RelativeOverlap"
+    tools:layout_constraintBottom_creator="1"
+    tools:layout_constraintTop_creator="1" />
+
+  <SeekBar
+    android:id="@+id/main_track_progress_seeker"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="50dp"
+    android:layout_marginLeft="50dp"
+    android:layout_marginEnd="50dp"
+    android:layout_marginRight="50dp"
+    android:gravity="center"
+    android:progress="0"
+    android:progressTint="@color/white"
+    android:secondaryProgress="0"
+    android:thumbTint="@color/white"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintLeft_toLeftOf="@+id/main_track_progress_current"
+    app:layout_constraintRight_toRightOf="@+id/main_track_duration_total"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:ignore="UnusedAttribute"
+    tools:layout_constraintBottom_creator="1"
+    tools:layout_constraintLeft_creator="1"
+    tools:layout_constraintRight_creator="1"
+    tools:layout_constraintTop_creator="1" />
+
   <LinearLayout
     android:id="@+id/track_info_area"
     android:layout_width="wrap_content"
@@ -74,28 +165,21 @@
       tools:text="Panic [2012]" />
   </LinearLayout>
 
-  <SeekBar
-    android:id="@+id/main_track_progress_seeker"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="50dp"
-    android:layout_marginLeft="50dp"
-    android:layout_marginEnd="50dp"
-    android:layout_marginRight="50dp"
-    android:gravity="center"
-    android:progress="0"
-    android:progressTint="@color/white"
-    android:secondaryProgress="0"
-    android:thumbTint="@color/white"
+  <com.kelsos.mbrc.ui.widgets.SquareImageButton
+    android:id="@+id/main_mute_button"
+    android:layout_width="23dp"
+    android:layout_height="23dp"
+    android:layout_centerVertical="true"
+    android:layout_marginBottom="8dp"
+    android:background="?attr/selectableItemBackgroundBorderless"
+    android:contentDescription="@string/main_button_mute_description"
+    android:scaleType="centerInside"
+    android:src="@drawable/ic_volume_off_black_24dp"
+    android:tint="@color/button_dark"
     app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintLeft_toLeftOf="@+id/main_track_progress_current"
-    app:layout_constraintRight_toRightOf="@+id/main_track_duration_total"
-    app:layout_constraintTop_toTopOf="parent"
-    tools:ignore="UnusedAttribute"
-    tools:layout_constraintBottom_creator="1"
-    tools:layout_constraintLeft_creator="1"
-    tools:layout_constraintRight_creator="1"
-    tools:layout_constraintTop_creator="1" />
+    app:layout_constraintLeft_toLeftOf="@+id/main_repeat_button"
+    app:layout_constraintTop_toTopOf="@+id/main_volume_seeker"
+    app:layout_constraintVertical_bias="0.0" />
 
   <SeekBar
     android:id="@+id/main_volume_seeker"
@@ -115,71 +199,6 @@
     app:layout_constraintRight_toRightOf="@+id/main_track_duration_total"
     tools:ignore="UnusedAttribute"
     tools:layout_constraintLeft_creator="1" />
-
-
-  <TextView
-    android:id="@+id/main_track_progress_current"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:paddingLeft="@dimen/small_margin"
-    android:paddingEnd="@dimen/small_margin"
-    android:paddingRight="@dimen/small_margin"
-    android:shadowColor="@android:color/black"
-    android:shadowDx="1"
-    android:shadowDy="1"
-    android:shadowRadius="1.5"
-    android:text="@string/main_label_duration_current"
-    android:textColor="@color/primary_text"
-    android:textSize="12sp"
-    app:layout_constraintBottom_toBottomOf="@+id/main_track_progress_seeker"
-    app:layout_constraintHorizontal_chainStyle="spread_inside"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintTop_toTopOf="@+id/main_track_progress_seeker"
-    app:layout_constraintVertical_bias="0.0"
-    tools:ignore="MissingPrefix"
-    tools:layout_constraintBottom_creator="1"
-    tools:layout_constraintTop_creator="1" />
-
-  <TextView
-    android:id="@+id/main_track_duration_total"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginEnd="8dp"
-    android:paddingLeft="@dimen/small_margin"
-    android:paddingEnd="@dimen/small_margin"
-    android:paddingRight="@dimen/small_margin"
-    android:shadowColor="@android:color/black"
-    android:shadowDx="1"
-    android:shadowDy="1"
-    android:shadowRadius="1.5"
-    android:text="@string/main_label_duration_total"
-    android:textColor="@color/primary_text"
-    android:textSize="12sp"
-    app:layout_constraintBottom_toBottomOf="@+id/main_track_progress_seeker"
-    app:layout_constraintRight_toLeftOf="@+id/main_album_cover_image_view"
-    app:layout_constraintTop_toTopOf="@+id/main_track_progress_seeker"
-    app:layout_constraintVertical_bias="0.0"
-    tools:ignore="MissingPrefix,RelativeOverlap"
-    tools:layout_constraintBottom_creator="1"
-    tools:layout_constraintTop_creator="1" />
-
-
-  <com.kelsos.mbrc.ui.widgets.SquareImageButton
-    android:id="@+id/main_mute_button"
-    android:layout_width="23dp"
-    android:layout_height="23dp"
-    android:layout_centerVertical="true"
-    android:layout_marginBottom="8dp"
-    android:background="?attr/selectableItemBackgroundBorderless"
-    android:contentDescription="@string/main_button_mute_description"
-    android:scaleType="centerInside"
-    android:src="@drawable/ic_volume_off_black_24dp"
-    android:tint="@color/button_dark"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintLeft_toLeftOf="@+id/main_repeat_button"
-    app:layout_constraintTop_toTopOf="@+id/main_volume_seeker"
-    app:layout_constraintVertical_bias="0.0" />
 
   <com.kelsos.mbrc.ui.widgets.SquareImageButton
     android:id="@+id/main_repeat_button"
@@ -269,26 +288,5 @@
     app:layout_constraintRight_toRightOf="@+id/main_track_duration_total"
     app:layout_constraintTop_toTopOf="@+id/main_button_play_pause"
     app:layout_constraintVertical_bias="1.0" />
-
-  <com.kelsos.mbrc.ui.widgets.SquareImageView
-    android:id="@+id/main_album_cover_image_view"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:layout_marginTop="16dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginBottom="16dp"
-    android:adjustViewBounds="true"
-    android:contentDescription="@string/description_album_cover"
-    android:longClickable="true"
-    android:scaleType="centerCrop"
-    android:src="@drawable/ic_image_no_cover"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintDimensionRatio="h,1:1"
-    app:layout_constraintRight_toRightOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:siv_use_height="true"
-    tools:layout_constraintBottom_creator="1"
-    tools:layout_constraintRight_creator="1"
-    tools:layout_constraintTop_creator="1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
