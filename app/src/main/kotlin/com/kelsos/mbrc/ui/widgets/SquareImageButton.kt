@@ -1,11 +1,11 @@
 package com.kelsos.mbrc.ui.widgets
 
 import android.content.Context
+import android.support.v7.widget.AppCompatImageButton
 import android.util.AttributeSet
-import android.widget.ImageButton
 import com.kelsos.mbrc.R
 
-class SquareImageButton : ImageButton {
+class SquareImageButton : AppCompatImageButton {
 
     private var useHeight: Boolean = false
 

@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_dual_item_height"
     android:background="?attr/selectableItemBackground"
     android:clickable="true"
+    android:focusable="true"
     android:orientation="horizontal">
 
   <ImageView
-    android:layout_gravity="center"
-    android:padding="@dimen/normal_margin"
-    android:scaleType="center"
-    android:layout_width="wrap_content"
-    android:src="@drawable/ic_desktop_windows_black_24dp"
-    android:tint="@color/secondary_text"
-    android:contentDescription="@string/description_computer_icon"
-    android:layout_height="wrap_content"/>
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:contentDescription="@string/description_computer_icon"
+      android:padding="@dimen/normal_margin"
+      android:scaleType="center"
+      android:tint="@color/secondary_text"
+      app:srcCompat="@drawable/ic_desktop_windows_black_24dp" />
 
   <LinearLayout
       android:layout_width="0dp"
@@ -53,11 +55,11 @@
           tools:text="192.168.100.10" />
 
       <TextView
-        android:paddingStart="@dimen/semicolon_padding"
-        android:paddingEnd="@dimen/semicolon_padding"
-        android:layout_width="wrap_content"
-        android:text="@string/semicolon"
-        android:layout_height="wrap_content"/>
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:paddingEnd="@dimen/semicolon_padding"
+          android:paddingStart="@dimen/semicolon_padding"
+          android:text="@string/semicolon" />
 
       <TextView
           android:id="@+id/cs_list_port"
@@ -77,11 +79,10 @@
       android:layout_gravity="center_vertical"
       android:layout_marginBottom="4dp"
       android:layout_marginEnd="@dimen/small_margin"
-      android:layout_marginRight="@dimen/small_margin"
-      android:scaleType="centerInside"
       android:layout_marginTop="4dp"
       android:contentDescription="@string/connection_default_description"
-      android:enabled="false" />
+      android:enabled="false"
+      android:scaleType="centerInside" />
 
   <LinearLayout
       android:id="@+id/cs_list_overflow"
@@ -90,16 +91,17 @@
       android:layout_weight="0"
       android:background="?attr/selectableItemBackground"
       android:clickable="true"
+      android:focusable="true"
       android:gravity="center_vertical"
       android:padding="@dimen/normal_margin">
 
     <ImageView
-      android:layout_width="wrap_content"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/menu_overflow_description"
-        android:src="@drawable/ic_more_vert_black_24dp"
-        android:tint="@android:color/white" />
+        android:tint="@android:color/white"
+        app:srcCompat="@drawable/ic_more_vert_black_24dp" />
   </LinearLayout>
 
 </LinearLayout>

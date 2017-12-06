@@ -25,9 +25,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingEnd="@dimen/small_margin"
-        android:paddingRight="@dimen/small_margin"
-        android:src="@drawable/ic_error_outline_black_24dp"
         android:tint="@color/white"
+        app:srcCompat="@drawable/ic_error_outline_black_24dp"
         tools:ignore="RtlSymmetry" />
 
     <TextView

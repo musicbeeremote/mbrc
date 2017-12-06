@@ -36,8 +36,8 @@
       android:id="@+id/list_empty_icon"
       style="@style/empty_view_image"
       android:layout_below="@+id/list_empty_title"
-      android:src="@drawable/ic_music_note_black_80dp"
-      android:visibility="gone" />
+      android:visibility="gone"
+      app:srcCompat="@drawable/ic_music_note_black_80dp" />
 
   <TextView
       android:id="@+id/list_empty_subtitle"
