@@ -2,7 +2,6 @@ package com.kelsos.mbrc.ui.navigation.library.search
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.MenuItem
 import android.widget.LinearLayout
@@ -12,7 +11,7 @@ import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.library.genres.Genre
 import com.kelsos.mbrc.content.library.tracks.Track
-import com.kelsos.mbrc.ui.activities.FontActivity
+import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.search.SearchResultAdapter.OnSearchItemSelected
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
@@ -22,10 +21,10 @@ import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class SearchResultsActivity : FontActivity(),
+class SearchResultsActivity : BaseActivity(),
                               SearchResultsView,
                               OnSearchItemSelected {
-  private val toolbar: Toolbar by bindView(R.id.toolbar)
+
   private val searchResultsRecycler: EmptyRecyclerView by bindView(R.id.search_results_recycler)
   private val emptyViewText: TextView by bindView(R.id.empty_view_text)
   private val emptyView: LinearLayout by bindView(R.id.empty_view)
@@ -33,11 +32,12 @@ class SearchResultsActivity : FontActivity(),
   @Inject lateinit var adapter: SearchResultAdapter
   @Inject lateinit var presenter: SearchResultsPresenter
   @Inject lateinit var actionHandler: PopupActionHandler
-  private var scope: Scope? = null
+
+  private lateinit var scope: Scope
 
   override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this), SearchResultsModule())
+    scope.installModules(SmoothieActivityModule(this), SearchResultsModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_search_results)
@@ -53,10 +53,7 @@ class SearchResultsActivity : FontActivity(),
       presenter.search(query)
     }
 
-    setSupportActionBar(toolbar)
-    supportActionBar?.setHomeButtonEnabled(true)
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    supportActionBar?.title = query
+    setupToolbar(query)
 
     searchResultsRecycler.adapter = adapter
     searchResultsRecycler.emptyView = emptyView
@@ -70,17 +67,8 @@ class SearchResultsActivity : FontActivity(),
     adapter.update(searchResults)
   }
 
-  override fun onStart() {
-    super.onStart()
-    presenter.attach(this)
-  }
-
-  override fun onStop() {
-    super.onStop()
-    presenter.detach()
-  }
-
   override fun onDestroy() {
+    presenter.detach()
     Toothpick.closeScope(this)
     super.onDestroy()
   }

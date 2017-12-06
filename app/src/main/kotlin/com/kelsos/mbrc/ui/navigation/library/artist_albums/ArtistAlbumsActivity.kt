@@ -2,12 +2,11 @@ package com.kelsos.mbrc.ui.navigation.library.artist_albums
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.widget.LinearLayout
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
-import com.kelsos.mbrc.ui.activities.FontActivity
+import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.albums.AlbumEntryAdapter
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
@@ -18,12 +17,11 @@ import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class ArtistAlbumsActivity : FontActivity(),
+class ArtistAlbumsActivity : BaseActivity(),
     ArtistAlbumsView,
     AlbumEntryAdapter.MenuItemSelectedListener {
 
   private val recyclerView: EmptyRecyclerView by bindView(R.id.album_recycler)
-  private val toolbar: Toolbar by bindView(R.id.toolbar)
   private val emptyView: LinearLayout by bindView(R.id.empty_view)
 
   @Inject lateinit var actionHandler: PopupActionHandler
@@ -31,16 +29,15 @@ class ArtistAlbumsActivity : FontActivity(),
   @Inject lateinit var presenter: ArtistAlbumsPresenter
 
   private var artist: String? = null
-  private var scope: Scope? = null
+  private lateinit var scope: Scope
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this),
+    scope.installModules(SmoothieActivityModule(this),
         ArtistAlbumsModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_artist_albums)
-
 
     val extras = intent.extras
     if (extras != null) {
@@ -52,14 +49,8 @@ class ArtistAlbumsActivity : FontActivity(),
       return
     }
 
-    setSupportActionBar(toolbar)
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    supportActionBar?.setDisplayShowHomeEnabled(true)
-    supportActionBar?.title = artist
-
-    if (artist.isNullOrEmpty()) {
-      supportActionBar?.setTitle(R.string.empty)
-    }
+    val title = artist ?: getString(R.string.empty)
+    setupToolbar(title)
 
     adapter.setMenuItemSelectedListener(this)
     recyclerView.layoutManager = LinearLayoutManager(this)
@@ -93,18 +84,9 @@ class ArtistAlbumsActivity : FontActivity(),
   }
 
   override fun onDestroy() {
-    super.onDestroy()
-    Toothpick.closeScope(this)
-  }
-
-  override fun onStart() {
-    super.onStart()
-    presenter.attach(this)
-  }
-
-  override fun onStop() {
-    super.onStop()
     presenter.detach()
+    Toothpick.closeScope(this)
+    super.onDestroy()
   }
 
   override fun onBackPressed() {

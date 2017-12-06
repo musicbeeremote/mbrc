@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
-import android.support.v4.view.MenuItemCompat
 import android.support.v4.view.ViewPager
 import android.support.v4.view.ViewPager.OnPageChangeListener
 import android.support.v7.app.AlertDialog
@@ -14,7 +13,7 @@ import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.navigation.library.search.SearchResultsActivity
 import kotterknife.bindView
 import toothpick.Scope
@@ -22,7 +21,7 @@ import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class LibraryActivity : BaseActivity(),
+class LibraryActivity : BaseNavigationActivity(),
     LibraryView,
     OnQueryTextListener,
     OnPageChangeListener {
@@ -34,7 +33,8 @@ class LibraryActivity : BaseActivity(),
   private var searchMenuItem: MenuItem? = null
   private var albumArtistOnly: MenuItem? = null
   private var pagerAdapter: LibraryPagerAdapter? = null
-  private var scope: Scope? = null
+
+  private lateinit var scope: Scope
   @Inject lateinit var presenter: LibraryPresenter
 
   private var refreshDialog: AlertDialog? = null
@@ -59,7 +59,6 @@ class LibraryActivity : BaseActivity(),
         it.clearFocus()
         it.setQuery("", false)
         searchMenuItem?.collapseActionView()
-        MenuItemCompat.collapseActionView(searchMenuItem)
         return true
       }
     }
@@ -72,7 +71,7 @@ class LibraryActivity : BaseActivity(),
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this), LibraryModule())
+    scope.installModules(SmoothieActivityModule(this), LibraryModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_library)
@@ -82,16 +81,23 @@ class LibraryActivity : BaseActivity(),
     pager.adapter = pagerAdapter
     tabs.setupWithViewPager(pager)
     pager.addOnPageChangeListener(this)
+    presenter.attach(this)
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     menuInflater.inflate(R.menu.library_search, menu)
-    searchMenuItem = menu.findItem(R.id.library_search_item)
+    searchMenuItem = menu.findItem(R.id.library_search_item).apply {
+      searchView = actionView as SearchView
+    }
+
     albumArtistOnly = menu.findItem(R.id.library_album_artist)
-    searchView = MenuItemCompat.getActionView(searchMenuItem) as SearchView
-    searchView!!.queryHint = getString(R.string.library_search_hint)
-    searchView!!.setIconifiedByDefault(true)
-    searchView!!.setOnQueryTextListener(this)
+
+    searchView?.apply {
+      queryHint = getString(R.string.library_search_hint)
+      setIconifiedByDefault(true)
+      setOnQueryTextListener(this@LibraryActivity)
+    }
+
     presenter.loadArtistPreference()
     return super.onCreateOptionsMenu(menu)
   }
@@ -112,19 +118,10 @@ class LibraryActivity : BaseActivity(),
   }
 
   public override fun onDestroy() {
+    presenter.detach()
+    pagerAdapter = null
     Toothpick.closeScope(this)
     super.onDestroy()
-    pagerAdapter = null
-  }
-
-  override fun onStart() {
-    super.onStart()
-    presenter.attach(this)
-  }
-
-  override fun onStop() {
-    super.onStop()
-    presenter.detach()
   }
 
   override fun onBackPressed() {

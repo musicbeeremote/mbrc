@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/mini_control"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mini_control"
     android:layout_width="match_parent"
     android:layout_height="@dimen/mini_control_height"
     android:background="@color/background_dark">
@@ -16,7 +17,7 @@
       android:src="@drawable/ic_image_no_cover" />
 
   <LinearLayout
-    android:layout_width="match_parent"
+      android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:layout_gravity="start"
       android:layout_toEndOf="@+id/mc_track_cover"
@@ -38,7 +39,7 @@
         android:maxLines="1"
         android:textColor="@color/primary_text"
         android:textSize="@dimen/mini_control_title_text_size"
-        fontPath="fonts/roboto_medium.ttf"
+        app:fontFamily="@font/roboto_medium"
         tools:ignore="MissingPrefix,UnusedAttribute"
         tools:text="All night" />
 
@@ -73,8 +74,8 @@
         android:background="?attr/selectableItemBackground"
         android:baselineAlignBottom="false"
         android:contentDescription="@string/main_button_previous_description"
-        android:tint="@color/white"
-        android:src="@drawable/ic_skip_previous_black_24dp" />
+        android:src="@drawable/ic_skip_previous_black_24dp"
+        android:tint="@color/white" />
 
     <ImageButton
         android:id="@+id/mc_play_pause"
@@ -83,8 +84,8 @@
         android:background="?attr/selectableItemBackground"
         android:baselineAlignBottom="false"
         android:contentDescription="@string/main_button_play_pause_description"
-        android:tint="@color/white"
-        android:src="@drawable/ic_play_arrow_black_36dp" />
+        android:src="@drawable/ic_play_arrow_black_36dp"
+        android:tint="@color/white" />
 
     <ImageButton
         android:id="@+id/mc_next_track"
@@ -93,8 +94,8 @@
         android:background="?attr/selectableItemBackground"
         android:baselineAlignBottom="false"
         android:contentDescription="@string/main_button_next_description"
-        android:tint="@color/white"
-        android:src="@drawable/ic_skip_next_black_24dp" />
+        android:src="@drawable/ic_skip_next_black_24dp"
+        android:tint="@color/white" />
 
   </LinearLayout>
 
