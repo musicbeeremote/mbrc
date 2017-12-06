@@ -36,9 +36,9 @@
           android:name="android.support.PARENT_ACTIVITY"
           android:value=".ui.navigation.main.MainActivity"/>
     </activity>
-    <activity android:name=".ui.navigation.library.album_tracks.AlbumTracksActivity"/>
-    <activity android:name=".ui.navigation.library.artist_albums.ArtistAlbumsActivity"/>
-    <activity android:name=".ui.navigation.library.genre_artists.GenreArtistsActivity"/>
+    <activity android:name=".ui.navigation.library.albumtracks.AlbumTracksActivity" />
+    <activity android:name=".ui.navigation.library.artistalbums.ArtistAlbumsActivity" />
+    <activity android:name=".ui.navigation.library.genreartists.GenreArtistsActivity" />
     <activity
         android:name=".ui.navigation.lyrics.LyricsActivity"
         android:label="@string/nav_lyrics"
@@ -79,7 +79,7 @@
           android:value=".ui.navigation.main.MainActivity"/>
     </activity>
     <activity
-        android:name=".ui.connection_manager.ConnectionManagerActivity"
+        android:name=".ui.connectionmanager.ConnectionManagerActivity"
         android:parentActivityName=".ui.preferences.SettingsActivity"
         android:windowSoftInputMode="adjustNothing">
 
@@ -103,7 +103,7 @@
       </intent-filter>
     </service>
 
-    <receiver android:name=".platform.media_session.MediaButtonReceiver">
+    <receiver android:name=".platform.mediasession.MediaButtonReceiver">
       <intent-filter>
         <action android:name="android.media.AUDIO_BECOMING_NOISY"/>
       </intent-filter>
@@ -131,7 +131,7 @@
     </receiver>
 
     <activity
-        android:name=".ui.help_feedback.HelpFeedbackActivity"
+        android:name=".ui.helpfeedback.HelpFeedbackActivity"
         android:label="@string/title_activity_help_feedback"
         android:parentActivityName=".ui.navigation.main.MainActivity">
       <meta-data

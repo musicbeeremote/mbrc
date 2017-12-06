@@ -8,7 +8,7 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.ui.navigation.library.Search.Section
 import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumFragment
 import com.kelsos.mbrc.ui.navigation.library.artists.BrowseArtistFragment
-import com.kelsos.mbrc.ui.navigation.library.gernes.BrowseGenreFragment
+import com.kelsos.mbrc.ui.navigation.library.genres.BrowseGenreFragment
 import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackFragment
 
 class LibraryPagerAdapter(activity: FragmentActivity) : FragmentStatePagerAdapter(activity.supportFragmentManager) {

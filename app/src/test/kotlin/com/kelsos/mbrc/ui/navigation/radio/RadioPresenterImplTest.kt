@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
 import com.kelsos.mbrc.any
-import com.kelsos.mbrc.content.now_playing.queue.Queue
-import com.kelsos.mbrc.content.now_playing.queue.QueueApi
-import com.kelsos.mbrc.content.now_playing.queue.QueueResponse
+import com.kelsos.mbrc.content.nowplaying.queue.Queue
+import com.kelsos.mbrc.content.nowplaying.queue.QueueApi
+import com.kelsos.mbrc.content.nowplaying.queue.QueueResponse
 import com.kelsos.mbrc.content.radios.RadioRepository
 import com.kelsos.mbrc.content.radios.RadioStation
 import com.kelsos.mbrc.rules.MockitoInitializerRule
@@ -18,10 +18,7 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.never
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule
 import java.net.SocketTimeoutException

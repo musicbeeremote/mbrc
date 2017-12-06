@@ -2,18 +2,14 @@ package com.kelsos.mbrc
 
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.interfaces.SimpleLifecycle
-import com.kelsos.mbrc.networking.ChangeConnectionStateEvent
-import com.kelsos.mbrc.networking.MulticastConfigurationDiscovery
+import com.kelsos.mbrc.networking.*
 import com.kelsos.mbrc.networking.SocketAction.START
 import com.kelsos.mbrc.networking.SocketAction.TERMINATE
-import com.kelsos.mbrc.networking.SocketClient
-import com.kelsos.mbrc.networking.StartLibrarySyncEvent
-import com.kelsos.mbrc.networking.StartServiceDiscoveryEvent
 import com.kelsos.mbrc.networking.protocol.CommandExecutor
 import com.kelsos.mbrc.networking.protocol.CommandRegistration
 import com.kelsos.mbrc.networking.protocol.ProtocolHandler
 import com.kelsos.mbrc.platform.ForegroundHooks
-import com.kelsos.mbrc.platform.media_session.SessionNotificationManager
+import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
 import timber.log.Timber
 import toothpick.Scope
 import java.util.concurrent.ExecutorService

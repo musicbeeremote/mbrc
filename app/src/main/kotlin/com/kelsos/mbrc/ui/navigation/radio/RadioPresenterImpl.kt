@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
-import com.kelsos.mbrc.content.now_playing.queue.Queue.NOW
-import com.kelsos.mbrc.content.now_playing.queue.QueueApi
+import com.kelsos.mbrc.content.nowplaying.queue.Queue.NOW
+import com.kelsos.mbrc.content.nowplaying.queue.QueueApi
 import com.kelsos.mbrc.content.radios.RadioRepository
 import com.kelsos.mbrc.mvp.BasePresenter
 import io.reactivex.Scheduler
