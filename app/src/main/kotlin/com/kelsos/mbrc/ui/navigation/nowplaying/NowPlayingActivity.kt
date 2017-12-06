@@ -15,7 +15,7 @@ import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.content.now_playing.NowPlaying
 import com.kelsos.mbrc.databinding.ActivityNowplayingBinding
 import com.kelsos.mbrc.databinding.ListEmptyViewBinding
-import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper
 import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingAdapter.NowPlayingListener
@@ -26,7 +26,7 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class NowPlayingActivity :
-  BaseActivity(),
+  BaseNavigationActivity(),
   NowPlayingView,
   OnQueryTextListener,
   OnStartDragListener,

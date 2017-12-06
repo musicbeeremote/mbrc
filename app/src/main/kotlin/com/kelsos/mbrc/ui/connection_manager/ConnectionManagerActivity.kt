@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.UiActivityConnectionManagerBinding
@@ -16,7 +15,7 @@ import com.kelsos.mbrc.networking.DiscoveryStop
 import com.kelsos.mbrc.networking.StartServiceDiscoveryEvent
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.preferences.DefaultSettingsChangedEvent
-import com.kelsos.mbrc.ui.activities.FontActivity
+import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment
 import toothpick.Scope
 import toothpick.Toothpick
@@ -24,13 +23,13 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class ConnectionManagerActivity :
-  FontActivity(),
+  BaseActivity(),
   ConnectionManagerView,
   SettingsDialogFragment.SettingsSaveListener,
   ConnectionAdapter.ConnectionChangeListener {
+
   @Inject
   lateinit var bus: RxBus
-
   @Inject
   lateinit var presenter: ConnectionManagerPresenter
 
@@ -56,13 +55,13 @@ class ConnectionManagerActivity :
     Toothpick.inject(this, scope)
     binding = UiActivityConnectionManagerBinding.inflate(layoutInflater)
     setContentView(binding.root)
-    val toolbar: MaterialToolbar = binding.toolbar
     val recyclerView = binding.connectionList
 
     binding.connectionAdd.setOnClickListener { onAddButtonClick() }
     binding.connectionScan.setOnClickListener { onScanButtonClick() }
 
-    setSupportActionBar(toolbar)
+    setupToolbar(getString(R.string.connection_manager_title))
+
     recyclerView.setHasFixedSize(true)
     val layoutManager = LinearLayoutManager(this)
     recyclerView.layoutManager = layoutManager
@@ -76,13 +75,6 @@ class ConnectionManagerActivity :
   override fun onDestroy() {
     Toothpick.closeScope(this)
     super.onDestroy()
-  }
-
-  override fun onStart() {
-    super.onStart()
-
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    supportActionBar?.setTitle(R.string.connection_manager_title)
   }
 
   override fun onResume() {

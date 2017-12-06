@@ -4,9 +4,9 @@ import android.os.Bundle
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.ActivityHelpFeedbackBinding
-import com.kelsos.mbrc.ui.activities.FontActivity
+import com.kelsos.mbrc.ui.activities.BaseActivity
 
-class HelpFeedbackActivity : FontActivity() {
+class HelpFeedbackActivity : BaseActivity() {
 
   private lateinit var pagerAdapter: HelpFeedbackPagerAdapter
   private lateinit var binding: ActivityHelpFeedbackBinding
@@ -15,14 +15,7 @@ class HelpFeedbackActivity : FontActivity() {
     super.onCreate(savedInstanceState)
     binding = ActivityHelpFeedbackBinding.inflate(layoutInflater)
     setContentView(binding.root)
-
-    setSupportActionBar(binding.toolbar)
-    val actionBar = supportActionBar
-
-    if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(true)
-      actionBar.setHomeButtonEnabled(true)
-    }
+    setupToolbar()
 
     pagerAdapter = HelpFeedbackPagerAdapter(this)
     binding.pagerHelpFeedback.apply {

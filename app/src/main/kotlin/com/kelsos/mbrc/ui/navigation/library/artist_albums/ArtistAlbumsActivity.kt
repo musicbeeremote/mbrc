@@ -9,7 +9,7 @@ import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.now_playing.queue.Queue
 import com.kelsos.mbrc.databinding.ActivityArtistAlbumsBinding
 import com.kelsos.mbrc.databinding.EmptyListBinding
-import com.kelsos.mbrc.ui.activities.FontActivity
+import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.albums.AlbumEntryAdapter
 import com.raizlabs.android.dbflow.list.FlowCursorList
@@ -19,7 +19,7 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class ArtistAlbumsActivity :
-  FontActivity(),
+  BaseActivity(),
   ArtistAlbumsView,
   AlbumEntryAdapter.MenuItemSelectedListener {
 
@@ -28,13 +28,13 @@ class ArtistAlbumsActivity :
   @Inject lateinit var presenter: ArtistAlbumsPresenter
 
   private var artist: String? = null
-  private var scope: Scope? = null
+  private lateinit var scope: Scope
   private lateinit var binding: ActivityArtistAlbumsBinding
   private lateinit var emptyBinding: EmptyListBinding
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(
+    scope.installModules(
       SmoothieActivityModule(this),
       ArtistAlbumsModule()
     )
@@ -54,14 +54,8 @@ class ArtistAlbumsActivity :
       return
     }
 
-    setSupportActionBar(binding.toolbar)
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    supportActionBar?.setDisplayShowHomeEnabled(true)
-    supportActionBar?.title = artist
-
-    if (artist.isNullOrEmpty()) {
-      supportActionBar?.setTitle(R.string.empty)
-    }
+    val title = artist ?: getString(R.string.empty)
+    setupToolbar(title)
 
     adapter.setMenuItemSelectedListener(this)
     binding.albumRecycler.layoutManager = LinearLayoutManager(this)
@@ -109,18 +103,9 @@ class ArtistAlbumsActivity :
   }
 
   override fun onDestroy() {
-    super.onDestroy()
-    Toothpick.closeScope(this)
-  }
-
-  override fun onStart() {
-    super.onStart()
-    presenter.attach(this)
-  }
-
-  override fun onStop() {
-    super.onStop()
     presenter.detach()
+    Toothpick.closeScope(this)
+    super.onDestroy()
   }
 
   override fun onBackPressed() {
@@ -128,6 +113,6 @@ class ArtistAlbumsActivity :
   }
 
   companion object {
-    val ARTIST_NAME = "artist_name"
+    const val ARTIST_NAME = "artist_name"
   }
 }

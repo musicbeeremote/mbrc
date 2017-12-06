@@ -9,7 +9,7 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.radios.RadioStation
 import com.kelsos.mbrc.databinding.ActivityRadioBinding
 import com.kelsos.mbrc.databinding.ListEmptyViewBinding
-import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.navigation.radio.RadioAdapter.OnRadioPressedListener
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
@@ -18,7 +18,7 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class RadioActivity :
-  BaseActivity(),
+  BaseNavigationActivity(),
   RadioView,
   SwipeRefreshLayout.OnRefreshListener,
   OnRadioPressedListener {

@@ -11,7 +11,7 @@ import com.kelsos.mbrc.content.library.albums.AlbumInfo
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.databinding.ActivityAlbumTracksBinding
 import com.kelsos.mbrc.databinding.ListEmptyViewButtonBinding
-import com.kelsos.mbrc.ui.activities.FontActivity
+import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter
 import com.kelsos.mbrc.utilities.RemoteUtils.sha1
@@ -24,7 +24,7 @@ import java.io.File
 import javax.inject.Inject
 
 class AlbumTracksActivity :
-  FontActivity(),
+  BaseActivity(),
   AlbumTracksView,
   TrackEntryAdapter.MenuItemSelectedListener {
 
@@ -38,14 +38,14 @@ class AlbumTracksActivity :
   lateinit var presenter: AlbumTracksPresenter
 
   private var album: AlbumInfo? = null
-  private var scope: Scope? = null
+  private lateinit var scope: Scope
 
   private lateinit var binding: ActivityAlbumTracksBinding
   private lateinit var emptyBinding: ListEmptyViewButtonBinding
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(
+    scope.installModules(
       SmoothieActivityModule(this),
       AlbumTracksModule()
     )
@@ -66,25 +66,19 @@ class AlbumTracksActivity :
       return
     }
 
-    setSupportActionBar(binding.toolbar)
-    val supportActionBar = supportActionBar ?: error("Actionbar should not be null")
-    supportActionBar.setDisplayHomeAsUpEnabled(true)
-    supportActionBar.setDisplayShowHomeEnabled(true)
-
-    if (selectedAlbum.album.isEmpty()) {
-      supportActionBar.setTitle(R.string.non_album_tracks)
+    val albumTitle = album?.album ?: ""
+    val title = if (albumTitle.isBlank()) {
+      getString(R.string.non_album_tracks)
     } else {
-      supportActionBar.title = selectedAlbum.album
+      albumTitle
     }
 
+    setupToolbar(title, subtitle = selectedAlbum.artist)
     binding.albumTracksAlbum.text = selectedAlbum.album
     binding.albumTracksArtist.text = selectedAlbum.artist
     loadCover(selectedAlbum.artist, selectedAlbum.album)
 
-    presenter.attach(this)
-    presenter.load(selectedAlbum)
     adapter.setMenuItemSelectedListener(this)
-
     val recyclerView = binding.listTracks
     recyclerView.layoutManager = LinearLayoutManager(baseContext)
     recyclerView.adapter = adapter
@@ -95,6 +89,9 @@ class AlbumTracksActivity :
     play.setOnClickListener {
       presenter.queueAlbum(selectedAlbum.artist, selectedAlbum.album)
     }
+
+    presenter.attach(this)
+    presenter.load(album!!)
   }
 
   private fun loadCover(artist: String, album: String) {
@@ -145,19 +142,10 @@ class AlbumTracksActivity :
       .show()
   }
 
-  override fun onStart() {
-    super.onStart()
-    presenter.attach(this)
-  }
-
-  override fun onStop() {
-    super.onStop()
-    presenter.detach()
-  }
-
   override fun onDestroy() {
-    super.onDestroy()
+    presenter.detach()
     Toothpick.closeScope(this)
+    super.onDestroy()
   }
 
   override fun onBackPressed() {

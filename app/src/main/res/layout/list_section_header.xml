@@ -6,6 +6,7 @@
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
   android:height="@dimen/subheader_height"
+  android:fontFamily="sans-serif-medium"
   android:gravity="center_vertical"
   android:paddingStart="@dimen/normal_margin"
   android:paddingTop="@dimen/small_margin"

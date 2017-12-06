@@ -4,14 +4,14 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.ActivityLyricsBinding
-import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class LyricsActivity : BaseActivity(), LyricsView {
+class LyricsActivity : BaseNavigationActivity(), LyricsView {
   private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
 
   @Inject
