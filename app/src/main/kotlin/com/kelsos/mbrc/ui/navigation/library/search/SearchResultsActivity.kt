@@ -7,8 +7,6 @@ import android.text.TextUtils
 import android.view.MenuItem
 import android.widget.LinearLayout
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.library.artists.Artist
@@ -18,6 +16,7 @@ import com.kelsos.mbrc.ui.activities.FontActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.search.SearchResultAdapter.OnSearchItemSelected
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
+import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -26,10 +25,10 @@ import javax.inject.Inject
 class SearchResultsActivity : FontActivity(),
                               SearchResultsView,
                               OnSearchItemSelected {
-  @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-  @BindView(R.id.search_results_recycler) lateinit var searchResultsRecycler: EmptyRecyclerView
-  @BindView(R.id.empty_view_text) lateinit var emptyViewText: TextView
-  @BindView(R.id.empty_view) lateinit var emptyView: LinearLayout
+  private val toolbar: Toolbar by bindView(R.id.toolbar)
+  private val searchResultsRecycler: EmptyRecyclerView by bindView(R.id.search_results_recycler)
+  private val emptyViewText: TextView by bindView(R.id.empty_view_text)
+  private val emptyView: LinearLayout by bindView(R.id.empty_view)
 
   @Inject lateinit var adapter: SearchResultAdapter
   @Inject lateinit var presenter: SearchResultsPresenter
@@ -42,7 +41,7 @@ class SearchResultsActivity : FontActivity(),
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_search_results)
-    ButterKnife.bind(this)
+
 
     val query = intent.getStringExtra(QUERY)
 

@@ -7,17 +7,16 @@ import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.widget.EditText
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
+import kotterknife.bindView
 
 class SettingsDialogFragment : DialogFragment() {
 
-  @BindView(R.id.settings_dialog_host) lateinit var hostEdit: EditText
-  @BindView(R.id.settings_dialog_name) lateinit var nameEdit: EditText
-  @BindView(R.id.settings_dialog_port) lateinit var portEdit: EditText
+  private val hostEdit: EditText by bindView(R.id.settings_dialog_host)
+  private val nameEdit: EditText by bindView(R.id.settings_dialog_name)
+  private val portEdit: EditText by bindView(R.id.settings_dialog_port)
 
   private var mListener: SettingsSaveListener? = null
   private lateinit var settings: ConnectionSettings
@@ -64,9 +63,7 @@ class SettingsDialogFragment : DialogFragment() {
       }
     }
 
-    val settingsDialog = builder.create()
-    ButterKnife.bind(this, settingsDialog)
-    return settingsDialog
+    return builder.create()
   }
 
   override fun onStart() {

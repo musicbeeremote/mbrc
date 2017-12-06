@@ -8,8 +8,6 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.playlists.Playlist
 import com.kelsos.mbrc.content.playlists.PlaylistService
@@ -18,6 +16,7 @@ import com.kelsos.mbrc.ui.navigation.playlists.PlaylistAdapter.OnPlaylistPressed
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -31,13 +30,13 @@ class PlaylistActivity : BaseActivity(),
 
   private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
 
-  @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
-  @BindView(R.id.playlist_list) lateinit var playlistList: EmptyRecyclerView
-  @BindView(R.id.empty_view) lateinit var emptyView: View
-  @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
-  @BindView(R.id.list_empty_icon) lateinit var emptyViewIcon: ImageView
-  @BindView(R.id.list_empty_subtitle) lateinit var emptyViewSubTitle: TextView
-  @BindView(R.id.empty_view_progress_bar) lateinit var emptyViewProgress: ProgressBar
+  private val swipeLayout: MultiSwipeRefreshLayout by bindView(R.id.swipe_layout)
+  private val playlistList: EmptyRecyclerView by bindView(R.id.playlist_list)
+  private val emptyView: View by bindView(R.id.empty_view)
+  private val emptyViewTitle: TextView by bindView(R.id.list_empty_title)
+  private val emptyViewIcon: ImageView by bindView(R.id.list_empty_icon)
+  private val emptyViewSubTitle: TextView by bindView(R.id.list_empty_subtitle)
+  private val emptyViewProgress: ProgressBar by bindView(R.id.empty_view_progress_bar)
 
   @Inject lateinit var adapter: PlaylistAdapter
   @Inject lateinit var service: PlaylistService
@@ -47,7 +46,7 @@ class PlaylistActivity : BaseActivity(),
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_playlists)
-    ButterKnife.bind(this)
+
 
     scope = Toothpick.openScopes(application, PRESENTER_SCOPE, this)
     scope.installTestModules(SmoothieActivityModule(this), PlaylistModule())
