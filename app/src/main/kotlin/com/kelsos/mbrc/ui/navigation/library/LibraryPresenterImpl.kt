@@ -21,7 +21,7 @@ constructor(
   LibrarySyncInteractor.OnStartListener {
 
   override fun refresh() {
-    view?.showSyncProgress()
+    view().showSyncProgress()
     scope.launch {
       librarySyncInteractor.sync()
     }
@@ -44,26 +44,26 @@ constructor(
 
   override fun onTermination() {
     scope.launch {
-      view?.hideSyncProgress()
+      view().hideSyncProgress()
     }
   }
 
   override fun onFailure(throwable: Throwable) {
     scope.launch {
-      view?.syncFailure()
+      view().syncFailure()
     }
   }
 
   override fun showStats() {
     scope.launch {
-      view?.showStats(librarySyncInteractor.syncStats())
+      view().showStats(librarySyncInteractor.syncStats())
     }
   }
 
   override fun loadArtistPreference() {
     scope.launch {
       val shouldDisplay = settingsManager.shouldDisplayOnlyAlbumArtists()
-      view?.updateArtistOnlyPreference(shouldDisplay)
+      view().updateArtistOnlyPreference(shouldDisplay)
     }
   }
 
@@ -77,12 +77,12 @@ constructor(
   }
 
   override fun onSuccess(stats: LibraryStats) {
-    view?.syncComplete(stats)
+    view().syncComplete(stats)
   }
 
   override fun onStart() {
     scope.launch {
-      view?.showSyncProgress()
+      view().showSyncProgress()
     }
   }
 }

@@ -29,7 +29,7 @@ class LyricsPresenterImpl
     }
 
     if (model.status == LyricsPayload.NOT_FOUND) {
-      view?.showNoLyrics()
+      view().showNoLyrics()
     } else {
       updateLyrics(model.lyrics)
     }
@@ -46,7 +46,7 @@ class LyricsPresenterImpl
           .toTypedArray()
       )
     )
-    view?.updateLyrics(lyrics)
+    view().updateLyrics(lyrics)
   }
 
   companion object {

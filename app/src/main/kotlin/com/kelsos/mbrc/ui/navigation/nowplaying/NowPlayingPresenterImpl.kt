@@ -21,30 +21,29 @@ constructor(
   NowPlayingPresenter {
 
   override fun reload(scrollToTrack: Boolean) {
-    view?.showLoading()
+    view().showLoading()
     scope.launch {
       try {
-        view?.update(repository.getAndSaveRemote())
-        view?.trackChanged(model.trackInfo, scrollToTrack)
+        view().update(repository.getAndSaveRemote())
+        view().trackChanged(model.trackInfo, scrollToTrack)
       } catch (e: Exception) {
-        view?.failure(e)
+        view().failure(e)
       }
-      view?.hideLoading()
+      view().hideLoading()
     }
   }
 
   override fun load() {
-    view?.showLoading()
+    view().showLoading()
     scope.launch {
       try {
-        view?.update(repository.getAllCursor())
-        view?.trackChanged(model.trackInfo, true)
-        view?.loading()
+        view().update(repository.getAllCursor())
+        view().trackChanged(model.trackInfo, true)
         reload(true)
       } catch (e: Exception) {
-        view?.failure(e)
+        view().failure(e)
       }
-      view?.hideLoading()
+      view().hideLoading()
     }
   }
 
@@ -66,7 +65,7 @@ constructor(
     bus.register(
       this,
       TrackInfoChangeEvent::class.java,
-      { this.view?.trackChanged(it.trackInfo) },
+      { this.view().trackChanged(it.trackInfo) },
       true
     )
   }

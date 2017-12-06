@@ -17,13 +17,13 @@ class PlaylistPresenterImpl
 
   override fun load() {
     scope.launch {
-      view?.showLoading()
+      view().showLoading()
       try {
-        view?.update(repository.getAllCursor())
+        view().update(repository.getAllCursor())
       } catch (e: Exception) {
-        view?.failure(e)
+        view().failure(e)
       }
-      view?.hideLoading()
+      view().hideLoading()
     }
   }
 
@@ -32,14 +32,14 @@ class PlaylistPresenterImpl
   }
 
   override fun reload() {
-    view?.showLoading()
+    view().showLoading()
     scope.launch {
       try {
-        view?.update(repository.getAndSaveRemote())
+        view().update(repository.getAndSaveRemote())
       } catch (e: Exception) {
-        view?.failure(e)
+        view().failure(e)
       }
-      view?.hideLoading()
+      view().hideLoading()
     }
   }
 }

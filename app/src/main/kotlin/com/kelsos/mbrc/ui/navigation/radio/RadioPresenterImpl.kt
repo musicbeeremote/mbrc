@@ -17,26 +17,27 @@ constructor(
 ) : BasePresenter<RadioView>(dispatcher.main), RadioPresenter {
 
   override fun load() {
-    view?.showLoading()
+
+    view().showLoading()
     scope.launch {
       try {
-        view?.update(radioRepository.getAndSaveRemote())
+        view().update(radioRepository.getAndSaveRemote())
       } catch (e: Exception) {
-        view?.error(e)
+        view().error(e)
       }
-      view?.hideLoading()
+      view().hideLoading()
     }
   }
 
   override fun refresh() {
-    view?.showLoading()
+    view().showLoading()
     scope.launch {
       try {
-        view?.update(radioRepository.getAndSaveRemote())
+        view().update(radioRepository.getAndSaveRemote())
       } catch (e: Exception) {
-        view?.error(e)
+        view().error(e)
       }
-      view?.hideLoading()
+      view().hideLoading()
     }
   }
 
@@ -44,9 +45,9 @@ constructor(
     scope.launch {
       val (success, _) = queue.queuePath(path)
       if (success) {
-        view?.radioPlaySuccessful()
+        view().radioPlaySuccessful()
       } else {
-        view?.radioPlayFailed()
+        view().radioPlayFailed()
       }
     }
   }

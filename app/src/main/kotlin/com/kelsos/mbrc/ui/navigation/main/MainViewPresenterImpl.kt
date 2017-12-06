@@ -60,16 +60,18 @@ class MainViewPresenterImpl
       try {
         modelInitializer.initialize()
         checkIfAttached()
-        view?.updateCover(model.coverPath)
-        view?.updateLfmStatus(model.lfmStatus)
-        view?.updateScrobbleStatus(model.isScrobblingEnabled)
-        view?.updateRepeat(model.repeat)
-        view?.updateShuffleState(model.shuffle)
-        view?.updateVolume(model.volume, model.isMute)
-        view?.updatePlayState(model.playState)
-        view?.updateTrackInfo(model.trackInfo)
-        view?.updateConnection(connectionStatusModel.connection)
-        view?.updateProgress(UpdatePositionEvent(model.position, model.duration))
+        with(view()) {
+          updateCover(model.coverPath)
+          updateLfmStatus(model.lfmStatus)
+          updateScrobbleStatus(model.isScrobblingEnabled)
+          updateRepeat(model.repeat)
+          updateShuffleState(model.shuffle)
+          updateVolume(model.volume, model.isMute)
+          updatePlayState(model.playState)
+          updateTrackInfo(model.trackInfo)
+          updateConnection(connectionStatusModel.connection)
+        }
+        view().updateProgress(UpdatePositionEvent(model.position, model.duration))
         showPluginUpdateAvailable()
         showPluginUpdateRequired()
       } catch (e: Exception) {
@@ -78,7 +80,7 @@ class MainViewPresenterImpl
     }
 
     if (settingsManager.shouldShowChangeLog()) {
-      view?.showChangeLog()
+      view().showChangeLog()
     }
   }
 
@@ -87,7 +89,7 @@ class MainViewPresenterImpl
       return
     }
     model.pluginUpdateAvailable = false
-    view?.notifyPluginOutOfDate()
+    view().notifyPluginOutOfDate()
   }
 
   private fun showPluginUpdateRequired() {
@@ -96,7 +98,7 @@ class MainViewPresenterImpl
     }
 
     model.pluginUpdateRequired = false
-    view?.showPluginUpdateRequired(model.minimumRequired)
+    view().showPluginUpdateRequired(model.minimumRequired)
   }
 
   override fun requestNowPlayingPosition() {
@@ -109,61 +111,60 @@ class MainViewPresenterImpl
 
   override fun attach(view: MainView) {
     super.attach(view)
-    load()
+    this.load()
     this.bus.register(
       this,
       CoverChangedEvent::class.java,
-      { this.view?.updateCover(it.path) },
+      { this.view().updateCover(it.path) },
       true
     )
     this.bus.register(
       this,
       ShuffleChange::class.java,
-      { this.view?.updateShuffleState(it.shuffleState) },
+      { this.view().updateShuffleState(it.shuffleState) },
       true
     )
-    this.bus.register(this, RepeatChange::class.java, { this.view?.updateRepeat(it.mode) }, true)
+    this.bus.register(this, RepeatChange::class.java, { this.view().updateRepeat(it.mode) }, true)
     this.bus.register(
       this,
       VolumeChange::class.java,
-      { this.view?.updateVolume(it.volume, it.isMute) },
+      { this.view().updateVolume(it.volume, it.isMute) },
       true
     )
     this.bus.register(
       this,
       PlayStateChange::class.java,
-      { this.view?.updatePlayState(it.state) },
+      { this.view().updatePlayState(it.state) },
       true
     )
     this.bus.register(
       this,
       TrackInfoChangeEvent::class.java,
-      { this.view?.updateTrackInfo(it.trackInfo) },
+      { this.view().updateTrackInfo(it.trackInfo) },
       true
     )
     this.bus.register(
       this,
       ConnectionStatusChangeEvent::class.java,
-      { this.view?.updateConnection(it.status) },
+      { this.view().updateConnection(it.status) },
       true
     )
     this.bus.register(
-      this, UpdatePositionEvent::class.java,
-      {
-        this.view?.updateProgress(it)
-      },
+      this,
+      UpdatePositionEvent::class.java,
+      { this.view().updateProgress(it) },
       true
     )
     this.bus.register(
       this,
       ScrobbleChange::class.java,
-      { this.view?.updateScrobbleStatus(it.isActive) },
+      { this.view().updateScrobbleStatus(it.isActive) },
       true
     )
     this.bus.register(
       this,
       LfmRatingChanged::class.java,
-      { this.view?.updateLfmStatus(it.status) },
+      { this.view().updateLfmStatus(it.status) },
       true
     )
   }

@@ -14,8 +14,7 @@ import kotlin.coroutines.CoroutineContext
 open class BasePresenter<T : BaseView>(
   private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : Presenter<T>, LifecycleOwner {
-  var view: T? = null
-    private set
+  private var view: T? = null
 
   private val lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
   private lateinit var job: Job

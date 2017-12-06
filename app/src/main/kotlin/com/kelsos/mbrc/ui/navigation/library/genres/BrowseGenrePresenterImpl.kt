@@ -43,14 +43,14 @@ constructor(
 
   private fun updateUi(term: String) {
     scope.launch {
-      view?.showLoading()
-      view?.search(term)
+      view().showLoading()
+      view().search(term)
       try {
-        view?.update(getData(term))
+        view().update(getData(term))
       } catch (e: Exception) {
         Timber.v(e, "Error while loading the data from the database")
       }
-      view?.hideLoading()
+      view().hideLoading()
     }
   }
 
@@ -72,7 +72,7 @@ constructor(
     scope.launch {
       val genreName = genre.genre ?: throw IllegalArgumentException("null genre")
       val (success, tracks) = queue.queueGenre(action, genreName)
-      view?.queue(success, tracks)
+      view().queue(success, tracks)
     }
   }
 }

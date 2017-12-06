@@ -18,7 +18,7 @@ constructor(
   override fun load(artist: String) {
     scope.launch {
       try {
-        view?.update(repository.getAlbumsByArtist(artist))
+        view().update(repository.getAlbumsByArtist(artist))
       } catch (e: Exception) {
         Timber.v(e)
       }
@@ -30,7 +30,7 @@ constructor(
       val artist = album.artist ?: throw IllegalArgumentException("artist is null")
       val albumName = album.album ?: throw java.lang.IllegalArgumentException("album is null")
       val (success, tracks) = queue.queueAlbum(action, albumName, artist)
-      view?.queue(success, tracks)
+      view().queue(success, tracks)
     }
   }
 }

@@ -19,7 +19,7 @@ constructor(
   override fun load(genre: String) {
     scope.launch {
       try {
-        view?.update(repository.getArtistByGenre(genre))
+        view().update(repository.getArtistByGenre(genre))
       } catch (e: Exception) {
         Timber.v(e)
       }
@@ -30,7 +30,7 @@ constructor(
     scope.launch {
       val artist = entry.artist ?: throw IllegalArgumentException("artist is null")
       val (success, tracks) = queue.queueArtist(action, artist)
-      view?.queue(success, tracks)
+      view().queue(success, tracks)
     }
   }
 }

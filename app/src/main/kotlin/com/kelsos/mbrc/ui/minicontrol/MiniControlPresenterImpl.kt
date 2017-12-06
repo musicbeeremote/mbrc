@@ -23,21 +23,21 @@ class MiniControlPresenterImpl
     if (!isAttached) {
       return
     }
-    view?.updateCover(model.coverPath)
-    view?.updateState(model.playState)
-    view?.updateTrackInfo(model.trackInfo)
+    view().updateCover(model.coverPath)
+    view().updateState(model.playState)
+    view().updateTrackInfo(model.trackInfo)
   }
 
   override fun attach(view: MiniControlView) {
     super.attach(view)
-    bus.register(this, CoverChangedEvent::class.java, { this.view?.updateCover(it.path) }, true)
+    bus.register(this, CoverChangedEvent::class.java, { this.view().updateCover(it.path) }, true)
     bus.register(
       this,
       TrackInfoChangeEvent::class.java,
-      { this.view?.updateTrackInfo(it.trackInfo) },
+      { this.view().updateTrackInfo(it.trackInfo) },
       true
     )
-    bus.register(this, PlayStateChange::class.java, { this.view?.updateState(it.state) }, true)
+    bus.register(this, PlayStateChange::class.java, { this.view().updateState(it.state) }, true)
   }
 
   override fun next() {

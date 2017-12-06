@@ -43,14 +43,14 @@ constructor(
 
   private fun updateUi(term: String) {
     scope.launch {
-      view?.showLoading()
-      view?.search(term)
+      view().showLoading()
+      view().search(term)
       try {
-        view?.update(getData(term))
+        view().update(getData(term))
       } catch (e: Exception) {
         Timber.v(e, "Error while loading the data from the database")
       }
-      view?.hideLoading()
+      view().hideLoading()
     }
   }
 
@@ -75,7 +75,7 @@ constructor(
       } else {
         queue.queueTrack(track, action)
       }
-      view?.queue(success, tracks)
+      view().queue(success, tracks)
     }
   }
 }

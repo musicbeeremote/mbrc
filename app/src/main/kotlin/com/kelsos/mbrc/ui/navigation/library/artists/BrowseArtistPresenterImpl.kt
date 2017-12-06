@@ -47,14 +47,14 @@ constructor(
 
   private fun updateUi(term: String) {
     scope.launch {
-      view?.showLoading()
-      view?.search(term)
+      view().showLoading()
+      view().search(term)
       try {
-        view?.update(getData(term))
+        view().update(getData(term))
       } catch (e: Exception) {
         Timber.v(e, "Error while loading the data from the database")
       }
-      view?.hideLoading()
+      view().hideLoading()
     }
   }
 
@@ -81,7 +81,7 @@ constructor(
     scope.launch {
       val artist = entry.artist ?: throw IllegalArgumentException("artist should not be null")
       val (success, tracks) = queue.queueArtist(action, artist)
-      view?.queue(success, tracks)
+      view().queue(success, tracks)
     }
   }
 }

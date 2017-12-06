@@ -20,7 +20,7 @@ constructor(
   override fun load(album: AlbumInfo) {
     scope.launch {
       try {
-        view?.update(
+        view().update(
           when {
             album.album.isEmpty() -> {
               repository.getNonAlbumTracks(album.artist)
@@ -43,14 +43,14 @@ constructor(
       } else {
         queue.queueTrack(entry, action, true)
       }
-      view?.queue(success, tracks)
+      view().queue(success, tracks)
     }
   }
 
   override fun queueAlbum(artist: String, album: String) {
     scope.launch {
       val (success, tracks) = queue.queueAlbum(Queue.NOW, album, artist)
-      view?.queue(success, tracks)
+      view().queue(success, tracks)
     }
   }
 }

@@ -25,14 +25,14 @@ constructor(
 
   private fun updateUi(term: String) {
     scope.launch {
-      view?.showLoading()
-      view?.search(term)
+      view().showLoading()
+      view().search(term)
       try {
-        view?.update(getData(term))
+        view().update(getData(term))
       } catch (e: Exception) {
         Timber.v(e)
       }
-      view?.hideLoading()
+      view().hideLoading()
     }
   }
 
@@ -65,7 +65,7 @@ constructor(
   override fun queue(action: String, entry: Album) {
     scope.launch {
       val (success, tracks) = queueHandler.queueAlbum(action, entry.album!!, entry.artist!!)
-      view?.queue(success, tracks)
+      view().queue(success, tracks)
     }
   }
 }
