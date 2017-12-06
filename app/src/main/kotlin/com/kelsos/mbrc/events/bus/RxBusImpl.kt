@@ -9,9 +9,11 @@ import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
+import kotlin.reflect.KClass
 
 class RxBusImpl @Inject
 constructor() : RxBus {
+
   init {
     Timber.v("Injecting RxBus instance %s", this)
   }
@@ -53,6 +55,11 @@ constructor() : RxBus {
     val observable = serializedRelay.filter { it.javaClass == eventClass }.map { obj -> obj as T }
     val scheduler = if (main) AndroidSchedulers.mainThread() else Schedulers.trampoline()
     return observable.observeOn(scheduler).subscribe(onNext)
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  override fun <T : Any> observe(eventClass: KClass<T>): Observable<T> {
+    return serializedRelay.filter { it.javaClass == eventClass.java }.map { obj -> obj as T }
   }
 
   override fun post(event: Any) {

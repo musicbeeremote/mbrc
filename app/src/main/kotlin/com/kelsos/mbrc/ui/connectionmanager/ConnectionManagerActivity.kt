@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.connectionmanager
 
-import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
@@ -8,17 +7,12 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
 import android.widget.Button
-
-
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.events.ConnectionSettingsChanged
 import com.kelsos.mbrc.events.DiscoveryStopped
 import com.kelsos.mbrc.events.NotifyUser
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.networking.DiscoveryStop
-import com.kelsos.mbrc.networking.StartServiceDiscoveryEvent
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
-import com.kelsos.mbrc.preferences.DefaultSettingsChangedEvent
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment
 import kotterknife.bindView
@@ -32,15 +26,13 @@ class ConnectionManagerActivity : BaseActivity(),
     SettingsDialogFragment.SettingsSaveListener,
     ConnectionAdapter.ConnectionChangeListener {
 
-  @Inject lateinit var bus: RxBus
   @Inject lateinit var presenter: ConnectionManagerPresenter
 
   private val recyclerView: RecyclerView by bindView(R.id.connection_list)
 
   private var progress: AlertDialog? = null
-  private var mContext: Context? = null
   private var adapter: ConnectionAdapter? = null
-  private var scope: Scope? = null
+  private lateinit var scope: Scope
 
   private val addButton: Button by bindView(R.id.connection_add)
   private val scanButton: Button by bindView(R.id.connection_scan)
@@ -51,17 +43,17 @@ class ConnectionManagerActivity : BaseActivity(),
   }
 
   private fun onScanButtonClick() {
-    val builder = AlertDialog.Builder(mContext!!)
+    val builder = AlertDialog.Builder(this)
         .setTitle(R.string.progress_scanning)
         .setMessage(R.string.progress_scanning_message)
 
     progress = builder.show()
-    bus.post(StartServiceDiscoveryEvent())
+    presenter.startDiscovery()
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this), ConnectionManagerModule.create())
+    scope.installModules(SmoothieActivityModule(this), ConnectionManagerModule.create())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.ui_activity_connection_manager)
@@ -81,22 +73,9 @@ class ConnectionManagerActivity : BaseActivity(),
   }
 
   override fun onDestroy() {
+    presenter.detach()
     Toothpick.closeScope(this)
     super.onDestroy()
-  }
-
-  override fun onResume() {
-    super.onResume()
-    presenter.attach(this)
-    bus.register(this, ConnectionSettingsChanged::class.java, { this.onConnectionSettingsChange(it) }, true)
-    bus.register(this, DiscoveryStopped::class.java, { this.onDiscoveryStopped(it) }, true)
-    bus.register(this, NotifyUser::class.java, { this.onUserNotification(it) }, true)
-  }
-
-  override fun onPause() {
-    super.onPause()
-    presenter.detach()
-    bus.unregister(this)
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -111,11 +90,11 @@ class ConnectionManagerActivity : BaseActivity(),
     presenter.save(settings)
   }
 
-  private fun onConnectionSettingsChange(event: ConnectionSettingsChanged) {
+  override fun onConnectionSettingsChange(event: ConnectionSettingsChanged) {
     adapter!!.setSelectionId(event.defaultId)
   }
 
-  private fun onDiscoveryStopped(event: DiscoveryStopped) {
+  override fun onDiscoveryStopped(event: DiscoveryStopped) {
 
     if (progress != null) {
       progress!!.dismiss()
@@ -135,7 +114,7 @@ class ConnectionManagerActivity : BaseActivity(),
     Snackbar.make(recyclerView, message, Snackbar.LENGTH_SHORT).show()
   }
 
-  private fun onUserNotification(event: NotifyUser) {
+  override fun onUserNotification(event: NotifyUser) {
     val message = if (event.isFromResource) getString(event.resId) else event.message
 
     Snackbar.make(recyclerView, message, Snackbar.LENGTH_SHORT).show()
@@ -157,10 +136,6 @@ class ConnectionManagerActivity : BaseActivity(),
 
   override fun updateModel(connectionModel: ConnectionModel) {
     adapter!!.update(connectionModel)
-  }
-
-  override fun defaultChanged() {
-    bus.post(DefaultSettingsChangedEvent())
   }
 
   override fun dataUpdated() {
