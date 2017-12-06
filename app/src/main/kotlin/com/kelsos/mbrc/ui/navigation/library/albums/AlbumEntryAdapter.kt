@@ -9,15 +9,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import butterknife.BindString
-import butterknife.BindView
-import butterknife.ButterKnife
+
+
+
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.extensions.count
+import com.kelsos.mbrc.extensions.string
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 import com.kelsos.mbrc.utilities.Checks.ifNotNull
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import kotterknife.bindView
 import javax.inject.Inject
 
 class AlbumEntryAdapter
@@ -91,15 +93,11 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
   }
 
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    @BindView(R.id.line_two) lateinit var artist: TextView
-    @BindView(R.id.line_one) lateinit var album: TextView
-    @BindView(R.id.ui_item_context_indicator) lateinit var indicator: LinearLayout
-    @BindString(R.string.unknown_artist) lateinit var unknownArtist: String
-    @BindString(R.string.non_album_tracks) lateinit var emptyAlbum: String
-
-    init {
-      ButterKnife.bind(this, itemView)
-    }
+    val artist: TextView by bindView(R.id.line_two)
+    val album: TextView by bindView(R.id.line_one)
+    val indicator: LinearLayout by bindView(R.id.ui_item_context_indicator)
+    val unknownArtist: String by lazy { string(R.string.unknown_artist) }
+    val emptyAlbum: String by lazy { string(R.string.non_album_tracks) }
   }
 
   fun update(albums: FlowCursorList<Album>) {

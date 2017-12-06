@@ -8,8 +8,6 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.radios.RadioStation
 import com.kelsos.mbrc.ui.activities.BaseActivity
@@ -17,6 +15,7 @@ import com.kelsos.mbrc.ui.navigation.radio.RadioAdapter.OnRadioPressedListener
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -24,15 +23,13 @@ import javax.inject.Inject
 
 class RadioActivity : BaseActivity(), RadioView, OnRefreshListener, OnRadioPressedListener {
 
-  private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
-
-  @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
-  @BindView(R.id.radio_list) lateinit var radioView: EmptyRecyclerView
-  @BindView(R.id.empty_view) lateinit var emptyView: View
-  @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
-  @BindView(R.id.list_empty_icon) lateinit var emptyViewIcon: ImageView
-  @BindView(R.id.list_empty_subtitle) lateinit var emptyViewSubTitle: TextView
-  @BindView(R.id.empty_view_progress_bar) lateinit var emptyViewProgress: ProgressBar
+  private val swipeLayout: MultiSwipeRefreshLayout by bindView(R.id.swipe_layout)
+  private val radioView: EmptyRecyclerView by bindView(R.id.radio_list)
+  private val emptyView: View by bindView(R.id.empty_view)
+  private val emptyViewTitle: TextView by bindView(R.id.list_empty_title)
+  private val emptyViewIcon: ImageView by bindView(R.id.list_empty_icon)
+  private val emptyViewSubTitle: TextView by bindView(R.id.list_empty_subtitle)
+  private val emptyViewProgress: ProgressBar by bindView(R.id.empty_view_progress_bar)
 
   @Inject lateinit var presenter: RadioPresenter
   @Inject lateinit var adapter: RadioAdapter
@@ -50,7 +47,7 @@ class RadioActivity : BaseActivity(), RadioView, OnRefreshListener, OnRadioPress
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_radio)
     Toothpick.inject(this, scope)
-    ButterKnife.bind(this)
+
     super.setup()
     swipeLayout.setOnRefreshListener(this)
     swipeLayout.setSwipeableChildren(R.id.radio_list, R.id.empty_view)
@@ -124,4 +121,8 @@ class RadioActivity : BaseActivity(), RadioView, OnRefreshListener, OnRadioPress
   @javax.inject.Scope
   @Retention(AnnotationRetention.RUNTIME)
   annotation class Presenter
+
+  companion object {
+    private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
+  }
 }

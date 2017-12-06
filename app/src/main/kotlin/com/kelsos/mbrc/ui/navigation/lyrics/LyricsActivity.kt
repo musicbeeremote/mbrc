@@ -4,11 +4,10 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.LinearLayout
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
+import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -17,9 +16,9 @@ import javax.inject.Inject
 class LyricsActivity : BaseActivity(), LyricsView {
   private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
 
-  @BindView(R.id.lyrics_recycler_view) lateinit var lyricsRecycler: EmptyRecyclerView
-  @BindView(R.id.empty_view) lateinit var emptyView: LinearLayout
-  @BindView(R.id.empty_view_text) lateinit var emptyText: TextView
+  private val lyricsRecycler: EmptyRecyclerView by bindView(R.id.lyrics_recycler_view)
+  private val emptyView: LinearLayout by bindView(R.id.empty_view)
+  private val emptyText: TextView by bindView(R.id.empty_view_text)
 
   @Inject lateinit var presenter: LyricsPresenter
 
@@ -29,7 +28,7 @@ class LyricsActivity : BaseActivity(), LyricsView {
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_lyrics)
-    ButterKnife.bind(this)
+
 
     scope = Toothpick.openScopes(application, PRESENTER_SCOPE, this)
     scope.installModules(SmoothieActivityModule(this), LyricsModule())

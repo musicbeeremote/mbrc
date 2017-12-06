@@ -15,8 +15,6 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.content.now_playing.NowPlaying
@@ -27,6 +25,7 @@ import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingAdapter.NowPlayingList
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -38,13 +37,13 @@ class NowPlayingActivity : BaseActivity(),
     OnStartDragListener,
     NowPlayingListener {
 
-  @BindView(R.id.now_playing_list) lateinit var nowPlayingList: EmptyRecyclerView
-  @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: MultiSwipeRefreshLayout
-  @BindView(R.id.empty_view) lateinit var emptyView: View
-  @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
-  @BindView(R.id.list_empty_icon) lateinit var emptyViewIcon: ImageView
-  @BindView(R.id.list_empty_subtitle) lateinit var emptyViewSubTitle: TextView
-  @BindView(R.id.empty_view_progress_bar) lateinit var emptyViewProgress: ProgressBar
+  private val nowPlayingList: EmptyRecyclerView by bindView(R.id.now_playing_list)
+  private val swipeRefreshLayout: MultiSwipeRefreshLayout by bindView(R.id.swipe_layout)
+  private val emptyView: View by bindView(R.id.empty_view)
+  private val emptyViewTitle: TextView by bindView(R.id.list_empty_title)
+  private val emptyViewIcon: ImageView by bindView(R.id.list_empty_icon)
+  private val emptyViewSubTitle: TextView by bindView(R.id.list_empty_subtitle)
+  private val emptyViewProgress: ProgressBar by bindView(R.id.empty_view_progress_bar)
   @Inject lateinit var adapter: NowPlayingAdapter
 
   @Inject lateinit var presenter: NowPlayingPresenter
@@ -69,7 +68,6 @@ class NowPlayingActivity : BaseActivity(),
         it.clearFocus()
         it.setQuery("", false)
         searchMenuItem?.collapseActionView()
-        MenuItemCompat.collapseActionView(searchMenuItem)
         return true
       }
     }
@@ -95,7 +93,7 @@ class NowPlayingActivity : BaseActivity(),
     scope.installModules(SmoothieActivityModule(this), NowPlayingModule.create())
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_nowplaying)
-    ButterKnife.bind(this)
+
     Toothpick.inject(this, scope)
     super.setup()
     swipeRefreshLayout.setSwipeableChildren(R.id.now_playing_list, R.id.empty_view)

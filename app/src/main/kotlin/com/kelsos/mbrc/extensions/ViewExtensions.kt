@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.extensions
 
+import android.support.annotation.StringRes
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
@@ -14,3 +16,7 @@ fun View?.show() {
 }
 
 fun View?.isInvisible(): Boolean = this?.visibility == INVISIBLE
+
+fun RecyclerView.ViewHolder.string(@StringRes resId: Int) : String {
+  return this.itemView.context.getString(resId)
+}

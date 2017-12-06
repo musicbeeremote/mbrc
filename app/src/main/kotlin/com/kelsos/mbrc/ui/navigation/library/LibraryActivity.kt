@@ -13,11 +13,10 @@ import android.support.v7.widget.SearchView.OnQueryTextListener
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.search.SearchResultsActivity
+import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -28,8 +27,8 @@ class LibraryActivity : BaseActivity(),
     OnQueryTextListener,
     OnPageChangeListener {
 
-  @BindView(R.id.search_pager) lateinit var pager: ViewPager
-  @BindView(R.id.pager_tab_strip) lateinit var tabs: TabLayout
+  private val pager: ViewPager by bindView(R.id.search_pager)
+  private val tabs: TabLayout by bindView(R.id.pager_tab_strip)
 
   private var searchView: SearchView? = null
   private var searchMenuItem: MenuItem? = null
@@ -77,7 +76,7 @@ class LibraryActivity : BaseActivity(),
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_library)
-    ButterKnife.bind(this)
+
     super.setup()
     pagerAdapter = LibraryPagerAdapter(this)
     pager.adapter = pagerAdapter

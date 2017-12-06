@@ -12,9 +12,6 @@ import android.support.v7.app.AlertDialog
 import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Sorting
 import com.kelsos.mbrc.content.library.albums.Sorting.Fields
@@ -22,14 +19,11 @@ import com.kelsos.mbrc.content.library.albums.Sorting.ORDER_ASCENDING
 import com.kelsos.mbrc.content.library.albums.Sorting.ORDER_DESCENDING
 import com.kelsos.mbrc.content.library.albums.Sorting.Order
 import com.kelsos.mbrc.extensions.fail
+import kotterknife.bindView
 
 class SortingDialog : DialogFragment() {
-
-  @BindView(R.id.sorting_dialog__order)
-  lateinit var orderButton: Button
-
-  @BindView(R.id.sorting_dialog__sorting_options)
-  lateinit var sortingOption: RadioGroup
+  private val orderButton: Button by bindView(R.id.sorting_dialog__order)
+  private val sortingOption: RadioGroup by bindView(R.id.sorting_dialog__sorting_options)
 
   private lateinit var dialog: AlertDialog
   private lateinit var fm: FragmentManager
@@ -39,8 +33,7 @@ class SortingDialog : DialogFragment() {
   @Fields private var sorting: Long = Sorting.ALBUM_ARTIST__ALBUM
   @Order private var order: Long = Sorting.ORDER_ASCENDING
 
-  @OnClick(R.id.sorting_dialog__order)
-  fun onOrderChanged() {
+  private fun onOrderChanged() {
     this.order = when (order) {
       ORDER_DESCENDING -> ORDER_ASCENDING
       ORDER_ASCENDING -> ORDER_DESCENDING
@@ -80,8 +73,6 @@ class SortingDialog : DialogFragment() {
         .setPositiveButton(android.R.string.ok) { dialogInterface, _ -> dialogInterface.dismiss() }
         .create()
 
-    ButterKnife.bind(this, dialog)
-
     setOrder(order)
     sortingOption.check(sortingOption.getChildAt(sorting.toInt()).id)
     sortingOption.setOnCheckedChangeListener { radioGroup, _ ->
@@ -90,6 +81,8 @@ class SortingDialog : DialogFragment() {
       val idx = radioGroup.indexOfChild(radioButton)
       sortingChange(1 + idx.toLong())
     }
+
+    orderButton.setOnClickListener { onOrderChanged() }
 
     return dialog
   }
