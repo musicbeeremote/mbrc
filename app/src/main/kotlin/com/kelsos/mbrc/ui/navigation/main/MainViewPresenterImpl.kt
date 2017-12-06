@@ -1,17 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.main
 
-import com.kelsos.mbrc.content.active_status.MainDataModel
-import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
-import com.kelsos.mbrc.events.CoverChangedEvent
-import com.kelsos.mbrc.events.LfmRatingChanged
-import com.kelsos.mbrc.events.PlayStateChange
-import com.kelsos.mbrc.events.RepeatChange
-import com.kelsos.mbrc.events.ScrobbleChange
-import com.kelsos.mbrc.events.ShuffleChange
-import com.kelsos.mbrc.events.TrackInfoChangeEvent
-import com.kelsos.mbrc.events.UpdatePositionEvent
-import com.kelsos.mbrc.events.UserAction
-import com.kelsos.mbrc.events.VolumeChange
+import com.kelsos.mbrc.content.activestatus.MainDataModel
+import com.kelsos.mbrc.events.*
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.connections.ConnectionStatusModel

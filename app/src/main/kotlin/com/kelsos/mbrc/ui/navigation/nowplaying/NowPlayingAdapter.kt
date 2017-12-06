@@ -11,7 +11,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.now_playing.NowPlaying
+import com.kelsos.mbrc.content.nowplaying.NowPlaying
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.TouchHelperViewHolder

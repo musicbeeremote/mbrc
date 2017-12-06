@@ -33,7 +33,7 @@ import com.kelsos.mbrc.networking.protocol.VolumeInteractor
 import com.kelsos.mbrc.platform.RemoteService
 import com.kelsos.mbrc.platform.ServiceChecker
 import com.kelsos.mbrc.ui.dialogs.OutputSelectionDialog
-import com.kelsos.mbrc.ui.help_feedback.HelpFeedbackActivity
+import com.kelsos.mbrc.ui.helpfeedback.HelpFeedbackActivity
 import com.kelsos.mbrc.ui.navigation.library.LibraryActivity
 import com.kelsos.mbrc.ui.navigation.lyrics.LyricsActivity
 import com.kelsos.mbrc.ui.navigation.main.MainActivity
