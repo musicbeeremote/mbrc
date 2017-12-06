@@ -8,17 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import butterknife.BindView
-import butterknife.ButterKnife
+
+
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.utilities.RemoteUtils
+import kotterknife.bindView
 import timber.log.Timber
 
 class HelpFragment : Fragment() {
 
-  @BindView(R.id.help_webview)
-  lateinit var helpWebview: WebView
+  private val helpWebview: WebView by bindView(R.id.help_webview)
 
   override fun onStart() {
     super.onStart()
@@ -37,10 +37,12 @@ class HelpFragment : Fragment() {
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     // Inflate the layout for this fragment
-    val view = inflater.inflate(R.layout.fragment_help, container, false)
-    ButterKnife.bind(this, view)
+    return inflater.inflate(R.layout.fragment_help, container, false)
+  }
+
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
     helpWebview.webViewClient = RemoteWebViewClient()
-    return view
   }
 
   private class RemoteWebViewClient : WebViewClient() {

@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.widget.LinearLayout
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.extensions.enableHome
@@ -16,6 +14,7 @@ import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -25,9 +24,9 @@ class GenreArtistsActivity : FontActivity(),
     GenreArtistsView,
     MenuItemSelectedListener {
 
-  @BindView(R.id.genre_artists_recycler) lateinit var recyclerView: EmptyRecyclerView
-  @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-  @BindView(R.id.empty_view) lateinit var emptyView: LinearLayout
+  private val recyclerView: EmptyRecyclerView by bindView(R.id.genre_artists_recycler)
+  private val toolbar: Toolbar by bindView(R.id.toolbar)
+  private val emptyView: LinearLayout by bindView(R.id.empty_view)
 
   @Inject lateinit var adapter: ArtistEntryAdapter
   @Inject lateinit var actionHandler: PopupActionHandler
@@ -43,8 +42,6 @@ class GenreArtistsActivity : FontActivity(),
     scope!!.installModules(SmoothieActivityModule(this),
         GenreArtistsModule())
     Toothpick.inject(this, scope)
-
-    ButterKnife.bind(this)
 
     genre = intent?.extras?.getString(GENRE_NAME)
 

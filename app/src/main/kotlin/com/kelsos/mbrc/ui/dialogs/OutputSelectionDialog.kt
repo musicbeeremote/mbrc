@@ -10,13 +10,12 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.widget.*
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.output.OutputResponse
 import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.extensions.hide
 import com.kelsos.mbrc.extensions.show
+import kotterknife.bindView
 import toothpick.Toothpick
 import javax.inject.Inject
 
@@ -29,14 +28,9 @@ class OutputSelectionDialog : DialogFragment(),
   private lateinit var fm: FragmentManager
   private lateinit var dialog: AlertDialog
 
-  @BindView(R.id.output_selection__available_outputs)
-  internal lateinit var availableOutputs: Spinner
-
-  @BindView(R.id.output_selection__loading_outputs)
-  internal lateinit var loadingProgress: ProgressBar
-
-  @BindView(R.id.output_selection__error_message)
-  internal lateinit var errorMessage: TextView
+  private val availableOutputs: Spinner by bindView(R.id.output_selection__available_outputs)
+  private val loadingProgress: ProgressBar by bindView(R.id.output_selection__loading_outputs)
+  private val errorMessage: TextView by bindView(R.id.output_selection__error_message)
 
   @Inject internal lateinit var presenter: OutputSelectionPresenter
 
@@ -49,7 +43,7 @@ class OutputSelectionDialog : DialogFragment(),
     Toothpick.inject(this, scopes)
     val inflater = LayoutInflater.from(context)
     val view = inflater.inflate(R.layout.dialog__output_selection, null, false)
-    ButterKnife.bind(this, view)
+
 
     dialog = AlertDialog.Builder(context)
         .setTitle(R.string.output_selection__select_output)

@@ -11,9 +11,6 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.active_status.PlayerState
 import com.kelsos.mbrc.content.active_status.PlayerState.State
@@ -22,42 +19,37 @@ import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.ui.navigation.main.MainActivity
 import com.squareup.picasso.Picasso
+import kotterknife.bindView
 import toothpick.Toothpick
 import java.io.File
 import javax.inject.Inject
 
 class MiniControlFragment : Fragment(), MiniControlView {
 
-  private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
+  private val trackCover: ImageView by bindView(R.id.mc_track_cover)
+  private val trackArtist: TextView by bindView(R.id.mc_track_artist)
+  private val trackTitle: TextView by bindView(R.id.mc_track_title)
+  private val playPause: ImageButton by bindView(R.id.mc_play_pause)
 
-  @BindView(R.id.mc_track_cover) lateinit var trackCover: ImageView
-  @BindView(R.id.mc_track_artist) lateinit var trackArtist: TextView
-  @BindView(R.id.mc_track_title) lateinit var trackTitle: TextView
-  @BindView(R.id.mc_play_pause) lateinit var playPause: ImageButton
+  private val miniControl: View by bindView(R.id.mini_control)
+  private val nextButton: ImageButton by bindView(R.id.mc_next_track)
+  private val previousButton: ImageButton by bindView(R.id.mc_prev_track)
 
   @Inject lateinit var presenter: MiniControlPresenter
 
-  @OnClick(R.id.mini_control)
-  internal fun onControlClick() {
+  private fun onControlClick() {
     val context = context ?: fail("null context")
     val builder = TaskStackBuilder.create(context)
     builder.addNextIntentWithParentStack(Intent(context, MainActivity::class.java))
     builder.startActivities()
   }
 
-  @OnClick(R.id.mc_next_track)
-  internal fun onNextClick() {
-    presenter.next()
-  }
-
-  @OnClick(R.id.mc_play_pause)
-  internal fun onPlayClick() {
-    presenter.playPause()
-  }
-
-  @OnClick(R.id.mc_prev_track)
-  internal fun onPreviousClick() {
-    presenter.previous()
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    miniControl.setOnClickListener { onControlClick() }
+    nextButton.setOnClickListener { presenter.next() }
+    playPause.setOnClickListener { presenter.playPause() }
+    previousButton.setOnClickListener { presenter.previous() }
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,9 +61,7 @@ class MiniControlFragment : Fragment(), MiniControlView {
   }
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-    val view = inflater.inflate(R.layout.ui_fragment_mini_control, container, false)
-    ButterKnife.bind(this, view)
-    return view
+    return inflater.inflate(R.layout.ui_fragment_mini_control, container, false)
   }
 
   override fun onStart() {
@@ -126,4 +116,8 @@ class MiniControlFragment : Fragment(), MiniControlView {
   @javax.inject.Scope
   @Retention(AnnotationRetention.RUNTIME)
   annotation class Presenter
+
+  companion object {
+    private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
+  }
 }

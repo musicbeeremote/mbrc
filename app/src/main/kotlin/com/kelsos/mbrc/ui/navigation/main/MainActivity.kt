@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.main
 
+
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -12,14 +13,11 @@ import android.support.v7.widget.ShareActionProvider
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
-import butterknife.OnLongClick
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.active_status.PlayerState
 import com.kelsos.mbrc.content.active_status.PlayerState.State
@@ -37,6 +35,7 @@ import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment
 import com.kelsos.mbrc.ui.navigation.main.LfmRating.Rating
 import com.kelsos.mbrc.ui.navigation.main.ProgressSeekerHelper.ProgressUpdate
 import com.squareup.picasso.Picasso
+import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -52,68 +51,31 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   @Inject lateinit var presenter: MainViewPresenter
   @Inject lateinit var progressHelper: ProgressSeekerHelper
   // Inject elements of the view
-  @BindView(R.id.main_artist_label) lateinit var artistLabel: TextView
-  @BindView(R.id.main_title_label) lateinit var titleLabel: TextView
-  @BindView(R.id.main_label_album) lateinit var albumLabel: TextView
-  @BindView(R.id.main_track_progress_current) lateinit var trackProgressCurrent: TextView
-  @BindView(R.id.main_track_duration_total) lateinit var trackDuration: TextView
-  @BindView(R.id.main_button_play_pause) lateinit var playPauseButton: ImageButton
-  @BindView(R.id.main_volume_seeker) lateinit var volumeBar: SeekBar
-  @BindView(R.id.main_track_progress_seeker) lateinit var progressBar: SeekBar
-  @BindView(R.id.main_mute_button) lateinit var muteButton: ImageButton
-  @BindView(R.id.main_shuffle_button) lateinit var shuffleButton: ImageButton
-  @BindView(R.id.main_repeat_button) lateinit var repeatButton: ImageButton
-  @BindView(R.id.main_album_cover_image_view) lateinit var albumCover: ImageView
+  private val artistLabel: TextView by bindView(R.id.main_artist_label)
+  private val titleLabel: TextView by bindView(R.id.main_title_label)
+  private val albumLabel: TextView by bindView(R.id.main_label_album)
+  private val trackProgressCurrent: TextView by bindView(R.id.main_track_progress_current)
+  private val trackDuration: TextView by bindView(R.id.main_track_duration_total)
+  private val playPauseButton: ImageButton by bindView(R.id.main_button_play_pause)
+  private val volumeBar: SeekBar by bindView(R.id.main_volume_seeker)
+  private val progressBar: SeekBar by bindView(R.id.main_track_progress_seeker)
+  private val muteButton: ImageButton by bindView(R.id.main_mute_button)
+  private val shuffleButton: ImageButton by bindView(R.id.main_shuffle_button)
+  private val repeatButton: ImageButton by bindView(R.id.main_repeat_button)
+  private val albumCover: ImageView by bindView(R.id.main_album_cover_image_view)
+  private val previousButton: ImageButton by bindView(R.id.main_button_previous)
+  private val nextButton: ImageButton by bindView(R.id.main_button_next)
+  private val trackInfo: View by bindView(R.id.track_info_area)
+
   private var mShareActionProvider: ShareActionProvider? = null
 
-  var changeLogDialog: AlertDialog? = null
-  var outOfDateDialog: AlertDialog? = null
+  private var changeLogDialog: AlertDialog? = null
+  private var outOfDateDialog: AlertDialog? = null
 
   private var menu: Menu? = null
   private var volumeChangeListener: SeekBarThrottler? = null
 
   private var positionChangeListener: SeekBarThrottler? = null
-
-  @OnClick(R.id.main_button_play_pause)
-  internal fun playButtonPressed() {
-    presenter.play()
-  }
-
-  @OnClick(R.id.main_button_previous)
-  internal fun onPreviousButtonPressed() {
-    presenter.previous()
-  }
-
-  @OnClick(R.id.main_button_next)
-  internal fun onNextButtonPressed() {
-    presenter.next()
-  }
-
-  @OnLongClick(R.id.main_button_play_pause)
-  internal fun onPlayerStopPressed(): Boolean {
-    return presenter.stop()
-  }
-
-  @OnClick(R.id.main_mute_button)
-  internal fun onMuteButtonPressed() {
-    presenter.mute()
-  }
-
-  @OnClick(R.id.main_shuffle_button)
-  internal fun onShuffleButtonClicked() {
-    presenter.shuffle()
-  }
-
-  @OnClick(R.id.main_repeat_button)
-  internal fun onRepeatButtonPressed() {
-    presenter.repeat()
-  }
-
-  @OnClick(R.id.track_info_area)
-  internal fun onTrackInfoPressed() {
-    navigate(R.id.nav_now_playing)
-  }
-
   private lateinit var scope: Scope
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -122,7 +84,15 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
     Toothpick.inject(this, scope)
-    ButterKnife.bind(this)
+    playPauseButton.setOnClickListener { presenter.play() }
+    playPauseButton.setOnLongClickListener { presenter.stop() }
+    previousButton.setOnClickListener { presenter.previous() }
+    nextButton.setOnClickListener { presenter.next() }
+    muteButton.setOnClickListener { presenter.mute() }
+    shuffleButton.setOnClickListener { presenter.shuffle() }
+    repeatButton.setOnClickListener { presenter.repeat() }
+    trackInfo.setOnClickListener { navigate(R.id.nav_now_playing) }
+
     super.setup()
     presenter.attach(this)
     presenter.load()
@@ -130,7 +100,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
   override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
-    if (intent?.getBooleanExtra(EXIT_APP, false) ?: false) {
+    if (intent?.getBooleanExtra(EXIT_APP, false) == true) {
       exitApplication()
       return
     }
@@ -260,12 +230,10 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     @DrawableRes var resId = R.drawable.ic_repeat_black_24dp
 
     //noinspection StatementWithEmptyBody
-    if (Repeat.ALL.equals(mode, ignoreCase = true)) {
-      // Do nothing already set above
-    } else if (Repeat.ONE.equals(mode, ignoreCase = true)) {
-      resId = R.drawable.ic_repeat_one_black_24dp
-    } else {
-      colorId = R.color.button_dark
+    when {
+      Repeat.ALL.equals(mode, ignoreCase = true) -> Unit
+      Repeat.ONE.equals(mode, ignoreCase = true) -> resId = R.drawable.ic_repeat_one_black_24dp
+      else -> colorId = R.color.button_dark
     }
 
     val color = ContextCompat.getColor(this, colorId)
@@ -285,26 +253,31 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     @DrawableRes val resId: Int
     val tag: String
 
-    if (PlayerState.PLAYING == state) {
-      resId = R.drawable.ic_pause_circle_filled_black_24dp
-      tag = "Playing"
-      /* Start the animation if the track is playing*/
-      presenter.requestNowPlayingPosition()
-      trackProgressAnimation(progressBar.progress, progressBar.max)
-    } else if (PlayerState.PAUSED == state) {
-      resId = R.drawable.ic_play_circle_filled_black_24dp
-      tag = PAUSED
-      /* Stop the animation if the track is paused*/
-      progressHelper.stop()
-    } else if (PlayerState.STOPPED == state) {
-      resId = R.drawable.ic_play_circle_filled_black_24dp
-      tag = STOPPED
-      /* Stop the animation if the track is paused*/
-      progressHelper.stop()
-      activateStoppedState()
-    } else {
-      resId = R.drawable.ic_play_circle_filled_black_24dp
-      tag = STOPPED
+    when (state) {
+      PlayerState.PLAYING -> {
+        resId = R.drawable.ic_pause_circle_filled_black_24dp
+        tag = "Playing"
+        /* Start the animation if the track is playing*/
+        presenter.requestNowPlayingPosition()
+        trackProgressAnimation(progressBar.progress, progressBar.max)
+      }
+      PlayerState.PAUSED -> {
+        resId = R.drawable.ic_play_circle_filled_black_24dp
+        tag = PAUSED
+        /* Stop the animation if the track is paused*/
+        progressHelper.stop()
+      }
+      PlayerState.STOPPED -> {
+        resId = R.drawable.ic_play_circle_filled_black_24dp
+        tag = STOPPED
+        /* Stop the animation if the track is paused*/
+        progressHelper.stop()
+        activateStoppedState()
+      }
+      else -> {
+        resId = R.drawable.ic_play_circle_filled_black_24dp
+        tag = STOPPED
+      }
     }
 
     playPauseButton.setColorFilter(accentColor)
