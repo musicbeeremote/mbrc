@@ -21,7 +21,8 @@ class RadioPresenterImpl
     RadioPresenter {
 
   override fun load() {
-    view?.showLoading()
+
+    view().showLoading()
     addDisposable(radioRepository.cacheIsEmpty().flatMap {
       if (it) {
         return@flatMap radioRepository.getAndSaveRemote()
@@ -29,26 +30,26 @@ class RadioPresenterImpl
         return@flatMap radioRepository.getAllCursor()
       }
     }.subscribeOn(ioScheduler).observeOn(mainScheduler).subscribe({
-      view?.hideLoading()
-      view?.update(it)
+      view().hideLoading()
+      view().update(it)
     }, {
-      view?.error(it)
-      view?.hideLoading()
+      view().error(it)
+      view().hideLoading()
       Timber.v(it, "Failed")
     }))
   }
 
   override fun refresh() {
-    view?.showLoading()
+    view().showLoading()
     addDisposable(radioRepository.getAndSaveRemote()
         .subscribeOn(ioScheduler)
         .observeOn(mainScheduler)
         .subscribe({
-          view?.update(it)
-          view?.hideLoading()
+          view().update(it)
+          view().hideLoading()
         }, {
-          view?.error(it)
-          view?.hideLoading()
+          view().error(it)
+          view().hideLoading()
         }))
   }
 
@@ -57,9 +58,9 @@ class RadioPresenterImpl
         .subscribeOn(ioScheduler)
         .observeOn(mainScheduler)
         .subscribe({
-          view?.radioPlaySuccessful()
+          view().radioPlaySuccessful()
         }, {
-          view?.radioPlayFailed(it)
+          view().radioPlayFailed(it)
         })
   }
 }

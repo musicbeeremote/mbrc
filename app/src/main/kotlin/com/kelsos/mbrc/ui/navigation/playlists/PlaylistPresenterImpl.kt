@@ -23,14 +23,14 @@ class PlaylistPresenterImpl
     PlaylistPresenter {
 
   override fun load() {
-    view?.showLoading()
+    view().showLoading()
     addDisposable(repository.getAllCursor().compose { schedule(it) }
         .subscribe({
-          view?.update(it)
-          view?.hideLoading()
+          view().update(it)
+          view().hideLoading()
         }) {
-          view?.failure(it)
-          view?.hideLoading()
+          view().failure(it)
+          view().hideLoading()
         })
   }
 
@@ -39,15 +39,15 @@ class PlaylistPresenterImpl
   }
 
   override fun reload() {
-    view?.showLoading()
+    view().showLoading()
     addDisposable(repository.getAndSaveRemote()
         .compose { schedule(it) }
         .subscribe({
-          view?.update(it)
-          view?.hideLoading()
+          view().update(it)
+          view().hideLoading()
         }) {
-          view?.failure(it)
-          view?.hideLoading()
+          view().failure(it)
+          view().hideLoading()
         })
   }
 

@@ -54,7 +54,7 @@ constructor(
         List<ConnectionSettings>,
         ConnectionModel>(defaultId, all, BiFunction(::ConnectionModel))
         .subscribe({
-          view?.updateModel(it)
+          view().updateModel(it)
         }, {
           this.onLoadError(it)
         }))
@@ -64,7 +64,7 @@ constructor(
     checkIfAttached()
     repository.default = settings
     bus.post(DefaultSettingsChangedEvent())
-    view?.dataUpdated()
+    view().dataUpdated()
   }
 
   override fun save(settings: ConnectionSettings) {
@@ -80,7 +80,7 @@ constructor(
       bus.post(DefaultSettingsChangedEvent())
     }
 
-    view?.dataUpdated()
+    view().dataUpdated()
   }
 
   override fun delete(settings: ConnectionSettings) {
@@ -90,7 +90,7 @@ constructor(
       bus.post(DefaultSettingsChangedEvent())
     }
 
-    view?.dataUpdated()
+    view().dataUpdated()
   }
 
   private fun onLoadError(throwable: Throwable) {
