@@ -5,7 +5,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import kotterknife.bindView
 import toothpick.Scope
@@ -13,7 +13,7 @@ import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class LyricsActivity : BaseActivity(), LyricsView {
+class LyricsActivity : BaseNavigationActivity(), LyricsView {
   private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
 
   private val lyricsRecycler: EmptyRecyclerView by bindView(R.id.lyrics_recycler_view)

@@ -11,7 +11,7 @@ import android.widget.TextView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.playlists.Playlist
 import com.kelsos.mbrc.content.playlists.PlaylistService
-import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.navigation.playlists.PlaylistAdapter.OnPlaylistPressedListener
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
@@ -23,7 +23,7 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import java.net.ConnectException
 import javax.inject.Inject
 
-class PlaylistActivity : BaseActivity(),
+class PlaylistActivity : BaseNavigationActivity(),
                          PlaylistView,
                          OnPlaylistPressedListener,
                          OnRefreshListener {

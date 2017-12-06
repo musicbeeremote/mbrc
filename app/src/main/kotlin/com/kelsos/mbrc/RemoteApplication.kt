@@ -15,7 +15,6 @@ import toothpick.configuration.Configuration
 import toothpick.registries.FactoryRegistryLocator
 import toothpick.registries.MemberInjectorRegistryLocator
 import toothpick.smoothie.module.SmoothieApplicationModule
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 
 open class RemoteApplication : MultiDexApplication() {
 
@@ -33,7 +32,6 @@ open class RemoteApplication : MultiDexApplication() {
     }
     initializeDbflow()
     initializeToothpick()
-    initializeCalligraphy()
     initializeTimber()
     initializeLeakCanary()
   }
@@ -63,13 +61,6 @@ open class RemoteApplication : MultiDexApplication() {
 
   private fun initializeDbflow() {
     FlowManager.init(FlowConfig.Builder(this).openDatabasesOnInit(true).build())
-  }
-
-  private fun initializeCalligraphy() {
-    CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
-        .setDefaultFontPath("fonts/roboto_regular.ttf")
-        .setFontAttrId(R.attr.fontPath)
-        .build())
   }
 
   protected fun initializeToothpick() {
