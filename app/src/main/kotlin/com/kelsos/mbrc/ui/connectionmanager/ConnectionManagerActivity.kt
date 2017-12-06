@@ -10,11 +10,8 @@ import com.kelsos.mbrc.databinding.UiActivityConnectionManagerBinding
 import com.kelsos.mbrc.events.ConnectionSettingsChanged
 import com.kelsos.mbrc.events.DiscoveryStopped
 import com.kelsos.mbrc.events.NotifyUser
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.networking.DiscoveryStop
-import com.kelsos.mbrc.networking.StartServiceDiscoveryEvent
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
-import com.kelsos.mbrc.preferences.DefaultSettingsChangedEvent
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment
 import toothpick.Scope
@@ -29,12 +26,10 @@ class ConnectionManagerActivity :
   ConnectionAdapter.ConnectionChangeListener {
 
   @Inject
-  lateinit var bus: RxBus
-  @Inject
   lateinit var presenter: ConnectionManagerPresenter
 
   private var adapter: ConnectionAdapter? = null
-  private var scope: Scope? = null
+  private lateinit var scope: Scope
 
   private lateinit var binding: UiActivityConnectionManagerBinding
 
@@ -45,12 +40,12 @@ class ConnectionManagerActivity :
 
   private fun onScanButtonClick() {
     binding.connectionManagerProgress.isGone = false
-    bus.post(StartServiceDiscoveryEvent())
+    presenter.startDiscovery()
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this), ConnectionManagerModule.create())
+    scope.installModules(SmoothieActivityModule(this), ConnectionManagerModule.create())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     binding = UiActivityConnectionManagerBinding.inflate(layoutInflater)
@@ -73,27 +68,9 @@ class ConnectionManagerActivity :
   }
 
   override fun onDestroy() {
+    presenter.detach()
     Toothpick.closeScope(this)
     super.onDestroy()
-  }
-
-  override fun onResume() {
-    super.onResume()
-    presenter.attach(this)
-    bus.register(
-      this,
-      ConnectionSettingsChanged::class.java,
-      { this.onConnectionSettingsChange(it) },
-      true
-    )
-    bus.register(this, DiscoveryStopped::class.java, { this.onDiscoveryStopped(it) }, true)
-    bus.register(this, NotifyUser::class.java, { this.onUserNotification(it) }, true)
-  }
-
-  override fun onPause() {
-    super.onPause()
-    presenter.detach()
-    bus.unregister(this)
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -108,11 +85,11 @@ class ConnectionManagerActivity :
     presenter.save(settings)
   }
 
-  private fun onConnectionSettingsChange(event: ConnectionSettingsChanged) {
+  override fun onConnectionSettingsChange(event: ConnectionSettingsChanged) {
     adapter!!.setSelectionId(event.defaultId)
   }
 
-  private fun onDiscoveryStopped(event: DiscoveryStopped) {
+  override fun onDiscoveryStopped(event: DiscoveryStopped) {
     binding.connectionManagerProgress.isGone = true
 
     val message: String = when (event.reason) {
@@ -128,7 +105,7 @@ class ConnectionManagerActivity :
     Snackbar.make(binding.connectionList, message, Snackbar.LENGTH_SHORT).show()
   }
 
-  private fun onUserNotification(event: NotifyUser) {
+  override fun onUserNotification(event: NotifyUser) {
     val message = if (event.isFromResource) getString(event.resId) else event.message
     Snackbar.make(binding.connectionList, message, Snackbar.LENGTH_SHORT).show()
   }
@@ -149,10 +126,6 @@ class ConnectionManagerActivity :
 
   override fun updateModel(connectionModel: ConnectionModel) {
     adapter!!.update(connectionModel)
-  }
-
-  override fun defaultChanged() {
-    bus.post(DefaultSettingsChangedEvent())
   }
 
   override fun dataUpdated() {

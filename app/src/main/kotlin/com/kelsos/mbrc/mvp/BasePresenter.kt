@@ -41,6 +41,10 @@ open class BasePresenter<T : BaseView>(
     job.cancelChildren()
   }
 
+  fun view(): T {
+    return view ?: throw ViewNotAttachedException()
+  }
+
   fun checkIfAttached() {
     if (!isAttached) {
       throw ViewNotAttachedException()

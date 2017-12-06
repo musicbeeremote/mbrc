@@ -11,4 +11,6 @@ interface ConnectionManagerPresenter : Presenter<ConnectionManagerView> {
   fun save(settings: ConnectionSettings)
 
   fun delete(settings: ConnectionSettings)
+
+  fun startDiscovery()
 }
