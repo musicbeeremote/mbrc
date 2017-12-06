@@ -2,19 +2,16 @@ package com.kelsos.mbrc.ui.navigation.library.artist_albums
 
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
-import butterknife.BindView
-import butterknife.ButterKnife
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.now_playing.queue.Queue
+import com.kelsos.mbrc.databinding.ActivityArtistAlbumsBinding
+import com.kelsos.mbrc.databinding.EmptyListBinding
 import com.kelsos.mbrc.ui.activities.FontActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.albums.AlbumEntryAdapter
-import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
 import toothpick.Toothpick
@@ -26,16 +23,14 @@ class ArtistAlbumsActivity :
   ArtistAlbumsView,
   AlbumEntryAdapter.MenuItemSelectedListener {
 
-  @BindView(R.id.album_recycler) lateinit var recyclerView: EmptyRecyclerView
-  @BindView(R.id.toolbar) lateinit var toolbar: MaterialToolbar
-  @BindView(R.id.empty_view) lateinit var emptyView: ConstraintLayout
-
   @Inject lateinit var actionHandler: PopupActionHandler
   @Inject lateinit var adapter: AlbumEntryAdapter
   @Inject lateinit var presenter: ArtistAlbumsPresenter
 
   private var artist: String? = null
   private var scope: Scope? = null
+  private lateinit var binding: ActivityArtistAlbumsBinding
+  private lateinit var emptyBinding: EmptyListBinding
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
@@ -45,8 +40,9 @@ class ArtistAlbumsActivity :
     )
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
-    setContentView(R.layout.activity_artist_albums)
-    ButterKnife.bind(this)
+    binding = ActivityArtistAlbumsBinding.inflate(layoutInflater)
+    emptyBinding = EmptyListBinding.bind(binding.root)
+    setContentView(binding.root)
 
     val extras = intent.extras
     if (extras != null) {
@@ -58,7 +54,7 @@ class ArtistAlbumsActivity :
       return
     }
 
-    setSupportActionBar(toolbar)
+    setSupportActionBar(binding.toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     supportActionBar?.setDisplayShowHomeEnabled(true)
     supportActionBar?.title = artist
@@ -68,9 +64,9 @@ class ArtistAlbumsActivity :
     }
 
     adapter.setMenuItemSelectedListener(this)
-    recyclerView.layoutManager = LinearLayoutManager(this)
-    recyclerView.adapter = adapter
-    recyclerView.emptyView = emptyView
+    binding.albumRecycler.layoutManager = LinearLayoutManager(this)
+    binding.albumRecycler.adapter = adapter
+    binding.albumRecycler.emptyView = emptyBinding.emptyView
     presenter.attach(this)
     presenter.load(artist!!)
   }
@@ -107,7 +103,7 @@ class ArtistAlbumsActivity :
     } else {
       getString(R.string.queue_result__failure)
     }
-    Snackbar.make(recyclerView, R.string.queue_result__success, Snackbar.LENGTH_SHORT)
+    Snackbar.make(binding.root, R.string.queue_result__success, Snackbar.LENGTH_SHORT)
       .setText(message)
       .show()
   }

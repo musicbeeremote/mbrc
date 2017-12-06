@@ -8,13 +8,13 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
-import com.kelsos.mbrc.R
+import com.kelsos.mbrc.databinding.FragmentHelpBinding
 import com.kelsos.mbrc.utilities.RemoteUtils.getVersion
 import timber.log.Timber
 
 class HelpFragment : Fragment() {
 
-  lateinit var helpView: WebView
+  private lateinit var helpView: WebView
 
   override fun onStart() {
     super.onStart()
@@ -37,12 +37,11 @@ class HelpFragment : Fragment() {
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
-  ): View? {
-    // Inflate the layout for this fragment
-    val view = inflater.inflate(R.layout.fragment_help, container, false)
-    helpView = view.findViewById(R.id.help_webview)
+  ): View {
+    val binding = FragmentHelpBinding.inflate(layoutInflater)
+    helpView = binding.helpWebview
     helpView.webViewClient = RemoteWebViewClient()
-    return view
+    return binding.root
   }
 
   private class RemoteWebViewClient : WebViewClient() {

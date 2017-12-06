@@ -2,20 +2,15 @@ package com.kelsos.mbrc.ui.navigation.playlists
 
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.playlists.Playlist
+import com.kelsos.mbrc.databinding.ActivityPlaylistsBinding
+import com.kelsos.mbrc.databinding.ListEmptyViewBinding
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.playlists.PlaylistAdapter.OnPlaylistPressedListener
-import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
-import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
 import toothpick.Toothpick
@@ -31,36 +26,30 @@ class PlaylistActivity :
 
   private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
 
-  @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
-  @BindView(R.id.playlist_list) lateinit var playlistList: EmptyRecyclerView
-  @BindView(R.id.empty_view) lateinit var emptyView: View
-  @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
-  @BindView(R.id.list_empty_icon) lateinit var emptyViewIcon: ImageView
-  @BindView(R.id.list_empty_subtitle) lateinit var emptyViewSubTitle: TextView
-  @BindView(R.id.empty_view_progress_bar) lateinit var emptyViewProgress: ProgressBar
-
   @Inject lateinit var adapter: PlaylistAdapter
   @Inject lateinit var presenter: PlaylistPresenter
   private lateinit var scope: Scope
+  private lateinit var binding: ActivityPlaylistsBinding
+  private lateinit var emptyBinding: ListEmptyViewBinding
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_playlists)
-    ButterKnife.bind(this)
-
+    binding = ActivityPlaylistsBinding.inflate(layoutInflater)
+    emptyBinding = ListEmptyViewBinding.bind(binding.root)
+    setContentView(binding.root)
     scope = Toothpick.openScopes(application, PRESENTER_SCOPE, this)
     scope.installTestModules(SmoothieActivityModule(this), PlaylistModule())
     Toothpick.inject(this, scope)
 
     super.setup()
 
-    swipeLayout.setSwipeableChildren(R.id.playlist_list, R.id.empty_view)
+    binding.swipeLayout.setSwipeableChildren(R.id.playlist_list, R.id.empty_view)
     adapter.setPlaylistPressedListener(this)
-    playlistList.layoutManager = LinearLayoutManager(this)
-    playlistList.emptyView = emptyView
-    playlistList.adapter = adapter
-    swipeLayout.setOnRefreshListener(this)
-    emptyViewTitle.setText(R.string.playlists_list_empty)
+    binding.playlistList.layoutManager = LinearLayoutManager(this)
+    binding.playlistList.emptyView = emptyBinding.emptyView
+    binding.playlistList.adapter = adapter
+    binding.swipeLayout.setOnRefreshListener(this)
+    emptyBinding.listEmptyTitle.setText(R.string.playlists_list_empty)
   }
 
   public override fun onStart() {
@@ -92,8 +81,8 @@ class PlaylistActivity :
   }
 
   override fun onRefresh() {
-    if (!swipeLayout.isRefreshing) {
-      swipeLayout.isRefreshing = true
+    if (!binding.swipeLayout.isRefreshing) {
+      binding.swipeLayout.isRefreshing = true
     }
 
     presenter.reload()
@@ -101,10 +90,11 @@ class PlaylistActivity :
 
   override fun update(cursor: FlowCursorList<Playlist>) {
     adapter.update(cursor)
-    swipeLayout.isRefreshing = false
+    binding.swipeLayout.isRefreshing = false
   }
 
   override fun failure(throwable: Throwable) {
+    val swipeLayout = binding.swipeLayout
     swipeLayout.isRefreshing = false
     if (throwable.cause is ConnectException) {
       Snackbar.make(swipeLayout, R.string.service_connection_error, Snackbar.LENGTH_SHORT).show()
@@ -114,18 +104,18 @@ class PlaylistActivity :
   }
 
   override fun showLoading() {
-    emptyViewProgress.visibility = View.VISIBLE
-    emptyViewIcon.visibility = View.GONE
-    emptyViewTitle.visibility = View.GONE
-    emptyViewSubTitle.visibility = View.GONE
+    emptyBinding.emptyViewProgressBar.visibility = View.VISIBLE
+    emptyBinding.listEmptyIcon.visibility = View.GONE
+    emptyBinding.listEmptyTitle.visibility = View.GONE
+    emptyBinding.listEmptySubtitle.visibility = View.GONE
   }
 
   override fun hideLoading() {
-    emptyViewProgress.visibility = View.GONE
-    emptyViewIcon.visibility = View.VISIBLE
-    emptyViewTitle.visibility = View.VISIBLE
-    emptyViewSubTitle.visibility = View.VISIBLE
-    swipeLayout.isRefreshing = false
+    emptyBinding.emptyViewProgressBar.visibility = View.GONE
+    emptyBinding.listEmptyIcon.visibility = View.VISIBLE
+    emptyBinding.listEmptyTitle.visibility = View.VISIBLE
+    emptyBinding.listEmptySubtitle.visibility = View.VISIBLE
+    binding.swipeLayout.isRefreshing = false
   }
 
   @javax.inject.Scope

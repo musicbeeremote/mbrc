@@ -11,12 +11,10 @@ import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindString
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.library.albums.key
+import com.kelsos.mbrc.databinding.UiListDualBinding
 import com.kelsos.mbrc.extensions.count
 import com.kelsos.mbrc.ui.widgets.SquareImageView
 import com.raizlabs.android.dbflow.list.FlowCursorList
@@ -93,15 +91,19 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
   }
 
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    @BindView(R.id.line_two) lateinit var artist: TextView
-    @BindView(R.id.line_one) lateinit var album: TextView
-    @BindView(R.id.cover) lateinit var image: SquareImageView
-    @BindView(R.id.ui_item_context_indicator) lateinit var indicator: LinearLayout
-    @BindString(R.string.unknown_artist) lateinit var unknownArtist: String
-    @BindString(R.string.non_album_tracks) lateinit var emptyAlbum: String
+    val artist: TextView
+    val album: TextView
+    val image: SquareImageView
+    val indicator: LinearLayout
+    val unknownArtist: String by lazy { itemView.context.getString(R.string.unknown_artist) }
+    val emptyAlbum: String by lazy { itemView.context.getString(R.string.non_album_tracks) }
 
     init {
-      ButterKnife.bind(this, itemView)
+      val binding = UiListDualBinding.bind(itemView)
+      artist = binding.lineTwo
+      album = binding.lineOne
+      indicator = binding.uiItemContextIndicator
+      image = binding.cover
       image.isGone = false
     }
   }

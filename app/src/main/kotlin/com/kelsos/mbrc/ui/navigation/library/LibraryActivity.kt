@@ -3,19 +3,16 @@ package com.kelsos.mbrc.ui.navigation.library
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.view.isGone
-import androidx.viewpager2.widget.ViewPager2
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.databinding.ActivityLibraryBinding
+import com.kelsos.mbrc.databinding.LibraryStatsLayoutBinding
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import toothpick.Scope
 import toothpick.Toothpick
@@ -27,12 +24,6 @@ class LibraryActivity :
   LibraryView,
   OnQueryTextListener {
 
-  @BindView(R.id.search_pager)
-  lateinit var pager: ViewPager2
-
-  @BindView(R.id.pager_tab_strip)
-  lateinit var tabs: TabLayout
-
   private var searchView: SearchView? = null
   private var searchMenuItem: MenuItem? = null
   private var albumArtistOnly: MenuItem? = null
@@ -42,6 +33,7 @@ class LibraryActivity :
 
   @Inject
   lateinit var presenter: LibraryPresenter
+  private lateinit var binding: ActivityLibraryBinding
 
   override fun onQueryTextSubmit(query: String): Boolean {
     val search = query.trim()
@@ -80,9 +72,12 @@ class LibraryActivity :
     scope!!.installModules(SmoothieActivityModule(this))
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
-    setContentView(R.layout.activity_library)
-    ButterKnife.bind(this)
+    binding = ActivityLibraryBinding.inflate(layoutInflater)
+    setContentView(binding.root)
+
     super.setup()
+    val tabs: TabLayout = findViewById(R.id.pager_tab_strip)
+    val pager = binding.searchPager
     pagerAdapter = LibraryPagerAdapter(this)
     pager.apply {
       adapter = pagerAdapter
@@ -143,17 +138,20 @@ class LibraryActivity :
   }
 
   override fun showStats(stats: LibraryStats) {
-    val dialog = MaterialAlertDialogBuilder(this)
+    val binding = LibraryStatsLayoutBinding.inflate(layoutInflater)
+    MaterialAlertDialogBuilder(this)
       .setTitle(R.string.library_stats__title)
-      .setView(R.layout.library_stats__layout)
+      .setView(binding.root)
       .setPositiveButton(android.R.string.ok) { md, _ -> md.dismiss() }
       .show()
 
-    dialog.findViewById<TextView>(R.id.library_stats__genre_value)?.text = "${stats.genres}"
-    dialog.findViewById<TextView>(R.id.library_stats__artist_value)?.text = "${stats.artists}"
-    dialog.findViewById<TextView>(R.id.library_stats__album_value)?.text = "${stats.albums}"
-    dialog.findViewById<TextView>(R.id.library_stats__track_value)?.text = "${stats.tracks}"
-    dialog.findViewById<TextView>(R.id.library_stats__playlist_value)?.text = "${stats.playlists}"
+    binding.apply {
+      libraryStatsGenreValue.text = "${stats.genres}"
+      libraryStatsArtistValue.text = "${stats.artists}"
+      libraryStatsAlbumValue.text = "${stats.albums}"
+      libraryStatsTrackValue.text = "${stats.tracks}"
+      libraryStatsPlaylistValue.text = "${stats.playlists}"
+    }
   }
 
   override fun syncComplete(stats: LibraryStats) {
@@ -165,7 +163,7 @@ class LibraryActivity :
       stats.tracks,
       stats.playlists
     )
-    Snackbar.make(pager, R.string.library__sync_complete, Snackbar.LENGTH_LONG)
+    Snackbar.make(binding.root, R.string.library__sync_complete, Snackbar.LENGTH_LONG)
       .setText(message)
       .show()
   }
@@ -207,25 +205,25 @@ class LibraryActivity :
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
-    outState.putInt(PAGER_POSITION, pager.currentItem)
+    outState.putInt(PAGER_POSITION, binding.searchPager.currentItem)
   }
 
   override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-    pager.currentItem = savedInstanceState.getInt(PAGER_POSITION, 0)
+    binding.searchPager.currentItem = savedInstanceState.getInt(PAGER_POSITION, 0)
   }
 
   override fun syncFailure() {
-    Snackbar.make(pager, R.string.library__sync_failed, Snackbar.LENGTH_LONG).show()
+    Snackbar.make(binding.root, R.string.library__sync_failed, Snackbar.LENGTH_LONG).show()
   }
 
   override fun showSyncProgress() {
-    findViewById<LinearProgressIndicator>(R.id.sync_progress).isGone = false
-    findViewById<TextView>(R.id.sync_progress_text).isGone = false
+    binding.syncProgress.isGone = false
+    binding.syncProgressText.isGone = false
   }
 
   override fun hideSyncProgress() {
-    findViewById<LinearProgressIndicator>(R.id.sync_progress).isGone = true
-    findViewById<TextView>(R.id.sync_progress_text).isGone = true
+    binding.syncProgress.isGone = true
+    binding.syncProgressText.isGone = true
   }
 
   companion object {

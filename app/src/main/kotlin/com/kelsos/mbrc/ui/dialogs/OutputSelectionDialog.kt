@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.dialogs
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,6 +17,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.databinding.DialogOutputSelectionBinding
 import com.kelsos.mbrc.di.modules.obtainViewModel
 import com.kelsos.mbrc.features.output.OutputSelectionResult
 import com.kelsos.mbrc.features.output.OutputSelectionViewModel
@@ -33,6 +33,9 @@ class OutputSelectionDialog() : DialogFragment(), View.OnTouchListener {
   private lateinit var availableOutputs: Spinner
   private lateinit var loadingProgress: ProgressBar
   private lateinit var errorMessage: TextView
+
+  private var _binding: DialogOutputSelectionBinding? = null
+  private val binding get() = _binding!!
 
   private var scope: Scope? = null
 
@@ -89,19 +92,16 @@ class OutputSelectionDialog() : DialogFragment(), View.OnTouchListener {
     viewModel.reload()
   }
 
-  @SuppressLint("InflateParams")
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val context = requireContext()
-    val inflater = LayoutInflater.from(context)
-    val view = inflater.inflate(R.layout.dialog__output_selection, null, false)
-
-    availableOutputs = view.findViewById(R.id.output_selection__available_outputs)
-    loadingProgress = view.findViewById(R.id.output_selection__loading_outputs)
-    errorMessage = view.findViewById(R.id.output_selection__error_message)
+    _binding = DialogOutputSelectionBinding.inflate(LayoutInflater.from(requireContext()))
+    availableOutputs = binding.outputSelectionAvailableOutputs
+    errorMessage = binding.outputSelectionErrorMessage
+    loadingProgress = binding.outputSelectionLoadingOutputs
+    val view = binding.root
 
     viewModel = obtainViewModel(OutputSelectionViewModel::class.java)
 
-    dialog = MaterialAlertDialogBuilder(context)
+    dialog = MaterialAlertDialogBuilder(requireContext())
       .setTitle(R.string.output_selection__select_output)
       .setView(view)
       .setNeutralButton(R.string.output_selection__close_dialog) { dialogInterface, _ ->

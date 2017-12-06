@@ -4,14 +4,10 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.databinding.UiActivityConnectionManagerBinding
 import com.kelsos.mbrc.events.ConnectionSettingsChanged
 import com.kelsos.mbrc.events.DiscoveryStopped
 import com.kelsos.mbrc.events.NotifyUser
@@ -38,23 +34,18 @@ class ConnectionManagerActivity :
   @Inject
   lateinit var presenter: ConnectionManagerPresenter
 
-  @BindView(R.id.connection_list)
-  lateinit var mRecyclerView: RecyclerView
-
-  @BindView(R.id.toolbar)
-  lateinit var mToolbar: MaterialToolbar
   private var adapter: ConnectionAdapter? = null
   private var scope: Scope? = null
 
-  @OnClick(R.id.connection_add)
-  internal fun onAddButtonClick() {
+  private lateinit var binding: UiActivityConnectionManagerBinding
+
+  private fun onAddButtonClick() {
     val settingsDialog = SettingsDialogFragment()
     settingsDialog.show(supportFragmentManager, "settings_dialog")
   }
 
-  @OnClick(R.id.connection_scan)
-  internal fun onScanButtonClick() {
-    findViewById<LinearProgressIndicator>(R.id.connection_manager__progress).isGone = false
+  private fun onScanButtonClick() {
+    binding.connectionManagerProgress.isGone = false
     bus.post(StartServiceDiscoveryEvent())
   }
 
@@ -63,15 +54,21 @@ class ConnectionManagerActivity :
     scope!!.installModules(SmoothieActivityModule(this), ConnectionManagerModule.create())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
-    setContentView(R.layout.ui_activity_connection_manager)
-    ButterKnife.bind(this)
-    setSupportActionBar(mToolbar)
-    mRecyclerView.setHasFixedSize(true)
-    val mLayoutManager = LinearLayoutManager(this)
-    mRecyclerView.layoutManager = mLayoutManager
+    binding = UiActivityConnectionManagerBinding.inflate(layoutInflater)
+    setContentView(binding.root)
+    val toolbar: MaterialToolbar = binding.toolbar
+    val recyclerView = binding.connectionList
+
+    binding.connectionAdd.setOnClickListener { onAddButtonClick() }
+    binding.connectionScan.setOnClickListener { onScanButtonClick() }
+
+    setSupportActionBar(toolbar)
+    recyclerView.setHasFixedSize(true)
+    val layoutManager = LinearLayoutManager(this)
+    recyclerView.layoutManager = layoutManager
     adapter = ConnectionAdapter()
     adapter!!.setChangeListener(this)
-    mRecyclerView.adapter = adapter
+    recyclerView.adapter = adapter
     presenter.attach(this)
     presenter.load()
   }
@@ -124,7 +121,7 @@ class ConnectionManagerActivity :
   }
 
   private fun onDiscoveryStopped(event: DiscoveryStopped) {
-    findViewById<LinearProgressIndicator>(R.id.connection_manager__progress).isGone = true
+    binding.connectionManagerProgress.isGone = true
 
     val message: String = when (event.reason) {
       DiscoveryStop.NO_WIFI -> getString(R.string.con_man_no_wifi)
@@ -136,12 +133,12 @@ class ConnectionManagerActivity :
       else -> throw IllegalArgumentException(event.reason.toString())
     }
 
-    Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show()
+    Snackbar.make(binding.connectionList, message, Snackbar.LENGTH_SHORT).show()
   }
 
   private fun onUserNotification(event: NotifyUser) {
     val message = if (event.isFromResource) getString(event.resId) else event.message
-    Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show()
+    Snackbar.make(binding.connectionList, message, Snackbar.LENGTH_SHORT).show()
   }
 
   override fun onDelete(settings: ConnectionSettings) {

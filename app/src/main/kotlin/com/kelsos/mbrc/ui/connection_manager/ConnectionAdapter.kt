@@ -8,9 +8,8 @@ import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.databinding.UiListConnectionSettingsBinding
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
 
 class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewHolder>() {
@@ -19,7 +18,7 @@ class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewH
   private var changeListener: ConnectionChangeListener? = null
 
   init {
-    data = ArrayList<ConnectionSettings>()
+    data = ArrayList()
     setHasStableIds(true)
   }
 
@@ -103,19 +102,19 @@ class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewH
   }
 
   inner class ConnectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    @BindView(R.id.cs_list_host)
-    lateinit var hostname: TextView
-    @BindView(R.id.cs_list_port)
-    lateinit var portNum: TextView
-    @BindView(R.id.cs_list_name)
-    lateinit var computerName: TextView
-    @BindView(R.id.cs_list_default)
-    lateinit var defaultSettings: ImageView
-    @BindView(R.id.cs_list_overflow)
-    lateinit var overflow: View
+    val hostname: TextView
+    val portNum: TextView
+    val computerName: TextView
+    val defaultSettings: ImageView
+    val overflow: View
 
     init {
-      ButterKnife.bind(this, itemView)
+      val binding = UiListConnectionSettingsBinding.bind(itemView)
+      hostname = binding.csListHost
+      portNum = binding.csListPort
+      computerName = binding.csListName
+      defaultSettings = binding.csListDefault
+      overflow = binding.csListOverflow
     }
   }
 

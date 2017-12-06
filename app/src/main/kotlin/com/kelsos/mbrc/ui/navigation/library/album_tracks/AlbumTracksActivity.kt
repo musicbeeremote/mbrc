@@ -3,19 +3,17 @@ package com.kelsos.mbrc.ui.navigation.library.album_tracks
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.AlbumInfo
 import com.kelsos.mbrc.content.library.tracks.Track
+import com.kelsos.mbrc.databinding.ActivityAlbumTracksBinding
+import com.kelsos.mbrc.databinding.ListEmptyViewButtonBinding
 import com.kelsos.mbrc.ui.activities.FontActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter
-import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.utilities.RemoteUtils.sha1
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.squareup.picasso.Picasso
@@ -41,7 +39,9 @@ class AlbumTracksActivity :
 
   private var album: AlbumInfo? = null
   private var scope: Scope? = null
-  private lateinit var recyclerView: EmptyRecyclerView
+
+  private lateinit var binding: ActivityAlbumTracksBinding
+  private lateinit var emptyBinding: ListEmptyViewButtonBinding
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
@@ -51,7 +51,9 @@ class AlbumTracksActivity :
     )
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
-    setContentView(R.layout.activity_album_tracks)
+    binding = ActivityAlbumTracksBinding.inflate(layoutInflater)
+    emptyBinding = ListEmptyViewButtonBinding.bind(binding.root)
+    setContentView(binding.root)
     val extras = intent.extras
 
     if (extras != null) {
@@ -64,7 +66,7 @@ class AlbumTracksActivity :
       return
     }
 
-    setSupportActionBar(findViewById(R.id.toolbar))
+    setSupportActionBar(binding.toolbar)
     val supportActionBar = supportActionBar ?: error("Actionbar should not be null")
     supportActionBar.setDisplayHomeAsUpEnabled(true)
     supportActionBar.setDisplayShowHomeEnabled(true)
@@ -75,18 +77,20 @@ class AlbumTracksActivity :
       supportActionBar.title = selectedAlbum.album
     }
 
-    findViewById<TextView>(R.id.album_tracks__album).text = selectedAlbum.album
-    findViewById<TextView>(R.id.album_tracks__artist).text = selectedAlbum.artist
+    binding.albumTracksAlbum.text = selectedAlbum.album
+    binding.albumTracksArtist.text = selectedAlbum.artist
     loadCover(selectedAlbum.artist, selectedAlbum.album)
 
     presenter.attach(this)
     presenter.load(selectedAlbum)
     adapter.setMenuItemSelectedListener(this)
-    recyclerView = findViewById(R.id.list_tracks)
+
+    val recyclerView = binding.listTracks
     recyclerView.layoutManager = LinearLayoutManager(baseContext)
     recyclerView.adapter = adapter
-    recyclerView.emptyView = findViewById(R.id.empty_view)
-    val play = findViewById<Button>(R.id.play_album)
+    recyclerView.emptyView = emptyBinding.emptyView
+
+    val play = binding.playAlbum
     play.isVisible = true
     play.setOnClickListener {
       presenter.queueAlbum(selectedAlbum.artist, selectedAlbum.album)
@@ -94,7 +98,7 @@ class AlbumTracksActivity :
   }
 
   private fun loadCover(artist: String, album: String) {
-    val image = findViewById<ImageView>(R.id.album_tracks__cover)
+    val image = binding.albumTracksCover
     val cache = File(cacheDir, "covers")
     Picasso.get()
       .load(File(cache, sha1("${artist}_$album")))
@@ -136,7 +140,7 @@ class AlbumTracksActivity :
     } else {
       getString(R.string.queue_result__failure)
     }
-    Snackbar.make(recyclerView, R.string.queue_result__success, Snackbar.LENGTH_SHORT)
+    Snackbar.make(binding.root, R.string.queue_result__success, Snackbar.LENGTH_SHORT)
       .setText(message)
       .show()
   }

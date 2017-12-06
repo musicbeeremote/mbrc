@@ -7,10 +7,9 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.radios.RadioStation
+import com.kelsos.mbrc.databinding.ListitemSingleBinding
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import javax.inject.Inject
 
@@ -60,11 +59,12 @@ class RadioAdapter
   }
 
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    @BindView(R.id.line_one) lateinit var name: TextView
-    @BindView(R.id.ui_item_context_indicator) lateinit var context: LinearLayout
-
+    val name: TextView
+    val context: LinearLayout
     init {
-      ButterKnife.bind(this, itemView)
+      val binding = ListitemSingleBinding.bind(itemView)
+      name = binding.lineOne
+      context = binding.uiItemContextIndicator
     }
   }
 }

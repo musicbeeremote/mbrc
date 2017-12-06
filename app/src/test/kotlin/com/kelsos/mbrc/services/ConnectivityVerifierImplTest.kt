@@ -15,9 +15,9 @@ import com.kelsos.mbrc.networking.SocketMessage
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.preferences.SettingsManager
-import com.kelsos.mbrc.preferences.SettingsManagerImpl
+import com.kelsos.mbrc.preferences.ClientInformationStore
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
@@ -51,11 +51,13 @@ class ConnectivityVerifierImplTest {
   private val port: Int = 46000
 
   lateinit var verifier: ConnectivityVerifier
+  private val informationStore: ClientInformationStore = mockk()
 
   @Before
   fun setUp() {
     toothpickRule.scope.installModules(TestModule())
     verifier = toothpickRule.getInstance(ConnectivityVerifier::class.java)
+    every { informationStore.getClientId() } returns "abc"
   }
 
   private fun startMockServer(
@@ -211,8 +213,6 @@ class ConnectivityVerifierImplTest {
       bind(ObjectMapper::class.java).toInstance(mapper)
       bind(RequestManager::class.java).to(RequestManagerImpl::class.java)
       bind(ConnectionRepository::class.java).toInstance(connectionRepository)
-      bind(ConnectivityVerifier::class.java).to(ConnectivityVerifierImpl::class.java)
-      bind(SettingsManager::class.java).to(SettingsManagerImpl::class.java)
       bind(AppDispatchers::class.java).toInstance(
         AppDispatchers(
           testDispatcher,
@@ -220,6 +220,7 @@ class ConnectivityVerifierImplTest {
           testDispatcher
         )
       )
+      bind(ClientInformationStore::class.java).toInstance(informationStore)
     }
   }
 }

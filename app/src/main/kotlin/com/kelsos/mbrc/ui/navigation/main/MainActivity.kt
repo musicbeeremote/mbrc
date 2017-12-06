@@ -6,19 +6,12 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.Window
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.SeekBar
-import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.ShareActionProvider
-import androidx.core.content.ContextCompat
 import androidx.core.view.MenuItemCompat
-import butterknife.ButterKnife
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.kelsos.mbrc.R
@@ -29,6 +22,8 @@ import com.kelsos.mbrc.content.active_status.PlayerState.State
 import com.kelsos.mbrc.content.active_status.Repeat
 import com.kelsos.mbrc.content.active_status.Repeat.Mode
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
+import com.kelsos.mbrc.databinding.ActivityMainBinding
+import com.kelsos.mbrc.databinding.ContentMainBinding
 import com.kelsos.mbrc.events.OnMainFragmentOptionsInflated
 import com.kelsos.mbrc.events.ShuffleChange
 import com.kelsos.mbrc.events.ShuffleChange.ShuffleState
@@ -55,21 +50,9 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   // Injects
   @Inject
   lateinit var presenter: MainViewPresenter
+
   @Inject
   lateinit var progressHelper: ProgressSeekerHelper
-
-  private lateinit var artistLabel: TextView
-  private lateinit var titleLabel: TextView
-  private lateinit var albumLabel: TextView
-  private lateinit var trackProgressCurrent: TextView
-  private lateinit var trackDuration: TextView
-  private lateinit var playPauseButton: ImageButton
-  private lateinit var volumeBar: SeekBar
-  private lateinit var progressBar: SeekBar
-  private lateinit var muteButton: ImageButton
-  private lateinit var shuffleButton: ImageButton
-  private lateinit var repeatButton: ImageButton
-  private lateinit var albumCover: ImageView
 
   private var mShareActionProvider: ShareActionProvider? = null
 
@@ -81,6 +64,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   private var positionChangeListener: SeekBarThrottler? = null
 
   private lateinit var scope: Scope
+  private lateinit var binding: ContentMainBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, PRESENTER_SCOPE, this)
@@ -89,32 +73,21 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
     window.sharedElementsUseOverlay = false
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
+    val mainBinding = ActivityMainBinding.inflate(layoutInflater)
+    binding = ContentMainBinding.bind(mainBinding.root)
+    setContentView(mainBinding.root)
     Toothpick.inject(this, scope)
-    artistLabel = findViewById(R.id.main_artist_label)
-    titleLabel = findViewById(R.id.main_title_label)
-    albumLabel = findViewById(R.id.main_label_album)
-    trackProgressCurrent = findViewById(R.id.main_track_progress_current)
-    trackDuration = findViewById(R.id.main_track_duration_total)
-    playPauseButton = findViewById(R.id.main_button_play_pause)
-    volumeBar = findViewById(R.id.main_volume_seeker)
-    progressBar = findViewById(R.id.main_track_progress_seeker)
-    muteButton = findViewById(R.id.main_mute_button)
-    shuffleButton = findViewById(R.id.main_shuffle_button)
-    repeatButton = findViewById(R.id.main_repeat_button)
-    albumCover = findViewById(R.id.main_album_cover_image_view)
 
-    muteButton.setOnClickListener { presenter.mute() }
-    shuffleButton.setOnClickListener { presenter.shuffle() }
-    repeatButton.setOnClickListener { presenter.repeat() }
+    binding.mainMuteButton.setOnClickListener { presenter.mute() }
+    binding.mainShuffleButton.setOnClickListener { presenter.shuffle() }
+    binding.mainRepeatButton.setOnClickListener { presenter.repeat() }
 
-    playPauseButton.setOnClickListener { presenter.play() }
-    playPauseButton.setOnLongClickListener { presenter.stop() }
-    findViewById<ImageButton>(R.id.main_button_previous).setOnClickListener { presenter.previous() }
-    findViewById<ImageButton>(R.id.main_button_next).setOnClickListener { presenter.next() }
-    findViewById<View>(R.id.track_info_area).setOnClickListener { navigate(R.id.nav_now_playing) }
+    binding.mainButtonPlayPause.setOnClickListener { presenter.play() }
+    binding.mainButtonPlayPause.setOnLongClickListener { presenter.stop() }
+    binding.mainButtonPrevious.setOnClickListener { presenter.previous() }
+    binding.mainButtonNext.setOnClickListener { presenter.next() }
+    binding.trackInfoArea.setOnClickListener { navigate(R.id.nav_now_playing) }
 
-    ButterKnife.bind(this)
     super.setup()
     presenter.attach(this)
   }
@@ -133,7 +106,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
   override fun notifyPluginOutOfDate() {
     val snackBar = Snackbar.make(
-      navigationView,
+      binding.root,
       R.string.main__dialog_plugin_outdated_message,
       Snackbar.LENGTH_INDEFINITE
     )
@@ -157,11 +130,11 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     progressHelper.setProgressListener(this)
     volumeChangeListener = SeekBarThrottler { presenter.changeVolume(it) }
     positionChangeListener = SeekBarThrottler { presenter.seek(it) }
-    volumeBar.setOnSeekBarChangeListener(volumeChangeListener)
-    progressBar.setOnSeekBarChangeListener(positionChangeListener)
-    artistLabel.isSelected = true
-    titleLabel.isSelected = true
-    albumLabel.isSelected = true
+    binding.mainVolumeSeeker.setOnSeekBarChangeListener(volumeChangeListener)
+    binding.mainTrackProgressSeeker.setOnSeekBarChangeListener(positionChangeListener)
+    binding.mainArtistLabel.isSelected = true
+    binding.mainTitleLabel.isSelected = true
+    binding.mainLabelAlbum.isSelected = true
 
     if (!isConnected) {
       onConnectClick()
@@ -200,8 +173,8 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     volumeChangeListener = null
     positionChangeListener?.terminate()
     positionChangeListener = null
-    volumeBar.setOnSeekBarChangeListener(null)
-    progressBar.setOnSeekBarChangeListener(null)
+    binding.mainVolumeSeeker.setOnSeekBarChangeListener(null)
+    binding.mainTrackProgressSeeker.setOnSeekBarChangeListener(null)
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -218,7 +191,11 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     get() {
       val shareIntent = Intent(Intent.ACTION_SEND)
       shareIntent.type = "text/plain"
-      val payload = String.format("Now Playing: %s - %s", artistLabel.text, titleLabel.text)
+      val payload = String.format(
+        "Now Playing: %s - %s",
+        binding.mainLabelAlbum.text,
+        binding.mainTitleLabel.text
+      )
       shareIntent.putExtra(Intent.EXTRA_TEXT, payload)
       return shareIntent
     }
@@ -227,7 +204,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     val file = File(path)
 
     if (!file.exists()) {
-      albumCover.setImageResource(R.drawable.ic_image_no_cover)
+      binding.mainAlbumCoverImageView.setImageResource(R.drawable.ic_image_no_cover)
       return
     }
 
@@ -239,17 +216,17 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
       .config(Bitmap.Config.RGB_565)
       .resize(dimens, dimens)
       .centerCrop()
-      .into(albumCover)
+      .into(binding.mainAlbumCoverImageView)
   }
 
   override fun updateShuffleState(@ShuffleState shuffleState: String) {
     val shuffle = ShuffleChange.OFF != shuffleState
     val autoDj = ShuffleChange.AUTODJ == shuffleState
 
-    val color = ContextCompat.getColor(this, if (shuffle) R.color.accent else R.color.button_dark)
-    shuffleButton.setColorFilter(color)
+    val color = getColor(if (shuffle) R.color.accent else R.color.button_dark)
+    binding.mainShuffleButton.setColorFilter(color)
     val resId = if (autoDj) R.drawable.ic_headset_black_24dp else R.drawable.ic_shuffle_black_24dp
-    shuffleButton.setImageResource(resId)
+    binding.mainShuffleButton.setImageResource(resId)
   }
 
   override fun updateRepeat(@Mode mode: String) {
@@ -258,26 +235,20 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
     //noinspection StatementWithEmptyBody
     when {
-      Repeat.ALL.equals(mode, ignoreCase = true) -> {
-        // Do nothing already set above
-      }
-      Repeat.ONE.equals(mode, ignoreCase = true) -> {
-        resId = R.drawable.ic_repeat_one_black_24dp
-      }
-      else -> {
-        colorId = R.color.button_dark
-      }
+      Repeat.ALL.equals(mode, ignoreCase = true) -> Unit
+      Repeat.ONE.equals(mode, ignoreCase = true) -> resId = R.drawable.ic_repeat_one_black_24dp
+      else -> colorId = R.color.button_dark
     }
 
-    val color = ContextCompat.getColor(this, colorId)
+    val repeatButton = binding.mainRepeatButton
     repeatButton.setImageResource(resId)
-    repeatButton.setColorFilter(color)
+    repeatButton.setColorFilter(getColor(colorId))
   }
 
   override fun updateVolume(volume: Int, mute: Boolean) {
-    volumeBar.progress = volume
-    val color = ContextCompat.getColor(this, R.color.button_dark)
-    muteButton.setColorFilter(color)
+    binding.mainVolumeSeeker.progress = volume
+    val muteButton = binding.mainMuteButton
+    muteButton.setColorFilter(getColor(R.color.button_dark))
     val resId = if (mute) {
       R.drawable.ic_volume_off_black_24dp
     } else {
@@ -287,12 +258,13 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   }
 
   override fun updatePlayState(@State state: String) {
-    val accentColor = ContextCompat.getColor(this, R.color.accent)
+    val accentColor = getColor(R.color.accent)
     val tag = tag(state)
 
-    if (playPauseButton.tag == tag) {
+    if (binding.mainButtonPlayPause.tag == tag) {
       return
     }
+    val progressBar = binding.mainTrackProgressSeeker
     @DrawableRes val resId: Int = when (state) {
       PlayerState.PLAYING -> {
         /* Start the animation if the track is playing*/
@@ -316,9 +288,9 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
       }
     }
 
-    playPauseButton.setColorFilter(accentColor)
-    playPauseButton.setImageResource(resId)
-    playPauseButton.tag = tag
+    binding.mainButtonPlayPause.setColorFilter(accentColor)
+    binding.mainButtonPlayPause.setImageResource(resId)
+    binding.mainButtonPlayPause.tag = tag
   }
 
   /**
@@ -327,7 +299,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   private fun trackProgressAnimation(current: Long, total: Long) {
     progressHelper.stop()
 
-    val tag = playPauseButton.tag
+    val tag = binding.mainButtonPlayPause.tag
     if (STOPPED == tag || PAUSED == tag) {
       return
     }
@@ -336,14 +308,14 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   }
 
   private fun activateStoppedState() {
-    progressBar.progress = 0
-    trackProgressCurrent.text = getString(R.string.playback_progress, 0, 0)
+    binding.mainTrackProgressSeeker.progress = 0
+    binding.mainTrackProgressCurrent.text = getString(R.string.playback_progress, 0, 0)
   }
 
   override fun updateTrackInfo(info: TrackInfo) {
-    artistLabel.text = info.artist
-    titleLabel.text = info.title
-    albumLabel.text = if (TextUtils.isEmpty(info.year)) info.album
+    binding.mainArtistLabel.text = info.artist
+    binding.mainTitleLabel.text = info.title
+    binding.mainLabelAlbum.text = if (TextUtils.isEmpty(info.year)) info.album
     else String.format("%s [%s]", info.album, info.year)
 
     if (mShareActionProvider != null) {
@@ -383,15 +355,19 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     val finalTotalSeconds = totalSeconds
     val finalCurrentSeconds = currentSeconds
 
-    trackDuration.text = getString(R.string.playback_progress, totalMinutes, finalTotalSeconds)
-    trackProgressCurrent.text = getString(
+    binding.mainTrackDurationTotal.text = getString(
+      R.string.playback_progress,
+      totalMinutes,
+      finalTotalSeconds
+    )
+    binding.mainTrackProgressCurrent.text = getString(
       R.string.playback_progress,
       currentMinutes,
       finalCurrentSeconds
     )
 
-    progressBar.max = total.toInt()
-    progressBar.progress = current.toInt()
+    binding.mainTrackProgressSeeker.max = total.toInt()
+    binding.mainTrackProgressSeeker.progress = current.toInt()
 
     trackProgressAnimation(current, total)
   }
@@ -422,12 +398,13 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   }
 
   override fun progress(position: Long, duration: Long) {
+    val progressBar = binding.mainTrackProgressSeeker
     val currentProgress = progressBar.progress / 1000
     val currentMinutes = currentProgress / 60
     val currentSeconds = currentProgress % 60
 
     progressBar.progress = progressBar.progress + 1000
-    trackProgressCurrent.text = getString(
+    binding.mainTrackProgressCurrent.text = getString(
       R.string.playback_progress,
       currentMinutes,
       currentSeconds

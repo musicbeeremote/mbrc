@@ -3,11 +3,10 @@ package com.kelsos.mbrc
 import android.os.Bundle
 import android.view.View
 import android.view.Window
-import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import com.kelsos.mbrc.databinding.ActivityUpdateRequiredBinding
 
 class UpdateRequiredActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,11 +23,12 @@ class UpdateRequiredActivity : AppCompatActivity() {
       duration = 250L
     }
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_update_required)
+    val binding = ActivityUpdateRequiredBinding.inflate(layoutInflater)
+    setContentView(binding.root)
     val version = intent.getStringExtra(VERSION)
     val text = getString(R.string.plugin_update__description, version)
-    findViewById<TextView>(R.id.main_update_text).text = text
-    findViewById<Button>(R.id.main_update_ok).setOnClickListener {
+    binding.mainUpdateText.text = text
+    binding.mainUpdateOk.setOnClickListener {
       finish()
     }
   }

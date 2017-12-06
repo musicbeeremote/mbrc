@@ -2,20 +2,15 @@ package com.kelsos.mbrc.ui.navigation.radio
 
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.radios.RadioStation
+import com.kelsos.mbrc.databinding.ActivityRadioBinding
+import com.kelsos.mbrc.databinding.ListEmptyViewBinding
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.radio.RadioAdapter.OnRadioPressedListener
-import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
-import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
 import toothpick.Toothpick
@@ -28,16 +23,6 @@ class RadioActivity :
   SwipeRefreshLayout.OnRefreshListener,
   OnRadioPressedListener {
 
-  private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
-
-  @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
-  @BindView(R.id.radio_list) lateinit var radioView: EmptyRecyclerView
-  @BindView(R.id.empty_view) lateinit var emptyView: View
-  @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
-  @BindView(R.id.list_empty_icon) lateinit var emptyViewIcon: ImageView
-  @BindView(R.id.list_empty_subtitle) lateinit var emptyViewSubTitle: TextView
-  @BindView(R.id.empty_view_progress_bar) lateinit var emptyViewProgress: ProgressBar
-
   @Inject lateinit var presenter: RadioPresenter
   @Inject lateinit var adapter: RadioAdapter
 
@@ -46,23 +31,27 @@ class RadioActivity :
   }
 
   private lateinit var scope: Scope
+  private lateinit var binding: ActivityRadioBinding
+  private lateinit var emptyBinding: ListEmptyViewBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     Toothpick.openScope(PRESENTER_SCOPE).installModules(RadioModule())
     scope = Toothpick.openScopes(application, PRESENTER_SCOPE, this)
     scope.installModules(SmoothieActivityModule(this))
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_radio)
+    binding = ActivityRadioBinding.inflate(layoutInflater)
+    emptyBinding = ListEmptyViewBinding.bind(binding.root)
+    setContentView(binding.root)
     Toothpick.inject(this, scope)
-    ButterKnife.bind(this)
+
     super.setup()
-    swipeLayout.setOnRefreshListener(this)
-    swipeLayout.setSwipeableChildren(R.id.radio_list, R.id.empty_view)
-    emptyViewTitle.setText(R.string.radio__no_radio_stations)
-    emptyViewIcon.setImageResource(R.drawable.ic_radio_black_80dp)
-    radioView.adapter = adapter
-    radioView.emptyView = emptyView
-    radioView.layoutManager = LinearLayoutManager(this)
+    binding.swipeLayout.setOnRefreshListener(this)
+    binding.swipeLayout.setSwipeableChildren(R.id.radio_list, R.id.empty_view)
+    emptyBinding.listEmptyTitle.setText(R.string.radio__no_radio_stations)
+    emptyBinding.listEmptyIcon.setImageResource(R.drawable.ic_radio_black_80dp)
+    binding.radioList.adapter = adapter
+    binding.radioList.emptyView = emptyBinding.emptyView
+    binding.radioList.layoutManager = LinearLayoutManager(this)
   }
 
   override fun onStart() {
@@ -91,7 +80,7 @@ class RadioActivity :
   }
 
   override fun error(error: Throwable) {
-    Snackbar.make(radioView, R.string.radio__loading_failed, Snackbar.LENGTH_SHORT).show()
+    Snackbar.make(binding.radioList, R.string.radio__loading_failed, Snackbar.LENGTH_SHORT).show()
   }
 
   override fun onRadioPressed(path: String) {
@@ -103,29 +92,33 @@ class RadioActivity :
   }
 
   override fun radioPlayFailed() {
-    Snackbar.make(radioView, R.string.radio__play_failed, Snackbar.LENGTH_SHORT).show()
+    Snackbar.make(binding.radioList, R.string.radio__play_failed, Snackbar.LENGTH_SHORT).show()
   }
 
   override fun radioPlaySuccessful() {
-    Snackbar.make(radioView, R.string.radio__play_successful, Snackbar.LENGTH_SHORT).show()
+    Snackbar.make(binding.radioList, R.string.radio__play_successful, Snackbar.LENGTH_SHORT).show()
   }
 
   override fun showLoading() {
-    emptyViewProgress.visibility = View.VISIBLE
-    emptyViewIcon.visibility = View.GONE
-    emptyViewTitle.visibility = View.GONE
-    emptyViewSubTitle.visibility = View.GONE
+    emptyBinding.emptyViewProgressBar.visibility = View.VISIBLE
+    emptyBinding.listEmptyIcon.visibility = View.GONE
+    emptyBinding.listEmptyTitle.visibility = View.GONE
+    emptyBinding.listEmptySubtitle.visibility = View.GONE
   }
 
   override fun hideLoading() {
-    emptyViewProgress.visibility = View.GONE
-    emptyViewIcon.visibility = View.VISIBLE
-    emptyViewTitle.visibility = View.VISIBLE
-    emptyViewSubTitle.visibility = View.VISIBLE
-    swipeLayout.isRefreshing = false
+    emptyBinding.emptyViewProgressBar.visibility = View.GONE
+    emptyBinding.listEmptyIcon.visibility = View.VISIBLE
+    emptyBinding.listEmptyTitle.visibility = View.VISIBLE
+    emptyBinding.listEmptySubtitle.visibility = View.VISIBLE
+    binding.swipeLayout.isRefreshing = false
   }
 
   @javax.inject.Scope
   @Retention(AnnotationRetention.RUNTIME)
   annotation class Presenter
+
+  companion object {
+    private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
+  }
 }

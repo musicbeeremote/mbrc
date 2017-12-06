@@ -16,7 +16,6 @@ import androidx.core.app.TaskStackBuilder
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import butterknife.BindView
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -50,16 +49,11 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
   @Inject
   lateinit var serviceChecker: ServiceChecker
 
-  @Inject lateinit var volumeInteractor: VolumeInteractor
+  @Inject
+  lateinit var volumeInteractor: VolumeInteractor
 
-  @BindView(R.id.toolbar)
-  lateinit var toolbar: MaterialToolbar
-
-  @BindView(R.id.drawer_layout)
-  lateinit var drawer: DrawerLayout
-
-  @BindView(R.id.nav_view)
-  lateinit var navigationView: NavigationView
+  private lateinit var drawer: DrawerLayout
+  protected lateinit var navigationView: NavigationView
 
   private var connectText: TextView? = null
   private var toggle: ActionBarDrawerToggle? = null
@@ -222,14 +216,22 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
   }
 
   /**
-   * Should be called after injections and Butterknife bindings.
+   * Should be called after injections and
    */
   fun setup() {
     Timber.v("Initializing base activity")
+    val toolbar: MaterialToolbar = findViewById(R.id.toolbar)
+    drawer = findViewById(R.id.drawer_layout)
+    navigationView = findViewById(R.id.nav_view)
     setSupportActionBar(toolbar)
 
-    toggle =
-      ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close)
+    toggle = ActionBarDrawerToggle(
+      this,
+      drawer,
+      toolbar,
+      R.string.drawer_open,
+      R.string.drawer_close
+    )
     drawer.addDrawerListener(toggle!!)
     drawer.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
     toggle!!.syncState()

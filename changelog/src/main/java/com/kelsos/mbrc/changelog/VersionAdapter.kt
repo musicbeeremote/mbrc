@@ -1,19 +1,23 @@
 package com.kelsos.mbrc.changelog
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
 import androidx.recyclerview.widget.RecyclerView
+import com.kelsos.mbrc.changelog.databinding.ChangelogDialogEntryBinding
+import com.kelsos.mbrc.changelog.databinding.ChangelogDialogHeaderBinding
 
-class VersionAdapter(private val changeLog: List<ChangeLogEntry>) :
-  RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class VersionAdapter(
+  private val changeLog: List<ChangeLogEntry>
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-  class VersionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val version: TextView = itemView.findViewById(R.id.changelog_version__version)
-    private val release: TextView = itemView.findViewById(R.id.changelog_version__release)
+  class VersionViewHolder(
+    binding: ChangelogDialogHeaderBinding
+  ) : RecyclerView.ViewHolder(binding.root) {
+    private val version: TextView = binding.changelogVersionVersion
+    private val release: TextView = binding.changelogVersionRelease
 
     fun bind(version: ChangeLogEntry.Version) {
       this.version.text = version.version
@@ -22,16 +26,17 @@ class VersionAdapter(private val changeLog: List<ChangeLogEntry>) :
 
     companion object {
       fun from(parent: ViewGroup): VersionViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val itemView = inflater.inflate(R.layout.changelog_dialog__header, parent, false)
-        return VersionViewHolder(itemView)
+        val binding = ChangelogDialogHeaderBinding.inflate(LayoutInflater.from(parent.context))
+        return VersionViewHolder(binding)
       }
     }
   }
 
-  class EntryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val text: TextView = itemView.findViewById(R.id.changelog_entry__text)
-    private val type: TextView = itemView.findViewById(R.id.changelog_entry__type)
+  class EntryViewHolder(
+    binding: ChangelogDialogEntryBinding
+  ) : RecyclerView.ViewHolder(binding.root) {
+    private val text: TextView = binding.changelogEntryText
+    private val type: TextView = binding.changelogEntryType
 
     fun bind(entry: ChangeLogEntry.Entry) {
       val typeResId = when (entry.type) {
@@ -45,9 +50,8 @@ class VersionAdapter(private val changeLog: List<ChangeLogEntry>) :
 
     companion object {
       fun from(parent: ViewGroup): EntryViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val itemView = inflater.inflate(R.layout.changelog_dialog__entry, parent, false)
-        return EntryViewHolder(itemView)
+        val binding = ChangelogDialogEntryBinding.inflate(LayoutInflater.from(parent.context))
+        return EntryViewHolder(binding)
       }
     }
   }

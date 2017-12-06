@@ -4,26 +4,21 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.content.now_playing.NowPlaying
+import com.kelsos.mbrc.databinding.ActivityNowplayingBinding
+import com.kelsos.mbrc.databinding.ListEmptyViewBinding
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper
 import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingAdapter.NowPlayingListener
-import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
-import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
 import toothpick.Toothpick
@@ -37,16 +32,14 @@ class NowPlayingActivity :
   OnStartDragListener,
   NowPlayingListener {
 
-  @BindView(R.id.now_playing_list) lateinit var nowPlayingList: EmptyRecyclerView
-  @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: MultiSwipeRefreshLayout
-  @BindView(R.id.empty_view) lateinit var emptyView: View
-  @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
-  @BindView(R.id.list_empty_icon) lateinit var emptyViewIcon: ImageView
-  @BindView(R.id.list_empty_subtitle) lateinit var emptyViewSubTitle: TextView
-  @BindView(R.id.empty_view_progress_bar) lateinit var emptyViewProgress: ProgressBar
-  @Inject lateinit var adapter: NowPlayingAdapter
+  private lateinit var binding: ActivityNowplayingBinding
+  private lateinit var emptyBinding: ListEmptyViewBinding
 
-  @Inject lateinit var presenter: NowPlayingPresenter
+  @Inject
+  lateinit var adapter: NowPlayingAdapter
+
+  @Inject
+  lateinit var presenter: NowPlayingPresenter
   private var searchView: SearchView? = null
   private var searchMenuItem: MenuItem? = null
   private lateinit var scope: Scope
@@ -91,33 +84,36 @@ class NowPlayingActivity :
     scope = Toothpick.openScopes(application, this)
     scope.installModules(SmoothieActivityModule(this), NowPlayingModule.create())
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_nowplaying)
-    ButterKnife.bind(this)
+    binding = ActivityNowplayingBinding.inflate(layoutInflater)
+    emptyBinding = ListEmptyViewBinding.bind(binding.root)
+    setContentView(binding.root)
+
     Toothpick.inject(this, scope)
     super.setup()
-    swipeRefreshLayout.setSwipeableChildren(R.id.now_playing_list, R.id.empty_view)
-    nowPlayingList.emptyView = emptyView
+
+    binding.swipeLayout.setSwipeableChildren(R.id.now_playing_list, R.id.empty_view)
+    binding.nowPlayingList.emptyView = emptyBinding.emptyView
     val manager = LinearLayoutManager(this)
-    nowPlayingList.layoutManager = manager
-    nowPlayingList.adapter = adapter
-    nowPlayingList.itemAnimator?.changeDuration = 0
+    binding.nowPlayingList.layoutManager = manager
+    binding.nowPlayingList.adapter = adapter
+    binding.nowPlayingList.itemAnimator?.changeDuration = 0
     touchListener = NowPlayingTouchListener(this) {
       if (it) {
-        swipeRefreshLayout.clearSwipeableChildren()
-        swipeRefreshLayout.isRefreshing = false
-        swipeRefreshLayout.isEnabled = false
-        swipeRefreshLayout.cancelPendingInputEvents()
+        binding.swipeLayout.clearSwipeableChildren()
+        binding.swipeLayout.isRefreshing = false
+        binding.swipeLayout.isEnabled = false
+        binding.swipeLayout.cancelPendingInputEvents()
       } else {
-        swipeRefreshLayout.setSwipeableChildren(R.id.now_playing_list, R.id.empty_view)
-        swipeRefreshLayout.isEnabled = true
+        binding.swipeLayout.setSwipeableChildren(R.id.now_playing_list, R.id.empty_view)
+        binding.swipeLayout.isEnabled = true
       }
     }
-    nowPlayingList.addOnItemTouchListener(touchListener)
+    binding.nowPlayingList.addOnItemTouchListener(touchListener)
     val callback = SimpleItemTouchHelper(adapter)
     itemTouchHelper = ItemTouchHelper(callback)
-    itemTouchHelper!!.attachToRecyclerView(nowPlayingList)
+    itemTouchHelper!!.attachToRecyclerView(binding.nowPlayingList)
     adapter.setListener(this)
-    swipeRefreshLayout.setOnRefreshListener { this.refresh() }
+    binding.swipeLayout.setOnRefreshListener { this.refresh() }
     presenter.attach(this)
     presenter.load()
   }
@@ -128,8 +124,8 @@ class NowPlayingActivity :
   }
 
   override fun loading() {
-    if (!swipeRefreshLayout.isRefreshing) {
-      swipeRefreshLayout.isRefreshing = true
+    if (!binding.swipeLayout.isRefreshing) {
+      binding.swipeLayout.isRefreshing = true
     }
   }
 
@@ -166,7 +162,7 @@ class NowPlayingActivity :
 
   override fun update(cursor: FlowCursorList<NowPlaying>) {
     adapter.update(cursor)
-    swipeRefreshLayout.isRefreshing = false
+    binding.swipeLayout.isRefreshing = false
   }
 
   override fun reload() {
@@ -176,28 +172,28 @@ class NowPlayingActivity :
   override fun trackChanged(trackInfo: TrackInfo, scrollToTrack: Boolean) {
     adapter.setPlayingTrack(trackInfo.path)
     if (scrollToTrack) {
-      nowPlayingList.scrollToPosition(adapter.getPlayingTrackIndex())
+      binding.nowPlayingList.scrollToPosition(adapter.getPlayingTrackIndex())
     }
   }
 
   override fun failure(throwable: Throwable) {
-    swipeRefreshLayout.isRefreshing = false
-    Snackbar.make(nowPlayingList, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
+    binding.swipeLayout.isRefreshing = false
+    Snackbar.make(binding.nowPlayingList, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
   }
 
   override fun showLoading() {
-    emptyViewProgress.visibility = View.VISIBLE
-    emptyViewIcon.visibility = View.GONE
-    emptyViewTitle.visibility = View.GONE
-    emptyViewSubTitle.visibility = View.GONE
+    emptyBinding.emptyViewProgressBar.visibility = View.VISIBLE
+    emptyBinding.listEmptyIcon.visibility = View.GONE
+    emptyBinding.listEmptyTitle.visibility = View.GONE
+    emptyBinding.listEmptySubtitle.visibility = View.GONE
   }
 
   override fun hideLoading() {
-    emptyViewProgress.visibility = View.GONE
-    emptyViewIcon.visibility = View.VISIBLE
-    emptyViewTitle.visibility = View.VISIBLE
-    emptyViewSubTitle.visibility = View.VISIBLE
-    swipeRefreshLayout.isRefreshing = false
+    emptyBinding.emptyViewProgressBar.visibility = View.GONE
+    emptyBinding.listEmptyIcon.visibility = View.VISIBLE
+    emptyBinding.listEmptyTitle.visibility = View.VISIBLE
+    emptyBinding.listEmptySubtitle.visibility = View.VISIBLE
+    binding.swipeLayout.isRefreshing = false
   }
 
   override fun onBackPressed() {

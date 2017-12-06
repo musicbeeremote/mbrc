@@ -8,13 +8,14 @@ import android.widget.EditText
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.databinding.UiDialogSettingsBinding
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
 
 class SettingsDialogFragment : DialogFragment() {
 
-  lateinit var hostEdit: EditText
-  lateinit var nameEdit: EditText
-  lateinit var portEdit: EditText
+  private lateinit var hostEdit: EditText
+  private lateinit var nameEdit: EditText
+  private lateinit var portEdit: EditText
 
   private var mListener: SettingsSaveListener? = null
   private lateinit var settings: ConnectionSettings
@@ -34,9 +35,10 @@ class SettingsDialogFragment : DialogFragment() {
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    val binding = UiDialogSettingsBinding.inflate(layoutInflater)
     val resId = if (edit) R.string.settings_dialog_save else R.string.settings_dialog_add
     val dialog = MaterialAlertDialogBuilder(requireActivity())
-      .setView(R.layout.ui_dialog_settings)
+      .setView(binding.root)
       .setTitle(if (edit) R.string.settings_dialog_edit else R.string.settings_dialog_add)
       .setPositiveButton(resId) { dialog, _ ->
         var shouldIClose = true
@@ -60,9 +62,9 @@ class SettingsDialogFragment : DialogFragment() {
       }.setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.dismiss() }
       .show()
 
-    hostEdit = dialog.findViewById(R.id.settings_dialog_host) ?: error("not found")
-    nameEdit = dialog.findViewById(R.id.settings_dialog_name) ?: error("not found")
-    portEdit = dialog.findViewById(R.id.settings_dialog_port) ?: error("not found")
+    hostEdit = binding.settingsDialogHost
+    nameEdit = binding.settingsDialogName
+    portEdit = binding.settingsDialogPort
     return dialog
   }
 

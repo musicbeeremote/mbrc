@@ -6,18 +6,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.app.TaskStackBuilder
 import androidx.fragment.app.Fragment
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.active_status.PlayerState
 import com.kelsos.mbrc.content.active_status.PlayerState.State
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
+import com.kelsos.mbrc.databinding.UiFragmentMiniControlBinding
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.ui.navigation.main.MainActivity
 import com.squareup.picasso.Picasso
@@ -27,34 +22,24 @@ import javax.inject.Inject
 
 class MiniControlFragment : Fragment(), MiniControlView {
 
-  @BindView(R.id.mc_track_cover) lateinit var trackCover: ImageView
-  @BindView(R.id.mc_track_artist) lateinit var trackArtist: TextView
-  @BindView(R.id.mc_track_title) lateinit var trackTitle: TextView
-  @BindView(R.id.mc_play_pause) lateinit var playPause: ImageButton
+  private var _binding: UiFragmentMiniControlBinding? = null
+  private val binding get() = _binding!!
 
   @Inject
   lateinit var presenter: MiniControlPresenter
 
-  @OnClick(R.id.mini_control)
-  internal fun onControlClick() {
+  private fun onControlClick() {
     val builder = TaskStackBuilder.create(requireContext())
     builder.addNextIntentWithParentStack(Intent(context, MainActivity::class.java))
     builder.startActivities()
   }
 
-  @OnClick(R.id.mc_next_track)
-  internal fun onNextClick() {
-    presenter.next()
-  }
-
-  @OnClick(R.id.mc_play_pause)
-  internal fun onPlayClick() {
-    presenter.playPause()
-  }
-
-  @OnClick(R.id.mc_prev_track)
-  internal fun onPreviousClick() {
-    presenter.previous()
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    binding.miniControl.setOnClickListener { onControlClick() }
+    binding.mcNextTrack.setOnClickListener { presenter.next() }
+    binding.mcPlayPause.setOnClickListener { presenter.playPause() }
+    binding.mcPrevTrack.setOnClickListener { presenter.previous() }
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,10 +53,9 @@ class MiniControlFragment : Fragment(), MiniControlView {
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
-  ): View? {
-    val view = inflater.inflate(R.layout.ui_fragment_mini_control, container, false)
-    ButterKnife.bind(this, view)
-    return view
+  ): View {
+    _binding = UiFragmentMiniControlBinding.inflate(inflater)
+    return binding.root
   }
 
   override fun onStart() {
@@ -96,21 +80,21 @@ class MiniControlFragment : Fragment(), MiniControlView {
         .config(Bitmap.Config.RGB_565)
         .resize(dimens, dimens)
         .centerCrop()
-        .into(trackCover)
+        .into(binding.mcTrackCover)
     } else {
-      trackCover.setImageResource(R.drawable.ic_image_no_cover)
+      binding.mcTrackCover.setImageResource(R.drawable.ic_image_no_cover)
     }
   }
 
   override fun updateTrackInfo(trackInfo: TrackInfo) {
-    trackArtist.text = trackInfo.artist
-    trackTitle.text = trackInfo.title
+    binding.mcTrackArtist.text = trackInfo.artist
+    binding.mcTrackTitle.text = trackInfo.title
   }
 
   override fun updateState(@State state: String) {
     when (state) {
-      PlayerState.PLAYING -> playPause.setImageResource(R.drawable.ic_action_pause)
-      else -> playPause.setImageResource(R.drawable.ic_action_play)
+      PlayerState.PLAYING -> binding.mcPlayPause.setImageResource(R.drawable.ic_action_pause)
+      else -> binding.mcPlayPause.setImageResource(R.drawable.ic_action_play)
     }
   }
 

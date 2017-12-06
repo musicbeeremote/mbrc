@@ -10,10 +10,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.now_playing.NowPlaying
+import com.kelsos.mbrc.databinding.UiListTrackItemBinding
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.TouchHelperViewHolder
@@ -172,23 +171,19 @@ class NowPlayingAdapter
 
   class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView), TouchHelperViewHolder {
 
-    @BindView(R.id.track_title)
-    lateinit var title: TextView
-
-    @BindView(R.id.track_artist)
-    lateinit var artist: TextView
-
-    @BindView(R.id.track_indicator_view)
-    lateinit var trackPlaying: ImageView
-
-    @BindView(R.id.track_container)
-    lateinit var container: ConstraintLayout
-
-    @BindView(R.id.drag_handle)
-    lateinit var dragHandle: View
+    val title: TextView
+    val artist: TextView
+    val trackPlaying: ImageView
+    val container: ConstraintLayout
+    val dragHandle: View
 
     init {
-      ButterKnife.bind(this, itemView)
+      val binding = UiListTrackItemBinding.bind(itemView)
+      title = binding.trackTitle
+      artist = binding.trackArtist
+      trackPlaying = binding.trackIndicatorView
+      container = binding.trackContainer
+      dragHandle = binding.dragHandle
     }
 
     override fun onItemSelected() {

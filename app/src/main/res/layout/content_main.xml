@@ -7,7 +7,7 @@
   android:orientation="vertical"
   app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-  <ImageButton
+  <com.kelsos.mbrc.ui.widgets.SquareImageButton
     android:id="@+id/main_mute_button"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -18,7 +18,7 @@
     android:contentDescription="@string/main_button_mute_description"
     android:padding="@dimen/small_margin"
     android:src="@drawable/ic_volume_off_black_24dp"
-    android:tint="@color/button_dark"
+    app:tint="@color/button_dark"
     app:layout_constraintBottom_toTopOf="@+id/main_repeat_button"
     app:layout_constraintLeft_toLeftOf="parent"
     tools:ignore="RtlHardcoded,RtlSymmetry" />

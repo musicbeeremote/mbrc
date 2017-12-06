@@ -7,51 +7,46 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.kelsos.mbrc.BuildConfig.APPLICATION_ID
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.databinding.FragmentFeedbackBinding
 import com.kelsos.mbrc.logging.LogHelper
 import com.kelsos.mbrc.utilities.RemoteUtils.getVersion
 import java.io.File
 
 class FeedbackFragment : Fragment() {
 
-  @BindView(R.id.feedback_content) lateinit var feedbackEditText: EditText
-  @BindView(R.id.include_device_info) lateinit var deviceInfo: CheckBox
-  @BindView(R.id.include_log_info) lateinit var logInfo: CheckBox
-  @BindView(R.id.feedback_button) lateinit var feedbackButton: Button
+  private var _binding: FragmentFeedbackBinding? = null
+  private val binding get() = _binding!!
 
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
-  ): View? {
-    val view = inflater.inflate(R.layout.fragment_feedback, container, false)
-    ButterKnife.bind(this, view)
-
-    LogHelper.logsExist(requireContext()) { exists ->
-      logInfo.isEnabled = exists
-    }
-    return view
+  ): View {
+    _binding = FragmentFeedbackBinding.inflate(layoutInflater)
+    return binding.root
   }
 
-  @OnClick(R.id.feedback_button)
-  internal fun onFeedbackButtonClicked() {
-    var feedbackText = feedbackEditText.text.toString().trim { it <= ' ' }
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    LogHelper.logsExist(requireContext()) { exists ->
+      binding.includeLogInfo.isEnabled = exists
+    }
+    binding.feedbackButton.setOnClickListener { onFeedbackButtonClicked() }
+  }
+
+  private fun onFeedbackButtonClicked() {
+    var feedbackText = binding.feedbackContent.text.toString().trim { it <= ' ' }
     if (TextUtils.isEmpty(feedbackText)) {
       return
     }
 
-    feedbackButton.isEnabled = false
+    binding.feedbackButton.isEnabled = false
 
-    if (deviceInfo.isChecked) {
+    if (binding.includeDeviceInfo.isChecked) {
       val device = Build.DEVICE
       val manufacturer = Build.MANUFACTURER
       val appVersion = requireContext().getVersion()
@@ -66,7 +61,7 @@ class FeedbackFragment : Fragment() {
       )
     }
 
-    if (!logInfo.isChecked) {
+    if (!binding.includeLogInfo.isChecked) {
       openChooser(feedbackText)
       return
     }
@@ -88,7 +83,7 @@ class FeedbackFragment : Fragment() {
       emailIntent.putExtra(Intent.EXTRA_STREAM, logsUri)
     }
 
-    feedbackButton.isEnabled = true
+    binding.feedbackButton.isEnabled = true
 
     startActivity(Intent.createChooser(emailIntent, getString(R.string.feedback_chooser_title)))
   }
