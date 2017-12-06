@@ -76,7 +76,7 @@ class LibraryActivity :
     setContentView(binding.root)
 
     super.setup()
-    val tabs: TabLayout = findViewById(R.id.pager_tab_strip)
+    val tabs: TabLayout = binding.pagerTabStrip
     val pager = binding.searchPager
     pagerAdapter = LibraryPagerAdapter(this)
     pager.apply {

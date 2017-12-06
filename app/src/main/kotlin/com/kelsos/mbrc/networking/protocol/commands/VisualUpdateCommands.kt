@@ -3,7 +3,7 @@ package com.kelsos.mbrc.networking.protocol.commands
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.treeToValue
-import com.kelsos.mbrc.content.active_status.MainDataModel
+import com.kelsos.mbrc.content.activestatus.MainDataModel
 import com.kelsos.mbrc.events.TrackMovedEvent
 import com.kelsos.mbrc.events.TrackRemovalEvent
 import com.kelsos.mbrc.events.UpdatePositionEvent

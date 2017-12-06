@@ -21,7 +21,7 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.logging.FileLoggingTree
 import com.kelsos.mbrc.platform.RemoteService
-import com.kelsos.mbrc.ui.connection_manager.ConnectionManagerActivity
+import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerActivity
 import com.kelsos.mbrc.ui.dialogs.WebViewDialog
 import com.kelsos.mbrc.utilities.RemoteUtils.getVersion
 import timber.log.Timber

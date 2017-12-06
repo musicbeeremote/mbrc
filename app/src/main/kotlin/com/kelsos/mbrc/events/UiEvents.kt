@@ -2,8 +2,8 @@ package com.kelsos.mbrc.events
 
 import androidx.annotation.StringDef
 import androidx.annotation.StringRes
-import com.kelsos.mbrc.content.active_status.PlayerState
-import com.kelsos.mbrc.content.active_status.Repeat
+import com.kelsos.mbrc.content.activestatus.PlayerState
+import com.kelsos.mbrc.content.activestatus.Repeat
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.networking.DiscoveryStop.Reason
 import com.kelsos.mbrc.networking.connections.Connection

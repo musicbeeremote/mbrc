@@ -3,8 +3,8 @@ package com.kelsos.mbrc.di.modules
 import androidx.core.app.NotificationManagerCompat
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.kelsos.mbrc.content.active_status.ModelCache
-import com.kelsos.mbrc.content.active_status.ModelCacheImpl
+import com.kelsos.mbrc.content.activestatus.ModelCache
+import com.kelsos.mbrc.content.activestatus.ModelCacheImpl
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.library.albums.AlbumRepositoryImpl
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
@@ -15,8 +15,8 @@ import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.content.library.genres.GenreRepositoryImpl
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.library.tracks.TrackRepositoryImpl
-import com.kelsos.mbrc.content.now_playing.NowPlayingRepository
-import com.kelsos.mbrc.content.now_playing.NowPlayingRepositoryImpl
+import com.kelsos.mbrc.content.nowplaying.NowPlayingRepository
+import com.kelsos.mbrc.content.nowplaying.NowPlayingRepositoryImpl
 import com.kelsos.mbrc.content.output.OutputApi
 import com.kelsos.mbrc.content.output.OutputApiImpl
 import com.kelsos.mbrc.content.playlists.PlaylistRepository

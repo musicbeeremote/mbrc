@@ -11,11 +11,11 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.RemoteServiceCore
-import com.kelsos.mbrc.platform.media_session.RemoteViewIntentBuilder
-import com.kelsos.mbrc.platform.media_session.RemoteViewIntentBuilder.getPendingIntent
-import com.kelsos.mbrc.platform.media_session.SessionNotificationManager.Companion.CHANNEL_ID
-import com.kelsos.mbrc.platform.media_session.SessionNotificationManager.Companion.NOW_PLAYING_PLACEHOLDER
-import com.kelsos.mbrc.platform.media_session.SessionNotificationManager.Companion.channel
+import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
+import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.getPendingIntent
+import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager.Companion.CHANNEL_ID
+import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager.Companion.NOW_PLAYING_PLACEHOLDER
+import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager.Companion.channel
 import timber.log.Timber
 import toothpick.Scope
 import toothpick.Toothpick

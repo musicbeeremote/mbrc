@@ -8,10 +8,10 @@ import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.library.albums.AlbumMapper
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.library.genres.Genre
-import com.kelsos.mbrc.content.now_playing.queue.Queue
-import com.kelsos.mbrc.ui.navigation.library.album_tracks.AlbumTracksActivity
-import com.kelsos.mbrc.ui.navigation.library.artist_albums.ArtistAlbumsActivity
-import com.kelsos.mbrc.ui.navigation.library.genre_artists.GenreArtistsActivity
+import com.kelsos.mbrc.content.nowplaying.queue.Queue
+import com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksActivity
+import com.kelsos.mbrc.ui.navigation.library.artistalbums.ArtistAlbumsActivity
+import com.kelsos.mbrc.ui.navigation.library.genreartists.GenreArtistsActivity
 import javax.inject.Inject
 import javax.inject.Singleton
 

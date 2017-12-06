@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
-import com.kelsos.mbrc.content.now_playing.queue.Queue
+import com.kelsos.mbrc.content.nowplaying.queue.Queue
 import com.kelsos.mbrc.databinding.FragmentBrowseBinding
 import com.kelsos.mbrc.databinding.ListEmptyViewButtonBinding
 import com.kelsos.mbrc.ui.navigation.library.LibraryActivity.Companion.LIBRARY_SCOPE

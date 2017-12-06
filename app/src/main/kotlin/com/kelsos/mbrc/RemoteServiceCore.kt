@@ -12,7 +12,7 @@ import com.kelsos.mbrc.networking.StartServiceDiscoveryEvent
 import com.kelsos.mbrc.networking.protocol.CommandExecutor
 import com.kelsos.mbrc.networking.protocol.CommandRegistration
 import com.kelsos.mbrc.networking.protocol.ProtocolHandler
-import com.kelsos.mbrc.platform.media_session.SessionNotificationManager
+import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
 import timber.log.Timber
 import toothpick.Scope
 import java.util.concurrent.ExecutorService

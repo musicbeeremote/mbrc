@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.networking.protocol
 
-import com.kelsos.mbrc.content.active_status.MainDataModel
+import com.kelsos.mbrc.content.activestatus.MainDataModel
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.networking.SendProtocolMessage
 import com.kelsos.mbrc.networking.SocketMessage

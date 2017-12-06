@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
-import com.kelsos.mbrc.content.now_playing.NowPlaying
+import com.kelsos.mbrc.content.nowplaying.NowPlaying
 import com.kelsos.mbrc.databinding.ActivityNowplayingBinding
 import com.kelsos.mbrc.databinding.ListEmptyViewBinding
 import com.kelsos.mbrc.ui.activities.BaseNavigationActivity

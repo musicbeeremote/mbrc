@@ -11,7 +11,7 @@ import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.VolumeInteractor
-import com.kelsos.mbrc.platform.media_session.RemoteViewIntentBuilder
+import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
 import com.kelsos.mbrc.preferences.SettingsManager
 import timber.log.Timber
 import javax.inject.Inject

@@ -3,7 +3,7 @@ package com.kelsos.mbrc.platform.widgets
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import com.kelsos.mbrc.content.active_status.PlayerState.State
+import com.kelsos.mbrc.content.activestatus.PlayerState.State
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
 
 object UpdateWidgets {

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.main
 
-import com.kelsos.mbrc.content.active_status.MainDataModel
+import com.kelsos.mbrc.content.activestatus.MainDataModel
 import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.CoverChangedEvent
 import com.kelsos.mbrc.events.LfmRatingChanged

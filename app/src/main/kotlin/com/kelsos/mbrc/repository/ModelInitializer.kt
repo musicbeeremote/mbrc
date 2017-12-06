@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.repository
 
-import com.kelsos.mbrc.content.active_status.MainDataModel
-import com.kelsos.mbrc.content.active_status.ModelCache
+import com.kelsos.mbrc.content.activestatus.MainDataModel
+import com.kelsos.mbrc.content.activestatus.ModelCache
 import com.kelsos.mbrc.content.library.tracks.isEmpty
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import kotlinx.coroutines.withContext

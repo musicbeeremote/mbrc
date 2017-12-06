@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
-import com.kelsos.mbrc.content.active_status.MainDataModel
-import com.kelsos.mbrc.content.now_playing.NowPlayingRepository
+import com.kelsos.mbrc.content.activestatus.MainDataModel
+import com.kelsos.mbrc.content.nowplaying.NowPlayingRepository
 import com.kelsos.mbrc.events.TrackInfoChangeEvent
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.bus.RxBus

@@ -4,7 +4,7 @@ import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.library.genres.Genre
 import com.kelsos.mbrc.content.library.tracks.Track
-import com.kelsos.mbrc.content.now_playing.NowPlaying
+import com.kelsos.mbrc.content.nowplaying.NowPlaying
 import com.kelsos.mbrc.content.playlists.Playlist
 import com.raizlabs.android.dbflow.annotation.Database
 import com.raizlabs.android.dbflow.annotation.Migration
