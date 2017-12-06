@@ -4,8 +4,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
 open class BasePresenter<T : BaseView> : Presenter<T> {
-  var view: T? = null
-    private set
+  private var view: T? = null
 
   private val compositeDisposable = CompositeDisposable()
 

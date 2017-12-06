@@ -19,7 +19,7 @@ class LibraryPresenterImpl
 ) : LibraryPresenter, OnCompleteListener, BasePresenter<LibraryView>() {
 
   override fun refresh() {
-    view?.showRefreshing()
+    view().showRefreshing()
     librarySyncInteractor.sync()
   }
 
@@ -37,11 +37,11 @@ class LibraryPresenterImpl
   }
 
   override fun onTermination() {
-    view?.hideRefreshing()
+    view().hideRefreshing()
   }
 
   override fun onFailure(throwable: Throwable) {
-    view?.refreshFailed()
+    view().refreshFailed()
   }
 
   override fun loadArtistPreference() {
@@ -49,7 +49,7 @@ class LibraryPresenterImpl
         .subscribeOn(ioScheduler)
         .observeOn(mainScheduler)
         .subscribe({
-          view?.updateArtistOnlyPreference(it)
+          view().updateArtistOnlyPreference(it)
         }, {
 
         })

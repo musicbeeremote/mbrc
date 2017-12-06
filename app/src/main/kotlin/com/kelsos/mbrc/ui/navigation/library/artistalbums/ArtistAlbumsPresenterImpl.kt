@@ -11,7 +11,7 @@ class ArtistAlbumsPresenterImpl
     ArtistAlbumsPresenter {
   override fun load(artist: String) {
     addDisposable(repository.getAlbumsByArtist(artist).subscribe ({
-      view?.update(it)
+      view().update(it)
     }) {
       Timber.v(it)
     })

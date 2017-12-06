@@ -32,7 +32,7 @@ class SearchResultsPresenterImpl
         .subscribeOn(ioScheduler)
         .observeOn(mainScheduler)
         .subscribe({
-          view?.update(it)
+          view().update(it)
         }) {
           Timber.v(it)
         })
