@@ -12,17 +12,19 @@ import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.networking.protocol.Protocol
+import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
 
-class RatingDialogFragment : DialogFragment() {
+class RatingDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListener {
 
   @Inject lateinit var bus: RxBus
   @Inject lateinit var model: MainDataModel
-  private lateinit var ratingBar: RatingBar
+  private val ratingBar: RatingBar by bindView(R.id.ratingBar)
   private var rating: Float = 0.toFloat()
   private var scope: Scope? = null
+  private lateinit var dialog: AlertDialog
 
   override fun onCreate(savedInstanceState: Bundle?) {
     val context = activity ?: fail("context was null")
@@ -40,6 +42,7 @@ class RatingDialogFragment : DialogFragment() {
 
   private fun handleRatingChange(event: RatingChanged) {
     rating = event.rating
+    ratingBar.rating = rating
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -48,17 +51,19 @@ class RatingDialogFragment : DialogFragment() {
     val builder = AlertDialog.Builder(activity)
     builder.setTitle(R.string.rate_the_playing_track)
     builder.setView(R.layout.ui_dialog_rating)
-
-    val dialog = builder.create()
-
-    ratingBar = dialog.findViewById(R.id.ratingBar) ?: fail("null view")
-    ratingBar.setOnRatingBarChangeListener { _, ratingValue, isUserInitiated ->
-      if (isUserInitiated) {
-        bus.post(UserAction(Protocol.NowPlayingRating, ratingValue))
-      }
-    }
-    ratingBar.rating = rating
-
+    dialog = builder.create()
     return dialog
+  }
+
+  override fun onRatingChanged(bar: RatingBar?, rating: Float, userInitiated: Boolean) {
+    if (userInitiated) {
+      bus.post(UserAction(Protocol.NowPlayingRating, rating))
+    }
+  }
+
+  override fun onStart() {
+    super.onStart()
+    ratingBar.onRatingBarChangeListener = this
+    ratingBar.rating = rating
   }
 }
