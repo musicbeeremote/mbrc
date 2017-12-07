@@ -73,6 +73,12 @@ class SortingDialog : DialogFragment() {
         .setPositiveButton(android.R.string.ok) { dialogInterface, _ -> dialogInterface.dismiss() }
         .create()
 
+    return dialog
+  }
+
+  override fun onStart() {
+    super.onStart()
+
     setOrder(order)
     sortingOption.check(sortingOption.getChildAt(sorting.toInt()).id)
     sortingOption.setOnCheckedChangeListener { radioGroup, _ ->
@@ -83,8 +89,6 @@ class SortingDialog : DialogFragment() {
     }
 
     orderButton.setOnClickListener { onOrderChanged() }
-
-    return dialog
   }
 
   fun show() {
