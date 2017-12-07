@@ -42,13 +42,18 @@ class LibrarySyncInteractorImpl
 
     val start = System.currentTimeMillis()
 
-    disposable = checkIfShouldSync(auto)
-        .andThen(genreRepository.getRemote())
-        .andThen(artistRepository.getRemote())
-        .andThen(albumRepository.getRemote())
-        .andThen(trackRepository.getRemote())
-        .andThen(playlistRepository.getRemote())
-        .subscribeOn(schedulerProvider.io())
+    disposable = checkIfShouldSync(auto).flatMapCompletable { empty ->
+      if (empty) {
+        return@flatMapCompletable genreRepository.getRemote()
+            .andThen(artistRepository.getRemote())
+            .andThen(albumRepository.getRemote())
+            .andThen(trackRepository.getRemote())
+            .andThen(playlistRepository.getRemote())
+      } else {
+        return@flatMapCompletable Completable.error(ShouldNotProceedException())
+      }
+
+    }.subscribeOn(schedulerProvider.io())
         .observeOn(schedulerProvider.main())
         .doOnTerminate {
           onCompleteListener?.onTermination()
@@ -64,17 +69,11 @@ class LibrarySyncInteractorImpl
         }
   }
 
-  private fun checkIfShouldSync(auto: Boolean): Completable {
+  private fun checkIfShouldSync(auto: Boolean): Single<Boolean> {
     if (auto) {
-      return isEmpty().flatMap {
-        if (it) {
-          return@flatMap Single.just(it)
-        } else {
-          return@flatMap Single.error<Boolean>(ShouldNotProceedException())
-        }
-      }.toCompletable()
+      return isEmpty()
     } else {
-      return Completable.complete()
+      return Single.just(true)
     }
   }
 
