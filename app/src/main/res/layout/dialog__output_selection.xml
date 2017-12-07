@@ -7,7 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:maxHeight="72dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="8dp">
 
   <ProgressBar
       android:id="@+id/output_selection__loading_outputs"
