@@ -4,18 +4,16 @@ import com.kelsos.mbrc.content.nowplaying.queue.Queue.NOW
 import com.kelsos.mbrc.content.nowplaying.queue.QueueApi
 import com.kelsos.mbrc.content.radios.RadioRepository
 import com.kelsos.mbrc.mvp.BasePresenter
-import io.reactivex.Scheduler
+import com.kelsos.mbrc.utilities.SchedulerProvider
 import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Named
 
 @RadioActivity.Presenter
 class RadioPresenterImpl
 @Inject constructor(
     private val radioRepository: RadioRepository,
     private val queueApi: QueueApi,
-    @Named("io") private val ioScheduler: Scheduler,
-    @Named("main") private val mainScheduler: Scheduler
+    private val schedulerProvider: SchedulerProvider
 ) :
     BasePresenter<RadioView>(),
     RadioPresenter {
@@ -29,7 +27,7 @@ class RadioPresenterImpl
       } else {
         return@flatMap radioRepository.getAllCursor()
       }
-    }.subscribeOn(ioScheduler).observeOn(mainScheduler).subscribe({
+    }.subscribeOn(schedulerProvider.io()).observeOn(schedulerProvider.main()).subscribe({
       view().hideLoading()
       view().update(it)
     }, {
@@ -42,8 +40,8 @@ class RadioPresenterImpl
   override fun refresh() {
     view().showLoading()
     addDisposable(radioRepository.getAndSaveRemote()
-        .subscribeOn(ioScheduler)
-        .observeOn(mainScheduler)
+        .subscribeOn(schedulerProvider.io())
+        .observeOn(schedulerProvider.main())
         .subscribe({
           view().update(it)
           view().hideLoading()
@@ -54,13 +52,13 @@ class RadioPresenterImpl
   }
 
   override fun play(path: String) {
-    queueApi.queue(NOW, listOf(path))
-        .subscribeOn(ioScheduler)
-        .observeOn(mainScheduler)
+    addDisposable(queueApi.queue(NOW, listOf(path))
+        .subscribeOn(schedulerProvider.io())
+        .observeOn(schedulerProvider.main())
         .subscribe({
           view().radioPlaySuccessful()
         }, {
           view().radioPlayFailed(it)
-        })
+        }))
   }
 }

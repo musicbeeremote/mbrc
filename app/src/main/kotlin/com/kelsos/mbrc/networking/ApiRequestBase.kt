@@ -30,13 +30,30 @@ open class ApiRequestBase(
   }
 
   private fun responses(socket: Socket): Observable<out ServiceMessage> {
-    try {
-      val `in` = InputStreamReader(socket.inputStream, "UTF-8")
-      val bufferedReader = BufferedReader(`in`)
-      return Observable.create(ProtocolResponseReader(bufferedReader, socket))
-    } catch (ex: IOException) {
-      return Observable.error<ServiceMessage>(ex)
+    return Observable.create<ServiceMessage> { emitter ->
+      try {
+        val streamReader = InputStreamReader(socket.inputStream, "UTF-8")
+        val reader = BufferedReader(streamReader)
+        while (true) {
+          val line = reader.readLine()
+          if (line.isNullOrBlank()) {
+            break
+          }
+
+          //Timber.v("incoming -> %s", line)
+          emitter.onNext(ApiRequestBase.ServiceMessage(line, socket))
+        }
+
+        emitter.onComplete()
+      } catch (ex: Exception) {
+        if (!emitter.isDisposed) {
+          emitter.onError(ex)
+        } else {
+          Timber.e(ex, "Emitter was already disposed")
+        }
+      }
     }
+
   }
 
   /**

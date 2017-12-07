@@ -17,20 +17,21 @@ import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
 import com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksActivity
 import com.kelsos.mbrc.ui.navigation.library.artistalbums.ArtistAlbumsActivity
 import com.kelsos.mbrc.ui.navigation.library.genreartists.GenreArtistsActivity
-import io.reactivex.Scheduler
+import com.kelsos.mbrc.utilities.SchedulerProvider
 import io.reactivex.Single
 import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class PopupActionHandler
 @Inject
-constructor(private val settings: DefaultActionPreferenceStore,
-            @Named("io") private val ioScheduler: Scheduler,
-            private val trackRepository: TrackRepository,
-            private val queueApi: QueueApi) {
+constructor(
+    private val settings: DefaultActionPreferenceStore,
+    private val schedulerProvider: SchedulerProvider,
+    private val trackRepository: TrackRepository,
+    private val queueApi: QueueApi
+) {
 
   fun albumSelected(menuItem: MenuItem, entry: Album, context: Context) {
 
@@ -53,7 +54,7 @@ constructor(private val settings: DefaultActionPreferenceStore,
   private fun queueAlbum(entry: Album, @QueueType type: String) {
     trackRepository.getAlbumTrackPaths(entry.album!!, entry.artist!!).flatMap {
       queueApi.queue(type, it)
-    }.subscribeOn(ioScheduler).subscribe({
+    }.subscribeOn(schedulerProvider.io()).subscribe({
 
     }) {
       Timber.v(it, "Failed to queue")
@@ -80,7 +81,7 @@ constructor(private val settings: DefaultActionPreferenceStore,
   private fun queueArtist(entry: Artist, type: String) {
     trackRepository.getArtistTrackPaths(artist = entry.artist!!).flatMap {
       queueApi.queue(type, it)
-    }.subscribeOn(ioScheduler).subscribe({
+    }.subscribeOn(schedulerProvider.io()).subscribe({
 
     }) {
       Timber.v(it, "Failed to queue")
@@ -108,7 +109,7 @@ constructor(private val settings: DefaultActionPreferenceStore,
   private fun queueGenre(entry: Genre, type: String) {
     trackRepository.getGenreTrackPaths(genre = entry.genre!!).flatMap {
       queueApi.queue(type, it)
-    }.subscribeOn(ioScheduler).subscribe({
+    }.subscribeOn(schedulerProvider.io()).subscribe({
 
     }) {
       Timber.v(it, "Failed to queue")
@@ -131,7 +132,7 @@ constructor(private val settings: DefaultActionPreferenceStore,
   private fun queueTrack(entry: Track, @QueueType type: String, album: Boolean = false) {
 
     val trackSource: Single<List<String>>
-    val path:String?
+    val path: String?
     if (type == Queue.ADD_ALL) {
       if (album) {
         trackSource = trackRepository.getAlbumTrackPaths(entry.album!!, entry.albumArtist!!)
@@ -150,7 +151,7 @@ constructor(private val settings: DefaultActionPreferenceStore,
     }
 
     trackSource.flatMap { queueApi.queue(type, it, path) }
-        .subscribeOn(ioScheduler)
+        .subscribeOn(schedulerProvider.io())
         .subscribe({ }) {
           Timber.v(it, "Failed to queue")
         }

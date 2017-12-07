@@ -5,12 +5,11 @@ import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.mvp.BasePresenter
-import io.reactivex.Scheduler
+import com.kelsos.mbrc.utilities.SchedulerProvider
 import io.reactivex.Single
 import io.reactivex.functions.Function4
 import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Named
 
 class SearchResultsPresenterImpl
 @Inject constructor(
@@ -18,8 +17,7 @@ class SearchResultsPresenterImpl
     private val artistRepository: ArtistRepository,
     private val albumRepository: AlbumRepository,
     private val trackRepository: TrackRepository,
-    @Named("io") private val ioScheduler: Scheduler,
-    @Named("main") private val mainScheduler: Scheduler
+    private val schedulerProvider: SchedulerProvider
 ) : BasePresenter<SearchResultsView>(),
     SearchResultsPresenter {
   override fun search(term: String) {
@@ -29,8 +27,8 @@ class SearchResultsPresenterImpl
         albumRepository.search(term),
         trackRepository.search(term),
         Function4(::SearchResults))
-        .subscribeOn(ioScheduler)
-        .observeOn(mainScheduler)
+        .subscribeOn(schedulerProvider.io())
+        .observeOn(schedulerProvider.main())
         .subscribe({
           view().update(it)
         }) {

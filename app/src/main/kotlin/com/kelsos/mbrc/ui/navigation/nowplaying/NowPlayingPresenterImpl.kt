@@ -9,19 +9,18 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.protocol.NowPlayingMoveRequest
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.utilities.SchedulerProvider
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import io.reactivex.Scheduler
 import io.reactivex.Single
 import javax.inject.Inject
-import javax.inject.Named
 
 class NowPlayingPresenterImpl
-@Inject constructor(private val repository: NowPlayingRepository,
-                    private val bus: RxBus,
-                    private val model: MainDataModel,
-                    @Named("io") private val ioScheduler: Scheduler,
-                    @Named("main") private val mainScheduler: Scheduler) :
-    BasePresenter<NowPlayingView>(),
+@Inject constructor(
+    private val repository: NowPlayingRepository,
+    private val bus: RxBus,
+    private val model: MainDataModel,
+    private val schedulerProvider: SchedulerProvider
+) : BasePresenter<NowPlayingView>(),
     NowPlayingPresenter {
 
   override fun reload(scrollToTrack: Boolean) {
@@ -77,6 +76,6 @@ class NowPlayingPresenterImpl
     bus.post(UserAction(Protocol.NowPlayingListRemove, position))
   }
 
-  private fun schedule(it: Single<FlowCursorList<NowPlaying>>) = it.observeOn(mainScheduler)
-      .subscribeOn(ioScheduler)
+  private fun schedule(it: Single<FlowCursorList<NowPlaying>>) = it.observeOn(schedulerProvider.main())
+      .subscribeOn(schedulerProvider.io())
 }

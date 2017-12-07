@@ -7,19 +7,19 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.ui.navigation.library.ArtistTabRefreshEvent
+import com.kelsos.mbrc.utilities.SchedulerProvider
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import io.reactivex.Scheduler
 import io.reactivex.Single
 import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Named
 
 class BrowseArtistPresenterImpl
-@Inject constructor(private val bus: RxBus,
-                    private val repository: ArtistRepository,
-                    private val settingsManager: SettingsManager,
-                    @Named("io") private val ioScheduler: Scheduler,
-                    @Named("main") private val mainScheduler: Scheduler) :
+@Inject constructor(
+    private val bus: RxBus,
+    private val repository: ArtistRepository,
+    private val settingsManager: SettingsManager,
+    private val schedulerProvider: SchedulerProvider
+) :
     BasePresenter<BrowseArtistView>(),
     BrowseArtistPresenter {
 
@@ -71,7 +71,7 @@ class BrowseArtistPresenterImpl
     }))
   }
 
-  private fun schedule(it: Single<FlowCursorList<Artist>>) = it.observeOn(mainScheduler)
-      .subscribeOn(ioScheduler)
+  private fun schedule(it: Single<FlowCursorList<Artist>>) = it.observeOn(schedulerProvider.main())
+      .subscribeOn(schedulerProvider.io())
 
 }
