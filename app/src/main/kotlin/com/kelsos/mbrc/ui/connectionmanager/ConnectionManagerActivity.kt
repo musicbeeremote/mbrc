@@ -45,7 +45,7 @@ class ConnectionManagerActivity : BaseActivity(),
   private fun onScanButtonClick() {
     val builder = AlertDialog.Builder(this)
         .setTitle(R.string.progress_scanning)
-        .setMessage(R.string.progress_scanning_message)
+        .setView(R.layout.dialog__content_progress)
 
     progress = builder.show()
     presenter.startDiscovery()

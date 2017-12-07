@@ -69,7 +69,7 @@
   <string name="settings_version">settings_version</string>
   <string name="preferences_key_connection_manager">manage_connections</string>
   <string name="progress_scanning">Scanning…</string>
-  <string name="progress_scanning_message">Wait while scanning for a remote host</string>
+  <string name="progress_scanning_message">Wait while scanning for a remote host…</string>
   <string name="con_man_no_wifi">This client is available only on a wifi connection</string>
   <string name="con_man_not_found">A remote client could not be found</string>
   <string name="con_man_success">Service successfully found</string>
@@ -166,7 +166,7 @@
   <string name="feedback_device_information"><![CDATA[Include Device & Application Information]]></string>
   <string name="feedback_version_info">\n\nDevice: %1$s %2$s Android(%3$s)\nMusicBee Remote v%4$s</string>
   <string name="library_actionbar_refresh">Refresh</string>
-  <string name="refreshing_library_data">Refreshing library data</string>
+  <string name="refreshing_library_data">Refreshing library data…</string>
   <string name="feedback_logs">Include Logs</string>
   <string name="main__dialog_change_log">Change Log</string>
   <string name="main__dialog_plugin_outdated_message">It seems that you are using an older version of the MusicBee Remote Plugin. Some features require an newer version of the plugin to work. Please Update.</string>
