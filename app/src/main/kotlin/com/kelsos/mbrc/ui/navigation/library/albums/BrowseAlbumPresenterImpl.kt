@@ -7,19 +7,19 @@ import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.AlbumSortingStore
+import com.kelsos.mbrc.utilities.SchedulerProvider
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import io.reactivex.Scheduler
 import io.reactivex.Single
 import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Named
 
 class BrowseAlbumPresenterImpl
-@Inject constructor(private val bus: RxBus,
-                    private val repository: AlbumRepository,
-                    private val albumSortingStore: AlbumSortingStore,
-                    @Named("io") private val ioScheduler: Scheduler,
-                    @Named("main") private val mainScheduler: Scheduler) :
+@Inject constructor(
+    private val bus: RxBus,
+    private val repository: AlbumRepository,
+    private val albumSortingStore: AlbumSortingStore,
+    private val schedulerProvider: SchedulerProvider
+) :
     BasePresenter<BrowseAlbumView>(),
     BrowseAlbumPresenter {
 
@@ -87,6 +87,6 @@ class BrowseAlbumPresenterImpl
 
   }
 
-  private fun schedule(it: Single<FlowCursorList<Album>>) = it.observeOn(mainScheduler)
-      .subscribeOn(ioScheduler)
+  private fun schedule(it: Single<FlowCursorList<Album>>) = it.observeOn(schedulerProvider.main())
+      .subscribeOn(schedulerProvider.io())
 }
