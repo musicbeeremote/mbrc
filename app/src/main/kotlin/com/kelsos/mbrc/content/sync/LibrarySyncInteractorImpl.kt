@@ -7,14 +7,13 @@ import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.utilities.SchedulerProvider
 import io.reactivex.Completable
-import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function4
 import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Named
 
 class LibrarySyncInteractorImpl
 @Inject constructor(
@@ -23,8 +22,7 @@ class LibrarySyncInteractorImpl
     private val albumRepository: AlbumRepository,
     private val trackRepository: TrackRepository,
     private val playlistRepository: PlaylistRepository,
-    @Named("io") private val ioScheduler: Scheduler,
-    @Named("main") private val mainScheduler: Scheduler,
+    private val schedulerProvider: SchedulerProvider,
     private val bus: RxBus
 ) : LibrarySyncInteractor {
 
@@ -50,8 +48,8 @@ class LibrarySyncInteractorImpl
         .andThen(albumRepository.getRemote())
         .andThen(trackRepository.getRemote())
         .andThen(playlistRepository.getRemote())
-        .subscribeOn(ioScheduler)
-        .observeOn(mainScheduler)
+        .subscribeOn(schedulerProvider.io())
+        .observeOn(schedulerProvider.main())
         .doOnTerminate {
           onCompleteListener?.onTermination()
           bus.post(LibraryRefreshCompleteEvent())
