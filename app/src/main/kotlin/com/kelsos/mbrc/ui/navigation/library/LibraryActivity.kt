@@ -166,7 +166,7 @@ class LibraryActivity : BaseNavigationActivity(),
 
   override fun showRefreshing() {
     refreshDialog = AlertDialog.Builder(this)
-        .setMessage(R.string.refreshing_library_data)
+        .setView(R.layout.dialog__syncing_library)
         .setCancelable(false)
         .create()
 
