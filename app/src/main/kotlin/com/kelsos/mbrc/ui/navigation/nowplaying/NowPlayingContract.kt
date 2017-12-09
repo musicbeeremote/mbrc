@@ -4,12 +4,9 @@ import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.content.nowplaying.NowPlaying
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
-import com.raizlabs.android.dbflow.list.FlowCursorList
 
 interface NowPlayingView : BaseView {
-  fun update(cursor: FlowCursorList<NowPlaying>)
-  fun reload()
-  fun loading()
+  fun update(cursor: List<NowPlaying>)
   fun trackChanged(trackInfo: TrackInfo, scrollToTrack: Boolean = false)
   fun failure(throwable: Throwable)
   fun showLoading()

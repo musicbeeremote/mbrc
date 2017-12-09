@@ -16,7 +16,6 @@ import com.kelsos.mbrc.databinding.ListEmptyViewButtonBinding
 import com.kelsos.mbrc.ui.navigation.library.LibraryActivity.Companion.LIBRARY_SCOPE
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter.MenuItemSelectedListener
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Toothpick
 import javax.inject.Inject
 
@@ -27,8 +26,10 @@ class BrowseTrackFragment :
 
   @Inject
   lateinit var adapter: TrackEntryAdapter
+
   @Inject
   lateinit var actionHandler: PopupActionHandler
+
   @Inject
   lateinit var presenter: BrowseTrackPresenter
 
@@ -72,12 +73,6 @@ class BrowseTrackFragment :
     presenter.attach(this)
   }
 
-  override fun onStart() {
-    super.onStart()
-    presenter.attach(this)
-    adapter.refresh()
-  }
-
   override fun onDestroyView() {
     super.onDestroyView()
     presenter.detach()
@@ -95,11 +90,10 @@ class BrowseTrackFragment :
     binding.libraryDataList.layoutManager = LinearLayoutManager(requireContext())
     binding.libraryDataList.setHasFixedSize(true)
     adapter.setMenuItemSelectedListener(this)
-    presenter.attach(this)
     presenter.load()
   }
 
-  override fun update(it: FlowCursorList<Track>) {
+  override fun update(it: List<Track>) {
     adapter.update(it)
   }
 

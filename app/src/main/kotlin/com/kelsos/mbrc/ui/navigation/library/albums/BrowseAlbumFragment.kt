@@ -16,7 +16,6 @@ import com.kelsos.mbrc.databinding.FragmentBrowseBinding
 import com.kelsos.mbrc.databinding.ListEmptyViewButtonBinding
 import com.kelsos.mbrc.ui.navigation.library.LibraryActivity.Companion.LIBRARY_SCOPE
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
@@ -51,22 +50,7 @@ class BrowseAlbumFragment :
   ): View {
     _binding = FragmentBrowseBinding.inflate(inflater)
     _emptyBinding = ListEmptyViewButtonBinding.bind(binding.root)
-    emptyBinding.listEmptyTitle.setText(R.string.albums_list_empty)
-    emptyBinding.listEmptySync.setOnClickListener {
-      presenter.sync()
-    }
     return binding.root
-  }
-
-  override fun onStart() {
-    super.onStart()
-    presenter.attach(this)
-    adapter.refresh()
-  }
-
-  override fun onResume() {
-    super.onResume()
-    adapter.refresh()
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,6 +64,10 @@ class BrowseAlbumFragment :
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     emptyBinding.listEmptyTitle.setText(R.string.albums_list_empty)
+    emptyBinding.listEmptyTitle.setText(R.string.albums_list_empty)
+    emptyBinding.listEmptySync.setOnClickListener {
+      presenter.sync()
+    }
     binding.libraryDataList.adapter = adapter
     binding.libraryDataList.emptyView = emptyBinding.emptyView
     binding.libraryDataList.layoutManager = LinearLayoutManager(requireContext())
@@ -100,7 +88,7 @@ class BrowseAlbumFragment :
     actionHandler.albumSelected(album, requireActivity())
   }
 
-  override fun update(cursor: FlowCursorList<Album>) {
+  override fun update(cursor: List<Album>) {
     adapter.update(cursor)
   }
 

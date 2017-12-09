@@ -4,7 +4,6 @@ import com.kelsos.mbrc.content.library.genres.Genre
 import com.kelsos.mbrc.content.nowplaying.queue.Queue
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
-import com.raizlabs.android.dbflow.list.FlowCursorList
 
 interface BrowseGenrePresenter : Presenter<BrowseGenreView> {
   fun load()
@@ -13,7 +12,7 @@ interface BrowseGenrePresenter : Presenter<BrowseGenreView> {
 }
 
 interface BrowseGenreView : BaseView {
-  fun update(cursor: FlowCursorList<Genre>)
+  fun update(cursor: List<Genre>)
   fun search(term: String)
   fun queue(success: Boolean, tracks: Int)
   fun hideLoading()

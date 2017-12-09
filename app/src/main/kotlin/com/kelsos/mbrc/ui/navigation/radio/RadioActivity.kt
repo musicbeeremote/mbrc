@@ -11,7 +11,6 @@ import com.kelsos.mbrc.databinding.ActivityRadioBinding
 import com.kelsos.mbrc.databinding.ListEmptyViewBinding
 import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.navigation.radio.RadioAdapter.OnRadioPressedListener
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -75,7 +74,7 @@ class RadioActivity :
     Toothpick.closeScope(this)
   }
 
-  override fun update(data: FlowCursorList<RadioStation>) {
+  override fun update(data: List<RadioStation>) {
     adapter.update(data)
   }
 

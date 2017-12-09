@@ -4,10 +4,9 @@ import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.nowplaying.queue.Queue
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
-import com.raizlabs.android.dbflow.list.FlowCursorList
 
 interface ArtistAlbumsView : BaseView {
-  fun update(albums: FlowCursorList<Album>)
+  fun update(albums: List<Album>)
   fun queue(success: Boolean, tracks: Int)
 }
 

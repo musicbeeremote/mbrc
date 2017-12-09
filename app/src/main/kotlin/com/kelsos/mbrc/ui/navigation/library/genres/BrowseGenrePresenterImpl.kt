@@ -8,7 +8,6 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.ui.navigation.library.LibrarySearchModel
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -54,7 +53,7 @@ constructor(
     }
   }
 
-  private suspend fun getData(term: String): FlowCursorList<Genre> {
+  private suspend fun getData(term: String): List<Genre> {
     return if (term.isEmpty()) {
       repository.getAllCursor()
     } else {

@@ -13,7 +13,6 @@ import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter.MenuItemSelectedListener
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -89,7 +88,7 @@ class GenreArtistsActivity :
     actionHandler.artistSelected(artist, this)
   }
 
-  override fun update(data: FlowCursorList<Artist>) {
+  override fun update(data: List<Artist>) {
     adapter.update(data)
   }
 

@@ -18,20 +18,17 @@ import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.TouchHelperViewHolder
 import com.raizlabs.android.dbflow.kotlinextensions.delete
 import com.raizlabs.android.dbflow.kotlinextensions.save
-import com.raizlabs.android.dbflow.list.FlowCursorList
-import com.raizlabs.android.dbflow.list.FlowCursorList.OnCursorRefreshListener
 import timber.log.Timber
 import javax.inject.Inject
 
 class NowPlayingAdapter
 @Inject constructor(context: Activity) :
   RecyclerView.Adapter<NowPlayingAdapter.TrackHolder>(),
-  ItemTouchHelperAdapter,
-  OnCursorRefreshListener<NowPlaying> {
+  ItemTouchHelperAdapter {
 
   private val dragStartListener: OnStartDragListener = context as OnStartDragListener
 
-  private var data: FlowCursorList<NowPlaying>? = null
+  private var data: List<NowPlaying>? = null
   private var playingTrackIndex: Int = 0
   private var currentTrack: String = ""
   private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -82,7 +79,7 @@ class NowPlayingAdapter
   }
 
   override fun onBindViewHolder(holder: TrackHolder, position: Int) {
-    val (title, artist) = data?.getItem(position.toLong()) ?: return
+    val (title, artist) = data?.get(holder.bindingAdapterPosition) ?: return
 
     holder.title.text = title
     holder.artist.text = artist
@@ -94,7 +91,7 @@ class NowPlayingAdapter
   }
 
   override fun getItemCount(): Int {
-    return data?.count?.toInt() ?: 0
+    return data?.size ?: 0
   }
 
   override fun onItemMove(from: Int, to: Int): Boolean {
@@ -113,8 +110,8 @@ class NowPlayingAdapter
     val data = this.data ?: return
 
     Timber.v("Swapping %d => %d", from, to)
-    val fromTrack = data.getItem(from.toLong()) ?: return
-    val toTrack = data.getItem(to.toLong()) ?: return
+    val fromTrack = data[from]
+    val toTrack = data[to]
     Timber.v("from => %s to => %s", fromTrack, toTrack)
     val position = toTrack.position
     toTrack.position = fromTrack.position
@@ -123,44 +120,27 @@ class NowPlayingAdapter
     fromTrack.save()
 
     // Before saving remove the listener to avoid interrupting the swapping functionality
-    data.removeOnCursorRefreshListener(this)
-    data.refresh()
-    data.addOnCursorRefreshListener(this)
 
     Timber.v("after swap => from => %s to => %s", fromTrack, toTrack)
   }
 
   override fun onItemDismiss(position: Int) {
-    val nowPlaying = data?.getItem(position.toLong())
+    val nowPlaying = data?.get(position)
 
     nowPlaying?.let {
       it.delete()
-      refresh()
       notifyItemRemoved(position)
       listener?.onDismiss(position)
     }
   }
 
-  fun refresh() {
-    data?.refresh()
-  }
-
-  fun update(cursor: FlowCursorList<NowPlaying>) {
+  fun update(cursor: List<NowPlaying>) {
     this.data = cursor
     notifyDataSetChanged()
   }
 
   fun setListener(listener: NowPlayingListener) {
     this.listener = listener
-  }
-
-  /**
-   * Callback when data refreshes.
-
-   * @param cursorList The object that changed.
-   */
-  override fun onCursorRefreshed(cursorList: FlowCursorList<NowPlaying>) {
-    notifyDataSetChanged()
   }
 
   interface NowPlayingListener {

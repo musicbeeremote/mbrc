@@ -17,7 +17,6 @@ import com.kelsos.mbrc.databinding.ListEmptyViewButtonBinding
 import com.kelsos.mbrc.ui.navigation.library.LibraryActivity.Companion.LIBRARY_SCOPE
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.genres.GenreEntryAdapter.MenuItemSelectedListener
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Toothpick
 import javax.inject.Inject
 
@@ -28,8 +27,10 @@ class BrowseGenreFragment :
 
   @Inject
   lateinit var adapter: GenreEntryAdapter
+
   @Inject
   lateinit var actionHandler: PopupActionHandler
+
   @Inject
   lateinit var presenter: BrowseGenrePresenter
 
@@ -73,7 +74,7 @@ class BrowseGenreFragment :
     presenter.detach()
   }
 
-  override fun update(cursor: FlowCursorList<Genre>) {
+  override fun update(cursor: List<Genre>) {
     adapter.update(cursor)
   }
 

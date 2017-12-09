@@ -15,7 +15,6 @@ import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter
 import com.kelsos.mbrc.utilities.RemoteUtils.sha1
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.squareup.picasso.Picasso
 import toothpick.Scope
 import toothpick.Toothpick
@@ -127,7 +126,7 @@ class AlbumTracksActivity :
     presenter.queue(track)
   }
 
-  override fun update(cursor: FlowCursorList<Track>) {
+  override fun update(cursor: List<Track>) {
     adapter.update(cursor)
   }
 

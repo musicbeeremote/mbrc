@@ -11,7 +11,6 @@ import com.raizlabs.android.dbflow.kotlinextensions.from
 import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.kotlinextensions.where
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.OperatorGroup.clause
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
@@ -34,17 +33,17 @@ class LocalTrackDataSource
     database<RemoteDatabase>().executeTransaction(transaction)
   }
 
-  override suspend fun loadAllCursor(): FlowCursorList<Track> = withContext(dispatchers.db) {
+  override suspend fun loadAllCursor(): List<Track> = withContext(dispatchers.db) {
     val query = (select from Track::class)
       .orderBy(Track_Table.album_artist, true)
       .orderBy(Track_Table.album, true)
       .orderBy(Track_Table.disc, true)
       .orderBy(Track_Table.trackno, true)
 
-    return@withContext FlowCursorList.Builder(Track::class.java).modelQueriable(query).build()
+    return@withContext query.flowQueryList()
   }
 
-  suspend fun getAlbumTracks(album: String, artist: String): FlowCursorList<Track> =
+  suspend fun getAlbumTracks(album: String, artist: String): List<Track> =
     withContext(dispatchers.db) {
       val query = (
         select from Track::class
@@ -55,11 +54,10 @@ class LocalTrackDataSource
         .orderBy(Track_Table.album, true)
         .orderBy(Track_Table.disc, true)
         .orderBy(Track_Table.trackno, true)
-      return@withContext FlowCursorList.Builder(Track::class.java).modelQueriable(query)
-        .build()
+      return@withContext query.flowQueryList()
     }
 
-  suspend fun getNonAlbumTracks(artist: String): FlowCursorList<Track> =
+  suspend fun getNonAlbumTracks(artist: String): List<Track> =
     withContext(dispatchers.db) {
       val query = (
         select from Track::class
@@ -71,14 +69,12 @@ class LocalTrackDataSource
         .orderBy(Track_Table.disc, true)
         .orderBy(Track_Table.trackno, true)
 
-      return@withContext FlowCursorList.Builder(Track::class.java).modelQueriable(query)
-        .build()
+      return@withContext query.flowQueryList()
     }
 
-  override suspend fun search(term: String): FlowCursorList<Track> = withContext(dispatchers.db) {
+  override suspend fun search(term: String): List<Track> = withContext(dispatchers.db) {
     val query = (select from Track::class where Track_Table.title.like("%${term.escapeLike()}%"))
-    return@withContext FlowCursorList.Builder(Track::class.java).modelQueriable(query)
-      .build()
+    return@withContext query.flowQueryList()
   }
 
   suspend fun getGenreTrackPaths(genre: String): List<String> =

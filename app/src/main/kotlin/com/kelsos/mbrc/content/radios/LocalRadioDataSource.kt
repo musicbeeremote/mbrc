@@ -10,7 +10,6 @@ import com.raizlabs.android.dbflow.kotlinextensions.from
 import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.kotlinextensions.where
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.OperatorGroup.clause
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
@@ -34,18 +33,16 @@ constructor(val dispatchers: AppDispatchers) : LocalDataSource<RadioStation> {
     database<RemoteDatabase>().executeTransaction(transaction)
   }
 
-  override suspend fun loadAllCursor(): FlowCursorList<RadioStation> = withContext(dispatchers.db) {
-    val modelQueriable = (select from RadioStation::class)
-    return@withContext FlowCursorList.Builder(RadioStation::class.java)
-      .modelQueriable(modelQueriable).build()
+  override suspend fun loadAllCursor(): List<RadioStation> = withContext(dispatchers.db) {
+    val query = (select from RadioStation::class)
+    return@withContext query.flowQueryList()
   }
 
-  override suspend fun search(term: String): FlowCursorList<RadioStation> =
+  override suspend fun search(term: String): List<RadioStation> =
     withContext(dispatchers.db) {
       val searchTerm = "%${term.escapeLike()}%"
       val query = (select from RadioStation::class where RadioStation_Table.name.like(searchTerm))
-      return@withContext FlowCursorList.Builder(RadioStation::class.java)
-        .modelQueriable(query).build()
+      return@withContext query.flowQueryList()
     }
 
   override suspend fun isEmpty(): Boolean = withContext(dispatchers.db) {

@@ -12,7 +12,6 @@ import com.raizlabs.android.dbflow.kotlinextensions.or
 import com.raizlabs.android.dbflow.kotlinextensions.orderBy
 import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.kotlinextensions.where
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.OperatorGroup.clause
 import com.raizlabs.android.dbflow.sql.language.OrderBy
 import com.raizlabs.android.dbflow.sql.language.SQLite
@@ -36,20 +35,19 @@ class LocalNowPlayingDataSource
     database<RemoteDatabase>().executeTransaction(transaction)
   }
 
-  override suspend fun loadAllCursor(): FlowCursorList<NowPlaying> = withContext(dispatchers.db) {
+  override suspend fun loadAllCursor(): List<NowPlaying> = withContext(dispatchers.db) {
     val positionAscending = OrderBy.fromProperty(NowPlaying_Table.position).ascending()
     val query = (select from NowPlaying::class orderBy positionAscending)
-    return@withContext FlowCursorList.Builder(NowPlaying::class.java).modelQueriable(query).build()
+    return@withContext query.flowQueryList()
   }
 
-  override suspend fun search(term: String): FlowCursorList<NowPlaying> =
+  override suspend fun search(term: String): List<NowPlaying> =
     withContext(dispatchers.db) {
       val searchTerm = "%${term.escapeLike()}%"
       val matchesTitle = NowPlaying_Table.title.like(searchTerm)
       val matchesArtist = NowPlaying_Table.artist.like(searchTerm)
       val query = (select from NowPlaying::class where matchesTitle or matchesArtist)
-      return@withContext FlowCursorList.Builder(NowPlaying::class.java).modelQueriable(query)
-        .build()
+      return@withContext query.flowQueryList()
     }
 
   override suspend fun isEmpty(): Boolean = withContext(dispatchers.db) {

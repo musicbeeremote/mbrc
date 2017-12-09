@@ -19,7 +19,6 @@ import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper
 import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingAdapter.NowPlayingListener
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -115,18 +114,11 @@ class NowPlayingActivity :
     adapter.setListener(this)
     binding.swipeLayout.setOnRefreshListener { this.refresh() }
     presenter.attach(this)
-    presenter.load()
+    refresh(true)
   }
 
   private fun refresh(scrollToTrack: Boolean = false) {
-    loading()
     presenter.reload(scrollToTrack)
-  }
-
-  override fun loading() {
-    if (!binding.swipeLayout.isRefreshing) {
-      binding.swipeLayout.isRefreshing = true
-    }
   }
 
   override fun onPress(position: Int) {
@@ -151,13 +143,9 @@ class NowPlayingActivity :
     super.onDestroy()
   }
 
-  override fun update(cursor: FlowCursorList<NowPlaying>) {
+  override fun update(cursor: List<NowPlaying>) {
     adapter.update(cursor)
     binding.swipeLayout.isRefreshing = false
-  }
-
-  override fun reload() {
-    adapter.refresh()
   }
 
   override fun trackChanged(trackInfo: TrackInfo, scrollToTrack: Boolean) {

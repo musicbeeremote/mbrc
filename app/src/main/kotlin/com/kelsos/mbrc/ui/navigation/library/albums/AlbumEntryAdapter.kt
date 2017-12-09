@@ -15,9 +15,7 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.library.albums.key
 import com.kelsos.mbrc.databinding.UiListDualBinding
-import com.kelsos.mbrc.extensions.count
 import com.kelsos.mbrc.ui.widgets.SquareImageView
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.squareup.picasso.Picasso
 import java.io.File
 import javax.inject.Inject
@@ -27,20 +25,20 @@ class AlbumEntryAdapter
 constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHolder>() {
 
   private val inflater: LayoutInflater = LayoutInflater.from(context)
-  private var data: FlowCursorList<Album>? = null
+  private var data: List<Album> = emptyList()
   private var listener: MenuItemSelectedListener? = null
   private val cache = File(context.cacheDir, "covers")
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val view = inflater.inflate(R.layout.ui_list_dual, parent, false)
-    val holder = ViewHolder(view)
-    holder.indicator.setOnClickListener {
+    val holder = ViewHolder(view, cache)
+    holder.setIndicatorOnClickListener {
       val popupMenu = PopupMenu(it.context, it)
       popupMenu.inflate(R.menu.popup_album)
       popupMenu.setOnMenuItemClickListener { menuItem ->
-        val data = this.data ?: return@setOnMenuItemClickListener false
-        val position = holder.bindingAdapterPosition.toLong()
-        val album = data.getItem(position) ?: return@setOnMenuItemClickListener false
+        val data = this.data
+        val position = holder.bindingAdapterPosition
+        val album = data[position]
         listener?.onMenuItemSelected(menuItem, album)
         true
       }
@@ -48,37 +46,19 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
     }
 
     holder.itemView.setOnClickListener {
-      val data = this.data ?: return@setOnClickListener
-      val position = holder.bindingAdapterPosition.toLong()
-      val album = data.getItem(position) ?: return@setOnClickListener
+      val position = holder.bindingAdapterPosition
+      val album = data[position]
       listener?.onItemClicked(album)
     }
     return holder
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val data = this.data ?: return
-    val item = data.getItem(position.toLong()) ?: return
-    val (artist, album, _, _) = item
-    holder.album.text = if (album.isNullOrBlank()) holder.emptyAlbum else album
-    holder.artist.text = if (artist.isNullOrBlank()) holder.unknownArtist else artist
-    Picasso.get()
-      .load(File(cache, item.key()))
-      .noFade()
-      .config(Bitmap.Config.RGB_565)
-      .error(R.drawable.ic_image_no_cover)
-      .placeholder(R.drawable.ic_image_no_cover)
-      .resizeDimen(R.dimen.list_album_size, R.dimen.list_album_size)
-      .centerCrop()
-      .into(holder.image)
+    val album = data[holder.bindingAdapterPosition]
+    holder.bind(album)
   }
 
-  fun refresh() {
-    data?.refresh()
-    notifyDataSetChanged()
-  }
-
-  override fun getItemCount(): Int = data.count()
+  override fun getItemCount(): Int = data.size
 
   fun setMenuItemSelectedListener(listener: MenuItemSelectedListener) {
     this.listener = listener
@@ -90,13 +70,15 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
     fun onItemClicked(album: Album)
   }
 
-  class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val artist: TextView
-    val album: TextView
-    val image: SquareImageView
-    val indicator: LinearLayout
-    val unknownArtist: String by lazy { itemView.context.getString(R.string.unknown_artist) }
-    val emptyAlbum: String by lazy { itemView.context.getString(R.string.non_album_tracks) }
+  class ViewHolder(itemView: View, private val cache: File) : RecyclerView.ViewHolder(itemView) {
+    private val artist: TextView
+    private val album: TextView
+    private val image: SquareImageView
+    private val indicator: LinearLayout
+    private val unknownArtist: String by lazy {
+      itemView.context.getString(R.string.unknown_artist)
+    }
+    private val emptyAlbum: String by lazy { itemView.context.getString(R.string.non_album_tracks) }
 
     init {
       val binding = UiListDualBinding.bind(itemView)
@@ -106,9 +88,29 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
       image = binding.cover
       image.isGone = false
     }
+
+    fun bind(album: Album) {
+      val title = album.album
+      val artist = album.artist
+      this.album.text = if (title.isNullOrBlank()) emptyAlbum else title
+      this.artist.text = if (artist.isNullOrBlank()) unknownArtist else artist
+      Picasso.get()
+        .load(File(cache, album.key()))
+        .noFade()
+        .config(Bitmap.Config.RGB_565)
+        .error(R.drawable.ic_image_no_cover)
+        .placeholder(R.drawable.ic_image_no_cover)
+        .resizeDimen(R.dimen.list_album_size, R.dimen.list_album_size)
+        .centerCrop()
+        .into(image)
+    }
+
+    fun setIndicatorOnClickListener(listener: (view: View) -> Unit) {
+      indicator.setOnClickListener { listener(it) }
+    }
   }
 
-  fun update(albums: FlowCursorList<Album>) {
+  fun update(albums: List<Album>) {
     data = albums
     notifyDataSetChanged()
   }

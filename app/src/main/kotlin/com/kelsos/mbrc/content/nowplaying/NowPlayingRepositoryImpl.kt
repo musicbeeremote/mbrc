@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.content.nowplaying
 
 import com.kelsos.mbrc.di.modules.AppDispatchers
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
@@ -14,9 +13,9 @@ class NowPlayingRepositoryImpl
   private val localDataSource: LocalNowPlayingDataSource,
   private val dispatchers: AppDispatchers
 ) : NowPlayingRepository {
-  override suspend fun getAllCursor(): FlowCursorList<NowPlaying> = localDataSource.loadAllCursor()
+  override suspend fun getAllCursor(): List<NowPlaying> = localDataSource.loadAllCursor()
 
-  override suspend fun getAndSaveRemote(): FlowCursorList<NowPlaying> {
+  override suspend fun getAndSaveRemote(): List<NowPlaying> {
     getRemote()
     return localDataSource.loadAllCursor()
   }
@@ -35,7 +34,7 @@ class NowPlayingRepositoryImpl
     }
   }
 
-  override suspend fun search(term: String): FlowCursorList<NowPlaying> =
+  override suspend fun search(term: String): List<NowPlaying> =
     localDataSource.search(term)
 
   override suspend fun cacheIsEmpty(): Boolean = localDataSource.isEmpty()

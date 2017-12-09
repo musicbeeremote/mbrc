@@ -15,7 +15,6 @@ import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.kotlinextensions.on
 import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.kotlinextensions.where
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.OperatorGroup.clause
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
@@ -48,14 +47,14 @@ constructor(
     database<RemoteDatabase>().executeTransaction(updateTransaction)
   }
 
-  override suspend fun loadAllCursor(): FlowCursorList<Album> = withContext(dispatchers.db) {
+  override suspend fun loadAllCursor(): List<Album> = withContext(dispatchers.db) {
     val query = (select from Album::class)
       .orderBy(Album_Table.artist, true)
       .orderBy(Album_Table.album, true)
-    return@withContext FlowCursorList.Builder(Album::class.java).modelQueriable(query).build()
+    return@withContext query.flowQueryList()
   }
 
-  suspend fun getAlbumsByArtist(artist: String): FlowCursorList<Album> =
+  suspend fun getAlbumsByArtist(artist: String): List<Album> =
     withContext(dispatchers.db) {
       val selectAlbum = SQLite.select(
         Album_Table.album.withTable(),
@@ -73,12 +72,12 @@ constructor(
         )
         .orderBy(Album_Table.artist.withTable(), true)
         .orderBy(Album_Table.album.withTable(), true)
-      return@withContext FlowCursorList.Builder(Album::class.java).modelQueriable(query).build()
+      return@withContext query.flowQueryList()
     }
 
-  override suspend fun search(term: String): FlowCursorList<Album> = withContext(dispatchers.db) {
+  override suspend fun search(term: String): List<Album> = withContext(dispatchers.db) {
     val query = (select from Album::class where Album_Table.album.like("%${term.escapeLike()}%"))
-    return@withContext FlowCursorList.Builder(Album::class.java).modelQueriable(query).build()
+    return@withContext query.flowQueryList()
   }
 
   override suspend fun isEmpty(): Boolean = withContext(dispatchers.db) {

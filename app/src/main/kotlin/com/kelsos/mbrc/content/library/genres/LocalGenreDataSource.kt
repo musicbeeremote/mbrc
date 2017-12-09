@@ -10,7 +10,6 @@ import com.raizlabs.android.dbflow.kotlinextensions.from
 import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.kotlinextensions.where
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.OperatorGroup.clause
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
@@ -33,15 +32,15 @@ class LocalGenreDataSource
     database<RemoteDatabase>().executeTransaction(transaction)
   }
 
-  override suspend fun loadAllCursor(): FlowCursorList<Genre> = withContext(dispatchers.db) {
+  override suspend fun loadAllCursor(): List<Genre> = withContext(dispatchers.db) {
     val query = (select from Genre::class).orderBy(Genre_Table.genre, true)
-    return@withContext FlowCursorList.Builder(Genre::class.java).modelQueriable(query).build()
+    return@withContext query.flowQueryList()
   }
 
-  override suspend fun search(term: String): FlowCursorList<Genre> = withContext(dispatchers.db) {
+  override suspend fun search(term: String): List<Genre> = withContext(dispatchers.db) {
     val query = (select from Genre::class where Genre_Table.genre.like("%${term.escapeLike()}%"))
       .orderBy(Genre_Table.genre, true)
-    return@withContext FlowCursorList.Builder(Genre::class.java).modelQueriable(query).build()
+    return@withContext query.flowQueryList()
   }
 
   override suspend fun isEmpty(): Boolean = withContext(dispatchers.db) {

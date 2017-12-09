@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.content.radios
 
 import com.kelsos.mbrc.di.modules.AppDispatchers
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
@@ -14,10 +13,10 @@ class RadioRepositoryImpl
   private val remoteDataSource: RemoteRadioDataSource,
   private val dispatchers: AppDispatchers
 ) : RadioRepository {
-  override suspend fun getAllCursor(): FlowCursorList<RadioStation> =
+  override suspend fun getAllCursor(): List<RadioStation> =
     localDataSource.loadAllCursor()
 
-  override suspend fun getAndSaveRemote(): FlowCursorList<RadioStation> {
+  override suspend fun getAndSaveRemote(): List<RadioStation> {
     getRemote()
     return localDataSource.loadAllCursor()
   }
@@ -36,7 +35,7 @@ class RadioRepositoryImpl
     }
   }
 
-  override suspend fun search(term: String): FlowCursorList<RadioStation> =
+  override suspend fun search(term: String): List<RadioStation> =
     localDataSource.search(term)
 
   override suspend fun cacheIsEmpty(): Boolean = localDataSource.isEmpty()

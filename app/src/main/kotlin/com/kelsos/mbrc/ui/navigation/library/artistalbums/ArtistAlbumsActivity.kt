@@ -12,7 +12,6 @@ import com.kelsos.mbrc.databinding.EmptyListBinding
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.albums.AlbumEntryAdapter
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -23,9 +22,12 @@ class ArtistAlbumsActivity :
   ArtistAlbumsView,
   AlbumEntryAdapter.MenuItemSelectedListener {
 
-  @Inject lateinit var actionHandler: PopupActionHandler
-  @Inject lateinit var adapter: AlbumEntryAdapter
-  @Inject lateinit var presenter: ArtistAlbumsPresenter
+  @Inject
+  lateinit var actionHandler: PopupActionHandler
+  @Inject
+  lateinit var adapter: AlbumEntryAdapter
+  @Inject
+  lateinit var presenter: ArtistAlbumsPresenter
 
   private var artist: String? = null
   private lateinit var scope: Scope
@@ -87,7 +89,7 @@ class ArtistAlbumsActivity :
     actionHandler.albumSelected(album, this)
   }
 
-  override fun update(albums: FlowCursorList<Album>) {
+  override fun update(albums: List<Album>) {
     adapter.update(albums)
   }
 

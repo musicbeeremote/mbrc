@@ -10,7 +10,6 @@ import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.ui.navigation.library.ArtistTabRefreshEvent
 import com.kelsos.mbrc.ui.navigation.library.LibrarySearchModel
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -58,7 +57,7 @@ constructor(
     }
   }
 
-  private suspend fun getData(term: String): FlowCursorList<Artist> {
+  private suspend fun getData(term: String): List<Artist> {
     return if (term.isEmpty()) {
       val shouldDisplay = settingsManager.shouldDisplayOnlyAlbumArtists()
       if (shouldDisplay) {

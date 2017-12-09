@@ -16,8 +16,6 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.content.library.tracks.key
 import com.kelsos.mbrc.databinding.UiListDualBinding
-import com.kelsos.mbrc.extensions.count
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.squareup.picasso.Picasso
 import java.io.File
 import javax.inject.Inject
@@ -25,7 +23,7 @@ import javax.inject.Inject
 class TrackEntryAdapter
 @Inject
 constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHolder>() {
-  private var data: FlowCursorList<Track>? = null
+  private var data: List<Track>? = null
   private var listener: MenuItemSelectedListener? = null
   private val inflater: LayoutInflater = LayoutInflater.from(context)
   private val cache = File(context.cacheDir, "covers")
@@ -45,8 +43,8 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
     holder.indicator.setOnClickListener { createPopup(it, holder) }
 
     holder.itemView.setOnClickListener {
-      val position = holder.bindingAdapterPosition.toLong()
-      val track = data?.getItem(position) ?: return@setOnClickListener
+      val position = holder.bindingAdapterPosition
+      val track = data?.get(position) ?: return@setOnClickListener
       listener?.onItemClicked(track)
     }
     return holder
@@ -56,8 +54,8 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
     val popupMenu = PopupMenu(it.context, it)
     popupMenu.inflate(R.menu.popup_track)
     popupMenu.setOnMenuItemClickListener { menuItem ->
-      val position = holder.bindingAdapterPosition.toLong()
-      val track = data?.getItem(position) ?: return@setOnMenuItemClickListener false
+      val position = holder.bindingAdapterPosition
+      val track = data?.get(position) ?: return@setOnMenuItemClickListener false
       listener?.onMenuItemSelected(menuItem, track)
       true
     }
@@ -65,7 +63,7 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val entry = data?.getItem(position.toLong()) ?: return
+    val entry = data?.get(holder.bindingAdapterPosition) ?: return
     holder.title.text = entry.title
     val artist = entry.artist
     holder.artist.text = if (artist.isNullOrBlank()) holder.unknownArtist else artist
@@ -82,12 +80,7 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
       .into(holder.image)
   }
 
-  override fun getItemCount(): Int = data.count()
-
-  fun refresh() {
-    data?.refresh()
-    notifyDataSetChanged()
-  }
+  override fun getItemCount(): Int = data?.size ?: 0
 
   interface MenuItemSelectedListener {
     fun onMenuItemSelected(menuItem: MenuItem, track: Track)
@@ -111,7 +104,7 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
     }
   }
 
-  fun update(cursor: FlowCursorList<Track>) {
+  fun update(cursor: List<Track>) {
     data = cursor
     notifyDataSetChanged()
   }

@@ -3,10 +3,9 @@ package com.kelsos.mbrc.ui.navigation.radio
 import com.kelsos.mbrc.content.radios.RadioStation
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
-import com.raizlabs.android.dbflow.list.FlowCursorList
 
 interface RadioView : BaseView {
-  fun update(data: FlowCursorList<RadioStation>)
+  fun update(data: List<RadioStation>)
   fun error(error: Throwable)
   fun radioPlayFailed()
   fun radioPlaySuccessful()

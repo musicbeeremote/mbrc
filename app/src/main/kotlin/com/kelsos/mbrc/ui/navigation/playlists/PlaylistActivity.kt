@@ -11,7 +11,6 @@ import com.kelsos.mbrc.databinding.ActivityPlaylistsBinding
 import com.kelsos.mbrc.databinding.ListEmptyViewBinding
 import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.navigation.playlists.PlaylistAdapter.OnPlaylistPressedListener
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -78,7 +77,7 @@ class PlaylistActivity :
     presenter.reload()
   }
 
-  override fun update(cursor: FlowCursorList<Playlist>) {
+  override fun update(cursor: List<Playlist>) {
     adapter.update(cursor)
     binding.swipeLayout.isRefreshing = false
   }

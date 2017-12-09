@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.content.library.artists
 
 import com.kelsos.mbrc.di.modules.AppDispatchers
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
@@ -16,12 +15,12 @@ constructor(
   private val dispatchers: AppDispatchers
 ) : ArtistRepository {
 
-  override suspend fun getArtistByGenre(genre: String): FlowCursorList<Artist> =
+  override suspend fun getArtistByGenre(genre: String): List<Artist> =
     localDataSource.getArtistByGenre(genre)
 
-  override suspend fun getAllCursor(): FlowCursorList<Artist> = localDataSource.loadAllCursor()
+  override suspend fun getAllCursor(): List<Artist> = localDataSource.loadAllCursor()
 
-  override suspend fun getAndSaveRemote(): FlowCursorList<Artist> {
+  override suspend fun getAndSaveRemote(): List<Artist> {
     getRemote()
     return localDataSource.loadAllCursor()
   }
@@ -40,12 +39,12 @@ constructor(
     }
   }
 
-  override suspend fun search(term: String): FlowCursorList<Artist> = localDataSource.search(term)
+  override suspend fun search(term: String): List<Artist> = localDataSource.search(term)
 
-  override suspend fun getAlbumArtistsOnly(): FlowCursorList<Artist> =
+  override suspend fun getAlbumArtistsOnly(): List<Artist> =
     localDataSource.getAlbumArtists()
 
-  override suspend fun getAllRemoteAndShowAlbumArtist(): FlowCursorList<Artist> {
+  override suspend fun getAllRemoteAndShowAlbumArtist(): List<Artist> {
     getRemote()
     return localDataSource.getAlbumArtists()
   }
