@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.di.modules
 
-import android.support.v4.app.NotificationManagerCompat
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.kelsos.mbrc.content.activestatus.ModelCache
@@ -31,10 +30,16 @@ import com.kelsos.mbrc.content.playlists.PlaylistApiImpl
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.content.playlists.PlaylistRepositoryImpl
 import com.kelsos.mbrc.content.playlists.PlaylistService
-import com.kelsos.mbrc.content.radios.*
+import com.kelsos.mbrc.content.radios.LocalRadioDataSource
+import com.kelsos.mbrc.content.radios.LocalRadioDataSourceImpl
+import com.kelsos.mbrc.content.radios.RadioApi
+import com.kelsos.mbrc.content.radios.RadioApiImpl
+import com.kelsos.mbrc.content.radios.RadioRepository
+import com.kelsos.mbrc.content.radios.RadioRepositoryImpl
+import com.kelsos.mbrc.content.radios.RemoteRadioDataSource
+import com.kelsos.mbrc.content.radios.RemoteRadioDataSourceImpl
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractorImpl
-import com.kelsos.mbrc.di.providers.NotificationManagerCompatProvider
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.bus.RxBusImpl
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
@@ -43,7 +48,12 @@ import com.kelsos.mbrc.networking.protocol.VolumeInteractor
 import com.kelsos.mbrc.networking.protocol.VolumeInteractorImpl
 import com.kelsos.mbrc.platform.ServiceChecker
 import com.kelsos.mbrc.platform.ServiceCheckerImpl
-import com.kelsos.mbrc.preferences.*
+import com.kelsos.mbrc.preferences.AlbumSortingStore
+import com.kelsos.mbrc.preferences.AlbumSortingStoreImpl
+import com.kelsos.mbrc.preferences.ClientInformationStore
+import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
+import com.kelsos.mbrc.preferences.SettingsManager
+import com.kelsos.mbrc.preferences.SettingsManagerImpl
 import com.kelsos.mbrc.utilities.SchedulerProvider
 import com.kelsos.mbrc.utilities.SchedulerProviderImpl
 import io.reactivex.Scheduler
@@ -66,7 +76,6 @@ class RemoteModule : Module() {
     bind(CoverApi::class.java).to(CoverApiImpl::class.java).singletonInScope()
     bind(QueueApi::class.java).to(QueueApiImpl::class.java).singletonInScope()
 
-    bind(NotificationManagerCompat::class.java).toProvider(NotificationManagerCompatProvider::class.java)
     bind(ConnectionRepository::class.java).to(ConnectionRepositoryImpl::class.java)
     bind(Scheduler::class.java).withName("main").toProviderInstance { AndroidSchedulers.mainThread() }
     bind(Scheduler::class.java).withName("io").toProviderInstance { Schedulers.io() }
