@@ -204,4 +204,6 @@
   <string name="sorting_dialog__order">Order</string>
   <string name="sorting_dialog__ascending">Ascending</string>
   <string name="sorting_dialog__descending">Descending</string>
+  <string name="notification__session_channel_name">MBRC Session</string>
+  <string name="notification__session_channel_description">Displays the playing information of the track and allows control.</string>
 </resources>

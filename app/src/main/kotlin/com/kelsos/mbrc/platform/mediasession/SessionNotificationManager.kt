@@ -2,10 +2,12 @@ package com.kelsos.mbrc.platform.mediasession
 
 import android.app.Application
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationCompat.Action
-import android.support.v4.app.NotificationManagerCompat
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
@@ -30,12 +32,14 @@ import javax.inject.Singleton
 @Singleton
 class SessionNotificationManager
 @Inject
-constructor(bus: RxBus,
-            private val context: Application,
-            private val sessionManager: RemoteSessionManager,
-            private val settings: SettingsManager,
-            private val model: SessionStatusModel,
-            private val notificationManager: NotificationManagerCompat) {
+constructor(
+    bus: RxBus,
+    private val context: Application,
+    private val sessionManager: RemoteSessionManager,
+    private val settings: SettingsManager,
+    private val model: SessionStatusModel,
+    private val notificationManager: NotificationManager
+) {
   private var notification: Notification? = null
   private val previous: String
   private val play: String
@@ -51,6 +55,8 @@ constructor(bus: RxBus,
     previous = context.getString(R.string.notification_action_previous)
     play = context.getString(R.string.notification_action_play)
     next = context.getString(R.string.notification_action_next)
+
+    createNotificationChannels()
   }
 
   private fun handleTrackInfo(event: TrackInfoChangeEvent) {
@@ -100,12 +106,34 @@ constructor(bus: RxBus,
     }
   }
 
+  private fun createNotificationChannels() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+      return
+    }
+
+    val name = context.getString(R.string.notification__session_channel_name)
+    val description = context.getString(R.string.notification__session_channel_description)
+    val channel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT)
+    channel.apply {
+      this.description = description
+      enableLights(false)
+      enableVibration(false)
+      setSound(null, null)
+    }
+
+    notificationManager.createNotificationChannel(channel)
+  }
+
   private fun createBuilder(): NotificationCompat.Builder {
     val mediaStyle = android.support.v4.media.app.NotificationCompat.MediaStyle()
     mediaStyle.setMediaSession(sessionManager.mediaSessionToken)
 
-    val builder = NotificationCompat.Builder(context)
-    val resId = if (model.playState == PlayerState.PLAYING) R.drawable.ic_action_pause else R.drawable.ic_action_play
+    val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+    val resId = if (model.playState == PlayerState.PLAYING) {
+      R.drawable.ic_action_pause
+    } else {
+      R.drawable.ic_action_play
+    }
 
     builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         .setSmallIcon(R.drawable.ic_mbrc_status)
@@ -163,7 +191,8 @@ constructor(bus: RxBus,
   }
 
   companion object {
-    val NOW_PLAYING_PLACEHOLDER = 15613
+    const val NOW_PLAYING_PLACEHOLDER = 15613
+    const val CHANNEL_ID = "mbrc_session_01"
   }
 
   class CancelNotificationEvent
