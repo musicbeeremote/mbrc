@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.di.modules
 
-import androidx.core.app.NotificationManagerCompat
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.kelsos.mbrc.content.activestatus.ModelCache
@@ -26,7 +25,6 @@ import com.kelsos.mbrc.content.radios.RadioRepository
 import com.kelsos.mbrc.content.radios.RadioRepositoryImpl
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractorImpl
-import com.kelsos.mbrc.di.providers.NotificationManagerCompatProvider
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.bus.RxBusImpl
 import com.kelsos.mbrc.helper.QueueHandler
@@ -58,9 +56,6 @@ class RemoteModule : Module() {
     bind(RxBus::class.java).to(RxBusImpl::class.java).singletonInScope()
     bind(ObjectMapper::class.java).toInstance(mapper)
 
-    bind(NotificationManagerCompat::class.java).toProvider(
-      NotificationManagerCompatProvider::class.java
-    )
     bind(ConnectionRepository::class.java).to(ConnectionRepositoryImpl::class.java)
 
     bind(TrackRepository::class.java).to(TrackRepositoryImpl::class.java)
