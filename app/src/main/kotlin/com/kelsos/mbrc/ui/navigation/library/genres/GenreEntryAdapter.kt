@@ -9,15 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-
-
-
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.genres.Genre
-import com.kelsos.mbrc.extensions.count
 import com.kelsos.mbrc.extensions.string
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotterknife.bindView
 import javax.inject.Inject
 
@@ -25,7 +20,7 @@ class GenreEntryAdapter
 @Inject
 constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHolder>(),
     BubbleTextGetter {
-  private var data: FlowCursorList<Genre>? = null
+  private var data: List<Genre>? = null
   private var listener: MenuItemSelectedListener? = null
   private val inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -83,7 +78,7 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
    * @param position The position of the item within the adapter's data set.
    */
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val genre = data?.getItem(position.toLong())
+    val genre = data?.get(holder.adapterPosition)
 
     genre?.let {
       holder.title.text = if (it.genre.isNullOrBlank()) holder.empty else genre.genre
@@ -108,15 +103,10 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
 
    * @return The total number of items in this adapter.
    */
-  override fun getItemCount(): Int = data.count()
-
-  fun refresh() {
-    data?.refresh()
-    notifyDataSetChanged()
-  }
+  override fun getItemCount(): Int = data?.size ?: 0
 
   override fun getTextToShowInBubble(pos: Int): String {
-    val genre = data?.getItem(pos.toLong())?.genre
+    val genre = data?.get(pos)?.genre
     genre?.let {
       if (it.isNotBlank()) {
         return it.substring(0, 1)
@@ -138,7 +128,7 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
     val empty: String by lazy { string(R.string.empty) }
   }
 
-  fun update(cursor: FlowCursorList<Genre>) {
+  fun update(cursor: List<Genre>) {
     data = cursor
     notifyDataSetChanged()
   }

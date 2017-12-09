@@ -9,16 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-
-
-
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
-import com.kelsos.mbrc.extensions.count
 import com.kelsos.mbrc.extensions.string
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 import com.kelsos.mbrc.utilities.Checks.ifNotNull
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotterknife.bindView
 import javax.inject.Inject
 
@@ -27,18 +22,18 @@ class AlbumEntryAdapter
 constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHolder>(), BubbleTextGetter {
 
   private val inflater: LayoutInflater = LayoutInflater.from(context)
-  private var data: FlowCursorList<Album>? = null
+  private var data: List<Album> = emptyList()
   private var listener: MenuItemSelectedListener? = null
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val view = inflater.inflate(R.layout.ui_list_dual, parent, false)
     val holder = ViewHolder(view)
-    holder.indicator.setOnClickListener {
+    holder.setIndicatorOnClickListener {
       val popupMenu = PopupMenu(it.context, it)
       popupMenu.inflate(R.menu.popup_album)
       popupMenu.setOnMenuItemClickListener {
-        val position = holder.adapterPosition.toLong()
-        ifNotNull(listener, data?.getItem(position)) { listener, album ->
+        val position = holder.adapterPosition
+        ifNotNull(listener, data[position]) { listener, album ->
           listener.onMenuItemSelected(it, album)
         }
         true
@@ -47,39 +42,26 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
     }
 
     holder.itemView.setOnClickListener {
-      val position = holder.adapterPosition.toLong()
-      val album = data?.getItem(position)
-
-      ifNotNull(listener, album) { listener, album ->
-        listener.onItemClicked(album)
-      }
-
+      val position = holder.adapterPosition
+      val album = data[position]
+      listener?.onItemClicked(album)
     }
     return holder
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val album = data?.getItem(position.toLong())
-    album?.let { (artist, title) ->
-      holder.album.text = if (title.isNullOrBlank()) holder.emptyAlbum else title
-      holder.artist.text = if (artist.isNullOrBlank()) holder.unknownArtist else artist
-    }
-
+    val album = data[holder.adapterPosition]
+    holder.bind(album)
   }
 
-  fun refresh() {
-    data?.refresh()
-    notifyDataSetChanged()
-  }
-
-  override fun getItemCount(): Int = data.count()
+  override fun getItemCount(): Int = data.size
 
   fun setMenuItemSelectedListener(listener: MenuItemSelectedListener) {
     this.listener = listener
   }
 
   override fun getTextToShowInBubble(pos: Int): String {
-    val artist = data?.getItem(pos.toLong())?.artist
+    val artist = data[pos].artist
     if (artist != null && artist.isNotBlank()) {
       return artist.substring(0, 1)
     }
@@ -93,14 +75,25 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
   }
 
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val artist: TextView by bindView(R.id.line_two)
-    val album: TextView by bindView(R.id.line_one)
-    val indicator: LinearLayout by bindView(R.id.ui_item_context_indicator)
-    val unknownArtist: String by lazy { string(R.string.unknown_artist) }
-    val emptyAlbum: String by lazy { string(R.string.non_album_tracks) }
+    private val artist: TextView by bindView(R.id.line_two)
+    private val album: TextView by bindView(R.id.line_one)
+    private val indicator: LinearLayout by bindView(R.id.ui_item_context_indicator)
+    private val unknownArtist: String by lazy { string(R.string.unknown_artist) }
+    private val emptyAlbum: String by lazy { string(R.string.non_album_tracks) }
+
+    fun bind(album: Album) {
+      val title = album.album
+      val artist = album.artist
+      this.album.text = if (title.isNullOrBlank()) emptyAlbum else title
+      this.artist.text = if (artist.isNullOrBlank()) unknownArtist else artist
+    }
+
+    fun setIndicatorOnClickListener(listener: (view: View) -> Unit) {
+      indicator.setOnClickListener { listener(it) }
+    }
   }
 
-  fun update(albums: FlowCursorList<Album>) {
+  fun update(albums: List<Album>) {
     data = albums
     notifyDataSetChanged()
   }

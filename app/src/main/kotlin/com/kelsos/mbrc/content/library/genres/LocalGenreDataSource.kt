@@ -10,7 +10,6 @@ import com.raizlabs.android.dbflow.kotlinextensions.from
 import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.kotlinextensions.where
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import io.reactivex.Observable
@@ -33,22 +32,20 @@ class LocalGenreDataSource
     database<RemoteDatabase>().executeTransaction(transaction)
   }
 
-  override fun loadAllCursor(): Observable<FlowCursorList<Genre>> {
+  override fun loadAllCursor(): Observable<List<Genre>> {
     return Observable.create {
       val modelQueriable = (select from Genre::class).orderBy(Genre_Table.genre, true)
-      val cursor = FlowCursorList.Builder(Genre::class.java).modelQueriable(modelQueriable).build()
-      it.onNext(cursor)
+      it.onNext(modelQueriable.flowQueryList())
       it.onComplete()
     }
 
   }
 
-  override fun search(term: String): Single<FlowCursorList<Genre>> {
-    return Single.create<FlowCursorList<Genre>> {
+  override fun search(term: String): Single<List<Genre>> {
+    return Single.create<List<Genre>> {
       val modelQueriable = (select from Genre::class where genre.like("%${term.escapeLike()}%"))
           .orderBy(Genre_Table.genre, true)
-      val cursor = FlowCursorList.Builder(Genre::class.java).modelQueriable(modelQueriable).build()
-      it.onSuccess(cursor)
+      it.onSuccess(modelQueriable.flowQueryList())
     }
   }
 

@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.content.library.genres
 
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
@@ -8,11 +7,11 @@ import javax.inject.Inject
 class GenreRepositoryImpl
 @Inject constructor(private val remoteDataSource: RemoteGenreDataSource,
                     private val localDataSource: LocalGenreDataSource) : GenreRepository {
-  override fun getAllCursor(): Single<FlowCursorList<Genre>> {
+  override fun getAllCursor(): Single<List<Genre>> {
     return localDataSource.loadAllCursor().firstOrError()
   }
 
-  override fun getAndSaveRemote(): Single<FlowCursorList<Genre>> {
+  override fun getAndSaveRemote(): Single<List<Genre>> {
     return getRemote().andThen(localDataSource.loadAllCursor().firstOrError())
   }
 
@@ -23,7 +22,7 @@ class GenreRepositoryImpl
     }.ignoreElements()
   }
 
-  override fun search(term: String): Single<FlowCursorList<Genre>> {
+  override fun search(term: String): Single<List<Genre>> {
     return localDataSource.search(term)
   }
 

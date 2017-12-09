@@ -8,7 +8,6 @@ import com.raizlabs.android.dbflow.kotlinextensions.from
 import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.kotlinextensions.where
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import io.reactivex.Observable
@@ -31,20 +30,18 @@ class LocalRadioDataSourceImpl
     database<RemoteDatabase>().executeTransaction(transaction)
   }
 
-  override fun loadAllCursor(): Observable<FlowCursorList<RadioStation>> {
+  override fun loadAllCursor(): Observable<List<RadioStation>> {
     return Observable.create {
       val modelQueriable = (select from RadioStation::class)
-      val cursor = FlowCursorList.Builder(RadioStation::class.java).modelQueriable(modelQueriable).build()
-      it.onNext(cursor)
+      it.onNext(modelQueriable.flowQueryList())
       it.onComplete()
     }
   }
 
-  override fun search(term: String): Single<FlowCursorList<RadioStation>> {
-    return Single.create<FlowCursorList<RadioStation>> {
+  override fun search(term: String): Single<List<RadioStation>> {
+    return Single.create<List<RadioStation>> {
       val modelQueriable = (select from RadioStation::class where RadioStation_Table.name.like("%${term.escapeLike()}%"))
-      val cursor = FlowCursorList.Builder(RadioStation::class.java).modelQueriable(modelQueriable).build()
-      it.onSuccess(cursor)
+      it.onSuccess(modelQueriable.flowQueryList())
     }
   }
 
