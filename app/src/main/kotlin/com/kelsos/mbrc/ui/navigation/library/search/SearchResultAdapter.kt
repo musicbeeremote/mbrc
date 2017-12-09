@@ -41,11 +41,11 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
   override fun getItemCount(@Section section: Int): Int {
     data?.let {
       return when (section) {
-        SECTION_GENRE -> it.genreList.count
-        SECTION_ARTIST -> it.artistList.count
-        SECTION_ALBUM -> it.albumList.count
-        SECTION_TRACK -> it.trackList.count
-        else -> 0L
+        SECTION_GENRE -> it.genreList.size
+        SECTION_ARTIST -> it.artistList.size
+        SECTION_ALBUM -> it.albumList.size
+        SECTION_TRACK -> it.trackList.size
+        else -> 0
       }.toInt()
     }
 
@@ -73,24 +73,23 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
   ) {
 
     data?.let {
-      val position = relativePosition.toLong()
 
       when (section) {
         SECTION_ALBUM -> {
-          val album = it.albumList.getItem(position)
-          album?.let { holder.bindAlbum(it) }
+          val album = it.albumList[relativePosition]
+          holder.bindAlbum(album)
         }
         SECTION_ARTIST -> {
-          val artist = it.artistList.getItem(position)
-          artist?.let { holder.bindArtist(it) }
+          val artist = it.artistList[relativePosition]
+          holder.bindArtist(artist)
         }
         SECTION_GENRE -> {
-          val genre = it.genreList.getItem(position)
-          genre?.let { holder.bindGenre(it) }
+          val genre = it.genreList[relativePosition]
+          holder.bindGenre(genre)
         }
         SECTION_TRACK -> {
-          val track = it.trackList.getItem(position)
-          track?.let { holder.bindTrack(it) }
+          val track = it.trackList[relativePosition]
+          holder.bindTrack(track)
         }
         else -> {
           throw IllegalArgumentException("Attempted to bind invalid section")

@@ -6,7 +6,6 @@ import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.utilities.SchedulerProvider
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Single
 import timber.log.Timber
 import javax.inject.Inject
@@ -55,7 +54,7 @@ class BrowseTrackPresenterImpl
     }))
   }
 
-  private fun schedule(it: Single<FlowCursorList<Track>>) = it.observeOn(schedulerProvider.main())
+  private fun schedule(it: Single<List<Track>>) = it.observeOn(schedulerProvider.main())
       .subscribeOn(schedulerProvider.io())
 
 }

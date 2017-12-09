@@ -7,7 +7,6 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.SchedulerProvider
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Single
 import javax.inject.Inject
 
@@ -49,6 +48,6 @@ class PlaylistPresenterImpl
         })
   }
 
-  private fun schedule(it: Single<FlowCursorList<Playlist>>) = it.observeOn(schedulerProvider.main())
+  private fun schedule(it: Single<List<Playlist>>) = it.observeOn(schedulerProvider.main())
       .subscribeOn(schedulerProvider.io())
 }

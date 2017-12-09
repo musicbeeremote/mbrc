@@ -12,7 +12,6 @@ import com.raizlabs.android.dbflow.kotlinextensions.from
 import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.kotlinextensions.where
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import io.reactivex.Observable
@@ -36,7 +35,7 @@ class LocalTrackDataSource
     database<RemoteDatabase>().executeTransaction(transaction)
   }
 
-  override fun loadAllCursor(): Observable<FlowCursorList<Track>> {
+  override fun loadAllCursor(): Observable<List<Track>> {
     return Observable.create {
       val modelQueriable = (select from Track::class)
           .orderBy(Track_Table.album_artist, true)
@@ -44,14 +43,13 @@ class LocalTrackDataSource
           .orderBy(Track_Table.disc, true)
           .orderBy(Track_Table.trackno, true)
 
-      val cursor = FlowCursorList.Builder<Track>(Track::class.java).modelQueriable(modelQueriable).build()
-      it.onNext(cursor)
+      it.onNext(modelQueriable.flowQueryList())
       it.onComplete()
     }
   }
 
-  fun getAlbumTracks(album: String, artist: String): Single<FlowCursorList<Track>> {
-    return Single.create<FlowCursorList<Track>> {
+  fun getAlbumTracks(album: String, artist: String): Single<List<Track>> {
+    return Single.create<List<Track>> {
       val modelQueriable = (select from Track::class
           where Track_Table.album.`is`(album)
           and Track_Table.album_artist.`is`(artist))
@@ -59,13 +57,13 @@ class LocalTrackDataSource
           .orderBy(Track_Table.album, true)
           .orderBy(Track_Table.disc, true)
           .orderBy(Track_Table.trackno, true)
-      val cursor = FlowCursorList.Builder<Track>(Track::class.java).modelQueriable(modelQueriable).build()
-      it.onSuccess(cursor)
+
+      it.onSuccess(modelQueriable.flowQueryList())
     }
   }
 
-  fun getNonAlbumTracks(artist: String): Single<FlowCursorList<Track>> {
-    return Single.create<FlowCursorList<Track>> {
+  fun getNonAlbumTracks(artist: String): Single<List<Track>> {
+    return Single.create<List<Track>> {
       val modelQueriable = (select from Track::class
           where Track_Table.album.`is`("")
           and Track_Table.artist.`is`(artist))
@@ -74,16 +72,14 @@ class LocalTrackDataSource
           .orderBy(Track_Table.disc, true)
           .orderBy(Track_Table.trackno, true)
 
-      val cursor = FlowCursorList.Builder<Track>(Track::class.java).modelQueriable(modelQueriable).build()
-      it.onSuccess(cursor)
+      it.onSuccess(modelQueriable.flowQueryList())
     }
   }
 
-  override fun search(term: String): Single<FlowCursorList<Track>> {
-    return Single.create<FlowCursorList<Track>> {
+  override fun search(term: String): Single<List<Track>> {
+    return Single.create<List<Track>> {
       val modelQueriable = (select from Track::class where title.like("%${term.escapeLike()}%"))
-      val cursor = FlowCursorList.Builder<Track>(Track::class.java).modelQueriable(modelQueriable).build()
-      it.onSuccess(cursor)
+      it.onSuccess(modelQueriable.flowQueryList())
     }
   }
 

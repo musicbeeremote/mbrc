@@ -5,10 +5,9 @@ import com.kelsos.mbrc.content.library.albums.Sorting.Fields
 import com.kelsos.mbrc.content.library.albums.Sorting.Order
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
-import com.raizlabs.android.dbflow.list.FlowCursorList
 
 interface BrowseAlbumView : BaseView {
-  fun update(cursor: FlowCursorList<Album>)
+  fun update(cursor: List<Album>)
   fun failure(throwable: Throwable)
   fun hideLoading()
   fun showLoading()

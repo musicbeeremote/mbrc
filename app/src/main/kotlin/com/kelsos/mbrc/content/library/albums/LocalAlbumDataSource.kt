@@ -16,7 +16,7 @@ import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.kotlinextensions.on
 import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.kotlinextensions.where
-import com.raizlabs.android.dbflow.list.FlowCursorList
+import com.raizlabs.android.dbflow.list.FlowQueryList
 import com.raizlabs.android.dbflow.sql.language.OperatorGroup.clause
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
@@ -40,20 +40,19 @@ class LocalAlbumDataSource
     database<RemoteDatabase>().executeTransaction(transaction)
   }
 
-  override fun loadAllCursor(): Observable<FlowCursorList<Album>> {
+  override fun loadAllCursor(): Observable<List<Album>> {
     return Observable.create {
       val modelQueriable = (select from Album::class)
           .orderBy(Album_Table.artist, true)
           .orderBy(album, true)
-      val cursor = FlowCursorList.Builder(Album::class.java).modelQueriable(modelQueriable).build()
-      it.onNext(cursor)
+      it.onNext(modelQueriable.flowQueryList())
       it.onComplete()
     }
   }
 
-  fun getAlbumsByArtist(artist: String): Single<FlowCursorList<Album>> {
+  fun getAlbumsByArtist(artist: String): Single<List<Album>> {
 
-    return Single.create<FlowCursorList<Album>> {
+    return Single.create<List<Album>> {
       val selectAlbum = SQLite.select(Album_Table.album.withTable(), Album_Table.artist.withTable()).distinct()
       val artistOrAlbumArtist = clause(Track_Table.artist.withTable().`is`(artist))
           .or(Track_Table.album_artist.withTable().`is`(artist))
@@ -65,16 +64,15 @@ class LocalAlbumDataSource
           where artistOrAlbumArtist)
           .orderBy(Album_Table.artist.withTable(), true)
           .orderBy(album.withTable(), true)
-      val cursor = FlowCursorList.Builder(Album::class.java).modelQueriable(modelQueriable).build()
-      it.onSuccess(cursor)
+
+      it.onSuccess(modelQueriable.flowQueryList())
     }
   }
 
-  override fun search(term: String): Single<FlowCursorList<Album>> {
-    return Single.create<FlowCursorList<Album>> {
+  override fun search(term: String): Single<List<Album>> {
+    return Single.create<List<Album>> {
       val modelQueriable = (select from Album::class where album.like("%${term.escapeLike()}%"))
-      val cursor = FlowCursorList.Builder(Album::class.java).modelQueriable(modelQueriable).build()
-      it.onSuccess(cursor)
+      it.onSuccess(modelQueriable.flowQueryList())
     }
   }
 
@@ -84,7 +82,7 @@ class LocalAlbumDataSource
     }
   }
 
-  fun getAlbumsSorted(@Sorting.Fields order: Long, ascending: Boolean): Single<FlowCursorList<Album>> {
+  fun getAlbumsSorted(@Sorting.Fields order: Long, ascending: Boolean): Single<List<Album>> {
     val join = SQLite.select().from(Album::class)
         .innerJoin(Track::class)
         .on(
@@ -126,7 +124,7 @@ class LocalAlbumDataSource
       else -> throw IllegalArgumentException("no such option")
     }
 
-    return Single.just(FlowCursorList.Builder(Album::class.java)
+    return Single.just(FlowQueryList.Builder(Album::class.java)
         .modelQueriable(sorted.groupBy(Album_Table.album.withTable(), Album_Table.artist.withTable()))
         .build())
   }

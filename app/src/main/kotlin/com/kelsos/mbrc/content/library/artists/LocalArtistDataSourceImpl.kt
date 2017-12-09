@@ -11,7 +11,6 @@ import com.raizlabs.android.dbflow.kotlinextensions.from
 import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.kotlinextensions.where
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import io.reactivex.Observable
@@ -35,16 +34,16 @@ class LocalArtistDataSourceImpl
     database<RemoteDatabase>().executeTransaction(transaction)
   }
 
-  override fun loadAllCursor(): Observable<FlowCursorList<Artist>> {
+  override fun loadAllCursor(): Observable<List<Artist>> {
     return Observable.create {
       val modelQueriable = (select from Artist::class).orderBy(artist, true)
-      val cursor = FlowCursorList.Builder(Artist::class.java).modelQueriable(modelQueriable).build()
-      it.onNext(cursor)
+
+      it.onNext(modelQueriable.flowQueryList())
       it.onComplete()
     }
   }
 
-  override fun getArtistByGenre(genre: String): Single<FlowCursorList<Artist>> {
+  override fun getArtistByGenre(genre: String): Single<List<Artist>> {
     return Single.create {
       val modelQueriable = SQLite.select().distinct()
           .from<Artist>(Artist::class.java)
@@ -54,20 +53,20 @@ class LocalArtistDataSourceImpl
           .where(Track_Table.genre.`is`(genre))
           .orderBy(artist.withTable(), true).
           groupBy(artist.withTable())
-      val cursor = FlowCursorList.Builder(Artist::class.java).modelQueriable(modelQueriable).build()
-      it.onSuccess(cursor)
+
+      it.onSuccess(modelQueriable.flowQueryList())
     }
   }
 
-  override fun search(term: String): Single<FlowCursorList<Artist>> {
+  override fun search(term: String): Single<List<Artist>> {
     return Single.create {
       val modelQueriable = (select from Artist::class where artist.like("%${term.escapeLike()}%"))
-      val cursor = FlowCursorList.Builder(Artist::class.java).modelQueriable(modelQueriable).build()
-      it.onSuccess(cursor)
+
+      it.onSuccess(modelQueriable.flowQueryList())
     }
   }
 
-  override fun getAlbumArtists(): Single<FlowCursorList<Artist>> {
+  override fun getAlbumArtists(): Single<List<Artist>> {
     return Single.create {
       val modelQueriable = SQLite.select().distinct()
           .from<Artist>(Artist::class.java)
@@ -76,8 +75,8 @@ class LocalArtistDataSourceImpl
           .where(artist.withTable().`in`(Track_Table.album_artist.withTable()))
           .orderBy(artist.withTable(), true).
           groupBy(artist.withTable())
-      val cursor = FlowCursorList.Builder(Artist::class.java).modelQueriable(modelQueriable).build()
-      it.onSuccess(cursor)
+
+      it.onSuccess(modelQueriable.flowQueryList())
     }
   }
 

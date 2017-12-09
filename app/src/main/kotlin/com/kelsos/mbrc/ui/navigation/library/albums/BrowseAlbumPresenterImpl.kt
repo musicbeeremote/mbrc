@@ -8,7 +8,6 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.AlbumSortingStore
 import com.kelsos.mbrc.utilities.SchedulerProvider
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Single
 import timber.log.Timber
 import javax.inject.Inject
@@ -87,6 +86,6 @@ class BrowseAlbumPresenterImpl
 
   }
 
-  private fun schedule(it: Single<FlowCursorList<Album>>) = it.observeOn(schedulerProvider.main())
+  private fun schedule(it: Single<List<Album>>) = it.observeOn(schedulerProvider.main())
       .subscribeOn(schedulerProvider.io())
 }

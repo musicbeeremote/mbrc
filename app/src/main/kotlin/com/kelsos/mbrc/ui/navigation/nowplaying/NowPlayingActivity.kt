@@ -23,7 +23,6 @@ import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper
 import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingAdapter.NowPlayingListener
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
@@ -155,13 +154,9 @@ class NowPlayingActivity : BaseNavigationActivity(),
     super.onDestroy()
   }
 
-  override fun update(cursor: FlowCursorList<NowPlaying>) {
+  override fun update(cursor: List<NowPlaying>) {
     adapter.update(cursor)
     swipeRefreshLayout.isRefreshing = false
-  }
-
-  override fun reload() {
-    adapter.refresh()
   }
 
   override fun trackChanged(trackInfo: TrackInfo, scrollToTrack: Boolean) {

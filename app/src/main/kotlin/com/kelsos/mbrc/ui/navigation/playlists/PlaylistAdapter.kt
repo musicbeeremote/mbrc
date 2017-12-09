@@ -9,8 +9,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.playlists.Playlist
-import com.kelsos.mbrc.extensions.count
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotterknife.bindView
 import javax.inject.Inject
 
@@ -18,7 +16,7 @@ class PlaylistAdapter
 @Inject constructor(context: Activity) : RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
 
   private val inflater: LayoutInflater = LayoutInflater.from(context)
-  private var data: FlowCursorList<Playlist>? = null
+  private var data: List<Playlist>? = null
   private var playlistPressedListener: OnPlaylistPressedListener? = null
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,7 +24,7 @@ class PlaylistAdapter
     val viewHolder = ViewHolder(view)
 
     viewHolder.itemView.setOnClickListener {
-      val path = data?.getItem(viewHolder.adapterPosition.toLong())?.url
+      val path = data?.get(viewHolder.adapterPosition)?.url
       path?.let {
         playlistPressedListener?.playlistPressed(it)
       }
@@ -36,7 +34,7 @@ class PlaylistAdapter
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val playlist = data?.getItem(holder.adapterPosition.toLong())
+    val playlist = data?.get(holder.adapterPosition)
     playlist?.let {
       holder.name.text = playlist.name
     }
@@ -44,9 +42,9 @@ class PlaylistAdapter
 
   }
 
-  override fun getItemCount(): Int = data.count()
+  override fun getItemCount(): Int = data?.size ?: 0
 
-  fun update(cursor: FlowCursorList<Playlist>) {
+  fun update(cursor: List<Playlist>) {
     this.data = cursor
     notifyDataSetChanged()
   }

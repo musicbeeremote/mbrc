@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.content.nowplaying
 
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
@@ -8,11 +7,11 @@ import javax.inject.Inject
 class NowPlayingRepositoryImpl
 @Inject constructor(private val remoteDataSource: RemoteNowPlayingDataSource,
                     private val localDataSource: LocalNowPlayingDataSource) : NowPlayingRepository {
-  override fun getAllCursor(): Single<FlowCursorList<NowPlaying>> {
+  override fun getAllCursor(): Single<List<NowPlaying>> {
     return localDataSource.loadAllCursor().firstOrError()
   }
 
-  override fun getAndSaveRemote(): Single<FlowCursorList<NowPlaying>> {
+  override fun getAndSaveRemote(): Single<List<NowPlaying>> {
     return getRemote().andThen(localDataSource.loadAllCursor().firstOrError())
   }
 
@@ -23,7 +22,7 @@ class NowPlayingRepositoryImpl
     }.ignoreElements()
   }
 
-  override fun search(term: String): Single<FlowCursorList<NowPlaying>> {
+  override fun search(term: String): Single<List<NowPlaying>> {
     return localDataSource.search(term)
   }
 

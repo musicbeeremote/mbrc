@@ -20,7 +20,6 @@ import com.kelsos.mbrc.ui.navigation.library.genres.GenreEntryAdapter.MenuItemSe
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotterknife.bindView
 import toothpick.Toothpick
 import javax.inject.Inject
@@ -63,7 +62,7 @@ class BrowseGenreFragment : Fragment(),
     presenter.detach()
   }
 
-  override fun update(cursor: FlowCursorList<Genre>) {
+  override fun update(cursor: List<Genre>) {
     swipeLayout.isRefreshing = false
     adapter.update(cursor)
   }

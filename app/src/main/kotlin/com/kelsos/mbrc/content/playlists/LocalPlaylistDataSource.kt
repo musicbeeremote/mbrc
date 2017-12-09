@@ -10,7 +10,6 @@ import com.raizlabs.android.dbflow.kotlinextensions.from
 import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.kotlinextensions.where
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import io.reactivex.Observable
@@ -33,20 +32,18 @@ class LocalPlaylistDataSource
     database<RemoteDatabase>().executeTransaction(transaction)
   }
 
-  override fun loadAllCursor(): Observable<FlowCursorList<Playlist>> {
+  override fun loadAllCursor(): Observable<List<Playlist>> {
     return Observable.create {
       val modelQueriable = (select from Playlist::class)
-      val cursor = FlowCursorList.Builder(Playlist::class.java).modelQueriable(modelQueriable).build()
-      it.onNext(cursor)
+      it.onNext(modelQueriable.flowQueryList())
       it.onComplete()
     }
   }
 
-  override fun search(term: String): Single<FlowCursorList<Playlist>> {
-    return Single.create<FlowCursorList<Playlist>> {
+  override fun search(term: String): Single<List<Playlist>> {
+    return Single.create<List<Playlist>> {
       val modelQueriable = (select from Playlist::class where name.like("%${term.escapeLike()}%"))
-      val cursor = FlowCursorList.Builder(Playlist::class.java).modelQueriable(modelQueriable).build()
-      it.onSuccess(cursor)
+      it.onSuccess(modelQueriable.flowQueryList())
     }
   }
 
