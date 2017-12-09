@@ -10,7 +10,6 @@ import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.protocol.NowPlayingMoveRequest
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.SchedulerProvider
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Single
 import javax.inject.Inject
 
@@ -76,6 +75,6 @@ class NowPlayingPresenterImpl
     bus.post(UserAction(Protocol.NowPlayingListRemove, position))
   }
 
-  private fun schedule(it: Single<FlowCursorList<NowPlaying>>) = it.observeOn(schedulerProvider.main())
+  private fun schedule(it: Single<List<NowPlaying>>) = it.observeOn(schedulerProvider.main())
       .subscribeOn(schedulerProvider.io())
 }

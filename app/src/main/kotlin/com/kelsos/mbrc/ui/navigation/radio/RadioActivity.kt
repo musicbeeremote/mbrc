@@ -14,7 +14,6 @@ import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.navigation.radio.RadioAdapter.OnRadioPressedListener
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
@@ -79,7 +78,7 @@ class RadioActivity : BaseNavigationActivity(), RadioView, OnRefreshListener, On
     Toothpick.closeScope(this)
   }
 
-  override fun update(data: FlowCursorList<RadioStation>) {
+  override fun update(data: List<RadioStation>) {
     adapter.update(data)
   }
 

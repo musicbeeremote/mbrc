@@ -20,7 +20,6 @@ import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter.MenuItemSe
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotterknife.bindView
 import toothpick.Toothpick
 import javax.inject.Inject
@@ -73,7 +72,7 @@ class BrowseTrackFragment : Fragment(),
     presenter.load()
   }
 
-  override fun update(it: FlowCursorList<Track>) {
+  override fun update(it: List<Track>) {
     adapter.update(it)
     swipeLayout.isRefreshing = false
   }

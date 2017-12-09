@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.content.radios
 
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
@@ -10,11 +9,11 @@ class RadioRepositoryImpl
     private val localDataSource: LocalRadioDataSource,
     private val remoteDataSource: RemoteRadioDataSource
 ) : RadioRepository {
-  override fun getAllCursor(): Single<FlowCursorList<RadioStation>> {
+  override fun getAllCursor(): Single<List<RadioStation>> {
     return localDataSource.loadAllCursor().firstOrError()
   }
 
-  override fun getAndSaveRemote(): Single<FlowCursorList<RadioStation>> {
+  override fun getAndSaveRemote(): Single<List<RadioStation>> {
     return getRemote().andThen(localDataSource.loadAllCursor().firstOrError())
   }
 
@@ -25,7 +24,7 @@ class RadioRepositoryImpl
     }.ignoreElements()
   }
 
-  override fun search(term: String): Single<FlowCursorList<RadioStation>> {
+  override fun search(term: String): Single<List<RadioStation>> {
     return localDataSource.search(term)
   }
 

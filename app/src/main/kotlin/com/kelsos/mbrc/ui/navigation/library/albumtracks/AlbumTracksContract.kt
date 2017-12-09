@@ -4,10 +4,9 @@ import com.kelsos.mbrc.content.library.albums.AlbumInfo
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
-import com.raizlabs.android.dbflow.list.FlowCursorList
 
 interface AlbumTracksView : BaseView {
-  fun update(cursor: FlowCursorList<Track>)
+  fun update(cursor: List<Track>)
 }
 
 interface AlbumTracksPresenter : Presenter<AlbumTracksView> {

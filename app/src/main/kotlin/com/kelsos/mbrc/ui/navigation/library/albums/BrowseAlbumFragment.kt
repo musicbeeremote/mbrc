@@ -4,7 +4,12 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -17,7 +22,6 @@ import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotterknife.bindView
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -44,11 +48,6 @@ class BrowseAlbumFragment : Fragment(),
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     return inflater.inflate(R.layout.fragment_browse, container, false)
-  }
-
-  override fun onResume() {
-    super.onResume()
-    adapter.refresh()
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -114,12 +113,7 @@ class BrowseAlbumFragment : Fragment(),
     presenter.reload()
   }
 
-  override fun onStop() {
-    super.onStop()
-
-  }
-
-  override fun update(cursor: FlowCursorList<Album>) {
+  override fun update(cursor: List<Album>) {
     adapter.update(cursor)
     swipeLayout.isRefreshing = false
   }

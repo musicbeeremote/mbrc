@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.content.library.albums
 
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
@@ -10,15 +9,15 @@ class AlbumRepositoryImpl
                     private val remoteDataSource: RemoteAlbumDataSource) :
     AlbumRepository {
 
-  override fun getAlbumsByArtist(artist: String): Single<FlowCursorList<Album>> {
+  override fun getAlbumsByArtist(artist: String): Single<List<Album>> {
     return localDataSource.getAlbumsByArtist(artist)
   }
 
-  override fun getAllCursor(): Single<FlowCursorList<Album>> {
+  override fun getAllCursor(): Single<List<Album>> {
     return localDataSource.loadAllCursor().firstOrError()
   }
 
-  override fun getAndSaveRemote(): Single<FlowCursorList<Album>> {
+  override fun getAndSaveRemote(): Single<List<Album>> {
     return getRemote().andThen(localDataSource.loadAllCursor().firstOrError())
   }
 
@@ -29,7 +28,7 @@ class AlbumRepositoryImpl
     }.ignoreElements()
   }
 
-  override fun search(term: String): Single<FlowCursorList<Album>> {
+  override fun search(term: String): Single<List<Album>> {
     return localDataSource.search(term)
   }
 
@@ -37,7 +36,7 @@ class AlbumRepositoryImpl
     return localDataSource.isEmpty()
   }
 
-  override fun getAlbumsSorted(@Sorting.Fields order: Long, ascending: Boolean): Single<FlowCursorList<Album>> {
+  override fun getAlbumsSorted(@Sorting.Fields order: Long, ascending: Boolean): Single<List<Album>> {
     return localDataSource.getAlbumsSorted(order, ascending)
   }
 }

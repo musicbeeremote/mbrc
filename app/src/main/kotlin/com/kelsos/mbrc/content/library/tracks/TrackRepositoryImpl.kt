@@ -2,7 +2,6 @@ package com.kelsos.mbrc.content.library.tracks
 
 import com.kelsos.mbrc.content.library.UpdatedDataSource
 import com.kelsos.mbrc.utilities.SchedulerProvider
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Completable
 import io.reactivex.Single
 import org.threeten.bp.Instant
@@ -16,19 +15,19 @@ class TrackRepositoryImpl
     private val schedulerProvider: SchedulerProvider
 ) : TrackRepository {
 
-  override fun getAllCursor(): Single<FlowCursorList<Track>> {
+  override fun getAllCursor(): Single<List<Track>> {
     return localDataSource.loadAllCursor().singleOrError()
   }
 
-  override fun getAlbumTracks(album: String, artist: String): Single<FlowCursorList<Track>> {
+  override fun getAlbumTracks(album: String, artist: String): Single<List<Track>> {
     return localDataSource.getAlbumTracks(album, artist)
   }
 
-  override fun getNonAlbumTracks(artist: String): Single<FlowCursorList<Track>> {
+  override fun getNonAlbumTracks(artist: String): Single<List<Track>> {
     return localDataSource.getNonAlbumTracks(artist)
   }
 
-  override fun getAndSaveRemote(): Single<FlowCursorList<Track>> {
+  override fun getAndSaveRemote(): Single<List<Track>> {
     return getRemote().andThen(localDataSource.loadAllCursor().singleOrError())
   }
 
@@ -48,7 +47,7 @@ class TrackRepositoryImpl
         .ignoreElements()
   }
 
-  override fun search(term: String): Single<FlowCursorList<Track>> {
+  override fun search(term: String): Single<List<Track>> {
     return localDataSource.search(term)
   }
 
