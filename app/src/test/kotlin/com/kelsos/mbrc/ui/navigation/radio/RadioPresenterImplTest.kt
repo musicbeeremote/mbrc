@@ -1,14 +1,14 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
+import android.arch.paging.DataSource
 import com.kelsos.mbrc.any
 import com.kelsos.mbrc.content.nowplaying.queue.Queue
 import com.kelsos.mbrc.content.nowplaying.queue.QueueApi
 import com.kelsos.mbrc.content.nowplaying.queue.QueueResponse
 import com.kelsos.mbrc.content.radios.RadioRepository
-import com.kelsos.mbrc.content.radios.RadioStation
+import com.kelsos.mbrc.content.radios.RadioStationEntity
 import com.kelsos.mbrc.rules.MockitoInitializerRule
 import com.kelsos.mbrc.ui.navigation.radio.RadioActivity.Presenter
-import com.raizlabs.android.dbflow.list.FlowCursorList
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
@@ -17,23 +17,26 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
+import org.mockito.BDDMockito.given
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.never
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule
 import java.net.SocketTimeoutException
 
 class RadioPresenterImplTest {
 
-  val toothpickRule: ToothPickRule = ToothPickRule(this, Presenter::class.java)
+  private val toothpickRule: ToothPickRule = ToothPickRule(this, Presenter::class.java)
       .setRootRegistryPackage("com.kelsos.mbrc")
   @Rule @JvmField val chain: TestRule = RuleChain.outerRule(toothpickRule)
       .around(MockitoInitializerRule(this))
 
-  @Mock lateinit var radioView: RadioView
-  @Mock lateinit var radioRepository: RadioRepository
-  @Mock lateinit var queueApi: QueueApi
-  @Mock lateinit var result: FlowCursorList<RadioStation>
+  @Mock private lateinit var radioView: RadioView
+  @Mock private lateinit var radioRepository: RadioRepository
+  @Mock private lateinit var queueApi: QueueApi
+  @Mock private lateinit var result: DataSource.Factory<Int, RadioStationEntity>
 
   private lateinit var presenter: RadioPresenter
 
@@ -44,83 +47,84 @@ class RadioPresenterImplTest {
   }
 
   @Test
-  fun loadRadios_cacheEmpty_ViewNotAttached() {
+  fun loadRadiosCacheEmptyViewNotAttached() {
     val data = Single.just(result)
-    `when`(radioRepository.cacheIsEmpty()).thenReturn(Single.just(true))
-    `when`(radioRepository.getAndSaveRemote()).thenReturn(data)
+
+    given(radioRepository.cacheIsEmpty()).willReturn(Single.just(true))
+    given(radioRepository.getAndSaveRemote()).willReturn(data)
 
     presenter.load()
 
     verify(radioRepository, times(1)).getAndSaveRemote()
-    verify(radioRepository, never()).getAllCursor()
-    verify(radioView, never()).update(result)
+    verify(radioRepository, never()).getAll()
+    verify(radioView, never()).update(any())
     verify(radioView, never()).error(any())
     verify(radioView, never()).showLoading()
     verify(radioView, never()).hideLoading()
   }
 
   @Test
-  fun loadRadios_cacheEmpty_ViewAttached() {
+  fun loadRadiosCacheEmptyViewAttached() {
     val data = Single.just(result)
-    `when`(radioRepository.cacheIsEmpty()).thenReturn(Single.just(true))
-    `when`(radioRepository.getAndSaveRemote()).thenReturn(data)
+    given(radioRepository.cacheIsEmpty()).willReturn(Single.just(true))
+    given(radioRepository.getAndSaveRemote()).willReturn(data)
 
     presenter.attach(radioView)
     presenter.load()
 
     verify(radioRepository, times(1)).getAndSaveRemote()
-    verify(radioRepository, never()).getAllCursor()
-    verify(radioView, times(1)).update(result)
+    verify(radioRepository, never()).getAll()
+    verify(radioView, times(1)).update(any())
     verify(radioView, never()).error(any())
     verify(radioView, times(1)).showLoading()
     verify(radioView, times(1)).hideLoading()
   }
 
   @Test
-  fun loadRadios_cacheNotEmpty_viewAttached() {
+  fun loadRadiosCacheNotEmptyViewAttached() {
     val data = Single.just(result)
-    `when`(radioRepository.cacheIsEmpty()).thenReturn(Single.just(false))
-    `when`(radioRepository.getAllCursor()).thenReturn(data)
+    given(radioRepository.cacheIsEmpty()).willReturn(Single.just(false))
+    given(radioRepository.getAll()).willReturn(data)
 
     presenter.attach(radioView)
     presenter.load()
 
     verify(radioRepository, never()).getAndSaveRemote()
-    verify(radioRepository, times(1)).getAllCursor()
-    verify(radioView, times(1)).update(result)
+    verify(radioRepository, times(1)).getAll()
+    verify(radioView, times(1)).update(any())
     verify(radioView, never()).error(any())
     verify(radioView, times(1)).showLoading()
     verify(radioView, times(1)).hideLoading()
   }
 
   @Test
-  fun loadRadios_loadError_ViewAttached() {
+  fun loadRadiosLoadErrorViewAttached() {
     val exception = RuntimeException()
-    `when`(radioRepository.cacheIsEmpty()).thenReturn(Single.just(false))
-    `when`(radioRepository.getAllCursor()).thenReturn(Single.error(exception))
+    given(radioRepository.cacheIsEmpty()).willReturn(Single.just(false))
+    given(radioRepository.getAll()).willReturn(Single.error(exception))
 
     presenter.attach(radioView)
     presenter.load()
 
     verify(radioRepository, never()).getAndSaveRemote()
-    verify(radioRepository, times(1)).getAllCursor()
-    verify(radioView, never()).update(result)
+    verify(radioRepository, times(1)).getAll()
+    verify(radioView, never()).update(any())
     verify(radioView, times(1)).error(exception)
     verify(radioView, times(1)).showLoading()
     verify(radioView, times(1)).hideLoading()
   }
 
   @Test
-  fun loadRadios_loadError_ViewNotAttached() {
+  fun loadRadiosLoadErrorViewNotAttached() {
     val exception = RuntimeException()
-    `when`(radioRepository.cacheIsEmpty()).thenReturn(Single.just(false))
-    `when`(radioRepository.getAllCursor()).thenReturn(Single.error(exception))
+    given(radioRepository.cacheIsEmpty()).willReturn(Single.just(false))
+    given(radioRepository.getAll()).willReturn(Single.error(exception))
 
     presenter.load()
 
     verify(radioRepository, never()).getAndSaveRemote()
-    verify(radioRepository, times(1)).getAllCursor()
-    verify(radioView, never()).update(result)
+    verify(radioRepository, times(1)).getAll()
+    verify(radioView, never()).update(any())
     verify(radioView, never()).error(exception)
     verify(radioView, never()).showLoading()
     verify(radioView, never()).hideLoading()
@@ -128,72 +132,72 @@ class RadioPresenterImplTest {
 
 
   @Test
-  fun loadRadios_refresh_ViewAttached() {
+  fun loadRadiosRefreshViewAttached() {
     val data = Single.just(result)
-    `when`(radioRepository.getAndSaveRemote()).thenReturn(data)
+    given(radioRepository.getAndSaveRemote()).willReturn(data)
 
     presenter.attach(radioView)
     presenter.refresh()
 
     verify(radioRepository, times(1)).getAndSaveRemote()
-    verify(radioRepository, never()).getAllCursor()
-    verify(radioView, times(1)).update(result)
+    verify(radioRepository, never()).getAll()
+    verify(radioView, times(1)).update(any())
     verify(radioView, never()).error(any())
     verify(radioView, times(1)).showLoading()
     verify(radioView, times(1)).hideLoading()
   }
 
   @Test
-  fun loadRadios_refresh_ViewNotAttached() {
+  fun loadRadiosRefreshViewNotAttached() {
     val data = Single.just(result)
-    `when`(radioRepository.getAndSaveRemote()).thenReturn(data)
+    given(radioRepository.getAndSaveRemote()).willReturn(data)
 
     presenter.refresh()
 
     verify(radioRepository, times(1)).getAndSaveRemote()
-    verify(radioRepository, never()).getAllCursor()
-    verify(radioView, never()).update(result)
+    verify(radioRepository, never()).getAll()
+    verify(radioView, never()).update(any())
     verify(radioView, never()).error(any())
     verify(radioView, never()).showLoading()
     verify(radioView, never()).hideLoading()
   }
 
   @Test
-  fun loadRadios_refreshError_ViewAttached() {
+  fun loadRadiosRefreshErrorViewAttached() {
     val error = RuntimeException()
-    `when`(radioRepository.getAndSaveRemote()).thenReturn(Single.error(error))
+    given(radioRepository.getAndSaveRemote()).willReturn(Single.error(error))
 
     presenter.attach(radioView)
     presenter.refresh()
 
     verify(radioRepository, times(1)).getAndSaveRemote()
-    verify(radioRepository, never()).getAllCursor()
-    verify(radioView, never()).update(result)
+    verify(radioRepository, never()).getAll()
+    verify(radioView, never()).update(any())
     verify(radioView, times(1)).error(error)
     verify(radioView, times(1)).showLoading()
     verify(radioView, times(1)).hideLoading()
   }
 
   @Test
-  fun loadRadios_refreshError_ViewNotAttached() {
+  fun loadRadiosRefreshErrorViewNotAttached() {
     val error = RuntimeException()
-    `when`(radioRepository.getAndSaveRemote()).thenReturn(Single.error(error))
+    given(radioRepository.getAndSaveRemote()).willReturn(Single.error(error))
 
     presenter.refresh()
 
     verify(radioRepository, times(1)).getAndSaveRemote()
-    verify(radioRepository, never()).getAllCursor()
-    verify(radioView, never()).update(result)
+    verify(radioRepository, never()).getAll()
+    verify(radioView, never()).update(any())
     verify(radioView, never()).error(error)
     verify(radioView, never()).showLoading()
     verify(radioView, never()).hideLoading()
   }
 
   @Test
-  fun playRadio_successful_ViewAttached() {
+  fun playRadioSuccessfulViewAttached() {
     val path = "http://fake.rad"
     val queueResponse = QueueResponse(200)
-    `when`(queueApi.queue(Queue.NOW, listOf(path))).thenReturn(Single.just(queueResponse))
+    given(queueApi.queue(Queue.NOW, listOf(path))).willReturn(Single.just(queueResponse))
 
     presenter.attach(radioView)
     presenter.play(path)
@@ -203,10 +207,10 @@ class RadioPresenterImplTest {
   }
 
   @Test
-  fun playRadio_successful_ViewNotAttached() {
+  fun playRadioSuccessfulViewNotAttached() {
     val path = "http://fake.rad"
     val queueResponse = QueueResponse(200)
-    `when`(queueApi.queue(Queue.NOW, listOf(path))).thenReturn(Single.just(queueResponse))
+    given(queueApi.queue(Queue.NOW, listOf(path))).willReturn(Single.just(queueResponse))
 
     presenter.play(path)
     verify(queueApi, times(1)).queue(Queue.NOW, listOf(path))
@@ -215,10 +219,10 @@ class RadioPresenterImplTest {
   }
 
   @Test
-  fun playRadio_failure_ViewAttached() {
+  fun playRadioFailureViewAttached() {
     val path = "http://fake.rad"
     val timeout = SocketTimeoutException()
-    `when`(queueApi.queue(Queue.NOW, listOf(path))).thenReturn(Single.error(timeout))
+    given(queueApi.queue(Queue.NOW, listOf(path))).willReturn(Single.error(timeout))
 
     presenter.attach(radioView)
     presenter.play(path)
@@ -228,10 +232,10 @@ class RadioPresenterImplTest {
   }
 
   @Test
-  fun playRadio_failure_ViewNotAttached() {
+  fun playRadioFailureViewNotAttached() {
     val path = "http://fake.rad"
     val timeout = SocketTimeoutException()
-    `when`(queueApi.queue(Queue.NOW, listOf(path))).thenReturn(Single.error(timeout))
+    given(queueApi.queue(Queue.NOW, listOf(path))).willReturn(Single.error(timeout))
 
     presenter.play(path)
     verify(queueApi, times(1)).queue(Queue.NOW, listOf(path))

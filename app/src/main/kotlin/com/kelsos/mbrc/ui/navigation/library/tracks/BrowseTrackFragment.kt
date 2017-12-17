@@ -12,7 +12,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.tracks.Track
+import com.kelsos.mbrc.content.library.tracks.TrackEntity
 import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.extensions.initLinear
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
@@ -72,16 +72,16 @@ class BrowseTrackFragment : Fragment(),
     presenter.load()
   }
 
-  override fun update(it: List<Track>) {
+  override fun update(it: List<TrackEntity>) {
     adapter.update(it)
     swipeLayout.isRefreshing = false
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: Track) {
+  override fun onMenuItemSelected(menuItem: MenuItem, entry: TrackEntity) {
     actionHandler.trackSelected(menuItem, entry)
   }
 
-  override fun onItemClicked(track: Track) {
+  override fun onItemClicked(track: TrackEntity) {
     actionHandler.trackSelected(track)
   }
 

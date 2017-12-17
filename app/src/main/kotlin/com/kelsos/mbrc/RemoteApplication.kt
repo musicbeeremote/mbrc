@@ -1,12 +1,11 @@
 package com.kelsos.mbrc
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.support.annotation.CallSuper
 import android.support.multidex.MultiDexApplication
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.kelsos.mbrc.di.modules.RemoteModule
-import com.raizlabs.android.dbflow.config.FlowConfig
-import com.raizlabs.android.dbflow.config.FlowManager
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import timber.log.Timber
@@ -16,6 +15,7 @@ import toothpick.registries.FactoryRegistryLocator
 import toothpick.registries.MemberInjectorRegistryLocator
 import toothpick.smoothie.module.SmoothieApplicationModule
 
+@SuppressLint("Registered")
 open class RemoteApplication : MultiDexApplication() {
 
   private var refWatcher: RefWatcher? = null
@@ -28,9 +28,9 @@ open class RemoteApplication : MultiDexApplication() {
 
   open protected fun initialize() {
     if (!testMode()) {
-      AndroidThreeTen.init(this);
+      AndroidThreeTen.init(this)
     }
-    initializeDbflow()
+
     initializeToothpick()
     initializeTimber()
     initializeLeakCanary()
@@ -59,16 +59,11 @@ open class RemoteApplication : MultiDexApplication() {
     }
   }
 
-  private fun initializeDbflow() {
-    FlowManager.init(FlowConfig.Builder(this).openDatabasesOnInit(true).build())
-  }
-
-  protected fun initializeToothpick() {
-    val configuration: Configuration
-    if (BuildConfig.DEBUG) {
-      configuration = Configuration.forDevelopment().disableReflection()
+  private fun initializeToothpick() {
+    val configuration: Configuration = if (BuildConfig.DEBUG) {
+      Configuration.forDevelopment().disableReflection()
     } else {
-      configuration = Configuration.forProduction().disableReflection()
+      Configuration.forProduction().disableReflection()
     }
 
     Toothpick.setConfiguration(configuration)

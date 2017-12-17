@@ -1,32 +1,44 @@
 package com.kelsos.mbrc.content.playlists
 
+import android.arch.paging.DataSource
+import com.kelsos.mbrc.utilities.epoch
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
 
 class PlaylistRepositoryImpl
-@Inject constructor(private val localDataSource: LocalPlaylistDataSource,
-                    private val remoteDataSource: RemotePlaylistDataSource) : PlaylistRepository {
-  override fun getAllCursor(): Single<List<Playlist>> {
-    return localDataSource.loadAllCursor().firstOrError()
+@Inject
+constructor(
+    private val dao: PlaylistDao,
+    private val remoteDataSource: RemotePlaylistDataSource
+) : PlaylistRepository {
+  private val mapper = PlaylistDtoMapper()
+
+  override fun getAll(): Single<DataSource.Factory<Int, PlaylistEntity>> {
+    return Single.just(dao.getAll())
   }
 
-  override fun getAndSaveRemote(): Single<List<Playlist>> {
-    return getRemote().andThen(localDataSource.loadAllCursor().firstOrError())
+  override fun getAndSaveRemote(): Single<DataSource.Factory<Int, PlaylistEntity>> {
+    return getRemote().andThen(getAll())
   }
 
   override fun getRemote(): Completable {
-    localDataSource.deleteAll()
+    val added = epoch()
     return remoteDataSource.fetch().doOnNext {
-      localDataSource.saveAll(it)
+      val playlists = it.map {
+        mapper.map(it).apply {
+          this.dateAdded = added
+        }
+      }
+      dao.insertAll(playlists)
+    }.doFinally {
+      dao.removePreviousEntries(added)
     }.ignoreElements()
   }
 
-  override fun search(term: String): Single<List<Playlist>> {
-    return localDataSource.search(term)
+  override fun search(term: String): Single<DataSource.Factory<Int, PlaylistEntity>> {
+    return Single.just(dao.search(term))
   }
 
-  override fun cacheIsEmpty(): Single<Boolean> {
-    return localDataSource.isEmpty()
-  }
+  override fun cacheIsEmpty(): Single<Boolean> = Single.just(dao.count() == 0L)
 }

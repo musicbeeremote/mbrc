@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.genres.Genre
+import com.kelsos.mbrc.content.library.genres.GenreEntity
 import com.kelsos.mbrc.extensions.string
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 import kotterknife.bindView
@@ -20,7 +20,7 @@ class GenreEntryAdapter
 @Inject
 constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHolder>(),
     BubbleTextGetter {
-  private var data: List<Genre>? = null
+  private var data: List<GenreEntity>? = null
   private var listener: MenuItemSelectedListener? = null
   private val inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -81,14 +81,14 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
     val genre = data?.get(holder.adapterPosition)
 
     genre?.let {
-      holder.title.text = if (it.genre.isNullOrBlank()) holder.empty else genre.genre
+      holder.title.text = if (it.genre.isBlank()) holder.empty else genre.genre
       holder.indicator.setOnClickListener { createPopup(it, genre) }
       holder.itemView.setOnClickListener { listener?.onItemClicked(genre) }
     }
 
   }
 
-  private fun createPopup(it: View, genre: Genre) {
+  private fun createPopup(it: View, genre: GenreEntity) {
     val popupMenu = PopupMenu(it.context, it)
     popupMenu.inflate(R.menu.popup_genre)
     popupMenu.setOnMenuItemClickListener { menuItem ->
@@ -117,9 +117,9 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
   }
 
   interface MenuItemSelectedListener {
-    fun onMenuItemSelected(menuItem: MenuItem, entry: Genre): Boolean
+    fun onMenuItemSelected(menuItem: MenuItem, entry: GenreEntity): Boolean
 
-    fun onItemClicked(genre: Genre)
+    fun onItemClicked(genre: GenreEntity)
   }
 
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -128,7 +128,7 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
     val empty: String by lazy { string(R.string.empty) }
   }
 
-  fun update(cursor: List<Genre>) {
+  fun update(cursor: List<GenreEntity>) {
     data = cursor
     notifyDataSetChanged()
   }

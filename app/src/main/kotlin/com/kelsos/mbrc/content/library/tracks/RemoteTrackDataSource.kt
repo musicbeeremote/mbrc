@@ -7,8 +7,9 @@ import io.reactivex.Observable
 import javax.inject.Inject
 
 class RemoteTrackDataSource
-@Inject constructor(private val service: LibraryService) : RemoteDataSource<Track> {
-  override fun fetch(): Observable<List<Track>> {
+@Inject
+constructor(private val service: LibraryService) : RemoteDataSource<TrackDto> {
+  override fun fetch(): Observable<List<TrackDto>> {
     return Observable.range(0, Integer.MAX_VALUE).flatMap {
       service.getTracks(it * LIMIT, LIMIT)
     }.takeWhile { it.offset < it.total }.map { it.data }

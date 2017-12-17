@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
+import android.arch.lifecycle.Observer
 import com.kelsos.mbrc.content.activestatus.MainDataModel
-import com.kelsos.mbrc.content.nowplaying.NowPlaying
 import com.kelsos.mbrc.content.nowplaying.NowPlayingRepository
 import com.kelsos.mbrc.events.TrackInfoChangeEvent
 import com.kelsos.mbrc.events.UserAction
@@ -10,7 +10,7 @@ import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.protocol.NowPlayingMoveRequest
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.SchedulerProvider
-import io.reactivex.Single
+import com.kelsos.mbrc.utilities.paged
 import javax.inject.Inject
 
 class NowPlayingPresenterImpl
@@ -25,9 +25,16 @@ class NowPlayingPresenterImpl
   override fun reload(scrollToTrack: Boolean) {
     view().showLoading()
     addDisposable(repository.getAndSaveRemote()
-        .compose { schedule(it) }
+        .subscribeOn(schedulerProvider.io())
+        .observeOn(schedulerProvider.main())
         .subscribe({
-          view().update(it)
+          val liveData = it.paged()
+          liveData.observe(this, Observer {
+            if (it != null) {
+              view().update(it)
+            }
+          })
+
           view().trackChanged(model.trackInfo, scrollToTrack)
           view().hideLoading()
         }) {
@@ -37,9 +44,16 @@ class NowPlayingPresenterImpl
   }
 
   override fun load() {
-    addDisposable(repository.getAllCursor().compose { schedule(it) }
+    addDisposable(repository.getAll()
+        .subscribeOn(schedulerProvider.io())
+        .observeOn(schedulerProvider.main())
         .subscribe({
-          view().update(it)
+          val liveData = it.paged()
+          liveData.observe(this, Observer {
+            if (it != null) {
+              view().update(it)
+            }
+          })
           view().trackChanged(model.trackInfo, true)
           view().hideLoading()
         }) {
@@ -74,7 +88,4 @@ class NowPlayingPresenterImpl
   override fun removeTrack(position: Int) {
     bus.post(UserAction(Protocol.NowPlayingListRemove, position))
   }
-
-  private fun schedule(it: Single<List<NowPlaying>>) = it.observeOn(schedulerProvider.main())
-      .subscribeOn(schedulerProvider.io())
 }

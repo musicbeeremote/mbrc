@@ -13,13 +13,11 @@ import com.kelsos.mbrc.networking.SocketAction.STOP
 import com.kelsos.mbrc.networking.SocketAction.TERMINATE
 import com.kelsos.mbrc.networking.SocketActivityChecker.PingTimeoutListener
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
-import com.kelsos.mbrc.networking.connections.ConnectionSettings
+import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.connections.InetAddressMapper
 import com.kelsos.mbrc.preferences.DefaultSettingsChangedEvent
 import io.reactivex.Completable
-import io.reactivex.Single
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import java.io.BufferedReader
 import java.io.BufferedWriter
@@ -50,8 +48,6 @@ constructor(
   private var socket: Socket? = null
   private var output: PrintWriter? = null
   private val executor = Executors.newSingleThreadExecutor { Thread(it, "socket-thread") }
-  private val messageExecutor = Executors.newSingleThreadExecutor { Thread(it, "client-send-thread") }
-  private val messageScheduler = Schedulers.from(messageExecutor)
 
   private var disposable: Disposable? = null
 
@@ -164,29 +160,17 @@ constructor(
     if (!isConnected()) {
       return
     }
-    Single.fromCallable { return@fromCallable message }
-        .map { mapper.writeValueAsString(message) + "\r\n" }
-        .doOnSuccess { Timber.v("Sending -> $it") }
-        .flatMapCompletable { writeToSocket(it) }
-        .subscribeOn(messageScheduler)
-        .observeOn(messageScheduler)
-        .subscribe({
-
-        }, {
-          Timber.e(it, "When sending")
-        })
-
-
+    val messageString = "${mapper.writeValueAsString(message)}\r\n"
+    Timber.v("Sending -> $messageString")
+    writeToSocket(messageString)
   }
 
-  private fun writeToSocket(message: String): Completable {
-    return Completable.fromAction {
-      val output = output ?: throw RuntimeException("output was null")
-      output.print(message)
+  private fun writeToSocket(message: String) {
+    val output = output ?: throw IOException("output was null")
+    output.print(message)
 
-      if (output.checkError()) {
-        throw RuntimeException("Output stream encountered an error")
-      }
+    if (output.checkError()) {
+      throw IOException("Output stream encountered an error")
     }
   }
 
@@ -196,7 +180,7 @@ constructor(
   }
 
   private inner class SocketConnection
-  internal constructor(connectionSettings: ConnectionSettings) : Runnable {
+  internal constructor(connectionSettings: ConnectionSettingsEntity) : Runnable {
     private val socketAddress: SocketAddress?
     private val mapper: InetAddressMapper = InetAddressMapper()
 

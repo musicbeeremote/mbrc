@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.ui.navigation.library.albums
 
-import com.kelsos.mbrc.content.library.albums.Album
+import android.arch.lifecycle.Observer
+import android.arch.paging.DataSource
+import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.library.albums.Sorting
 import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
@@ -8,18 +10,19 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.AlbumSortingStore
 import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.paged
 import io.reactivex.Single
 import timber.log.Timber
 import javax.inject.Inject
 
 class BrowseAlbumPresenterImpl
-@Inject constructor(
+@Inject
+constructor(
     private val bus: RxBus,
     private val repository: AlbumRepository,
     private val albumSortingStore: AlbumSortingStore,
     private val schedulerProvider: SchedulerProvider
-) :
-    BasePresenter<BrowseAlbumView>(),
+) : BasePresenter<BrowseAlbumView>(),
     BrowseAlbumPresenter {
 
   override fun attach(view: BrowseAlbumView) {
@@ -35,7 +38,12 @@ class BrowseAlbumPresenterImpl
   override fun load() {
     view().showLoading()
     addDisposable(repository.getAlbumsSorted().compose { schedule(it) }.subscribe({
-      view().update(it)
+      val liveData = it.paged()
+      liveData.observe(this, Observer {
+        if (it != null) {
+          view().update(it)
+        }
+      })
       view().hideLoading()
     }) {
       Timber.v(it)
@@ -59,7 +67,12 @@ class BrowseAlbumPresenterImpl
     addDisposable(repository.getAlbumsSorted(sortingSelection, ascending)
         .compose { schedule(it) }
         .subscribe({
-          view().update(it)
+          val liveData = it.paged()
+          liveData.observe(this, Observer {
+            if (it != null) {
+              view().update(it)
+            }
+          })
           view().hideLoading()
         }) {
           Timber.v(it)
@@ -77,7 +90,13 @@ class BrowseAlbumPresenterImpl
   override fun reload() {
     view().showLoading()
     addDisposable(repository.getAndSaveRemote().compose { schedule(it) }.subscribe({
-      view().update(it)
+      val pagedList = it.paged()
+      pagedList.observe(this, Observer {
+        if (it != null) {
+          view().update(it)
+        }
+      })
+
       view().hideLoading()
     }) {
       Timber.v(it)
@@ -86,6 +105,6 @@ class BrowseAlbumPresenterImpl
 
   }
 
-  private fun schedule(it: Single<List<Album>>) = it.observeOn(schedulerProvider.main())
+  private fun schedule(it: Single<DataSource.Factory<Int, AlbumEntity>>) = it.observeOn(schedulerProvider.main())
       .subscribeOn(schedulerProvider.io())
 }

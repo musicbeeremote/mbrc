@@ -9,12 +9,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.networking.connections.ConnectionSettings
+import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import kotterknife.bindView
 import java.util.*
 
 class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewHolder>() {
-  private val data: MutableList<ConnectionSettings>
+  private val data: MutableList<ConnectionSettingsEntity>
   private var selectionId: Long = 0
   private var changeListener: ConnectionChangeListener? = null
 
@@ -71,7 +71,7 @@ class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewH
     }
   }
 
-  private fun showPopup(settings: ConnectionSettings, v: View) {
+  private fun showPopup(settings: ConnectionSettingsEntity, v: View) {
     val popupMenu = PopupMenu(v.context, v)
     popupMenu.menuInflater.inflate(R.menu.connection_popup, popupMenu.menu)
     popupMenu.setOnMenuItemClickListener {
@@ -112,10 +112,10 @@ class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewH
   }
 
   interface ConnectionChangeListener {
-    fun onDelete(settings: ConnectionSettings)
+    fun onDelete(settings: ConnectionSettingsEntity)
 
-    fun onEdit(settings: ConnectionSettings)
+    fun onEdit(settings: ConnectionSettingsEntity)
 
-    fun onDefault(settings: ConnectionSettings)
+    fun onDefault(settings: ConnectionSettingsEntity)
   }
 }

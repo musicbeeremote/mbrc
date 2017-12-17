@@ -5,12 +5,20 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import io.reactivex.Completable
 import io.reactivex.Single
-import java.io.*
+import java.io.BufferedReader
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileReader
+import java.io.FileWriter
 import javax.inject.Inject
 
 class ModelCacheImpl
-@Inject constructor(private val mapper: ObjectMapper,
-                    private val context: Application) : ModelCache {
+@Inject
+constructor(
+    private val mapper: ObjectMapper,
+    private val context: Application
+) : ModelCache {
 
   override fun persistInfo(trackInfo: TrackInfo): Completable {
     return Completable.fromCallable {
@@ -32,20 +40,18 @@ class ModelCacheImpl
     }
   }
 
-  override fun persistCover(cover: String): Completable {
-    return Completable.fromCallable {
-      val coverFile = File(context.filesDir, COVER_INFO)
-      if (coverFile.exists()) {
-        coverFile.delete()
-      }
-
-      val writer = FileWriter(coverFile)
-      val bufferedWriter = BufferedWriter(writer)
-      bufferedWriter.write(cover)
-      bufferedWriter.flush()
-      bufferedWriter.close()
-      writer.close()
+  override fun persistCover(cover: String): Completable = Completable.fromCallable {
+    val coverFile = File(context.filesDir, COVER_INFO)
+    if (coverFile.exists()) {
+      coverFile.delete()
     }
+
+    val writer = FileWriter(coverFile)
+    val bufferedWriter = BufferedWriter(writer)
+    bufferedWriter.write(cover)
+    bufferedWriter.flush()
+    bufferedWriter.close()
+    writer.close()
   }
 
   override fun restoreCover(): Single<String> {

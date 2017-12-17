@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.ui.navigation.library.artists
 
-import com.kelsos.mbrc.content.library.artists.Artist
+import android.arch.lifecycle.Observer
+import android.arch.paging.DataSource
+import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.events.bus.RxBus
@@ -8,6 +10,7 @@ import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.ui.navigation.library.ArtistTabRefreshEvent
 import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.paged
 import io.reactivex.Single
 import timber.log.Timber
 import javax.inject.Inject
@@ -39,11 +42,16 @@ class BrowseArtistPresenterImpl
       if (it) {
         return@flatMap repository.getAlbumArtistsOnly()
       } else {
-        return@flatMap repository.getAllCursor()
+        return@flatMap repository.getAll()
       }
     }
     addDisposable(artistObservable.compose { schedule(it) }.subscribe({
-      view().update(it)
+      val liveData = it.paged()
+      liveData.observe(this, Observer {
+        if (it != null) {
+          view().update(it)
+        }
+      })
       view().hideLoading()
     }, {
       Timber.v(it, "Error while loading the data from the database")
@@ -62,7 +70,12 @@ class BrowseArtistPresenterImpl
       }
     }
     addDisposable(artistObservable.compose { schedule(it) }.subscribe({
-      view().update(it)
+      val liveData = it.paged()
+      liveData.observe(this, Observer {
+        if (it != null) {
+          view().update(it)
+        }
+      })
       view().hideLoading()
     }, {
       Timber.v(it, "Error retrieving the data")
@@ -70,7 +83,7 @@ class BrowseArtistPresenterImpl
     }))
   }
 
-  private fun schedule(it: Single<List<Artist>>) = it.observeOn(schedulerProvider.main())
+  private fun schedule(it: Single<DataSource.Factory<Int, ArtistEntity>>) = it.observeOn(schedulerProvider.main())
       .subscribeOn(schedulerProvider.io())
 
 }

@@ -5,7 +5,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.MenuItem
 import android.widget.LinearLayout
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.albums.Album
+import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.albums.AlbumEntryAdapter
@@ -70,15 +70,15 @@ class ArtistAlbumsActivity : BaseActivity(),
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: Album) {
+  override fun onMenuItemSelected(menuItem: MenuItem, entry: AlbumEntity) {
     actionHandler.albumSelected(menuItem, entry, this)
   }
 
-  override fun onItemClicked(album: Album) {
+  override fun onItemClicked(album: AlbumEntity) {
     actionHandler.albumSelected(album, this)
   }
 
-  override fun update(albums: List<Album>) {
+  override fun update(albums: List<AlbumEntity>) {
     adapter.update(albums)
   }
 

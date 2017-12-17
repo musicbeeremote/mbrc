@@ -7,8 +7,9 @@ import io.reactivex.Observable
 import javax.inject.Inject
 
 class RemoteGenreDataSource
-@Inject constructor(private var service: LibraryService) : RemoteDataSource<Genre> {
-  override fun fetch(): Observable<List<Genre>> {
+@Inject
+constructor(private var service: LibraryService) : RemoteDataSource<GenreDto> {
+  override fun fetch(): Observable<List<GenreDto>> {
     return Observable.range(0, Integer.MAX_VALUE).flatMap {
       service.getGenres(it * LIMIT, LIMIT)
     }.takeWhile { it.offset < it.total }.map { it.data }

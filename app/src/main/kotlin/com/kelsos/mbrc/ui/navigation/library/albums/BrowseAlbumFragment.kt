@@ -14,7 +14,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.albums.Album
+import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.extensions.initLinear
 import com.kelsos.mbrc.ui.dialogs.SortingDialog
@@ -95,12 +95,12 @@ class BrowseAlbumFragment : Fragment(),
     presenter.load()
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: Album) {
+  override fun onMenuItemSelected(menuItem: MenuItem, entry: AlbumEntity) {
     val activity = activity ?: fail("null activity")
     actionHandler.albumSelected(menuItem, entry, activity)
   }
 
-  override fun onItemClicked(album: Album) {
+  override fun onItemClicked(album: AlbumEntity) {
     val activity = activity ?: fail("null activity")
     actionHandler.albumSelected(album, activity)
   }
@@ -113,7 +113,7 @@ class BrowseAlbumFragment : Fragment(),
     presenter.reload()
   }
 
-  override fun update(cursor: List<Album>) {
+  override fun update(cursor: List<AlbumEntity>) {
     adapter.update(cursor)
     swipeLayout.isRefreshing = false
   }

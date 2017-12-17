@@ -151,6 +151,12 @@ idea {
   }
 }
 
+kotlin {
+  experimental {
+    coroutines 'enable'
+  }
+}
+
 ext {
   support_library_version = "27.0.2"
   dbflow_version = "4.1.2"
@@ -159,9 +165,9 @@ ext {
   runner_version = "1.0.1"
   espresso_version = "3.0.1"
   junit_version = "4.12"
-  mockito_version = "2.12.0"
+  mockito_version = "2.13.0"
   robolectric_version = "3.5.1"
-  truth_version = "0.36"
+  truth_version = "0.37"
   leakcanary_version = "1.5.4"
 }
 
@@ -216,13 +222,11 @@ dependencies {
   //Some of the dependencies pull the wrong version support v13
   implementation "com.android.support:support-v13:${support_library_version}"
 
-  kapt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
+  implementation 'android.arch.paging:runtime:1.0.0-alpha4-1'
 
-  implementation "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
-  implementation "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
-  implementation "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}@aar"
-  implementation "com.github.Raizlabs.DBFlow:dbflow-rx2:${dbflow_version}"
-  implementation "com.github.Raizlabs.DBFlow:dbflow-rx2-kotlinextensions:${dbflow_version}"
+  compile 'android.arch.persistence.room:runtime:1.0.0'
+  compile 'android.arch.persistence.room:rxjava2:1.0.0'
+  kapt "android.arch.persistence.room:compiler:1.0.0"
 
   implementation "com.fasterxml.jackson.core:jackson-core:${jackson_version}"
   implementation "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
@@ -235,6 +239,8 @@ dependencies {
   implementation 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.20"
+  implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
   implementation 'com.squareup.picasso:picasso:2.5.2'
   implementation 'com.android.support:multidex:1.0.2'

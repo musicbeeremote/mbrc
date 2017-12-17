@@ -11,20 +11,21 @@ import io.reactivex.Single
 import javax.inject.Inject
 
 class OutputApiImpl
-@Inject constructor(
+@Inject
+constructor(
     repository: ConnectionRepository,
     private val mapper: ObjectMapper,
     clientInformationStore: ClientInformationStore
 ) : OutputApi, ApiBase(repository, mapper, clientInformationStore) {
   override fun getOutputs(): Single<OutputResponse> {
     return request(Protocol.PlayerOutput).flatMap {
-      Observable.fromCallable { mapper.readValue<OutputResponse>(it.data as String) }
+      return@flatMap Observable.fromCallable { mapper.readValue<OutputResponse>(it.data as String) }
     }.firstOrError()
   }
 
   override fun setOutput(active: String): Single<OutputResponse> {
     return request(Protocol.PlayerOutputSwitch, active).flatMap {
-      Observable.fromCallable { mapper.readValue<OutputResponse>(it.data as String) }
+      return@flatMap Observable.fromCallable { mapper.readValue<OutputResponse>(it.data as String) }
     }.firstOrError()
   }
 }
