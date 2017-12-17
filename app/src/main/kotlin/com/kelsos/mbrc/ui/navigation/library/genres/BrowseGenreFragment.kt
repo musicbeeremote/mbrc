@@ -12,7 +12,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.genres.Genre
+import com.kelsos.mbrc.content.library.genres.GenreEntity
 import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.extensions.initLinear
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
@@ -62,7 +62,7 @@ class BrowseGenreFragment : Fragment(),
     presenter.detach()
   }
 
-  override fun update(cursor: List<Genre>) {
+  override fun update(cursor: List<GenreEntity>) {
     swipeLayout.isRefreshing = false
     adapter.update(cursor)
   }
@@ -79,13 +79,13 @@ class BrowseGenreFragment : Fragment(),
     presenter.load()
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: Genre): Boolean {
+  override fun onMenuItemSelected(menuItem: MenuItem, entry: GenreEntity): Boolean {
     val activity = activity ?: fail("null activity")
     actionHandler.genreSelected(menuItem, entry, activity)
     return true
   }
 
-  override fun onItemClicked(genre: Genre) {
+  override fun onItemClicked(genre: GenreEntity) {
     val activity = activity ?: fail("null activity")
     actionHandler.genreSelected(genre, activity)
   }

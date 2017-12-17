@@ -1,32 +1,37 @@
 package com.kelsos.mbrc.content.library.genres
 
+import android.arch.paging.DataSource
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
 
 class GenreRepositoryImpl
-@Inject constructor(private val remoteDataSource: RemoteGenreDataSource,
-                    private val localDataSource: LocalGenreDataSource) : GenreRepository {
-  override fun getAllCursor(): Single<List<Genre>> {
-    return localDataSource.loadAllCursor().firstOrError()
+@Inject
+constructor(
+    private val remoteDataSource: RemoteGenreDataSource,
+    private val dao: GenreDao
+) : GenreRepository {
+
+  private val mapper = GenreDtoMapper()
+
+  override fun getAll(): Single<DataSource.Factory<Int, GenreEntity>> {
+    return Single.just(dao.getAll())
   }
 
-  override fun getAndSaveRemote(): Single<List<Genre>> {
-    return getRemote().andThen(localDataSource.loadAllCursor().firstOrError())
+  override fun getAndSaveRemote(): Single<DataSource.Factory<Int, GenreEntity>> {
+    return getRemote().andThen(getAll())
   }
 
   override fun getRemote(): Completable {
-    localDataSource.deleteAll()
+    dao.deleteAll()
     return remoteDataSource.fetch().doOnNext {
-      localDataSource.saveAll(it)
+      dao.saveAll(it.map { mapper.map(it) })
     }.ignoreElements()
   }
 
-  override fun search(term: String): Single<List<Genre>> {
-    return localDataSource.search(term)
+  override fun search(term: String): Single<DataSource.Factory<Int, GenreEntity>> {
+    return Single.just(dao.search(term))
   }
 
-  override fun cacheIsEmpty(): Single<Boolean> {
-    return localDataSource.isEmpty()
-  }
+  override fun cacheIsEmpty(): Single<Boolean> = Single.just(dao.count() == 0L)
 }

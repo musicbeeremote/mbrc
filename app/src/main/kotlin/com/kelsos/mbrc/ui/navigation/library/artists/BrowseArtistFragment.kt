@@ -12,7 +12,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.artists.Artist
+import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.extensions.initLinear
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
@@ -79,12 +79,12 @@ class BrowseArtistFragment : Fragment(),
     presenter.load()
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: Artist) {
+  override fun onMenuItemSelected(menuItem: MenuItem, entry: ArtistEntity) {
     val activity = activity ?: fail("null activity")
     actionHandler.artistSelected(menuItem, entry, activity)
   }
 
-  override fun onItemClicked(artist: Artist) {
+  override fun onItemClicked(artist: ArtistEntity) {
     val activity = activity ?: fail("null activity")
     actionHandler.artistSelected(artist, activity)
   }
@@ -97,7 +97,7 @@ class BrowseArtistFragment : Fragment(),
     presenter.reload()
   }
 
-  override fun update(data: List<Artist>) {
+  override fun update(data: List<ArtistEntity>) {
     swipeLayout.isRefreshing = false
     adapter.update(data)
   }

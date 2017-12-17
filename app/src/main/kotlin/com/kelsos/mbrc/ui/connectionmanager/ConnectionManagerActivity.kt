@@ -12,7 +12,7 @@ import com.kelsos.mbrc.events.ConnectionSettingsChanged
 import com.kelsos.mbrc.events.DiscoveryStopped
 import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.networking.DiscoveryStop
-import com.kelsos.mbrc.networking.connections.ConnectionSettings
+import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment
 import kotterknife.bindView
@@ -86,7 +86,7 @@ class ConnectionManagerActivity : BaseActivity(),
     return true
   }
 
-  override fun onSave(settings: ConnectionSettings) {
+  override fun onSave(settings: ConnectionSettingsEntity) {
     presenter.save(settings)
   }
 
@@ -120,17 +120,17 @@ class ConnectionManagerActivity : BaseActivity(),
     Snackbar.make(recyclerView, message, Snackbar.LENGTH_SHORT).show()
   }
 
-  override fun onDelete(settings: ConnectionSettings) {
+  override fun onDelete(settings: ConnectionSettingsEntity) {
     presenter.delete(settings)
   }
 
-  override fun onEdit(settings: ConnectionSettings) {
+  override fun onEdit(settings: ConnectionSettingsEntity) {
     val settingsDialog = SettingsDialogFragment.newInstance(settings)
     val fragmentManager = supportFragmentManager
     settingsDialog.show(fragmentManager, "settings_dialog")
   }
 
-  override fun onDefault(settings: ConnectionSettings) {
+  override fun onDefault(settings: ConnectionSettingsEntity) {
     presenter.setDefault(settings)
   }
 

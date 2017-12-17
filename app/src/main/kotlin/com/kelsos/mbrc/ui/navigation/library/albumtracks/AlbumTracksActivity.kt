@@ -7,7 +7,7 @@ import android.view.MenuItem
 import android.widget.LinearLayout
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.AlbumInfo
-import com.kelsos.mbrc.content.library.tracks.Track
+import com.kelsos.mbrc.content.library.tracks.TrackEntity
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter
@@ -81,15 +81,15 @@ class AlbumTracksActivity : BaseActivity(),
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: Track) {
+  override fun onMenuItemSelected(menuItem: MenuItem, entry: TrackEntity) {
     actionHandler.trackSelected(menuItem, entry, true)
   }
 
-  override fun onItemClicked(track: Track) {
+  override fun onItemClicked(track: TrackEntity) {
     actionHandler.trackSelected(track, true)
   }
 
-  override fun update(cursor: List<Track>) {
+  override fun update(cursor: List<TrackEntity>) {
     adapter.update(cursor)
   }
 

@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.LinearLayout
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.artists.Artist
+import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.extensions.initLinear
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
@@ -66,15 +66,15 @@ class GenreArtistsActivity : BaseActivity(),
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: Artist) {
+  override fun onMenuItemSelected(menuItem: MenuItem, entry: ArtistEntity) {
     actionHandler.artistSelected(menuItem, entry, this)
   }
 
-  override fun onItemClicked(artist: Artist) {
+  override fun onItemClicked(artist: ArtistEntity) {
     actionHandler.artistSelected(artist, this)
   }
 
-  override fun update(data: List<Artist>) {
+  override fun update(data: List<ArtistEntity>) {
    adapter.update(data)
   }
 

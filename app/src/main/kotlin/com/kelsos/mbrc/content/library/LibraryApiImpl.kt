@@ -2,10 +2,10 @@ package com.kelsos.mbrc.content.library
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.kelsos.mbrc.content.library.albums.Album
-import com.kelsos.mbrc.content.library.artists.Artist
-import com.kelsos.mbrc.content.library.genres.Genre
-import com.kelsos.mbrc.content.library.tracks.Track
+import com.kelsos.mbrc.content.library.albums.AlbumDto
+import com.kelsos.mbrc.content.library.artists.ArtistDto
+import com.kelsos.mbrc.content.library.genres.GenreDto
+import com.kelsos.mbrc.content.library.tracks.TrackDto
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.protocol.Page
@@ -22,31 +22,31 @@ constructor(
     clientInformationStore: ClientInformationStore
 ) : ApiBase(repository, mapper, clientInformationStore), LibraryService {
 
-  override fun getGenres(offset: Int, limit: Int): Observable<Page<Genre>> {
+  override fun getGenres(offset: Int, limit: Int): Observable<Page<GenreDto>> {
     val range = getPageRange(offset, limit)
     return request(Protocol.LibraryBrowseGenres, range).flatMap {
-      Observable.fromCallable { mapper.readValue<Page<Genre>>(it.data as String) }
+      return@flatMap Observable.fromCallable { mapper.readValue<Page<GenreDto>>(it.data as String) }
     }
   }
 
-  override fun getArtists(offset: Int, limit: Int): Observable<Page<Artist>> {
+  override fun getArtists(offset: Int, limit: Int): Observable<Page<ArtistDto>> {
     val range = getPageRange(offset, limit)
     return request(Protocol.LibraryBrowseArtists, range).flatMap {
-      Observable.fromCallable { mapper.readValue<Page<Artist>>(it.data as String) }
+      return@flatMap Observable.fromCallable { mapper.readValue<Page<ArtistDto>>(it.data as String) }
     }
   }
 
-  override fun getAlbums(offset: Int, limit: Int): Observable<Page<Album>> {
+  override fun getAlbums(offset: Int, limit: Int): Observable<Page<AlbumDto>> {
     val range = getPageRange(offset, limit)
     return request(Protocol.LibraryBrowseAlbums, range).flatMap {
-      Observable.fromCallable { mapper.readValue<Page<Album>>(it.data as String) }
+      return@flatMap Observable.fromCallable { mapper.readValue<Page<AlbumDto>>(it.data as String) }
     }
   }
 
-  override fun getTracks(offset: Int, limit: Int): Observable<Page<Track>> {
+  override fun getTracks(offset: Int, limit: Int): Observable<Page<TrackDto>> {
     val range = getPageRange(offset, limit)
     return request(Protocol.LibraryBrowseTracks, range).flatMap {
-      Observable.fromCallable { mapper.readValue<Page<Track>>(it.data as String) }
+      return@flatMap Observable.fromCallable { mapper.readValue<Page<TrackDto>>(it.data as String) }
     }
   }
 }

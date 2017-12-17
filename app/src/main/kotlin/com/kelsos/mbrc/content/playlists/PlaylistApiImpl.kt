@@ -18,10 +18,10 @@ constructor(
     clientInformationStore: ClientInformationStore
 ) : ApiBase(repository, mapper, clientInformationStore), PlaylistService {
 
-  override fun getPlaylists(offset: Int, limit: Int): Observable<Page<Playlist>> {
+  override fun fetch(offset: Int, limit: Int): Observable<Page<PlaylistDto>> {
     val range = getPageRange(offset, limit)
     return request(Protocol.PlaylistList, range).flatMap {
-      Observable.fromCallable { mapper.readValue<Page<Playlist>>(it.data as String) }
+      return@flatMap Observable.fromCallable { mapper.readValue<Page<PlaylistDto>>(it.data as String) }
     }
   }
 }

@@ -2,4 +2,4 @@ package com.kelsos.mbrc.content.radios
 
 import com.kelsos.mbrc.interfaces.data.Repository
 
-interface RadioRepository : Repository<RadioStation>
+interface RadioRepository : Repository<RadioStationEntity>

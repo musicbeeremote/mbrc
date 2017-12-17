@@ -66,21 +66,19 @@ open class ApiRequestBase(
    */
   private fun connect(firstMessage: SocketMessage): Socket {
     val mapper = InetAddressMapper()
-    val connectionSettings = repository.default ?: throw RuntimeException("no settings")
+    val connectionSettings = repository.default ?: throw NullPointerException("no settings")
     try {
       val socketAddress = mapper.map(connectionSettings)
       Timber.v("Creating new socket")
 
-      val socket = Socket().apply {
+      return Socket().apply {
         soTimeout = 20 * 1000
         connect(socketAddress)
         send(firstMessage)
       }
-
-      return socket
     } catch (e: IOException) {
       Timber.v("failed to create socket")
-      throw RuntimeException(e)
+      throw e
     }
 
   }

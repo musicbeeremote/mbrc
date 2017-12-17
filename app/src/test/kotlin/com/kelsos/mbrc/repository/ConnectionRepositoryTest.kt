@@ -9,8 +9,7 @@ import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionRepositoryImpl
-import com.kelsos.mbrc.networking.connections.ConnectionSettings
-import com.kelsos.mbrc.rules.DBFlowTestRule
+import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -31,12 +30,12 @@ import java.util.*
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
     application = TestApplication::class,
-    sdk = intArrayOf(Build.VERSION_CODES.N_MR1))
+    sdk = [(Build.VERSION_CODES.N_MR1)])
 class ConnectionRepositoryTest {
   private val toothPickRule = ToothPickRule(this, "test")
   @Rule
   @JvmField
-  val ruleChain: TestRule = RuleChain.outerRule(toothPickRule).around(DBFlowTestRule.create())
+  val ruleChain: TestRule = RuleChain.outerRule(toothPickRule)
 
   private lateinit var repository: ConnectionRepository
 
@@ -91,13 +90,13 @@ class ConnectionRepositoryTest {
 
     repository.delete(settings2)
 
-    val settingsList = ArrayList<ConnectionSettings>()
+    val settingsList = ArrayList<ConnectionSettingsEntity>()
     settingsList.add(settings)
     settingsList.add(settings1)
     settingsList.add(settings3)
 
     assertThat(repository.count()).isEqualTo(3)
-    assertThat(repository.all).containsAllIn(settingsList)
+    assertThat(repository.getAll()).containsAllIn(settingsList)
   }
 
   @Test
@@ -265,12 +264,12 @@ class ConnectionRepositoryTest {
 
     settings.port = newPort
 
-    repository.update(settings)
+    repository.save(settings)
 
     assertThat(repository.default!!.port).isEqualTo(newPort)
 
     settings.address = newAddress
-    repository.update(settings)
+    repository.save(settings)
 
     assertThat(repository.default!!.address).isEqualTo(newAddress)
   }
@@ -292,8 +291,8 @@ class ConnectionRepositoryTest {
     assertThat(repository.defaultId).isEqualTo(1)
   }
 
-  private fun createSettings(address: String): ConnectionSettings {
-    val settings = ConnectionSettings()
+  private fun createSettings(address: String): ConnectionSettingsEntity {
+    val settings = ConnectionSettingsEntity()
     settings.name = "Desktop PC"
     settings.address = address
     settings.port = 3000

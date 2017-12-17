@@ -3,13 +3,16 @@ package com.kelsos.mbrc.content.library.tracks
 import android.os.Parcel
 import android.os.Parcelable
 
-data class TrackInfo(var artist: String = "",
-                     var title: String = "",
-                     var album: String = "",
-                     var year: String = "",
-                     var path: String = "") : Parcelable {
+data class TrackInfo(
+    var artist: String = "",
+    var title: String = "",
+    var album: String = "",
+    var year: String = "",
+    var path: String = ""
+) : Parcelable {
   companion object {
-    @JvmField val CREATOR: Parcelable.Creator<TrackInfo> = object : Parcelable.Creator<TrackInfo> {
+    @JvmField
+    val CREATOR: Parcelable.Creator<TrackInfo> = object : Parcelable.Creator<TrackInfo> {
       override fun createFromParcel(source: Parcel): TrackInfo = TrackInfo(source)
       override fun newArray(size: Int): Array<TrackInfo?> = arrayOfNulls(size)
     }
