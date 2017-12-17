@@ -11,13 +11,11 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.nowplaying.NowPlaying
+import com.kelsos.mbrc.content.nowplaying.NowPlayingEntity
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.TouchHelperViewHolder
 import com.kelsos.mbrc.utilities.Checks.ifNotNull
-import com.raizlabs.android.dbflow.kotlinextensions.delete
-import com.raizlabs.android.dbflow.kotlinextensions.save
 import kotterknife.bindView
 import timber.log.Timber
 import javax.inject.Inject
@@ -28,7 +26,7 @@ class NowPlayingAdapter
 
   private val dragStartListener: OnStartDragListener = context as OnStartDragListener
 
-  private var data: List<NowPlaying>? = null
+  private var data: List<NowPlayingEntity>? = null
   private var playingTrackIndex: Int = 0
   private var currentTrack: String = ""
   private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -119,8 +117,8 @@ class NowPlayingAdapter
         val position = to.position
         to.position = from.position
         from.position = position
-        to.save()
-        from.save()
+//        to.save()
+//        from.save()
 
         // Before saving remove the listener to avoid interrupting the swapping functionality
 
@@ -133,13 +131,13 @@ class NowPlayingAdapter
     val nowPlaying = data?.get(position)
 
     nowPlaying?.let {
-      it.delete()
+      //it.delete()
       notifyItemRemoved(position)
       listener?.onDismiss(position)
     }
   }
 
-  fun update(cursor: List<NowPlaying>) {
+  fun update(cursor: List<NowPlayingEntity>) {
     this.data = cursor
     notifyDataSetChanged()
   }

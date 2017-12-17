@@ -7,10 +7,10 @@ import android.view.MenuItem
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.albums.Album
-import com.kelsos.mbrc.content.library.artists.Artist
-import com.kelsos.mbrc.content.library.genres.Genre
-import com.kelsos.mbrc.content.library.tracks.Track
+import com.kelsos.mbrc.content.library.albums.AlbumEntity
+import com.kelsos.mbrc.content.library.artists.ArtistEntity
+import com.kelsos.mbrc.content.library.genres.GenreEntity
+import com.kelsos.mbrc.content.library.tracks.TrackEntity
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.search.SearchResultAdapter.OnSearchItemSelected
@@ -81,35 +81,35 @@ class SearchResultsActivity : BaseActivity(),
     return super.onOptionsItemSelected(item)
   }
 
-  override fun albumSelected(item: MenuItem, album: Album) {
+  override fun albumSelected(item: MenuItem, album: AlbumEntity) {
     actionHandler.albumSelected(item, album, this)
   }
 
-  override fun albumSelected(album: Album) {
+  override fun albumSelected(album: AlbumEntity) {
     actionHandler.albumSelected(album, this)
   }
 
-  override fun artistSelected(item: MenuItem, artist: Artist) {
+  override fun artistSelected(item: MenuItem, artist: ArtistEntity) {
     actionHandler.artistSelected(item, artist, this)
   }
 
-  override fun artistSelected(artist: Artist) {
+  override fun artistSelected(artist: ArtistEntity) {
     actionHandler.artistSelected(artist, this)
   }
 
-  override fun genreSelected(item: MenuItem, genre: Genre) {
+  override fun genreSelected(item: MenuItem, genre: GenreEntity) {
     actionHandler.genreSelected(item, genre, this)
   }
 
-  override fun genreSelected(genre: Genre) {
+  override fun genreSelected(genre: GenreEntity) {
     actionHandler.genreSelected(genre, this)
   }
 
-  override fun trackSelected(item: MenuItem, track: Track) {
+  override fun trackSelected(item: MenuItem, track: TrackEntity) {
     actionHandler.trackSelected(item, track)
   }
 
-  override fun trackSelected(track: Track) {
+  override fun trackSelected(track: TrackEntity) {
     actionHandler.trackSelected(track)
   }
 

@@ -1,13 +1,15 @@
 package com.kelsos.mbrc.ui.navigation.library.search
 
-import com.kelsos.mbrc.content.library.albums.Album
-import com.kelsos.mbrc.content.library.artists.Artist
-import com.kelsos.mbrc.content.library.genres.Genre
-import com.kelsos.mbrc.content.library.tracks.Track
+import android.arch.lifecycle.LiveData
+import android.arch.paging.PagedList
+import com.kelsos.mbrc.content.library.albums.AlbumEntity
+import com.kelsos.mbrc.content.library.artists.ArtistEntity
+import com.kelsos.mbrc.content.library.genres.GenreEntity
+import com.kelsos.mbrc.content.library.tracks.TrackEntity
 
 data class SearchResults(
-    var genreList: List<Genre>,
-    var artistList: List<Artist>,
-    var albumList: List<Album>,
-    var trackList: List<Track>
+    var genreList: LiveData<PagedList<GenreEntity>>,
+    var artistList: LiveData<PagedList<ArtistEntity>>,
+    var albumList: LiveData<PagedList<AlbumEntity>>,
+    var trackList: LiveData<PagedList<TrackEntity>>
 )

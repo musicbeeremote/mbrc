@@ -1,73 +1,70 @@
 package com.kelsos.mbrc.content.library.tracks
 
-import com.kelsos.mbrc.content.library.UpdatedDataSource
+import android.arch.paging.DataSource
 import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.epoch
 import io.reactivex.Completable
 import io.reactivex.Single
-import org.threeten.bp.Instant
 import javax.inject.Inject
 
 class TrackRepositoryImpl
 @Inject constructor(
-    private val localDataSource: LocalTrackDataSource,
+    private val dao: TrackDao,
     private val remoteDataSource: RemoteTrackDataSource,
-    private val updatedDataSource: UpdatedDataSource,
     private val schedulerProvider: SchedulerProvider
 ) : TrackRepository {
 
-  override fun getAllCursor(): Single<List<Track>> {
-    return localDataSource.loadAllCursor().singleOrError()
+  private val mapper = TrackDtoMapper()
+
+  override fun getAll(): Single<DataSource.Factory<Int, TrackEntity>> {
+    return Single.just(dao.getAll())
   }
 
-  override fun getAlbumTracks(album: String, artist: String): Single<List<Track>> {
-    return localDataSource.getAlbumTracks(album, artist)
+  override fun getAlbumTracks(album: String, artist: String): Single<DataSource.Factory<Int, TrackEntity>> {
+    return Single.just(dao.getAlbumTracks(album, artist))
   }
 
-  override fun getNonAlbumTracks(artist: String): Single<List<Track>> {
-    return localDataSource.getNonAlbumTracks(artist)
+  override fun getNonAlbumTracks(artist: String): Single<DataSource.Factory<Int, TrackEntity>> {
+    return Single.just(dao.getNonAlbumTracks(artist))
   }
 
-  override fun getAndSaveRemote(): Single<List<Track>> {
-    return getRemote().andThen(localDataSource.loadAllCursor().singleOrError())
+  override fun getAndSaveRemote(): Single<DataSource.Factory<Int, TrackEntity>> {
+    return getRemote().andThen(getAll())
   }
 
   override fun getRemote(): Completable {
-    val epoch = Instant.now().epochSecond
-
-    //localDataSource.deleteAll()
+    val added = epoch()
     return remoteDataSource.fetch().doOnNext {
-      localDataSource.saveAll(it)
-      updatedDataSource.addUpdated(it.mapNotNull { it.src }, epoch)
+      val tracks = it.map { mapper.map(it).apply { dateAdded = added } }
+      dao.insertAll(tracks)
     }.doOnComplete {
-      val paths = updatedDataSource.getPathInsertedAtEpoch(epoch)
-      localDataSource.deletePaths(paths)
-      updatedDataSource.deleteAll()
+      dao.removePreviousEntries(added)
     }.subscribeOn(schedulerProvider.io())
         .observeOn(schedulerProvider.db())
         .ignoreElements()
   }
 
-  override fun search(term: String): Single<List<Track>> {
-    return localDataSource.search(term)
+  override fun search(term: String): Single<DataSource.Factory<Int, TrackEntity>> {
+    return Single.just(dao.search(term))
   }
 
   override fun getGenreTrackPaths(genre: String): Single<List<String>> {
-    return localDataSource.getGenreTrackPaths(genre)
+    return Single.just(dao.getGenreTrackPaths(genre))
   }
 
   override fun getArtistTrackPaths(artist: String): Single<List<String>> {
-    return localDataSource.getArtistTrackPaths(artist)
+    return Single.just(dao.getArtistTrackPaths(artist))
   }
 
   override fun getAlbumTrackPaths(album: String, artist: String): Single<List<String>> {
-    return localDataSource.getAlbumTrackPaths(album, artist)
+    return Single.just(dao.getAlbumTrackPaths(album, artist))
   }
 
   override fun getAllTrackPaths(): Single<List<String>> {
-    return localDataSource.getAllTrackPaths()
+    return Single.just(dao.getAllTrackPaths())
   }
 
   override fun cacheIsEmpty(): Single<Boolean> {
-    return localDataSource.isEmpty()
+    return Single.just(dao.count() == 0L)
   }
 }

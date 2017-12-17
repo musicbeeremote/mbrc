@@ -9,7 +9,7 @@ import android.text.TextUtils
 import android.widget.EditText
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.extensions.fail
-import com.kelsos.mbrc.networking.connections.ConnectionSettings
+import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import kotterknife.bindView
 
 class SettingsDialogFragment : DialogFragment() {
@@ -19,10 +19,10 @@ class SettingsDialogFragment : DialogFragment() {
   private val portEdit: EditText by bindView(R.id.settings_dialog_port)
 
   private var mListener: SettingsSaveListener? = null
-  private lateinit var settings: ConnectionSettings
+  private lateinit var settings: ConnectionSettingsEntity
   private var edit: Boolean = false
 
-  private fun setConnectionSettings(settings: ConnectionSettings) {
+  private fun setConnectionSettings(settings: ConnectionSettingsEntity) {
     this.settings = settings
   }
 
@@ -91,12 +91,12 @@ class SettingsDialogFragment : DialogFragment() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     if (!edit) {
-      settings = ConnectionSettings()
+      settings = ConnectionSettingsEntity()
     }
   }
 
   interface SettingsSaveListener {
-    fun onSave(settings: ConnectionSettings)
+    fun onSave(settings: ConnectionSettingsEntity)
   }
 
   companion object {
@@ -104,7 +104,7 @@ class SettingsDialogFragment : DialogFragment() {
     private val MAX_PORT = 65535
     private val MIN_PORT = 1
 
-    fun newInstance(settings: ConnectionSettings): SettingsDialogFragment {
+    fun newInstance(settings: ConnectionSettingsEntity): SettingsDialogFragment {
       val fragment = SettingsDialogFragment()
       fragment.setConnectionSettings(settings)
       fragment.edit = true

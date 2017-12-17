@@ -7,11 +7,9 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.StartServiceDiscoveryEvent
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
-import com.kelsos.mbrc.networking.connections.ConnectionSettings
+import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.preferences.DefaultSettingsChangedEvent
 import com.kelsos.mbrc.utilities.SchedulerProvider
-import io.reactivex.Observable
-import io.reactivex.functions.BiFunction
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -47,12 +45,9 @@ constructor(
 
   override fun load() {
     checkIfAttached()
-    val all = Observable.defer { Observable.just(repository.all) }
-    val defaultId = Observable.defer { Observable.just(repository.defaultId) }
-
-    addDisposable(Observable.zip<Long,
-        List<ConnectionSettings>,
-        ConnectionModel>(defaultId, all, BiFunction(::ConnectionModel))
+    addDisposable(repository.getModel()
+        .subscribeOn(schedulerProvider.io())
+        .observeOn(schedulerProvider.main())
         .subscribe({
           view().updateModel(it)
         }, {
@@ -60,21 +55,17 @@ constructor(
         }))
   }
 
-  override fun setDefault(settings: ConnectionSettings) {
+  override fun setDefault(settings: ConnectionSettingsEntity) {
     checkIfAttached()
     repository.default = settings
     bus.post(DefaultSettingsChangedEvent())
     view().dataUpdated()
   }
 
-  override fun save(settings: ConnectionSettings) {
+  override fun save(settings: ConnectionSettingsEntity) {
     checkIfAttached()
 
-    if (settings.id > 0) {
-      repository.update(settings)
-    } else {
-      repository.save(settings)
-    }
+    repository.save(settings)
 
     if (settings.id == repository.defaultId) {
       bus.post(DefaultSettingsChangedEvent())
@@ -83,7 +74,7 @@ constructor(
     view().dataUpdated()
   }
 
-  override fun delete(settings: ConnectionSettings) {
+  override fun delete(settings: ConnectionSettingsEntity) {
     checkIfAttached()
     repository.delete(settings)
     if (settings.id == repository.defaultId) {

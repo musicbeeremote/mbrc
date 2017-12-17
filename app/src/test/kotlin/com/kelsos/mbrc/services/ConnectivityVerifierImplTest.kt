@@ -5,7 +5,7 @@ import com.kelsos.mbrc.networking.ConnectivityVerifier
 import com.kelsos.mbrc.networking.ConnectivityVerifierImpl
 import com.kelsos.mbrc.networking.SocketMessage
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
-import com.kelsos.mbrc.networking.connections.ConnectionSettings
+import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.protocol.Protocol
 import org.junit.After
 import org.junit.Before
@@ -110,7 +110,7 @@ class ConnectivityVerifierImplTest {
     val server = startMockServer()
 
     `when`(connectionRepository.default).thenAnswer {
-      val settings = ConnectionSettings()
+      val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
       return@thenAnswer settings
@@ -128,7 +128,7 @@ class ConnectivityVerifierImplTest {
   @Test fun testPrematureDisconnectDuringVerification() {
     val server = startMockServer(true)
     `when`(connectionRepository.default).thenAnswer {
-      val settings = ConnectionSettings()
+      val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
       return@thenAnswer settings
@@ -142,7 +142,7 @@ class ConnectivityVerifierImplTest {
   @Test fun testInvalidPluginResponseVerification() {
     val server = startMockServer(false, Protocol.ClientNotAllowed)
     `when`(connectionRepository.default).thenAnswer {
-      val settings = ConnectionSettings()
+      val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
       return@thenAnswer settings

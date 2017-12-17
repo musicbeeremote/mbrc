@@ -1,17 +1,20 @@
 package com.kelsos.mbrc.networking.connections
 
+import com.kelsos.mbrc.ui.connectionmanager.ConnectionModel
+import io.reactivex.Single
+
 interface ConnectionRepository {
-  fun save(settings: ConnectionSettings)
+  fun save(settings: ConnectionSettingsEntity)
 
-  fun delete(settings: ConnectionSettings)
+  fun delete(settings: ConnectionSettingsEntity)
 
-  fun update(settings: ConnectionSettings)
+  var default: ConnectionSettingsEntity?
 
-  var default: ConnectionSettings?
-
-  val all: List<ConnectionSettings>
+  fun getAll(): List<ConnectionSettingsEntity>
 
   fun count(): Long
 
   val defaultId: Long
+
+  fun getModel(): Single<ConnectionModel>
 }

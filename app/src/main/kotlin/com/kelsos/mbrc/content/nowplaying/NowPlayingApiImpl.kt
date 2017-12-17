@@ -18,10 +18,10 @@ constructor(
     clientInformationStore: ClientInformationStore
 ) : ApiBase(repository, mapper, clientInformationStore), NowPlayingService {
 
-  override fun getNowPlaying(offset: Int, limit: Int): Observable<Page<NowPlaying>> {
+  override fun getNowPlaying(offset: Int, limit: Int): Observable<Page<NowPlayingDto>> {
     val range = getPageRange(offset, limit)
     return request(Protocol.NowPlayingList, range).flatMap {
-      Observable.fromCallable { mapper.readValue<Page<NowPlaying>>(it.data as String) }
+      return@flatMap Observable.fromCallable { mapper.readValue<Page<NowPlayingDto>>(it.data as String) }
     }
   }
 }

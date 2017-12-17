@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.albums.Album
+import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.extensions.string
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 import com.kelsos.mbrc.utilities.Checks.ifNotNull
@@ -22,7 +22,7 @@ class AlbumEntryAdapter
 constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHolder>(), BubbleTextGetter {
 
   private val inflater: LayoutInflater = LayoutInflater.from(context)
-  private var data: List<Album> = emptyList()
+  private var data: List<AlbumEntity> = emptyList()
   private var listener: MenuItemSelectedListener? = null
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -62,16 +62,16 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
 
   override fun getTextToShowInBubble(pos: Int): String {
     val artist = data[pos].artist
-    if (artist != null && artist.isNotBlank()) {
+    if (artist.isNotBlank()) {
       return artist.substring(0, 1)
     }
     return "-"
   }
 
   interface MenuItemSelectedListener {
-    fun onMenuItemSelected(menuItem: MenuItem, entry: Album)
+    fun onMenuItemSelected(menuItem: MenuItem, entry: AlbumEntity)
 
-    fun onItemClicked(album: Album)
+    fun onItemClicked(album: AlbumEntity)
   }
 
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -81,11 +81,11 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
     private val unknownArtist: String by lazy { string(R.string.unknown_artist) }
     private val emptyAlbum: String by lazy { string(R.string.non_album_tracks) }
 
-    fun bind(album: Album) {
+    fun bind(album: AlbumEntity) {
       val title = album.album
       val artist = album.artist
-      this.album.text = if (title.isNullOrBlank()) emptyAlbum else title
-      this.artist.text = if (artist.isNullOrBlank()) unknownArtist else artist
+      this.album.text = if (title.isBlank()) emptyAlbum else title
+      this.artist.text = if (artist.isBlank()) unknownArtist else artist
     }
 
     fun setIndicatorOnClickListener(listener: (view: View) -> Unit) {
@@ -93,7 +93,7 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
     }
   }
 
-  fun update(albums: List<Album>) {
+  fun update(albums: List<AlbumEntity>) {
     data = albums
     notifyDataSetChanged()
   }

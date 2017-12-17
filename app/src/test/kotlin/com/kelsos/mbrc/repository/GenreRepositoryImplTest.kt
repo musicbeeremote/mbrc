@@ -5,11 +5,12 @@ import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.content.library.LibraryService
-import com.kelsos.mbrc.content.library.genres.Genre
+import com.kelsos.mbrc.content.library.genres.GenreEntity
 import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.content.library.genres.GenreRepositoryImpl
+import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.networking.protocol.Page
-import com.kelsos.mbrc.rules.DBFlowTestRule
+import com.kelsos.mbrc.utilities.paged
 import io.reactivex.Observable
 import org.junit.Before
 import org.junit.Rule
@@ -29,13 +30,13 @@ import java.util.concurrent.TimeUnit
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
     application = TestApplication::class,
-    sdk = intArrayOf(Build.VERSION_CODES.N_MR1)
+    sdk = [(Build.VERSION_CODES.N_MR1)]
 )
 class GenreRepositoryImplTest {
   private val toothPickRule = ToothPickRule(this, "test")
 
   @Rule
-  fun chain(): TestRule = RuleChain.outerRule(toothPickRule).around(DBFlowTestRule.create())
+  fun chain(): TestRule = RuleChain.outerRule(toothPickRule)
 
   private lateinit var repository: GenreRepository
 
@@ -61,9 +62,11 @@ class GenreRepositoryImplTest {
     testSubscriber.assertComplete()
     testSubscriber.assertNoErrors()
     testSubscriber.assertValueCount(1)
-    val cursorList = testSubscriber.values()[0]
-    assertThat(cursorList.count).isEqualTo(1200)
-    assertThat(cursorList.getItem(0)?.genre).isEqualTo("Metal0")
+    val factory = testSubscriber.values()[0]
+    val data = factory.paged()
+    val list = data.value ?: fail("data was null")
+    assertThat(list.size).isEqualTo(1200)
+    assertThat(list.first()).isEqualTo("Metal0")
   }
 
   private inner class TestModule : Module() {
@@ -83,7 +86,7 @@ class GenreRepositoryImplTest {
                 limit = totalElements - offset
               }
               return@thenAnswer Observable.range(offset, limit)
-                  .map { Genre("Metal$it", it) }
+                  .map { GenreEntity("Metal$it") }
                   .toList()
                   .map {
                     return@map createPage(totalElements, offset, limit, it)
@@ -95,8 +98,13 @@ class GenreRepositoryImplTest {
     }
   }
 
-  private fun createPage(totalElements: Int, offset: Int, limit: Int, data: List<Genre> = emptyList<Genre>()): Page<Genre> {
-    val page = Page<Genre>()
+  private fun createPage(
+      totalElements: Int,
+      offset: Int,
+      limit: Int,
+      data: List<GenreEntity> = emptyList()
+  ): Page<GenreEntity> {
+    val page = Page<GenreEntity>()
     page.data = data
     page.total = totalElements
     page.offset = offset
