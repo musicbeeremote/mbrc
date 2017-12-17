@@ -82,11 +82,6 @@
     @javax.inject.Inject <methods>;
 }
 
-# DBFlow
--keep class * extends com.raizlabs.android.dbflow.config.DatabaseHolder { *; }
--keep class com.raizlabs.android.dbflow.config.GeneratedDatabaseHolder
--keep class * extends com.raizlabs.android.dbflow.config.BaseDatabaseDefinition { *; }
-
 ## Square Picasso specific rules ##
 ## https://square.github.io/picasso/ ##
 
@@ -130,7 +125,6 @@
 }
 
 -keep class kotlin.** { *; }
--keep class com.raizlabs.android.dbflow.structure.Model { *; }
 
 -keep class com.kelsos.mbrc.** {
     void set*(***);

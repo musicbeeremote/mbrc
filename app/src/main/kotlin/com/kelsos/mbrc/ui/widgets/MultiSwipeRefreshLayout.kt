@@ -41,14 +41,14 @@ class MultiSwipeRefreshLayout :
    */
   fun setSwipeableChildren(vararg ids: Int) {
     // Iterate through the ids and find the Views
-    swipeableChildren = arrayOfNulls<View>(ids.size)
+    swipeableChildren = arrayOfNulls(ids.size)
     for (i in ids.indices) {
       swipeableChildren[i] = findViewById(ids[i])
     }
   }
 
   fun clearSwipeableChildren() {
-    swipeableChildren = emptyArray<View?>()
+    swipeableChildren = emptyArray()
   }
 
   /**

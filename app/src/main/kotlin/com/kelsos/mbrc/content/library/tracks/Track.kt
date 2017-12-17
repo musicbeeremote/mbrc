@@ -1,55 +1,19 @@
 package com.kelsos.mbrc.content.library.tracks
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.kelsos.mbrc.RemoteDatabase
 import com.kelsos.mbrc.interfaces.data.Data
-import com.kelsos.mbrc.utilities.RemoteUtils
-import com.raizlabs.android.dbflow.annotation.Column
-import com.raizlabs.android.dbflow.annotation.PrimaryKey
-import com.raizlabs.android.dbflow.annotation.Table
+import com.kelsos.mbrc.utilities.RemoteUtils.sha1
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+interface Track : Data {
+  var artist: String
+  var title: String
+  var src: String
+  var trackno: Int
+  var disc: Int
+  var albumArtist: String
+  var album: String
+  var genre: String
+  var year: String
+  var id: Long
+}
 
-@JsonPropertyOrder("artist", "title", "src", "trackno", "disc")
-@Table(name = "track", database = RemoteDatabase::class)
-data class Track(
-  @JsonProperty("artist")
-  @Column
-  var artist: String? = null,
-  @JsonProperty("title")
-  @Column
-  var title: String? = null,
-  @JsonProperty("src")
-  @Column
-  var src: String? = null,
-  @JsonProperty("trackno")
-  @Column
-  var trackno: Int = 0,
-  @JsonProperty("disc")
-  @Column
-  var disc: Int = 0,
-  @JsonProperty("album_artist")
-  @Column(name = "album_artist")
-  var albumArtist: String? = null,
-  @JsonProperty("album")
-  @Column
-  var album: String? = null,
-  @JsonProperty("genre")
-  @Column
-  var genre: String? = null,
-  @JsonProperty("year")
-  @Column
-  var year: String? = null,
-  @JsonIgnore
-  @Column(name = "date_added")
-  var dateAdded: Long = 0,
-  @JsonIgnore
-  @Column
-  @PrimaryKey(autoincrement = true)
-  var id: Long = 0
-) : Data
-
-fun Track.key(): String = RemoteUtils.sha1("${albumArtist}_$album")
+fun Track.key(): String = sha1("${albumArtist}_$album")

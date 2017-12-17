@@ -4,7 +4,7 @@ import toothpick.config.Module
 
 class ConnectionManagerModule private constructor() : Module() {
   init {
-    bind<ConnectionManagerPresenter>(ConnectionManagerPresenter::class.java).to(
+    bind(ConnectionManagerPresenter::class.java).to(
       ConnectionManagerPresenterImpl::class.java
     ).singletonInScope()
   }

@@ -16,13 +16,12 @@ import com.kelsos.mbrc.databinding.UiListTrackItemBinding
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.TouchHelperViewHolder
-import com.raizlabs.android.dbflow.kotlinextensions.delete
-import com.raizlabs.android.dbflow.kotlinextensions.save
 import timber.log.Timber
 import javax.inject.Inject
 
 class NowPlayingAdapter
-@Inject constructor(context: Activity) :
+@Inject
+constructor(context: Activity) :
   RecyclerView.Adapter<NowPlayingAdapter.TrackHolder>(),
   ItemTouchHelperAdapter {
 
@@ -49,8 +48,8 @@ class NowPlayingAdapter
     val data = this.data ?: return
 
     this.currentTrack = path
-    data.forEachIndexed { index, (_, _, itemPath) ->
-      if (itemPath.equals(path)) {
+    data.forEachIndexed { index, track ->
+      if (track.path == path) {
         setPlayingTrack(index)
       }
     }
@@ -79,10 +78,9 @@ class NowPlayingAdapter
   }
 
   override fun onBindViewHolder(holder: TrackHolder, position: Int) {
-    val (title, artist) = data?.get(holder.bindingAdapterPosition) ?: return
-
-    holder.title.text = title
-    holder.artist.text = artist
+    val track = data?.get(holder.bindingAdapterPosition) ?: return
+    holder.title.text = track.title
+    holder.artist.text = track.artist
     if (position == playingTrackIndex) {
       holder.trackPlaying.setImageResource(R.drawable.ic_media_now_playing)
     } else {
@@ -113,12 +111,7 @@ class NowPlayingAdapter
     val fromTrack = data[from]
     val toTrack = data[to]
     Timber.v("from => %s to => %s", fromTrack, toTrack)
-    val position = toTrack.position
-    toTrack.position = fromTrack.position
-    fromTrack.position = position
-    toTrack.save()
-    fromTrack.save()
-
+    // TODO: fix the swap functionality with room
     // Before saving remove the listener to avoid interrupting the swapping functionality
 
     Timber.v("after swap => from => %s to => %s", fromTrack, toTrack)
@@ -128,7 +121,6 @@ class NowPlayingAdapter
     val nowPlaying = data?.get(position)
 
     nowPlaying?.let {
-      it.delete()
       notifyItemRemoved(position)
       listener?.onDismiss(position)
     }

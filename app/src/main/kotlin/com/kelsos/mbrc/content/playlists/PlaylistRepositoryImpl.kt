@@ -1,42 +1,48 @@
 package com.kelsos.mbrc.content.playlists
 
+import androidx.paging.DataSource
 import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.utilities.epoch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
-import org.threeten.bp.Instant
 import javax.inject.Inject
 
 class PlaylistRepositoryImpl
 @Inject constructor(
-  private val localDataSource: LocalPlaylistDataSource,
+  private val dao: PlaylistDao,
   private val remoteDataSource: RemotePlaylistDataSource,
   private val dispatchers: AppDispatchers
 ) : PlaylistRepository {
-  override suspend fun getAllCursor(): List<Playlist> = localDataSource.loadAllCursor()
+  private val mapper = PlaylistDtoMapper()
 
-  override suspend fun getAndSaveRemote(): List<Playlist> {
+  override suspend fun getAll(): DataSource.Factory<Int, Playlist> = dao.getAll().map { it }
+
+  override suspend fun getAndSaveRemote(): DataSource.Factory<Int, Playlist> {
     getRemote()
-    return localDataSource.loadAllCursor()
+    return dao.getAll().map { it }
   }
 
   override suspend fun getRemote() {
-    val epoch = Instant.now().epochSecond
+    val added = epoch()
     withContext(dispatchers.io) {
-      remoteDataSource.fetch()
-        .onCompletion {
-          localDataSource.removePreviousEntries(epoch)
+      remoteDataSource.fetch().onCompletion {
+        dao.removePreviousEntries(added)
+      }.collect { items ->
+        val playlists = items.map {
+          mapper.map(it).apply {
+            this.dateAdded = added
+          }
         }
-        .collect { list ->
-          val data = list.map { it.apply { dateAdded = epoch } }
-          localDataSource.saveAll(data)
-        }
+        dao.insertAll(playlists)
+      }
     }
   }
 
-  override suspend fun search(term: String): List<Playlist> = localDataSource.search(term)
+  override suspend fun search(term: String): DataSource.Factory<Int, Playlist> =
+    dao.search(term).map { it }
 
-  override suspend fun cacheIsEmpty(): Boolean = localDataSource.isEmpty()
+  override suspend fun cacheIsEmpty(): Boolean = dao.count() == 0L
 
-  override suspend fun count(): Long = localDataSource.count()
+  override suspend fun count(): Long = dao.count()
 }

@@ -92,8 +92,8 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
     fun bind(album: Album) {
       val title = album.album
       val artist = album.artist
-      this.album.text = if (title.isNullOrBlank()) emptyAlbum else title
-      this.artist.text = if (artist.isNullOrBlank()) unknownArtist else artist
+      this.album.text = if (title.isBlank()) emptyAlbum else title
+      this.artist.text = if (artist.isBlank()) unknownArtist else artist
       Picasso.get()
         .load(File(cache, album.key()))
         .noFade()

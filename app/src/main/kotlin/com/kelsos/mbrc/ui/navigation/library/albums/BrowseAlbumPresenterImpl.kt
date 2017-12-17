@@ -8,6 +8,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.ui.navigation.library.LibrarySearchModel
+import com.kelsos.mbrc.utilities.paged
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -28,7 +29,15 @@ constructor(
       view().showLoading()
       view().search(term)
       try {
-        view().update(getData(term))
+        val liveData = getData(term).paged()
+        liveData.observe(
+          this@BrowseAlbumPresenterImpl,
+          {
+            if (it != null) {
+              view().update(it)
+            }
+          }
+        )
       } catch (e: Exception) {
         Timber.v(e)
       }
@@ -37,7 +46,7 @@ constructor(
   }
 
   private suspend fun getData(term: String) =
-    if (term.isNotEmpty()) repository.search(term) else repository.getAllCursor()
+    if (term.isNotEmpty()) repository.search(term) else repository.getAll()
 
   override fun attach(view: BrowseAlbumView) {
     super.attach(view)
@@ -64,7 +73,7 @@ constructor(
 
   override fun queue(action: String, entry: Album) {
     scope.launch {
-      val (success, tracks) = queueHandler.queueAlbum(action, entry.album!!, entry.artist!!)
+      val (success, tracks) = queueHandler.queueAlbum(action, entry.album, entry.artist)
       view().queue(success, tracks)
     }
   }

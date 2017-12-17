@@ -24,8 +24,10 @@ class ArtistAlbumsActivity :
 
   @Inject
   lateinit var actionHandler: PopupActionHandler
+
   @Inject
   lateinit var adapter: AlbumEntryAdapter
+
   @Inject
   lateinit var presenter: ArtistAlbumsPresenter
 

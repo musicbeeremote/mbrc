@@ -4,20 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class DiscoveryMessage {
+data class DiscoveryMessage(
   @JsonProperty("name")
-  var name: String? = null
-
+  var name: String = "",
   @JsonProperty("address")
-  var address: String? = null
-
+  var address: String = "",
   @JsonProperty("port")
-  var port: Int = 0
-
+  var port: Int = 0,
   @JsonProperty("context")
-  var context: String? = null
-
-  override fun toString(): String {
-    return "{name='$name', address='$address', port=$port, context='$context'}"
-  }
-}
+  var context: String = ""
+)

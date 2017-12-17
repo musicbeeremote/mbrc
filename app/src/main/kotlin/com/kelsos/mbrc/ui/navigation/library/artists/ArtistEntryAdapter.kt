@@ -54,7 +54,7 @@ constructor(context: Activity) : RecyclerView.Adapter<ArtistEntryAdapter.ViewHol
     val artist = data?.get(holder.bindingAdapterPosition)
 
     artist?.let {
-      holder.title.text = if (it.artist.isNullOrBlank()) {
+      holder.title.text = if (it.artist.isBlank()) {
         holder.empty
       } else {
         it.artist

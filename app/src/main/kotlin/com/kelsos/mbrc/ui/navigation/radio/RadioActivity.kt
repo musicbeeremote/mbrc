@@ -51,27 +51,20 @@ class RadioActivity :
     binding.radioList.adapter = adapter
     binding.radioList.emptyView = emptyBinding.emptyView
     binding.radioList.layoutManager = LinearLayoutManager(this)
-  }
-
-  override fun onStart() {
-    super.onStart()
     presenter.attach(this)
     presenter.load()
     adapter.setOnRadioPressedListener(this)
   }
 
-  override fun onStop() {
-    super.onStop()
+  override fun onDestroy() {
     presenter.detach()
     adapter.setOnRadioPressedListener(null)
-  }
 
-  override fun onDestroy() {
-    super.onDestroy()
     if (isFinishing) {
       Toothpick.closeScope(PRESENTER_SCOPE)
     }
     Toothpick.closeScope(this)
+    super.onDestroy()
   }
 
   override fun update(data: List<RadioStation>) {

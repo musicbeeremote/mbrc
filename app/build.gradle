@@ -44,6 +44,13 @@ android {
 
     testInstrumentationRunner 'com.kelsos.mbrc.MockTestRunner'
     testApplicationId "com.kelsos.mbrc.test"
+    vectorDrawables.useSupportLibrary = true
+
+    javaCompileOptions {
+      annotationProcessorOptions {
+        arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+      }
+    }
   }
 
   testOptions {
@@ -167,6 +174,8 @@ dependencies {
   testImplementation "androidx.test.espresso:espresso-intents:3.4.0"
   testImplementation "androidx.test.espresso:espresso-core:3.4.0"
   testImplementation 'androidx.test.espresso:espresso-contrib:3.4.0'
+  testImplementation "androidx.test:core:1.4.0"
+  testImplementation "androidx.room:room-testing:2.3.0"
 
   testImplementation "androidx.test.ext:truth:1.4.0"
   testImplementation "androidx.arch.core:core-testing:2.1.0"
@@ -196,11 +205,11 @@ dependencies {
   implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1"
   implementation "androidx.lifecycle:lifecycle-common-java8:2.3.1"
 
-  kapt "com.github.Raizlabs.DBFlow:dbflow-processor:4.2.4"
+  implementation "androidx.paging:paging-runtime-ktx:3.0.0"
 
-  implementation "com.github.Raizlabs.DBFlow:dbflow-core:4.2.4"
-  implementation "com.github.Raizlabs.DBFlow:dbflow:4.2.4"
-  implementation "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:4.2.4@aar"
+  implementation 'androidx.room:room-runtime:2.3.0'
+  implementation "androidx.room:room-ktx:2.3.0"
+  kapt 'androidx.room:room-compiler:2.3.0'
 
   implementation "com.fasterxml.jackson.core:jackson-core:2.12.2"
   implementation "com.fasterxml.jackson.core:jackson-databind:2.12.2"

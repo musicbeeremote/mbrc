@@ -1,55 +1,60 @@
 package com.kelsos.mbrc.content.library.artists
 
+import androidx.paging.DataSource
 import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.utilities.epoch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
-import org.threeten.bp.Instant
 import javax.inject.Inject
 
 class ArtistRepositoryImpl
 @Inject
 constructor(
-  private val localDataSource: LocalArtistDataSource,
+  private val dao: ArtistDao,
   private val remoteDataSource: RemoteArtistDataSource,
   private val dispatchers: AppDispatchers
 ) : ArtistRepository {
 
-  override suspend fun getArtistByGenre(genre: String): List<Artist> =
-    localDataSource.getArtistByGenre(genre)
+  private val mapper = ArtistDtoMapper()
 
-  override suspend fun getAllCursor(): List<Artist> = localDataSource.loadAllCursor()
+  override suspend fun getArtistByGenre(genre: String): DataSource.Factory<Int, Artist> {
+    return dao.getArtistByGenre(genre).map { it }
+  }
 
-  override suspend fun getAndSaveRemote(): List<Artist> {
+  override suspend fun getAll(): DataSource.Factory<Int, Artist> = dao.getAll().map { it }
+
+  override suspend fun getAndSaveRemote(): DataSource.Factory<Int, Artist> {
     getRemote()
-    return localDataSource.loadAllCursor()
+    return dao.getAll().map { it }
   }
 
   override suspend fun getRemote() {
-    val epoch = Instant.now().epochSecond
+    val added = epoch()
     withContext(dispatchers.io) {
       remoteDataSource.fetch()
         .onCompletion {
-          localDataSource.removePreviousEntries(epoch)
+          dao.removePreviousEntries(added)
         }
         .collect { artists ->
-          val data = artists.map { it.apply { dateAdded = epoch } }
-          localDataSource.saveAll(data)
+          val data = artists.map { mapper.map(it).apply { dateAdded = added } }
+          dao.insertAll(data)
         }
     }
   }
 
-  override suspend fun search(term: String): List<Artist> = localDataSource.search(term)
+  override suspend fun search(term: String): DataSource.Factory<Int, Artist> =
+    dao.search(term).map { it }
 
-  override suspend fun getAlbumArtistsOnly(): List<Artist> =
-    localDataSource.getAlbumArtists()
+  override suspend fun getAlbumArtistsOnly(): DataSource.Factory<Int, Artist> =
+    dao.getAlbumArtists().map { it }
 
-  override suspend fun getAllRemoteAndShowAlbumArtist(): List<Artist> {
+  override suspend fun getAllRemoteAndShowAlbumArtist(): DataSource.Factory<Int, Artist> {
     getRemote()
-    return localDataSource.getAlbumArtists()
+    return dao.getAlbumArtists().map { it }
   }
 
-  override suspend fun cacheIsEmpty(): Boolean = localDataSource.isEmpty()
+  override suspend fun cacheIsEmpty(): Boolean = dao.count() == 0L
 
-  override suspend fun count(): Long = localDataSource.count()
+  override suspend fun count(): Long = dao.count()
 }

@@ -4,34 +4,37 @@ import android.content.SharedPreferences
 import android.content.res.Resources
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.di.modules.AppDispatchers
-import com.raizlabs.android.dbflow.kotlinextensions.delete
-import com.raizlabs.android.dbflow.kotlinextensions.save
-import com.raizlabs.android.dbflow.kotlinextensions.update
-import com.raizlabs.android.dbflow.sql.language.SQLite
+import com.kelsos.mbrc.ui.connectionmanager.ConnectionModel
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ConnectionRepositoryImpl
-@Inject constructor(
+@Inject
+constructor(
+  private val connectionDao: ConnectionDao,
   private val preferences: SharedPreferences,
   private val resources: Resources,
   private val dispatchers: AppDispatchers
 ) : ConnectionRepository {
 
-  override suspend fun save(settings: ConnectionSettings) = withContext(dispatchers.db) {
-    settings.save()
+  override suspend fun save(settings: ConnectionSettingsEntity) = withContext(dispatchers.db) {
 
-    if (count() == 1L) {
-      last?.let { settings ->
-        setDefault(settings)
-      }
+    if (settings.id > 0) {
+      connectionDao.update(settings)
+    } else {
+      connectionDao.insert(settings)
+    }
+
+    val newDefault = last
+    if (count() == 1L && newDefault !== null) {
+      setDefault(newDefault)
     }
   }
 
-  override suspend fun delete(settings: ConnectionSettings) = withContext(dispatchers.db) {
+  override suspend fun delete(settings: ConnectionSettingsEntity) = withContext(dispatchers.db) {
     val oldId = settings.id
 
-    settings.delete()
+    connectionDao.delete(settings)
 
     if (oldId != defaultId) {
       return@withContext
@@ -41,51 +44,35 @@ class ConnectionRepositoryImpl
     if (count == 0L) {
       defaultId = -1
     } else {
-      val connectionSettings = getItemBefore(oldId) ?: first
-      connectionSettings?.let { settings ->
-        setDefault(settings)
+      val before = getItemBefore(oldId)
+      val newDefault = before ?: first
+      if (newDefault === null) {
+        return@withContext
       }
+      setDefault(newDefault)
     }
   }
 
-  private fun getItemBefore(id: Long): ConnectionSettings? {
-    return SQLite.select()
-      .from(ConnectionSettings::class.java)
-      .where(ConnectionSettings_Table.id.lessThan(id))
-      .orderBy(ConnectionSettings_Table.id, false)
-      .querySingle()
+  private fun getItemBefore(id: Long): ConnectionSettingsEntity? {
+    return connectionDao.getPrevious(id)
   }
 
-  private val first: ConnectionSettings?
-    get() = SQLite.select()
-      .from(ConnectionSettings::class.java)
-      .orderBy(ConnectionSettings_Table.id, true)
-      .querySingle()
+  private val first: ConnectionSettingsEntity?
+    get() = connectionDao.first()
 
-  private val last: ConnectionSettings?
-    get() = SQLite.select()
-      .from(ConnectionSettings::class.java)
-      .orderBy(ConnectionSettings_Table.id, false)
-      .querySingle()
+  private val last: ConnectionSettingsEntity?
+    get() = connectionDao.last()
 
-  override suspend fun update(settings: ConnectionSettings) = withContext(dispatchers.db) {
-    settings.update()
-  }
-
-  override suspend fun setDefault(settings: ConnectionSettings) {
+  override suspend fun setDefault(settings: ConnectionSettingsEntity) {
     defaultId = settings.id
   }
 
-  override suspend fun getDefault(): ConnectionSettings? = withContext(dispatchers.db) {
+  override suspend fun getDefault(): ConnectionSettingsEntity? = withContext(dispatchers.db) {
     val defaultId = defaultId
     if (defaultId < 0) {
       return@withContext null
     }
-
-    return@withContext SQLite.select()
-      .from(ConnectionSettings::class.java)
-      .where(ConnectionSettings_Table.id.`is`(defaultId))
-      .querySingle()
+    return@withContext connectionDao.findById(defaultId)
   }
 
   override var defaultId: Long
@@ -98,11 +85,13 @@ class ConnectionRepositoryImpl
       this.preferences.edit().putLong(key, id).apply()
     }
 
-  override suspend fun getAll(): List<ConnectionSettings> = withContext(dispatchers.db) {
-    return@withContext SQLite.select().from(ConnectionSettings::class.java).queryList()
+  override suspend fun getModel(): ConnectionModel = withContext(dispatchers.db) {
+    return@withContext ConnectionModel(defaultId, getAll())
   }
 
+  override suspend fun getAll(): List<ConnectionSettingsEntity> = connectionDao.getAll()
+
   override suspend fun count(): Long = withContext(dispatchers.db) {
-    return@withContext SQLite.selectCountOf().from(ConnectionSettings::class.java).longValue()
+    return@withContext connectionDao.count()
   }
 }

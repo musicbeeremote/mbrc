@@ -14,9 +14,10 @@ import kotlin.coroutines.CoroutineContext
 open class BasePresenter<T : BaseView>(
   private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : Presenter<T>, LifecycleOwner {
-  private var view: T? = null
-
+  @Suppress("LeakingThis")
   private val lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
+  override fun getLifecycle(): Lifecycle = this.lifecycleRegistry
+  private var view: T? = null
   private lateinit var job: Job
   protected lateinit var scope: CoroutineScope
 
@@ -53,8 +54,4 @@ open class BasePresenter<T : BaseView>(
   protected class ViewNotAttachedException : RuntimeException(
     "Please call Presenter.attach(BaseView) before calling a method on the presenter"
   )
-
-  override fun getLifecycle(): Lifecycle {
-    return this.lifecycleRegistry
-  }
 }

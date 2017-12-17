@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class RemotePlaylistDataSource
-@Inject constructor(private val service: ApiBase) : RemoteDataSource<Playlist> {
-  override suspend fun fetch(): Flow<List<Playlist>> {
-    return service.getAllPages(Protocol.PlaylistList, Playlist::class)
+@Inject constructor(private val service: ApiBase) : RemoteDataSource<PlaylistDto> {
+  override suspend fun fetch(): Flow<List<PlaylistDto>> {
+    return service.getAllPages(Protocol.PlaylistList, PlaylistDto::class)
   }
 }

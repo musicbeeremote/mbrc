@@ -66,7 +66,7 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
     val entry = data?.get(holder.bindingAdapterPosition) ?: return
     holder.title.text = entry.title
     val artist = entry.artist
-    holder.artist.text = if (artist.isNullOrBlank()) holder.unknownArtist else artist
+    holder.artist.text = if (artist.isBlank()) holder.unknownArtist else artist
     holder.image.isGone = !coverMode
 
     Picasso.get()

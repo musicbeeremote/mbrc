@@ -1,16 +1,20 @@
 package com.kelsos.mbrc.repository
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Resources
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
+import com.kelsos.mbrc.RemoteDb
 import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.networking.connections.ConnectionDao
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionRepositoryImpl
-import com.kelsos.mbrc.networking.connections.ConnectionSettings
-import com.kelsos.mbrc.rules.DBFlowTestRule
+import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
@@ -35,12 +39,20 @@ class ConnectionRepositoryTest {
   private val toothPickRule = ToothPickRule(this)
   private val testDispatcher = TestCoroutineDispatcher()
 
+  lateinit var db: RemoteDb
+  lateinit var dao: ConnectionDao
+
   @Rule
-  fun chain(): TestRule = RuleChain.outerRule(toothPickRule).around(DBFlowTestRule.create())
+  fun chain(): TestRule = RuleChain.outerRule(toothPickRule)
 
   @Before
   @Throws(Exception::class)
   fun setUp() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    db = Room.inMemoryDatabaseBuilder(context, RemoteDb::class.java)
+      .allowMainThreadQueries()
+      .build()
+    dao = db.connectionDao()
   }
 
   @Test
@@ -49,8 +61,7 @@ class ConnectionRepositoryTest {
     val settings = createSettings("192.167.90.10")
     repository.save(settings)
 
-    assertThat(repository.getDefault()).isEqualTo(settings)
-    assertThat(settings.id).isEqualTo(1)
+    assertThat(repository.getDefault()).isEqualTo(settings.copy(id = 1))
   }
 
   @Test
@@ -65,8 +76,7 @@ class ConnectionRepositoryTest {
     repository.save(settings2)
     repository.save(settings3)
 
-    assertThat(repository.getDefault()).isEqualTo(settings)
-    assertThat(settings.id).isEqualTo(1)
+    assertThat(repository.getDefault()).isEqualTo(settings.copy(id = 1))
     assertThat(repository.count()).isEqualTo(3)
   }
 
@@ -97,22 +107,22 @@ class ConnectionRepositoryTest {
     val settings1 = createSettings("192.167.90.11")
     val settings2 = createSettings("192.167.90.12")
     val settings3 = createSettings("192.167.90.13")
+    val settingsWithId = settings.copy(id = 1)
 
     repository.save(settings)
     repository.save(settings1)
     repository.save(settings2)
     repository.save(settings3)
 
-    assertThat(repository.getDefault()).isEqualTo(settings)
-    assertThat(settings.id).isEqualTo(1)
+    assertThat(repository.getDefault()).isEqualTo(settingsWithId)
     assertThat(repository.count()).isEqualTo(4)
 
-    repository.delete(settings2)
+    repository.delete(settings2.copy(id = 3))
 
-    val settingsList = ArrayList<ConnectionSettings>()
-    settingsList.add(settings)
-    settingsList.add(settings1)
-    settingsList.add(settings3)
+    val settingsList = ArrayList<ConnectionSettingsEntity>()
+    settingsList.add(settingsWithId)
+    settingsList.add(settings1.copy(id = 2))
+    settingsList.add(settings3.copy(id = 4))
 
     assertThat(repository.count()).isEqualTo(3)
     assertThat(repository.getAll()).containsExactlyElementsIn(settingsList)
@@ -124,15 +134,14 @@ class ConnectionRepositoryTest {
 
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
+    val settings1WithId = settings1.copy(id = 2)
 
     repository.save(settings)
     repository.save(settings1)
 
-    assertThat(repository.getDefault()).isEqualTo(settings)
-
-    repository.setDefault(settings1)
-
-    assertThat(repository.getDefault()).isEqualTo(settings1)
+    assertThat(repository.getDefault()).isEqualTo(settings.copy(id = 1))
+    repository.setDefault(settings1WithId)
+    assertThat(repository.getDefault()).isEqualTo(settings1WithId)
   }
 
   @Test
@@ -140,12 +149,11 @@ class ConnectionRepositoryTest {
     val repository = repository
 
     val settings = createSettings("192.167.90.10")
+    val firstSettings = settings.copy(id = 1)
     repository.save(settings)
 
-    assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.getDefault()).isEqualTo(settings)
-
-    repository.delete(settings)
+    assertThat(repository.getDefault()).isEqualTo(firstSettings)
+    repository.delete(firstSettings)
 
     assertThat(repository.count()).isEqualTo(0)
     assertThat(repository.getDefault()).isNull()
@@ -160,6 +168,7 @@ class ConnectionRepositoryTest {
     val settings1 = createSettings("192.167.90.11")
     val settings2 = createSettings("192.167.90.12")
     val settings3 = createSettings("192.167.90.14")
+    val firstSettings = settings.copy(id = 1)
 
     repository.save(settings)
     repository.save(settings1)
@@ -167,14 +176,12 @@ class ConnectionRepositoryTest {
     repository.save(settings3)
 
     assertThat(repository.count()).isEqualTo(4)
+    assertThat(repository.getDefault()).isEqualTo(firstSettings)
 
-    assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.getDefault()).isEqualTo(settings)
-
-    repository.delete(settings)
+    repository.delete(firstSettings)
 
     assertThat(repository.count()).isEqualTo(3)
-    assertThat(repository.getDefault()).isEqualTo(settings1)
+    assertThat(repository.getDefault()).isEqualTo(settings1.copy(id = 2))
     assertThat(repository.defaultId).isEqualTo(2)
   }
 
@@ -193,17 +200,16 @@ class ConnectionRepositoryTest {
     repository.save(settings3)
 
     assertThat(repository.count()).isEqualTo(4)
+    assertThat(repository.getDefault()).isEqualTo(settings.copy(id = 1))
 
-    assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.getDefault()).isEqualTo(settings)
+    val secondSettings = settings1.copy(id = 2)
+    repository.setDefault(secondSettings)
+    assertThat(repository.getDefault()).isEqualTo(secondSettings)
 
-    repository.setDefault(settings1)
-    assertThat(repository.getDefault()).isEqualTo(settings1)
-
-    repository.delete(settings1)
+    repository.delete(secondSettings)
 
     assertThat(repository.count()).isEqualTo(3)
-    assertThat(repository.getDefault()).isEqualTo(settings)
+    assertThat(repository.getDefault()).isEqualTo(settings.copy(id = 1))
     assertThat(repository.defaultId).isEqualTo(1)
   }
 
@@ -215,6 +221,7 @@ class ConnectionRepositoryTest {
     val settings1 = createSettings("192.167.90.11")
     val settings2 = createSettings("192.167.90.12")
     val settings3 = createSettings("192.167.90.14")
+    val settings3WithId = settings3.copy(id = 4)
 
     repository.save(settings)
     repository.save(settings1)
@@ -223,16 +230,15 @@ class ConnectionRepositoryTest {
 
     assertThat(repository.count()).isEqualTo(4)
 
-    assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.getDefault()).isEqualTo(settings)
+    assertThat(repository.getDefault()).isEqualTo(settings.copy(id = 1))
 
-    repository.setDefault(settings3)
-    assertThat(repository.getDefault()).isEqualTo(settings3)
+    repository.setDefault(settings3WithId)
+    assertThat(repository.getDefault()).isEqualTo(settings3WithId)
 
-    repository.delete(settings3)
+    repository.delete(settings3WithId)
 
     assertThat(repository.count()).isEqualTo(3)
-    assertThat(repository.getDefault()).isEqualTo(settings2)
+    assertThat(repository.getDefault()).isEqualTo(settings2.copy(id = 3))
     assertThat(repository.defaultId).isEqualTo(3)
   }
 
@@ -244,6 +250,8 @@ class ConnectionRepositoryTest {
     val settings1 = createSettings("192.167.90.11")
     val settings2 = createSettings("192.167.90.12")
     val settings3 = createSettings("192.167.90.14")
+    val settings1WithId = settings.copy(id = 1)
+    val settings3WithId = settings3.copy(id = 4)
 
     repository.save(settings)
     repository.save(settings1)
@@ -251,17 +259,15 @@ class ConnectionRepositoryTest {
     repository.save(settings3)
 
     assertThat(repository.count()).isEqualTo(4)
+    assertThat(repository.getDefault()).isEqualTo(settings1WithId)
 
-    assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.getDefault()).isEqualTo(settings)
+    repository.setDefault(settings3WithId)
+    assertThat(repository.getDefault()).isEqualTo(settings3WithId)
 
-    repository.setDefault(settings3)
-    assertThat(repository.getDefault()).isEqualTo(settings3)
-
-    repository.delete(settings1)
+    repository.delete(settings1WithId)
 
     assertThat(repository.count()).isEqualTo(3)
-    assertThat(repository.getDefault()).isEqualTo(settings3)
+    assertThat(repository.getDefault()).isEqualTo(settings3WithId)
     assertThat(repository.defaultId).isEqualTo(4)
   }
 
@@ -274,29 +280,29 @@ class ConnectionRepositoryTest {
     val repository = repository
 
     val settings = createSettings(address)
-    repository.save(settings)
+    val settingsWithId = settings.copy(id = 1)
 
-    assertThat(settings.id).isEqualTo(1)
+    repository.save(settings)
     val defaultSettings = repository.getDefault()
 
-    assertThat(defaultSettings).isEqualTo(settings)
+    assertThat(defaultSettings).isEqualTo(settingsWithId)
     assertThat(defaultSettings!!.port).isEqualTo(3000)
     assertThat(defaultSettings.address).isEqualTo(address)
 
-    settings.port = newPort
+    settingsWithId.port = newPort
 
-    repository.update(settings)
+    repository.save(settingsWithId)
 
     assertThat(repository.getDefault()!!.port).isEqualTo(newPort)
 
-    settings.address = newAddress
-    repository.update(settings)
+    settingsWithId.address = newAddress
+    repository.save(settingsWithId)
 
     assertThat(repository.getDefault()!!.address).isEqualTo(newAddress)
   }
 
-  private fun createSettings(address: String): ConnectionSettings {
-    val settings = ConnectionSettings()
+  private fun createSettings(address: String): ConnectionSettingsEntity {
+    val settings = ConnectionSettingsEntity()
     settings.name = "Desktop PC"
     settings.address = address
     settings.port = 3000
@@ -324,6 +330,7 @@ class ConnectionRepositoryTest {
         `when`(resources.getString(anyInt())).thenReturn("preferences_key")
         resources
       }
+      bind(ConnectionDao::class.java).toProviderInstance { dao }
     }
   }
 
@@ -331,5 +338,6 @@ class ConnectionRepositoryTest {
   @Throws(Exception::class)
   fun tearDown() {
     Toothpick.reset()
+    db.close()
   }
 }

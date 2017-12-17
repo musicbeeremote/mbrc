@@ -30,7 +30,6 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
-import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
@@ -111,11 +110,11 @@ class CircleImageView : AppCompatImageView {
     }
   }
 
-  override fun getScaleType(): ImageView.ScaleType {
+  override fun getScaleType(): ScaleType {
     return SCALE_TYPE
   }
 
-  override fun setScaleType(scaleType: ImageView.ScaleType) {
+  override fun setScaleType(scaleType: ScaleType) {
     if (scaleType != SCALE_TYPE) {
       throw IllegalArgumentException(String.format("ScaleType %s not supported.", scaleType))
     }
@@ -379,7 +378,7 @@ class CircleImageView : AppCompatImageView {
 
   companion object {
 
-    private val SCALE_TYPE = ImageView.ScaleType.CENTER_CROP
+    private val SCALE_TYPE = ScaleType.CENTER_CROP
 
     private val BITMAP_CONFIG = Bitmap.Config.ARGB_8888
     private val COLORDRAWABLE_DIMENSION = 2

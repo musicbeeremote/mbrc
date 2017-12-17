@@ -29,7 +29,6 @@ constructor(private val bus: RxBus) {
       }
     }
   var handshake: Boolean = false
-    get
     set(value) {
       field = value
       notifyState()
@@ -38,17 +37,17 @@ constructor(private val bus: RxBus) {
   init {
     connected = false
     handshake = false
-    this.bus.register(this, RequestConnectionStateEvent::class.java, { notifyState() })
-    this.bus.register(this, SocketStatusChangedEvent::class.java, { connected = it.connected })
+    this.bus.register(this, RequestConnectionStateEvent::class.java) { notifyState() }
+    this.bus.register(this, SocketStatusChangedEvent::class.java) { connected = it.connected }
   }
 
   val connection: Int
     @Status
     get() {
-      when {
-        connected && handshake -> return Connection.ACTIVE
-        connected -> return Connection.ON
-        else -> return Connection.OFF
+      return when {
+        connected && handshake -> Connection.ACTIVE
+        connected -> Connection.ON
+        else -> Connection.OFF
       }
     }
 

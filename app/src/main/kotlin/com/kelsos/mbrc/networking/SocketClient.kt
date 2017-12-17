@@ -13,7 +13,7 @@ import com.kelsos.mbrc.networking.SocketAction.STOP
 import com.kelsos.mbrc.networking.SocketAction.TERMINATE
 import com.kelsos.mbrc.networking.SocketActivityChecker.PingTimeoutListener
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
-import com.kelsos.mbrc.networking.connections.ConnectionSettings
+import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.connections.InetAddressMapper
 import com.kelsos.mbrc.preferences.DefaultSettingsChangedEvent
 import kotlinx.coroutines.CoroutineScope
@@ -170,18 +170,20 @@ constructor(
       return
     }
     try {
-      writeToSocket(message = mapper.writeValueAsString(message) + "\r\n")
+      val messageString = "${mapper.writeValueAsString(message)}\r\n"
+      Timber.v("Sending -> $messageString")
+      writeToSocket(message = messageString)
     } catch (ignored: Exception) {
       Timber.d(ignored, "Send failed")
     }
   }
 
   private fun writeToSocket(message: String) {
-    val output = output ?: throw RuntimeException("output was null")
+    val output = output ?: throw IOException("output was null")
     output.print(message)
 
     if (output.checkError()) {
-      throw RuntimeException("Output stream encountered an error")
+      throw IOException("Output stream encountered an error")
     }
   }
 
@@ -190,7 +192,7 @@ constructor(
     socketManager(RESET)
   }
 
-  private inner class SocketConnection(connectionSettings: ConnectionSettings) : Runnable {
+  private inner class SocketConnection(connectionSettings: ConnectionSettingsEntity) : Runnable {
     private val socketAddress: SocketAddress?
     private val mapper: InetAddressMapper = InetAddressMapper()
 

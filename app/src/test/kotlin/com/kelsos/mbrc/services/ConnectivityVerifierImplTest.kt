@@ -1,19 +1,21 @@
 package com.kelsos.mbrc.services
 
-import android.app.Application
-import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import android.content.Context
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.TestApplication
+import com.kelsos.mbrc.RemoteDb
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.networking.ConnectivityVerifier
 import com.kelsos.mbrc.networking.ConnectivityVerifierImpl
 import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.RequestManagerImpl
 import com.kelsos.mbrc.networking.SocketMessage
+import com.kelsos.mbrc.networking.connections.ConnectionDao
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
-import com.kelsos.mbrc.networking.connections.ConnectionSettings
+import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.preferences.ClientInformationStore
 import io.mockk.coEvery
@@ -40,6 +42,7 @@ import java.util.concurrent.Executors
 
 @RunWith(AndroidJUnit4::class)
 class ConnectivityVerifierImplTest {
+
   private val connectionRepository: ConnectionRepository = mockk()
   private val testDispatcher = TestCoroutineDispatcher()
 
@@ -51,11 +54,17 @@ class ConnectivityVerifierImplTest {
   private val port: Int = 46000
 
   lateinit var verifier: ConnectivityVerifier
+  lateinit var db: RemoteDb
+  lateinit var dao: ConnectionDao
   private val informationStore: ClientInformationStore = mockk()
 
   @Before
   fun setUp() {
     toothpickRule.scope.installModules(TestModule())
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    db = Room.inMemoryDatabaseBuilder(context, RemoteDb::class.java).build()
+    dao = db.connectionDao()
+
     verifier = toothpickRule.getInstance(ConnectivityVerifier::class.java)
     every { informationStore.getClientId() } returns "abc"
   }
@@ -117,6 +126,7 @@ class ConnectivityVerifierImplTest {
 
   @After
   fun tearDown() {
+    db.close()
   }
 
   @Test
@@ -124,7 +134,7 @@ class ConnectivityVerifierImplTest {
     val server = startMockServer()
 
     coEvery { connectionRepository.getDefault() } answers {
-      val settings = ConnectionSettings()
+      val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
       settings
@@ -138,7 +148,7 @@ class ConnectivityVerifierImplTest {
   fun testPrematureDisconnectDuringVerification() = testDispatcher.runBlockingTest {
     val server = startMockServer(true)
     coEvery { connectionRepository.getDefault() } answers {
-      val settings = ConnectionSettings()
+      val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
       settings
@@ -157,7 +167,7 @@ class ConnectivityVerifierImplTest {
   fun testInvalidPluginResponseVerification() = testDispatcher.runBlockingTest {
     val server = startMockServer(false, Protocol.ClientNotAllowed)
     coEvery { connectionRepository.getDefault() } answers {
-      val settings = ConnectionSettings()
+      val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
       settings
@@ -208,11 +218,10 @@ class ConnectivityVerifierImplTest {
 
   inner class TestModule : Module() {
     init {
-      val applicationContext = getApplicationContext<TestApplication>()
-      bind(Application::class.java).toInstance(applicationContext)
       bind(ObjectMapper::class.java).toInstance(mapper)
       bind(RequestManager::class.java).to(RequestManagerImpl::class.java)
       bind(ConnectionRepository::class.java).toInstance(connectionRepository)
+      bind(ConnectivityVerifier::class.java).to(ConnectivityVerifierImpl::class.java)
       bind(AppDispatchers::class.java).toInstance(
         AppDispatchers(
           testDispatcher,
@@ -221,6 +230,7 @@ class ConnectivityVerifierImplTest {
         )
       )
       bind(ClientInformationStore::class.java).toInstance(informationStore)
+      bind(ConnectionDao::class.java).toProviderInstance { dao }
     }
   }
 }

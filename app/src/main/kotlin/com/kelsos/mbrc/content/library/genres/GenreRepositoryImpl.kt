@@ -1,45 +1,48 @@
 package com.kelsos.mbrc.content.library.genres
 
+import androidx.paging.DataSource
 import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.utilities.epoch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
-import org.threeten.bp.Instant
 import javax.inject.Inject
 
 class GenreRepositoryImpl
 @Inject
 constructor(
+  private val dao: GenreDao,
   private val remoteDataSource: RemoteGenreDataSource,
-  private val localDataSource: LocalGenreDataSource,
   private val dispatchers: AppDispatchers
 ) : GenreRepository {
 
-  override suspend fun getAllCursor(): List<Genre> = localDataSource.loadAllCursor()
+  private val mapper = GenreDtoMapper()
 
-  override suspend fun getAndSaveRemote(): List<Genre> {
+  override suspend fun getAll(): DataSource.Factory<Int, Genre> = dao.getAll().map { it }
+
+  override suspend fun getAndSaveRemote(): DataSource.Factory<Int, Genre> {
     getRemote()
-    return localDataSource.loadAllCursor()
+    return dao.getAll().map { it }
   }
 
   override suspend fun getRemote() {
-    val epoch = Instant.now().epochSecond
-
     withContext(dispatchers.io) {
+      val added = epoch()
       remoteDataSource.fetch()
         .onCompletion {
-          localDataSource.removePreviousEntries(epoch)
+          dao.removePreviousEntries(added)
         }
         .collect { genres ->
-          val data = genres.map { it.apply { dateAdded = epoch } }
-          localDataSource.saveAll(data)
+          val data = genres.map { mapper.map(it).apply { dateAdded = added } }
+          dao.insertAll(data)
         }
     }
   }
 
-  override suspend fun search(term: String): List<Genre> = localDataSource.search(term)
+  override suspend fun search(term: String): DataSource.Factory<Int, Genre> =
+    dao.search(term).map { it }
 
-  override suspend fun cacheIsEmpty(): Boolean = localDataSource.isEmpty()
+  override suspend fun cacheIsEmpty(): Boolean = dao.count() == 0L
 
-  override suspend fun count(): Long = localDataSource.count()
+  override suspend fun count(): Long = dao.count()
 }

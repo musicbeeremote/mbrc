@@ -24,7 +24,7 @@ import com.kelsos.mbrc.features.output.OutputSelectionViewModel
 import toothpick.Scope
 import toothpick.Toothpick
 
-class OutputSelectionDialog() : DialogFragment(), View.OnTouchListener {
+class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
 
   private var touchInitiated: Boolean = false
   private lateinit var fm: FragmentManager

@@ -34,7 +34,7 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
     val genre = data?.get(holder.bindingAdapterPosition)
 
     genre?.let {
-      holder.title.text = if (it.genre.isNullOrBlank()) holder.empty else genre.genre
+      holder.title.text = if (it.genre.isBlank()) holder.empty else genre.genre
       holder.indicator.setOnClickListener { createPopup(it, genre) }
       holder.itemView.setOnClickListener { listener?.onItemClicked(genre) }
     }

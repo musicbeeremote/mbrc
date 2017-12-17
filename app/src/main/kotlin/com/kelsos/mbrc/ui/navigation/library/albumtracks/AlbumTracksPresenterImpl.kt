@@ -6,6 +6,7 @@ import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.nowplaying.queue.Queue
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
+import com.kelsos.mbrc.utilities.paged
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -15,18 +16,26 @@ class AlbumTracksPresenterImpl
 constructor(
   private val repository: TrackRepository,
   private val queue: QueueHandler
-) : BasePresenter<AlbumTracksView>(),
-  AlbumTracksPresenter {
+) : BasePresenter<AlbumTracksView>(), AlbumTracksPresenter {
+
   override fun load(album: AlbumInfo) {
     scope.launch {
       try {
-        view().update(
-          when {
-            album.album.isEmpty() -> {
-              repository.getNonAlbumTracks(album.artist)
-            }
-            else -> {
-              repository.getAlbumTracks(album.album, album.artist)
+        val data = when {
+          album.album.isEmpty() -> {
+            repository.getNonAlbumTracks(album.artist)
+          }
+          else -> {
+            repository.getAlbumTracks(album.album, album.artist)
+          }
+        }
+
+        val liveData = data.paged()
+        liveData.observe(
+          this@AlbumTracksPresenterImpl,
+          {
+            if (it != null) {
+              view().update(it)
             }
           }
         )

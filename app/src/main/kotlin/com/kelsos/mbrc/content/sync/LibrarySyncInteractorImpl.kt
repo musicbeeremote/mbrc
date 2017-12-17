@@ -25,7 +25,7 @@ class LibrarySyncInteractorImpl
   private val playlistRepository: PlaylistRepository,
   private val coverCache: CoverCache,
   private val bus: RxBus,
-  private val dispatchers: AppDispatchers
+  dispatchers: AppDispatchers
 ) : LibrarySyncInteractor {
 
   private var running: Boolean = false

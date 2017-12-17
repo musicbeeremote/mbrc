@@ -9,7 +9,7 @@ import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.UiDialogSettingsBinding
-import com.kelsos.mbrc.networking.connections.ConnectionSettings
+import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 
 class SettingsDialogFragment : DialogFragment() {
 
@@ -18,10 +18,10 @@ class SettingsDialogFragment : DialogFragment() {
   private lateinit var portEdit: EditText
 
   private var mListener: SettingsSaveListener? = null
-  private lateinit var settings: ConnectionSettings
+  private lateinit var settings: ConnectionSettingsEntity
   private var edit: Boolean = false
 
-  private fun setConnectionSettings(settings: ConnectionSettings) {
+  private fun setConnectionSettings(settings: ConnectionSettingsEntity) {
     this.settings = settings
   }
 
@@ -88,12 +88,12 @@ class SettingsDialogFragment : DialogFragment() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     if (!edit) {
-      settings = ConnectionSettings()
+      settings = ConnectionSettingsEntity()
     }
   }
 
   interface SettingsSaveListener {
-    fun onSave(settings: ConnectionSettings)
+    fun onSave(settings: ConnectionSettingsEntity)
   }
 
   companion object {
@@ -101,7 +101,7 @@ class SettingsDialogFragment : DialogFragment() {
     private const val MAX_PORT = 65535
     private const val MIN_PORT = 1
 
-    fun newInstance(settings: ConnectionSettings): SettingsDialogFragment {
+    fun newInstance(settings: ConnectionSettingsEntity): SettingsDialogFragment {
       val fragment = SettingsDialogFragment()
       fragment.setConnectionSettings(settings)
       fragment.edit = true

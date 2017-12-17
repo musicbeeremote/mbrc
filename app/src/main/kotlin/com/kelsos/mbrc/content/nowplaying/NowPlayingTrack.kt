@@ -3,9 +3,14 @@ package com.kelsos.mbrc.content.nowplaying
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class NowPlayingTrack(
-  @JsonProperty("artist") var artist: String,
-  @JsonProperty("album") var album: String,
-  @JsonProperty("title") var title: String,
-  @JsonProperty("year") var year: String,
-  @JsonProperty("path") var path: String
+  @JsonProperty("artist")
+  val artist: String,
+  @JsonProperty("album")
+  val album: String,
+  @JsonProperty("title")
+  val title: String,
+  @JsonProperty("year")
+  val year: String,
+  @JsonProperty("path")
+  val path: String
 )

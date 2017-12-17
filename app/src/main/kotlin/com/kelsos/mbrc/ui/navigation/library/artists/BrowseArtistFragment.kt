@@ -28,8 +28,10 @@ class BrowseArtistFragment :
 
   @Inject
   lateinit var adapter: ArtistEntryAdapter
+
   @Inject
   lateinit var actionHandler: PopupActionHandler
+
   @Inject
   lateinit var presenter: BrowseArtistPresenter
 

@@ -2,7 +2,6 @@ package com.kelsos.mbrc.content.library.covers
 
 import android.app.Application
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
-import com.kelsos.mbrc.content.library.albums.key
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -35,19 +34,12 @@ constructor(
   suspend fun cache() {
     val covers = withContext(dispatchers.db) {
       val albumCovers = mutableListOf<AlbumCover>()
-      val covers = albumRepository.getAllCursor()
-        .map {
-          AlbumCover(
-            artist = it.artist ?: "",
-            album = it.album ?: "",
-            hash = it.cover ?: ""
-          )
-        }
+      val covers = albumRepository.getCovers()
       withContext(dispatchers.io) {
         val files = cache.listFiles()?.map { it.nameWithoutExtension } ?: emptyList()
 
         for (cover in covers) {
-          if (cover.hash.isBlank() || files.contains(cover.key())) {
+          if (cover.hash.isNullOrBlank() || files.contains(cover.key())) {
             albumCovers.add(cover)
           } else {
             albumCovers.add(cover.copy(hash = ""))
@@ -63,7 +55,7 @@ constructor(
         withContext(dispatchers.db) {
           albumRepository.updateCovers(updated)
         }
-        val storedCovers = albumRepository.getAllCursor().map { it.key() }
+        val storedCovers = albumRepository.getCovers().map { it.key() }
         val coverFiles = cache.listFiles()
         if (coverFiles != null) {
           val notInDb = coverFiles.filter { !storedCovers.contains(it.nameWithoutExtension) }

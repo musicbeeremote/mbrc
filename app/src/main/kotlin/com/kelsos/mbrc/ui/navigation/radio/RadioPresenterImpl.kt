@@ -4,6 +4,7 @@ import com.kelsos.mbrc.content.radios.RadioRepository
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
+import com.kelsos.mbrc.utilities.paged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,7 +22,16 @@ constructor(
     view().showLoading()
     scope.launch {
       try {
-        view().update(radioRepository.getAndSaveRemote())
+        val data = radioRepository.getAndSaveRemote()
+        val liveData = data.paged()
+        liveData.observe(
+          this@RadioPresenterImpl,
+          {
+            if (it != null) {
+              view().update(it)
+            }
+          }
+        )
       } catch (e: Exception) {
         view().error(e)
       }
@@ -33,7 +43,16 @@ constructor(
     view().showLoading()
     scope.launch {
       try {
-        view().update(radioRepository.getAndSaveRemote())
+        val data = radioRepository.getAndSaveRemote()
+        val liveData = data.paged()
+        liveData.observe(
+          this@RadioPresenterImpl,
+          {
+            if (it != null) {
+              view().update(it)
+            }
+          }
+        )
       } catch (e: Exception) {
         view().error(e)
       }

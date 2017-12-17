@@ -1,11 +1,10 @@
 package com.kelsos.mbrc
 
+import android.annotation.SuppressLint
 import androidx.annotation.CallSuper
 import androidx.multidex.MultiDexApplication
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.kelsos.mbrc.di.modules.RemoteModule
-import com.raizlabs.android.dbflow.config.FlowConfig
-import com.raizlabs.android.dbflow.config.FlowManager
 import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
@@ -13,6 +12,7 @@ import toothpick.registries.FactoryRegistryLocator
 import toothpick.registries.MemberInjectorRegistryLocator
 import toothpick.smoothie.module.SmoothieApplicationModule
 
+@SuppressLint("Registered")
 open class RemoteApplication : MultiDexApplication() {
 
   @CallSuper
@@ -25,7 +25,7 @@ open class RemoteApplication : MultiDexApplication() {
     if (!testMode()) {
       AndroidThreeTen.init(this)
     }
-    initializeDbflow()
+
     initializeToothpick()
     initializeTimber()
   }
@@ -39,10 +39,6 @@ open class RemoteApplication : MultiDexApplication() {
         }
       })
     }
-  }
-
-  private fun initializeDbflow() {
-    FlowManager.init(FlowConfig.Builder(this).openDatabasesOnInit(true).build())
   }
 
   private fun initializeToothpick() {

@@ -8,6 +8,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.protocol.NowPlayingMoveRequest
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.utilities.paged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,14 +18,22 @@ constructor(
   private val repository: NowPlayingRepository,
   private val bus: RxBus,
   private val model: MainDataModel
-) : BasePresenter<NowPlayingView>(),
-  NowPlayingPresenter {
+) : BasePresenter<NowPlayingView>(), NowPlayingPresenter {
 
   override fun reload(scrollToTrack: Boolean) {
     view().showLoading()
     scope.launch {
       try {
-        view().update(repository.getAndSaveRemote())
+        val data = repository.getAndSaveRemote()
+        val liveData = data.paged()
+        liveData.observe(
+          this@NowPlayingPresenterImpl,
+          {
+            if (it != null) {
+              view().update(it)
+            }
+          }
+        )
         view().trackChanged(model.trackInfo, scrollToTrack)
       } catch (e: Exception) {
         view().failure(e)
@@ -37,7 +46,16 @@ constructor(
     view().showLoading()
     scope.launch {
       try {
-        view().update(repository.getAllCursor())
+        val data = repository.getAll()
+        val liveData = data.paged()
+        liveData.observe(
+          this@NowPlayingPresenterImpl,
+          {
+            if (it != null) {
+              view().update(it)
+            }
+          }
+        )
         view().trackChanged(model.trackInfo, true)
         reload(true)
       } catch (e: Exception) {

@@ -7,7 +7,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.StartServiceDiscoveryEvent
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
-import com.kelsos.mbrc.networking.connections.ConnectionSettings
+import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.preferences.DefaultSettingsChangedEvent
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -63,7 +63,7 @@ constructor(
     }
   }
 
-  override fun setDefault(settings: ConnectionSettings) {
+  override fun setDefault(settings: ConnectionSettingsEntity) {
     checkIfAttached()
     scope.launch {
       repository.setDefault(settings)
@@ -72,15 +72,12 @@ constructor(
     }
   }
 
-  override fun save(settings: ConnectionSettings) {
+  override fun save(settings: ConnectionSettingsEntity) {
     checkIfAttached()
+
     scope.launch {
       try {
-        if (settings.id > 0) {
-          repository.update(settings)
-        } else {
-          repository.save(settings)
-        }
+        repository.save(settings)
 
         if (settings.id == repository.defaultId) {
           bus.post(DefaultSettingsChangedEvent())
@@ -93,7 +90,7 @@ constructor(
     }
   }
 
-  override fun delete(settings: ConnectionSettings) {
+  override fun delete(settings: ConnectionSettingsEntity) {
     scope.launch {
       checkIfAttached()
       repository.delete(settings)

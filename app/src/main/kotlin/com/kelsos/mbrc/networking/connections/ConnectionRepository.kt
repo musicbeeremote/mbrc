@@ -1,19 +1,21 @@
 package com.kelsos.mbrc.networking.connections
 
+import com.kelsos.mbrc.ui.connectionmanager.ConnectionModel
+
 interface ConnectionRepository {
-  suspend fun save(settings: ConnectionSettings)
+  suspend fun save(settings: ConnectionSettingsEntity)
 
-  suspend fun delete(settings: ConnectionSettings)
+  suspend fun delete(settings: ConnectionSettingsEntity)
 
-  suspend fun update(settings: ConnectionSettings): Boolean
-
-  suspend fun getAll(): List<ConnectionSettings>
+  suspend fun getAll(): List<ConnectionSettingsEntity>
 
   suspend fun count(): Long
 
-  suspend fun setDefault(settings: ConnectionSettings)
+  suspend fun setDefault(settings: ConnectionSettingsEntity)
 
-  suspend fun getDefault(): ConnectionSettings?
+  suspend fun getDefault(): ConnectionSettingsEntity?
 
   val defaultId: Long
+
+  suspend fun getModel(): ConnectionModel
 }
