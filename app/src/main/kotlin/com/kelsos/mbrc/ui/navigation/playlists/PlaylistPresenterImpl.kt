@@ -1,6 +1,10 @@
 package com.kelsos.mbrc.ui.navigation.playlists
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
+import android.arch.paging.DataSource
+import android.arch.paging.PagedList
+import com.kelsos.mbrc.content.playlists.PlaylistEntity
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.bus.RxBus
@@ -19,24 +23,29 @@ constructor(
 ) : BasePresenter<PlaylistView>(),
     PlaylistPresenter {
 
+  private lateinit var playlists: LiveData<PagedList<PlaylistEntity>>
+
   override fun load() {
     view().showLoading()
     addDisposable(repository.getAll()
         .observeOn(schedulerProvider.main())
         .subscribeOn(schedulerProvider.io())
         .subscribe({
-          val liveData = it.paged()
-          liveData.observe(this, Observer {
-            if (it != null) {
-              view().update(it)
-            }
-          })
-
+          onPlaylistsLoad(it)
           view().hideLoading()
         }) {
           view().failure(it)
           view().hideLoading()
         })
+  }
+
+  private fun onPlaylistsLoad(it: DataSource.Factory<Int, PlaylistEntity>) {
+    playlists = it.paged()
+    playlists.observe(this, Observer {
+      if (it != null) {
+        view().update(it)
+      }
+    })
   }
 
   override fun play(path: String) {
@@ -49,13 +58,7 @@ constructor(
         .observeOn(schedulerProvider.main())
         .subscribeOn(schedulerProvider.io())
         .subscribe({
-          val liveData = it.paged()
-          liveData.observe(this, Observer {
-            if (it != null) {
-              view().update(it)
-            }
-          })
-
+          onPlaylistsLoad(it)
           view().hideLoading()
         }) {
           view().failure(it)
