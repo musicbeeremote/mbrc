@@ -1,6 +1,10 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
+import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
+import androidx.paging.PagedList
 import com.kelsos.mbrc.content.radios.RadioRepository
+import com.kelsos.mbrc.content.radios.RadioStation
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
@@ -17,21 +21,13 @@ constructor(
   dispatcher: AppDispatchers
 ) : BasePresenter<RadioView>(dispatcher.main), RadioPresenter {
 
-  override fun load() {
+  private lateinit var radios: LiveData<PagedList<RadioStation>>
 
+  override fun load() {
     view().showLoading()
     scope.launch {
       try {
-        val data = radioRepository.getAndSaveRemote()
-        val liveData = data.paged()
-        liveData.observe(
-          this@RadioPresenterImpl,
-          {
-            if (it != null) {
-              view().update(it)
-            }
-          }
-        )
+        onRadiosLoaded(radioRepository.getAndSaveRemote())
       } catch (e: Exception) {
         view().error(e)
       }
@@ -39,20 +35,23 @@ constructor(
     }
   }
 
+  private fun onRadiosLoaded(factory: DataSource.Factory<Int, RadioStation>) {
+    radios = factory.paged()
+    radios.observe(
+      this@RadioPresenterImpl,
+      {
+        if (it != null) {
+          view().update(it)
+        }
+      }
+    )
+  }
+
   override fun refresh() {
     view().showLoading()
     scope.launch {
       try {
-        val data = radioRepository.getAndSaveRemote()
-        val liveData = data.paged()
-        liveData.observe(
-          this@RadioPresenterImpl,
-          {
-            if (it != null) {
-              view().update(it)
-            }
-          }
-        )
+        onRadiosLoaded(radioRepository.getAndSaveRemote())
       } catch (e: Exception) {
         view().error(e)
       }

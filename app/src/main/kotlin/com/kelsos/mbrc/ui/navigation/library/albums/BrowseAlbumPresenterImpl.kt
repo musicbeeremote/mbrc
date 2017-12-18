@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library.albums
 
+import androidx.lifecycle.LiveData
+import androidx.paging.PagedList
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
@@ -24,13 +26,15 @@ constructor(
   private val searchModel: LibrarySearchModel
 ) : BasePresenter<BrowseAlbumView>(), BrowseAlbumPresenter {
 
+  private lateinit var albums: LiveData<PagedList<Album>>
+
   private fun updateUi(term: String) {
     scope.launch {
       view().showLoading()
       view().search(term)
       try {
-        val liveData = getData(term).paged()
-        liveData.observe(
+        albums = getData(term).paged()
+        albums.observe(
           this@BrowseAlbumPresenterImpl,
           {
             if (it != null) {

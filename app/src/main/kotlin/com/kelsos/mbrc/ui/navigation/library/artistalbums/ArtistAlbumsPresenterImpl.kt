@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library.artistalbums
 
+import androidx.lifecycle.LiveData
+import androidx.paging.PagedList
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.helper.QueueHandler
@@ -16,12 +18,14 @@ constructor(
   private val queue: QueueHandler
 ) : BasePresenter<ArtistAlbumsView>(), ArtistAlbumsPresenter {
 
+  private lateinit var albums: LiveData<PagedList<Album>>
+
   override fun load(artist: String) {
     scope.launch {
       try {
         val data = repository.getAlbumsByArtist(artist)
-        val liveData = data.paged()
-        liveData.observe(
+        albums = data.paged()
+        albums.observe(
           this@ArtistAlbumsPresenterImpl,
           {
             if (it != null) {

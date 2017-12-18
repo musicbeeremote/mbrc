@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.ui.navigation.library.tracks
 
+import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
+import androidx.paging.PagedList
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
@@ -25,6 +27,8 @@ constructor(
   private val searchModel: LibrarySearchModel
 ) : BasePresenter<BrowseTrackView>(), BrowseTrackPresenter {
 
+  private lateinit var tracks: LiveData<PagedList<Track>>
+
   override fun attach(view: BrowseTrackView) {
     super.attach(view)
     scope.launch {
@@ -47,21 +51,24 @@ constructor(
       view().showLoading()
       view().search(term)
       try {
-        val data = getData(term)
-        val liveData = data.paged()
-        liveData.observe(
-          this@BrowseTrackPresenterImpl,
-          {
-            if (it != null) {
-              view().update(it)
-            }
-          }
-        )
+        onTrackLoad(getData(term))
       } catch (e: Exception) {
         Timber.v(e, "Error while loading the data from the database")
       }
       view().hideLoading()
     }
+  }
+
+  private fun onTrackLoad(it: DataSource.Factory<Int, Track>) {
+    tracks = it.paged()
+    tracks.observe(
+      this@BrowseTrackPresenterImpl,
+      {
+        if (it != null) {
+          view().update(it)
+        }
+      }
+    )
   }
 
   private suspend fun getData(term: String): DataSource.Factory<Int, Track> {

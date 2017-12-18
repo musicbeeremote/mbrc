@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library.genreartists
 
+import androidx.lifecycle.LiveData
+import androidx.paging.PagedList
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.content.nowplaying.queue.Queue
@@ -17,12 +19,15 @@ constructor(
   private val queue: QueueHandler
 ) : BasePresenter<GenreArtistsView>(),
   GenreArtistsPresenter {
+
+  private lateinit var artists: LiveData<PagedList<Artist>>
+
   override fun load(genre: String) {
     scope.launch {
       try {
-        val data = repository.getArtistByGenre(genre)
-        val liveData = data.paged()
-        liveData.observe(
+        val factory = repository.getArtistByGenre(genre)
+        artists = factory.paged()
+        artists.observe(
           this@GenreArtistsPresenterImpl,
           {
             if (it != null) {

@@ -1,5 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.playlists
 
+import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
+import androidx.paging.PagedList
+import com.kelsos.mbrc.content.playlists.Playlist
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.events.bus.RxBus
@@ -17,25 +21,30 @@ constructor(
 ) : BasePresenter<PlaylistView>(),
   PlaylistPresenter {
 
+  private lateinit var playlists: LiveData<PagedList<Playlist>>
+
   override fun load() {
     scope.launch {
       view().showLoading()
       try {
-        val data = repository.getAll()
-        val liveData = data.paged()
-        liveData.observe(
-          this@PlaylistPresenterImpl,
-          {
-            if (it != null) {
-              view().update(it)
-            }
-          }
-        )
+        onPlaylistsLoad(repository.getAll())
       } catch (e: Exception) {
         view().failure(e)
       }
       view().hideLoading()
     }
+  }
+
+  private fun onPlaylistsLoad(it: DataSource.Factory<Int, Playlist>) {
+    playlists = it.paged()
+    playlists.observe(
+      this@PlaylistPresenterImpl,
+      {
+        if (it != null) {
+          view().update(it)
+        }
+      }
+    )
   }
 
   override fun play(path: String) {
@@ -46,16 +55,7 @@ constructor(
     view().showLoading()
     scope.launch {
       try {
-        val data = repository.getAndSaveRemote()
-        val liveData = data.paged()
-        liveData.observe(
-          this@PlaylistPresenterImpl,
-          {
-            if (it != null) {
-              view().update(it)
-            }
-          }
-        )
+        onPlaylistsLoad(repository.getAndSaveRemote())
       } catch (e: Exception) {
         view().failure(e)
       }
