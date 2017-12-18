@@ -1,7 +1,11 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
+import android.arch.paging.DataSource
+import android.arch.paging.PagedList
 import com.kelsos.mbrc.content.activestatus.MainDataModel
+import com.kelsos.mbrc.content.nowplaying.NowPlayingEntity
 import com.kelsos.mbrc.content.nowplaying.NowPlayingRepository
 import com.kelsos.mbrc.events.TrackInfoChangeEvent
 import com.kelsos.mbrc.events.UserAction
@@ -22,18 +26,16 @@ class NowPlayingPresenterImpl
 ) : BasePresenter<NowPlayingView>(),
     NowPlayingPresenter {
 
+  private lateinit var nowPlayingTracks: LiveData<PagedList<NowPlayingEntity>>
+
   override fun reload(scrollToTrack: Boolean) {
     view().showLoading()
     addDisposable(repository.getAndSaveRemote()
         .subscribeOn(schedulerProvider.io())
         .observeOn(schedulerProvider.main())
         .subscribe({
-          val liveData = it.paged()
-          liveData.observe(this, Observer {
-            if (it != null) {
-              view().update(it)
-            }
-          })
+
+          onNowPlayingTracksLoaded(it)
 
           view().trackChanged(model.trackInfo, scrollToTrack)
           view().hideLoading()
@@ -43,17 +45,21 @@ class NowPlayingPresenterImpl
         })
   }
 
+  private fun onNowPlayingTracksLoaded(it: DataSource.Factory<Int, NowPlayingEntity>) {
+    nowPlayingTracks = it.paged()
+    nowPlayingTracks.observe(this, Observer {
+      if (it != null) {
+        view().update(it)
+      }
+    })
+  }
+
   override fun load() {
     addDisposable(repository.getAll()
         .subscribeOn(schedulerProvider.io())
         .observeOn(schedulerProvider.main())
         .subscribe({
-          val liveData = it.paged()
-          liveData.observe(this, Observer {
-            if (it != null) {
-              view().update(it)
-            }
-          })
+          onNowPlayingTracksLoaded(it)
           view().trackChanged(model.trackInfo, true)
           view().hideLoading()
         }) {

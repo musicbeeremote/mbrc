@@ -1,7 +1,10 @@
 package com.kelsos.mbrc.ui.navigation.library.albumtracks
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
+import android.arch.paging.PagedList
 import com.kelsos.mbrc.content.library.albums.AlbumInfo
+import com.kelsos.mbrc.content.library.tracks.TrackEntity
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.utilities.paged
@@ -15,6 +18,8 @@ constructor(
 ) : BasePresenter<AlbumTracksView>(),
     AlbumTracksPresenter {
 
+  private lateinit var tracks: LiveData<PagedList<TrackEntity>>
+
   override fun load(album: AlbumInfo) {
     val request = if (album.album.isEmpty()) {
       repository.getNonAlbumTracks(album.artist)
@@ -23,8 +28,8 @@ constructor(
     }
 
     addDisposable(request.subscribe({
-      val liveData = it.paged()
-      liveData.observe(this, Observer {
+      tracks = it.paged()
+      tracks.observe(this, Observer {
         if (it != null) {
           view().update(it)
         }

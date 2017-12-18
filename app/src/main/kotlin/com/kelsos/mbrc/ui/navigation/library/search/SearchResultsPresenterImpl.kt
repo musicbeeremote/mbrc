@@ -18,7 +18,8 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class SearchResultsPresenterImpl
-@Inject constructor(
+@Inject
+constructor(
     private val genreRepository: GenreRepository,
     private val artistRepository: ArtistRepository,
     private val albumRepository: AlbumRepository,
