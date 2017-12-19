@@ -224,8 +224,8 @@ dependencies {
 
   implementation 'android.arch.paging:runtime:1.0.0-alpha4-1'
 
-  compile 'android.arch.persistence.room:runtime:1.0.0'
-  compile 'android.arch.persistence.room:rxjava2:1.0.0'
+  implementation 'android.arch.persistence.room:runtime:1.0.0'
+  implementation 'android.arch.persistence.room:rxjava2:1.0.0'
   kapt "android.arch.persistence.room:compiler:1.0.0"
 
   implementation "com.fasterxml.jackson.core:jackson-core:${jackson_version}"
@@ -251,7 +251,7 @@ dependencies {
 
   implementation 'com.jakewharton.timber:timber:4.6.0'
   implementation 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
-  implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+  implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta4'
 
   implementation 'com.jakewharton.threetenabp:threetenabp:1.0.5'
 
