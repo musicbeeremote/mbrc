@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "46013e61f8e0854259d6a8babbe57567",
+    "identityHash": "6c6ecfe0c70f60845ddc2369f5482eeb",
     "entities": [
       {
         "tableName": "genre",
@@ -371,7 +371,16 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "radio_url_idx",
+            "unique": true,
+            "columnNames": [
+              "url"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `radio_url_idx` ON `${TABLE_NAME}` (`url`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
@@ -426,7 +435,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '46013e61f8e0854259d6a8babbe57567')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6c6ecfe0c70f60845ddc2369f5482eeb')"
     ]
   }
 }
