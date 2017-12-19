@@ -26,7 +26,7 @@ constructor(
     val added = epoch()
     return remoteDataSource.fetch().doOnNext {
       dao.insertAll(it.map { mapper.map(it).apply { dateAdded = added } })
-    }.doFinally {
+    }.doOnComplete {
       dao.removePreviousEntries(added)
     }.ignoreElements()
   }
