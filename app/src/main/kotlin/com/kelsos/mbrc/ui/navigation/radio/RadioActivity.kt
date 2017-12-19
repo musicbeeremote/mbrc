@@ -30,15 +30,12 @@ class RadioActivity : BaseNavigationActivity(), RadioView, OnRefreshListener, On
   private val emptyView: Group by bindView(R.id.radio_stations__empty_group)
   private val emptyViewTitle: TextView by bindView(R.id.radio_stations__text_title)
   private val emptyViewIcon: ImageView by bindView(R.id.radio_stations__empty_icon)
-  private val emptyViewSubTitle: TextView by bindView(R.id.radio_stations__text_subtitle)
   private val emptyViewProgress: ProgressBar by bindView(R.id.radio_stations__loading_bar)
 
   @Inject lateinit var presenter: RadioPresenter
   @Inject lateinit var adapter: RadioAdapter
 
-  override fun active(): Int {
-    return R.id.nav_radio
-  }
+  override fun active(): Int = R.id.nav_radio
 
   private lateinit var scope: Scope
 
