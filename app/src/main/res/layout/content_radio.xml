@@ -44,7 +44,7 @@
       android:id="@+id/radio_stations__empty_group"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:visibility="visible"
+      android:visibility="gone"
       app:constraint_referenced_ids="radio_stations__empty_icon,radio_stations__text_subtitle,radio_stations__text_title" />
 
   <ImageView
