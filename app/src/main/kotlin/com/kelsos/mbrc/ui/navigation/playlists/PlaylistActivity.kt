@@ -1,14 +1,13 @@
 package com.kelsos.mbrc.ui.navigation.playlists
 
 import android.os.Bundle
-import android.view.View
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.playlists.Playlist
 import com.kelsos.mbrc.databinding.ActivityPlaylistsBinding
-import com.kelsos.mbrc.databinding.ListEmptyViewBinding
 import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.navigation.playlists.PlaylistAdapter.OnPlaylistPressedListener
 import toothpick.Scope
@@ -27,26 +26,20 @@ class PlaylistActivity :
   @Inject lateinit var presenter: PlaylistPresenter
   private lateinit var scope: Scope
   private lateinit var binding: ActivityPlaylistsBinding
-  private lateinit var emptyBinding: ListEmptyViewBinding
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     binding = ActivityPlaylistsBinding.inflate(layoutInflater)
-    emptyBinding = ListEmptyViewBinding.bind(binding.root)
     setContentView(binding.root)
     scope = Toothpick.openScopes(application, PRESENTER_SCOPE, this)
     scope.installTestModules(SmoothieActivityModule(this), PlaylistModule())
     Toothpick.inject(this, scope)
 
     super.setup()
-
-    binding.swipeLayout.setSwipeableChildren(R.id.playlist_list, R.id.empty_view)
     adapter.setPlaylistPressedListener(this)
-    binding.playlistList.layoutManager = LinearLayoutManager(this)
-    binding.playlistList.emptyView = emptyBinding.emptyView
-    binding.playlistList.adapter = adapter
-    binding.swipeLayout.setOnRefreshListener(this)
-    emptyBinding.listEmptyTitle.setText(R.string.playlists_list_empty)
+    binding.playlistsPlaylistList.layoutManager = LinearLayoutManager(this)
+    binding.playlistsPlaylistList.adapter = adapter
+    binding.playlistsRefreshLayout.setOnRefreshListener(this)
     presenter.attach(this)
     presenter.load()
   }
@@ -55,9 +48,7 @@ class PlaylistActivity :
     presenter.play(path)
   }
 
-  override fun active(): Int {
-    return R.id.nav_playlists
-  }
+  override fun active(): Int = R.id.nav_playlists
 
   override fun onDestroy() {
     presenter.detach()
@@ -70,20 +61,21 @@ class PlaylistActivity :
   }
 
   override fun onRefresh() {
-    if (!binding.swipeLayout.isRefreshing) {
-      binding.swipeLayout.isRefreshing = true
+    if (!binding.playlistsRefreshLayout.isRefreshing) {
+      binding.playlistsRefreshLayout.isRefreshing = true
     }
 
     presenter.reload()
   }
 
   override fun update(cursor: List<Playlist>) {
+    binding.playlistsEmptyGroup.isGone = cursor.isNotEmpty()
     adapter.update(cursor)
-    binding.swipeLayout.isRefreshing = false
+    binding.playlistsRefreshLayout.isRefreshing = false
   }
 
   override fun failure(throwable: Throwable) {
-    val swipeLayout = binding.swipeLayout
+    val swipeLayout = binding.playlistsRefreshLayout
     swipeLayout.isRefreshing = false
     if (throwable.cause is ConnectException) {
       Snackbar.make(swipeLayout, R.string.service_connection_error, Snackbar.LENGTH_SHORT).show()
@@ -93,18 +85,11 @@ class PlaylistActivity :
   }
 
   override fun showLoading() {
-    emptyBinding.emptyViewProgressBar.visibility = View.VISIBLE
-    emptyBinding.listEmptyIcon.visibility = View.GONE
-    emptyBinding.listEmptyTitle.visibility = View.GONE
-    emptyBinding.listEmptySubtitle.visibility = View.GONE
   }
 
   override fun hideLoading() {
-    emptyBinding.emptyViewProgressBar.visibility = View.GONE
-    emptyBinding.listEmptyIcon.visibility = View.VISIBLE
-    emptyBinding.listEmptyTitle.visibility = View.VISIBLE
-    emptyBinding.listEmptySubtitle.visibility = View.VISIBLE
-    binding.swipeLayout.isRefreshing = false
+    binding.playlistsEmptyGroup.isGone = true
+    binding.playlistsRefreshLayout.isRefreshing = false
   }
 
   @javax.inject.Scope

@@ -13,6 +13,102 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.nav.PlaylistActivity">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginBottom="@dimen/mini_control_height"
+      app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+      <ImageView
+        android:id="@+id/playlists__empty_icon"
+        style="@style/empty_view_image"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_music_note_black_80dp" />
+
+      <ProgressBar
+        android:id="@+id/playlists__loading_bar"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+      <TextView
+        android:id="@+id/playlists__text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="1"
+        android:text="@string/playlists_list_empty"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toTopOf="@+id/playlists__empty_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/playlists__refresh_layout"
+        app:layout_constraintVertical_bias="1.0" />
+
+      <TextView
+        android:id="@+id/playlists__text_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="sans-serif-light"
+        android:text="@string/swipe_to_refresh"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/playlists__empty_icon"
+        app:layout_constraintVertical_bias="0.0" />
+
+      <androidx.constraintlayout.widget.Group
+        android:id="@+id/playlists__empty_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="playlists__text_title,playlists__empty_icon,playlists__text_subtitle" />
+
+      <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/playlists__refresh_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context="com.kelsos.mbrc.ui.navigation.playlists.PlaylistActivity">
+
+        <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/playlists__playlist_list"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:paddingTop="@dimen/list_padding_top"
+          tools:listitem="@layout/listitem_single" />
+
+      </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <com.google.android.material.appbar.AppBarLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -27,34 +123,6 @@
         tools:showIn="@layout/activity_playlists" />
 
     </com.google.android.material.appbar.AppBarLayout>
-
-    <com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
-      android:id="@+id/swipe_layout"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:layout_marginBottom="@dimen/mini_control_height"
-      app:layout_behavior="@string/appbar_scrolling_view_behavior"
-      tools:context="com.kelsos.mbrc.ui.activities.nav.PlaylistActivity">
-
-      <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
-          android:id="@+id/playlist_list"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:paddingTop="@dimen/list_padding_top"
-          tools:listitem="@layout/listitem_single" />
-
-        <include
-          layout="@layout/list_empty_view"
-          android:visibility="gone" />
-
-      </FrameLayout>
-
-
-    </com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout>
 
     <include
       android:id="@+id/playlist_mini_control"

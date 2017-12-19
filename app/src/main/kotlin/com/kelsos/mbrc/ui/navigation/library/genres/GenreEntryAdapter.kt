@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
@@ -59,7 +59,7 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
 
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val title: TextView
-    val indicator: LinearLayout
+    val indicator: ImageView
     val empty: String by lazy { itemView.context.getString(R.string.empty) }
 
     init {

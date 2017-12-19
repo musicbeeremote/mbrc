@@ -59,7 +59,7 @@ class RadioActivity :
   }
 
   override fun update(data: List<RadioStation>) {
-    binding.radioStationsEmptyGroup.isGone = data.isEmpty()
+    binding.radioStationsEmptyGroup.isGone = data.isNotEmpty()
     adapter.update(data)
   }
 
@@ -87,6 +87,7 @@ class RadioActivity :
   }
 
   override fun hideLoading() {
+    binding.radioStationsEmptyGroup.isGone = false
     binding.radioStationsLoadingBar.isGone = true
     binding.radioStationsRefreshLayout.isRefreshing = false
   }

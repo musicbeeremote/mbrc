@@ -10,7 +10,6 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.AlbumInfo
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.databinding.ActivityAlbumTracksBinding
-import com.kelsos.mbrc.databinding.ListEmptyViewButtonBinding
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter
@@ -40,18 +39,13 @@ class AlbumTracksActivity :
   private lateinit var scope: Scope
 
   private lateinit var binding: ActivityAlbumTracksBinding
-  private lateinit var emptyBinding: ListEmptyViewButtonBinding
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
-    scope.installModules(
-      SmoothieActivityModule(this),
-      AlbumTracksModule()
-    )
+    scope.installModules(SmoothieActivityModule(this), AlbumTracksModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     binding = ActivityAlbumTracksBinding.inflate(layoutInflater)
-    emptyBinding = ListEmptyViewButtonBinding.bind(binding.root)
     setContentView(binding.root)
     val extras = intent.extras
 
@@ -78,12 +72,11 @@ class AlbumTracksActivity :
     loadCover(selectedAlbum.artist, selectedAlbum.album)
 
     adapter.setMenuItemSelectedListener(this)
-    val recyclerView = binding.listTracks
-    recyclerView.layoutManager = LinearLayoutManager(baseContext)
-    recyclerView.adapter = adapter
-    recyclerView.emptyView = emptyBinding.emptyView
+    val listTracks = binding.albumTracksTrackList
+    listTracks.layoutManager = LinearLayoutManager(baseContext)
+    listTracks.adapter = adapter
 
-    val play = binding.playAlbum
+    val play = binding.albumTracksPlay
     play.isVisible = true
     play.setOnClickListener {
       presenter.queueAlbum(selectedAlbum.artist, selectedAlbum.album)

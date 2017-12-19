@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.UiListConnectionSettingsBinding
@@ -57,17 +57,8 @@ class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewH
   override fun onBindViewHolder(holder: ConnectionViewHolder, position: Int) {
     val settings = data[position]
     holder.computerName.text = settings.name
-    holder.hostname.text = settings.address
-    holder.portNum.text = settings.port.toString()
-
-    if (settings.id == selectionId) {
-      holder.defaultSettings.visibility = View.VISIBLE
-      val grey = ContextCompat.getColor(holder.itemView.context, R.color.button_dark)
-      holder.defaultSettings.setImageResource(R.drawable.ic_check_black_24dp)
-      holder.defaultSettings.setColorFilter(grey)
-    } else {
-      holder.defaultSettings.visibility = View.INVISIBLE
-    }
+    holder.host.text = "${settings.address} : ${settings.port}"
+    holder.defaultSettings.isGone = settings.id != selectionId
   }
 
   private fun showPopup(settings: ConnectionSettingsEntity, v: View) {
@@ -102,19 +93,17 @@ class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewH
   }
 
   inner class ConnectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val hostname: TextView
-    val portNum: TextView
+    val host: TextView
     val computerName: TextView
     val defaultSettings: ImageView
     val overflow: View
 
     init {
       val binding = UiListConnectionSettingsBinding.bind(itemView)
-      hostname = binding.csListHost
-      portNum = binding.csListPort
-      computerName = binding.csListName
-      defaultSettings = binding.csListDefault
-      overflow = binding.csListOverflow
+      host = binding.connectionSettingsHostnameAndPort
+      computerName = binding.connectionSettingsName
+      defaultSettings = binding.connectionSettingsDefaultIndicator
+      overflow = binding.connectionSettingsOverflow
     }
   }
 

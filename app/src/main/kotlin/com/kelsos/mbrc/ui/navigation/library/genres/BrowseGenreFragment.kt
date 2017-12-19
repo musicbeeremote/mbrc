@@ -13,7 +13,6 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.genres.Genre
 import com.kelsos.mbrc.content.nowplaying.queue.Queue
 import com.kelsos.mbrc.databinding.FragmentBrowseBinding
-import com.kelsos.mbrc.databinding.ListEmptyViewButtonBinding
 import com.kelsos.mbrc.ui.navigation.library.LibraryActivity.Companion.LIBRARY_SCOPE
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.genres.GenreEntryAdapter.MenuItemSelectedListener
@@ -36,8 +35,6 @@ class BrowseGenreFragment :
 
   private var _binding: FragmentBrowseBinding? = null
   private val binding get() = _binding!!
-  private var _emptyBinding: ListEmptyViewButtonBinding? = null
-  private val emptyBinding get() = _emptyBinding!!
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -48,7 +45,7 @@ class BrowseGenreFragment :
   }
 
   override fun search(term: String) {
-    emptyBinding.listEmptySync.isGone = term.isNotEmpty()
+    binding.libraryBrowserSync.isGone = term.isNotEmpty()
   }
 
   override fun queue(success: Boolean, tracks: Int) {
@@ -81,14 +78,13 @@ class BrowseGenreFragment :
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    emptyBinding.listEmptyTitle.setText(R.string.genres_list_empty)
-    emptyBinding.listEmptySync.setOnClickListener {
+    binding.libraryBrowserTextTitle.setText(R.string.genres_list_empty)
+    binding.libraryBrowserSync.setOnClickListener {
       presenter.sync()
     }
-    binding.libraryDataList.adapter = adapter
-    binding.libraryDataList.emptyView = emptyBinding.emptyView
-    binding.libraryDataList.layoutManager = LinearLayoutManager(requireContext())
-    binding.libraryDataList.setHasFixedSize(true)
+    binding.libraryBrowserContent.adapter = adapter
+    binding.libraryBrowserContent.layoutManager = LinearLayoutManager(requireContext())
+    binding.libraryBrowserContent.setHasFixedSize(true)
     adapter.setMenuItemSelectedListener(this)
     presenter.attach(this)
     presenter.load()
@@ -112,12 +108,12 @@ class BrowseGenreFragment :
   }
 
   override fun showLoading() {
-    emptyBinding.listEmptyIcon.visibility = View.GONE
-    emptyBinding.listEmptyTitle.visibility = View.GONE
+    binding.libraryBrowserEmptyGroup.isGone = true
+    binding.libraryBrowserLoadingBar.isGone = false
   }
 
   override fun hideLoading() {
-    emptyBinding.listEmptyIcon.visibility = View.VISIBLE
-    emptyBinding.listEmptyTitle.visibility = View.VISIBLE
+    binding.libraryBrowserEmptyGroup.isGone = false
+    binding.libraryBrowserLoadingBar.isGone = true
   }
 }

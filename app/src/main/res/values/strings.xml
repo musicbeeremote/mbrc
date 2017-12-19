@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
 
   <string name="application_name">MusicBee Remote</string>
@@ -128,7 +128,6 @@
   <string name="description_computer_icon">Computer icon</string>
   <string name="settings_dialog_edit">Edit</string>
   <string name="settings_dialog_save">Save</string>
-  <string name="semicolon" translatable="false">:</string>
   <string name="non_album_tracks">Non album tracks</string>
   <string name="no_lyrics">No lyrics found</string>
   <string name="settings_key_debug_logging">settings_debug_log</string>
@@ -146,7 +145,7 @@
   <string name="playlists_load_failed">There was an error while trying to load the playlists.</string>
   <string name="service_connection_error">Failed to connect to remote host.</string>
   <string name="now_playing_search_hint">Search and play a track</string>
-  <string name="feedback_device_information"><![CDATA[Include Device & Application Information]]></string>
+  <string name="feedback_device_information">Include Device &amp; Application Information</string>
   <string name="feedback_version_info">\n\nDevice: %1$s %2$s Android(%3$s)\nMusicBee Remote v%4$s</string>
   <string name="library_actionbar_refresh">Refresh</string>
   <string name="feedback_logs">Include Logs</string>
@@ -155,8 +154,6 @@
   <string name="settings_key_album_artists_only">mbrc.settings.album_artist_only</string>
   <string name="menu_play_queue_all">Play Now (Queue All)</string>
   <string name="album_tracks__play__content_description">Plays all the tracks</string>
-  <string name="default_port">3000</string>
-  <string name="settings_dialog__name_placeholder">My Computer</string>
   <string name="press_to_sync">Press here to sync</string>
   <string name="library_sync_in_progress">Library metadata sync in progress, please wait…</string>
   <string name="library_search_subtitle">Displaying results for search</string>

@@ -6,70 +6,50 @@
   android:layout_height="match_parent">
 
   <com.google.android.material.textfield.TextInputLayout
-    android:id="@+id/settings_name_wrapper"
+    android:id="@+id/settings_dialog__name_input"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="8dp"
-    app:layout_constraintBottom_toTopOf="@+id/settings_dialog_port_wrapper"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.0">
+    app:layout_constraintTop_toTopOf="parent">
 
     <EditText
-      android:text="@string/settings_dialog__name_placeholder"
-      android:id="@+id/settings_dialog_name"
+      android:id="@+id/settings_dialog__name_edit"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:hint="@string/settings_dialog_hint_name"
-      android:inputType="text" />
+      android:hint="@string/settings_dialog_hint_name" />
   </com.google.android.material.textfield.TextInputLayout>
 
   <com.google.android.material.textfield.TextInputLayout
-    android:id="@+id/settings_dialog_host_wrapper"
+    android:id="@+id/settings_dialog__hostname_input"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="8dp"
-    app:layout_constraintBottom_toBottomOf="@+id/settings_dialog_port_wrapper"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/settings_name_wrapper"
-    app:layout_constraintVertical_bias="0.0">
+    app:layout_constraintTop_toBottomOf="@id/settings_dialog__name_input">
 
     <EditText
-      android:id="@+id/settings_dialog_host"
+      android:id="@+id/settings_dialog__hostname_edit"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:hint="@string/settings_dialog_hint_host"
-      android:inputType="text" />
+      android:hint="@string/settings_dialog_hint_host"  />
   </com.google.android.material.textfield.TextInputLayout>
 
   <com.google.android.material.textfield.TextInputLayout
-    android:id="@+id/settings_dialog_port_wrapper"
+    android:id="@+id/settings_dialog__port_input"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="8dp"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/settings_dialog_host_wrapper">
+    app:layout_constraintTop_toBottomOf="@id/settings_dialog__hostname_input">
 
     <EditText
-      android:id="@+id/settings_dialog_port"
+      android:id="@+id/settings_dialog__port_edit"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:hint="@string/settings_dialog_hint_port"
       android:inputType="number"
-      android:maxLength="5"
-      android:text="@string/default_port" />
+      android:maxLength="5"/>
   </com.google.android.material.textfield.TextInputLayout>
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

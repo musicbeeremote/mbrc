@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isGone
@@ -40,7 +39,7 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val view = inflater.inflate(R.layout.ui_list_dual, parent, false)
     val holder = ViewHolder(view)
-    holder.indicator.setOnClickListener { createPopup(it, holder) }
+    holder.indicator.setOnClickListener { createPopup(view, holder) }
 
     holder.itemView.setOnClickListener {
       val position = holder.bindingAdapterPosition
@@ -91,7 +90,7 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val artist: TextView
     val title: TextView
-    val indicator: LinearLayout
+    val indicator: ImageView
     val unknownArtist: String by lazy { itemView.context.getString(R.string.unknown_artist) }
     val image: ImageView
 
@@ -99,7 +98,7 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
       val binding = UiListDualBinding.bind(itemView)
       artist = binding.lineTwo
       title = binding.lineOne
-      indicator = binding.uiItemContextIndicator
+      indicator = binding.overflowMenu
       image = binding.cover
     }
   }

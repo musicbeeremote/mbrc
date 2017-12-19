@@ -8,7 +8,6 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.nowplaying.queue.Queue
 import com.kelsos.mbrc.databinding.ActivityGenreArtistsBinding
-import com.kelsos.mbrc.databinding.ListEmptyViewBinding
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter
@@ -35,18 +34,13 @@ class GenreArtistsActivity :
   private var genre: String? = null
   private lateinit var scope: Scope
   private lateinit var binding: ActivityGenreArtistsBinding
-  private lateinit var emptyBinding: ListEmptyViewBinding
 
   public override fun onCreate(savedInstanceState: Bundle?) {
+    scope = Toothpick.openScopes(application, this)
+    scope.installModules(SmoothieActivityModule(this), GenreArtistsModule())
     super.onCreate(savedInstanceState)
     binding = ActivityGenreArtistsBinding.inflate(layoutInflater)
-    emptyBinding = ListEmptyViewBinding.bind(binding.root)
     setContentView(binding.root)
-    scope = Toothpick.openScopes(application, this)
-    scope.installModules(
-      SmoothieActivityModule(this),
-      GenreArtistsModule()
-    )
     Toothpick.inject(this, scope)
 
     genre = intent?.extras?.getString(GENRE_NAME)
@@ -59,9 +53,8 @@ class GenreArtistsActivity :
     val title = genre ?: getString(R.string.empty)
     setupToolbar(title)
     adapter.setMenuItemSelectedListener(this)
-    binding.genreArtistsRecycler.adapter = adapter
-    binding.genreArtistsRecycler.emptyView = emptyBinding.emptyView
-    binding.genreArtistsRecycler.layoutManager = LinearLayoutManager(this)
+    binding.genreArtistsArtistList.adapter = adapter
+    binding.genreArtistsArtistList.layoutManager = LinearLayoutManager(this)
     presenter.attach(this)
     presenter.load(genre!!)
   }

@@ -3,9 +3,9 @@ package com.kelsos.mbrc.ui.navigation.nowplaying
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +14,6 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.content.nowplaying.NowPlaying
 import com.kelsos.mbrc.databinding.ActivityNowplayingBinding
-import com.kelsos.mbrc.databinding.ListEmptyViewBinding
 import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper
@@ -32,7 +31,6 @@ class NowPlayingActivity :
   NowPlayingListener {
 
   private lateinit var binding: ActivityNowplayingBinding
-  private lateinit var emptyBinding: ListEmptyViewBinding
 
   @Inject
   lateinit var adapter: NowPlayingAdapter
@@ -84,35 +82,30 @@ class NowPlayingActivity :
     scope.installModules(SmoothieActivityModule(this), NowPlayingModule.create())
     super.onCreate(savedInstanceState)
     binding = ActivityNowplayingBinding.inflate(layoutInflater)
-    emptyBinding = ListEmptyViewBinding.bind(binding.root)
     setContentView(binding.root)
 
     Toothpick.inject(this, scope)
     super.setup()
 
-    binding.swipeLayout.setSwipeableChildren(R.id.now_playing_list, R.id.empty_view)
-    binding.nowPlayingList.emptyView = emptyBinding.emptyView
     val manager = LinearLayoutManager(this)
-    binding.nowPlayingList.layoutManager = manager
-    binding.nowPlayingList.adapter = adapter
-    binding.nowPlayingList.itemAnimator?.changeDuration = 0
+    binding.nowPlayingTrackList.layoutManager = manager
+    binding.nowPlayingTrackList.adapter = adapter
+    binding.nowPlayingTrackList.itemAnimator?.changeDuration = 0
     touchListener = NowPlayingTouchListener(this) {
       if (it) {
-        binding.swipeLayout.clearSwipeableChildren()
-        binding.swipeLayout.isRefreshing = false
-        binding.swipeLayout.isEnabled = false
-        binding.swipeLayout.cancelPendingInputEvents()
+        binding.nowPlayingRefreshLayout.isRefreshing = false
+        binding.nowPlayingRefreshLayout.isEnabled = false
+        binding.nowPlayingRefreshLayout.cancelPendingInputEvents()
       } else {
-        binding.swipeLayout.setSwipeableChildren(R.id.now_playing_list, R.id.empty_view)
-        binding.swipeLayout.isEnabled = true
+        binding.nowPlayingRefreshLayout.isEnabled = true
       }
     }
-    binding.nowPlayingList.addOnItemTouchListener(touchListener)
+    binding.nowPlayingTrackList.addOnItemTouchListener(touchListener)
     val callback = SimpleItemTouchHelper(adapter)
     itemTouchHelper = ItemTouchHelper(callback)
-    itemTouchHelper!!.attachToRecyclerView(binding.nowPlayingList)
+    itemTouchHelper!!.attachToRecyclerView(binding.nowPlayingTrackList)
     adapter.setListener(this)
-    binding.swipeLayout.setOnRefreshListener { this.refresh() }
+    binding.nowPlayingRefreshLayout.setOnRefreshListener { this.refresh() }
     presenter.attach(this)
     refresh(true)
   }
@@ -133,9 +126,7 @@ class NowPlayingActivity :
     presenter.removeTrack(position)
   }
 
-  override fun active(): Int {
-    return R.id.nav_now_playing
-  }
+  override fun active(): Int = R.id.nav_now_playing
 
   override fun onDestroy() {
     presenter.detach()
@@ -143,36 +134,31 @@ class NowPlayingActivity :
     super.onDestroy()
   }
 
-  override fun update(cursor: List<NowPlaying>) {
-    adapter.update(cursor)
-    binding.swipeLayout.isRefreshing = false
+  override fun update(data: List<NowPlaying>) {
+    binding.nowPlayingEmptyGroup.isGone = data.isNotEmpty()
+    adapter.update(data)
+    binding.nowPlayingRefreshLayout.isRefreshing = false
   }
 
   override fun trackChanged(trackInfo: TrackInfo, scrollToTrack: Boolean) {
     adapter.setPlayingTrack(trackInfo.path)
     if (scrollToTrack) {
-      binding.nowPlayingList.scrollToPosition(adapter.getPlayingTrackIndex())
+      binding.nowPlayingTrackList.scrollToPosition(adapter.getPlayingTrackIndex())
     }
   }
 
   override fun failure(throwable: Throwable) {
-    binding.swipeLayout.isRefreshing = false
-    Snackbar.make(binding.nowPlayingList, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
+    binding.nowPlayingRefreshLayout.isRefreshing = false
+    Snackbar.make(binding.root, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
   }
 
   override fun showLoading() {
-    emptyBinding.emptyViewProgressBar.visibility = View.VISIBLE
-    emptyBinding.listEmptyIcon.visibility = View.GONE
-    emptyBinding.listEmptyTitle.visibility = View.GONE
-    emptyBinding.listEmptySubtitle.visibility = View.GONE
   }
 
   override fun hideLoading() {
-    emptyBinding.emptyViewProgressBar.visibility = View.GONE
-    emptyBinding.listEmptyIcon.visibility = View.VISIBLE
-    emptyBinding.listEmptyTitle.visibility = View.VISIBLE
-    emptyBinding.listEmptySubtitle.visibility = View.VISIBLE
-    binding.swipeLayout.isRefreshing = false
+    binding.nowPlayingEmptyGroup.isGone = false
+    binding.nowPlayingLoadingBar.isGone = true
+    binding.nowPlayingRefreshLayout.isRefreshing = false
   }
 
   override fun onBackPressed() {

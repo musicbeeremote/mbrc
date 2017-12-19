@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isGone
@@ -74,7 +74,7 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
     private val artist: TextView
     private val album: TextView
     private val image: SquareImageView
-    private val indicator: LinearLayout
+    private val indicator: ImageView
     private val unknownArtist: String by lazy {
       itemView.context.getString(R.string.unknown_artist)
     }
@@ -84,7 +84,7 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
       val binding = UiListDualBinding.bind(itemView)
       artist = binding.lineTwo
       album = binding.lineOne
-      indicator = binding.uiItemContextIndicator
+      indicator = binding.overflowMenu
       image = binding.cover
       image.isGone = false
     }

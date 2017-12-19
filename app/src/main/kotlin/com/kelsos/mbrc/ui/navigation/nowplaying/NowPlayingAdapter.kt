@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.nowplaying.NowPlaying
@@ -59,7 +58,6 @@ constructor(context: Activity) :
     val inflatedView = inflater.inflate(R.layout.ui_list_track_item, parent, false)
     val holder = TrackHolder(inflatedView)
     holder.itemView.setOnClickListener { onClick(holder) }
-    holder.container.setOnClickListener { onClick(holder) }
     holder.dragHandle.setOnTouchListener { view, motionEvent ->
       view.performClick()
       if (motionEvent.action == ACTION_DOWN) {
@@ -146,7 +144,6 @@ constructor(context: Activity) :
     val title: TextView
     val artist: TextView
     val trackPlaying: ImageView
-    val container: ConstraintLayout
     val dragHandle: View
 
     init {
@@ -154,7 +151,6 @@ constructor(context: Activity) :
       title = binding.trackTitle
       artist = binding.trackArtist
       trackPlaying = binding.trackIndicatorView
-      container = binding.trackContainer
       dragHandle = binding.dragHandle
     }
 

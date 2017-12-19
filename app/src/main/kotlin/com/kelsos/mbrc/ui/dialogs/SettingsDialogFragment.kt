@@ -62,9 +62,9 @@ class SettingsDialogFragment : DialogFragment() {
       }.setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.dismiss() }
       .show()
 
-    hostEdit = binding.settingsDialogHost
-    nameEdit = binding.settingsDialogName
-    portEdit = binding.settingsDialogPort
+    hostEdit = binding.settingsDialogHostnameEdit
+    nameEdit = binding.settingsDialogNameEdit
+    portEdit = binding.settingsDialogPortEdit
     return dialog
   }
 

@@ -13,7 +13,6 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.nowplaying.queue.Queue
 import com.kelsos.mbrc.databinding.FragmentBrowseBinding
-import com.kelsos.mbrc.databinding.ListEmptyViewButtonBinding
 import com.kelsos.mbrc.ui.navigation.library.LibraryActivity.Companion.LIBRARY_SCOPE
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter.MenuItemSelectedListener
@@ -39,11 +38,9 @@ class BrowseArtistFragment :
 
   private var _binding: FragmentBrowseBinding? = null
   private val binding get() = _binding!!
-  private var _emptyBinding: ListEmptyViewButtonBinding? = null
-  private val emptyBinding get() = _emptyBinding!!
 
   override fun search(term: String) {
-    emptyBinding.listEmptySync.isGone = term.isNotEmpty()
+    binding.libraryBrowserEmptyGroup.isGone = term.isNotEmpty()
   }
 
   override fun queue(success: Boolean, tracks: Int) {
@@ -81,20 +78,18 @@ class BrowseArtistFragment :
     savedInstanceState: Bundle?
   ): View {
     _binding = FragmentBrowseBinding.inflate(inflater)
-    _emptyBinding = ListEmptyViewButtonBinding.bind(binding.root)
     return binding.root
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    emptyBinding.listEmptyTitle.setText(R.string.artists_list_empty)
-    emptyBinding.listEmptySync.setOnClickListener {
+    binding.libraryBrowserTextTitle.setText(R.string.artists_list_empty)
+    binding.libraryBrowserSync.setOnClickListener {
       presenter.sync()
     }
-    binding.libraryDataList.setHasFixedSize(true)
-    binding.libraryDataList.adapter = adapter
-    binding.libraryDataList.emptyView = emptyBinding.emptyView
-    binding.libraryDataList.layoutManager = LinearLayoutManager(requireContext())
+    binding.libraryBrowserContent.setHasFixedSize(true)
+    binding.libraryBrowserContent.adapter = adapter
+    binding.libraryBrowserContent.layoutManager = LinearLayoutManager(requireContext())
     adapter.setMenuItemSelectedListener(this)
     presenter.attach(this)
     presenter.load()
@@ -116,12 +111,12 @@ class BrowseArtistFragment :
   }
 
   override fun showLoading() {
-    emptyBinding.listEmptyIcon.visibility = View.GONE
-    emptyBinding.listEmptyTitle.visibility = View.GONE
+    binding.libraryBrowserEmptyGroup.isGone = true
+    binding.libraryBrowserLoadingBar.isGone = false
   }
 
   override fun hideLoading() {
-    emptyBinding.listEmptyIcon.visibility = View.VISIBLE
-    emptyBinding.listEmptyTitle.visibility = View.VISIBLE
+    binding.libraryBrowserEmptyGroup.isGone = false
+    binding.libraryBrowserLoadingBar.isGone = true
   }
 }
