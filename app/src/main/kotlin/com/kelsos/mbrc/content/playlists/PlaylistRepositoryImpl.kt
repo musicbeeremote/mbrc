@@ -31,7 +31,7 @@ constructor(
         }
       }
       dao.insertAll(playlists)
-    }.doFinally {
+    }.doOnComplete {
       dao.removePreviousEntries(added)
     }.ignoreElements()
   }

@@ -1,20 +1,20 @@
 package com.kelsos.mbrc.ui.navigation.playlists
 
 import android.os.Bundle
+import android.support.constraint.Group
 import android.support.design.widget.Snackbar
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
 import android.support.v7.widget.LinearLayoutManager
-import android.view.View
-import android.widget.ImageView
+import android.support.v7.widget.RecyclerView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.playlists.Playlist
-import com.kelsos.mbrc.content.playlists.PlaylistService
+import com.kelsos.mbrc.extensions.gone
+import com.kelsos.mbrc.extensions.show
 import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.navigation.playlists.PlaylistAdapter.OnPlaylistPressedListener
-import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
-import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
@@ -23,37 +23,31 @@ import java.net.ConnectException
 import javax.inject.Inject
 
 class PlaylistActivity : BaseNavigationActivity(),
-                         PlaylistView,
-                         OnPlaylistPressedListener,
-                         OnRefreshListener {
+    PlaylistView,
+    OnPlaylistPressedListener,
+    OnRefreshListener {
 
-  private val swipeLayout: MultiSwipeRefreshLayout by bindView(R.id.swipe_layout)
-  private val playlistList: EmptyRecyclerView by bindView(R.id.playlist_list)
-  private val emptyView: View by bindView(R.id.empty_view)
-  private val emptyViewTitle: TextView by bindView(R.id.list_empty_title)
-  private val emptyViewIcon: ImageView by bindView(R.id.list_empty_icon)
-  private val emptyViewSubTitle: TextView by bindView(R.id.list_empty_subtitle)
-  private val emptyViewProgress: ProgressBar by bindView(R.id.empty_view_progress_bar)
+  private val swipeLayout: SwipeRefreshLayout by bindView(R.id.playlists__refresh_layout)
+  private val playlistList: RecyclerView by bindView(R.id.playlists__playlist_list)
+  private val emptyView: Group by bindView(R.id.playlists__empty_group)
+  private val emptyViewTitle: TextView by bindView(R.id.playlists__text_title)
+  private val emptyViewProgress: ProgressBar by bindView(R.id.playlists__loading_bar)
 
   @Inject lateinit var adapter: PlaylistAdapter
-  @Inject lateinit var service: PlaylistService
   @Inject lateinit var presenter: PlaylistPresenter
+
   private lateinit var scope: Scope
 
   public override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_playlists)
-
     scope = Toothpick.openScopes(application, PRESENTER_SCOPE, this)
     scope.installTestModules(SmoothieActivityModule(this), PlaylistModule())
+    super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
-
+    setContentView(R.layout.activity_playlists)
     super.setup()
 
-    swipeLayout.setSwipeableChildren(R.id.playlist_list, R.id.empty_view)
     adapter.setPlaylistPressedListener(this)
     playlistList.layoutManager = LinearLayoutManager(this)
-    playlistList.emptyView = emptyView
     playlistList.adapter = adapter
     swipeLayout.setOnRefreshListener(this)
     emptyViewTitle.setText(R.string.playlists_list_empty)
@@ -65,9 +59,7 @@ class PlaylistActivity : BaseNavigationActivity(),
     presenter.play(path)
   }
 
-  override fun active(): Int {
-    return R.id.nav_playlists
-  }
+  override fun active(): Int = R.id.nav_playlists
 
   override fun onDestroy() {
     presenter.detach()
@@ -88,6 +80,11 @@ class PlaylistActivity : BaseNavigationActivity(),
   }
 
   override fun update(cursor: List<Playlist>) {
+    if (cursor.isEmpty()) {
+      emptyView.show()
+    } else {
+      emptyView.gone()
+    }
     adapter.update(cursor)
     swipeLayout.isRefreshing = false
   }
@@ -102,17 +99,10 @@ class PlaylistActivity : BaseNavigationActivity(),
   }
 
   override fun showLoading() {
-    emptyViewProgress.visibility = View.VISIBLE
-    emptyViewIcon.visibility = View.GONE
-    emptyViewTitle.visibility = View.GONE
-    emptyViewSubTitle.visibility = View.GONE
   }
 
   override fun hideLoading() {
-    emptyViewProgress.visibility = View.GONE
-    emptyViewIcon.visibility = View.VISIBLE
-    emptyViewTitle.visibility = View.VISIBLE
-    emptyViewSubTitle.visibility = View.VISIBLE
+    emptyViewProgress.gone()
     swipeLayout.isRefreshing = false
   }
 
