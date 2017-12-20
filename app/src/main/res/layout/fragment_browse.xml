@@ -1,46 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
-  android:id="@+id/swipe_layout"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent">
-
-  <FrameLayout
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-      android:layout_width="match_parent"
-      android:layout_height="match_parent">
+  <android.support.v4.widget.SwipeRefreshLayout
+      android:id="@+id/library_browser__refresh_layout"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent">
 
-      <com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
-        android:layout_marginEnd="@dimen/small_margin"
-        android:layout_marginRight="@dimen/small_margin"
-        android:id="@+id/library_data_list"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/library_browser__content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/small_margin"
         android:paddingBottom="@dimen/small_margin"
         android:paddingTop="@dimen/small_margin"
         android:scrollbars="none"
-        tools:listitem="@layout/listitem_single"/>
+        tools:listitem="@layout/listitem_single" />
 
-      <com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
-        android:id="@+id/fastscroller"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignBottom="@id/library_data_list"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@id/library_data_list"
-        />
-    </RelativeLayout>
+  </android.support.v4.widget.SwipeRefreshLayout>
 
+  <com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
+      android:id="@+id/fastscroller"
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
 
-    <include
-      layout="@layout/list_empty_view"
-      android:visibility="gone"/>
-  </FrameLayout>
+  <ProgressBar
+      android:id="@+id/library_browser__loading_bar"
+      android:layout_width="60dp"
+      android:layout_height="60dp"
+      android:layout_marginBottom="16dp"
+      android:layout_marginTop="16dp"
+      android:visibility="visible"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
 
+  <TextView
+      android:id="@+id/library_browser__text_title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="16dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginStart="8dp"
+      android:layout_marginTop="8dp"
+      android:fontFamily="sans-serif-medium"
+      android:maxLines="1"
+      android:text="@string/now_playing_list_empty"
+      android:textSize="22sp"
+      app:layout_constraintBottom_toTopOf="@+id/library_browser__empty_icon"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="1.0" />
 
-</com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout>
+  <ImageView
+      android:id="@+id/library_browser__empty_icon"
+      style="@style/empty_view_image"
+      android:layout_marginEnd="8dp"
+      android:layout_marginStart="8dp"
+      android:tint="@color/light_gray"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:srcCompat="@drawable/ic_music_note_black_80dp" />
+
+  <TextView
+      android:id="@+id/library_browser__text_subtitle"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="8dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginStart="8dp"
+      android:layout_marginTop="16dp"
+      android:fontFamily="sans-serif-light"
+      android:text="@string/swipe_to_refresh"
+      android:textSize="14sp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/library_browser__empty_icon"
+      app:layout_constraintVertical_bias="0.0" />
+
+  <android.support.constraint.Group
+      android:id="@+id/library_browser__empty_group"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:visibility="gone"
+      app:constraint_referenced_ids="library_browser__text_title,library_browser__text_subtitle,library_browser__empty_icon" />
+
+</android.support.constraint.ConstraintLayout>

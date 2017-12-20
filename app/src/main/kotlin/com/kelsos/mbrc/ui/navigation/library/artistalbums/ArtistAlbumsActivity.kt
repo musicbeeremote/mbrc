@@ -2,6 +2,7 @@ package com.kelsos.mbrc.ui.navigation.library.artistalbums
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
 import android.widget.LinearLayout
 import com.kelsos.mbrc.R
@@ -9,7 +10,6 @@ import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.albums.AlbumEntryAdapter
-import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
@@ -20,7 +20,7 @@ class ArtistAlbumsActivity : BaseActivity(),
     ArtistAlbumsView,
     AlbumEntryAdapter.MenuItemSelectedListener {
 
-  private val recyclerView: EmptyRecyclerView by bindView(R.id.album_recycler)
+  private val recyclerView: RecyclerView by bindView(R.id.album_recycler)
   private val emptyView: LinearLayout by bindView(R.id.empty_view)
 
   @Inject lateinit var actionHandler: PopupActionHandler
@@ -54,7 +54,6 @@ class ArtistAlbumsActivity : BaseActivity(),
     adapter.setMenuItemSelectedListener(this)
     recyclerView.layoutManager = LinearLayoutManager(this)
     recyclerView.adapter = adapter
-    recyclerView.emptyView = emptyView
     presenter.attach(this)
     presenter.load(artist!!)
   }

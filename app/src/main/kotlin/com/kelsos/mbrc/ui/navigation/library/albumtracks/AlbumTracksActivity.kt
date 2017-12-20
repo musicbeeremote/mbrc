@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.navigation.library.albumtracks
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
 import android.widget.LinearLayout
 import com.kelsos.mbrc.R
@@ -11,7 +12,6 @@ import com.kelsos.mbrc.content.library.tracks.TrackEntity
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter
-import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
@@ -22,7 +22,7 @@ class AlbumTracksActivity : BaseActivity(),
     AlbumTracksView,
     TrackEntryAdapter.MenuItemSelectedListener {
 
-  private val listTracks: EmptyRecyclerView by bindView(R.id.list_tracks)
+  private val listTracks: RecyclerView by bindView(R.id.list_tracks)
   private val emptyView: LinearLayout by bindView(R.id.empty_view)
   private val playAlbum: FloatingActionButton by bindView(R.id.play_album)
 
@@ -44,7 +44,7 @@ class AlbumTracksActivity : BaseActivity(),
     val extras = intent.extras
 
     if (extras != null) {
-      album = extras.getParcelable<AlbumInfo>(ALBUM)
+      album = extras.getParcelable(ALBUM)
     }
 
     if (album == null) {
@@ -64,7 +64,6 @@ class AlbumTracksActivity : BaseActivity(),
     adapter.setMenuItemSelectedListener(this)
     listTracks.layoutManager = LinearLayoutManager(baseContext)
     listTracks.adapter = adapter
-    listTracks.emptyView = emptyView
 
     presenter.attach(this)
     presenter.load(album!!)

@@ -1,57 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:paddingEnd="8dp"
+    android:paddingStart="8dp">
 
   <android.support.design.widget.TextInputLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content">
+      android:id="@+id/settings_dialog__name_input"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent">
 
-    <EditText
-        android:id="@+id/settings_dialog_name"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="@dimen/small_margin"
-        android:layout_marginRight="@dimen/small_margin"
-        android:layout_marginTop="@dimen/small_margin"
+    <android.support.design.widget.TextInputEditText
+        android:id="@+id/settings_dialog__name_edit"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:hint="@string/settings_dialog_hint_name" />
   </android.support.design.widget.TextInputLayout>
 
   <android.support.design.widget.TextInputLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content">
+      android:id="@+id/settings_dialog__hostname_input"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/settings_dialog__name_input">
 
-    <EditText
-        android:id="@+id/settings_dialog_host"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="@dimen/small_margin"
-        android:layout_marginRight="@dimen/small_margin"
-        android:layout_marginTop="@dimen/small_margin"
+    <android.support.design.widget.TextInputEditText
+        android:id="@+id/settings_dialog__hostname_edit"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:hint="@string/settings_dialog_hint_host" />
   </android.support.design.widget.TextInputLayout>
 
   <android.support.design.widget.TextInputLayout
-      android:id="@+id/settings_dialog_port_wrapper"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content">
+      android:id="@+id/settings_dialog__port_input"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/settings_dialog__hostname_input">
 
-    <EditText
-        android:id="@+id/settings_dialog_port"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="@dimen/small_margin"
-        android:layout_marginRight="@dimen/small_margin"
-        android:layout_marginTop="@dimen/small_margin"
+    <android.support.design.widget.TextInputEditText
+        android:id="@+id/settings_dialog__port_edit"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:hint="@string/settings_dialog_hint_port"
         android:inputType="number"
         android:maxLength="5" />
   </android.support.design.widget.TextInputLayout>
 
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

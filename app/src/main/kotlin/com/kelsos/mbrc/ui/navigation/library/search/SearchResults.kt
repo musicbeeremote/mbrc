@@ -12,4 +12,12 @@ data class SearchResults(
     var artistList: LiveData<PagedList<ArtistEntity>>,
     var albumList: LiveData<PagedList<AlbumEntity>>,
     var trackList: LiveData<PagedList<TrackEntity>>
-)
+) {
+  fun empty(): Boolean {
+    val noGenres = genreList.value?.isEmpty() ?: true
+    val noArtists = artistList.value?.isEmpty() ?: true
+    val noAlbums = albumList.value?.isEmpty() ?: true
+    val noTracks = trackList.value?.isEmpty() ?: true
+    return noGenres && noArtists && noAlbums && noTracks
+  }
+}
