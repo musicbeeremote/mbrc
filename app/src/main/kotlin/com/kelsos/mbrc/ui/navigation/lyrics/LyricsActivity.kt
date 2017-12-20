@@ -1,12 +1,13 @@
 package com.kelsos.mbrc.ui.navigation.lyrics
 
 import android.os.Bundle
+import android.support.constraint.Group
 import android.support.v7.widget.LinearLayoutManager
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.support.v7.widget.RecyclerView
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.extensions.gone
+import com.kelsos.mbrc.extensions.show
 import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
-import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
@@ -14,11 +15,9 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class LyricsActivity : BaseNavigationActivity(), LyricsView {
-  private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
 
-  private val lyricsRecycler: EmptyRecyclerView by bindView(R.id.lyrics_recycler_view)
-  private val emptyView: LinearLayout by bindView(R.id.empty_view)
-  private val emptyText: TextView by bindView(R.id.empty_view_text)
+  private val lyricsRecycler: RecyclerView by bindView(R.id.lyrics__lyrics_list)
+  private val emptyView: Group by bindView(R.id.lyrics__empty_group)
 
   @Inject lateinit var presenter: LyricsPresenter
 
@@ -26,24 +25,19 @@ class LyricsActivity : BaseNavigationActivity(), LyricsView {
   private lateinit var adapter: LyricsAdapter
 
   public override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_lyrics)
-
-
     scope = Toothpick.openScopes(application, PRESENTER_SCOPE, this)
     scope.installModules(SmoothieActivityModule(this), LyricsModule())
+    super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
+    setContentView(R.layout.activity_lyrics)
 
     super.setup()
     lyricsRecycler.setHasFixedSize(true)
-    lyricsRecycler.emptyView = emptyView
     val layoutManager = LinearLayoutManager(this)
     lyricsRecycler.layoutManager = layoutManager
     adapter = LyricsAdapter()
     lyricsRecycler.adapter = adapter
   }
-
-
 
   override fun onDestroy() {
     Toothpick.closeScope(this)
@@ -65,21 +59,27 @@ class LyricsActivity : BaseNavigationActivity(), LyricsView {
   }
 
   override fun updateLyrics(lyrics: List<String>) {
+    if (lyrics.isEmpty()) {
+      emptyView.show()
+    } else {
+      emptyView.gone()
+    }
     adapter.updateLyrics(lyrics)
   }
 
   override fun showNoLyrics() {
-    emptyText.setText(R.string.no_lyrics)
     adapter.clear()
   }
 
-  override fun active(): Int {
-    return R.id.nav_lyrics
-  }
+  override fun active(): Int = R.id.nav_lyrics
 
   @javax.inject.Scope
   @Target(AnnotationTarget.TYPE)
   @Retention(AnnotationRetention.RUNTIME)
   annotation class Presenter
+
+  companion object {
+    private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
+  }
 }
 

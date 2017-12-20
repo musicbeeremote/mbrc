@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import com.kelsos.mbrc.R
@@ -60,7 +59,6 @@ class NowPlayingAdapter
     val view = inflater.inflate(R.layout.ui_list_track_item, parent, false)
     val holder = TrackHolder(view)
     holder.itemView.setOnClickListener { onClick(holder) }
-    holder.container.setOnClickListener { onClick(holder) }
     holder.dragHandle.setOnTouchListener { _, motionEvent ->
       if (motionEvent.action == ACTION_DOWN) {
         dragStartListener.onStartDrag(holder)
@@ -157,7 +155,6 @@ class NowPlayingAdapter
     val title: TextView by bindView(R.id.track_title)
     val artist: TextView by bindView(R.id.track_artist)
     val trackPlaying: ImageView by bindView(R.id.track_indicator_view)
-    val container: FrameLayout by bindView(R.id.track_container)
     val dragHandle: View by bindView(R.id.drag_handle)
 
     override fun onItemSelected() {

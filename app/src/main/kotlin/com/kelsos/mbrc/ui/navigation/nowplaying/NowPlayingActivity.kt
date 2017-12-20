@@ -2,7 +2,9 @@ package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import android.os.Build
 import android.os.Bundle
+import android.support.constraint.Group
 import android.support.design.widget.Snackbar
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
@@ -10,19 +12,17 @@ import android.support.v7.widget.SearchView.OnQueryTextListener
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.ImageView
 import android.widget.ProgressBar
-import android.widget.TextView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.content.nowplaying.NowPlayingEntity
+import com.kelsos.mbrc.extensions.gone
+import com.kelsos.mbrc.extensions.hide
+import com.kelsos.mbrc.extensions.show
 import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper
 import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingAdapter.NowPlayingListener
-import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
-import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
@@ -35,13 +35,10 @@ class NowPlayingActivity : BaseNavigationActivity(),
     OnStartDragListener,
     NowPlayingListener {
 
-  private val nowPlayingList: EmptyRecyclerView by bindView(R.id.now_playing_list)
-  private val swipeRefreshLayout: MultiSwipeRefreshLayout by bindView(R.id.swipe_layout)
-  private val emptyView: View by bindView(R.id.empty_view)
-  private val emptyViewTitle: TextView by bindView(R.id.list_empty_title)
-  private val emptyViewIcon: ImageView by bindView(R.id.list_empty_icon)
-  private val emptyViewSubTitle: TextView by bindView(R.id.list_empty_subtitle)
-  private val emptyViewProgress: ProgressBar by bindView(R.id.empty_view_progress_bar)
+  private val nowPlayingList: RecyclerView by bindView(R.id.now_playing__track_list)
+  private val swipeRefreshLayout: SwipeRefreshLayout by bindView(R.id.now_playing__refresh_layout)
+  private val emptyGroup: Group by bindView(R.id.now_playing__empty_group)
+  private val emptyViewProgress: ProgressBar by bindView(R.id.now_playing__loading_bar)
   @Inject lateinit var adapter: NowPlayingAdapter
 
   @Inject lateinit var presenter: NowPlayingPresenter
@@ -50,7 +47,6 @@ class NowPlayingActivity : BaseNavigationActivity(),
   private lateinit var scope: Scope
   private lateinit var touchListener: NowPlayingTouchListener
   private var itemTouchHelper: ItemTouchHelper? = null
-
 
   override fun onQueryTextSubmit(query: String): Boolean {
     closeSearch()
@@ -99,22 +95,19 @@ class NowPlayingActivity : BaseNavigationActivity(),
 
     Toothpick.inject(this, scope)
     super.setup()
-    swipeRefreshLayout.setSwipeableChildren(R.id.now_playing_list, R.id.empty_view)
-    nowPlayingList.emptyView = emptyView
+
     val manager = LinearLayoutManager(this)
     nowPlayingList.layoutManager = manager
     nowPlayingList.adapter = adapter
     nowPlayingList.itemAnimator.changeDuration = 0
     touchListener = NowPlayingTouchListener(this, {
       if (it) {
-        swipeRefreshLayout.clearSwipeableChildren()
         swipeRefreshLayout.isRefreshing = false
         swipeRefreshLayout.isEnabled = false
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
           swipeRefreshLayout.cancelPendingInputEvents()
         }
       } else {
-        swipeRefreshLayout.setSwipeableChildren(R.id.now_playing_list, R.id.empty_view)
         swipeRefreshLayout.isEnabled = true
       }
     })
@@ -144,9 +137,7 @@ class NowPlayingActivity : BaseNavigationActivity(),
     presenter.removeTrack(position)
   }
 
-  override fun active(): Int {
-    return R.id.nav_now_playing
-  }
+  override fun active(): Int = R.id.nav_now_playing
 
   override fun onDestroy() {
     presenter.detach()
@@ -154,8 +145,13 @@ class NowPlayingActivity : BaseNavigationActivity(),
     super.onDestroy()
   }
 
-  override fun update(cursor: List<NowPlayingEntity>) {
-    adapter.update(cursor)
+  override fun update(data: List<NowPlayingEntity>) {
+    if (data.isEmpty()) {
+      emptyGroup.show()
+    } else {
+      emptyGroup.hide()
+    }
+    adapter.update(data)
     swipeRefreshLayout.isRefreshing = false
   }
 
@@ -172,17 +168,11 @@ class NowPlayingActivity : BaseNavigationActivity(),
   }
 
   override fun showLoading() {
-    emptyViewProgress.visibility = View.VISIBLE
-    emptyViewIcon.visibility = View.GONE
-    emptyViewTitle.visibility = View.GONE
-    emptyViewSubTitle.visibility = View.GONE
+
   }
 
   override fun hideLoading() {
-    emptyViewProgress.visibility = View.GONE
-    emptyViewIcon.visibility = View.VISIBLE
-    emptyViewTitle.visibility = View.VISIBLE
-    emptyViewSubTitle.visibility = View.VISIBLE
+    emptyViewProgress.gone()
     swipeRefreshLayout.isRefreshing = false
   }
 

@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
+import android.widget.ImageView
 import android.widget.TextView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
@@ -77,7 +77,7 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val artist: TextView by bindView(R.id.line_two)
     private val album: TextView by bindView(R.id.line_one)
-    private val indicator: LinearLayout by bindView(R.id.ui_item_context_indicator)
+    private val indicator: ImageView by bindView(R.id.overflow_menu)
     private val unknownArtist: String by lazy { string(R.string.unknown_artist) }
     private val emptyAlbum: String by lazy { string(R.string.non_album_tracks) }
 

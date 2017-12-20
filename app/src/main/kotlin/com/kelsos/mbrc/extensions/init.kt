@@ -4,14 +4,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 
-
-
-fun EmptyRecyclerView.initLinear(adapter: RecyclerView.Adapter<*>, emptyView: View, fastScroller: RecyclerViewFastScroller? = null) {
+fun RecyclerView.initLinear(adapter: RecyclerView.Adapter<*>, fastScroller: RecyclerViewFastScroller? = null) {
   this.adapter = adapter
-  this.emptyView = emptyView
+
   if (fastScroller == null) {
     this.layoutManager = LinearLayoutManager(this.context)
   } else {

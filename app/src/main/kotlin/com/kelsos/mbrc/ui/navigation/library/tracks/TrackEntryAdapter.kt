@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
+import android.widget.ImageView
 import android.widget.TextView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.TrackEntity
@@ -134,7 +134,7 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val artist: TextView by bindView(R.id.line_two)
     val title: TextView by bindView(R.id.line_one)
-    val indicator: LinearLayout by bindView(R.id.ui_item_context_indicator)
+    val indicator: ImageView by bindView(R.id.overflow_menu)
     val unknownArtist: String by lazy { string(R.string.unknown_artist) }
   }
 

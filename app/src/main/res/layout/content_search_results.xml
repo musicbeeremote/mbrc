@@ -1,40 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:layout_editor_absoluteY="25dp">
 
-  <com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
-      android:id="@+id/search_results_recycler"
+  <android.support.v7.widget.RecyclerView
+      android:id="@+id/content_search__search_results"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      tools:listitem="@layout/listitem_single" />
+
+  <android.support.constraint.Group
+      android:id="@+id/content_search__empty_group"
       android:layout_width="match_parent"
-      android:layout_height="match_parent" />
+      android:layout_height="match_parent"
+      android:visibility="gone"
+      tools:visibility="visible" />
 
-  <LinearLayout
-      android:id="@+id/empty_view"
-      android:layout_width="match_parent"
-      android:layout_height="0dip"
-      android:layout_weight="1"
-      android:gravity="center"
-      android:orientation="horizontal"
-      android:visibility="gone">
+  <ImageView
+      android:id="@+id/content_search__empty_icon"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:tint="@color/light_gray"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:srcCompat="@drawable/ic_music_note_black_80dp" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingEnd="@dimen/small_margin"
-        android:tint="@color/white"
-        app:srcCompat="@drawable/ic_error_outline_black_24dp"
-        tools:ignore="RtlSymmetry" />
-
-    <TextView
-        android:id="@+id/empty_view_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-light"
-        android:textColor="@color/primary_text"
-        tools:ignore="UnusedAttribute" />
-  </LinearLayout>
-</LinearLayout>
+  <TextView
+      android:id="@+id/content_search__empty_text"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="16dp"
+      android:fontFamily="sans-serif-light"
+      android:text="@string/no_results_found"
+      android:textColor="@color/primary_text"
+      app:layout_constraintBottom_toTopOf="@id/content_search__empty_icon"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="1" />
+</android.support.constraint.ConstraintLayout>

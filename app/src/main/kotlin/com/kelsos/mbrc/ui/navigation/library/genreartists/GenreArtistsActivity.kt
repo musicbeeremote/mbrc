@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library.genreartists
 
 import android.os.Bundle
+import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
 import android.widget.LinearLayout
 import com.kelsos.mbrc.R
@@ -10,7 +11,6 @@ import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter.MenuItemSelectedListener
-import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
@@ -21,7 +21,7 @@ class GenreArtistsActivity : BaseActivity(),
     GenreArtistsView,
     MenuItemSelectedListener {
 
-  private val recyclerView: EmptyRecyclerView by bindView(R.id.genre_artists_recycler)
+  private val recyclerView: RecyclerView by bindView(R.id.genre_artists_recycler)
   private val emptyView: LinearLayout by bindView(R.id.empty_view)
 
   @Inject lateinit var adapter: ArtistEntryAdapter
@@ -50,7 +50,7 @@ class GenreArtistsActivity : BaseActivity(),
     setupToolbar(title)
 
     adapter.setMenuItemSelectedListener(this)
-    recyclerView.initLinear(adapter, emptyView)
+    recyclerView.initLinear(adapter)
     presenter.attach(this)
     presenter.load(genre!!)
   }
