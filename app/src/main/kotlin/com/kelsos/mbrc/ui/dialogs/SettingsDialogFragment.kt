@@ -14,9 +14,9 @@ import kotterknife.bindView
 
 class SettingsDialogFragment : DialogFragment() {
 
-  private val hostEdit: EditText by bindView(R.id.settings_dialog_host)
-  private val nameEdit: EditText by bindView(R.id.settings_dialog_name)
-  private val portEdit: EditText by bindView(R.id.settings_dialog_port)
+  private val hostEdit: EditText by bindView(R.id.settings_dialog__hostname_edit)
+  private val nameEdit: EditText by bindView(R.id.settings_dialog__name_edit)
+  private val portEdit: EditText by bindView(R.id.settings_dialog__port_edit)
 
   private var mListener: SettingsSaveListener? = null
   private lateinit var settings: ConnectionSettingsEntity

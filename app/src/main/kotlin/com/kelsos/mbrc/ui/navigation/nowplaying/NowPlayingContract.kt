@@ -6,7 +6,7 @@ import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 
 interface NowPlayingView : BaseView {
-  fun update(cursor: List<NowPlayingEntity>)
+  fun update(data: List<NowPlayingEntity>)
   fun trackChanged(trackInfo: TrackInfo, scrollToTrack: Boolean = false)
   fun failure(throwable: Throwable)
   fun showLoading()

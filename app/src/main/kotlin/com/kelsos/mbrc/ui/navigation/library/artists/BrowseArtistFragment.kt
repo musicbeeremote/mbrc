@@ -1,9 +1,12 @@
 package com.kelsos.mbrc.ui.navigation.library.artists
 
 import android.os.Bundle
+import android.support.constraint.Group
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -17,8 +20,6 @@ import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.extensions.initLinear
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter.MenuItemSelectedListener
-import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
-import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import kotterknife.bindView
 import toothpick.Scope
@@ -30,15 +31,15 @@ class BrowseArtistFragment : Fragment(),
     MenuItemSelectedListener,
     OnRefreshListener {
 
-  private val recycler: EmptyRecyclerView by bindView(R.id.library_data_list)
-  private val swipeLayout: MultiSwipeRefreshLayout by bindView(R.id.swipe_layout)
+  private val recycler: RecyclerView by bindView(R.id.library_browser__content)
+  private val swipeLayout: SwipeRefreshLayout by bindView(R.id.library_browser__refresh_layout)
   private val fastScroller: RecyclerViewFastScroller by bindView(R.id.fastscroller)
 
-  private val emptyView: View by bindView(R.id.empty_view)
-  private val emptyViewTitle: TextView by bindView(R.id.list_empty_title)
-  private val emptyViewIcon: ImageView by bindView(R.id.list_empty_icon)
-  private val emptyViewSubTitle: TextView by bindView(R.id.list_empty_subtitle)
-  private val emptyViewProgress: ProgressBar by bindView(R.id.empty_view_progress_bar)
+  private val emptyView: Group by bindView(R.id.library_browser__empty_group)
+  private val emptyViewTitle: TextView by bindView(R.id.library_browser__text_title)
+  private val emptyViewIcon: ImageView by bindView(R.id.library_browser__empty_icon)
+  private val emptyViewSubTitle: TextView by bindView(R.id.library_browser__text_subtitle)
+  private val emptyViewProgress: ProgressBar by bindView(R.id.library_browser__loading_bar)
 
   @Inject lateinit var adapter: ArtistEntryAdapter
   @Inject lateinit var actionHandler: PopupActionHandler
@@ -70,10 +71,10 @@ class BrowseArtistFragment : Fragment(),
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     swipeLayout.setOnRefreshListener(this)
-    swipeLayout.setSwipeableChildren(R.id.library_data_list, R.id.empty_view)
+
     emptyViewTitle.setText(R.string.artists_list_empty)
     recycler.setHasFixedSize(true)
-    recycler.initLinear(adapter, emptyView, fastScroller)
+    recycler.initLinear(adapter, fastScroller)
     adapter.setMenuItemSelectedListener(this)
     presenter.attach(this)
     presenter.load()
