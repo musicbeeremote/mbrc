@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.ui.navigation.library.artistalbums
 
 import android.os.Bundle
+import android.support.constraint.Group
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
-import android.widget.LinearLayout
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.ui.activities.BaseActivity
@@ -20,8 +20,8 @@ class ArtistAlbumsActivity : BaseActivity(),
     ArtistAlbumsView,
     AlbumEntryAdapter.MenuItemSelectedListener {
 
-  private val recyclerView: RecyclerView by bindView(R.id.album_recycler)
-  private val emptyView: LinearLayout by bindView(R.id.empty_view)
+  private val recyclerView: RecyclerView by bindView(R.id.artist_albums__album_list)
+  private val emptyView: Group by bindView(R.id.artist_albums__empty_view)
 
   @Inject lateinit var actionHandler: PopupActionHandler
   @Inject lateinit var adapter: AlbumEntryAdapter
@@ -32,8 +32,7 @@ class ArtistAlbumsActivity : BaseActivity(),
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
-    scope.installModules(SmoothieActivityModule(this),
-        ArtistAlbumsModule())
+    scope.installModules(SmoothieActivityModule(this), ArtistAlbumsModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_artist_albums)
