@@ -21,44 +21,59 @@
 
   </android.support.design.widget.AppBarLayout>
 
-  <RelativeLayout
+  <android.support.constraint.ConstraintLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/album_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/artist_albums__album_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/small_margin"
+        android:layout_marginTop="@dimen/small_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/ui_list_dual" />
 
-    <LinearLayout
-        android:id="@+id/empty_view"
+    <android.support.constraint.Group
+        android:id="@+id/artist_albums__empty_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="horizontal"
         android:visibility="gone"
-        tools:showIn="@layout/activity_album_tracks">
+        app:constraint_referenced_ids="artist_albums__empty_icon, artist_albums__empty_title" />
 
-      <ImageView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:paddingEnd="@dimen/small_margin"
-          android:tint="@color/white"
-          app:srcCompat="@drawable/ic_error_outline_black_24dp"
-          tools:ignore="RtlSymmetry" />
+    <ImageView
+        android:id="@+id/artist_albums__empty_icon"
+        style="@style/empty_view_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tint="@color/light_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_music_note_black_80dp" />
 
-      <TextView
-          android:id="@+id/empty_view_text"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:fontFamily="sans-serif-light"
-          android:text="@string/no_results_found"
-          android:textColor="@color/primary_text"
-          tools:ignore="UnusedAttribute" />
-    </LinearLayout>
-  </RelativeLayout>
+    <TextView
+        android:id="@+id/artist_albums__empty_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-light"
+        android:text="@string/no_results_found"
+        android:textColor="@color/primary_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/artist_albums__empty_icon"
+        app:layout_constraintVertical_bias="0" />
+  </android.support.constraint.ConstraintLayout>
 
 </android.support.design.widget.CoordinatorLayout>
 
