@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.ui.connectionmanager
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import com.kelsos.mbrc.events.ConnectionSettingsChanged
 import com.kelsos.mbrc.events.DiscoveryStopped
 import com.kelsos.mbrc.events.NotifyUser
@@ -20,6 +22,8 @@ constructor(
     private val schedulerProvider: SchedulerProvider,
     private val bus: RxBus
 ) : BasePresenter<ConnectionManagerView>(), ConnectionManagerPresenter {
+
+  private lateinit var settings: LiveData<List<ConnectionSettingsEntity>>
 
   override fun attach(view: ConnectionManagerView) {
     super.attach(view)
@@ -49,7 +53,16 @@ constructor(
         .subscribeOn(schedulerProvider.io())
         .observeOn(schedulerProvider.main())
         .subscribe({
-          view().updateModel(it)
+
+          settings = it.settings
+          view().updateDefault(it.defaultId)
+
+          settings.observe(this, Observer {
+            it?.let { data ->
+              view().updateData(data)
+            }
+          })
+
         }, {
           this.onLoadError(it)
         }))
@@ -59,7 +72,6 @@ constructor(
     checkIfAttached()
     repository.default = settings
     bus.post(DefaultSettingsChangedEvent())
-    load()
   }
 
   override fun save(settings: ConnectionSettingsEntity) {
@@ -70,7 +82,6 @@ constructor(
       bus.post(DefaultSettingsChangedEvent())
     }
 
-    load()
   }
 
   override fun delete(settings: ConnectionSettingsEntity) {
@@ -81,8 +92,6 @@ constructor(
     if (settings.id == repository.defaultId) {
       bus.post(DefaultSettingsChangedEvent())
     }
-
-    load()
   }
 
   private fun onLoadError(throwable: Throwable) {

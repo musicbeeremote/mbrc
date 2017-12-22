@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.networking.connections
 
+import android.arch.lifecycle.LiveData
 import android.content.SharedPreferences
 import android.content.res.Resources
 import com.kelsos.mbrc.R
@@ -90,7 +91,7 @@ constructor(
     return@fromCallable ConnectionModel(defaultId, getAll())
   }
 
-  override fun getAll(): List<ConnectionSettingsEntity> = connectionDao.getAll()
+  override fun getAll(): LiveData<List<ConnectionSettingsEntity>> = connectionDao.getAll()
 
   override fun count(): Long {
     return connectionDao.count()

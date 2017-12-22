@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.networking.connections
 
+import android.arch.lifecycle.LiveData
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionModel
 import io.reactivex.Single
 
@@ -10,7 +11,7 @@ interface ConnectionRepository {
 
   var default: ConnectionSettingsEntity?
 
-  fun getAll(): List<ConnectionSettingsEntity>
+  fun getAll(): LiveData<List<ConnectionSettingsEntity>>
 
   fun count(): Long
 

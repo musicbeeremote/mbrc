@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.networking.connections
 
+import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Delete
 import android.arch.persistence.room.Insert
@@ -23,7 +24,7 @@ interface ConnectionDao {
   fun findById(defaultId: Long): ConnectionSettingsEntity?
 
   @Query("select * from settings")
-  fun getAll(): List<ConnectionSettingsEntity>
+  fun getAll(): LiveData<List<ConnectionSettingsEntity>>
 
   @Query("select count(*) from settings")
   fun count(): Long
