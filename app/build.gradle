@@ -272,17 +272,17 @@ allprojects {
     if (signProperties.exists()) {
       def prop = new Properties()
       prop.load(new FileInputStream(signProperties))
-      def filepath = prop.getAt("keys")
+      def filepath = prop["keys"]
       def keyProperties = file(filepath)
       if (keyProperties.exists()) {
         def props = new Properties()
         props.load(new FileInputStream(keyProperties))
-        def keystorePath = props.getAt('keystore')
+        def keystorePath = props['keystore']
         def releaseConfig = android.signingConfigs['release']
         releaseConfig.storeFile = file(keystorePath)
-        releaseConfig.storePassword = props.getAt('storePass')
-        releaseConfig.keyAlias = props.getAt('keyAlias')
-        releaseConfig.keyPassword = props.getAt('keyPass')
+        releaseConfig.storePassword = props['storePass']
+        releaseConfig.keyAlias = props['keyAlias']
+        releaseConfig.keyPassword = props['keyPass']
       }
     }
   }
