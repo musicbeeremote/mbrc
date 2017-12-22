@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.networking.connections
 
+import androidx.lifecycle.LiveData
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionModel
 
 interface ConnectionRepository {
@@ -7,7 +8,7 @@ interface ConnectionRepository {
 
   suspend fun delete(settings: ConnectionSettingsEntity)
 
-  suspend fun getAll(): List<ConnectionSettingsEntity>
+  suspend fun getAll(): LiveData<List<ConnectionSettingsEntity>>
 
   suspend fun count(): Long
 

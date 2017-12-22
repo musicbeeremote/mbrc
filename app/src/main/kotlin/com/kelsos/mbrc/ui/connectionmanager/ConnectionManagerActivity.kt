@@ -34,8 +34,8 @@ class ConnectionManagerActivity :
   private lateinit var binding: UiActivityConnectionManagerBinding
 
   private fun onAddButtonClick() {
-    val settingsDialog = SettingsDialogFragment()
-    settingsDialog.show(supportFragmentManager, "settings_dialog")
+    val settingsDialog = SettingsDialogFragment.create(supportFragmentManager)
+    settingsDialog.show()
   }
 
   private fun onScanButtonClick() {
@@ -50,18 +50,19 @@ class ConnectionManagerActivity :
     Toothpick.inject(this, scope)
     binding = UiActivityConnectionManagerBinding.inflate(layoutInflater)
     setContentView(binding.root)
-    val recyclerView = binding.connectionList
+    val recyclerView = binding.connectionManagerConnections
 
-    binding.connectionAdd.setOnClickListener { onAddButtonClick() }
-    binding.connectionScan.setOnClickListener { onScanButtonClick() }
+    binding.connectionManagerAdd.setOnClickListener { onAddButtonClick() }
+    binding.connectionManagerScan.setOnClickListener { onScanButtonClick() }
 
     setupToolbar(getString(R.string.connection_manager_title))
 
     recyclerView.setHasFixedSize(true)
     val layoutManager = LinearLayoutManager(this)
     recyclerView.layoutManager = layoutManager
-    adapter = ConnectionAdapter()
-    adapter!!.setChangeListener(this)
+    adapter = ConnectionAdapter().apply {
+      setChangeListener(this@ConnectionManagerActivity)
+    }
     recyclerView.adapter = adapter
     presenter.attach(this)
     presenter.load()
@@ -86,7 +87,7 @@ class ConnectionManagerActivity :
   }
 
   override fun onConnectionSettingsChange(event: ConnectionSettingsChanged) {
-    adapter!!.setSelectionId(event.defaultId)
+    checkNotNull(adapter).setSelectionId(event.defaultId)
   }
 
   override fun onDiscoveryStopped(event: DiscoveryStopped) {
@@ -102,12 +103,12 @@ class ConnectionManagerActivity :
       else -> throw IllegalArgumentException(event.reason.toString())
     }
 
-    Snackbar.make(binding.connectionList, message, Snackbar.LENGTH_SHORT).show()
+    Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
   }
 
   override fun onUserNotification(event: NotifyUser) {
     val message = if (event.isFromResource) getString(event.resId) else event.message
-    Snackbar.make(binding.connectionList, message, Snackbar.LENGTH_SHORT).show()
+    Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
   }
 
   override fun onDelete(settings: ConnectionSettingsEntity) {
@@ -115,20 +116,19 @@ class ConnectionManagerActivity :
   }
 
   override fun onEdit(settings: ConnectionSettingsEntity) {
-    val settingsDialog = SettingsDialogFragment.newInstance(settings)
-    val fragmentManager = supportFragmentManager
-    settingsDialog.show(fragmentManager, "settings_dialog")
+    val settingsDialog = SettingsDialogFragment.newInstance(settings, supportFragmentManager)
+    settingsDialog.show()
   }
 
   override fun onDefault(settings: ConnectionSettingsEntity) {
     presenter.setDefault(settings)
   }
 
-  override fun updateModel(connectionModel: ConnectionModel) {
-    adapter!!.update(connectionModel)
+  override fun updateData(data: List<ConnectionSettingsEntity>) {
+    checkNotNull(adapter).updateData(data)
   }
 
-  override fun dataUpdated() {
-    presenter.load()
+  override fun updateDefault(defaultId: Long) {
+    checkNotNull(adapter).setSelectionId(defaultId)
   }
 }

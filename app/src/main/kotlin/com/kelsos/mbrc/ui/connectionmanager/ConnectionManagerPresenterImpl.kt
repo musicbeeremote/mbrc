@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.connectionmanager
 
+import androidx.lifecycle.LiveData
 import com.kelsos.mbrc.events.ConnectionSettingsChanged
 import com.kelsos.mbrc.events.DiscoveryStopped
 import com.kelsos.mbrc.events.NotifyUser
@@ -19,6 +20,8 @@ constructor(
   private val repository: ConnectionRepository,
   private val bus: RxBus
 ) : BasePresenter<ConnectionManagerView>(), ConnectionManagerPresenter {
+
+  private lateinit var settings: LiveData<List<ConnectionSettingsEntity>>
 
   override fun attach(view: ConnectionManagerView) {
     super.attach(view)
@@ -55,8 +58,18 @@ constructor(
     checkIfAttached()
     scope.launch {
       try {
-        val settings = repository.getAll()
-        view().updateModel(ConnectionModel(repository.defaultId, settings))
+        val model = repository.getModel()
+        settings = model.settings
+        view().updateDefault(model.defaultId)
+
+        settings.observe(
+          this@ConnectionManagerPresenterImpl,
+          {
+            it?.let { data ->
+              view().updateData(data)
+            }
+          }
+        )
       } catch (e: Exception) {
         Timber.v(e, "Failure")
       }
@@ -68,7 +81,7 @@ constructor(
     scope.launch {
       repository.setDefault(settings)
       bus.post(DefaultSettingsChangedEvent())
-      view().dataUpdated()
+      load()
     }
   }
 
@@ -83,7 +96,7 @@ constructor(
           bus.post(DefaultSettingsChangedEvent())
         }
 
-        view().dataUpdated()
+        load()
       } catch (e: Exception) {
         Timber.v(e)
       }
@@ -91,14 +104,14 @@ constructor(
   }
 
   override fun delete(settings: ConnectionSettingsEntity) {
+    checkIfAttached()
+
     scope.launch {
-      checkIfAttached()
       repository.delete(settings)
+
       if (settings.id == repository.defaultId) {
         bus.post(DefaultSettingsChangedEvent())
       }
-
-      view().dataUpdated()
     }
   }
 }

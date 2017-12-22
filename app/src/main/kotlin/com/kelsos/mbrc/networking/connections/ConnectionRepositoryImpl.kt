@@ -2,6 +2,7 @@ package com.kelsos.mbrc.networking.connections
 
 import android.content.SharedPreferences
 import android.content.res.Resources
+import androidx.lifecycle.LiveData
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionModel
@@ -89,7 +90,7 @@ constructor(
     return@withContext ConnectionModel(defaultId, getAll())
   }
 
-  override suspend fun getAll(): List<ConnectionSettingsEntity> = connectionDao.getAll()
+  override suspend fun getAll(): LiveData<List<ConnectionSettingsEntity>> = connectionDao.getAll()
 
   override suspend fun count(): Long = withContext(dispatchers.db) {
     return@withContext connectionDao.count()

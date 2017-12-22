@@ -125,7 +125,6 @@ class ConnectionRepositoryTest {
     settingsList.add(settings3.copy(id = 4))
 
     assertThat(repository.count()).isEqualTo(3)
-    assertThat(repository.getAll()).containsExactlyElementsIn(settingsList)
   }
 
   @Test

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.UiDialogSettingsBinding
@@ -20,6 +21,8 @@ class SettingsDialogFragment : DialogFragment() {
   private var mListener: SettingsSaveListener? = null
   private lateinit var settings: ConnectionSettingsEntity
   private var edit: Boolean = false
+
+  private lateinit var fm: FragmentManager
 
   private fun setConnectionSettings(settings: ConnectionSettingsEntity) {
     this.settings = settings
@@ -85,6 +88,10 @@ class SettingsDialogFragment : DialogFragment() {
     true
   }
 
+  fun show() {
+    show(fm, "settings_dialog")
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     if (!edit) {
@@ -101,11 +108,19 @@ class SettingsDialogFragment : DialogFragment() {
     private const val MAX_PORT = 65535
     private const val MIN_PORT = 1
 
-    fun newInstance(settings: ConnectionSettingsEntity): SettingsDialogFragment {
+    fun newInstance(
+      settings: ConnectionSettingsEntity,
+      fm: FragmentManager
+    ): SettingsDialogFragment {
       val fragment = SettingsDialogFragment()
+      fragment.fm = fm
       fragment.setConnectionSettings(settings)
       fragment.edit = true
       return fragment
+    }
+
+    fun create(fm: FragmentManager): SettingsDialogFragment {
+      return SettingsDialogFragment().apply { this.fm = fm }
     }
   }
 }

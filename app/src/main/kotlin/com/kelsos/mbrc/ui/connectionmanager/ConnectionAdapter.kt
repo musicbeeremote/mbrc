@@ -31,22 +31,18 @@ class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewH
     this.changeListener = changeListener
   }
 
-  override fun getItemId(position: Int): Long {
-    return data[0].id
-  }
+  override fun getItemId(position: Int): Long = data[0].id
 
   override fun onCreateViewHolder(viewGroup: ViewGroup, position: Int): ConnectionViewHolder {
-    val inflater = LayoutInflater.from(viewGroup.context)
-    val view = inflater.inflate(R.layout.ui_list_connection_settings, viewGroup, false)
-    val holder = ConnectionViewHolder(view)
+    val holder = ConnectionViewHolder.create(viewGroup)
 
-    holder.overflow.setOnClickListener {
+    holder.onOverflow {
       val bindingAdapterPosition = holder.bindingAdapterPosition
       val settings = data[bindingAdapterPosition]
       showPopup(settings, it)
     }
 
-    holder.itemView.setOnClickListener {
+    holder.onClick {
       val bindingAdapterPosition = holder.bindingAdapterPosition
       val settings = data[bindingAdapterPosition]
       changeListener?.onDefault(settings)
@@ -55,10 +51,7 @@ class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewH
   }
 
   override fun onBindViewHolder(holder: ConnectionViewHolder, position: Int) {
-    val settings = data[position]
-    holder.computerName.text = settings.name
-    holder.host.text = "${settings.address} : ${settings.port}"
-    holder.defaultSettings.isGone = settings.id != selectionId
+    holder.bind(data[position], selectionId)
   }
 
   private fun showPopup(settings: ConnectionSettingsEntity, v: View) {
@@ -81,29 +74,43 @@ class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewH
     popupMenu.show()
   }
 
-  override fun getItemCount(): Int {
-    return data.size
-  }
+  override fun getItemCount(): Int = data.size
 
-  fun update(connectionModel: ConnectionModel) {
+  fun updateData(data: List<ConnectionSettingsEntity>) {
     this.data.clear()
-    this.data.addAll(connectionModel.settings)
-    selectionId = connectionModel.defaultId
+    this.data.addAll(data)
     notifyDataSetChanged()
   }
 
-  inner class ConnectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val host: TextView
-    val computerName: TextView
-    val defaultSettings: ImageView
-    val overflow: View
+  class ConnectionViewHolder(
+    binding: UiListConnectionSettingsBinding
+  ) : RecyclerView.ViewHolder(binding.root) {
+    private val hostname: TextView = binding.connectionSettingsHostnameAndPort
+    private val computerName: TextView = binding.connectionSettingsName
+    private val defaultSettings: ImageView = binding.connectionSettingsDefaultIndicator
+    private val overflow: View = binding.connectionSettingsOverflow
 
-    init {
-      val binding = UiListConnectionSettingsBinding.bind(itemView)
-      host = binding.connectionSettingsHostnameAndPort
-      computerName = binding.connectionSettingsName
-      defaultSettings = binding.connectionSettingsDefaultIndicator
-      overflow = binding.connectionSettingsOverflow
+    fun bind(settings: ConnectionSettingsEntity, selectionId: Long) {
+      computerName.text = settings.name
+      hostname.text = "${settings.address} : ${settings.port}"
+      defaultSettings.isGone = settings.id != selectionId
+    }
+
+    fun onOverflow(action: (view: View) -> Unit) {
+      overflow.setOnClickListener { action(it) }
+    }
+
+    fun onClick(action: () -> Unit) {
+      itemView.setOnClickListener { action() }
+    }
+
+    companion object {
+      fun create(parent: ViewGroup): ConnectionViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        val view = inflater.inflate(R.layout.ui_list_connection_settings, parent, false)
+        val binding = UiListConnectionSettingsBinding.bind(view)
+        return ConnectionViewHolder(binding)
+      }
     }
   }
 
