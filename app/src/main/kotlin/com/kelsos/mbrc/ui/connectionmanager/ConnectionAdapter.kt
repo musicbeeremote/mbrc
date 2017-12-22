@@ -78,10 +78,9 @@ class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewH
 
   override fun getItemCount(): Int = data.size
 
-  fun update(connectionModel: ConnectionModel) {
+  fun updateData(data: List<ConnectionSettingsEntity>) {
     this.data.clear()
-    this.data.addAll(connectionModel.settings)
-    selectionId = connectionModel.defaultId
+    this.data.addAll(data)
     notifyDataSetChanged()
   }
 
@@ -126,4 +125,5 @@ class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewH
 
     fun onDefault(settings: ConnectionSettingsEntity)
   }
+
 }
