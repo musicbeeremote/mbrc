@@ -59,29 +59,30 @@ constructor(
     checkIfAttached()
     repository.default = settings
     bus.post(DefaultSettingsChangedEvent())
-    view().dataUpdated()
+    load()
   }
 
   override fun save(settings: ConnectionSettingsEntity) {
     checkIfAttached()
-
     repository.save(settings)
 
     if (settings.id == repository.defaultId) {
       bus.post(DefaultSettingsChangedEvent())
     }
 
-    view().dataUpdated()
+    load()
   }
 
   override fun delete(settings: ConnectionSettingsEntity) {
     checkIfAttached()
+
     repository.delete(settings)
+
     if (settings.id == repository.defaultId) {
       bus.post(DefaultSettingsChangedEvent())
     }
 
-    view().dataUpdated()
+    load()
   }
 
   private fun onLoadError(throwable: Throwable) {

@@ -5,6 +5,8 @@ import android.content.res.Resources
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionModel
 import io.reactivex.Single
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
 import javax.inject.Inject
 
 class ConnectionRepositoryImpl
@@ -16,33 +18,34 @@ constructor(
 ) : ConnectionRepository {
 
   override fun save(settings: ConnectionSettingsEntity) {
+    async(CommonPool) {
+      if (settings.id > 0) {
+        connectionDao.update(settings)
+      } else {
+        connectionDao.insert(settings)
+      }
 
-    if (settings.id > 0) {
-      connectionDao.update(settings)
-    } else {
-      connectionDao.insert(settings)
-    }
-
-    if (count() == 1L) {
-      default = last
+      if (count() == 1L) {
+        default = last
+      }
     }
   }
 
   override fun delete(settings: ConnectionSettingsEntity) {
-    val oldId = settings.id
+    async(CommonPool) {
+      val oldId = settings.id
 
-    connectionDao.delete(settings)
+      connectionDao.delete(settings)
 
-    if (oldId != defaultId) {
-      return
-    }
-
-    val count = count()
-    if (count == 0L) {
-      defaultId = -1
-    } else {
-      val before = getItemBefore(oldId)
-      default = before ?: first
+      if (oldId == defaultId) {
+        val count = count()
+        if (count == 0L) {
+          defaultId = -1
+        } else {
+          val before = getItemBefore(oldId)
+          default = before ?: first
+        }
+      }
     }
   }
 
