@@ -28,18 +28,18 @@ class ConnectionManagerActivity : BaseActivity(),
 
   @Inject lateinit var presenter: ConnectionManagerPresenter
 
-  private val recyclerView: RecyclerView by bindView(R.id.connection_list)
+  private val recyclerView: RecyclerView by bindView(R.id.connection_manager__connections)
 
   private var progress: AlertDialog? = null
   private var adapter: ConnectionAdapter? = null
   private lateinit var scope: Scope
 
-  private val addButton: Button by bindView(R.id.connection_add)
-  private val scanButton: Button by bindView(R.id.connection_scan)
+  private val addButton: Button by bindView(R.id.connection_manager__add)
+  private val scanButton: Button by bindView(R.id.connection_manager__scan)
 
   private fun onAddButtonClick() {
-    val settingsDialog = SettingsDialogFragment()
-    settingsDialog.show(supportFragmentManager, "settings_dialog")
+    val settingsDialog = SettingsDialogFragment.create(supportFragmentManager)
+    settingsDialog.show()
   }
 
   private fun onScanButtonClick() {
@@ -125,9 +125,8 @@ class ConnectionManagerActivity : BaseActivity(),
   }
 
   override fun onEdit(settings: ConnectionSettingsEntity) {
-    val settingsDialog = SettingsDialogFragment.newInstance(settings)
-    val fragmentManager = supportFragmentManager
-    settingsDialog.show(fragmentManager, "settings_dialog")
+    val settingsDialog = SettingsDialogFragment.newInstance(settings, supportFragmentManager)
+    settingsDialog.show()
   }
 
   override fun onDefault(settings: ConnectionSettingsEntity) {
@@ -136,9 +135,5 @@ class ConnectionManagerActivity : BaseActivity(),
 
   override fun updateModel(connectionModel: ConnectionModel) {
     adapter!!.update(connectionModel)
-  }
-
-  override fun dataUpdated() {
-    presenter.load()
   }
 }
