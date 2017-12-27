@@ -96,7 +96,7 @@ class ConnectionRepositoryTest {
     settingsList.add(settings3)
 
     assertThat(repository.count()).isEqualTo(3)
-    assertThat(repository.getAll()).containsAllIn(settingsList)
+    assertThat(repository.getAll().value).containsAllIn(settingsList)
   }
 
   @Test

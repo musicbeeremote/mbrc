@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.artistalbums
 
+import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.constraint.Group
 import android.support.v7.widget.LinearLayoutManager
@@ -76,8 +77,8 @@ class ArtistAlbumsActivity : BaseActivity(),
     actionHandler.albumSelected(album, this)
   }
 
-  override fun update(albums: List<AlbumEntity>) {
-    adapter.update(albums)
+  override fun update(albums: PagedList<AlbumEntity>) {
+    adapter.setList(albums)
   }
 
   override fun onDestroy() {
