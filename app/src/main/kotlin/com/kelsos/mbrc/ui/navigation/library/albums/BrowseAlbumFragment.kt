@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.albums
 
+import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.constraint.Group
 import android.support.design.widget.Snackbar
@@ -113,8 +114,8 @@ class BrowseAlbumFragment : Fragment(),
     presenter.reload()
   }
 
-  override fun update(cursor: List<AlbumEntity>) {
-    adapter.update(cursor)
+  override fun update(pagedList: PagedList<AlbumEntity>) {
+    adapter.setList(pagedList)
     swipeLayout.isRefreshing = false
   }
 
