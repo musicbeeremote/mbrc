@@ -131,7 +131,7 @@ android {
 
   android.applicationVariants.all { variant ->
     variant.outputs.all {
-      outputFileName = "${defaultConfig.applicationId}-{$variant.flavorName}-${variant.versionCode}-v${variant.versionName}.apk"
+      outputFileName = "${defaultConfig.applicationId}-${variant.flavorName}-${variant.versionCode}-v${variant.versionName}.apk"
     }
   }
 
