@@ -18,6 +18,8 @@ import com.kelsos.mbrc.networking.connections.InetAddressMapper
 import com.kelsos.mbrc.preferences.DefaultSettingsChangedEvent
 import io.reactivex.Completable
 import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
 import timber.log.Timber
 import java.io.BufferedReader
 import java.io.BufferedWriter
@@ -156,13 +158,16 @@ constructor(
 
   }
 
-  @Synchronized fun sendData(message: SocketMessage) {
-    if (!isConnected()) {
-      return
+  @Synchronized
+  fun sendData(message: SocketMessage) {
+    async(CommonPool) {
+      if (isConnected()) {
+        val messageString = "${mapper.writeValueAsString(message)}\r\n"
+        Timber.v("Sending -> $messageString")
+        writeToSocket(messageString)
+      }
     }
-    val messageString = "${mapper.writeValueAsString(message)}\r\n"
-    Timber.v("Sending -> $messageString")
-    writeToSocket(messageString)
+
   }
 
   private fun writeToSocket(message: String) {
