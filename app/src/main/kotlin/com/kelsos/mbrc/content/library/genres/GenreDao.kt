@@ -15,10 +15,10 @@ interface GenreDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun saveAll(list: List<GenreEntity>)
 
-  @Query("select * from genre")
+  @Query("select * from genre order by genre")
   fun getAll(): DataSource.Factory<Int, GenreEntity>
 
-  @Query("select * from genre where genre like '%' || :term || '%'")
+  @Query("select * from genre where genre like '%' || :term || '%' order by genre")
   fun search(term: String): DataSource.Factory<Int, GenreEntity>
 
   @Query("select count(*) from genre")
