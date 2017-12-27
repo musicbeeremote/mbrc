@@ -25,6 +25,9 @@ constructor() {
   var shuffle: String = ShuffleChange.OFF
   var isScrobblingEnabled: Boolean = false
   var isMute: Boolean = false
+
+  @get:LfmRating.Rating
+  @setparam:LfmRating.Rating
   var lfmStatus: Int = LfmRating.NORMAL
     private set
   var apiOutOfDate: Boolean = false

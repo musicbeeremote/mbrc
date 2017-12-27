@@ -20,8 +20,9 @@ object LogHelper {
       val exists = try {
         val filesDir = context.filesDir
         val logDir = File(filesDir, FileLoggingTree.LOGS_DIR)
-        val logFiles = logDir.listFiles()?.filter { it.extension != "lck" }
-        logFiles.isNullOrEmpty()
+        val listFiles = logDir.listFiles() ?: return@withContext false
+        val logFiles = listFiles.filter { it.extension != "lck" }
+        logFiles.isNotEmpty()
       } catch (e: Exception) {
         false
       }
@@ -41,11 +42,16 @@ object LogHelper {
         result(null)
       }
 
-      val logFiles = logDir.listFiles()?.filter {
+      val listFiles = logDir.listFiles()
+      if (listFiles == null) {
+        result(null)
+        return@withContext
+      }
+      val logFiles = listFiles.filter {
         it.extension != "lck"
       }
 
-      if (logFiles.isNullOrEmpty()) {
+      if (logFiles.isEmpty()) {
         Timber.v("No log files found")
         result(null)
         return@withContext

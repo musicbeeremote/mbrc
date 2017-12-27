@@ -1,8 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library.artists
 
-import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
-import androidx.paging.PagedList
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
@@ -13,8 +12,9 @@ import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.ui.navigation.library.ArtistTabRefreshEvent
 import com.kelsos.mbrc.ui.navigation.library.LibrarySearchModel
-import com.kelsos.mbrc.utilities.paged
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -30,7 +30,7 @@ constructor(
   private val searchModel: LibrarySearchModel
 ) : BasePresenter<BrowseArtistView>(), BrowseArtistPresenter {
 
-  private lateinit var artists: LiveData<PagedList<Artist>>
+  private lateinit var artists: Flow<PagingData<Artist>>
 
   override fun attach(view: BrowseArtistView) {
     super.attach(view)
@@ -52,7 +52,6 @@ constructor(
 
   private fun updateUi(term: String) {
     scope.launch {
-      view().showLoading()
       view().search(term)
       try {
         onArtistsLoaded(getData(term))
@@ -63,19 +62,14 @@ constructor(
     }
   }
 
-  private fun onArtistsLoaded(factory: DataSource.Factory<Int, Artist>) {
-    artists = factory.paged()
-    artists.observe(
-      this@BrowseArtistPresenterImpl,
-      {
-        if (it != null) {
-          view().update(it)
-        }
-      }
-    )
+  private fun onArtistsLoaded(artists: Flow<PagingData<Artist>>) {
+    this.artists = artists.cachedIn(scope)
+    scope.launch {
+      artists.collectLatest { view().update(it) }
+    }
   }
 
-  private suspend fun getData(term: String): DataSource.Factory<Int, Artist> {
+  private suspend fun getData(term: String): Flow<PagingData<Artist>> {
     return if (term.isEmpty()) {
       val shouldDisplay = settingsManager.shouldDisplayOnlyAlbumArtists()
       if (shouldDisplay) {

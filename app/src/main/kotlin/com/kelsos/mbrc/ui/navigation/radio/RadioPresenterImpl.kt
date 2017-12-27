@@ -1,14 +1,14 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
-import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
-import androidx.paging.PagedList
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.kelsos.mbrc.content.radios.RadioRepository
 import com.kelsos.mbrc.content.radios.RadioStation
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.utilities.paged
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,7 +21,7 @@ constructor(
   dispatcher: AppDispatchers
 ) : BasePresenter<RadioView>(dispatcher.main), RadioPresenter {
 
-  private lateinit var radios: LiveData<PagedList<RadioStation>>
+  private lateinit var radios: Flow<PagingData<RadioStation>>
 
   override fun load() {
     view().showLoading()
@@ -35,16 +35,11 @@ constructor(
     }
   }
 
-  private fun onRadiosLoaded(factory: DataSource.Factory<Int, RadioStation>) {
-    radios = factory.paged()
-    radios.observe(
-      this@RadioPresenterImpl,
-      {
-        if (it != null) {
-          view().update(it)
-        }
-      }
-    )
+  private fun onRadiosLoaded(data: Flow<PagingData<RadioStation>>) {
+    this.radios = data.cachedIn(scope)
+    scope.launch {
+      data.collectLatest { view().update(it) }
+    }
   }
 
   override fun refresh() {

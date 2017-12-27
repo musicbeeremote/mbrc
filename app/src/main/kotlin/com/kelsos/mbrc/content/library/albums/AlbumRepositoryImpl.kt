@@ -1,13 +1,15 @@
 package com.kelsos.mbrc.content.library.albums
 
-import androidx.paging.DataSource
+import androidx.paging.PagingData
 import com.kelsos.mbrc.content.library.covers.AlbumCover
 import com.kelsos.mbrc.content.library.covers.CachedAlbumCover
 import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.utilities.epoch
+import com.kelsos.mbrc.utilities.paged
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
-import org.threeten.bp.Instant
 import javax.inject.Inject
 
 class AlbumRepositoryImpl
@@ -19,18 +21,18 @@ constructor(
 ) : AlbumRepository {
   private val mapper = AlbumDtoMapper()
 
-  override suspend fun getAlbumsByArtist(artist: String): DataSource.Factory<Int, Album> =
-    dao.getAlbumsByArtist(artist).map { it }
+  override suspend fun getAlbumsByArtist(artist: String): Flow<PagingData<Album>> =
+    dao.getAlbumsByArtist(artist).paged()
 
-  override suspend fun getAll(): DataSource.Factory<Int, Album> = dao.getAll().map { it }
+  override suspend fun getAll(): Flow<PagingData<Album>> = dao.getAll().paged()
 
-  override suspend fun getAndSaveRemote(): DataSource.Factory<Int, Album> {
+  override suspend fun getAndSaveRemote(): Flow<PagingData<Album>> {
     getRemote()
-    return dao.getAll().map { it }
+    return dao.getAll().paged()
   }
 
   override suspend fun getRemote() {
-    val epoch = Instant.now().epochSecond
+    val added = epoch()
     val default = CachedAlbumCover(0, null)
     val cached = dao.all().associate { entry ->
       entry.album + entry.artist to CachedAlbumCover(entry.id, entry.cover)
@@ -38,12 +40,12 @@ constructor(
     withContext(dispatchers.io) {
       remoteDataSource.fetch()
         .onCompletion {
-          dao.removePreviousEntries(epoch)
+          dao.removePreviousEntries(added)
         }
         .collect { albums ->
           val list = albums.map { dto ->
             mapper.map(dto).apply {
-              dateAdded = epoch
+              dateAdded = added
               val key = dto.album + dto.artist
 
               if (cached.containsKey(key)) {
@@ -58,8 +60,8 @@ constructor(
     }
   }
 
-  override suspend fun search(term: String): DataSource.Factory<Int, Album> =
-    dao.search(term).map { it }
+  override suspend fun search(term: String): Flow<PagingData<Album>> =
+    dao.search(term).paged()
 
   override suspend fun cacheIsEmpty(): Boolean = dao.count() == 0L
 

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.content.library.tracks
 
-import androidx.paging.DataSource
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -14,11 +14,16 @@ interface TrackDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun insertAll(list: List<TrackEntity>)
 
-  @Query("select * from track")
-  fun getAll(): DataSource.Factory<Int, TrackEntity>
+  @Query("select * from track order by album_artist asc, album asc, disc asc, trackno asc")
+  fun getAll(): PagingSource<Int, TrackEntity>
 
-  @Query("select * from track where '%' || :term ||'%'")
-  fun search(term: String): DataSource.Factory<Int, TrackEntity>
+  @Query(
+    """
+    select * from track where '%' || :term ||'%'
+    order by album_artist asc, album asc, disc asc, trackno asc
+    """
+  )
+  fun search(term: String): PagingSource<Int, TrackEntity>
 
   @Query(
     """
@@ -29,7 +34,7 @@ interface TrackDao {
   fun getAlbumTracks(
     album: String,
     artist: String
-  ): DataSource.Factory<Int, TrackEntity>
+  ): PagingSource<Int, TrackEntity>
 
   @Query(
     """
@@ -37,7 +42,7 @@ interface TrackDao {
     order by album_artist asc, album asc, disc asc, trackno asc
     """
   )
-  fun getNonAlbumTracks(artist: String): DataSource.Factory<Int, TrackEntity>
+  fun getNonAlbumTracks(artist: String): PagingSource<Int, TrackEntity>
 
   @Query(
     """

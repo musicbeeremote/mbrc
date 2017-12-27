@@ -1,12 +1,13 @@
 package com.kelsos.mbrc.interfaces.data
 
-import androidx.paging.DataSource
+import androidx.paging.PagingData
+import kotlinx.coroutines.flow.Flow
 
 interface Repository<T : Data> {
-  suspend fun getAll(): DataSource.Factory<Int, T>
-  suspend fun getAndSaveRemote(): DataSource.Factory<Int, T>
+  suspend fun getAll(): Flow<PagingData<T>>
+  suspend fun getAndSaveRemote(): Flow<PagingData<T>>
   suspend fun getRemote()
-  suspend fun search(term: String): DataSource.Factory<Int, T>
+  suspend fun search(term: String): Flow<PagingData<T>>
   suspend fun cacheIsEmpty(): Boolean
   suspend fun count(): Long
 }

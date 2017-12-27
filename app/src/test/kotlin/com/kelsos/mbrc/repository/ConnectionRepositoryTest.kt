@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Resources
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -44,6 +45,7 @@ class ConnectionRepositoryTest {
 
   @Rule
   fun chain(): TestRule = RuleChain.outerRule(toothPickRule)
+    .around(InstantTaskExecutorRule())
 
   @Before
   @Throws(Exception::class)

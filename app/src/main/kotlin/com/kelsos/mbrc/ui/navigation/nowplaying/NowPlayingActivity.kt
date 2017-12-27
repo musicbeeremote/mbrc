@@ -6,6 +6,7 @@ import android.view.MenuItem
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.view.isGone
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -134,9 +135,9 @@ class NowPlayingActivity :
     super.onDestroy()
   }
 
-  override fun update(data: List<NowPlaying>) {
-    binding.nowPlayingEmptyGroup.isGone = data.isNotEmpty()
-    adapter.update(data)
+  override suspend fun update(data: PagingData<NowPlaying>) {
+    adapter.submitData(data)
+    binding.nowPlayingEmptyGroup.isGone = adapter.itemCount != 0
     binding.nowPlayingRefreshLayout.isRefreshing = false
   }
 

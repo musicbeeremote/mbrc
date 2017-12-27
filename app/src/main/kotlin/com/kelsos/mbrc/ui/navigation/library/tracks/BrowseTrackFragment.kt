@@ -2,26 +2,23 @@ package com.kelsos.mbrc.ui.navigation.library.tracks
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IdRes
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.databinding.FragmentBrowseBinding
-import com.kelsos.mbrc.ui.navigation.library.LibraryActivity.Companion.LIBRARY_SCOPE
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter.MenuItemSelectedListener
 import toothpick.Toothpick
 import javax.inject.Inject
 
-class BrowseTrackFragment :
-  Fragment(),
-  BrowseTrackView,
-  MenuItemSelectedListener {
+class BrowseTrackFragment : Fragment(), BrowseTrackView, MenuItemSelectedListener {
 
   @Inject
   lateinit var adapter: TrackEntryAdapter
@@ -60,8 +57,7 @@ class BrowseTrackFragment :
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val activity = requireActivity()
-    val scope = Toothpick.openScopes(requireActivity().application, LIBRARY_SCOPE, activity, this)
+    val scope = Toothpick.openScopes(requireActivity().application, this)
     scope.installModules(BrowseTrackModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
@@ -88,25 +84,20 @@ class BrowseTrackFragment :
     presenter.load()
   }
 
-  override fun update(it: List<Track>) {
-    adapter.update(it)
+  override suspend fun update(tracks: PagingData<Track>) {
+    adapter.submitData(tracks)
+    binding.libraryBrowserEmptyGroup.isGone = adapter.itemCount != 0
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, track: Track) {
-    presenter.queue(track, actionHandler.trackSelected(menuItem))
+  override fun onMenuItemSelected(@IdRes itemId: Int, track: Track) {
+    presenter.queue(track, actionHandler.trackSelected(itemId))
   }
 
   override fun onItemClicked(track: Track) {
     presenter.queue(track)
   }
 
-  override fun showLoading() {
-    binding.libraryBrowserEmptyGroup.isGone = true
-    binding.libraryBrowserLoadingBar.isGone = false
-  }
-
   override fun hideLoading() {
-    binding.libraryBrowserEmptyGroup.isGone = false
     binding.libraryBrowserLoadingBar.isGone = true
   }
 }

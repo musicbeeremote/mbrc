@@ -1,8 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library.tracks
 
-import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
-import androidx.paging.PagedList
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
@@ -11,8 +10,9 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.ui.navigation.library.LibrarySearchModel
-import com.kelsos.mbrc.utilities.paged
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -27,7 +27,7 @@ constructor(
   private val searchModel: LibrarySearchModel
 ) : BasePresenter<BrowseTrackView>(), BrowseTrackPresenter {
 
-  private lateinit var tracks: LiveData<PagedList<Track>>
+  private lateinit var tracks: Flow<PagingData<Track>>
 
   override fun attach(view: BrowseTrackView) {
     super.attach(view)
@@ -48,7 +48,6 @@ constructor(
 
   private fun updateUi(term: String) {
     scope.launch {
-      view().showLoading()
       view().search(term)
       try {
         onTrackLoad(getData(term))
@@ -59,19 +58,14 @@ constructor(
     }
   }
 
-  private fun onTrackLoad(it: DataSource.Factory<Int, Track>) {
-    tracks = it.paged()
-    tracks.observe(
-      this@BrowseTrackPresenterImpl,
-      {
-        if (it != null) {
-          view().update(it)
-        }
-      }
-    )
+  private fun onTrackLoad(data: Flow<PagingData<Track>>) {
+    tracks = data.cachedIn(scope)
+    scope.launch {
+      data.collectLatest { view().update(it) }
+    }
   }
 
-  private suspend fun getData(term: String): DataSource.Factory<Int, Track> {
+  private suspend fun getData(term: String): Flow<PagingData<Track>> {
     return if (term.isEmpty()) {
       repository.getAll()
     } else {

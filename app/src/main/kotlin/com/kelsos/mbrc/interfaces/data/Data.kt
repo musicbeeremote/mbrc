@@ -1,3 +1,5 @@
 package com.kelsos.mbrc.interfaces.data
 
-interface Data
+interface Data {
+  override fun equals(other: Any?): Boolean
+}

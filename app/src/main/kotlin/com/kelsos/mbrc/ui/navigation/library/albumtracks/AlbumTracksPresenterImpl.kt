@@ -1,14 +1,15 @@
 package com.kelsos.mbrc.ui.navigation.library.albumtracks
 
-import androidx.lifecycle.LiveData
-import androidx.paging.PagedList
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.kelsos.mbrc.content.library.albums.AlbumInfo
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
-import com.kelsos.mbrc.content.nowplaying.queue.Queue
+import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.utilities.paged
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -20,7 +21,7 @@ constructor(
   private val queue: QueueHandler
 ) : BasePresenter<AlbumTracksView>(), AlbumTracksPresenter {
 
-  private lateinit var tracks: LiveData<PagedList<Track>>
+  private lateinit var tracks: Flow<PagingData<Track>>
 
   override fun load(album: AlbumInfo) {
     scope.launch {
@@ -34,15 +35,8 @@ constructor(
           }
         }
 
-        tracks = data.paged()
-        tracks.observe(
-          this@AlbumTracksPresenterImpl,
-          {
-            if (it != null) {
-              view().update(it)
-            }
-          }
-        )
+        tracks = data.cachedIn(scope)
+        data.collectLatest { view().update(it) }
       } catch (e: Exception) {
         Timber.v(e)
       }
@@ -62,7 +56,7 @@ constructor(
 
   override fun queueAlbum(artist: String, album: String) {
     scope.launch {
-      val (success, tracks) = queue.queueAlbum(Queue.NOW, album, artist)
+      val (success, tracks) = queue.queueAlbum(LibraryPopup.NOW, album, artist)
       view().queue(success, tracks)
     }
   }

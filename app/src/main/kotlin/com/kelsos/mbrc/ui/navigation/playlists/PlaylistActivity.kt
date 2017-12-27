@@ -2,6 +2,7 @@ package com.kelsos.mbrc.ui.navigation.playlists
 
 import android.os.Bundle
 import androidx.core.view.isGone
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.google.android.material.snackbar.Snackbar
@@ -68,9 +69,9 @@ class PlaylistActivity :
     presenter.reload()
   }
 
-  override fun update(cursor: List<Playlist>) {
-    binding.playlistsEmptyGroup.isGone = cursor.isNotEmpty()
-    adapter.update(cursor)
+  override suspend fun update(data: PagingData<Playlist>) {
+    adapter.submitData(data)
+    binding.playlistsEmptyGroup.isGone = adapter.itemCount != 0
     binding.playlistsRefreshLayout.isRefreshing = false
   }
 

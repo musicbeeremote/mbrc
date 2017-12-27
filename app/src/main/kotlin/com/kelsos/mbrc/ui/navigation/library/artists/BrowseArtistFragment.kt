@@ -2,28 +2,25 @@ package com.kelsos.mbrc.ui.navigation.library.artists
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IdRes
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.Artist
-import com.kelsos.mbrc.content.nowplaying.queue.Queue
+import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.databinding.FragmentBrowseBinding
-import com.kelsos.mbrc.ui.navigation.library.LibraryActivity.Companion.LIBRARY_SCOPE
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter.MenuItemSelectedListener
 import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
 
-class BrowseArtistFragment :
-  Fragment(),
-  BrowseArtistView,
-  MenuItemSelectedListener {
+class BrowseArtistFragment : Fragment(), BrowseArtistView, MenuItemSelectedListener {
 
   @Inject
   lateinit var adapter: ArtistEntryAdapter
@@ -55,8 +52,7 @@ class BrowseArtistFragment :
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    scope =
-      Toothpick.openScopes(requireActivity().application, LIBRARY_SCOPE, requireActivity(), this)
+    scope = Toothpick.openScopes(requireActivity().application, this)
     scope?.installModules(BrowseArtistModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
@@ -67,8 +63,13 @@ class BrowseArtistFragment :
     super.onDestroy()
   }
 
-  override fun onDestroyView() {
-    super.onDestroyView()
+  override fun onStart() {
+    super.onStart()
+    presenter.attach(this)
+  }
+
+  override fun onStop() {
+    super.onStop()
     presenter.detach()
   }
 
@@ -95,9 +96,9 @@ class BrowseArtistFragment :
     presenter.load()
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, artist: Artist) {
-    val action = actionHandler.artistSelected(menuItem, artist, requireActivity())
-    if (action != Queue.PROFILE) {
+  override fun onMenuItemSelected(@IdRes itemId: Int, artist: Artist) {
+    val action = actionHandler.artistSelected(itemId, artist, requireActivity())
+    if (action != LibraryPopup.PROFILE) {
       presenter.queue(action, artist)
     }
   }
@@ -106,13 +107,9 @@ class BrowseArtistFragment :
     actionHandler.artistSelected(artist, requireActivity())
   }
 
-  override fun update(data: List<Artist>) {
-    adapter.update(data)
-  }
-
-  override fun showLoading() {
-    binding.libraryBrowserEmptyGroup.isGone = true
-    binding.libraryBrowserLoadingBar.isGone = false
+  override suspend fun update(artists: PagingData<Artist>) {
+    adapter.submitData(artists)
+    binding.libraryBrowserEmptyGroup.isGone = adapter.itemCount != 0
   }
 
   override fun hideLoading() {

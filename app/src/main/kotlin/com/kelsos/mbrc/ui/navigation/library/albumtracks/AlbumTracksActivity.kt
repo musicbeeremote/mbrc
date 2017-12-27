@@ -3,7 +3,9 @@ package com.kelsos.mbrc.ui.navigation.library.albumtracks
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.annotation.IdRes
 import androidx.core.view.isVisible
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
@@ -37,7 +39,6 @@ class AlbumTracksActivity :
 
   private var album: AlbumInfo? = null
   private lateinit var scope: Scope
-
   private lateinit var binding: ActivityAlbumTracksBinding
 
   public override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,16 +112,16 @@ class AlbumTracksActivity :
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, track: Track) {
-    presenter.queue(track, actionHandler.trackSelected(menuItem))
+  override fun onMenuItemSelected(@IdRes itemId: Int, track: Track) {
+    presenter.queue(track, actionHandler.trackSelected(itemId))
   }
 
   override fun onItemClicked(track: Track) {
     presenter.queue(track)
   }
 
-  override fun update(cursor: List<Track>) {
-    adapter.update(cursor)
+  override suspend fun update(tracks: PagingData<Track>) {
+    adapter.submitData(tracks)
   }
 
   override fun queue(success: Boolean, tracks: Int) {

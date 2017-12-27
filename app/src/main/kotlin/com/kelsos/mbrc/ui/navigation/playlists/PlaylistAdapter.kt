@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.playlists.Playlist
@@ -14,10 +16,11 @@ import javax.inject.Inject
 
 class PlaylistAdapter
 @Inject
-constructor(context: Activity) : RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
+constructor(context: Activity) : PagingDataAdapter<Playlist, PlaylistAdapter.ViewHolder>(
+  PLAYLIST_COMPARATOR
+) {
 
   private val inflater: LayoutInflater = LayoutInflater.from(context)
-  private var data: List<Playlist>? = null
   private var playlistPressedListener: OnPlaylistPressedListener? = null
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -25,7 +28,7 @@ constructor(context: Activity) : RecyclerView.Adapter<PlaylistAdapter.ViewHolder
     val viewHolder = ViewHolder(view)
 
     viewHolder.itemView.setOnClickListener {
-      val path = data?.get(viewHolder.bindingAdapterPosition)?.url
+      val path = getItem(viewHolder.bindingAdapterPosition)?.url
       path?.let {
         playlistPressedListener?.playlistPressed(it)
       }
@@ -34,18 +37,11 @@ constructor(context: Activity) : RecyclerView.Adapter<PlaylistAdapter.ViewHolder
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val playlist = data?.get(holder.bindingAdapterPosition)
+    val playlist = getItem(holder.bindingAdapterPosition)
     playlist?.let {
       holder.name.text = playlist.name
     }
     holder.context.visibility = View.GONE
-  }
-
-  override fun getItemCount(): Int = data?.size ?: 0
-
-  fun update(cursor: List<Playlist>) {
-    this.data = cursor
-    notifyDataSetChanged()
   }
 
   fun setPlaylistPressedListener(playlistPressedListener: OnPlaylistPressedListener) {
@@ -64,6 +60,18 @@ constructor(context: Activity) : RecyclerView.Adapter<PlaylistAdapter.ViewHolder
       val binding = ListitemSingleBinding.bind(itemView)
       name = binding.lineOne
       context = binding.uiItemContextIndicator
+    }
+  }
+
+  companion object {
+    val PLAYLIST_COMPARATOR = object : DiffUtil.ItemCallback<Playlist>() {
+      override fun areItemsTheSame(oldItem: Playlist, newItem: Playlist): Boolean {
+        return oldItem.id == newItem.id
+      }
+
+      override fun areContentsTheSame(oldItem: Playlist, newItem: Playlist): Boolean {
+        return oldItem.name == newItem.name
+      }
     }
   }
 }

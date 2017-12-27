@@ -2,8 +2,16 @@ package com.kelsos.mbrc.content.nowplaying.queue
 
 import androidx.annotation.StringDef
 
-object Queue {
-  @StringDef(NEXT, LAST, NOW, ADD_ALL, PROFILE)
+object LibraryPopup {
+  @StringDef(
+    PROFILE,
+    NEXT,
+    LAST,
+    NOW,
+    ADD_ALL,
+    PLAY_ALBUM,
+    PLAY_ARTIST
+  )
   @Retention(AnnotationRetention.SOURCE)
   annotation class Action
 

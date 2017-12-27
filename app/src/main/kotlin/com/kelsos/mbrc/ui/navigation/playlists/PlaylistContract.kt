@@ -1,11 +1,12 @@
 package com.kelsos.mbrc.ui.navigation.playlists
 
+import androidx.paging.PagingData
 import com.kelsos.mbrc.content.playlists.Playlist
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 
 interface PlaylistView : BaseView {
-  fun update(cursor: List<Playlist>)
+  suspend fun update(data: PagingData<Playlist>)
   fun failure(throwable: Throwable)
   fun showLoading()
   fun hideLoading()

@@ -1,12 +1,13 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
+import androidx.paging.PagingData
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
 import com.kelsos.mbrc.content.nowplaying.NowPlaying
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 
 interface NowPlayingView : BaseView {
-  fun update(data: List<NowPlaying>)
+  suspend fun update(data: PagingData<NowPlaying>)
   fun trackChanged(trackInfo: TrackInfo, scrollToTrack: Boolean = false)
   fun failure(throwable: Throwable)
   fun showLoading()

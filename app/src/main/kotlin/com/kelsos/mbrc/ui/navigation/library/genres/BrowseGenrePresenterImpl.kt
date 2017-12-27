@@ -1,8 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library.genres
 
-import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
-import androidx.paging.PagedList
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.kelsos.mbrc.content.library.genres.Genre
 import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
@@ -11,8 +10,9 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.ui.navigation.library.LibrarySearchModel
-import com.kelsos.mbrc.utilities.paged
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -27,7 +27,7 @@ constructor(
   private val searchModel: LibrarySearchModel
 ) : BasePresenter<BrowseGenreView>(), BrowseGenrePresenter {
 
-  private lateinit var genres: LiveData<PagedList<Genre>>
+  private lateinit var genres: Flow<PagingData<Genre>>
 
   override fun attach(view: BrowseGenreView) {
     super.attach(view)
@@ -48,7 +48,6 @@ constructor(
 
   private fun updateUi(term: String) {
     scope.launch {
-      view().showLoading()
       view().search(term)
       try {
         onGenresLoaded(getData(term))
@@ -59,7 +58,7 @@ constructor(
     }
   }
 
-  private suspend fun getData(term: String): DataSource.Factory<Int, Genre> {
+  private suspend fun getData(term: String): Flow<PagingData<Genre>> {
     return if (term.isEmpty()) {
       repository.getAll()
     } else {
@@ -67,16 +66,11 @@ constructor(
     }
   }
 
-  private fun onGenresLoaded(data: DataSource.Factory<Int, Genre>) {
-    genres = data.paged()
-    genres.observe(
-      this@BrowseGenrePresenterImpl,
-      {
-        if (it != null) {
-          view().update(it)
-        }
-      }
-    )
+  private fun onGenresLoaded(data: Flow<PagingData<Genre>>) {
+    genres = data.cachedIn(scope)
+    scope.launch {
+      genres.collectLatest { view().update(it) }
+    }
   }
 
   override fun sync() {

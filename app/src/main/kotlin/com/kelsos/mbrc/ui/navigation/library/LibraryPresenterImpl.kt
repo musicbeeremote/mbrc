@@ -8,6 +8,7 @@ import com.kelsos.mbrc.preferences.SettingsManager
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@LibraryActivity.Presenter
 class LibraryPresenterImpl
 @Inject
 constructor(

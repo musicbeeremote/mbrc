@@ -2,27 +2,24 @@ package com.kelsos.mbrc.ui.navigation.library.genres
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IdRes
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.genres.Genre
-import com.kelsos.mbrc.content.nowplaying.queue.Queue
+import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.databinding.FragmentBrowseBinding
-import com.kelsos.mbrc.ui.navigation.library.LibraryActivity.Companion.LIBRARY_SCOPE
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.genres.GenreEntryAdapter.MenuItemSelectedListener
 import toothpick.Toothpick
 import javax.inject.Inject
 
-class BrowseGenreFragment :
-  Fragment(),
-  BrowseGenreView,
-  MenuItemSelectedListener {
+class BrowseGenreFragment : Fragment(), BrowseGenreView, MenuItemSelectedListener {
 
   @Inject
   lateinit var adapter: GenreEntryAdapter
@@ -60,7 +57,7 @@ class BrowseGenreFragment :
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val scope = Toothpick.openScopes(requireActivity().application, LIBRARY_SCOPE, activity, this)
+    val scope = Toothpick.openScopes(requireActivity().application, requireActivity(), this)
     scope.installModules(BrowseGenreModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
@@ -71,8 +68,9 @@ class BrowseGenreFragment :
     presenter.detach()
   }
 
-  override fun update(cursor: List<Genre>) {
-    adapter.update(cursor)
+  override suspend fun update(genres: PagingData<Genre>) {
+    adapter.submitData(genres)
+    binding.libraryBrowserEmptyGroup.isGone = adapter.itemCount != 0
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -90,9 +88,9 @@ class BrowseGenreFragment :
     presenter.load()
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, genre: Genre): Boolean {
-    val action = actionHandler.genreSelected(menuItem, genre, requireActivity())
-    if (action != Queue.PROFILE) {
+  override fun onMenuItemSelected(@IdRes itemId: Int, genre: Genre): Boolean {
+    val action = actionHandler.genreSelected(itemId, genre, requireActivity())
+    if (action != LibraryPopup.PROFILE) {
       presenter.queue(action, genre)
     }
     return true
@@ -107,13 +105,7 @@ class BrowseGenreFragment :
     super.onDestroy()
   }
 
-  override fun showLoading() {
-    binding.libraryBrowserEmptyGroup.isGone = true
-    binding.libraryBrowserLoadingBar.isGone = false
-  }
-
   override fun hideLoading() {
-    binding.libraryBrowserEmptyGroup.isGone = false
     binding.libraryBrowserLoadingBar.isGone = true
   }
 }

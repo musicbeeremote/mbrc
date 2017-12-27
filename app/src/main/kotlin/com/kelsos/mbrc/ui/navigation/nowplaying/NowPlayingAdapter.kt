@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.nowplaying.NowPlaying
@@ -21,12 +23,12 @@ import javax.inject.Inject
 class NowPlayingAdapter
 @Inject
 constructor(context: Activity) :
-  RecyclerView.Adapter<NowPlayingAdapter.TrackHolder>(),
+  PagingDataAdapter<NowPlaying, NowPlayingAdapter.TrackHolder>(
+    NOW_PLAYING_COMPARATOR
+  ),
   ItemTouchHelperAdapter {
 
   private val dragStartListener: OnStartDragListener = context as OnStartDragListener
-
-  private var data: List<NowPlaying>? = null
   private var playingTrackIndex: Int = 0
   private var currentTrack: String = ""
   private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -44,14 +46,7 @@ constructor(context: Activity) :
   }
 
   fun setPlayingTrack(path: String) {
-    val data = this.data ?: return
-
     this.currentTrack = path
-    data.forEachIndexed { index, track ->
-      if (track.path == path) {
-        setPlayingTrack(index)
-      }
-    }
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackHolder {
@@ -76,7 +71,7 @@ constructor(context: Activity) :
   }
 
   override fun onBindViewHolder(holder: TrackHolder, position: Int) {
-    val track = data?.get(holder.bindingAdapterPosition) ?: return
+    val track = getItem(holder.bindingAdapterPosition) ?: return
     holder.title.text = track.title
     holder.artist.text = track.artist
     if (position == playingTrackIndex) {
@@ -84,10 +79,6 @@ constructor(context: Activity) :
     } else {
       holder.trackPlaying.setImageResource(android.R.color.transparent)
     }
-  }
-
-  override fun getItemCount(): Int {
-    return data?.size ?: 0
   }
 
   override fun onItemMove(from: Int, to: Int): Boolean {
@@ -103,11 +94,9 @@ constructor(context: Activity) :
   }
 
   private fun swapPositions(from: Int, to: Int) {
-    val data = this.data ?: return
-
     Timber.v("Swapping %d => %d", from, to)
-    val fromTrack = data[from]
-    val toTrack = data[to]
+    val fromTrack = getItem(from) ?: return
+    val toTrack = getItem(to) ?: return
     Timber.v("from => %s to => %s", fromTrack, toTrack)
     // TODO: fix the swap functionality with room
     // Before saving remove the listener to avoid interrupting the swapping functionality
@@ -116,17 +105,12 @@ constructor(context: Activity) :
   }
 
   override fun onItemDismiss(position: Int) {
-    val nowPlaying = data?.get(position)
+    val nowPlaying = getItem(position)
 
     nowPlaying?.let {
       notifyItemRemoved(position)
       listener?.onDismiss(position)
     }
-  }
-
-  fun update(cursor: List<NowPlaying>) {
-    this.data = cursor
-    notifyDataSetChanged()
   }
 
   fun setListener(listener: NowPlayingListener) {
@@ -160,6 +144,20 @@ constructor(context: Activity) :
 
     override fun onItemClear() {
       this.itemView.setBackgroundColor(0)
+    }
+  }
+
+  companion object {
+    val NOW_PLAYING_COMPARATOR = object : DiffUtil.ItemCallback<NowPlaying>() {
+      override fun areItemsTheSame(oldItem: NowPlaying, newItem: NowPlaying): Boolean {
+        return oldItem.id == newItem.id
+      }
+
+      override fun areContentsTheSame(oldItem: NowPlaying, newItem: NowPlaying): Boolean {
+        return oldItem.position == newItem.position &&
+          oldItem.artist == newItem.artist &&
+          oldItem.title == newItem.title
+      }
     }
   }
 }

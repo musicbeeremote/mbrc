@@ -2,6 +2,7 @@ package com.kelsos.mbrc.ui.navigation.radio
 
 import android.os.Bundle
 import androidx.core.view.isGone
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
@@ -58,9 +59,9 @@ class RadioActivity :
     super.onDestroy()
   }
 
-  override fun update(data: List<RadioStation>) {
-    binding.radioStationsEmptyGroup.isGone = data.isNotEmpty()
-    adapter.update(data)
+  override suspend fun update(data: PagingData<RadioStation>) {
+    adapter.submitData(data)
+    binding.radioStationsEmptyGroup.isGone = adapter.itemCount != 0
   }
 
   override fun error(error: Throwable) {

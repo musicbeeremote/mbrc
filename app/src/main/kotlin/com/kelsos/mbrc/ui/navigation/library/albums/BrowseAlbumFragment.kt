@@ -2,18 +2,18 @@ package com.kelsos.mbrc.ui.navigation.library.albums
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IdRes
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
-import com.kelsos.mbrc.content.nowplaying.queue.Queue
+import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.databinding.FragmentBrowseBinding
-import com.kelsos.mbrc.ui.navigation.library.LibraryActivity.Companion.LIBRARY_SCOPE
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -50,7 +50,7 @@ class BrowseAlbumFragment :
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val scope = Toothpick.openScopes(requireActivity().application, LIBRARY_SCOPE, activity, this)
+    val scope = Toothpick.openScopes(requireActivity().application, activity, this)
     scope.installModules(SmoothieActivityModule(requireActivity()), BrowseAlbumModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
@@ -71,9 +71,9 @@ class BrowseAlbumFragment :
     presenter.load()
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, album: Album) {
-    val action = actionHandler.albumSelected(menuItem, album, requireActivity())
-    if (action != Queue.PROFILE) {
+  override fun onMenuItemSelected(@IdRes itemId: Int, album: Album) {
+    val action = actionHandler.albumSelected(itemId, album, requireActivity())
+    if (action != LibraryPopup.PROFILE) {
       presenter.queue(action, album)
     }
   }
@@ -82,8 +82,8 @@ class BrowseAlbumFragment :
     actionHandler.albumSelected(album, requireActivity())
   }
 
-  override fun update(cursor: List<Album>) {
-    adapter.update(cursor)
+  override suspend fun update(albums: PagingData<Album>) {
+    adapter.submitData(albums)
   }
 
   override fun queue(success: Boolean, tracks: Int) {
@@ -105,11 +105,6 @@ class BrowseAlbumFragment :
   override fun hideLoading() {
     binding.libraryBrowserEmptyGroup.isGone = false
     binding.libraryBrowserLoadingBar.isGone = true
-  }
-
-  override fun onDestroyView() {
-    super.onDestroyView()
-    presenter.detach()
   }
 
   override fun onDestroy() {

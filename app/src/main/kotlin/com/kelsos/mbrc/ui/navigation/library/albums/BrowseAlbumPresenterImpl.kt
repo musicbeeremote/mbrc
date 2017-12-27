@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library.albums
 
-import androidx.lifecycle.LiveData
-import androidx.paging.PagedList
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
@@ -10,8 +10,9 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.ui.navigation.library.LibrarySearchModel
-import com.kelsos.mbrc.utilities.paged
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -26,22 +27,20 @@ constructor(
   private val searchModel: LibrarySearchModel
 ) : BasePresenter<BrowseAlbumView>(), BrowseAlbumPresenter {
 
-  private lateinit var albums: LiveData<PagedList<Album>>
+  private lateinit var albums: Flow<PagingData<Album>>
+
+  private fun observeAlbums(data: Flow<PagingData<Album>>) {
+    albums = data.cachedIn(scope)
+    scope.launch {
+      data.collectLatest { view().update(it) }
+    }
+  }
 
   private fun updateUi(term: String) {
     scope.launch {
-      view().showLoading()
       view().search(term)
       try {
-        albums = getData(term).paged()
-        albums.observe(
-          this@BrowseAlbumPresenterImpl,
-          {
-            if (it != null) {
-              view().update(it)
-            }
-          }
-        )
+        observeAlbums(getData(term))
       } catch (e: Exception) {
         Timber.v(e)
       }

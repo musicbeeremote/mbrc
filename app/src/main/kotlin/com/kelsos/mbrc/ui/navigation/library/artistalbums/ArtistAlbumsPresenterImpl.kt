@@ -1,12 +1,13 @@
 package com.kelsos.mbrc.ui.navigation.library.artistalbums
 
-import androidx.lifecycle.LiveData
-import androidx.paging.PagedList
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.utilities.paged
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -18,21 +19,14 @@ constructor(
   private val queue: QueueHandler
 ) : BasePresenter<ArtistAlbumsView>(), ArtistAlbumsPresenter {
 
-  private lateinit var albums: LiveData<PagedList<Album>>
+  private lateinit var albums: Flow<PagingData<Album>>
 
   override fun load(artist: String) {
     scope.launch {
       try {
         val data = repository.getAlbumsByArtist(artist)
-        albums = data.paged()
-        albums.observe(
-          this@ArtistAlbumsPresenterImpl,
-          {
-            if (it != null) {
-              view().update(it)
-            }
-          }
-        )
+        albums = data.cachedIn(scope)
+        albums.collectLatest { view().update(it) }
       } catch (e: Exception) {
         Timber.v(e)
       }

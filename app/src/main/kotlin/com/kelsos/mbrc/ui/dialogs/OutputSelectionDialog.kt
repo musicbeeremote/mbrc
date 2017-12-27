@@ -60,14 +60,10 @@ class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
     super.onCreate(savedInstanceState)
     scope = Toothpick.openScopes(requireActivity().application, this)
     Toothpick.inject(this, scope)
-  }
-
-  override fun onActivityCreated(savedInstanceState: Bundle?) {
-    super.onActivityCreated(savedInstanceState)
-    viewModel.outputs.observe(this) {
+    viewModel.outputs.observe(viewLifecycleOwner) {
       update(it)
     }
-    viewModel.selection.observe(this) {
+    viewModel.selection.observe(viewLifecycleOwner) {
       val adapter = availableOutputs.adapter as ArrayAdapter<*>
       for (position in 0 until adapter.count) {
         if (it == adapter.getItem(position)) {
@@ -76,7 +72,7 @@ class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
         }
       }
     }
-    viewModel.events.observe(this) {
+    viewModel.events.observe(viewLifecycleOwner) {
       if (it.handled) {
         return@observe
       }

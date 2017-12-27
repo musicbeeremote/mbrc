@@ -1,8 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
-import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
-import androidx.paging.PagedList
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.kelsos.mbrc.content.activestatus.MainDataModel
 import com.kelsos.mbrc.content.nowplaying.NowPlaying
 import com.kelsos.mbrc.content.nowplaying.NowPlayingRepository
@@ -12,7 +11,8 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.protocol.NowPlayingMoveRequest
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.utilities.paged
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,7 +24,7 @@ constructor(
   private val model: MainDataModel
 ) : BasePresenter<NowPlayingView>(), NowPlayingPresenter {
 
-  private lateinit var nowPlayingTracks: LiveData<PagedList<NowPlaying>>
+  private lateinit var nowPlayingTracks: Flow<PagingData<NowPlaying>>
 
   override fun reload(scrollToTrack: Boolean) {
     view().showLoading()
@@ -39,16 +39,11 @@ constructor(
     }
   }
 
-  private fun onNowPlayingTracksLoaded(it: DataSource.Factory<Int, NowPlaying>) {
-    nowPlayingTracks = it.paged()
-    nowPlayingTracks.observe(
-      this@NowPlayingPresenterImpl,
-      {
-        if (it != null) {
-          view().update(it)
-        }
-      }
-    )
+  private fun onNowPlayingTracksLoaded(data: Flow<PagingData<NowPlaying>>) {
+    nowPlayingTracks = data.cachedIn(scope)
+    scope.launch {
+      data.collectLatest { view().update(it) }
+    }
   }
 
   override fun load() {

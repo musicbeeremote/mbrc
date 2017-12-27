@@ -1,8 +1,10 @@
 package com.kelsos.mbrc.content.playlists
 
-import androidx.paging.DataSource
+import androidx.paging.PagingData
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.utilities.epoch
+import com.kelsos.mbrc.utilities.paged
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
@@ -16,11 +18,11 @@ class PlaylistRepositoryImpl
 ) : PlaylistRepository {
   private val mapper = PlaylistDtoMapper()
 
-  override suspend fun getAll(): DataSource.Factory<Int, Playlist> = dao.getAll().map { it }
+  override suspend fun getAll(): Flow<PagingData<Playlist>> = dao.getAll().paged()
 
-  override suspend fun getAndSaveRemote(): DataSource.Factory<Int, Playlist> {
+  override suspend fun getAndSaveRemote(): Flow<PagingData<Playlist>> {
     getRemote()
-    return dao.getAll().map { it }
+    return dao.getAll().paged()
   }
 
   override suspend fun getRemote() {
@@ -39,8 +41,8 @@ class PlaylistRepositoryImpl
     }
   }
 
-  override suspend fun search(term: String): DataSource.Factory<Int, Playlist> =
-    dao.search(term).map { it }
+  override suspend fun search(term: String): Flow<PagingData<Playlist>> =
+    dao.search(term).paged()
 
   override suspend fun cacheIsEmpty(): Boolean = dao.count() == 0L
 

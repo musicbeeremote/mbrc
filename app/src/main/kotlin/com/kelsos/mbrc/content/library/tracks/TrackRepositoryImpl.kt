@@ -1,15 +1,18 @@
 package com.kelsos.mbrc.content.library.tracks
 
-import androidx.paging.DataSource
+import androidx.paging.PagingData
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.utilities.epoch
+import com.kelsos.mbrc.utilities.paged
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class TrackRepositoryImpl
-@Inject constructor(
+@Inject
+constructor(
   private val dao: TrackDao,
   private val remoteDataSource: RemoteTrackDataSource,
   private val dispatchers: AppDispatchers
@@ -17,20 +20,20 @@ class TrackRepositoryImpl
 
   private val mapper = TrackDtoMapper()
 
-  override suspend fun getAll(): DataSource.Factory<Int, Track> = dao.getAll().map { it }
+  override suspend fun getAll(): Flow<PagingData<Track>> = dao.getAll().paged()
 
   override suspend fun getAlbumTracks(
     album: String,
     artist: String
-  ): DataSource.Factory<Int, Track> =
-    dao.getAlbumTracks(album, artist).map { it }
+  ): Flow<PagingData<Track>> =
+    dao.getAlbumTracks(album, artist).paged()
 
-  override suspend fun getNonAlbumTracks(artist: String): DataSource.Factory<Int, Track> =
-    dao.getNonAlbumTracks(artist).map { it }
+  override suspend fun getNonAlbumTracks(artist: String): Flow<PagingData<Track>> =
+    dao.getNonAlbumTracks(artist).paged()
 
-  override suspend fun getAndSaveRemote(): DataSource.Factory<Int, Track> {
+  override suspend fun getAndSaveRemote(): Flow<PagingData<Track>> {
     getRemote()
-    return dao.getAll().map { it }
+    return dao.getAll().paged()
   }
 
   override suspend fun getRemote() {
@@ -45,8 +48,8 @@ class TrackRepositoryImpl
     }
   }
 
-  override suspend fun search(term: String): DataSource.Factory<Int, Track> {
-    return dao.search(term).map { it }
+  override suspend fun search(term: String): Flow<PagingData<Track>> {
+    return dao.search(term).paged()
   }
 
   override suspend fun getGenreTrackPaths(genre: String): List<String> {

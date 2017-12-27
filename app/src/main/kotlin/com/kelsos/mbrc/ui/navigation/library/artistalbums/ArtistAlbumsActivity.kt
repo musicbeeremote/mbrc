@@ -2,11 +2,13 @@ package com.kelsos.mbrc.ui.navigation.library.artistalbums
 
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.annotation.IdRes
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
-import com.kelsos.mbrc.content.nowplaying.queue.Queue
+import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.databinding.ActivityArtistAlbumsBinding
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
@@ -73,9 +75,9 @@ class ArtistAlbumsActivity :
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, album: Album) {
-    val action = actionHandler.albumSelected(menuItem, album, this)
-    if (action != Queue.PROFILE) {
+  override fun onMenuItemSelected(@IdRes itemId: Int, album: Album) {
+    val action = actionHandler.albumSelected(itemId, album, this)
+    if (action != LibraryPopup.PROFILE) {
       presenter.queue(action, album)
     }
   }
@@ -84,8 +86,8 @@ class ArtistAlbumsActivity :
     actionHandler.albumSelected(album, this)
   }
 
-  override fun update(albums: List<Album>) {
-    adapter.update(albums)
+  override suspend fun update(albums: PagingData<Album>) {
+    adapter.submitData(albums)
   }
 
   override fun queue(success: Boolean, tracks: Int) {

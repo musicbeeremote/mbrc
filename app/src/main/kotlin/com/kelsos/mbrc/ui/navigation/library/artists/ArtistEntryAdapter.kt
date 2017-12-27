@@ -1,25 +1,22 @@
 package com.kelsos.mbrc.ui.navigation.library.artists
 
-import android.app.Activity
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.PopupMenu
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.databinding.ListitemSingleBinding
+import com.kelsos.mbrc.ui.navigation.library.popup
 import javax.inject.Inject
 
 class ArtistEntryAdapter
 @Inject
-constructor(context: Activity) : RecyclerView.Adapter<ArtistEntryAdapter.ViewHolder>() {
-
-  private val inflater: LayoutInflater = LayoutInflater.from(context)
-  private var data: List<Artist>? = null
+constructor() : PagingDataAdapter<Artist, ArtistEntryAdapter.ViewHolder>(DIFF_CALLBACK) {
   private var listener: MenuItemSelectedListener? = null
 
   fun setMenuItemSelectedListener(listener: MenuItemSelectedListener) {
@@ -27,63 +24,82 @@ constructor(context: Activity) : RecyclerView.Adapter<ArtistEntryAdapter.ViewHol
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-    val view = inflater.inflate(R.layout.listitem_single, parent, false)
-    val holder = ViewHolder(view)
-
-    holder.indicator.setOnClickListener {
-      val popupMenu = PopupMenu(it.context, it)
-      popupMenu.inflate(R.menu.popup_artist)
-      popupMenu.setOnMenuItemClickListener { menuItem ->
-        val position = holder.bindingAdapterPosition
-        val artist = data?.get(position) ?: return@setOnMenuItemClickListener false
-        listener?.onMenuItemSelected(menuItem, artist)
-        true
+    val holder = ViewHolder.create(parent)
+    holder.onIndicatorClick { view, position ->
+      view.popup(R.menu.popup_artist) { id ->
+        val artist = getItem(position) ?: return@popup
+        listener?.onMenuItemSelected(id, artist)
       }
-      popupMenu.show()
     }
 
-    holder.itemView.setOnClickListener {
-      val position = holder.bindingAdapterPosition
-      val artist = data?.get(position) ?: return@setOnClickListener
+    holder.onPress { position ->
+      val artist = getItem(position) ?: return@onPress
       listener?.onItemClicked(artist)
     }
     return holder
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val artist = data?.get(holder.bindingAdapterPosition)
+    val artist = getItem(position)
+    if (artist != null) {
+      holder.bindTo(artist)
+    } else {
+      holder.clear()
+    }
+  }
 
-    artist?.let {
-      holder.title.text = if (it.artist.isBlank()) {
-        holder.empty
-      } else {
-        it.artist
+  companion object {
+    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Artist>() {
+      override fun areItemsTheSame(oldItem: Artist, newItem: Artist): Boolean {
+        return oldItem.id == newItem.id
+      }
+
+      override fun areContentsTheSame(oldItem: Artist, newItem: Artist): Boolean {
+        return oldItem == newItem
       }
     }
   }
 
-  override fun getItemCount(): Int = data?.size ?: 0
-
   interface MenuItemSelectedListener {
-    fun onMenuItemSelected(menuItem: MenuItem, artist: Artist)
+    fun onMenuItemSelected(itemId: Int, artist: Artist)
 
     fun onItemClicked(artist: Artist)
   }
 
-  class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val title: TextView
-    val indicator: ImageView
-    val empty: String = itemView.context.getString(R.string.empty)
+  class ViewHolder(
+    binding: ListitemSingleBinding
+  ) : RecyclerView.ViewHolder(binding.root) {
+    private val title: TextView = binding.lineOne
+    private val indicator: ImageView = binding.uiItemContextIndicator
+    private val empty: String = itemView.context.getString(R.string.empty)
 
-    init {
-      val binding = ListitemSingleBinding.bind(itemView)
-      title = binding.lineOne
-      indicator = binding.uiItemContextIndicator
+    fun bindTo(artist: Artist) {
+      title.text = if (artist.artist.isBlank()) {
+        empty
+      } else {
+        artist.artist
+      }
     }
-  }
 
-  fun update(data: List<Artist>) {
-    this.data = data
-    notifyDataSetChanged()
+    fun clear() {
+      title.text = ""
+    }
+
+    fun onIndicatorClick(onClick: (view: View, position: Int) -> Unit) {
+      indicator.setOnClickListener { onClick(it, bindingAdapterPosition) }
+    }
+
+    fun onPress(onPress: (position: Int) -> Unit) {
+      itemView.setOnClickListener { onPress(bindingAdapterPosition) }
+    }
+
+    companion object {
+      fun create(parent: ViewGroup): ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        val view = inflater.inflate(R.layout.listitem_single, parent, false)
+        val binding = ListitemSingleBinding.bind(view)
+        return ViewHolder(binding)
+      }
+    }
   }
 }

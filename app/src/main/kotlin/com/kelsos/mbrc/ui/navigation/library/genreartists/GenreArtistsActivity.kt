@@ -2,11 +2,13 @@ package com.kelsos.mbrc.ui.navigation.library.genreartists
 
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.annotation.IdRes
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.Artist
-import com.kelsos.mbrc.content.nowplaying.queue.Queue
+import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.databinding.ActivityGenreArtistsBinding
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
@@ -17,10 +19,7 @@ import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class GenreArtistsActivity :
-  BaseActivity(),
-  GenreArtistsView,
-  MenuItemSelectedListener {
+class GenreArtistsActivity : BaseActivity(), GenreArtistsView, MenuItemSelectedListener {
 
   @Inject
   lateinit var adapter: ArtistEntryAdapter
@@ -70,9 +69,9 @@ class GenreArtistsActivity :
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, artist: Artist) {
-    val action = actionHandler.artistSelected(menuItem, artist, this)
-    if (action != Queue.PROFILE) {
+  override fun onMenuItemSelected(@IdRes itemId: Int, artist: Artist) {
+    val action = actionHandler.artistSelected(itemId, artist, this)
+    if (action != LibraryPopup.PROFILE) {
       presenter.queue(action, artist)
     }
   }
@@ -81,8 +80,8 @@ class GenreArtistsActivity :
     actionHandler.artistSelected(artist, this)
   }
 
-  override fun update(data: List<Artist>) {
-    adapter.update(data)
+  override suspend fun update(artists: PagingData<Artist>) {
+    adapter.submitData(artists)
   }
 
   override fun queue(success: Boolean, tracks: Int) {

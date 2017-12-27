@@ -1,8 +1,10 @@
 package com.kelsos.mbrc.content.nowplaying
 
-import androidx.paging.DataSource
+import androidx.paging.PagingData
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.utilities.epoch
+import com.kelsos.mbrc.utilities.paged
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
@@ -16,11 +18,11 @@ class NowPlayingRepositoryImpl
 ) : NowPlayingRepository {
   private val mapper = NowPlayingDtoMapper()
 
-  override suspend fun getAll(): DataSource.Factory<Int, NowPlaying> = dao.getAll().map { it }
+  override suspend fun getAll(): Flow<PagingData<NowPlaying>> = dao.getAll().paged()
 
-  override suspend fun getAndSaveRemote(): DataSource.Factory<Int, NowPlaying> {
+  override suspend fun getAndSaveRemote(): Flow<PagingData<NowPlaying>> {
     getRemote()
-    return dao.getAll().map { it }
+    return dao.getAll().paged()
   }
 
   override suspend fun getRemote() {
@@ -35,8 +37,8 @@ class NowPlayingRepositoryImpl
     }
   }
 
-  override suspend fun search(term: String): DataSource.Factory<Int, NowPlaying> =
-    dao.search(term).map { it }
+  override suspend fun search(term: String): Flow<PagingData<NowPlaying>> =
+    dao.search(term).paged()
 
   override suspend fun cacheIsEmpty(): Boolean = dao.count() == 0L
 
