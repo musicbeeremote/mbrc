@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.paging.DataSource
 import android.arch.paging.PagedList
-import com.kelsos.mbrc.content.nowplaying.queue.Queue.NOW
+import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.NOW
 import com.kelsos.mbrc.content.nowplaying.queue.QueueApi
 import com.kelsos.mbrc.content.radios.RadioRepository
 import com.kelsos.mbrc.content.radios.RadioStationEntity

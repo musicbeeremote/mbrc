@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.content.library.artists
 
 import android.arch.paging.DataSource
+import com.kelsos.mbrc.utilities.epoch
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
@@ -27,9 +28,11 @@ constructor(
   }
 
   override fun getRemote(): Completable {
-    dao.deleteAll()
+    val added = epoch()
     return remoteDataSource.fetch().doOnNext {
-      dao.insertAll(it.map { mapper.map(it) })
+      dao.insertAll(it.map { mapper.map(it).apply { dateAdded = added } })
+    }.doOnComplete {
+      dao.removePreviousEntries(added)
     }.ignoreElements()
   }
 

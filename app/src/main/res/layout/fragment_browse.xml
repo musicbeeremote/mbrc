@@ -30,6 +30,9 @@
       android:id="@+id/fastscroller"
       android:layout_width="wrap_content"
       android:layout_height="match_parent"
+      android:layout_marginBottom="16dp"
+      android:layout_marginTop="16dp"
+      android:paddingBottom="8dp"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintTop_toTopOf="parent" />

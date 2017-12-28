@@ -8,7 +8,9 @@ import org.threeten.bp.Instant
 
 fun <T> DataSource.Factory<Int, T>.paged(): LiveData<PagedList<T>> {
   val config = PagedList.Config.Builder()
-      .setPageSize(40)
+      .setPrefetchDistance(50)
+      .setInitialLoadSizeHint(25)
+      .setPageSize(50)
       .setEnablePlaceholders(true)
       .build()
   return LivePagedListBuilder(this, config).build()

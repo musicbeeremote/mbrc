@@ -57,8 +57,17 @@ class BrowseAlbumFragment : Fragment(),
     scope.installModules(SmoothieActivityModule(activity), BrowseAlbumModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
-    presenter.attach(this)
     setHasOptionsMenu(true)
+  }
+
+  override fun onStart() {
+    super.onStart()
+    presenter.attach(this)
+  }
+
+  override fun onStop() {
+    super.onStop()
+    presenter.detach()
   }
 
   override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -96,10 +105,11 @@ class BrowseAlbumFragment : Fragment(),
     presenter.load()
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: AlbumEntity) {
+  override fun onMenuItemSelected(action: String, entry: AlbumEntity) {
     val activity = activity ?: fail("null activity")
-    actionHandler.albumSelected(menuItem, entry, activity)
+    actionHandler.albumSelected(action, entry, activity)
   }
+
 
   override fun onItemClicked(album: AlbumEntity) {
     val activity = activity ?: fail("null activity")
@@ -137,11 +147,6 @@ class BrowseAlbumFragment : Fragment(),
     emptyViewTitle.visibility = View.VISIBLE
     emptyViewSubTitle.visibility = View.VISIBLE
     swipeLayout.isRefreshing = false
-  }
-
-  override fun onDestroyView() {
-    super.onDestroyView()
-    presenter.detach()
   }
 
   override fun onDestroy() {

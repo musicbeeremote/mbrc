@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.genres
 
+import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.constraint.Group
 import android.support.design.widget.Snackbar
@@ -8,7 +9,6 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -63,9 +63,9 @@ class BrowseGenreFragment : Fragment(),
     presenter.detach()
   }
 
-  override fun update(cursor: List<GenreEntity>) {
+  override fun update(pagedList: PagedList<GenreEntity>) {
     swipeLayout.isRefreshing = false
-    adapter.update(cursor)
+    adapter.setList(pagedList)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -80,9 +80,9 @@ class BrowseGenreFragment : Fragment(),
     presenter.load()
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: GenreEntity): Boolean {
+  override fun onMenuItemSelected(action: String, entry: GenreEntity): Boolean {
     val activity = activity ?: fail("null activity")
-    actionHandler.genreSelected(menuItem, entry, activity)
+    actionHandler.genreSelected(action, entry, activity)
     return true
   }
 

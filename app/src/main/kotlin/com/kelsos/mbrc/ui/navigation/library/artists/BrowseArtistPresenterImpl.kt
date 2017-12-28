@@ -40,7 +40,6 @@ constructor(
   }
 
   override fun load() {
-    view().showLoading()
     val artistObservable = settingsManager.shouldDisplayOnlyAlbumArtists().flatMap {
       if (it) {
         return@flatMap repository.getAlbumArtistsOnly()
@@ -62,6 +61,10 @@ constructor(
   }
 
   private fun onArtistsLoaded(it: DataSource.Factory<Int, ArtistEntity>) {
+    if (::artists.isInitialized) {
+      artists.removeObservers(this)
+    }
+
     artists = it.paged()
     artists.observe(this, Observer {
       if (it != null) {
@@ -71,7 +74,6 @@ constructor(
   }
 
   override fun reload() {
-    view().showLoading()
     val artistObservable = settingsManager.shouldDisplayOnlyAlbumArtists().flatMap {
       if (it) {
         return@flatMap repository.getAllRemoteAndShowAlbumArtist()
@@ -79,8 +81,8 @@ constructor(
         return@flatMap repository.getAndSaveRemote()
       }
     }
-    addDisposable(artistObservable.
-        observeOn(schedulerProvider.main())
+    addDisposable(artistObservable
+        .observeOn(schedulerProvider.main())
         .subscribeOn(schedulerProvider.io())
         .subscribe({
           onArtistsLoaded(it)
