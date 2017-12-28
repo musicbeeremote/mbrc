@@ -26,17 +26,15 @@ class LibraryPagerAdapter(activity: FragmentActivity) : FragmentStatePagerAdapte
     return null
   }
 
-  override fun getCount(): Int {
-    return COUNT
-  }
+  override fun getCount(): Int = COUNT
 
   override fun getPageTitle(@Section position: Int): CharSequence {
-    when (position) {
-      Search.SECTION_ALBUM -> return context.getString(R.string.label_albums)
-      Search.SECTION_ARTIST -> return context.getString(R.string.label_artists)
-      Search.SECTION_GENRE -> return context.getString(R.string.label_genres)
-      Search.SECTION_TRACK -> return context.getString(R.string.label_tracks)
-      else -> return ""
+    return when (position) {
+      Search.SECTION_ALBUM -> context.getString(R.string.label_albums)
+      Search.SECTION_ARTIST -> context.getString(R.string.label_artists)
+      Search.SECTION_GENRE -> context.getString(R.string.label_genres)
+      Search.SECTION_TRACK -> context.getString(R.string.label_tracks)
+      else -> ""
     }
   }
 

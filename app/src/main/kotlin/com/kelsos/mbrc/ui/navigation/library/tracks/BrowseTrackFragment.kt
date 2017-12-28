@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.tracks
 
+import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.constraint.Group
 import android.support.design.widget.Snackbar
@@ -8,7 +9,6 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -73,13 +73,13 @@ class BrowseTrackFragment : Fragment(),
     presenter.load()
   }
 
-  override fun update(it: List<TrackEntity>) {
-    adapter.update(it)
+  override fun update(pagedList: PagedList<TrackEntity>) {
+    adapter.setList(pagedList)
     swipeLayout.isRefreshing = false
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: TrackEntity) {
-    actionHandler.trackSelected(menuItem, entry)
+  override fun onMenuItemSelected(action: String, entry: TrackEntity) {
+    actionHandler.trackSelected(action, entry)
   }
 
   override fun onItemClicked(track: TrackEntity) {

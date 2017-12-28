@@ -15,7 +15,7 @@ interface ArtistDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun insertAll(list: List<ArtistEntity>)
 
-  @Query("select * from artist")
+  @Query("select * from artist order by artist collate nocase asc")
   fun getAll(): DataSource.Factory<Int, ArtistEntity>
 
   @Query("select distinct artist.id, artist.artist, artist.date_added " +
@@ -33,4 +33,7 @@ interface ArtistDao {
 
   @Query("select count(*) from artist")
   fun count(): Long
+
+  @Query("delete from artist where date_added != :added")
+  fun removePreviousEntries(added: Long)
 }

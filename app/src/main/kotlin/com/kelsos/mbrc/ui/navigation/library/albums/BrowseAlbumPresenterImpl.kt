@@ -2,6 +2,7 @@ package com.kelsos.mbrc.ui.navigation.library.albums
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
+import android.arch.paging.DataSource
 import android.arch.paging.PagedList
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
@@ -12,6 +13,7 @@ import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.AlbumSortingStore
 import com.kelsos.mbrc.utilities.SchedulerProvider
 import com.kelsos.mbrc.utilities.paged
+import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -27,6 +29,20 @@ constructor(
 
   private lateinit var albums: LiveData<PagedList<AlbumEntity>>
 
+  private fun observeAlbums(it: DataSource.Factory<Int, AlbumEntity>) {
+
+    if (::albums.isInitialized) {
+      albums.removeObservers(this)
+    }
+
+    albums = it.paged()
+    albums.observe(this, Observer {
+      if (it != null) {
+        view().update(it)
+      }
+    })
+  }
+
   override fun attach(view: BrowseAlbumView) {
     super.attach(view)
     bus.register(this, LibraryRefreshCompleteEvent::class.java, { load() })
@@ -39,21 +55,17 @@ constructor(
 
   override fun load() {
     view().showLoading()
-    addDisposable(repository.getAlbumsSorted()
+    disposables += repository.getAlbumsSorted()
         .observeOn(schedulerProvider.main())
         .subscribeOn(schedulerProvider.io())
         .subscribe({
-          albums = it.paged()
-          albums.observe(this, Observer {
-            if (it != null) {
-              view().update(it)
-            }
-          })
+          observeAlbums(it)
           view().hideLoading()
         }) {
           Timber.v(it)
           view().hideLoading()
-        })
+        }
+
   }
 
   override fun showSorting() {
@@ -69,21 +81,16 @@ constructor(
   }
 
   private fun loadSorted(sortingSelection: Long, ascending: Boolean) {
-    addDisposable(repository.getAlbumsSorted(sortingSelection, ascending)
+    disposables += repository.getAlbumsSorted(sortingSelection, ascending)
         .observeOn(schedulerProvider.main())
         .subscribeOn(schedulerProvider.io())
         .subscribe({
-          albums = it.paged()
-          albums.observe(this, Observer {
-            if (it != null) {
-              view().update(it)
-            }
-          })
+          observeAlbums(it)
           view().hideLoading()
         }) {
           Timber.v(it)
           view().hideLoading()
-        })
+        }
   }
 
   override fun sortBy(@Sorting.Fields selection: Long) {
@@ -94,22 +101,16 @@ constructor(
 
   override fun reload() {
     view().showLoading()
-    addDisposable(repository.getAndSaveRemote()
+    disposables += repository.getAndSaveRemote()
         .observeOn(schedulerProvider.main())
         .subscribeOn(schedulerProvider.io())
         .subscribe({
-          albums = it.paged()
-          albums.observe(this, Observer {
-            if (it != null) {
-              view().update(it)
-            }
-          })
-
+          observeAlbums(it)
           view().hideLoading()
         }) {
           Timber.v(it)
           view().hideLoading()
-        })
+        }
 
   }
 }

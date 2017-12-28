@@ -23,4 +23,7 @@ interface GenreDao {
 
   @Query("select count(*) from genre")
   fun count(): Long
+
+  @Query("delete from genre where date_added != :added")
+  fun removePreviousEntries(added: Long)
 }

@@ -53,7 +53,7 @@ class LibrarySyncInteractorImpl
         return@flatMapCompletable Completable.error(ShouldNotProceedException())
       }
 
-    }.subscribeOn(schedulerProvider.io())
+    }.subscribeOn(schedulerProvider.sync())
         .observeOn(schedulerProvider.main())
         .doOnTerminate {
           onCompleteListener?.onTermination()
