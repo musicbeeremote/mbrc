@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.genreartists
 
+import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.constraint.Group
 import android.support.v7.widget.RecyclerView
@@ -65,16 +66,16 @@ class GenreArtistsActivity : BaseActivity(),
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: ArtistEntity) {
-    actionHandler.artistSelected(menuItem, entry, this)
+  override fun onMenuItemSelected(action: String, entry: ArtistEntity) {
+    actionHandler.artistSelected(action, entry, this)
   }
 
   override fun onItemClicked(artist: ArtistEntity) {
     actionHandler.artistSelected(artist, this)
   }
 
-  override fun update(data: List<ArtistEntity>) {
-   adapter.update(data)
+  override fun update(pagedList: PagedList<ArtistEntity>) {
+    adapter.setList(pagedList)
   }
 
   override fun onDestroy() {

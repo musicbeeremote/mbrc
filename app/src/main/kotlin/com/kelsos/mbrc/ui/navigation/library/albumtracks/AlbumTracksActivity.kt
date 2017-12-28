@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.albumtracks
 
+import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.constraint.Group
 import android.support.design.widget.FloatingActionButton
@@ -79,16 +80,16 @@ class AlbumTracksActivity : BaseActivity(),
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: TrackEntity) {
-    actionHandler.trackSelected(menuItem, entry, true)
+  override fun onMenuItemSelected(action: String, entry: TrackEntity) {
+    actionHandler.trackSelected(action, entry, true)
   }
 
   override fun onItemClicked(track: TrackEntity) {
     actionHandler.trackSelected(track, true)
   }
 
-  override fun update(cursor: List<TrackEntity>) {
-    adapter.update(cursor)
+  override fun update(pagedList: PagedList<TrackEntity>) {
+    adapter.setList(pagedList)
   }
 
   override fun onDestroy() {

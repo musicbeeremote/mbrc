@@ -16,6 +16,7 @@ import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.content.library.genres.GenreEntity
 import com.kelsos.mbrc.content.library.tracks.TrackEntity
+import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.Action
 import com.kelsos.mbrc.ui.SectionedRecyclerViewAdapter
 import com.kelsos.mbrc.ui.navigation.library.Search.SECTION_ALBUM
 import com.kelsos.mbrc.ui.navigation.library.Search.SECTION_ARTIST
@@ -138,28 +139,28 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
 
   private fun onContextClick(holder: SearchViewHolder, track: TrackEntity) {
     showPopup(R.menu.popup_track, holder.uiItemContextIndicator!!, { item ->
-      onSearchItemSelectedListener?.trackSelected(item, track)
+      //onSearchItemSelectedListener?.trackSelected(item, track)
       true
     })
   }
 
   private fun onContextClick(holder: SearchViewHolder, genre: GenreEntity) {
     showPopup(R.menu.popup_genre, holder.uiItemContextIndicator!!, { item ->
-      onSearchItemSelectedListener?.genreSelected(item, genre)
+      //onSearchItemSelectedListener?.genreSelected(item, genre)
       true
     })
   }
 
   private fun onContextClick(holder: SearchViewHolder, album: AlbumEntity) {
     showPopup(R.menu.popup_album, holder.uiItemContextIndicator!!, { item ->
-      onSearchItemSelectedListener?.albumSelected(item, album)
+      //onSearchItemSelectedListener?.albumSelected(item, album)
       true
     })
   }
 
   private fun onContextClick(holder: SearchViewHolder, artist: ArtistEntity) {
     showPopup(R.menu.popup_artist, holder.uiItemContextIndicator!!, { item ->
-      onSearchItemSelectedListener?.artistSelected(item, artist)
+      //onSearchItemSelectedListener?.artistSelected(item, artist)
       true
     })
   }
@@ -176,12 +177,11 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
-    val layout: Int
-    when (viewType) {
-      VIEW_TYPE_HEADER -> layout = R.layout.list_section_header
-      VIEW_TYPE_DUAL -> layout = R.layout.ui_list_dual
-      VIEW_TYPE_SINGLE -> layout = R.layout.listitem_single
-      else -> layout = R.layout.listitem_single
+    val layout: Int = when (viewType) {
+      VIEW_TYPE_HEADER -> R.layout.list_section_header
+      VIEW_TYPE_DUAL -> R.layout.ui_list_dual
+      VIEW_TYPE_SINGLE -> R.layout.listitem_single
+      else -> R.layout.listitem_single
     }
     val view = inflater.inflate(layout, parent, false)
     return SearchViewHolder(view)
@@ -199,19 +199,19 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
   }
 
   interface OnSearchItemSelected {
-    fun albumSelected(item: MenuItem, album: AlbumEntity)
+    fun albumSelected(@Action action: String, album: AlbumEntity)
 
     fun albumSelected(album: AlbumEntity)
 
-    fun artistSelected(item: MenuItem, artist: ArtistEntity)
+    fun artistSelected(@Action action: String, artist: ArtistEntity)
 
     fun artistSelected(artist: ArtistEntity)
 
-    fun genreSelected(item: MenuItem, genre: GenreEntity)
+    fun genreSelected(@Action action: String, genre: GenreEntity)
 
     fun genreSelected(genre: GenreEntity)
 
-    fun trackSelected(item: MenuItem, track: TrackEntity)
+    fun trackSelected(@Action action: String, track: TrackEntity)
 
     fun trackSelected(track: TrackEntity)
   }

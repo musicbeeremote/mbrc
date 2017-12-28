@@ -7,4 +7,5 @@ interface SchedulerProvider {
   fun main(): Scheduler
   fun computation(): Scheduler
   fun db() : Scheduler
+  fun sync(): Scheduler
 }

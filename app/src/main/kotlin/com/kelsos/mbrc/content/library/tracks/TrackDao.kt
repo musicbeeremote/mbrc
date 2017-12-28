@@ -14,10 +14,10 @@ interface TrackDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun insertAll(list: List<TrackEntity>)
 
-  @Query("select * from track")
+  @Query("select * from track order by album_artist asc, album asc, disc asc, trackno asc")
   fun getAll(): DataSource.Factory<Int, TrackEntity>
 
-  @Query("select * from track where '%' || :term ||'%'")
+  @Query("select * from track where '%' || :term ||'%' order by album_artist asc, album asc, disc asc, trackno asc")
   fun search(term: String): DataSource.Factory<Int, TrackEntity>
 
   @Query("select * from track where album = :album and album_artist = :artist order by album_artist asc, album asc, disc asc, trackno asc")

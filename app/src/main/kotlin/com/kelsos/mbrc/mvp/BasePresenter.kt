@@ -16,6 +16,9 @@ open class BasePresenter<T : BaseView> : Presenter<T>, LifecycleOwner {
 
   private val compositeDisposable = CompositeDisposable()
 
+  protected val disposables: CompositeDisposable
+    get() = compositeDisposable
+
   override val isAttached: Boolean
     get() = view != null
 

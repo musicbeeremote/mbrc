@@ -81,32 +81,32 @@ class SearchResultsActivity : BaseActivity(),
     else -> super.onOptionsItemSelected(item)
   }
 
-  override fun albumSelected(item: MenuItem, album: AlbumEntity) {
-    actionHandler.albumSelected(item, album, this)
+  override fun albumSelected(action: String, album: AlbumEntity) {
+    actionHandler.albumSelected(action, album, this)
   }
 
   override fun albumSelected(album: AlbumEntity) {
     actionHandler.albumSelected(album, this)
   }
 
-  override fun artistSelected(item: MenuItem, artist: ArtistEntity) {
-    actionHandler.artistSelected(item, artist, this)
+  override fun artistSelected(action: String, artist: ArtistEntity) {
+    actionHandler.artistSelected(action, artist, this)
   }
 
   override fun artistSelected(artist: ArtistEntity) {
     actionHandler.artistSelected(artist, this)
   }
 
-  override fun genreSelected(item: MenuItem, genre: GenreEntity) {
-    actionHandler.genreSelected(item, genre, this)
+  override fun genreSelected(action: String, genre: GenreEntity) {
+    actionHandler.genreSelected(action, genre, this)
   }
 
   override fun genreSelected(genre: GenreEntity) {
     actionHandler.genreSelected(genre, this)
   }
 
-  override fun trackSelected(item: MenuItem, track: TrackEntity) {
-    actionHandler.trackSelected(item, track)
+  override fun trackSelected(action: String, track: TrackEntity) {
+    actionHandler.trackSelected(action, track)
   }
 
   override fun trackSelected(track: TrackEntity) {

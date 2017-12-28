@@ -69,8 +69,8 @@ class ArtistAlbumsActivity : BaseActivity(),
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: AlbumEntity) {
-    actionHandler.albumSelected(menuItem, entry, this)
+  override fun onMenuItemSelected(action: String, entry: AlbumEntity) {
+    actionHandler.albumSelected(action, entry, this)
   }
 
   override fun onItemClicked(album: AlbumEntity) {
