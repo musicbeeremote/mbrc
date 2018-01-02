@@ -2,8 +2,6 @@ package com.kelsos.mbrc.ui.navigation.library.artists
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
-import android.arch.paging.DataSource
-import android.arch.paging.PagedList
 import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
@@ -12,7 +10,6 @@ import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.ui.navigation.library.ArtistTabRefreshEvent
 import com.kelsos.mbrc.utilities.SchedulerProvider
-import com.kelsos.mbrc.utilities.paged
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -26,7 +23,7 @@ constructor(
 ) : BasePresenter<BrowseArtistView>(),
     BrowseArtistPresenter {
 
-  private lateinit var artists: LiveData<PagedList<ArtistEntity>>
+  private lateinit var artists: LiveData<List<ArtistEntity>>
 
   override fun attach(view: BrowseArtistView) {
     super.attach(view)
@@ -60,12 +57,12 @@ constructor(
 
   }
 
-  private fun onArtistsLoaded(it: DataSource.Factory<Int, ArtistEntity>) {
+  private fun onArtistsLoaded(it: LiveData<List<ArtistEntity>>) {
     if (::artists.isInitialized) {
       artists.removeObservers(this)
     }
 
-    artists = it.paged()
+    artists = it
     artists.observe(this, Observer {
       if (it != null) {
         view().update(it)

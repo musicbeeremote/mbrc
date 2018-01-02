@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.content.library.genres
 
-import android.arch.paging.DataSource
+import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
@@ -16,10 +16,10 @@ interface GenreDao {
   fun saveAll(list: List<GenreEntity>)
 
   @Query("select * from genre order by genre")
-  fun getAll(): DataSource.Factory<Int, GenreEntity>
+  fun getAll(): LiveData<List<GenreEntity>>
 
   @Query("select * from genre where genre like '%' || :term || '%' order by genre")
-  fun search(term: String): DataSource.Factory<Int, GenreEntity>
+  fun search(term: String): LiveData<List<GenreEntity>>
 
   @Query("select count(*) from genre")
   fun count(): Long

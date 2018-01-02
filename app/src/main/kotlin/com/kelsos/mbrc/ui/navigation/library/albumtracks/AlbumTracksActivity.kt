@@ -88,7 +88,7 @@ class AlbumTracksActivity : BaseActivity(),
     actionHandler.trackSelected(track, true)
   }
 
-  override fun update(pagedList: PagedList<TrackEntity>) {
+  override fun update(pagedList: List<TrackEntity>) {
     adapter.setList(pagedList)
   }
 

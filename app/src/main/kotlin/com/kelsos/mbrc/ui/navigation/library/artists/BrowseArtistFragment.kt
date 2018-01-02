@@ -102,7 +102,7 @@ class BrowseArtistFragment : Fragment(),
     presenter.reload()
   }
 
-  override fun update(pagedList: PagedList<ArtistEntity>) {
+  override fun update(pagedList: List<ArtistEntity>) {
     if (pagedList.isEmpty()) {
       emptyView.show()
     } else {

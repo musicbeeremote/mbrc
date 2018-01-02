@@ -6,7 +6,7 @@ import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 
 interface BrowseTrackView : BaseView {
-  fun update(pagedList: PagedList<TrackEntity>)
+  fun update(pagedList: List<TrackEntity>)
   fun failure(it: Throwable)
   fun hideLoading()
   fun showLoading()

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.content.library.artists
 
-import android.arch.paging.DataSource
+import android.arch.lifecycle.LiveData
 import com.kelsos.mbrc.utilities.epoch
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -15,15 +15,15 @@ constructor(
 
   private val mapper = ArtistDtoMapper()
 
-  override fun getArtistByGenre(genre: String): Single<DataSource.Factory<Int, ArtistEntity>> {
+  override fun getArtistByGenre(genre: String): Single<LiveData<List<ArtistEntity>>> {
     return Single.just(dao.getArtistByGenre(genre))
   }
 
-  override fun getAll(): Single<DataSource.Factory<Int, ArtistEntity>> {
+  override fun getAll(): Single<LiveData<List<ArtistEntity>>> {
     return Single.just(dao.getAll())
   }
 
-  override fun getAndSaveRemote(): Single<DataSource.Factory<Int, ArtistEntity>> {
+  override fun getAndSaveRemote(): Single<LiveData<List<ArtistEntity>>> {
     return getRemote().andThen(getAll())
   }
 
@@ -36,15 +36,15 @@ constructor(
     }.ignoreElements()
   }
 
-  override fun search(term: String): Single<DataSource.Factory<Int, ArtistEntity>> {
+  override fun search(term: String): Single<LiveData<List<ArtistEntity>>> {
     return Single.just(dao.search(term))
   }
 
-  override fun getAlbumArtistsOnly(): Single<DataSource.Factory<Int, ArtistEntity>> {
+  override fun getAlbumArtistsOnly(): Single<LiveData<List<ArtistEntity>>> {
     return Single.just(dao.getAlbumArtists())
   }
 
-  override fun getAllRemoteAndShowAlbumArtist(): Single<DataSource.Factory<Int, ArtistEntity>> {
+  override fun getAllRemoteAndShowAlbumArtist(): Single<LiveData<List<ArtistEntity>>> {
     return getRemote().andThen(getAlbumArtistsOnly())
   }
 

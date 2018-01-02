@@ -63,7 +63,7 @@ class BrowseGenreFragment : Fragment(),
     presenter.detach()
   }
 
-  override fun update(pagedList: PagedList<GenreEntity>) {
+  override fun update(pagedList: List<GenreEntity>) {
     swipeLayout.isRefreshing = false
     adapter.setList(pagedList)
   }

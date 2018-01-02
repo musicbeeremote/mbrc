@@ -2,8 +2,6 @@ package com.kelsos.mbrc.ui.navigation.playlists
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
-import android.arch.paging.DataSource
-import android.arch.paging.PagedList
 import com.kelsos.mbrc.content.playlists.PlaylistEntity
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.events.UserAction
@@ -11,7 +9,6 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.SchedulerProvider
-import com.kelsos.mbrc.utilities.paged
 import javax.inject.Inject
 
 class PlaylistPresenterImpl
@@ -23,7 +20,7 @@ constructor(
 ) : BasePresenter<PlaylistView>(),
     PlaylistPresenter {
 
-  private lateinit var playlists: LiveData<PagedList<PlaylistEntity>>
+  private lateinit var playlists: LiveData<List<PlaylistEntity>>
 
   override fun load() {
     view().showLoading()
@@ -39,8 +36,8 @@ constructor(
         })
   }
 
-  private fun onPlaylistsLoad(it: DataSource.Factory<Int, PlaylistEntity>) {
-    playlists = it.paged()
+  private fun onPlaylistsLoad(it: LiveData<List<PlaylistEntity>>) {
+    playlists = it
     playlists.observe(this, Observer {
       if (it != null) {
         view().update(it)

@@ -36,7 +36,7 @@ class RadioPresenterImplTest {
   @Mock private lateinit var radioView: RadioView
   @Mock private lateinit var radioRepository: RadioRepository
   @Mock private lateinit var queueApi: QueueApi
-  @Mock private lateinit var result: DataSource.Factory<Int, RadioStationEntity>
+  @Mock private lateinit var result: LiveData<List<RadioStationEntity>>
 
   private lateinit var presenter: RadioPresenter
 

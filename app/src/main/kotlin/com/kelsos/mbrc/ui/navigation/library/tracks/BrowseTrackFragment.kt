@@ -73,7 +73,7 @@ class BrowseTrackFragment : Fragment(),
     presenter.load()
   }
 
-  override fun update(pagedList: PagedList<TrackEntity>) {
+  override fun update(pagedList: List<TrackEntity>) {
     adapter.setList(pagedList)
     swipeLayout.isRefreshing = false
   }

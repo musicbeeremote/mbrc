@@ -6,7 +6,7 @@ import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 
 interface BrowseArtistView : BaseView {
-  fun update(pagedList: PagedList<ArtistEntity>)
+  fun update(pagedList: List<ArtistEntity>)
   fun failure(throwable: Throwable)
   fun hideLoading()
 }

@@ -11,7 +11,7 @@ interface BrowseGenrePresenter : Presenter<BrowseGenreView> {
 }
 
 interface BrowseGenreView : BaseView {
-  fun update(pagedList: PagedList<GenreEntity>)
+  fun update(pagedList: List<GenreEntity>)
   fun failure(it: Throwable)
   fun hideLoading()
   fun showLoading()
