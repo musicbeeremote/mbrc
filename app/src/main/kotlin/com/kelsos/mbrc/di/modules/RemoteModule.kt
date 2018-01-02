@@ -69,6 +69,7 @@ import com.kelsos.mbrc.preferences.ClientInformationStore
 import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.preferences.SettingsManagerImpl
+import com.kelsos.mbrc.ui.navigation.library.SyncProgressProvider
 import com.kelsos.mbrc.utilities.SchedulerProvider
 import com.kelsos.mbrc.utilities.SchedulerProviderImpl
 import toothpick.config.Binding
@@ -123,6 +124,8 @@ class RemoteModule : Module() {
     bind(VolumeInteractor::class).to(VolumeInteractorImpl::class).singletonInScope()
     bind(OutputApi::class).to(OutputApiImpl::class).singletonInScope()
     bind(AlbumSortingStore::class).to(AlbumSortingStoreImpl::class)
+
+    bind(SyncProgressProvider::class).toInstance(SyncProgressProvider())
   }
 }
 
