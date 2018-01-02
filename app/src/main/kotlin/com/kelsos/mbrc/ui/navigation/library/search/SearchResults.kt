@@ -8,10 +8,10 @@ import com.kelsos.mbrc.content.library.genres.GenreEntity
 import com.kelsos.mbrc.content.library.tracks.TrackEntity
 
 data class SearchResults(
-    var genreList: LiveData<PagedList<GenreEntity>>,
-    var artistList: LiveData<PagedList<ArtistEntity>>,
-    var albumList: LiveData<PagedList<AlbumEntity>>,
-    var trackList: LiveData<PagedList<TrackEntity>>
+    var genreList: LiveData<List<GenreEntity>>,
+    var artistList: LiveData<List<ArtistEntity>>,
+    var albumList: LiveData<List<AlbumEntity>>,
+    var trackList: LiveData<List<TrackEntity>>
 ) {
   fun empty(): Boolean {
     val noGenres = genreList.value?.isEmpty() ?: true

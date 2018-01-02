@@ -2,12 +2,10 @@ package com.kelsos.mbrc.ui.navigation.library.albumtracks
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
-import android.arch.paging.PagedList
 import com.kelsos.mbrc.content.library.albums.AlbumInfo
 import com.kelsos.mbrc.content.library.tracks.TrackEntity
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.utilities.paged
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -18,7 +16,7 @@ constructor(
 ) : BasePresenter<AlbumTracksView>(),
     AlbumTracksPresenter {
 
-  private lateinit var tracks: LiveData<PagedList<TrackEntity>>
+  private lateinit var tracks: LiveData<List<TrackEntity>>
 
   override fun load(album: AlbumInfo) {
     val request = if (album.album.isEmpty()) {
@@ -28,7 +26,7 @@ constructor(
     }
 
     addDisposable(request.subscribe({
-      tracks = it.paged()
+      tracks = it
       tracks.observe(this, Observer {
         if (it != null) {
           view().update(it)

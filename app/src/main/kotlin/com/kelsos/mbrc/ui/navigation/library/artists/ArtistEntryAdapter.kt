@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.navigation.library.artists
 
-import android.arch.paging.PagedListAdapter
 import android.support.v7.recyclerview.extensions.DiffCallback
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -12,6 +11,7 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.Action
+import com.kelsos.mbrc.ui.navigation.library.BaseMediaAdapter
 import com.kelsos.mbrc.ui.navigation.library.popup
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 import com.kelsos.mbrc.utilities.Checks.ifNotNull
@@ -19,7 +19,7 @@ import kotterknife.bindView
 import javax.inject.Inject
 
 class ArtistEntryAdapter
-@Inject constructor() : PagedListAdapter<ArtistEntity, ArtistEntryAdapter.ViewHolder>(DIFF_CALLBACK), BubbleTextGetter {
+@Inject constructor() : BaseMediaAdapter<ArtistEntity, ArtistEntryAdapter.ViewHolder>(), BubbleTextGetter {
 
   private var listener: MenuItemSelectedListener? = null
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->

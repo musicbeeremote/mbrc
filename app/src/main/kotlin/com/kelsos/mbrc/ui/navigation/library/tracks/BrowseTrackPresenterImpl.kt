@@ -2,15 +2,12 @@ package com.kelsos.mbrc.ui.navigation.library.tracks
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
-import android.arch.paging.DataSource
-import android.arch.paging.PagedList
 import com.kelsos.mbrc.content.library.tracks.TrackEntity
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.utilities.SchedulerProvider
-import com.kelsos.mbrc.utilities.paged
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -23,7 +20,7 @@ constructor(
 ) : BasePresenter<BrowseTrackView>(),
     BrowseTrackPresenter {
 
-  private lateinit var tracks: LiveData<PagedList<TrackEntity>>
+  private lateinit var tracks: LiveData<List<TrackEntity>>
 
   override fun attach(view: BrowseTrackView) {
     super.attach(view)
@@ -50,12 +47,12 @@ constructor(
         }))
   }
 
-  private fun onTrackLoad(it: DataSource.Factory<Int, TrackEntity>) {
+  private fun onTrackLoad(it: LiveData<List<TrackEntity>>) {
     if (::tracks.isInitialized) {
       tracks.removeObservers(this)
     }
 
-    tracks = it.paged()
+    tracks = it
     tracks.observe(this, Observer {
       if (it != null) {
         view().update(it)

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.search
 
-import android.arch.paging.DataSource
+import android.arch.lifecycle.LiveData
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.library.artists.ArtistEntity
@@ -11,7 +11,6 @@ import com.kelsos.mbrc.content.library.tracks.TrackEntity
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.utilities.SchedulerProvider
-import com.kelsos.mbrc.utilities.paged
 import io.reactivex.Single
 import io.reactivex.functions.Function4
 import timber.log.Timber
@@ -33,17 +32,12 @@ constructor(
         artistRepository.search(term),
         albumRepository.search(term),
         trackRepository.search(term),
-        Function4 { genreList: DataSource.Factory<Int, GenreEntity>,
-                    artistList: DataSource.Factory<Int, ArtistEntity>,
-                    albumList: DataSource.Factory<Int, AlbumEntity>,
-                    trackList: DataSource.Factory<Int, TrackEntity> ->
+        Function4 { genreList: LiveData<List<GenreEntity>>,
+                    artistList: LiveData<List<ArtistEntity>>,
+                    albumList: LiveData<List<AlbumEntity>>,
+                    trackList: LiveData<List<TrackEntity>> ->
 
-          val genres = genreList.paged()
-          val artists = artistList.paged()
-          val albums = albumList.paged()
-          val tracks = trackList.paged()
-
-          SearchResults(genres, artists, albums, tracks)
+          SearchResults(genreList, artistList, albumList, trackList)
         })
         .subscribeOn(schedulerProvider.io())
         .observeOn(schedulerProvider.main())

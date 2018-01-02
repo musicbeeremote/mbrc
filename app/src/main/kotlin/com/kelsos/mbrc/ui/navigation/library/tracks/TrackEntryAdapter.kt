@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.navigation.library.tracks
 
-import android.arch.paging.PagedListAdapter
 import android.support.v7.recyclerview.extensions.DiffCallback
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -13,6 +12,7 @@ import com.kelsos.mbrc.content.library.tracks.TrackEntity
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.Action
 import com.kelsos.mbrc.extensions.string
+import com.kelsos.mbrc.ui.navigation.library.BaseMediaAdapter
 import com.kelsos.mbrc.ui.navigation.library.popup
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 import com.kelsos.mbrc.utilities.Checks.ifNotNull
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 class TrackEntryAdapter
 @Inject
-constructor() : PagedListAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(DIFF_CALLBACK), BubbleTextGetter {
+constructor() : BaseMediaAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(), BubbleTextGetter {
 
   private var listener: MenuItemSelectedListener? = null
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->

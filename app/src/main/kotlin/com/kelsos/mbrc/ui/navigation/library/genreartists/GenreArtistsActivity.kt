@@ -74,7 +74,7 @@ class GenreArtistsActivity : BaseActivity(),
     actionHandler.artistSelected(artist, this)
   }
 
-  override fun update(pagedList: PagedList<ArtistEntity>) {
+  override fun update(pagedList: List<ArtistEntity>) {
     adapter.setList(pagedList)
   }
 

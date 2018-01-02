@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.content.nowplaying
 
-import android.arch.paging.DataSource
+import android.arch.lifecycle.LiveData
 import com.kelsos.mbrc.utilities.epoch
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -15,11 +15,11 @@ constructor(
 
   private val mapper = NowPlayingDtoMapper()
 
-  override fun getAll(): Single<DataSource.Factory<Int, NowPlayingEntity>> {
+  override fun getAll(): Single<LiveData<List<NowPlayingEntity>>> {
     return Single.just(dao.getAll())
   }
 
-  override fun getAndSaveRemote(): Single<DataSource.Factory<Int, NowPlayingEntity>> {
+  override fun getAndSaveRemote(): Single<LiveData<List<NowPlayingEntity>>> {
     return getRemote().andThen(getAll())
   }
 
@@ -33,7 +33,7 @@ constructor(
     }.ignoreElements()
   }
 
-  override fun search(term: String): Single<DataSource.Factory<Int, NowPlayingEntity>> {
+  override fun search(term: String): Single<LiveData<List<NowPlayingEntity>>> {
     return Single.just(dao.search(term))
   }
 
