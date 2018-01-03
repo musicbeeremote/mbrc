@@ -10,6 +10,7 @@ import com.kelsos.mbrc.utilities.SchedulerProvider
 import timber.log.Timber
 import javax.inject.Inject
 
+@LibraryActivity.Presenter
 class LibraryPresenterImpl
 @Inject constructor(
     private val schedulerProvider: SchedulerProvider,
@@ -26,6 +27,7 @@ class LibraryPresenterImpl
       }
 
       Timber.v("progress $it")
+      view().updateSyncProgress(it)
     })
   }
 

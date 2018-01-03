@@ -16,11 +16,11 @@ constructor(
   private val mapper = ArtistDtoMapper()
 
   override fun getArtistByGenre(genre: String): Single<LiveData<List<ArtistEntity>>> {
-    return Single.just(dao.getArtistByGenre(genre))
+    return Single.fromCallable { dao.getArtistByGenre(genre) }
   }
 
   override fun getAll(): Single<LiveData<List<ArtistEntity>>> {
-    return Single.just(dao.getAll())
+    return Single.fromCallable { dao.getAll() }
   }
 
   override fun getAndSaveRemote(): Single<LiveData<List<ArtistEntity>>> {
@@ -37,11 +37,11 @@ constructor(
   }
 
   override fun search(term: String): Single<LiveData<List<ArtistEntity>>> {
-    return Single.just(dao.search(term))
+    return Single.fromCallable { dao.search(term) }
   }
 
   override fun getAlbumArtistsOnly(): Single<LiveData<List<ArtistEntity>>> {
-    return Single.just(dao.getAlbumArtists())
+    return Single.fromCallable { dao.getAlbumArtists() }
   }
 
   override fun getAllRemoteAndShowAlbumArtist(): Single<LiveData<List<ArtistEntity>>> {
@@ -49,6 +49,6 @@ constructor(
   }
 
   override fun cacheIsEmpty(): Single<Boolean> {
-    return Single.just(dao.count() == 0L)
+    return Single.fromCallable { dao.count() == 0L }
   }
 }

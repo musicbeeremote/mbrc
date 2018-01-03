@@ -206,4 +206,9 @@
   <string name="sorting_dialog__descending">Descending</string>
   <string name="notification__session_channel_name">MBRC Session</string>
   <string name="notification__session_channel_description">Displays the playing information of the track and allows control.</string>
+
+  <string name="library_sync__genres_progress">%d of %d Genres</string>
+  <string name="library_sync__artists_progress">%d of %d Artists</string>
+  <string name="library_sync__albums_progress">%d of %d Albums</string>
+  <string name="library_sync__tracks_progress">%d of %d Tracks</string>
 </resources>

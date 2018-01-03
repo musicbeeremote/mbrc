@@ -7,10 +7,12 @@ import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 
 interface BrowseAlbumView : BaseView {
-  fun update(pagedList: List<AlbumEntity>)
+  fun update(list: List<AlbumEntity>)
+
   fun failure(throwable: Throwable)
+
   fun hideLoading()
-  fun showLoading()
+
   fun showSorting(@Order order: Long, @Fields selection: Long)
 }
 

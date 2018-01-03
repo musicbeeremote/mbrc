@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.navigation.library.tracks
 
-import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.constraint.Group
 import android.support.design.widget.Snackbar
@@ -11,13 +10,15 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.TrackEntity
 import com.kelsos.mbrc.extensions.fail
+import com.kelsos.mbrc.extensions.gone
+import com.kelsos.mbrc.extensions.hide
 import com.kelsos.mbrc.extensions.initLinear
+import com.kelsos.mbrc.extensions.show
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
@@ -36,8 +37,6 @@ class BrowseTrackFragment : Fragment(),
 
   private val emptyView: Group by bindView(R.id.library_browser__empty_group)
   private val emptyViewTitle: TextView by bindView(R.id.library_browser__text_title)
-  private val emptyViewIcon: ImageView by bindView(R.id.library_browser__empty_icon)
-  private val emptyViewSubTitle: TextView by bindView(R.id.library_browser__text_subtitle)
   private val emptyViewProgress: ProgressBar by bindView(R.id.library_browser__loading_bar)
 
   @Inject lateinit var adapter: TrackEntryAdapter
@@ -50,7 +49,7 @@ class BrowseTrackFragment : Fragment(),
 
   override fun onCreate(savedInstanceState: Bundle?) {
     val activity = activity ?: fail("null activity")
-    val scope = Toothpick.openScopes(activity.application, activity, this)
+    val scope = Toothpick.openScopes(activity.application, this)
     scope.installModules(BrowseTrackModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
@@ -73,9 +72,14 @@ class BrowseTrackFragment : Fragment(),
     presenter.load()
   }
 
-  override fun update(pagedList: List<TrackEntity>) {
-    adapter.setList(pagedList)
-    swipeLayout.isRefreshing = false
+  override fun update(list: List<TrackEntity>) {
+    if (list.isEmpty()) {
+      emptyView.show()
+    } else {
+      emptyView.hide()
+    }
+    adapter.setList(list)
+
   }
 
   override fun onMenuItemSelected(action: String, entry: TrackEntity) {
@@ -99,18 +103,8 @@ class BrowseTrackFragment : Fragment(),
     Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
   }
 
-  override fun showLoading() {
-    emptyViewProgress.visibility = View.VISIBLE
-    emptyViewIcon.visibility = View.GONE
-    emptyViewTitle.visibility = View.GONE
-    emptyViewSubTitle.visibility = View.GONE
-  }
-
   override fun hideLoading() {
-    emptyViewProgress.visibility = View.GONE
-    emptyViewIcon.visibility = View.VISIBLE
-    emptyViewTitle.visibility = View.VISIBLE
-    emptyViewSubTitle.visibility = View.VISIBLE
+    emptyViewProgress.gone()
     swipeLayout.isRefreshing = false
   }
 

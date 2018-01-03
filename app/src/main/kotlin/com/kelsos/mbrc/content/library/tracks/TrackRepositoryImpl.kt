@@ -17,15 +17,15 @@ class TrackRepositoryImpl
   private val mapper = TrackDtoMapper()
 
   override fun getAll(): Single<LiveData<List<TrackEntity>>> {
-    return Single.just(dao.getAll())
+    return Single.fromCallable { dao.getAll() }
   }
 
   override fun getAlbumTracks(album: String, artist: String): Single<LiveData<List<TrackEntity>>> {
-    return Single.just(dao.getAlbumTracks(album, artist))
+    return Single.fromCallable { dao.getAlbumTracks(album, artist) }
   }
 
   override fun getNonAlbumTracks(artist: String): Single<LiveData<List<TrackEntity>>> {
-    return Single.just(dao.getNonAlbumTracks(artist))
+    return Single.fromCallable { dao.getNonAlbumTracks(artist) }
   }
 
   override fun getAndSaveRemote(): Single<LiveData<List<TrackEntity>>> {
@@ -45,26 +45,26 @@ class TrackRepositoryImpl
   }
 
   override fun search(term: String): Single<LiveData<List<TrackEntity>>> {
-    return Single.just(dao.search(term))
+    return Single.fromCallable { dao.search(term) }
   }
 
   override fun getGenreTrackPaths(genre: String): Single<List<String>> {
-    return Single.just(dao.getGenreTrackPaths(genre))
+    return Single.fromCallable { dao.getGenreTrackPaths(genre) }
   }
 
   override fun getArtistTrackPaths(artist: String): Single<List<String>> {
-    return Single.just(dao.getArtistTrackPaths(artist))
+    return Single.fromCallable { dao.getArtistTrackPaths(artist) }
   }
 
   override fun getAlbumTrackPaths(album: String, artist: String): Single<List<String>> {
-    return Single.just(dao.getAlbumTrackPaths(album, artist))
+    return Single.fromCallable { dao.getAlbumTrackPaths(album, artist) }
   }
 
   override fun getAllTrackPaths(): Single<List<String>> {
-    return Single.just(dao.getAllTrackPaths())
+    return Single.fromCallable { dao.getAllTrackPaths() }
   }
 
   override fun cacheIsEmpty(): Single<Boolean> {
-    return Single.just(dao.count() == 0L)
+    return Single.fromCallable { dao.count() == 0L }
   }
 }

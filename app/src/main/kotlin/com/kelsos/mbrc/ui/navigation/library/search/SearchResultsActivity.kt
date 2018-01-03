@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library.search
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.constraint.Group
 import android.support.v7.widget.LinearLayoutManager
@@ -115,5 +117,11 @@ class SearchResultsActivity : BaseActivity(),
 
   companion object {
     val QUERY = "com.kelsos.mbrc.extras.QUERY"
+
+    fun start(context: Context, queryString: String) {
+      val searchIntent = Intent(context, SearchResultsActivity::class.java)
+      searchIntent.putExtra(SearchResultsActivity.QUERY, queryString)
+      context.startActivity(searchIntent)
+    }
   }
 }

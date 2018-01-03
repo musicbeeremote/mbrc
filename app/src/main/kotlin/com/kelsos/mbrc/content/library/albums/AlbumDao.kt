@@ -22,7 +22,10 @@ interface AlbumDao {
   @Query("select count(*) from album")
   fun count(): Long
 
-  @Query("select album.album, album.artist, album.id, album.date_added from album " +
+  @Query("delete from album where date_added != :added")
+  fun removePreviousEntries(added: Long)
+
+  @Query("select distinct album.album, album.artist, album.id, album.date_added from album " +
       "inner join track on track.album = album.album and track.album_artist = album.artist " +
       "where track.artist = :artist or track.album_artist = :artist " +
       "order by album.artist asc, album.album asc")

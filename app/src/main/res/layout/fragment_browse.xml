@@ -101,6 +101,7 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:visibility="gone"
+      tools:visibility="visible"
       app:constraint_referenced_ids="library_browser__text_title,library_browser__text_subtitle,library_browser__empty_icon" />
 
 </android.support.constraint.ConstraintLayout>

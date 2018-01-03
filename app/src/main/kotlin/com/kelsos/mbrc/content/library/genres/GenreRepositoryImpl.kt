@@ -16,7 +16,7 @@ constructor(
   private val mapper = GenreDtoMapper()
 
   override fun getAll(): Single<LiveData<List<GenreEntity>>> {
-    return Single.just(dao.getAll())
+    return Single.fromCallable { dao.getAll() }
   }
 
   override fun getAndSaveRemote(): Single<LiveData<List<GenreEntity>>> {
@@ -33,8 +33,8 @@ constructor(
   }
 
   override fun search(term: String): Single<LiveData<List<GenreEntity>>> {
-    return Single.just(dao.search(term))
+    return Single.fromCallable { dao.search(term) }
   }
 
-  override fun cacheIsEmpty(): Single<Boolean> = Single.just(dao.count() == 0L)
+  override fun cacheIsEmpty(): Single<Boolean> = Single.fromCallable { dao.count() == 0L }
 }

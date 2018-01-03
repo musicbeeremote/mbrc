@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.navigation.library.artists
 
-import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.constraint.Group
 import android.support.design.widget.Snackbar
@@ -48,7 +47,7 @@ class BrowseArtistFragment : Fragment(),
 
   override fun onCreate(savedInstanceState: Bundle?) {
     val activity = activity ?: fail("null activity")
-    scope = Toothpick.openScopes(activity.application, activity, this)
+    scope = Toothpick.openScopes(activity.application, this)
     scope?.installModules(BrowseArtistModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)

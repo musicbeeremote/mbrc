@@ -15,7 +15,7 @@ constructor(
   private val mapper = RadioDtoMapper()
 
   override fun getAll(): Single<LiveData<List<RadioStationEntity>>> {
-    return Single.just(dao.getAll())
+    return Single.fromCallable { dao.getAll() }
   }
 
   override fun getAndSaveRemote(): Single<LiveData<List<RadioStationEntity>>> {
@@ -32,10 +32,10 @@ constructor(
   }
 
   override fun search(term: String): Single<LiveData<List<RadioStationEntity>>> {
-    return Single.just(dao.search(term))
+    return Single.fromCallable { dao.search(term) }
   }
 
   override fun cacheIsEmpty(): Single<Boolean> {
-    return Single.just(dao.count() == 0L)
+    return Single.fromCallable { dao.count() == 0L }
   }
 }
