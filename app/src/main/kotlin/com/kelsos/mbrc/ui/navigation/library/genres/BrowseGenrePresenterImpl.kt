@@ -33,7 +33,7 @@ constructor(
   }
 
   override fun load() {
-    view().showLoading()
+
     addDisposable(repository.getAll()
         .observeOn(schedulerProvider.main())
         .subscribeOn(schedulerProvider.io())
@@ -61,7 +61,6 @@ constructor(
   }
 
   override fun reload() {
-    view().showLoading()
     addDisposable(repository.getAndSaveRemote()
         .observeOn(schedulerProvider.main())
         .subscribeOn(schedulerProvider.io())

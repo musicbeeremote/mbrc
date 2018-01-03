@@ -51,7 +51,6 @@ constructor(
   }
 
   override fun load() {
-    view().showLoading()
     disposables += repository.getAlbumsSorted()
         .observeOn(schedulerProvider.main())
         .subscribeOn(schedulerProvider.io())
@@ -97,7 +96,6 @@ constructor(
   }
 
   override fun reload() {
-    view().showLoading()
     disposables += repository.getAndSaveRemote()
         .observeOn(schedulerProvider.main())
         .subscribeOn(schedulerProvider.io())

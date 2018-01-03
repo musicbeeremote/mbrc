@@ -1,15 +1,12 @@
 package com.kelsos.mbrc.ui.navigation.library
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v4.view.ViewPager.OnPageChangeListener
-import android.support.v7.app.AlertDialog
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.SearchView.OnQueryTextListener
-import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import com.kelsos.mbrc.R
@@ -37,15 +34,13 @@ class LibraryActivity : BaseNavigationActivity(),
   private lateinit var scope: Scope
   @Inject lateinit var presenter: LibraryPresenter
 
-  private var refreshDialog: AlertDialog? = null
+  private var refreshDialog: SyncProgressDialog? = null
 
   override fun onQueryTextSubmit(query: String): Boolean {
-    if (!TextUtils.isEmpty(query) && query.trim { it <= ' ' }.isNotEmpty()) {
+    if (!query.isEmpty() && query.trim { it <= ' ' }.isNotEmpty()) {
       closeSearch()
 
-      val searchIntent = Intent(this, SearchResultsActivity::class.java)
-      searchIntent.putExtra(SearchResultsActivity.QUERY, query.trim { it <= ' ' })
-      startActivity(searchIntent)
+      SearchResultsActivity.start(this, query.trim { it <= ' ' })
     }
 
     return true
@@ -70,8 +65,9 @@ class LibraryActivity : BaseNavigationActivity(),
   }
 
   public override fun onCreate(savedInstanceState: Bundle?) {
-    scope = Toothpick.openScopes(application, this)
-    scope.installModules(SmoothieActivityModule(this), LibraryModule())
+    Toothpick.openScope(PRESENTER_SCOPE).installModules(LibraryModule())
+    scope = Toothpick.openScopes(application, PRESENTER_SCOPE, this)
+    scope.installModules(SmoothieActivityModule(this))
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_library)
@@ -121,6 +117,10 @@ class LibraryActivity : BaseNavigationActivity(),
     presenter.detach()
     pagerAdapter = null
     Toothpick.closeScope(this)
+
+    if (isFinishing) {
+      Toothpick.closeScope(PRESENTER_SCOPE)
+    }
     super.onDestroy()
   }
 
@@ -165,19 +165,24 @@ class LibraryActivity : BaseNavigationActivity(),
   }
 
   override fun showRefreshing() {
-    refreshDialog = AlertDialog.Builder(this)
-        .setView(R.layout.dialog__syncing_library)
-        .setCancelable(false)
-        .create()
-
+    refreshDialog = syncDialog()
     refreshDialog?.show()
+  }
+
+  override fun updateSyncProgress(progress: SyncProgress) {
+    refreshDialog?.updateProgress(progress)
   }
 
   override fun hideRefreshing() {
     refreshDialog?.dismiss()
   }
 
+  @javax.inject.Scope
+  @Retention(AnnotationRetention.RUNTIME)
+  annotation class Presenter
+
   companion object {
     private val PAGER_POSITION = "com.kelsos.mbrc.ui.activities.nav.PAGER_POSITION"
+    private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
   }
 }
