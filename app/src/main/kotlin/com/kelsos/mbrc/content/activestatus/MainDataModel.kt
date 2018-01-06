@@ -4,14 +4,22 @@ import com.kelsos.mbrc.content.activestatus.PlayerState.STOPPED
 import com.kelsos.mbrc.content.activestatus.PlayerState.State
 import com.kelsos.mbrc.content.activestatus.Repeat.Mode
 import com.kelsos.mbrc.content.library.tracks.TrackInfo
-import com.kelsos.mbrc.events.*
+import com.kelsos.mbrc.events.LfmRatingChanged
+import com.kelsos.mbrc.events.PlayStateChange
+import com.kelsos.mbrc.events.RatingChanged
+import com.kelsos.mbrc.events.RepeatChange
+import com.kelsos.mbrc.events.ScrobbleChange
+import com.kelsos.mbrc.events.ShuffleChange
 import com.kelsos.mbrc.events.ShuffleChange.ShuffleState
+import com.kelsos.mbrc.events.VolumeChange
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.ui.navigation.main.LfmRating
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
 import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
@@ -21,10 +29,13 @@ import javax.inject.Singleton
 @Singleton
 class MainDataModel
 @Inject
-constructor(private val bus: RxBus,
-            private val cache: ModelCache) {
+constructor(
+    private val bus: RxBus,
+    private val cache: ModelCache
+) {
 
   private var disposable: Disposable? = null
+  private val disposables = CompositeDisposable()
   private var _trackInfo: TrackInfo = TrackInfo()
   private var _coverPath: String = ""
   private var onPluginOutOfDate: (() -> Unit)? = null
@@ -34,8 +45,8 @@ constructor(private val bus: RxBus,
   }
 
   private fun restoreStated() {
-    cache.restoreInfo().subscribe({ trackInfo = it }, { onLoadError(it) })
-    cache.restoreCover().subscribe({ coverPath = it }, { onLoadError(it) })
+    disposables += cache.restoreInfo().subscribe({ trackInfo = it }, { onLoadError(it) })
+    disposables += cache.restoreCover().subscribe({ coverPath = it }, { onLoadError(it) })
   }
 
   private fun onLoadError(it: Throwable?) {
@@ -64,7 +75,8 @@ constructor(private val bus: RxBus,
       }
     }
 
-  @ShuffleState var shuffle: String = ShuffleChange.OFF
+  @ShuffleState
+  var shuffle: String = ShuffleChange.OFF
     set(value) {
       field = value
       bus.post(ShuffleChange(value))
@@ -82,7 +94,6 @@ constructor(private val bus: RxBus,
       bus.post(if (value) VolumeChange() else VolumeChange(volume))
     }
 
-
   @get:LfmRating.Rating
   @setparam:LfmRating.Rating
   var lfmStatus: Int = LfmRating.NORMAL
@@ -90,7 +101,7 @@ constructor(private val bus: RxBus,
 
   var pluginVersion: String = "1.0.0"
     set(value) {
-      if (value.isNullOrEmpty()) {
+      if (value.isEmpty()) {
         return
       }
       field = value.substring(0, value.lastIndexOf('.'))
@@ -101,15 +112,15 @@ constructor(private val bus: RxBus,
       field = value
       if (value < Protocol.ProtocolVersionNumber) {
         apiOutOfDate = true
-        Completable.fromCallable { onPluginOutOfDate?.invoke() }
+        disposables += Completable.fromCallable { onPluginOutOfDate?.invoke() }
             .subscribeOn(AndroidSchedulers.mainThread())
             .subscribe({ })
 
       }
     }
 
-
-  @State var playState: String = PlayerState.UNDEFINED
+  @State
+  var playState: String = PlayerState.UNDEFINED
     set(value) {
       disposable?.dispose()
       field = value
@@ -117,7 +128,8 @@ constructor(private val bus: RxBus,
       if (field != STOPPED) {
         bus.post(PlayStateChange(field))
       } else {
-        disposable = Completable.timer(800, TimeUnit.MILLISECONDS).subscribe { bus.post(PlayStateChange(field)) }
+        disposable = Completable.timer(800, TimeUnit.MILLISECONDS)
+            .subscribe { bus.post(PlayStateChange(field)) }
       }
     }
 
@@ -134,10 +146,10 @@ constructor(private val bus: RxBus,
   }
 
   fun setLfmRating(rating: String) {
-    when (rating) {
-      "Love" -> lfmStatus = LfmRating.LOVED
-      "Ban" -> lfmStatus = LfmRating.BANNED
-      else -> lfmStatus = LfmRating.NORMAL
+    lfmStatus = when (rating) {
+      "Love" -> LfmRating.LOVED
+      "Ban" -> LfmRating.BANNED
+      else -> LfmRating.NORMAL
     }
 
     bus.post(LfmRatingChanged(lfmStatus))
@@ -153,17 +165,16 @@ constructor(private val bus: RxBus,
     bus.post(RepeatChange(this.repeat))
   }
 
-
   var trackInfo: TrackInfo
     get() {
       return _trackInfo
     }
     set(value) {
       _trackInfo = value
-      cache.persistInfo(value).subscribe({
+      disposables += cache.persistInfo(value).subscribe({
         Timber.v("Playing track info successfully persisted")
       }) {
-        Timber.v(it, "Failed to perist the playing track info")
+        Timber.v(it, "Failed to persist the playing track info")
       }
     }
 
@@ -173,13 +184,12 @@ constructor(private val bus: RxBus,
     }
     set(value) {
       _coverPath = value
-      cache.persistCover(value).subscribe({
+      disposables += cache.persistCover(value).subscribe({
         Timber.v("Playing track info successfully persisted")
       }) {
-        Timber.v(it, "Failed to perist the playing track info")
+        Timber.v(it, "Failed to persist the playing track info")
       }
     }
-
 
   var apiOutOfDate: Boolean = false
     private set
