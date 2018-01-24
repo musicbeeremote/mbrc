@@ -17,6 +17,9 @@ interface TrackDao {
   @Query("select * from track order by album_artist asc, album asc, disc asc, trackno asc")
   fun getAll(): LiveData<List<TrackEntity>>
 
+  @Query("select substr(album_artist,1,1) from track order by album_artist asc, album asc, disc asc, trackno asc")
+  fun getAllIndexes(): LiveData<List<String>>
+
   @Query("select * from track where '%' || :term ||'%' order by album_artist asc, album asc, disc asc, trackno asc")
   fun search(term: String): LiveData<List<TrackEntity>>
 
