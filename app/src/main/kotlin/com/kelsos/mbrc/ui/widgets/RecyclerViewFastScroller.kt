@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.support.annotation.IdRes
+import android.support.annotation.IntDef
 import android.support.annotation.LayoutRes
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.LinearLayoutManager
@@ -19,7 +20,6 @@ import com.kelsos.mbrc.extensions.hide
 import com.kelsos.mbrc.extensions.isInvisible
 import com.kelsos.mbrc.extensions.show
 
-
 class RecyclerViewFastScroller : LinearLayout {
   private val BUBBLE_ANIMATION_DURATION = 100
   private val TRACK_SNAP_RANGE = 5
@@ -30,6 +30,7 @@ class RecyclerViewFastScroller : LinearLayout {
   private var inHeight: Int = 0
   private var isInitialized = false
   private var currentAnimator: ObjectAnimator? = null
+  private var scrollStateChangeListener: RecyclerViewFastScroller.ScrollStateChangeListener? = null
 
   private val onScrollListener = object : RecyclerView.OnScrollListener() {
     override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
@@ -41,6 +42,13 @@ class RecyclerViewFastScroller : LinearLayout {
     fun getTextToShowInBubble(pos: Int): String
   }
 
+  interface ScrollStateChangeListener {
+    fun scrollStateChanged(@ScrollState state: Int)
+  }
+
+  fun setOnScrollStateChangeListener(scrollStateChangeListener: ScrollStateChangeListener) {
+    this.scrollStateChangeListener = scrollStateChangeListener
+  }
 
   constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
     init()
@@ -54,7 +62,6 @@ class RecyclerViewFastScroller : LinearLayout {
     init()
   }
 
-
   internal fun init() {
     if (isInitialized)
       return
@@ -66,7 +73,7 @@ class RecyclerViewFastScroller : LinearLayout {
   fun setViewsToUse(@LayoutRes layoutResId: Int, @IdRes bubbleResId: Int, @IdRes handleResId: Int) {
     val inflater = LayoutInflater.from(context)
     inflater.inflate(layoutResId, this, true)
-    bubble = findViewById<TextView>(bubbleResId)
+    bubble = findViewById(bubbleResId)
     bubble.hide()
     handle = findViewById(handleResId)
   }
@@ -97,6 +104,7 @@ class RecyclerViewFastScroller : LinearLayout {
         val y = event.y
         setBubbleAndHandlePosition(y)
         setRecyclerViewPosition(y)
+        scrollStateChangeListener?.scrollStateChanged(SCROLL_STARTED)
         return true
       }
       MotionEvent.ACTION_MOVE -> {
@@ -108,6 +116,7 @@ class RecyclerViewFastScroller : LinearLayout {
       MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
         handle.isSelected = false
         hideBubble()
+        scrollStateChangeListener?.scrollStateChanged(SCROLL_ENDED)
         return true
       }
     }
@@ -137,16 +146,15 @@ class RecyclerViewFastScroller : LinearLayout {
     val recyclerView = this.recyclerView ?: return
 
     val itemCount = recyclerView.adapter.itemCount
-    val proportion: Float
-
-    if (handle.y == 0F) {
-      proportion = 0f
+    val proportion: Float = if (handle.y == 0F) {
+      0f
     } else {
       if (handle.y + handle.height >= inHeight - TRACK_SNAP_RANGE)
-        proportion = 1f
+        1f
       else
-        proportion = y / inHeight.toFloat()
+        y / inHeight.toFloat()
     }
+
     val targetPos = getValueInRange(0, itemCount - 1, (proportion * itemCount.toFloat()).toInt())
     (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(targetPos, 0)
     val bubbleText = (recyclerView.adapter as BubbleTextGetter).getTextToShowInBubble(targetPos)
@@ -217,6 +225,15 @@ class RecyclerViewFastScroller : LinearLayout {
           start()
         }
 
+  }
+
+  @IntDef(SCROLL_STARTED.toLong(), SCROLL_ENDED.toLong())
+  @Retention(AnnotationRetention.SOURCE)
+  annotation class ScrollState
+
+  companion object {
+    const val SCROLL_STARTED = 1
+    const val SCROLL_ENDED = 2
   }
 
 }
