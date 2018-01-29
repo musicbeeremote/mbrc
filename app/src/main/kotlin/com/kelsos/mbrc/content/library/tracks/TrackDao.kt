@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.content.library.tracks
 
 import android.arch.lifecycle.LiveData
+import android.arch.paging.DataSource
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
@@ -15,22 +16,22 @@ interface TrackDao {
   fun insertAll(list: List<TrackEntity>)
 
   @Query("select * from track order by album_artist asc, album asc, disc asc, trackno asc")
-  fun getAll(): LiveData<List<TrackEntity>>
+  fun getAll(): DataSource.Factory<Int, TrackEntity>
 
   @Query("select substr(album_artist,1,1) from track order by album_artist asc, album asc, disc asc, trackno asc")
   fun getAllIndexes(): LiveData<List<String>>
 
   @Query("select * from track where '%' || :term ||'%' order by album_artist asc, album asc, disc asc, trackno asc")
-  fun search(term: String): LiveData<List<TrackEntity>>
+  fun search(term: String): DataSource.Factory<Int, TrackEntity>
 
   @Query("select * from track where album = :album and album_artist = :artist order by album_artist asc, album asc, disc asc, trackno asc")
   fun getAlbumTracks(
       album: String,
       artist: String
-  ): LiveData<List<TrackEntity>>
+  ): DataSource.Factory<Int, TrackEntity>
 
   @Query("select * from track where album = '' and album_artist = :artist order by album_artist asc, album asc, disc asc, trackno asc")
-  fun getNonAlbumTracks(artist: String): LiveData<List<TrackEntity>>
+  fun getNonAlbumTracks(artist: String): DataSource.Factory<Int, TrackEntity>
 
   @Query("select src from track where genre = :genre order by album_artist asc, album asc, disc asc, trackno asc")
   fun getGenreTrackPaths(genre: String): List<String>

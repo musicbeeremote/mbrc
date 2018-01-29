@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.content.library.albums
 
-import android.arch.lifecycle.LiveData
 import com.kelsos.mbrc.utilities.epoch
+import android.arch.paging.DataSource
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
@@ -15,15 +15,15 @@ constructor(
 
   private val mapper = AlbumDtoMapper()
 
-  override fun getAlbumsByArtist(artist: String): Single<LiveData<List<AlbumEntity>>> {
+  override fun getAlbumsByArtist(artist: String): Single<DataSource.Factory<Int, AlbumEntity>> {
     return Single.fromCallable { dao.getAlbumsByArtist(artist) }
   }
 
-  override fun getAll(): Single<LiveData<List<AlbumEntity>>> {
+  override fun getAll(): Single<DataSource.Factory<Int, AlbumEntity>> {
     return Single.fromCallable { dao.getAll() }
   }
 
-  override fun getAndSaveRemote(): Single<LiveData<List<AlbumEntity>>> {
+  override fun getAndSaveRemote(): Single<DataSource.Factory<Int, AlbumEntity>> {
     return getRemote().andThen(getAll())
   }
 
@@ -36,13 +36,13 @@ constructor(
     }.ignoreElements()
   }
 
-  override fun search(term: String): Single<LiveData<List<AlbumEntity>>> {
+  override fun search(term: String): Single<DataSource.Factory<Int, AlbumEntity>> {
     return Single.fromCallable { dao.search(term) }
   }
 
   override fun cacheIsEmpty(): Single<Boolean> = Single.fromCallable { dao.count() == 0L }
 
-  override fun getAlbumsSorted(@Sorting.Fields order: Long, ascending: Boolean): Single<LiveData<List<AlbumEntity>>> {
+  override fun getAlbumsSorted(@Sorting.Fields order: Long, ascending: Boolean): Single<DataSource.Factory<Int, AlbumEntity>> {
     val factory = when (order) {
       Sorting.ALBUM -> {
         if (ascending) {

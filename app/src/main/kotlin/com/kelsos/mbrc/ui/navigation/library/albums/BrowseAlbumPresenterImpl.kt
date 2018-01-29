@@ -2,6 +2,8 @@ package com.kelsos.mbrc.ui.navigation.library.albums
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
+import android.arch.paging.DataSource
+import android.arch.paging.PagedList
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.library.albums.Sorting
@@ -10,6 +12,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.AlbumSortingStore
 import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.paged
 import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
 import javax.inject.Inject
@@ -24,15 +27,15 @@ constructor(
 ) : BasePresenter<BrowseAlbumView>(),
     BrowseAlbumPresenter {
 
-  private lateinit var albums: LiveData<List<AlbumEntity>>
+  private lateinit var albums: LiveData<PagedList<AlbumEntity>>
 
-  private fun observeAlbums(it: LiveData<List<AlbumEntity>>) {
+  private fun observeAlbums(it: DataSource.Factory<Int, AlbumEntity>) {
 
     if (::albums.isInitialized) {
       albums.removeObservers(this)
     }
 
-    albums = it
+    albums = it.paged()
     albums.observe(this, Observer {
       if (it != null) {
         view().update(it)

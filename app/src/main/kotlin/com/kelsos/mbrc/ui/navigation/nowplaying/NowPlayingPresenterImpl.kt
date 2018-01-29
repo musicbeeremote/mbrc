@@ -2,6 +2,8 @@ package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
+import android.arch.paging.DataSource
+import android.arch.paging.PagedList
 import com.kelsos.mbrc.content.activestatus.MainDataModel
 import com.kelsos.mbrc.content.nowplaying.NowPlayingEntity
 import com.kelsos.mbrc.content.nowplaying.NowPlayingRepository
@@ -12,6 +14,7 @@ import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.protocol.NowPlayingMoveRequest
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.paged
 import javax.inject.Inject
 
 class NowPlayingPresenterImpl
@@ -23,7 +26,7 @@ class NowPlayingPresenterImpl
 ) : BasePresenter<NowPlayingView>(),
     NowPlayingPresenter {
 
-  private lateinit var nowPlayingTracks: LiveData<List<NowPlayingEntity>>
+  private lateinit var nowPlayingTracks: LiveData<PagedList<NowPlayingEntity>>
 
   override fun reload(scrollToTrack: Boolean) {
     view().showLoading()
@@ -42,8 +45,8 @@ class NowPlayingPresenterImpl
         })
   }
 
-  private fun onNowPlayingTracksLoaded(it: LiveData<List<NowPlayingEntity>>) {
-    nowPlayingTracks = it
+  private fun onNowPlayingTracksLoaded(it: DataSource.Factory<Int, NowPlayingEntity>) {
+    nowPlayingTracks = it.paged()
     nowPlayingTracks.observe(this, Observer {
       if (it != null) {
         view().update(it)

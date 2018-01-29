@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.genres
 
+import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.constraint.Group
 import android.support.design.widget.Snackbar
@@ -62,14 +63,14 @@ class BrowseGenreFragment : Fragment(),
     presenter.detach()
   }
 
-  override fun update(list: List<GenreEntity>) {
-    if (list.isEmpty()) {
+  override fun update(pagedList: PagedList<GenreEntity>) {
+    if (pagedList.isEmpty()) {
       emptyView.show()
     } else {
       emptyView.hide()
     }
 
-    adapter.setList(list)
+    adapter.setList(pagedList)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

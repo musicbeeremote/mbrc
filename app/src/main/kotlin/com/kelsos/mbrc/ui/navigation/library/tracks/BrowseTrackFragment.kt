@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.tracks
 
+import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.constraint.Group
 import android.support.design.widget.Snackbar
@@ -72,13 +73,13 @@ class BrowseTrackFragment : Fragment(),
     presenter.load()
   }
 
-  override fun update(list: List<TrackEntity>) {
-    if (list.isEmpty()) {
+  override fun update(pagedList: PagedList<TrackEntity>) {
+    if (pagedList.isEmpty()) {
       emptyView.show()
     } else {
       emptyView.hide()
     }
-    adapter.setList(list)
+    adapter.setList(pagedList)
 
   }
 

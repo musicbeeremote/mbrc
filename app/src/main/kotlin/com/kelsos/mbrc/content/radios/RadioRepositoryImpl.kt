@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.content.radios
 
-import android.arch.lifecycle.LiveData
+import android.arch.paging.DataSource
 import com.kelsos.mbrc.utilities.epoch
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -14,11 +14,11 @@ constructor(
 ) : RadioRepository {
   private val mapper = RadioDtoMapper()
 
-  override fun getAll(): Single<LiveData<List<RadioStationEntity>>> {
+  override fun getAll(): Single<DataSource.Factory<Int, RadioStationEntity>> {
     return Single.fromCallable { dao.getAll() }
   }
 
-  override fun getAndSaveRemote(): Single<LiveData<List<RadioStationEntity>>> {
+  override fun getAndSaveRemote(): Single<DataSource.Factory<Int, RadioStationEntity>> {
     return getRemote().andThen(getAll())
   }
 
@@ -31,7 +31,7 @@ constructor(
     }.ignoreElements()
   }
 
-  override fun search(term: String): Single<LiveData<List<RadioStationEntity>>> {
+  override fun search(term: String): Single<DataSource.Factory<Int, RadioStationEntity>> {
     return Single.fromCallable { dao.search(term) }
   }
 

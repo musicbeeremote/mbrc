@@ -77,7 +77,7 @@ class ArtistAlbumsActivity : BaseActivity(),
     actionHandler.albumSelected(album, this)
   }
 
-  override fun update(albums: List<AlbumEntity>) {
+  override fun update(albums: PagedList<AlbumEntity>) {
     adapter.setList(albums)
   }
 

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.content.library.genres
 
-import android.arch.lifecycle.LiveData
+import android.arch.paging.DataSource
 import com.kelsos.mbrc.utilities.epoch
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -15,11 +15,11 @@ constructor(
 
   private val mapper = GenreDtoMapper()
 
-  override fun getAll(): Single<LiveData<List<GenreEntity>>> {
+  override fun getAll(): Single<DataSource.Factory<Int, GenreEntity>> {
     return Single.fromCallable { dao.getAll() }
   }
 
-  override fun getAndSaveRemote(): Single<LiveData<List<GenreEntity>>> {
+  override fun getAndSaveRemote(): Single<DataSource.Factory<Int, GenreEntity>> {
     return getRemote().andThen(getAll())
   }
 
@@ -32,7 +32,7 @@ constructor(
     }.ignoreElements()
   }
 
-  override fun search(term: String): Single<LiveData<List<GenreEntity>>> {
+  override fun search(term: String): Single<DataSource.Factory<Int, GenreEntity>> {
     return Single.fromCallable { dao.search(term) }
   }
 
