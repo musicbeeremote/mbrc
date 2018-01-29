@@ -13,6 +13,7 @@ import com.kelsos.mbrc.content.library.tracks.TrackEntity
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.Action
 import com.kelsos.mbrc.extensions.string
+import com.kelsos.mbrc.ui.navigation.library.OnFastScrollListener
 import com.kelsos.mbrc.ui.navigation.library.popup
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 import com.kelsos.mbrc.utilities.Checks.ifNotNull
@@ -21,8 +22,10 @@ import javax.inject.Inject
 
 class TrackEntryAdapter
 @Inject
-constructor() : PagedListAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(DIFF_CALLBACK), BubbleTextGetter {
+constructor() : PagedListAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(DIFF_CALLBACK),
+  BubbleTextGetter, OnFastScrollListener {
 
+  private var fastScrolling: Boolean = false
   private var listener: MenuItemSelectedListener? = null
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->
     view.popup(R.menu.popup_track) {
@@ -56,6 +59,11 @@ constructor() : PagedListAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(DIFF
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    if (fastScrolling) {
+      holder.clear()
+      return
+    }
+
     val trackEntity = getItem(holder.adapterPosition)
 
     if (trackEntity != null) {
@@ -66,11 +74,23 @@ constructor() : PagedListAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(DIFF
   }
 
   override fun getTextToShowInBubble(pos: Int): String {
+    if (fastScrolling) {
+      return "$pos"
+    }
     val albumArtist = getItem(pos)?.albumArtist
     if (albumArtist != null && albumArtist.isNotBlank()) {
       return albumArtist.substring(0, 1)
     }
     return "-"
+  }
+
+  override fun onStart() {
+    fastScrolling = true
+  }
+
+  override fun onComplete(firstVisibleItemPosition: Int, lastVisibleItemPosition: Int) {
+    fastScrolling = false
+    notifyItemRangeChanged(firstVisibleItemPosition, lastVisibleItemPosition)
   }
 
   companion object {
@@ -92,9 +112,9 @@ constructor() : PagedListAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(DIFF
   }
 
   class ViewHolder(
-      itemView: View,
-      indicatorPressed: (view: View, position: Int) -> Unit,
-      pressed: (view: View, position: Int) -> Unit
+    itemView: View,
+    indicatorPressed: (view: View, position: Int) -> Unit,
+    pressed: (view: View, position: Int) -> Unit
   ) : RecyclerView.ViewHolder(itemView) {
     private val artist: TextView by bindView(R.id.line_two)
     private val title: TextView by bindView(R.id.line_one)
@@ -108,9 +128,9 @@ constructor() : PagedListAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(DIFF
 
     companion object {
       fun create(
-          parent: ViewGroup,
-          indicatorPressed: (view: View, position: Int) -> Unit,
-          pressed: (view: View, position: Int) -> Unit
+        parent: ViewGroup,
+        indicatorPressed: (view: View, position: Int) -> Unit,
+        pressed: (view: View, position: Int) -> Unit
       ): ViewHolder {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.ui_list_dual, parent, false)

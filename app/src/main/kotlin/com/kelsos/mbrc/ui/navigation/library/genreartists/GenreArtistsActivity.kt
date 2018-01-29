@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.ArtistEntity
-import com.kelsos.mbrc.extensions.initLinear
+import com.kelsos.mbrc.extensions.linear
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter
@@ -50,7 +50,7 @@ class GenreArtistsActivity : BaseActivity(),
     setupToolbar(title)
 
     adapter.setMenuItemSelectedListener(this)
-    recyclerView.initLinear(adapter)
+    recyclerView.linear(adapter)
     presenter.attach(this)
     presenter.load(genre!!)
   }

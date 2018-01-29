@@ -18,7 +18,7 @@ import com.kelsos.mbrc.content.library.genres.GenreEntity
 import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.extensions.gone
 import com.kelsos.mbrc.extensions.hide
-import com.kelsos.mbrc.extensions.initLinear
+import com.kelsos.mbrc.extensions.linear
 import com.kelsos.mbrc.extensions.show
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.genres.GenreEntryAdapter.MenuItemSelectedListener
@@ -78,7 +78,7 @@ class BrowseGenreFragment : Fragment(),
 
     emptyViewTitle.setText(R.string.genres_list_empty)
     swipeLayout.setOnRefreshListener(this)
-    recycler.initLinear(adapter, fastScroller)
+    recycler.linear(adapter, fastScroller)
     recycler.setHasFixedSize(true)
     adapter.setMenuItemSelectedListener(this)
     presenter.attach(this)
