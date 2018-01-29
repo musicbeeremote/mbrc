@@ -161,13 +161,13 @@ ext {
   support_library_version = "27.0.2"
   dbflow_version = "4.1.2"
   toothpick_version = "1.1.1"
-  jackson_version = "2.9.3"
+  jackson_version = "2.9.4"
   runner_version = "1.0.1"
   espresso_version = "3.0.1"
   junit_version = "4.12"
   mockito_version = "2.13.0"
   robolectric_version = "3.6.1"
-  truth_version = "0.37"
+  truth_version = "0.39"
   leakcanary_version = "1.5.4"
 }
 
@@ -239,14 +239,14 @@ dependencies {
   implementation 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.20"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.1"
   implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
   implementation 'com.squareup.picasso:picasso:2.5.2'
   implementation 'com.android.support:multidex:1.0.2'
 
   implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
+  implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
   implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
 
   implementation 'com.jakewharton.timber:timber:4.6.0'
