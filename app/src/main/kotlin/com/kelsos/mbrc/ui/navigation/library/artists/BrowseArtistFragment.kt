@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.artists
 
+import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.constraint.Group
 import android.support.design.widget.Snackbar
@@ -101,7 +102,7 @@ class BrowseArtistFragment : Fragment(),
     presenter.reload()
   }
 
-  override fun update(pagedList: List<ArtistEntity>) {
+  override fun update(pagedList: PagedList<ArtistEntity>) {
     if (pagedList.isEmpty()) {
       emptyView.show()
     } else {

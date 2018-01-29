@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.genres
 
+import android.arch.paging.PagedListAdapter
 import android.support.v7.recyclerview.extensions.DiffCallback
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -12,7 +13,6 @@ import com.kelsos.mbrc.content.library.genres.GenreEntity
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.Action
 import com.kelsos.mbrc.extensions.string
-import com.kelsos.mbrc.ui.navigation.library.BaseMediaAdapter
 import com.kelsos.mbrc.ui.navigation.library.popup
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 import kotterknife.bindView
@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 class GenreEntryAdapter
 @Inject
-constructor() : BaseMediaAdapter<GenreEntity, GenreEntryAdapter.ViewHolder>(),
+constructor() : PagedListAdapter<GenreEntity, GenreEntryAdapter.ViewHolder>(DIFF_CALLBACK),
     BubbleTextGetter {
 
   private var listener: MenuItemSelectedListener? = null

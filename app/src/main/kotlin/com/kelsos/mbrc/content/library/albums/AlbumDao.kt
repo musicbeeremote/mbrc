@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.content.library.albums
 
-import android.arch.lifecycle.LiveData
+import android.arch.paging.DataSource
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
@@ -14,10 +14,10 @@ interface AlbumDao {
   fun insert(list: List<AlbumEntity>)
 
   @Query("select * from album")
-  fun getAll(): LiveData<List<AlbumEntity>>
+  fun getAll(): DataSource.Factory<Int, AlbumEntity>
 
   @Query("select * from album where album.album like '%' || :term || '%'")
-  fun search(term: String): LiveData<List<AlbumEntity>>
+  fun search(term: String): DataSource.Factory<Int, AlbumEntity>
 
   @Query("select count(*) from album")
   fun count(): Long
@@ -29,75 +29,75 @@ interface AlbumDao {
       "inner join track on track.album = album.album and track.album_artist = album.artist " +
       "where track.artist = :artist or track.album_artist = :artist " +
       "order by album.artist asc, album.album asc")
-  fun getAlbumsByArtist(artist: String): LiveData<List<AlbumEntity>>
+  fun getAlbumsByArtist(artist: String): DataSource.Factory<Int, AlbumEntity>
 
   @Query("select distinct album.album, album.artist, album.id, album.date_added from album " +
       "inner join track on album.album = track.album and album.artist = track.album_artist " +
       "order by album.album asc")
-  fun getSortedByAlbumAsc(): LiveData<List<AlbumEntity>>
+  fun getSortedByAlbumAsc(): DataSource.Factory<Int, AlbumEntity>
 
   @Query("select distinct album.album, album.artist, album.id, album.date_added from album " +
       "inner join track on album.album = track.album and album.artist = track.album_artist " +
       "order by album.album desc")
-  fun getSortedByAlbumDesc(): LiveData<List<AlbumEntity>>
+  fun getSortedByAlbumDesc(): DataSource.Factory<Int, AlbumEntity>
 
   @Query("select distinct album.album, album.artist, album.id, album.date_added from album " +
       "inner join track on album.album = track.album and album.artist = track.album_artist " +
       "order by album.artist asc, album.album asc")
-  fun getSortedByAlbumArtistAndAlbumAsc(): LiveData<List<AlbumEntity>>
+  fun getSortedByAlbumArtistAndAlbumAsc(): DataSource.Factory<Int, AlbumEntity>
 
   @Query("select distinct album.album, album.artist, album.id, album.date_added from album " +
       "inner join track on album.album = track.album and album.artist = track.album_artist " +
       "order by album.artist desc, album.album desc")
-  fun getSortedByAlbumArtistAndAlbumDesc(): LiveData<List<AlbumEntity>>
+  fun getSortedByAlbumArtistAndAlbumDesc(): DataSource.Factory<Int, AlbumEntity>
 
   @Query("select distinct album.album, album.artist, album.id, album.date_added from album " +
       "inner join track on album.album = track.album and album.artist = track.album_artist " +
       "order by album.artist asc, track.year asc, album.album asc")
-  fun getSortedByAlbumArtistAndYearAndAlbumAsc(): LiveData<List<AlbumEntity>>
+  fun getSortedByAlbumArtistAndYearAndAlbumAsc(): DataSource.Factory<Int, AlbumEntity>
 
   @Query("select distinct album.album, album.artist, album.id, album.date_added from album " +
       "inner join track on album.album = track.album and album.artist = track.album_artist " +
       "order by album.artist desc, track.year desc, album.album desc")
-  fun getSortedByAlbumArtistAndYearAndAlbumDesc(): LiveData<List<AlbumEntity>>
+  fun getSortedByAlbumArtistAndYearAndAlbumDesc(): DataSource.Factory<Int, AlbumEntity>
 
   @Query("select distinct album.album, album.artist, album.id, album.date_added from album " +
       "inner join track on album.album = track.album and album.artist = track.album_artist " +
       "order by track.artist asc, album.album asc")
-  fun getSortedByArtistAndAlbumAsc(): LiveData<List<AlbumEntity>>
+  fun getSortedByArtistAndAlbumAsc(): DataSource.Factory<Int, AlbumEntity>
 
   @Query("select distinct album.album, album.artist, album.id, album.date_added from album " +
       "inner join track on album.album = track.album and album.artist = track.album_artist " +
       "order by track.artist desc, album.album desc")
-  fun getSortedByArtistAndAlbumDesc(): LiveData<List<AlbumEntity>>
+  fun getSortedByArtistAndAlbumDesc(): DataSource.Factory<Int, AlbumEntity>
 
   @Query("select distinct album.album, album.artist, album.id, album.date_added from album " +
       "inner join track on album.album = track.album and album.artist = track.album_artist " +
       "order by track.genre asc, album.artist asc, album.album asc")
-  fun getSortedByGenreAndAlbumArtistAndAlbumAsc(): LiveData<List<AlbumEntity>>
+  fun getSortedByGenreAndAlbumArtistAndAlbumAsc(): DataSource.Factory<Int, AlbumEntity>
 
   @Query("select distinct album.album, album.artist, album.id, album.date_added from album " +
       "inner join track on album.album = track.album and album.artist = track.album_artist " +
       "order by track.genre desc, album.artist desc, album.album desc")
-  fun getSortedByGenreAndAlbumArtistAndAlbumDesc(): LiveData<List<AlbumEntity>>
+  fun getSortedByGenreAndAlbumArtistAndAlbumDesc(): DataSource.Factory<Int, AlbumEntity>
 
   @Query("select distinct album.album, album.artist, album.id, album.date_added from album " +
       "inner join track on album.album = track.album and album.artist = track.album_artist " +
       "order by track.year asc, album.album asc")
-  fun getSortedByYearAndAlbumAsc(): LiveData<List<AlbumEntity>>
+  fun getSortedByYearAndAlbumAsc(): DataSource.Factory<Int, AlbumEntity>
 
   @Query("select distinct album.album, album.artist, album.id, album.date_added from album " +
       "inner join track on album.album = track.album and album.artist = track.album_artist " +
       "order by track.year desc, album.album desc")
-  fun getSortedByYearAndAlbumDesc(): LiveData<List<AlbumEntity>>
+  fun getSortedByYearAndAlbumDesc(): DataSource.Factory<Int, AlbumEntity>
 
   @Query("select distinct album.album, album.artist, album.id, album.date_added from album " +
       "inner join track on album.album = track.album and album.artist = track.album_artist " +
       "order by track.year asc, album.artist asc, album.album asc")
-  fun getSortedByYearAndAlbumArtistAndAlbumAsc(): LiveData<List<AlbumEntity>>
+  fun getSortedByYearAndAlbumArtistAndAlbumAsc(): DataSource.Factory<Int, AlbumEntity>
 
   @Query("select distinct album.album, album.artist, album.id, album.date_added from album " +
       "inner join track on album.album = track.album and album.artist = track.album_artist " +
       "order by track.year desc, album.artist desc, album.album desc")
-  fun getSortedByYearAndAlbumArtistAndAlbumDesc(): LiveData<List<AlbumEntity>>
+  fun getSortedByYearAndAlbumArtistAndAlbumDesc(): DataSource.Factory<Int, AlbumEntity>
 }

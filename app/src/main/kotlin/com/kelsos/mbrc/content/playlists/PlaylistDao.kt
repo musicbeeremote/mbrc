@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.content.playlists
 
-import android.arch.lifecycle.LiveData
+import android.arch.paging.DataSource
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
@@ -15,10 +15,10 @@ interface PlaylistDao {
   fun insertAll(list: List<PlaylistEntity>)
 
   @Query("select * from playlists")
-  fun getAll(): LiveData<List<PlaylistEntity>>
+  fun getAll(): DataSource.Factory<Int, PlaylistEntity>
 
   @Query("select * from playlists where name like '%'|| :term ||'%'")
-  fun search(term: String): LiveData<List<PlaylistEntity>>
+  fun search(term: String): DataSource.Factory<Int, PlaylistEntity>
 
   @Query("select count(*) from playlists")
   fun count(): Long

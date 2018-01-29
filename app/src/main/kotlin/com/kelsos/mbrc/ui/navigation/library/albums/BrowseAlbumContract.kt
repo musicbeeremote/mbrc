@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.albums
 
+import android.arch.paging.PagedList
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.content.library.albums.Sorting.Fields
 import com.kelsos.mbrc.content.library.albums.Sorting.Order
@@ -7,7 +8,7 @@ import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 
 interface BrowseAlbumView : BaseView {
-  fun update(list: List<AlbumEntity>)
+  fun update(pagedList: PagedList<AlbumEntity>)
 
   fun failure(throwable: Throwable)
 

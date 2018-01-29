@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.content.library.tracks
 
-import android.arch.lifecycle.LiveData
+import android.arch.paging.DataSource
 import com.kelsos.mbrc.utilities.SchedulerProvider
 import com.kelsos.mbrc.utilities.epoch
 import io.reactivex.Completable
@@ -16,19 +16,19 @@ class TrackRepositoryImpl
 
   private val mapper = TrackDtoMapper()
 
-  override fun getAll(): Single<LiveData<List<TrackEntity>>> {
+  override fun getAll(): Single<DataSource.Factory<Int, TrackEntity>> {
     return Single.fromCallable { dao.getAll() }
   }
 
-  override fun getAlbumTracks(album: String, artist: String): Single<LiveData<List<TrackEntity>>> {
+  override fun getAlbumTracks(album: String, artist: String): Single<DataSource.Factory<Int, TrackEntity>> {
     return Single.fromCallable { dao.getAlbumTracks(album, artist) }
   }
 
-  override fun getNonAlbumTracks(artist: String): Single<LiveData<List<TrackEntity>>> {
+  override fun getNonAlbumTracks(artist: String): Single<DataSource.Factory<Int, TrackEntity>> {
     return Single.fromCallable { dao.getNonAlbumTracks(artist) }
   }
 
-  override fun getAndSaveRemote(): Single<LiveData<List<TrackEntity>>> {
+  override fun getAndSaveRemote(): Single<DataSource.Factory<Int, TrackEntity>> {
     return getRemote().andThen(getAll())
   }
 
@@ -44,7 +44,7 @@ class TrackRepositoryImpl
         .ignoreElements()
   }
 
-  override fun search(term: String): Single<LiveData<List<TrackEntity>>> {
+  override fun search(term: String): Single<DataSource.Factory<Int, TrackEntity>> {
     return Single.fromCallable { dao.search(term) }
   }
 
