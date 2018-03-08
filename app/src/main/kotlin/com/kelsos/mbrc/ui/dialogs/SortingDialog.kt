@@ -27,11 +27,11 @@ class SortingDialog : DialogFragment() {
 
   private lateinit var dialog: AlertDialog
   private lateinit var fm: FragmentManager
-  private lateinit var orderChange: (order: Long) -> Unit
-  private lateinit var sortingChange: (sorting: Long) -> Unit
+  private lateinit var orderChange: (order: Int) -> Unit
+  private lateinit var sortingChange: (sorting: Int) -> Unit
 
-  @Fields private var sorting: Long = Sorting.ALBUM_ARTIST__ALBUM
-  @Order private var order: Long = Sorting.ORDER_ASCENDING
+  @Fields private var sorting: Int = Sorting.ALBUM_ARTIST__ALBUM
+  @Order private var order: Int = Sorting.ORDER_ASCENDING
 
   private fun onOrderChanged() {
     this.order = when (order) {
@@ -44,7 +44,7 @@ class SortingDialog : DialogFragment() {
     orderChange(this.order)
   }
 
-  private fun setOrder(@Order order: Long) {
+  private fun setOrder(@Order order: Int) {
 
     fun Button.set(@StringRes stringId: Int, @DrawableRes drawableId: Int) {
       text = getString(stringId)
@@ -80,12 +80,12 @@ class SortingDialog : DialogFragment() {
     super.onStart()
 
     setOrder(order)
-    sortingOption.check(sortingOption.getChildAt(sorting.toInt()).id)
+    sortingOption.check(sortingOption.getChildAt(sorting).id)
     sortingOption.setOnCheckedChangeListener { radioGroup, _ ->
       val radioButtonID = radioGroup.checkedRadioButtonId
       val radioButton = radioGroup.findViewById<RadioButton>(radioButtonID)
       val idx = radioGroup.indexOfChild(radioButton)
-      sortingChange(1 + idx.toLong())
+      sortingChange(1 + idx)
     }
 
     orderButton.setOnClickListener { onOrderChanged() }
@@ -103,11 +103,11 @@ class SortingDialog : DialogFragment() {
     const val TAG = "com.kelsos.mbrc.ui.dialog.SortingDialog"
 
     fun create(
-        fm: FragmentManager,
-        @Fields sorting: Long,
-        @Order order: Long,
-        orderChange: (order: Long) -> Unit,
-        sortingChange: (sorting: Long) -> Unit
+      fm: FragmentManager,
+      @Fields sorting: Int,
+      @Order order: Int,
+      orderChange: (order: Int) -> Unit,
+      sortingChange: (sorting: Int) -> Unit
     ): SortingDialog = SortingDialog().apply {
       this.fm = fm
       this.sorting = sorting

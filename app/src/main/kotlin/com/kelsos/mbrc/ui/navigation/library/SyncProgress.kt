@@ -3,9 +3,9 @@ package com.kelsos.mbrc.ui.navigation.library
 import android.support.annotation.IntDef
 
 data class SyncProgress(
-    val current: Int,
-    val total: Int,
-    @Type val type: Int
+  val current: Int,
+  val total: Int,
+  @Type val type: Int
 ) {
 
   override fun toString(): String {
@@ -13,10 +13,10 @@ data class SyncProgress(
   }
 
   @IntDef(
-      GENRE.toLong(),
-      ARTIST.toLong(),
-      ALBUM.toLong(),
-      TRACK.toLong()
+    GENRE,
+    ARTIST,
+    ALBUM,
+    TRACK
   )
   @Retention(AnnotationRetention.SOURCE)
   annotation class Type

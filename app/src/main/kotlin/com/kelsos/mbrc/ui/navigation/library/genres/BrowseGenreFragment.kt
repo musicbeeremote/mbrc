@@ -28,9 +28,9 @@ import toothpick.Toothpick
 import javax.inject.Inject
 
 class BrowseGenreFragment : Fragment(),
-    BrowseGenreView,
-    MenuItemSelectedListener,
-    OnRefreshListener {
+  BrowseGenreView,
+  MenuItemSelectedListener,
+  OnRefreshListener {
 
   private val recycler: RecyclerView by bindView(R.id.library_browser__content)
   private val swipeLayout: SwipeRefreshLayout by bindView(R.id.library_browser__refresh_layout)
@@ -40,9 +40,12 @@ class BrowseGenreFragment : Fragment(),
   private val emptyViewTitle: TextView by bindView(R.id.library_browser__text_title)
   private val emptyViewProgress: ProgressBar by bindView(R.id.library_browser__loading_bar)
 
-  @Inject lateinit var adapter: GenreEntryAdapter
-  @Inject lateinit var actionHandler: PopupActionHandler
-  @Inject lateinit var presenter: BrowseGenrePresenter
+  @Inject
+  lateinit var adapter: GenreEntryAdapter
+  @Inject
+  lateinit var actionHandler: PopupActionHandler
+  @Inject
+  lateinit var presenter: BrowseGenrePresenter
 
   override fun onCreateView(inflater: LayoutInflater,
                             container: ViewGroup?,
@@ -70,7 +73,7 @@ class BrowseGenreFragment : Fragment(),
       emptyView.hide()
     }
 
-    adapter.setList(pagedList)
+    adapter.submitList(pagedList)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

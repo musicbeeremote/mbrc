@@ -108,7 +108,7 @@ class BrowseArtistFragment : Fragment(),
     } else {
       emptyView.gone()
     }
-    adapter.setList(pagedList)
+    adapter.submitList(pagedList)
   }
 
   override fun failure(throwable: Throwable) {

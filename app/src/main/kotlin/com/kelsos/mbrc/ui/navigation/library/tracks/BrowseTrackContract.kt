@@ -8,6 +8,8 @@ import com.kelsos.mbrc.mvp.Presenter
 interface BrowseTrackView : BaseView {
   fun update(pagedList: PagedList<TrackEntity>)
 
+  fun updateIndexes(indexes: List<String>)
+
   fun failure(it: Throwable)
 
   fun hideLoading()

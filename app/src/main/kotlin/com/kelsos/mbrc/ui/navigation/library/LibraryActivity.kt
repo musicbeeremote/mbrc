@@ -74,9 +74,13 @@ class LibraryActivity : BaseNavigationActivity(),
 
     super.setup()
     pagerAdapter = LibraryPagerAdapter(this)
+
     pager.adapter = pagerAdapter
-    tabs.setupWithViewPager(pager)
+    pager.offscreenPageLimit = 4
     pager.addOnPageChangeListener(this)
+
+    tabs.setupWithViewPager(pager)
+
     presenter.attach(this)
   }
 

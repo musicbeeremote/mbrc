@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library.tracks
 
 import android.arch.paging.PagedListAdapter
+import android.support.constraint.Group
 import android.support.v7.recyclerview.extensions.DiffCallback
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -12,12 +13,15 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.TrackEntity
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.Action
+import com.kelsos.mbrc.extensions.gone
+import com.kelsos.mbrc.extensions.show
 import com.kelsos.mbrc.extensions.string
 import com.kelsos.mbrc.ui.navigation.library.OnFastScrollListener
 import com.kelsos.mbrc.ui.navigation.library.popup
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 import com.kelsos.mbrc.utilities.Checks.ifNotNull
 import kotterknife.bindView
+import timber.log.Timber
 import javax.inject.Inject
 
 class TrackEntryAdapter
@@ -25,6 +29,7 @@ class TrackEntryAdapter
 constructor() : PagedListAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(DIFF_CALLBACK),
   BubbleTextGetter, OnFastScrollListener {
 
+  private var indexes: List<String> = emptyList()
   private var fastScrolling: Boolean = false
   private var listener: MenuItemSelectedListener? = null
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->
@@ -74,14 +79,11 @@ constructor() : PagedListAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(DIFF
   }
 
   override fun getTextToShowInBubble(pos: Int): String {
-    if (fastScrolling) {
-      return "$pos"
+    return if (pos < indexes.size) {
+      indexes[pos]
+    } else {
+      "-"
     }
-    val albumArtist = getItem(pos)?.albumArtist
-    if (albumArtist != null && albumArtist.isNotBlank()) {
-      return albumArtist.substring(0, 1)
-    }
-    return "-"
   }
 
   override fun onStart() {
@@ -90,7 +92,12 @@ constructor() : PagedListAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(DIFF
 
   override fun onComplete(firstVisibleItemPosition: Int, lastVisibleItemPosition: Int) {
     fastScrolling = false
+    Timber.v("scrolling done")
     notifyItemRangeChanged(firstVisibleItemPosition, lastVisibleItemPosition)
+  }
+
+  fun setIndexes(indexes: List<String>) {
+    this.indexes = indexes
   }
 
   companion object {
@@ -106,9 +113,10 @@ constructor() : PagedListAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(DIFF
   }
 
   interface MenuItemSelectedListener {
-    fun onMenuItemSelected(@Action action: String, entry: TrackEntity)
 
+    fun onMenuItemSelected(@Action action: String, entry: TrackEntity)
     fun onItemClicked(track: TrackEntity)
+
   }
 
   class ViewHolder(
@@ -118,6 +126,7 @@ constructor() : PagedListAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(DIFF
   ) : RecyclerView.ViewHolder(itemView) {
     private val artist: TextView by bindView(R.id.line_two)
     private val title: TextView by bindView(R.id.line_one)
+    private val empty: Group by bindView(R.id.listitem_loading)
     private val indicator: ImageView by bindView(R.id.overflow_menu)
     private val unknownArtist: String by lazy { string(R.string.unknown_artist) }
 
@@ -139,14 +148,17 @@ constructor() : PagedListAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(DIFF
     }
 
     fun clear() {
+      empty.show()
       artist.text = ""
       title.text = ""
     }
 
     fun bindTo(trackEntity: TrackEntity) {
+      empty.gone()
       title.text = trackEntity.title
       artist.text = if (trackEntity.artist.isBlank()) unknownArtist else trackEntity.artist
     }
+
   }
 
 }

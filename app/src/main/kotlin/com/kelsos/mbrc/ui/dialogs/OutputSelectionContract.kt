@@ -6,7 +6,7 @@ import com.kelsos.mbrc.mvp.Presenter
 
 interface OutputSelectionView : BaseView {
   fun update(data: OutputResponse)
-  fun error(@OutputSelectionContract.Code code: Long)
+  fun error(@OutputSelectionContract.Code code: Int)
 }
 
 interface OutputSelectionPresenter : Presenter<OutputSelectionView> {

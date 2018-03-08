@@ -48,8 +48,10 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
 
   private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
   // Injects
-  @Inject lateinit var presenter: MainViewPresenter
-  @Inject lateinit var progressHelper: ProgressSeekerHelper
+  @Inject
+  lateinit var presenter: MainViewPresenter
+  @Inject
+  lateinit var progressHelper: ProgressSeekerHelper
   // Inject elements of the view
   private val artistLabel: TextView by bindView(R.id.main_artist_label)
   private val titleLabel: TextView by bindView(R.id.main_title_label)
@@ -108,18 +110,18 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
 
   override fun showChangeLog() {
     changeLogDialog = AlertDialog.Builder(this)
-        .setTitle(R.string.main__dialog_change_log)
-        .setView(R.layout.change_log_dialog)
-        .setPositiveButton(android.R.string.ok) { dialogInterface, _ -> dialogInterface.dismiss() }
-        .show()
+      .setTitle(R.string.main__dialog_change_log)
+      .setView(R.layout.change_log_dialog)
+      .setPositiveButton(android.R.string.ok) { dialogInterface, _ -> dialogInterface.dismiss() }
+      .show()
   }
 
   override fun notifyPluginOutOfDate() {
     outOfDateDialog = AlertDialog.Builder(this)
-        .setTitle(R.string.main__dialog_plugin_outdated_title)
-        .setMessage(R.string.main__dialog_plugin_outdated_message)
-        .setPositiveButton(android.R.string.ok) { dialogInterface, _ -> dialogInterface.dismiss() }
-        .show()
+      .setTitle(R.string.main__dialog_plugin_outdated_title)
+      .setMessage(R.string.main__dialog_plugin_outdated_message)
+      .setPositiveButton(android.R.string.ok) { dialogInterface, _ -> dialogInterface.dismiss() }
+      .show()
   }
 
   override fun onStart() {
@@ -179,9 +181,9 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     menuInflater.inflate(R.menu.menu, menu)
     this.menu = menu
-    val shareItem = menu.findItem(R.id.actionbar_share)
-    mShareActionProvider = MenuItemCompat.getActionProvider(shareItem) as ShareActionProvider
-    mShareActionProvider!!.setShareIntent(shareIntent)
+//    val shareItem = menu.findItem(R.id.actionbar_share)
+//    mShareActionProvider = MenuItemCompat.getActionProvider(shareItem) as ShareActionProvider
+//    mShareActionProvider!!.setShareIntent(shareIntent)
     bus.post(OnMainFragmentOptionsInflated())
     return super.onCreateOptionsMenu(menu)
   }
@@ -204,14 +206,14 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
     }
 
     val dimens = getDimens()
-    Picasso.with(this)
-        .load(file)
-        .noFade()
-        .error(R.drawable.ic_image_no_cover)
-        .config(Bitmap.Config.RGB_565)
-        .resize(dimens, dimens)
-        .centerCrop()
-        .into(albumCover)
+    Picasso.get()
+      .load(file)
+      .noFade()
+      .error(R.drawable.ic_image_no_cover)
+      .config(Bitmap.Config.RGB_565)
+      .resize(dimens, dimens)
+      .centerCrop()
+      .into(albumCover)
 
   }
 
@@ -346,8 +348,8 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
 
     trackDuration.text = getString(R.string.playback_progress, totalMinutes, finalTotalSeconds)
     trackProgressCurrent.text = getString(R.string.playback_progress,
-        currentMinutes,
-        finalCurrentSeconds)
+      currentMinutes,
+      finalCurrentSeconds)
 
     progressBar.max = total
     progressBar.progress = current
@@ -387,8 +389,8 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
 
     progressBar.progress = progressBar.progress + 1000
     trackProgressCurrent.text = getString(R.string.playback_progress,
-        currentMinutes,
-        currentSeconds)
+      currentMinutes,
+      currentSeconds)
   }
 
   override fun onDestroy() {

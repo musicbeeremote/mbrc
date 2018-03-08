@@ -24,6 +24,10 @@ class TrackRepositoryImpl
     return Single.fromCallable { dao.getAlbumTracks(album, artist) }
   }
 
+  override fun allTracks(): Single<Tracks> {
+    return Single.fromCallable { Tracks(dao.getAll(), dao.getAllIndexes()) }
+  }
+
   override fun getNonAlbumTracks(artist: String): Single<DataSource.Factory<Int, TrackEntity>> {
     return Single.fromCallable { dao.getNonAlbumTracks(artist) }
   }

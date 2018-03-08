@@ -25,6 +25,7 @@ constructor(
     BrowseTrackPresenter {
 
   private lateinit var tracks: LiveData<PagedList<TrackEntity>>
+  private lateinit var indexes: LiveData<List<String>>
 
   override fun attach(view: BrowseTrackView) {
     super.attach(view)
@@ -40,18 +41,31 @@ constructor(
   }
 
   override fun load() {
-    disposables += repository.getAll()
+    disposables += repository.allTracks()
         .observeOn(schedulerProvider.main())
         .subscribeOn(schedulerProvider.io())
         .doFinally {
           view().hideLoading()
         }
         .subscribe({
-          onTrackLoad(it)
+          onTrackLoad(it.factory)
+          onIndexesLoad(it.indexes)
         }, {
           view().failure(it)
           Timber.e(it, "Error while loading the data from the database")
         })
+  }
+
+  private fun onIndexesLoad(indexes: LiveData<List<String>>) {
+    if (this::indexes.isInitialized) {
+      this.indexes.removeObservers(this)
+    }
+    this.indexes = indexes
+    this.indexes.observe(this, Observer {
+      if (it != null) {
+        view().updateIndexes(it)
+      }
+    })
   }
 
   private fun onTrackLoad(it: DataSource.Factory<Int, TrackEntity>) {

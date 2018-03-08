@@ -14,14 +14,14 @@ interface BrowseAlbumView : BaseView {
 
   fun hideLoading()
 
-  fun showSorting(@Order order: Long, @Fields selection: Long)
+  fun showSorting(@Order order: Int, @Fields selection: Int)
 }
 
 interface BrowseAlbumPresenter : Presenter<BrowseAlbumView> {
   fun load()
   fun reload()
   fun showSorting()
-  fun order(@Order order: Long)
-  fun sortBy(@Fields selection: Long)
+  fun order(@Order order: Int)
+  fun sortBy(@Fields selection: Int)
 }
 

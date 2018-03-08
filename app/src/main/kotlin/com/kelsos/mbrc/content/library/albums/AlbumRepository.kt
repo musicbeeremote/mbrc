@@ -11,7 +11,7 @@ interface AlbumRepository : Repository<AlbumEntity> {
    * Retrieves the albums ordered by
    */
   fun getAlbumsSorted(
-      @Sorting.Fields order: Long = Sorting.ALBUM_ARTIST__ALBUM,
-      ascending: Boolean = true
+    @Sorting.Fields order: Int = Sorting.ALBUM_ARTIST__ALBUM,
+    ascending: Boolean = true
   ): Single<DataSource.Factory<Int, AlbumEntity>>
 }

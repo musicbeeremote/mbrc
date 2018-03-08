@@ -198,8 +198,8 @@ class RecyclerViewFastScroller : LinearLayout {
 
     currentAnimator?.cancel()
     currentAnimator = ObjectAnimator.ofFloat(bubble, "alpha", 0f, 1f)
-        .setDuration(BUBBLE_ANIMATION_DURATION.toLong())
-        .apply { start() }
+      .setDuration(BUBBLE_ANIMATION_DURATION.toLong())
+      .apply { start() }
   }
 
   private fun hideBubble() {
@@ -207,27 +207,27 @@ class RecyclerViewFastScroller : LinearLayout {
       return
     currentAnimator?.cancel()
     currentAnimator = ObjectAnimator.ofFloat(bubble, "alpha", 1f, 0f)
-        .setDuration(BUBBLE_ANIMATION_DURATION.toLong())
-        .apply {
-          addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-              super.onAnimationEnd(animation)
-              bubble.hide()
-              currentAnimator = null
-            }
+      .setDuration(BUBBLE_ANIMATION_DURATION.toLong())
+      .apply {
+        addListener(object : AnimatorListenerAdapter() {
+          override fun onAnimationEnd(animation: Animator) {
+            super.onAnimationEnd(animation)
+            bubble.hide()
+            currentAnimator = null
+          }
 
-            override fun onAnimationCancel(animation: Animator) {
-              super.onAnimationCancel(animation)
-              bubble.hide()
-              currentAnimator = null
-            }
-          })
-          start()
-        }
+          override fun onAnimationCancel(animation: Animator) {
+            super.onAnimationCancel(animation)
+            bubble.hide()
+            currentAnimator = null
+          }
+        })
+        start()
+      }
 
   }
 
-  @IntDef(SCROLL_STARTED.toLong(), SCROLL_ENDED.toLong())
+  @IntDef(SCROLL_STARTED, SCROLL_ENDED)
   @Retention(AnnotationRetention.SOURCE)
   annotation class ScrollState
 

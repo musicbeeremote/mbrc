@@ -7,7 +7,11 @@ object LfmRating {
   const val BANNED = -1
   const val NORMAL = 0
 
-  @IntDef(LOVED.toLong(), BANNED.toLong(), NORMAL.toLong())
+  @IntDef(
+    LOVED,
+    BANNED,
+    NORMAL
+  )
   @Retention(AnnotationRetention.SOURCE)
   annotation class Rating
 }

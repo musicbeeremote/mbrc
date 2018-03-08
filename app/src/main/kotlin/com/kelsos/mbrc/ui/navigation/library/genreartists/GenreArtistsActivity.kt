@@ -75,7 +75,7 @@ class GenreArtistsActivity : BaseActivity(),
   }
 
   override fun update(pagedList: PagedList<ArtistEntity>) {
-    adapter.setList(pagedList)
+    adapter.submitList(pagedList)
   }
 
   override fun onDestroy() {

@@ -82,7 +82,7 @@ class MiniControlFragment : Fragment(), MiniControlView {
     if (file.exists()) {
 
       val dimens = context.getDimens()
-      Picasso.with(context)
+      Picasso.get()
           .load(file)
           .noFade()
           .config(Bitmap.Config.RGB_565)
