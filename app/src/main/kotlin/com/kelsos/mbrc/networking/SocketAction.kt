@@ -10,6 +10,12 @@ object SocketAction {
   const val STOP = 5
 
   @Retention(AnnotationRetention.SOURCE)
-  @IntDef(RESET.toLong(), START.toLong(), RETRY.toLong(), TERMINATE.toLong(), STOP.toLong())
+  @IntDef(
+    RESET,
+    START,
+    RETRY,
+    TERMINATE,
+    STOP
+  )
   annotation class Action
 }

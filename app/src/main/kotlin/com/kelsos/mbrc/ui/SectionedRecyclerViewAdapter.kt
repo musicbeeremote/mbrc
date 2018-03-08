@@ -80,7 +80,7 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : Recy
   override fun getItemCount(): Int {
     var count = 0
     mHeaderLocationMap.clear()
-    for (s in 0..sectionCount - 1) {
+    for (s in 0 until sectionCount) {
       val itemCount = getItemCount(s)
       if (mShowHeadersForEmptySections || itemCount > 0) {
         mHeaderLocationMap.put(count, s)
@@ -97,13 +97,13 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : Recy
   @SuppressLint("Range")
   @Deprecated("")
   override fun getItemViewType(position: Int): Int {
-    if (isHeader(position)) {
-      return getHeaderViewType(mHeaderLocationMap[position] ?: -1)
+    return if (isHeader(position)) {
+      getHeaderViewType(mHeaderLocationMap[position] ?: -1)
     } else {
       val sectionAndPos = getSectionIndexAndRelativePosition(position)
-      return getItemViewType(sectionAndPos[0],
-          // offset section view positions
-          sectionAndPos[1], position - (sectionAndPos[0] + 1))
+      getItemViewType(sectionAndPos[0],
+        // offset section view positions
+        sectionAndPos[1], position - (sectionAndPos[0] + 1))
     }
   }
 
@@ -155,7 +155,7 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : Recy
    * *
    */
   @Deprecated("Shouldn't be used", replaceWith = ReplaceWith("onBindViewHolder(VH,Int,Int,Int)"))
-  override fun onBindViewHolder(holder: VH, position: Int, payloads: List<Any>?) {
+  override fun onBindViewHolder(holder: VH, position: Int, payloads: List<Any>) {
     super.onBindViewHolder(holder, position, payloads)
   }
 

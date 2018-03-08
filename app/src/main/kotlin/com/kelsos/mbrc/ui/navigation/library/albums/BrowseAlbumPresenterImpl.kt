@@ -71,7 +71,7 @@ constructor(
     view().showSorting(albumSortingStore.getSortingOrder(), albumSortingStore.getSortingSelection())
   }
 
-  override fun order(@Sorting.Order order: Long) {
+  override fun order(@Sorting.Order order: Int) {
     albumSortingStore.setSortingOrder(order)
 
     val ascending = order == Sorting.ORDER_ASCENDING
@@ -79,7 +79,7 @@ constructor(
     loadSorted(sortingSelection, ascending)
   }
 
-  private fun loadSorted(sortingSelection: Long, ascending: Boolean) {
+  private fun loadSorted(sortingSelection: Int, ascending: Boolean) {
     disposables += repository.getAlbumsSorted(sortingSelection, ascending)
         .observeOn(schedulerProvider.main())
         .subscribeOn(schedulerProvider.io())
@@ -92,7 +92,7 @@ constructor(
         }
   }
 
-  override fun sortBy(@Sorting.Fields selection: Long) {
+  override fun sortBy(@Sorting.Fields selection: Int) {
     albumSortingStore.setSortingSelection(selection)
     val ascending = albumSortingStore.getSortingOrder() == Sorting.ORDER_ASCENDING
     loadSorted(selection, ascending)

@@ -29,6 +29,19 @@
       app:layout_constraintTop_toTopOf="parent"
       tools:text="Back in black" />
 
+  <View
+      android:id="@+id/line_one_empty"
+      android:layout_width="94dp"
+      android:layout_height="0dp"
+      android:layout_marginBottom="4dp"
+      android:layout_marginTop="4dp"
+      android:background="@color/primary_text"
+      app:layout_constraintBottom_toBottomOf="@id/line_one"
+      app:layout_constraintEnd_toEndOf="@id/line_one"
+      app:layout_constraintHorizontal_bias="0"
+      app:layout_constraintStart_toStartOf="@id/line_one"
+      app:layout_constraintTop_toTopOf="@id/line_one" />
+
   <TextView
       android:id="@+id/line_two"
       android:layout_width="0dp"
@@ -44,6 +57,25 @@
       app:layout_constraintStart_toStartOf="@+id/line_one"
       app:layout_constraintTop_toBottomOf="@id/line_one"
       tools:text="AC/DC" />
+
+  <View
+      android:id="@+id/line_two_empty"
+      android:layout_width="148dp"
+      android:layout_height="0dp"
+      android:layout_marginBottom="4dp"
+      android:layout_marginTop="4dp"
+      android:background="@color/secondary_text"
+      app:layout_constraintBottom_toBottomOf="@id/line_two"
+      app:layout_constraintEnd_toEndOf="@id/line_two"
+      app:layout_constraintHorizontal_bias="0"
+      app:layout_constraintStart_toStartOf="@id/line_two"
+      app:layout_constraintTop_toTopOf="@id/line_two" />
+
+  <android.support.constraint.Group
+      android:id="@+id/listitem_loading"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      app:constraint_referenced_ids="line_two_empty,line_one_empty" />
 
   <ImageView
       android:id="@+id/overflow_menu"

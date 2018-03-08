@@ -82,7 +82,7 @@ class BrowseAlbumFragment : Fragment(),
     return super.onOptionsItemSelected(item)
   }
 
-  override fun showSorting(order: Long, selection: Long) {
+  override fun showSorting(order: Int, selection: Int) {
     val fm = fragmentManager ?: fail("null fragmentManager")
     SortingDialog.create(fm, order, selection, {
       presenter.order(it)
@@ -129,7 +129,7 @@ class BrowseAlbumFragment : Fragment(),
     } else {
       emptyView.gone()
     }
-    adapter.setList(pagedList)
+    adapter.submitList(pagedList)
     swipeLayout.isRefreshing = false
   }
 

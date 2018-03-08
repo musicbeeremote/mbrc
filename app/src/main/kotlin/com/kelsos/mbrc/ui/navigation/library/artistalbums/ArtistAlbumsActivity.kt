@@ -78,7 +78,7 @@ class ArtistAlbumsActivity : BaseActivity(),
   }
 
   override fun update(albums: PagedList<AlbumEntity>) {
-    adapter.setList(albums)
+    adapter.submitList(albums)
   }
 
   override fun onDestroy() {

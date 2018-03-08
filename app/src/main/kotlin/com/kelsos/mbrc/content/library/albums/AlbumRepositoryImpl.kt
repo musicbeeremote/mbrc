@@ -42,7 +42,7 @@ constructor(
 
   override fun cacheIsEmpty(): Single<Boolean> = Single.fromCallable { dao.count() == 0L }
 
-  override fun getAlbumsSorted(@Sorting.Fields order: Long, ascending: Boolean): Single<DataSource.Factory<Int, AlbumEntity>> {
+  override fun getAlbumsSorted(@Sorting.Fields order: Int, ascending: Boolean): Single<DataSource.Factory<Int, AlbumEntity>> {
     val factory = when (order) {
       Sorting.ALBUM -> {
         if (ascending) {

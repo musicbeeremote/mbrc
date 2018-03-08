@@ -8,7 +8,12 @@ object Search {
   const val SECTION_ALBUM = 2
   const val SECTION_TRACK = 3
 
-  @IntDef(SECTION_GENRE.toLong(), SECTION_ARTIST.toLong(), SECTION_ALBUM.toLong(), SECTION_TRACK.toLong())
+  @IntDef(
+    SECTION_GENRE,
+    SECTION_ARTIST,
+    SECTION_ALBUM,
+    SECTION_TRACK
+  )
   @Retention(AnnotationRetention.SOURCE)
   annotation class Section
 }

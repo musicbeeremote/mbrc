@@ -5,12 +5,12 @@ import com.kelsos.mbrc.content.library.albums.Sorting.Order
 
 interface AlbumSortingStore {
   @Fields
-  fun getSortingSelection(): Long
+  fun getSortingSelection(): Int
 
-  fun setSortingSelection(@Fields sorting: Long)
+  fun setSortingSelection(@Fields sorting: Int)
 
   @Order
-  fun getSortingOrder(): Long
+  fun getSortingOrder(): Int
 
-  fun setSortingOrder(@Order order: Long)
+  fun setSortingOrder(@Order order: Int)
 }

@@ -8,6 +8,10 @@ object Connection {
   const val ACTIVE = 2
 
   @Retention(AnnotationRetention.SOURCE)
-  @IntDef(OFF.toLong(), ON.toLong(), ACTIVE.toLong())
+  @IntDef(
+    OFF,
+    ON,
+    ACTIVE
+  )
   annotation class Status
-}//no instance
+}

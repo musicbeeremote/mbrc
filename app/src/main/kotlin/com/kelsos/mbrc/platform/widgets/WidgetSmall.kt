@@ -94,8 +94,8 @@ class WidgetSmall : AppWidgetProvider() {
     val smallWidget = RemoteViews(context.packageName, R.layout.widget_small)
     val coverFile = File(path)
     if (coverFile.exists()) {
-      Picasso.with(context).invalidate(coverFile)
-      Picasso.with(context).load(coverFile)
+      Picasso.get().invalidate(coverFile)
+      Picasso.get().load(coverFile)
           .centerCrop()
           .resizeDimen(R.dimen.widget_small_height, R.dimen.widget_small_height)
           .into(smallWidget, R.id.widget_small_image, widgetsIds)

@@ -38,7 +38,7 @@ constructor(
   }
 
   @OutputSelectionContract.Code
-  private fun code(throwable: Throwable?): Long {
+  private fun code(throwable: Throwable?): Int {
     val cause = throwable?.cause ?: throwable
 
     return when (cause) {

@@ -36,12 +36,12 @@ object RemoteViewIntentBuilder {
   }
 
   @IntDef(
-      OPEN.toLong(),
-      PLAY.toLong(),
-      CLOSE.toLong(),
-      PREVIOUS.toLong(),
-      NEXT.toLong(),
-      CANCEL.toLong()
+    OPEN,
+    PLAY,
+    CLOSE,
+    PREVIOUS,
+    NEXT,
+    CANCEL
   )
   @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
   annotation class ButtonAction

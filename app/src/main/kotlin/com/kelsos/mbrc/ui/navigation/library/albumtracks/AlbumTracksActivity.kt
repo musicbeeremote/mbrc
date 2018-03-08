@@ -89,7 +89,7 @@ class AlbumTracksActivity : BaseActivity(),
   }
 
   override fun update(pagedList: PagedList<TrackEntity>) {
-    adapter.setList(pagedList)
+    adapter.submitList(pagedList)
   }
 
   override fun onDestroy() {

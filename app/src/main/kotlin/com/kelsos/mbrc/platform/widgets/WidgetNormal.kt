@@ -98,8 +98,8 @@ class WidgetNormal : AppWidgetProvider() {
 
     val coverFile = File(path)
     if (coverFile.exists()) {
-      Picasso.with(context).invalidate(coverFile)
-      Picasso.with(context).load(coverFile)
+      Picasso.get().invalidate(coverFile)
+      Picasso.get().load(coverFile)
           .centerCrop()
           .resizeDimen(R.dimen.widget_normal_height, R.dimen.widget_normal_height)
           .into(widget, R.id.widget_normal_image, widgetsIds)

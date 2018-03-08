@@ -8,24 +8,24 @@ class AlbumSortingStoreImpl
 @Inject
 constructor(private val sharedPreferences: SharedPreferences) : AlbumSortingStore {
   @Sorting.Fields
-  override fun getSortingSelection(): Long {
-    return sharedPreferences.getLong(ALBUM_SORTING_KEY, Sorting.ALBUM_ARTIST__ALBUM)
+  override fun getSortingSelection(): Int {
+    return sharedPreferences.getInt(ALBUM_SORTING_KEY, Sorting.ALBUM_ARTIST__ALBUM)
   }
 
-  override fun setSortingSelection(@Sorting.Fields sorting: Long) {
+  override fun setSortingSelection(@Sorting.Fields sorting: Int) {
     sharedPreferences.edit()
-        .putLong(ALBUM_SORTING_KEY, sorting)
+        .putInt(ALBUM_SORTING_KEY, sorting)
         .apply()
   }
 
   @Sorting.Order
-  override fun getSortingOrder(): Long {
-    return sharedPreferences.getLong(ALBUM_SORTING_ORDER_KEY, Sorting.ORDER_ASCENDING)
+  override fun getSortingOrder(): Int {
+    return sharedPreferences.getInt(ALBUM_SORTING_ORDER_KEY, Sorting.ORDER_ASCENDING)
   }
 
-  override fun setSortingOrder(@Sorting.Order order: Long) {
+  override fun setSortingOrder(@Sorting.Order order: Int) {
     sharedPreferences.edit()
-        .putLong(ALBUM_SORTING_ORDER_KEY, order)
+        .putInt(ALBUM_SORTING_ORDER_KEY, order)
         .apply()
   }
 

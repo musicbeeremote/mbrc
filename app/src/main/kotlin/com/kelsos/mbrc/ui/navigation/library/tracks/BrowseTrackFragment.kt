@@ -73,13 +73,17 @@ class BrowseTrackFragment : Fragment(),
     presenter.load()
   }
 
+  override fun updateIndexes(indexes: List<String>) {
+    adapter.setIndexes(indexes)
+  }
+
   override fun update(pagedList: PagedList<TrackEntity>) {
     if (pagedList.isEmpty()) {
       emptyView.show()
     } else {
       emptyView.hide()
     }
-    adapter.setList(pagedList)
+    adapter.submitList(pagedList)
 
   }
 
