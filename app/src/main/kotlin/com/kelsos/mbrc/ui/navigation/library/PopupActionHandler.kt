@@ -21,7 +21,11 @@ class PopupActionHandler
 constructor() {
 
   @LibraryPopup.Action
-  fun albumSelected(@IdRes itemId: Int, entry: Album, context: Context): String {
+  fun albumSelected(
+    @IdRes itemId: Int,
+    entry: Album,
+    context: Context
+  ): String {
     if (itemId == R.id.popup_album_tracks) {
       openProfile(entry, context)
       return LibraryPopup.PROFILE
@@ -36,7 +40,11 @@ constructor() {
   }
 
   @LibraryPopup.Action
-  fun artistSelected(@IdRes itemId: Int, entry: Artist, context: Context): String {
+  fun artistSelected(
+    @IdRes itemId: Int,
+    entry: Artist,
+    context: Context
+  ): String {
     if (itemId == R.id.popup_artist_album) {
       openProfile(entry, context)
       return LibraryPopup.PROFILE
@@ -51,7 +59,11 @@ constructor() {
   }
 
   @LibraryPopup.Action
-  fun genreSelected(@IdRes itemId: Int, entry: Genre, context: Context): String {
+  fun genreSelected(
+    @IdRes itemId: Int,
+    entry: Genre,
+    context: Context
+  ): String {
     if (R.id.popup_genre_artists == itemId) {
       openProfile(entry, context)
       return LibraryPopup.PROFILE

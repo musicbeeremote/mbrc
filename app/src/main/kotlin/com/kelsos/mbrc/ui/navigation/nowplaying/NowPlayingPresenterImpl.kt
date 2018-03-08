@@ -17,8 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class NowPlayingPresenterImpl
-@Inject
-constructor(
+@Inject constructor(
   private val repository: NowPlayingRepository,
   private val bus: RxBus,
   private val model: MainDataModel

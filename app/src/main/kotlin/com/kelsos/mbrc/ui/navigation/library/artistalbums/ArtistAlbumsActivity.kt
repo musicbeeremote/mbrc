@@ -11,6 +11,7 @@ import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.databinding.ActivityArtistAlbumsBinding
 import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.albums.AlbumEntryAdapter
 import toothpick.Scope
@@ -21,7 +22,7 @@ import javax.inject.Inject
 class ArtistAlbumsActivity :
   BaseActivity(),
   ArtistAlbumsView,
-  AlbumEntryAdapter.MenuItemSelectedListener {
+  MenuItemSelectedListener<Album> {
 
   @Inject
   lateinit var actionHandler: PopupActionHandler
@@ -75,15 +76,15 @@ class ArtistAlbumsActivity :
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onMenuItemSelected(@IdRes itemId: Int, album: Album) {
-    val action = actionHandler.albumSelected(itemId, album, this)
+  override fun onMenuItemSelected(@IdRes itemId: Int, item: Album) {
+    val action = actionHandler.albumSelected(itemId, item, this)
     if (action != LibraryPopup.PROFILE) {
-      presenter.queue(action, album)
+      presenter.queue(action, item)
     }
   }
 
-  override fun onItemClicked(album: Album) {
-    actionHandler.albumSelected(album, this)
+  override fun onItemClicked(item: Album) {
+    actionHandler.albumSelected(item, this)
   }
 
   override suspend fun update(albums: PagingData<Album>) {

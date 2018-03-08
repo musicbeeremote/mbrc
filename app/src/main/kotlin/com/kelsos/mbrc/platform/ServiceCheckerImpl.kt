@@ -7,8 +7,8 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class ServiceCheckerImpl
-@Inject
-constructor(
+@Inject constructor(
+
   private val application: Application
 ) : ServiceChecker {
 

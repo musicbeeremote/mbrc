@@ -11,7 +11,6 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.ShareActionProvider
-import androidx.core.view.MenuItemCompat
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.kelsos.mbrc.R
@@ -180,9 +179,9 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     menuInflater.inflate(R.menu.menu, menu)
     this.menu = menu
-    val shareItem = menu.findItem(R.id.actionbar_share)
-    mShareActionProvider = MenuItemCompat.getActionProvider(shareItem) as ShareActionProvider
-    mShareActionProvider!!.setShareIntent(shareIntent)
+//    val shareItem = menu.findItem(R.id.actionbar_share)
+//    mShareActionProvider = MenuItemCompat.getActionProvider(shareItem) as ShareActionProvider
+//    mShareActionProvider!!.setShareIntent(shareIntent)
     bus.post(OnMainFragmentOptionsInflated())
     return super.onCreateOptionsMenu(menu)
   }

@@ -11,7 +11,6 @@ interface BrowseAlbumView : BaseView {
   fun search(term: String)
   fun queue(success: Boolean, tracks: Int)
   fun hideLoading()
-  fun showLoading()
 }
 
 interface BrowseAlbumPresenter : Presenter<BrowseAlbumView> {

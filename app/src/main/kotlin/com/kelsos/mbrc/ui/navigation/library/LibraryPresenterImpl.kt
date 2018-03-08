@@ -10,8 +10,7 @@ import javax.inject.Inject
 
 @LibraryActivity.Presenter
 class LibraryPresenterImpl
-@Inject
-constructor(
+@Inject constructor(
   private val settingsManager: SettingsManager,
   private val bus: RxBus,
   private val librarySyncInteractor: LibrarySyncInteractor,

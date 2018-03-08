@@ -13,6 +13,7 @@ import com.kelsos.mbrc.content.library.albums.AlbumInfo
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.databinding.ActivityAlbumTracksBinding
 import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter
 import com.kelsos.mbrc.utilities.RemoteUtils.sha1
@@ -26,7 +27,7 @@ import javax.inject.Inject
 class AlbumTracksActivity :
   BaseActivity(),
   AlbumTracksView,
-  TrackEntryAdapter.MenuItemSelectedListener {
+  MenuItemSelectedListener<Track> {
 
   @Inject
   lateinit var adapter: TrackEntryAdapter
@@ -112,12 +113,12 @@ class AlbumTracksActivity :
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onMenuItemSelected(@IdRes itemId: Int, track: Track) {
-    presenter.queue(track, actionHandler.trackSelected(itemId))
+  override fun onMenuItemSelected(@IdRes itemId: Int, item: Track) {
+    presenter.queue(item, actionHandler.trackSelected(itemId))
   }
 
-  override fun onItemClicked(track: Track) {
-    presenter.queue(track)
+  override fun onItemClicked(item: Track) {
+    presenter.queue(item)
   }
 
   override suspend fun update(tracks: PagingData<Track>) {

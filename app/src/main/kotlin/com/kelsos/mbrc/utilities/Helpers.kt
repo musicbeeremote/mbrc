@@ -11,9 +11,9 @@ import org.threeten.bp.Instant
 
 fun <T, I : Any> PagingSource<Int, T>.paged(): Flow<PagingData<I>> where T : I {
   val config = PagingConfig(
-    prefetchDistance = 50,
+    prefetchDistance = 100,
     enablePlaceholders = true,
-    initialLoadSize = 25,
+    initialLoadSize = 100,
     pageSize = 50
   )
   return Pager(config) { this }.flow.map { data -> data.map { it } }

@@ -14,12 +14,12 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.genres.Genre
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.databinding.FragmentBrowseBinding
+import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
-import com.kelsos.mbrc.ui.navigation.library.genres.GenreEntryAdapter.MenuItemSelectedListener
 import toothpick.Toothpick
 import javax.inject.Inject
 
-class BrowseGenreFragment : Fragment(), BrowseGenreView, MenuItemSelectedListener {
+class BrowseGenreFragment : Fragment(), BrowseGenreView, MenuItemSelectedListener<Genre> {
 
   @Inject
   lateinit var adapter: GenreEntryAdapter
@@ -88,16 +88,15 @@ class BrowseGenreFragment : Fragment(), BrowseGenreView, MenuItemSelectedListene
     presenter.load()
   }
 
-  override fun onMenuItemSelected(@IdRes itemId: Int, genre: Genre): Boolean {
-    val action = actionHandler.genreSelected(itemId, genre, requireActivity())
+  override fun onMenuItemSelected(@IdRes itemId: Int, item: Genre) {
+    val action = actionHandler.genreSelected(itemId, item, requireActivity())
     if (action != LibraryPopup.PROFILE) {
-      presenter.queue(action, genre)
+      presenter.queue(action, item)
     }
-    return true
   }
 
-  override fun onItemClicked(genre: Genre) {
-    actionHandler.genreSelected(genre, requireActivity())
+  override fun onItemClicked(item: Genre) {
+    actionHandler.genreSelected(item, requireActivity())
   }
 
   override fun onDestroy() {

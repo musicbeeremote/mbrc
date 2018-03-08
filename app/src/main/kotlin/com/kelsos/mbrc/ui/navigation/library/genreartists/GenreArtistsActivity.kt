@@ -11,15 +11,15 @@ import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.databinding.ActivityGenreArtistsBinding
 import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter
-import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter.MenuItemSelectedListener
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class GenreArtistsActivity : BaseActivity(), GenreArtistsView, MenuItemSelectedListener {
+class GenreArtistsActivity : BaseActivity(), GenreArtistsView, MenuItemSelectedListener<Artist> {
 
   @Inject
   lateinit var adapter: ArtistEntryAdapter
@@ -69,15 +69,15 @@ class GenreArtistsActivity : BaseActivity(), GenreArtistsView, MenuItemSelectedL
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onMenuItemSelected(@IdRes itemId: Int, artist: Artist) {
-    val action = actionHandler.artistSelected(itemId, artist, this)
+  override fun onMenuItemSelected(@IdRes itemId: Int, item: Artist) {
+    val action = actionHandler.artistSelected(itemId, item, this)
     if (action != LibraryPopup.PROFILE) {
-      presenter.queue(action, artist)
+      presenter.queue(action, item)
     }
   }
 
-  override fun onItemClicked(artist: Artist) {
-    actionHandler.artistSelected(artist, this)
+  override fun onItemClicked(item: Artist) {
+    actionHandler.artistSelected(item, this)
   }
 
   override suspend fun update(artists: PagingData<Artist>) {

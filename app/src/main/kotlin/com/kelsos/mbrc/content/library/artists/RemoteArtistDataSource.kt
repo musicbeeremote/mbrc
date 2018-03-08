@@ -8,7 +8,9 @@ import javax.inject.Inject
 
 class RemoteArtistDataSource
 @Inject
-constructor(private val service: ApiBase) : RemoteDataSource<ArtistDto> {
+constructor(
+  private val service: ApiBase
+) : RemoteDataSource<ArtistDto> {
   override suspend fun fetch(): Flow<List<ArtistDto>> {
     return service.getAllPages(Protocol.LibraryBrowseArtists, ArtistDto::class)
   }

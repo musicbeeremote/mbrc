@@ -28,7 +28,8 @@ constructor(
   private val librarySyncInteractor: LibrarySyncInteractor,
   private val queue: QueueHandler,
   private val searchModel: LibrarySearchModel
-) : BasePresenter<BrowseArtistView>(), BrowseArtistPresenter {
+) : BasePresenter<BrowseArtistView>(),
+  BrowseArtistPresenter {
 
   private lateinit var artists: Flow<PagingData<Artist>>
 

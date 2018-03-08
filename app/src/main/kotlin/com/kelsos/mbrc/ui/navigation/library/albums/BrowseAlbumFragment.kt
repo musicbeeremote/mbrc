@@ -14,6 +14,7 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.databinding.FragmentBrowseBinding
+import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -22,7 +23,7 @@ import javax.inject.Inject
 class BrowseAlbumFragment :
   Fragment(),
   BrowseAlbumView,
-  AlbumEntryAdapter.MenuItemSelectedListener {
+  MenuItemSelectedListener<Album> {
 
   @Inject
   lateinit var adapter: AlbumEntryAdapter
@@ -71,19 +72,20 @@ class BrowseAlbumFragment :
     presenter.load()
   }
 
-  override fun onMenuItemSelected(@IdRes itemId: Int, album: Album) {
-    val action = actionHandler.albumSelected(itemId, album, requireActivity())
+  override fun onMenuItemSelected(@IdRes itemId: Int, item: Album) {
+    val action = actionHandler.albumSelected(itemId, item, requireActivity())
     if (action != LibraryPopup.PROFILE) {
-      presenter.queue(action, album)
+      presenter.queue(action, item)
     }
   }
 
-  override fun onItemClicked(album: Album) {
-    actionHandler.albumSelected(album, requireActivity())
+  override fun onItemClicked(item: Album) {
+    actionHandler.albumSelected(item, requireActivity())
   }
 
   override suspend fun update(albums: PagingData<Album>) {
     adapter.submitData(albums)
+    binding.libraryBrowserEmptyGroup.isGone = adapter.itemCount != 0
   }
 
   override fun queue(success: Boolean, tracks: Int) {
@@ -97,13 +99,7 @@ class BrowseAlbumFragment :
       .show()
   }
 
-  override fun showLoading() {
-    binding.libraryBrowserEmptyGroup.isGone = true
-    binding.libraryBrowserLoadingBar.isGone = false
-  }
-
   override fun hideLoading() {
-    binding.libraryBrowserEmptyGroup.isGone = false
     binding.libraryBrowserLoadingBar.isGone = true
   }
 

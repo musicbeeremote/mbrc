@@ -7,6 +7,7 @@ import javax.inject.Inject
 class OutputApiImpl
 @Inject
 constructor(
+
   private val apiBase: ApiBase
 ) : OutputApi {
   override suspend fun getOutputs(): OutputResponse {

@@ -14,13 +14,13 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.databinding.FragmentBrowseBinding
+import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
-import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter.MenuItemSelectedListener
 import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
 
-class BrowseArtistFragment : Fragment(), BrowseArtistView, MenuItemSelectedListener {
+class BrowseArtistFragment : Fragment(), BrowseArtistView, MenuItemSelectedListener<Artist> {
 
   @Inject
   lateinit var adapter: ArtistEntryAdapter
@@ -96,15 +96,15 @@ class BrowseArtistFragment : Fragment(), BrowseArtistView, MenuItemSelectedListe
     presenter.load()
   }
 
-  override fun onMenuItemSelected(@IdRes itemId: Int, artist: Artist) {
-    val action = actionHandler.artistSelected(itemId, artist, requireActivity())
+  override fun onMenuItemSelected(@IdRes itemId: Int, item: Artist) {
+    val action = actionHandler.artistSelected(itemId, item, requireActivity())
     if (action != LibraryPopup.PROFILE) {
-      presenter.queue(action, artist)
+      presenter.queue(action, item)
     }
   }
 
-  override fun onItemClicked(artist: Artist) {
-    actionHandler.artistSelected(artist, requireActivity())
+  override fun onItemClicked(item: Artist) {
+    actionHandler.artistSelected(item, requireActivity())
   }
 
   override suspend fun update(artists: PagingData<Artist>) {

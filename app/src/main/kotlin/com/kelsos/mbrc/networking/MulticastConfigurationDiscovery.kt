@@ -153,7 +153,7 @@ internal constructor(
         send(DatagramPacket(data, data.size, group, MULTICASTPORT))
       }
     } catch (e: IOException) {
-      Timber.v(e, "Failed to open multi cast socket")
+      Timber.v(e, "Failed to open multicast socket")
       throw RuntimeException(e)
     }
   }
