@@ -33,10 +33,12 @@ import javax.inject.Singleton
 class RemoteSessionManager
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 @Inject
-constructor(context: Application,
-            volumeProvider: RemoteVolumeProvider,
-            private val bus: RxBus,
-            private val manager: AudioManager) : AudioManager.OnAudioFocusChangeListener {
+constructor(
+  context: Application,
+  volumeProvider: RemoteVolumeProvider,
+  private val bus: RxBus,
+  private val manager: AudioManager
+) : AudioManager.OnAudioFocusChangeListener {
   private val mMediaSession: MediaSessionCompat?
 
   @Inject lateinit var handler: MediaIntentHandler
@@ -137,11 +139,9 @@ constructor(context: Application,
     if (PlayerState.PLAYING == state) {
       builder.setState(PlaybackStateCompat.STATE_PLAYING, -1, 1f)
       mMediaSession.isActive = true
-
     } else if (PlayerState.PAUSED == state) {
       builder.setState(PlaybackStateCompat.STATE_PAUSED, -1, 0f)
       mMediaSession.isActive = true
-
     } else {
       builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
       mMediaSession.isActive = false
@@ -158,7 +158,6 @@ constructor(context: Application,
       // Do nothing
     } else {
       abandonFocus()
-
     }
   }
 

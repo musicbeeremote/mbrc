@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
-import android.arch.lifecycle.LiveData
 import com.kelsos.mbrc.any
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.content.nowplaying.queue.QueueApi
@@ -129,7 +128,6 @@ class RadioPresenterImplTest {
     verify(radioView, never()).showLoading()
     verify(radioView, never()).hideLoading()
   }
-
 
   @Test
   fun loadRadiosRefreshViewAttached() {

@@ -151,8 +151,7 @@ class RecyclerViewFastScroller : LinearLayout {
     } else {
       if (handle.y + handle.height >= inHeight - TRACK_SNAP_RANGE)
         1f
-      else
-        y / inHeight.toFloat()
+      else y / inHeight.toFloat()
     }
 
     val targetPos = getValueInRange(0, itemCount - 1, (proportion * itemCount.toFloat()).toInt())
@@ -195,7 +194,6 @@ class RecyclerViewFastScroller : LinearLayout {
 
     bubble.show()
 
-
     currentAnimator?.cancel()
     currentAnimator = ObjectAnimator.ofFloat(bubble, "alpha", 0f, 1f)
       .setDuration(BUBBLE_ANIMATION_DURATION.toLong())
@@ -224,7 +222,6 @@ class RecyclerViewFastScroller : LinearLayout {
         })
         start()
       }
-
   }
 
   @IntDef(SCROLL_STARTED, SCROLL_ENDED)
@@ -235,6 +232,4 @@ class RecyclerViewFastScroller : LinearLayout {
     const val SCROLL_STARTED = 1
     const val SCROLL_ENDED = 2
   }
-
 }
-

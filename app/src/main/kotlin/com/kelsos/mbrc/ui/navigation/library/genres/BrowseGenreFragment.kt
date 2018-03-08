@@ -20,8 +20,8 @@ import com.kelsos.mbrc.extensions.gone
 import com.kelsos.mbrc.extensions.hide
 import com.kelsos.mbrc.extensions.linear
 import com.kelsos.mbrc.extensions.show
+import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
-import com.kelsos.mbrc.ui.navigation.library.genres.GenreEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import kotterknife.bindView
 import toothpick.Toothpick
@@ -29,7 +29,7 @@ import javax.inject.Inject
 
 class BrowseGenreFragment : Fragment(),
   BrowseGenreView,
-  MenuItemSelectedListener,
+  MenuItemSelectedListener<GenreEntity>,
   OnRefreshListener {
 
   private val recycler: RecyclerView by bindView(R.id.library_browser__content)
@@ -47,9 +47,11 @@ class BrowseGenreFragment : Fragment(),
   @Inject
   lateinit var presenter: BrowseGenrePresenter
 
-  override fun onCreateView(inflater: LayoutInflater,
-                            container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View? {
     return inflater.inflate(R.layout.fragment_browse, container, false)
   }
 
@@ -88,15 +90,12 @@ class BrowseGenreFragment : Fragment(),
     presenter.load()
   }
 
-  override fun onMenuItemSelected(action: String, entry: GenreEntity): Boolean {
-    val activity = activity ?: fail("null activity")
-    actionHandler.genreSelected(action, entry, activity)
-    return true
+  override fun onMenuItemSelected(action: String, item: GenreEntity) {
+    actionHandler.genreSelected(action, item, requireContext())
   }
 
-  override fun onItemClicked(genre: GenreEntity) {
-    val activity = activity ?: fail("null activity")
-    actionHandler.genreSelected(genre, activity)
+  override fun onItemClicked(item: GenreEntity) {
+    actionHandler.genreSelected(item, requireContext())
   }
 
   override fun onRefresh() {
@@ -105,7 +104,6 @@ class BrowseGenreFragment : Fragment(),
     }
 
     presenter.reload()
-
   }
 
   override fun failure(throwable: Throwable) {
@@ -122,5 +120,4 @@ class BrowseGenreFragment : Fragment(),
     emptyViewProgress.gone()
     swipeLayout.isRefreshing = false
   }
-
 }

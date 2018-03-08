@@ -13,7 +13,7 @@ import javax.inject.Inject
 class ArtistAlbumsPresenterImpl
 @Inject
 constructor(
-    private val repository: AlbumRepository
+  private val repository: AlbumRepository
 ) : BasePresenter<ArtistAlbumsView>(),
     ArtistAlbumsPresenter {
 

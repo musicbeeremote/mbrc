@@ -10,8 +10,8 @@ import javax.inject.Inject
 class OutputSelectionPresenterImpl
 @Inject
 constructor(
-    private val outputApi: OutputApi,
-    private val schedulerProvider: SchedulerProvider
+  private val outputApi: OutputApi,
+  private val schedulerProvider: SchedulerProvider
 ) : OutputSelectionPresenter, BasePresenter<OutputSelectionView>() {
   override fun load() {
     addDisposable(outputApi.getOutputs()

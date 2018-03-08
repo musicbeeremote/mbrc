@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
-
 import android.app.Activity
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -29,7 +28,6 @@ class RadioAdapter
       path?.let {
         radioPressedListener?.onRadioPressed(it)
       }
-
     }
     return viewHolder
   }
@@ -40,7 +38,6 @@ class RadioAdapter
       holder.name.text = radio.name
     }
     holder.context.visibility = View.GONE
-
   }
 
   override fun getItemCount(): Int {

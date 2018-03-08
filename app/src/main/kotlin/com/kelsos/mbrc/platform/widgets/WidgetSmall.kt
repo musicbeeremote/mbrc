@@ -69,10 +69,12 @@ class WidgetSmall : AppWidgetProvider() {
     }
   }
 
-  private fun updateInfo(context: Context?,
-                         widgetManager: AppWidgetManager,
-                         widgetsIds: IntArray,
-                         info: TrackInfo) {
+  private fun updateInfo(
+    context: Context?,
+    widgetManager: AppWidgetManager,
+    widgetsIds: IntArray,
+    info: TrackInfo
+  ) {
 
     if (context == null) {
       return
@@ -84,9 +86,12 @@ class WidgetSmall : AppWidgetProvider() {
     widgetManager.updateAppWidget(widgetsIds, smallWidget)
   }
 
-  private fun updateCover(context: Context?,
-                          widgetManager: AppWidgetManager,
-                          widgetsIds: IntArray, path: String) {
+  private fun updateCover(
+    context: Context?,
+    widgetManager: AppWidgetManager,
+    widgetsIds: IntArray,
+    path: String
+  ) {
     if (context == null) {
       return
     }
@@ -105,10 +110,12 @@ class WidgetSmall : AppWidgetProvider() {
     }
   }
 
-  private fun updatePlayState(context: Context?,
-                              manager: AppWidgetManager,
-                              widgetsIds: IntArray,
-                              @State state: String) {
+  private fun updatePlayState(
+    context: Context?,
+    manager: AppWidgetManager,
+    widgetsIds: IntArray,
+    @State state: String
+  ) {
     if (context == null) {
       return
     }

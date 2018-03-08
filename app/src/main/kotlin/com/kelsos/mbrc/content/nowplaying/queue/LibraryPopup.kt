@@ -18,5 +18,4 @@ object LibraryPopup {
   const val LAST = "last"
   const val NOW = "now"
   const val ADD_ALL = "add-all"
-
 }

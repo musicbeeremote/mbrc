@@ -9,8 +9,8 @@ import javax.inject.Inject
 
 class ConnectivityVerifierImpl
 @Inject constructor(
-    private val mapper: ObjectMapper,
-    val repository: ConnectionRepository
+  private val mapper: ObjectMapper,
+  val repository: ConnectionRepository
 ) : ConnectivityVerifier, ApiRequestBase(mapper, repository) {
 
   override fun verify(): Single<Boolean> {

@@ -12,9 +12,9 @@ import javax.inject.Inject
 
 class QueueApiImpl
 @Inject constructor(
-    repository: ConnectionRepository,
-    private val mapper: ObjectMapper,
-    clientInformationStore: ClientInformationStore
+  repository: ConnectionRepository,
+  private val mapper: ObjectMapper,
+  clientInformationStore: ClientInformationStore
 ) : ApiBase(repository, mapper, clientInformationStore), QueueApi {
   override fun queue(@Action type: String, tracks: List<String>, play: String?): Single<QueueResponse> {
     return request(Protocol.NowPlayingQueue, QueuePayload(type, tracks, play)).firstOrError().flatMap {

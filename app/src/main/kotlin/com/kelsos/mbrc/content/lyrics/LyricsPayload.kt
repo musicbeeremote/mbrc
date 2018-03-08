@@ -10,4 +10,3 @@ data class LyricsPayload(@JsonProperty("status") val status: Int = NOT_FOUND, @J
     const val NOT_FOUND = 404
   }
 }
-

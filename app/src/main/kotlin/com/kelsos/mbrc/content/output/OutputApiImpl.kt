@@ -13,9 +13,9 @@ import javax.inject.Inject
 class OutputApiImpl
 @Inject
 constructor(
-    repository: ConnectionRepository,
-    private val mapper: ObjectMapper,
-    clientInformationStore: ClientInformationStore
+  repository: ConnectionRepository,
+  private val mapper: ObjectMapper,
+  clientInformationStore: ClientInformationStore
 ) : OutputApi, ApiBase(repository, mapper, clientInformationStore) {
   override fun getOutputs(): Single<OutputResponse> {
     return request(Protocol.PlayerOutput).flatMap {

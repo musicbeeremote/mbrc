@@ -6,8 +6,10 @@ import android.content.Intent
 import javax.inject.Inject
 
 class ServiceCheckerImpl
-@Inject constructor(private val manager: ActivityManager,
-                    private val application: Application) : ServiceChecker {
+@Inject constructor(
+  private val manager: ActivityManager,
+  private val application: Application
+) : ServiceChecker {
 
   override fun startServiceIfNotRunning() {
     if (!isMyServiceRunning(RemoteService::class.java)) {

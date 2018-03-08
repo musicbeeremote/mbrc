@@ -13,11 +13,11 @@ import javax.inject.Inject
 @LibraryActivity.Presenter
 class LibraryPresenterImpl
 @Inject constructor(
-    private val schedulerProvider: SchedulerProvider,
-    private val settingsManager: SettingsManager,
-    private val bus: RxBus,
-    private val librarySyncInteractor: LibrarySyncInteractor,
-    syncProgressProvider: SyncProgressProvider
+  private val schedulerProvider: SchedulerProvider,
+  private val settingsManager: SettingsManager,
+  private val bus: RxBus,
+  private val librarySyncInteractor: LibrarySyncInteractor,
+  syncProgressProvider: SyncProgressProvider
 ) : LibraryPresenter, OnCompleteListener, BasePresenter<LibraryView>() {
 
   init {
@@ -64,9 +64,7 @@ class LibraryPresenterImpl
         .subscribe({
           view().updateArtistOnlyPreference(it)
         }, {
-
         }))
-
   }
 
   override fun setArtistPreference(albumArtistOnly: Boolean) {
@@ -78,4 +76,3 @@ class LibraryPresenterImpl
     //todo show success message
   }
 }
-

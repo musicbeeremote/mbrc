@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.content.activestatus
 
-
 object Repeat {
 
   const val ALL = "all"
@@ -10,5 +9,4 @@ object Repeat {
   @android.support.annotation.StringDef(com.kelsos.mbrc.content.activestatus.Repeat.ALL, com.kelsos.mbrc.content.activestatus.Repeat.NONE, com.kelsos.mbrc.content.activestatus.Repeat.ONE)
   @Retention(AnnotationRetention.SOURCE)
   annotation class Mode
-
 }

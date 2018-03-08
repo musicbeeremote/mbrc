@@ -125,5 +125,4 @@ class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewH
 
     fun onDefault(settings: ConnectionSettingsEntity)
   }
-
 }

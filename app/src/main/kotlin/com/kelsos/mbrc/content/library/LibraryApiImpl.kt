@@ -17,9 +17,9 @@ import javax.inject.Inject
 class LibraryApiImpl
 @Inject
 constructor(
-    repository: ConnectionRepository,
-    private val mapper: ObjectMapper,
-    clientInformationStore: ClientInformationStore
+  repository: ConnectionRepository,
+  private val mapper: ObjectMapper,
+  clientInformationStore: ClientInformationStore
 ) : ApiBase(repository, mapper, clientInformationStore), LibraryService {
 
   override fun getGenres(offset: Int, limit: Int): Observable<Page<GenreDto>> {

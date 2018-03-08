@@ -99,7 +99,6 @@ class RadioActivity : BaseNavigationActivity(), RadioView, OnRefreshListener, On
   }
 
   override fun showLoading() {
-
   }
 
   override fun hideLoading() {

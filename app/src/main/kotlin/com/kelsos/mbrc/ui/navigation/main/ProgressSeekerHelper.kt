@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class ProgressSeekerHelper
 @Inject constructor(
-    private val schedulerProvider: SchedulerProvider
+  private val schedulerProvider: SchedulerProvider
 ) {
   private var progressUpdate: ProgressUpdate? = null
   private var disposable: Disposable? = null
@@ -49,5 +49,4 @@ class ProgressSeekerHelper
   interface ProgressUpdate {
     fun progress(position: Int, duration: Int)
   }
-
 }

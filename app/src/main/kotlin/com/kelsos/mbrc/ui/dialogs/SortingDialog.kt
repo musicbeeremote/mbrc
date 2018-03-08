@@ -62,7 +62,6 @@ class SortingDialog : DialogFragment() {
         orderButton.set(R.string.sorting_dialog__ascending, R.drawable.ic_arrow_drop_up_black_24dp)
       }
     }
-
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

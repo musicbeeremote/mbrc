@@ -18,8 +18,8 @@ import javax.inject.Singleton
 class SettingsManagerImpl
 @Inject
 constructor(
-    private val context: Application,
-    private val preferences: SharedPreferences
+  private val context: Application,
+  private val preferences: SharedPreferences
 ) : SettingsManager {
 
   init {
@@ -99,4 +99,3 @@ constructor(
 
   private fun getKey(settingsKey: Int) = context.getString(settingsKey)
 }
-

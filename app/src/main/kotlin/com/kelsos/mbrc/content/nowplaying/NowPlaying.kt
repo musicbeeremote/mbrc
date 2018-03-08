@@ -9,4 +9,3 @@ interface NowPlaying : Data {
   val position: Int
   val id: Long
 }
-

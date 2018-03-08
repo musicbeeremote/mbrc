@@ -33,12 +33,12 @@ import javax.inject.Singleton
 class SessionNotificationManager
 @Inject
 constructor(
-    bus: RxBus,
-    private val context: Application,
-    private val sessionManager: RemoteSessionManager,
-    private val settings: SettingsManager,
-    private val model: SessionStatusModel,
-    private val notificationManager: NotificationManager
+  bus: RxBus,
+  private val context: Application,
+  private val sessionManager: RemoteSessionManager,
+  private val settings: SettingsManager,
+  private val model: SessionStatusModel,
+  private val notificationManager: NotificationManager
 ) {
   private var notification: Notification? = null
   private val previous: String

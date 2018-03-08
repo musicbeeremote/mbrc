@@ -42,8 +42,8 @@ class UpdateLfmRating
 class UpdateLyrics
 @Inject
 constructor(
-    private val model: LyricsModel,
-    private val mapper: ObjectMapper
+  private val model: LyricsModel,
+  private val mapper: ObjectMapper
 ) : ICommand {
 
   override fun execute(e: IEvent) {
@@ -68,10 +68,10 @@ class UpdateMute
 
 class UpdateNowPlayingTrack
 @Inject constructor(
-    private val model: MainDataModel,
-    private val context: Application,
-    private val mapper: ObjectMapper,
-    private val bus: RxBus
+  private val model: MainDataModel,
+  private val context: Application,
+  private val mapper: ObjectMapper,
+  private val bus: RxBus
 ) : ICommand {
 
   override fun execute(e: IEvent) {
@@ -108,8 +108,8 @@ class UpdatePlayerStatus
 
 class UpdatePlayState
 @Inject constructor(
-    private val model: MainDataModel,
-    private val context: Application
+  private val model: MainDataModel,
+  private val context: Application
 ) : ICommand {
 
   override fun execute(e: IEvent) {

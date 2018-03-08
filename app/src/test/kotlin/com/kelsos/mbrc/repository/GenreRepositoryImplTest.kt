@@ -18,7 +18,7 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.given
 import org.mockito.Mockito.anyInt
 import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
@@ -73,7 +73,7 @@ class GenreRepositoryImplTest {
     init {
       bind(GenreRepository::class.java).to(GenreRepositoryImpl::class.java)
       val mockService = mock(LibraryService::class.java)
-      `when`(mockService.getGenres(anyInt(), anyInt()))
+      given(mockService.getGenres(anyInt(), anyInt()))
           .thenAnswer {
             val offset = it.arguments[0] as Int
             var limit = it.arguments[1] as Int
@@ -99,10 +99,10 @@ class GenreRepositoryImplTest {
   }
 
   private fun createPage(
-      totalElements: Int,
-      offset: Int,
-      limit: Int,
-      data: List<GenreEntity> = emptyList()
+    totalElements: Int,
+    offset: Int,
+    limit: Int,
+    data: List<GenreEntity> = emptyList()
   ): Page<GenreEntity> {
     val page = Page<GenreEntity>()
     page.data = data
@@ -111,5 +111,4 @@ class GenreRepositoryImplTest {
     page.limit = limit
     return page
   }
-
 }

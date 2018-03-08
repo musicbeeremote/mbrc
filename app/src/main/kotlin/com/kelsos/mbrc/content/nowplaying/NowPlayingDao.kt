@@ -26,5 +26,4 @@ interface NowPlayingDao {
 
   @Query("delete from now_playing where date_added != :added")
   fun removePreviousEntries(added: Long)
-
 }

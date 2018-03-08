@@ -10,10 +10,9 @@ import java.io.IOException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-
 object LogHelper {
 
-  fun logsExist(context: Context) : Single<Boolean> {
+  fun logsExist(context: Context): Single<Boolean> {
     return Single.fromCallable {
       val filesDir = context.filesDir
       val logDir = File(filesDir, FileLoggingTree.LOGS_DIR)
@@ -73,13 +72,11 @@ object LogHelper {
         fos.close()
 
         return@fromCallable zipFile
-
-      } catch(e: IOException) {
+      } catch (e: IOException) {
         throw RuntimeException(e)
       }
     }
   }
 
   const val LOG_ZIP = "mbrc_logs.zip"
-
 }

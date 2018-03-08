@@ -82,4 +82,3 @@ class LyricsActivity : BaseNavigationActivity(), LyricsView {
     private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
   }
 }
-

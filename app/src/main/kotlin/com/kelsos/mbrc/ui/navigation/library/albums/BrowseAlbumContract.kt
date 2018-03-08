@@ -24,4 +24,3 @@ interface BrowseAlbumPresenter : Presenter<BrowseAlbumView> {
   fun order(@Order order: Int)
   fun sortBy(@Fields selection: Int)
 }
-

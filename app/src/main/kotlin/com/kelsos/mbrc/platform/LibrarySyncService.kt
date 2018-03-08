@@ -43,7 +43,6 @@ class LibrarySyncService : IntentService("LibrarySyncService") {
     librarySyncInteractor.sync(auto)
   }
 
-
   companion object {
     /**
      * Sync action for the library data
@@ -54,7 +53,6 @@ class LibrarySyncService : IntentService("LibrarySyncService") {
      * Who started the sync operation. This is to distinct between user initiated sync operations
      */
     private val EXTRA_AUTO = "com.kelsos.mbrc.dev.extra.AUTO"
-
 
     /**
      * Starts this service to perform a library metadata sync operatin with the given parameters. If

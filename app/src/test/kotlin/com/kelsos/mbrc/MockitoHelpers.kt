@@ -7,7 +7,7 @@ fun <T> any(): T {
   return uninitialized()
 }
 
-fun <T> any(clazz: Class<T> ) : T {
+fun <T> any(clazz: Class<T> ): T {
   Mockito.any<T>(clazz)
   return uninitialized()
 }

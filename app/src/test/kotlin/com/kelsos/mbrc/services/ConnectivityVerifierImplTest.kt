@@ -12,7 +12,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.given
 import org.mockito.MockitoAnnotations
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule
@@ -42,13 +42,12 @@ class ConnectivityVerifierImplTest {
     MockitoAnnotations.initMocks(this)
     toothpickRule.scope.installModules(TestModule())
     verifier = toothpickRule.getInstance(ConnectivityVerifier::class.java)
-
   }
 
   fun startMockServer(
-      prematureDisconnect: Boolean = false,
-      responseContext: String = Protocol.VerifyConnection,
-      json: Boolean = true
+    prematureDisconnect: Boolean = false,
+    responseContext: String = Protocol.VerifyConnection,
+    json: Boolean = true
   ): ServerSocket {
     val random = Random()
     val executor: ExecutorService = Executors.newSingleThreadExecutor()
@@ -94,7 +93,6 @@ class ConnectivityVerifierImplTest {
         server.close()
         return@Runnable
       }
-
     }
 
     executor.execute(mockSocket)
@@ -103,13 +101,12 @@ class ConnectivityVerifierImplTest {
 
   @After
   fun tearDown() {
-
   }
 
   @Test fun testSuccessfulVerification() {
     val server = startMockServer()
 
-    `when`(connectionRepository.default).thenAnswer {
+    given(connectionRepository.default).thenAnswer {
       val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
@@ -124,10 +121,9 @@ class ConnectivityVerifierImplTest {
     subscriber.assertValue(true)
   }
 
-
   @Test fun testPrematureDisconnectDuringVerification() {
     val server = startMockServer(true)
-    `when`(connectionRepository.default).thenAnswer {
+    given(connectionRepository.default).thenAnswer {
       val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
@@ -141,7 +137,7 @@ class ConnectivityVerifierImplTest {
 
   @Test fun testInvalidPluginResponseVerification() {
     val server = startMockServer(false, Protocol.ClientNotAllowed)
-    `when`(connectionRepository.default).thenAnswer {
+    given(connectionRepository.default).thenAnswer {
       val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
@@ -156,7 +152,7 @@ class ConnectivityVerifierImplTest {
   @Test fun testVerificationNoConnection() {
     startMockServer(true)
 
-    `when`(connectionRepository.default).thenAnswer {
+    given(connectionRepository.default).thenAnswer {
       return@thenAnswer null
     }
 
@@ -168,7 +164,7 @@ class ConnectivityVerifierImplTest {
   @Test fun testVerificationNoJsonPayload() {
     startMockServer(false, "payload", false)
 
-    `when`(connectionRepository.default).thenAnswer {
+    given(connectionRepository.default).thenAnswer {
       return@thenAnswer null
     }
 

@@ -17,9 +17,9 @@ import javax.inject.Inject
 class PlaylistPresenterImpl
 @Inject
 constructor(
-    private val bus: RxBus,
-    private val repository: PlaylistRepository,
-    private val schedulerProvider: SchedulerProvider
+  private val bus: RxBus,
+  private val repository: PlaylistRepository,
+  private val schedulerProvider: SchedulerProvider
 ) : BasePresenter<PlaylistView>(),
     PlaylistPresenter {
 
@@ -65,5 +65,4 @@ constructor(
           view().hideLoading()
         })
   }
-
 }

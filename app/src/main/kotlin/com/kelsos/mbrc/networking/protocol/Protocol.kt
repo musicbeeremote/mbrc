@@ -65,7 +65,6 @@ object Protocol {
   const val PlayerOutput = "playeroutput"
   const val PlayerOutputSwitch = "playeroutputswitch"
 
-
   /**
    * Toggle action in protocol. This should be send to the functions with multiple states
    * in order to change to the next in order state.
@@ -121,6 +120,4 @@ object Protocol {
       PlayerOutputSwitch)
   @Retention(AnnotationRetention.SOURCE)
   annotation class Context
-
-
 }

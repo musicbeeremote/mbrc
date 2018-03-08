@@ -9,10 +9,10 @@ import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 
 fun RecyclerView.linear(
   adapter: RecyclerView.Adapter<*>,
-  fastScroller: RecyclerViewFastScroller? = null,
-  fastScrollListener: OnFastScrollListener? = null
+  fastScroller: RecyclerViewFastScroller? = null
 ) {
   this.adapter = adapter
+  val fastScrollListener = adapter as? OnFastScrollListener
 
   val layoutManager: LinearLayoutManager
   if (fastScroller == null) {
@@ -64,10 +64,8 @@ fun RecyclerView.linear(
           else -> throw IllegalArgumentException("Invalid state")
         }
       }
-
     })
   }
 
   this.layoutManager = layoutManager
-
 }

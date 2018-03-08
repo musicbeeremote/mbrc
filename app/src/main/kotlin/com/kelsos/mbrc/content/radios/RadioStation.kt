@@ -7,4 +7,3 @@ interface RadioStation : Data {
   val url: String
   var id: Long
 }
-

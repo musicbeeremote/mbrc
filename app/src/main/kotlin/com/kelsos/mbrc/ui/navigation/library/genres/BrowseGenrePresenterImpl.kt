@@ -17,9 +17,9 @@ import javax.inject.Inject
 class BrowseGenrePresenterImpl
 @Inject
 constructor(
-    private val bus: RxBus,
-    private val repository: GenreRepository,
-    private val schedulerProvider: SchedulerProvider
+  private val bus: RxBus,
+  private val repository: GenreRepository,
+  private val schedulerProvider: SchedulerProvider
 ) : BasePresenter<BrowseGenreView>(),
     BrowseGenrePresenter {
 
@@ -76,6 +76,4 @@ constructor(
           view().hideLoading()
         }))
   }
-
 }
-

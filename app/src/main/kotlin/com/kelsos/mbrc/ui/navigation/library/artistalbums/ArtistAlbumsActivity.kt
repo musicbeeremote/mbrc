@@ -9,6 +9,7 @@ import android.view.MenuItem
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.albums.AlbumEntryAdapter
 import kotterknife.bindView
@@ -18,15 +19,18 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class ArtistAlbumsActivity : BaseActivity(),
-    ArtistAlbumsView,
-    AlbumEntryAdapter.MenuItemSelectedListener {
+  ArtistAlbumsView,
+  MenuItemSelectedListener<AlbumEntity> {
 
   private val recyclerView: RecyclerView by bindView(R.id.artist_albums__album_list)
   private val emptyView: Group by bindView(R.id.artist_albums__empty_view)
 
-  @Inject lateinit var actionHandler: PopupActionHandler
-  @Inject lateinit var adapter: AlbumEntryAdapter
-  @Inject lateinit var presenter: ArtistAlbumsPresenter
+  @Inject
+  lateinit var actionHandler: PopupActionHandler
+  @Inject
+  lateinit var adapter: AlbumEntryAdapter
+  @Inject
+  lateinit var presenter: ArtistAlbumsPresenter
 
   private var artist: String? = null
   private lateinit var scope: Scope
@@ -69,12 +73,12 @@ class ArtistAlbumsActivity : BaseActivity(),
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onMenuItemSelected(action: String, entry: AlbumEntity) {
-    actionHandler.albumSelected(action, entry, this)
+  override fun onMenuItemSelected(action: String, item: AlbumEntity) {
+    actionHandler.albumSelected(action, item, this)
   }
 
-  override fun onItemClicked(album: AlbumEntity) {
-    actionHandler.albumSelected(album, this)
+  override fun onItemClicked(item: AlbumEntity) {
+    actionHandler.albumSelected(item, this)
   }
 
   override fun update(albums: PagedList<AlbumEntity>) {
@@ -92,8 +96,6 @@ class ArtistAlbumsActivity : BaseActivity(),
   }
 
   companion object {
-    val ARTIST_NAME = "artist_name"
+    const val ARTIST_NAME = "artist_name"
   }
 }
-
-

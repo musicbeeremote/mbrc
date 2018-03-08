@@ -13,9 +13,9 @@ import javax.inject.Inject
 class RadioApiImpl
 @Inject
 constructor(
-    repository: ConnectionRepository,
-    private val mapper: ObjectMapper,
-    clientInformationStore: ClientInformationStore
+  repository: ConnectionRepository,
+  private val mapper: ObjectMapper,
+  clientInformationStore: ClientInformationStore
 ) : RadioApi, ApiBase(repository, mapper, clientInformationStore) {
   override fun getRadios(offset: Int, limit: Int): Observable<Page<RadioStationDto>> {
     val range = getPageRange(offset, limit)

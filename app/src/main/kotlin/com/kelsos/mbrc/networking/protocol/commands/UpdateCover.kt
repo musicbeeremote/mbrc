@@ -30,11 +30,11 @@ import javax.inject.Inject
 
 class UpdateCover
 @Inject constructor(
-    private val bus: RxBus,
-    private val context: Application,
-    private val mapper: ObjectMapper,
-    private val coverApi: CoverApi,
-    private val model: MainDataModel
+  private val bus: RxBus,
+  private val context: Application,
+  private val mapper: ObjectMapper,
+  private val coverApi: CoverApi,
+  private val model: MainDataModel
 ) : ICommand {
   private val coverDir: File
 
@@ -157,6 +157,4 @@ class UpdateCover
     const val COVER_DIR = "cover"
     const val TEMP_COVER = "temp_cover.jpg"
   }
-
 }
-

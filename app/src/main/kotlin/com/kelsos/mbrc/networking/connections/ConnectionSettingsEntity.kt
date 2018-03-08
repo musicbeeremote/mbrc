@@ -10,12 +10,12 @@ import android.arch.persistence.room.PrimaryKey
     indices = [(Index(value = ["address", "port"], unique = true))]
 )
 data class ConnectionSettingsEntity(
-    @ColumnInfo(name = "address")
-    var address: String = "",
-    @ColumnInfo(name = "port")
-    var port: Int = 0,
-    @ColumnInfo(name = "name")
-    var name: String = "",
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0
+  @ColumnInfo(name = "address")
+  var address: String = "",
+  @ColumnInfo(name = "port")
+  var port: Int = 0,
+  @ColumnInfo(name = "name")
+  var name: String = "",
+  @PrimaryKey(autoGenerate = true)
+  var id: Long = 0
 )

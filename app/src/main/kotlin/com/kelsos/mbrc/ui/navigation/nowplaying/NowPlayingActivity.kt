@@ -168,7 +168,6 @@ class NowPlayingActivity : BaseNavigationActivity(),
   }
 
   override fun showLoading() {
-
   }
 
   override fun hideLoading() {

@@ -13,12 +13,12 @@ import java.io.InputStreamReader
 import java.net.Socket
 
 open class ApiRequestBase(
-    private val mapper: ObjectMapper,
-    private val repository: ConnectionRepository
+  private val mapper: ObjectMapper,
+  private val repository: ConnectionRepository
 ) {
 
   internal fun call(
-      firstMessage: SocketMessage = SocketMessage.create(Protocol.Player, "Android")
+    firstMessage: SocketMessage = SocketMessage.create(Protocol.Player, "Android")
   ): Observable<ServiceMessage> {
     return Observable.using<ServiceMessage, Socket>({
       this.connect(firstMessage)
@@ -53,7 +53,6 @@ open class ApiRequestBase(
         }
       }
     }
-
   }
 
   /**
@@ -80,7 +79,6 @@ open class ApiRequestBase(
       Timber.v("failed to create socket")
       throw e
     }
-
   }
 
   /**

@@ -20,11 +20,11 @@ import javax.inject.Inject
 class SearchResultsPresenterImpl
 @Inject
 constructor(
-    private val genreRepository: GenreRepository,
-    private val artistRepository: ArtistRepository,
-    private val albumRepository: AlbumRepository,
-    private val trackRepository: TrackRepository,
-    private val schedulerProvider: SchedulerProvider
+  private val genreRepository: GenreRepository,
+  private val artistRepository: ArtistRepository,
+  private val albumRepository: AlbumRepository,
+  private val trackRepository: TrackRepository,
+  private val schedulerProvider: SchedulerProvider
 ) : BasePresenter<SearchResultsView>(),
     SearchResultsPresenter {
   override fun search(term: String) {

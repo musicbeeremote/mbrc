@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.content.library.albums
 
-
 import com.kelsos.mbrc.interfaces.data.Mapper
 
 class AlbumMapper : Mapper<AlbumEntity, AlbumInfo> {

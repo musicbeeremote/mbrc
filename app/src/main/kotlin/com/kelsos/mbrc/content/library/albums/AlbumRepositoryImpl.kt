@@ -9,8 +9,8 @@ import javax.inject.Inject
 class AlbumRepositoryImpl
 @Inject
 constructor(
-    private val dao: AlbumDao,
-    private val remoteDataSource: RemoteAlbumDataSource
+  private val dao: AlbumDao,
+  private val remoteDataSource: RemoteAlbumDataSource
 ) : AlbumRepository {
 
   private val mapper = AlbumDtoMapper()

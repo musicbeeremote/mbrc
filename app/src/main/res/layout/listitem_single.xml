@@ -12,6 +12,29 @@
     android:focusable="true"
     android:gravity="center_vertical">
 
+  <android.support.constraint.Group
+      android:id="@+id/listitem_loading"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      android:visibility="gone"
+      app:constraint_referenced_ids="line_one_empty"
+      tools:visibility="gone" />
+
+  <View
+      android:id="@+id/line_one_empty"
+      android:layout_width="0dp"
+      android:layout_height="8dp"
+      android:layout_marginTop="4dp"
+      android:layout_marginBottom="4dp"
+      android:background="@color/item__placeholder_color"
+      app:layout_constraintBottom_toBottomOf="@id/line_one"
+      app:layout_constraintEnd_toEndOf="@id/line_one"
+      app:layout_constraintHorizontal_bias="0"
+      app:layout_constraintStart_toStartOf="@id/line_one"
+      app:layout_constraintTop_toTopOf="@id/line_one"
+      app:layout_constraintWidth_default="percent"
+      app:layout_constraintWidth_percent=".5" />
+
   <TextView
       android:id="@+id/line_one"
       android:layout_width="0dp"

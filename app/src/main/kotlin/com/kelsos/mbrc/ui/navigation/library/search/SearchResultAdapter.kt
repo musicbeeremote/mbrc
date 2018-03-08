@@ -51,7 +51,6 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
     }
 
     return 0
-
   }
 
   override fun onBindHeaderViewHolder(holder: SearchViewHolder, @Section section: Int) {
@@ -66,10 +65,10 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
   }
 
   override fun onBindViewHolder(
-      holder: SearchViewHolder,
-      @Section section: Int,
-      relativePosition: Int,
-      absolutePosition: Int
+    holder: SearchViewHolder,
+    @Section section: Int,
+    relativePosition: Int,
+    absolutePosition: Int
   ) {
 
     data?.let {
@@ -100,7 +99,6 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
         }
       }
     }
-
   }
 
   private fun SearchViewHolder.bindTrack(track: TrackEntity) {
@@ -233,4 +231,3 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
     notifyDataSetChanged()
   }
 }
-

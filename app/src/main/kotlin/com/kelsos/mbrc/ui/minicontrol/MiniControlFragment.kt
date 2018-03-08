@@ -89,7 +89,6 @@ class MiniControlFragment : Fragment(), MiniControlView {
           .resize(dimens, dimens)
           .centerCrop()
           .into(trackCover)
-
     } else {
       trackCover.setImageResource(R.drawable.ic_image_no_cover)
     }

@@ -12,8 +12,8 @@ import javax.inject.Inject
 class RemoteAlbumDataSource
 @Inject
 constructor(
-    private val service: LibraryService,
-    private val syncProgressProvider: SyncProgressProvider
+  private val service: LibraryService,
+  private val syncProgressProvider: SyncProgressProvider
 ) : RemoteDataSource<AlbumDto> {
   override fun fetch(): Observable<List<AlbumDto>> {
     return Observable.range(0, Integer.MAX_VALUE).flatMap {

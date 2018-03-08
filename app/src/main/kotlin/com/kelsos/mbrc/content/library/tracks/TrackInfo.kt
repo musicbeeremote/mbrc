@@ -4,11 +4,11 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class TrackInfo(
-    var artist: String = "",
-    var title: String = "",
-    var album: String = "",
-    var year: String = "",
-    var path: String = ""
+  var artist: String = "",
+  var title: String = "",
+  var album: String = "",
+  var year: String = "",
+  var path: String = ""
 ) : Parcelable {
   companion object {
     @JvmField

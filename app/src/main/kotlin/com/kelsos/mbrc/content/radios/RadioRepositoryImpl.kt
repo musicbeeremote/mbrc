@@ -9,8 +9,8 @@ import javax.inject.Inject
 class RadioRepositoryImpl
 @Inject
 constructor(
-    private val dao: RadioStationDao,
-    private val remoteDataSource: RemoteRadioDataSource
+  private val dao: RadioStationDao,
+  private val remoteDataSource: RemoteRadioDataSource
 ) : RadioRepository {
   private val mapper = RadioDtoMapper()
 

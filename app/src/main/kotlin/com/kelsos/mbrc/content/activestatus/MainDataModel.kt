@@ -30,8 +30,8 @@ import javax.inject.Singleton
 class MainDataModel
 @Inject
 constructor(
-    private val bus: RxBus,
-    private val cache: ModelCache
+  private val bus: RxBus,
+  private val cache: ModelCache
 ) {
 
   private var disposable: Disposable? = null
@@ -115,7 +115,6 @@ constructor(
         disposables += Completable.fromCallable { onPluginOutOfDate?.invoke() }
             .subscribeOn(AndroidSchedulers.mainThread())
             .subscribe({ })
-
       }
     }
 
@@ -193,6 +192,4 @@ constructor(
 
   var apiOutOfDate: Boolean = false
     private set
-
 }
-

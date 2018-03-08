@@ -17,7 +17,7 @@ import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.mockito.Mockito
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.given
 import org.mockito.Mockito.anyInt
 import org.mockito.Mockito.anyLong
 import org.mockito.Mockito.anyString
@@ -102,7 +102,6 @@ class ConnectionRepositoryTest {
   @Test
   fun changeDefault() {
 
-
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
 
@@ -119,7 +118,6 @@ class ConnectionRepositoryTest {
   @Test
   fun deleteSingleDefault() {
 
-
     val settings = createSettings("192.167.90.10")
     repository.save(settings)
 
@@ -135,7 +133,6 @@ class ConnectionRepositoryTest {
 
   @Test
   fun deleteFromMultipleDefaultFirst() {
-
 
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
@@ -161,7 +158,6 @@ class ConnectionRepositoryTest {
 
   @Test
   fun deleteFromMultipleDefaultSecond() {
-
 
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
@@ -191,7 +187,6 @@ class ConnectionRepositoryTest {
   @Test
   fun deleteFromMultipleDefaultLast() {
 
-
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
     val settings2 = createSettings("192.167.90.12")
@@ -219,7 +214,6 @@ class ConnectionRepositoryTest {
 
   @Test
   fun deleteFromMultipleNonDefault() {
-
 
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
@@ -277,7 +271,6 @@ class ConnectionRepositoryTest {
   @Test
   fun setDefaultNull() {
 
-
     val settings = createSettings("192.167.90.10")
     repository.save(settings)
 
@@ -306,9 +299,9 @@ class ConnectionRepositoryTest {
         val defaultId = longArrayOf(-1)
         val preferences = Mockito.mock(SharedPreferences::class.java)
         val editor = Mockito.mock(SharedPreferences.Editor::class.java)
-        `when`(preferences.edit()).thenReturn(editor)
-        `when`(preferences.getLong(anyString(), anyLong())).thenAnswer { defaultId[0] }
-        `when`(editor.putLong(anyString(), anyLong())).then {
+        given(preferences.edit()).willReturn(editor)
+        given(preferences.getLong(anyString(), anyLong())).thenAnswer { defaultId[0] }
+        given(editor.putLong(anyString(), anyLong())).then {
           val o = it.arguments[1]
           defaultId[0] = java.lang.Long.parseLong(o.toString())
           editor
@@ -318,7 +311,7 @@ class ConnectionRepositoryTest {
       bind(ConnectionRepository::class.java).to(ConnectionRepositoryImpl::class.java)
       bind(Resources::class.java).toProviderInstance {
         val resources = Mockito.mock(Resources::class.java)
-        `when`(resources.getString(anyInt())).thenReturn("preferences_key")
+        given(resources.getString(anyInt())).willReturn("preferences_key")
         resources
       }
     }

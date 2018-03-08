@@ -18,9 +18,9 @@ import javax.inject.Inject
 class BrowseTrackPresenterImpl
 @Inject
 constructor(
-    private val bus: RxBus,
-    private val repository: TrackRepository,
-    private val schedulerProvider: SchedulerProvider
+  private val bus: RxBus,
+  private val repository: TrackRepository,
+  private val schedulerProvider: SchedulerProvider
 ) : BasePresenter<BrowseTrackView>(),
     BrowseTrackPresenter {
 
@@ -95,5 +95,4 @@ constructor(
           Timber.e(it, "Error while loading the data from the database")
         })
   }
-
 }

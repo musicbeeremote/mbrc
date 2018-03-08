@@ -56,7 +56,6 @@ class CommandExecutor
     } catch (ex: Exception) {
       Timber.d(ex, "executing command for type: \t%s", event)
     }
-
   }
 
   override fun run() {
@@ -68,6 +67,5 @@ class CommandExecutor
     } catch (e: InterruptedException) {
       Timber.d(e, "Failed to execute command")
     }
-
   }
 }

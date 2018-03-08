@@ -55,7 +55,6 @@ class SyncProgressDialog(private val context: Context) {
 
     current.text = loadingProgress
 
-
     this.progress.max = totalItems
     this.progress.progress = currentProgress
   }
