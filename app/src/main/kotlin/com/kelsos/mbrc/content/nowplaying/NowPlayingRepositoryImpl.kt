@@ -9,8 +9,8 @@ import javax.inject.Inject
 class NowPlayingRepositoryImpl
 @Inject
 constructor(
-    private val remoteDataSource: RemoteNowPlayingDataSource,
-    private val dao: NowPlayingDao
+  private val remoteDataSource: RemoteNowPlayingDataSource,
+  private val dao: NowPlayingDao
 ) : NowPlayingRepository {
 
   private val mapper = NowPlayingDtoMapper()

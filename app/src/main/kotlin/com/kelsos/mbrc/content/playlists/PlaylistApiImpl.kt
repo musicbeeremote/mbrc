@@ -13,9 +13,9 @@ import javax.inject.Inject
 class PlaylistApiImpl
 @Inject
 constructor(
-    repository: ConnectionRepository,
-    private val mapper: ObjectMapper,
-    clientInformationStore: ClientInformationStore
+  repository: ConnectionRepository,
+  private val mapper: ObjectMapper,
+  clientInformationStore: ClientInformationStore
 ) : ApiBase(repository, mapper, clientInformationStore), PlaylistService {
 
   override fun fetch(offset: Int, limit: Int): Observable<Page<PlaylistDto>> {
@@ -25,4 +25,3 @@ constructor(
     }
   }
 }
-

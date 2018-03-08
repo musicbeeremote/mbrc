@@ -18,7 +18,6 @@ class ClientInformationStoreImpl
     return clientId
   }
 
-
   companion object {
     const val CLIENT_ID = "com.kelsos.mbrc.CLIENT_ID"
   }

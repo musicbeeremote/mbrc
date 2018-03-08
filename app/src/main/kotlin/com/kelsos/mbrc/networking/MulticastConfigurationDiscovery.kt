@@ -23,11 +23,11 @@ import javax.inject.Inject
 class MulticastConfigurationDiscovery
 @Inject
 internal constructor(
-    private val manager: WifiManager,
-    private val connectivityManager: ConnectivityManager,
-    private val mapper: ObjectMapper,
-    private val bus: RxBus,
-    private val connectionRepository: ConnectionRepository
+  private val manager: WifiManager,
+  private val connectivityManager: ConnectivityManager,
+  private val mapper: ObjectMapper,
+  private val bus: RxBus,
+  private val connectionRepository: ConnectionRepository
 ) {
   private var mLock: WifiManager.MulticastLock? = null
   private var group: InetAddress? = null
@@ -42,7 +42,6 @@ internal constructor(
       it.setReferenceCounted(true)
       it.acquire()
     }
-
 
     Timber.v("Starting remote service discovery")
 
@@ -104,7 +103,6 @@ internal constructor(
     } catch (e: IOException) {
       Timber.v("While cleaning up the discovery %s", e.message)
     }
-
   }
 
   private fun getObservable(socket: MulticastSocket): Observable<DiscoveryMessage> {
@@ -145,7 +143,6 @@ internal constructor(
         Timber.v(e, "Failed to open multicast socket")
         throw RuntimeException(e)
       }
-
     }
 
   companion object {

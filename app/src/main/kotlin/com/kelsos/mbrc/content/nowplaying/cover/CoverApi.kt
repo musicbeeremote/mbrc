@@ -5,5 +5,4 @@ import io.reactivex.Single
 interface CoverApi {
 
   fun getCover(): Single<String>
-
 }

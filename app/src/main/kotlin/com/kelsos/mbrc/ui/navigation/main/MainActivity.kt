@@ -1,13 +1,11 @@
 package com.kelsos.mbrc.ui.navigation.main
 
-
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
 import android.support.v4.content.ContextCompat
-import android.support.v4.view.MenuItemCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.ShareActionProvider
 import android.text.TextUtils
@@ -46,7 +44,6 @@ import javax.inject.Singleton
 @Singleton
 class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
 
-  private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
   // Injects
   @Inject
   lateinit var presenter: MainViewPresenter
@@ -214,7 +211,6 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
       .resize(dimens, dimens)
       .centerCrop()
       .into(albumCover)
-
   }
 
   override fun updateShuffleState(@ShuffleState shuffleState: String) {
@@ -297,7 +293,6 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
     if (STOPPED == tag || PAUSED == tag) {
       return
     }
-
 
     progressHelper.update(current, total)
   }
@@ -405,14 +400,14 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
     super.onDestroy()
   }
 
-  companion object {
-    private val PAUSED = "Paused"
-    private val STOPPED = "Stopped"
-  }
-
   @javax.inject.Scope
   @Target(AnnotationTarget.TYPE)
   @Retention(AnnotationRetention.RUNTIME)
   annotation class Presenter
-}
 
+  companion object {
+    private const val PAUSED = "Paused"
+    private const val STOPPED = "Stopped"
+    private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
+  }
+}

@@ -36,7 +36,6 @@ interface MainView : BaseView {
   fun notifyPluginOutOfDate()
 }
 
-
 interface MainViewPresenter : Presenter<MainView> {
   fun load()
   fun requestNowPlayingPosition()

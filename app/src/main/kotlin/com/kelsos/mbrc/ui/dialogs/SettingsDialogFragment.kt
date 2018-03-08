@@ -36,7 +36,6 @@ class SettingsDialogFragment : DialogFragment() {
     } catch (e: ClassCastException) {
       throw ClassCastException(context!!.toString() + " must implement SettingsDialogListener")
     }
-
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

@@ -9,8 +9,8 @@ import javax.inject.Inject
 class ArtistRepositoryImpl
 @Inject
 constructor(
-    private val dao: ArtistDao,
-    private val remoteDataSource: RemoteArtistDataSource
+  private val dao: ArtistDao,
+  private val remoteDataSource: RemoteArtistDataSource
 ) : ArtistRepository {
 
   private val mapper = ArtistDtoMapper()
@@ -27,13 +27,21 @@ constructor(
     return getRemote().andThen(getAll())
   }
 
+  override fun allArtists(): Single<Artists> {
+    return Single.fromCallable { Artists(dao.getAll(), dao.getAllIndexes()) }
+  }
+
+  override fun albumArtists(): Single<Artists> {
+    return Single.fromCallable { Artists(dao.getAlbumArtists(), dao.getAlbumArtistIndexes()) }
+  }
+
   override fun getRemote(): Completable {
     val added = epoch()
     return remoteDataSource.fetch().doOnNext {
       dao.insertAll(it.map { mapper.map(it).apply { dateAdded = added } })
     }.doOnComplete {
-      dao.removePreviousEntries(added)
-    }.ignoreElements()
+        dao.removePreviousEntries(added)
+      }.ignoreElements()
   }
 
   override fun search(term: String): Single<DataSource.Factory<Int, ArtistEntity>> {

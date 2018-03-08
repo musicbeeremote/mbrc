@@ -32,7 +32,6 @@ class LyricsPresenterImpl
     } else {
       updateLyrics(model.lyrics)
     }
-
   }
 
   fun updateLyrics(text: String) {
@@ -49,5 +48,3 @@ class LyricsPresenterImpl
     const val LYRICS_NEWLINE = "\r\n|\n"
   }
 }
-
-

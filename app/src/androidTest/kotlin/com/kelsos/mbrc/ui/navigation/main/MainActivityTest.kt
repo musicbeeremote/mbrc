@@ -29,19 +29,28 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
-import org.mockito.Mockito.*
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.BDDMockito.given
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import toothpick.Toothpick
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule
-
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class MainActivityTest {
 
-  var toothPickRule = ToothPickRule(this)
-  val activityRule = IntentsTestRule(MainActivity::class.java, true, false)
-  @Rule fun chain(): TestRule = RuleChain.outerRule(toothPickRule).around(activityRule)
+  private var toothPickRule = ToothPickRule(this)
+  private val activityRule = IntentsTestRule(
+    MainActivity::class.java,
+    true,
+    false
+  )
+
+  @Rule
+  fun chain(): TestRule = RuleChain.outerRule(toothPickRule).around(activityRule)
 
   private lateinit var model: MainDataModel
   private lateinit var mockBus: RxBus
@@ -57,11 +66,11 @@ class MainActivityTest {
     mockServiceChecker = mock(ServiceChecker::class.java)
 
     val trackInfo = TrackInfo()
-    `when`(mockCache.restoreCover()).thenReturn(Single.just(""))
-    `when`(mockCache.persistCover(anyString())).thenReturn(Completable.complete())
-    `when`(mockCache.restoreInfo()).thenReturn(Single.just(trackInfo))
-    `when`(mockCache.persistInfo(trackInfo)).thenReturn(Completable.complete())
-    `when`(mockSettingsManager.shouldShowChangeLog()).thenReturn(Single.just(false))
+    given(mockCache.restoreCover()).willReturn(Single.just(""))
+    given(mockCache.persistCover(anyString())).willReturn(Completable.complete())
+    given(mockCache.restoreInfo()).willReturn(Single.just(trackInfo))
+    given(mockCache.persistInfo(trackInfo)).willReturn(Completable.complete())
+    given(mockSettingsManager.shouldShowChangeLog()).willReturn(Single.just(false))
     mockBus = mock(RxBus::class.java)
 
     model = MainDataModel(mockBus, mockCache)
@@ -94,7 +103,7 @@ class MainActivityTest {
 
   @Test
   fun testShouldShowChangeLog() {
-    `when`(mockSettingsManager.shouldShowChangeLog()).thenReturn(Single.just(true))
+    given(mockSettingsManager.shouldShowChangeLog()).willReturn(Single.just(true))
     activityRule.launchActivity(Intent())
     onView(withText(R.string.main__dialog_change_log)).check(matches(isDisplayed()))
     verify(mockSettingsManager, times(1)).shouldShowChangeLog()
@@ -112,8 +121,8 @@ class MainActivityTest {
       bind(MainDataModel::class.java).toProviderInstance { model }.providesSingletonInScope()
       bind(RxBus::class.java).toProviderInstance { mockBus }.providesSingletonInScope()
       bind(SettingsManager::class.java)
-          .toProviderInstance { mockSettingsManager }
-          .providesSingletonInScope()
+        .toProviderInstance { mockSettingsManager }
+        .providesSingletonInScope()
       bind(Scheduler::class.java).withName("main").toProviderInstance { TestScheduler() }
       bind(Application::class.java).toInstance(application)
       bind(ServiceChecker::class.java).toInstance(mockServiceChecker)

@@ -12,10 +12,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
     "protocol_version"
 )
 data class ProtocolPayload(
-    @JsonProperty("client_id")
-    var clientId: String,
-    @JsonProperty("no_broadcast")
-    var noBroadcast: Boolean = false,
-    @JsonProperty("protocol_version")
-    var protocolVersion: Int = 3
+  @JsonProperty("client_id")
+  var clientId: String,
+  @JsonProperty("no_broadcast")
+  var noBroadcast: Boolean = false,
+  @JsonProperty("protocol_version")
+  var protocolVersion: Int = 3
 )

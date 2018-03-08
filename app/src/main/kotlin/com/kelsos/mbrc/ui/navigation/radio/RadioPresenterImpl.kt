@@ -18,9 +18,9 @@ import javax.inject.Inject
 class RadioPresenterImpl
 @Inject
 constructor(
-    private val radioRepository: RadioRepository,
-    private val queueApi: QueueApi,
-    private val schedulerProvider: SchedulerProvider
+  private val radioRepository: RadioRepository,
+  private val queueApi: QueueApi,
+  private val schedulerProvider: SchedulerProvider
 ) : BasePresenter<RadioView>(),
     RadioPresenter {
 

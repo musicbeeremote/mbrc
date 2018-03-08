@@ -91,7 +91,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     mRevision?.summary = BuildConfig.GIT_SHA
   }
 
-
   private fun requestPhoneStatePermission() {
     activity?.let {
       ActivityCompat.requestPermissions(it, arrayOf(Manifest.permission.READ_PHONE_STATE), REQUEST_CODE)
@@ -111,7 +110,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     activity?.let {
       dialog.show(it.supportFragmentManager, "license_dialog")
     }
-
   }
 
   private fun showOpenSourceLicenseDialog() {
@@ -123,7 +121,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     activity?.let {
       dialog.show(it.supportFragmentManager, "licenses_dialogs")
     }
-
   }
 
   override fun onOptionsItemSelected(item: MenuItem?): Boolean = when (item?.itemId) {

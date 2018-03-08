@@ -20,17 +20,17 @@ import com.kelsos.mbrc.extensions.gone
 import com.kelsos.mbrc.extensions.hide
 import com.kelsos.mbrc.extensions.linear
 import com.kelsos.mbrc.extensions.show
+import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
-import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import kotterknife.bindView
 import toothpick.Toothpick
 import javax.inject.Inject
 
 class BrowseTrackFragment : Fragment(),
-    BrowseTrackView,
-    MenuItemSelectedListener,
-    OnRefreshListener {
+  BrowseTrackView,
+  MenuItemSelectedListener<TrackEntity>,
+  OnRefreshListener {
 
   private val recycler: RecyclerView by bindView(R.id.library_browser__content)
   private val swipeLayout: SwipeRefreshLayout by bindView(R.id.library_browser__refresh_layout)
@@ -40,17 +40,20 @@ class BrowseTrackFragment : Fragment(),
   private val emptyViewTitle: TextView by bindView(R.id.library_browser__text_title)
   private val emptyViewProgress: ProgressBar by bindView(R.id.library_browser__loading_bar)
 
-  @Inject lateinit var adapter: TrackEntryAdapter
-  @Inject lateinit var actionHandler: PopupActionHandler
-  @Inject lateinit var presenter: BrowseTrackPresenter
+  @Inject
+  lateinit var adapter: TrackEntryAdapter
+  @Inject
+  lateinit var actionHandler: PopupActionHandler
+  @Inject
+  lateinit var presenter: BrowseTrackPresenter
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     return inflater.inflate(R.layout.fragment_browse, container, false)
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val activity = activity ?: fail("null activity")
-    val scope = Toothpick.openScopes(activity.application, this)
+
+    val scope = Toothpick.openScopes(requireActivity().application, this)
     scope.installModules(BrowseTrackModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
@@ -66,7 +69,7 @@ class BrowseTrackFragment : Fragment(),
 
     emptyViewTitle.setText(R.string.tracks_list_empty)
     swipeLayout.setOnRefreshListener(this)
-    recycler.linear(adapter, fastScroller, adapter)
+    recycler.linear(adapter, fastScroller)
     recycler.setHasFixedSize(true)
     adapter.setMenuItemSelectedListener(this)
     presenter.attach(this)
@@ -84,15 +87,14 @@ class BrowseTrackFragment : Fragment(),
       emptyView.hide()
     }
     adapter.submitList(pagedList)
-
   }
 
-  override fun onMenuItemSelected(action: String, entry: TrackEntity) {
-    actionHandler.trackSelected(action, entry)
+  override fun onMenuItemSelected(action: String, item: TrackEntity) {
+    actionHandler.trackSelected(action, item)
   }
 
-  override fun onItemClicked(track: TrackEntity) {
-    actionHandler.trackSelected(track)
+  override fun onItemClicked(item: TrackEntity) {
+    actionHandler.trackSelected(item)
   }
 
   override fun onRefresh() {
@@ -112,5 +114,4 @@ class BrowseTrackFragment : Fragment(),
     emptyViewProgress.gone()
     swipeLayout.isRefreshing = false
   }
-
 }

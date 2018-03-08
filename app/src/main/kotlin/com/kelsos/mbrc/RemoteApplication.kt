@@ -26,7 +26,7 @@ open class RemoteApplication : MultiDexApplication() {
     initialize()
   }
 
-  open protected fun initialize() {
+  protected open fun initialize() {
     if (!testMode()) {
       AndroidThreeTen.init(this)
     }
@@ -37,7 +37,7 @@ open class RemoteApplication : MultiDexApplication() {
   }
 
   private fun initializeLeakCanary() {
-    if (testMode()){
+    if (testMode()) {
       return
     }
 
@@ -76,7 +76,7 @@ open class RemoteApplication : MultiDexApplication() {
     }
   }
 
-  open internal fun installLeakCanary(): RefWatcher {
+  internal open fun installLeakCanary(): RefWatcher {
     return RefWatcher.DISABLED
   }
 
@@ -85,5 +85,5 @@ open class RemoteApplication : MultiDexApplication() {
     return application.refWatcher
   }
 
-  open internal fun testMode(): Boolean = false
+  internal open fun testMode(): Boolean = false
 }

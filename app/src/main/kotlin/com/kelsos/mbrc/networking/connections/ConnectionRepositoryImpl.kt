@@ -13,9 +13,9 @@ import javax.inject.Inject
 class ConnectionRepositoryImpl
 @Inject
 constructor(
-    private val connectionDao: ConnectionDao,
-    private val preferences: SharedPreferences,
-    private val resources: Resources
+  private val connectionDao: ConnectionDao,
+  private val preferences: SharedPreferences,
+  private val resources: Resources
 ) : ConnectionRepository {
 
   override fun save(settings: ConnectionSettingsEntity) {
@@ -96,5 +96,4 @@ constructor(
   override fun count(): Long {
     return connectionDao.count()
   }
-
 }

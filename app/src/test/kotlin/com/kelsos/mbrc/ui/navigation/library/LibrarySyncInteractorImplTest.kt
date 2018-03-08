@@ -20,7 +20,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.given
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.reset
@@ -223,26 +223,26 @@ class LibrarySyncInteractorImplTest {
   }
 
   private fun mockCacheState(isEmpty: Boolean) {
-    `when`(genreRepository.cacheIsEmpty()).thenReturn(Single.just(isEmpty))
-    `when`(artistRepository.cacheIsEmpty()).thenReturn(Single.just(isEmpty))
-    `when`(albumRepository.cacheIsEmpty()).thenReturn(Single.just(isEmpty))
-    `when`(trackRepository.cacheIsEmpty()).thenReturn(Single.just(isEmpty))
+    given(genreRepository.cacheIsEmpty()).willReturn(Single.just(isEmpty))
+    given(artistRepository.cacheIsEmpty()).willReturn(Single.just(isEmpty))
+    given(albumRepository.cacheIsEmpty()).willReturn(Single.just(isEmpty))
+    given(trackRepository.cacheIsEmpty()).willReturn(Single.just(isEmpty))
   }
 
   private fun mockSuccessfulRepositoryResponse() {
-    `when`(genreRepository.getRemote()).thenReturn(Completable.complete())
-    `when`(artistRepository.getRemote()).thenReturn(Completable.complete())
-    `when`(albumRepository.getRemote()).thenReturn(Completable.complete())
-    `when`(trackRepository.getRemote()).thenReturn(Completable.complete())
-    `when`(playlistRepository.getRemote()).thenReturn(Completable.complete())
+    given(genreRepository.getRemote()).willReturn(Completable.complete())
+    given(artistRepository.getRemote()).willReturn(Completable.complete())
+    given(albumRepository.getRemote()).willReturn(Completable.complete())
+    given(trackRepository.getRemote()).willReturn(Completable.complete())
+    given(playlistRepository.getRemote()).willReturn(Completable.complete())
   }
 
   private fun mockFailedRepositoryResponse() {
-    `when`(genreRepository.getRemote()).thenReturn(Completable.complete())
-    `when`(artistRepository.getRemote()).thenReturn(Completable.error(Exception()))
-    `when`(albumRepository.getRemote()).thenReturn(Completable.complete())
-    `when`(trackRepository.getRemote()).thenReturn(Completable.complete())
-    `when`(playlistRepository.getRemote()).thenReturn(Completable.complete())
+    given(genreRepository.getRemote()).willReturn(Completable.complete())
+    given(artistRepository.getRemote()).willReturn(Completable.error(Exception()))
+    given(albumRepository.getRemote()).willReturn(Completable.complete())
+    given(trackRepository.getRemote()).willReturn(Completable.complete())
+    given(playlistRepository.getRemote()).willReturn(Completable.complete())
   }
 
   @javax.inject.Scope

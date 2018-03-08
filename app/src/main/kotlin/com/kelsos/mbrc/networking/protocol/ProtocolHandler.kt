@@ -24,11 +24,11 @@ import javax.inject.Singleton
 class ProtocolHandler
 @Inject
 constructor(
-    private val bus: RxBus,
-    private val mapper: ObjectMapper,
-    private val model: MainDataModel,
-    private val connectionStatusModel: ConnectionStatusModel,
-    private val clientInformationStore: ClientInformationStore
+  private val bus: RxBus,
+  private val mapper: ObjectMapper,
+  private val model: MainDataModel,
+  private val connectionStatusModel: ConnectionStatusModel,
+  private val clientInformationStore: ClientInformationStore
 ) {
 
   init {
@@ -50,8 +50,7 @@ constructor(
         .subscribeOn(Schedulers.io())
         .subscribe({
           Timber.v("processing done")
-        })
-        {
+        }) {
           Timber.e(it, "processing error")
         }
   }
@@ -99,7 +98,6 @@ constructor(
         bus.post(MessageEvent(context, node.path("data")))
       }
     }
-
   }
 
   fun sendProtocolPayload() {

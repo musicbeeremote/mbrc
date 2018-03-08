@@ -10,11 +10,10 @@ import android.arch.persistence.room.PrimaryKey
     indices = [(Index("genre", name = "genre_genre_idx", unique = true))]
 )
 data class GenreEntity(
-    @ColumnInfo
-    override var genre: String = "",
-    @ColumnInfo(name = "date_added")
-    var dateAdded: Long = 0,
-    @PrimaryKey(autoGenerate = true)
-    override var id: Long = 0
+  @ColumnInfo
+  override var genre: String = "",
+  @ColumnInfo(name = "date_added")
+  var dateAdded: Long = 0,
+  @PrimaryKey(autoGenerate = true)
+  override var id: Long = 0
 ) : Genre
-

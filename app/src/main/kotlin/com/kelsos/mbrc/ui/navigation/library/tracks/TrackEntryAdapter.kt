@@ -1,37 +1,22 @@
 package com.kelsos.mbrc.ui.navigation.library.tracks
 
-import android.arch.paging.PagedListAdapter
-import android.support.constraint.Group
-import android.support.v7.recyclerview.extensions.DiffCallback
-import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
+import android.support.v7.util.DiffUtil
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.TrackEntity
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
-import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.Action
-import com.kelsos.mbrc.extensions.gone
-import com.kelsos.mbrc.extensions.show
-import com.kelsos.mbrc.extensions.string
+import com.kelsos.mbrc.ui.FastScrollableAdapter
 import com.kelsos.mbrc.ui.navigation.library.OnFastScrollListener
 import com.kelsos.mbrc.ui.navigation.library.popup
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
-import com.kelsos.mbrc.utilities.Checks.ifNotNull
-import kotterknife.bindView
-import timber.log.Timber
 import javax.inject.Inject
 
 class TrackEntryAdapter
 @Inject
-constructor() : PagedListAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(DIFF_CALLBACK),
+constructor() : FastScrollableAdapter<TrackEntity, TrackViewHolder>(DIFF_CALLBACK),
   BubbleTextGetter, OnFastScrollListener {
 
-  private var indexes: List<String> = emptyList()
-  private var fastScrolling: Boolean = false
-  private var listener: MenuItemSelectedListener? = null
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->
     view.popup(R.menu.popup_track) {
 
@@ -43,27 +28,25 @@ constructor() : PagedListAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(DIFF
         else -> throw IllegalArgumentException("invalid menuItem id $it")
       }
 
-      ifNotNull(listener, getItem(position)) { listener, track ->
-        listener.onMenuItemSelected(action, track)
+      val listener = requireListener()
+      getItem(position)?.run {
+        listener.onMenuItemSelected(action, this)
       }
     }
   }
 
   private val pressed: (View, Int) -> Unit = { _, position ->
-    ifNotNull(listener, getItem(position)) { listener, track ->
-      listener.onItemClicked(track)
+    val listener = requireListener()
+    getItem(position)?.run {
+      listener.onItemClicked(this)
     }
   }
 
-  fun setMenuItemSelectedListener(listener: MenuItemSelectedListener) {
-    this.listener = listener
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
+    return TrackViewHolder.create(parent, indicatorPressed, pressed)
   }
 
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-    return ViewHolder.create(parent, indicatorPressed, pressed)
-  }
-
-  override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+  override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
     if (fastScrolling) {
       holder.clear()
       return
@@ -78,30 +61,8 @@ constructor() : PagedListAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(DIFF
     }
   }
 
-  override fun getTextToShowInBubble(pos: Int): String {
-    return if (pos < indexes.size) {
-      indexes[pos]
-    } else {
-      "-"
-    }
-  }
-
-  override fun onStart() {
-    fastScrolling = true
-  }
-
-  override fun onComplete(firstVisibleItemPosition: Int, lastVisibleItemPosition: Int) {
-    fastScrolling = false
-    Timber.v("scrolling done")
-    notifyItemRangeChanged(firstVisibleItemPosition, lastVisibleItemPosition)
-  }
-
-  fun setIndexes(indexes: List<String>) {
-    this.indexes = indexes
-  }
-
   companion object {
-    val DIFF_CALLBACK = object : DiffCallback<TrackEntity>() {
+    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<TrackEntity>() {
       override fun areItemsTheSame(oldItem: TrackEntity, newItem: TrackEntity): Boolean {
         return oldItem.id == newItem.id
       }
@@ -111,54 +72,4 @@ constructor() : PagedListAdapter<TrackEntity, TrackEntryAdapter.ViewHolder>(DIFF
       }
     }
   }
-
-  interface MenuItemSelectedListener {
-
-    fun onMenuItemSelected(@Action action: String, entry: TrackEntity)
-    fun onItemClicked(track: TrackEntity)
-
-  }
-
-  class ViewHolder(
-    itemView: View,
-    indicatorPressed: (view: View, position: Int) -> Unit,
-    pressed: (view: View, position: Int) -> Unit
-  ) : RecyclerView.ViewHolder(itemView) {
-    private val artist: TextView by bindView(R.id.line_two)
-    private val title: TextView by bindView(R.id.line_one)
-    private val empty: Group by bindView(R.id.listitem_loading)
-    private val indicator: ImageView by bindView(R.id.overflow_menu)
-    private val unknownArtist: String by lazy { string(R.string.unknown_artist) }
-
-    init {
-      indicator.setOnClickListener { indicatorPressed(it, adapterPosition) }
-      itemView.setOnClickListener { pressed(it, adapterPosition) }
-    }
-
-    companion object {
-      fun create(
-        parent: ViewGroup,
-        indicatorPressed: (view: View, position: Int) -> Unit,
-        pressed: (view: View, position: Int) -> Unit
-      ): ViewHolder {
-        val inflater: LayoutInflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.ui_list_dual, parent, false)
-        return ViewHolder(view, indicatorPressed, pressed)
-      }
-    }
-
-    fun clear() {
-      empty.show()
-      artist.text = ""
-      title.text = ""
-    }
-
-    fun bindTo(trackEntity: TrackEntity) {
-      empty.gone()
-      title.text = trackEntity.title
-      artist.text = if (trackEntity.artist.isBlank()) unknownArtist else trackEntity.artist
-    }
-
-  }
-
 }

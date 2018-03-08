@@ -9,9 +9,9 @@ import javax.inject.Inject
 
 class TrackRepositoryImpl
 @Inject constructor(
-    private val dao: TrackDao,
-    private val remoteDataSource: RemoteTrackDataSource,
-    private val schedulerProvider: SchedulerProvider
+  private val dao: TrackDao,
+  private val remoteDataSource: RemoteTrackDataSource,
+  private val schedulerProvider: SchedulerProvider
 ) : TrackRepository {
 
   private val mapper = TrackDtoMapper()

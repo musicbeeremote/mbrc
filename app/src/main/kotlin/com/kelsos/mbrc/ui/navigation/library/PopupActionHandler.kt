@@ -28,19 +28,19 @@ import javax.inject.Singleton
 class PopupActionHandler
 @Inject
 constructor(
-    private val settings: DefaultActionPreferenceStore,
-    private val schedulerProvider: SchedulerProvider,
-    private val trackRepository: TrackRepository,
-    private val queueApi: QueueApi
+  private val settings: DefaultActionPreferenceStore,
+  private val schedulerProvider: SchedulerProvider,
+  private val trackRepository: TrackRepository,
+  private val queueApi: QueueApi
 ) {
 
   private val disposables = CompositeDisposable()
 
   fun albumSelected(
-      @Action action: String,
-      entry: AlbumEntity,
-      context: Context,
-      result: (success: Boolean) -> Unit = {}
+    @Action action: String,
+    entry: AlbumEntity,
+    context: Context,
+    result: (success: Boolean) -> Unit = {}
   ) {
 
     if (action == LibraryPopup.PROFILE) {
@@ -52,9 +52,9 @@ constructor(
   }
 
   private fun queueAlbum(
-      entry: AlbumEntity,
-      @Action type: String,
-      result: (success: Boolean) -> Unit
+    entry: AlbumEntity,
+    @Action type: String,
+    result: (success: Boolean) -> Unit
   ) {
     disposables += trackRepository.getAlbumTrackPaths(entry.album, entry.artist)
         .flatMap {
@@ -69,10 +69,10 @@ constructor(
   }
 
   fun artistSelected(
-      @Action action: String,
-      entry: ArtistEntity,
-      context: Context,
-      result: (success: Boolean) -> Unit = {}
+    @Action action: String,
+    entry: ArtistEntity,
+    context: Context,
+    result: (success: Boolean) -> Unit = {}
   ) {
 
     if (action == PROFILE) {
@@ -95,10 +95,10 @@ constructor(
   }
 
   fun genreSelected(
-      @Action action: String,
-      entry: GenreEntity,
-      context: Context,
-      result: (success: Boolean) -> Unit = {}
+    @Action action: String,
+    entry: GenreEntity,
+    context: Context,
+    result: (success: Boolean) -> Unit = {}
   ) {
 
     if (action == PROFILE) {
@@ -124,9 +124,9 @@ constructor(
 
   //todo album detection -> queue album tracks
   fun trackSelected(
-      @Action action: String,
-      entry: TrackEntity,
-      album: Boolean = false
+    @Action action: String,
+    entry: TrackEntity,
+    album: Boolean = false
   ) {
     queueTrack(entry, action, album)
   }
@@ -143,7 +143,6 @@ constructor(
       }
 
       path = entry.src
-
     } else {
       trackSource = Single.fromCallable {
         return@fromCallable listOf(entry.src)

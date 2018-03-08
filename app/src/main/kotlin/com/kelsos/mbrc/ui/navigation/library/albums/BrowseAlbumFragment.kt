@@ -22,6 +22,7 @@ import com.kelsos.mbrc.extensions.gone
 import com.kelsos.mbrc.extensions.linear
 import com.kelsos.mbrc.extensions.show
 import com.kelsos.mbrc.ui.dialogs.SortingDialog
+import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import kotterknife.bindView
@@ -30,9 +31,9 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class BrowseAlbumFragment : Fragment(),
-    BrowseAlbumView,
-    AlbumEntryAdapter.MenuItemSelectedListener,
-    SwipeRefreshLayout.OnRefreshListener {
+  BrowseAlbumView,
+  MenuItemSelectedListener<AlbumEntity>,
+  SwipeRefreshLayout.OnRefreshListener {
 
   private val recycler: RecyclerView by bindView(R.id.library_browser__content)
   private val swipeLayout: SwipeRefreshLayout by bindView(R.id.library_browser__refresh_layout)
@@ -42,9 +43,12 @@ class BrowseAlbumFragment : Fragment(),
   private val emptyViewTitle: TextView by bindView(R.id.library_browser__text_title)
   private val emptyViewProgress: ProgressBar by bindView(R.id.library_browser__loading_bar)
 
-  @Inject lateinit var adapter: AlbumEntryAdapter
-  @Inject lateinit var actionHandler: PopupActionHandler
-  @Inject lateinit var presenter: BrowseAlbumPresenter
+  @Inject
+  lateinit var adapter: AlbumEntryAdapter
+  @Inject
+  lateinit var actionHandler: PopupActionHandler
+  @Inject
+  lateinit var presenter: BrowseAlbumPresenter
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     return inflater.inflate(R.layout.fragment_browse, container, false)
@@ -104,14 +108,12 @@ class BrowseAlbumFragment : Fragment(),
     presenter.load()
   }
 
-  override fun onMenuItemSelected(action: String, entry: AlbumEntity) {
-    val activity = activity ?: fail("null activity")
-    actionHandler.albumSelected(action, entry, activity)
+  override fun onMenuItemSelected(action: String, item: AlbumEntity) {
+    actionHandler.albumSelected(action, item, requireContext())
   }
 
-  override fun onItemClicked(album: AlbumEntity) {
-    val activity = activity ?: fail("null activity")
-    actionHandler.albumSelected(album, activity)
+  override fun onItemClicked(item: AlbumEntity) {
+    actionHandler.albumSelected(item, requireContext())
   }
 
   override fun onRefresh() {
@@ -121,7 +123,6 @@ class BrowseAlbumFragment : Fragment(),
 
     presenter.reload()
   }
-
 
   override fun update(pagedList: PagedList<AlbumEntity>) {
     if (pagedList.isEmpty()) {
@@ -147,5 +148,4 @@ class BrowseAlbumFragment : Fragment(),
     Toothpick.closeScope(this)
     super.onDestroy()
   }
-
 }

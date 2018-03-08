@@ -44,7 +44,6 @@ class OutputSelectionDialog : DialogFragment(),
     val inflater = LayoutInflater.from(context)
     val view = inflater.inflate(R.layout.dialog__output_selection, null, false)
 
-
     dialog = AlertDialog.Builder(context)
         .setTitle(R.string.output_selection__select_output)
         .setView(view)
@@ -74,7 +73,6 @@ class OutputSelectionDialog : DialogFragment(),
   }
 
   override fun onNothingSelected(parent: AdapterView<*>?) {
-
   }
 
   override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {

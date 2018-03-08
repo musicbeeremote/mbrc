@@ -18,13 +18,13 @@ import javax.inject.Inject
 
 class RemoteServiceCore
 @Inject constructor(
-    private val commandExecutor: CommandExecutor,
-    private val discovery: MulticastConfigurationDiscovery,
-    private val client: SocketClient,
-    private val protocolhandler: ProtocolHandler,
-    private val sessionNotificationManager: SessionNotificationManager,
-    private val bus: RxBus,
-    private val scope: Scope
+  private val commandExecutor: CommandExecutor,
+  private val discovery: MulticastConfigurationDiscovery,
+  private val client: SocketClient,
+  private val protocolhandler: ProtocolHandler,
+  private val sessionNotificationManager: SessionNotificationManager,
+  private val bus: RxBus,
+  private val scope: Scope
 ) : SimpleLifecycle {
 
   private lateinit var threadPoolExecutor: ExecutorService

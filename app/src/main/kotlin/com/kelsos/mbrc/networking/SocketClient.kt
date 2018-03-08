@@ -40,10 +40,10 @@ import javax.inject.Singleton
 class SocketClient
 @Inject
 constructor(
-    private val activityChecker: SocketActivityChecker,
-    private val bus: RxBus,
-    private val mapper: ObjectMapper,
-    private val connectionRepository: ConnectionRepository
+  private val activityChecker: SocketActivityChecker,
+  private val bus: RxBus,
+  private val mapper: ObjectMapper,
+  private val connectionRepository: ConnectionRepository
 ) : PingTimeoutListener {
   private var numOfRetries: Int = 0
   private var shouldStop: Boolean = false
@@ -153,9 +153,7 @@ constructor(
       socket?.close()
       socket = null
     } catch (ignore: IOException) {
-
     }
-
   }
 
   @Synchronized
@@ -167,7 +165,6 @@ constructor(
         writeToSocket(messageString)
       }
     }
-
   }
 
   private fun writeToSocket(message: String) {

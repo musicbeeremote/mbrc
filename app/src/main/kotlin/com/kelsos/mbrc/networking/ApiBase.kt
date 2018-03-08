@@ -12,9 +12,9 @@ import timber.log.Timber
 import java.io.IOException
 
 open class ApiBase(
-    repository: ConnectionRepository,
-    private val mapper: ObjectMapper,
-    private val clientInformationStore: ClientInformationStore
+  repository: ConnectionRepository,
+  private val mapper: ObjectMapper,
+  private val clientInformationStore: ClientInformationStore
 ) : ApiRequestBase(mapper, repository) {
 
   fun request(@Context request: String, data: Any? = null): Observable<SocketMessage> {
@@ -23,9 +23,10 @@ open class ApiBase(
   }
 
   private fun getSocketMessageObservable(
-      request: String,
-      data: Any,
-      serviceMessage: ServiceMessage): Observable<SocketMessage> {
+    request: String,
+    data: Any,
+    serviceMessage: ServiceMessage
+  ): Observable<SocketMessage> {
     return Observable.create<SocketMessage> {
       try {
         val socket = serviceMessage.socket

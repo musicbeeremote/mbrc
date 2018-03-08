@@ -25,5 +25,4 @@ fun File.md5(): String? {
   } catch (e: Exception) {
     return null
   }
-
 }

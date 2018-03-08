@@ -13,9 +13,9 @@ import javax.inject.Inject
 class NowPlayingApiImpl
 @Inject
 constructor(
-    repository: ConnectionRepository,
-    private val mapper: ObjectMapper,
-    clientInformationStore: ClientInformationStore
+  repository: ConnectionRepository,
+  private val mapper: ObjectMapper,
+  clientInformationStore: ClientInformationStore
 ) : ApiBase(repository, mapper, clientInformationStore), NowPlayingService {
 
   override fun getNowPlaying(offset: Int, limit: Int): Observable<Page<NowPlayingDto>> {

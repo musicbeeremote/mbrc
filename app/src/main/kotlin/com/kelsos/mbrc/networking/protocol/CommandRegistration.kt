@@ -46,4 +46,3 @@ object CommandRegistration {
     controller.clearCommands()
   }
 }
-

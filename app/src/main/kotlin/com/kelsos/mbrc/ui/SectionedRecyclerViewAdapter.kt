@@ -60,10 +60,10 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : Recy
 
   @Suppress("UNUSED_PARAMETER")
   protected fun getRowSpan(
-      fullSpanSize: Int,
-      section: Int,
-      relativePosition: Int,
-      absolutePosition: Int
+    fullSpanSize: Int,
+    section: Int,
+    relativePosition: Int,
+    absolutePosition: Int
   ): Int = 1
 
   // returns section along with offsetted position

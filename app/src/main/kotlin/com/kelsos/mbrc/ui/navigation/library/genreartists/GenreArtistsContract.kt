@@ -12,5 +12,3 @@ interface GenreArtistsView : BaseView {
 interface GenreArtistsPresenter : Presenter<GenreArtistsView> {
   fun load(genre: String)
 }
-
-

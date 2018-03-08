@@ -19,10 +19,10 @@ import javax.inject.Inject
 
 class NowPlayingPresenterImpl
 @Inject constructor(
-    private val repository: NowPlayingRepository,
-    private val bus: RxBus,
-    private val model: MainDataModel,
-    private val schedulerProvider: SchedulerProvider
+  private val repository: NowPlayingRepository,
+  private val bus: RxBus,
+  private val model: MainDataModel,
+  private val schedulerProvider: SchedulerProvider
 ) : BasePresenter<NowPlayingView>(),
     NowPlayingPresenter {
 

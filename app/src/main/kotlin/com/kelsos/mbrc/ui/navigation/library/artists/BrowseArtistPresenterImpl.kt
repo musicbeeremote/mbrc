@@ -19,14 +19,15 @@ import javax.inject.Inject
 class BrowseArtistPresenterImpl
 @Inject
 constructor(
-    private val bus: RxBus,
-    private val repository: ArtistRepository,
-    private val settingsManager: SettingsManager,
-    private val schedulerProvider: SchedulerProvider
+  private val bus: RxBus,
+  private val repository: ArtistRepository,
+  private val settingsManager: SettingsManager,
+  private val schedulerProvider: SchedulerProvider
 ) : BasePresenter<BrowseArtistView>(),
-    BrowseArtistPresenter {
+  BrowseArtistPresenter {
 
   private lateinit var artists: LiveData<PagedList<ArtistEntity>>
+  private lateinit var indexes: LiveData<List<String>>
 
   override fun attach(view: BrowseArtistView) {
     super.attach(view)
@@ -42,21 +43,37 @@ constructor(
   override fun load() {
     val artistObservable = settingsManager.shouldDisplayOnlyAlbumArtists().flatMap {
       if (it) {
-        return@flatMap repository.getAlbumArtistsOnly()
+        return@flatMap repository.albumArtists()
       } else {
-        return@flatMap repository.getAll()
+        return@flatMap repository.allArtists()
       }
     }
     addDisposable(artistObservable
-        .observeOn(schedulerProvider.main())
-        .subscribeOn(schedulerProvider.io())
-        .subscribe({
-          onArtistsLoaded(it)
-          view().hideLoading()
-        }, {
-          Timber.v(it, "Error while loading the data from the database")
-          view().hideLoading()
-        }))
+      .observeOn(schedulerProvider.main())
+      .subscribeOn(schedulerProvider.io())
+      .subscribe({
+        onArtistsLoaded(it.factory)
+        onIndexesLoaded(it.indexes)
+        view().hideLoading()
+      }, {
+        Timber.v(it, "Error while loading the data from the database")
+        view().hideLoading()
+      }))
+  }
+
+  private fun onIndexesLoaded(data: LiveData<List<String>>) {
+    if (::indexes.isInitialized) {
+      indexes.removeObservers(this)
+    }
+
+    indexes = data.apply {
+      observe(this@BrowseArtistPresenterImpl, Observer {
+        if (it == null) {
+          return@Observer
+        }
+        view().updateIndexes(it)
+      })
+    }
 
   }
 
@@ -82,15 +99,14 @@ constructor(
       }
     }
     addDisposable(artistObservable
-        .observeOn(schedulerProvider.main())
-        .subscribeOn(schedulerProvider.io())
-        .subscribe({
-          onArtistsLoaded(it)
-          view().hideLoading()
-        }, {
-          Timber.v(it, "Error retrieving the data")
-          view().hideLoading()
-        }))
+      .observeOn(schedulerProvider.main())
+      .subscribeOn(schedulerProvider.io())
+      .subscribe({
+        onArtistsLoaded(it)
+        view().hideLoading()
+      }, {
+        Timber.v(it, "Error retrieving the data")
+        view().hideLoading()
+      }))
   }
-
 }

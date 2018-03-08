@@ -88,7 +88,6 @@ class NowPlayingAdapter
         holder.trackPlaying.setImageResource(android.R.color.transparent)
       }
     }
-
   }
 
   override fun getItemCount(): Int {
@@ -164,6 +163,5 @@ class NowPlayingAdapter
     override fun onItemClear() {
       this.itemView.setBackgroundColor(0)
     }
-
   }
 }

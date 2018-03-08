@@ -16,8 +16,8 @@ import javax.inject.Inject
 class ModelCacheImpl
 @Inject
 constructor(
-    private val mapper: ObjectMapper,
-    private val context: Application
+  private val mapper: ObjectMapper,
+  private val context: Application
 ) : ModelCache {
 
   override fun persistInfo(trackInfo: TrackInfo): Completable {

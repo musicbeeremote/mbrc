@@ -11,9 +11,9 @@ import javax.inject.Inject
 
 class CoverApiImpl
 @Inject constructor(
-    repository: ConnectionRepository,
-    private val mapper: ObjectMapper,
-    clientInformationStore: ClientInformationStore
+  repository: ConnectionRepository,
+  private val mapper: ObjectMapper,
+  clientInformationStore: ClientInformationStore
 ) : ApiBase(repository, mapper, clientInformationStore), CoverApi {
   override fun getCover(): Single<String> {
     return request(Protocol.NowPlayingCover).flatMap {

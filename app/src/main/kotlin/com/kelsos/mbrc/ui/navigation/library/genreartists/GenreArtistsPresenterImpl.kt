@@ -14,8 +14,8 @@ import javax.inject.Inject
 class GenreArtistsPresenterImpl
 @Inject
 constructor(
-    private val repository: ArtistRepository,
-    private val schedulerProvider: SchedulerProvider
+  private val repository: ArtistRepository,
+  private val schedulerProvider: SchedulerProvider
 ) : BasePresenter<GenreArtistsView>(),
     GenreArtistsPresenter {
 
@@ -36,5 +36,4 @@ constructor(
           Timber.v(it)
         })
   }
-
 }

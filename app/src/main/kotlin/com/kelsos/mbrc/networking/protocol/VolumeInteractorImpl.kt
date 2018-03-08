@@ -8,8 +8,8 @@ import javax.inject.Inject
 
 class VolumeInteractorImpl
 @Inject constructor(
-    private val model: MainDataModel,
-    private val bus: RxBus
+  private val model: MainDataModel,
+  private val bus: RxBus
 ) : VolumeInteractor {
 
   override fun increment() {
@@ -24,7 +24,6 @@ class VolumeInteractorImpl
         mod < 5 -> volume = currentVolume + (DEFAULT_STEP - mod)
         else -> volume = currentVolume + (20 - mod)
       }
-
     } else {
       volume = 100
     }
@@ -58,7 +57,6 @@ class VolumeInteractorImpl
     val volume = (model.volume * 0.2).toInt()
 
     send(volume)
-
   }
 
   /**

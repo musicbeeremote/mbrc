@@ -17,13 +17,13 @@ import javax.inject.Inject
 
 class LibrarySyncInteractorImpl
 @Inject constructor(
-    private val genreRepository: GenreRepository,
-    private val artistRepository: ArtistRepository,
-    private val albumRepository: AlbumRepository,
-    private val trackRepository: TrackRepository,
-    private val playlistRepository: PlaylistRepository,
-    private val schedulerProvider: SchedulerProvider,
-    private val bus: RxBus
+  private val genreRepository: GenreRepository,
+  private val artistRepository: ArtistRepository,
+  private val albumRepository: AlbumRepository,
+  private val trackRepository: TrackRepository,
+  private val playlistRepository: PlaylistRepository,
+  private val schedulerProvider: SchedulerProvider,
+  private val bus: RxBus
 ) : LibrarySyncInteractor {
 
   private var disposable: Disposable? = null
@@ -52,7 +52,6 @@ class LibrarySyncInteractorImpl
       } else {
         return@flatMapCompletable Completable.error(ShouldNotProceedException())
       }
-
     }.subscribeOn(schedulerProvider.sync())
         .observeOn(schedulerProvider.main())
         .doOnTerminate {

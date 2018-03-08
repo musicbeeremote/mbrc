@@ -9,9 +9,9 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.extensions.linear
 import com.kelsos.mbrc.ui.activities.BaseActivity
+import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter
-import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter.MenuItemSelectedListener
 import kotterknife.bindView
 import toothpick.Scope
 import toothpick.Toothpick
@@ -19,15 +19,18 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class GenreArtistsActivity : BaseActivity(),
-    GenreArtistsView,
-    MenuItemSelectedListener {
+  GenreArtistsView,
+  MenuItemSelectedListener<ArtistEntity> {
 
   private val recyclerView: RecyclerView by bindView(R.id.genre_artists__artist_list)
   private val emptyView: Group by bindView(R.id.genre_artists__empty_view)
 
-  @Inject lateinit var adapter: ArtistEntryAdapter
-  @Inject lateinit var actionHandler: PopupActionHandler
-  @Inject lateinit var presenter: GenreArtistsPresenter
+  @Inject
+  lateinit var adapter: ArtistEntryAdapter
+  @Inject
+  lateinit var actionHandler: PopupActionHandler
+  @Inject
+  lateinit var presenter: GenreArtistsPresenter
 
   private var genre: String? = null
   private lateinit var scope: Scope
@@ -66,12 +69,12 @@ class GenreArtistsActivity : BaseActivity(),
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onMenuItemSelected(action: String, entry: ArtistEntity) {
-    actionHandler.artistSelected(action, entry, this)
+  override fun onMenuItemSelected(action: String, item: ArtistEntity) {
+    actionHandler.artistSelected(action, item, this)
   }
 
-  override fun onItemClicked(artist: ArtistEntity) {
-    actionHandler.artistSelected(artist, this)
+  override fun onItemClicked(item: ArtistEntity) {
+    actionHandler.artistSelected(item, this)
   }
 
   override fun update(pagedList: PagedList<ArtistEntity>) {
@@ -92,4 +95,3 @@ class GenreArtistsActivity : BaseActivity(),
     const val GENRE_NAME = "genre_name"
   }
 }
-

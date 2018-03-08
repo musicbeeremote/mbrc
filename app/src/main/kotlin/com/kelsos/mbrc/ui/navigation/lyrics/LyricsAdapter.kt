@@ -15,12 +15,12 @@ class LyricsAdapter(private var data: List<String> = emptyList()) : RecyclerView
    * an item.
    *
    *
-   * This new ViewHolder should be constructed with a new View that can represent the items
+   * This new TrackViewHolder should be constructed with a new View that can represent the items
    * of the given type. You can either create a new View manually or inflate it from an XML
    * layout file.
    *
    *
-   * The new ViewHolder will be used to display items of the adapter using
+   * The new TrackViewHolder will be used to display items of the adapter using
    * [.onBindViewHolder]. Since it will be re-used to display different
    * items in the data set, it is a good idea to cache references to sub views of the View to
    * avoid unnecessary [View.findViewById] calls.
@@ -30,7 +30,7 @@ class LyricsAdapter(private var data: List<String> = emptyList()) : RecyclerView
    * *
    * @param viewType The view type of the new View.
    * *
-   * @return A new ViewHolder that holds a View of the given view type.
+   * @return A new TrackViewHolder that holds a View of the given view type.
    * *
    * @see .getItemViewType
    * @see .onBindViewHolder
@@ -54,7 +54,7 @@ class LyricsAdapter(private var data: List<String> = emptyList()) : RecyclerView
    * (e.g. in a click listener), use [ViewHolder.getPosition] which will have the
    * updated position.
 
-   * @param holder The ViewHolder which should be updated to represent the contents of the
+   * @param holder The TrackViewHolder which should be updated to represent the contents of the
    * * item at the given position in the data set.
    * *
    * @param position The position of the item within the adapter's data set.

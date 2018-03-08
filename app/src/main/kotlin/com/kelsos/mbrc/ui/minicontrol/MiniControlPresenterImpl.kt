@@ -14,8 +14,10 @@ import javax.inject.Inject
 
 @MiniControlFragment.Presenter
 class MiniControlPresenterImpl
-@Inject constructor(private val model: MainDataModel,
-                    private val bus: RxBus) :
+@Inject constructor(
+  private val model: MainDataModel,
+  private val bus: RxBus
+) :
     BasePresenter<MiniControlView>(), MiniControlPresenter {
 
   override fun load() {
@@ -50,10 +52,8 @@ class MiniControlPresenterImpl
     bus.post(create(action))
   }
 
-
   override fun detach() {
     super.detach()
     bus.unregister(this)
   }
-
 }

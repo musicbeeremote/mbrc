@@ -13,4 +13,3 @@ interface AlbumTracksView : BaseView {
 interface AlbumTracksPresenter : Presenter<AlbumTracksView> {
   fun load(album: AlbumInfo)
 }
-

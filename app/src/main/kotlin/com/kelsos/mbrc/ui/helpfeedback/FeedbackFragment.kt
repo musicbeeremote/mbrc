@@ -28,9 +28,11 @@ class FeedbackFragment : Fragment() {
   private val logInfo: CheckBox by bindView(R.id.include_log_info)
   private val feedbackButton: Button by bindView(R.id.feedback_button)
 
-  override fun onCreateView(inflater: LayoutInflater,
-                            container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View? {
     return inflater.inflate(R.layout.fragment_feedback, container, false)
   }
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,7 +45,6 @@ class FeedbackFragment : Fragment() {
         .subscribe({
           logInfo.isEnabled = true
         }) {
-
         }
     feedbackButton.setOnClickListener { onFeedbackButtonClicked() }
   }

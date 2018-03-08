@@ -11,8 +11,8 @@ import javax.inject.Inject
 class RemoteArtistDataSource
 @Inject
 constructor(
-    private val service: LibraryService,
-    private val syncProgressProvider: SyncProgressProvider
+  private val service: LibraryService,
+  private val syncProgressProvider: SyncProgressProvider
 ) : RemoteDataSource<ArtistDto> {
   override fun fetch(): Observable<List<ArtistDto>> {
     return Observable.range(0, Integer.MAX_VALUE).flatMap {

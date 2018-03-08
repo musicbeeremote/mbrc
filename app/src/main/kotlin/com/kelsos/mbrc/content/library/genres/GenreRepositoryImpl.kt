@@ -9,8 +9,8 @@ import javax.inject.Inject
 class GenreRepositoryImpl
 @Inject
 constructor(
-    private val remoteDataSource: RemoteGenreDataSource,
-    private val dao: GenreDao
+  private val remoteDataSource: RemoteGenreDataSource,
+  private val dao: GenreDao
 ) : GenreRepository {
 
   private val mapper = GenreDtoMapper()

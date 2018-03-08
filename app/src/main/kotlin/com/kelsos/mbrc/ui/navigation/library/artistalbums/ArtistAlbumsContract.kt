@@ -9,7 +9,6 @@ interface ArtistAlbumsView : BaseView {
   fun update(albums: PagedList<AlbumEntity>)
 }
 
-interface ArtistAlbumsPresenter: Presenter<ArtistAlbumsView> {
+interface ArtistAlbumsPresenter : Presenter<ArtistAlbumsView> {
   fun load(artist: String)
 }
-

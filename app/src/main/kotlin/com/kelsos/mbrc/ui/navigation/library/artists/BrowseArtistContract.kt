@@ -9,10 +9,10 @@ interface BrowseArtistView : BaseView {
   fun update(pagedList: PagedList<ArtistEntity>)
   fun failure(throwable: Throwable)
   fun hideLoading()
+  fun updateIndexes(indexes: List<String>)
 }
 
 interface BrowseArtistPresenter : Presenter<BrowseArtistView> {
   fun load()
   fun reload()
 }
-

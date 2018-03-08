@@ -18,9 +18,9 @@ import javax.inject.Inject
 class ConnectionManagerPresenterImpl
 @Inject
 constructor(
-    private val repository: ConnectionRepository,
-    private val schedulerProvider: SchedulerProvider,
-    private val bus: RxBus
+  private val repository: ConnectionRepository,
+  private val schedulerProvider: SchedulerProvider,
+  private val bus: RxBus
 ) : BasePresenter<ConnectionManagerView>(), ConnectionManagerPresenter {
 
   private lateinit var settings: LiveData<List<ConnectionSettingsEntity>>
@@ -62,7 +62,6 @@ constructor(
               view().updateData(data)
             }
           })
-
         }, {
           this.onLoadError(it)
         }))
@@ -81,7 +80,6 @@ constructor(
     if (settings.id == repository.defaultId) {
       bus.post(DefaultSettingsChangedEvent())
     }
-
   }
 
   override fun delete(settings: ConnectionSettingsEntity) {

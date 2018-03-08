@@ -9,5 +9,5 @@ interface Repository<T : Data> {
   fun getAndSaveRemote(): Single<DataSource.Factory<Int, T>>
   fun getRemote(): Completable
   fun search(term: String): Single<DataSource.Factory<Int, T>>
-  fun cacheIsEmpty() : Single<Boolean>
+  fun cacheIsEmpty(): Single<Boolean>
 }

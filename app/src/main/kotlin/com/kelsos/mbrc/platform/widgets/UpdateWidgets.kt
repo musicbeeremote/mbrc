@@ -57,6 +57,4 @@ object UpdateWidgets {
     widgetUpdateIntent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
     return widgetUpdateIntent
   }
-
-
 }

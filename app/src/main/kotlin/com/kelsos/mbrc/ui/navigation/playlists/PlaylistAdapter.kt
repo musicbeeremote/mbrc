@@ -28,7 +28,6 @@ class PlaylistAdapter
       path?.let {
         playlistPressedListener?.playlistPressed(it)
       }
-
     }
     return viewHolder
   }
@@ -39,7 +38,6 @@ class PlaylistAdapter
       holder.name.text = playlist.name
     }
     holder.context.visibility = View.GONE
-
   }
 
   override fun getItemCount(): Int = data?.size ?: 0

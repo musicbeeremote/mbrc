@@ -9,8 +9,8 @@ import javax.inject.Inject
 class PlaylistRepositoryImpl
 @Inject
 constructor(
-    private val dao: PlaylistDao,
-    private val remoteDataSource: RemotePlaylistDataSource
+  private val dao: PlaylistDao,
+  private val remoteDataSource: RemotePlaylistDataSource
 ) : PlaylistRepository {
   private val mapper = PlaylistDtoMapper()
 

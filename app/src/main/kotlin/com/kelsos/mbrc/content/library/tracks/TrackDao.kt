@@ -26,8 +26,8 @@ interface TrackDao {
 
   @Query("select * from track where album = :album and album_artist = :artist order by album_artist asc, album asc, disc asc, trackno asc")
   fun getAlbumTracks(
-      album: String,
-      artist: String
+    album: String,
+    artist: String
   ): DataSource.Factory<Int, TrackEntity>
 
   @Query("select * from track where album = '' and album_artist = :artist order by album_artist asc, album asc, disc asc, trackno asc")

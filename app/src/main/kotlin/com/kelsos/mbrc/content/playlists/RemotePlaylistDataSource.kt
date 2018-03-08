@@ -4,7 +4,6 @@ import com.kelsos.mbrc.interfaces.data.RemoteDataSource
 import io.reactivex.Observable
 import javax.inject.Inject
 
-
 class RemotePlaylistDataSource
 @Inject
 constructor(private val service: PlaylistService) : RemoteDataSource<PlaylistDto> {
@@ -13,5 +12,4 @@ constructor(private val service: PlaylistService) : RemoteDataSource<PlaylistDto
       service.fetch(it * RemoteDataSource.LIMIT, RemoteDataSource.LIMIT)
     }.takeWhile { it.offset < it.total }.map { it.data }
   }
-
 }

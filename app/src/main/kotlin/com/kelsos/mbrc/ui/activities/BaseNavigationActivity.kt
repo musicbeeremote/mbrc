@@ -45,7 +45,6 @@ import kotterknife.bindView
 import timber.log.Timber
 import javax.inject.Inject
 
-
 abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
   @Inject lateinit var bus: RxBus
   @Inject lateinit var serviceChecker: ServiceChecker
@@ -201,7 +200,6 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
       intent.flags = FLAG_ACTIVITY_CLEAR_TOP
       startActivity(intent)
     }
-
   }
 
   private fun createBackStack(intent: Intent) {

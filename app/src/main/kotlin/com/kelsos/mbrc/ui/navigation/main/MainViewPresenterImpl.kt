@@ -12,10 +12,12 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class MainViewPresenterImpl
-@Inject constructor(val bus: RxBus,
-                    val model: MainDataModel,
-                    val connectionStatusModel: ConnectionStatusModel,
-                    private val settingsManager: SettingsManager) : BasePresenter<MainView>(), MainViewPresenter {
+@Inject constructor(
+  val bus: RxBus,
+  val model: MainDataModel,
+  val connectionStatusModel: ConnectionStatusModel,
+  private val settingsManager: SettingsManager
+) : BasePresenter<MainView>(), MainViewPresenter {
   override fun stop(): Boolean {
     bus.post(UserAction(Protocol.PlayerStop, true))
     return true
@@ -56,7 +58,6 @@ class MainViewPresenterImpl
         updateConnection(connectionStatusModel.connection)
       }
     }.subscribe({
-
     }) {
       Timber.e(it, "Failed to load")
     })
@@ -66,10 +67,7 @@ class MainViewPresenterImpl
         view().showChangeLog()
       }
     }) {
-
     })
-
-
   }
 
   override fun requestNowPlayingPosition() {
@@ -118,6 +116,4 @@ class MainViewPresenterImpl
     bus.post(UserAction.toggle(Protocol.NowPlayingLfmRating))
     return true
   }
-
-
 }

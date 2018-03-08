@@ -14,7 +14,7 @@ import javax.inject.Inject
 class AlbumTracksPresenterImpl
 @Inject
 constructor(
-    private val repository: TrackRepository
+  private val repository: TrackRepository
 ) : BasePresenter<AlbumTracksView>(),
     AlbumTracksPresenter {
 

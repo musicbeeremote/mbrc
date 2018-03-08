@@ -19,8 +19,8 @@ import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.extensions.gone
 import com.kelsos.mbrc.extensions.linear
 import com.kelsos.mbrc.extensions.show
+import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
-import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import kotterknife.bindView
 import toothpick.Scope
@@ -28,9 +28,9 @@ import toothpick.Toothpick
 import javax.inject.Inject
 
 class BrowseArtistFragment : Fragment(),
-    BrowseArtistView,
-    MenuItemSelectedListener,
-    OnRefreshListener {
+  BrowseArtistView,
+  MenuItemSelectedListener<ArtistEntity>,
+  OnRefreshListener {
 
   private val recycler: RecyclerView by bindView(R.id.library_browser__content)
   private val swipeLayout: SwipeRefreshLayout by bindView(R.id.library_browser__refresh_layout)
@@ -40,9 +40,12 @@ class BrowseArtistFragment : Fragment(),
   private val emptyViewTitle: TextView by bindView(R.id.library_browser__text_title)
   private val emptyViewProgress: ProgressBar by bindView(R.id.library_browser__loading_bar)
 
-  @Inject lateinit var adapter: ArtistEntryAdapter
-  @Inject lateinit var actionHandler: PopupActionHandler
-  @Inject lateinit var presenter: BrowseArtistPresenter
+  @Inject
+  lateinit var adapter: ArtistEntryAdapter
+  @Inject
+  lateinit var actionHandler: PopupActionHandler
+  @Inject
+  lateinit var presenter: BrowseArtistPresenter
 
   private var scope: Scope? = null
 
@@ -84,14 +87,16 @@ class BrowseArtistFragment : Fragment(),
     presenter.load()
   }
 
-  override fun onMenuItemSelected(action: String, entry: ArtistEntity) {
-    val activity = activity ?: fail("null activity")
-    actionHandler.artistSelected(action, entry, activity)
+  override fun updateIndexes(indexes: List<String>) {
+    adapter.setIndexes(indexes)
   }
 
-  override fun onItemClicked(artist: ArtistEntity) {
-    val activity = activity ?: fail("null activity")
-    actionHandler.artistSelected(artist, activity)
+  override fun onMenuItemSelected(action: String, item: ArtistEntity) {
+    actionHandler.artistSelected(action, item, requireContext())
+  }
+
+  override fun onItemClicked(item: ArtistEntity) {
+    actionHandler.artistSelected(item, requireContext())
   }
 
   override fun onRefresh() {
@@ -119,5 +124,4 @@ class BrowseArtistFragment : Fragment(),
     emptyViewProgress.gone()
     swipeLayout.isRefreshing = false
   }
-
 }

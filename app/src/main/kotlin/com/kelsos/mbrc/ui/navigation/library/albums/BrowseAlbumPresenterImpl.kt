@@ -20,10 +20,10 @@ import javax.inject.Inject
 class BrowseAlbumPresenterImpl
 @Inject
 constructor(
-    private val bus: RxBus,
-    private val repository: AlbumRepository,
-    private val albumSortingStore: AlbumSortingStore,
-    private val schedulerProvider: SchedulerProvider
+  private val bus: RxBus,
+  private val repository: AlbumRepository,
+  private val albumSortingStore: AlbumSortingStore,
+  private val schedulerProvider: SchedulerProvider
 ) : BasePresenter<BrowseAlbumView>(),
     BrowseAlbumPresenter {
 
@@ -64,7 +64,6 @@ constructor(
           Timber.v(it)
           view().hideLoading()
         }
-
   }
 
   override fun showSorting() {
@@ -109,6 +108,5 @@ constructor(
           Timber.v(it)
           view().hideLoading()
         }
-
   }
 }
