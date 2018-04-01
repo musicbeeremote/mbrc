@@ -13,8 +13,8 @@ import android.support.test.filters.LargeTest
 import android.support.test.runner.AndroidJUnit4
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.MainDataModel
-import com.kelsos.mbrc.content.activestatus.ModelCache
-import com.kelsos.mbrc.content.library.tracks.TrackInfo
+import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
+import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.platform.ServiceChecker
 import com.kelsos.mbrc.preferences.SettingsManager
@@ -52,28 +52,26 @@ class MainActivityTest {
   @Rule
   fun chain(): TestRule = RuleChain.outerRule(toothPickRule).around(activityRule)
 
-  private lateinit var model: MainDataModel
-  private lateinit var mockBus: RxBus
+
+
   private lateinit var mockSettingsManager: SettingsManager
-  private lateinit var mockCache: ModelCache
+  private lateinit var mockCache: PlayingTrackCache
   private lateinit var application: Application
   private lateinit var mockServiceChecker: ServiceChecker
 
   @Before
   fun setUp() {
     mockSettingsManager = mock(SettingsManager::class.java)
-    mockCache = mock(ModelCache::class.java)
+    mockCache = mock(PlayingTrackCache::class.java)
     mockServiceChecker = mock(ServiceChecker::class.java)
 
-    val trackInfo = TrackInfo()
+    val trackInfo = PlayingTrackModel()
     given(mockCache.restoreCover()).willReturn(Single.just(""))
     given(mockCache.persistCover(anyString())).willReturn(Completable.complete())
     given(mockCache.restoreInfo()).willReturn(Single.just(trackInfo))
     given(mockCache.persistInfo(trackInfo)).willReturn(Completable.complete())
     given(mockSettingsManager.shouldShowChangeLog()).willReturn(Single.just(false))
-    mockBus = mock(RxBus::class.java)
 
-    model = MainDataModel(mockBus, mockCache)
 
     application = InstrumentationRegistry.getTargetContext().applicationContext as Application
     val scope = Toothpick.openScope(application)

@@ -6,8 +6,8 @@ import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 
 @Entity(
-    tableName = "now_playing",
-    indices = [Index("path", "position", name = "now_playing_track_idx", unique = true)]
+  tableName = "now_playing",
+  indices = [Index("path", "position", name = "now_playing_track_idx", unique = true)]
 )
 data class NowPlayingEntity(
   @ColumnInfo(name = "title")

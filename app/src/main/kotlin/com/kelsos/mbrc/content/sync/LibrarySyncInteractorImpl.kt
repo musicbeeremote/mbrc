@@ -5,8 +5,6 @@ import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
-import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.utilities.SchedulerProvider
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -16,14 +14,14 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class LibrarySyncInteractorImpl
-@Inject constructor(
+@Inject
+constructor(
   private val genreRepository: GenreRepository,
   private val artistRepository: ArtistRepository,
   private val albumRepository: AlbumRepository,
   private val trackRepository: TrackRepository,
   private val playlistRepository: PlaylistRepository,
-  private val schedulerProvider: SchedulerProvider,
-  private val bus: RxBus
+  private val schedulerProvider: SchedulerProvider
 ) : LibrarySyncInteractor {
 
   private var disposable: Disposable? = null
@@ -45,27 +43,26 @@ class LibrarySyncInteractorImpl
     disposable = checkIfShouldSync(auto).flatMapCompletable { empty ->
       if (empty) {
         return@flatMapCompletable genreRepository.getRemote()
-            .andThen(artistRepository.getRemote())
-            .andThen(albumRepository.getRemote())
-            .andThen(trackRepository.getRemote())
-            .andThen(playlistRepository.getRemote())
+          .andThen(artistRepository.getRemote())
+          .andThen(albumRepository.getRemote())
+          .andThen(trackRepository.getRemote())
+          .andThen(playlistRepository.getRemote())
       } else {
         return@flatMapCompletable Completable.error(ShouldNotProceedException())
       }
     }.subscribeOn(schedulerProvider.sync())
-        .observeOn(schedulerProvider.main())
-        .doOnTerminate {
-          onCompleteListener?.onTermination()
-          bus.post(LibraryRefreshCompleteEvent())
-          running = false
-        }
-        .subscribe({
-          onCompleteListener?.onSuccess()
-          Timber.v("Library refresh was complete after ${System.currentTimeMillis() - start} ms")
-        }) {
-          Timber.e(it, "Refresh couldn't complete")
-          onCompleteListener?.onFailure(it)
-        }
+      .observeOn(schedulerProvider.main())
+      .doOnTerminate {
+        onCompleteListener?.onTermination()
+        running = false
+      }
+      .subscribe({
+        onCompleteListener?.onSuccess()
+        Timber.v("Library refresh complete after ${System.currentTimeMillis() - start} ms")
+      }) {
+        Timber.e(it, "Refresh couldn't complete")
+        onCompleteListener?.onFailure(it)
+      }
   }
 
   private fun checkIfShouldSync(auto: Boolean): Single<Boolean> {
@@ -78,15 +75,17 @@ class LibrarySyncInteractorImpl
 
   private fun isEmpty(): Single<Boolean> {
     return Single.zip(genreRepository.cacheIsEmpty(),
-        artistRepository.cacheIsEmpty(),
-        albumRepository.cacheIsEmpty(),
-        trackRepository.cacheIsEmpty(),
-        Function4 { noGenres, noArtists, noAlbums, noTracks ->
-          noGenres && noArtists && noAlbums && noTracks
-        })
+      artistRepository.cacheIsEmpty(),
+      albumRepository.cacheIsEmpty(),
+      trackRepository.cacheIsEmpty(),
+      Function4 { noGenres, noArtists, noAlbums, noTracks ->
+        noGenres && noArtists && noAlbums && noTracks
+      })
   }
 
-  override fun setOnCompleteListener(onCompleteListener: LibrarySyncInteractor.OnCompleteListener?) {
+  override fun setOnCompleteListener(
+    onCompleteListener: LibrarySyncInteractor.OnCompleteListener?
+  ) {
     this.onCompleteListener = onCompleteListener
   }
 

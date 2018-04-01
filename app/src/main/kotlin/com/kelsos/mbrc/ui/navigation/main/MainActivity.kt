@@ -19,18 +19,18 @@ import android.widget.TextView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerState.State
+import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
 import com.kelsos.mbrc.content.activestatus.Repeat
 import com.kelsos.mbrc.content.activestatus.Repeat.Mode
-import com.kelsos.mbrc.content.library.tracks.TrackInfo
-import com.kelsos.mbrc.events.OnMainFragmentOptionsInflated
-import com.kelsos.mbrc.events.ShuffleChange
-import com.kelsos.mbrc.events.ShuffleChange.ShuffleState
-import com.kelsos.mbrc.events.UpdatePositionEvent
+import com.kelsos.mbrc.content.activestatus.TrackRatingModel
+import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
+import com.kelsos.mbrc.events.ShuffleMode
+import com.kelsos.mbrc.events.ShuffleMode.Shuffle
+import com.kelsos.mbrc.content.activestatus.TrackPositionData
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.dialogs.RatingDialogFragment
-import com.kelsos.mbrc.ui.navigation.main.LfmRating.Rating
 import com.kelsos.mbrc.ui.navigation.main.ProgressSeekerHelper.ProgressUpdate
 import com.squareup.picasso.Picasso
 import kotterknife.bindView
@@ -145,27 +145,25 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    when (item.itemId) {
+    return when (item.itemId) {
       R.id.menu_lastfm_scrobble -> {
         presenter.toggleScrobbling()
-        return true
+        true
       }
       R.id.menu_rating_dialog -> {
-        val ratingDialog = RatingDialogFragment()
-        ratingDialog.show(supportFragmentManager, "RatingDialog")
-        return true
+        RatingDialogFragment.create(this).show()
+        true
       }
       R.id.menu_lastfm_love -> {
-        return presenter.lfmLove()
+        presenter.lfmLove()
       }
-      else -> return false
+      else -> false
     }
   }
 
   override fun onStop() {
     super.onStop()
     presenter.detach()
-    bus.unregister(this)
     progressHelper.setProgressListener(null)
     volumeChangeListener?.terminate()
     volumeChangeListener = null
@@ -181,7 +179,7 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
 //    val shareItem = menu.findItem(R.id.actionbar_share)
 //    mShareActionProvider = MenuItemCompat.getActionProvider(shareItem) as ShareActionProvider
 //    mShareActionProvider!!.setShareIntent(shareIntent)
-    bus.post(OnMainFragmentOptionsInflated())
+    //bus.post(OnMainFragmentOptionsInflated())
     return super.onCreateOptionsMenu(menu)
   }
 
@@ -194,7 +192,28 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
       return shareIntent
     }
 
-  override fun updateCover(path: String) {
+  override fun updateRating(rating: TrackRatingModel) {
+    menu?.run {
+      val favoriteMenuItem = findItem(R.id.menu_lastfm_love) ?: return
+
+      when (rating.lfmRating) {
+        LfmRating.LOVED -> favoriteMenuItem.setIcon(R.drawable.ic_favorite_black_24dp)
+        else -> favoriteMenuItem.setIcon(R.drawable.ic_favorite_border_black_24dp)
+      }
+    }
+  }
+
+  override fun updateStatus(playerStatus: PlayerStatusModel) {
+    with(playerStatus) {
+      updateShuffleState(shuffle)
+      updateRepeat(repeat)
+      updateVolume(volume, mute)
+      updatePlayState(playState)
+      updateScrobbleStatus(scrobbling)
+    }
+  }
+
+  private fun updateCover(path: String) {
     val file = File(path)
 
     if (!file.exists()) {
@@ -202,7 +221,14 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
       return
     }
 
+    if (albumCover.tag == path) {
+      return
+    }
+
+    albumCover.tag = path
+
     val dimens = getDimens()
+
     Picasso.get()
       .load(file)
       .noFade()
@@ -213,17 +239,20 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
       .into(albumCover)
   }
 
-  override fun updateShuffleState(@ShuffleState shuffleState: String) {
-    val shuffle = ShuffleChange.OFF != shuffleState
-    val autoDj = ShuffleChange.AUTODJ == shuffleState
+  private fun updateShuffleState(@Shuffle shuffleState: String) {
+    val shuffle = ShuffleMode.OFF != shuffleState
+    val autoDj = ShuffleMode.AUTODJ == shuffleState
 
-    val color = ContextCompat.getColor(this, if (shuffle) R.color.accent else R.color.button_dark)
+    val colorResId = if (shuffle) R.color.accent else R.color.button_dark
+    val iconResId =
+      if (autoDj) R.drawable.ic_headset_black_24dp else R.drawable.ic_shuffle_black_24dp
+
+    val color = ContextCompat.getColor(this, colorResId)
     shuffleButton.setColorFilter(color)
-
-    shuffleButton.setImageResource(if (autoDj) R.drawable.ic_headset_black_24dp else R.drawable.ic_shuffle_black_24dp)
+    shuffleButton.setImageResource(iconResId)
   }
 
-  override fun updateRepeat(@Mode mode: String) {
+  private fun updateRepeat(@Mode mode: String) {
     @ColorRes var colorId = R.color.accent
     @DrawableRes var resId = R.drawable.ic_repeat_black_24dp
 
@@ -239,14 +268,21 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
     repeatButton.setColorFilter(color)
   }
 
-  override fun updateVolume(volume: Int, mute: Boolean) {
-    volumeBar.progress = volume
+  private fun updateVolume(volume: Int, mute: Boolean) {
     val color = ContextCompat.getColor(this, R.color.button_dark)
-    muteButton.setColorFilter(color)
-    muteButton.setImageResource(if (mute) R.drawable.ic_volume_off_black_24dp else R.drawable.ic_volume_up_black_24dp)
+    val iconResId = if (mute) {
+      R.drawable.ic_volume_off_black_24dp
+    } else {
+      R.drawable.ic_volume_up_black_24dp
+    }
+    volumeBar.progress = volume
+    with(muteButton) {
+      setColorFilter(color)
+      setImageResource(iconResId)
+    }
   }
 
-  override fun updatePlayState(@State state: String) {
+  private fun updatePlayState(@State state: String) {
     val accentColor = ContextCompat.getColor(this, R.color.accent)
     @DrawableRes val resId: Int
     val tag: String
@@ -302,7 +338,7 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
     trackProgressCurrent.text = getString(R.string.playback_progress, 0, 0)
   }
 
-  override fun updateTrackInfo(info: TrackInfo) {
+  override fun updateTrackInfo(info: PlayingTrackModel) {
     artistLabel.text = info.artist
     titleLabel.text = info.title
     albumLabel.text = if (TextUtils.isEmpty(info.year)) info.album
@@ -311,6 +347,8 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
     if (mShareActionProvider != null) {
       mShareActionProvider!!.setShareIntent(shareIntent)
     }
+
+    updateCover(info.coverUrl)
   }
 
   override fun updateConnection(status: Int) {
@@ -326,7 +364,7 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
    * current progress of playback
    */
 
-  override fun updateProgress(position: UpdatePositionEvent) {
+  override fun updateProgress(position: TrackPositionData) {
     val total = position.total
     val current = position.current
 
@@ -342,9 +380,11 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
     val finalCurrentSeconds = currentSeconds
 
     trackDuration.text = getString(R.string.playback_progress, totalMinutes, finalTotalSeconds)
-    trackProgressCurrent.text = getString(R.string.playback_progress,
+    trackProgressCurrent.text = getString(
+      R.string.playback_progress,
       currentMinutes,
-      finalCurrentSeconds)
+      finalCurrentSeconds
+    )
 
     progressBar.max = total
     progressBar.progress = current
@@ -352,25 +392,13 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
     trackProgressAnimation(position.current, position.total)
   }
 
-  override fun updateScrobbleStatus(active: Boolean) {
+  private fun updateScrobbleStatus(active: Boolean) {
     if (menu == null) {
       return
     }
     val scrobbleMenuItem = menu!!.findItem(R.id.menu_lastfm_scrobble) ?: return
 
     scrobbleMenuItem.isChecked = active
-  }
-
-  override fun updateLfmStatus(@Rating status: Int) {
-    if (menu == null) {
-      return
-    }
-    val favoriteMenuItem = menu!!.findItem(R.id.menu_lastfm_love) ?: return
-
-    when (status) {
-      LfmRating.LOVED -> favoriteMenuItem.setIcon(R.drawable.ic_favorite_black_24dp)
-      else -> favoriteMenuItem.setIcon(R.drawable.ic_favorite_border_black_24dp)
-    }
   }
 
   override fun active(): Int {
@@ -383,9 +411,11 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
     val currentSeconds = currentProgress % 60
 
     progressBar.progress = progressBar.progress + 1000
-    trackProgressCurrent.text = getString(R.string.playback_progress,
+    trackProgressCurrent.text = getString(
+      R.string.playback_progress,
       currentMinutes,
-      currentSeconds)
+      currentSeconds
+    )
   }
 
   override fun onDestroy() {

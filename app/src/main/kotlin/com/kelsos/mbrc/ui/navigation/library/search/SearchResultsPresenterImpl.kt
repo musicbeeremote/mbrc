@@ -26,31 +26,31 @@ constructor(
   private val trackRepository: TrackRepository,
   private val schedulerProvider: SchedulerProvider
 ) : BasePresenter<SearchResultsView>(),
-    SearchResultsPresenter {
+  SearchResultsPresenter {
   override fun search(term: String) {
 
     addDisposable(Single.zip(genreRepository.search(term),
-        artistRepository.search(term),
-        albumRepository.search(term),
-        trackRepository.search(term),
-        Function4 { genreList: DataSource.Factory<Int, GenreEntity>,
-                    artistList: DataSource.Factory<Int, ArtistEntity>,
-                    albumList: DataSource.Factory<Int, AlbumEntity>,
-                    trackList: DataSource.Factory<Int, TrackEntity> ->
+      artistRepository.search(term),
+      albumRepository.search(term),
+      trackRepository.search(term),
+      Function4 { genreList: DataSource.Factory<Int, GenreEntity>,
+                  artistList: DataSource.Factory<Int, ArtistEntity>,
+                  albumList: DataSource.Factory<Int, AlbumEntity>,
+                  trackList: DataSource.Factory<Int, TrackEntity> ->
 
-          val genres = genreList.paged()
-          val artists = artistList.paged()
-          val albums = albumList.paged()
-          val tracks = trackList.paged()
+        val genres = genreList.paged()
+        val artists = artistList.paged()
+        val albums = albumList.paged()
+        val tracks = trackList.paged()
 
-          SearchResults(genres, artists, albums, tracks)
-        })
-        .subscribeOn(schedulerProvider.io())
-        .observeOn(schedulerProvider.main())
-        .subscribe({
-          view().update(it)
-        }) {
-          Timber.v(it)
-        })
+        SearchResults(genres, artists, albums, tracks)
+      })
+      .subscribeOn(schedulerProvider.io())
+      .observeOn(schedulerProvider.main())
+      .subscribe({
+        view().update(it)
+      }) {
+        Timber.v(it)
+      })
   }
 }

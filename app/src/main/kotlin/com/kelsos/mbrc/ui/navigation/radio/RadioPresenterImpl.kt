@@ -11,6 +11,7 @@ import com.kelsos.mbrc.content.radios.RadioStationEntity
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.utilities.SchedulerProvider
 import com.kelsos.mbrc.utilities.paged
+import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -22,24 +23,23 @@ constructor(
   private val queueApi: QueueApi,
   private val schedulerProvider: SchedulerProvider
 ) : BasePresenter<RadioView>(),
-    RadioPresenter {
+  RadioPresenter {
 
   private lateinit var radios: LiveData<PagedList<RadioStationEntity>>
 
   override fun load() {
+    view().loading(true)
 
-    view().showLoading()
-    addDisposable(radioRepository.getAll()
-        .subscribeOn(schedulerProvider.io())
-        .observeOn(schedulerProvider.main())
-        .subscribe({
-          onRadiosLoaded(it)
-          view().hideLoading()
-        }, {
-          view().error(it)
-          view().hideLoading()
-          Timber.v(it, "Failed")
-        }))
+    disposables += radioRepository.getAll()
+      .subscribeOn(schedulerProvider.io())
+      .observeOn(schedulerProvider.main())
+      .doAfterTerminate { view().loading(false) }
+      .subscribe({
+        onRadiosLoaded(it)
+      }, {
+        view().error(it)
+        Timber.v(it, "Failed")
+      })
   }
 
   private fun onRadiosLoaded(factory: DataSource.Factory<Int, RadioStationEntity>) {
@@ -52,27 +52,26 @@ constructor(
   }
 
   override fun refresh() {
-    view().showLoading()
-    addDisposable(radioRepository.getAndSaveRemote()
-        .subscribeOn(schedulerProvider.io())
-        .observeOn(schedulerProvider.main())
-        .subscribe({
-          onRadiosLoaded(it)
-          view().hideLoading()
-        }, {
-          view().error(it)
-          view().hideLoading()
-        }))
+    view().loading(true)
+    disposables += radioRepository.getAndSaveRemote()
+      .subscribeOn(schedulerProvider.io())
+      .observeOn(schedulerProvider.main())
+      .doAfterTerminate { view().loading(false) }
+      .subscribe({
+        onRadiosLoaded(it)
+      }, {
+        view().error(it)
+      })
   }
 
   override fun play(path: String) {
-    addDisposable(queueApi.queue(NOW, listOf(path))
-        .subscribeOn(schedulerProvider.io())
-        .observeOn(schedulerProvider.main())
-        .subscribe({
-          view().radioPlaySuccessful()
-        }, {
-          view().radioPlayFailed(it)
-        }))
+    disposables += queueApi.queue(NOW, listOf(path))
+      .subscribeOn(schedulerProvider.io())
+      .observeOn(schedulerProvider.main())
+      .subscribe({
+        view().radioPlaySuccessful()
+      }, {
+        view().radioPlayFailed(it)
+      })
   }
 }

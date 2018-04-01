@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.content.library.genres
 
+import android.arch.lifecycle.LiveData
 import android.arch.paging.DataSource
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
@@ -26,4 +27,7 @@ interface GenreDao {
 
   @Query("delete from genre where date_added != :added")
   fun removePreviousEntries(added: Long)
+
+  @Query("select substr(genre,1,1) from genre order by genre")
+  fun getAllIndexes(): LiveData<List<String>>
 }

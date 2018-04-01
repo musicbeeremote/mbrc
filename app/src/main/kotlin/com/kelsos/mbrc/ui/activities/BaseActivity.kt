@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.ui.activities
 
 import android.annotation.SuppressLint
+import android.support.annotation.StringRes
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import com.kelsos.mbrc.R
@@ -22,5 +24,13 @@ open class BaseActivity : AppCompatActivity() {
         this.title = title
       }
     }
+  }
+
+  protected fun showSnackbar(@StringRes resId: Int) {
+    Snackbar.make(
+      findViewById(android.R.id.content),
+      resId,
+      Snackbar.LENGTH_SHORT
+    ).show()
   }
 }

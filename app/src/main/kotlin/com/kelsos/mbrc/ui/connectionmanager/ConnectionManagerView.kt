@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.ui.connectionmanager
 
 import com.kelsos.mbrc.events.ConnectionSettingsChanged
-import com.kelsos.mbrc.events.DiscoveryStopped
 import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
@@ -14,7 +13,7 @@ interface ConnectionManagerView : BaseView {
 
   fun onUserNotification(event: NotifyUser)
 
-  fun onDiscoveryStopped(event: DiscoveryStopped)
+  fun onDiscoveryStopped(status: Int)
 
   fun onConnectionSettingsChange(event: ConnectionSettingsChanged)
 }

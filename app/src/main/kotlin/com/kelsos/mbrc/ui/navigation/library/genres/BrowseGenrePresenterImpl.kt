@@ -6,48 +6,53 @@ import android.arch.paging.DataSource
 import android.arch.paging.PagedList
 import com.kelsos.mbrc.content.library.genres.GenreEntity
 import com.kelsos.mbrc.content.library.genres.GenreRepository
-import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.utilities.SchedulerProvider
 import com.kelsos.mbrc.utilities.paged
+import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
 import javax.inject.Inject
 
 class BrowseGenrePresenterImpl
 @Inject
 constructor(
-  private val bus: RxBus,
   private val repository: GenreRepository,
   private val schedulerProvider: SchedulerProvider
 ) : BasePresenter<BrowseGenreView>(),
-    BrowseGenrePresenter {
+  BrowseGenrePresenter {
 
   private lateinit var genres: LiveData<PagedList<GenreEntity>>
+  private lateinit var indexes: LiveData<List<String>>
 
-  override fun attach(view: BrowseGenreView) {
-    super.attach(view)
-    bus.register(this, LibraryRefreshCompleteEvent::class.java, { load() })
-  }
-
-  override fun detach() {
-    super.detach()
-    bus.unregister(this)
-  }
 
   override fun load() {
 
-    addDisposable(repository.getAll()
-        .observeOn(schedulerProvider.main())
-        .subscribeOn(schedulerProvider.io())
-        .subscribe({
-          onGenresLoaded(it)
-          view().hideLoading()
-        }, {
-          Timber.v(it, "Error while loading the data from the database")
-          view().failure(it)
-          view().hideLoading()
-        }))
+    disposables += repository.allGenres()
+      .observeOn(schedulerProvider.main())
+      .subscribeOn(schedulerProvider.io())
+      .doFinally { view().hideLoading() }
+      .subscribe({
+        onGenresLoaded(it.factory)
+        onIndexesLoaded(it.indexes)
+      }, {
+        Timber.v(it, "Error while loading the data from the database")
+        view().failure(it)
+      })
+  }
+
+  private fun onIndexesLoaded(data: LiveData<List<String>>) {
+    if (::indexes.isInitialized) {
+      indexes.removeObservers(this)
+    }
+
+    indexes = data.apply {
+      observe(this@BrowseGenrePresenterImpl, Observer {
+        if (it == null) {
+          return@Observer
+        }
+        view().updateIndexes(it)
+      })
+    }
   }
 
   private fun onGenresLoaded(it: DataSource.Factory<Int, GenreEntity>) {
@@ -64,16 +69,15 @@ constructor(
   }
 
   override fun reload() {
-    addDisposable(repository.getAndSaveRemote()
-        .observeOn(schedulerProvider.main())
-        .subscribeOn(schedulerProvider.io())
-        .subscribe({
-          onGenresLoaded(it)
-          view().hideLoading()
-        }, {
-          Timber.v(it, "Error while loading the data from the database")
-          view().failure(it)
-          view().hideLoading()
-        }))
+    disposables += repository.getAndSaveRemote()
+      .observeOn(schedulerProvider.main())
+      .subscribeOn(schedulerProvider.io())
+      .doFinally { view().hideLoading() }
+      .subscribe({
+        onGenresLoaded(it)
+      }, {
+        Timber.v(it, "Error while loading the data from the database")
+        view().failure(it)
+      })
   }
 }

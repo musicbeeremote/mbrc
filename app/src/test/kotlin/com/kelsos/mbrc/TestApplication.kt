@@ -3,7 +3,7 @@ package com.kelsos.mbrc
 import org.robolectric.TestLifecycleApplication
 import java.lang.reflect.Method
 
-class TestApplication : RemoteApplication(), TestLifecycleApplication {
+class TestApplication : App(), TestLifecycleApplication {
 
   override fun testMode(): Boolean = true
 

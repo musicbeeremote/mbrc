@@ -16,7 +16,7 @@ class AlbumTracksPresenterImpl
 constructor(
   private val repository: TrackRepository
 ) : BasePresenter<AlbumTracksView>(),
-    AlbumTracksPresenter {
+  AlbumTracksPresenter {
 
   private lateinit var tracks: LiveData<PagedList<TrackEntity>>
 

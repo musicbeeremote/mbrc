@@ -13,13 +13,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.TrackEntity
-import com.kelsos.mbrc.extensions.fail
-import com.kelsos.mbrc.extensions.gone
-import com.kelsos.mbrc.extensions.hide
 import com.kelsos.mbrc.extensions.linear
-import com.kelsos.mbrc.extensions.show
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
@@ -47,7 +44,11 @@ class BrowseTrackFragment : Fragment(),
   @Inject
   lateinit var presenter: BrowseTrackPresenter
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View? {
     return inflater.inflate(R.layout.fragment_browse, container, false)
   }
 
@@ -81,11 +82,7 @@ class BrowseTrackFragment : Fragment(),
   }
 
   override fun update(pagedList: PagedList<TrackEntity>) {
-    if (pagedList.isEmpty()) {
-      emptyView.show()
-    } else {
-      emptyView.hide()
-    }
+    emptyView.isVisible = pagedList.isEmpty()
     adapter.submitList(pagedList)
   }
 
@@ -111,7 +108,7 @@ class BrowseTrackFragment : Fragment(),
   }
 
   override fun hideLoading() {
-    emptyViewProgress.gone()
+    emptyViewProgress.isVisible = false
     swipeLayout.isRefreshing = false
   }
 }

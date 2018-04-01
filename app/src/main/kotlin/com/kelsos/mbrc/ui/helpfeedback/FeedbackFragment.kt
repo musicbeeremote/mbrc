@@ -35,17 +35,18 @@ class FeedbackFragment : Fragment() {
   ): View? {
     return inflater.inflate(R.layout.fragment_feedback, container, false)
   }
+
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     val context = context ?: fail("null context")
 
     LogHelper.logsExist(context)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({
-          logInfo.isEnabled = true
-        }) {
-        }
+      .subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe({
+        logInfo.isEnabled = true
+      }) {
+      }
     feedbackButton.setOnClickListener { onFeedbackButtonClicked() }
   }
 
@@ -64,11 +65,13 @@ class FeedbackFragment : Fragment() {
       val appVersion = RemoteUtils.getVersion(context)
       val androidVersion = Build.VERSION.RELEASE
 
-      feedbackText += getString(R.string.feedback_version_info,
-          manufacturer,
-          device,
-          androidVersion,
-          appVersion)
+      feedbackText += getString(
+        R.string.feedback_version_info,
+        manufacturer,
+        device,
+        androidVersion,
+        appVersion
+      )
     }
 
     if (!logInfo.isChecked) {
@@ -77,13 +80,13 @@ class FeedbackFragment : Fragment() {
     }
 
     LogHelper.zipLogs(context)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({
-          openChooser(feedbackText, it)
-        }) {
-          openChooser(feedbackText)
-        }
+      .subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe({
+        openChooser(feedbackText, it)
+      }) {
+        openChooser(feedbackText)
+      }
   }
 
   private fun openChooser(feedbackText: String, logs: File? = null) {

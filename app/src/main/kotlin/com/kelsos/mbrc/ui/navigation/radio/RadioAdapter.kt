@@ -1,52 +1,28 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
-import android.app.Activity
-import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
+import android.arch.paging.PagedListAdapter
+import android.support.v7.util.DiffUtil
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.radios.RadioStation
-import kotterknife.bindView
+import com.kelsos.mbrc.content.radios.RadioStationEntity
 import javax.inject.Inject
 
 class RadioAdapter
-@Inject constructor(context: Activity) : RecyclerView.Adapter<RadioAdapter.ViewHolder>() {
-
-  private val inflater: LayoutInflater = LayoutInflater.from(context)
-  private var data: List<RadioStation>? = null
+@Inject
+constructor() : PagedListAdapter<RadioStationEntity, RadioViewHolder>(DIFF) {
   private var radioPressedListener: OnRadioPressedListener? = null
 
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-    val view = inflater.inflate(R.layout.listitem_single, parent, false)
-    val viewHolder = ViewHolder(view)
-
-    viewHolder.itemView.setOnClickListener {
-      val path = data?.get(viewHolder.adapterPosition)?.url
-      path?.let {
-        radioPressedListener?.onRadioPressed(it)
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RadioViewHolder {
+    return RadioViewHolder.create(parent) { position ->
+      getItem(position)?.let {
+        radioPressedListener?.onRadioPressed(it.url)
       }
     }
-    return viewHolder
   }
 
-  override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val radio = data?.get(holder.adapterPosition)
-    radio?.let {
-      holder.name.text = radio.name
+  override fun onBindViewHolder(holder: RadioViewHolder, position: Int) {
+    getItem(position)?.let {
+      holder.bindTo(it)
     }
-    holder.context.visibility = View.GONE
-  }
-
-  override fun getItemCount(): Int {
-    return data?.size ?: 0
-  }
-
-  fun update(cursor: List<RadioStation>) {
-    this.data = cursor
-    notifyDataSetChanged()
   }
 
   fun setOnRadioPressedListener(onRadioPressedListener: OnRadioPressedListener?) {
@@ -57,8 +33,15 @@ class RadioAdapter
     fun onRadioPressed(path: String)
   }
 
-  class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val name: TextView by bindView(R.id.line_one)
-    val context: ImageView by bindView(R.id.ui_item_context_indicator)
+  companion object {
+    val DIFF = object : DiffUtil.ItemCallback<RadioStationEntity>() {
+      override fun areItemsTheSame(oldItem: RadioStationEntity?, newItem: RadioStationEntity?): Boolean {
+        return oldItem?.id == newItem?.id
+      }
+
+      override fun areContentsTheSame(oldItem: RadioStationEntity?, newItem: RadioStationEntity?): Boolean {
+        return oldItem == newItem
+      }
+    }
   }
 }

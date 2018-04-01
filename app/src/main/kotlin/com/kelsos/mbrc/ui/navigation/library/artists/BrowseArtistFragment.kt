@@ -13,12 +13,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.extensions.fail
-import com.kelsos.mbrc.extensions.gone
 import com.kelsos.mbrc.extensions.linear
-import com.kelsos.mbrc.extensions.show
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
@@ -72,7 +71,11 @@ class BrowseArtistFragment : Fragment(),
     presenter.detach()
   }
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View? {
     return inflater.inflate(R.layout.fragment_browse, container, false)
   }
 
@@ -108,11 +111,7 @@ class BrowseArtistFragment : Fragment(),
   }
 
   override fun update(pagedList: PagedList<ArtistEntity>) {
-    if (pagedList.isEmpty()) {
-      emptyView.show()
-    } else {
-      emptyView.gone()
-    }
+    emptyView.isVisible = pagedList.isEmpty()
     adapter.submitList(pagedList)
   }
 
@@ -121,7 +120,7 @@ class BrowseArtistFragment : Fragment(),
   }
 
   override fun hideLoading() {
-    emptyViewProgress.gone()
+    emptyViewProgress.isVisible = false
     swipeLayout.isRefreshing = false
   }
 }

@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.preferences
 
 import android.content.SharedPreferences
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class ClientInformationStoreImpl

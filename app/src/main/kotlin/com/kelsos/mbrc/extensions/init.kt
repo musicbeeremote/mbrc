@@ -3,6 +3,7 @@ package com.kelsos.mbrc.extensions
 import android.annotation.SuppressLint
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import androidx.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.ui.navigation.library.OnFastScrollListener
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
@@ -32,17 +33,15 @@ fun RecyclerView.linear(
           // this avoids trying to handle un-needed calls
           if (firstVisibleItemPosition == -1)
           //not initialized, or no items shown, so hide fast-scroller
-            fastScroller.gone()
+          {
+            fastScroller.isVisible = false
+          }
           return
         }
         val lastVisibleItemPosition = findLastVisibleItemPosition()
         val itemsShown = lastVisibleItemPosition - firstVisibleItemPosition + 1
         //if all items are shown, hide the fast-scroller
-        if (adapter.itemCount > itemsShown) {
-          fastScroller.show()
-        } else {
-          fastScroller.gone()
-        }
+        fastScroller.isVisible = adapter.itemCount > itemsShown
       }
     }
     fastScroller.setRecyclerView(this)

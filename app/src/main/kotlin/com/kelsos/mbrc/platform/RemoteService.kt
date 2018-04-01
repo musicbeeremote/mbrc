@@ -10,15 +10,15 @@ import timber.log.Timber
 import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class RemoteService : Service(), ForegroundHooks {
 
   private val controllerBinder = ControllerBinder()
 
-  @Inject lateinit var receiver: RemoteBroadcastReceiver
-  @Inject lateinit var core: RemoteServiceCore
+  @Inject
+  lateinit var receiver: RemoteBroadcastReceiver
+  @Inject
+  lateinit var core: RemoteServiceCore
 
   private var scope: Scope? = null
 

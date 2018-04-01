@@ -10,7 +10,7 @@ import android.widget.RemoteViews
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerState.State
-import com.kelsos.mbrc.content.library.tracks.TrackInfo
+import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.NEXT
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PLAY
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PREVIOUS
@@ -41,14 +41,25 @@ class WidgetNormal : AppWidgetProvider() {
       val path = extras.getString(UpdateWidgets.COVER_PATH, "")
       updateCover(context, widgetManager, widgetsIds, path)
     } else if (extras.getBoolean(UpdateWidgets.INFO, false)) {
-      updateInfo(context, widgetManager, widgetsIds, extras.getParcelable<TrackInfo>(UpdateWidgets.TRACK_INFO))
+      updateInfo(
+        context,
+        widgetManager,
+        widgetsIds,
+        extras.getParcelable<PlayingTrackModel>(UpdateWidgets.TRACK_INFO)
+      )
     } else if (extras.getBoolean(UpdateWidgets.STATE, false)) {
-      updatePlayState(context, widgetManager, widgetsIds,
-          extras.getString(UpdateWidgets.PLAYER_STATE, PlayerState.UNDEFINED))
+      updatePlayState(
+        context, widgetManager, widgetsIds,
+        extras.getString(UpdateWidgets.PLAYER_STATE, PlayerState.UNDEFINED)
+      )
     }
   }
 
-  override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+  override fun onUpdate(
+    context: Context,
+    appWidgetManager: AppWidgetManager,
+    appWidgetIds: IntArray
+  ) {
     super.onUpdate(context, appWidgetManager, appWidgetIds)
     Timber.v("Update widget received")
 
@@ -64,7 +75,10 @@ class WidgetNormal : AppWidgetProvider() {
       views.setOnClickPendingIntent(R.id.widget_normal_image, pendingIntent)
       views.setOnClickPendingIntent(R.id.widget_normal_play, getPendingIntent(PLAY, context))
       views.setOnClickPendingIntent(R.id.widget_normal_next, getPendingIntent(NEXT, context))
-      views.setOnClickPendingIntent(R.id.widget_normal_previous, getPendingIntent(PREVIOUS, context))
+      views.setOnClickPendingIntent(
+        R.id.widget_normal_previous,
+        getPendingIntent(PREVIOUS, context)
+      )
 
       // Tell the AppWidgetManager to perform an update on the current app widget
       appWidgetManager.updateAppWidget(appWidgetId, views)
@@ -75,7 +89,7 @@ class WidgetNormal : AppWidgetProvider() {
     context: Context?,
     widgetManager: AppWidgetManager,
     widgetsIds: IntArray,
-    info: TrackInfo
+    info: PlayingTrackModel
   ) {
     if (context == null) {
       return
@@ -104,9 +118,9 @@ class WidgetNormal : AppWidgetProvider() {
     if (coverFile.exists()) {
       Picasso.get().invalidate(coverFile)
       Picasso.get().load(coverFile)
-          .centerCrop()
-          .resizeDimen(R.dimen.widget_normal_height, R.dimen.widget_normal_height)
-          .into(widget, R.id.widget_normal_image, widgetsIds)
+        .centerCrop()
+        .resizeDimen(R.dimen.widget_normal_height, R.dimen.widget_normal_height)
+        .into(widget, R.id.widget_normal_image, widgetsIds)
     } else {
       widget.setImageViewResource(R.id.widget_normal_image, R.drawable.ic_image_no_cover)
     }
@@ -125,12 +139,14 @@ class WidgetNormal : AppWidgetProvider() {
 
     val widget = RemoteViews(context.packageName, R.layout.widget_normal)
 
-    widget.setImageViewResource(R.id.widget_normal_play,
-        if (PlayerState.PLAYING == state) {
-          R.drawable.ic_action_pause
-        } else {
-          R.drawable.ic_action_play
-        })
+    widget.setImageViewResource(
+      R.id.widget_normal_play,
+      if (PlayerState.PLAYING == state) {
+        R.drawable.ic_action_pause
+      } else {
+        R.drawable.ic_action_play
+      }
+    )
     manager.updateAppWidget(widgetsIds, widget)
   }
 }

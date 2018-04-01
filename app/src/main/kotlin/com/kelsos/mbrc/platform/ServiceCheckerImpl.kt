@@ -18,6 +18,7 @@ class ServiceCheckerImpl
   }
 
   private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
-    return manager.getRunningServices(Integer.MAX_VALUE).any { serviceClass.name == it.service.className }
+    return manager.getRunningServices(Integer.MAX_VALUE)
+      .any { serviceClass.name == it.service.className }
   }
 }

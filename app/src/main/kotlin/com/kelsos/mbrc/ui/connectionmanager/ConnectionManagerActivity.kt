@@ -9,10 +9,9 @@ import android.view.MenuItem
 import android.widget.Button
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.events.ConnectionSettingsChanged
-import com.kelsos.mbrc.events.DiscoveryStopped
 import com.kelsos.mbrc.events.NotifyUser
-import com.kelsos.mbrc.networking.DiscoveryStop
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
+import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment
 import kotterknife.bindView
@@ -22,11 +21,12 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class ConnectionManagerActivity : BaseActivity(),
-    ConnectionManagerView,
-    SettingsDialogFragment.SettingsSaveListener,
-    ConnectionAdapter.ConnectionChangeListener {
+  ConnectionManagerView,
+  SettingsDialogFragment.SettingsSaveListener,
+  ConnectionAdapter.ConnectionChangeListener {
 
-  @Inject lateinit var presenter: ConnectionManagerPresenter
+  @Inject
+  lateinit var presenter: ConnectionManagerPresenter
 
   private val recyclerView: RecyclerView by bindView(R.id.connection_manager__connections)
 
@@ -44,8 +44,8 @@ class ConnectionManagerActivity : BaseActivity(),
 
   private fun onScanButtonClick() {
     val builder = AlertDialog.Builder(this)
-        .setTitle(R.string.progress_scanning)
-        .setView(R.layout.dialog__content_progress)
+      .setTitle(R.string.progress_scanning)
+      .setView(R.layout.dialog__content_progress)
 
     progress = builder.show()
     presenter.startDiscovery()
@@ -94,14 +94,11 @@ class ConnectionManagerActivity : BaseActivity(),
     adapter.setSelectionId(event.defaultId)
   }
 
-  override fun onDiscoveryStopped(event: DiscoveryStopped) {
-
-    if (progress != null) {
-      progress!!.dismiss()
-    }
+  override fun onDiscoveryStopped(status: Int) {
+    progress?.dismiss()
 
     val message: String
-    when (event.reason) {
+    when (status) {
       DiscoveryStop.NO_WIFI -> message = getString(R.string.con_man_no_wifi)
       DiscoveryStop.NOT_FOUND -> message = getString(R.string.con_man_not_found)
       DiscoveryStop.COMPLETE -> {

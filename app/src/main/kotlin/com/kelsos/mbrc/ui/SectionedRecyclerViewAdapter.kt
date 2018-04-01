@@ -11,7 +11,8 @@ import android.view.ViewGroup
 /**
  * @author Aidan Follestad (afollestad)
  */
-abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : RecyclerView.Adapter<VH>() {
+abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> :
+  RecyclerView.Adapter<VH>() {
 
   private val mHeaderLocationMap: ArrayMap<Int, Int> = ArrayMap()
   private var mLayoutManager: GridLayoutManager? = null
@@ -24,7 +25,12 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : Recy
 
   abstract fun onBindHeaderViewHolder(holder: VH, section: Int)
 
-  abstract fun onBindViewHolder(holder: VH, section: Int, relativePosition: Int, absolutePosition: Int)
+  abstract fun onBindViewHolder(
+    holder: VH,
+    section: Int,
+    relativePosition: Int,
+    absolutePosition: Int
+  )
 
   fun isHeader(position: Int): Boolean {
     return mHeaderLocationMap[position] != null
@@ -71,9 +77,12 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : Recy
     synchronized(mHeaderLocationMap) {
       var lastSectionIndex: Int = -1
       mHeaderLocationMap.keys
-          .takeWhile { itemPosition > it }
-          .forEach { lastSectionIndex = it }
-      return intArrayOf(mHeaderLocationMap[lastSectionIndex] ?: -1, itemPosition - lastSectionIndex - 1)
+        .takeWhile { itemPosition > it }
+        .forEach { lastSectionIndex = it }
+      return intArrayOf(
+        mHeaderLocationMap[lastSectionIndex] ?: -1,
+        itemPosition - lastSectionIndex - 1
+      )
     }
   }
 
@@ -101,9 +110,11 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : Recy
       getHeaderViewType(mHeaderLocationMap[position] ?: -1)
     } else {
       val sectionAndPos = getSectionIndexAndRelativePosition(position)
-      getItemViewType(sectionAndPos[0],
+      getItemViewType(
+        sectionAndPos[0],
         // offset section view positions
-        sectionAndPos[1], position - (sectionAndPos[0] + 1))
+        sectionAndPos[1], position - (sectionAndPos[0] + 1)
+      )
     }
   }
 
@@ -131,8 +142,10 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : Recy
   override fun onBindViewHolder(holder: VH, position: Int) {
     var layoutParams: StaggeredGridLayoutManager.LayoutParams? = null
     if (holder.itemView.layoutParams is GridLayoutManager.LayoutParams) {
-      layoutParams = StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-          ViewGroup.LayoutParams.WRAP_CONTENT)
+      layoutParams = StaggeredGridLayoutManager.LayoutParams(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT
+      )
     } else if (holder.itemView.layoutParams is StaggeredGridLayoutManager.LayoutParams) {
       layoutParams = holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams
     }
@@ -143,9 +156,11 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : Recy
       if (layoutParams != null) layoutParams.isFullSpan = false
       val sectionAndPos = getSectionIndexAndRelativePosition(position)
       val absPos = position - (sectionAndPos[0] + 1)
-      onBindViewHolder(holder, sectionAndPos[0],
-          // offset section view positions
-          sectionAndPos[1], absPos)
+      onBindViewHolder(
+        holder, sectionAndPos[0],
+        // offset section view positions
+        sectionAndPos[1], absPos
+      )
     }
     if (layoutParams != null) holder.itemView.layoutParams = layoutParams
   }

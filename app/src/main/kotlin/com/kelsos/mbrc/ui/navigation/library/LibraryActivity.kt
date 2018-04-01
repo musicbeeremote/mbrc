@@ -19,9 +19,9 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class LibraryActivity : BaseNavigationActivity(),
-    LibraryView,
-    OnQueryTextListener,
-    OnPageChangeListener {
+  LibraryView,
+  OnQueryTextListener,
+  OnPageChangeListener {
 
   private val pager: ViewPager by bindView(R.id.search_pager)
   private val tabs: TabLayout by bindView(R.id.pager_tab_strip)
@@ -32,7 +32,8 @@ class LibraryActivity : BaseNavigationActivity(),
   private var pagerAdapter: LibraryPagerAdapter? = null
 
   private lateinit var scope: Scope
-  @Inject lateinit var presenter: LibraryPresenter
+  @Inject
+  lateinit var presenter: LibraryPresenter
 
   private var refreshDialog: SyncProgressDialog? = null
 

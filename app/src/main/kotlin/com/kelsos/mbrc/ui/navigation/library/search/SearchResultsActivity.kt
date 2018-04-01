@@ -7,13 +7,12 @@ import android.support.constraint.Group
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
+import androidx.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.content.library.genres.GenreEntity
 import com.kelsos.mbrc.content.library.tracks.TrackEntity
-import com.kelsos.mbrc.extensions.gone
-import com.kelsos.mbrc.extensions.show
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.search.SearchResultAdapter.OnSearchItemSelected
@@ -24,15 +23,18 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class SearchResultsActivity : BaseActivity(),
-    SearchResultsView,
-    OnSearchItemSelected {
+  SearchResultsView,
+  OnSearchItemSelected {
 
   private val searchResultsRecycler: RecyclerView by bindView(R.id.content_search__search_results)
   private val emptyView: Group by bindView(R.id.content_search__empty_group)
 
-  @Inject lateinit var adapter: SearchResultAdapter
-  @Inject lateinit var presenter: SearchResultsPresenter
-  @Inject lateinit var actionHandler: PopupActionHandler
+  @Inject
+  lateinit var adapter: SearchResultAdapter
+  @Inject
+  lateinit var presenter: SearchResultsPresenter
+  @Inject
+  lateinit var actionHandler: PopupActionHandler
 
   private lateinit var scope: Scope
 
@@ -61,11 +63,7 @@ class SearchResultsActivity : BaseActivity(),
   }
 
   override fun update(searchResults: SearchResults) {
-    if (searchResults.empty()) {
-      emptyView.show()
-    } else {
-      emptyView.gone()
-    }
+    emptyView.isVisible = searchResults.empty()
     adapter.update(searchResults)
   }
 

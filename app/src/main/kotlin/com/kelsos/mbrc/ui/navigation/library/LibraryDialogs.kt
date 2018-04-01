@@ -7,6 +7,10 @@ import android.view.LayoutInflater
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.ui.navigation.library.SyncProgress.Companion.ALBUM
+import com.kelsos.mbrc.ui.navigation.library.SyncProgress.Companion.ARTIST
+import com.kelsos.mbrc.ui.navigation.library.SyncProgress.Companion.GENRE
+import com.kelsos.mbrc.ui.navigation.library.SyncProgress.Companion.TRACK
 
 @SuppressLint("InflateParams")
 fun LibraryActivity.syncDialog(): SyncProgressDialog {
@@ -27,9 +31,9 @@ class SyncProgressDialog(private val context: Context) {
     progress = view.findViewById(R.id.progress_dialog__loading_progress_bar)
 
     dialog = AlertDialog.Builder(context)
-        .setView(view)
-        .setCancelable(false)
-        .create()
+      .setView(view)
+      .setCancelable(false)
+      .create()
   }
 
   fun show() {
@@ -46,10 +50,26 @@ class SyncProgressDialog(private val context: Context) {
     val currentProgress = progress.current.coerceAtMost(totalItems)
 
     val loadingProgress = when (progress.type) {
-      SyncProgress.GENRE -> context.getString(R.string.library_sync__genres_progress, currentProgress, totalItems)
-      SyncProgress.ARTIST -> context.getString(R.string.library_sync__artists_progress, currentProgress, totalItems)
-      SyncProgress.ALBUM -> context.getString(R.string.library_sync__albums_progress, currentProgress, totalItems)
-      SyncProgress.TRACK -> context.getString(R.string.library_sync__tracks_progress, currentProgress, totalItems)
+      GENRE -> context.getString(
+        R.string.library_sync__genres_progress,
+        currentProgress,
+        totalItems
+      )
+      ARTIST -> context.getString(
+        R.string.library_sync__artists_progress,
+        currentProgress,
+        totalItems
+      )
+      ALBUM -> context.getString(
+        R.string.library_sync__albums_progress,
+        currentProgress,
+        totalItems
+      )
+      TRACK -> context.getString(
+        R.string.library_sync__tracks_progress,
+        currentProgress,
+        totalItems
+      )
       else -> throw IllegalArgumentException("${progress.type} is not supported")
     }
 

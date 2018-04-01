@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.search
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.support.annotation.MenuRes
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
@@ -29,9 +28,7 @@ import javax.inject.Inject
 
 class SearchResultAdapter
 @Inject
-constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapter.SearchViewHolder>() {
-
-  private val inflater: LayoutInflater = LayoutInflater.from(context)
+constructor() : SectionedRecyclerViewAdapter<SearchResultAdapter.SearchViewHolder>() {
   private var data: SearchResults? = null
 
   private var onSearchItemSelectedListener: OnSearchItemSelected? = null
@@ -164,7 +161,11 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
   }
 
   @SuppressLint("Range")
-  override fun getItemViewType(@Section section: Int, relativePosition: Int, absolutePosition: Int): Int {
+  override fun getItemViewType(
+    @Section section: Int,
+    relativePosition: Int,
+    absolutePosition: Int
+  ): Int {
     if (section == SECTION_GENRE || section == SECTION_ARTIST) {
       return VIEW_TYPE_SINGLE
     } else if (section == SECTION_ALBUM || section == SECTION_TRACK) {
@@ -181,6 +182,7 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
       VIEW_TYPE_SINGLE -> R.layout.listitem_single
       else -> R.layout.listitem_single
     }
+    val inflater = LayoutInflater.from(parent.context)
     val view = inflater.inflate(layout, parent, false)
     return SearchViewHolder(view)
   }
@@ -220,14 +222,13 @@ constructor(context: Activity) : SectionedRecyclerViewAdapter<SearchResultAdapte
     val uiItemContextIndicator: LinearLayout? by bindOptionalView(R.id.ui_item_context_indicator)
   }
 
-  companion object {
-
-    private val VIEW_TYPE_DUAL = 1
-    private val VIEW_TYPE_SINGLE = 2
-  }
-
   fun update(searchResults: SearchResults) {
     this.data = searchResults
     notifyDataSetChanged()
+  }
+
+  companion object {
+    private const val VIEW_TYPE_DUAL = 1
+    private const val VIEW_TYPE_SINGLE = 2
   }
 }

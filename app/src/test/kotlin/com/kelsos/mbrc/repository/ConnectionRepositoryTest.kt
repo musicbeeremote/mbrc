@@ -16,8 +16,8 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
+import org.mockito.BDDMockito.given
 import org.mockito.Mockito
-import org.mockito.Mockito.given
 import org.mockito.Mockito.anyInt
 import org.mockito.Mockito.anyLong
 import org.mockito.Mockito.anyString
@@ -25,7 +25,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule
-import java.util.*
+import java.util.ArrayList
 
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
@@ -300,8 +300,8 @@ class ConnectionRepositoryTest {
         val preferences = Mockito.mock(SharedPreferences::class.java)
         val editor = Mockito.mock(SharedPreferences.Editor::class.java)
         given(preferences.edit()).willReturn(editor)
-        given(preferences.getLong(anyString(), anyLong())).thenAnswer { defaultId[0] }
-        given(editor.putLong(anyString(), anyLong())).then {
+        given(preferences.getLong(anyString(), anyLong())).willAnswer { defaultId[0] }
+        given(editor.putLong(anyString(), anyLong())).will {
           val o = it.arguments[1]
           defaultId[0] = java.lang.Long.parseLong(o.toString())
           editor

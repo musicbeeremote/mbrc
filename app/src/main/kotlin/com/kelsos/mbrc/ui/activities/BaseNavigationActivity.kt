@@ -14,7 +14,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.KeyEvent
 import android.view.MenuItem
@@ -23,11 +22,7 @@ import android.widget.TextView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.NotifyUser
-import com.kelsos.mbrc.events.RequestConnectionStateEvent
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.extensions.fail
-import com.kelsos.mbrc.networking.ChangeConnectionStateEvent
-import com.kelsos.mbrc.networking.SocketAction
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.protocol.VolumeInteractor
 import com.kelsos.mbrc.platform.RemoteService
@@ -44,11 +39,14 @@ import com.kelsos.mbrc.ui.preferences.SettingsActivity
 import kotterknife.bindView
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.reflect.KClass
 
-abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-  @Inject lateinit var bus: RxBus
-  @Inject lateinit var serviceChecker: ServiceChecker
-  @Inject lateinit var volumeInteractor: VolumeInteractor
+abstract class BaseNavigationActivity : BaseActivity(),
+  NavigationView.OnNavigationItemSelectedListener {
+  @Inject
+  lateinit var serviceChecker: ServiceChecker
+  @Inject
+  lateinit var volumeInteractor: VolumeInteractor
 
   private val toolbar: Toolbar by bindView(R.id.toolbar)
   private val drawer: DrawerLayout by bindView(R.id.drawer_layout)
@@ -62,13 +60,13 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
 
   private fun onConnectLongClick(): Boolean {
     serviceChecker.startServiceIfNotRunning()
-    bus.post(ChangeConnectionStateEvent(SocketAction.RESET))
+    //bus.post(ChangeConnectionStateEvent(SocketAction.RESET))
     return true
   }
 
   private fun onConnectClick() {
     serviceChecker.startServiceIfNotRunning()
-    bus.post(ChangeConnectionStateEvent(SocketAction.START))
+    //bus.post(ChangeConnectionStateEvent(SocketAction.START))
   }
 
   override fun onDestroy() {
@@ -95,10 +93,10 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
   }
 
   override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-    when (keyCode) {
-      KeyEvent.KEYCODE_VOLUME_UP -> return true
-      KeyEvent.KEYCODE_VOLUME_DOWN -> return true
-      else -> return super.onKeyUp(keyCode, event)
+    return when (keyCode) {
+      KeyEvent.KEYCODE_VOLUME_UP -> true
+      KeyEvent.KEYCODE_VOLUME_DOWN -> true
+      else -> super.onKeyUp(keyCode, event)
     }
   }
 
@@ -106,18 +104,23 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
     Timber.v("Handling new connection status %s", event.status)
     @StringRes val resId: Int
     @ColorRes val colorId: Int
-    if (event.status == Connection.OFF) {
-      resId = R.string.drawer_connection_status_off
-      colorId = R.color.black
-    } else if (event.status == Connection.ON) {
-      resId = R.string.drawer_connection_status_on
-      colorId = R.color.accent
-    } else if (event.status == Connection.ACTIVE) {
-      resId = R.string.drawer_connection_status_active
-      colorId = R.color.power_on
-    } else {
-      resId = R.string.drawer_connection_status_off
-      colorId = R.color.black
+    when (event.status) {
+      Connection.OFF -> {
+        resId = R.string.drawer_connection_status_off
+        colorId = R.color.black
+      }
+      Connection.ON -> {
+        resId = R.string.drawer_connection_status_on
+        colorId = R.color.accent
+      }
+      Connection.ACTIVE -> {
+        resId = R.string.drawer_connection_status_active
+        colorId = R.color.power_on
+      }
+      else -> {
+        resId = R.string.drawer_connection_status_off
+        colorId = R.color.black
+      }
     }
 
     connectText!!.setText(resId)
@@ -134,58 +137,59 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
   }
 
   override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-    when (keyCode) {
+    return when (keyCode) {
       KeyEvent.KEYCODE_VOLUME_UP -> {
         volumeInteractor.increment()
-        return true
+        true
       }
       KeyEvent.KEYCODE_VOLUME_DOWN -> {
         volumeInteractor.decrement()
-        return true
+        true
       }
-      else -> return super.onKeyDown(keyCode, event)
+      else -> super.onKeyDown(keyCode, event)
     }
   }
 
   override fun onNavigationItemSelected(item: MenuItem): Boolean {
     val itemId = item.itemId
-    drawer.closeDrawer(GravityCompat.START)
-    drawer.postDelayed({ navigate(itemId) }, 250)
+    drawer.run {
+      closeDrawer(GravityCompat.START)
+      postDelayed({ navigate(itemId) }, 250)
+    }
     return true
   }
 
-  internal fun navigate(itemId: Int) {
+  private fun startActivity(clazz: KClass<*>) {
+    createBackStack(Intent(this, clazz.java))
+  }
+
+  protected fun navigate(itemId: Int) {
 
     if (active() == itemId) {
       return
     }
 
-    if (itemId == R.id.nav_home) {
-      val upIntent = NavUtils.getParentActivityIntent(this) ?: fail("couldn't get intent")
-      if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-        createBackStack(Intent(this, MainActivity::class.java))
-      } else {
-        NavUtils.navigateUpTo(this, upIntent)
+    when (itemId) {
+      R.id.nav_home -> {
+        val upIntent = NavUtils.getParentActivityIntent(this) ?: fail("couldn't get intent")
+        if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+          startActivity(MainActivity::class)
+        } else {
+          NavUtils.navigateUpTo(this, upIntent)
+        }
       }
-    } else if (itemId == R.id.nav_library) {
-      createBackStack(Intent(this, LibraryActivity::class.java))
-    } else if (itemId == R.id.nav_now_playing) {
-      createBackStack(Intent(this, NowPlayingActivity::class.java))
-    } else if (itemId == R.id.nav_playlists) {
-      createBackStack(Intent(this, PlaylistActivity::class.java))
-    } else if (itemId == R.id.nav_radio) {
-      createBackStack(Intent(this, RadioActivity::class.java))
-    } else if (itemId == R.id.nav_lyrics) {
-      createBackStack(Intent(this, LyricsActivity::class.java))
-    } else if (itemId == R.id.nav_settings) {
-      createBackStack(Intent(this, SettingsActivity::class.java))
-    } else if (itemId == R.id.nav_outputs) {
-      val selectionDialog = OutputSelectionDialog.instance(supportFragmentManager)
-      selectionDialog.show()
-    } else if (itemId == R.id.nav_help) {
-      createBackStack(Intent(this, HelpFeedbackActivity::class.java))
-    } else if (itemId == R.id.nav_exit) {
-      exitApplication()
+      R.id.nav_library -> startActivity(LibraryActivity::class)
+      R.id.nav_now_playing -> startActivity(NowPlayingActivity::class)
+      R.id.nav_playlists -> startActivity(PlaylistActivity::class)
+      R.id.nav_radio -> startActivity(RadioActivity::class)
+      R.id.nav_lyrics -> startActivity(LyricsActivity::class)
+      R.id.nav_settings -> startActivity(SettingsActivity::class)
+      R.id.nav_outputs -> {
+        val selectionDialog = OutputSelectionDialog.instance(supportFragmentManager)
+        selectionDialog.show()
+      }
+      R.id.nav_help -> startActivity(HelpFeedbackActivity::class)
+      R.id.nav_exit -> exitApplication()
     }
   }
 
@@ -216,7 +220,13 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
     Timber.v("Initializing base activity")
     setSupportActionBar(toolbar)
 
-    toggle = ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close)
+    toggle = ActionBarDrawerToggle(
+      this,
+      drawer,
+      toolbar,
+      R.string.drawer_open,
+      R.string.drawer_close
+    )
     drawer.addDrawerListener(toggle!!)
     drawer.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
     toggle!!.syncState()
@@ -224,26 +234,18 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
 
     val header = navigationView.getHeaderView(0)
     connectText = header.findViewById(R.id.nav_connect_text)
-    connect = header.findViewById(R.id.connect_button)
-    connect!!.setOnClickListener({ this.onConnectClick() })
-    connect!!.setOnLongClickListener({ this.onConnectLongClick() })
+    connect = header.findViewById<ImageView>(R.id.connect_button).apply {
+      setOnClickListener({ onConnectClick() })
+      setOnLongClickListener({ onConnectLongClick() })
+    }
 
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    supportActionBar?.setHomeButtonEnabled(true)
+    supportActionBar?.apply {
+      setDisplayHomeAsUpEnabled(true)
+      setHomeButtonEnabled(true)
+    }
+
     navigationView.setCheckedItem(active())
     serviceChecker.startServiceIfNotRunning()
-  }
-
-  override fun onResume() {
-    super.onResume()
-    this.bus.register(this, NotifyUser::class.java, { this.handleUserNotification(it) }, true)
-    this.bus.register(this, ConnectionStatusChangeEvent::class.java, { this.onConnection(it) }, true)
-    this.bus.post(RequestConnectionStateEvent())
-  }
-
-  override fun onPause() {
-    super.onPause()
-    this.bus.unregister(this)
   }
 
   companion object {

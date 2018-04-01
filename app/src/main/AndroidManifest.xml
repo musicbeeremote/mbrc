@@ -13,7 +13,7 @@
   <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
 
   <application
-      android:name=".RemoteApplication"
+      android:name=".App"
       android:allowBackup="true"
       android:description="@string/application_description"
       android:icon="@mipmap/ic_launcher"

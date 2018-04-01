@@ -2,7 +2,9 @@ package com.kelsos.mbrc.platform.mediasession
 
 import android.annotation.SuppressLint
 import android.app.PendingIntent
-import android.app.PendingIntent.*
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
+import android.app.PendingIntent.getActivity
+import android.app.PendingIntent.getBroadcast
 import android.content.Context
 import android.content.Intent
 import android.support.annotation.IntDef
@@ -25,7 +27,12 @@ object RemoteViewIntentBuilder {
   @SuppressLint("SwitchIntDef")
   fun getPendingIntent(@ButtonAction id: Int, context: Context): PendingIntent {
     return when (id) {
-      OPEN -> getActivity(context, OPEN, Intent(context, MainActivity::class.java), FLAG_UPDATE_CURRENT)
+      OPEN -> getActivity(
+        context,
+        OPEN,
+        Intent(context, MainActivity::class.java),
+        FLAG_UPDATE_CURRENT
+      )
       PLAY -> getBroadcast(context, PLAY, Intent(PLAY_PRESSED), FLAG_UPDATE_CURRENT)
       NEXT -> getBroadcast(context, NEXT, Intent(NEXT_PRESSED), FLAG_UPDATE_CURRENT)
       CLOSE -> getBroadcast(context, CLOSE, Intent(CLOSE_PRESSED), FLAG_UPDATE_CURRENT)

@@ -15,8 +15,8 @@ class SeekBarThrottler(private val action: (Int) -> Unit) : SeekBar.OnSeekBarCha
   init {
     this.fromUser = false
     disposable = progressRelay.throttleLast(600, TimeUnit.MILLISECONDS)
-        .distinct()
-        .subscribe { this.onProgressChange(it) }
+      .distinct()
+      .subscribe { this.onProgressChange(it) }
   }
 
   override fun onProgressChanged(seekBar: SeekBar, value: Int, fromUser: Boolean) {

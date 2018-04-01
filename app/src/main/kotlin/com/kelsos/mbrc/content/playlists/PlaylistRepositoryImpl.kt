@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.content.playlists
 
 import android.arch.paging.DataSource
+import com.kelsos.mbrc.networking.ApiBase
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.epoch
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -10,7 +12,7 @@ class PlaylistRepositoryImpl
 @Inject
 constructor(
   private val dao: PlaylistDao,
-  private val remoteDataSource: RemotePlaylistDataSource
+  private val remoteDataSource: ApiBase
 ) : PlaylistRepository {
   private val mapper = PlaylistDtoMapper()
 
@@ -24,7 +26,7 @@ constructor(
 
   override fun getRemote(): Completable {
     val added = epoch()
-    return remoteDataSource.fetch().doOnNext {
+    return remoteDataSource.getAllPages(Protocol.PlaylistList, PlaylistDto::class).doOnNext {
       val playlists = it.map {
         mapper.map(it).apply {
           this.dateAdded = added

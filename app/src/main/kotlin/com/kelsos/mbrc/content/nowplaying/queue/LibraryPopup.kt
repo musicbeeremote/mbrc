@@ -4,11 +4,11 @@ import android.support.annotation.StringDef
 
 object LibraryPopup {
   @StringDef(
-      PROFILE,
-      NEXT,
-      LAST,
-      NOW,
-      ADD_ALL
+    PROFILE,
+    NEXT,
+    LAST,
+    NOW,
+    ADD_ALL
   )
   @Retention(AnnotationRetention.SOURCE)
   annotation class Action

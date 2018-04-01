@@ -3,10 +3,10 @@ package com.kelsos.mbrc.ui.navigation.library
 import android.arch.lifecycle.Observer
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor.OnCompleteListener
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.utilities.SchedulerProvider
+import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -15,7 +15,6 @@ class LibraryPresenterImpl
 @Inject constructor(
   private val schedulerProvider: SchedulerProvider,
   private val settingsManager: SettingsManager,
-  private val bus: RxBus,
   private val librarySyncInteractor: LibrarySyncInteractor,
   syncProgressProvider: SyncProgressProvider
 ) : LibraryPresenter, OnCompleteListener, BasePresenter<LibraryView>() {
@@ -58,18 +57,18 @@ class LibraryPresenterImpl
   }
 
   override fun loadArtistPreference() {
-    addDisposable(settingsManager.shouldDisplayOnlyAlbumArtists()
-        .subscribeOn(schedulerProvider.io())
-        .observeOn(schedulerProvider.main())
-        .subscribe({
-          view().updateArtistOnlyPreference(it)
-        }, {
-        }))
+    disposables += settingsManager.shouldDisplayOnlyAlbumArtists()
+      .subscribeOn(schedulerProvider.io())
+      .observeOn(schedulerProvider.main())
+      .subscribe({
+        view().updateArtistOnlyPreference(it)
+      }, {
+      })
   }
 
   override fun setArtistPreference(albumArtistOnly: Boolean) {
     settingsManager.setShouldDisplayOnlyAlbumArtist(albumArtistOnly)
-    bus.post(ArtistTabRefreshEvent())
+    //bus.post(ArtistTabRefreshEvent())
   }
 
   override fun onSuccess() {

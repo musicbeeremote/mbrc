@@ -15,25 +15,25 @@ constructor(
 ) : OutputSelectionPresenter, BasePresenter<OutputSelectionView>() {
   override fun load() {
     addDisposable(outputApi.getOutputs()
-        .subscribeOn(schedulerProvider.io())
-        .observeOn(schedulerProvider.main())
-        .subscribe({
-          view().update(it)
-        }) {
-          view().error(code(it))
-        }
+      .subscribeOn(schedulerProvider.io())
+      .observeOn(schedulerProvider.main())
+      .subscribe({
+        view().update(it)
+      }) {
+        view().error(code(it))
+      }
     )
   }
 
   override fun changeOutput(selectedOutput: String) {
     addDisposable(outputApi.setOutput(selectedOutput)
-        .subscribeOn(schedulerProvider.io())
-        .observeOn(schedulerProvider.main())
-        .subscribe({
-          view().update(it)
-        }) {
-          view().error(code(it))
-        }
+      .subscribeOn(schedulerProvider.io())
+      .observeOn(schedulerProvider.main())
+      .subscribe({
+        view().update(it)
+      }) {
+        view().error(code(it))
+      }
     )
   }
 

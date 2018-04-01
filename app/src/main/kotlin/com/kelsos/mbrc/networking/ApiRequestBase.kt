@@ -2,6 +2,7 @@ package com.kelsos.mbrc.networking
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.InetAddressMapper
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -20,18 +21,12 @@ open class ApiRequestBase(
   internal fun call(
     firstMessage: SocketMessage = SocketMessage.create(Protocol.Player, "Android")
   ): Observable<ServiceMessage> {
-    return Observable.using<ServiceMessage, Socket>({
-      this.connect(firstMessage)
-    }, {
-      this.responses(it)
-    }, {
-      it.cleanup()
-    })
-  }
-
-  private fun responses(socket: Socket): Observable<out ServiceMessage> {
-    return Observable.create<ServiceMessage> { emitter ->
+    return Observable.create { emitter ->
       try {
+        val socket = connect(firstMessage)
+        emitter.setCancellable {
+          socket.cleanup()
+        }
         val streamReader = InputStreamReader(socket.inputStream, "UTF-8")
         val reader = BufferedReader(streamReader)
         while (true) {
@@ -40,17 +35,14 @@ open class ApiRequestBase(
             break
           }
 
-          //Timber.v("incoming -> %s", line)
+          Timber.v("incoming -> %s", line)
           emitter.onNext(ApiRequestBase.ServiceMessage(line, socket))
         }
 
+        Timber.v("complete")
         emitter.onComplete()
       } catch (ex: Exception) {
-        if (!emitter.isDisposed) {
-          emitter.onError(ex)
-        } else {
-          Timber.e(ex, "Emitter was already disposed")
-        }
+        emitter.tryOnError(ex)
       }
     }
   }

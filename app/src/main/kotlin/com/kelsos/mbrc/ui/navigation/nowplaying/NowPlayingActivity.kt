@@ -13,12 +13,10 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ProgressBar
+import androidx.view.isVisible
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.tracks.TrackInfo
+import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.content.nowplaying.NowPlayingEntity
-import com.kelsos.mbrc.extensions.gone
-import com.kelsos.mbrc.extensions.hide
-import com.kelsos.mbrc.extensions.show
 import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper
@@ -30,18 +28,20 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class NowPlayingActivity : BaseNavigationActivity(),
-    NowPlayingView,
-    OnQueryTextListener,
-    OnStartDragListener,
-    NowPlayingListener {
+  NowPlayingView,
+  OnQueryTextListener,
+  OnStartDragListener,
+  NowPlayingListener {
 
   private val nowPlayingList: RecyclerView by bindView(R.id.now_playing__track_list)
   private val swipeRefreshLayout: SwipeRefreshLayout by bindView(R.id.now_playing__refresh_layout)
   private val emptyGroup: Group by bindView(R.id.now_playing__empty_group)
   private val emptyViewProgress: ProgressBar by bindView(R.id.now_playing__loading_bar)
-  @Inject lateinit var adapter: NowPlayingAdapter
+  @Inject
+  lateinit var adapter: NowPlayingAdapter
 
-  @Inject lateinit var presenter: NowPlayingPresenter
+  @Inject
+  lateinit var presenter: NowPlayingPresenter
   private var searchView: SearchView? = null
   private var searchMenuItem: MenuItem? = null
   private lateinit var scope: Scope
@@ -146,17 +146,13 @@ class NowPlayingActivity : BaseNavigationActivity(),
   }
 
   override fun update(data: List<NowPlayingEntity>) {
-    if (data.isEmpty()) {
-      emptyGroup.show()
-    } else {
-      emptyGroup.hide()
-    }
+    emptyGroup.isVisible = data.isEmpty()
     adapter.update(data)
     swipeRefreshLayout.isRefreshing = false
   }
 
-  override fun trackChanged(trackInfo: TrackInfo, scrollToTrack: Boolean) {
-    adapter.setPlayingTrack(trackInfo.path)
+  override fun trackChanged(track: PlayingTrackModel, scrollToTrack: Boolean) {
+    adapter.setPlayingTrack(track.path)
     if (scrollToTrack) {
       nowPlayingList.scrollToPosition(adapter.getPlayingTrackIndex())
     }
@@ -171,7 +167,7 @@ class NowPlayingActivity : BaseNavigationActivity(),
   }
 
   override fun hideLoading() {
-    emptyViewProgress.gone()
+    emptyViewProgress.isVisible = false
     swipeRefreshLayout.isRefreshing = false
   }
 

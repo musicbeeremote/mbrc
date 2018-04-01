@@ -7,6 +7,6 @@ import org.junit.runners.model.Statement
 class MockitoInitializerRule(private val test: Any) : TestRule {
 
   override fun apply(base: Statement, description: Description): Statement {
-    return MockitInitilizationStatement(base, test)
+    return MockitoInitializationStatement(base, test)
   }
 }

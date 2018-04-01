@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kelsos.mbrc.networking.ConnectivityVerifier
-import com.kelsos.mbrc.networking.ConnectivityVerifierImpl
-import com.kelsos.mbrc.networking.SocketMessage
+import com.kelsos.mbrc.networking.client.ConnectivityVerifier
+import com.kelsos.mbrc.networking.client.ConnectivityVerifierImpl
+import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -11,8 +11,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.BDDMockito.given
 import org.mockito.Mock
-import org.mockito.Mockito.given
 import org.mockito.MockitoAnnotations
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule
@@ -22,7 +22,7 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.io.PrintWriter
 import java.net.ServerSocket
-import java.util.*
+import java.util.Random
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -106,11 +106,11 @@ class ConnectivityVerifierImplTest {
   @Test fun testSuccessfulVerification() {
     val server = startMockServer()
 
-    given(connectionRepository.default).thenAnswer {
+    given(connectionRepository.default).willAnswer {
       val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
-      return@thenAnswer settings
+      return@willAnswer settings
     }
 
     val subscriber = verifier.verify().test()
@@ -123,11 +123,11 @@ class ConnectivityVerifierImplTest {
 
   @Test fun testPrematureDisconnectDuringVerification() {
     val server = startMockServer(true)
-    given(connectionRepository.default).thenAnswer {
+    given(connectionRepository.default).willAnswer {
       val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
-      return@thenAnswer settings
+      return@willAnswer settings
     }
 
     val subscriber = verifier.verify().test()
@@ -137,11 +137,11 @@ class ConnectivityVerifierImplTest {
 
   @Test fun testInvalidPluginResponseVerification() {
     val server = startMockServer(false, Protocol.ClientNotAllowed)
-    given(connectionRepository.default).thenAnswer {
+    given(connectionRepository.default).willAnswer {
       val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
-      return@thenAnswer settings
+      return@willAnswer settings
     }
 
     val subscriber = verifier.verify().test()
@@ -152,8 +152,8 @@ class ConnectivityVerifierImplTest {
   @Test fun testVerificationNoConnection() {
     startMockServer(true)
 
-    given(connectionRepository.default).thenAnswer {
-      return@thenAnswer null
+    given(connectionRepository.default).willAnswer {
+      return@willAnswer null
     }
 
     val subscriber = verifier.verify().test()
@@ -164,8 +164,8 @@ class ConnectivityVerifierImplTest {
   @Test fun testVerificationNoJsonPayload() {
     startMockServer(false, "payload", false)
 
-    given(connectionRepository.default).thenAnswer {
-      return@thenAnswer null
+    given(connectionRepository.default).willAnswer {
+      return@willAnswer null
     }
 
     val subscriber = verifier.verify().test()

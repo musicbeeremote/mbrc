@@ -13,13 +13,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.genres.GenreEntity
 import com.kelsos.mbrc.extensions.fail
-import com.kelsos.mbrc.extensions.gone
-import com.kelsos.mbrc.extensions.hide
 import com.kelsos.mbrc.extensions.linear
-import com.kelsos.mbrc.extensions.show
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
@@ -69,12 +67,7 @@ class BrowseGenreFragment : Fragment(),
   }
 
   override fun update(pagedList: PagedList<GenreEntity>) {
-    if (pagedList.isEmpty()) {
-      emptyView.show()
-    } else {
-      emptyView.hide()
-    }
-
+    emptyView.isVisible = pagedList.isEmpty()
     adapter.submitList(pagedList)
   }
 
@@ -117,7 +110,11 @@ class BrowseGenreFragment : Fragment(),
   }
 
   override fun hideLoading() {
-    emptyViewProgress.gone()
+    emptyViewProgress.isVisible = false
     swipeLayout.isRefreshing = false
+  }
+
+  override fun updateIndexes(indexes: List<String>) {
+    adapter.setIndexes(indexes)
   }
 }

@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.widgets
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.support.annotation.IdRes
 import android.support.annotation.IntDef
@@ -16,13 +17,10 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.kelsos.mbrc.extensions.hide
-import com.kelsos.mbrc.extensions.isInvisible
-import com.kelsos.mbrc.extensions.show
+import androidx.view.isInvisible
+import androidx.view.isVisible
 
 class RecyclerViewFastScroller : LinearLayout {
-  private val BUBBLE_ANIMATION_DURATION = 100
-  private val TRACK_SNAP_RANGE = 5
 
   private var bubble: TextView? = null
   private lateinit var handle: View
@@ -50,7 +48,11 @@ class RecyclerViewFastScroller : LinearLayout {
     this.scrollStateChangeListener = scrollStateChangeListener
   }
 
-  constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+  constructor(
+    context: Context,
+    attrs: AttributeSet,
+    defStyleAttr: Int
+  ) : super(context, attrs, defStyleAttr) {
     init()
   }
 
@@ -74,7 +76,7 @@ class RecyclerViewFastScroller : LinearLayout {
     val inflater = LayoutInflater.from(context)
     inflater.inflate(layoutResId, this, true)
     bubble = findViewById(bubbleResId)
-    bubble.hide()
+    bubble?.isInvisible = true
     handle = findViewById(handleResId)
   }
 
@@ -84,6 +86,7 @@ class RecyclerViewFastScroller : LinearLayout {
     updateBubbleAndHandlePosition()
   }
 
+  @SuppressLint("ClickableViewAccessibility")
   override fun onTouchEvent(event: MotionEvent): Boolean {
     val action = event.action
 
@@ -95,8 +98,10 @@ class RecyclerViewFastScroller : LinearLayout {
 
         currentAnimator?.cancel()
 
-        if (bubble.isInvisible()) {
-          showBubble()
+        bubble?.let {
+          if (it.isInvisible) {
+            showBubble()
+          }
         }
 
         handle.isSelected = true
@@ -184,7 +189,11 @@ class RecyclerViewFastScroller : LinearLayout {
     handle.y = getValueInRange(0, inHeight - handleHeight, (y - handleHeight / 2).toInt()).toFloat()
     bubble?.let {
       val bubbleHeight = it.height
-      it.y = getValueInRange(0, inHeight - bubbleHeight - handleHeight / 2, (y - bubbleHeight).toInt()).toFloat()
+      it.y = getValueInRange(
+        0,
+        inHeight - bubbleHeight - handleHeight / 2,
+        (y - bubbleHeight).toInt()
+      ).toFloat()
     }
   }
 
@@ -192,7 +201,7 @@ class RecyclerViewFastScroller : LinearLayout {
     if (bubble == null)
       return
 
-    bubble.show()
+    bubble?.isVisible = true
 
     currentAnimator?.cancel()
     currentAnimator = ObjectAnimator.ofFloat(bubble, "alpha", 0f, 1f)
@@ -210,13 +219,13 @@ class RecyclerViewFastScroller : LinearLayout {
         addListener(object : AnimatorListenerAdapter() {
           override fun onAnimationEnd(animation: Animator) {
             super.onAnimationEnd(animation)
-            bubble.hide()
+            bubble?.isInvisible = true
             currentAnimator = null
           }
 
           override fun onAnimationCancel(animation: Animator) {
             super.onAnimationCancel(animation)
-            bubble.hide()
+            bubble?.isInvisible = true
             currentAnimator = null
           }
         })
@@ -231,5 +240,8 @@ class RecyclerViewFastScroller : LinearLayout {
   companion object {
     const val SCROLL_STARTED = 1
     const val SCROLL_ENDED = 2
+
+    private const val BUBBLE_ANIMATION_DURATION = 100
+    private const val TRACK_SNAP_RANGE = 5
   }
 }

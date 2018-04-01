@@ -15,7 +15,7 @@ class ArtistAlbumsPresenterImpl
 constructor(
   private val repository: AlbumRepository
 ) : BasePresenter<ArtistAlbumsView>(),
-    ArtistAlbumsPresenter {
+  ArtistAlbumsPresenter {
 
   private lateinit var albums: LiveData<PagedList<AlbumEntity>>
 

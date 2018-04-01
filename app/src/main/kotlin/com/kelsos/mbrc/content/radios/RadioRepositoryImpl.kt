@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.content.radios
 
 import android.arch.paging.DataSource
+import com.kelsos.mbrc.networking.ApiBase
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.epoch
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -10,7 +12,7 @@ class RadioRepositoryImpl
 @Inject
 constructor(
   private val dao: RadioStationDao,
-  private val remoteDataSource: RemoteRadioDataSource
+  private val remoteDataSource: ApiBase
 ) : RadioRepository {
   private val mapper = RadioDtoMapper()
 
@@ -24,7 +26,7 @@ constructor(
 
   override fun getRemote(): Completable {
     val added = epoch()
-    return remoteDataSource.fetch().doOnNext {
+    return remoteDataSource.getAllPages(Protocol.RadioStations, RadioStationDto::class).doOnNext {
       dao.insertAll(it.map { mapper.map(it).apply { dateAdded = added } })
     }.doOnComplete {
       dao.removePreviousEntries(added)

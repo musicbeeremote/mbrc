@@ -6,10 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
-import com.kelsos.mbrc.extensions.gone
-import com.kelsos.mbrc.extensions.show
 import com.kelsos.mbrc.extensions.string
 import com.kelsos.mbrc.ui.BindableViewHolder
 import kotterknife.bindView
@@ -32,7 +31,7 @@ class AlbumViewHolder(
   }
 
   override fun bindTo(item: AlbumEntity) {
-    loading.gone()
+    loading.isVisible = false
     val title = item.album
     val artist = item.artist
     this.album.text = if (title.isBlank()) emptyAlbum else title
@@ -40,7 +39,7 @@ class AlbumViewHolder(
   }
 
   override fun clear() {
-    loading.show()
+    loading.isVisible = true
     artist.text = ""
     album.text = ""
   }

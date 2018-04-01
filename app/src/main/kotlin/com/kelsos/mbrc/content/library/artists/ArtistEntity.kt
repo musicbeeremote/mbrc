@@ -6,8 +6,8 @@ import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 
 @Entity(
-    tableName = "artist",
-    indices = [(Index("artist", name = "artist_artist_idx", unique = true))]
+  tableName = "artist",
+  indices = [(Index("artist", name = "artist_artist_idx", unique = true))]
 )
 data class ArtistEntity(
   @ColumnInfo

@@ -14,8 +14,8 @@ constructor(private val sharedPreferences: SharedPreferences) : AlbumSortingStor
 
   override fun setSortingSelection(@Sorting.Fields sorting: Int) {
     sharedPreferences.edit()
-        .putInt(ALBUM_SORTING_KEY, sorting)
-        .apply()
+      .putInt(ALBUM_SORTING_KEY, sorting)
+      .apply()
   }
 
   @Sorting.Order
@@ -25,8 +25,8 @@ constructor(private val sharedPreferences: SharedPreferences) : AlbumSortingStor
 
   override fun setSortingOrder(@Sorting.Order order: Int) {
     sharedPreferences.edit()
-        .putInt(ALBUM_SORTING_ORDER_KEY, order)
-        .apply()
+      .putInt(ALBUM_SORTING_ORDER_KEY, order)
+      .apply()
   }
 
   companion object {
