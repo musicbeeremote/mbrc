@@ -10,7 +10,7 @@ import android.widget.RemoteViews
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerState.State
-import com.kelsos.mbrc.content.library.tracks.TrackInfo
+import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.NEXT
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PLAY
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PREVIOUS
@@ -40,14 +40,25 @@ class WidgetSmall : AppWidgetProvider() {
       val path = extras.getString(UpdateWidgets.COVER_PATH, "")
       updateCover(context, widgetManager, widgetsIds, path)
     } else if (extras.getBoolean(UpdateWidgets.INFO, false)) {
-      updateInfo(context, widgetManager, widgetsIds, extras.getParcelable<TrackInfo>(UpdateWidgets.TRACK_INFO))
+      updateInfo(
+        context,
+        widgetManager,
+        widgetsIds,
+        extras.getParcelable<PlayingTrackModel>(UpdateWidgets.TRACK_INFO)
+      )
     } else if (extras.getBoolean(UpdateWidgets.STATE, false)) {
-      updatePlayState(context, widgetManager, widgetsIds,
-          extras.getString(UpdateWidgets.PLAYER_STATE, PlayerState.UNDEFINED))
+      updatePlayState(
+        context, widgetManager, widgetsIds,
+        extras.getString(UpdateWidgets.PLAYER_STATE, PlayerState.UNDEFINED)
+      )
     }
   }
 
-  override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+  override fun onUpdate(
+    context: Context,
+    appWidgetManager: AppWidgetManager,
+    appWidgetIds: IntArray
+  ) {
     super.onUpdate(context, appWidgetManager, appWidgetIds)
 
     for (appWidgetId in appWidgetIds) {
@@ -73,7 +84,7 @@ class WidgetSmall : AppWidgetProvider() {
     context: Context?,
     widgetManager: AppWidgetManager,
     widgetsIds: IntArray,
-    info: TrackInfo
+    info: PlayingTrackModel
   ) {
 
     if (context == null) {
@@ -101,9 +112,9 @@ class WidgetSmall : AppWidgetProvider() {
     if (coverFile.exists()) {
       Picasso.get().invalidate(coverFile)
       Picasso.get().load(coverFile)
-          .centerCrop()
-          .resizeDimen(R.dimen.widget_small_height, R.dimen.widget_small_height)
-          .into(smallWidget, R.id.widget_small_image, widgetsIds)
+        .centerCrop()
+        .resizeDimen(R.dimen.widget_small_height, R.dimen.widget_small_height)
+        .into(smallWidget, R.id.widget_small_image, widgetsIds)
     } else {
       smallWidget.setImageViewResource(R.id.widget_small_image, R.drawable.ic_image_no_cover)
       widgetManager.updateAppWidget(widgetsIds, smallWidget)
@@ -122,12 +133,14 @@ class WidgetSmall : AppWidgetProvider() {
 
     val smallWidget = RemoteViews(context.packageName, R.layout.widget_small)
 
-    smallWidget.setImageViewResource(R.id.widget_small_play,
-        if (PlayerState.PLAYING == state) {
-          R.drawable.ic_action_pause
-        } else {
-          R.drawable.ic_action_play
-        })
+    smallWidget.setImageViewResource(
+      R.id.widget_small_play,
+      if (PlayerState.PLAYING == state) {
+        R.drawable.ic_action_pause
+      } else {
+        R.drawable.ic_action_play
+      }
+    )
     manager.updateAppWidget(widgetsIds, smallWidget)
   }
 }

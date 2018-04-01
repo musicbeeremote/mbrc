@@ -6,10 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.ArtistEntity
-import com.kelsos.mbrc.extensions.hide
-import com.kelsos.mbrc.extensions.show
 import com.kelsos.mbrc.ui.BindableViewHolder
 import kotterknife.bindView
 
@@ -41,7 +40,7 @@ class ArtistViewHolder(
   }
 
   override fun bindTo(item: ArtistEntity) {
-    loading.hide()
+    loading.isVisible = false
     title.text = if (item.artist.isBlank()) {
       empty
     } else {
@@ -50,7 +49,7 @@ class ArtistViewHolder(
   }
 
   override fun clear() {
-    loading.show()
+    loading.isVisible = true
     title.text = ""
   }
 }

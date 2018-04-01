@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.content.library.tracks
 
 import android.arch.paging.DataSource
+import com.kelsos.mbrc.content.library.DataModel
 import com.kelsos.mbrc.interfaces.data.Repository
 import io.reactivex.Single
 
@@ -12,5 +13,5 @@ interface TrackRepository : Repository<TrackEntity> {
   fun getArtistTrackPaths(artist: String): Single<List<String>>
   fun getAllTrackPaths(): Single<List<String>>
 
-  fun allTracks(): Single<Tracks>
+  fun allTracks(): Single<DataModel<TrackEntity>>
 }

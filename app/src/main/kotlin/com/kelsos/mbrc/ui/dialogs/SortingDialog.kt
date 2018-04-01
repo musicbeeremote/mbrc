@@ -30,8 +30,10 @@ class SortingDialog : DialogFragment() {
   private lateinit var orderChange: (order: Int) -> Unit
   private lateinit var sortingChange: (sorting: Int) -> Unit
 
-  @Fields private var sorting: Int = Sorting.ALBUM_ARTIST__ALBUM
-  @Order private var order: Int = Sorting.ORDER_ASCENDING
+  @Fields
+  private var sorting: Int = Sorting.ALBUM_ARTIST__ALBUM
+  @Order
+  private var order: Int = Sorting.ORDER_ASCENDING
 
   private fun onOrderChanged() {
     this.order = when (order) {
@@ -56,7 +58,10 @@ class SortingDialog : DialogFragment() {
 
     when (order) {
       Sorting.ORDER_ASCENDING -> {
-        orderButton.set(R.string.sorting_dialog__descending, R.drawable.ic_arrow_drop_down_black_24dp)
+        orderButton.set(
+          R.string.sorting_dialog__descending,
+          R.drawable.ic_arrow_drop_down_black_24dp
+        )
       }
       Sorting.ORDER_DESCENDING -> {
         orderButton.set(R.string.sorting_dialog__ascending, R.drawable.ic_arrow_drop_up_black_24dp)
@@ -67,10 +72,10 @@ class SortingDialog : DialogFragment() {
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     val context = context ?: fail("null context")
     dialog = AlertDialog.Builder(context)
-        .setTitle(R.string.album_sorting__dialog_title)
-        .setView(R.layout.dialog__sorting)
-        .setPositiveButton(android.R.string.ok) { dialogInterface, _ -> dialogInterface.dismiss() }
-        .create()
+      .setTitle(R.string.album_sorting__dialog_title)
+      .setView(R.layout.dialog__sorting)
+      .setPositiveButton(android.R.string.ok) { dialogInterface, _ -> dialogInterface.dismiss() }
+      .create()
 
     return dialog
   }

@@ -7,7 +7,10 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import com.kelsos.mbrc.R
 
-class HelpFeedbackPagerAdapter(fm: FragmentManager, context: Activity) : FragmentStatePagerAdapter(fm) {
+class HelpFeedbackPagerAdapter(
+  fm: FragmentManager,
+  context: Activity
+) : FragmentStatePagerAdapter(fm) {
   private val context: Context
 
   private val titles = intArrayOf(R.string.tab_help, R.string.tab_feedback)
@@ -17,10 +20,10 @@ class HelpFeedbackPagerAdapter(fm: FragmentManager, context: Activity) : Fragmen
   }
 
   override fun getItem(position: Int): Fragment? {
-    when (position) {
-      HELP -> return HelpFragment.newInstance()
-      FEEDBACK -> return FeedbackFragment.newInstance()
-      else -> return null
+    return when (position) {
+      HELP -> HelpFragment.newInstance()
+      FEEDBACK -> FeedbackFragment.newInstance()
+      else -> null
     }
   }
 
@@ -33,8 +36,8 @@ class HelpFeedbackPagerAdapter(fm: FragmentManager, context: Activity) : Fragmen
   }
 
   companion object {
-    private val HELP = 0
-    private val FEEDBACK = 1
-    private val PAGES = 2
+    private const val HELP = 0
+    private const val FEEDBACK = 1
+    private const val PAGES = 2
   }
 }

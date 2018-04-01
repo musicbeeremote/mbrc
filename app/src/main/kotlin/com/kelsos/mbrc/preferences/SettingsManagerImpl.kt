@@ -10,7 +10,7 @@ import com.kelsos.mbrc.preferences.SettingsManager.Companion.REDUCE
 import com.kelsos.mbrc.utilities.RemoteUtils
 import io.reactivex.Single
 import timber.log.Timber
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -44,7 +44,8 @@ constructor(
   private fun updatePreferences() {
     val enabled = preferences.getBoolean(getKey(R.string.settings_legacy_key_reduce_volume), false)
     if (enabled) {
-      preferences.edit().putString(getKey(R.string.settings_key_incoming_call_action), REDUCE).apply()
+      preferences.edit().putString(getKey(R.string.settings_key_incoming_call_action), REDUCE)
+        .apply()
     }
   }
 
@@ -52,8 +53,10 @@ constructor(
     return preferences.getBoolean(getKey(R.string.settings_key_notification_control), true)
   }
 
-  @CallAction override fun getCallAction(): String = preferences.getString(
-      getKey(R.string.settings_key_incoming_call_action), NONE)
+  @CallAction
+  override fun getCallAction(): String = preferences.getString(
+    getKey(R.string.settings_key_incoming_call_action), NONE
+  )
 
   override fun isPluginUpdateCheckEnabled(): Boolean {
     return preferences.getBoolean(getKey(R.string.settings_key_plugin_check), false)
@@ -65,18 +68,22 @@ constructor(
 
   override fun setLastUpdated(lastChecked: Date) {
     preferences.edit()
-        .putLong(getKey(R.string.settings_key_last_update_check), lastChecked.time)
-        .apply()
+      .putLong(getKey(R.string.settings_key_last_update_check), lastChecked.time)
+      .apply()
   }
 
   override fun shouldDisplayOnlyAlbumArtists(): Single<Boolean> {
     return Single.fromCallable {
-      return@fromCallable preferences.getBoolean(getKey(R.string.settings_key_album_artists_only), false)
+      return@fromCallable preferences.getBoolean(
+        getKey(R.string.settings_key_album_artists_only),
+        false
+      )
     }
   }
 
   override fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean) {
-    preferences.edit().putBoolean(getKey(R.string.settings_key_album_artists_only), onlyAlbumArtist).apply()
+    preferences.edit().putBoolean(getKey(R.string.settings_key_album_artists_only), onlyAlbumArtist)
+      .apply()
   }
 
   override fun shouldShowChangeLog(): Single<Boolean> {
@@ -87,8 +94,8 @@ constructor(
 
       if (lastVersionCode < currentVersion) {
         preferences.edit()
-            .putLong(getKey(R.string.settings_key_last_version_run), currentVersion)
-            .apply()
+          .putLong(getKey(R.string.settings_key_last_version_run), currentVersion)
+          .apply()
         Timber.d("Update or fresh install")
 
         return@fromCallable true

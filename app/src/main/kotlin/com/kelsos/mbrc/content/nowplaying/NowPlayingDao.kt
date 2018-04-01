@@ -18,7 +18,10 @@ interface NowPlayingDao {
   @Query("select * from now_playing")
   fun getAll(): DataSource.Factory<Int, NowPlayingEntity>
 
-  @Query("select * from now_playing where title like '%' || :term || '%' or artist like '%' || :term || '%'")
+  @Query(
+    "select * from now_playing where title " +
+      "like '%' || :term || '%' or artist like '%' || :term || '%'"
+  )
   fun search(term: String): DataSource.Factory<Int, NowPlayingEntity>
 
   @Query("select count(*) from now_playing")

@@ -5,10 +5,6 @@ import com.kelsos.mbrc.mvp.Presenter
 
 interface LyricsView : BaseView {
   fun updateLyrics(lyrics: List<String>)
-
-  fun showNoLyrics()
 }
 
-interface LyricsPresenter : Presenter<LyricsView> {
-  fun load()
-}
+interface LyricsPresenter : Presenter<LyricsView>

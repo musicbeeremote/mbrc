@@ -1,7 +1,9 @@
 package com.kelsos.mbrc.content.library.albums
 
-import com.kelsos.mbrc.utilities.epoch
 import android.arch.paging.DataSource
+import com.kelsos.mbrc.networking.ApiBase
+import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.utilities.epoch
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
@@ -10,7 +12,7 @@ class AlbumRepositoryImpl
 @Inject
 constructor(
   private val dao: AlbumDao,
-  private val remoteDataSource: RemoteAlbumDataSource
+  private val remoteDataSource: ApiBase
 ) : AlbumRepository {
 
   private val mapper = AlbumDtoMapper()
@@ -29,7 +31,7 @@ constructor(
 
   override fun getRemote(): Completable {
     val added = epoch()
-    return remoteDataSource.fetch().doOnNext {
+    return remoteDataSource.getAllPages(Protocol.LibraryBrowseAlbums, AlbumDto::class).doOnNext {
       dao.insert(it.map { mapper.map(it).apply { dateAdded = added } })
     }.doOnComplete {
       dao.removePreviousEntries(added)
@@ -42,7 +44,10 @@ constructor(
 
   override fun cacheIsEmpty(): Single<Boolean> = Single.fromCallable { dao.count() == 0L }
 
-  override fun getAlbumsSorted(@Sorting.Fields order: Int, ascending: Boolean): Single<DataSource.Factory<Int, AlbumEntity>> {
+  override fun getAlbumsSorted(
+    @Sorting.Fields order: Int,
+    ascending: Boolean
+  ): Single<DataSource.Factory<Int, AlbumEntity>> {
     val factory = when (order) {
       Sorting.ALBUM -> {
         if (ascending) {

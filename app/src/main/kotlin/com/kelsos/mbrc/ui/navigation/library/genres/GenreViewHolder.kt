@@ -6,10 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.genres.GenreEntity
-import com.kelsos.mbrc.extensions.gone
-import com.kelsos.mbrc.extensions.show
 import com.kelsos.mbrc.extensions.string
 import com.kelsos.mbrc.ui.BindableViewHolder
 import kotterknife.bindView
@@ -30,12 +29,12 @@ class GenreViewHolder(
   }
 
   override fun bindTo(item: GenreEntity) {
-    loading.gone()
+    loading.isVisible = false
     title.text = if (item.genre.isBlank()) empty else item.genre
   }
 
   override fun clear() {
-    loading.show()
+    loading.isVisible = true
     title.text = ""
   }
 

@@ -14,7 +14,7 @@ import android.widget.TextView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerState.State
-import com.kelsos.mbrc.content.library.tracks.TrackInfo
+import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.ui.navigation.main.MainActivity
@@ -35,7 +35,8 @@ class MiniControlFragment : Fragment(), MiniControlView {
   private val nextButton: ImageButton by bindView(R.id.mc_next_track)
   private val previousButton: ImageButton by bindView(R.id.mc_prev_track)
 
-  @Inject lateinit var presenter: MiniControlPresenter
+  @Inject
+  lateinit var presenter: MiniControlPresenter
 
   private fun onControlClick() {
     val context = context ?: fail("null context")
@@ -60,14 +61,17 @@ class MiniControlFragment : Fragment(), MiniControlView {
     Toothpick.inject(this, scope)
   }
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View? {
     return inflater.inflate(R.layout.ui_fragment_mini_control, container, false)
   }
 
   override fun onStart() {
     super.onStart()
     presenter.attach(this)
-    presenter.load()
   }
 
   override fun onStop() {
@@ -75,7 +79,7 @@ class MiniControlFragment : Fragment(), MiniControlView {
     presenter.detach()
   }
 
-  override fun updateCover(path: String) {
+  private fun updateCover(path: String) {
     val context = context ?: return
     val file = File(path)
 
@@ -83,20 +87,21 @@ class MiniControlFragment : Fragment(), MiniControlView {
 
       val dimens = context.getDimens()
       Picasso.get()
-          .load(file)
-          .noFade()
-          .config(Bitmap.Config.RGB_565)
-          .resize(dimens, dimens)
-          .centerCrop()
-          .into(trackCover)
+        .load(file)
+        .noFade()
+        .config(Bitmap.Config.RGB_565)
+        .resize(dimens, dimens)
+        .centerCrop()
+        .into(trackCover)
     } else {
       trackCover.setImageResource(R.drawable.ic_image_no_cover)
     }
   }
 
-  override fun updateTrackInfo(trackInfo: TrackInfo) {
-    trackArtist.text = trackInfo.artist
-    trackTitle.text = trackInfo.title
+  override fun updateTrackInfo(track: PlayingTrackModel) {
+    trackArtist.text = track.artist
+    trackTitle.text = track.title
+    updateCover(track.coverUrl)
   }
 
   override fun updateState(@State state: String) {

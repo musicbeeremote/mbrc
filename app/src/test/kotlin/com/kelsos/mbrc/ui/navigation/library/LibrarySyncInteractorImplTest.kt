@@ -19,8 +19,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.BDDMockito.given
 import org.mockito.Mock
-import org.mockito.Mockito.given
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.reset
@@ -35,16 +35,28 @@ import toothpick.testing.ToothPickTestModule
 import java.util.concurrent.TimeUnit
 
 class LibrarySyncInteractorImplTest {
-  @Rule fun toothPickRule() = ToothPickRule(this)
+  @Rule
+  fun toothPickRule() = ToothPickRule(this)
 
-  val TEST_CASE_SCOPE: Class<*> = TestCase::class.java
+  private val TEST_CASE_SCOPE: Class<*> = TestCase::class.java
 
-  @Mock lateinit var genreRepository: GenreRepository
-  @Mock lateinit var artistRepository: ArtistRepository
-  @Mock lateinit var albumRepository: AlbumRepository
-  @Mock lateinit var trackRepository: TrackRepository
-  @Mock lateinit var playlistRepository: PlaylistRepository
-  @Mock lateinit var bus: RxBus
+  @Mock
+  private lateinit var genreRepository: GenreRepository
+
+  @Mock
+  private lateinit var artistRepository: ArtistRepository
+
+  @Mock
+  private lateinit var albumRepository: AlbumRepository
+
+  @Mock
+  private lateinit var trackRepository: TrackRepository
+
+  @Mock
+  private lateinit var playlistRepository: PlaylistRepository
+
+  @Mock
+  private lateinit var bus: RxBus
 
   private lateinit var ioScheduler: TestScheduler
   private lateinit var mainScheduler: TestScheduler
@@ -60,7 +72,8 @@ class LibrarySyncInteractorImplTest {
       init {
         bind(Scheduler::class.java).withName("io").toInstance(ioScheduler)
         bind(Scheduler::class.java).withName("main").toInstance(mainScheduler)
-        bind(LibrarySyncInteractor::class.java).to(LibrarySyncInteractorImpl::class.java).singletonInScope()
+        bind(LibrarySyncInteractor::class.java).to(LibrarySyncInteractorImpl::class.java)
+          .singletonInScope()
       }
     })
   }

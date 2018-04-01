@@ -17,23 +17,23 @@ constructor(
   private val repository: ArtistRepository,
   private val schedulerProvider: SchedulerProvider
 ) : BasePresenter<GenreArtistsView>(),
-    GenreArtistsPresenter {
+  GenreArtistsPresenter {
 
   private lateinit var artists: LiveData<PagedList<ArtistEntity>>
 
   override fun load(genre: String) {
     addDisposable(repository.getArtistByGenre(genre)
-        .subscribeOn(schedulerProvider.io())
-        .observeOn(schedulerProvider.main())
-        .subscribe({
-          artists = it.paged()
-          artists.observe(this, Observer {
-            if (it != null) {
-              view().update(it)
-            }
-          })
-        }) {
-          Timber.v(it)
+      .subscribeOn(schedulerProvider.io())
+      .observeOn(schedulerProvider.main())
+      .subscribe({
+        artists = it.paged()
+        artists.observe(this, Observer {
+          if (it != null) {
+            view().update(it)
+          }
         })
+      }) {
+        Timber.v(it)
+      })
   }
 }

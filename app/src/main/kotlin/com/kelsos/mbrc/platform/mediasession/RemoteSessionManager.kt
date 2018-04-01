@@ -21,7 +21,7 @@ import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.PlayStateChange
 import com.kelsos.mbrc.events.RemoteClientMetaData
 import com.kelsos.mbrc.events.UserAction
-import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.RemoteUtils
@@ -36,33 +36,40 @@ class RemoteSessionManager
 constructor(
   context: Application,
   volumeProvider: RemoteVolumeProvider,
-  private val bus: RxBus,
+  private val userActionUseCase: UserActionUseCase,
   private val manager: AudioManager
 ) : AudioManager.OnAudioFocusChangeListener {
-  private val mMediaSession: MediaSessionCompat?
+  private val mediaSession: MediaSessionCompat?
 
-  @Inject lateinit var handler: MediaIntentHandler
+  @Inject
+  lateinit var handler: MediaIntentHandler
 
   init {
 
-    bus.register(this, RemoteClientMetaData::class.java, { this.metadataUpdate(it) })
-    bus.register(this, PlayStateChange::class.java, { this.updateState(it) })
-    bus.register(this, PlayStateChange::class.java, { this.onPlayStateChange(it) })
-    bus.register(this, ConnectionStatusChangeEvent::class.java, { this.onConnectionStatusChanged(it) })
-
+//    bus.register(this, RemoteClientMetaData::class.java, { this.metadataUpdate(it) })
+//    bus.register(this, PlayStateChange::class.java, { this.updateState(it) })
+//    bus.register(this, PlayStateChange::class.java, { this.onPlayStateChange(it) })
+//    bus.register(
+//      this,
+//      ConnectionStatusChangeEvent::class.java,
+//      { this.onConnectionStatusChanged(it) })
+//
+//
     val myEventReceiver = ComponentName(context.packageName, MediaButtonReceiver::class.java.name)
     val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
     mediaButtonIntent.component = myEventReceiver
-    val mediaPendingIntent = PendingIntent.getBroadcast(context.applicationContext, 0, mediaButtonIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT)
+    val mediaPendingIntent = PendingIntent.getBroadcast(
+      context.applicationContext, 0, mediaButtonIntent,
+      PendingIntent.FLAG_UPDATE_CURRENT
+    )
 
-    mMediaSession = MediaSessionCompat(context, "Session", myEventReceiver, mediaPendingIntent)
-    mMediaSession.setPlaybackToRemote(volumeProvider)
+    mediaSession = MediaSessionCompat(context, "Session", myEventReceiver, mediaPendingIntent)
+    mediaSession.setPlaybackToRemote(volumeProvider)
 
-    mMediaSession.setFlags(FLAG_HANDLES_MEDIA_BUTTONS or FLAG_HANDLES_TRANSPORT_CONTROLS)
+    mediaSession.setFlags(FLAG_HANDLES_MEDIA_BUTTONS or FLAG_HANDLES_TRANSPORT_CONTROLS)
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      mMediaSession.setCallback(object : MediaSessionCompat.Callback() {
+      mediaSession.setCallback(object : MediaSessionCompat.Callback() {
         override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
           val success = handler.handleMediaIntent(mediaButtonEvent)
           return success || super.onMediaButtonEvent(mediaButtonEvent)
@@ -93,12 +100,12 @@ constructor(
 
   private fun onConnectionStatusChanged(event: ConnectionStatusChangeEvent) {
     if (event.status == Connection.OFF) {
-      if (mMediaSession != null) {
+      if (mediaSession != null) {
         val builder = PlaybackStateCompat.Builder()
         builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
         val playbackState = builder.build()
-        mMediaSession.isActive = false
-        mMediaSession.setPlaybackState(playbackState)
+        mediaSession.isActive = false
+        mediaSession.setPlaybackState(playbackState)
         ensureTransportControls(playbackState)
       }
       abandonFocus()
@@ -106,58 +113,64 @@ constructor(
   }
 
   private fun postAction(action: UserAction) {
-    bus.post(action)
+    userActionUseCase.perform(action)
   }
 
   val mediaSessionToken: MediaSessionCompat.Token
-    get() = mMediaSession!!.sessionToken
+    get() = mediaSession!!.sessionToken
 
   private fun metadataUpdate(data: RemoteClientMetaData) {
-    if (mMediaSession == null) {
+    if (mediaSession == null) {
       return
     }
 
-    val trackInfo = data.trackInfo
+    val trackInfo = data.track
     val bitmap = RemoteUtils.coverBitmapSync(data.coverPath)
 
-    val builder = MediaMetadataCompat.Builder()
-    builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, trackInfo.album)
-    builder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, trackInfo.artist)
-    builder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, trackInfo.title)
-    builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
-    mMediaSession.setMetadata(builder.build())
+    val meta = MediaMetadataCompat.Builder().apply {
+      putString(MediaMetadataCompat.METADATA_KEY_ALBUM, trackInfo.album)
+      putString(MediaMetadataCompat.METADATA_KEY_ARTIST, trackInfo.artist)
+      putString(MediaMetadataCompat.METADATA_KEY_TITLE, trackInfo.title)
+      putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
+    }
+
+    mediaSession.setMetadata(meta.build())
   }
 
   private fun updateState(stateChange: PlayStateChange) {
-    if (mMediaSession == null) {
+    if (mediaSession == null) {
       return
     }
 
     val builder = PlaybackStateCompat.Builder()
     builder.setActions(PLAYBACK_ACTIONS)
     @State val state = stateChange.state
-    if (PlayerState.PLAYING == state) {
-      builder.setState(PlaybackStateCompat.STATE_PLAYING, -1, 1f)
-      mMediaSession.isActive = true
-    } else if (PlayerState.PAUSED == state) {
-      builder.setState(PlaybackStateCompat.STATE_PAUSED, -1, 0f)
-      mMediaSession.isActive = true
-    } else {
-      builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
-      mMediaSession.isActive = false
+    when (state) {
+      PlayerState.PLAYING -> {
+        builder.setState(PlaybackStateCompat.STATE_PLAYING, -1, 1f)
+        mediaSession.isActive = true
+      }
+      PlayerState.PAUSED -> {
+        builder.setState(PlaybackStateCompat.STATE_PAUSED, -1, 0f)
+        mediaSession.isActive = true
+      }
+      else -> {
+        builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
+        mediaSession.isActive = false
+      }
     }
     val playbackState = builder.build()
-    mMediaSession.setPlaybackState(playbackState)
+    mediaSession.setPlaybackState(playbackState)
     ensureTransportControls(playbackState)
   }
 
   private fun onPlayStateChange(change: PlayStateChange) {
-    if (PlayerState.PLAYING == change.state) {
-      requestFocus()
-    } else if (change.state == PlayerState.PAUSED) {
-      // Do nothing
-    } else {
-      abandonFocus()
+    when {
+      PlayerState.PLAYING == change.state -> requestFocus()
+      change.state == PlayerState.PAUSED -> {
+        // Do nothing
+      }
+      else -> abandonFocus()
     }
   }
 
@@ -170,7 +183,7 @@ constructor(
     }
 
     val actions = playbackState.actions
-    val remoteObj = mMediaSession!!.remoteControlClient
+    val remoteObj = mediaSession!!.remoteControlClient
     if (actions != 0L && remoteObj != null) {
 
       var transportControls = 0
@@ -212,8 +225,10 @@ constructor(
   }
 
   private fun requestFocus(): Boolean {
-    return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == manager.requestAudioFocus(this,
-        AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
+    return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == manager.requestAudioFocus(
+      this,
+      AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN
+    )
   }
 
   private fun abandonFocus(): Boolean {
@@ -223,12 +238,18 @@ constructor(
   override fun onAudioFocusChange(focusChange: Int) {
     when (focusChange) {
       AudioManager.AUDIOFOCUS_GAIN -> Timber.d("gained")
-      AudioManager.AUDIOFOCUS_LOSS, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> Timber.d("transient loss")
+      AudioManager.AUDIOFOCUS_LOSS,
+      AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> Timber.d("transient loss")
       AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> Timber.d("Loss can duck")
     }
   }
 
   companion object {
-    private val PLAYBACK_ACTIONS = PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_PLAY_PAUSE or PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or PlaybackStateCompat.ACTION_STOP
+    private const val PLAYBACK_ACTIONS = PlaybackStateCompat.ACTION_PAUSE or
+      PlaybackStateCompat.ACTION_PLAY_PAUSE or
+      PlaybackStateCompat.ACTION_PLAY or
+      PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
+      PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
+      PlaybackStateCompat.ACTION_STOP
   }
 }

@@ -1,39 +1,27 @@
 package com.kelsos.mbrc.ui.navigation.main
 
-import com.kelsos.mbrc.content.activestatus.PlayerState.State
-import com.kelsos.mbrc.content.activestatus.Repeat.Mode
-import com.kelsos.mbrc.content.library.tracks.TrackInfo
-import com.kelsos.mbrc.events.ShuffleChange.ShuffleState
-import com.kelsos.mbrc.events.UpdatePositionEvent
+import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
+import com.kelsos.mbrc.content.activestatus.TrackRatingModel
+import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
+import com.kelsos.mbrc.content.activestatus.TrackPositionData
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
-import com.kelsos.mbrc.ui.navigation.main.LfmRating.Rating
 
 interface MainView : BaseView {
 
-  fun updateShuffleState(@ShuffleState shuffleState: String)
-
-  fun updateRepeat(@Mode mode: String)
-
-  fun updateVolume(volume: Int, mute: Boolean)
-
-  fun updatePlayState(@State state: String)
-
-  fun updateTrackInfo(info: TrackInfo)
+  fun updateTrackInfo(info: PlayingTrackModel)
 
   fun updateConnection(status: Int)
 
-  fun updateScrobbleStatus(active: Boolean)
-
-  fun updateLfmStatus(@Rating status: Int)
-
-  fun updateCover(path: String)
-
-  fun updateProgress(position: UpdatePositionEvent)
+  fun updateProgress(position: TrackPositionData)
 
   fun showChangeLog()
 
   fun notifyPluginOutOfDate()
+
+  fun updateStatus(playerStatus: PlayerStatusModel)
+
+  fun updateRating(rating: TrackRatingModel)
 }
 
 interface MainViewPresenter : Presenter<MainView> {

@@ -9,20 +9,24 @@ import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.ProgressBar
+import android.widget.Spinner
+import android.widget.TextView
+import androidx.view.isInvisible
+import androidx.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.output.OutputResponse
 import com.kelsos.mbrc.extensions.fail
-import com.kelsos.mbrc.extensions.hide
-import com.kelsos.mbrc.extensions.show
 import kotterknife.bindView
 import toothpick.Toothpick
 import javax.inject.Inject
 
 class OutputSelectionDialog : DialogFragment(),
-    OutputSelectionView,
-    View.OnTouchListener,
-    AdapterView.OnItemSelectedListener {
+  OutputSelectionView,
+  View.OnTouchListener,
+  AdapterView.OnItemSelectedListener {
 
   private var touchInitiated: Boolean = false
   private lateinit var fm: FragmentManager
@@ -32,7 +36,8 @@ class OutputSelectionDialog : DialogFragment(),
   private val loadingProgress: ProgressBar by bindView(R.id.output_selection__loading_outputs)
   private val errorMessage: TextView by bindView(R.id.output_selection__error_message)
 
-  @Inject internal lateinit var presenter: OutputSelectionPresenter
+  @Inject
+  internal lateinit var presenter: OutputSelectionPresenter
 
   @SuppressLint("InflateParams")
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -45,12 +50,12 @@ class OutputSelectionDialog : DialogFragment(),
     val view = inflater.inflate(R.layout.dialog__output_selection, null, false)
 
     dialog = AlertDialog.Builder(context)
-        .setTitle(R.string.output_selection__select_output)
-        .setView(view)
-        .setNeutralButton(R.string.output_selection__close_dialog) { dialogInterface, _ ->
-          dialogInterface.dismiss()
-        }
-        .create()
+      .setTitle(R.string.output_selection__select_output)
+      .setView(view)
+      .setNeutralButton(R.string.output_selection__close_dialog) { dialogInterface, _ ->
+        dialogInterface.dismiss()
+      }
+      .create()
 
     presenter.load()
 
@@ -95,10 +100,10 @@ class OutputSelectionDialog : DialogFragment(),
     availableOutputs.setOnTouchListener(null)
     val (devices, active) = data
     val outputAdapter = ArrayAdapter<String>(
-        context,
-        R.layout.item__output_device,
-        R.id.output_selection__output_device,
-        devices
+      context,
+      R.layout.item__output_device,
+      R.id.output_selection__output_device,
+      devices
     )
     availableOutputs.adapter = outputAdapter
 
@@ -106,8 +111,8 @@ class OutputSelectionDialog : DialogFragment(),
     availableOutputs.setSelection(selection)
     availableOutputs.onItemSelectedListener = this
     availableOutputs.setOnTouchListener(this)
-    loadingProgress.hide()
-    availableOutputs.show()
+    loadingProgress.isInvisible = true
+    availableOutputs.isVisible = true
   }
 
   override fun error(@OutputSelectionContract.Code code: Int) {
@@ -116,9 +121,9 @@ class OutputSelectionDialog : DialogFragment(),
       else -> R.string.output_selection__generic_error
     }
     errorMessage.setText(resId)
-    loadingProgress.hide()
-    availableOutputs.hide()
-    errorMessage.show()
+    loadingProgress.isInvisible = true
+    availableOutputs.isInvisible = true
+    errorMessage.isVisible = true
   }
 
   override fun dismiss() {

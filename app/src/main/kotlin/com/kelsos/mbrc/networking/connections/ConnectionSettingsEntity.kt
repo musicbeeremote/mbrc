@@ -6,8 +6,8 @@ import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 
 @Entity(
-    tableName = "settings",
-    indices = [(Index(value = ["address", "port"], unique = true))]
+  tableName = "settings",
+  indices = [(Index(value = ["address", "port"], unique = true))]
 )
 data class ConnectionSettingsEntity(
   @ColumnInfo(name = "address")

@@ -4,6 +4,8 @@ import toothpick.config.Module
 
 class SearchResultsModule : Module() {
   init {
-    bind(SearchResultsPresenter::class.java).to(SearchResultsPresenterImpl::class.java).singletonInScope()
+    bind(SearchResultsPresenter::class.java)
+      .to(SearchResultsPresenterImpl::class.java)
+      .singletonInScope()
   }
 }

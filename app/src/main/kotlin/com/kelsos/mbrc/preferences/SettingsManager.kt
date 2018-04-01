@@ -2,7 +2,7 @@ package com.kelsos.mbrc.preferences
 
 import android.support.annotation.StringDef
 import io.reactivex.Single
-import java.util.*
+import java.util.Date
 
 interface SettingsManager {
 
@@ -12,12 +12,15 @@ interface SettingsManager {
   fun isNotificationControlEnabled(): Boolean
   fun isPluginUpdateCheckEnabled(): Boolean
 
-  @CallAction fun getCallAction(): String
+  @CallAction
+  fun getCallAction(): String
 
-  @StringDef(NONE,
-      PAUSE,
-      STOP,
-      REDUCE)
+  @StringDef(
+    NONE,
+    PAUSE,
+    STOP,
+    REDUCE
+  )
   @Retention(AnnotationRetention.SOURCE)
   annotation class CallAction
 

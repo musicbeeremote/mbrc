@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
+import android.arch.paging.DataSource
 import com.kelsos.mbrc.any
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.content.nowplaying.queue.QueueApi
@@ -28,14 +29,20 @@ import java.net.SocketTimeoutException
 class RadioPresenterImplTest {
 
   private val toothpickRule: ToothPickRule = ToothPickRule(this, Presenter::class.java)
-      .setRootRegistryPackage("com.kelsos.mbrc")
-  @Rule @JvmField val chain: TestRule = RuleChain.outerRule(toothpickRule)
-      .around(MockitoInitializerRule(this))
+    .setRootRegistryPackage("com.kelsos.mbrc")
+  @Rule
+  @JvmField
+  val chain: TestRule = RuleChain.outerRule(toothpickRule)
+    .around(MockitoInitializerRule(this))
 
-  @Mock private lateinit var radioView: RadioView
-  @Mock private lateinit var radioRepository: RadioRepository
-  @Mock private lateinit var queueApi: QueueApi
-  @Mock private lateinit var result: DataSource.Factory<Int, RadioStationEntity>
+  @Mock
+  private lateinit var radioView: RadioView
+  @Mock
+  private lateinit var radioRepository: RadioRepository
+  @Mock
+  private lateinit var queueApi: QueueApi
+  @Mock
+  private lateinit var result: DataSource.Factory<Int, RadioStationEntity>
 
   private lateinit var presenter: RadioPresenter
 

@@ -57,15 +57,15 @@ constructor(
     result: (success: Boolean) -> Unit
   ) {
     disposables += trackRepository.getAlbumTrackPaths(entry.album, entry.artist)
-        .flatMap {
-          queueApi.queue(type, it)
-        }.subscribeOn(schedulerProvider.io())
-        .subscribe({
-          result(true)
-        }) {
-          result(false)
-          Timber.e(it, "Failed to queue")
-        }
+      .flatMap {
+        queueApi.queue(type, it)
+      }.subscribeOn(schedulerProvider.io())
+      .subscribe({
+        result(true)
+      }) {
+        result(false)
+        Timber.e(it, "Failed to queue")
+      }
   }
 
   fun artistSelected(
@@ -111,15 +111,15 @@ constructor(
 
   private fun queueGenre(entry: GenreEntity, type: String, result: (success: Boolean) -> Unit) {
     disposables += trackRepository.getGenreTrackPaths(genre = entry.genre)
-        .flatMap {
-          queueApi.queue(type, it)
-        }.subscribeOn(schedulerProvider.io())
-        .subscribe({
-          result(true)
-        }) {
-          result(false)
-          Timber.e(it, "Failed to queue")
-        }
+      .flatMap {
+        queueApi.queue(type, it)
+      }.subscribeOn(schedulerProvider.io())
+      .subscribe({
+        result(true)
+      }) {
+        result(false)
+        Timber.e(it, "Failed to queue")
+      }
   }
 
   //todo album detection -> queue album tracks
@@ -151,10 +151,10 @@ constructor(
     }
 
     disposables += trackSource.flatMap { queueApi.queue(type, it, path) }
-        .subscribeOn(schedulerProvider.io())
-        .subscribe({ }) {
-          Timber.v(it, "Failed to queue")
-        }
+      .subscribeOn(schedulerProvider.io())
+      .subscribe({ }) {
+        Timber.v(it, "Failed to queue")
+      }
   }
 
   fun albumSelected(album: AlbumEntity, context: Context) {

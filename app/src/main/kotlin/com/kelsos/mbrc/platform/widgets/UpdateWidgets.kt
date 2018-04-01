@@ -4,7 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import com.kelsos.mbrc.content.activestatus.PlayerState.State
-import com.kelsos.mbrc.content.library.tracks.TrackInfo
+import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 
 object UpdateWidgets {
   const val COVER = "com.kelsos.mbrc.platform.widgets.COVER"
@@ -16,11 +16,11 @@ object UpdateWidgets {
 
   fun updateCover(context: Context, path: String = "") {
     val normalIntent = getIntent(WidgetNormal::class.java, context)
-        .putExtra(COVER, true)
-        .putExtra(COVER_PATH, path)
+      .putExtra(COVER, true)
+      .putExtra(COVER_PATH, path)
     val smallIntent = getIntent(WidgetSmall::class.java, context)
-        .putExtra(COVER, true)
-        .putExtra(COVER_PATH, path)
+      .putExtra(COVER, true)
+      .putExtra(COVER_PATH, path)
 
     context.sendBroadcast(smallIntent)
     context.sendBroadcast(normalIntent)
@@ -28,25 +28,25 @@ object UpdateWidgets {
 
   fun updatePlaystate(context: Context, @State state: String) {
     val normalIntent = getIntent(WidgetNormal::class.java, context)
-        .putExtra(STATE, true)
-        .putExtra(PLAYER_STATE, state)
+      .putExtra(STATE, true)
+      .putExtra(PLAYER_STATE, state)
 
     val smallIntent = getIntent(WidgetSmall::class.java, context)
-        .putExtra(STATE, true)
-        .putExtra(PLAYER_STATE, state)
+      .putExtra(STATE, true)
+      .putExtra(PLAYER_STATE, state)
 
     context.sendBroadcast(smallIntent)
     context.sendBroadcast(normalIntent)
   }
 
-  fun updateTrackInfo(context: Context, info: TrackInfo) {
+  fun updateTrackInfo(context: Context, info: PlayingTrackModel) {
     val normalIntent = getIntent(WidgetNormal::class.java, context)
-        .putExtra(INFO, true)
-        .putExtra(TRACK_INFO, info)
+      .putExtra(INFO, true)
+      .putExtra(TRACK_INFO, info)
 
     val smallIntent = getIntent(WidgetSmall::class.java, context)
-        .putExtra(INFO, true)
-        .putExtra(TRACK_INFO, info)
+      .putExtra(INFO, true)
+      .putExtra(TRACK_INFO, info)
 
     context.sendBroadcast(smallIntent)
     context.sendBroadcast(normalIntent)

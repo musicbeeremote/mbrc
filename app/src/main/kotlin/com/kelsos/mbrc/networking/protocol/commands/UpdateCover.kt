@@ -7,12 +7,10 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kelsos.mbrc.content.activestatus.MainDataModel
+import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
+import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.content.nowplaying.cover.CoverApi
 import com.kelsos.mbrc.content.nowplaying.cover.CoverPayload
-import com.kelsos.mbrc.events.CoverChangedEvent
-import com.kelsos.mbrc.events.RemoteClientMetaData
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.extensions.md5
 import com.kelsos.mbrc.interfaces.ICommand
@@ -29,12 +27,12 @@ import java.lang.Exception
 import javax.inject.Inject
 
 class UpdateCover
-@Inject constructor(
-  private val bus: RxBus,
+@Inject
+constructor(
   private val context: Application,
   private val mapper: ObjectMapper,
   private val coverApi: CoverApi,
-  private val model: MainDataModel
+  private val playingTrackLiveDataProvider: PlayingTrackLiveDataProvider
 ) : ICommand {
   private val coverDir: File
 
@@ -46,7 +44,7 @@ class UpdateCover
     val payload = mapper.treeToValue((e.data as JsonNode), CoverPayload::class.java)
 
     if (payload.status == CoverPayload.NOT_FOUND) {
-      bus.post(CoverChangedEvent())
+      playingTrackLiveDataProvider.update({ PlayingTrackModel() }) { copy(coverUrl = "") }
       UpdateWidgets.updateCover(context)
     } else if (payload.status == CoverPayload.READY) {
       retrieveCover()
@@ -61,9 +59,10 @@ class UpdateCover
     }.flatMap {
       return@flatMap prefetch(it)
     }.subscribeOn(Schedulers.io()).subscribe({
-      model.coverPath = it.absolutePath
-      bus.post(CoverChangedEvent(it.absolutePath))
-      bus.post(RemoteClientMetaData(model.trackInfo, model.coverPath))
+
+      playingTrackLiveDataProvider.update({ PlayingTrackModel(coverUrl = it.absolutePath) }) {
+        copy(coverUrl = it.absolutePath)
+      }
       UpdateWidgets.updateCover(context, it.absolutePath)
     }, {
       removeCover(it)
@@ -90,7 +89,9 @@ class UpdateCover
       Timber.v(it, "Failed to store path")
     }
 
-    bus.post(CoverChangedEvent())
+    playingTrackLiveDataProvider.update({ PlayingTrackModel(coverUrl = "") }) {
+      copy(coverUrl = "")
+    }
   }
 
   private fun storeCover(bitmap: Bitmap): File {
@@ -116,17 +117,17 @@ class UpdateCover
     return Single.create<File> {
       val dimens = context.getDimens()
       Picasso.get().load(newFile)
-          .config(Bitmap.Config.RGB_565)
-          .resize(dimens, dimens)
-          .centerCrop().fetch(object : Callback {
-        override fun onSuccess() {
-          it.onSuccess(newFile)
-        }
+        .config(Bitmap.Config.RGB_565)
+        .resize(dimens, dimens)
+        .centerCrop().fetch(object : Callback {
+          override fun onSuccess() {
+            it.onSuccess(newFile)
+          }
 
-        override fun onError(e: Exception?) {
-          it.onError(e ?: RuntimeException("can't fetch"))
-        }
-      })
+          override fun onError(e: Exception?) {
+            it.onError(e ?: RuntimeException("can't fetch"))
+          }
+        })
     }
   }
 
@@ -137,6 +138,9 @@ class UpdateCover
   }
 
   private fun clearPreviousCovers(keep: Int = 2) {
+    if (!coverDir.exists()) {
+      return
+    }
     val storedCovers = coverDir.listFiles()
     storedCovers.sortByDescending(File::lastModified)
     val elementsToKeep = if (storedCovers.size - keep < 0) 0 else storedCovers.size - keep

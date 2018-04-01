@@ -7,11 +7,16 @@ import com.kelsos.mbrc.mvp.Presenter
 
 interface BrowseGenrePresenter : Presenter<BrowseGenreView> {
   fun load()
+
   fun reload()
 }
 
 interface BrowseGenreView : BaseView {
   fun update(pagedList: PagedList<GenreEntity>)
+
   fun failure(throwable: Throwable)
+
   fun hideLoading()
+
+  fun updateIndexes(indexes: List<String>)
 }

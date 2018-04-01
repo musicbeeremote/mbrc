@@ -4,15 +4,23 @@ import android.graphics.Canvas
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 
-class SimpleItemTouchHelper(private val adapter: ItemTouchHelperAdapter) : ItemTouchHelper.Callback() {
+class SimpleItemTouchHelper(private val adapter: ItemTouchHelperAdapter) :
+  ItemTouchHelper.Callback() {
 
-  override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+  override fun getMovementFlags(
+    recyclerView: RecyclerView,
+    viewHolder: RecyclerView.ViewHolder
+  ): Int {
     val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN
     val swipeFlags = ItemTouchHelper.END
     return ItemTouchHelper.Callback.makeMovementFlags(dragFlags, swipeFlags)
   }
 
-  override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+  override fun onMove(
+    recyclerView: RecyclerView,
+    viewHolder: RecyclerView.ViewHolder,
+    target: RecyclerView.ViewHolder
+  ): Boolean {
     if (viewHolder.itemViewType != target.itemViewType) {
       return false
     }
@@ -26,15 +34,19 @@ class SimpleItemTouchHelper(private val adapter: ItemTouchHelperAdapter) : ItemT
     adapter.onItemDismiss(viewHolder.adapterPosition)
   }
 
-  override fun isLongPressDragEnabled(): Boolean {
-    return false
-  }
+  override fun isLongPressDragEnabled(): Boolean = false
 
-  override fun isItemViewSwipeEnabled(): Boolean {
-    return true
-  }
+  override fun isItemViewSwipeEnabled(): Boolean = true
 
-  override fun onChildDrawOver(c: Canvas?, recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
+  override fun onChildDrawOver(
+    c: Canvas?,
+    recyclerView: RecyclerView?,
+    viewHolder: RecyclerView.ViewHolder?,
+    dX: Float,
+    dY: Float,
+    actionState: Int,
+    isCurrentlyActive: Boolean
+  ) {
     if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
       // Fade out the view as it is swiped out of the parent's bounds
       val alpha = ALPHA_FULL - Math.abs(dX) / viewHolder!!.itemView.width.toFloat()

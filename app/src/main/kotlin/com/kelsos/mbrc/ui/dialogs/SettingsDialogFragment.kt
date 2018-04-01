@@ -39,32 +39,42 @@ class SettingsDialogFragment : DialogFragment() {
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val context = activity ?: fail("null activity")
+    val context = requireContext()
     val builder = AlertDialog.Builder(context)
-    builder.setView(R.layout.ui_dialog_settings)
-    builder.setTitle(if (edit) R.string.settings_dialog_edit else R.string.settings_dialog_add)
-    builder.setNegativeButton(android.R.string.cancel) { dialogInterface, _ -> dialogInterface.dismiss() }
-    builder.setPositiveButton(if (edit) R.string.settings_dialog_save else R.string.settings_dialog_add) { dialog, _ ->
-      var shouldIClose = true
-      val hostname = hostEdit.text.toString()
-      val computerName = nameEdit.text.toString()
+    with(builder) {
+      setView(R.layout.ui_dialog_settings)
+      setTitle(if (edit) R.string.settings_dialog_edit else R.string.settings_dialog_add)
 
-      if (hostname.isEmpty() || computerName.isEmpty()) {
-        shouldIClose = false
+      setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->
+        dialogInterface.dismiss()
       }
 
-      val portText = portEdit.text.toString()
+      val resId = if (edit) R.string.settings_dialog_save else R.string.settings_dialog_add
 
-      val portNum = if (TextUtils.isEmpty(portText)) 0 else Integer.parseInt(portText)
-      if (isValid(portNum) && shouldIClose) {
-        settings.name = computerName
-        settings.address = hostname
-        settings.port = portNum
-        mListener?.onSave(settings)
-        dialog.dismiss()
+      setPositiveButton(resId) { dialog, _ ->
+        var shouldIClose = true
+        val hostname = hostEdit.text.toString()
+        val computerName = nameEdit.text.toString()
+
+        if (hostname.isEmpty() || computerName.isEmpty()) {
+          shouldIClose = false
+        }
+
+        val portText = portEdit.text.toString()
+
+        val portNum = if (TextUtils.isEmpty(portText)) 0 else Integer.parseInt(portText)
+        if (isValid(portNum) && shouldIClose) {
+          settings.apply {
+            name = computerName
+            address = hostname
+            port = portNum
+          }
+
+          mListener?.onSave(settings)
+          dialog.dismiss()
+        }
       }
     }
-
     return builder.create()
   }
 
@@ -81,10 +91,10 @@ class SettingsDialogFragment : DialogFragment() {
   private fun isValid(port: Int): Boolean = if (port < MIN_PORT || port > MAX_PORT) {
     val context = context ?: fail("null context")
     AlertDialog.Builder(context)
-        .setTitle(R.string.alert_invalid_range)
-        .setMessage(R.string.alert_invalid_port_number)
-        .setPositiveButton(android.R.string.ok) { dialogInterface, _ -> dialogInterface.dismiss() }
-        .show()
+      .setTitle(R.string.alert_invalid_range)
+      .setMessage(R.string.alert_invalid_port_number)
+      .setPositiveButton(android.R.string.ok) { dialogInterface, _ -> dialogInterface.dismiss() }
+      .show()
     false
   } else {
     true
@@ -107,16 +117,19 @@ class SettingsDialogFragment : DialogFragment() {
 
   companion object {
 
-    private val MAX_PORT = 65535
-    private val MIN_PORT = 1
+    private const val MAX_PORT = 65535
+    private const val MIN_PORT = 1
 
-    fun newInstance(settings: ConnectionSettingsEntity, fm: FragmentManager): SettingsDialogFragment {
+    fun newInstance(
+      settings: ConnectionSettingsEntity,
+      fm: FragmentManager
+    ): SettingsDialogFragment {
 
-      val fragment = SettingsDialogFragment()
-      fragment.fm = fm
-      fragment.setConnectionSettings(settings)
-      fragment.edit = true
-      return fragment
+      return SettingsDialogFragment().apply {
+        this.fm = fm
+        setConnectionSettings(settings)
+        edit = true
+      }
     }
 
     fun create(fm: FragmentManager): SettingsDialogFragment {

@@ -18,28 +18,35 @@ interface TrackDao {
   @Query("select * from track order by album_artist asc, album asc, disc asc, trackno asc")
   fun getAll(): DataSource.Factory<Int, TrackEntity>
 
-  @Query("select substr(album_artist,1,1) from track order by album_artist asc, album asc, disc asc, trackno asc")
+  @Query("select substr(album_artist,1,1) from track order by album_artist asc, album asc," +
+    " disc asc, trackno asc")
   fun getAllIndexes(): LiveData<List<String>>
 
-  @Query("select * from track where '%' || :term ||'%' order by album_artist asc, album asc, disc asc, trackno asc")
+  @Query("select * from track where '%' || :term ||'%' order by album_artist asc, " +
+    "album asc, disc asc, trackno asc")
   fun search(term: String): DataSource.Factory<Int, TrackEntity>
 
-  @Query("select * from track where album = :album and album_artist = :artist order by album_artist asc, album asc, disc asc, trackno asc")
+  @Query("select * from track where album = :album and album_artist = :artist " +
+    "order by album_artist asc, album asc, disc asc, trackno asc")
   fun getAlbumTracks(
     album: String,
     artist: String
   ): DataSource.Factory<Int, TrackEntity>
 
-  @Query("select * from track where album = '' and album_artist = :artist order by album_artist asc, album asc, disc asc, trackno asc")
+  @Query("select * from track where album = '' and album_artist = :artist " +
+    "order by album_artist asc, album asc, disc asc, trackno asc")
   fun getNonAlbumTracks(artist: String): DataSource.Factory<Int, TrackEntity>
 
-  @Query("select src from track where genre = :genre order by album_artist asc, album asc, disc asc, trackno asc")
+  @Query("select src from track where genre = :genre " +
+    "order by album_artist asc, album asc, disc asc, trackno asc")
   fun getGenreTrackPaths(genre: String): List<String>
 
-  @Query("select src from track where artist = :artist or album_artist = :artist order by album_artist asc, album asc, disc asc, trackno asc")
+  @Query("select src from track where artist = :artist or album_artist = :artist " +
+    "order by album_artist asc, album asc, disc asc, trackno asc")
   fun getArtistTrackPaths(artist: String): List<String>
 
-  @Query("select src from track where album_artist = :artist or album = :album order by album_artist asc, album asc, disc asc, trackno asc")
+  @Query("select src from track where album_artist = :artist or album = :album " +
+    "order by album_artist asc, album asc, disc asc, trackno asc")
   fun getAlbumTrackPaths(album: String, artist: String): List<String>
 
   @Query("select src from track order by album_artist asc, album asc, disc asc, trackno asc")

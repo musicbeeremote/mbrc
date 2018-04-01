@@ -11,10 +11,7 @@ import android.support.v4.app.NotificationCompat.Action
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
-import com.kelsos.mbrc.events.CoverChangedEvent
 import com.kelsos.mbrc.events.PlayStateChange
-import com.kelsos.mbrc.events.TrackInfoChangeEvent
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.platform.ForegroundHooks
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.NEXT
@@ -33,7 +30,6 @@ import javax.inject.Singleton
 class SessionNotificationManager
 @Inject
 constructor(
-  bus: RxBus,
   private val context: Application,
   private val sessionManager: RemoteSessionManager,
   private val settings: SettingsManager,
@@ -47,21 +43,14 @@ constructor(
   private var hooks: ForegroundHooks? = null
 
   init {
-    bus.register(this, TrackInfoChangeEvent::class.java, { this.handleTrackInfo(it) })
-    bus.register(this, CoverChangedEvent::class.java, { this.coverChanged(it.path) })
-    bus.register(this, PlayStateChange::class.java, { this.playStateChanged(it) })
-    bus.register(this, ConnectionStatusChangeEvent::class.java, { this.connectionChanged(it) })
-    bus.register(this, CancelNotificationEvent::class.java, { this.cancelNotification() })
+
+//    bus.register(this, ConnectionStatusChangeEvent::class.java, { this.connectionChanged(it) })
+//    bus.register(this, CancelNotificationEvent::class.java, { this.cancelNotification() })
     previous = context.getString(R.string.notification_action_previous)
     play = context.getString(R.string.notification_action_play)
     next = context.getString(R.string.notification_action_next)
 
     createNotificationChannels()
-  }
-
-  private fun handleTrackInfo(event: TrackInfoChangeEvent) {
-    model.trackInfo = event.trackInfo
-    update()
   }
 
   private fun coverChanged(path: String) {
@@ -136,11 +125,11 @@ constructor(
     }
 
     builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        .setSmallIcon(R.drawable.ic_mbrc_status)
-        .setStyle(mediaStyle.setShowActionsInCompactView(1, 2))
-        .addAction(previousAction)
-        .addAction(getPlayAction(resId))
-        .addAction(nextAction)
+      .setSmallIcon(R.drawable.ic_mbrc_status)
+      .setStyle(mediaStyle.setShowActionsInCompactView(1, 2))
+      .addAction(previousAction)
+      .addAction(getPlayAction(resId))
+      .addAction(nextAction)
 
     builder.priority = NotificationCompat.PRIORITY_LOW
     builder.setOnlyAlertOnce(true)
@@ -152,7 +141,7 @@ constructor(
       builder.setLargeIcon(icon)
     }
 
-    val info = model.trackInfo
+    val info = model.track
 
     info?.let {
       builder.setContentTitle(it.title).setContentText(it.artist).setSubText(it.album)
@@ -194,6 +183,4 @@ constructor(
     const val NOW_PLAYING_PLACEHOLDER = 15613
     const val CHANNEL_ID = "mbrc_session_01"
   }
-
-  class CancelNotificationEvent
 }

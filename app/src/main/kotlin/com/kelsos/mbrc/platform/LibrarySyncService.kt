@@ -12,7 +12,8 @@ import javax.inject.Inject
  */
 class LibrarySyncService : IntentService("LibrarySyncService") {
 
-  @Inject lateinit var librarySyncInteractor: LibrarySyncInteractor
+  @Inject
+  lateinit var librarySyncInteractor: LibrarySyncInteractor
 
   override fun onCreate() {
     val scope = Toothpick.openScopes(application, this)

@@ -7,12 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.view.isVisible
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.extensions.gone
-import com.kelsos.mbrc.extensions.show
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import kotterknife.bindView
-import java.util.*
+import java.util.ArrayList
 
 class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewHolder>() {
   private val data: MutableList<ConnectionSettingsEntity>
@@ -95,9 +94,9 @@ class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewH
       hostname.text = "${entity.address} : ${entity.port}"
 
       if (entity.id == selectionId) {
-        defaultSettings.show()
+        defaultSettings.isVisible = true
       } else {
-        defaultSettings.gone()
+        defaultSettings.isVisible = false
       }
     }
 

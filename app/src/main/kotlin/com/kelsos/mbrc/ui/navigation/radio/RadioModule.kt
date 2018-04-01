@@ -1,11 +1,10 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
+import com.kelsos.mbrc.di.bindSingletonClass
 import toothpick.config.Module
 
 class RadioModule : Module() {
   init {
-    bind(RadioPresenter::class.java)
-        .to(RadioPresenterImpl::class.java)
-        .singletonInScope()
+    bindSingletonClass<RadioPresenter> { RadioPresenterImpl::class }
   }
 }

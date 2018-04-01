@@ -1,6 +1,9 @@
 package com.kelsos.mbrc.content.library.artists
 
 import android.arch.paging.DataSource
+import com.kelsos.mbrc.content.library.DataModel
+import com.kelsos.mbrc.networking.ApiBase
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.epoch
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -10,7 +13,7 @@ class ArtistRepositoryImpl
 @Inject
 constructor(
   private val dao: ArtistDao,
-  private val remoteDataSource: RemoteArtistDataSource
+  private val remoteDataSource: ApiBase
 ) : ArtistRepository {
 
   private val mapper = ArtistDtoMapper()
@@ -27,21 +30,21 @@ constructor(
     return getRemote().andThen(getAll())
   }
 
-  override fun allArtists(): Single<Artists> {
-    return Single.fromCallable { Artists(dao.getAll(), dao.getAllIndexes()) }
+  override fun allArtists(): Single<DataModel<ArtistEntity>> {
+    return Single.fromCallable { DataModel(dao.getAll(), dao.getAllIndexes()) }
   }
 
-  override fun albumArtists(): Single<Artists> {
-    return Single.fromCallable { Artists(dao.getAlbumArtists(), dao.getAlbumArtistIndexes()) }
+  override fun albumArtists(): Single<DataModel<ArtistEntity>> {
+    return Single.fromCallable { DataModel(dao.getAlbumArtists(), dao.getAlbumArtistIndexes()) }
   }
 
   override fun getRemote(): Completable {
     val added = epoch()
-    return remoteDataSource.fetch().doOnNext {
+    return remoteDataSource.getAllPages(Protocol.LibraryBrowseArtists, ArtistDto::class).doOnNext {
       dao.insertAll(it.map { mapper.map(it).apply { dateAdded = added } })
     }.doOnComplete {
-        dao.removePreviousEntries(added)
-      }.ignoreElements()
+      dao.removePreviousEntries(added)
+    }.ignoreElements()
   }
 
   override fun search(term: String): Single<DataSource.Factory<Int, ArtistEntity>> {

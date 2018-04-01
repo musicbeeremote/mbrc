@@ -6,10 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.TrackEntity
-import com.kelsos.mbrc.extensions.gone
-import com.kelsos.mbrc.extensions.show
 import com.kelsos.mbrc.extensions.string
 import com.kelsos.mbrc.ui.BindableViewHolder
 import kotterknife.bindView
@@ -31,13 +30,13 @@ class TrackViewHolder(
   }
 
   override fun clear() {
-    empty.show()
+    empty.isVisible = true
     artist.text = ""
     title.text = ""
   }
 
   override fun bindTo(item: TrackEntity) {
-    empty.gone()
+    empty.isVisible = false
     title.text = item.title
     artist.text = if (item.artist.isBlank()) unknownArtist else item.artist
   }

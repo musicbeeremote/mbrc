@@ -3,7 +3,7 @@
           xmlns:tools="http://schemas.android.com/tools">
 
   <application
-      android:name="com.kelsos.mbrc.DebugRemoteApplication"
+      android:name="com.kelsos.mbrc.DebugApp"
       android:largeHeap="true"
       tools:replace="android:name">
   </application>

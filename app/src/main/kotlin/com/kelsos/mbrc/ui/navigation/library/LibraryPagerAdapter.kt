@@ -11,7 +11,9 @@ import com.kelsos.mbrc.ui.navigation.library.artists.BrowseArtistFragment
 import com.kelsos.mbrc.ui.navigation.library.genres.BrowseGenreFragment
 import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackFragment
 
-class LibraryPagerAdapter(activity: FragmentActivity) : FragmentStatePagerAdapter(activity.supportFragmentManager) {
+class LibraryPagerAdapter(
+  activity: FragmentActivity
+) : FragmentStatePagerAdapter(activity.supportFragmentManager) {
   private val context: Context = activity.applicationContext
 
   override fun getItem(@Section position: Int): Fragment? {

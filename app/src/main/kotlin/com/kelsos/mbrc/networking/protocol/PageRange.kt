@@ -9,6 +9,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 @JsonPropertyOrder("offset", "limit")
 class PageRange {
 
-  @JsonProperty("offset") var offset: Int = 0
-  @JsonProperty("limit") var limit: Int = 0
+  @JsonProperty("offset")
+  var offset: Int = 0
+  @JsonProperty("limit")
+  var limit: Int = 0
 }

@@ -8,10 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
-
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.extensions.fail
-import com.kelsos.mbrc.utilities.RemoteUtils
+import com.kelsos.mbrc.utilities.RemoteUtils.getVersion
 import kotterknife.bindView
 import timber.log.Timber
 
@@ -24,8 +22,8 @@ class HelpFragment : Fragment() {
 
     val url: String
     url = try {
-      val context = context ?: fail("null context")
-      String.format("http://kelsos.net/musicbeeremote/help?version=%s", RemoteUtils.getVersion(context))
+      val context = requireContext()
+      "http://kelsos.net/musicbeeremote/help?version=${getVersion(context)}"
     } catch (e: PackageManager.NameNotFoundException) {
       Timber.v(e, "Failed to get version")
       "http://kelsos.net/musicbeeremote/help"
@@ -34,7 +32,11 @@ class HelpFragment : Fragment() {
     helpWebview.loadUrl(url)
   }
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View? {
     // Inflate the layout for this fragment
     return inflater.inflate(R.layout.fragment_help, container, false)
   }
@@ -53,7 +55,6 @@ class HelpFragment : Fragment() {
   }
 
   companion object {
-
     fun newInstance(): HelpFragment {
       return HelpFragment()
     }
