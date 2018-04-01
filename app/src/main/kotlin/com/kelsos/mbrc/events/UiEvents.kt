@@ -1,27 +1,15 @@
 package com.kelsos.mbrc.events
 
-import androidx.annotation.StringDef
 import androidx.annotation.StringRes
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.activestatus.Repeat
-import com.kelsos.mbrc.content.library.tracks.TrackInfo
-import com.kelsos.mbrc.networking.DiscoveryStop.Reason
+import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.networking.connections.Connection
-import com.kelsos.mbrc.ui.navigation.main.LfmRating.Rating
 
 class ConnectionSettingsChanged(val defaultId: Long)
 
 class ConnectionStatusChangeEvent(@Connection.Status val status: Int)
 
-class CoverChangedEvent(val path: String = "")
-
-class DiscoveryStopped(@Reason val reason: Int)
-
-class LfmRatingChanged(@Rating val status: Int)
-
 class LibraryRefreshCompleteEvent
-
-class LyricsUpdatedEvent(val lyrics: String)
 
 class NotifyUser {
   val message: String
@@ -42,48 +30,13 @@ class NotifyUser {
   }
 }
 
-class OnMainFragmentOptionsInflated
-
 class PlayStateChange(@PlayerState.State val state: String, val position: Long = 0)
 
 class RatingChanged(val rating: Float)
 
 class RemoteClientMetaData(
-  val trackInfo: TrackInfo,
-  val coverPath: String = "",
-  val duration: Long = 0
+  val track: PlayingTrackModel,
+  val coverPath: String = ""
 )
 
-class RepeatChange(@Repeat.Mode val mode: String)
-
-class RequestConnectionStateEvent
-
-class ScrobbleChange(val isActive: Boolean)
-
-class ShuffleChange(@ShuffleState val shuffleState: String) {
-
-  @StringDef(OFF, AUTODJ, SHUFFLE)
-  @Retention(AnnotationRetention.SOURCE)
-  annotation class ShuffleState
-
-  companion object {
-    const val OFF = "off"
-    const val AUTODJ = "autodj"
-    const val SHUFFLE = "shuffle"
-  }
-}
-
-class TrackInfoChangeEvent(val trackInfo: TrackInfo)
-
-class TrackMovedEvent(val from: Int, val to: Int, val success: Boolean)
-
 class TrackRemovalEvent(val index: Int, val success: Boolean)
-
-class UpdatePositionEvent(val current: Long, val total: Long)
-
-class VolumeChange {
-  var volume: Int = 0
-    private set
-  var isMute: Boolean = false
-    private set
-}

@@ -1,45 +1,30 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
-import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.radios.RadioStation
-import com.kelsos.mbrc.databinding.ListitemSingleBinding
 import javax.inject.Inject
 
 class RadioAdapter
 @Inject
-constructor() : PagingDataAdapter<RadioStation, RadioAdapter.ViewHolder>(
+constructor() : PagingDataAdapter<RadioStation, RadioViewHolder>(
   RADIO_COMPARATOR
 ) {
   private var radioPressedListener: OnRadioPressedListener? = null
 
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-    val inflater: LayoutInflater = LayoutInflater.from(parent.context)
-    val view = inflater.inflate(R.layout.listitem_single, parent, false)
-    val viewHolder = ViewHolder(view)
-
-    viewHolder.itemView.setOnClickListener {
-      val path = getItem(viewHolder.bindingAdapterPosition)?.url
-      path?.let {
-        radioPressedListener?.onRadioPressed(it)
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RadioViewHolder {
+    return RadioViewHolder.create(parent) { position ->
+      getItem(position)?.let {
+        radioPressedListener?.onRadioPressed(it.url)
       }
     }
-    return viewHolder
   }
 
-  override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val radio = getItem(holder.bindingAdapterPosition)
-    radio?.let {
-      holder.name.text = radio.name
+  override fun onBindViewHolder(holder: RadioViewHolder, position: Int) {
+    getItem(position)?.let {
+      holder.bindTo(it)
     }
-    holder.context.visibility = View.GONE
   }
 
   fun setOnRadioPressedListener(onRadioPressedListener: OnRadioPressedListener?) {
@@ -48,16 +33,6 @@ constructor() : PagingDataAdapter<RadioStation, RadioAdapter.ViewHolder>(
 
   interface OnRadioPressedListener {
     fun onRadioPressed(path: String)
-  }
-
-  class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val name: TextView
-    val context: ImageView
-    init {
-      val binding = ListitemSingleBinding.bind(itemView)
-      name = binding.lineOne
-      context = binding.uiItemContextIndicator
-    }
   }
 
   companion object {

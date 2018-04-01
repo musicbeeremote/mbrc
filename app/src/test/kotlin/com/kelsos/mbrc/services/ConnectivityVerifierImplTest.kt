@@ -6,13 +6,13 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.RemoteDb
+import com.kelsos.mbrc.Database
 import com.kelsos.mbrc.di.modules.AppDispatchers
-import com.kelsos.mbrc.networking.ConnectivityVerifier
-import com.kelsos.mbrc.networking.ConnectivityVerifierImpl
 import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.RequestManagerImpl
-import com.kelsos.mbrc.networking.SocketMessage
+import com.kelsos.mbrc.networking.client.ConnectivityVerifier
+import com.kelsos.mbrc.networking.client.ConnectivityVerifierImpl
+import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.connections.ConnectionDao
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
@@ -54,7 +54,7 @@ class ConnectivityVerifierImplTest {
   private val port: Int = 46000
 
   lateinit var verifier: ConnectivityVerifier
-  lateinit var db: RemoteDb
+  lateinit var db: Database
   lateinit var dao: ConnectionDao
   private val informationStore: ClientInformationStore = mockk()
 
@@ -62,7 +62,7 @@ class ConnectivityVerifierImplTest {
   fun setUp() {
     toothpickRule.scope.installModules(TestModule())
     val context = ApplicationProvider.getApplicationContext<Context>()
-    db = Room.inMemoryDatabaseBuilder(context, RemoteDb::class.java).build()
+    db = Room.inMemoryDatabaseBuilder(context, Database::class.java).build()
     dao = db.connectionDao()
 
     verifier = toothpickRule.getInstance(ConnectivityVerifier::class.java)

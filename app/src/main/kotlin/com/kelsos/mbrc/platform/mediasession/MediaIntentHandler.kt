@@ -3,7 +3,7 @@ package com.kelsos.mbrc.platform.mediasession
 import android.content.Intent
 import android.view.KeyEvent
 import com.kelsos.mbrc.events.UserAction
-import com.kelsos.mbrc.events.bus.RxBus
+import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -11,7 +11,9 @@ import javax.inject.Singleton
 @Singleton
 class MediaIntentHandler
 @Inject
-constructor(private val bus: RxBus) {
+constructor(
+  private val userActionUseCase: UserActionUseCase
+) {
   private var previousClick: Long = 0
 
   init {
@@ -20,15 +22,19 @@ constructor(private val bus: RxBus) {
 
   fun handleMediaIntent(mediaIntent: Intent?): Boolean {
     var result = false
-    if (mediaIntent?.action == Intent.ACTION_MEDIA_BUTTON) {
-      val extras = mediaIntent.extras
-      val keyEvent = extras?.get(Intent.EXTRA_KEY_EVENT) as KeyEvent?
+    val intent = mediaIntent ?: return false
+    val action = intent.action
 
-      if (keyEvent?.action != KeyEvent.ACTION_DOWN) {
+    if (action == Intent.ACTION_MEDIA_BUTTON) {
+      val extras = intent.extras ?: return false
+
+      val event = extras.get(Intent.EXTRA_KEY_EVENT) as KeyEvent? ?: return false
+
+      if (event.action != KeyEvent.ACTION_DOWN) {
         return false
       }
 
-      result = when (keyEvent.keyCode) {
+      result = when (event.keyCode) {
         KeyEvent.KEYCODE_HEADSETHOOK -> {
           val currentClick = System.currentTimeMillis()
           if (currentClick - previousClick < DOUBLE_CLICK_INTERVAL) {
@@ -38,12 +44,14 @@ constructor(private val bus: RxBus) {
           postAction(UserAction(Protocol.PlayerPlayPause, true))
         }
         KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE ->
+
           postAction(UserAction(Protocol.PlayerPlayPause, true))
         KeyEvent.KEYCODE_MEDIA_PLAY -> postAction(UserAction(Protocol.PlayerPlay, true))
         KeyEvent.KEYCODE_MEDIA_PAUSE -> postAction(UserAction(Protocol.PlayerPause, true))
         KeyEvent.KEYCODE_MEDIA_STOP -> postAction(UserAction(Protocol.PlayerStop, true))
         KeyEvent.KEYCODE_MEDIA_NEXT -> postAction(UserAction(Protocol.PlayerNext, true))
-        KeyEvent.KEYCODE_MEDIA_PREVIOUS -> postAction(UserAction(Protocol.PlayerPrevious, true))
+        KeyEvent.KEYCODE_MEDIA_PREVIOUS ->
+          postAction(UserAction(Protocol.PlayerPrevious, true))
         else -> false
       }
     }
@@ -51,7 +59,7 @@ constructor(private val bus: RxBus) {
   }
 
   private fun postAction(action: UserAction): Boolean {
-    bus.post(action)
+    userActionUseCase.perform(action)
     return true
   }
 

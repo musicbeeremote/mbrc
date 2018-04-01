@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.interfaces.data.RemoteDataSource.Companion.LIMIT
 import com.kelsos.mbrc.networking.client.GenericSocketMessage
 import com.kelsos.mbrc.networking.client.ResponseWithPayload
+import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Page
 import com.kelsos.mbrc.networking.protocol.PageRange
 import kotlinx.coroutines.flow.Flow

@@ -7,7 +7,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import timber.log.Timber
 
-class NowPlayingTouchListener(context: Context, private val onLongClick: (Boolean) -> Unit) :
+class NowPlayingTouchListener(
+  context: Context,
+  private val onLongClick: (Boolean) -> Unit
+) :
   OnItemTouchListener {
   private val gestureDetector: GestureDetector
 
@@ -24,8 +27,7 @@ class NowPlayingTouchListener(context: Context, private val onLongClick: (Boolea
     )
   }
 
-  override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
-  }
+  override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) = Unit
 
   override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
     gestureDetector.onTouchEvent(e)
@@ -38,6 +40,5 @@ class NowPlayingTouchListener(context: Context, private val onLongClick: (Boolea
     return false
   }
 
-  override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-  }
+  override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) = Unit
 }

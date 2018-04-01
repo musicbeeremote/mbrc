@@ -30,7 +30,13 @@ interface AlbumDao {
   @Query("delete from album where date_added < :added")
   fun removePreviousEntries(added: Long)
 
-  @Query("select * from album where artist = :artist order by album asc")
+  @Query(
+    """
+      select distinct album.album, album.artist, album.id, album.date_added, album.cover from album
+      inner join track on album.album = track.album and album.artist = track.album_artist
+      where album.artist = :artist order by album.album asc
+    """
+  )
   fun getAlbumsByArtist(artist: String): PagingSource<Int, AlbumEntity>
 
   @Query("select album, artist, cover as hash from album")

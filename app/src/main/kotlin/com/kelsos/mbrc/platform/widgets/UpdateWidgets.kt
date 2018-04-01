@@ -4,7 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import com.kelsos.mbrc.content.activestatus.PlayerState.State
-import com.kelsos.mbrc.content.library.tracks.TrackInfo
+import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 
 object UpdateWidgets {
   const val COVER = "com.kelsos.mbrc.platform.widgets.COVER"
@@ -39,7 +39,7 @@ object UpdateWidgets {
     context.sendBroadcast(normalIntent)
   }
 
-  fun updateTrackInfo(context: Context, info: TrackInfo) {
+  fun updateTrackInfo(context: Context, info: PlayingTrackModel) {
     val normalIntent = getIntent(WidgetNormal::class.java, context)
       .putExtra(INFO, true)
       .putExtra(TRACK_INFO, info)

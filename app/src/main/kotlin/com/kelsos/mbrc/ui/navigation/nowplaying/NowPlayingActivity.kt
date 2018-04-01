@@ -12,13 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.tracks.TrackInfo
+import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.content.nowplaying.NowPlaying
 import com.kelsos.mbrc.databinding.ActivityNowplayingBinding
 import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper
-import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingAdapter.NowPlayingListener
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
@@ -29,7 +28,7 @@ class NowPlayingActivity :
   NowPlayingView,
   OnQueryTextListener,
   OnStartDragListener,
-  NowPlayingListener {
+  NowPlayingAdapter.NowPlayingListener {
 
   private lateinit var binding: ActivityNowplayingBinding
 
@@ -141,8 +140,8 @@ class NowPlayingActivity :
     binding.nowPlayingRefreshLayout.isRefreshing = false
   }
 
-  override fun trackChanged(trackInfo: TrackInfo, scrollToTrack: Boolean) {
-    adapter.setPlayingTrack(trackInfo.path)
+  override fun trackChanged(track: PlayingTrackModel, scrollToTrack: Boolean) {
+    adapter.setPlayingTrack(track.path)
     if (scrollToTrack) {
       binding.nowPlayingTrackList.scrollToPosition(adapter.getPlayingTrackIndex())
     }
@@ -157,7 +156,6 @@ class NowPlayingActivity :
   }
 
   override fun hideLoading() {
-    binding.nowPlayingEmptyGroup.isGone = false
     binding.nowPlayingLoadingBar.isGone = true
     binding.nowPlayingRefreshLayout.isRefreshing = false
   }

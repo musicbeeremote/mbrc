@@ -7,8 +7,6 @@ import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.di.modules.AppDispatchers
-import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.ui.navigation.library.LibraryStats
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -17,14 +15,14 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class LibrarySyncInteractorImpl
-@Inject constructor(
+@Inject
+constructor(
   private val genreRepository: GenreRepository,
   private val artistRepository: ArtistRepository,
   private val albumRepository: AlbumRepository,
   private val trackRepository: TrackRepository,
   private val playlistRepository: PlaylistRepository,
   private val coverCache: CoverCache,
-  private val bus: RxBus,
   dispatchers: AppDispatchers
 ) : LibrarySyncInteractor {
 
@@ -61,7 +59,7 @@ class LibrarySyncInteractorImpl
         trackRepository.getRemote()
         playlistRepository.getRemote()
         coverCache.cache()
-        bus.post(LibraryRefreshCompleteEvent())
+
         onCompleteListener?.onSuccess(
           LibraryStats(
             genres = genreRepository.count(),

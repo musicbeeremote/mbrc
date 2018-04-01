@@ -8,7 +8,11 @@ object Repeat {
   const val NONE = "none"
   const val ONE = "one"
 
-  @StringDef(ALL, NONE, ONE)
+  @StringDef(
+    ALL,
+    NONE,
+    ONE
+  )
   @Retention(AnnotationRetention.SOURCE)
   annotation class Mode
 }

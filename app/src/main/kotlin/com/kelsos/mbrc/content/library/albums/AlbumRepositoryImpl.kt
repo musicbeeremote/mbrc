@@ -4,6 +4,8 @@ import androidx.paging.PagingData
 import com.kelsos.mbrc.content.library.covers.AlbumCover
 import com.kelsos.mbrc.content.library.covers.CachedAlbumCover
 import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.networking.ApiBase
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.epoch
 import com.kelsos.mbrc.utilities.paged
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +18,7 @@ class AlbumRepositoryImpl
 @Inject
 constructor(
   private val dao: AlbumDao,
-  private val remoteDataSource: RemoteAlbumDataSource,
+  private val api: ApiBase,
   private val dispatchers: AppDispatchers
 ) : AlbumRepository {
   private val mapper = AlbumDtoMapper()
@@ -38,7 +40,7 @@ constructor(
       entry.album + entry.artist to CachedAlbumCover(entry.id, entry.cover)
     }
     withContext(dispatchers.io) {
-      remoteDataSource.fetch()
+      api.getAllPages(Protocol.LibraryBrowseAlbums, AlbumDto::class)
         .onCompletion {
           dao.removePreviousEntries(added)
         }

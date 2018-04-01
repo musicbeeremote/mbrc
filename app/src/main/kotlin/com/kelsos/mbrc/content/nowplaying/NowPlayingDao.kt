@@ -19,10 +19,8 @@ interface NowPlayingDao {
   fun getAll(): PagingSource<Int, NowPlayingEntity>
 
   @Query(
-    """
-    select * from now_playing
-    where title like '%' || :term || '%' or artist like '%' || :term || '%'
-    """
+    "select * from now_playing where title " +
+      "like '%' || :term || '%' or artist like '%' || :term || '%'"
   )
   fun search(term: String): PagingSource<Int, NowPlayingEntity>
 

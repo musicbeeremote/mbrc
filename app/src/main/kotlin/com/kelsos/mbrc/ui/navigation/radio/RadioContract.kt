@@ -10,8 +10,7 @@ interface RadioView : BaseView {
   fun error(error: Throwable)
   fun radioPlayFailed()
   fun radioPlaySuccessful()
-  fun showLoading()
-  fun hideLoading()
+  fun loading(visible: Boolean)
 }
 
 interface RadioPresenter : Presenter<RadioView> {

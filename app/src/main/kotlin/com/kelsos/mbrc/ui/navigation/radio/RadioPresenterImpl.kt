@@ -24,14 +24,14 @@ constructor(
   private lateinit var radios: Flow<PagingData<RadioStation>>
 
   override fun load() {
-    view().showLoading()
+    view().loading(true)
     scope.launch {
       try {
         onRadiosLoaded(radioRepository.getAndSaveRemote())
       } catch (e: Exception) {
         view().error(e)
       }
-      view().hideLoading()
+      view().loading(false)
     }
   }
 
@@ -43,14 +43,14 @@ constructor(
   }
 
   override fun refresh() {
-    view().showLoading()
+    view().loading(true)
     scope.launch {
       try {
         onRadiosLoaded(radioRepository.getAndSaveRemote())
       } catch (e: Exception) {
         view().error(e)
       }
-      view().hideLoading()
+      view().loading(false)
     }
   }
 

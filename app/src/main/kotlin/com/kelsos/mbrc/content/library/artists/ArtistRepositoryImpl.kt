@@ -2,6 +2,8 @@ package com.kelsos.mbrc.content.library.artists
 
 import androidx.paging.PagingData
 import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.networking.ApiBase
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.epoch
 import com.kelsos.mbrc.utilities.paged
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +16,7 @@ class ArtistRepositoryImpl
 @Inject
 constructor(
   private val dao: ArtistDao,
-  private val remoteDataSource: RemoteArtistDataSource,
+  private val api: ApiBase,
   private val dispatchers: AppDispatchers
 ) : ArtistRepository {
 
@@ -34,7 +36,7 @@ constructor(
   override suspend fun getRemote() {
     withContext(dispatchers.io) {
       val added = epoch()
-      remoteDataSource.fetch()
+      api.getAllPages(Protocol.LibraryBrowseArtists, ArtistDto::class)
         .onCompletion {
           dao.removePreviousEntries(added)
         }

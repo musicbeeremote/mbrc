@@ -113,7 +113,6 @@ class BrowseArtistFragment : Fragment(), BrowseArtistView, MenuItemSelectedListe
   }
 
   override fun hideLoading() {
-    binding.libraryBrowserEmptyGroup.isGone = false
     binding.libraryBrowserLoadingBar.isGone = true
   }
 }

@@ -4,8 +4,10 @@ import android.content.SharedPreferences
 import android.content.res.Resources
 import androidx.lifecycle.LiveData
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionModel
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -15,8 +17,17 @@ constructor(
   private val connectionDao: ConnectionDao,
   private val preferences: SharedPreferences,
   private val resources: Resources,
-  private val dispatchers: AppDispatchers
+  private val dispatchers: AppDispatchers,
+  private val defaultSettingsLiveDataProvider: DefaultSettingsLiveDataProvider
 ) : ConnectionRepository {
+
+  init {
+    runBlocking {
+      getDefault()?.let {
+        defaultSettingsLiveDataProvider.update(it)
+      }
+    }
+  }
 
   override suspend fun save(settings: ConnectionSettingsEntity) = withContext(dispatchers.db) {
 

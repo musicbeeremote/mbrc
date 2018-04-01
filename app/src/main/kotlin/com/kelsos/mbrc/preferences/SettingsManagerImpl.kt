@@ -38,6 +38,7 @@ constructor(
   }
 
   @SettingsManager.CallAction
+
   override fun getCallAction(): String = preferences.getString(
     getKey(R.string.settings_key_incoming_call_action), NONE
   ) ?: NONE
@@ -59,7 +60,10 @@ constructor(
   }
 
   override suspend fun shouldDisplayOnlyAlbumArtists(): Boolean {
-    return preferences.getBoolean(getKey(R.string.settings_key_album_artists_only), false)
+    return preferences.getBoolean(
+      getKey(R.string.settings_key_album_artists_only),
+      false
+    )
   }
 
   override fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean) {

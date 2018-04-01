@@ -53,7 +53,6 @@ class HelpFragment : Fragment() {
   }
 
   companion object {
-
     fun newInstance(): HelpFragment {
       return HelpFragment()
     }

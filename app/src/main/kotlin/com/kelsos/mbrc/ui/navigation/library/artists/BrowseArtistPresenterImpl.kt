@@ -5,12 +5,9 @@ import androidx.paging.cachedIn
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
-import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.SettingsManager
-import com.kelsos.mbrc.ui.navigation.library.ArtistTabRefreshEvent
 import com.kelsos.mbrc.ui.navigation.library.LibrarySearchModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -22,7 +19,6 @@ import javax.inject.Inject
 class BrowseArtistPresenterImpl
 @Inject
 constructor(
-  private val bus: RxBus,
   private val repository: ArtistRepository,
   private val settingsManager: SettingsManager,
   private val librarySyncInteractor: LibrarySyncInteractor,
@@ -38,13 +34,6 @@ constructor(
     scope.launch {
       searchModel.term.collect { term -> updateUi(term) }
     }
-    bus.register(this, LibraryRefreshCompleteEvent::class.java) { load() }
-    bus.register(this, ArtistTabRefreshEvent::class.java) { load() }
-  }
-
-  override fun detach() {
-    super.detach()
-    bus.unregister(this)
   }
 
   override fun load() {

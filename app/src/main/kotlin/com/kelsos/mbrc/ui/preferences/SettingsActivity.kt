@@ -3,17 +3,13 @@ package com.kelsos.mbrc.ui.preferences
 import android.os.Bundle
 import android.view.MenuItem
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
-import javax.inject.Inject
 
 class SettingsActivity : BaseActivity() {
 
-  @Inject
-  lateinit var bus: RxBus
   private lateinit var scope: Scope
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +21,7 @@ class SettingsActivity : BaseActivity() {
 
     setupToolbar(getString(R.string.nav_settings))
 
-    val fragment = SettingsFragment.newInstance(bus)
+    val fragment = SettingsFragment.newInstance()
     supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
   }
 

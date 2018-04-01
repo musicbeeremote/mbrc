@@ -5,7 +5,6 @@ import androidx.core.view.isGone
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.radios.RadioStation
 import com.kelsos.mbrc.databinding.ActivityRadioBinding
@@ -38,7 +37,6 @@ class RadioActivity :
     binding = ActivityRadioBinding.inflate(layoutInflater)
     setContentView(binding.root)
     Toothpick.inject(this, scope)
-
     super.setup()
     binding.radioStationsRefreshLayout.setOnRefreshListener(this)
     binding.radioStationsStationsList.adapter = adapter
@@ -65,7 +63,7 @@ class RadioActivity :
   }
 
   override fun error(error: Throwable) {
-    Snackbar.make(binding.root, R.string.radio__loading_failed, Snackbar.LENGTH_SHORT).show()
+    showSnackbar(R.string.radio__loading_failed)
   }
 
   override fun onRadioPressed(path: String) {
@@ -77,20 +75,18 @@ class RadioActivity :
   }
 
   override fun radioPlayFailed() {
-    Snackbar.make(binding.root, R.string.radio__play_failed, Snackbar.LENGTH_SHORT).show()
+    showSnackbar(R.string.radio__play_failed)
   }
 
   override fun radioPlaySuccessful() {
-    Snackbar.make(binding.root, R.string.radio__play_successful, Snackbar.LENGTH_SHORT).show()
+    showSnackbar(R.string.radio__play_successful)
   }
 
-  override fun showLoading() {
-  }
-
-  override fun hideLoading() {
-    binding.radioStationsEmptyGroup.isGone = false
-    binding.radioStationsLoadingBar.isGone = true
-    binding.radioStationsRefreshLayout.isRefreshing = false
+  override fun loading(visible: Boolean) {
+    if (!visible) {
+      binding.radioStationsLoadingBar.isGone = true
+      binding.radioStationsRefreshLayout.isRefreshing = false
+    }
   }
 
   @javax.inject.Scope

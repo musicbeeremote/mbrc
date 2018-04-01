@@ -8,7 +8,6 @@ import javax.inject.Inject
 
 class ServiceCheckerImpl
 @Inject constructor(
-
   private val application: Application
 ) : ServiceChecker {
 

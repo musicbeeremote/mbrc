@@ -5,6 +5,11 @@ import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.ActivityLyricsBinding
+import com.kelsos.mbrc.di.close
+import com.kelsos.mbrc.di.inject
+import com.kelsos.mbrc.di.modules
+import com.kelsos.mbrc.di.scope
+import com.kelsos.mbrc.di.scopes
 import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
 import toothpick.Scope
 import toothpick.Toothpick
@@ -13,64 +18,54 @@ import javax.inject.Inject
 
 class LyricsActivity : BaseNavigationActivity(), LyricsView {
 
+  override fun active(): Int = R.id.nav_lyrics
+
   @Inject
   lateinit var presenter: LyricsPresenter
 
   private lateinit var scope: Scope
-  private lateinit var adapter: LyricsAdapter
+  private val lyricsAdapter: LyricsAdapter by lazy { LyricsAdapter() }
 
   private lateinit var binding: ActivityLyricsBinding
 
-  public override fun onCreate(savedInstanceState: Bundle?) {
-    scope = Toothpick.openScopes(application, PRESENTER_SCOPE, this)
-    scope.installModules(SmoothieActivityModule(this), LyricsModule())
-    super.onCreate(savedInstanceState)
-    binding = ActivityLyricsBinding.inflate(layoutInflater)
-    setContentView(binding.root)
-    Toothpick.inject(this, scope)
-
-    super.setup()
+  private fun setupRecycler() {
     val lyricsRecycler = binding.lyricsLyricsList
     val layoutManager = LinearLayoutManager(this)
-    adapter = LyricsAdapter()
+    val adapter = LyricsAdapter()
     lyricsRecycler.setHasFixedSize(true)
     lyricsRecycler.layoutManager = layoutManager
     lyricsRecycler.adapter = adapter
   }
 
+  public override fun onCreate(savedInstanceState: Bundle?) {
+    scope(PRESENTER_SCOPE, { LyricsModule() })
+    scope = scopes(application, PRESENTER_SCOPE, this).modules(SmoothieActivityModule(this))
+
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_lyrics)
+    scope.inject(this)
+    super.setup()
+    setupRecycler()
+    presenter.attach(this)
+  }
+
   override fun onDestroy() {
-    Toothpick.closeScope(this)
+    presenter.detach()
+    scope.close()
+
     if (isFinishing) {
       Toothpick.closeScope(PRESENTER_SCOPE)
     }
     super.onDestroy()
   }
 
-  override fun onStart() {
-    super.onStart()
-    presenter.attach(this)
-    presenter.load()
-  }
-
-  override fun onStop() {
-    super.onStop()
-    presenter.detach()
-  }
-
   override fun updateLyrics(lyrics: List<String>) {
     binding.lyricsEmptyGroup.isGone = lyrics.isNotEmpty()
-    adapter.updateLyrics(lyrics)
+    lyricsAdapter.submitList(lyrics)
   }
-
-  override fun showNoLyrics() {
-    binding.lyricsEmptyGroup.isGone = false
-    adapter.clear()
-  }
-
-  override fun active(): Int = R.id.nav_lyrics
 
   @javax.inject.Scope
-  @Target(AnnotationTarget.TYPE)
+  @Target(AnnotationTarget.CLASS)
   @Retention(AnnotationRetention.RUNTIME)
   annotation class Presenter
 

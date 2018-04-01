@@ -20,9 +20,7 @@ import timber.log.Timber
 import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class RemoteService : Service() {
 
   private val controllerBinder = ControllerBinder()

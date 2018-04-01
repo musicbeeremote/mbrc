@@ -2,7 +2,6 @@ package com.kelsos.mbrc.ui.navigation.library
 
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor.OnCompleteListener
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.SettingsManager
 import kotlinx.coroutines.launch
@@ -12,7 +11,6 @@ import javax.inject.Inject
 class LibraryPresenterImpl
 @Inject constructor(
   private val settingsManager: SettingsManager,
-  private val bus: RxBus,
   private val librarySyncInteractor: LibrarySyncInteractor,
   private val searchModel: LibrarySearchModel
 ) : LibraryPresenter,
@@ -69,7 +67,6 @@ class LibraryPresenterImpl
 
   override fun setArtistPreference(albumArtistOnly: Boolean) {
     settingsManager.setShouldDisplayOnlyAlbumArtist(albumArtistOnly)
-    bus.post(ArtistTabRefreshEvent())
   }
 
   override fun search(keyword: String) {

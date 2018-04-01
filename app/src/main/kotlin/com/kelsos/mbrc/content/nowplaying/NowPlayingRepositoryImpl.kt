@@ -2,6 +2,8 @@ package com.kelsos.mbrc.content.nowplaying
 
 import androidx.paging.PagingData
 import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.networking.ApiBase
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.epoch
 import com.kelsos.mbrc.utilities.paged
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +15,7 @@ import javax.inject.Inject
 class NowPlayingRepositoryImpl
 @Inject constructor(
   private val dao: NowPlayingDao,
-  private val remoteDataSource: RemoteNowPlayingDataSource,
+  private val api: ApiBase,
   private val dispatchers: AppDispatchers
 ) : NowPlayingRepository {
   private val mapper = NowPlayingDtoMapper()
@@ -28,12 +30,14 @@ class NowPlayingRepositoryImpl
   override suspend fun getRemote() {
     val added = epoch()
     withContext(dispatchers.io) {
-      remoteDataSource.fetch().onCompletion {
-        dao.removePreviousEntries(added)
-      }.collect { item ->
-        val list = item.map { mapper.map(it).apply { dateAdded = added } }
-        dao.insertAll(list)
-      }
+      api.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class)
+        .onCompletion {
+          dao.removePreviousEntries(added)
+        }
+        .collect { item ->
+          val list = item.map { mapper.map(it).apply { dateAdded = added } }
+          dao.insertAll(list)
+        }
     }
   }
 
@@ -43,4 +47,8 @@ class NowPlayingRepositoryImpl
   override suspend fun cacheIsEmpty(): Boolean = dao.count() == 0L
 
   override suspend fun count(): Long = dao.count()
+
+  override fun move(from: Int, to: Int) {
+    TODO("implement move")
+  }
 }

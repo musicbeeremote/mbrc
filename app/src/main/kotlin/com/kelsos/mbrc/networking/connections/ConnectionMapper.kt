@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.networking.connections
 
 import com.kelsos.mbrc.interfaces.data.Mapper
-import com.kelsos.mbrc.networking.DiscoveryMessage
+import com.kelsos.mbrc.networking.discovery.DiscoveryMessage
 
 class ConnectionMapper : Mapper<DiscoveryMessage, ConnectionSettingsEntity> {
   override fun map(from: DiscoveryMessage): ConnectionSettingsEntity {

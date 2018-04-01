@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.UiListConnectionSettingsBinding
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
+import java.util.ArrayList
 
 class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewHolder>() {
   private val data: MutableList<ConnectionSettingsEntity>

@@ -82,7 +82,6 @@ constructor(context: Activity) :
   }
 
   override fun onItemMove(from: Int, to: Int): Boolean {
-    swapPositions(from, to)
     listener?.onMove(from, to)
     notifyItemMoved(from, to)
 

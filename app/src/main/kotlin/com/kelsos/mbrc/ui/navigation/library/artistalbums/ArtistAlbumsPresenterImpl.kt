@@ -17,7 +17,8 @@ class ArtistAlbumsPresenterImpl
 constructor(
   private val repository: AlbumRepository,
   private val queue: QueueHandler
-) : BasePresenter<ArtistAlbumsView>(), ArtistAlbumsPresenter {
+) : BasePresenter<ArtistAlbumsView>(),
+  ArtistAlbumsPresenter {
 
   private lateinit var albums: Flow<PagingData<Album>>
 

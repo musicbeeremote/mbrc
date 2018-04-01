@@ -3,6 +3,7 @@ package com.kelsos.mbrc.networking
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.InetAddressMapper
 import com.kelsos.mbrc.networking.protocol.Protocol

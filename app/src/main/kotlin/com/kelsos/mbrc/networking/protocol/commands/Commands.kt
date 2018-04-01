@@ -5,8 +5,8 @@ import android.content.Intent
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.networking.SocketActivityChecker
-import com.kelsos.mbrc.networking.SocketClient
-import com.kelsos.mbrc.networking.SocketMessage
+import com.kelsos.mbrc.networking.client.MessageQueue
+import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.platform.RemoteService
 import timber.log.Timber
@@ -14,13 +14,13 @@ import javax.inject.Inject
 
 class ProtocolPingHandle
 @Inject constructor(
-  private val client: SocketClient,
+  private val messageQueue: MessageQueue,
   private var activityChecker: SocketActivityChecker
 ) : ICommand {
 
   override fun execute(e: IEvent) {
     activityChecker.ping()
-    client.sendData(SocketMessage.create(Protocol.PONG))
+    messageQueue.queue(SocketMessage.create(Protocol.PONG))
   }
 }
 

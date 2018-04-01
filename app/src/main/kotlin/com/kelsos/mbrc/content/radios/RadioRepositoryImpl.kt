@@ -2,6 +2,8 @@ package com.kelsos.mbrc.content.radios
 
 import androidx.paging.PagingData
 import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.networking.ApiBase
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.epoch
 import com.kelsos.mbrc.utilities.paged
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +16,7 @@ class RadioRepositoryImpl
 @Inject
 constructor(
   private val dao: RadioStationDao,
-  private val remoteDataSource: RemoteRadioDataSource,
+  private val api: ApiBase,
   private val dispatchers: AppDispatchers
 ) : RadioRepository {
   private val mapper = RadioDtoMapper()
@@ -28,14 +30,15 @@ constructor(
   }
 
   override suspend fun getRemote() {
-    val added = epoch()
     withContext(dispatchers.io) {
-      remoteDataSource.fetch().onCompletion {
-        dao.removePreviousEntries(added)
-      }.collect { radios ->
-        val data = radios.map { mapper.map(it).apply { dateAdded = added } }
-        dao.insertAll(data)
-      }
+      val added = epoch()
+      api.getAllPages(Protocol.RadioStations, RadioStationDto::class)
+        .onCompletion {
+          dao.removePreviousEntries(added)
+        }.collect { radios ->
+          val data = radios.map { mapper.map(it).apply { dateAdded = added } }
+          dao.insertAll(data)
+        }
     }
   }
 

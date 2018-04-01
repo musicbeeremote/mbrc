@@ -34,13 +34,9 @@ class SimpleItemTouchHelper(private val adapter: ItemTouchHelperAdapter) :
     adapter.onItemDismiss(viewHolder.bindingAdapterPosition)
   }
 
-  override fun isLongPressDragEnabled(): Boolean {
-    return false
-  }
+  override fun isLongPressDragEnabled(): Boolean = false
 
-  override fun isItemViewSwipeEnabled(): Boolean {
-    return true
-  }
+  override fun isItemViewSwipeEnabled(): Boolean = true
 
   override fun onChildDrawOver(
     c: Canvas,

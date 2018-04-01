@@ -5,8 +5,6 @@ import androidx.paging.cachedIn
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
-import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.ui.navigation.library.LibrarySearchModel
@@ -20,7 +18,6 @@ import javax.inject.Inject
 class BrowseAlbumPresenterImpl
 @Inject
 constructor(
-  private val bus: RxBus,
   private val repository: AlbumRepository,
   private val librarySyncInteractor: LibrarySyncInteractor,
   private val queueHandler: QueueHandler,
@@ -56,12 +53,6 @@ constructor(
     scope.launch {
       searchModel.term.collect { term -> updateUi(term) }
     }
-    bus.register(this, LibraryRefreshCompleteEvent::class.java) { load() }
-  }
-
-  override fun detach() {
-    super.detach()
-    bus.unregister(this)
   }
 
   override fun load() {

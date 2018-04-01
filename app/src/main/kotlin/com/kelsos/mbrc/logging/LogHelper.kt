@@ -103,5 +103,5 @@ object LogHelper {
     }
   }
 
-  const val LOG_ZIP = "mbrc_logs.zip"
+  private const val LOG_ZIP = "mbrc_logs.zip"
 }

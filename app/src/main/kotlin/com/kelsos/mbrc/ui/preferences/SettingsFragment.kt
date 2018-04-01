@@ -10,6 +10,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
+import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.os.HandlerCompat
 import androidx.preference.CheckBoxPreference
@@ -18,7 +19,6 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.logging.FileLoggingTree
 import com.kelsos.mbrc.platform.RemoteService
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerActivity
@@ -27,7 +27,6 @@ import com.kelsos.mbrc.utilities.RemoteUtils.getVersion
 import timber.log.Timber
 
 class SettingsFragment : PreferenceFragmentCompat() {
-  private var bus: RxBus? = null
 
   private val permissionLauncher = registerForActivityResult(RequestPermission()) { isGranted ->
     if (isGranted) {
@@ -106,21 +105,30 @@ class SettingsFragment : PreferenceFragmentCompat() {
   }
 
   private fun showLicenseDialog() {
-    val args = Bundle()
-    args.putString(WebViewDialog.ARG_URL, "file:///android_asset/license.html")
-    args.putInt(WebViewDialog.ARG_TITLE, R.string.musicbee_remote_license_title)
-    val dialog = WebViewDialog()
-    dialog.arguments = args
-    dialog.show(requireActivity().supportFragmentManager, "license_dialog")
+    showWebViewDialog(
+      "file:///android_asset/license.html",
+      R.string.musicbee_remote_license_title,
+      "license_dialog"
+    )
   }
 
   private fun showOpenSourceLicenseDialog() {
-    val args = Bundle()
-    args.putString(WebViewDialog.ARG_URL, "file:///android_asset/licenses.html")
-    args.putInt(WebViewDialog.ARG_TITLE, R.string.open_source_licenses_title)
+    showWebViewDialog(
+      "file:///android_asset/licenses.html",
+      R.string.open_source_licenses_title,
+      "licenses_dialogs"
+    )
+  }
+
+  private fun showWebViewDialog(url: String, @StringRes titleResId: Int, tag: String) {
     val dialog = WebViewDialog()
-    dialog.arguments = args
-    dialog.show(requireActivity().supportFragmentManager, "licenses_dialogs")
+    dialog.arguments = Bundle().apply {
+      putString(WebViewDialog.ARG_URL, url)
+      putInt(WebViewDialog.ARG_TITLE, titleResId)
+    }
+    requireActivity().let {
+      dialog.show(it.supportFragmentManager, tag)
+    }
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
@@ -129,10 +137,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
       true
     }
     else -> super.onOptionsItemSelected(item)
-  }
-
-  fun setBus(bus: RxBus) {
-    this.bus = bus
   }
 
   private fun restartService() {
@@ -158,10 +162,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
   companion object {
 
-    fun newInstance(bus: RxBus): SettingsFragment {
-      val fragment = SettingsFragment()
-      fragment.setBus(bus)
-      return fragment
-    }
+    fun newInstance(): SettingsFragment = SettingsFragment()
   }
 }

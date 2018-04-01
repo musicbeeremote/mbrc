@@ -10,7 +10,7 @@ import android.widget.RemoteViews
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerState.State
-import com.kelsos.mbrc.content.library.tracks.TrackInfo
+import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.NEXT
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PLAY
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PREVIOUS
@@ -44,7 +44,8 @@ class WidgetNormal : AppWidgetProvider() {
       val path = extras.getString(UpdateWidgets.COVER_PATH, "")
       updateCover(context, widgetManager, widgetsIds, path)
     } else if (extras.getBoolean(UpdateWidgets.INFO, false)) {
-      val info = extras.getParcelable<TrackInfo>(UpdateWidgets.TRACK_INFO)
+      val info =
+        extras.getParcelable<PlayingTrackModel>(UpdateWidgets.TRACK_INFO)
       info?.run {
         updateInfo(context, widgetManager, widgetsIds, this)
       }
@@ -90,7 +91,7 @@ class WidgetNormal : AppWidgetProvider() {
     context: Context?,
     widgetManager: AppWidgetManager,
     widgetsIds: IntArray,
-    info: TrackInfo
+    info: PlayingTrackModel
   ) {
     if (context == null) {
       return

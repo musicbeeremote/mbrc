@@ -56,9 +56,12 @@ class SettingsDialogFragment : DialogFragment() {
 
         val portNum = if (TextUtils.isEmpty(portText)) 0 else Integer.parseInt(portText)
         if (isValid(portNum) && shouldIClose) {
-          settings.name = computerName
-          settings.address = hostname
-          settings.port = portNum
+          settings.apply {
+            name = computerName
+            address = hostname
+            port = portNum
+          }
+
           mListener?.onSave(settings)
           dialog.dismiss()
         }
@@ -112,11 +115,12 @@ class SettingsDialogFragment : DialogFragment() {
       settings: ConnectionSettingsEntity,
       fm: FragmentManager
     ): SettingsDialogFragment {
-      val fragment = SettingsDialogFragment()
-      fragment.fm = fm
-      fragment.setConnectionSettings(settings)
-      fragment.edit = true
-      return fragment
+
+      return SettingsDialogFragment().apply {
+        this.fm = fm
+        setConnectionSettings(settings)
+        edit = true
+      }
     }
 
     fun create(fm: FragmentManager): SettingsDialogFragment {

@@ -1,43 +1,55 @@
 package com.kelsos.mbrc.ui.navigation.lyrics
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
-import com.kelsos.mbrc.R
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import com.kelsos.mbrc.databinding.UiListLyricsItemBinding
+import com.kelsos.mbrc.ui.BindableViewHolder
 
-class LyricsAdapter(
-  private var data: List<String> = emptyList()
-) : RecyclerView.Adapter<LyricsAdapter.ViewHolder>() {
+class LyricsAdapter : ListAdapter<String, LyricsAdapter.ViewHolder>(DIFF) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-    val view =
-      LayoutInflater.from(parent.context).inflate(R.layout.ui_list_lyrics_item, parent, false)
-    return ViewHolder(view)
+    return ViewHolder.create(parent)
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val str = data[position]
-    holder.title.text = str
+    holder.bindTo(getItem(position))
   }
 
-  fun updateLyrics(lyrics: List<String>) {
-    this.data = lyrics
-    notifyDataSetChanged()
+  class ViewHolder(
+    binding: UiListLyricsItemBinding
+  ) : BindableViewHolder<String>(binding) {
+
+    private val title: TextView = binding.text1
+
+    override fun bindTo(item: String) {
+      title.text = item
+    }
+
+    override fun clear() {
+      title.text = ""
+    }
+
+    companion object {
+      fun create(parent: ViewGroup): ViewHolder {
+        val binding = UiListLyricsItemBinding.inflate(LayoutInflater.from(parent.context))
+        return ViewHolder(binding)
+      }
+    }
   }
 
-  override fun getItemCount(): Int {
-    return data.size
-  }
+  companion object {
+    val DIFF = object : DiffUtil.ItemCallback<String>() {
 
-  class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val title: TextView = itemView.findViewById(android.R.id.text1)
-  }
+      override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
+        return oldItem == newItem
+      }
 
-  fun clear() {
-    if (data.isNotEmpty()) {
-      data = emptyList()
+      override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
+        return oldItem == newItem
+      }
     }
   }
 }

@@ -4,7 +4,14 @@ import androidx.annotation.StringDef
 import org.threeten.bp.Instant
 
 interface SettingsManager {
-  @CallAction fun getCallAction(): String
+  @CallAction
+  fun getCallAction(): String
+  suspend fun shouldDisplayOnlyAlbumArtists(): Boolean
+  fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean)
+  fun shouldShowChangeLog(): Boolean
+  fun isPluginUpdateCheckEnabled(): Boolean
+  fun getLastUpdated(required: Boolean = false): Instant
+  fun setLastUpdated(lastChecked: Instant, required: Boolean = false)
 
   @StringDef(
     NONE,
@@ -21,10 +28,4 @@ interface SettingsManager {
     const val STOP = "stop"
     const val REDUCE = "reduce"
   }
-  suspend fun shouldDisplayOnlyAlbumArtists(): Boolean
-  fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean)
-  fun shouldShowChangeLog(): Boolean
-  fun isPluginUpdateCheckEnabled(): Boolean
-  fun getLastUpdated(required: Boolean = false): Instant
-  fun setLastUpdated(lastChecked: Instant, required: Boolean = false)
 }
