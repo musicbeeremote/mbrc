@@ -1,6 +1,5 @@
 package com.kelsos.mbrc
 
-import android.arch.lifecycle.Observer
 import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
 import com.kelsos.mbrc.interfaces.SimpleLifecycle
 import com.kelsos.mbrc.networking.client.IClientConnectionManager
@@ -20,16 +19,12 @@ constructor(
 ) : SimpleLifecycle {
 
   init {
-    defaultSettingsLiveDataProvider.get().observe(this, Observer {
-      if (it != null) {
-        return@Observer
-      }
-
+    defaultSettingsLiveDataProvider.observe(this) {
       clientConnectionManager.run {
         stop()
         start()
       }
-    })
+    }
   }
 
   private var action: SyncStartAction? = null
@@ -48,6 +43,7 @@ constructor(
     Timber.v("Stopping remote core")
     sessionNotificationManager.cancelNotification()
     clientConnectionManager.stop()
+    defaultSettingsLiveDataProvider.removeObservers(this)
   }
 
   fun attach(hooks: ForegroundHooks) {
