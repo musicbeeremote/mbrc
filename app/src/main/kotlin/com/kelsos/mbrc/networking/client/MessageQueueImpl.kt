@@ -47,13 +47,17 @@ constructor() : MessageQueue {
   override fun run() {
     running = true
 
-    try {
-      //noinspection InfiniteLoopStatement
-      while (true) {
-        onMessageAvailable(messageQueue.take())
+    //noinspection InfiniteLoopStatement
+    while (true) {
+      try {
+        onMessageAvailable(messageQueue.take().also {
+          Timber.v("message -> ${it.context}")
+        })
+      } catch (e: InterruptedException) {
+        Timber.d(e, "Failed to execute command")
       }
-    } catch (e: InterruptedException) {
-      Timber.d(e, "Failed to execute command")
     }
+
+
   }
 }
