@@ -5,6 +5,8 @@ import com.kelsos.mbrc.interfaces.SimpleLifecycle
 import com.kelsos.mbrc.networking.client.IClientConnectionManager
 import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -20,8 +22,12 @@ constructor(
   init {
     defaultSettingsLiveDataProvider.observe(this) {
       clientConnectionManager.run {
-        stop()
-        start()
+        setDefaultConnectionSettings(it)
+        runBlocking {
+          stop()
+          delay(1500)
+          start()
+        }
       }
     }
   }

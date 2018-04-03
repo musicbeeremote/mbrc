@@ -33,7 +33,9 @@ constructor(
   private lateinit var connectionSettings: ConnectionSettingsEntity
   private lateinit var onConnectionChange: (Boolean) -> Unit
 
-  private val executor = Executors.newSingleThreadExecutor { Thread(it, "socket-thread") }
+  private var executor = getExecutor()
+
+  private fun getExecutor() = Executors.newSingleThreadExecutor { Thread(it, "socket-thread") }
   private val job = SupervisorJob()
   private val context = job + executor.asCoroutineDispatcher()
   private val scope = CoroutineScope(context)
@@ -45,7 +47,6 @@ constructor(
 
   override fun setDefaultConnectionSettings(connectionSettings: ConnectionSettingsEntity) {
     this.connectionSettings = connectionSettings
-    start()
   }
 
   override fun setOnConnectionChangeListener(onConnectionChange: (Boolean) -> Unit) {
@@ -53,6 +54,16 @@ constructor(
   }
 
   override fun start() {
+
+    if (executor.isShutdown) {
+      executor = getExecutor()
+    }
+
+    if (connection?.isConnected() == true) {
+      Timber.v("connection is already active")
+      return
+    }
+
     scope.launch {
       delay(2000)
 
@@ -69,11 +80,14 @@ constructor(
           onConnectionChange(connected)
 
           if (!connected) {
-            activityChecker.stop()
+            // activityChecker.stop()
+          } else {
+            messageQueue.queue(SocketMessage.player())
           }
         }
       ) {
       }.apply {
+        messageQueue.start()
         executor.execute(this)
         activityChecker.start()
       }
@@ -81,7 +95,10 @@ constructor(
   }
 
   override fun stop() {
-    TODO("not implemented")
+    messageQueue.stop()
+    activityChecker.stop()
+    connection?.cleanupSocket()
+    executor.shutdownNow()
   }
 
   @Synchronized
@@ -162,7 +179,7 @@ constructor(
       }
 
       try {
-        with(connect()) {
+        socket = with(connect()) {
           val out = OutputStreamWriter(outputStream, "UTF-8")
           output = PrintWriter(
             BufferedWriter(
@@ -192,6 +209,7 @@ constructor(
               throw e
             }
           }
+          this
         }
       } catch (e: Exception) {
         error(e)
