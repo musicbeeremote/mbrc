@@ -23,7 +23,7 @@ class HelpFragment : Fragment() {
     val url: String
     url = try {
       val context = requireContext()
-      "http://kelsos.net/musicbeeremote/help?version=${getVersion(context)}"
+      "http://kelsos.net/musicbeeremote/help?version=${getVersion()}"
     } catch (e: PackageManager.NameNotFoundException) {
       Timber.v(e, "Failed to get version")
       "http://kelsos.net/musicbeeremote/help"

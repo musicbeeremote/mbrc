@@ -10,10 +10,10 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationCompat.Action
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
-import com.kelsos.mbrc.events.PlayStateChange
-import com.kelsos.mbrc.networking.connections.Connection
+import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.platform.ForegroundHooks
+import com.kelsos.mbrc.platform.mediasession.INotificationManager.Companion.CHANNEL_ID
+import com.kelsos.mbrc.platform.mediasession.INotificationManager.Companion.NOW_PLAYING_PLACEHOLDER
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.NEXT
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.OPEN
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PLAY
@@ -21,58 +21,36 @@ import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PREVIOUS
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.getPendingIntent
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.utilities.RemoteUtils
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
 import timber.log.Timber
-import java.io.File
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class SessionNotificationManager
 @Inject
 constructor(
   private val context: Application,
   private val sessionManager: RemoteSessionManager,
   private val settings: SettingsManager,
-  private val model: SessionStatusModel,
   private val notificationManager: NotificationManager
-) {
+) : INotificationManager {
+
+  private val previous: String by lazy { context.getString(R.string.notification_action_previous) }
+  private val play: String by lazy { context.getString(R.string.notification_action_play) }
+  private val next: String by lazy { context.getString(R.string.notification_action_next) }
+
+  private val channelName by lazy { context.getString(R.string.notification__session_channel_name) }
+  private val channelDescription by lazy {
+    context.getString(R.string.notification__session_channel_description)
+  }
+
   private var notification: Notification? = null
-  private val previous: String
-  private val play: String
-  private val next: String
   private var hooks: ForegroundHooks? = null
 
+  private var notificationData: NotificationData = NotificationData()
+
   init {
-
-//    bus.register(this, ConnectionStatusChangeEvent::class.java, { this.connectionChanged(it) })
-//    bus.register(this, CancelNotificationEvent::class.java, { this.cancelNotification() })
-    previous = context.getString(R.string.notification_action_previous)
-    play = context.getString(R.string.notification_action_play)
-    next = context.getString(R.string.notification_action_next)
-
     createNotificationChannels()
-  }
-
-  private fun coverChanged(path: String) {
-    val coverFile = File(path)
-    if (coverFile.exists()) {
-      RemoteUtils.bitmapFromFile(coverFile.absolutePath).doOnTerminate {
-        update()
-      }.subscribe({
-        model.cover = it
-      }, {
-        Timber.v(it, "failed to decode")
-        model.cover = null
-      })
-    } else {
-      model.cover = null
-      update()
-    }
-  }
-
-  private fun playStateChanged(event: PlayStateChange) {
-    model.playState = event.state
-    update()
   }
 
   private fun update() {
@@ -80,31 +58,19 @@ constructor(
     notificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification)
   }
 
-  private fun connectionChanged(event: ConnectionStatusChangeEvent) {
-    if (!settings.isNotificationControlEnabled()) {
-      Timber.v("Notification is off doing nothing")
-      return
-    }
-
-    if (event.status == Connection.OFF) {
-      cancelNotification(NOW_PLAYING_PLACEHOLDER)
-    } else {
-      notification = createBuilder().build()
-
-      notification?.let { hooks?.start(NOW_PLAYING_PLACEHOLDER, it) }
-    }
-  }
-
   private fun createNotificationChannels() {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
       return
     }
 
-    val name = context.getString(R.string.notification__session_channel_name)
-    val description = context.getString(R.string.notification__session_channel_description)
-    val channel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT)
+    val channel = NotificationChannel(
+      CHANNEL_ID,
+      channelName,
+      NotificationManager.IMPORTANCE_DEFAULT
+    )
+
     channel.apply {
-      this.description = description
+      this.description = channelDescription
       enableLights(false)
       enableVibration(false)
       setSound(null, null)
@@ -118,7 +84,7 @@ constructor(
     mediaStyle.setMediaSession(sessionManager.mediaSessionToken)
 
     val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-    val resId = if (model.playState == PlayerState.PLAYING) {
+    val resId = if (notificationData.playerState == PlayerState.PLAYING) {
       R.drawable.ic_action_pause
     } else {
       R.drawable.ic_action_play
@@ -127,24 +93,26 @@ constructor(
     builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
       .setSmallIcon(R.drawable.ic_mbrc_status)
       .setStyle(mediaStyle.setShowActionsInCompactView(1, 2))
-      .addAction(previousAction)
+      .addAction(getPreviousAction())
       .addAction(getPlayAction(resId))
-      .addAction(nextAction)
+      .addAction(getNextAction())
 
     builder.priority = NotificationCompat.PRIORITY_LOW
     builder.setOnlyAlertOnce(true)
 
-    if (model.cover != null) {
-      builder.setLargeIcon(model.cover)
+    if (notificationData.cover != null) {
+      builder.setLargeIcon(notificationData.cover)
     } else {
       val icon = BitmapFactory.decodeResource(context.resources, R.drawable.ic_image_no_cover)
       builder.setLargeIcon(icon)
     }
 
-    val info = model.track
+    val info = notificationData.trackModel
 
-    info?.let {
-      builder.setContentTitle(it.title).setContentText(it.artist).setSubText(it.album)
+    with(info) {
+      builder.setContentTitle(title)
+        .setContentText(artist)
+        .setSubText(album)
     }
 
     builder.setContentIntent(getPendingIntent(OPEN, context))
@@ -152,11 +120,10 @@ constructor(
     return builder
   }
 
-  private val previousAction: Action
-    get() {
-      val previousIntent = getPendingIntent(PREVIOUS, context)
-      return Action.Builder(R.drawable.ic_action_previous, previous, previousIntent).build()
-    }
+  private fun getPreviousAction(): Action {
+    val previousIntent = getPendingIntent(PREVIOUS, context)
+    return Action.Builder(R.drawable.ic_action_previous, previous, previousIntent).build()
+  }
 
   private fun getPlayAction(playStateIcon: Int): Action {
     val playIntent = getPendingIntent(PLAY, context)
@@ -164,23 +131,55 @@ constructor(
     return Action.Builder(playStateIcon, play, playIntent).build()
   }
 
-  private val nextAction: Action
-    get() {
-      val nextIntent = getPendingIntent(NEXT, context)
-      return Action.Builder(R.drawable.ic_action_next, next, nextIntent).build()
-    }
+  private fun getNextAction(): Action {
+    val nextIntent = getPendingIntent(NEXT, context)
+    return Action.Builder(R.drawable.ic_action_next, next, nextIntent).build()
+  }
 
-  fun cancelNotification(notificationId: Int = NOW_PLAYING_PLACEHOLDER) {
+  override fun cancel(notificationId: Int) {
     notificationManager.cancel(notificationId)
     hooks?.stop()
   }
 
-  fun setForegroundHooks(hooks: ForegroundHooks) {
+  override fun setForegroundHooks(hooks: ForegroundHooks) {
     this.hooks = hooks
   }
 
-  companion object {
-    const val NOW_PLAYING_PLACEHOLDER = 15613
-    const val CHANNEL_ID = "mbrc_session_01"
+  override fun trackChanged(playingTrack: PlayingTrackModel) {
+    async(CommonPool) {
+      notificationData = with(playingTrack.coverUrl) {
+        val cover = if (isNotEmpty()) {
+          RemoteUtils.loadBitmap(this).await()
+        } else {
+          null
+        }
+        notificationData.copy(trackModel = playingTrack, cover = cover)
+      }
+
+      update()
+    }
+  }
+
+  override fun connectionStateChanged(connected: Boolean) {
+    if (!settings.isNotificationControlEnabled()) {
+      Timber.v("Notification is off doing nothing")
+      return
+    }
+
+    if (connected) {
+      cancel(NOW_PLAYING_PLACEHOLDER)
+    } else {
+      notification = createBuilder().build().also {
+        hooks?.start(NOW_PLAYING_PLACEHOLDER, it)
+      }
+    }
+  }
+
+  override fun playerStateChanged(state: String) {
+    if (notificationData.playerState == state) {
+      return
+    }
+    notificationData = notificationData.copy(playerState = state)
+    update()
   }
 }

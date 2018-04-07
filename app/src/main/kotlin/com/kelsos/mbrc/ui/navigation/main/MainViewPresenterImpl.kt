@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingLiveDataProvider
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.mvp.BasePresenter
@@ -20,7 +21,8 @@ class MainViewPresenterImpl
   connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider,
   playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
   playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
-  trackRatingLiveDataProvider: TrackRatingLiveDataProvider
+  trackRatingLiveDataProvider: TrackRatingLiveDataProvider,
+  trackPositionLiveDataProvider: TrackPositionLiveDataProvider
 ) : BasePresenter<MainView>(), MainViewPresenter {
 
   init {
@@ -50,6 +52,14 @@ class MainViewPresenterImpl
         return@Observer
       }
       view().updateConnection(status.status)
+    })
+
+    trackPositionLiveDataProvider.get().observe(this, Observer {
+      if (it == null) {
+        return@Observer
+      }
+
+      view().updateProgress(it)
     })
   }
   override fun stop(): Boolean {

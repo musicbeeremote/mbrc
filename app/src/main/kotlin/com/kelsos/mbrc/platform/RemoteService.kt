@@ -3,9 +3,9 @@ package com.kelsos.mbrc.platform
 import android.app.Notification
 import android.app.Service
 import android.content.Intent
-import android.os.Binder
 import android.os.IBinder
-import com.kelsos.mbrc.RemoteServiceCore
+import com.kelsos.mbrc.IRemoteServiceCore
+import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
 import timber.log.Timber
 import toothpick.Scope
 import toothpick.Toothpick
@@ -13,23 +13,25 @@ import javax.inject.Inject
 
 class RemoteService : Service(), ForegroundHooks {
 
-  private val controllerBinder = ControllerBinder()
-
   @Inject
   lateinit var receiver: RemoteBroadcastReceiver
+
   @Inject
-  lateinit var core: RemoteServiceCore
+  lateinit var core: IRemoteServiceCore
+
+  @Inject
+  lateinit var notifications: SessionNotificationManager
 
   private var scope: Scope? = null
 
-  override fun onBind(intent: Intent?): IBinder = controllerBinder
+  override fun onBind(intent: Intent?): IBinder? = null
 
   override fun onCreate() {
     super.onCreate()
     scope = Toothpick.openScope(application)
     Toothpick.inject(this, scope)
     this.registerReceiver(receiver, receiver.filter())
-    core.attach(this)
+    notifications.setForegroundHooks(this)
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -56,9 +58,8 @@ class RemoteService : Service(), ForegroundHooks {
     stopForeground(true)
   }
 
-  private inner class ControllerBinder : Binder() {
-    internal val service: ControllerBinder
-      @SuppressWarnings("unused")
-      get() = this@ControllerBinder
+  override fun onTaskRemoved(rootIntent: Intent?) {
+    super.onTaskRemoved(rootIntent)
+    notifications.cancel()
   }
 }

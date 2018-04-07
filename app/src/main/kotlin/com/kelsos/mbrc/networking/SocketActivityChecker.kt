@@ -50,6 +50,6 @@ class SocketActivityChecker {
   }
 
   companion object {
-    private val DELAY = 40
+    private const val DELAY = 40
   }
 }

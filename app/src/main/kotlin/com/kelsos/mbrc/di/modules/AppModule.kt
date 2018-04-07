@@ -3,6 +3,8 @@ package com.kelsos.mbrc.di.modules
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.kelsos.mbrc.IRemoteServiceCore
+import com.kelsos.mbrc.RemoteServiceCore
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCacheImpl
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
@@ -15,6 +17,8 @@ import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvide
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProviderImpl
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProviderImpl
+import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProviderImpl
 import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingLiveDataProviderImpl
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
@@ -80,6 +84,8 @@ import com.kelsos.mbrc.networking.protocol.VolumeInteractor
 import com.kelsos.mbrc.networking.protocol.VolumeInteractorImpl
 import com.kelsos.mbrc.platform.ServiceChecker
 import com.kelsos.mbrc.platform.ServiceCheckerImpl
+import com.kelsos.mbrc.platform.mediasession.INotificationManager
+import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
 import com.kelsos.mbrc.preferences.AlbumSortingStore
 import com.kelsos.mbrc.preferences.AlbumSortingStoreImpl
 import com.kelsos.mbrc.preferences.ClientInformationStore
@@ -166,5 +172,9 @@ class AppModule : Module() {
     bindSingletonClass<UiMessageQueue> { UiMessageQueueImpl::class }
     bindSingletonClass<RemoteServiceDiscovery> { RemoteServiceDiscoveryImpl::class }
     bindSingletonClass<ServiceDiscoveryUseCase> { ServiceDiscoveryUseCaseImpl::class }
+    bindSingletonClass<TrackPositionLiveDataProvider> { TrackPositionLiveDataProviderImpl::class }
+
+    bindSingletonClass<INotificationManager> { SessionNotificationManager::class }
+    bindSingletonClass<IRemoteServiceCore> { RemoteServiceCore::class }
   }
 }
