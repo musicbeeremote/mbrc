@@ -77,7 +77,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     try {
-      val version = requireContext().getVersion()
+      val version = getVersion()
       mVersion?.summary = resources.getString(R.string.settings_version_number, version)
     } catch (e: PackageManager.NameNotFoundException) {
       Timber.d(e, "failed")

@@ -35,7 +35,13 @@ constructor(
 
     val command = commandMap[context]
     if (command == null) {
-      val commandInstance = commandFactory.create(context)
+      val commandInstance: ICommand
+      try {
+        commandInstance = commandFactory.create(context)
+      } catch (e: Exception) {
+        Timber.e(e, "While creating command")
+        return
+      }
       commandMap[context] = commandInstance
       callExecute(commandInstance, event)
     } else {

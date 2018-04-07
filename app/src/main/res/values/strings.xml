@@ -186,4 +186,6 @@
   <string name="plugin_update__description">It seems that you have connected to an older version of the plugin.\n\nSome features will not function properly unless you update the plugin to %1$s.</string>
   <string name="plugin_update__title">Plugin Update Required</string>
   <string name="update_required__content_description">Update icon</string>
+  <string name="notification__session_channel_name">MusicBee Remote</string>
+  <string name="notification__session_channel_description">MusicBee Remote controls notification</string>
 </resources>

@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.navigation.main
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingLiveDataProvider
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.mvp.BasePresenter
@@ -19,6 +20,7 @@ class MainViewPresenterImpl
   playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
   playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
   trackRatingLiveDataProvider: TrackRatingLiveDataProvider,
+  trackPositionLiveDataProvider: TrackPositionLiveDataProvider
 ) : BasePresenter<MainView>(), MainViewPresenter {
 
   init {
@@ -49,7 +51,16 @@ class MainViewPresenterImpl
       }
       view().updateConnection(status.status)
     }
+
+    trackPositionLiveDataProvider.get().observe(this) {
+      if (it == null) {
+        return@observe
+      }
+
+      view().updateProgress(it)
+    }
   }
+
   override fun stop(): Boolean {
     userActionUseCase.perform(UserAction(Protocol.PlayerStop, true))
     return true

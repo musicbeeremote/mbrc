@@ -26,33 +26,40 @@ constructor(
     val replies = incoming.split("\r\n".toRegex()).dropLastWhile(String::isEmpty)
 
     replies.forEach { message ->
-      Timber.v("message -> $message")
+      process(message)
+    }
+  }
 
-      val node = messageDeserializer.deserialize(message)
-      val context = node.path("context").textValue()
+  private fun process(message: String) {
 
-      if (context == Protocol.ClientNotAllowed) {
-        clientNotAllowed()
-        return
-      } else if (context == Protocol.CommandUnavailable) {
-        uiMessageQueue.dispatch(PARTY_MODE_COMMAND_UNAVAILABLE)
-        return
-      }
+    val node = messageDeserializer.deserialize(message)
+    val context = node.path("context").textValue()
 
-      val connectionStatus = connectionStatusLiveDataProvider.requireValue()
+    Timber.v("received message with context -> $context")
 
-      if (connectionStatus.status != ACTIVE) {
-        if (context == Protocol.Player) {
-          sendProtocolPayload()
-        } else if (context == Protocol.ProtocolTag) {
-          connectionStatusLiveDataProvider.active()
-          handshakeComplete()
-        }
+    if (context == Protocol.ClientNotAllowed) {
+      clientNotAllowed()
+      return
+    } else if (context == Protocol.CommandUnavailable) {
+      uiMessageQueue.dispatch(PARTY_MODE_COMMAND_UNAVAILABLE)
+      return
+    }
 
-        return
-      }
+    val connectionStatus = connectionStatusLiveDataProvider.requireValue()
 
-      commandExecutor.processEvent(MessageEvent(context, node.path("data")))
+    val dataPayload = node.path("data")
+
+    if (context == Protocol.Player) {
+      sendProtocolPayload()
+      return
+    } else if (context == Protocol.ProtocolTag) {
+      connectionStatusLiveDataProvider.active()
+      handshakeComplete()
+      return
+    }
+
+    if (connectionStatus.status == ACTIVE) {
+      commandExecutor.processEvent(MessageEvent(context, dataPayload))
     }
   }
 
@@ -72,5 +79,13 @@ constructor(
 
   fun handshakeComplete() {
     messageQueue.queue(SocketMessage.create(Protocol.INIT))
+  }
+
+  override fun start() {
+    commandExecutor.start()
+  }
+
+  override fun stop() {
+    commandExecutor.stop()
   }
 }

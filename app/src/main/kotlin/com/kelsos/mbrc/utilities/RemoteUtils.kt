@@ -1,10 +1,8 @@
 package com.kelsos.mbrc.utilities
 
-import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.core.content.pm.PackageInfoCompat
+import com.kelsos.mbrc.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -14,17 +12,15 @@ import java.security.MessageDigest
 
 object RemoteUtils {
 
-  @Throws(PackageManager.NameNotFoundException::class)
-  fun Context.getVersion(): String {
-    return packageManager.getPackageInfo(packageName, 0).versionName
+  fun getVersion(): String {
+    return BuildConfig.VERSION_NAME
   }
 
-  @Throws(PackageManager.NameNotFoundException::class)
-  fun Context.getVersionCode(): Long {
-    return PackageInfoCompat.getLongVersionCode(packageManager.getPackageInfo(packageName, 0))
+  fun getVersionCode(): Int {
+    return BuildConfig.VERSION_CODE
   }
 
-  fun bitmapFromFile(path: String): Bitmap? = runBlocking {
+  private fun bitmapFromFile(path: String): Bitmap? = runBlocking {
     return@runBlocking try {
       withContext(Dispatchers.IO) {
         val options = BitmapFactory.Options()

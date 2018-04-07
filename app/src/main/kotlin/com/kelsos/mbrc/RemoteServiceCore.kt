@@ -1,12 +1,11 @@
 package com.kelsos.mbrc
 
 import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
-import com.kelsos.mbrc.interfaces.SimpleLifecycle
+import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
 import com.kelsos.mbrc.networking.client.IClientConnectionManager
 import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
-import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -15,43 +14,58 @@ class RemoteServiceCore
 constructor(
   private val discovery: ServiceDiscoveryUseCase,
   private val clientConnectionManager: IClientConnectionManager,
-  private val defaultSettingsLiveDataProvider: DefaultSettingsLiveDataProvider,
-  private val sessionNotificationManager: SessionNotificationManager
-) : SimpleLifecycle {
+  private val notificationManager: INotificationManager,
+  private val playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
+  private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
+  private val defaultSettingsLiveDataProvider: DefaultSettingsLiveDataProvider
+) : IRemoteServiceCore, LifeCycleAwareService() {
 
   init {
     defaultSettingsLiveDataProvider.observe(this) {
-      clientConnectionManager.run {
-        setDefaultConnectionSettings(it)
-        runBlocking {
-          stop()
-          delay(1500)
-          start()
-        }
+      Timber.v("settings changed")
+      clientConnectionManager.setDefaultConnectionSettings(it)
+    }
+
+    playingTrackLiveDataProvider.get().observe(this) {
+      if (it == null) {
+        return@observe
       }
+
+      notificationManager.trackChanged(it)
+    }
+
+    playerStatusLiveDataProvider.get().observe(this) {
+      if (it == null) {
+        return@observe
+      }
+
+      notificationManager.playerStateChanged(it.playState)
     }
   }
 
   private var action: SyncStartAction? = null
 
   override fun start() {
+    super.start()
     Timber.v("Starting remote core")
-
-    discovery.discover()
     with(clientConnectionManager) {
-      setOnConnectionChangeListener { }
+      setOnConnectionChangeListener {
+        notificationManager.connectionStateChanged(it)
+      }
     }
-    clientConnectionManager.start()
+
+    discovery.discover {}
   }
 
   override fun stop() {
+    super.stop()
     Timber.v("Stopping remote core")
-    sessionNotificationManager.cancelNotification()
+
     clientConnectionManager.stop()
     defaultSettingsLiveDataProvider.removeObservers(this)
   }
 
-  fun setSyncStartAction(action: SyncStartAction?) {
+  override fun setSyncStartAction(action: SyncStartAction?) {
     this.action = action
   }
 }

@@ -6,12 +6,13 @@ import com.kelsos.mbrc.content.activestatus.TrackRatingModel
 import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
+import com.kelsos.mbrc.networking.connections.Connection
 
 interface MainView : BaseView {
 
   fun updateTrackInfo(info: PlayingTrackModel)
 
-  fun updateConnection(status: Int)
+  fun updateConnection(@Connection.Status status: Int)
 
   fun updateProgress(duration: TrackPositionData)
 

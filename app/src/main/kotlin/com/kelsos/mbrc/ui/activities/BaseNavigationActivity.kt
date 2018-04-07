@@ -20,9 +20,10 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
+import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
 import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.networking.connections.Connection
+import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.networking.protocol.VolumeInteractor
 import com.kelsos.mbrc.platform.RemoteService
 import com.kelsos.mbrc.platform.ServiceChecker
@@ -42,10 +43,15 @@ import kotlin.reflect.KClass
 abstract class BaseNavigationActivity :
   BaseActivity(),
   NavigationView.OnNavigationItemSelectedListener {
+
   @Inject
   lateinit var serviceChecker: ServiceChecker
+
   @Inject
   lateinit var volumeInteractor: VolumeInteractor
+
+  @Inject
+  lateinit var connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider
 
   private lateinit var drawer: DrawerLayout
   protected lateinit var navigationView: NavigationView
@@ -73,6 +79,7 @@ abstract class BaseNavigationActivity :
   override fun onDestroy() {
     super.onDestroy()
     drawer.removeDrawerListener(toggle!!)
+    connectionStatusLiveDataProvider.get().removeObservers(this)
   }
 
   override fun onBackPressed() {
@@ -90,6 +97,15 @@ abstract class BaseNavigationActivity :
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
+    connectionStatusLiveDataProvider.get().observe(
+      this,
+      {
+        if (it == null) {
+          return@observe
+        }
+        onConnection(it)
+      }
+    )
     toggle!!.syncState()
   }
 
@@ -101,11 +117,11 @@ abstract class BaseNavigationActivity :
     }
   }
 
-  private fun onConnection(event: ConnectionStatusChangeEvent) {
-    Timber.v("Handling new connection status %s", event.status)
+  private fun onConnection(connectionStatus: ConnectionStatus) {
+    Timber.v("Handling new connection status ${connectionStatus.status}")
     @StringRes val resId: Int
     @ColorRes val colorId: Int
-    when (event.status) {
+    when (connectionStatus.status) {
       Connection.OFF -> {
         resId = R.string.drawer_connection_status_off
         colorId = R.color.black
@@ -126,7 +142,7 @@ abstract class BaseNavigationActivity :
 
     connectText!!.setText(resId)
     connect!!.setColorFilter(ContextCompat.getColor(this, colorId))
-    isConnected = event.status == Connection.ACTIVE
+    isConnected = connectionStatus.status == Connection.ACTIVE
   }
 
   private fun handleUserNotification(event: NotifyUser) {
@@ -233,10 +249,12 @@ abstract class BaseNavigationActivity :
       toolbar,
       R.string.drawer_open,
       R.string.drawer_close
-    )
-    drawer.addDrawerListener(toggle!!)
-    drawer.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
-    toggle!!.syncState()
+    ).apply {
+      drawer.addDrawerListener(this)
+      drawer.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
+      syncState()
+    }
+
     navigationView.setNavigationItemSelectedListener(this)
 
     val header = navigationView.getHeaderView(0)

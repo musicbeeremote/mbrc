@@ -3,16 +3,16 @@ package com.kelsos.mbrc.platform
 import android.app.Notification
 import android.app.Service
 import android.content.Intent
-import android.os.Binder
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.kelsos.mbrc.IRemoteServiceCore
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.RemoteServiceCore
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.getPendingIntent
+import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager.Companion.CHANNEL_ID
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager.Companion.NOW_PLAYING_PLACEHOLDER
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager.Companion.channel
@@ -23,19 +23,20 @@ import javax.inject.Inject
 
 class RemoteService : Service() {
 
-  private val controllerBinder = ControllerBinder()
-
   @Inject
   lateinit var receiver: RemoteBroadcastReceiver
 
   @Inject
-  lateinit var core: RemoteServiceCore
+  lateinit var core: IRemoteServiceCore
+
+  @Inject
+  lateinit var notifications: SessionNotificationManager
 
   private lateinit var scope: Scope
   private lateinit var handler: Handler
 
   private fun placeholderNotification(): Notification {
-    val channel = channel()
+    val channel = channel(this)
     channel?.let { notificationChannel ->
       val manager = NotificationManagerCompat.from(this)
       manager.createNotificationChannel(notificationChannel)
@@ -56,7 +57,7 @@ class RemoteService : Service() {
       .build()
   }
 
-  override fun onBind(intent: Intent?): IBinder = controllerBinder
+  override fun onBind(intent: Intent?): IBinder? = null
 
   override fun onCreate() {
     super.onCreate()
@@ -94,10 +95,9 @@ class RemoteService : Service() {
     )
   }
 
-  private inner class ControllerBinder : Binder() {
-    val service: ControllerBinder
-      @SuppressWarnings("unused")
-      get() = this@ControllerBinder
+  override fun onTaskRemoved(rootIntent: Intent?) {
+    super.onTaskRemoved(rootIntent)
+    notifications.cancel()
   }
 
   companion object {

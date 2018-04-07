@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
+import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -11,10 +12,17 @@ import javax.inject.Inject
 class ConnectionManagerPresenterImpl
 @Inject
 constructor(
-  private val repository: ConnectionRepository
+  private val repository: ConnectionRepository,
+  private val serviceDiscoveryUseCase: ServiceDiscoveryUseCase,
 ) : BasePresenter<ConnectionManagerView>(), ConnectionManagerPresenter {
 
   private lateinit var settings: LiveData<List<ConnectionSettingsEntity>>
+
+  override fun startDiscovery() {
+    serviceDiscoveryUseCase.discover {
+      view().onDiscoveryStopped(it)
+    }
+  }
 
   override fun load() {
     checkIfAttached()
@@ -39,7 +47,7 @@ constructor(
     checkIfAttached()
     scope.launch {
       repository.setDefault(settings)
-      // bus.post(DefaultSettingsChangedEvent())
+      // TODO: handle change
       load()
     }
   }
@@ -52,7 +60,7 @@ constructor(
         repository.save(settings)
 
         if (settings.id == repository.defaultId) {
-          // bus.post(DefaultSettingsChangedEvent())
+          // TODO: handle change
         }
 
         load()
@@ -69,12 +77,8 @@ constructor(
       repository.delete(settings)
 
       if (settings.id == repository.defaultId) {
-        // bus.post(DefaultSettingsChangedEvent())
+        // TODO: handle change
       }
     }
-  }
-
-  override fun startDiscovery() {
-    TODO("Not yet implemented")
   }
 }
