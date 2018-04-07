@@ -26,42 +26,50 @@ constructor(
     val replies = incoming.split("\r\n".toRegex()).dropLastWhile(String::isEmpty)
 
     replies.forEach { message ->
-      Timber.v("message -> $message" )
+      process(message)
+    }
+  }
 
-      val node = messageDeserializer.deserialize(message)
-      val context = node.path("context").textValue()
+  private fun process(message: String) {
 
-      if (context == Protocol.ClientNotAllowed) {
-        clientNotAllowed()
-        return
-      } else if (context == Protocol.CommandUnavailable) {
-        uiMessageQueue.dispatch(PARTY_MODE_COMMAND_UNAVAILABLE)
-        return
+
+    val node = messageDeserializer.deserialize(message)
+    val context = node.path("context").textValue()
+
+    Timber.v("received message with context -> $context")
+
+    if (context == Protocol.ClientNotAllowed) {
+      clientNotAllowed()
+      return
+    } else if (context == Protocol.CommandUnavailable) {
+      uiMessageQueue.dispatch(PARTY_MODE_COMMAND_UNAVAILABLE)
+      return
+    }
+
+    val connectionStatus = connectionStatusLiveDataProvider.requireValue()
+
+    val dataPayload = node.path("data")
+
+    if (context == Protocol.Player) {
+      sendProtocolPayload()
+      return
+    } else if (context == Protocol.ProtocolTag) {
+
+      val protocolVersion: Int = try {
+        dataPayload.asText().toInt()
+      } catch (ignore: Exception) {
+        2
       }
 
-      val connectionStatus = connectionStatusLiveDataProvider.requireValue()
+      //model.pluginProtocol = protocolVersion
+      connectionStatusLiveDataProvider.active()
+      handshakeComplete()
+      //bus.post(StartLibrarySyncEvent())
+      return
+    }
 
-      if (connectionStatus.status != ACTIVE) {
-        if (context == Protocol.Player) {
-          sendProtocolPayload()
-        } else if (context == Protocol.ProtocolTag) {
-
-          val protocolVersion: Int = try {
-            node.path("data").asText().toInt()
-          } catch (ignore: Exception) {
-            2
-          }
-
-          //model.pluginProtocol = protocolVersion
-          connectionStatusLiveDataProvider.active()
-          handshakeComplete()
-          //bus.post(StartLibrarySyncEvent())
-        }
-
-        return
-      }
-
-      commandExecutor.processEvent(MessageEvent(context, node.path("data")))
+    if (connectionStatus.status == ACTIVE) {
+      commandExecutor.processEvent(MessageEvent(context, dataPayload))
     }
   }
 
@@ -81,5 +89,13 @@ constructor(
 
   fun handshakeComplete() {
     messageQueue.queue(SocketMessage.create(Protocol.INIT))
+  }
+
+  override fun start() {
+    commandExecutor.start()
+  }
+
+  override fun stop() {
+    commandExecutor.stop()
   }
 }

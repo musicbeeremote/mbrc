@@ -90,11 +90,11 @@ constructor(
     return Single.fromCallable {
 
       val lastVersionCode = preferences.getLong(getKey(R.string.settings_key_last_version_run), 0)
-      val currentVersion = RemoteUtils.getVersionCode(context)
+      val currentVersion = RemoteUtils.getVersionCode()
 
       if (lastVersionCode < currentVersion) {
         preferences.edit()
-          .putLong(getKey(R.string.settings_key_last_version_run), currentVersion)
+          .putLong(getKey(R.string.settings_key_last_version_run), currentVersion.toLong())
           .apply()
         Timber.d("Update or fresh install")
 

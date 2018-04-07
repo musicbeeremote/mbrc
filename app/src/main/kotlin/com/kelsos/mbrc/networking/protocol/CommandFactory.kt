@@ -50,7 +50,7 @@ constructor(application: Application) : CommandFactory {
       Protocol.PluginVersion -> UpdatePluginVersionCommand::class.java
       Protocol.PING -> ProtocolPingHandle::class.java
       Protocol.PONG -> ProtocolPongHandle::class.java
-      else -> fail("Not supported $context")
+      else -> fail("Not supported message context $context")
     }
 
     return scope.getInstance(clazz)

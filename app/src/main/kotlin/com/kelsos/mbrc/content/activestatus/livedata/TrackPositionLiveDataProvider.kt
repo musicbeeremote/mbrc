@@ -10,5 +10,4 @@ class TrackPositionLiveDataProviderImpl
   init {
     update(TrackPositionData())
   }
-
 }

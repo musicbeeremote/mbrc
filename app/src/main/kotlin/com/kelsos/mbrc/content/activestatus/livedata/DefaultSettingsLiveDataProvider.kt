@@ -28,6 +28,7 @@ constructor(
 
   override fun observe(obj: Any, onSettings: OnDefaultConnectionChanged) {
     map[obj] = settingsRelay.subscribeOn(schedulerProvider.io())
+      .distinctUntilChanged { t1, t2 -> t1.address == t2.address && t1.port == t2.port }
       .subscribeOn(schedulerProvider.main())
       .subscribe { onSettings(it) }
   }

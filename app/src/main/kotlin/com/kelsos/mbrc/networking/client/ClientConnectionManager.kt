@@ -5,6 +5,7 @@ import com.kelsos.mbrc.networking.SocketActivityChecker.PingTimeoutListener
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.connections.InetAddressMapper
 import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
 import timber.log.Timber
@@ -36,6 +37,9 @@ constructor(
   private fun getExecutor() = Executors.newSingleThreadExecutor { Thread(it, "socket-thread") }
   private var connection: SocketConnection? = null
 
+  private var pendingConnection: Deferred<Unit>? = null
+
+
   init {
     messageQueue.setOnMessageAvailable { sendData(it) }
   }
@@ -50,11 +54,18 @@ constructor(
   }
 
   override fun start() {
+    pendingConnection?.cancel()
+    pendingConnection = async(CommonPool) {
+      stop()
+      delay(2000)
+      realStart()
+    }
+  }
 
+  private fun realStart() {
     if (executor.isShutdown) {
       executor = getExecutor()
     }
-
 
     if (connection?.isConnected() == true) {
       Timber.v("connection is already active")
@@ -62,8 +73,6 @@ constructor(
     }
 
     async(CommonPool) {
-      delay(2000)
-
       if (!::connectionSettings.isInitialized) {
         Timber.v("no connection settings aborting")
         return@async
@@ -82,17 +91,17 @@ constructor(
           }
         }
       ) {
-
       }.apply {
+        messageHandler.start()
         messageQueue.start()
         executor.execute(this)
         activityChecker.start()
       }
-
     }
   }
 
   override fun stop() {
+    messageHandler.stop()
     messageQueue.stop()
     activityChecker.stop()
     connection?.cleanupSocket()
@@ -155,8 +164,8 @@ constructor(
 
     fun sendMessage(messageString: String) {
       async(CommonPool) {
+        Timber.v("Sending (${isConnected()})")
         if (isConnected()) {
-          Timber.v("Sending -> $messageString")
           writeToSocket(messageString)
         }
       }

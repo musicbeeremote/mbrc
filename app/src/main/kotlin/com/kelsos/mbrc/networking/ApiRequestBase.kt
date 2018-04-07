@@ -20,30 +20,31 @@ open class ApiRequestBase(
 
   internal fun call(
     firstMessage: SocketMessage = SocketMessage.create(Protocol.Player, "Android")
-  ): Observable<ServiceMessage> {
-    return Observable.create { emitter ->
-      try {
-        val socket = connect(firstMessage)
-        emitter.setCancellable {
-          socket.cleanup()
-        }
-        val streamReader = InputStreamReader(socket.inputStream, "UTF-8")
-        val reader = BufferedReader(streamReader)
-        while (true) {
-          val line = reader.readLine()
-          if (line.isNullOrBlank()) {
-            break
-          }
+  ): Observable<ServiceMessage> = Observable.create { emitter ->
+    try {
+      val socket = connect(firstMessage)
 
-          Timber.v("incoming -> %s", line)
-          emitter.onNext(ApiRequestBase.ServiceMessage(line, socket))
-        }
-
-        Timber.v("complete")
-        emitter.onComplete()
-      } catch (ex: Exception) {
-        emitter.tryOnError(ex)
+      emitter.setCancellable {
+        socket.cleanup()
       }
+
+      val streamReader = InputStreamReader(socket.inputStream, "UTF-8")
+      val reader = BufferedReader(streamReader)
+      while (true) {
+        val line = reader.readLine()
+        if (line.isNullOrBlank()) {
+          break
+        }
+
+        emitter.onNext(ApiRequestBase.ServiceMessage(line, socket))
+      }
+
+      Timber.v("complete")
+      socket.cleanup()
+
+      emitter.onComplete()
+    } catch (ex: Exception) {
+      emitter.tryOnError(ex)
     }
   }
 
