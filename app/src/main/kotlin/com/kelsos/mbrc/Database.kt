@@ -54,3 +54,4 @@ abstract class Database : RoomDatabase() {
     const val VERSION = 5
   }
 }
+

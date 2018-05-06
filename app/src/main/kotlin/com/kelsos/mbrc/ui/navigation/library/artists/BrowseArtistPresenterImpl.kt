@@ -8,7 +8,7 @@ import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.SettingsManager
-import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.AppRxSchedulers
 import com.kelsos.mbrc.utilities.paged
 import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
@@ -19,7 +19,7 @@ class BrowseArtistPresenterImpl
 constructor(
   private val repository: ArtistRepository,
   private val settingsManager: SettingsManager,
-  private val schedulerProvider: SchedulerProvider
+  private val appRxSchedulers: AppRxSchedulers
 ) : BasePresenter<BrowseArtistView>(),
   BrowseArtistPresenter {
 
@@ -35,8 +35,8 @@ constructor(
       }
     }
     disposables += artistObservable
-      .observeOn(schedulerProvider.main())
-      .subscribeOn(schedulerProvider.io())
+      .observeOn(appRxSchedulers.database)
+      .subscribeOn(appRxSchedulers.disk)
       .doFinally { view().hideLoading() }
       .subscribe({
         onArtistsLoaded(it.factory)
@@ -75,19 +75,12 @@ constructor(
   }
 
   override fun reload() {
-    val artistObservable = settingsManager.shouldDisplayOnlyAlbumArtists().flatMap {
-      if (it) {
-        return@flatMap repository.getAllRemoteAndShowAlbumArtist()
-      } else {
-        return@flatMap repository.getAndSaveRemote()
-      }
-    }
-    disposables += artistObservable
-      .observeOn(schedulerProvider.main())
-      .subscribeOn(schedulerProvider.io())
+    disposables += repository.getRemote()
+      .subscribeOn(appRxSchedulers.network)
+      .observeOn(appRxSchedulers.main)
       .doFinally { view().hideLoading() }
       .subscribe({
-        onArtistsLoaded(it)
+
       }, {
         Timber.v(it, "Error retrieving the data")
       })

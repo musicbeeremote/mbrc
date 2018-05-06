@@ -4,16 +4,21 @@ import android.arch.paging.DataSource
 import com.kelsos.mbrc.content.library.DataModel
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.epoch
 import io.reactivex.Completable
 import io.reactivex.Single
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class ArtistRepositoryImpl
 @Inject
 constructor(
   private val dao: ArtistDao,
-  private val remoteDataSource: ApiBase
+  private val remoteDataSource: ApiBase,
+  private val coroutineDispatchers: AppCoroutineDispatchers
 ) : ArtistRepository {
 
   private val mapper = ArtistDtoMapper()
@@ -24,10 +29,6 @@ constructor(
 
   override fun getAll(): Single<DataSource.Factory<Int, ArtistEntity>> {
     return Single.fromCallable { dao.getAll() }
-  }
-
-  override fun getAndSaveRemote(): Single<DataSource.Factory<Int, ArtistEntity>> {
-    return getRemote().andThen(getAll())
   }
 
   override fun allArtists(): Single<DataModel<ArtistEntity>> {
@@ -41,9 +42,17 @@ constructor(
   override fun getRemote(): Completable {
     val added = epoch()
     return remoteDataSource.getAllPages(Protocol.LibraryBrowseArtists, ArtistDto::class).doOnNext {
-      dao.insertAll(it.map { mapper.map(it).apply { dateAdded = added } })
+      async(CommonPool) {
+        val items = it.map { mapper.map(it).apply { dateAdded = added } }
+        withContext(coroutineDispatchers.database) {
+          dao.insertAll(items)
+        }
+      }
+
     }.doOnComplete {
-      dao.removePreviousEntries(added)
+      async(coroutineDispatchers.database) {
+        dao.removePreviousEntries(added)
+      }
     }.ignoreElements()
   }
 

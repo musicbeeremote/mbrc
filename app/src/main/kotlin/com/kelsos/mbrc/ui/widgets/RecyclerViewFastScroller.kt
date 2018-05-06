@@ -17,8 +17,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.view.isInvisible
-import androidx.view.isVisible
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 
 class RecyclerViewFastScroller : LinearLayout {
 
@@ -197,21 +197,21 @@ class RecyclerViewFastScroller : LinearLayout {
     }
   }
 
+  @SuppressLint("ObjectAnimatorBinding")
   private fun showBubble() {
-    if (bubble == null)
-      return
-
-    bubble?.isVisible = true
+    val bubbleView = bubble ?: return
+    bubbleView.isVisible = true
 
     currentAnimator?.cancel()
-    currentAnimator = ObjectAnimator.ofFloat(bubble, "alpha", 0f, 1f)
+    currentAnimator = ObjectAnimator.ofFloat(bubbleView, "alpha", 0f, 1f)
       .setDuration(BUBBLE_ANIMATION_DURATION.toLong())
       .apply { start() }
   }
 
+  @SuppressLint("ObjectAnimatorBinding")
   private fun hideBubble() {
-    if (bubble == null)
-      return
+    val bubbleView = bubble ?: return
+
     currentAnimator?.cancel()
     currentAnimator = ObjectAnimator.ofFloat(bubble, "alpha", 1f, 0f)
       .setDuration(BUBBLE_ANIMATION_DURATION.toLong())
@@ -219,13 +219,13 @@ class RecyclerViewFastScroller : LinearLayout {
         addListener(object : AnimatorListenerAdapter() {
           override fun onAnimationEnd(animation: Animator) {
             super.onAnimationEnd(animation)
-            bubble?.isInvisible = true
+            bubbleView.isInvisible = true
             currentAnimator = null
           }
 
           override fun onAnimationCancel(animation: Animator) {
             super.onAnimationCancel(animation)
-            bubble?.isInvisible = true
+            bubbleView.isInvisible = true
             currentAnimator = null
           }
         })

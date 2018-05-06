@@ -5,7 +5,7 @@ import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
-import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable
@@ -21,7 +21,7 @@ constructor(
   private val albumRepository: AlbumRepository,
   private val trackRepository: TrackRepository,
   private val playlistRepository: PlaylistRepository,
-  private val schedulerProvider: SchedulerProvider
+  private val appRxSchedulers: AppRxSchedulers
 ) : LibrarySyncInteractor {
 
   private var disposable: Disposable? = null
@@ -36,7 +36,7 @@ constructor(
     }
     running = true
 
-    Timber.v("Starting library metadata sync")
+    Timber.v("Starting library metadata network")
 
     val start = System.currentTimeMillis()
 
@@ -50,8 +50,8 @@ constructor(
       } else {
         return@flatMapCompletable Completable.error(ShouldNotProceedException())
       }
-    }.subscribeOn(schedulerProvider.sync())
-      .observeOn(schedulerProvider.main())
+    }.subscribeOn(appRxSchedulers.network)
+      .observeOn(appRxSchedulers.main)
       .doOnTerminate {
         onCompleteListener?.onTermination()
         running = false
@@ -66,10 +66,10 @@ constructor(
   }
 
   private fun checkIfShouldSync(auto: Boolean): Single<Boolean> {
-    if (auto) {
-      return isEmpty()
+    return if (auto) {
+      isEmpty()
     } else {
-      return Single.just(true)
+      Single.just(true)
     }
   }
 

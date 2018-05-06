@@ -8,6 +8,7 @@ import com.kelsos.mbrc.content.library.tracks.TrackEntity
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.utilities.paged
+import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -27,7 +28,7 @@ constructor(
       repository.getAlbumTracks(album.album, album.artist)
     }
 
-    addDisposable(request.subscribe({
+    disposables += request.subscribe({
       tracks = it.paged()
       tracks.observe(this, Observer {
         if (it != null) {
@@ -36,6 +37,6 @@ constructor(
       })
     }) {
       Timber.v(it)
-    })
+    }
   }
 }

@@ -7,7 +7,7 @@ import android.arch.paging.PagedList
 import com.kelsos.mbrc.content.library.tracks.TrackEntity
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.AppRxSchedulers
 import com.kelsos.mbrc.utilities.paged
 import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
@@ -17,7 +17,7 @@ class BrowseTrackPresenterImpl
 @Inject
 constructor(
   private val repository: TrackRepository,
-  private val schedulerProvider: SchedulerProvider
+  private val appRxSchedulers: AppRxSchedulers
 ) : BasePresenter<BrowseTrackView>(),
   BrowseTrackPresenter {
 
@@ -32,8 +32,8 @@ constructor(
 
   override fun load() {
     disposables += repository.allTracks()
-      .observeOn(schedulerProvider.main())
-      .subscribeOn(schedulerProvider.io())
+      .subscribeOn(appRxSchedulers.database)
+      .observeOn(appRxSchedulers.main)
       .doFinally { view().hideLoading() }
       .subscribe({
         onTrackLoad(it.factory)
@@ -70,14 +70,15 @@ constructor(
   }
 
   override fun reload() {
-    disposables += repository.getAndSaveRemote()
-      .observeOn(schedulerProvider.main())
-      .subscribeOn(schedulerProvider.io())
+    disposables += repository.getRemote()
+      .subscribeOn(appRxSchedulers.network)
+      .observeOn(appRxSchedulers.main)
+
       .doFinally {
         view().hideLoading()
       }
       .subscribe({
-        onTrackLoad(it)
+
       }, {
         view().failure(it)
         Timber.e(it, "Error while loading the data from the database")

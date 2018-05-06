@@ -79,6 +79,11 @@ fun scope(scopeName: Any, vararg bindings: Scope.() -> Module?): Scope =
 inline fun <reified T> Module.bindSingletonProvider(target: KClass<out Provider<T>>): Binding<T> =
   bind<T>().apply { toProvider(target.java).providesSingletonInScope() }
 
+inline fun <reified T> Module.bindSingletonProviderInstance(noinline target: () -> T): Binding<T> =
+  bind<T>().apply {
+    toProviderInstance(target.asProvider()).providesSingletonInScope()
+  }
+
 inline fun <reified T> Module.bindSingletonClass(target: () -> KClass<out Any>): Binding<T> =
   bind<T>().apply { to(target().java as Class<T>).singletonInScope() }
 

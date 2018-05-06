@@ -9,7 +9,7 @@ import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.library.albums.Sorting
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.AlbumSortingStore
-import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.AppRxSchedulers
 import com.kelsos.mbrc.utilities.paged
 import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
@@ -20,7 +20,7 @@ class BrowseAlbumPresenterImpl
 constructor(
   private val repository: AlbumRepository,
   private val albumSortingStore: AlbumSortingStore,
-  private val schedulerProvider: SchedulerProvider
+  private val appRxSchedulers: AppRxSchedulers
 ) : BasePresenter<BrowseAlbumView>(),
   BrowseAlbumPresenter {
 
@@ -42,8 +42,8 @@ constructor(
 
   override fun load() {
     disposables += repository.getAlbumsSorted()
-      .observeOn(schedulerProvider.main())
-      .subscribeOn(schedulerProvider.io())
+      .subscribeOn(appRxSchedulers.disk)
+      .observeOn(appRxSchedulers.database)
       .subscribe({
         observeAlbums(it)
         view().hideLoading()
@@ -67,8 +67,8 @@ constructor(
 
   private fun loadSorted(sortingSelection: Int, ascending: Boolean) {
     disposables += repository.getAlbumsSorted(sortingSelection, ascending)
-      .observeOn(schedulerProvider.main())
-      .subscribeOn(schedulerProvider.io())
+      .observeOn(appRxSchedulers.main)
+      .subscribeOn(appRxSchedulers.disk)
       .doFinally { view().hideLoading() }
       .subscribe({
         observeAlbums(it)
@@ -84,12 +84,12 @@ constructor(
   }
 
   override fun reload() {
-    disposables += repository.getAndSaveRemote()
-      .observeOn(schedulerProvider.main())
-      .subscribeOn(schedulerProvider.io())
+    disposables += repository.getRemote()
+      .subscribeOn(appRxSchedulers.network)
+      .observeOn(appRxSchedulers.main)
       .doFinally { view().hideLoading() }
       .subscribe({
-        observeAlbums(it)
+
       }) {
         Timber.v(it)
       }

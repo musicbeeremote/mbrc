@@ -4,17 +4,21 @@ import android.arch.paging.DataSource
 import com.kelsos.mbrc.content.library.DataModel
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.epoch
 import io.reactivex.Completable
 import io.reactivex.Single
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class TrackRepositoryImpl
-@Inject constructor(
+@Inject
+constructor(
   private val dao: TrackDao,
   private val remoteDataSource: ApiBase,
-  private val schedulerProvider: SchedulerProvider
+  private val coroutineDispatchers: AppCoroutineDispatchers
 ) : TrackRepository {
 
   private val mapper = TrackDtoMapper()
@@ -38,20 +42,20 @@ class TrackRepositoryImpl
     return Single.fromCallable { dao.getNonAlbumTracks(artist) }
   }
 
-  override fun getAndSaveRemote(): Single<DataSource.Factory<Int, TrackEntity>> {
-    return getRemote().andThen(getAll())
-  }
-
   override fun getRemote(): Completable {
     val added = epoch()
     return remoteDataSource.getAllPages(Protocol.LibraryBrowseTracks, TrackDto::class).doOnNext {
-      val tracks = it.map { mapper.map(it).apply { dateAdded = added } }
-      dao.insertAll(tracks)
+      async(CommonPool) {
+        val tracks = it.map { mapper.map(it).apply { dateAdded = added } }
+        withContext(coroutineDispatchers.database) {
+          dao.insertAll(tracks)
+        }
+      }
     }.doOnComplete {
-      dao.removePreviousEntries(added)
-    }.subscribeOn(schedulerProvider.io())
-      .observeOn(schedulerProvider.db())
-      .ignoreElements()
+      async(coroutineDispatchers.database) {
+        dao.removePreviousEntries(added)
+      }
+    }.ignoreElements()
   }
 
   override fun search(term: String): Single<DataSource.Factory<Int, TrackEntity>> {

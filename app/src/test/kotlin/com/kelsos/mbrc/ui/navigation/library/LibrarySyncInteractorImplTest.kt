@@ -176,7 +176,7 @@ class LibrarySyncInteractorImplTest {
     verify(onCompleteListener, never()).onFailure(any())
     verify(bus, times(1)).post(any(LibraryRefreshCompleteEvent::class.java))
 
-    // Reset the mocks and run a second sync
+    // Reset the mocks and run a second network
     reset(onCompleteListener)
     reset(bus)
 

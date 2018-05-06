@@ -11,23 +11,16 @@ class ConnectionStatusChangeEvent(@Connection.Status val status: Int)
 
 class LibraryRefreshCompleteEvent
 
-class NotifyUser {
+class NotifyUser(@StringRes val resId: Int) {
   val message: String
-  val resId: Int
   var isFromResource: Boolean = false
     private set
 
-  constructor(message: String) {
-    this.message = message
-    this.isFromResource = false
-    this.resId = -1
-  }
-
-  constructor(@StringRes resId: Int) {
-    this.resId = resId
+  init {
     this.isFromResource = true
     this.message = ""
   }
+
 }
 
 class PlayStateChange(@PlayerState.State val state: String)
@@ -35,6 +28,4 @@ class PlayStateChange(@PlayerState.State val state: String)
 class RatingChanged(val rating: Float)
 
 class RemoteClientMetaData(val track: PlayingTrackModel, val coverPath: String = "")
-
-class TrackRemovalEvent(val index: Int, val success: Boolean)
 

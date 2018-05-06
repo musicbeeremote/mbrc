@@ -8,7 +8,7 @@ import toothpick.Toothpick
 import javax.inject.Inject
 
 /**
- * An [IntentService] subclass for handling the metadata sync operation
+ * An [IntentService] subclass for handling the metadata network operation
  */
 class LibrarySyncService : IntentService("LibrarySyncService") {
 
@@ -37,7 +37,7 @@ class LibrarySyncService : IntentService("LibrarySyncService") {
   }
 
   /**
-   * Handle action sync in the provided background thread with the provided
+   * Handle action network in the provided background thread with the provided
    * parameters.
    */
   private fun handleActionSync(auto: Boolean) {
@@ -51,12 +51,12 @@ class LibrarySyncService : IntentService("LibrarySyncService") {
     private val ACTION_SYNC = "com.kelsos.mbrc.action.SYNC"
 
     /**
-     * Who started the sync operation. This is to distinct between user initiated sync operations
+     * Who started the network operation. This is to distinct between user initiated network operations
      */
     private val EXTRA_AUTO = "com.kelsos.mbrc.dev.extra.AUTO"
 
     /**
-     * Starts this service to perform a library metadata sync operatin with the given parameters. If
+     * Starts this service to perform a library metadata network operatin with the given parameters. If
      * the service is already performing a task this action will be queued.
      * @see IntentService
      */

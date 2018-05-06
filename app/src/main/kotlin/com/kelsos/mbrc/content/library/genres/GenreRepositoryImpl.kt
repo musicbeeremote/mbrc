@@ -4,16 +4,21 @@ import android.arch.paging.DataSource
 import com.kelsos.mbrc.content.library.DataModel
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.epoch
 import io.reactivex.Completable
 import io.reactivex.Single
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class GenreRepositoryImpl
 @Inject
 constructor(
   private val remoteDataSource: ApiBase,
-  private val dao: GenreDao
+  private val dao: GenreDao,
+  private val coroutineDispatchers: AppCoroutineDispatchers
 ) : GenreRepository {
 
   private val mapper = GenreDtoMapper()
@@ -22,16 +27,19 @@ constructor(
     return Single.fromCallable { dao.getAll() }
   }
 
-  override fun getAndSaveRemote(): Single<DataSource.Factory<Int, GenreEntity>> {
-    return getRemote().andThen(getAll())
-  }
-
   override fun getRemote(): Completable {
     val added = epoch()
     return remoteDataSource.getAllPages(Protocol.LibraryBrowseGenres, GenreDto::class).doOnNext {
-      dao.saveAll(it.map { mapper.map(it).apply { dateAdded = added } })
+      async(CommonPool) {
+        val items = it.map { mapper.map(it).apply { dateAdded = added } }
+        withContext(coroutineDispatchers.database) {
+          dao.saveAll(items)
+        }
+      }
     }.doOnComplete {
-      dao.removePreviousEntries(added)
+      async(coroutineDispatchers.database) {
+        dao.removePreviousEntries(added)
+      }
     }.ignoreElements()
   }
 

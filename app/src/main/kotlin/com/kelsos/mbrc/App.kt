@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.support.annotation.CallSuper
 import android.support.multidex.MultiDexApplication
+import com.github.anrwatchdog.ANRError
+import com.github.anrwatchdog.ANRWatchDog
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.kelsos.mbrc.di.modules.AppModule
 import com.kelsos.mbrc.utilities.CustomLoggingTree
@@ -15,6 +17,8 @@ import toothpick.configuration.Configuration
 import toothpick.registries.FactoryRegistryLocator
 import toothpick.registries.MemberInjectorRegistryLocator
 import toothpick.smoothie.module.SmoothieApplicationModule
+
+
 
 @SuppressLint("Registered")
 open class App : MultiDexApplication() {
@@ -35,6 +39,14 @@ open class App : MultiDexApplication() {
     initializeToothpick()
     initializeTimber()
     initializeLeakCanary()
+    ANRWatchDog()
+      .setANRListener { onAnr(it) }
+      .setIgnoreDebugger(true)
+      .start()
+  }
+
+  protected open fun onAnr(anrError: ANRError?) {
+    Timber.v(anrError, "ANR error")
   }
 
   private fun initializeLeakCanary() {

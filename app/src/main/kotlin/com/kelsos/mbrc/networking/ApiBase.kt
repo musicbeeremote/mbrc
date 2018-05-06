@@ -1,107 +1,83 @@
 package com.kelsos.mbrc.networking
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.kelsos.mbrc.DeserializationAdapter
 import com.kelsos.mbrc.interfaces.data.RemoteDataSource
+import com.kelsos.mbrc.networking.client.GenericSocketMessage
 import com.kelsos.mbrc.networking.client.SocketMessage
-import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.protocol.Page
 import com.kelsos.mbrc.networking.protocol.PageRange
-import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.Protocol.Context
-import com.kelsos.mbrc.networking.protocol.ProtocolPayload
-import com.kelsos.mbrc.preferences.ClientInformationStore
 import io.reactivex.Observable
 import io.reactivex.Single
 import timber.log.Timber
-import java.io.IOException
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
 class ApiBase
 @Inject constructor(
-  repository: ConnectionRepository,
-  private val mapper: ObjectMapper,
-  private val clientInformationStore: ClientInformationStore
-) : ApiRequestBase(mapper, repository) {
+  private val deserializationAdapter: DeserializationAdapter,
+  private val apiRequestManager: RequestManager
+) {
 
-  fun <T> getItem(@Context request: String, clazz: Class<T>, payload: Any = ""): Single<T> {
-    return request(request, payload).map { mapper.convertValue(it.data, clazz) }
-      .firstOrError()
+  fun <T> getItem(
+    @Context request: String,
+    kClazz: KClass<T>,
+    payload: Any = ""
+  ): Single<T> where T : Any {
+    val factory = deserializationAdapter.typeFactory()
+    val type = factory.constructParametricType(GenericSocketMessage::class.java, kClazz.java)
+    return Single.fromCallable { apiRequestManager.openConnection() }.flatMap {
+      apiRequestManager.request(it, SocketMessage.create(request, payload)).map {
+        val socketMessage = deserializationAdapter.objectify<GenericSocketMessage<T>>(it, type)
+        socketMessage.data
+      }.doFinally { it.close() }
+    }
   }
-
-  //todo change it so that a socket connection is running longer
 
   fun <T : Any> getAllPages(@Context request: String, clazz: KClass<T>): Observable<List<T>> {
-    val start = System.currentTimeMillis()
-    val type = mapper.typeFactory.constructParametricType(Page::class.java, clazz.java)
+    val start = now()
 
-    return Observable.range(0, Integer.MAX_VALUE).flatMap {
-      val pageStart = System.currentTimeMillis()
-      val offset = it * RemoteDataSource.LIMIT
-      Timber.v("fetching $request offset $offset - limit ${RemoteDataSource.LIMIT}")
-      val range = getPageRange(offset, RemoteDataSource.LIMIT)
-      request(request, range).map {
-        mapper.convertValue<Page<T>>(it.data, type)
-      }.doOnComplete {
-        Timber.v("duration ${System.currentTimeMillis() - pageStart} ms")
+    val factory = deserializationAdapter.typeFactory()
+    val inner = factory.constructParametricType(Page::class.java, clazz.java)
+    val type = factory.constructParametricType(GenericSocketMessage::class.java, inner)
+
+    return Single.fromCallable { apiRequestManager.openConnection() }
+      .flatMapObservable { connection ->
+        Observable.range(0, Integer.MAX_VALUE).flatMapSingle {
+          val pageStart = now()
+
+          val limit = RemoteDataSource.LIMIT
+          val offset = it * limit
+          val range = getPageRange(offset, limit)
+
+          Timber.v("fetching $request offset $offset [$limit]")
+
+          val message = SocketMessage.create(request, range ?: "")
+
+          apiRequestManager.request(connection, message).map {
+            deserializationAdapter.objectify<GenericSocketMessage<Page<T>>>(it, type).data
+          }.doOnSuccess {
+            Timber.v("duration ${now() - pageStart} ms")
+          }
+        }.takeWhile { it.offset < it.total }
+          .map { it.data }
+          .doFinally {
+            connection.close()
+          }
+          .doOnComplete { Timber.v("duration ${System.currentTimeMillis() - start} ms") }
       }
-    }.takeWhile { it.offset < it.total }
-      .map { it.data }
-      .doOnComplete { Timber.v("duration ${System.currentTimeMillis() - start} ms") }
-  }
-
-  private fun request(@Context request: String, data: Any? = null): Observable<SocketMessage> {
-    return call().flatMap { getSocketMessageObservable(request, data ?: "", it) }
-      .skipWhile { it.shouldSkip() }
-  }
-
-  private fun getSocketMessageObservable(
-    request: String,
-    data: Any,
-    serviceMessage: ServiceMessage
-  ): Observable<SocketMessage> {
-    return Observable.create<SocketMessage> {
-      try {
-        val socket = serviceMessage.socket
-        val jsonString = serviceMessage.message
-        val message = mapper.readValue(jsonString, SocketMessage::class.java)
-        val context = message.context
-
-        Timber.v("$context message received")
-        if (Protocol.Player == context) {
-          val payload = getProtocolPayload()
-          socket.send(SocketMessage.create(Protocol.ProtocolTag, payload))
-        } else if (Protocol.ProtocolTag == context) {
-          socket.send(SocketMessage.create(request, data))
-        }
-
-        it.onNext(message)
-        it.onComplete()
-      } catch (e: IOException) {
-        it.tryOnError(e)
-      }
-    }
-  }
-
-  private fun getProtocolPayload(): ProtocolPayload {
-    return ProtocolPayload(clientInformationStore.getClientId()).apply {
-      noBroadcast = true
-      protocolVersion = Protocol.ProtocolVersionNumber
-    }
-  }
-
-  private fun SocketMessage.shouldSkip(): Boolean {
-    return Protocol.Player == this.context || Protocol.ProtocolTag == this.context
   }
 
   private fun getPageRange(offset: Int, limit: Int): PageRange? {
-    var range: PageRange? = null
-
-    if (limit > 0) {
-      range = PageRange()
-      range.offset = offset
-      range.limit = limit
+    return takeIf { limit > 0 }?.run {
+      PageRange().apply {
+        this.offset = offset
+        this.limit = limit
+      }
     }
-    return range
+  }
+
+  private fun now(): Long {
+    return System.currentTimeMillis()
   }
 }

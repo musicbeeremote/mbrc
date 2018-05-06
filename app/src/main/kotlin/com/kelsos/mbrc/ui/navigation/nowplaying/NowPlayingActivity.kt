@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
-import android.os.Build
+import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.constraint.Group
 import android.support.design.widget.Snackbar
@@ -13,7 +13,7 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ProgressBar
-import androidx.view.isVisible
+import androidx.core.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.content.nowplaying.NowPlayingEntity
@@ -104,9 +104,7 @@ class NowPlayingActivity : BaseNavigationActivity(),
       if (it) {
         swipeRefreshLayout.isRefreshing = false
         swipeRefreshLayout.isEnabled = false
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-          swipeRefreshLayout.cancelPendingInputEvents()
-        }
+        swipeRefreshLayout.cancelPendingInputEvents()
       } else {
         swipeRefreshLayout.isEnabled = true
       }
@@ -118,6 +116,7 @@ class NowPlayingActivity : BaseNavigationActivity(),
     adapter.setListener(this)
     swipeRefreshLayout.setOnRefreshListener { this.refresh() }
     presenter.attach(this)
+    presenter.load()
     refresh(true)
   }
 
@@ -145,9 +144,9 @@ class NowPlayingActivity : BaseNavigationActivity(),
     super.onDestroy()
   }
 
-  override fun update(data: List<NowPlayingEntity>) {
+  override fun update(data: PagedList<NowPlayingEntity>) {
     emptyGroup.isVisible = data.isEmpty()
-    adapter.update(data)
+    adapter.submitList(data)
     swipeRefreshLayout.isRefreshing = false
   }
 
@@ -163,12 +162,11 @@ class NowPlayingActivity : BaseNavigationActivity(),
     Snackbar.make(nowPlayingList, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
   }
 
-  override fun showLoading() {
-  }
-
-  override fun hideLoading() {
-    emptyViewProgress.isVisible = false
-    swipeRefreshLayout.isRefreshing = false
+  override fun loading(show: Boolean) {
+    if (!show) {
+      emptyViewProgress.isVisible = false
+      swipeRefreshLayout.isRefreshing = false
+    }
   }
 
   override fun onBackPressed() {

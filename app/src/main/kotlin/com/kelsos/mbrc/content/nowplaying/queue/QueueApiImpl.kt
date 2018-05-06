@@ -19,7 +19,7 @@ constructor(
   ): Single<QueueResponse> {
     return apiBase.getItem(
       Protocol.NowPlayingQueue,
-      QueueResponse::class.java,
+      QueueResponse::class,
       QueuePayload(type, tracks, play)
     ).map { payload ->
       if (payload.code == CoverPayload.SUCCESS) {
