@@ -130,7 +130,7 @@ class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
     availableOutputs.adapter = outputAdapter
     availableOutputs.onItemSelectedListener = onItemSelectedListener
     availableOutputs.setOnTouchListener(this)
-    loadingProgress.isInvisible = true
+    loadingProgress.isVisible = false
     availableOutputs.isVisible = true
   }
 
@@ -140,7 +140,7 @@ class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
       else -> R.string.output_selection__generic_error
     }
     errorMessage.setText(resId)
-    loadingProgress.isInvisible = true
+    loadingProgress.isVisible = false
     availableOutputs.isInvisible = true
     errorMessage.isVisible = true
   }

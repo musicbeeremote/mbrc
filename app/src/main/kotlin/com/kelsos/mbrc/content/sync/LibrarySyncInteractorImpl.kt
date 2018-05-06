@@ -6,8 +6,8 @@ import com.kelsos.mbrc.content.library.covers.CoverCache
 import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
-import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.ui.navigation.library.LibraryStats
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
@@ -23,7 +23,7 @@ constructor(
   private val trackRepository: TrackRepository,
   private val playlistRepository: PlaylistRepository,
   private val coverCache: CoverCache,
-  dispatchers: AppDispatchers
+  dispatchers: AppCoroutineDispatchers
 ) : LibrarySyncInteractor {
 
   private var running: Boolean = false
@@ -31,7 +31,7 @@ constructor(
   private var onStartListener: LibrarySyncInteractor.OnStartListener? = null
 
   private val job = SupervisorJob()
-  private val scope = CoroutineScope(job + dispatchers.io)
+  private val scope = CoroutineScope(job + dispatchers.network)
 
   override fun sync(auto: Boolean) {
     if (isRunning()) {
@@ -42,6 +42,7 @@ constructor(
     running = true
     scope.launch {
       Timber.v("Starting library metadata sync")
+      val start = System.currentTimeMillis()
 
       onStartListener?.onStart()
 
@@ -69,7 +70,7 @@ constructor(
             playlists = playlistRepository.count()
           )
         )
-        Timber.v("Library refresh was complete")
+        Timber.v("Library refresh complete after ${System.currentTimeMillis() - start} ms")
       } catch (e: Exception) {
         Timber.e(e, "Refresh couldn't complete")
         onCompleteListener?.onFailure(e)

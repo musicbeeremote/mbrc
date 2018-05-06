@@ -3,8 +3,14 @@ package com.kelsos.mbrc.di.modules
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.kelsos.mbrc.DatabaseTransactionRunner
+import com.kelsos.mbrc.DatabaseTransactionRunnerImpl
+import com.kelsos.mbrc.DeserializationAdapter
+import com.kelsos.mbrc.DeserializationAdapterImpl
 import com.kelsos.mbrc.IRemoteServiceCore
 import com.kelsos.mbrc.RemoteServiceCore
+import com.kelsos.mbrc.SerializationAdapter
+import com.kelsos.mbrc.SerializationAdapterImpl
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCacheImpl
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
@@ -52,6 +58,8 @@ import com.kelsos.mbrc.di.providers.NowPlayingDaoProvider
 import com.kelsos.mbrc.di.providers.PlaylistDaoProvider
 import com.kelsos.mbrc.di.providers.RadioStationDaoProvider
 import com.kelsos.mbrc.di.providers.TrackDaoProvider
+import com.kelsos.mbrc.networking.RequestManager
+import com.kelsos.mbrc.networking.RequestManagerImpl
 import com.kelsos.mbrc.networking.client.ClientConnectionManager
 import com.kelsos.mbrc.networking.client.IClientConnectionManager
 import com.kelsos.mbrc.networking.client.MessageDeserializer
@@ -160,5 +168,13 @@ class AppModule : Module() {
 
     bindSingletonClass<INotificationManager> { SessionNotificationManager::class }
     bindSingletonClass<IRemoteServiceCore> { RemoteServiceCore::class }
+
+    bindClass<SerializationAdapter> { SerializationAdapterImpl::class }
+    bindClass<DeserializationAdapter> { DeserializationAdapterImpl::class }
+    bindClass<DatabaseTransactionRunner> { DatabaseTransactionRunnerImpl::class }
+
+    bindSingletonProvider(AppCoroutineDispatcherProvider::class)
+
+    bindClass<RequestManager> { RequestManagerImpl::class }
   }
 }

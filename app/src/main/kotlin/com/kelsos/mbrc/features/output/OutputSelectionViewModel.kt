@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.kelsos.mbrc.content.output.OutputApi
 import com.kelsos.mbrc.content.output.OutputResponse
-import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
@@ -18,7 +18,7 @@ class OutputSelectionViewModel
 @Inject
 constructor(
   private val outputApi: OutputApi,
-  dispatchers: AppDispatchers
+  dispatchers: AppCoroutineDispatchers
 ) : ViewModel() {
 
   private val job = SupervisorJob()

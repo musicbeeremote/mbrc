@@ -5,10 +5,10 @@ import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.networking.connections.ConnectionMapper
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -25,7 +25,7 @@ internal constructor(
   private val manager: WifiManager,
   private val connectivityManager: ConnectivityManager,
   private val mapper: ObjectMapper,
-  private val dispatchers: AppDispatchers
+  private val dispatchers: AppCoroutineDispatchers
 ) : RemoteServiceDiscovery {
   private var multicastLock: WifiManager.MulticastLock? = null
   private var group: InetAddress? = null
@@ -49,7 +49,7 @@ internal constructor(
       var currentTry = 0
       while (currentTry < 4) {
         try {
-          val entity = withContext(dispatchers.io) {
+          val entity = withContext(dispatchers.network) {
             val buffer = ByteArray(512)
             val discoveryMessage = with(DatagramPacket(buffer, buffer.size)) {
               socket.receive(this)

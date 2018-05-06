@@ -24,6 +24,7 @@ constructor(
     defaultSettingsLiveDataProvider.observe(this) {
       Timber.v("settings changed")
       clientConnectionManager.setDefaultConnectionSettings(it)
+      clientConnectionManager.start()
     }
 
     playingTrackLiveDataProvider.get().observe(this) {

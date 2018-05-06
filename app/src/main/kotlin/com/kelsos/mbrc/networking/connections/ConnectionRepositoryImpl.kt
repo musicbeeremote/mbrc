@@ -5,8 +5,8 @@ import android.content.res.Resources
 import androidx.lifecycle.LiveData
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
-import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionModel
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -17,7 +17,7 @@ constructor(
   private val connectionDao: ConnectionDao,
   private val preferences: SharedPreferences,
   private val resources: Resources,
-  private val dispatchers: AppDispatchers,
+  private val dispatchers: AppCoroutineDispatchers,
   private val defaultSettingsLiveDataProvider: DefaultSettingsLiveDataProvider
 ) : ConnectionRepository {
 
@@ -29,41 +29,43 @@ constructor(
     }
   }
 
-  override suspend fun save(settings: ConnectionSettingsEntity) = withContext(dispatchers.db) {
+  override suspend fun save(settings: ConnectionSettingsEntity) =
+    withContext(dispatchers.database) {
 
-    if (settings.id > 0) {
-      connectionDao.update(settings)
-    } else {
-      connectionDao.insert(settings)
+      if (settings.id > 0) {
+        connectionDao.update(settings)
+      } else {
+        connectionDao.insert(settings)
+      }
+
+      val newDefault = last
+      if (count() == 1L && newDefault !== null) {
+        setDefault(newDefault)
+      }
     }
 
-    val newDefault = last
-    if (count() == 1L && newDefault !== null) {
-      setDefault(newDefault)
-    }
-  }
+  override suspend fun delete(settings: ConnectionSettingsEntity) =
+    withContext(dispatchers.database) {
+      val oldId = settings.id
 
-  override suspend fun delete(settings: ConnectionSettingsEntity) = withContext(dispatchers.db) {
-    val oldId = settings.id
+      connectionDao.delete(settings)
 
-    connectionDao.delete(settings)
-
-    if (oldId != defaultId) {
-      return@withContext
-    }
-
-    val count = count()
-    if (count == 0L) {
-      defaultId = -1
-    } else {
-      val before = getItemBefore(oldId)
-      val newDefault = before ?: first
-      if (newDefault === null) {
+      if (oldId != defaultId) {
         return@withContext
       }
-      setDefault(newDefault)
+
+      val count = count()
+      if (count == 0L) {
+        defaultId = -1
+      } else {
+        val before = getItemBefore(oldId)
+        val newDefault = before ?: first
+        if (newDefault === null) {
+          return@withContext
+        }
+        setDefault(newDefault)
+      }
     }
-  }
 
   private fun getItemBefore(id: Long): ConnectionSettingsEntity? {
     return connectionDao.getPrevious(id)
@@ -79,7 +81,7 @@ constructor(
     defaultId = settings.id
   }
 
-  override suspend fun getDefault(): ConnectionSettingsEntity? = withContext(dispatchers.db) {
+  override suspend fun getDefault(): ConnectionSettingsEntity? = withContext(dispatchers.database) {
     val defaultId = defaultId
     if (defaultId < 0) {
       return@withContext null
@@ -97,13 +99,13 @@ constructor(
       this.preferences.edit().putLong(key, id).apply()
     }
 
-  override suspend fun getModel(): ConnectionModel = withContext(dispatchers.db) {
+  override suspend fun getModel(): ConnectionModel = withContext(dispatchers.database) {
     return@withContext ConnectionModel(defaultId, getAll())
   }
 
   override suspend fun getAll(): LiveData<List<ConnectionSettingsEntity>> = connectionDao.getAll()
 
-  override suspend fun count(): Long = withContext(dispatchers.db) {
+  override suspend fun count(): Long = withContext(dispatchers.database) {
     return@withContext connectionDao.count()
   }
 }

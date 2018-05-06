@@ -36,7 +36,7 @@ constructor(
 class UpdatePlaybackPositionCommand
 @Inject constructor(
   private val mapper: ObjectMapper,
-  private val trackPositionLiveDataProvider: TrackPositionLiveDataProvider,
+  private val trackPositionLiveDataProvider: TrackPositionLiveDataProvider
 ) : ICommand {
 
   override fun execute(e: IEvent) {

@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.content.nowplaying
 
 import androidx.paging.PagingData
-import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.epoch
 import com.kelsos.mbrc.utilities.paged
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +16,7 @@ class NowPlayingRepositoryImpl
 @Inject constructor(
   private val dao: NowPlayingDao,
   private val api: ApiBase,
-  private val dispatchers: AppDispatchers
+  private val dispatchers: AppCoroutineDispatchers
 ) : NowPlayingRepository {
   private val mapper = NowPlayingDtoMapper()
 
@@ -29,7 +29,7 @@ class NowPlayingRepositoryImpl
 
   override suspend fun getRemote() {
     val added = epoch()
-    withContext(dispatchers.io) {
+    withContext(dispatchers.network) {
       api.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class)
         .onCompletion {
           dao.removePreviousEntries(added)

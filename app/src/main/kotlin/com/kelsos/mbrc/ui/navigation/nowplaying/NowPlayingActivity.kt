@@ -107,6 +107,7 @@ class NowPlayingActivity :
     adapter.setListener(this)
     binding.nowPlayingRefreshLayout.setOnRefreshListener { this.refresh() }
     presenter.attach(this)
+    presenter.load()
     refresh(true)
   }
 
@@ -152,12 +153,11 @@ class NowPlayingActivity :
     Snackbar.make(binding.root, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
   }
 
-  override fun showLoading() {
-  }
-
-  override fun hideLoading() {
-    binding.nowPlayingLoadingBar.isGone = true
-    binding.nowPlayingRefreshLayout.isRefreshing = false
+  override fun loading(show: Boolean) {
+    if (!show) {
+      binding.nowPlayingLoadingBar.isGone = true
+      binding.nowPlayingRefreshLayout.isRefreshing = false
+    }
   }
 
   override fun onBackPressed() {

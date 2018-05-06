@@ -118,7 +118,8 @@ abstract class BaseNavigationActivity :
   }
 
   private fun onConnection(connectionStatus: ConnectionStatus) {
-    Timber.v("Handling new connection status ${connectionStatus.status}")
+    Timber.v("Handling new connection status ${Connection.string(connectionStatus.status)}")
+
     @StringRes val resId: Int
     @ColorRes val colorId: Int
     when (connectionStatus.status) {
@@ -227,10 +228,10 @@ abstract class BaseNavigationActivity :
   }
 
   private fun createBackStack(intent: Intent) {
-    val builder = TaskStackBuilder.create(this)
-    builder.addNextIntentWithParentStack(intent)
-    builder.startActivities()
-    overridePendingTransition(R.anim.slide_in, R.anim.slide_out)
+    TaskStackBuilder.create(this)
+      .addNextIntentWithParentStack(intent)
+      .startActivities()
+    // overridePendingTransition(R.anim.slide_in, R.anim.slide_out)
   }
 
   /**

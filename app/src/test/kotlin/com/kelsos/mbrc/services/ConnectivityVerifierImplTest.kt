@@ -7,7 +7,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.Database
-import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.DeserializationAdapter
+import com.kelsos.mbrc.DeserializationAdapterImpl
+import com.kelsos.mbrc.SerializationAdapter
+import com.kelsos.mbrc.SerializationAdapterImpl
 import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.RequestManagerImpl
 import com.kelsos.mbrc.networking.client.ConnectivityVerifier
@@ -18,6 +21,7 @@ import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.preferences.ClientInformationStore
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -222,8 +226,9 @@ class ConnectivityVerifierImplTest {
       bind(RequestManager::class.java).to(RequestManagerImpl::class.java)
       bind(ConnectionRepository::class.java).toInstance(connectionRepository)
       bind(ConnectivityVerifier::class.java).to(ConnectivityVerifierImpl::class.java)
-      bind(AppDispatchers::class.java).toInstance(
-        AppDispatchers(
+      bind(AppCoroutineDispatchers::class.java).toInstance(
+        AppCoroutineDispatchers(
+          testDispatcher,
           testDispatcher,
           testDispatcher,
           testDispatcher
@@ -231,6 +236,8 @@ class ConnectivityVerifierImplTest {
       )
       bind(ClientInformationStore::class.java).toInstance(informationStore)
       bind(ConnectionDao::class.java).toProviderInstance { dao }
+      bind(DeserializationAdapter::class.java).to(DeserializationAdapterImpl::class.java)
+      bind(SerializationAdapter::class.java).to(SerializationAdapterImpl::class.java)
     }
   }
 }

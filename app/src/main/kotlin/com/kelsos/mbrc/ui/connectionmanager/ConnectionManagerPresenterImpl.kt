@@ -13,7 +13,7 @@ class ConnectionManagerPresenterImpl
 @Inject
 constructor(
   private val repository: ConnectionRepository,
-  private val serviceDiscoveryUseCase: ServiceDiscoveryUseCase,
+  private val serviceDiscoveryUseCase: ServiceDiscoveryUseCase
 ) : BasePresenter<ConnectionManagerView>(), ConnectionManagerPresenter {
 
   private lateinit var settings: LiveData<List<ConnectionSettingsEntity>>

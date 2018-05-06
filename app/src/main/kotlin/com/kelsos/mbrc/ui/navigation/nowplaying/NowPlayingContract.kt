@@ -10,8 +10,7 @@ interface NowPlayingView : BaseView {
   suspend fun update(data: PagingData<NowPlaying>)
   fun trackChanged(track: PlayingTrackModel, scrollToTrack: Boolean = false)
   fun failure(throwable: Throwable)
-  fun showLoading()
-  fun hideLoading()
+  fun loading(show: Boolean = false)
 }
 
 interface NowPlayingPresenter : Presenter<NowPlayingView> {

@@ -2,9 +2,9 @@ package com.kelsos.mbrc.content.library.covers
 
 import android.app.Application
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
-import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
@@ -20,7 +20,7 @@ class CoverCache
 constructor(
   private val albumRepository: AlbumRepository,
   private val api: ApiBase,
-  private val dispatchers: AppDispatchers,
+  private val dispatchers: AppCoroutineDispatchers,
   app: Application
 ) {
 
@@ -32,10 +32,10 @@ constructor(
   }
 
   suspend fun cache() {
-    val covers = withContext(dispatchers.db) {
+    val covers = withContext(dispatchers.database) {
       val albumCovers = mutableListOf<AlbumCover>()
       val covers = albumRepository.getCovers()
-      withContext(dispatchers.io) {
+      withContext(dispatchers.network) {
         val files = cache.listFiles()?.map { it.nameWithoutExtension } ?: emptyList()
 
         for (cover in covers) {
@@ -48,11 +48,11 @@ constructor(
       }
       albumCovers
     }
-    withContext(dispatchers.io) {
+    withContext(dispatchers.network) {
       val updated = mutableListOf<AlbumCover>()
       api.getAll(Protocol.LibraryCover, covers, Cover::class).onCompletion {
         Timber.v("Updated covers for ${updated.size} albums")
-        withContext(dispatchers.db) {
+        withContext(dispatchers.database) {
           albumRepository.updateCovers(updated)
         }
         val storedCovers = albumRepository.getCovers().map { it.key() }

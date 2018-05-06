@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
-import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
@@ -10,9 +10,9 @@ import javax.inject.Inject
 
 class MoveManagerImpl
 @Inject
-constructor(dispatchers: AppDispatchers) : MoveManager {
+constructor(dispatchers: AppCoroutineDispatchers) : MoveManager {
   private val job = SupervisorJob()
-  private val scope = CoroutineScope(dispatchers.io + job)
+  private val scope = CoroutineScope(dispatchers.disk + job)
   private var originalPosition: Int = -1
   private var finalPosition: Int = -1
 

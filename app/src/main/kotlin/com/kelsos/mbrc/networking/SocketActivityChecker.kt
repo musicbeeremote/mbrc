@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.networking
 
-import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
@@ -15,12 +15,11 @@ import javax.inject.Singleton
 @Singleton
 class SocketActivityChecker
 @Inject
-constructor(dispatchers: AppDispatchers) {
+constructor(dispatchers: AppCoroutineDispatchers) {
   private var deferred: Deferred<Unit>? = null
   private var pingTimeoutListener: PingTimeoutListener? = null
   private val job = SupervisorJob()
-  private val context = job + dispatchers.io
-  private val scope = CoroutineScope(context)
+  private val scope = CoroutineScope(job + dispatchers.network)
 
   fun start() {
     Timber.v("Starting activity checker")

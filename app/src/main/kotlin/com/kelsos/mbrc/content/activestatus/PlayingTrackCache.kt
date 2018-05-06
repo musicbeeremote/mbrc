@@ -3,10 +3,10 @@ package com.kelsos.mbrc.content.activestatus
 import android.app.Application
 import androidx.datastore.core.DataStore
 import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
-import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.store.Store
 import com.kelsos.mbrc.store.Track
 import com.kelsos.mbrc.store.dataStore
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -19,7 +19,7 @@ class PlayingTrackCacheImpl
 @Inject
 constructor(
   context: Application,
-  private val dispatchers: AppDispatchers
+  private val dispatchers: AppCoroutineDispatchers
 ) : PlayingTrackCache {
 
   private val dataStore: DataStore<Store> = context.dataStore
@@ -34,7 +34,9 @@ constructor(
       }
     }
 
-  override suspend fun persistInfo(trackInfo: PlayingTrackModel) = withContext(dispatchers.io) {
+  override suspend fun persistInfo(
+    trackInfo: PlayingTrackModel
+  ) = withContext(dispatchers.network) {
     dataStore.updateData { store ->
       val track = Track.newBuilder()
         .setAlbum(trackInfo.album)
@@ -51,7 +53,7 @@ constructor(
     return@withContext
   }
 
-  override suspend fun restoreInfo(): PlayingTrackModel = withContext(dispatchers.io) {
+  override suspend fun restoreInfo(): PlayingTrackModel = withContext(dispatchers.network) {
     val track = storeFlow.first().track
 
     return@withContext PlayingTrackModel(

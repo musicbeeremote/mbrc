@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
-import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
@@ -17,7 +17,12 @@ class MoveManagerImplTest {
   private lateinit var onMoveSubmit: (Int, Int) -> Unit
 
   private val testDispatcher = TestCoroutineDispatcher()
-  private val dispatchers = AppDispatchers(testDispatcher, testDispatcher, testDispatcher)
+  private val dispatchers = AppCoroutineDispatchers(
+    testDispatcher,
+    testDispatcher,
+    testDispatcher,
+    testDispatcher
+  )
   private val moveManager: MoveManager = MoveManagerImpl(dispatchers)
 
   @Before

@@ -13,85 +13,6 @@
       android:logo="@mipmap/ic_launcher"
       android:theme="@style/Theme.App"
       tools:ignore="UnusedAttribute">
-    <activity
-        android:name=".UpdateRequiredActivity"
-        android:exported="true" />
-    <activity
-        android:name=".ui.navigation.main.MainActivity"
-        android:launchMode="singleTop"
-        android:windowSoftInputMode="adjustNothing" />
-    <activity
-        android:name=".ui.navigation.library.LibraryActivity"
-        android:label="@string/nav_library"
-        android:parentActivityName=".ui.navigation.main.MainActivity">
-
-      <!-- Parent activity meta-data to support 4.0 and lower -->
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.navigation.main.MainActivity" />
-    </activity>
-    <activity android:name=".ui.navigation.library.albumtracks.AlbumTracksActivity" />
-    <activity android:name=".ui.navigation.library.artistalbums.ArtistAlbumsActivity" />
-    <activity android:name=".ui.navigation.library.genreartists.GenreArtistsActivity" />
-    <activity
-        android:name=".ui.navigation.lyrics.LyricsActivity"
-        android:label="@string/nav_lyrics"
-        android:parentActivityName=".ui.navigation.main.MainActivity">
-
-      <!-- Parent activity meta-data to support 4.0 and lower -->
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.navigation.main.MainActivity" />
-    </activity>
-    <activity
-        android:name=".ui.navigation.nowplaying.NowPlayingActivity"
-        android:label="@string/nav_now_playing"
-        android:parentActivityName=".ui.navigation.main.MainActivity">
-
-      <!-- Parent activity meta-data to support 4.0 and lower -->
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.navigation.main.MainActivity" />
-    </activity>
-    <activity
-        android:name=".ui.navigation.playlists.PlaylistActivity"
-        android:label="@string/nav_playlists"
-        android:parentActivityName=".ui.navigation.main.MainActivity">
-
-      <!-- Parent activity meta-data to support 4.0 and lower -->
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.navigation.main.MainActivity" />
-    </activity>
-    <activity
-        android:name=".ui.preferences.SettingsActivity"
-        android:parentActivityName=".ui.navigation.main.MainActivity">
-
-      <!-- Parent activity meta-data to support 4.0 and lower -->
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.navigation.main.MainActivity" />
-    </activity>
-    <activity
-        android:name=".ui.connectionmanager.ConnectionManagerActivity"
-        android:parentActivityName=".ui.preferences.SettingsActivity"
-        android:windowSoftInputMode="adjustNothing">
-
-      <!-- Parent activity meta-data to support 4.0 and lower -->
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.preferences.SettingsActivity" />
-    </activity>
-
-    <activity
-        android:name=".ui.helpfeedback.HelpFeedbackActivity"
-        android:label="@string/title_activity_help_feedback"
-        android:parentActivityName=".ui.navigation.main.MainActivity"
-        android:windowSoftInputMode="adjustNothing">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="com.kelsos.mbrc.ui.navigation.main.MainActivity" />
-    </activity>
 
     <activity
         android:name=".ui.activities.SplashActivity"
@@ -102,14 +23,61 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
+
+    <activity
+        android:name=".ui.navigation.main.MainActivity"
+        android:launchMode="singleTop"
+        android:windowSoftInputMode="adjustNothing" />
+
+    <activity
+        android:name=".UpdateRequiredActivity"
+        android:exported="true" />
+
+    <activity
+        android:name=".ui.navigation.library.LibraryActivity"
+        android:label="@string/nav_library"
+        android:parentActivityName=".ui.navigation.main.MainActivity" />
+
+    <activity
+        android:name=".ui.navigation.nowplaying.NowPlayingActivity"
+        android:label="@string/nav_now_playing"
+        android:parentActivityName=".ui.navigation.main.MainActivity" />
+
+    <activity
+        android:name=".ui.navigation.playlists.PlaylistActivity"
+        android:label="@string/nav_playlists"
+        android:parentActivityName=".ui.navigation.main.MainActivity" />
+
     <activity
         android:name=".ui.navigation.radio.RadioActivity"
         android:label="@string/title_activity_radios"
-        android:parentActivityName=".ui.navigation.main.MainActivity">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="com.kelsos.mbrc.ui.navigation.main.MainActivity" />
-    </activity>
+        android:parentActivityName=".ui.navigation.main.MainActivity" />
+
+    <activity
+        android:name=".ui.navigation.lyrics.LyricsActivity"
+        android:label="@string/nav_lyrics"
+        android:parentActivityName=".ui.navigation.main.MainActivity" />
+
+    <activity
+        android:name=".ui.preferences.SettingsActivity"
+        android:parentActivityName=".ui.navigation.main.MainActivity" />
+
+    <activity
+        android:name=".ui.connectionmanager.ConnectionManagerActivity"
+        android:parentActivityName=".ui.preferences.SettingsActivity"
+        android:windowSoftInputMode="adjustNothing" />
+
+    <activity android:name=".ui.navigation.library.albumtracks.AlbumTracksActivity" />
+
+    <activity android:name=".ui.navigation.library.artistalbums.ArtistAlbumsActivity" />
+
+    <activity android:name=".ui.navigation.library.genreartists.GenreArtistsActivity" />
+
+    <activity
+        android:name=".ui.helpfeedback.HelpFeedbackActivity"
+        android:label="@string/title_activity_help_feedback"
+        android:parentActivityName=".ui.navigation.main.MainActivity" />
+
     <receiver android:name=".platform.mediasession.MediaButtonReceiver">
       <intent-filter>
         <action android:name="android.intent.action.MEDIA_BUTTON" />
@@ -125,6 +93,7 @@
           android:name="android.appwidget.provider"
           android:resource="@xml/remote_widget_small" />
     </receiver>
+
     <receiver android:name=".platform.widgets.WidgetNormal">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -134,6 +103,7 @@
           android:name="android.appwidget.provider"
           android:resource="@xml/remote_widget_normal" />
     </receiver>
+
     <service
         android:name=".platform.RemoteService"
         android:description="@string/info_service_description"
@@ -149,7 +119,7 @@
 
     <service
         android:name=".platform.LibrarySyncService"
-        android:exported="false"/>
+        android:exported="false" />
 
     <provider
         android:name="androidx.core.content.FileProvider"

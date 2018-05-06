@@ -47,7 +47,7 @@ constructor() : MessageQueue {
   override fun run() {
     running = true
 
-    //noinspection InfiniteLoopStatement
+    // noinspection InfiniteLoopStatement
     while (true) {
       try {
         onMessageAvailable(

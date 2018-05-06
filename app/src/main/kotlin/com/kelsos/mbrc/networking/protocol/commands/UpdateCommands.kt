@@ -23,7 +23,6 @@ import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.content.lyrics.LyricsPayload
 import com.kelsos.mbrc.content.nowplaying.NowPlayingTrack
 import com.kelsos.mbrc.content.nowplaying.cover.CoverPayload
-import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.events.ShuffleMode
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.extensions.md5
@@ -33,6 +32,7 @@ import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.platform.widgets.UpdateWidgets
 import com.kelsos.mbrc.ui.navigation.main.LfmRating
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
@@ -165,7 +165,7 @@ constructor(
     val mute = node.path(Protocol.PlayerMute).asBoolean()
     val playState = node.path(Protocol.PlayerState).asText()
     val repeat = node.path(Protocol.PlayerRepeat).asText().toRepeat()
-    //noinspection ResourceType
+    // noinspection ResourceType
     val shuffle = node.path(Protocol.PlayerShuffle).asText()
     val scrobbling = node.path(Protocol.PlayerScrobble).asBoolean()
     val volume = Integer.parseInt(node.path(Protocol.PlayerVolume).asText())
@@ -299,11 +299,11 @@ class UpdateCover
   private val mapper: ObjectMapper,
   private val coverService: ApiBase,
   private val cache: PlayingTrackCache,
-  appDispatchers: AppDispatchers
+  appDispatchers: AppCoroutineDispatchers
 ) : ICommand {
   private val coverDir: File
   private val job = SupervisorJob()
-  private val scope = CoroutineScope(job + appDispatchers.io)
+  private val scope = CoroutineScope(job + appDispatchers.network)
 
   init {
     coverDir = File(context.filesDir, COVER_DIR)

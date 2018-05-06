@@ -81,7 +81,7 @@ constructor(
   override fun run() {
     running = true
     try {
-      //noinspection InfiniteLoopStatement
+      // noinspection InfiniteLoopStatement
       while (true) {
         executeCommand(eventQueue.take())
       }

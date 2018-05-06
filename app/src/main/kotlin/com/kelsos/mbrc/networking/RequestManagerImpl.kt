@@ -1,14 +1,14 @@
 package com.kelsos.mbrc.networking
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.DeserializationAdapter
+import com.kelsos.mbrc.SerializationAdapter
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.InetAddressMapper
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 import com.kelsos.mbrc.preferences.ClientInformationStore
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.IOException
@@ -19,14 +19,15 @@ import javax.inject.Inject
 class RequestManagerImpl
 @Inject
 constructor(
-  private val mapper: ObjectMapper,
-  private val repository: ConnectionRepository,
+  private val serializationAdapter: SerializationAdapter,
+  private val deserializationAdapter: DeserializationAdapter,
   private val clientInformationStore: ClientInformationStore,
-  private val dispatchers: AppDispatchers
+  private val repository: ConnectionRepository,
+  private val dispatchers: AppCoroutineDispatchers
 ) : RequestManager {
 
   override suspend fun openConnection(handshake: Boolean): ActiveConnection =
-    withContext(dispatchers.io) {
+    withContext(dispatchers.network) {
       val firstMessage = if (handshake) SocketMessage.create(Protocol.Player, "Android") else null
       val socket = connect(firstMessage)
 
@@ -39,7 +40,7 @@ constructor(
           break
         }
 
-        val message = mapper.readValue<SocketMessage>(line)
+        val message = deserializationAdapter.objectify(line, SocketMessage::class)
 
         val context = message.context
         Timber.v("incoming context => $context")
@@ -64,7 +65,7 @@ constructor(
   }
 
   override suspend fun request(connection: ActiveConnection, message: SocketMessage): String =
-    withContext(dispatchers.io) {
+    withContext(dispatchers.network) {
       connection.send(message.getBytes())
       val readLine = connection.readLine()
       return@withContext if (readLine.isEmpty()) {
@@ -96,7 +97,7 @@ constructor(
   }
 
   private fun SocketMessage.getBytes(): ByteArray {
-    return (mapper.writeValueAsString(this) + "\r\n").toByteArray()
+    return (serializationAdapter.stringify(this) + "\r\n").toByteArray()
   }
 
   private fun Socket.send(socketMessage: SocketMessage) {

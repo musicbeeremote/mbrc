@@ -3,6 +3,7 @@ package com.kelsos.mbrc.networking.client
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.Protocol.Context
+import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 
 class SocketMessage {
   @JsonProperty
@@ -29,4 +30,8 @@ class SocketMessage {
 
 fun SocketMessage.Companion.player(): SocketMessage {
   return create(Protocol.Player, "Android")
+}
+
+fun SocketMessage.Companion.protocol(payload: ProtocolPayload): SocketMessage {
+  return create(Protocol.ProtocolTag, payload)
 }

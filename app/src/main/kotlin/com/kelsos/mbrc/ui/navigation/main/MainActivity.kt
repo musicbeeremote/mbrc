@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.main
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -446,6 +447,12 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
   }
 
   companion object {
+    fun start(context: Context) {
+      with(context) {
+        startActivity(Intent(this, MainActivity::class.java))
+      }
+    }
+
     private const val PAUSED = "Paused"
     private const val STOPPED = "Stopped"
     private const val PLAYING = "Playing"
