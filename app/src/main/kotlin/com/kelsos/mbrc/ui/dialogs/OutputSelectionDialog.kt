@@ -14,8 +14,8 @@ import android.widget.ArrayAdapter
 import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
-import androidx.view.isInvisible
-import androidx.view.isVisible
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.output.OutputResponse
 import com.kelsos.mbrc.extensions.fail
@@ -111,7 +111,7 @@ class OutputSelectionDialog : DialogFragment(),
     availableOutputs.setSelection(selection)
     availableOutputs.onItemSelectedListener = this
     availableOutputs.setOnTouchListener(this)
-    loadingProgress.isInvisible = true
+    loadingProgress.isVisible = false
     availableOutputs.isVisible = true
   }
 
@@ -121,7 +121,7 @@ class OutputSelectionDialog : DialogFragment(),
       else -> R.string.output_selection__generic_error
     }
     errorMessage.setText(resId)
-    loadingProgress.isInvisible = true
+    loadingProgress.isVisible = false
     availableOutputs.isInvisible = true
     errorMessage.isVisible = true
   }

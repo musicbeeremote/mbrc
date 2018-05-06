@@ -25,10 +25,6 @@ constructor(
     return Single.fromCallable { dao.getAll() }
   }
 
-  override fun getAndSaveRemote(): Single<DataSource.Factory<Int, AlbumEntity>> {
-    return getRemote().andThen(getAll())
-  }
-
   override fun getRemote(): Completable {
     val added = epoch()
     return remoteDataSource.getAllPages(Protocol.LibraryBrowseAlbums, AlbumDto::class).doOnNext {

@@ -2,7 +2,7 @@ package com.kelsos.mbrc.content.activestatus.livedata
 
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
-import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.disposables.Disposable
 import java.util.WeakHashMap
 import javax.inject.Inject
@@ -21,15 +21,15 @@ typealias OnDefaultConnectionChanged = (ConnectionSettingsEntity) -> Unit
 class DefaultSettingsLiveDataProviderImpl
 @Inject
 constructor(
-  private val schedulerProvider: SchedulerProvider
+  private val appRxSchedulers: AppRxSchedulers
 ) : DefaultSettingsLiveDataProvider {
   private val settingsRelay: BehaviorRelay<ConnectionSettingsEntity> = BehaviorRelay.create()
   private val map: WeakHashMap<Any, Disposable> = WeakHashMap()
 
   override fun observe(obj: Any, onSettings: OnDefaultConnectionChanged) {
-    map[obj] = settingsRelay.subscribeOn(schedulerProvider.io())
+    map[obj] = settingsRelay.subscribeOn(appRxSchedulers.disk)
       .distinctUntilChanged { t1, t2 -> t1.address == t2.address && t1.port == t2.port }
-      .subscribeOn(schedulerProvider.main())
+      .subscribeOn(appRxSchedulers.main)
       .subscribe { onSettings(it) }
   }
 

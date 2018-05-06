@@ -12,17 +12,18 @@ import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.NowPlayingMoveRequest
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.AppRxSchedulers
 import com.kelsos.mbrc.utilities.paged
 import io.reactivex.rxkotlin.plusAssign
 import javax.inject.Inject
 
 class NowPlayingPresenterImpl
-@Inject constructor(
+@Inject
+constructor(
   playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
   private val repository: NowPlayingRepository,
   private val moveManager: MoveManager,
-  private val schedulerProvider: SchedulerProvider,
+  private val appRxSchedulers: AppRxSchedulers,
   private val userActionUseCase: UserActionUseCase
 ) : BasePresenter<NowPlayingView>(), NowPlayingPresenter {
 
@@ -43,20 +44,15 @@ class NowPlayingPresenterImpl
   private lateinit var nowPlayingTracks: LiveData<PagedList<NowPlayingEntity>>
 
   override fun reload(scrollToTrack: Boolean) {
-    view().showLoading()
-    disposables += repository.getAndSaveRemote()
-      .subscribeOn(schedulerProvider.io())
-      .observeOn(schedulerProvider.main())
+    disposables += repository.getRemote()
+      .subscribeOn(appRxSchedulers.network)
+      .observeOn(appRxSchedulers.main)
+      .doFinally { view().loading() }
       .subscribe({
-        onNowPlayingTracksLoaded(it)
 
-        with(view()) {
-          hideLoading()
-        }
       }) {
         with(view()) {
           failure(it)
-          hideLoading()
         }
       }
   }
@@ -72,14 +68,13 @@ class NowPlayingPresenterImpl
 
   override fun load() {
     disposables += repository.getAll()
-      .subscribeOn(schedulerProvider.io())
-      .observeOn(schedulerProvider.main())
+      .subscribeOn(appRxSchedulers.database)
+      .observeOn(appRxSchedulers.main)
+      .doFinally { view().loading() }
       .subscribe({
         onNowPlayingTracksLoaded(it)
-        view().hideLoading()
       }) {
         view().failure(it)
-        view().hideLoading()
       }
   }
 

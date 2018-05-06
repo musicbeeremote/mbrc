@@ -6,7 +6,7 @@ import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
-import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
 import javax.inject.Inject
@@ -16,7 +16,7 @@ class ConnectionManagerPresenterImpl
 constructor(
   private val repository: ConnectionRepository,
   private val serviceDiscoveryUseCase: ServiceDiscoveryUseCase,
-  private val schedulerProvider: SchedulerProvider
+  private val appRxSchedulers: AppRxSchedulers
 ) : BasePresenter<ConnectionManagerView>(), ConnectionManagerPresenter {
 
   private lateinit var settings: LiveData<List<ConnectionSettingsEntity>>
@@ -24,18 +24,18 @@ constructor(
   override fun attach(view: ConnectionManagerView) {
     super.attach(view)
 //    disposables += bus.observe(ConnectionSettingsChanged::class)
-//      .subscribeOn(schedulerProvider.io())
-//      .observeOn(schedulerProvider.main())
+//      .subscribeOn(appRxSchedulers.disk())
+//      .observeOn(appRxSchedulers.main())
 //      .subscribe({ view().onConnectionSettingsChange(it) })
 
 //    disposables += bus.observe(DiscoveryStopped::class)
-//      .subscribeOn(schedulerProvider.io())
-//      .observeOn(schedulerProvider.main())
+//      .subscribeOn(appRxSchedulers.disk())
+//      .observeOn(appRxSchedulers.main())
 //      .subscribe({ view().onDiscoveryStopped(it) })
 
 //    disposables += bus.observe(NotifyUser::class)
-//      .subscribeOn(schedulerProvider.io())
-//      .observeOn(schedulerProvider.main())
+//      .subscribeOn(appRxSchedulers.disk())
+//      .observeOn(appRxSchedulers.main())
 //      .subscribe({ view().onUserNotification(it) })
   }
 
@@ -48,8 +48,8 @@ constructor(
   override fun load() {
     checkIfAttached()
     disposables += repository.getModel()
-      .subscribeOn(schedulerProvider.io())
-      .observeOn(schedulerProvider.main())
+      .subscribeOn(appRxSchedulers.disk)
+      .observeOn(appRxSchedulers.main)
       .subscribe({
 
         settings = it.settings

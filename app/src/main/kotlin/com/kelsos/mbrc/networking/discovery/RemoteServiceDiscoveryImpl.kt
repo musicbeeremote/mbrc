@@ -89,7 +89,7 @@ internal constructor(
       this.resource
     }, {
       this.getObservable(it)
-    },{ this.cleanup(it) })
+    }, { this.cleanup(it) })
   }
 
   private fun cleanup(resource: MulticastSocket) {
@@ -108,6 +108,8 @@ internal constructor(
       .flatMap { getMessage(socket) }
       .filter { message -> NOTIFY == message.context }
       .doOnNext { Timber.v("discovery message -> $it") }
+      .firstElement()
+      .toObservable()
   }
 
   private fun getMessage(socket: MulticastSocket): Observable<DiscoveryMessage>? {
@@ -130,15 +132,18 @@ internal constructor(
             group = it
           })
 
-          val message = with(DiscoveryMessage())  {
+          val message = with(DiscoveryMessage()) {
             context = Protocol.DISCOVERY
             address = wifiAddress
             mapper.writeValueAsBytes(this)
           }
 
-          send(DatagramPacket(message, message.size, group,
-            MULTICAST_PORT
-          ))
+          send(
+            DatagramPacket(
+              message, message.size, group,
+              MULTICAST_PORT
+            )
+          )
         }
 
       } catch (e: IOException) {

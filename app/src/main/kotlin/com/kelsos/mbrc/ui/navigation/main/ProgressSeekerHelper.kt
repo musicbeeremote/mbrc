@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.main
 
-import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import timber.log.Timber
@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class ProgressSeekerHelper
 @Inject constructor(
-  private val schedulerProvider: SchedulerProvider
+  private val appRxSchedulers: AppRxSchedulers
 ) {
   private var progressUpdate: ProgressUpdate? = null
   private var disposable: Disposable? = null
@@ -33,7 +33,7 @@ class ProgressSeekerHelper
       position + it
     }.takeWhile {
       it <= duration
-    }.observeOn(schedulerProvider.main()).subscribe({
+    }.observeOn(appRxSchedulers.main).subscribe({
       progressUpdate?.progress(it.toInt(), duration)
     }) { onError(it) }
   }

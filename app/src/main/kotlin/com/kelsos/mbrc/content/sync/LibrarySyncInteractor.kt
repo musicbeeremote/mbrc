@@ -1,15 +1,15 @@
 package com.kelsos.mbrc.content.sync
 
 /**
- * The class is responsible for the library metadata and playlist data sync.
+ * The class is responsible for the library metadata and playlist data network.
  */
 interface LibrarySyncInteractor {
   /**
-   * Starts the sync process for the library and playlist metadata. The sync can be
-   * either manual or automatic. The automatic sync should happen only under certain
+   * Starts the network process for the library and playlist metadata. The network can be
+   * either manual or automatic. The automatic network should happen only under certain
    * conditions.
    *
-   * @param auto Marks the sync process as automatic (initiated by conditions) or
+   * @param auto Marks the network process as automatic (initiated by conditions) or
    * manual (initiated by the user)
    */
   fun sync(auto: Boolean = false)

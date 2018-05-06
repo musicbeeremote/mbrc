@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.view.isVisible
+import androidx.core.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import kotterknife.bindView
@@ -93,11 +93,7 @@ class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewH
       computerName.text = entity.name
       hostname.text = "${entity.address} : ${entity.port}"
 
-      if (entity.id == selectionId) {
-        defaultSettings.isVisible = true
-      } else {
-        defaultSettings.isVisible = false
-      }
+      defaultSettings.isVisible = entity.id == selectionId
     }
 
     fun onOverflow(action: (view: View) -> Unit) {

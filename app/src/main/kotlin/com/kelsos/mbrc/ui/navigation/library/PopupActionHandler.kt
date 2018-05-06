@@ -16,7 +16,7 @@ import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
 import com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksActivity
 import com.kelsos.mbrc.ui.navigation.library.artistalbums.ArtistAlbumsActivity
 import com.kelsos.mbrc.ui.navigation.library.genreartists.GenreArtistsActivity
-import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -29,7 +29,7 @@ class PopupActionHandler
 @Inject
 constructor(
   private val settings: DefaultActionPreferenceStore,
-  private val schedulerProvider: SchedulerProvider,
+  private val appRxSchedulers: AppRxSchedulers,
   private val trackRepository: TrackRepository,
   private val queueApi: QueueApi
 ) {
@@ -59,7 +59,7 @@ constructor(
     disposables += trackRepository.getAlbumTrackPaths(entry.album, entry.artist)
       .flatMap {
         queueApi.queue(type, it)
-      }.subscribeOn(schedulerProvider.io())
+      }.subscribeOn(appRxSchedulers.disk)
       .subscribe({
         result(true)
       }) {
@@ -86,7 +86,7 @@ constructor(
   private fun queueArtist(entry: ArtistEntity, type: String, result: (success: Boolean) -> Unit) {
     disposables += trackRepository.getArtistTrackPaths(artist = entry.artist).flatMap {
       queueApi.queue(type, it)
-    }.subscribeOn(schedulerProvider.io()).subscribe({
+    }.subscribeOn(appRxSchedulers.disk).subscribe({
       result(true)
     }) {
       result(false)
@@ -113,7 +113,7 @@ constructor(
     disposables += trackRepository.getGenreTrackPaths(genre = entry.genre)
       .flatMap {
         queueApi.queue(type, it)
-      }.subscribeOn(schedulerProvider.io())
+      }.subscribeOn(appRxSchedulers.disk)
       .subscribe({
         result(true)
       }) {
@@ -151,7 +151,7 @@ constructor(
     }
 
     disposables += trackSource.flatMap { queueApi.queue(type, it, path) }
-      .subscribeOn(schedulerProvider.io())
+      .subscribeOn(appRxSchedulers.disk)
       .subscribe({ }) {
         Timber.v(it, "Failed to queue")
       }

@@ -10,7 +10,7 @@ class CoverApiImpl
   private val apiBase: ApiBase
 ) : CoverApi {
   override fun getCover(): Single<String> {
-    return apiBase.getItem(Protocol.NowPlayingCover, CoverPayload::class.java).map { payload ->
+    return apiBase.getItem(Protocol.NowPlayingCover, CoverPayload::class).map { payload ->
       if (payload.status == CoverPayload.SUCCESS) {
         return@map payload.cover
       } else {

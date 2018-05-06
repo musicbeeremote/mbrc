@@ -4,7 +4,6 @@ import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LifecycleRegistry
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 
 open class BasePresenter<T : BaseView> : Presenter<T>, LifecycleOwner {
   @Suppress("LeakingThis")
@@ -25,20 +24,9 @@ open class BasePresenter<T : BaseView> : Presenter<T>, LifecycleOwner {
   }
 
   override fun detach() {
+    disposables.clear()
     lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
     this.view = null
-    CompositeDisposable().clear()
-  }
-
-  @Deprecated(
-    message = "use rxkotlin +=",
-    replaceWith = ReplaceWith(
-      "disposables += disposable",
-      imports = ["io.reactivex.rxkotlin.plusAssign"]
-    )
-  )
-  protected fun addDisposable(disposable: Disposable) {
-    CompositeDisposable().add(disposable)
   }
 
   fun view(): T {

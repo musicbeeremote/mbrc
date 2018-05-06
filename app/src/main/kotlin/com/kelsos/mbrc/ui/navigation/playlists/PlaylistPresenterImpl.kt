@@ -10,7 +10,7 @@ import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.AppRxSchedulers
 import com.kelsos.mbrc.utilities.paged
 import io.reactivex.rxkotlin.plusAssign
 import javax.inject.Inject
@@ -19,17 +19,16 @@ class PlaylistPresenterImpl
 @Inject
 constructor(
   private val repository: PlaylistRepository,
-  private val schedulerProvider: SchedulerProvider,
+  private val appRxSchedulers: AppRxSchedulers,
   private val userActionUseCase: UserActionUseCase
 ) : BasePresenter<PlaylistView>(), PlaylistPresenter {
 
   private lateinit var playlists: LiveData<PagedList<PlaylistEntity>>
 
   override fun load() {
-    view().showLoading()
     disposables += repository.getAll()
-      .observeOn(schedulerProvider.main())
-      .subscribeOn(schedulerProvider.io())
+      .subscribeOn(appRxSchedulers.database)
+      .observeOn(appRxSchedulers.main)
       .doAfterTerminate { view().hideLoading() }
       .subscribe({
         onPlaylistsLoad(it)
@@ -52,15 +51,15 @@ constructor(
   }
 
   override fun reload() {
-    view().showLoading()
-    disposables += repository.getAndSaveRemote()
-      .observeOn(schedulerProvider.main())
-      .subscribeOn(schedulerProvider.io())
+    disposables += repository.getRemote()
+      .subscribeOn(appRxSchedulers.network)
+      .observeOn(appRxSchedulers.main)
       .doAfterTerminate { view().hideLoading() }
       .subscribe({
-        onPlaylistsLoad(it)
+        ///
       }) {
         view().failure(it)
       }
+
   }
 }

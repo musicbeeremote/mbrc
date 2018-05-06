@@ -5,7 +5,7 @@ import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor.OnCompleteListener
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.SettingsManager
-import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
 import javax.inject.Inject
@@ -13,7 +13,7 @@ import javax.inject.Inject
 @LibraryActivity.Presenter
 class LibraryPresenterImpl
 @Inject constructor(
-  private val schedulerProvider: SchedulerProvider,
+  private val appRxSchedulers: AppRxSchedulers,
   private val settingsManager: SettingsManager,
   private val librarySyncInteractor: LibrarySyncInteractor,
   syncProgressProvider: SyncProgressProvider
@@ -58,8 +58,8 @@ class LibraryPresenterImpl
 
   override fun loadArtistPreference() {
     disposables += settingsManager.shouldDisplayOnlyAlbumArtists()
-      .subscribeOn(schedulerProvider.io())
-      .observeOn(schedulerProvider.main())
+      .subscribeOn(appRxSchedulers.disk)
+      .observeOn(appRxSchedulers.main)
       .subscribe({
         view().updateArtistOnlyPreference(it)
       }, {

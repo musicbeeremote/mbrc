@@ -1,16 +1,16 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
+import android.arch.paging.PagedList
 import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.content.nowplaying.NowPlayingEntity
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 
 interface NowPlayingView : BaseView {
-  fun update(data: List<NowPlayingEntity>)
+  fun update(data: PagedList<NowPlayingEntity>)
   fun trackChanged(track: PlayingTrackModel, scrollToTrack: Boolean = false)
   fun failure(throwable: Throwable)
-  fun showLoading()
-  fun hideLoading()
+  fun loading(show: Boolean = false)
 }
 
 interface NowPlayingPresenter : Presenter<NowPlayingView> {

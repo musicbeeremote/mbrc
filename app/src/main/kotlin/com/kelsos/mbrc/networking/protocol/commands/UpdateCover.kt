@@ -16,10 +16,10 @@ import com.kelsos.mbrc.extensions.md5
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.platform.widgets.UpdateWidgets
+import com.kelsos.mbrc.utilities.AppRxSchedulers
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -31,6 +31,7 @@ class UpdateCover
 constructor(
   private val context: Application,
   private val mapper: ObjectMapper,
+  private val rxSchedulers: AppRxSchedulers,
   private val coverApi: CoverApi,
   private val playingTrackLiveDataProvider: PlayingTrackLiveDataProvider
 ) : ICommand {
@@ -52,13 +53,13 @@ constructor(
   }
 
   private fun retrieveCover() {
-    coverApi.getCover().subscribeOn(Schedulers.io()).flatMap {
+    coverApi.getCover().subscribeOn(rxSchedulers.network).flatMap {
       Single.fromCallable { getBitmap(it) }
     }.flatMap {
       return@flatMap Single.fromCallable { storeCover(it) }
     }.flatMap {
       return@flatMap prefetch(it)
-    }.subscribeOn(Schedulers.io()).subscribe({
+    }.subscribeOn(rxSchedulers.disk).subscribe({
 
       playingTrackLiveDataProvider.update({ PlayingTrackModel(coverUrl = it.absolutePath) }) {
         copy(coverUrl = it.absolutePath)

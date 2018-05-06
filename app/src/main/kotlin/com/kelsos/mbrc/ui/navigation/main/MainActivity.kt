@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.main
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -22,11 +23,11 @@ import com.kelsos.mbrc.content.activestatus.PlayerState.State
 import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
 import com.kelsos.mbrc.content.activestatus.Repeat
 import com.kelsos.mbrc.content.activestatus.Repeat.Mode
+import com.kelsos.mbrc.content.activestatus.TrackPositionData
 import com.kelsos.mbrc.content.activestatus.TrackRatingModel
 import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.events.ShuffleMode
 import com.kelsos.mbrc.events.ShuffleMode.Shuffle
-import com.kelsos.mbrc.content.activestatus.TrackPositionData
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
@@ -436,6 +437,12 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
   annotation class Presenter
 
   companion object {
+    fun start(context: Context) {
+      with(context) {
+        startActivity(Intent(this, MainActivity::class.java))
+      }
+    }
+
     private const val PAUSED = "Paused"
     private const val STOPPED = "Stopped"
     private val PRESENTER_SCOPE: Class<*> = Presenter::class.java

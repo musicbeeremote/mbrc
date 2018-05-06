@@ -3,8 +3,14 @@ package com.kelsos.mbrc.di.modules
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.kelsos.mbrc.DatabaseTransactionRunner
+import com.kelsos.mbrc.DatabaseTransactionRunnerImpl
+import com.kelsos.mbrc.DeserializationAdapter
+import com.kelsos.mbrc.DeserializationAdapterImpl
 import com.kelsos.mbrc.IRemoteServiceCore
 import com.kelsos.mbrc.RemoteServiceCore
+import com.kelsos.mbrc.SerializationAdapter
+import com.kelsos.mbrc.SerializationAdapterImpl
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCacheImpl
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
@@ -47,6 +53,7 @@ import com.kelsos.mbrc.di.bindClass
 import com.kelsos.mbrc.di.bindInstance
 import com.kelsos.mbrc.di.bindSingletonClass
 import com.kelsos.mbrc.di.bindSingletonProvider
+import com.kelsos.mbrc.di.bindSingletonProviderInstance
 import com.kelsos.mbrc.di.providers.AlbumDaoProvider
 import com.kelsos.mbrc.di.providers.ArtistDaoProvider
 import com.kelsos.mbrc.di.providers.ConnectionDaoProvider
@@ -56,6 +63,8 @@ import com.kelsos.mbrc.di.providers.NowPlayingDaoProvider
 import com.kelsos.mbrc.di.providers.PlaylistDaoProvider
 import com.kelsos.mbrc.di.providers.RadioStationDaoProvider
 import com.kelsos.mbrc.di.providers.TrackDaoProvider
+import com.kelsos.mbrc.networking.RequestManager
+import com.kelsos.mbrc.networking.RequestManagerImpl
 import com.kelsos.mbrc.networking.client.ClientConnectionManager
 import com.kelsos.mbrc.networking.client.IClientConnectionManager
 import com.kelsos.mbrc.networking.client.MessageDeserializer
@@ -93,9 +102,11 @@ import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.preferences.SettingsManagerImpl
 import com.kelsos.mbrc.ui.navigation.library.SyncProgressProvider
-import com.kelsos.mbrc.utilities.SchedulerProvider
-import com.kelsos.mbrc.utilities.SchedulerProviderImpl
+import com.kelsos.mbrc.utilities.AppRxSchedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import toothpick.config.Module
+import java.util.concurrent.Executors
 
 class AppModule : Module() {
   init {
@@ -111,7 +122,6 @@ class AppModule : Module() {
     bindSingletonClass<QueueApi> { QueueApiImpl::class }
 
     bindClass<ConnectionRepository> { ConnectionRepositoryImpl::class }
-    bindSingletonClass<SchedulerProvider> { SchedulerProviderImpl::class }
 
     bindClass<TrackRepository> { TrackRepositoryImpl::class }
     bindClass<AlbumRepository> { AlbumRepositoryImpl::class }
@@ -176,5 +186,25 @@ class AppModule : Module() {
 
     bindSingletonClass<INotificationManager> { SessionNotificationManager::class }
     bindSingletonClass<IRemoteServiceCore> { RemoteServiceCore::class }
+
+    bindClass<SerializationAdapter> { SerializationAdapterImpl::class }
+    bindClass<DeserializationAdapter> { DeserializationAdapterImpl::class }
+
+    bindSingletonProviderInstance {
+      AppRxSchedulers(
+        AndroidSchedulers.mainThread(),
+        Schedulers.io(),
+        Schedulers.from(Executors.newSingleThreadExecutor {
+          Thread(it, "database")
+        }),
+        Schedulers.io()
+      )
+    }
+
+    bindClass<DatabaseTransactionRunner> { DatabaseTransactionRunnerImpl::class }
+
+    bindSingletonProvider(AppCoroutineDispatcherProvider::class)
+
+    bindClass<RequestManager> { RequestManagerImpl::class }
   }
 }

@@ -11,10 +11,10 @@ constructor(
   private val apiBase: ApiBase
 ) : OutputApi {
   override fun getOutputs(): Single<OutputResponse> {
-    return apiBase.getItem(Protocol.PlayerOutput, OutputResponse::class.java)
+    return apiBase.getItem(Protocol.PlayerOutput, OutputResponse::class)
   }
 
   override fun setOutput(active: String): Single<OutputResponse> {
-    return apiBase.getItem(Protocol.PlayerOutputSwitch, OutputResponse::class.java)
+    return apiBase.getItem(Protocol.PlayerOutputSwitch, OutputResponse::class)
   }
 }

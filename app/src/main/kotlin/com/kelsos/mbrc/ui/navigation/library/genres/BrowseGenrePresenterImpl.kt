@@ -7,7 +7,7 @@ import android.arch.paging.PagedList
 import com.kelsos.mbrc.content.library.genres.GenreEntity
 import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.mvp.BasePresenter
-import com.kelsos.mbrc.utilities.SchedulerProvider
+import com.kelsos.mbrc.utilities.AppRxSchedulers
 import com.kelsos.mbrc.utilities.paged
 import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
@@ -17,7 +17,7 @@ class BrowseGenrePresenterImpl
 @Inject
 constructor(
   private val repository: GenreRepository,
-  private val schedulerProvider: SchedulerProvider
+  private val appRxSchedulers: AppRxSchedulers
 ) : BasePresenter<BrowseGenreView>(),
   BrowseGenrePresenter {
 
@@ -28,8 +28,8 @@ constructor(
   override fun load() {
 
     disposables += repository.allGenres()
-      .observeOn(schedulerProvider.main())
-      .subscribeOn(schedulerProvider.io())
+      .subscribeOn(appRxSchedulers.database)
+      .observeOn(appRxSchedulers.main)
       .doFinally { view().hideLoading() }
       .subscribe({
         onGenresLoaded(it.factory)
@@ -69,12 +69,12 @@ constructor(
   }
 
   override fun reload() {
-    disposables += repository.getAndSaveRemote()
-      .observeOn(schedulerProvider.main())
-      .subscribeOn(schedulerProvider.io())
+    disposables += repository.getRemote()
+      .subscribeOn(appRxSchedulers.network)
+      .observeOn(appRxSchedulers.main)
       .doFinally { view().hideLoading() }
       .subscribe({
-        onGenresLoaded(it)
+
       }, {
         Timber.v(it, "Error while loading the data from the database")
         view().failure(it)
