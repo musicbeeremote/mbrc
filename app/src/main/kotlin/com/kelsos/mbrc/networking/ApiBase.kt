@@ -10,6 +10,7 @@ import com.kelsos.mbrc.networking.protocol.Protocol.Context
 import io.reactivex.Observable
 import io.reactivex.Single
 import timber.log.Timber
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -26,7 +27,7 @@ class ApiBase
   ): Single<T> where T : Any {
     val factory = deserializationAdapter.typeFactory()
     val type = factory.constructParametricType(GenericSocketMessage::class.java, kClazz.java)
-    return Single.fromCallable { apiRequestManager.openConnection() }.flatMap {
+    return openConnection().flatMap {
       apiRequestManager.request(it, SocketMessage.create(request, payload)).map {
         val socketMessage = deserializationAdapter.objectify<GenericSocketMessage<T>>(it, type)
         socketMessage.data
@@ -41,8 +42,7 @@ class ApiBase
     val inner = factory.constructParametricType(Page::class.java, clazz.java)
     val type = factory.constructParametricType(GenericSocketMessage::class.java, inner)
 
-    return Single.fromCallable { apiRequestManager.openConnection() }
-      .flatMapObservable { connection ->
+    return openConnection().flatMapObservable { connection ->
         Observable.range(0, Integer.MAX_VALUE).flatMapSingle {
           val pageStart = now()
 
@@ -66,6 +66,14 @@ class ApiBase
           }
           .doOnComplete { Timber.v("duration ${System.currentTimeMillis() - start} ms") }
       }
+  }
+
+  private fun openConnection(): Single<ActiveConnection> = Single.create<ActiveConnection> {
+    try {
+      it.onSuccess(apiRequestManager.openConnection())
+    } catch (ex: SocketTimeoutException) {
+      it.tryOnError(ex)
+    }
   }
 
   private fun getPageRange(offset: Int, limit: Int): PageRange? {
