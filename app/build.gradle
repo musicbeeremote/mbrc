@@ -223,11 +223,11 @@ dependencies {
   //Some of the dependencies pull the wrong version support v13
   implementation "com.android.support:support-v13:${support_library_version}"
 
-  implementation 'android.arch.paging:runtime:1.0.0-rc1'
+  implementation 'android.arch.paging:runtime:1.0.0'
 
-  implementation 'android.arch.persistence.room:runtime:1.0.0'
-  implementation 'android.arch.persistence.room:rxjava2:1.0.0'
-  kapt "android.arch.persistence.room:compiler:1.0.0"
+  implementation 'android.arch.persistence.room:runtime:1.1.0'
+  implementation 'android.arch.persistence.room:rxjava2:1.1.0'
+  kapt "android.arch.persistence.room:compiler:1.1.0"
 
   implementation "com.fasterxml.jackson.core:jackson-core:${jackson_version}"
   implementation "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
@@ -382,7 +382,7 @@ configurations {
 }
 
 dependencies {
-  ktlint "com.github.shyiko:ktlint:0.23.0"
+  ktlint "com.github.shyiko:ktlint:0.23.1"
   // additional 3rd party ruleset(s) can be specified here
   // just add them to the classpath (e.g. ktlint 'groupId:artifactId:version') and
   // ktlint will pick them up
