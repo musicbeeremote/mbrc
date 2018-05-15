@@ -9,6 +9,7 @@ apply plugin: 'idea'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'com.akaita.android.easylauncher'
+apply plugin: 'com.google.firebase.firebase-perf'
 
 repositories {
   maven { url 'https://maven.fabric.io/public' }
@@ -266,6 +267,8 @@ dependencies {
   playImplementation('com.crashlytics.sdk.android:crashlytics:2.9.2@aar') {
     transitive = true
   }
+  playImplementation 'com.google.firebase:firebase-perf:15.2.0'
+  playImplementation 'com.google.firebase:firebase-core:15.0.2'
 }
 
 allprojects {
@@ -405,3 +408,5 @@ task ktlintFormat(type: JavaExec, group: "formatting") {
   main = "com.github.shyiko.ktlint.Main"
   args "-F", "src/**/*.kt"
 }
+
+apply plugin: 'com.google.gms.google-services'
