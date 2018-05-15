@@ -8,6 +8,7 @@ plugins {
   id 'kotlin-parcelize'
   id 'idea'
   id 'jacoco'
+  id 'com.google.firebase.firebase-perf'
 }
 
 static buildTime() {
@@ -251,6 +252,7 @@ dependencies {
   // When using the BoM, you don't specify versions in Firebase library dependencies
   playImplementation 'com.google.firebase:firebase-crashlytics-ktx'
   playImplementation 'com.google.firebase:firebase-analytics-ktx'
+  playImplementation 'com.google.firebase:firebase-perf-ktx'
 }
 
 protobuf {

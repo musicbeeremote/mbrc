@@ -82,10 +82,12 @@
     @javax.inject.Inject <methods>;
 }
 
-## Square Picasso specific rules ##
-## https://square.github.io/picasso/ ##
-
--dontwarn com.squareup.okhttp.**
+# OkHttp
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
 
 
 # AppCompat v7
