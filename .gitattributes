@@ -1,0 +1,2 @@
+google-services.json filter=git-crypt diff=git-crypt
+fabric.properties filter=git-crypt diff=git-crypt
