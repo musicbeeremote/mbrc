@@ -15,6 +15,8 @@ interface BrowseAlbumView : BaseView {
   fun hideLoading()
 
   fun showSorting(@Order order: Int, @Fields selection: Int)
+
+  fun updateIndexes(indexes: List<String>)
 }
 
 interface BrowseAlbumPresenter : Presenter<BrowseAlbumView> {

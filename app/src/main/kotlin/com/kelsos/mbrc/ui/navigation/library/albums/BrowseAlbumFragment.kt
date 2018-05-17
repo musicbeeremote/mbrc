@@ -34,6 +34,7 @@ class BrowseAlbumFragment : Fragment(),
   MenuItemSelectedListener<AlbumEntity>,
   SwipeRefreshLayout.OnRefreshListener {
 
+
   private val recycler: RecyclerView by bindView(R.id.library_browser__content)
   private val swipeLayout: SwipeRefreshLayout by bindView(R.id.library_browser__refresh_layout)
   private val fastScroller: RecyclerViewFastScroller by bindView(R.id.fastscroller)
@@ -131,6 +132,10 @@ class BrowseAlbumFragment : Fragment(),
     emptyView.isVisible = pagedList.isEmpty()
     adapter.submitList(pagedList)
     swipeLayout.isRefreshing = false
+  }
+
+  override fun updateIndexes(indexes: List<String>) {
+    adapter.setIndexes(indexes)
   }
 
   override fun failure(throwable: Throwable) {
