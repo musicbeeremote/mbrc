@@ -3,16 +3,21 @@ package com.kelsos.mbrc.content.library.albums
 import android.arch.paging.DataSource
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.epoch
 import io.reactivex.Completable
 import io.reactivex.Single
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class AlbumRepositoryImpl
 @Inject
 constructor(
   private val dao: AlbumDao,
-  private val remoteDataSource: ApiBase
+  private val remoteDataSource: ApiBase,
+  private val appCoroutineDispatchers: AppCoroutineDispatchers
 ) : AlbumRepository {
 
   private val mapper = AlbumDtoMapper()
@@ -28,9 +33,16 @@ constructor(
   override fun getRemote(): Completable {
     val added = epoch()
     return remoteDataSource.getAllPages(Protocol.LibraryBrowseAlbums, AlbumDto::class).doOnNext {
-      dao.insert(it.map { mapper.map(it).apply { dateAdded = added } })
+      async(CommonPool) {
+        val list = it.map { mapper.map(it).apply { dateAdded = added } }
+        withContext(appCoroutineDispatchers.database) {
+          dao.insert(list)
+        }
+      }
     }.doOnComplete {
-      dao.removePreviousEntries(added)
+      async(appCoroutineDispatchers.database) {
+        dao.removePreviousEntries(added)
+      }
     }.ignoreElements()
   }
 
@@ -43,60 +55,119 @@ constructor(
   override fun getAlbumsSorted(
     @Sorting.Fields order: Int,
     ascending: Boolean
-  ): Single<DataSource.Factory<Int, AlbumEntity>> {
-    val factory = when (order) {
+  ): Single<AlbumsModel> {
+    val model = when (order) {
       Sorting.ALBUM -> {
-        if (ascending) {
-          dao.getSortedByAlbumAsc()
-        } else {
-          dao.getSortedByAlbumDesc()
-        }
+        AlbumsModel(
+          order,
+          if (ascending) {
+            dao.getSortedByAlbumAscIndexes()
+          } else {
+            dao.getSortedByAlbumDescIndexes()
+          },
+          if (ascending) {
+            dao.getSortedByAlbumAsc()
+          } else {
+            dao.getSortedByAlbumDesc()
+          }
+        )
       }
       Sorting.ALBUM_ARTIST__ALBUM -> {
-        if (ascending) {
-          dao.getSortedByAlbumArtistAndAlbumAsc()
-        } else {
-          dao.getSortedByAlbumArtistAndAlbumDesc()
-        }
+        AlbumsModel(
+          order,
+          if (ascending) {
+            dao.getSortedByAlbumArtistAndAlbumAscIndexes()
+          } else {
+            dao.getSortedByAlbumArtistAndAlbumDescIndexes()
+          },
+          if (ascending) {
+            dao.getSortedByAlbumArtistAndAlbumAsc()
+          } else {
+            dao.getSortedByAlbumArtistAndAlbumDesc()
+          }
+        )
+
       }
       Sorting.ALBUM_ARTIST__YEAR__ALBUM -> {
-        if (ascending) {
-          dao.getSortedByAlbumArtistAndYearAndAlbumAsc()
-        } else {
-          dao.getSortedByAlbumArtistAndYearAndAlbumDesc()
-        }
+        AlbumsModel(
+          order,
+          if (ascending) {
+            dao.getSortedByAlbumArtistAndYearAndAlbumAscIndexes()
+          } else {
+            dao.getSortedByAlbumArtistAndYearAndAlbumDescIndexes()
+          },
+          if (ascending) {
+            dao.getSortedByAlbumArtistAndYearAndAlbumAsc()
+          } else {
+            dao.getSortedByAlbumArtistAndYearAndAlbumDesc()
+          }
+
+        )
+
       }
       Sorting.ARTIST__ALBUM -> {
-        if (ascending) {
-          dao.getSortedByArtistAndAlbumAsc()
-        } else {
-          dao.getSortedByArtistAndAlbumDesc()
-        }
+        AlbumsModel(
+          order,
+          if (ascending) {
+            dao.getSortedByArtistAndAlbumAscIndexes()
+          } else {
+            dao.getSortedByArtistAndAlbumDescIndexes()
+          },
+          if (ascending) {
+            dao.getSortedByArtistAndAlbumAsc()
+          } else {
+            dao.getSortedByArtistAndAlbumDesc()
+          }
+        )
       }
       Sorting.GENRE__ALBUM_ARTIST__ALBUM -> {
-        if (ascending) {
-          dao.getSortedByGenreAndAlbumArtistAndAlbumAsc()
-        } else {
-          dao.getSortedByGenreAndAlbumArtistAndAlbumDesc()
-        }
+        AlbumsModel(
+          order,
+          if (ascending) {
+            dao.getSortedByGenreAndAlbumArtistAndAlbumAscIndexes()
+          } else {
+            dao.getSortedByGenreAndAlbumArtistAndAlbumDescIndexes()
+          },
+          if (ascending) {
+            dao.getSortedByGenreAndAlbumArtistAndAlbumAsc()
+          } else {
+            dao.getSortedByGenreAndAlbumArtistAndAlbumDesc()
+          }
+        )
       }
       Sorting.YEAR__ALBUM -> {
-        if (ascending) {
-          dao.getSortedByYearAndAlbumAsc()
-        } else {
-          dao.getSortedByYearAndAlbumDesc()
-        }
+        AlbumsModel(
+          order,
+          if (ascending) {
+            dao.getSortedByYearAndAlbumAscIndexes()
+          } else {
+            dao.getSortedByYearAndAlbumDescIndexes()
+          },
+          if (ascending) {
+            dao.getSortedByYearAndAlbumAsc()
+          } else {
+            dao.getSortedByYearAndAlbumDesc()
+          }
+        )
       }
       Sorting.YEAR__ALBUM_ARTIST__ALBUM -> {
-        if (ascending) {
-          dao.getSortedByYearAndAlbumArtistAndAlbumAsc()
-        } else {
-          dao.getSortedByYearAndAlbumArtistAndAlbumDesc()
-        }
+        AlbumsModel(
+          order,
+          if (ascending) {
+            dao.getSortedByYearAndAlbumArtistAndAlbumAscIndexes()
+          } else {
+            dao.getSortedByYearAndAlbumArtistAndAlbumDescIndexes()
+          },
+          if (ascending) {
+            dao.getSortedByYearAndAlbumArtistAndAlbumAsc()
+          } else {
+            dao.getSortedByYearAndAlbumArtistAndAlbumDesc()
+          }
+        )
       }
       else -> throw IllegalArgumentException("Invalid option")
     }
 
-    return Single.fromCallable { factory }
+    return Single.fromCallable { model }
   }
 }

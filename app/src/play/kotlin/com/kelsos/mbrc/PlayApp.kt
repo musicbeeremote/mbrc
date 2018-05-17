@@ -1,16 +1,17 @@
 package com.kelsos.mbrc
 
 import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.core.CrashlyticsCore
 import com.github.anrwatchdog.ANRError
-import com.kelsos.mbrc.BuildConfig.USE_CRASHLYTICS
 import io.fabric.sdk.android.Fabric
 
 class PlayApp : App() {
   override fun onCreate() {
     super.onCreate()
-    if (USE_CRASHLYTICS) {
-      Fabric.with(this, Crashlytics())
-    }
+    val crashlyticsKit = Crashlytics.Builder()
+      .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+      .build()
+    Fabric.with(this, crashlyticsKit)
   }
 
   override fun onAnr(anrError: ANRError?) {

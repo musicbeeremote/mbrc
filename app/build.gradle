@@ -87,7 +87,6 @@ android {
       applicationIdSuffix ".dev"
       versionNameSuffix "-dev"
       testCoverageEnabled true
-      ext.enableCrashlytics = false
 
       buildConfigField "String", "GIT_SHA", "\"debug_build\""
       buildConfigField "String", "BUILD_TIME", "\"debug_build\""
