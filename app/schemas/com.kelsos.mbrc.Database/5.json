@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "6c6ecfe0c70f60845ddc2369f5482eeb",
+    "identityHash": "7fcb9584932596bd9c91e1cfb2a7ba83",
     "entities": [
       {
         "tableName": "genre",
@@ -142,7 +142,7 @@
       },
       {
         "tableName": "track",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`artist` TEXT NOT NULL, `title` TEXT NOT NULL, `src` TEXT NOT NULL, `trackno` INTEGER NOT NULL, `disc` INTEGER NOT NULL, `album_artist` TEXT NOT NULL, `album` TEXT NOT NULL, `genre` TEXT NOT NULL, `year` TEXT NOT NULL, `date_added` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`artist` TEXT NOT NULL, `title` TEXT NOT NULL, `src` TEXT NOT NULL, `trackno` INTEGER NOT NULL, `disc` INTEGER NOT NULL, `album_artist` TEXT NOT NULL, `album` TEXT NOT NULL, `genre` TEXT NOT NULL, `year` TEXT NOT NULL, `sortable_year` TEXT NOT NULL, `date_added` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
         "fields": [
           {
             "fieldPath": "artist",
@@ -195,6 +195,12 @@
           {
             "fieldPath": "year",
             "columnName": "year",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sortableYear",
+            "columnName": "sortable_year",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -435,7 +441,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6c6ecfe0c70f60845ddc2369f5482eeb')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7fcb9584932596bd9c91e1cfb2a7ba83')"
     ]
   }
 }

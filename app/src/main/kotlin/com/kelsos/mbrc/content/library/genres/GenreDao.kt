@@ -12,7 +12,7 @@ interface GenreDao {
   @Query("delete from genre")
   fun deleteAll()
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  @Insert(onConflict = OnConflictStrategy.ABORT)
   fun insertAll(list: List<GenreEntity>)
 
   @Query("select * from genre order by genre")

@@ -45,7 +45,21 @@ constructor(
         dao.removePreviousEntries(added)
       }.collect { items ->
         val tracks = items.map { mapper.map(it).apply { dateAdded = added } }
-        dao.insertAll(tracks)
+        val sources = tracks.map { it.src }
+
+        withContext(dispatchers.database) {
+
+          val matches = sources.chunked(50)
+            .flatMap { dao.findMatchingIds(it) }
+            .map { it.src to it.id }
+            .toMap()
+
+          val toUpdate = tracks.filter { matches.containsKey(it.src) }
+          val toInsert = tracks.minus(toUpdate)
+
+          dao.update(toUpdate.map { it.id = matches.getValue(it.src); it })
+          dao.insertAll(toInsert)
+        }
       }
     }
   }

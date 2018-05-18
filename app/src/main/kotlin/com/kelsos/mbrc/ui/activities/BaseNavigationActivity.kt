@@ -190,7 +190,7 @@ abstract class BaseNavigationActivity :
 
     when (itemId) {
       R.id.nav_home -> {
-        val upIntent = NavUtils.getParentActivityIntent(this) ?: throw Exception("invalid intent")
+        val upIntent = NavUtils.getParentActivityIntent(this) ?: error("couldn't get intent")
         if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
           startActivity(MainActivity::class)
         } else {

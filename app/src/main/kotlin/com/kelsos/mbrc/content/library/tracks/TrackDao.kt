@@ -5,13 +5,14 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface TrackDao {
   @Query("delete from track")
   fun deleteAll()
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  @Insert(onConflict = OnConflictStrategy.ABORT)
   fun insertAll(list: List<TrackEntity>)
 
   @Query("select * from track order by album_artist asc, album asc, disc asc, trackno asc")
@@ -80,4 +81,10 @@ interface TrackDao {
 
   @Query("delete from track where date_added != :added")
   fun removePreviousEntries(added: Long)
+
+  @Query("select src, id from track where src in (:paths)")
+  fun findMatchingIds(paths: List<String>): List<TrackPath>
+
+  @Update
+  fun update(data: List<TrackEntity>)
 }

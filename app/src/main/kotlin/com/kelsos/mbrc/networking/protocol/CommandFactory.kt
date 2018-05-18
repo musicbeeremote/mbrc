@@ -49,7 +49,7 @@ constructor(application: Application) : CommandFactory {
       Protocol.PluginVersion -> UpdatePluginVersionCommand::class.java
       Protocol.PING -> ProtocolPingHandle::class.java
       Protocol.PONG -> ProtocolPongHandle::class.java
-      else -> throw IllegalArgumentException("Not supported message context $context")
+      else -> error("Not supported message context $context")
     }
 
     return scope.getInstance(clazz)
