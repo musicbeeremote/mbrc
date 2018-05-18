@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.networking.protocol
 
 import android.app.Application
-import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.networking.protocol.commands.ProtocolPingHandle
 import com.kelsos.mbrc.networking.protocol.commands.ProtocolPongHandle
@@ -50,7 +49,7 @@ constructor(application: Application) : CommandFactory {
       Protocol.PluginVersion -> UpdatePluginVersionCommand::class.java
       Protocol.PING -> ProtocolPingHandle::class.java
       Protocol.PONG -> ProtocolPongHandle::class.java
-      else -> fail("Not supported message context $context")
+      else -> error("Not supported message context $context")
     }
 
     return scope.getInstance(clazz)

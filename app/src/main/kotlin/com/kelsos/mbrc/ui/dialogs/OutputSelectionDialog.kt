@@ -18,7 +18,6 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.output.OutputResponse
-import com.kelsos.mbrc.extensions.fail
 import kotterknife.bindView
 import toothpick.Toothpick
 import javax.inject.Inject
@@ -41,7 +40,7 @@ class OutputSelectionDialog : DialogFragment(),
 
   @SuppressLint("InflateParams")
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val context = context ?: fail("context was null")
+    val context = context ?: error("context was null")
 
     val scopes = Toothpick.openScopes(context.applicationContext, this)
     scopes.installModules(OutputSelectionModule())

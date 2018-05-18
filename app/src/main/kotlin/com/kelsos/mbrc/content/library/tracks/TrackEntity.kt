@@ -26,6 +26,8 @@ data class TrackEntity(
   override var genre: String = "",
   @ColumnInfo
   override var year: String = "",
+  @ColumnInfo(name = "sortable_year")
+  var sortableYear: String = "",
   @ColumnInfo(name = "date_added")
   var dateAdded: Long = 0,
   @PrimaryKey(autoGenerate = true)

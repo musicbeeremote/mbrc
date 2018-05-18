@@ -47,28 +47,28 @@ interface AlbumDao {
   @Query("select substr(album, 1,1) from ($BY_ALBUM_DESC)")
   fun getSortedByAlbumDescIndexes(): LiveData<List<String>>
 
-  @Query(BY_ARTIST_ALBUM_ASC)
+  @Query(BY_ALBUMARTIST_ALBUM_ASC)
   fun getSortedByAlbumArtistAndAlbumAsc(): DataSource.Factory<Int, AlbumEntity>
 
-  @Query("select substr(album_artist, 1,1) from ($BY_ARTIST_ALBUM_ASC)")
+  @Query("select substr(album_artist, 1,1) from ($BY_ALBUMARTIST_ALBUM_ASC)")
   fun getSortedByAlbumArtistAndAlbumAscIndexes(): LiveData<List<String>>
 
-  @Query(BY_ARTIST_ALBUM_DESC)
+  @Query(BY_ALBUMARTIST_ALBUM_DESC)
   fun getSortedByAlbumArtistAndAlbumDesc(): DataSource.Factory<Int, AlbumEntity>
 
-  @Query("select substr(album_artist, 1,1) from ($BY_ARTIST_ALBUM_DESC)")
+  @Query("select substr(album_artist, 1,1) from ($BY_ALBUMARTIST_ALBUM_DESC)")
   fun getSortedByAlbumArtistAndAlbumDescIndexes(): LiveData<List<String>>
 
-  @Query(BY_ARTIST_YEAR_ALBUM_ASC)
+  @Query(BY_ALBUMARTIST_YEAR_ALBUM_ASC)
   fun getSortedByAlbumArtistAndYearAndAlbumAsc(): DataSource.Factory<Int, AlbumEntity>
 
-  @Query("select substr(album_artist, 1, 1) from ($BY_ARTIST_YEAR_ALBUM_ASC)")
+  @Query("select substr(album_artist, 1, 1) from ($BY_ALBUMARTIST_YEAR_ALBUM_ASC)")
   fun getSortedByAlbumArtistAndYearAndAlbumAscIndexes(): LiveData<List<String>>
 
-  @Query(BY_ARTIST_YEAR_ALBUM_DESC)
+  @Query(BY_ALBUMARTIST_YEAR_ALBUM_DESC)
   fun getSortedByAlbumArtistAndYearAndAlbumDesc(): DataSource.Factory<Int, AlbumEntity>
 
-  @Query("select substr(album_artist, 1, 1) from ($BY_ARTIST_YEAR_ALBUM_DESC)")
+  @Query("select substr(album_artist, 1, 1) from ($BY_ALBUMARTIST_YEAR_ALBUM_DESC)")
   fun getSortedByAlbumArtistAndYearAndAlbumDescIndexes(): LiveData<List<String>>
 
   @Query(BY_ARTIST_AND_ALBUM_ASC)
@@ -98,41 +98,41 @@ interface AlbumDao {
   @Query(BY_YEAR_ALBUM_ASC)
   fun getSortedByYearAndAlbumAsc(): DataSource.Factory<Int, AlbumEntity>
 
-  @Query("select substr(year, 1,4) from ($BY_YEAR_ALBUM_ASC)")
+  @Query("select substr(sortable_year, 1,4) from ($BY_YEAR_ALBUM_ASC)")
   fun getSortedByYearAndAlbumAscIndexes(): LiveData<List<String>>
 
   @Query(BY_YEAR_ALBUM_DESC)
   fun getSortedByYearAndAlbumDesc(): DataSource.Factory<Int, AlbumEntity>
 
-  @Query("select substr(year, 1,4) from ($BY_YEAR_ALBUM_DESC)")
+  @Query("select substr(sortable_year, 1,4) from ($BY_YEAR_ALBUM_DESC)")
   fun getSortedByYearAndAlbumDescIndexes(): LiveData<List<String>>
 
   @Query(BY_YEAR_ALBUMARTIST_ALBUM_ASC)
   fun getSortedByYearAndAlbumArtistAndAlbumAsc(): DataSource.Factory<Int, AlbumEntity>
 
-  @Query("select substr(year, 1,4) from ($BY_YEAR_ALBUMARTIST_ALBUM_ASC)")
+  @Query("select substr(sortable_year, 1,4) from ($BY_YEAR_ALBUMARTIST_ALBUM_ASC)")
   fun getSortedByYearAndAlbumArtistAndAlbumAscIndexes(): LiveData<List<String>>
 
   @Query(BY_YEAR_ALBUMARTIST_ALBUM_DESC)
   fun getSortedByYearAndAlbumArtistAndAlbumDesc(): DataSource.Factory<Int, AlbumEntity>
 
-  @Query("select substr(year, 1,4) from ($BY_YEAR_ALBUMARTIST_ALBUM_DESC)")
+  @Query("select substr(sortable_year, 1,4) from ($BY_YEAR_ALBUMARTIST_ALBUM_DESC)")
   fun getSortedByYearAndAlbumArtistAndAlbumDescIndexes(): LiveData<List<String>>
 
   companion object {
     private const val BASE =
-      "select distinct album.album, album.artist, track.album_artist, track.year, track.genre," +
-        " album.id, album.date_added " +
+      "select distinct album.album, album.artist, track.album_artist, track.sortable_year," +
+        " track.genre, album.id, album.date_added " +
         "from album inner join track on album.album = track.album " +
         "and album.artist = track.album_artist "
 
     const val BY_ALBUM_ASC = "$BASE order by album.album asc"
     const val BY_ALBUM_DESC = "$BASE order by album.album desc"
-    const val BY_ARTIST_ALBUM_ASC = "$BASE order by album.artist asc, album.album asc"
-    const val BY_ARTIST_ALBUM_DESC = "$BASE order by album.artist desc, album.album desc"
-    const val BY_ARTIST_YEAR_ALBUM_ASC =
+    const val BY_ALBUMARTIST_ALBUM_ASC = "$BASE order by album.artist asc, album.album asc"
+    const val BY_ALBUMARTIST_ALBUM_DESC = "$BASE order by album.artist desc, album.album desc"
+    const val BY_ALBUMARTIST_YEAR_ALBUM_ASC =
       "$BASE order by album.artist asc, track.year asc, album.album asc"
-    const val BY_ARTIST_YEAR_ALBUM_DESC =
+    const val BY_ALBUMARTIST_YEAR_ALBUM_DESC =
       "$BASE order by album.artist desc, track.year desc, album.album desc"
     const val BY_ARTIST_AND_ALBUM_ASC = "$BASE order by track.artist asc, album.album asc"
     const val BY_ARTIST_AND_ALBUM_DESC = "$BASE order by track.artist desc, album.album desc"
@@ -140,11 +140,11 @@ interface AlbumDao {
       "$BASE order by track.genre asc, album.artist asc, album.album asc"
     const val BY_GENRE_ALBUMARTIST_ALBUM_DESC =
       "$BASE order by track.genre desc, album.artist desc, album.album desc"
-    const val BY_YEAR_ALBUM_ASC = "$BASE order by track.year asc, album.album asc"
-    const val BY_YEAR_ALBUM_DESC = "$BASE order by track.year desc, album.album desc"
+    const val BY_YEAR_ALBUM_ASC = "$BASE order by track.sortable_year asc, album.album asc"
+    const val BY_YEAR_ALBUM_DESC = "$BASE order by track.sortable_year desc, album.album desc"
     const val BY_YEAR_ALBUMARTIST_ALBUM_ASC =
-      "$BASE order by track.year asc, album.artist asc, album.album asc"
+      "$BASE order by track.sortable_year asc, album.artist asc, album.album asc"
     const val BY_YEAR_ALBUMARTIST_ALBUM_DESC =
-      "$BASE order by track.year desc, album.artist desc, album.album desc"
+      "$BASE order by track.sortable_year desc, album.artist desc, album.album desc"
   }
 }

@@ -47,8 +47,20 @@ constructor(
     return remoteDataSource.getAllPages(Protocol.LibraryBrowseTracks, TrackDto::class).doOnNext {
       async(CommonPool) {
         val tracks = it.map { mapper.map(it).apply { dateAdded = added } }
+        val sources = tracks.map { it.src }
+
         withContext(coroutineDispatchers.database) {
-          dao.insertAll(tracks)
+
+          val matches = sources.chunked(50)
+            .flatMap { dao.findMatchingIds(it) }
+            .map { it.src to it.id }
+            .toMap()
+
+          val toUpdate = tracks.filter { matches.containsKey(it.src) }
+          val toInsert = tracks.minus(toUpdate)
+          
+          dao.update(toUpdate.map { it.id = matches.getValue(it.src); it })
+          dao.insertAll(toInsert)
         }
       }
     }.doOnComplete {

@@ -16,7 +16,6 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.genres.GenreEntity
-import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.extensions.linear
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
@@ -54,7 +53,7 @@ class BrowseGenreFragment : Fragment(),
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val activity = activity ?: fail("null activity")
+    val activity = activity ?: error("null activity")
     val scope = Toothpick.openScopes(activity.application, this)
     scope.installModules(BrowseGenreModule())
     super.onCreate(savedInstanceState)

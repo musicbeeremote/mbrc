@@ -10,7 +10,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.2.0-alpha14'
+    classpath 'com.android.tools.build:gradle:3.2.0-alpha15'
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
 
     classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
