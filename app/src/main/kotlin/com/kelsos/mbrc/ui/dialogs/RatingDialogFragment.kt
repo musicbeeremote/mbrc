@@ -11,7 +11,6 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.di.scopes
 import com.kelsos.mbrc.events.RatingChanged
 import com.kelsos.mbrc.events.UserAction
-import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import kotterknife.bindView
@@ -46,7 +45,7 @@ class RatingDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListen
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val activity = activity ?: fail("no context")
+    val activity = activity ?: error("no context")
     val builder = AlertDialog.Builder(activity)
     builder.setTitle(R.string.rate_the_playing_track)
     builder.setView(R.layout.ui_dialog_rating)

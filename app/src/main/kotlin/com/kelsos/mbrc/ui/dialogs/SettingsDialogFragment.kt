@@ -9,7 +9,6 @@ import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.widget.EditText
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import kotterknife.bindView
 
@@ -89,7 +88,7 @@ class SettingsDialogFragment : DialogFragment() {
   }
 
   private fun isValid(port: Int): Boolean = if (port < MIN_PORT || port > MAX_PORT) {
-    val context = context ?: fail("null context")
+    val context = context ?: error("null context")
     AlertDialog.Builder(context)
       .setTitle(R.string.alert_invalid_range)
       .setMessage(R.string.alert_invalid_port_number)

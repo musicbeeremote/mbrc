@@ -12,7 +12,3 @@ fun Context.getDimens(): Int {
     dpHeight.toInt()
   }
 }
-
-fun fail(message: String): Nothing {
-  throw RuntimeException(message)
-}

@@ -7,7 +7,6 @@ import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.content.library.genres.GenreEntity
 import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.content.library.genres.GenreRepositoryImpl
-import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.paged
@@ -64,7 +63,7 @@ class GenreRepositoryImplTest {
     testSubscriber.assertValueCount(1)
     val factory = testSubscriber.values()[0]
     val data = factory.paged()
-    val list = data.value ?: fail("data was null")
+    val list = data.value ?: error("data was null")
     assertThat(list.size).isEqualTo(1200)
     assertThat(list.first()).isEqualTo("Metal0")
   }

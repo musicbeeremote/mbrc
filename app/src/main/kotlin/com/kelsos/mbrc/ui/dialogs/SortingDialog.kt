@@ -18,7 +18,6 @@ import com.kelsos.mbrc.content.library.albums.Sorting.Fields
 import com.kelsos.mbrc.content.library.albums.Sorting.ORDER_ASCENDING
 import com.kelsos.mbrc.content.library.albums.Sorting.ORDER_DESCENDING
 import com.kelsos.mbrc.content.library.albums.Sorting.Order
-import com.kelsos.mbrc.extensions.fail
 import kotterknife.bindView
 
 class SortingDialog : DialogFragment() {
@@ -39,7 +38,7 @@ class SortingDialog : DialogFragment() {
     this.order = when (order) {
       ORDER_DESCENDING -> ORDER_ASCENDING
       ORDER_ASCENDING -> ORDER_DESCENDING
-      else -> fail("unknown order value: $order")
+      else -> error("unknown order value: $order")
     }
 
     setOrder(this.order)
@@ -70,7 +69,7 @@ class SortingDialog : DialogFragment() {
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val context = context ?: fail("null context")
+    val context = context ?: error("null context")
     dialog = AlertDialog.Builder(context)
       .setTitle(R.string.album_sorting__dialog_title)
       .setView(R.layout.dialog__sorting)

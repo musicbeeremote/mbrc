@@ -13,7 +13,6 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.extensions.fail
 import com.kelsos.mbrc.logging.LogHelper
 import com.kelsos.mbrc.utilities.RemoteUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -38,7 +37,7 @@ class FeedbackFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    val context = context ?: fail("null context")
+    val context = context ?: error("null context")
 
     LogHelper.logsExist(context)
       .subscribeOn(Schedulers.io())
@@ -51,7 +50,7 @@ class FeedbackFragment : Fragment() {
   }
 
   private fun onFeedbackButtonClicked() {
-    val context = context ?: fail("null context")
+    val context = context ?: error("null context")
     var feedbackText = feedbackEditText.text.toString().trim { it <= ' ' }
     if (TextUtils.isEmpty(feedbackText)) {
       return
