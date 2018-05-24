@@ -1,5 +1,8 @@
 package com.kelsos.mbrc.ui.navigation.library
 
 import android.arch.lifecycle.MutableLiveData
+import javax.inject.Inject
 
-class SyncProgressProvider : MutableLiveData<SyncProgress>()
+
+class SyncProgressProvider
+@Inject constructor() : MutableLiveData<SyncProgress>()

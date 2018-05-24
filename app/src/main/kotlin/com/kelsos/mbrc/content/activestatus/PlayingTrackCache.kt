@@ -1,10 +1,11 @@
 package com.kelsos.mbrc.content.activestatus
 
 import android.app.Application
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
+import com.squareup.moshi.Moshi
 import io.reactivex.Completable
 import io.reactivex.Single
+import okio.Okio
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.File
@@ -16,9 +17,11 @@ import javax.inject.Inject
 class PlayingTrackCacheImpl
 @Inject
 constructor(
-  private val mapper: ObjectMapper,
+  private val mapper: Moshi,
   private val context: Application
 ) : PlayingTrackCache {
+
+  private val adapter by lazy { mapper.adapter(PlayingTrackModel::class.java) }
 
   override fun persistInfo(track: PlayingTrackModel): Completable {
     return Completable.fromCallable {
@@ -26,7 +29,7 @@ constructor(
       if (infoFile.exists()) {
         infoFile.delete()
       }
-      mapper.writeValue(infoFile, track)
+      adapter.toJson(Okio.buffer(Okio.sink(infoFile)), track)
     }
   }
 
@@ -34,7 +37,7 @@ constructor(
     return Single.fromCallable {
       val infoFile = File(context.filesDir, TRACK_INFO)
       if (infoFile.exists()) {
-        return@fromCallable mapper.readValue(infoFile, PlayingTrackModel::class.java)
+        return@fromCallable adapter.fromJson(Okio.buffer(Okio.source(infoFile)))
       }
       throw FileNotFoundException()
     }

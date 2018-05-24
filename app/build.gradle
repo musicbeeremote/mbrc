@@ -229,9 +229,8 @@ dependencies {
   implementation 'android.arch.persistence.room:rxjava2:1.1.0'
   kapt "android.arch.persistence.room:compiler:1.1.0"
 
-  implementation "com.fasterxml.jackson.core:jackson-core:${jackson_version}"
-  implementation "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
-  implementation "com.fasterxml.jackson.module:jackson-module-kotlin:${jackson_version}"
+  implementation 'com.squareup.moshi:moshi:1.6.0'
+  kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.6.0'
 
   implementation "com.github.stephanenicolas.toothpick:toothpick-runtime:${toothpick_version}"
   implementation "com.github.stephanenicolas.toothpick:smoothie:${toothpick_version}"
@@ -243,7 +242,6 @@ dependencies {
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.5"
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.22.5"
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:0.22.5"
-  implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
   implementation 'com.squareup.picasso:picasso:2.71828'
   implementation "com.android.support:multidex:${multidex_version}"
@@ -409,3 +407,9 @@ task ktlintFormat(type: JavaExec, group: "formatting") {
 }
 
 apply plugin: 'com.google.gms.google-services'
+
+android.applicationVariants.all { variant ->
+  if (variant.name != 'play') {
+    project.tasks.getByName('process' + variant.name.capitalize() + 'GoogleServices').enabled = false
+  }
+}

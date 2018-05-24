@@ -1,8 +1,12 @@
 package com.kelsos.mbrc.networking.protocol.responses
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class Position(
-  @JsonProperty("current") val current: Int,
-  @JsonProperty("total") val total: Int
+  @Json(name = "current")
+  val current: Int,
+  @Json(name = "total")
+  val total: Int
 )

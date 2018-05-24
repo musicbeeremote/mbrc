@@ -20,9 +20,11 @@ import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PLAY
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PREVIOUS
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.getPendingIntent
 import com.kelsos.mbrc.preferences.SettingsManager
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.RemoteUtils
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -32,6 +34,7 @@ constructor(
   private val context: Application,
   private val sessionManager: RemoteSessionManager,
   private val settings: SettingsManager,
+  private val appCoroutineDispatchers: AppCoroutineDispatchers,
   private val notificationManager: NotificationManager
 ) : INotificationManager {
 
@@ -53,9 +56,13 @@ constructor(
     createNotificationChannels()
   }
 
-  private fun update() {
-    notification = createBuilder().build()
-    notificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification)
+  private suspend fun update(notificationData: NotificationData) {
+    notification = createBuilder(notificationData).build()
+
+    withContext(appCoroutineDispatchers.main) {
+      notificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification)
+    }
+
   }
 
   private fun createNotificationChannels() {
@@ -79,7 +86,7 @@ constructor(
     notificationManager.createNotificationChannel(channel)
   }
 
-  private fun createBuilder(): NotificationCompat.Builder {
+  private fun createBuilder(notificationData: NotificationData): NotificationCompat.Builder {
     val mediaStyle = android.support.v4.media.app.NotificationCompat.MediaStyle()
     mediaStyle.setMediaSession(sessionManager.mediaSessionToken)
 
@@ -101,15 +108,13 @@ constructor(
     builder.setOnlyAlertOnce(true)
 
     if (notificationData.cover != null) {
-      builder.setLargeIcon(notificationData.cover)
+      builder.setLargeIcon(this.notificationData.cover)
     } else {
       val icon = BitmapFactory.decodeResource(context.resources, R.drawable.ic_image_no_cover)
       builder.setLargeIcon(icon)
     }
 
-    val info = notificationData.trackModel
-
-    with(info) {
+    with(notificationData.trackModel) {
       builder.setContentTitle(title)
         .setContentText(artist)
         .setSubText(album)
@@ -156,20 +161,21 @@ constructor(
         notificationData.copy(trackModel = playingTrack, cover = cover)
       }
 
-      update()
+      update(notificationData)
     }
   }
 
   override fun connectionStateChanged(connected: Boolean) {
     if (!settings.isNotificationControlEnabled()) {
       Timber.v("Notification is off doing nothing")
+      cancel(NOW_PLAYING_PLACEHOLDER)
       return
     }
 
-    if (connected) {
+    if (!connected) {
       cancel(NOW_PLAYING_PLACEHOLDER)
     } else {
-      notification = createBuilder().build().also {
+      notification = createBuilder(notificationData).build().also {
         hooks?.start(NOW_PLAYING_PLACEHOLDER, it)
       }
     }
@@ -179,7 +185,10 @@ constructor(
     if (notificationData.playerState == state) {
       return
     }
-    notificationData = notificationData.copy(playerState = state)
-    update()
+
+    async(CommonPool) {
+      notificationData = notificationData.copy(playerState = state)
+      update(notificationData)
+    }
   }
 }

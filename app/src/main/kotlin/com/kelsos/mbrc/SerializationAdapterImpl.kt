@@ -1,12 +1,16 @@
 package com.kelsos.mbrc
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.kelsos.mbrc.networking.client.SocketMessage
+import com.squareup.moshi.Moshi
 import javax.inject.Inject
 
 class SerializationAdapterImpl
 @Inject
-constructor(private val objectMapper: ObjectMapper) : SerializationAdapter {
-  override fun stringify(`object`: Any): String {
-    return objectMapper.writeValueAsString(`object`)
+constructor(
+  private val moshi: Moshi
+) : SerializationAdapter {
+  override fun stringify(message: SocketMessage): String {
+    val adapter = moshi.adapter(SocketMessage::class.java)
+    return adapter.toJson(message)
   }
 }

@@ -1,13 +1,17 @@
 package com.kelsos.mbrc.networking.client
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.squareup.moshi.Moshi
 import javax.inject.Inject
 
 class MessageSerializerImpl
 @Inject
-constructor(private val mapper: ObjectMapper) :
-  MessageSerializer {
+constructor(
+  private val mapper: Moshi
+) : MessageSerializer {
+
+  private val adapter by lazy { mapper.adapter(SocketMessage::class.java) }
+
   override fun serialize(message: SocketMessage): String {
-    return "${mapper.writeValueAsString(message)}\r\n"
+    return "${adapter.toJson(message)}\r\n"
   }
 }

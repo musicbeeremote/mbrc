@@ -1,10 +1,12 @@
 package com.kelsos.mbrc.content.library.albums
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class AlbumDto(
-  @JsonProperty("artist")
+  @Json(name = "artist")
   var artist: String = "",
-  @JsonProperty("album")
+  @Json(name = "album")
   var album: String = ""
 )

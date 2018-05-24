@@ -1,16 +1,16 @@
 package com.kelsos.mbrc.networking.discovery
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonClass(generateAdapter = true)
 data class DiscoveryMessage(
-  @JsonProperty("name")
+  @Json(name="name")
   var name: String = "",
-  @JsonProperty("address")
+  @Json(name="address")
   var address: String = "",
-  @JsonProperty("port")
+  @Json(name="port")
   var port: Int = 0,
-  @JsonProperty("context")
+  @Json(name="context")
   var context: String = ""
 )
