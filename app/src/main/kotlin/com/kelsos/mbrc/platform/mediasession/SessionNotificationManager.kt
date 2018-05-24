@@ -19,6 +19,8 @@ import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.OPEN
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PLAY
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PREVIOUS
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.getPendingIntent
+import com.kelsos.mbrc.preferences.SettingsManager
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.RemoteUtils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -31,6 +33,8 @@ class SessionNotificationManager
 constructor(
   private val context: Application,
   private val sessionManager: RemoteSessionManager,
+  private val settings: SettingsManager,
+  private val appCoroutineDispatchers: AppCoroutineDispatchers,
   private val notificationManager: NotificationManager
 ) : INotificationManager {
 
@@ -46,8 +50,8 @@ constructor(
     createNotificationChannels()
   }
 
-  fun update() {
-    notification = createBuilder().build()
+  fun update(notificationData: NotificationData) {
+    notification = createBuilder(notificationData).build()
     notificationManager.notify(INotificationManager.NOW_PLAYING_PLACEHOLDER, notification)
   }
 
@@ -55,7 +59,7 @@ constructor(
     if (event.status == Connection.OFF) {
       cancel(NOW_PLAYING_PLACEHOLDER)
     } else {
-      update()
+      update(this.notificationData)
     }
   }
 
@@ -69,7 +73,7 @@ constructor(
     }
   }
 
-  private fun createBuilder(): NotificationCompat.Builder {
+  private fun createBuilder(notificationData: NotificationData): NotificationCompat.Builder {
     val mediaStyle = androidx.media.app.NotificationCompat.MediaStyle()
     mediaStyle.setMediaSession(sessionManager.mediaSessionToken)
 
@@ -91,15 +95,13 @@ constructor(
     builder.setOnlyAlertOnce(true)
 
     if (notificationData.cover != null) {
-      builder.setLargeIcon(notificationData.cover)
+      builder.setLargeIcon(this.notificationData.cover)
     } else {
       val icon = BitmapFactory.decodeResource(context.resources, R.drawable.ic_image_no_cover)
       builder.setLargeIcon(icon)
     }
 
-    val info = notificationData.trackModel
-
-    with(info) {
+    with(notificationData.trackModel) {
       builder.setContentTitle(title)
         .setContentText(artist)
         .setSubText(album)
@@ -141,7 +143,7 @@ constructor(
         notificationData.copy(trackModel = playingTrack, cover = cover)
       }
 
-      update()
+      update(notificationData)
     }
   }
 
@@ -149,7 +151,7 @@ constructor(
     if (connected) {
       cancel(NOW_PLAYING_PLACEHOLDER)
     } else {
-      notification = createBuilder().build()
+      notification = createBuilder(this.notificationData).build()
     }
   }
 
@@ -157,8 +159,9 @@ constructor(
     if (notificationData.playerState == state) {
       return
     }
+
     notificationData = notificationData.copy(playerState = state)
-    update()
+    update(notificationData)
   }
 
   companion object {

@@ -2,7 +2,7 @@ package com.kelsos.mbrc.networking.client
 
 interface UiMessageQueue {
 
-  fun dispatch(code: Int, payload: String = "")
+  fun dispatch(code: Int, payload: Any? = null)
 
   companion object {
     const val NOT_ALLOWED = 1

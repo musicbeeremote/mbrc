@@ -1,10 +1,12 @@
 package com.kelsos.mbrc.content.radios
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class RadioStationDto(
-  @JsonProperty("name")
+  @Json(name = "name")
   var name: String = "",
-  @JsonProperty("url")
+  @Json(name = "url")
   var url: String = ""
 )

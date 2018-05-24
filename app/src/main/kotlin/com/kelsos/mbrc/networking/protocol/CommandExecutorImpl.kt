@@ -2,7 +2,7 @@ package com.kelsos.mbrc.networking.protocol
 
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.interfaces.ICommand
-import com.kelsos.mbrc.interfaces.IEvent
+import com.kelsos.mbrc.interfaces.ProtocolMessage
 import timber.log.Timber
 import java.util.HashMap
 import java.util.concurrent.ExecutorService
@@ -19,7 +19,7 @@ constructor(
   private var executor = getExecutor()
 
   private var commandMap: MutableMap<String, ICommand> = HashMap()
-  private val eventQueue: LinkedBlockingQueue<IEvent> = LinkedBlockingQueue()
+  private val eventQueue: LinkedBlockingQueue<ProtocolMessage> = LinkedBlockingQueue()
   private var running: Boolean = false
 
   private fun getExecutor(): ExecutorService {
@@ -30,7 +30,7 @@ constructor(
 
   @Suppress("UNCHECKED_CAST")
   @Synchronized
-  private fun executeCommand(event: IEvent) {
+  private fun executeCommand(event: ProtocolMessage) {
     val context = event.type
 
     val command = commandMap[context]
@@ -49,7 +49,7 @@ constructor(
     }
   }
 
-  private fun callExecute(command: ICommand, event: IEvent) {
+  private fun callExecute(command: ICommand, event: ProtocolMessage) {
     try {
       command.execute(event)
     } catch (ex: Exception) {

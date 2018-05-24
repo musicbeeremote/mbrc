@@ -1,46 +1,48 @@
 package com.kelsos.mbrc.networking.protocol.commands
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.kelsos.mbrc.content.activestatus.TrackPositionData
 import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProvider
 import com.kelsos.mbrc.interfaces.ICommand
-import com.kelsos.mbrc.interfaces.IEvent
+import com.kelsos.mbrc.interfaces.ProtocolMessage
 import com.kelsos.mbrc.networking.protocol.responses.NowPlayingMoveResponse
 import com.kelsos.mbrc.networking.protocol.responses.NowPlayingTrackRemoveResponse
 import com.kelsos.mbrc.networking.protocol.responses.Position
+import com.squareup.moshi.Moshi
 import javax.inject.Inject
 
 class UpdateNowPlayingTrackMoved
 @Inject
 constructor(
-  private val mapper: ObjectMapper
+  private val moshi: Moshi
 ) : ICommand {
 
-  override fun execute(e: IEvent) {
-    val response: NowPlayingMoveResponse = mapper.treeToValue(e.data as JsonNode) ?: return
+  override fun execute(message: ProtocolMessage) {
+    val adapter = moshi.adapter(NowPlayingMoveResponse::class.java)
+    val response = adapter.fromJsonValue(message.data)
   }
 }
 
 class UpdateNowPlayingTrackRemoval
 @Inject
 constructor(
-  private val mapper: ObjectMapper
+  private val moshi: Moshi
 ) : ICommand {
-  override fun execute(e: IEvent) {
-    val response: NowPlayingTrackRemoveResponse = mapper.treeToValue(e.data as JsonNode) ?: return
+  override fun execute(message: ProtocolMessage) {
+    val adapter = moshi.adapter(NowPlayingTrackRemoveResponse::class.java)
+    val response = adapter.fromJsonValue(message.data)
   }
 }
 
 class UpdatePlaybackPositionCommand
-@Inject constructor(
-  private val mapper: ObjectMapper,
+@Inject
+constructor(
+  private val moshi: Moshi,
   private val trackPositionLiveDataProvider: TrackPositionLiveDataProvider
 ) : ICommand {
 
-  override fun execute(e: IEvent) {
-    val response: Position = mapper.treeToValue(e.data as JsonNode) ?: return
+  override fun execute(message: ProtocolMessage) {
+    val adapter = moshi.adapter(Position::class.java)
+    val response = adapter.fromJsonValue(message.data) ?: return
 
     trackPositionLiveDataProvider.update(
       TrackPositionData(

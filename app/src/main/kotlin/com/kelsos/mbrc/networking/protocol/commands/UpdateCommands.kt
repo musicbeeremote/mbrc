@@ -4,22 +4,14 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.BooleanNode
-import com.fasterxml.jackson.databind.node.IntNode
-import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.databind.node.TextNode
-import com.fasterxml.jackson.module.kotlin.treeToValue
-import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
+import com.kelsos.mbrc.content.activestatus.PlayerState
+import com.kelsos.mbrc.content.activestatus.PlayerStatus
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.content.activestatus.Repeat
-import com.kelsos.mbrc.content.activestatus.TrackRatingModel
 import com.kelsos.mbrc.content.activestatus.livedata.LyricsLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingLiveDataProvider
-import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.content.lyrics.LyricsPayload
 import com.kelsos.mbrc.content.nowplaying.NowPlayingTrack
 import com.kelsos.mbrc.content.nowplaying.cover.CoverPayload
@@ -27,12 +19,13 @@ import com.kelsos.mbrc.events.ShuffleMode
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.extensions.md5
 import com.kelsos.mbrc.interfaces.ICommand
-import com.kelsos.mbrc.interfaces.IEvent
+import com.kelsos.mbrc.interfaces.ProtocolMessage
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.platform.widgets.UpdateWidgets
 import com.kelsos.mbrc.ui.navigation.main.LfmRating
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
+import com.squareup.moshi.Moshi
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
@@ -51,9 +44,9 @@ constructor(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
 
-  override fun execute(e: IEvent) {
-    val scrobble = (e.data as BooleanNode).asBoolean()
-    playerStatusLiveDataProvider.update({ PlayerStatusModel(scrobbling = scrobble) }) {
+  override fun execute(message: ProtocolMessage) {
+    val scrobble = message.data as? Boolean ?: false
+    playerStatusLiveDataProvider.update {
       copy(scrobbling = scrobble)
     }
   }
@@ -65,14 +58,14 @@ constructor(
   private val trackRatingLiveDataProvider: TrackRatingLiveDataProvider
 ) : ICommand {
 
-  override fun execute(e: IEvent) {
-    val lfmRating = when (e.dataString) {
+  override fun execute(message: ProtocolMessage) {
+    val lfmRating = when (message.data as? String) {
       "Love" -> LfmRating.LOVED
       "Ban" -> LfmRating.BANNED
       else -> LfmRating.NORMAL
     }
 
-    trackRatingLiveDataProvider.update({ TrackRatingModel(lfmRating = lfmRating) }) {
+    trackRatingLiveDataProvider.update {
       copy(lfmRating = lfmRating)
     }
   }
@@ -81,12 +74,14 @@ constructor(
 class UpdateLyrics
 @Inject
 constructor(
-  private val mapper: ObjectMapper,
+  private val mapper: Moshi,
   private val lyricsLiveDataProvider: LyricsLiveDataProvider
 ) : ICommand {
 
-  override fun execute(e: IEvent) {
-    val payload = mapper.treeToValue((e.data as JsonNode), LyricsPayload::class.java)
+  override fun execute(message: ProtocolMessage) {
+    val adapter = mapper.adapter(LyricsPayload::class.java)
+    val payload = adapter.fromJsonValue(message.data) ?: return
+
     val lyrics = if (payload.status == LyricsPayload.SUCCESS) {
       payload.lyrics.replace("<p>", "\r\n")
         .replace("<br>", "\n")
@@ -117,9 +112,9 @@ constructor(
   private val statusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
 
-  override fun execute(e: IEvent) {
-    val mute = (e.data as BooleanNode).asBoolean()
-    statusLiveDataProvider.update({ PlayerStatusModel(mute = mute) }) { copy(mute = mute) }
+  override fun execute(message: ProtocolMessage) {
+    val mute = message.data as? Boolean ?: false
+    statusLiveDataProvider.update { copy(mute = mute) }
   }
 }
 
@@ -128,17 +123,14 @@ class UpdateNowPlayingTrack
 constructor(
   private val playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
   private val context: Application,
-  private val mapper: ObjectMapper
+  private val mapper: Moshi
 ) : ICommand {
 
-  override fun execute(e: IEvent) {
-    val track: NowPlayingTrack = mapper.treeToValue((e.data as JsonNode)) ?: return
+  override fun execute(message: ProtocolMessage) {
+    val adapter = mapper.adapter(NowPlayingTrack::class.java)
+    val track = adapter.fromJsonValue(message.data) ?: return
 
-    playingTrackLiveDataProvider.update({
-      with(track) {
-        PlayingTrackModel(artist, title, album, year, path)
-      }
-    }) {
+    playingTrackLiveDataProvider.update {
       copy(
         artist = track.artist,
         title = track.title,
@@ -157,36 +149,22 @@ constructor(
 class UpdatePlayerStatus
 @Inject
 constructor(
-  private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
+  private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
+  private val moshi: Moshi
 ) : ICommand {
 
-  override fun execute(e: IEvent) {
-    val node = e.data as ObjectNode
-    val mute = node.path(Protocol.PlayerMute).asBoolean()
-    val playState = node.path(Protocol.PlayerState).asText()
-    val repeat = node.path(Protocol.PlayerRepeat).asText().toRepeat()
-    // noinspection ResourceType
-    val shuffle = node.path(Protocol.PlayerShuffle).asText()
-    val scrobbling = node.path(Protocol.PlayerScrobble).asBoolean()
-    val volume = Integer.parseInt(node.path(Protocol.PlayerVolume).asText())
+  override fun execute(message: ProtocolMessage) {
+    val adapter = moshi.adapter(PlayerStatus::class.java)
+    val status = adapter.fromJsonValue(message.data) ?: return
 
-    playerStatusLiveDataProvider.update({
-      PlayerStatusModel(
-        mute = mute,
-        playState = playState,
-        repeat = repeat,
-        shuffle = shuffle,
-        scrobbling = scrobbling,
-        volume = volume
-      )
-    }) {
+    playerStatusLiveDataProvider.update {
       copy(
-        mute = mute,
-        playState = playState,
-        repeat = repeat,
-        shuffle = shuffle,
-        scrobbling = scrobbling,
-        volume = volume
+        mute = status.mute,
+        playState = status.playState,
+        repeat = status.repeat,
+        shuffle = status.shuffle,
+        scrobbling = status.scrobbling,
+        volume = status.volume
       )
     }
   }
@@ -199,12 +177,14 @@ constructor(
   private val context: Application
 ) : ICommand {
 
-  override fun execute(e: IEvent) {
-    val playState = e.dataString
-    playerStatusLiveDataProvider.update({ PlayerStatusModel(playState = playState) }) {
+  override fun execute(message: ProtocolMessage) {
+    val playState = message.data as? String ?: PlayerState.UNDEFINED
+
+    playerStatusLiveDataProvider.update {
       copy(playState = playState)
     }
-    UpdateWidgets.updatePlaystate(context, e.dataString)
+
+    UpdateWidgets.updatePlaystate(context, playState)
   }
 }
 
@@ -212,8 +192,8 @@ class UpdatePluginVersionCommand
 @Inject
 constructor() : ICommand {
 
-  override fun execute(e: IEvent) {
-    val pluginVersion = e.dataString
+  override fun execute(message: ProtocolMessage) {
+    val pluginVersion = message.data as? String
     Timber.v("plugin reports $pluginVersion")
   }
 }
@@ -224,9 +204,10 @@ constructor(
   private val ratingLiveDataProvider: TrackRatingLiveDataProvider
 ) : ICommand {
 
-  override fun execute(e: IEvent) {
-    val rating = (e.data as TextNode).asDouble(0.0).toFloat()
-    ratingLiveDataProvider.update({ TrackRatingModel(rating = rating) }) {
+  override fun execute(message: ProtocolMessage) {
+    val rating = (message.data as? Double)?.toFloat() ?: 0.0f
+
+    ratingLiveDataProvider.update {
       copy(rating = rating)
     }
   }
@@ -238,9 +219,10 @@ constructor(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
 
-  override fun execute(e: IEvent) {
-    val repeat = e.dataString.toRepeat()
-    playerStatusLiveDataProvider.update({ PlayerStatusModel(repeat = repeat) }) {
+  override fun execute(message: ProtocolMessage) {
+    val repeat = (message.data as? String)?.toRepeat() ?: Repeat.NONE
+
+    playerStatusLiveDataProvider.update {
       copy(repeat = repeat)
     }
   }
@@ -252,19 +234,10 @@ constructor(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
 
-  override fun execute(e: IEvent) {
-    var data: String? = e.dataString
+  override fun execute(message: ProtocolMessage) {
+    val data = message.data as? String ?: ShuffleMode.OFF
 
-    // Older plugin support, where the shuffle had boolean value.
-    if (data == null) {
-      data = if ((e.data as JsonNode).asBoolean()) {
-        ShuffleMode.SHUFFLE
-      } else {
-        ShuffleMode.OFF
-      }
-    }
-
-    playerStatusLiveDataProvider.update({ PlayerStatusModel(shuffle = data) }) {
+    playerStatusLiveDataProvider.update {
       copy(shuffle = data)
     }
   }
@@ -276,10 +249,10 @@ constructor(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
 
-  override fun execute(e: IEvent) {
-    val volume = (e.data as IntNode).asInt()
-    playerStatusLiveDataProvider.update({ PlayerStatusModel(volume = volume) }) {
-      copy(volume = volume)
+  override fun execute(message: ProtocolMessage) {
+    val volume = message.data as Number
+    playerStatusLiveDataProvider.update {
+      copy(volume = volume.toInt())
     }
   }
 }
@@ -296,7 +269,7 @@ private fun String.toRepeat(): String {
 class UpdateCover
 @Inject constructor(
   private val context: Application,
-  private val mapper: ObjectMapper,
+  private val moshi: Moshi,
   private val coverService: ApiBase,
   private val cache: PlayingTrackCache,
   appDispatchers: AppCoroutineDispatchers
@@ -309,12 +282,13 @@ class UpdateCover
     coverDir = File(context.filesDir, COVER_DIR)
   }
 
-  override fun execute(e: IEvent) {
-    val payload = mapper.treeToValue((e.data as JsonNode), CoverPayload::class.java)
+  override fun execute(message: ProtocolMessage) {
+    val adapter = moshi.adapter(CoverPayload::class.java)
+    val payload = adapter.fromJsonValue(message.data)
 
-    if (payload.status == CoverPayload.NOT_FOUND) {
+    if (payload?.status == CoverPayload.NOT_FOUND) {
       UpdateWidgets.updateCover(context)
-    } else if (payload.status == CoverPayload.READY) {
+    } else if (payload?.status == CoverPayload.READY) {
       scope.launch {
         retrieveCover()
       }

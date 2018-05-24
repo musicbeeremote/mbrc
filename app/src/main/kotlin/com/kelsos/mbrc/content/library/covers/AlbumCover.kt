@@ -1,20 +1,20 @@
 package com.kelsos.mbrc.content.library.covers
 
 import androidx.room.ColumnInfo
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.kelsos.mbrc.utilities.RemoteUtils
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonClass(generateAdapter = true)
 data class AlbumCover(
   @ColumnInfo
-  @JsonProperty("artist")
+  @Json(name = "artist")
   val artist: String,
   @ColumnInfo
-  @JsonProperty("album")
+  @Json(name = "album")
   val album: String,
   @ColumnInfo
-  @JsonProperty("hash")
+  @Json(name = "hash")
   val hash: String?
 )
 

@@ -1,5 +1,7 @@
 package com.kelsos.mbrc
 
+import com.kelsos.mbrc.networking.client.SocketMessage
+
 interface SerializationAdapter {
-  fun stringify(`object`: Any): String
+  fun stringify(message: SocketMessage): String
 }

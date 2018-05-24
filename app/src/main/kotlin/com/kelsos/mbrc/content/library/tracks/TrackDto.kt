@@ -1,24 +1,26 @@
 package com.kelsos.mbrc.content.library.tracks
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class TrackDto(
-  @JsonProperty("artist")
+  @Json(name = "artist")
   var artist: String = "",
-  @JsonProperty("title")
+  @Json(name = "title")
   var title: String = "",
-  @JsonProperty("src")
+  @Json(name = "src")
   var src: String = "",
-  @JsonProperty("trackno")
+  @Json(name = "trackno")
   var trackno: Int = 0,
-  @JsonProperty("disc")
+  @Json(name = "disc")
   var disc: Int = 0,
-  @JsonProperty("album_artist")
+  @Json(name = "album_artist")
   var albumArtist: String = "",
-  @JsonProperty("album")
+  @Json(name = "album")
   var album: String = "",
-  @JsonProperty("genre")
+  @Json(name = "genre")
   var genre: String = "",
-  @JsonProperty("year")
+  @Json(name = "year")
   var year: String = ""
 )

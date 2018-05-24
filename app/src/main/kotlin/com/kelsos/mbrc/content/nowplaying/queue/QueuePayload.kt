@@ -1,10 +1,15 @@
 package com.kelsos.mbrc.content.nowplaying.queue
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.Action
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class QueuePayload(
-  @JsonProperty("queue") @Action val type: String,
-  @JsonProperty("data") val data: List<String>,
-  @JsonProperty("play") val play: String? = null
+  @LibraryPopup.Action
+  @Json(name = "queue")
+  val type: String,
+  @Json(name = "data")
+  val data: List<String>,
+  @Json(name = "play")
+  val play: String? = null
 )

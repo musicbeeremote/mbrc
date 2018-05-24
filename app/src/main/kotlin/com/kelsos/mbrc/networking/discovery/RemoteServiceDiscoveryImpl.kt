@@ -3,12 +3,11 @@ package com.kelsos.mbrc.networking.discovery
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.kelsos.mbrc.networking.connections.ConnectionMapper
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -24,11 +23,13 @@ class RemoteServiceDiscoveryImpl
 internal constructor(
   private val manager: WifiManager,
   private val connectivityManager: ConnectivityManager,
-  private val mapper: ObjectMapper,
+  private val moshi: Moshi,
   private val dispatchers: AppCoroutineDispatchers
 ) : RemoteServiceDiscovery {
   private var multicastLock: WifiManager.MulticastLock? = null
   private var group: InetAddress? = null
+
+  private val adapter by lazy { moshi.adapter(DiscoveryMessage::class.java) }
 
   override fun discover(callback: (status: Int, setting: ConnectionSettingsEntity?) -> Unit) {
     if (!isWifiConnected()) {
@@ -55,7 +56,7 @@ internal constructor(
               socket.receive(this)
               val message = String(data.copyOfRange(0, length), Charsets.UTF_8)
               Timber.v(message)
-              mapper.readValue<DiscoveryMessage?>(message)
+              adapter.fromJson(message)
             }
             if (discoveryMessage == null || discoveryMessage.context != NOTIFY) {
               throw IOException("unexpected message")
@@ -120,7 +121,7 @@ internal constructor(
         val message = with(DiscoveryMessage()) {
           context = Protocol.DISCOVERY
           address = getWifiAddress()
-          mapper.writeValueAsBytes(this)
+          adapter.toJson(this).toByteArray()
         }
 
         send(

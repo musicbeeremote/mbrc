@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.Database
 import com.kelsos.mbrc.DeserializationAdapter
@@ -22,6 +21,7 @@ import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.preferences.ClientInformationStore
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
+import com.squareup.moshi.Moshi
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -54,7 +54,8 @@ class ConnectivityVerifierImplTest {
   @JvmField
   val toothpickRule: ToothPickRule = ToothPickRule(this, "verifier")
     .setRootRegistryPackage("com.kelsos.mbrc")
-  private val mapper = ObjectMapper()
+  private val moshi = Moshi.Builder().build()
+  private val adapter = moshi.adapter(SocketMessage::class.java)
   private val port: Int = 46000
 
   lateinit var verifier: ConnectivityVerifier
@@ -89,9 +90,9 @@ class ConnectivityVerifierImplTest {
         val input = InputStreamReader(connection!!.inputStream)
         val inputReader = BufferedReader(input)
         val line = inputReader.readLine()
-        val value = mapper.readValue(line, SocketMessage::class.java)
+        val value = adapter.fromJson(line)
 
-        if (value.context != Protocol.VerifyConnection) {
+        if (value?.context != Protocol.VerifyConnection) {
           connection.close()
           server.close()
           return@Runnable
@@ -107,9 +108,8 @@ class ConnectivityVerifierImplTest {
         val output = PrintWriter(BufferedWriter(out), true)
         val newLine = "\r\n"
         if (json) {
-          val response = SocketMessage()
-          response.context = responseContext
-          output.write(mapper.writeValueAsString(response) + newLine + newLine)
+          val response = SocketMessage(context = responseContext)
+          output.write(adapter.toJson(response) + newLine + newLine)
         } else {
           output.write(responseContext + newLine + newLine)
         }
@@ -222,7 +222,7 @@ class ConnectivityVerifierImplTest {
 
   inner class TestModule : Module() {
     init {
-      bind(ObjectMapper::class.java).toInstance(mapper)
+      bind(Moshi::class.java).toProviderInstance { Moshi.Builder().build() }
       bind(RequestManager::class.java).to(RequestManagerImpl::class.java)
       bind(ConnectionRepository::class.java).toInstance(connectionRepository)
       bind(ConnectivityVerifier::class.java).to(ConnectivityVerifierImpl::class.java)

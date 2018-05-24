@@ -46,20 +46,18 @@
     public static *** v(...);
 }
 
-# Proguard configuration for Jackson 2.x (fasterxml package instead of codehaus package)
-
--keep class com.fasterxml.jackson.databind.ObjectMapper {
-    public <methods>;
-    protected <methods>;
+-dontwarn okio.**
+-dontwarn javax.annotation.**
+-keepclasseswithmembers class * {
+    @com.squareup.moshi.* <methods>;
 }
--keep class com.fasterxml.jackson.databind.ObjectWriter {
-    public ** writeValueAsString(**);
+-keep @com.squareup.moshi.JsonQualifier interface *
+
+-keep class **JsonAdapter {
+    <init>(...);
+    <fields>;
 }
-
-## Retrolambda specific rules ##
-
-# as per official recommendation: https://github.com/evant/gradle-retrolambda#proguard
--dontwarn java.lang.invoke.*
+-keepnames @com.squareup.moshi.JsonClass class *
 
 #Toothpick
 # Do not obfuscate annotation scoped classes
@@ -89,7 +87,6 @@
 -keep interface okhttp3.** { *; }
 -dontwarn okhttp3.**
 
-
 # AppCompat v7
 -keep public class android.support.v7.widget.** { *; }
 -keep public class android.support.v7.internal.widget.** { *; }
@@ -104,27 +101,6 @@
 -keep class android.support.design.** { *; }
 -keep interface android.support.design.** { *; }
 -keep public class android.support.design.R$* { *; }
-
-
--dontwarn com.fasterxml.jackson.databind.ext.**
-
-### Jackson SERIALIZER SETTINGS
--keepclassmembers class * {
-    @com.fasterxml.jackson.annotation.* <fields>;
-    @com.fasterxml.jackson.annotation.* <init>(...);
-}
-
-# Jackson
--dontskipnonpubliclibraryclassmembers
--keepattributes *Annotation*,EnclosingMethod,Signature
--keepnames class com.fasterxml.jackson.** { *; }
--dontwarn com.fasterxml.jackson.databind.**
-
-# Keep anything annotated with @JsonCreator
--keepclassmembers public class * {
-    @com.fasterxml.jackson.annotation.JsonCreator *;
-    @com.fasterxml.jackson.annotation.JsonProperty *;
-}
 
 -keep class kotlin.** { *; }
 

@@ -1,16 +1,18 @@
 package com.kelsos.mbrc.content.nowplaying
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class NowPlayingTrack(
-  @JsonProperty("artist")
+  @Json(name = "artist")
   val artist: String,
-  @JsonProperty("album")
+  @Json(name = "album")
   val album: String,
-  @JsonProperty("title")
+  @Json(name = "title")
   val title: String,
-  @JsonProperty("year")
+  @Json(name = "year")
   val year: String,
-  @JsonProperty("path")
+  @Json(name = "path")
   val path: String
 )

@@ -1,27 +1,21 @@
 package com.kelsos.mbrc.networking.client
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.Protocol.Context
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
-class SocketMessage {
-  @JsonProperty
-  var context: String? = null
-
-  @JsonProperty
-  var data: Any? = null
-
-  @SuppressWarnings("unused")
-  constructor()
-
-  private constructor(@Context context: String, data: Any) {
-    this.context = context
-    this.data = data
-  }
+@JsonClass(generateAdapter = true)
+data class SocketMessage(
+  @Context
+  @Json(name = "context")
+  val context: String,
+  @Json(name = "data")
+  val data: Any = ""
+) {
 
   companion object {
-
     fun create(@Context context: String, data: Any = ""): SocketMessage {
       return SocketMessage(context, data)
     }

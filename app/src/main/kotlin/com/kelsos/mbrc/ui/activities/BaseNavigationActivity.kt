@@ -22,6 +22,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
 import com.kelsos.mbrc.events.NotifyUser
+import com.kelsos.mbrc.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.networking.protocol.VolumeInteractor
@@ -53,6 +54,9 @@ abstract class BaseNavigationActivity :
   @Inject
   lateinit var connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider
 
+  @Inject
+  lateinit var clientConnectionUseCase: ClientConnectionUseCase
+
   private lateinit var drawer: DrawerLayout
   protected lateinit var navigationView: NavigationView
 
@@ -66,14 +70,14 @@ abstract class BaseNavigationActivity :
   private fun onConnectLongClick(): Boolean {
     Timber.v("Connect long pressed")
     serviceChecker.startServiceIfNotRunning()
-    // bus.post(ChangeConnectionStateEvent(SocketAction.RESET))
+    clientConnectionUseCase.connect()
     return true
   }
 
   protected fun onConnectClick() {
     Timber.v("Attempting to connect")
     serviceChecker.startServiceIfNotRunning()
-    // bus.post(ChangeConnectionStateEvent(SocketAction.START))
+    clientConnectionUseCase.connect()
   }
 
   override fun onDestroy() {
