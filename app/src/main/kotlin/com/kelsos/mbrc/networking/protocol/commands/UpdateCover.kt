@@ -5,18 +5,16 @@ import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.JPEG
 import android.graphics.BitmapFactory
 import android.util.Base64
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
-import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.content.nowplaying.cover.CoverApi
 import com.kelsos.mbrc.content.nowplaying.cover.CoverPayload
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.extensions.md5
 import com.kelsos.mbrc.interfaces.ICommand
-import com.kelsos.mbrc.interfaces.IEvent
+import com.kelsos.mbrc.interfaces.ProtocolMessage
 import com.kelsos.mbrc.platform.widgets.UpdateWidgets
 import com.kelsos.mbrc.utilities.AppRxSchedulers
+import com.squareup.moshi.Moshi
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import io.reactivex.Single
@@ -30,7 +28,7 @@ class UpdateCover
 @Inject
 constructor(
   private val context: Application,
-  private val mapper: ObjectMapper,
+  private val mapper: Moshi,
   private val rxSchedulers: AppRxSchedulers,
   private val coverApi: CoverApi,
   private val playingTrackLiveDataProvider: PlayingTrackLiveDataProvider
@@ -41,11 +39,12 @@ constructor(
     coverDir = File(context.filesDir, COVER_DIR)
   }
 
-  override fun execute(e: IEvent) {
-    val payload = mapper.treeToValue((e.data as JsonNode), CoverPayload::class.java)
+  override fun execute(message: ProtocolMessage) {
+    val adapter = mapper.adapter(CoverPayload::class.java)
+    val payload = adapter.fromJsonValue(message.data) ?: return
 
     if (payload.status == CoverPayload.NOT_FOUND) {
-      playingTrackLiveDataProvider.update({ PlayingTrackModel() }) { copy(coverUrl = "") }
+      playingTrackLiveDataProvider.update() { copy(coverUrl = "") }
       UpdateWidgets.updateCover(context)
     } else if (payload.status == CoverPayload.READY) {
       retrieveCover()
@@ -61,7 +60,7 @@ constructor(
       return@flatMap prefetch(it)
     }.subscribeOn(rxSchedulers.disk).subscribe({
 
-      playingTrackLiveDataProvider.update({ PlayingTrackModel(coverUrl = it.absolutePath) }) {
+      playingTrackLiveDataProvider.update() {
         copy(coverUrl = it.absolutePath)
       }
       UpdateWidgets.updateCover(context, it.absolutePath)
@@ -90,7 +89,7 @@ constructor(
       Timber.v(it, "Failed to store path")
     }
 
-    playingTrackLiveDataProvider.update({ PlayingTrackModel(coverUrl = "") }) {
+    playingTrackLiveDataProvider.update() {
       copy(coverUrl = "")
     }
   }

@@ -23,6 +23,7 @@ import android.widget.TextView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
 import com.kelsos.mbrc.events.NotifyUser
+import com.kelsos.mbrc.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.networking.protocol.VolumeInteractor
@@ -54,6 +55,9 @@ abstract class BaseNavigationActivity : BaseActivity(),
   @Inject
   lateinit var connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider
 
+  @Inject
+  lateinit var clientConnectionUseCase: ClientConnectionUseCase
+
   private val toolbar: Toolbar by bindView(R.id.toolbar)
   private val drawer: DrawerLayout by bindView(R.id.drawer_layout)
   private val navigationView: NavigationView by bindView(R.id.nav_view)
@@ -66,13 +70,13 @@ abstract class BaseNavigationActivity : BaseActivity(),
 
   private fun onConnectLongClick(): Boolean {
     serviceChecker.startServiceIfNotRunning()
-    //bus.post(ChangeConnectionStateEvent(SocketAction.RESET))
+    clientConnectionUseCase.connect()
     return true
   }
 
   private fun onConnectClick() {
     serviceChecker.startServiceIfNotRunning()
-    //bus.post(ChangeConnectionStateEvent(SocketAction.START))
+    clientConnectionUseCase.connect()
   }
 
   override fun onDestroy() {

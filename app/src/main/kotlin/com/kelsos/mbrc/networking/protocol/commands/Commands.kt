@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.networking.protocol.commands
 
 import com.kelsos.mbrc.interfaces.ICommand
-import com.kelsos.mbrc.interfaces.IEvent
+import com.kelsos.mbrc.interfaces.ProtocolMessage
 import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.client.MessageQueue
 import com.kelsos.mbrc.networking.client.SocketMessage
@@ -15,7 +15,7 @@ class ProtocolPingHandle
   private var activityChecker: SocketActivityChecker
 ) : ICommand {
 
-  override fun execute(e: IEvent) {
+  override fun execute(message: ProtocolMessage) {
     activityChecker.ping()
     messageQueue.queue(SocketMessage.create(Protocol.PONG))
   }
@@ -23,7 +23,7 @@ class ProtocolPingHandle
 
 class ProtocolPongHandle
 @Inject constructor() : ICommand {
-  override fun execute(e: IEvent) {
-    Timber.d(e.data.toString())
+  override fun execute(message: ProtocolMessage) {
+    Timber.d(message.data.toString())
   }
 }

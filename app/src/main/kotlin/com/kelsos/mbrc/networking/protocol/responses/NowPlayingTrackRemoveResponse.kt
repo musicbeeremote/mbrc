@@ -1,8 +1,12 @@
 package com.kelsos.mbrc.networking.protocol.responses
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class NowPlayingTrackRemoveResponse(
-  @JsonProperty("index") val index: Int,
-  @JsonProperty("success") val success: Boolean
+  @Json(name = "index")
+  val index: Int,
+  @Json(name = "success")
+  val success: Boolean
 )

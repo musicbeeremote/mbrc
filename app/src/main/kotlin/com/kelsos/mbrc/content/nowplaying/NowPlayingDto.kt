@@ -1,14 +1,16 @@
 package com.kelsos.mbrc.content.nowplaying
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class NowPlayingDto(
-  @JsonProperty("title")
+  @Json(name = "title")
   var title: String = "",
-  @JsonProperty("artist")
+  @Json(name = "artist")
   var artist: String = "",
-  @JsonProperty("path")
+  @Json(name = "path")
   var path: String = "",
-  @JsonProperty("position")
+  @Json(name = "position")
   var position: Int = 0
 )

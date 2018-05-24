@@ -13,6 +13,7 @@ data class SyncProgress(
   }
 
   @IntDef(
+    NONE,
     GENRE,
     ARTIST,
     ALBUM,
@@ -22,6 +23,7 @@ data class SyncProgress(
   annotation class Type
 
   companion object {
+    const val NONE = 0
     const val GENRE = 1
     const val ARTIST = 2
     const val ALBUM = 3

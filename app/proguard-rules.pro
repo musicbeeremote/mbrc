@@ -46,32 +46,18 @@
     public static *** v(...);
 }
 
-
-# Butterknife
-# Retain generated class which implement Unbinder.
--keep public class * implements butterknife.Unbinder { public <init>(...); }
-
-# Prevent obfuscation of types which use ButterKnife annotations since the simple name
-# is used to reflectively look up the generated ViewBinding.
--keep class butterknife.*
--keepclasseswithmembernames class * { @butterknife.* <methods>; }
--keepclasseswithmembernames class * { @butterknife.* <fields>; }
-
-
-# Proguard configuration for Jackson 2.x (fasterxml package instead of codehaus package)
-
--keep class com.fasterxml.jackson.databind.ObjectMapper {
-    public <methods>;
-    protected <methods>;
+-dontwarn okio.**
+-dontwarn javax.annotation.**
+-keepclasseswithmembers class * {
+    @com.squareup.moshi.* <methods>;
 }
--keep class com.fasterxml.jackson.databind.ObjectWriter {
-    public ** writeValueAsString(**);
+-keep @com.squareup.moshi.JsonQualifier interface *
+
+-keep class **JsonAdapter {
+    <init>(...);
+    <fields>;
 }
-
-## Retrolambda specific rules ##
-
-# as per official recommendation: https://github.com/evant/gradle-retrolambda#proguard
--dontwarn java.lang.invoke.*
+-keepnames @com.squareup.moshi.JsonClass class *
 
 
 # rxjava

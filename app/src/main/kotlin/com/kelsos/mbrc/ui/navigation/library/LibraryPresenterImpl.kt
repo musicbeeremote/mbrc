@@ -1,13 +1,11 @@
 package com.kelsos.mbrc.ui.navigation.library
 
-import android.arch.lifecycle.Observer
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor.OnCompleteListener
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.rxkotlin.plusAssign
-import timber.log.Timber
 import javax.inject.Inject
 
 @LibraryActivity.Presenter
@@ -20,14 +18,14 @@ class LibraryPresenterImpl
 ) : LibraryPresenter, OnCompleteListener, BasePresenter<LibraryView>() {
 
   init {
-    syncProgressProvider.observe(this, Observer {
-      if (it == null) {
-        return@Observer
-      }
-
-      Timber.v("progress $it")
-      view().updateSyncProgress(it)
-    })
+//    syncProgressProvider.observe(this, Observer {
+//      if (it == null) {
+//        return@Observer
+//      }
+//
+//      Timber.v("progress $it")
+//      view().updateSyncProgress(it)
+//    })
   }
 
   override fun refresh() {

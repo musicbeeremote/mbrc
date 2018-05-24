@@ -15,7 +15,8 @@ import io.reactivex.rxkotlin.plusAssign
 import javax.inject.Inject
 
 class MainViewPresenterImpl
-@Inject constructor(
+@Inject
+constructor(
   private val settingsManager: SettingsManager,
   private val userActionUseCase: UserActionUseCase,
   connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider,

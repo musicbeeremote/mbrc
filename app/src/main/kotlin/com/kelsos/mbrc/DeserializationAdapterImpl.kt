@@ -1,26 +1,27 @@
 package com.kelsos.mbrc
 
-import com.fasterxml.jackson.databind.JavaType
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.type.TypeFactory
+import com.squareup.moshi.Moshi
+import java.lang.reflect.ParameterizedType
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
 class DeserializationAdapterImpl
-@Inject constructor(private val objectMapper: ObjectMapper) : DeserializationAdapter {
-  override fun <T : Any> objectify(line: String, type: JavaType): T {
-    return objectMapper.readValue(line, type)
-  }
-
-  override fun typeFactory(): TypeFactory {
-    return objectMapper.typeFactory
+@Inject
+constructor(
+  private val moshi: Moshi
+) : DeserializationAdapter {
+  override fun <T : Any> objectify(line: String, type: ParameterizedType): T {
+    val adapter = moshi.adapter<T>(type)
+    return checkNotNull(adapter.fromJson(line)) { "what?" }
   }
 
   override fun <T : Any> convertValue(data: Any?, kClass: KClass<T>): T {
-    return objectMapper.convertValue(data, kClass.java)
+    val adapter = moshi.adapter(kClass.java)
+    return checkNotNull(adapter.fromJsonValue(data)) { "what?" }
   }
 
   override fun <T : Any> objectify(line: String, kClass: KClass<T>): T {
-    return objectMapper.readValue(line, kClass.java)
+    val adapter = moshi.adapter(kClass.java)
+    return checkNotNull(adapter.fromJson(line)) { "what? " }
   }
 }

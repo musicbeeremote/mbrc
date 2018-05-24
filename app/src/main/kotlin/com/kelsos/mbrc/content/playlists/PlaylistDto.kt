@@ -1,10 +1,12 @@
 package com.kelsos.mbrc.content.playlists
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class PlaylistDto(
-  @JsonProperty
+  @Json(name = "name")
   var name: String = "",
-  @JsonProperty
+  @Json(name = "url")
   var url: String = ""
 )

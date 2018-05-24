@@ -1,9 +1,14 @@
 package com.kelsos.mbrc.networking.protocol.responses
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class NowPlayingMoveResponse(
-  @JsonProperty("from") val from: Int,
-  @JsonProperty("to") val to: Int,
-  @JsonProperty("success") val success: Boolean = false
+  @Json(name = "from")
+  val from: Int,
+  @Json(name = "to")
+  val to: Int,
+  @Json(name = "success")
+  val success: Boolean = false
 )
