@@ -2,6 +2,7 @@ package com.kelsos.mbrc.ui.navigation.library
 
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor.OnCompleteListener
+import com.kelsos.mbrc.metrics.SyncedData
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.SettingsManager
 import kotlinx.coroutines.launch
@@ -73,7 +74,7 @@ class LibraryPresenterImpl
     searchModel.term.tryEmit(keyword)
   }
 
-  override fun onSuccess(stats: LibraryStats) {
+  override fun onSuccess(stats: SyncedData) {
     view().syncComplete(stats)
   }
 

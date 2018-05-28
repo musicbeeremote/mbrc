@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library
 
+import com.kelsos.mbrc.metrics.SyncedData
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 
@@ -8,8 +9,8 @@ interface LibraryView : BaseView {
   fun showSyncProgress()
   fun hideSyncProgress()
   fun updateArtistOnlyPreference(albumArtistOnly: Boolean?)
-  fun syncComplete(stats: LibraryStats)
-  fun showStats(stats: LibraryStats)
+  fun syncComplete(stats: SyncedData)
+  fun showStats(stats: SyncedData)
 }
 
 interface LibraryPresenter : Presenter<LibraryView> {

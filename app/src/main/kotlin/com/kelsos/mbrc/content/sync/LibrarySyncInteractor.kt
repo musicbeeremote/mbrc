@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.content.sync
 
-import com.kelsos.mbrc.ui.navigation.library.LibraryStats
+import com.kelsos.mbrc.metrics.SyncedData
 
 /**
  * The class is responsible for the library metadata and playlist data network.
@@ -25,12 +25,12 @@ interface LibrarySyncInteractor {
 
   fun setOnCompleteListener(onCompleteListener: OnCompleteListener?)
   fun setOnStartListener(onStartListener: OnStartListener?)
-  suspend fun syncStats(): LibraryStats
+  suspend fun syncStats(): SyncedData
 
   interface OnCompleteListener {
     fun onTermination()
     fun onFailure(throwable: Throwable)
-    fun onSuccess(stats: LibraryStats)
+    fun onSuccess(stats: SyncedData)
   }
 
   interface OnStartListener {

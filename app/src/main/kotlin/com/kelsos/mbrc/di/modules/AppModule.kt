@@ -37,6 +37,8 @@ import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.library.tracks.TrackRepositoryImpl
 import com.kelsos.mbrc.content.nowplaying.NowPlayingRepository
 import com.kelsos.mbrc.content.nowplaying.NowPlayingRepositoryImpl
+import com.kelsos.mbrc.content.nowplaying.cover.CoverModel
+import com.kelsos.mbrc.content.nowplaying.cover.StoredCoverModel
 import com.kelsos.mbrc.content.output.OutputApi
 import com.kelsos.mbrc.content.output.OutputApiImpl
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
@@ -176,5 +178,7 @@ class AppModule : Module() {
     bindSingletonProvider(AppCoroutineDispatcherProvider::class)
 
     bindClass<RequestManager> { RequestManagerImpl::class }
+
+    bindInstance<CoverModel> { StoredCoverModel }
   }
 }

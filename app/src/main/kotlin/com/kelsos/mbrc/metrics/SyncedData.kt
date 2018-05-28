@@ -1,6 +1,6 @@
-package com.kelsos.mbrc.ui.navigation.library
+package com.kelsos.mbrc.metrics
 
-data class LibraryStats(
+data class SyncedData(
   val genres: Long,
   val artists: Long,
   val albums: Long,
