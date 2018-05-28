@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.support.annotation.CallSuper
 import android.support.multidex.MultiDexApplication
+import com.chibatching.kotpref.Kotpref
 import com.github.anrwatchdog.ANRError
 import com.github.anrwatchdog.ANRWatchDog
 import com.jakewharton.threetenabp.AndroidThreeTen
@@ -43,6 +44,8 @@ open class App : MultiDexApplication() {
       .setANRListener { onAnr(it) }
       .setIgnoreDebugger(true)
       .start()
+    
+    Kotpref.init(this)
   }
 
   protected open fun onAnr(anrError: ANRError?) {

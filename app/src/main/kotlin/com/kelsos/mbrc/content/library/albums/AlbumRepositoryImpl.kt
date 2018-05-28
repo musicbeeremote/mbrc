@@ -17,10 +17,14 @@ class AlbumRepositoryImpl
 constructor(
   private val dao: AlbumDao,
   private val remoteDataSource: ApiBase,
-  private val appCoroutineDispatchers: AppCoroutineDispatchers
+  private val coroutineDispatchers: AppCoroutineDispatchers
 ) : AlbumRepository {
 
   private val mapper = AlbumDtoMapper()
+
+  override suspend fun count(): Long {
+    return withContext(coroutineDispatchers.database) { dao.count() }
+  }
 
   override fun getAlbumsByArtist(artist: String): Single<DataSource.Factory<Int, AlbumEntity>> {
     return Single.fromCallable { dao.getAlbumsByArtist(artist) }
@@ -35,12 +39,12 @@ constructor(
     return remoteDataSource.getAllPages(Protocol.LibraryBrowseAlbums, AlbumDto::class).doOnNext {
       async(CommonPool) {
         val list = it.map { mapper.map(it).apply { dateAdded = added } }
-        withContext(appCoroutineDispatchers.database) {
+        withContext(coroutineDispatchers.database) {
           dao.insert(list)
         }
       }
     }.doOnComplete {
-      async(appCoroutineDispatchers.database) {
+      async(coroutineDispatchers.database) {
         dao.removePreviousEntries(added)
       }
     }.ignoreElements()

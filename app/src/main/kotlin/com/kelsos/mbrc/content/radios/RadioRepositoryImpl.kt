@@ -19,7 +19,12 @@ constructor(
   private val remoteDataSource: ApiBase,
   private val coroutineDispatchers: AppCoroutineDispatchers
 ) : RadioRepository {
+
   private val mapper = RadioDtoMapper()
+
+  override suspend fun count(): Long {
+    return withContext(coroutineDispatchers.database) { dao.count() }
+  }
 
   override fun getAll(): Single<DataSource.Factory<Int, RadioStationEntity>> {
     return Single.fromCallable { dao.getAll() }

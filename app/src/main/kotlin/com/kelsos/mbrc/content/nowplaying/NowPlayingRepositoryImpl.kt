@@ -23,6 +23,10 @@ constructor(
 
   private val mapper = NowPlayingDtoMapper()
 
+  override suspend fun count(): Long {
+    return withContext(coroutineDispatchers.database) { dao.count() }
+  }
+
   override fun getAll(): Single<DataSource.Factory<Int, NowPlayingEntity>> {
     return Single.fromCallable { dao.getAll() }
   }
