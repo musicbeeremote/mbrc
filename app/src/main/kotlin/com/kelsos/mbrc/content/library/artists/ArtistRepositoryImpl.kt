@@ -23,6 +23,10 @@ constructor(
 
   private val mapper = ArtistDtoMapper()
 
+  override suspend fun count(): Long {
+    return withContext(coroutineDispatchers.database) { dao.count() }
+  }
+
   override fun getArtistByGenre(genre: String): Single<DataSource.Factory<Int, ArtistEntity>> {
     return Single.fromCallable { dao.getArtistByGenre(genre) }
   }

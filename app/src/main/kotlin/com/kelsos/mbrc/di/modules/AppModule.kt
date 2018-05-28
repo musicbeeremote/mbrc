@@ -36,6 +36,8 @@ import com.kelsos.mbrc.content.nowplaying.NowPlayingRepository
 import com.kelsos.mbrc.content.nowplaying.NowPlayingRepositoryImpl
 import com.kelsos.mbrc.content.nowplaying.cover.CoverApi
 import com.kelsos.mbrc.content.nowplaying.cover.CoverApiImpl
+import com.kelsos.mbrc.content.nowplaying.cover.CoverModel
+import com.kelsos.mbrc.content.nowplaying.cover.StoredCoverModel
 import com.kelsos.mbrc.content.nowplaying.queue.QueueApi
 import com.kelsos.mbrc.content.nowplaying.queue.QueueApiImpl
 import com.kelsos.mbrc.content.output.OutputApi
@@ -106,7 +108,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import toothpick.config.Module
 import java.util.concurrent.Executors
-
 
 
 class AppModule : Module() {
@@ -206,5 +207,7 @@ class AppModule : Module() {
     bindSingletonProvider(AppCoroutineDispatcherProvider::class)
 
     bindClass<RequestManager> { RequestManagerImpl::class }
+
+    bindInstance<CoverModel> { StoredCoverModel }
   }
 }

@@ -5,11 +5,15 @@ import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
+import com.kelsos.mbrc.metrics.SyncMetrics
+import com.kelsos.mbrc.metrics.SyncedData
 import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function4
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -21,6 +25,7 @@ constructor(
   private val albumRepository: AlbumRepository,
   private val trackRepository: TrackRepository,
   private val playlistRepository: PlaylistRepository,
+  private val metrics: SyncMetrics,
   private val appRxSchedulers: AppRxSchedulers
 ) : LibrarySyncInteractor {
 
@@ -38,7 +43,7 @@ constructor(
 
     Timber.v("Starting library metadata network")
 
-    val start = System.currentTimeMillis()
+    metrics.librarySyncStarted()
 
     disposable = checkIfShouldSync(auto).flatMapCompletable { empty ->
       if (empty) {
@@ -58,10 +63,21 @@ constructor(
       }
       .subscribe({
         onCompleteListener?.onSuccess()
-        Timber.v("Library refresh complete after ${System.currentTimeMillis() - start} ms")
+        async(CommonPool) {
+          val syncedData = SyncedData(
+            genres = genreRepository.count(),
+            artists = artistRepository.count(),
+            albums = albumRepository.count(),
+            tracks = trackRepository.count(),
+            playlists = playlistRepository.count()
+          )
+          metrics.librarySyncComplete(syncedData)
+        }
+
       }) {
         Timber.e(it, "Refresh couldn't complete")
         onCompleteListener?.onFailure(it)
+        metrics.librarySyncFailed()
       }
   }
 

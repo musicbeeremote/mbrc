@@ -23,6 +23,10 @@ constructor(
 
   private val mapper = GenreDtoMapper()
 
+  override suspend fun count(): Long {
+    return withContext(coroutineDispatchers.database) { dao.count() }
+  }
+
   override fun getAll(): Single<DataSource.Factory<Int, GenreEntity>> {
     return Single.fromCallable { dao.getAll() }
   }

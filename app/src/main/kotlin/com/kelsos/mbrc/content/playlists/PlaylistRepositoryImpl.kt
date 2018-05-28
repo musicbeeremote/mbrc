@@ -19,7 +19,12 @@ constructor(
   private val remoteDataSource: ApiBase,
   private val coroutineDispatchers: AppCoroutineDispatchers
 ) : PlaylistRepository {
+
   private val mapper = PlaylistDtoMapper()
+
+  override suspend fun count(): Long {
+    return withContext(coroutineDispatchers.database) { dao.count() }
+  }
 
   override fun getAll(): Single<DataSource.Factory<Int, PlaylistEntity>> {
     return Single.fromCallable { dao.getAll() }
